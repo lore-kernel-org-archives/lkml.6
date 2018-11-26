@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D27C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1465C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884B52146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:40:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884B52146D
+	by mail.kernel.org (Postfix) with ESMTP id 70E8B2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:41:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E8B2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbeKZVdv (ORCPT
+        id S1726294AbeKZVeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:33:51 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35090 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbeKZVdv (ORCPT
+        Mon, 26 Nov 2018 16:34:50 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43465 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeKZVeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:33:51 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 81so16126235otj.2;
-        Mon, 26 Nov 2018 02:40:08 -0800 (PST)
+        Mon, 26 Nov 2018 16:34:50 -0500
+Received: by mail-oi1-f194.google.com with SMTP id u18so15322347oie.10;
+        Mon, 26 Nov 2018 02:41:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C6rdC0LZOQPO8wgYSUsp9+G6+84/8apFHU/adggHzNA=;
-        b=jxTWDgeCQVk7cxKKm8aAvxqHGVeTaq+ugEVvEflrCLQWkgxghQ5Ik4QzcZIHsjOdM8
-         zuN5MI2PZ/5G7OVh/1k3jOU2Qnhog0w4et7ZzUV8gp2y8dPtH9GtDOToeeQcKYJWTwez
-         FuwYXpU9tpLrDV48j4LL4dmMAoV7GPTs/WfPd7hsQLISgFIY4abtXalgeZ38d7Z7weOB
-         z+5Rk2EbFLU4evQdS5PHN/fou+rPPMPyfvnI9/vi6w/5/BJWcgUOzZTcKOjtMVb0G1k8
-         xoGBtzk5pLop1JSm79NieLVuYkmisqPUwWqirOyep2XN6HYUBqlQClTW8qEa5Jf0/EnM
-         SeVQ==
-X-Gm-Message-State: AA+aEWb92NrpA1UBzRlGIM6ytQSFyMH8MOuhWqP/iQ5vzIgrQOxIIkWW
-        drkrRdC8lEGFdSXji9pVB+kEfU6M5I3whkgiLZQ=
-X-Google-Smtp-Source: AFSGD/Voaf5Yuf0EOYgb5XRBMkaEAnvR7tBZl7YlX2gnB7wZZLyB5u/AymN00l1QFitQmB4ArVA98yzT/Yf607c0ofE=
-X-Received: by 2002:a05:6830:1289:: with SMTP id z9mr11430847otp.281.1543228808305;
- Mon, 26 Nov 2018 02:40:08 -0800 (PST)
+        bh=FgIERePgpk2uqf/nREl6qjaL77RHDiIugA7bYB9vdt8=;
+        b=WR6h4E1NENnwOfghY1lQ3mtacwiAItzYDoXi1SWKmIDIIy4NaT4/Riv+VlHfAi2AjO
+         qkryIxV0GigYSaZoLK2XWFH4CwoJnQ2SL13qJZnfwd3n0UZu7cIl1K1XqzNz3J4BWrqc
+         otYyvJXQweQkLAO+S06tXhA6J0j8hBVLTtcuwcxqgD2K/zK7KUPmiJGCX0DL8XxAwVMz
+         TkOVGKFrNrqnxoH39E8LIkD2lY30nb55FjLmNYbeV5RIZpyUgb3cjrE6W/FpUgH9wSzn
+         Dcq2QHVI0l6msvpA7petbaJhWogmskc6SKMaZwCxzy2Oq4NbqbmVinuQ9frc65Et7vev
+         Cjaw==
+X-Gm-Message-State: AA+aEWaRYMaNqZ/WIfcCqGtJC8cU55dLTYwbLicQsACWojgisS6+EULz
+        JCLwi6U8kmBeczdAHd4Wta3pp48+0BpjwXKrW6Y=
+X-Google-Smtp-Source: AFSGD/UvAzwE2p1IQkJXWxa7CqOU4Uw23wJfQsghlYTrt+bqDtwbUUfID34Vhhd4jhetL67ZIKLiXjwHP2Mj/T79zY8=
+X-Received: by 2002:aca:100b:: with SMTP id 11mr6037387oiq.303.1543228867924;
+ Mon, 26 Nov 2018 02:41:07 -0800 (PST)
 MIME-Version: 1.0
-References: <1542860922-9730-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1542860922-9730-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1542860922-9730-1-git-send-email-yamada.masahiro@socionext.com> <1542860922-9730-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1542860922-9730-2-git-send-email-yamada.masahiro@socionext.com>
 From:   Mathieu Malaterre <malat@debian.org>
-Date:   Mon, 26 Nov 2018 11:39:55 +0100
-Message-ID: <CA+7wUsx4q4ig2WaYKx7HQi4kwp9Wu+cegL82AWwaZNA0DGanHQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] modpost: file2alias: go back to simple devtable lookup
+Date:   Mon, 26 Nov 2018 11:40:55 +0100
+Message-ID: <CA+7wUsz6amd-Kp3Gf4fK5VyuwAB8ZkJpgKkAy+DYJxvfaLEczQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] modpost: file2alias: check prototype of handler
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
         Jessica Yu <jeyu@kernel.org>, rusty@rustcorp.com.au,
@@ -63,474 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, Nov 22, 2018 at 5:29 AM Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 >
-> Commit e49ce14150c6 ("modpost: use linker section to generate table.")
-> was not so cool as we had expected because it ended up with ugly section
-> hacks when commit dd2a3acaecd7 ("mod/file2alias: make modpost compile on
-> darwin again") came in.
->
-> Given a certain degree of unknowledge about the link stage of host
-> programs, I really want to see simple, stupid table lookup so that
-> this works in the same way regardless of the underlying executable
-> binary format.
+> Use specific prototype instead of an opaque pointer so that the
+> compiler can catch incompatible pointer type.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
 >
->  scripts/mod/file2alias.c | 144 ++++++++++++++++-------------------------------
->  1 file changed, 49 insertions(+), 95 deletions(-)
+>  scripts/mod/file2alias.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 >
 > diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 28a6166..7e4aede 100644
+> index 7e4aede..a37af7d 100644
 > --- a/scripts/mod/file2alias.c
 > +++ b/scripts/mod/file2alias.c
-> @@ -50,46 +50,6 @@ struct devtable {
->         void *function;
+> @@ -47,7 +47,7 @@ typedef struct {
+>  struct devtable {
+>         const char *device_id; /* name of table, __mod_<name>__*_device_table. */
+>         unsigned long id_size;
+> -       void *function;
+> +       int (*do_entry)(const char *filename, void *symval, char *alias);
 >  };
->
-> -#define ___cat(a,b) a ## b
-> -#define __cat(a,b) ___cat(a,b)
-> -
-> -/* we need some special handling for this host tool running eventually on
-> - * Darwin. The Mach-O section handling is a bit different than ELF section
-> - * handling. The differnces in detail are:
-> - *  a) we have segments which have sections
-> - *  b) we need a API call to get the respective section symbols */
-> -#if defined(__MACH__)
-> -#include <mach-o/getsect.h>
-> -
-> -#define INIT_SECTION(name)  do {                                       \
-> -               unsigned long name ## _len;                             \
-> -               char *__cat(pstart_,name) = getsectdata("__TEXT",       \
-> -                       #name, &__cat(name,_len));                      \
-> -               char *__cat(pstop_,name) = __cat(pstart_,name) +        \
-> -                       __cat(name, _len);                              \
-> -               __cat(__start_,name) = (void *)__cat(pstart_,name);     \
-> -               __cat(__stop_,name) = (void *)__cat(pstop_,name);       \
-> -       } while (0)
-> -#define SECTION(name)   __attribute__((section("__TEXT, " #name)))
-> -
-> -struct devtable **__start___devtable, **__stop___devtable;
-> -#else
-> -#define INIT_SECTION(name) /* no-op for ELF */
-> -#define SECTION(name)   __attribute__((section(#name)))
-> -
-> -/* We construct a table of pointers in an ELF section (pointers generally
-> - * go unpadded by gcc).  ld creates boundary syms for us. */
-> -extern struct devtable *__start___devtable[], *__stop___devtable[];
-> -#endif /* __MACH__ */
-> -
-> -#if !defined(__used)
-> -# if __GNUC__ == 3 && __GNUC_MINOR__ < 3
-> -#  define __used                       __attribute__((__unused__))
-> -# else
-> -#  define __used                       __attribute__((__used__))
-> -# endif
-> -#endif
 
-Much more complete than my earlier patch.
+It makes sense to do this cleanup.
 
-Acked-by: Mathieu Malaterre <malat@debian.org>
+Reviewed-by: Mathieu Malaterre <malat@debian.org>
 
 
 >  /* Define a variable f that holds the value of field f of struct devid
->   * based at address m.
->   */
-> @@ -110,16 +70,6 @@ extern struct devtable *__start___devtable[], *__stop___devtable[];
->  #define DEF_FIELD_ADDR(m, devid, f) \
->         DEF_FIELD_ADDR_VAR(m, devid, f, f)
+> @@ -1299,12 +1299,11 @@ static bool sym_is(const char *name, unsigned namelen, const char *symbol)
+>  static void do_table(void *symval, unsigned long size,
+>                      unsigned long id_size,
+>                      const char *device_id,
+> -                    void *function,
+> +                    int (*do_entry)(const char *filename, void *symval, char *alias),
+>                      struct module *mod)
+>  {
+>         unsigned int i;
+>         char alias[500];
+> -       int (*do_entry)(const char *, void *entry, char *alias) = function;
 >
-> -/* Add a table entry.  We test function type matches while we're here. */
-> -#define ADD_TO_DEVTABLE(device_id, type, function) \
-> -       static struct devtable __cat(devtable,__LINE__) = {     \
-> -               device_id + 0*sizeof((function)((const char *)NULL,     \
-> -                                               (void *)NULL,           \
-> -                                               (char *)NULL)),         \
-> -               SIZE_##type, (function) };                              \
-> -       static struct devtable *SECTION(__devtable) __used \
-> -               __cat(devtable_ptr,__LINE__) = &__cat(devtable,__LINE__)
-> -
->  #define ADD(str, sep, cond, field)                              \
->  do {                                                            \
->          strcat(str, sep);                                       \
-> @@ -439,7 +389,6 @@ static int do_hid_entry(const char *filename,
+>         device_id_check(mod->name, device_id, size, id_size, symval);
+>         /* Leave last one: it's the terminator. */
+> @@ -1420,7 +1419,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
 >
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("hid", hid_device_id, do_hid_entry);
->
->  /* Looks like: ieee1394:venNmoNspNverN */
->  static int do_ieee1394_entry(const char *filename,
-> @@ -464,7 +413,6 @@ static int do_ieee1394_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ieee1394", ieee1394_device_id, do_ieee1394_entry);
->
->  /* Looks like: pci:vNdNsvNsdNbcNscNiN. */
->  static int do_pci_entry(const char *filename,
-> @@ -508,7 +456,6 @@ static int do_pci_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("pci", pci_device_id, do_pci_entry);
->
->  /* looks like: "ccw:tNmNdtNdmN" */
->  static int do_ccw_entry(const char *filename,
-> @@ -532,7 +479,6 @@ static int do_ccw_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ccw", ccw_device_id, do_ccw_entry);
->
->  /* looks like: "ap:tN" */
->  static int do_ap_entry(const char *filename,
-> @@ -543,7 +489,6 @@ static int do_ap_entry(const char *filename,
->         sprintf(alias, "ap:t%02X*", dev_type);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ap", ap_device_id, do_ap_entry);
->
->  /* looks like: "css:tN" */
->  static int do_css_entry(const char *filename,
-> @@ -554,7 +499,6 @@ static int do_css_entry(const char *filename,
->         sprintf(alias, "css:t%01X", type);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("css", css_device_id, do_css_entry);
->
->  /* Looks like: "serio:tyNprNidNexN" */
->  static int do_serio_entry(const char *filename,
-> @@ -574,7 +518,6 @@ static int do_serio_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("serio", serio_device_id, do_serio_entry);
->
->  /* looks like: "acpi:ACPI0003" or "acpi:PNP0C0B" or "acpi:LNXVIDEO" or
->   *             "acpi:bbsspp" (bb=base-class, ss=sub-class, pp=prog-if)
-> @@ -612,7 +555,6 @@ static int do_acpi_entry(const char *filename,
->         }
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("acpi", acpi_device_id, do_acpi_entry);
->
->  /* looks like: "pnp:dD" */
->  static void do_pnp_device_entry(void *symval, unsigned long size,
-> @@ -736,7 +678,6 @@ static int do_pcmcia_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("pcmcia", pcmcia_device_id, do_pcmcia_entry);
->
->  static int do_vio_entry(const char *filename, void *symval,
->                 char *alias)
-> @@ -756,7 +697,6 @@ static int do_vio_entry(const char *filename, void *symval,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("vio", vio_device_id, do_vio_entry);
->
->  #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
->
-> @@ -829,7 +769,6 @@ static int do_input_entry(const char *filename, void *symval,
->                 do_input(alias, *swbit, 0, INPUT_DEVICE_ID_SW_MAX);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("input", input_device_id, do_input_entry);
->
->  static int do_eisa_entry(const char *filename, void *symval,
->                 char *alias)
-> @@ -841,7 +780,6 @@ static int do_eisa_entry(const char *filename, void *symval,
->                 strcat(alias, "*");
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("eisa", eisa_device_id, do_eisa_entry);
->
->  /* Looks like: parisc:tNhvNrevNsvN */
->  static int do_parisc_entry(const char *filename, void *symval,
-> @@ -861,7 +799,6 @@ static int do_parisc_entry(const char *filename, void *symval,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("parisc", parisc_device_id, do_parisc_entry);
->
->  /* Looks like: sdio:cNvNdN. */
->  static int do_sdio_entry(const char *filename,
-> @@ -878,7 +815,6 @@ static int do_sdio_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("sdio", sdio_device_id, do_sdio_entry);
->
->  /* Looks like: ssb:vNidNrevN. */
->  static int do_ssb_entry(const char *filename,
-> @@ -895,7 +831,6 @@ static int do_ssb_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ssb", ssb_device_id, do_ssb_entry);
->
->  /* Looks like: bcma:mNidNrevNclN. */
->  static int do_bcma_entry(const char *filename,
-> @@ -914,7 +849,6 @@ static int do_bcma_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("bcma", bcma_device_id, do_bcma_entry);
->
->  /* Looks like: virtio:dNvN */
->  static int do_virtio_entry(const char *filename, void *symval,
-> @@ -930,7 +864,6 @@ static int do_virtio_entry(const char *filename, void *symval,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("virtio", virtio_device_id, do_virtio_entry);
->
->  /*
->   * Looks like: vmbus:guid
-> @@ -953,7 +886,6 @@ static int do_vmbus_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("vmbus", hv_vmbus_device_id, do_vmbus_entry);
->
->  /* Looks like: rpmsg:S */
->  static int do_rpmsg_entry(const char *filename, void *symval,
-> @@ -964,7 +896,6 @@ static int do_rpmsg_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("rpmsg", rpmsg_device_id, do_rpmsg_entry);
->
->  /* Looks like: i2c:S */
->  static int do_i2c_entry(const char *filename, void *symval,
-> @@ -975,7 +906,6 @@ static int do_i2c_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("i2c", i2c_device_id, do_i2c_entry);
->
->  /* Looks like: spi:S */
->  static int do_spi_entry(const char *filename, void *symval,
-> @@ -986,7 +916,6 @@ static int do_spi_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("spi", spi_device_id, do_spi_entry);
->
->  static const struct dmifield {
->         const char *prefix;
-> @@ -1041,7 +970,6 @@ static int do_dmi_entry(const char *filename, void *symval,
->         strcat(alias, ":");
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("dmi", dmi_system_id, do_dmi_entry);
->
->  static int do_platform_entry(const char *filename,
->                              void *symval, char *alias)
-> @@ -1050,7 +978,6 @@ static int do_platform_entry(const char *filename,
->         sprintf(alias, PLATFORM_MODULE_PREFIX "%s", *name);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("platform", platform_device_id, do_platform_entry);
->
->  static int do_mdio_entry(const char *filename,
->                          void *symval, char *alias)
-> @@ -1075,7 +1002,6 @@ static int do_mdio_entry(const char *filename,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("mdio", mdio_device_id, do_mdio_entry);
->
->  /* Looks like: zorro:iN. */
->  static int do_zorro_entry(const char *filename, void *symval,
-> @@ -1086,7 +1012,6 @@ static int do_zorro_entry(const char *filename, void *symval,
->         ADD(alias, "i", id != ZORRO_WILDCARD, id);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("zorro", zorro_device_id, do_zorro_entry);
->
->  /* looks like: "pnp:dD" */
->  static int do_isapnp_entry(const char *filename,
-> @@ -1102,7 +1027,6 @@ static int do_isapnp_entry(const char *filename,
->                 (function >> 12) & 0x0f, (function >> 8) & 0x0f);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("isapnp", isapnp_device_id, do_isapnp_entry);
->
->  /* Looks like: "ipack:fNvNdN". */
->  static int do_ipack_entry(const char *filename,
-> @@ -1118,7 +1042,6 @@ static int do_ipack_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ipack", ipack_device_id, do_ipack_entry);
->
->  /*
->   * Append a match expression for a single masked hex digit.
-> @@ -1189,7 +1112,6 @@ static int do_amba_entry(const char *filename,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("amba", amba_id, do_amba_entry);
->
->  /*
->   * looks like: "mipscdmm:tN"
-> @@ -1205,7 +1127,6 @@ static int do_mips_cdmm_entry(const char *filename,
->         sprintf(alias, "mipscdmm:t%02X*", type);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("mipscdmm", mips_cdmm_device_id, do_mips_cdmm_entry);
->
->  /* LOOKS like cpu:type:x86,venVVVVfamFFFFmodMMMM:feature:*,FEAT,*
->   * All fields are numbers. It would be nicer to use strings for vendor
-> @@ -1230,7 +1151,6 @@ static int do_x86cpu_entry(const char *filename, void *symval,
->                 sprintf(alias + strlen(alias), "%04X*", feature);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("x86cpu", x86_cpu_id, do_x86cpu_entry);
->
->  /* LOOKS like cpu:type:*:feature:*FEAT* */
->  static int do_cpu_entry(const char *filename, void *symval, char *alias)
-> @@ -1240,7 +1160,6 @@ static int do_cpu_entry(const char *filename, void *symval, char *alias)
->         sprintf(alias, "cpu:type:*:feature:*%04X*", feature);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("cpu", cpu_feature, do_cpu_entry);
->
->  /* Looks like: mei:S:uuid:N:* */
->  static int do_mei_entry(const char *filename, void *symval,
-> @@ -1259,7 +1178,6 @@ static int do_mei_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("mei", mei_cl_device_id, do_mei_entry);
->
->  /* Looks like: rapidio:vNdNavNadN */
->  static int do_rio_entry(const char *filename,
-> @@ -1279,7 +1197,6 @@ static int do_rio_entry(const char *filename,
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("rapidio", rio_device_id, do_rio_entry);
->
->  /* Looks like: ulpi:vNpN */
->  static int do_ulpi_entry(const char *filename, void *symval,
-> @@ -1292,7 +1209,6 @@ static int do_ulpi_entry(const char *filename, void *symval,
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("ulpi", ulpi_device_id, do_ulpi_entry);
->
->  /* Looks like: hdaudio:vNrNaN */
->  static int do_hda_entry(const char *filename, void *symval, char *alias)
-> @@ -1309,7 +1225,6 @@ static int do_hda_entry(const char *filename, void *symval, char *alias)
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("hdaudio", hda_device_id, do_hda_entry);
->
->  /* Looks like: sdw:mNpN */
->  static int do_sdw_entry(const char *filename, void *symval, char *alias)
-> @@ -1324,7 +1239,6 @@ static int do_sdw_entry(const char *filename, void *symval, char *alias)
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("sdw", sdw_device_id, do_sdw_entry);
->
->  /* Looks like: fsl-mc:vNdN */
->  static int do_fsl_mc_entry(const char *filename, void *symval,
-> @@ -1336,7 +1250,6 @@ static int do_fsl_mc_entry(const char *filename, void *symval,
->         sprintf(alias, "fsl-mc:v%08Xd%s", vendor, *obj_type);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("fslmc", fsl_mc_device_id, do_fsl_mc_entry);
->
->  /* Looks like: tbsvc:kSpNvNrN */
->  static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
-> @@ -1361,7 +1274,6 @@ static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
->         add_wildcard(alias);
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("tbsvc", tb_service_id, do_tbsvc_entry);
->
->  /* Looks like: typec:idNmN */
->  static int do_typec_entry(const char *filename, void *symval, char *alias)
-> @@ -1374,7 +1286,6 @@ static int do_typec_entry(const char *filename, void *symval, char *alias)
->
->         return 1;
->  }
-> -ADD_TO_DEVTABLE("typec", typec_device_id, do_typec_entry);
->
->  /* Does namelen bytes of name exactly match the symbol? */
->  static bool sym_is(const char *name, unsigned namelen, const char *symbol)
-> @@ -1407,6 +1318,48 @@ static void do_table(void *symval, unsigned long size,
->         }
->  }
->
-> +static const struct devtable devtable[] = {
-> +       {"hid", SIZE_hid_device_id, do_hid_entry},
-> +       {"ieee1394", SIZE_ieee1394_device_id, do_ieee1394_entry},
-> +       {"pci", SIZE_pci_device_id, do_pci_entry},
-> +       {"ccw", SIZE_ccw_device_id, do_ccw_entry},
-> +       {"ap", SIZE_ap_device_id, do_ap_entry},
-> +       {"css", SIZE_css_device_id, do_css_entry},
-> +       {"serio", SIZE_serio_device_id, do_serio_entry},
-> +       {"acpi", SIZE_acpi_device_id, do_acpi_entry},
-> +       {"pcmcia", SIZE_pcmcia_device_id, do_pcmcia_entry},
-> +       {"vio", SIZE_vio_device_id, do_vio_entry},
-> +       {"input", SIZE_input_device_id, do_input_entry},
-> +       {"eisa", SIZE_eisa_device_id, do_eisa_entry},
-> +       {"parisc", SIZE_parisc_device_id, do_parisc_entry},
-> +       {"sdio", SIZE_sdio_device_id, do_sdio_entry},
-> +       {"ssb", SIZE_ssb_device_id, do_ssb_entry},
-> +       {"bcma", SIZE_bcma_device_id, do_bcma_entry},
-> +       {"virtio", SIZE_virtio_device_id, do_virtio_entry},
-> +       {"vmbus", SIZE_hv_vmbus_device_id, do_vmbus_entry},
-> +       {"rpmsg", SIZE_rpmsg_device_id, do_rpmsg_entry},
-> +       {"i2c", SIZE_i2c_device_id, do_i2c_entry},
-> +       {"spi", SIZE_spi_device_id, do_spi_entry},
-> +       {"dmi", SIZE_dmi_system_id, do_dmi_entry},
-> +       {"platform", SIZE_platform_device_id, do_platform_entry},
-> +       {"mdio", SIZE_mdio_device_id, do_mdio_entry},
-> +       {"zorro", SIZE_zorro_device_id, do_zorro_entry},
-> +       {"isapnp", SIZE_isapnp_device_id, do_isapnp_entry},
-> +       {"ipack", SIZE_ipack_device_id, do_ipack_entry},
-> +       {"amba", SIZE_amba_id, do_amba_entry},
-> +       {"mipscdmm", SIZE_mips_cdmm_device_id, do_mips_cdmm_entry},
-> +       {"x86cpu", SIZE_x86_cpu_id, do_x86cpu_entry},
-> +       {"cpu", SIZE_cpu_feature, do_cpu_entry},
-> +       {"mei", SIZE_mei_cl_device_id, do_mei_entry},
-> +       {"rapidio", SIZE_rio_device_id, do_rio_entry},
-> +       {"ulpi", SIZE_ulpi_device_id, do_ulpi_entry},
-> +       {"hdaudio", SIZE_hda_device_id, do_hda_entry},
-> +       {"sdw", SIZE_sdw_device_id, do_sdw_entry},
-> +       {"fslmc", SIZE_fsl_mc_device_id, do_fsl_mc_entry},
-> +       {"tbsvc", SIZE_tb_service_id, do_tbsvc_entry},
-> +       {"typec", SIZE_typec_device_id, do_typec_entry},
-> +};
-> +
->  /* Create MODULE_ALIAS() statements.
->   * At this time, we cannot write the actual output C source yet,
->   * so we write into the mod->dev_table_buf buffer. */
-> @@ -1460,13 +1413,14 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
->         else if (sym_is(name, namelen, "pnp_card"))
->                 do_pnp_card_entries(symval, sym->st_size, mod);
->         else {
-> -               struct devtable **p;
-> -               INIT_SECTION(__devtable);
-> +               int i;
-> +
-> +               for (i = 0; i < ARRAY_SIZE(devtable); i++) {
-> +                       const struct devtable *p = &devtable[i];
->
-> -               for (p = __start___devtable; p < __stop___devtable; p++) {
-> -                       if (sym_is(name, namelen, (*p)->device_id)) {
-> -                               do_table(symval, sym->st_size, (*p)->id_size,
-> -                                        (*p)->device_id, (*p)->function, mod);
-> +                       if (sym_is(name, namelen, p->device_id)) {
-> +                               do_table(symval, sym->st_size, p->id_size,
-> +                                        p->device_id, p->function, mod);
+>                         if (sym_is(name, namelen, p->device_id)) {
+>                                 do_table(symval, sym->st_size, p->id_size,
+> -                                        p->device_id, p->function, mod);
+> +                                        p->device_id, p->do_entry, mod);
 >                                 break;
 >                         }
 >                 }
