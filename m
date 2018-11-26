@@ -2,101 +2,144 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B93C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FADC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559522082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC7A2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O0QZ/4hx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559522082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KLyyZi20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC7A2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbeKZTGK (ORCPT
+        id S1726308AbeKZTHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:06:10 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49104 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbeKZTGK (ORCPT
+        Mon, 26 Nov 2018 14:07:53 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:21204 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeKZTHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:06:10 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAQ83W3G065120;
-        Mon, 26 Nov 2018 08:12:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=qN6v4G0SguRO4WzKZHxSFVoE6mFC9MtgUvAXXDrwd98=;
- b=O0QZ/4hxySurWORUAWETRY9WgidIsUjlYFEiA6mnd41oUFoMcn57uhSDEOJ3Ib4KePwU
- +7ECG4PGwNxn2bCDQ3wobH9BQoTeWlm1hMqiUM7QAS61p/q/zBIdR0dNXHh0j37fIRs/
- hUomLEvetCRcdgXV5g/2QDxhUqbpcB9eGVLki73FoAkP3UArKQS7QnUoPZt7bW0uNdxL
- ez7efv/4BHeMj3+xysWN6Y1PnB3PCnson3gdoODmhtH9uc+qCAcAiKM8Iz/SIPjvPx3q
- P+RqrnhBF4Dmr/+9RMdBpS3V6/2FdUlCKZBUOfgdtP5rWxC0ZgmQovt3VWD3aB2JjA/k vw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2nxy9qv3g6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 08:12:47 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAQ8Cjct008059
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 08:12:46 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAQ8CjYN006495;
-        Mon, 26 Nov 2018 08:12:45 GMT
-Received: from kili.mountain (/41.202.241.51)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 00:12:44 -0800
-Date:   Mon, 26 Nov 2018 11:12:29 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Peng Hao <peng.hao2@zte.com.cn>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] misc/pvpanic: fix a NULL vs IS_ERR() check
-Message-ID: <20181126081229.zzgbambzjnbmmo7e@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9088 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=938
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811260076
+        Mon, 26 Nov 2018 14:07:52 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181126081431epoutp01fd9cd9e3e16a8b0427e5b7bbeae95618~qnnqVtAX-1779417794epoutp01E
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 08:14:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181126081431epoutp01fd9cd9e3e16a8b0427e5b7bbeae95618~qnnqVtAX-1779417794epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543220071;
+        bh=nbKY0/RMvhmuZhMhNRLBHblEx0Q0gRo1x76spSLSRmw=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=KLyyZi20wGnOCCxAlnv1maFlN7qAbADG8k/yeYF/yJwiJr5ylam2qTunv/p+YXHBb
+         jBYPddzOdN5k4CrHnDd2bQVUWlL9pp9rD18qoxURo9HovXymCq4asmXdrGh+pIlpCT
+         k9vurgLJOdhEa+5T5a07/Y7/ePArSX000+Vg+6VQ=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181126081428epcas1p2c187f770b7b878f092f7e72d4cc0a545~qnnnAqARF2431524315epcas1p28;
+        Mon, 26 Nov 2018 08:14:28 +0000 (GMT)
+X-AuditID: b6c32a37-429ff70000000fdc-2c-5bfbab630471
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D4.48.04060.36BABFB5; Mon, 26 Nov 2018 17:14:28 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 1/6] devfreq: add basic fileds supporting suspend
+ functionality
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1542823301-23563-2-git-send-email-l.luba@partner.samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20181126081427epcms1p8801d251017da40b59d7e8391ee247fdb@epcms1p8>
+Date:   Mon, 26 Nov 2018 17:14:27 +0900
+X-CMS-MailID: 20181126081427epcms1p8801d251017da40b59d7e8391ee247fdb
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgl+LIzCtJLcpLzFFi42LZdlhTVzdl9e9og+4GRouDWzUtNs5Yz2qx
+        feM3VovrX56zWsw/co7VonnxejaLM925Fv2PXzNbnD+/gd3ibNMbdotbDTIWs6bsZbLY9Pga
+        q8XlXXPYLD73HmG0mHF+H5PF2iN32S2WXr/IZHH31FGg9tOXWC1a9x5ht2hb/YHV4s2FeywO
+        4h7bdm9j9Vgzbw2jx+yGiyweE/o/MXos3vOSyWPTqk42j/1z17B7bF5S7/HvGLvHwXd7mDy2
+        XG1n8ejbsorRY8Xq7+wenzfJBfBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqY
+        KynkJeam2iq5+AToumXmAL2vpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNAr
+        TswtLs1L10vOz7UyNDAwMgUqTMjO2DhvOlvBSo6KSzc7WRsYv7N1MXJySAiYSNx/283excjF
+        ISSwg1Gip3MGUIKDg1dAUOLvDmGQGmGBUIlluzYygdhCAkoSDTf3MUPE9SU6HmxjBLHZBHQl
+        tm64ywIyR0SgkVliyZ4vrCAOs8BkNolZzxqgtvFKzGh/ygJhS0tsX74VrJtTwFviwJuNjBBx
+        UYmbq9+yw9jvj82HiotItN47ywxhC0o8+LkbKi4l8eTtQqj6eonrnxcxgSyWEJjAKPH7xn+o
+        hL7EoyuzwY7gFfCV6P55kAnkSxYBVYnta81BTAkBF4n1j+pAKpgF5CW2v53DDBJmFtCUWL9L
+        HyLMJ/Huaw8rzCc75j1hgrDVJA7tXgK1SEbi9PSFUFd6SDRcnc4CCbfLjBL3nypOYJSfhQjd
+        WUiWzUJYtoCReRWjWGpBcW56arFhgTFyhG5iBKd+LfMdjBvO+RxiFOBgVOLhnfDrV7QQa2JZ
+        cWXuIUYJDmYlEV7fJb+jhXhTEiurUovy44tKc1KLDzGaAn08kVlKNDkfmJfySuINTY2MjY0t
+        TAzNTA0NlcR5n0jNjRYSSE8sSc1OTS1ILYLpY+LglGpgzA7gL9ixYnX/yp9rbm127Vn0aZ3B
+        oyL7K0b2gQXb29yn3NSw82vJ5Axa5zhb54BcDofTtu3NTXbC/D+6nzed/5bvztd4n0luq1PG
+        Pbu7h4yKgp5/Pj9PRClmbXOi1tuHC91PnlVgs09Yvepw+Zzn+9K1Tn1iVG8KfpWQ7r6o9ffP
+        mTsfSm6RVWIpzkg01GIuKk4EAFmGGFQTBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181121180201eucas1p1f1f96941c3d16a96722e65d5c21bfe80
+References: <1542823301-23563-2-git-send-email-l.luba@partner.samsung.com>
+        <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181121180201eucas1p1f1f96941c3d16a96722e65d5c21bfe80@epcms1p8>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The devm_ioremap_resource() function doesn't return NULL, it returns
-error pointers.
+>The patch prepares devfreq device for handling suspend/resume functionality.
+>The new fields will store needed information during this process.
+>Devfreq framework handles opp-suspend DT entry and there is no need of
+>modyfications in the drivers code.
+>
+>The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
+>solve issue with devfreq device's frequency during suspend/resume.
+>During the discussion on LKML some corner cases and comments appeared
+>related to the design. This patch address them keeping in mind suggestions
+>from Chanwoo Choi.
+>
+>Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 
-Fixes: 46f934c9a12f ("misc/pvpanic: add support to get pvpanic device info FDT")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/misc/pvpanic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+When you add new elements in a common struct (i.e., struct devfreq),
+please describe kindly in the doxygen entries so that developers
+may understand before reading all places where the new elements are
+used.
 
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-index 01241ec6a5cd..595ac065b401 100644
---- a/drivers/misc/pvpanic.c
-+++ b/drivers/misc/pvpanic.c
-@@ -140,8 +140,8 @@ static int pvpanic_mmio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 
- 	base = devm_ioremap_resource(&pdev->dev, mem);
--	if (base == NULL)
--		return -EFAULT;
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	atomic_notifier_chain_register(&panic_notifier_list,
- 				       &pvpanic_panic_nb);
--- 
-2.11.0
+You have added three new elements and there is no explanations on them.
+
+
+Cheers,
+MyungJoo
 
