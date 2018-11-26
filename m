@@ -2,218 +2,133 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1CBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DA2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C05220C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:56:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="kjJ40KIA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C05220C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DF3A2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:57:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF3A2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeK0Jwg (ORCPT
+        id S1727547AbeK0JxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:52:36 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37530 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeK0Jwf (ORCPT
+        Tue, 27 Nov 2018 04:53:16 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.229]:11251 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727222AbeK0JxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:52:35 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 80so6872908pge.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:56:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zbfCjqBHpAJ7K3XFvE3QIuIxE9xXYdGtzAQcePbc+b8=;
-        b=kjJ40KIAs6CJd9vbyC4OxMuKuzLv9P0M+3fs8oA7yLXGSKDh9ooEer+N6sG/TIv02K
-         u5f09fdt3N2VxD0oiXbct2aJOCQCUdDZPAoy4mJ5K8rZ+Z+ybQvCDf72o3Svo4Ov4lkl
-         WoBy9MTIywvgJdsGjaYVHZNPdYKFRsEawnMsU5k+DFWZVESRwLd0zkkqgHmDHlxE4CF2
-         Oo2IwAukkVu6SjMPpM4Q22u/sjYGmgK1iGNEDewb0q2UriqLOgaq1YUTIJLvFgU3fMI4
-         yJtzFyrEvxnIqJlrsK63mLpslLax00bqYdnyHI4OUwNLu2LTRT7CLJ/Xp0QkBznPBsD0
-         GrxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zbfCjqBHpAJ7K3XFvE3QIuIxE9xXYdGtzAQcePbc+b8=;
-        b=hWxcmLbXr5CF/JuhNUkeN+vuGyXZM5IlrENMICr0xf/VPh4TqjB3zz++5S2csidP8o
-         bFZAFqQ23WcZCP0MdEGZLlrQfw1RzZR9ZPe/CVHjcAmiWm9ZHgZvCYPe6Wl3dhyzh5ZX
-         eVFrOv3t8OdU7HHVMWBLaE0X1wSayOMJCyiHTTtoVUaOzPdkDR4EDZU6w5lQoZI4RneS
-         g67KYSld+5yl67bYefXCPUqNVNPQ5Oj6avFXFxgdWdoIfAf5e+9ZDLW+frYXFfqvfW38
-         bi11cFGQ07bPsy8ThYWYN5naUwYX18lqdQ50HtyownRbgi1m2ohEFxsK/Jezlepl355L
-         Mcxw==
-X-Gm-Message-State: AA+aEWZvzFeVi61dPXDjl2Taln0yQwZFzdAqYA3DsonUQ5AUFiXjsbkN
-        N9y83iGpRY7NLFy2mDK9KgTLfQ==
-X-Google-Smtp-Source: AFSGD/XsLnbmJ7JSiEaKpuAFiMdBC3Q1tAhywKOzA3kv9DDd3m2ZXLpW6CUfttmabObm5+3pyI0MyQ==
-X-Received: by 2002:a63:5e43:: with SMTP id s64mr26918522pgb.101.1543273012498;
-        Mon, 26 Nov 2018 14:56:52 -0800 (PST)
-Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id n22sm2153399pfh.166.2018.11.26.14.56.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 14:56:51 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:56:49 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 16/20] block: enable multipage bvecs
-Message-ID: <20181126225649.GP30411@vader>
-References: <20181126021720.19471-1-ming.lei@redhat.com>
- <20181126021720.19471-17-ming.lei@redhat.com>
+        Tue, 27 Nov 2018 04:53:16 -0500
+X-Greylist: delayed 1255 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Nov 2018 04:53:16 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 0E7A0704E
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:36:43 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id RPUggiVYoSjJARPUhg6DJW; Mon, 26 Nov 2018 16:36:43 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.78.127] (port=59722 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gRPUg-002X2c-Cz; Mon, 26 Nov 2018 16:36:42 -0600
+Subject: Re: linux-next: build warning after merge of the f2fs tree
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Kees Cook <keescook@google.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181126111933.1b0fb324@canb.auug.org.au>
+ <20181126215924.GA55960@jaegeuk-macbookpro.roam.corp.google.com>
+ <20181127091747.4830d123@canb.auug.org.au>
+ <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <37611a15-da14-1796-5f4c-1278d46a4329@embeddedor.com>
+Date:   Mon, 26 Nov 2018 16:36:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126021720.19471-17-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.78.127
+X-Source-L: No
+X-Exim-ID: 1gRPUg-002X2c-Cz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.78.127]:59722
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 10:17:16AM +0800, Ming Lei wrote:
-> This patch pulls the trigger for multi-page bvecs.
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  block/bio.c         | 22 +++++++++++++++-------
->  fs/iomap.c          |  4 ++--
->  fs/xfs/xfs_aops.c   |  4 ++--
->  include/linux/bio.h |  2 +-
->  4 files changed, 20 insertions(+), 12 deletions(-)
+On 11/26/18 4:22 PM, Jaegeuk Kim wrote:
+> On 11/27, Stephen Rothwell wrote:
+[..]
 > 
-> diff --git a/block/bio.c b/block/bio.c
-> index 75fde30af51f..8bf9338d4783 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -753,6 +753,8 @@ EXPORT_SYMBOL(bio_add_pc_page);
->   * @page: page to add
->   * @len: length of the data to add
->   * @off: offset of the data in @page
-> + * @same_page: if %true only merge if the new data is in the same physical
-> + *		page as the last segment of the bio.
->   *
->   * Try to add the data at @page + @off to the last bvec of @bio.  This is a
->   * a useful optimisation for file systems with a block size smaller than the
-> @@ -761,19 +763,25 @@ EXPORT_SYMBOL(bio_add_pc_page);
->   * Return %true on success or %false on failure.
->   */
->  bool __bio_try_merge_page(struct bio *bio, struct page *page,
-> -		unsigned int len, unsigned int off)
-> +		unsigned int len, unsigned int off, bool same_page)
->  {
->  	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
->  		return false;
->  
->  	if (bio->bi_vcnt > 0) {
->  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> +		phys_addr_t vec_end_addr = page_to_phys(bv->bv_page) +
-> +			bv->bv_offset + bv->bv_len;
-> +		phys_addr_t page_addr = page_to_phys(page);
->  
-> -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
-> -			bv->bv_len += len;
-> -			bio->bi_iter.bi_size += len;
-> -			return true;
-> -		}
-> +		if (vec_end_addr != page_addr + off)
-> +			return false;
-> +		if (same_page && ((vec_end_addr - 1) & PAGE_MASK) != page_addr)
-> +			return false;
-> +
-> +		bv->bv_len += len;
-> +		bio->bi_iter.bi_size += len;
-> +		return true;
->  	}
->  	return false;
->  }
-> @@ -819,7 +827,7 @@ EXPORT_SYMBOL_GPL(__bio_add_page);
->  int bio_add_page(struct bio *bio, struct page *page,
->  		 unsigned int len, unsigned int offset)
->  {
-> -	if (!__bio_try_merge_page(bio, page, len, offset)) {
-> +	if (!__bio_try_merge_page(bio, page, len, offset, false)) {
->  		if (bio_full(bio))
->  			return 0;
->  		__bio_add_page(bio, page, len, offset);
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 1f648d098a3b..ec5527b0fba4 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -313,7 +313,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	 */
->  	sector = iomap_sector(iomap, pos);
->  	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
-> -		if (__bio_try_merge_page(ctx->bio, page, plen, poff))
-> +		if (__bio_try_merge_page(ctx->bio, page, plen, poff, true))
->  			goto done;
->  		is_contig = true;
->  	}
-> @@ -344,7 +344,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  		ctx->bio->bi_end_io = iomap_read_end_io;
->  	}
->  
-> -	__bio_add_page(ctx->bio, page, plen, poff);
-> +	bio_add_page(ctx->bio, page, plen, poff);
->  done:
->  	/*
->  	 * Move the caller beyond our range so that it keeps making progress.
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 1f1829e506e8..b9fd44168f61 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -616,12 +616,12 @@ xfs_add_to_ioend(
->  				bdev, sector);
->  	}
->  
-> -	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff)) {
-> +	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
->  		if (iop)
->  			atomic_inc(&iop->write_count);
->  		if (bio_full(wpc->ioend->io_bio))
->  			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
-> -		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
-> +		bio_add_page(wpc->ioend->io_bio, page, len, poff);
->  	}
->  
->  	wpc->ioend->io_size += len;
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index c35997dd02c2..5505f74aef8b 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -441,7 +441,7 @@ extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
->  extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
->  			   unsigned int, unsigned int);
->  bool __bio_try_merge_page(struct bio *bio, struct page *page,
-> -		unsigned int len, unsigned int off);
-> +		unsigned int len, unsigned int off, bool same_page);
->  void __bio_add_page(struct bio *bio, struct page *page,
->  		unsigned int len, unsigned int off);
->  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
-> -- 
-> 2.9.5
+> Oh, thanks~
+> Is this okay?
+> 
+
+Yep. This fix the warning. :)
+
+Thanks, Jaegeuk
+--
+Gustavo
+
+>  From 79e24f1509e5b6a07069be9cc8163969da78c57a Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 26 Nov 2018 14:20:32 -0800
+> Subject: [PATCH] f2fs: avoid build warn of fall_through
+> 
+> After merging the f2fs tree, today's linux-next build
+>   (x86_64_allmodconfig) produced this warning:
+> 
+>   In file included from fs/f2fs/dir.c:11:
+>   fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+>   fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>      if (set)
+>         ^
+>   fs/f2fs/f2fs.h:2390:2: note: here
+>     case FI_DATA_EXIST:
+>     ^~~~
+> 
+>   Exposed by my use of -Wimplicit-fallthrough
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>   fs/f2fs/f2fs.h | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 26ad1de8641c..b3fe6803d4c6 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2387,6 +2387,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+>   	case FI_NEW_INODE:
+>   		if (set)
+>   			return;
+> +		/* fall through */
+>   	case FI_DATA_EXIST:
+>   	case FI_INLINE_DOTS:
+>   	case FI_PIN_FILE:
 > 
