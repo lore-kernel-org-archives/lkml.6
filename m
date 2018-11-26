@@ -2,93 +2,153 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36303C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E59C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA8DE20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27F7B20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X/0UUI72"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8DE20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K90cOgBQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F7B20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeKZThf (ORCPT
+        id S1726273AbeKZTh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:37:35 -0500
-Received: from m12-14.163.com ([220.181.12.14]:53139 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbeKZThf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:37:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=mRUPHWAZbqOzpceLys
-        nWh/u7NmcOm2I8CdBzUvVl9WY=; b=X/0UUI72BuOq7LA1cQ3Y/o0hqo4y5gN/vB
-        WC6LWpb7EMucZyuUrlo2mDQAiksXWQMl01KNltHxHNjz0UzHfwfEht9piMdsqa+c
-        /pV/rYcXeYedf5zGEWIRG3wxH6vW7zZ3LrpJFiSLiuQEDaFDi1sepo7Z4AFeZp27
-        53HAtLitA=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp10 (Coremail) with SMTP id DsCowADX6QwysvtbCavNBw--.55256S3;
-        Mon, 26 Nov 2018 16:43:32 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] gfs2: get rid of potential double free
-Date:   Mon, 26 Nov 2018 16:43:29 +0800
-Message-Id: <1543221809-86560-1-git-send-email-bianpan2016@163.com>
+        Mon, 26 Nov 2018 14:37:58 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33395 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbeKZTh6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:37:58 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so12285487wrr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=He3pqGo+A5MVuYP3nfDqw4JkRlqG2IIP4aWgZQSIRFM=;
+        b=K90cOgBQAPar+TCdDVEU4wOtnfYpzEitFO8EccUFV2G5w8dZvaY4eGF2Z1Csvun9VP
+         CLwZoD8BaIrdLRSrplDK9o+WLMwp1WdRXI6z4dfplsYQSxuywDR7TJfzltkHI6GBi6AB
+         KHMyM2sqXvcyujvKfa01AlX2+uzFfXgMp12a8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=He3pqGo+A5MVuYP3nfDqw4JkRlqG2IIP4aWgZQSIRFM=;
+        b=fea1C0B8c1IJQkK1j6B6WlEfX2JkLIDKw0CCQceVrZ9gfX+644smljZtVPUJt5CEgM
+         V4EIU4rWXynDP0DJloJDf+ZVWSFVr5hNhzbtRes/+i6yqBNtuoXoPiygTqiS9vi0EJpw
+         3ui6NLy0GmTg3dxCNlgD6yIIJO0Vb5HQO6fzGbDOM7Ap28hu/WGZWDg35irQNFOzXGGu
+         GnBE+p2f8orYI8wIQC++wlCzAeeD7Q+JSfrJr/sufa0JuT1YByoDwLtRjdz+3MgUeVvu
+         9cRWPBaXPI/15Mux7t7UZInrdiMLx0MdKE1TZsFotaPvhgLfs0VHUmKOzVXprld+kL/S
+         XBww==
+X-Gm-Message-State: AA+aEWaR4B1emWDZgxg3eRValyJRrJNGah6cfgWv8Dz0VqEH6K5rFUhT
+        Axpjm+O1wfRK1EWbPlysvAhRsg==
+X-Google-Smtp-Source: AFSGD/VXqQ3MHEbKPUaWDca/yLfibVXjgYrSRhj++xV5liCzpOvZQruzNBmUADJZiUFLJuUPi+Mc0w==
+X-Received: by 2002:adf:fd50:: with SMTP id h16mr19200808wrs.228.1543221872362;
+        Mon, 26 Nov 2018 00:44:32 -0800 (PST)
+Received: from localhost.localdomain (72.224.136.77.rev.sfr.net. [77.136.224.72])
+        by smtp.gmail.com with ESMTPSA id a204sm98009wmh.23.2018.11.26.00.44.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 26 Nov 2018 00:44:31 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rjw@rjwysocki.net
+Cc:     linux-kernel@vger.kernel.org, viresh.kumar@linaro.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>
+Subject: [PATCH V3 1/2] base/drivers/arch_topology: Replace mutex with READ_ONCE / WRITE_ONCE
+Date:   Mon, 26 Nov 2018 09:44:20 +0100
+Message-Id: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DsCowADX6QwysvtbCavNBw--.55256S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JF1xZw1xWr1rCF1kAw43Wrg_yoWkWFc_AF
-        4DKwn5u34UW3WkXa9xuw45trs3ArWDW3W8CrW8tFy3ArW8K3srGr1DWwn5Cr15ZF47ZrZ5
-        trykXFyjkr1SgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnFeHDUUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiVAkLclUMGKWupAAAsK
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__gfs2_set_acl will not increase the reference count of acl if it fails.
-In this case, posix_acl_release are called twice, one after
-__gfs2_set_acl and one in the error handling block. This patch does not
-release acl when __gfs2_set_acl fails.
+The mutex protects a per_cpu variable access. The potential race can
+happen only when the cpufreq governor module is loaded and at the same
+time the cpu capacity is changed in the sysfs.
 
-Fixes: e01580bf9e4("gfs2: use generic posix ACL infrastructure")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+There is no real interest of using a mutex to protect a variable
+assignation when there is no situation where a task can take the lock
+and block.
+
+Replace the mutex by READ_ONCE / WRITE_ONCE.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- fs/gfs2/inode.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/base/arch_topology.c  | 7 +------
+ include/linux/arch_topology.h | 2 +-
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 648f0ca..3a9041c 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -744,12 +744,13 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
- 			       the gfs2 structures. */
- 	if (default_acl) {
- 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
--		posix_acl_release(default_acl);
-+		if (!error)
-+			posix_acl_release(default_acl);
- 	}
--	if (acl) {
-+	if (acl && !error) {
-+		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
- 		if (!error)
--			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
--		posix_acl_release(acl);
-+			posix_acl_release(acl);
- 	}
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index edfcf8d..fd5325b 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -31,12 +31,11 @@ void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
+ 		per_cpu(freq_scale, i) = scale;
+ }
  
- 	if (error)
+-static DEFINE_MUTEX(cpu_scale_mutex);
+ DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE;
+ 
+ void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity)
+ {
+-	per_cpu(cpu_scale, cpu) = capacity;
++	WRITE_ONCE(per_cpu(cpu_scale, cpu), capacity);
+ }
+ 
+ static ssize_t cpu_capacity_show(struct device *dev,
+@@ -71,10 +70,8 @@ static ssize_t cpu_capacity_store(struct device *dev,
+ 	if (new_capacity > SCHED_CAPACITY_SCALE)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&cpu_scale_mutex);
+ 	for_each_cpu(i, &cpu_topology[this_cpu].core_sibling)
+ 		topology_set_cpu_scale(i, new_capacity);
+-	mutex_unlock(&cpu_scale_mutex);
+ 
+ 	schedule_work(&update_topology_flags_work);
+ 
+@@ -141,7 +138,6 @@ void topology_normalize_cpu_scale(void)
+ 		return;
+ 
+ 	pr_debug("cpu_capacity: capacity_scale=%u\n", capacity_scale);
+-	mutex_lock(&cpu_scale_mutex);
+ 	for_each_possible_cpu(cpu) {
+ 		pr_debug("cpu_capacity: cpu=%d raw_capacity=%u\n",
+ 			 cpu, raw_capacity[cpu]);
+@@ -151,7 +147,6 @@ void topology_normalize_cpu_scale(void)
+ 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
+ 			cpu, topology_get_cpu_scale(NULL, cpu));
+ 	}
+-	mutex_unlock(&cpu_scale_mutex);
+ }
+ 
+ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
+diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+index d9bdc1a..12c439f 100644
+--- a/include/linux/arch_topology.h
++++ b/include/linux/arch_topology.h
+@@ -20,7 +20,7 @@ struct sched_domain;
+ static inline
+ unsigned long topology_get_cpu_scale(struct sched_domain *sd, int cpu)
+ {
+-	return per_cpu(cpu_scale, cpu);
++	return READ_ONCE(per_cpu(cpu_scale, cpu));
+ }
+ 
+ void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity);
 -- 
 2.7.4
-
 
