@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8D4C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBCAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 649A72146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7456821104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2rmLrQj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649A72146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiBIQWSi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7456821104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeKZVr3 (ORCPT
+        id S1727104AbeKZVre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55664 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeKZVr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:47:29 -0500
+        id S1727045AbeKZVrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:47:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C51721104;
-        Mon, 26 Nov 2018 10:53:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5F5621104;
+        Mon, 26 Nov 2018 10:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229625;
-        bh=YcLRKx9cJjI5uz7QbDLc1wvpJKThjxyLlvoYwBODe/A=;
+        s=default; t=1543229630;
+        bh=vY9nGcdJ7m+1n2UMsima4l6ujp4RQy5ZbH4/z0xu5FM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X2rmLrQjLrlnA3iHpgQuHJMWfHGLoT6QWiskEG6HLdacsmo3FZR1fXYm8Qkf72mLY
-         bZpyUPWWIikekZQxE8tA+Vusds22PzKt3XbQM30CtrmKtzsRMhdlwxTG65KglU/nOC
-         MRm9WgOALvSxQEu9Z3rZ9txwHOD+1KGbDSS7JOX8=
+        b=JiBIQWSi7dDUexwFi4gBT8i9fYuZ2C5+VZ1HmBsHIWLD5/a8ijyOnN9u+vDphknMQ
+         SdKphu36FKWK5q0C7sumf1i6YcNd3p8KPAnTmc9/ywP3yx/EXq6tG+35IBIKi5+XzU
+         zd3pyooY4HVzFeMozuxQ/T7ctKmwKjN2HNPg5a4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 02/70] ip_tunnel: dont force DF when MTU is locked
-Date:   Mon, 26 Nov 2018 11:50:17 +0100
-Message-Id: <20181126105047.086636327@linuxfoundation.org>
+Subject: [PATCH 4.4 04/70] tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
+Date:   Mon, 26 Nov 2018 11:50:19 +0100
+Message-Id: <20181126105047.296249142@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -63,39 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
 
-[ Upstream commit 16f7eb2b77b55da816c4e207f3f9440a8cafc00a ]
+[ Upstream commit 59663e42199c93d1d7314d1446f6782fc4b1eb81 ]
 
-The various types of tunnels running over IPv4 can ask to set the DF
-bit to do PMTU discovery. However, PMTU discovery is subject to the
-threshold set by the net.ipv4.route.min_pmtu sysctl, and is also
-disabled on routes with "mtu lock". In those cases, we shouldn't set
-the DF bit.
+This patch has the fix to avoid PHY lockup with 5717/5719/5720 in change
+ring and flow control paths. This patch solves the RX hang while doing
+continuous ring or flow control parameters with heavy traffic from peer.
 
-This patch makes setting the DF bit conditional on the route's MTU
-locking state.
-
-This issue seems to be older than git history.
-
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Acked-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_tunnel_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/tg3.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_tunnel_core.c
-+++ b/net/ipv4/ip_tunnel_core.c
-@@ -71,7 +71,7 @@ int iptunnel_xmit(struct sock *sk, struc
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -12379,6 +12379,7 @@ static int tg3_set_ringparam(struct net_
+ {
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int i, irq_sync = 0, err = 0;
++	bool reset_phy = false;
  
- 	iph->version	=	4;
- 	iph->ihl	=	sizeof(struct iphdr) >> 2;
--	iph->frag_off	=	df;
-+	iph->frag_off	=	ip_mtu_locked(&rt->dst) ? 0 : df;
- 	iph->protocol	=	proto;
- 	iph->tos	=	tos;
- 	iph->daddr	=	dst;
+ 	if ((ering->rx_pending > tp->rx_std_ring_mask) ||
+ 	    (ering->rx_jumbo_pending > tp->rx_jmb_ring_mask) ||
+@@ -12410,7 +12411,13 @@ static int tg3_set_ringparam(struct net_
+ 
+ 	if (netif_running(dev)) {
+ 		tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-		err = tg3_restart_hw(tp, false);
++		/* Reset PHY to avoid PHY lock up */
++		if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5720)
++			reset_phy = true;
++
++		err = tg3_restart_hw(tp, reset_phy);
+ 		if (!err)
+ 			tg3_netif_start(tp);
+ 	}
+@@ -12444,6 +12451,7 @@ static int tg3_set_pauseparam(struct net
+ {
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int err = 0;
++	bool reset_phy = false;
+ 
+ 	if (tp->link_config.autoneg == AUTONEG_ENABLE)
+ 		tg3_warn_mgmt_link_flap(tp);
+@@ -12534,7 +12542,13 @@ static int tg3_set_pauseparam(struct net
+ 
+ 		if (netif_running(dev)) {
+ 			tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-			err = tg3_restart_hw(tp, false);
++			/* Reset PHY to avoid PHY lock up */
++			if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5720)
++				reset_phy = true;
++
++			err = tg3_restart_hw(tp, reset_phy);
+ 			if (!err)
+ 				tg3_netif_start(tp);
+ 		}
 
 
