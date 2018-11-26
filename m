@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6194DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C15C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B4B20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B4B20663
+	by mail.kernel.org (Postfix) with ESMTP id E2CB820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2CB820663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbeK0ErE (ORCPT
+        id S1727219AbeK0ErS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:47:04 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43858 "EHLO
+        Mon, 26 Nov 2018 23:47:18 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43840 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeK0ErD (ORCPT
+        with ESMTP id S1726743AbeK0ErB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:47:03 -0500
+        Mon, 26 Nov 2018 23:47:01 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id B905927AA40
+        with ESMTPSA id A047E27DA19
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     lee.jones@linaro.org
 Cc:     gwendal@chromium.org, drinkcat@chromium.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org
-Subject: [PATCH v2 8/8] mfd: cros_ec: add a dev_release empty method.
-Date:   Mon, 26 Nov 2018 18:51:58 +0100
-Message-Id: <20181126175158.5425-9-enric.balletbo@collabora.com>
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v2 5/8] mfd / platform: cros_ec: move device sysfs attributes to its own driver.
+Date:   Mon, 26 Nov 2018 18:51:55 +0100
+Message-Id: <20181126175158.5425-6-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181126175158.5425-1-enric.balletbo@collabora.com>
 References: <20181126175158.5425-1-enric.balletbo@collabora.com>
@@ -44,80 +45,223 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices are required to provide a release method. This patch fixes the
-following WARN():
+The entire way how cros debugfs attibutes are created is broken.
+cros_ec_sysfs should be its own driver and its attributes should be
+associated with the sysfs driver not the mfd driver.
 
-[   47.218707] ------------[ cut here ]------------
-[   47.223901] Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
-[   47.234430] WARNING: CPU: 0 PID: 3585 at drivers/base/core.c:895 device_release+0x80/0x90
-[   47.243560] Modules linked in: btusb btrtl btintel btbcm bluetooth ecdh_generic [...]
-[   47.323851] CPU: 0 PID: 3585 Comm: rmmod Not tainted 4.20.0-rc2+ #29
-[   47.330947] Hardware name: Google Kevin (DT)
-[   47.335714] pstate: 40000005 (nZcv daif -PAN -UAO)
-[   47.341063] pc : device_release+0x80/0x90
-[   47.345537] lr : device_release+0x80/0x90
-[   47.350001] sp : ffff00000b17bc70
-[   47.353698] x29: ffff00000b17bc70 x28: ffff8000e48e9a80
-[   47.359629] x27: 0000000000000000 x26: 0000000000000000
-[   47.365561] x25: 0000000056000000 x24: 0000000000000015
-[   47.371492] x23: ffff8000f0248060 x22: ffff000000b700a0
-[   47.377414] x21: ffff8000edf56100 x20: ffff8000edd13028
-[   47.383346] x19: ffff8000edd13018 x18: 0000000000000095
-[   47.389278] x17: 0000000000000000 x16: 0000000000000000
-[   47.395209] x15: 0000000000000400 x14: 0000000000000400
-[   47.401131] x13: 00000000000001a7 x12: 0000000000000000
-[   47.407053] x11: 0000000000000001 x10: 0000000000000960
-[   47.412976] x9 : ffff00000b17b9b0 x8 : ffff8000e48ea440
-[   47.418898] x7 : ffff8000ee9090c0 x6 : ffff8000f7d0b0b8
-[   47.424830] x5 : ffff8000f7d0b0b8 x4 : 0000000000000000
-[   47.430752] x3 : ffff8000f7d11e68 x2 : ffff8000e48e9a80
-[   47.436674] x1 : 37d859939c964800 x0 : 0000000000000000
-[   47.442597] Call trace:
-[   47.445324]  device_release+0x80/0x90
-[   47.449414]  kobject_put+0x74/0xe8
-[   47.453210]  device_unregister+0x20/0x30
-[   47.457592]  ec_device_remove+0x34/0x48 [cros_ec_dev]
-[   47.463233]  platform_drv_remove+0x28/0x48
-[   47.467805]  device_release_driver_internal+0x1a8/0x240
-[   47.473630]  driver_detach+0x40/0x80
-[   47.477609]  bus_remove_driver+0x54/0xa8
-[   47.481986]  driver_unregister+0x2c/0x58
-[   47.486355]  platform_driver_unregister+0x10/0x18
-[   47.491599]  cros_ec_dev_exit+0x1c/0x258 [cros_ec_dev]
-[   47.497338]  __arm64_sys_delete_module+0x16c/0x1f8
-[   47.502689]  el0_svc_common+0x84/0xd8
-[   47.506776]  el0_svc_handler+0x2c/0x80
-[   47.510960]  el0_svc+0x8/0xc
-[   47.514171] ---[ end trace 9087279fc8c03450 ]---
+The patch also adds the sysfs documentation.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
 Changes in v2:
-- Fix WARN when unloading. This is new in these series.
+- Remove unnecessary check for ec_dev.
+- Create the attributes directly instead of use the attach/detach callbacks.
 
- drivers/mfd/cros_ec_dev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../ABI/testing/sysfs-class-chromeos          | 32 ++++++++++++++++
+ drivers/mfd/Kconfig                           |  1 -
+ drivers/mfd/cros_ec_dev.c                     |  7 +---
+ drivers/platform/chrome/Kconfig               | 14 +++++--
+ drivers/platform/chrome/Makefile              |  3 +-
+ drivers/platform/chrome/cros_ec_sysfs.c       | 38 ++++++++++++++++++-
+ include/linux/mfd/cros_ec.h                   |  3 --
+ 7 files changed, 82 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
 
+diff --git a/Documentation/ABI/testing/sysfs-class-chromeos b/Documentation/ABI/testing/sysfs-class-chromeos
+new file mode 100644
+index 000000000000..a5399c4ca82d
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-chromeos
+@@ -0,0 +1,32 @@
++What:		/sys/class/chromeos/<cros-ec>/flashinfo
++Date:		August 2015
++KernelVersion:	4.2
++Description:
++		Show the EC flash information.
++
++What:		/sys/class/chromeos/<cros-ec>/kb_wake_angle
++Date:		March 2018
++KernelVersion:	4.17
++Description:
++		Control the keyboard wake lid angle. Values are between
++		0 and 360. This file will also show the keyboard wake lid
++		angle by querying the hardware.
++
++What:		/sys/class/chromeos/<cros-ec>/reboot
++Date:		August 2015
++KernelVersion:	4.2
++Description:
++		Tell the EC to reboot in various ways. Options are:
++		"cancel": Cancel a pending reboot.
++		"ro": Jump to RO without rebooting.
++		"rw": Jump to RW without rebooting.
++		"cold": Cold reboot.
++		"disable-jump": Disable jump until next reboot.
++		"hibernate": Hibernate the EC.
++		"at-shutdown": Reboot after an AP shutdown.
++
++What:		/sys/class/chromeos/<cros-ec>/version
++Date:		August 2015
++KernelVersion:	4.2
++Description:
++		Show the information about the EC software and hardware.
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 8c5dfdce4326..089ffb408918 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -214,7 +214,6 @@ config MFD_CROS_EC
+ config MFD_CROS_EC_CHARDEV
+         tristate "Chrome OS Embedded Controller userspace device interface"
+         depends on MFD_CROS_EC
+-        select CROS_EC_CTL
+         ---help---
+           This driver adds support to talk with the ChromeOS EC from userspace.
+ 
 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 13b6dc26dc9a..bd561e91153a 100644
+index 308ec8dc92ba..590e705f253f 100644
 --- a/drivers/mfd/cros_ec_dev.c
 +++ b/drivers/mfd/cros_ec_dev.c
-@@ -35,9 +35,14 @@
+@@ -34,15 +34,9 @@
  #define CROS_MAX_DEV 128
  static int ec_major;
  
-+static void cros_ec_dev_release(struct device *dev)
-+{
-+}
-+
+-static const struct attribute_group *cros_ec_groups[] = {
+-	&cros_ec_attr_group,
+-	NULL,
+-};
+-
  static struct class cros_class = {
  	.owner          = THIS_MODULE,
  	.name           = "chromeos",
-+	.dev_release	= cros_ec_dev_release,
+-	.dev_groups     = cros_ec_groups,
  };
  
  /* Basic communication */
+@@ -391,6 +385,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+ static const struct mfd_cell cros_ec_platform_cells[] = {
+ 	{ .name = "cros-ec-debugfs" },
+ 	{ .name = "cros-ec-lightbar" },
++	{ .name = "cros-ec-sysfs" },
+ 	{ .name = "cros-ec-vbc" },
+ };
+ 
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 4e4232b47764..b709cc5173a2 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -49,9 +49,6 @@ config CHROMEOS_TBMC
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called chromeos_tbmc.
+ 
+-config CROS_EC_CTL
+-        tristate
+-
+ config CROS_EC_I2C
+ 	tristate "ChromeOS Embedded Controller (I2C)"
+ 	depends on MFD_CROS_EC && I2C
+@@ -142,4 +139,15 @@ config CROS_EC_DEBUGFS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called cros_ec_debugfs.
+ 
++config CROS_EC_SYSFS
++	tristate "ChromeOS EC control and information through sysfs"
++	depends on MFD_CROS_EC_CHARDEV && SYSFS
++	default y
++	help
++	  This option exposes some sysfs attributes to control and get
++	  information from ChromeOS EC.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_sysfs.
++
+ endif # CHROMEOS_PLATFORMS
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index 12a5c4d18c17..fdbee501931b 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -3,8 +3,6 @@
+ obj-$(CONFIG_CHROMEOS_LAPTOP)		+= chromeos_laptop.o
+ obj-$(CONFIG_CHROMEOS_PSTORE)		+= chromeos_pstore.o
+ obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
+-cros_ec_ctl-objs			:= cros_ec_sysfs.o
+-obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
+ obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+ obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
+ cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o
+@@ -15,3 +13,4 @@ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
+ obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
+ obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
+ obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
++obj-$(CONFIG_CROS_EC_SYSFS)		+= cros_ec_sysfs.o
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index f34a50121064..bff24c19953d 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -34,6 +34,8 @@
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+ 
++#define DRV_NAME "cros-ec-sysfs"
++
+ /* Accessor functions */
+ 
+ static ssize_t reboot_show(struct device *dev,
+@@ -353,7 +355,41 @@ struct attribute_group cros_ec_attr_group = {
+ 	.attrs = __ec_attrs,
+ 	.is_visible = cros_ec_ctrl_visible,
+ };
+-EXPORT_SYMBOL(cros_ec_attr_group);
++
++static int cros_ec_sysfs_probe(struct platform_device *pd)
++{
++	struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
++	struct cros_ec_platform *ec_platform = dev_get_platdata(ec_dev->dev);
++	struct device *dev = &pd->dev;
++	int ret;
++
++	ret = sysfs_create_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
++	if (ret < 0)
++		dev_err(dev, "failed to create %s attributes. err=%d\n",
++			ec_platform->ec_name, ret);
++
++	return ret;
++}
++
++static int cros_ec_sysfs_remove(struct platform_device *pd)
++{
++	struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
++
++	sysfs_remove_group(&ec_dev->class_dev.kobj, &cros_ec_attr_group);
++
++	return 0;
++}
++
++static struct platform_driver cros_ec_sysfs_driver = {
++	.driver = {
++		.name = DRV_NAME,
++	},
++	.probe = cros_ec_sysfs_probe,
++	.remove = cros_ec_sysfs_remove,
++};
++
++module_platform_driver(cros_ec_sysfs_driver);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("ChromeOS EC control driver");
++MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index 69e90376043e..517f1320e101 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -333,7 +333,4 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
+  */
+ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
+ 
+-/* sysfs stuff */
+-extern struct attribute_group cros_ec_attr_group;
+-
+ #endif /* __LINUX_MFD_CROS_EC_H */
 -- 
 2.19.1
 
