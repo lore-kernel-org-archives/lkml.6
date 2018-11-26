@@ -2,119 +2,97 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEF3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF6AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561E120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBC0B20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:58:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C16wMtie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561E120663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIWy57oK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC0B20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbeK0BwC (ORCPT
+        id S1726894AbeK0Bw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:52:02 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42271 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeK0BwC (ORCPT
+        Mon, 26 Nov 2018 20:52:56 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44564 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeK0Bw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:52:02 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so19235850wrx.9
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:57:40 -0800 (PST)
+        Mon, 26 Nov 2018 20:52:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k8so3344531pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1k3K3ISxEZanBE3UUREGo2di9hLOXGOCwpJ8/upQSq0=;
-        b=C16wMtie3QwvJuLlxYPT22PbiedSoGGxLRvI3HeyaAVmTetnc5eh0ihX6eLZts3Zwz
-         jV4Iwux+Kal5vfbadk6GmjJY955Y5CEFPOUI0XAt/vsnhhDQjOCbwC5fNlQLoAsLPdKh
-         6PADBr/EkDmxHnCOq+5pKIAeRHSjVUIfO9BG4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1o8lSwjEPZ3h5U+NDRTqrxZ7R8/P82SB3E1BPnmJZYw=;
+        b=fIWy57oKodAje2X98H6wncOfsdZkXRg0NgHWa2aVJUDWMxFbtTGjphi66cBN5FdjHW
+         92TzWph7vamNwnw7hSvY2LneTZ9EQU9e6wr+UT5Qf4/eH+m1FueMcG+Doew+d8ojvVO9
+         Mfz2dUhhcuZxWyubWSEGO1ZUn0AP2RwKmAc6e6rp7D4hiAk6oIDXcXL4XdxlZJ0lQCf3
+         ADnsKRRmTnr0RfEJ/JX9zrR3e+gS4Dg0tJv0uOIqQ/x8rVeTIRe/lfZuafbP6Ipvk1pX
+         g2TZfUodPFcecGzuX8qCYMj7bgsQhfz2dlFJ/iavAjS4Ml/g2ze9dtj0NoPIuZMXMkPp
+         ENtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1k3K3ISxEZanBE3UUREGo2di9hLOXGOCwpJ8/upQSq0=;
-        b=j36wH+npwRvE/qffSV1pwWGFoUlAYeEzkQ7XdCSEFC2T1hnPUsqkbhUgAFxWSikLGX
-         B+yyeiBWLV8hZ7bkozhHQSVMtcwYNoRbjanVrI4j/8U9AVAXyiGdPdBCc5rHs8cJCM2/
-         Jnzw2VBDyy0WoX6EblNPh4xDqOZLjM3XYb8lPcm9hDgqxmq9j1oLC1ETez9czgdbgCif
-         3dUdQiDZEV0tVGGduFCOpylano1rQ1aHKD0kH9ZGfejIRC4BOZ+Ag2rM/otNFf0KezkQ
-         BppkOn86xFNuXQqXaHL0ka9Qkyo048lOtmBQX8SzkI6dyF4+KNr6+wkNIkeuUSEN5L0f
-         tNgg==
-X-Gm-Message-State: AA+aEWYxeHC6vgBBoJxZYo5Hk3Bp7jBxhURRaj4WHfGynMbnQxFl4w9v
-        0mLJQEQbWVVuVsGEAbquzdKjGA==
-X-Google-Smtp-Source: AFSGD/UVItdwoUYrNwHvOlFcNNdy5JLN6GuB7gwrcWbAuohJtIzDT85+qEn5uqSh9RWZHk/cJuDYBA==
-X-Received: by 2002:a5d:4a0c:: with SMTP id m12mr20580620wrq.38.1543244259571;
-        Mon, 26 Nov 2018 06:57:39 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id 66sm450039wmn.38.2018.11.26.06.57.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 06:57:38 -0800 (PST)
-Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Malathi Gottam <mgottam@codeaurora.org>, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org
-References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
- <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
-Date:   Mon, 26 Nov 2018 16:57:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1o8lSwjEPZ3h5U+NDRTqrxZ7R8/P82SB3E1BPnmJZYw=;
+        b=jJ3BugwbMgBo1wiD22jR1IzvPMvEeMq57cB/WjCpxJH/3+0aIHiQWaezwwun8xsD/i
+         +aHpqMbyMHjqTunsbCgm0Ug5J7dEq+6R0bv2M8nj96edGpIQfmjIaZzvnOpzEx1m58i1
+         ECvrQt8z5e4VasxiGkMz5Y0lZa3dzTt0dzeRY7r+DKWbwddzu9gT/p4v+Ksswa54M6fL
+         GFwmT/7jaqwj6z1wdk7SZ7mXUyb7sLKcxdOYANcp8SNMA45/tPpy3mswI+hVM7gT5+z3
+         WRPu51wZfQ+Mf/93ExZEG3egYVNPCfDrc9myGhAbyF4K5HxVxYRH4U4fVh/fCYuevjWv
+         HQwQ==
+X-Gm-Message-State: AA+aEWYVH9vgVe9/hW1qFmEUZzcN2bo/RhFz6CbVWsAMUudjK8eynF1v
+        ZtNQkFkaMSFNN1hnTmcETCw=
+X-Google-Smtp-Source: AFSGD/VgKLBKC9Zz0mvLPW0wX8K6N6E5oQFTvzGSytdJ3yDTdynSprQ1RxChdPsNPNfrpZ5SDpj3gA==
+X-Received: by 2002:a17:902:5a86:: with SMTP id r6mr27116593pli.301.1543244314745;
+        Mon, 26 Nov 2018 06:58:34 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id l19sm2266967pfi.71.2018.11.26.06.58.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 06:58:33 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     paul@paul-moore.com, eparis@redhat.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] kernel/audit: remove some duplicated includes
+Date:   Mon, 26 Nov 2018 09:58:30 -0500
+Message-Id: <20181126145830.31882-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+audit.h and fs.h are included twice.It's unnecessary.
+hence just remove them.
 
-On 11/26/18 3:37 PM, Hans Verkuil wrote:
-> On 11/26/2018 11:12 AM, Malathi Gottam wrote:
->> Accept the buffer size requested by client and compare it
->> against driver calculated size and set the maximum to
->> bitstream plane.
->>
->> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> 
-> Sorry, this isn't allowed. It is the driver that sets the sizeimage value,
-> never the other way around.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ kernel/audit_watch.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I think for decoders (OUTPUT queue) and encoders (CAPTURE queue) we
-allowed userspace to set sizeimage for buffers. See [1] Initialization
-paragraph point 2:
-
-    ``sizeimage``
-       desired size of ``CAPTURE`` buffers; the encoder may adjust it to
-       match hardware requirements
-
-Similar patch we be needed for decoder as well.
-
-> 
-> If you need to allocate larger buffers, then use VIDIOC_CREATE_BUFS instead
-> of VIDIOC_REQBUFS.
-> 
-> What problem are you trying to solve with this patch?
-> 
-> Regards,
-> 
-> 	Hans
-> 
-
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 787c7afdf829..8c8b1a87fd2b 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -21,10 +21,8 @@
+ 
+ #include <linux/file.h>
+ #include <linux/kernel.h>
+-#include <linux/audit.h>
+ #include <linux/kthread.h>
+ #include <linux/mutex.h>
+-#include <linux/fs.h>
+ #include <linux/fsnotify_backend.h>
+ #include <linux/namei.h>
+ #include <linux/netlink.h>
 -- 
-regards,
-Stan
+2.17.0
 
-[1] https://www.spinics.net/lists/linux-media/msg142049.html
