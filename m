@@ -2,115 +2,134 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFBDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE3BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37502086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:24:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVX38tyo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37502086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E1078205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:27:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1078205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbeK0GTd (ORCPT
+        id S1726397AbeK0GWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:19:33 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46639 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbeK0GTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:19:31 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x202so16926601oif.13;
-        Mon, 26 Nov 2018 11:24:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=AvfIZ9PB1dFlppUzJKR1909FJIJrzR+QBaeS3Cpmn9w=;
-        b=SVX38tyoPh+Ne0hZ4ujiqVS3FY9BW7IyBp9zzj9KEj6shQAl+X/ODvU61qvCO5fD2r
-         mUesX+qfnBKb9mYtmljgwOS/ijdZZ2zGzhkRVIqjOT1TPWGo+LKmaDz7QUXxNulCD4lE
-         ONd78mQb+hHADpOag08TDvikUporiCcLxzCnSNHxrKfyUGZ5EcVDxgp6jDXZghgpTwhq
-         hWH1zj6sjcwM4Z/w3j+/tuAbHz+hIv/Y2LaBddlgppeQFi31IZi4lHq9qt1jF2/0cts8
-         wjOKsrJFc0r50i2+PfX1x5IpY0SscoB3Ig+np68lW/Rxgww7QzM2mbDb1pS1IjYiMKDZ
-         gOrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=AvfIZ9PB1dFlppUzJKR1909FJIJrzR+QBaeS3Cpmn9w=;
-        b=RBPNbEGTIeiZo/AAmElywdK5cbLcnES0mFZ3Q5TqX0QDbe68z/Xbbw7IqPdpVqgSvS
-         PNIm9VHi+KNijsi3d9DgP7x9AyhWbtI1GCNbyUCg1pNYC08PU0lJI4E2Wp8dF+fQi1BY
-         IsYjDroYuPVg570lI44r3bE87bN6KL3qHYAC92YixfdZhWcuiyTt4atkfBCgKsMfiszP
-         xzOuS4XHS586puIjl25vmZTFDS18AkIfF5sxnEYvXG0ob9MSs3w1X6pgSDww+EXLtBm4
-         rQlMl2BlW5qpZsM/XS4T9n2lhxy157+eMBesCtFz/7pUwJRb6CWUALwjpdm/htGqS+nz
-         A1fQ==
-X-Gm-Message-State: AGRZ1gJ3ECDWtPvvJDorHQTREaGq3s6YwXf0nYOlkZHS7r4jkMkK2itv
-        EtPx3pXCPxzzvxlVFrU1qeSBsOfDY+/aZzb1rEU=
-X-Google-Smtp-Source: AJdET5fpJOHg+9C+1W9jpnQDVdAcrdgSvWNcxEUcsvBZ0ezDrNFQBhguDY/BRM6erCbRAQf3aDKrqO/IhEYgCGPkdJg=
-X-Received: by 2002:aca:a60d:: with SMTP id p13mr16745510oie.2.1543260265055;
- Mon, 26 Nov 2018 11:24:25 -0800 (PST)
+        Tue, 27 Nov 2018 01:22:15 -0500
+Received: from mga12.intel.com ([192.55.52.136]:1579 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeK0GWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:22:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 11:27:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
+   d="scan'208";a="94260554"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga006.jf.intel.com with ESMTP; 26 Nov 2018 11:27:07 -0800
+Subject: Re: [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
+To:     Hugh Dickins <hughd@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>, david@redhat.com,
+        mgorman@techsingularity.net, dh.herrmann@gmail.com,
+        kan.liang@intel.com, Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
+ <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
+ <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2255640a-a97f-ab31-7466-0d38cbfb2723@linux.intel.com>
+Date:   Mon, 26 Nov 2018 11:27:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-References: <20181121180443.tjgcpu2webrq53rh@smtp.gmail.com>
- <1542884458.30645.22.camel@analog.com> <20181125110839.4a3aecf9@archlinux>
-In-Reply-To: <20181125110839.4a3aecf9@archlinux>
-From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
-Date:   Mon, 26 Nov 2018 17:24:13 -0200
-Message-ID: <CAG4RSAHcEYj5bUpxT8apwXZZpWkPowFJ333tZiTHhb9VVn4m7g@mail.gmail.com>
-Subject: Re: [PATCH] staging: iio: ad7780: Add gain & filter gpio support
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     StefanSerban.Popa@analog.com,
-        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, kernel-usp@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, thank you for the review
+On 11/25/2018 07:29 PM, Hugh Dickins wrote:
 
-> On Thu, 22 Nov 2018 11:01:00 +0000
-> "Popa, Stefan Serban" <StefanSerban.Popa@analog.com> wrote:
-> > I think that instead of setting the gain directly, we should use
-> > the IIO_CHAN_INFO_SCALE attribute. At page 12 of the ad7780 datasheet t=
-here
-> > is a formula from which the output code can be calculated:
-> > Code =3D 2^(N =E2=88=92 1)
-> > =C3=97 [(AIN =C3=97 Gain /VREF) + 1]. So, by setting the scale from use=
-r space, the
-> > driver can calculate the correct gain by using the formula above. Also,=
- it
-> > would be useful to introduce scale available.
-> > Furthermore, there is a new
-> > ad7124 adc driver which does this exact thing. Take a look here: https:=
-//gi
-> > thub.com/analogdevicesinc/linux/blob/master/drivers/iio/adc/ad7124.c#L3=
-37.
+>>    Does somebody still have access to the customer load that triggered
+>> the horrible scaling issues before?
+> 
+> Kan? Tim?
+> 
 
-We have some questions about the code you provided to us:
-  1-) What is exactly the inputs for the write_raw function?
-  2-) Could you give more details about the math around lines 346-348?
-Is it correct to assume that the multiplication at line 346 won't
-overflow? (vref is an uint)
+We don't have access to the workload know.  Will ask the customer to
+see if they can test it.
 
-And regarding our code:
-  1-) The val in our write_raw function should be, in case of GAIN, a
-number that best approximate the actual gain value of 1 or 128? For
-instance, if the user inputs 126, we should default to 128?
-  2-) In the case of FILTER, is it the same? Is the user sending the
-value in mHz (milihertz)?
+Thanks.
 
-Thank you
+Tim
+
+
