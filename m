@@ -2,248 +2,181 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9472C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BABC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749ED20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749ED20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 41F3B20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:28:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqbAlI9s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F3B20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeK0FWB (ORCPT
+        id S1726932AbeK0FXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:22:01 -0500
-Received: from foss.arm.com ([217.140.101.70]:44634 "EHLO foss.arm.com"
+        Tue, 27 Nov 2018 00:23:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725199AbeK0FWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:22:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B61F51C00;
-        Mon, 26 Nov 2018 10:27:02 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E77173F5AF;
-        Mon, 26 Nov 2018 10:27:00 -0800 (PST)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
-Cc:     marc.zyngier@arm.com, Christoffer.Dall@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, bigeasy@linutronix.de,
-        Julien Thierry <julien.thierry@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Subject: [PATCH v2 4/4] KVM: arm/arm64: vgic: Make vgic_cpu->ap_list_lock a raw_spinlock
-Date:   Mon, 26 Nov 2018 18:26:47 +0000
-Message-Id: <1543256807-9768-5-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1543256807-9768-1-git-send-email-julien.thierry@arm.com>
-References: <1543256807-9768-1-git-send-email-julien.thierry@arm.com>
+        id S1725199AbeK0FXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:23:19 -0500
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C5382086E
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543256902;
+        bh=1FbfjxumzL31JcgS38noQ3Mg7ckl6RT6axMBxEObQV4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WqbAlI9slgEI354KkMfMS25Q/Wg28Xd6HgNjSf51wZd50Oivd9WI7ydcC94VDvGNA
+         fB9RggYFsyru+nTrEP7Q5Z2luidB0sKM3Vi7TE80ftAvmEBPJZFBBhKppCUmJEysp1
+         C843E1gaRgv84wv9NW9/x+ESPjZxSd02as1+GcSM=
+Received: by mail-wm1-f44.google.com with SMTP id y185so13147243wmd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:28:22 -0800 (PST)
+X-Gm-Message-State: AA+aEWb/r1lL5EYILczENIMwu0DaePLfuQmcL31B1+f2uQQKU7gyL209
+        mLJLxHRZVxEBHAHNkIMrVQguFO/Gtp4irunAvi3pbw==
+X-Google-Smtp-Source: AJdET5cb1NiFbrOTCuP/SGdE533oSXc70NGkYrzyKQg19MlISEqYkugkcoKoX4gy+62clns5qhaPvqszF5+heLkwYa4=
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr25095001wmf.32.1543256900794;
+ Mon, 26 Nov 2018 10:28:20 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1543200841.git.jpoimboe@redhat.com> <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
+ <20181126160217.GR2113@hirez.programming.kicks-ass.net> <20181126171036.chcbmb35ygpxziub@treble>
+In-Reply-To: <20181126171036.chcbmb35ygpxziub@treble>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 26 Nov 2018 10:28:08 -0800
+X-Gmail-Original-Message-ID: <CALCETrX+FP4V+SoMEwX2-WeSmr2g2xZvGbS5qthuO6N6dXE+bQ@mail.gmail.com>
+Message-ID: <CALCETrX+FP4V+SoMEwX2-WeSmr2g2xZvGbS5qthuO6N6dXE+bQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vgic_cpu->ap_list_lock must always be taken with interrupts disabled as
-it is used in interrupt context.
+On Mon, Nov 26, 2018 at 9:10 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Mon, Nov 26, 2018 at 05:02:17PM +0100, Peter Zijlstra wrote:
+> > On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
+> > > diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+> > > index 8026d176f25c..d3869295b88d 100644
+> > > --- a/arch/x86/kernel/static_call.c
+> > > +++ b/arch/x86/kernel/static_call.c
+> > > @@ -9,13 +9,21 @@
+> > >
+> > >  void static_call_bp_handler(void);
+> > >  void *bp_handler_dest;
+> > > +void *bp_handler_continue;
+> > >
+> > >  asm(".pushsection .text, \"ax\"                                            \n"
+> > >      ".globl static_call_bp_handler                                 \n"
+> > >      ".type static_call_bp_handler, @function                               \n"
+> > >      "static_call_bp_handler:                                               \n"
+> > > -    "ANNOTATE_RETPOLINE_SAFE                                               \n"
+> > > +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > > +    "call *bp_handler_dest                                         \n"
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > > +    "jmp *bp_handler_continue                                              \n"
+> > > +#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > >      "jmp *bp_handler_dest                                          \n"
+> > > +#endif
+> > >      ".popsection                                                   \n");
+> > >
+> > >  void arch_static_call_transform(void *site, void *tramp, void *func)
+> > > @@ -25,7 +33,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+> > >     unsigned char insn_opcode;
+> > >     unsigned char opcodes[CALL_INSN_SIZE];
+> > >
+> > > -   insn = (unsigned long)tramp;
+> > > +   if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> > > +           insn = (unsigned long)site;
+> > > +   else
+> > > +           insn = (unsigned long)tramp;
+> > >
+> > >     mutex_lock(&text_mutex);
+> > >
+> > > @@ -41,8 +52,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+> > >     opcodes[0] = insn_opcode;
+> > >     memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
+> > >
+> > > -   /* Set up the variable for the breakpoint handler: */
+> > > +   /* Set up the variables for the breakpoint handler: */
+> > >     bp_handler_dest = func;
+> > > +   if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> > > +           bp_handler_continue = (void *)(insn + CALL_INSN_SIZE);
+> > >
+> > >     /* Patch the call site: */
+> > >     text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
+> >
+> > OK, so this is where that static_call_bp_handler comes from; you need
+> > that CALL to frob the stack.
+> >
+> > But I still think it is broken; consider:
+> >
+> >       CPU0                            CPU1
+> >
+> >       bp_handler = ponies;
+> >
+> >       text_poke_bp(, &static_call_bp_handler)
+> >         text_poke(&int3);
+> >         on_each_cpu(sync)
+> >                                       <IPI>
+> >                                         ...
+> >                                       </IPI>
+> >
+> >         text_poke(/* all but first bytes */)
+> >         on_each_cpu(sync)
+> >                                       <IPI>
+> >                                         ...
+> >                                       </IPI>
+> >
+> >                                       <int3>
+> >                                         pt_regs->ip = &static_call_bp_handler
+> >                                       </int3>
+> >
+> >                                       // VCPU takes a nap...
+> >         text_poke(/* first byte */)
+> >         on_each_cpu(sync)
+> >                                       <IPI>
+> >                                         ...
+> >                                       </IPI>
+> >
+> >                                       // VCPU sleeps more
+> >       bp_handler = unicorn;
+> >
+> >                                       CALL unicorn
+> >
+> > *whoops*
+> >
+> > Now, granted, that is all rather 'unlikely', but that never stopped
+> > Murphy.
+>
+> Good find, thanks Peter.
+>
+> As we discussed on IRC, we'll need to fix this from within the int3
+> exception handler by faking the call: putting a fake return address on
+> the stack (pointing to right after the call) and setting regs->ip to the
+> called function.
 
-For configurations such as PREEMPT_RT_FULL, this means that it should
-be a raw_spinlock since RT spinlocks are interruptible.
-
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
----
- include/kvm/arm_vgic.h        |  2 +-
- virt/kvm/arm/vgic/vgic-init.c |  2 +-
- virt/kvm/arm/vgic/vgic.c      | 43 ++++++++++++++++++++++---------------------
- 3 files changed, 24 insertions(+), 23 deletions(-)
-
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 32954e1..c36c86f 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -307,7 +307,7 @@ struct vgic_cpu {
- 	unsigned int used_lrs;
- 	struct vgic_irq private_irqs[VGIC_NR_PRIVATE_IRQS];
- 
--	spinlock_t ap_list_lock;	/* Protects the ap_list */
-+	raw_spinlock_t ap_list_lock;	/* Protects the ap_list */
- 
- 	/*
- 	 * List of IRQs that this VCPU should consider because they are either
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index 330c1ad..dfbfcb1 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -206,7 +206,7 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
- 	vgic_cpu->sgi_iodev.base_addr = VGIC_ADDR_UNDEF;
- 
- 	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
--	spin_lock_init(&vgic_cpu->ap_list_lock);
-+	raw_spin_lock_init(&vgic_cpu->ap_list_lock);
- 
- 	/*
- 	 * Enable and configure all SGIs to be edge-triggered and
-diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
-index 01bd18c..736ae59 100644
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -54,11 +54,11 @@ struct vgic_global kvm_vgic_global_state __ro_after_init = {
-  * When taking more than one ap_list_lock at the same time, always take the
-  * lowest numbered VCPU's ap_list_lock first, so:
-  *   vcpuX->vcpu_id < vcpuY->vcpu_id:
-- *     spin_lock(vcpuX->arch.vgic_cpu.ap_list_lock);
-- *     spin_lock(vcpuY->arch.vgic_cpu.ap_list_lock);
-+ *     raw_spin_lock(vcpuX->arch.vgic_cpu.ap_list_lock);
-+ *     raw_spin_lock(vcpuY->arch.vgic_cpu.ap_list_lock);
-  *
-  * Since the VGIC must support injecting virtual interrupts from ISRs, we have
-- * to use the spin_lock_irqsave/spin_unlock_irqrestore versions of outer
-+ * to use the raw_spin_lock_irqsave/raw_spin_unlock_irqrestore versions of outer
-  * spinlocks for any lock that may be taken while injecting an interrupt.
-  */
- 
-@@ -273,7 +273,7 @@ static void vgic_sort_ap_list(struct kvm_vcpu *vcpu)
- {
- 	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
- 
--	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-+	DEBUG_SPINLOCK_BUG_ON(!raw_spin_is_locked(&vgic_cpu->ap_list_lock));
- 
- 	list_sort(NULL, &vgic_cpu->ap_list_head, vgic_irq_cmp);
- }
-@@ -351,7 +351,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
- 
- 	/* someone can do stuff here, which we re-check below */
- 
--	spin_lock_irqsave(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
-+	raw_spin_lock_irqsave(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
- 	raw_spin_lock(&irq->irq_lock);
- 
- 	/*
-@@ -368,7 +368,8 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
- 
- 	if (unlikely(irq->vcpu || vcpu != vgic_target_oracle(irq))) {
- 		raw_spin_unlock(&irq->irq_lock);
--		spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
-+		raw_spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock,
-+					   flags);
- 
- 		raw_spin_lock_irqsave(&irq->irq_lock, flags);
- 		goto retry;
-@@ -383,7 +384,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
- 	irq->vcpu = vcpu;
- 
- 	raw_spin_unlock(&irq->irq_lock);
--	spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
-+	raw_spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
- 
- 	kvm_make_request(KVM_REQ_IRQ_PENDING, vcpu);
- 	kvm_vcpu_kick(vcpu);
-@@ -597,7 +598,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
- 	DEBUG_SPINLOCK_BUG_ON(!irqs_disabled());
- 
- retry:
--	spin_lock(&vgic_cpu->ap_list_lock);
-+	raw_spin_lock(&vgic_cpu->ap_list_lock);
- 
- 	list_for_each_entry_safe(irq, tmp, &vgic_cpu->ap_list_head, ap_list) {
- 		struct kvm_vcpu *target_vcpu, *vcpuA, *vcpuB;
-@@ -638,7 +639,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
- 		/* This interrupt looks like it has to be migrated. */
- 
- 		raw_spin_unlock(&irq->irq_lock);
--		spin_unlock(&vgic_cpu->ap_list_lock);
-+		raw_spin_unlock(&vgic_cpu->ap_list_lock);
- 
- 		/*
- 		 * Ensure locking order by always locking the smallest
-@@ -652,9 +653,9 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
- 			vcpuB = vcpu;
- 		}
- 
--		spin_lock(&vcpuA->arch.vgic_cpu.ap_list_lock);
--		spin_lock_nested(&vcpuB->arch.vgic_cpu.ap_list_lock,
--				 SINGLE_DEPTH_NESTING);
-+		raw_spin_lock(&vcpuA->arch.vgic_cpu.ap_list_lock);
-+		raw_spin_lock_nested(&vcpuB->arch.vgic_cpu.ap_list_lock,
-+				      SINGLE_DEPTH_NESTING);
- 		raw_spin_lock(&irq->irq_lock);
- 
- 		/*
-@@ -676,8 +677,8 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
- 		}
- 
- 		raw_spin_unlock(&irq->irq_lock);
--		spin_unlock(&vcpuB->arch.vgic_cpu.ap_list_lock);
--		spin_unlock(&vcpuA->arch.vgic_cpu.ap_list_lock);
-+		raw_spin_unlock(&vcpuB->arch.vgic_cpu.ap_list_lock);
-+		raw_spin_unlock(&vcpuA->arch.vgic_cpu.ap_list_lock);
- 
- 		if (target_vcpu_needs_kick) {
- 			kvm_make_request(KVM_REQ_IRQ_PENDING, target_vcpu);
-@@ -687,7 +688,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
- 		goto retry;
- 	}
- 
--	spin_unlock(&vgic_cpu->ap_list_lock);
-+	raw_spin_unlock(&vgic_cpu->ap_list_lock);
- }
- 
- static inline void vgic_fold_lr_state(struct kvm_vcpu *vcpu)
-@@ -736,7 +737,7 @@ static int compute_ap_list_depth(struct kvm_vcpu *vcpu,
- 
- 	*multi_sgi = false;
- 
--	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-+	DEBUG_SPINLOCK_BUG_ON(!raw_spin_is_locked(&vgic_cpu->ap_list_lock));
- 
- 	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
- 		int w;
-@@ -761,7 +762,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
- 	bool multi_sgi;
- 	u8 prio = 0xff;
- 
--	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
-+	DEBUG_SPINLOCK_BUG_ON(!raw_spin_is_locked(&vgic_cpu->ap_list_lock));
- 
- 	count = compute_ap_list_depth(vcpu, &multi_sgi);
- 	if (count > kvm_vgic_global_state.nr_lr || multi_sgi)
-@@ -872,9 +873,9 @@ void kvm_vgic_flush_hwstate(struct kvm_vcpu *vcpu)
- 
- 	DEBUG_SPINLOCK_BUG_ON(!irqs_disabled());
- 
--	spin_lock(&vcpu->arch.vgic_cpu.ap_list_lock);
-+	raw_spin_lock(&vcpu->arch.vgic_cpu.ap_list_lock);
- 	vgic_flush_lr_state(vcpu);
--	spin_unlock(&vcpu->arch.vgic_cpu.ap_list_lock);
-+	raw_spin_unlock(&vcpu->arch.vgic_cpu.ap_list_lock);
- 
- 	if (can_access_vgic_from_kernel())
- 		vgic_restore_state(vcpu);
-@@ -915,7 +916,7 @@ int kvm_vgic_vcpu_pending_irq(struct kvm_vcpu *vcpu)
- 	if (vcpu->arch.vgic_cpu.vgic_v3.its_vpe.pending_last)
- 		return true;
- 
--	spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
-+	raw_spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
- 
- 	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
- 		raw_spin_lock(&irq->irq_lock);
-@@ -926,7 +927,7 @@ int kvm_vgic_vcpu_pending_irq(struct kvm_vcpu *vcpu)
- 			break;
- 	}
- 
--	spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
-+	raw_spin_unlock_irqrestore(&vgic_cpu->ap_list_lock, flags);
- 
- 	return pending;
- }
--- 
-1.9.1
-
+Can you add a comment that it will need updating when kernel CET is added?
