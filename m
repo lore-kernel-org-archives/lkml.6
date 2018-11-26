@@ -2,80 +2,79 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FFBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B989DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9072086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722B120672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:51:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t4cIGTr0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9072086B
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oL8Z/sto"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722B120672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbeKZUnB (ORCPT
+        id S1726298AbeKZUoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:43:01 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43072 "EHLO
+        Mon, 26 Nov 2018 15:44:44 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43276 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZUnA (ORCPT
+        with ESMTP id S1726176AbeKZUoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:43:00 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ9nJPo021384;
-        Mon, 26 Nov 2018 03:49:19 -0600
+        Mon, 26 Nov 2018 15:44:44 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ9p2iQ021741;
+        Mon, 26 Nov 2018 03:51:02 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543225759;
-        bh=u76TlQpPsm+1e7kgGekCZ9xvT0awBuq6MaFcju4bxPk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=t4cIGTr02ImJ1csOVMMTRSxndFCfOFQyjLPwYyzqQC2TTFKnAG8b2lSBrdvm6xqPK
-         53M44hWRFZfZK0MYS6uEWKI++V80Yr4UtYV/nJBOXhLkXk/VZ3pPD2AOuGVESc1/wn
-         C7Vcg09XVZN68ttREfVKXw3VMulJCfgZ/UJ1887M=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ9nJCr053359
+        s=ti-com-17Q1; t=1543225862;
+        bh=/g8+xSu8zGIeqo7TpxKQDlmCeuryaVp5bRjJX9mA6vw=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=oL8Z/stoF03ceQPKDrEPjkT3qRr927Rj1JBqgBO1SAQubeSRJ1eLeP9UnBG9BIoRN
+         KwOS1mNGxXzAtMeDMj7IUYeLWFaUSjDKg6xYFwt1I9U5ZpvAf3bVZan3Pw16TGbqna
+         X403gBPFnnZ3shq8pf0mH5eRCxmZ+Lq7yjyb9btU=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ9p2oG078214
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Nov 2018 03:49:19 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 26 Nov 2018 03:51:02 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 26
- Nov 2018 03:49:19 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ Nov 2018 03:51:01 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 26 Nov 2018 03:49:19 -0600
-Received: from [172.22.5.0] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ9nEfC024156;
-        Mon, 26 Nov 2018 03:49:15 -0600
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-To:     Thierry Reding <treding@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Jon Hunter <jonathanh@nvidia.com>,
-        Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
- <20180703084516.GT112168@atomide.com>
- <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
- <20181113180656.GE53235@atomide.com>
- <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
- <20181119161906.GP53235@atomide.com> <20181119171406.GQ53235@atomide.com>
- <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
- <20181123164827.GE53235@atomide.com> <20181126093625.GA10878@ulmo>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com>
-Date:   Mon, 26 Nov 2018 11:49:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ Mon, 26 Nov 2018 03:51:01 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ9owtX015296;
+        Mon, 26 Nov 2018 03:50:59 -0600
+Subject: Re: [RFC PATCH v2 06/15] usb:cdns3: Adds Host support
+To:     Pawel Laszczak <pawell@cadence.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-7-git-send-email-pawell@cadence.com>
+ <5BF80D44.2050600@ti.com>
+ <BYAPR07MB4709593D0B03399E9D35E07BDDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFBC201.4000000@ti.com>
+Date:   Mon, 26 Nov 2018 11:50:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20181126093625.GA10878@ulmo>
+In-Reply-To: <BYAPR07MB4709593D0B03399E9D35E07BDDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
 Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,59 +82,478 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thierry,
+Hi,
 
-On 11/26/18 11:36 AM, Thierry Reding wrote:
-> On Fri, Nov 23, 2018 at 08:48:27AM -0800, Tony Lindgren wrote:
->> * Jon Hunter <jonathanh@nvidia.com> [181120 11:14]:
->>> On 19/11/2018 17:14, Tony Lindgren wrote:
->>>> Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
->>>> Tegra114 PMIC interrupt") states that tegra114 inverts the
->>>> polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
->>>
->>> Yes Tegra can invert the polarity of the PMIC interrupt.
+On 26/11/18 10:24, Pawel Laszczak wrote:
+>> EXTERNAL MAIL
 >>
->> So is there some IP on Tegra called "Tegra PMC" that is
->> inverting the interrupt? Or is the "Tegra PMC" that commit
->> 7e9d474954f4 mentions just the palmas configuration for
->> inverting the interrupt?
+>>
+>> On 18/11/18 12:09, Pawel Laszczak wrote:
+>>> Patch adds host-export.h and host.c file and mplements functions that
+>>> allow to initialize, start and stop XHCI host driver.
+>>>
+>>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+>>> ---
+>>>  drivers/usb/cdns3/Kconfig       |  10 ++
+>>>  drivers/usb/cdns3/Makefile      |   1 +
+>>>  drivers/usb/cdns3/core.c        |   7 +-
+>>>  drivers/usb/cdns3/host-export.h |  30 ++++
+>>>  drivers/usb/cdns3/host.c        | 256 ++++++++++++++++++++++++++++++++
+>>>  5 files changed, 302 insertions(+), 2 deletions(-)
+>>>  create mode 100644 drivers/usb/cdns3/host-export.h
+>>>  create mode 100644 drivers/usb/cdns3/host.c
+>>>
+>>> diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
+>>> index eb22a8692991..d92bc3d68eb0 100644
+>>> --- a/drivers/usb/cdns3/Kconfig
+>>> +++ b/drivers/usb/cdns3/Kconfig
+>>> @@ -10,6 +10,16 @@ config USB_CDNS3
+>>>
+>>>  if USB_CDNS3
+>>>
+>>> +config USB_CDNS3_HOST
+>>> +        bool "Cadence USB3 host controller"
+>>> +        depends on USB_XHCI_HCD
+>>> +        help
+>>> +          Say Y here to enable host controller functionality of the
+>>> +          cadence driver.
+>>> +
+>>> +          Host controller is compliance with XHCI so it will use
+>>> +          standard XHCI driver.
+>>> +
+>>>  config USB_CDNS3_PCI_WRAP
+>>>  	tristate "PCIe-based Platforms"
+>>>  	depends on USB_PCI && ACPI
+>>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+>>> index e779b2a2f8eb..976117ba67ff 100644
+>>> --- a/drivers/usb/cdns3/Makefile
+>>> +++ b/drivers/usb/cdns3/Makefile
+>>> @@ -2,4 +2,5 @@ obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
+>>>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
+>>>
+>>>  cdns3-y					:= core.o drd.o
+>>> +cdns3-$(CONFIG_USB_CDNS3_HOST)          += host.o
+>>>  cdns3-pci-y		 		:= cdns3-pci-wrap.o
+>>> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+>>> index dbee4325da7f..4cb820be9ff3 100644
+>>> --- a/drivers/usb/cdns3/core.c
+>>> +++ b/drivers/usb/cdns3/core.c
+>>> @@ -17,6 +17,7 @@
+>>>
+>>>  #include "gadget.h"
+>>>  #include "core.h"
+>>> +#include "host-export.h"
+>>>  #include "drd.h"
+>>>
+>>>  static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+>>> @@ -98,7 +99,8 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
+>>>  	}
+>>>
+>>>  	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+>>> -		//TODO: implements host initialization
+>>> +		if (cdns3_host_init(cdns))
+>>> +			dev_info(dev, "doesn't support host\n");
+>>
+>> dev_err()
+>>
+>> And you need to error out with error code.
 > 
-> Yes, there's indeed an IP called PMC (Power-Management Controller) on
-> Tegra. It has a special input that is usually wired up to the PMIC
-> interrupt and a bit in the control register that configures the polarity
-> of that interrupt. If the PMIC generates a low-active interrupt we
-> usually set that bit to make sure it is properly sampled by the PMC.
-> 
-> The symptoms of this being incorrectly configured is usually an
-> interrupt storm on the PMIC interrupt, which I think typically results
-> in the system not booting at all, or taking a very long time to boot
-> because of that storm.
-> 
->> The problem I'm having is With omap5 where I can only get the
->> PMIC interrupts working with IRQ_TYPE_LEVEL_HIGH if
->> PALMAS_POLARITY_CTRL_INT_POLARITY is not set unlike for
->> Tegra.
-> 
-> Does somebody have access to the Palmas documentation? That should
-> pretty clearly state what the default polarity is and what it changes to
-> if you set the interrupt polarity bit.
+> ok, but I assume that even if host returns error then we can use 
+> only device role. Only when both functions return errors, then it's  a critical error 
+> and function return error code. 
 
-The register map documentation I have states the following:
-bit7 INT_POLARITY Select the polarity of the INT output line
-0: Interrupt line (INT) is low when interrupt is pending (default) RW
-1: Interrupt line (INT) is high when interrupt is pending
+But at this point we are in OTG or HOST dr_mode and without host functional
+both will not function correctly. So we must error out so user can debug.
 
-By default the Palmas irq is active low.
-
-> From what you're saying it sounds like either the logic is the wrong way
-> around in the Palmas MFD driver (and we correct it by switching it back
-> to the correct polarity in the PMC) or that you'd need to find some way
-> of inverting in on OMAP5.
+>>
+>>>  	}
+>>>
+>>>  	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+>>> @@ -142,7 +144,7 @@ static irqreturn_t cdns3_irq(int irq, void *data)
+>>>
+>>>  static void cdns3_remove_roles(struct cdns3 *cdns)
+>>>  {
+>>> -	//TODO: implements this function
+>>
+>> if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST)
+>>
+>>> +	cdns3_host_remove(cdns);
+>>
+>> How about calling it cdns3_host_exit() to complement cdns3_host_init().
+>>
+>>>  }
+>>>
+>>>  static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
+>>> @@ -410,6 +412,7 @@ static struct platform_driver cdns3_driver = {
+>>>
+>>>  static int __init cdns3_driver_platform_register(void)
+>>>  {
+>>> +	cdns3_host_driver_init();
+>>>  	return platform_driver_register(&cdns3_driver);
+>>>  }
+>>>  module_init(cdns3_driver_platform_register);
+>>> diff --git a/drivers/usb/cdns3/host-export.h b/drivers/usb/cdns3/host-export.h
+>>> new file mode 100644
+>>> index 000000000000..f8f3b230b472
+>>> --- /dev/null
+>>> +++ b/drivers/usb/cdns3/host-export.h
+>>> @@ -0,0 +1,30 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Cadence USBSS DRD Driver -Host Export APIs
+>>> + *
+>>> + * Copyright (C) 2017 NXP
+>>> + *
+>>> + * Authors: Peter Chen <peter.chen@nxp.com>
+>>> + */
+>>> +#ifndef __LINUX_CDNS3_HOST_EXPORT
+>>> +#define __LINUX_CDNS3_HOST_EXPORT
+>>> +
+>>> +#ifdef CONFIG_USB_CDNS3_HOST
+>>> +
+>>> +int cdns3_host_init(struct cdns3 *cdns);
+>>> +void cdns3_host_remove(struct cdns3 *cdns);
+>>> +void cdns3_host_driver_init(void);
+>>> +
+>>> +#else
+>>> +
+>>> +static inline int cdns3_host_init(struct cdns3 *cdns)
+>>> +{
+>>> +	return -ENXIO;
+>>> +}
+>>> +
+>>> +static inline void cdns3_host_remove(struct cdns3 *cdns) { }
+>>> +static inline void cdns3_host_driver_init(void) {}
+>>> +
+>>> +#endif /* CONFIG_USB_CDNS3_HOST */
+>>> +
+>>> +#endif /* __LINUX_CDNS3_HOST_EXPORT */
+>>> diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
+>>> new file mode 100644
+>>> index 000000000000..0dd47976cb28
+>>> --- /dev/null
+>>> +++ b/drivers/usb/cdns3/host.c
+>>> @@ -0,0 +1,256 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Cadence USBSS DRD Driver - host side
+>>> + *
+>>> + * Copyright (C) 2018 Cadence Design Systems.
+>>> + * Copyright (C) 2018 NXP
+>>> + *
+>>> + * Authors: Peter Chen <peter.chen@nxp.com>
+>>> + *	    Pawel Laszczak <pawell@cadence.com>
+>>> + */
+>>> +
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/device.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/slab.h>
+>>> +#include <linux/dma-mapping.h>
+>>> +#include <linux/usb.h>
+>>> +#include <linux/usb/hcd.h>
+>>> +#include <linux/pm_runtime.h>
+>>> +#include <linux/usb/of.h>
+>>> +
+>>> +#include "../host/xhci.h"
+>>> +#include "core.h"
+>>> +#include "host-export.h"
+>>> +
+>>> +static struct hc_driver __read_mostly xhci_cdns3_hc_driver;
+>>> +
+>>> +static void xhci_cdns3_quirks(struct device *dev, struct xhci_hcd *xhci)
+>>> +{
+>>> +	/*
+>>> +	 * As of now platform drivers don't provide MSI support so we ensure
+>>> +	 * here that the generic code does not try to make a pci_dev from our
+>>> +	 * dev struct in order to setup MSI
+>>> +	 */
+>>> +	xhci->quirks |= XHCI_PLAT;
+>>> +}
+>>> +
+>>> +static int xhci_cdns3_setup(struct usb_hcd *hcd)
+>>> +{
+>>> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+>>> +	u32 command;
+>>> +	int ret;
+>>> +
+>>> +	ret = xhci_gen_setup(hcd, xhci_cdns3_quirks);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	/* set usbcmd.EU3S */
+>>> +	command = readl(&xhci->op_regs->command);
+>>> +	command |= CMD_PM_INDEX;
+>>> +	writel(command, &xhci->op_regs->command);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static const struct xhci_driver_overrides xhci_cdns3_overrides __initconst = {
+>>> +	.extra_priv_size = sizeof(struct xhci_hcd),
+>>> +	.reset = xhci_cdns3_setup,
+>>> +};
+>>> +
+>>> +struct cdns3_host {
+>>> +	struct device dev;
+>>> +	struct usb_hcd *hcd;
+>>> +};
+>>> +
+>>> +static irqreturn_t cdns3_host_irq(struct cdns3 *cdns)
+>>> +{
+>>> +	struct device *dev = cdns->host_dev;
+>>> +	struct usb_hcd	*hcd;
+>>> +
+>>> +	if (dev)
+>>> +		hcd = dev_get_drvdata(dev);
+>>> +	else
+>>> +		return IRQ_NONE;
+>>> +
+>>> +	if (hcd)
+>>> +		return usb_hcd_irq(cdns->irq, hcd);
+>>> +	else
+>>> +		return IRQ_NONE;
+>>
+>> Why can't you just reuse the xhci-platform driver and let it manage the IRQ?
+>> Since it is a shared IRQ, different drivers can request the same IRQ and return IRQ_NONE
+>> if the IRQ wasn't from their device.
 > 
-> Thierry
+> In device role the host part of controller is kept in reset, so driver can't read the host register. 
+> Such solution allows driver to control access to host register. 
+> So if driver has shared separate interrupt for host role then it has to check if controller work in 
+> Host role.  
+
+I understand what you mean. I think the issue here is that you are having the host ISR active
+even when host role is stopped. This is the root cause of the problem.
+
+When you stop host role, the host driver *must* unregister the ISR
+and then place the host in reset.
+
+This will happen correctly if you use platform_unregister_device() to unregister the
+XHCI device in cdns3_host_stop().
+
 > 
+>>> +}
+>>> +
+>>> +static void cdns3_host_release(struct device *dev)
+>>> +{
+>>> +	struct cdns3_host *host = container_of(dev, struct cdns3_host, dev);
+>>> +
+>>> +	kfree(host);
+>>> +}
+>>> +
+>>> +static int cdns3_host_start(struct cdns3 *cdns)
+>>> +{
+>>> +	struct cdns3_host *host;
+>>> +	struct device *dev;
+>>> +	struct device *sysdev;
+>>> +	struct xhci_hcd	*xhci;
+>>> +	int ret;
+>>> +
+>>> +	host = kzalloc(sizeof(*host), GFP_KERNEL);
+>>> +	if (!host)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	dev = &host->dev;
+>>> +	dev->release = cdns3_host_release;
+>>> +	dev->parent = cdns->dev;
+>>> +	dev_set_name(dev, "xhci-cdns3");
+>>> +	cdns->host_dev = dev;
+>>> +	ret = device_register(dev);
+>>> +	if (ret)
+>>> +		goto err1;
+>>> +
+>>> +	sysdev = cdns->dev;
+>>> +	/* Try to set 64-bit DMA first */
+>>> +	if (WARN_ON(!sysdev->dma_mask))
+>>> +		/* Platform did not initialize dma_mask */
+>>> +		ret = dma_coerce_mask_and_coherent(sysdev,
+>>> +						   DMA_BIT_MASK(64));
+>>> +	else
+>>> +		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
+>>> +
+>>> +	/* If setting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
+>>> +	if (ret) {
+>>> +		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(32));
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>> +	pm_runtime_set_active(dev);
+>>> +	pm_runtime_no_callbacks(dev);
+>>> +	pm_runtime_enable(dev);
+>>> +	host->hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
+>>> +				     dev_name(dev), NULL);
+>>> +	if (!host->hcd) {
+>>> +		ret = -ENOMEM;
+>>> +		goto err2;
+>>> +	}
+>>> +
+>>> +	host->hcd->regs = cdns->xhci_regs;
+>>> +	host->hcd->rsrc_start = cdns->xhci_res->start;
+>>> +	host->hcd->rsrc_len = resource_size(cdns->xhci_res);
+>>> +
+>>> +	device_wakeup_enable(host->hcd->self.controller);
+>>> +	xhci = hcd_to_xhci(host->hcd);
+>>> +
+>>> +	xhci->main_hcd = host->hcd;
+>>> +	xhci->shared_hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
+>>> +					    dev_name(dev), host->hcd);
+>>> +	if (!xhci->shared_hcd) {
+>>> +		ret = -ENOMEM;
+>>> +		goto err3;
+>>> +	}
+>>> +
+>>> +	host->hcd->tpl_support = of_usb_host_tpl_support(sysdev->of_node);
+>>> +	xhci->shared_hcd->tpl_support = host->hcd->tpl_support;
+>>> +	ret = usb_add_hcd(host->hcd, 0, IRQF_SHARED);
+>>> +	if (ret)
+>>> +		goto err4;
+>>> +
+>>> +	ret = usb_add_hcd(xhci->shared_hcd, 0, IRQF_SHARED);
+>>> +	if (ret)
+>>> +		goto err5;
+>>> +
+>>> +	device_set_wakeup_capable(dev, true);
+>>
+>> All this is being done by the xhci-plat.c
+>>
+>> You can make use of it by just creating a xhci-hcd platform device.
+>>
+>> e.g.
+>> platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
+>> platform_device_add_resources() to add IRQ and memory resource.
+>> platform_device_add_properties() to add any quirks.
+>> platform_device_add()
+>>
+> 
+> If we do this in this way driver will not control the interrupt. 
 
-- Peter
+Why should this driver control host interrupt when it doesn't
+have access to HOST registers.
 
+> This code  has written by Peter Chan and I am convinced 
+> that this concept is only correct one.
+> 
+>>> +
+>>> +	return 0;
+>>> +
+>>> +err5:
+>>> +	usb_remove_hcd(host->hcd);
+>>> +err4:
+>>> +	usb_put_hcd(xhci->shared_hcd);
+>>> +err3:
+>>> +	usb_put_hcd(host->hcd);
+>>> +err2:
+>>> +	device_del(dev);
+>>> +err1:
+>>> +	put_device(dev);
+>>> +	cdns->host_dev = NULL;
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static void cdns3_host_stop(struct cdns3 *cdns)
+>>> +{
+>>> +	struct device *dev = cdns->host_dev;
+>>> +	struct xhci_hcd	*xhci;
+>>> +	struct usb_hcd	*hcd;
+>>> +
+>>> +	if (dev) {
+>>> +		hcd = dev_get_drvdata(dev);
+>>> +		xhci = hcd_to_xhci(hcd);
+>>> +		usb_remove_hcd(xhci->shared_hcd);
+>>> +		usb_remove_hcd(hcd);
+>>> +		synchronize_irq(cdns->irq);
+>>> +		usb_put_hcd(xhci->shared_hcd);
+>>> +		usb_put_hcd(hcd);
+>>> +		cdns->host_dev = NULL;
+>>> +		pm_runtime_set_suspended(dev);
+>>> +		pm_runtime_disable(dev);
+>>> +		device_del(dev);
+>>> +		put_device(dev);
+>>> +	}
+>>
+>> You can replace this with just
+>> 	platform_device_unregister(xhci_dev);
+>>
+>>> +}
+>>> +
+>>> +#if CONFIG_PM
+>>> +static int cdns3_host_suspend(struct cdns3 *cdns, bool do_wakeup)
+>>> +{
+>>> +	struct device *dev = cdns->host_dev;
+>>> +	struct xhci_hcd	*xhci;
+>>> +
+>>> +	if (!dev)
+>>> +		return 0;
+>>> +
+>>> +	xhci = hcd_to_xhci(dev_get_drvdata(dev));
+>>> +	return xhci_suspend(xhci, do_wakeup);
+>>> +}
+>>> +
+>>> +static int cdns3_host_resume(struct cdns3 *cdns, bool hibernated)
+>>> +{
+>>> +	struct device *dev = cdns->host_dev;
+>>> +	struct xhci_hcd	*xhci;
+>>> +
+>>> +	if (!dev)
+>>> +		return 0;
+>>> +
+>>> +	xhci = hcd_to_xhci(dev_get_drvdata(dev));
+>>> +	return xhci_resume(xhci, hibernated);
+>>> +}
+>>
+>> These won't be required any more as xhci-plat is doing this.
+>>
+>>> +#endif /* CONFIG_PM */
+>>> +
+>>> +int cdns3_host_init(struct cdns3 *cdns)
+>>> +{
+>>> +	struct cdns3_role_driver *rdrv;
+>>> +
+>>> +	rdrv = devm_kzalloc(cdns->dev, sizeof(*rdrv), GFP_KERNEL);
+>>> +	if (!rdrv)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	rdrv->start	= cdns3_host_start;
+>>> +	rdrv->stop	= cdns3_host_stop;
+>>> +	rdrv->irq	= cdns3_host_irq;
+>>> +#if CONFIG_PM
+>>> +	rdrv->suspend	= cdns3_host_suspend;
+>>> +	rdrv->resume	= cdns3_host_resume;
+>>> +#endif /* CONFIG_PM */
+>>> +	rdrv->name	= "host";
+>>> +	cdns->roles[CDNS3_ROLE_HOST] = rdrv;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +void cdns3_host_remove(struct cdns3 *cdns)
+>>> +{
+>>> +	cdns3_host_stop(cdns);
+>>
+>> calling cdns3_host_stop() here can lead to problems as Controller might be in
+>> peripheral mode at this point. The core driver needs to ensure that relevant role
+>> is stopped before calling cdns3_host_remove().
+>>
+>> Here you need to unregister the role driver though.
+>>
+>> cdns->roles[CDNS3_ROLE_HOST] = NULL;
+>>
+> This function can be called only in host mode/role. It operate on host registers. 
+> This checking is provided in core.c file. 
+>>> +}
+>>> +
+>>> +void __init cdns3_host_driver_init(void)
+>>> +{
+>>> +	xhci_init_driver(&xhci_cdns3_hc_driver, &xhci_cdns3_overrides);
+>>> +}
+>>>
+>>
+
+cheers,
+-roger
+
+-- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
