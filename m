@@ -2,119 +2,176 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B1AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932BBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7981A20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:36:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9/lDg+J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7981A20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5520720672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5520720672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeK0HcP (ORCPT
+        id S1727301AbeK0Hcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:32:15 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43435 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbeK0HcP (ORCPT
+        Tue, 27 Nov 2018 02:32:53 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36089 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbeK0Hcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:32:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so20357401wrs.10;
-        Mon, 26 Nov 2018 12:36:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TfuKDl6p14Zj1JRr1J4usQ1fsai7WppAo1qGcEpU2zk=;
-        b=D9/lDg+JwiZXIHDlfqHYOSWE5FygihVeuuyENmPoHAnBRYW24IBJJDzIE56fnF7Sx7
-         Jm26HSNcy4RBsrIjlJV5DgxIrv95DALH7Fr3zm2VstwJWHLlY0NTlzAdw3iM2rvgw0/Z
-         LDUYbBaLCI3QkPzZXb1j2V/YeyeY9Qi8oOH1rHDZC4/WFHDdxpZnR/WiaJC2SU4kHjYs
-         xQf6itplkkXL1Ooi/rpT6s1rXHOkTD5OFOygjIJqNdYKLVPODslOb9B8Kz/hVQlRERbq
-         qwkhboRxo8w1+EzZ396H0mw7IZJOa0PIlxfk0TkHvjzpNI2ySerXa6i2cyS5x1zlDDW2
-         5kKg==
+        Tue, 27 Nov 2018 02:32:53 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o125so13238458qkf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:37:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TfuKDl6p14Zj1JRr1J4usQ1fsai7WppAo1qGcEpU2zk=;
-        b=hoekOY9yiYlJ669/N7QSADfnOBo0lFSg1CJkBpEEHNP+O6Th6cHEj4zM0pciqp0A2i
-         scLmmHqOlf8rupv2Q2aKoDhb5ZztbRrzHOpCnRZvlPDSwqjkcdwVSS1zVH5WiunhnHoV
-         T/lxmUbdayUNZp9dWSIuO/1dHw3eMqBbXdNju+zCpDpt/b2eSzQ4QfbX43MV8Au8Mz6o
-         lYlMq/erP6Hwu1ndDfcz3yaUzf9Y4gxrF/7J7vYzt7bgfaSU1hEuCi9FYFpJbEg5uP/u
-         yDCEHiDcvjov6E/jqh/PO6jdobvtfofvpymNIPJzqu6pczeFaPT+fR1d70fCxjO/SrVG
-         AhrA==
-X-Gm-Message-State: AA+aEWZYsLL8j8CuN4/dAjj5ie3aJkDsfRTMkM6V6qbtSdCZhRSgzOqx
-        z9C/2PNeCwf2hJbQFjIQSE0xQUnDZPWeLuyHM5s=
-X-Google-Smtp-Source: AFSGD/U/9ghz685aJ2mQ2W9GyjEbG3D7a05e5bgPZ1LtUnuZpNn+cJ/hWbOljYnajjIjHqPpm3P0rhZX11/azn7Eshk=
-X-Received: by 2002:a5d:488f:: with SMTP id g15mr4135697wrq.15.1543264615455;
- Mon, 26 Nov 2018 12:36:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20181126150228.8578-1-colin.king@canonical.com>
-In-Reply-To: <20181126150228.8578-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 26 Nov 2018 15:36:43 -0500
-Message-ID: <CADnq5_Nm_-sLR1OfrXBPsE0YGNCEJ6Wv+sFAa01Am7XLvvpH9g@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: fix spelling mistake "Pramater" -> "Parameter"
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=VHLgVH8k0qVB5vuFVG167QXO5UKSibVmkgWmCZArFwI=;
+        b=DdrLz1JIFH+wl6Xf/Mos9lHJA1tdOKjWHjLxBjjrOiZTDkWWeRemDUVGx6owee8Unq
+         5Sv78wurKOKFgJdfZKAQgz2gcjNFnoYf867pGda1Q5RiwbbeGnLvJ1lDFAkmRxjhgrGX
+         aUp/x8oUheSQmM9D8Sr2zNW2GNI9akZwpzSy1seMCWYcL/6BPfSEhqhhw/7c6N3zgZnO
+         RvwOiChs72MqR3pzxO40FC6JyFmWpNK5P8OEgBVpw6BXxZsB3jP4/SgFiUp4jEdebA10
+         Rzt7+4oh8RPupL084HjIw74XZQIwPo5U+ulQc5kucuUjhzOVWh6daKPnKgMsW/4Ir5qf
+         yfZw==
+X-Gm-Message-State: AA+aEWb/sKhgNonlEeLuSE+KmGRHANgWM+4CyepNnomOQnHvaSuSXExC
+        t3qQ6/mypwuVVTOUM4LU3jcDeA==
+X-Google-Smtp-Source: AFSGD/Us+oursy0az3VlxXgVCAxquJYClVJgzYdQByKtndG81xYes1AmjB9UbV1cZ/pKMNsrmO94/w==
+X-Received: by 2002:a37:5a05:: with SMTP id o5mr26333541qkb.126.1543264653378;
+        Mon, 26 Nov 2018 12:37:33 -0800 (PST)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id v186sm826920qkd.13.2018.11.26.12.37.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 12:37:32 -0800 (PST)
+Message-ID: <6f8b276f708404762557046065bfd8f4f07880dc.camel@redhat.com>
+Subject: Re: [PATCH] drm/dp_mst: Skip validating ports during destruction,
+ just ref
+From:   Lyude Paul <lyude@redhat.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Dave Airlie <airlied@linux.ie>,
+        Jerry Zuo <Jerry.Zuo@amd.com>
+Date:   Mon, 26 Nov 2018 15:37:31 -0500
+In-Reply-To: <CAKMK7uFAjG-tLMdUz7xf4E+1Lthnzx+cshobVG5BES9Mt=-fEg@mail.gmail.com>
+References: <20181113224613.28809-1-lyude@redhat.com>
+         <CAKMK7uFAjG-tLMdUz7xf4E+1Lthnzx+cshobVG5BES9Mt=-fEg@mail.gmail.com>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 10:02 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the module description text and
-> a comment too, fix them. Also line break overly long comment.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Thu, 2018-11-22 at 09:34 +0100, Daniel Vetter wrote:
+> On Tue, Nov 13, 2018 at 11:47 PM Lyude Paul <lyude@redhat.com> wrote:
+> > Jerry Zuo pointed out a rather obscure hotplugging issue that it seems I
+> > accidentally introduced into DRM two years ago.
+> > 
+> > Pretend we have a topology like this:
+> > 
+> > > - DP-1: mst_primary
+> >    |- DP-4: active display
+> >    |- DP-5: disconnected
+> >    |- DP-6: active hub
+> >       |- DP-7: active display
+> >       |- DP-8: disconnected
+> >       |- DP-9: disconnected
+> > 
+> > If we unplug DP-6, the topology starting at DP-7 will be destroyed but
+> > it's payloads will live on in DP-1's VCPI allocations and thus require
+> > removal. However, this removal currently fails because
+> > drm_dp_update_payload_part1() will (rightly so) try to validate the port
+> > before accessing it, fail then abort. If we keep going, eventually we
+> > run the MST hub out of bandwidth and all new allocations will start to
+> > fail (or in my case; all new displays just start flickering a ton).
+> > 
+> > We could just teach drm_dp_update_payload_part1() not to drop the port
+> > ref in this case, but then we also need to teach
+> > drm_dp_destroy_payload_step1() to do the same thing, then hope no one
+> > ever adds anything to the that requires a validated port reference in
+> > drm_dp_destroy_connector_work(). Kind of sketchy.
+> > 
+> > So let's go with a more clever solution: any port that
+> > drm_dp_destroy_connector_work() interacts with is guaranteed to still
+> > exist in memory until we say so. While said port might not be valid we
+> > don't really care: that's the whole reason we're destroying it in the
+> > first place! So, teach drm_dp_get_validated_port_ref() to use the all
+> > mighty current_work() function to avoid attempting to validate ports
+> > from the context of mgr->destroy_connector_work. I can't see any
+> > situation where this wouldn't be safe, and this avoids having to play
+> > whack-a-mole in the future of trying to work around port validation.
+> > 
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > Fixes: 263efde31f97 ("drm/dp/mst: Get validated port ref in
+> > drm_dp_update_payload_part1()")
+> > Reported-by: Jerry Zuo <Jerry.Zuo@amd.com>
+> > Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+> > Cc: Harry Wentland <Harry.Wentland@amd.com>
+> > Cc: <stable@vger.kernel.org> # v4.6+
+> 
+> Hm, sounds very similar to the bug I pointed out in your "make vcpi
+> alloc more atomic" series. Will this all interact nicely with the
+> solution we've worked out there (where we need to delay at least the
+> kfree(port) until the last vcpi allocation is released?
+Yes, it seems to work fine in my tests
 
-Applied.  thanks!
+> -Daniel
+> 
+> > ---
+> >  drivers/gpu/drm/drm_dp_mst_topology.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > index 529414556962..08978ad72f33 100644
+> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > @@ -1023,9 +1023,20 @@ static struct drm_dp_mst_port
+> > *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
+> >  static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct
+> > drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
+> >  {
+> >         struct drm_dp_mst_port *rport = NULL;
+> > +
+> >         mutex_lock(&mgr->lock);
+> > -       if (mgr->mst_primary)
+> > -               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
+> > port);
+> > +       /*
+> > +        * Port may or may not be 'valid' but we don't care about that
+> > when
+> > +        * destroying the port and we are guaranteed that the port pointer
+> > +        * will be valid until we've finished
+> > +        */
+> > +       if (current_work() == &mgr->destroy_connector_work) {
+> > +               kref_get(&port->kref);
+> > +               rport = port;
+> > +       } else if (mgr->mst_primary) {
+> > +               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
+> > +                                                      port);
+> > +       }
+> >         mutex_unlock(&mgr->lock);
+> >         return rport;
+> >  }
+> > --
+> > 2.19.1
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+-- 
+Cheers,
+	Lyude Paul
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> index 8de55f7f1a3a..dd03fe77b3ed 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> @@ -454,9 +454,10 @@ module_param_named(cntl_sb_buf_per_se, amdgpu_cntl_sb_buf_per_se, int, 0444);
->
->  /**
->   * DOC: param_buf_per_se (int)
-> - * Override the size of Off-Chip Pramater Cache per Shader Engine in Byte. The default is 0 (depending on gfx).
-> + * Override the size of Off-Chip Parameter Cache per Shader Engine in Byte.
-> + * The default is 0 (depending on gfx).
->   */
-> -MODULE_PARM_DESC(param_buf_per_se, "the size of Off-Chip Pramater Cache per Shader Engine (default depending on gfx)");
-> +MODULE_PARM_DESC(param_buf_per_se, "the size of Off-Chip Parameter Cache per Shader Engine (default depending on gfx)");
->  module_param_named(param_buf_per_se, amdgpu_param_buf_per_se, int, 0444);
->
->  /**
-> --
-> 2.19.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
