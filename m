@@ -2,265 +2,338 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BA9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03737C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF7C20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:43:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF7C20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A764420855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:45:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A764420855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbeK0Fiu (ORCPT
+        id S1726568AbeK0FkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:38:50 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54949 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725723AbeK0Fiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:38:50 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7CCD5A8CA6B46;
-        Tue, 27 Nov 2018 02:43:47 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 27 Nov 2018 02:43:38 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next] net: hns3: Config NIC port speed same as that of optical module
-Date:   Mon, 26 Nov 2018 18:43:00 +0000
-Message-ID: <20181126184300.24964-1-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
+        Tue, 27 Nov 2018 00:40:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:44982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725723AbeK0FkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:40:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56C601A25;
+        Mon, 26 Nov 2018 10:45:22 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B05043F5AF;
+        Mon, 26 Nov 2018 10:45:18 -0800 (PST)
+Subject: Re: [PATCH v4 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum
+ 162001800 quirk
+To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181016124920.24708-1-shameerali.kolothum.thodi@huawei.com>
+ <20181016124920.24708-5-shameerali.kolothum.thodi@huawei.com>
+ <0d7a984e-5814-a986-cd48-ef0651079e32@arm.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387A0342@FRAEML521-MBX.china.huawei.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387A0575@FRAEML521-MBX.china.huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f8e469c3-7ec9-551e-d5bd-6f14b02a8f3f@arm.com>
+Date:   Mon, 26 Nov 2018 18:45:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.54]
-X-CFilter-Loop: Reflected
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8387A0575@FRAEML521-MBX.china.huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+Hi Shameer,
 
-Port 0/1 of HiP08 supports 10G and 25G. This patch adds a
-change to configure NIC port speed same as that of  optical
-module(SFP/QFSP). Driver gets the optical module speed and
-sets NIC port speed accordingly.
+Sorry for the delay...
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 23 +++---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 84 ++++++++++------------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  2 +
- 3 files changed, 49 insertions(+), 60 deletions(-)
+On 18/10/2018 16:27, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Linuxarm [mailto:linuxarm-bounces@huawei.com] On Behalf Of
+>> Shameerali Kolothum Thodi
+>> Sent: 18 October 2018 14:34
+>> To: Robin Murphy <robin.murphy@arm.com>; lorenzo.pieralisi@arm.com;
+>> jean-philippe.brucker@arm.com
+>> Cc: mark.rutland@arm.com; vkilari@codeaurora.org;
+>> neil.m.leeder@gmail.com; pabba@codeaurora.org; will.deacon@arm.com;
+>> rruigrok@codeaurora.org; Linuxarm <linuxarm@huawei.com>; linux-
+>> kernel@vger.kernel.org; linux-acpi@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org
+>> Subject: RE: [PATCH v4 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum
+>> 162001800 quirk
+>>
+>> Hi Robin,
+>>
+>>> -----Original Message-----
+>>> From: Robin Murphy [mailto:robin.murphy@arm.com]
+>>> Sent: 18 October 2018 12:44
+>>> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+>>> lorenzo.pieralisi@arm.com; jean-philippe.brucker@arm.com
+>>> Cc: will.deacon@arm.com; mark.rutland@arm.com; Guohanjun (Hanjun Guo)
+>>> <guohanjun@huawei.com>; John Garry <john.garry@huawei.com>;
+>>> pabba@codeaurora.org; vkilari@codeaurora.org; rruigrok@codeaurora.org;
+>>> linux-acpi@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+>>> kernel@lists.infradead.org; Linuxarm <linuxarm@huawei.com>;
+>>> neil.m.leeder@gmail.com
+>>> Subject: Re: [PATCH v4 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum
+>>> 162001800 quirk
+> 
+> [...]
+> 
+>>>> +static const struct smmu_pmu_erratum_wa smmu_pmu_wa[] = {
+>>>> +	{
+>>>> +		.match_type = se_match_acpi_oem,
+>>>> +		.id = hisi_162001800_oem_info,
+>>>> +		.desc_str = "HiSilicon erratum 162001800",
+>>>> +		.enable = hisi_erratum_evcntr_rdonly,
+>>>> +	},
+>>>> +};
+>>>> +
+>>>
+>>> There's an awful lot of raw ACPI internals splashed about here -
+>>> couldn't at least some of it be abstracted behind the IORT code? In
+>>> fact, can't IORT just set all this stuff up in advance like it does for
+>>> SMMUs?
+>>
+>> Hmmm.. Sorry, not clear to me. You mean to say associate the IORT node
+>> with platform device and retrieve it in driver just like smmu does for
+>> "model" checks? Not sure that works here if that’s what the above meant.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 2b90410..e1805b9 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -90,7 +90,6 @@ enum hclge_opcode_type {
- 	/* MAC command */
- 	HCLGE_OPC_CONFIG_MAC_MODE	= 0x0301,
- 	HCLGE_OPC_CONFIG_AN_MODE	= 0x0304,
--	HCLGE_OPC_QUERY_AN_RESULT	= 0x0306,
- 	HCLGE_OPC_QUERY_LINK_STATUS	= 0x0307,
- 	HCLGE_OPC_CONFIG_MAX_FRM_SIZE	= 0x0308,
- 	HCLGE_OPC_CONFIG_SPEED_DUP	= 0x0309,
-@@ -212,6 +211,9 @@ enum hclge_opcode_type {
- 	/* Led command */
- 	HCLGE_OPC_LED_STATUS_CFG	= 0xB000,
- 
-+	/* SFP command */
-+	HCLGE_OPC_SFP_GET_SPEED		= 0x7104,
-+
- 	/* Error INT commands */
- 	HCLGE_TM_SCH_ECC_INT_EN		= 0x0829,
- 	HCLGE_TM_SCH_ECC_ERR_RINT_CMD	= 0x082d,
-@@ -544,20 +546,6 @@ struct hclge_config_mac_speed_dup_cmd {
- 	u8 rsv[22];
- };
- 
--#define HCLGE_QUERY_SPEED_S		3
--#define HCLGE_QUERY_AN_B		0
--#define HCLGE_QUERY_DUPLEX_B		2
--
--#define HCLGE_QUERY_SPEED_M		GENMASK(4, 0)
--#define HCLGE_QUERY_AN_M		BIT(HCLGE_QUERY_AN_B)
--#define HCLGE_QUERY_DUPLEX_M		BIT(HCLGE_QUERY_DUPLEX_B)
--
--struct hclge_query_an_speed_dup_cmd {
--	u8 an_syn_dup_speed;
--	u8 pause;
--	u8 rsv[23];
--};
--
- #define HCLGE_RING_ID_MASK		GENMASK(9, 0)
- #define HCLGE_TQP_ENABLE_B		0
- 
-@@ -574,6 +562,11 @@ struct hclge_config_auto_neg_cmd {
- 	u8      rsv[20];
- };
- 
-+struct hclge_sfp_speed_cmd {
-+	__le32	sfp_speed;
-+	u32	rsv[5];
-+};
-+
- #define HCLGE_MAC_UPLINK_PORT		0x100
- 
- struct hclge_config_max_frm_size_cmd {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 696cb53..1c8cf84 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1896,37 +1896,6 @@ static int hclge_cfg_mac_speed_dup_h(struct hnae3_handle *handle, int speed,
- 	return hclge_cfg_mac_speed_dup(hdev, speed, duplex);
- }
- 
--static int hclge_query_mac_an_speed_dup(struct hclge_dev *hdev, int *speed,
--					u8 *duplex)
--{
--	struct hclge_query_an_speed_dup_cmd *req;
--	struct hclge_desc desc;
--	int speed_tmp;
--	int ret;
--
--	req = (struct hclge_query_an_speed_dup_cmd *)desc.data;
--
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_QUERY_AN_RESULT, true);
--	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"mac speed/autoneg/duplex query cmd failed %d\n",
--			ret);
--		return ret;
--	}
--
--	*duplex = hnae3_get_bit(req->an_syn_dup_speed, HCLGE_QUERY_DUPLEX_B);
--	speed_tmp = hnae3_get_field(req->an_syn_dup_speed, HCLGE_QUERY_SPEED_M,
--				    HCLGE_QUERY_SPEED_S);
--
--	ret = hclge_parse_speed(speed_tmp, speed);
--	if (ret)
--		dev_err(&hdev->pdev->dev,
--			"could not parse speed(=%d), %d\n", speed_tmp, ret);
--
--	return ret;
--}
--
- static int hclge_set_autoneg_en(struct hclge_dev *hdev, bool enable)
- {
- 	struct hclge_config_auto_neg_cmd *req;
-@@ -1973,6 +1942,7 @@ static int hclge_mac_init(struct hclge_dev *hdev)
- 	struct hclge_mac *mac = &hdev->hw.mac;
- 	int ret;
- 
-+	hdev->support_sfp_query = true;
- 	hdev->hw.mac.duplex = HCLGE_MAC_FULL;
- 	ret = hclge_cfg_mac_speed_dup_hw(hdev, hdev->hw.mac.speed,
- 					 hdev->hw.mac.duplex);
-@@ -2082,34 +2052,58 @@ static void hclge_update_link_status(struct hclge_dev *hdev)
- 	}
- }
- 
-+static int hclge_get_sfp_speed(struct hclge_dev *hdev, u32 *speed)
-+{
-+	struct hclge_sfp_speed_cmd *resp = NULL;
-+	struct hclge_desc desc;
-+	int ret;
-+
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_SFP_GET_SPEED, true);
-+	resp = (struct hclge_sfp_speed_cmd *)desc.data;
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret == -EOPNOTSUPP) {
-+		dev_warn(&hdev->pdev->dev,
-+			 "IMP do not support get SFP speed %d\n", ret);
-+		return ret;
-+	} else if (ret) {
-+		dev_err(&hdev->pdev->dev, "get sfp speed failed %d\n", ret);
-+		return ret;
-+	}
-+
-+	*speed = resp->sfp_speed;
-+
-+	return 0;
-+}
-+
- static int hclge_update_speed_duplex(struct hclge_dev *hdev)
- {
- 	struct hclge_mac mac = hdev->hw.mac;
--	u8 duplex;
- 	int speed;
- 	int ret;
- 
--	/* get the speed and duplex as autoneg'result from mac cmd when phy
-+	/* get the speed from SFP cmd when phy
- 	 * doesn't exit.
- 	 */
--	if (mac.phydev || !mac.autoneg)
-+	if (mac.phydev)
- 		return 0;
- 
--	ret = hclge_query_mac_an_speed_dup(hdev, &speed, &duplex);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"mac autoneg/speed/duplex query failed %d\n", ret);
--		return ret;
--	}
-+	/* if IMP does not support get SFP/qSFP speed, return directly */
-+	if (!hdev->support_sfp_query)
-+		return 0;
- 
--	ret = hclge_cfg_mac_speed_dup(hdev, speed, duplex);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"mac speed/duplex config failed %d\n", ret);
-+	ret = hclge_get_sfp_speed(hdev, &speed);
-+	if (ret == -EOPNOTSUPP) {
-+		hdev->support_sfp_query = false;
-+		return ret;
-+	} else if (ret) {
- 		return ret;
- 	}
- 
--	return 0;
-+	if (speed == HCLGE_MAC_SPEED_UNKNOWN)
-+		return 0; /* do nothing if no SFP */
-+
-+	/* must config full duplex for SFP */
-+	return hclge_cfg_mac_speed_dup(hdev, speed, HCLGE_MAC_FULL);
- }
- 
- static int hclge_update_speed_duplex_h(struct hnae3_handle *handle)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 4122ad1..0dd23a1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -155,6 +155,7 @@ enum hclge_evt_cause {
- #define HCLGE_MPF_ENBALE 1
- 
- enum HCLGE_MAC_SPEED {
-+	HCLGE_MAC_SPEED_UNKNOWN = 0,		/* unknown */
- 	HCLGE_MAC_SPEED_10M	= 10,		/* 10 Mbps */
- 	HCLGE_MAC_SPEED_100M	= 100,		/* 100 Mbps */
- 	HCLGE_MAC_SPEED_1G	= 1000,		/* 1000 Mbps   = 1 Gbps */
-@@ -624,6 +625,7 @@ struct hclge_dev {
- 	u8 hw_tc_map;
- 	u8 tc_num_last_time;
- 	enum hclge_fc_mode fc_mode_last_time;
-+	u8 support_sfp_query;
- 
- #define HCLGE_FLAG_TC_BASE_SCH_MODE		1
- #define HCLGE_FLAG_VNET_BASE_SCH_MODE		2
--- 
-2.7.4
+I don't think there's much of interest in the actual IORT node itself, 
+but I can't see that there would be any particular problem with passing 
+either some implementation identifier or just a ready-made set of quirk 
+flags to the PMCG driver via platdata.
 
+>>>>    #define to_smmu_pmu(p) (container_of(p, struct smmu_pmu, pmu))
+>>>>
+>>>>    #define SMMU_PMU_EVENT_ATTR_EXTRACTOR(_name, _config, _start,
+>>> _end)        \
+>>>> @@ -224,15 +271,20 @@ static void smmu_pmu_set_period(struct
+>>> smmu_pmu *smmu_pmu,
+>>>>    	u32 idx = hwc->idx;
+>>>>    	u64 new;
+>>>>
+>>>> -	/*
+>>>> -	 * We limit the max period to half the max counter value of the
+>>> counter
+>>>> -	 * size, so that even in the case of extreme interrupt latency the
+>>>> -	 * counter will (hopefully) not wrap past its initial value.
+>>>> -	 */
+>>>> -	new = smmu_pmu->counter_mask >> 1;
+>>>> +	if (smmu_pmu->options & SMMU_PMU_OPT_EVCNTR_RDONLY) {
+>>>> +		new = smmu_pmu_counter_get_value(smmu_pmu, idx);
+>>>
+>>> Something's clearly missing, because if this happens to start at 0, the
+>>> current overflow handling code cannot possibly give the correct count.
+>>> Much as I hate the reset-to-half-period idiom for being impossible to
+>>> make sense of, it does make various aspects appear a lot simpler than
+>>> they really are. Wait, maybe that's yet another reason to hate it...
+>>
+>> Yes,  if the counter starts at 0 and overflow happens, it won't possibly give
+>> the correct count compared to the reset-to-half-period logic. Since this is a
+>> 64 bit counter, just hope that, it won't necessarily happen that often.
 
+OK, if the full 64 counter bits are implemented, then I suppose we're 
+probably OK to assume nobody's going to run a single profiling session 
+over 4+ years or so. It might be worth a comment just to remind 
+ourselves that we're (currently) relying on the counter size to mostly 
+mitigate overflow-related issues in this case.
+
+> 
+> [...]
+> 
+>>>> +static void smmu_pmu_enable_errata(struct smmu_pmu *smmu_pmu,
+>>>> +				enum smmu_pmu_erratum_match_type type,
+>>>> +				se_match_fn_t match_fn,
+>>>> +				void *arg)
+>>>> +{
+>>>> +	const struct smmu_pmu_erratum_wa *wa = smmu_pmu_wa;
+>>>> +
+>>>> +	for (; wa->desc_str; wa++) {
+>>>> +		if (wa->match_type != type)
+>>>> +			continue;
+>>>> +
+>>>> +		if (match_fn(wa, arg)) {
+>>>> +			if (wa->enable) {
+>>>> +				wa->enable(smmu_pmu);
+>>>> +				dev_info(smmu_pmu->dev,
+>>>> +					"Enabling workaround for %s\n",
+>>>> +					 wa->desc_str);
+>>>> +			}
+>>>
+>>> Just how many kinds of broken are we expecting here? Is this lifted from
+>>> the arm64 cpufeature framework, because it seems like absolute overkill
+>>> for a simple PMU driver which in all reality is only ever going to
+>>> wiggle a few flags in some data structure.
+>>
+>> Yes, this erratum framework is based on the arm_arch_timer code. Agree that
+>> this is an overkill if it is just to support this hardware. I am not sure this can be
+>> extended to add the IMPLEMENTATION DEFINED events in future(I haven't
+>> looked into that now). If this is not that useful in the near future, I will remove
+>> the
+>> framework part and use the OEM info directly to set the flag. Please let me
+>> know
+>> your thoughts..
+> 
+> Below is another take on this patch. Please let me know if this makes any sense..
+> 
+> Thanks,
+> Shameer
+> 
+> ----8----
+> diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+> index ef94b90..6f81b94 100644
+> --- a/drivers/perf/arm_smmuv3_pmu.c
+> +++ b/drivers/perf/arm_smmuv3_pmu.c
+> @@ -96,6 +96,8 @@
+>   
+>   #define SMMU_PA_SHIFT                   12
+>   
+> +#define SMMU_PMU_OPT_EVCNTR_RDONLY	(1 << 0)
+> +
+>   static int cpuhp_state_num;
+>   
+>   struct smmu_pmu {
+> @@ -111,10 +113,38 @@ struct smmu_pmu {
+>   	struct device *dev;
+>   	void __iomem *reg_base;
+>   	void __iomem *reloc_base;
+> +	u32 options;
+>   	u64 counter_present_mask;
+>   	u64 counter_mask;
+>   };
+>   
+> +struct erratum_acpi_oem_info {
+> +	char oem_id[ACPI_OEM_ID_SIZE + 1];
+> +	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
+> +	u32 oem_revision;
+> +	void (*enable)(struct smmu_pmu *smmu_pmu);
+> +};
+> +
+> +void hisi_erratum_evcntr_rdonly(struct smmu_pmu *smmu_pmu)
+> +{
+> +	smmu_pmu->options |= SMMU_PMU_OPT_EVCNTR_RDONLY;
+> +	dev_info(smmu_pmu->dev, "Enabling HiSilicon erratum 162001800\n");
+> +}
+> +
+> +static struct erratum_acpi_oem_info acpi_oem_info[] = {
+> +	/*
+> +	 * Note that trailing spaces are required to properly match
+> +	 * the OEM table information.
+> +	 */
+> +	{
+> +		.oem_id         = "HISI  ",
+> +		.oem_table_id   = "HIP08   ",
+> +		.oem_revision   = 0,
+> +		.enable = hisi_erratum_evcntr_rdonly,
+> +	},
+> +	{ /* Sentinel indicating the end of the OEM array */ },
+> +};
+> +
+>   #define to_smmu_pmu(p) (container_of(p, struct smmu_pmu, pmu))
+>   
+>   #define SMMU_PMU_EVENT_ATTR_EXTRACTOR(_name, _config, _start, _end)        \
+> @@ -224,15 +254,20 @@ static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
+>   	u32 idx = hwc->idx;
+>   	u64 new;
+>   
+> -	/*
+> -	 * We limit the max period to half the max counter value of the counter
+> -	 * size, so that even in the case of extreme interrupt latency the
+> -	 * counter will (hopefully) not wrap past its initial value.
+> -	 */
+> -	new = smmu_pmu->counter_mask >> 1;
+> +	if (smmu_pmu->options & SMMU_PMU_OPT_EVCNTR_RDONLY) {
+> +		new = smmu_pmu_counter_get_value(smmu_pmu, idx);
+> +	} else {
+> +		/*
+> +		 * We limit the max period to half the max counter value
+> +		 * of the counter size, so that even in the case of extreme
+> +		 * interrupt latency the counter will (hopefully) not wrap
+> +		 * past its initial value.
+> +		 */
+> +		new = smmu_pmu->counter_mask >> 1;
+> +		smmu_pmu_counter_set_value(smmu_pmu, idx, new);
+> +	}
+>   
+>   	local64_set(&hwc->prev_count, new);
+> -	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
+>   }
+>   
+>   static void smmu_pmu_get_event_filter(struct perf_event *event, u32 *span,
+> @@ -670,6 +705,28 @@ static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
+>   		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
+>   }
+>   
+> +static void smmu_pmu_check_acpi_workarounds(struct smmu_pmu *smmu_pmu)
+> +{
+> +	static const struct erratum_acpi_oem_info empty_oem_info = {};
+> +	const struct erratum_acpi_oem_info *info = acpi_oem_info;
+> +	struct acpi_table_header *hdr;
+> +
+> +	if (ACPI_FAILURE(acpi_get_table(ACPI_SIG_IORT, 0, &hdr))) {
+> +		dev_err(smmu_pmu->dev, "failed to get IORT\n");
+> +		return;
+> +	}
+> +
+> +	/* Iterate over the ACPI OEM info array, looking for a match */
+> +	while (memcmp(info, &empty_oem_info, sizeof(*info))) {
+> +		if (!memcmp(info->oem_id, hdr->oem_id, ACPI_OEM_ID_SIZE) &&
+> +		    !memcmp(info->oem_table_id, hdr->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
+> +			info->oem_revision == hdr->oem_revision)
+> +			info->enable(smmu_pmu);
+> +
+> +		info++;
+> +	}
+> +}
+
+FWIW, this looks awfully like acpi_match_platform_list()...
+
+However, I still think that any parsing of IORT fields belongs in 
+iort.c, not in every driver which might ever need to detect a quirk. For 
+starters, that code has iort_table to hand, full knowledge of all the 
+other identifiable components, and a already contains a bunch of 
+system-specific quirk detection which could potentially be shared.
+
+[ side note: do you know if 1620 still has the same ITS quirk as 161x, 
+or is it just the SMMU's MSI output that didn't get updated? ]
+
+Robin.
+
+> +
+>   static int smmu_pmu_probe(struct platform_device *pdev)
+>   {
+>   	struct smmu_pmu *smmu_pmu;
+> @@ -749,6 +806,8 @@ static int smmu_pmu_probe(struct platform_device *pdev)
+>   		return -EINVAL;
+>   	}
+>   
+> +	smmu_pmu_check_acpi_workarounds(smmu_pmu);
+> +
+>   	/* Pick one CPU to be the preferred one to use */
+>   	smmu_pmu->on_cpu = get_cpu();
+>   	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
+> 
