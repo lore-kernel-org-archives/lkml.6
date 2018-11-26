@@ -2,114 +2,92 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610B2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7280C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31BE820659
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:44:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31BE820659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B179820862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="gjzFMxen"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B179820862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbeK0DjQ (ORCPT
+        id S1726893AbeK0DkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:39:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:27520 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 22:40:01 -0500
+Received: from vern.gendns.com ([98.142.107.122]:44898 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbeK0DjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:39:16 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A53C6307DAA3;
-        Mon, 26 Nov 2018 16:44:37 +0000 (UTC)
-Received: from treble (ovpn-121-105.rdu2.redhat.com [10.10.121.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C69985C229;
-        Mon, 26 Nov 2018 16:44:33 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 10:44:31 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com,
-        Jessica Yu <jeyu@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181126164431.o2y65t3nbhyl2shn@treble>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
- <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
- <20181126160837.GS2113@hirez.programming.kicks-ass.net>
- <CAKv+Gu8WiBtPJCjBDbOjjsjALHgdgokMCtyAZbSy6NPpxo=usQ@mail.gmail.com>
- <20181126163923.GT2113@hirez.programming.kicks-ass.net>
+        id S1726282AbeK0DkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:40:00 -0500
+X-Greylist: delayed 475 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Nov 2018 22:40:00 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=plAKvNBc8A/TfkDJGjSjtLkCbsmRxx1yRB9FE1YseDQ=; b=gjzFMxenDjJjiYFSjmP2tMbs8o
+        79i+RH6EcZ6FSUMMudgvVsHiIED2Q9wSOZ8jF//9rVnUOvpK5V4keQuF+ghEb7TjXwyyYz4tFvx6R
+        yeAuJBJQOrqoKYFweNIr0mqBwkSYWHJhOWflc7g+AxON4nswQKgJfeSmNqd3TlYeNi4PoUWBMT2VS
+        NDvrB13b1Dkiaupq/4HJZPVZTVRjLAXxtDbzOIzJX3CfBsnQsmRtmiR94GpwV2ApHqFxy+9t7GGXD
+        v9KykgemW8xaU6tVRM/VckxgcBnpTYzhzhvufVml59GZQ7OSJmA1dUoDHpO1H9ESzRQmkmtFAbvvx
+        IecjpUag==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:41774 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gRJzp-00012T-1B; Mon, 26 Nov 2018 11:44:29 -0500
+Subject: Re: [PATCH 17/17] ARM: dts: am335x-*: Enable PRU-ICSS nodes
+To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
+Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
+        ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
+        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
+        m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+ <1542886753-17625-18-git-send-email-rogerq@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <05cbdb2a-d561-0691-d5c3-ee787bb6d02e@lechnology.com>
+Date:   Mon, 26 Nov 2018 10:45:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181126163923.GT2113@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 26 Nov 2018 16:44:38 +0000 (UTC)
+In-Reply-To: <1542886753-17625-18-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 05:39:23PM +0100, Peter Zijlstra wrote:
-> On Mon, Nov 26, 2018 at 05:11:05PM +0100, Ard Biesheuvel wrote:
-> > On Mon, 26 Nov 2018 at 17:08, Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
-> > > > +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-> > > > +void arch_static_call_defuse_tramp(void *site, void *tramp)
-> > > > +{
-> > > > +     unsigned short opcode = INSN_UD2;
-> > > > +
-> > > > +     mutex_lock(&text_mutex);
-> > > > +     text_poke((void *)tramp, &opcode, 2);
-> > > > +     mutex_unlock(&text_mutex);
-> > > > +}
-> > > > +#endif
-> > >
-> > > I would rather think that makes the trampoline _more_ dangerous, rather
-> > > than less so.
-> > >
-> > > My dictionary sayeth:
-> > >
-> > >   defuse: verb
-> > >
-> > >     - remove the fuse from (an explosive device) in order to prevent it
-> > >       from exploding.
-> > >
-> > >     - make (a situation) less tense or dangerous
-> > >
-> > > patching in an UD2 seems to do the exact opposite.
-> > 
-> > That is my fault.
-> > 
-> > The original name was 'poison' iirc, but on arm64, we need to retain
-> > the trampoline for cases where the direct branch is out of range, and
-> > so poisoning is semantically inaccurate.
-> > 
-> > But since you opened your dictionary anyway, any better suggestions? :-)
+On 11/22/18 5:39 AM, Roger Quadros wrote:
+> From: Suman Anna <s-anna@ti.com>
 > 
-> I was leaning towards: "prime", but I'm not entirely sure that works
-> with your case.
+> The PRU-ICSS processor bus node and subsystem nodes were left in
+> disabled state in the base am33xx.dtsi file. PRU-ICSS is supported
+> on these AM335x boards so enable the PRUSS node.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
 
-Maybe we should just go back to "poison", along with a comment that it
-will not necessarily be poisoned for all arches.  I think "poison" at
-least describes the intent, if not always the implementation.
-
--- 
-Josh
+This does not apply cleanly to next-20181126. It looks like you
+could be missing "ARM: dts: am33xx: convert to use new clkctrl
+layout" from your development branch.
