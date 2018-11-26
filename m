@@ -7,48 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B125AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DD1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773D020817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC8B220817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nePVU0Sc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773D020817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2XOzuIzk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC8B220817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbeKZVwH (ORCPT
+        id S1729242AbeKZVwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33504 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:52:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeKZVwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:06 -0500
+        id S1727234AbeKZVwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA21F20817;
-        Mon, 26 Nov 2018 10:58:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1282146F;
+        Mon, 26 Nov 2018 10:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229901;
-        bh=yd9NdPubpetV7nHxmL535XkWEAN9f6sixP4oprPD/z0=;
+        s=default; t=1543229904;
+        bh=wPyDZtdeOTxpkhBL8d03hEmUOOxRiO/OnsIE6jC++7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nePVU0Sc0WJDGwioImovHohpqb7KL2m9AsjnaeaVvVM3AEvEv499X/jNYaznABRy5
-         uyOVKylO4YefE89XrWOJj17nWLmQVE/uEZn844SA2yyuBew/npmudZ4Bve2c5f1bEB
-         ZM4FhbFTpAR7CNZ+MvhgFdCrnov3wHdSLpfJQ2nU=
+        b=2XOzuIzkb0ZJP69+jZg/w08fEvx1Jf42uT9oN48vX8KshOVsIKYcoVz1hPmsJhNEb
+         SF2om99zZrT0DlpXQ7dHk9f0IimBQItqajJ1FHHoXLqySIre4O9VOVJartFVL+G6S9
+         AyiEAiqlMAJahildUvKovFbcsjawI24wiRChlZ9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.9 45/46] HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
-Date:   Mon, 26 Nov 2018 11:51:34 +0100
-Message-Id: <20181126105050.353181326@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 46/46] libceph: fall back to sendmsg for slab pages
+Date:   Mon, 26 Nov 2018 11:51:35 +0100
+Message-Id: <20181126105050.439732248@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -66,74 +61,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
+commit 7e241f647dc7087a0401418a187f3f5b527cc690 upstream.
 
-When a UHID_CREATE command is written to the uhid char device, a
-copy_from_user() is done from a user pointer embedded in the command.
-When the address limit is KERNEL_DS, e.g. as is the case during
-sys_sendfile(), this can read from kernel memory.  Alternatively,
-information can be leaked from a setuid binary that is tricked to write
-to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
+skb_can_coalesce() allows coalescing neighboring slab objects into
+a single frag:
 
-No other commands in uhid_char_write() are affected by this bug and
-UHID_CREATE is marked as "obsolete", so apply the restriction to
-UHID_CREATE only rather than to uhid_char_write() entirely.
+  return page == skb_frag_page(frag) &&
+         off == frag->page_offset + skb_frag_size(frag);
 
-Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
-Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
-helpers fault on kernel addresses"), allowing this bug to be found.
+ceph_tcp_sendpage() can be handed slab pages.  One example of this is
+XFS: it passes down sector sized slab objects for its metadata I/O.  If
+the kernel client is co-located on the OSD node, the skb may go through
+loopback and pop on the receive side with the exact same set of frags.
+When tcp_recvmsg() attempts to copy out such a frag, hardened usercopy
+complains because the size exceeds the object's allocated size:
 
-Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
-Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
-Cc: <stable@vger.kernel.org> # v3.6+
-Cc: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+  usercopy: kernel memory exposure attempt detected from ffff9ba917f20a00 (kmalloc-512) (1024 bytes)
+
+Although skb_can_coalesce() could be taught to return false if the
+resulting frag would cross a slab object boundary, we already have
+a fallback for non-refcounted pages.  Utilize it for slab pages too.
+
+Cc: stable@vger.kernel.org # 4.8+
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/uhid.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/ceph/messenger.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/hid/uhid.c
-+++ b/drivers/hid/uhid.c
-@@ -12,6 +12,7 @@
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -588,9 +588,15 @@ static int ceph_tcp_sendpage(struct sock
+ 	int ret;
+ 	struct kvec iov;
  
- #include <linux/atomic.h>
- #include <linux/compat.h>
-+#include <linux/cred.h>
- #include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/hid.h>
-@@ -24,6 +25,7 @@
- #include <linux/spinlock.h>
- #include <linux/uhid.h>
- #include <linux/wait.h>
-+#include <linux/uaccess.h>
+-	/* sendpage cannot properly handle pages with page_count == 0,
+-	 * we need to fallback to sendmsg if that's the case */
+-	if (page_count(page) >= 1)
++	/*
++	 * sendpage cannot properly handle pages with page_count == 0,
++	 * we need to fall back to sendmsg if that's the case.
++	 *
++	 * Same goes for slab pages: skb_can_coalesce() allows
++	 * coalescing neighboring slab objects into a single frag which
++	 * triggers one of hardened usercopy checks.
++	 */
++	if (page_count(page) >= 1 && !PageSlab(page))
+ 		return __ceph_tcp_sendpage(sock, page, offset, size, more);
  
- #define UHID_NAME	"uhid"
- #define UHID_BUFSIZE	32
-@@ -721,6 +723,17 @@ static ssize_t uhid_char_write(struct fi
- 
- 	switch (uhid->input_buf.type) {
- 	case UHID_CREATE:
-+		/*
-+		 * 'struct uhid_create_req' contains a __user pointer which is
-+		 * copied from, so it's unsafe to allow this with elevated
-+		 * privileges (e.g. from a setuid binary) or via kernel_write().
-+		 */
-+		if (file->f_cred != current_cred() || uaccess_kernel()) {
-+			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
-+				    task_tgid_vnr(current), current->comm);
-+			ret = -EACCES;
-+			goto unlock;
-+		}
- 		ret = uhid_dev_create(uhid, &uhid->input_buf);
- 		break;
- 	case UHID_CREATE2:
+ 	iov.iov_base = kmap(page) + offset;
 
 
