@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480C3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD23C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3722147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 952A821104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGrxu89l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3722147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1TDatplh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952A821104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbeKZVyY (ORCPT
+        id S1729914AbeKZVy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36490 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728754AbeKZVyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:24 -0500
+        id S1728754AbeKZVy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 107422089F;
-        Mon, 26 Nov 2018 11:00:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9830020817;
+        Mon, 26 Nov 2018 11:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230038;
-        bh=P7hG19Sg5YgZv+GWEkHm4kXERe01mYs3kk36BsfXKFA=;
+        s=default; t=1543230041;
+        bh=LaPX98p5/0BH2YUXG3GhbBtnEJxJtz+LXuSWxuS5utA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGrxu89l6ZLUky7zmDol612NETwA7zaW/qbYk8k+g0jRhDaF7rKRS7yACV1w71Ynm
-         NIvxMzJ2YCQq7b8pkwhGHqY7Zb3oCaciju4/MQ/1TX/oQfO9Eb21umLnTfPZxkMYw+
-         spxwkRVEZGH7XsJK5YF3T3vt/5iqUVZXSA1MMsTs=
+        b=1TDatplh135vEVjeNXDAlWwnvG48TTh7lpafocdWzVdqqBHSpkId2Vfh/8pwf2sbb
+         7VzdelQu4ggjUzPF7Ra5wPkLk50CxfnKq1jgDMyVdQzV2uvQA2GqaklXDEQiCxHu1w
+         mAAX8j36pP5CzCGcfw2Ok0eX+YUvwqRJ1+h6kyUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, bhe@redhat.com,
-        willy@infradead.org, linux-mm@kvack.org,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
+        bhe@redhat.com, willy@infradead.org, linux-mm@kvack.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 48/62] x86/mm: Move LDT remap out of KASLR region on 5-level paging
-Date:   Mon, 26 Nov 2018 11:51:29 +0100
-Message-Id: <20181126105054.375708665@linuxfoundation.org>
+Subject: [PATCH 4.14 49/62] x86/ldt: Unmap PTEs for the slot before freeing LDT pages
+Date:   Mon, 26 Nov 2018 11:51:30 +0100
+Message-Id: <20181126105054.440503950@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -68,31 +67,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit d52888aa2753e3063a9d3a0c9f72f94aa9809c15 upstream
+commit a0e6e0831c516860fc7f9be1db6c081fe902ebcf upstream
 
-On 5-level paging the LDT remap area is placed in the middle of the KASLR
-randomization region and it can overlap with the direct mapping, the
-vmalloc or the vmap area.
+modify_ldt(2) leaves the old LDT mapped after switching over to the new
+one. The old LDT gets freed and the pages can be re-used.
 
-The LDT mapping is per mm, so it cannot be moved into the P4D page table
-next to the CPU_ENTRY_AREA without complicating PGD table allocation for
-5-level paging.
+Leaving the mapping in place can have security implications. The mapping is
+present in the userspace page tables and Meltdown-like attacks can read
+these freed and possibly reused pages.
 
-The 4 PGD slot gap just before the direct mapping is reserved for
-hypervisors, so it cannot be used.
+It's relatively simple to fix: unmap the old LDT and flush TLB before
+freeing the old LDT memory.
 
-Move the direct mapping one slot deeper and use the resulting gap for the
-LDT remap area. The resulting layout is the same for 4 and 5 level paging.
+This further allows to avoid flushing the TLB in map_ldt_struct() as the
+slot is unmapped and flushed by unmap_ldt_struct() or has never been mapped
+at all.
 
-[ tglx: Massaged changelog ]
+[ tglx: Massaged changelog and removed the needless line breaks ]
 
 Fixes: f55f0501cbf6 ("x86/pti: Put the LDT in its own PGD if PTI is on")
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Cc: bp@alien8.de
 Cc: hpa@zytor.com
 Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
 Cc: peterz@infradead.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
@@ -100,117 +99,106 @@ Cc: bhe@redhat.com
 Cc: willy@infradead.org
 Cc: linux-mm@kvack.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181026122856.66224-2-kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/20181026122856.66224-3-kirill.shutemov@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/x86/x86_64/mm.txt         | 10 ++++++----
- arch/x86/include/asm/page_64_types.h    | 12 +++++++-----
- arch/x86/include/asm/pgtable_64_types.h |  7 +++----
- arch/x86/xen/mmu_pv.c                   |  6 +++---
- 4 files changed, 19 insertions(+), 16 deletions(-)
+ arch/x86/kernel/ldt.c | 49 +++++++++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index ea91cb61a602..43f066cde67d 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -4,8 +4,9 @@ Virtual memory map with 4 level page tables:
- 0000000000000000 - 00007fffffffffff (=47 bits) user space, different per mm
- hole caused by [47:63] sign extension
- ffff800000000000 - ffff87ffffffffff (=43 bits) guard hole, reserved for hypervisor
--ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory
--ffffc80000000000 - ffffc8ffffffffff (=40 bits) hole
-+ffff880000000000 - ffff887fffffffff (=39 bits) LDT remap for PTI
-+ffff888000000000 - ffffc87fffffffff (=64 TB) direct mapping of all phys. memory
-+ffffc88000000000 - ffffc8ffffffffff (=39 bits) hole
- ffffc90000000000 - ffffe8ffffffffff (=45 bits) vmalloc/ioremap space
- ffffe90000000000 - ffffe9ffffffffff (=40 bits) hole
- ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
-@@ -30,8 +31,9 @@ Virtual memory map with 5 level page tables:
- 0000000000000000 - 00ffffffffffffff (=56 bits) user space, different per mm
- hole caused by [56:63] sign extension
- ff00000000000000 - ff0fffffffffffff (=52 bits) guard hole, reserved for hypervisor
--ff10000000000000 - ff8fffffffffffff (=55 bits) direct mapping of all phys. memory
--ff90000000000000 - ff9fffffffffffff (=52 bits) LDT remap for PTI
-+ff10000000000000 - ff10ffffffffffff (=48 bits) LDT remap for PTI
-+ff11000000000000 - ff90ffffffffffff (=55 bits) direct mapping of all phys. memory
-+ff91000000000000 - ff9fffffffffffff (=3840 TB) hole
- ffa0000000000000 - ffd1ffffffffffff (=54 bits) vmalloc/ioremap space (12800 TB)
- ffd2000000000000 - ffd3ffffffffffff (=49 bits) hole
- ffd4000000000000 - ffd5ffffffffffff (=49 bits) virtual memory map (512TB)
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index e1407312c412..74d531f6d518 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -33,14 +33,16 @@
- 
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 26d713ecad34..65df298d4e9e 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -103,14 +103,6 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
  /*
-  * Set __PAGE_OFFSET to the most negative possible address +
-- * PGDIR_SIZE*16 (pgd slot 272).  The gap is to allow a space for a
-- * hypervisor to fit.  Choosing 16 slots here is arbitrary, but it's
-- * what Xen requires.
-+ * PGDIR_SIZE*17 (pgd slot 273).
-+ *
-+ * The gap is to allow a space for LDT remap for PTI (1 pgd slot) and space for
-+ * a hypervisor (16 slots). Choosing 16 slots for a hypervisor is arbitrary,
-+ * but it's what Xen requires.
+  * If PTI is enabled, this maps the LDT into the kernelmode and
+  * usermode tables for the given mm.
+- *
+- * There is no corresponding unmap function.  Even if the LDT is freed, we
+- * leave the PTEs around until the slot is reused or the mm is destroyed.
+- * This is harmless: the LDT is always in ordinary memory, and no one will
+- * access the freed slot.
+- *
+- * If we wanted to unmap freed LDTs, we'd also need to do a flush to make
+- * it useful, and the flush would slow down modify_ldt().
   */
- #ifdef CONFIG_X86_5LEVEL
--#define __PAGE_OFFSET_BASE      _AC(0xff10000000000000, UL)
-+#define __PAGE_OFFSET_BASE	_AC(0xff11000000000000, UL)
- #else
--#define __PAGE_OFFSET_BASE      _AC(0xffff880000000000, UL)
-+#define __PAGE_OFFSET_BASE	_AC(0xffff888000000000, UL)
- #endif
+ static int
+ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+@@ -119,8 +111,8 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 	bool is_vmalloc, had_top_level_entry;
+ 	unsigned long va;
+ 	spinlock_t *ptl;
++	int i, nr_pages;
+ 	pgd_t *pgd;
+-	int i;
  
- #ifdef CONFIG_RANDOMIZE_MEMORY
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 6b8f73dcbc2c..7764617b8f9c 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -88,16 +88,15 @@ typedef struct { pteval_t pte; } pte_t;
- # define VMALLOC_SIZE_TB	_AC(12800, UL)
- # define __VMALLOC_BASE		_AC(0xffa0000000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
--# define LDT_PGD_ENTRY		_AC(-112, UL)
--# define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #else
- # define VMALLOC_SIZE_TB	_AC(32, UL)
- # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
--# define LDT_PGD_ENTRY		_AC(-3, UL)
--# define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #endif
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return 0;
+@@ -141,7 +133,9 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
  
-+#define LDT_PGD_ENTRY		-240UL
-+#define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ 	is_vmalloc = is_vmalloc_addr(ldt->entries);
+ 
+-	for (i = 0; i * PAGE_SIZE < ldt->nr_entries * LDT_ENTRY_SIZE; i++) {
++	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
 +
- #ifdef CONFIG_RANDOMIZE_MEMORY
- # define VMALLOC_START		vmalloc_base
- # define VMEMMAP_START		vmemmap_base
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 8ed11a5b1a9d..b33fa127a613 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1869,7 +1869,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	init_top_pgt[0] = __pgd(0);
++	for (i = 0; i < nr_pages; i++) {
+ 		unsigned long offset = i << PAGE_SHIFT;
+ 		const void *src = (char *)ldt->entries + offset;
+ 		unsigned long pfn;
+@@ -189,14 +183,42 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ 		}
+ 	}
  
- 	/* Pre-constructed entries are in pfn, so convert to mfn */
--	/* L4[272] -> level3_ident_pgt  */
-+	/* L4[273] -> level3_ident_pgt  */
- 	/* L4[511] -> level3_kernel_pgt */
- 	convert_pfn_mfn(init_top_pgt);
+-	va = (unsigned long)ldt_slot_va(slot);
+-	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
+-
+ 	ldt->slot = slot;
+ #endif
+ 	return 0;
+ }
  
-@@ -1889,8 +1889,8 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	addr[0] = (unsigned long)pgd;
- 	addr[1] = (unsigned long)l3;
- 	addr[2] = (unsigned long)l2;
--	/* Graft it onto L4[272][0]. Note that we creating an aliasing problem:
--	 * Both L4[272][0] and L4[511][510] have entries that point to the same
-+	/* Graft it onto L4[273][0]. Note that we creating an aliasing problem:
-+	 * Both L4[273][0] and L4[511][510] have entries that point to the same
- 	 * L2 (PMD) tables. Meaning that if you modify it in __va space
- 	 * it will be also modified in the __ka space! (But if you just
- 	 * modify the PMD table to point to other PTE's or none, then you
++static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
++{
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	unsigned long va;
++	int i, nr_pages;
++
++	if (!ldt)
++		return;
++
++	/* LDT map/unmap is only required for PTI */
++	if (!static_cpu_has(X86_FEATURE_PTI))
++		return;
++
++	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
++
++	for (i = 0; i < nr_pages; i++) {
++		unsigned long offset = i << PAGE_SHIFT;
++		spinlock_t *ptl;
++		pte_t *ptep;
++
++		va = (unsigned long)ldt_slot_va(ldt->slot) + offset;
++		ptep = get_locked_pte(mm, va, &ptl);
++		pte_clear(mm, va, ptep);
++		pte_unmap_unlock(ptep, ptl);
++	}
++
++	va = (unsigned long)ldt_slot_va(ldt->slot);
++	flush_tlb_mm_range(mm, va, va + nr_pages * PAGE_SIZE, 0);
++#endif /* CONFIG_PAGE_TABLE_ISOLATION */
++}
++
+ static void free_ldt_pgtables(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+@@ -433,6 +455,7 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
+ 	}
+ 
+ 	install_ldt(mm, new_ldt);
++	unmap_ldt_struct(mm, old_ldt);
+ 	free_ldt_struct(old_ldt);
+ 	error = 0;
+ 
 -- 
 2.17.1
 
