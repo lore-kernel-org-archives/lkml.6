@@ -2,71 +2,197 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D703C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C408BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06D3720865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D3720865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BF9020865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="liGYW4Am"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF9020865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbeK0CXi (ORCPT
+        id S1727333AbeK0CX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:23:38 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45908 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726745AbeK0CXh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:23:37 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gRIos-0006ax-LO; Mon, 26 Nov 2018 15:29:06 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wimax/i2400m: fix spelling mistake "accesibility" -> "accessibility"
-Date:   Mon, 26 Nov 2018 15:29:06 +0000
-Message-Id: <20181126152906.19003-1-colin.king@canonical.com>
+        Mon, 26 Nov 2018 21:23:56 -0500
+Received: from plaes.org ([188.166.43.21]:49978 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeK0CWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:22:40 -0500
+Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
+        by plaes.org (Postfix) with ESMTPSA id AC9484140D;
+        Mon, 26 Nov 2018 15:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1543246091; bh=f2mcC9Dpd0QYLyRmz8so1Ckg3Nv64+LbaTC/FIJ10Ik=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=liGYW4AmOE0hbWFFjlGerPgWJ4LeJN2tW0wI3GQ5YAgmZ4t7Gc7oPSWS7Qd8LiRsE
+         TLA9D+xSfxu6HnjEmYKfO3vpY+d/DuZXaOsUbgW4Sd5oILiUzLramsKFYzbWyvdPLh
+         4bywNbV1HcCavC7ES8ViK7e21SYSxmpQSO0QrVHu/YEsgTK1RVK0KNengvR0nYaFo4
+         T9HlWU5Vu/Zvr47zDivQqgY7ZmnGHilUb77LpHg8ctK0mLCX/T1HIVsYJzFcf6Ci8a
+         /PF0/+t4GEylApL9fsJewmAv4CTgy4mdfudZre6oP6zbCqJ77EhyV5V5ak4+Z6ktfS
+         rOzkCZWb1y15w==
+From:   Priit Laes <plaes@plaes.org>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Cc:     Priit Laes <plaes@plaes.org>, Olliver Schinagl <oliver@schinagl.nl>
+Subject: [PATCH 04/14] regulator: axp20x: add support for set_ramp_delay for AXP209
+Date:   Mon, 26 Nov 2018 17:27:45 +0200
+Message-Id: <314a16a39da769ef411a58f6fad45e5be65ec0e1.1543245984.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
+References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
 
-The error message text contains a trivial spelling mistake, fix it.
+The AXP209 supports ramping up voltages on several regulators such as
+DCDC2 and LDO3.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This patch adds preliminary support for the regulator-ramp-delay property
+for these 2 regulators. Note that the voltage ramp only works when
+regulator is already enabled. E.g. when going from say 0.7 V to 3.6 V.
+
+When turning on the regulator, no voltage ramp is performed in hardware.
+
+What this means, is that if the bootloader brings up the voltage at 0.7 V,
+the ramp delay property is properly applied. If however, the bootloader
+leaves the power off, no ramp delay is applied when the power is
+enabled by the regulator framework.
+
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/net/wimax/i2400m/control.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/axp20x-regulator.c | 85 +++++++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+)
 
-diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
-index ef298d8525c5..6837fac3987b 100644
---- a/drivers/net/wimax/i2400m/control.c
-+++ b/drivers/net/wimax/i2400m/control.c
-@@ -254,7 +254,7 @@ static const struct
- 	[I2400M_MS_ILLEGAL_VALUE] = { "illegal value", -EINVAL },
- 	[I2400M_MS_MISSING_PARAMS] = { "missing parameters", -ENOMSG },
- 	[I2400M_MS_VERSION_ERROR] = { "bad version", -EIO },
--	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
-+	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accessibility error", -EIO },
- 	[I2400M_MS_BUSY] = { "busy", -EBUSY },
- 	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
- 	[I2400M_MS_UNINITIALIZED] = { "uninitialized", -EILSEQ },
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 9a2db28..1d9fa62 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -51,6 +51,17 @@
+ #define AXP20X_PWR_OUT_DCDC2_MASK	BIT_MASK(4)
+ #define AXP20X_PWR_OUT_LDO3_MASK	BIT_MASK(6)
+ 
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK	BIT_MASK(0)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE(x) \
++	((x) << 0)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK		BIT_MASK(1)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(x) \
++	((x) << 1)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK		BIT_MASK(2)
++#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN		BIT(2)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
++#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
++
+ #define AXP20X_LDO4_V_OUT_1250mV_START	0x0
+ #define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
+ #define AXP20X_LDO4_V_OUT_1250mV_END	\
+@@ -346,6 +357,79 @@
+ 		.ops		= &axp20x_ops_range,				\
+ 	}
+ 
++static const int axp209_dcdc2_ldo3_slew_rates[] = {
++	1600,
++	 800,
++};
++
++static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
++{
++	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
++	const struct regulator_desc *desc = rdev->desc;
++	u8 reg, mask, enable, cfg = 0xff;
++	const int *slew_rates;
++	int rate_count = 0;
++
++	if (!rdev)
++		return -EINVAL;
++
++	switch (axp20x->variant) {
++	case AXP209_ID:
++		if (desc->id == AXP20X_DCDC2) {
++			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
++			reg = AXP20X_DCDC2_LDO3_V_RAMP;
++			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
++			       AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK;
++			enable = (ramp > 0) ?
++				 AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN :
++				 !AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN;
++			break;
++		}
++
++		if (desc->id == AXP20X_LDO3) {
++			slew_rates = axp209_dcdc2_ldo3_slew_rates;
++			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
++			reg = AXP20X_DCDC2_LDO3_V_RAMP;
++			mask = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK |
++			       AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK;
++			enable = (ramp > 0) ?
++				 AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN :
++				 !AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN;
++			break;
++		}
++
++		if (rate_count > 0)
++			break;
++
++		/* fall through */
++	default:
++		/* Not supported for this regulator */
++		return -ENOTSUPP;
++	}
++
++	if (ramp == 0) {
++		cfg = enable;
++	} else {
++		int i;
++
++		for (i = 0; i < rate_count; i++) {
++			if (ramp <= slew_rates[i])
++				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
++			else
++				break;
++		}
++
++		if (cfg == 0xff) {
++			dev_err(axp20x->dev, "unsupported ramp value %d", ramp);
++			return -EINVAL;
++		}
++
++		cfg |= enable;
++	}
++
++	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
++}
++
+ static const struct regulator_ops axp20x_ops_fixed = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ };
+@@ -366,6 +450,7 @@ static const struct regulator_ops axp20x_ops = {
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+ 	.is_enabled		= regulator_is_enabled_regmap,
++	.set_ramp_delay		= axp20x_set_ramp_delay,
+ };
+ 
+ static const struct regulator_ops axp20x_ops_sw = {
 -- 
-2.19.1
-
+git-series 0.9.1
