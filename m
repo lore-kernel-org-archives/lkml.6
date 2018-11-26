@@ -2,110 +2,147 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E95C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEA6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA6D20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FA6D20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AE90D20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE90D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeK0B3x (ORCPT
+        id S1726891AbeK0BaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:29:53 -0500
-Received: from mga18.intel.com ([134.134.136.126]:38238 "EHLO mga18.intel.com"
+        Mon, 26 Nov 2018 20:30:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47951 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeK0B3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:29:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 06:35:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
-   d="scan'208";a="111623519"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Nov 2018 06:35:34 -0800
-Date:   Mon, 26 Nov 2018 06:35:34 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181126143534.GA25719@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <20181118071548.GA4795@linux.intel.com>
- <CALCETrXSpn7QGzPgO1BjMRQ75r2i0kmACrbUM+8PyT+xi3f3Hw@mail.gmail.com>
- <20181119160204.GD13298@linux.intel.com>
- <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
- <20181120101133.GA7319@linux.intel.com>
- <CALCETrU2dy7Oh+AHDGZ2omq9p7pNbjFd8ruv5CkfJXCp5nTYBQ@mail.gmail.com>
- <20181120225518.GE8391@linux.intel.com>
- <0a78772e-4f42-254b-d91a-f0f80a24ff90@fortanix.com>
- <20181121151734.GA16564@linux.intel.com>
+        id S1726279AbeK0BaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:30:07 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FBA2155AC;
+        Mon, 26 Nov 2018 14:35:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 488A383EB8;
+        Mon, 26 Nov 2018 14:35:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 26 Nov 2018 15:35:48 +0100 (CET)
+Date:   Mon, 26 Nov 2018 15:35:24 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Elvira Khabirova <lineprinter@altlinux.org>
+Cc:     rostedt@goodmis.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
+        luto@kernel.org, strace-devel@lists.strace.io,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
+ support to PTRACE_GET_SYSCALL_INFO
+Message-ID: <20181126143524.GB1660@redhat.com>
+References: <20181125022150.46258a20@akathisia>
+ <20181125022340.5703400f@akathisia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121151734.GA16564@linux.intel.com>
+In-Reply-To: <20181125022340.5703400f@akathisia>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 26 Nov 2018 14:35:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 05:17:34PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 21, 2018 at 05:17:32AM +0000, Jethro Beekman wrote:
-> > Jarkko, can you please explain you solution in detail? The CPU receives an
-> > exception. This will be handled by the kernel exception handler. What
-> > information does the kernel exception handler use to determine whether to
-> > deliver the exception as a regular signal to the process, or whether to set
-> > the special registers values for userspace and just continue executing the
-> > process manually?
-> 
-> Now we throw SIGSEGV when PF_SGX set, right? In my solution that would
-> be turned just doing iret to AEP with the extra that three registers get
-> exception data (type, reason, addr). No decoding or RIP adjusting
-> involved.
-> 
-> That would mean that you would actually have to implement AEP handler
-> than just have enclu there.
-> 
-> I've also proposed that perhaps for SGX also #UD should be propagated
-> this way because for some instructions you need outside help to emulate
-> "non-enclave" environment.
+On 11/25, Elvira Khabirova wrote:
+>
+> Extend PTRACE_GET_SYSCALL_INFO to support PTRACE_EVENT_SECCOMP stops.
+> The information returned is the same as for syscall-enter-stops.
 
-And how would you determine the #UD is related to SGX?  Hardware doesn't
-provide any indication that a #UD (or any other fault) is related to SGX
-or occurred in an enclave.  The only fault that is special-cased in a
-non-virtualized environment is #PF signaled by the EPCM, which gets the
-PF_SGX bit set in the error code.
+Oh, this is not nice ;) there must be a better option, I hope... Plus
 
-> That is all I have drafted together so far. I'll try to finish v18 this
-> week with other stuff and refine further next week (unless someone gives
-> obvious reason why this doesn't work, which might well be because I
-> haven't went too deep with my analysis yet because of lack of time).
+
+Can't ptrace_get_syscall() check
+
+	child->exit_code == (PTRACE_EVENT_SECCOMP << 8) | SIGTRAP;
+
+to detect the PTRACE_EVENT_SECCOMP case?
+
+Oleg.
+
+> Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>  include/linux/ptrace.h    | 1 +
+>  include/linux/sched.h     | 1 +
+>  include/linux/tracehook.h | 1 +
+>  kernel/ptrace.c           | 7 +++++--
+>  4 files changed, 8 insertions(+), 2 deletions(-)
 > 
-> /Jarkko
+> diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+> index 6c2ffed907f5..a993d0fde865 100644
+> --- a/include/linux/ptrace.h
+> +++ b/include/linux/ptrace.h
+> @@ -166,6 +166,7 @@ static inline void ptrace_event(int event, unsigned long message)
+>  {
+>  	if (unlikely(ptrace_event_enabled(current, event))) {
+>  		current->ptrace_message = message;
+> +		current->ptrace_event = event;
+>  		ptrace_notify((event << 8) | SIGTRAP);
+>  	} else if (event == PTRACE_EVENT_EXEC) {
+>  		/* legacy EXEC report via SIGTRAP */
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index a51c13c2b1a0..86215fb654d6 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -964,6 +964,7 @@ struct task_struct {
+>  
+>  	/* Ptrace state: */
+>  	unsigned long			ptrace_message;
+> +	int				ptrace_event;
+>  	kernel_siginfo_t		*last_siginfo;
+>  
+>  	struct task_io_accounting	ioac;
+> diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
+> index 633a83fe7051..5d2e5aa07a5c 100644
+> --- a/include/linux/tracehook.h
+> +++ b/include/linux/tracehook.h
+> @@ -66,6 +66,7 @@ static inline int ptrace_report_syscall(struct pt_regs *regs,
+>  		return 0;
+>  
+>  	current->ptrace_message = message;
+> +	current->ptrace_event = 0;
+>  	ptrace_notify(SIGTRAP | ((ptrace & PT_TRACESYSGOOD) ? 0x80 : 0));
+>  
+>  	/*
+> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> index 92c47cd5ad84..74a37e74c7f1 100644
+> --- a/kernel/ptrace.c
+> +++ b/kernel/ptrace.c
+> @@ -904,7 +904,9 @@ static int ptrace_get_syscall(struct task_struct *child,
+>  	unsigned long actual_size;
+>  	unsigned long write_size;
+>  
+> -	if (child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_ENTRY) {
+> +	if ((child->ptrace_event == 0 &&
+> +	     child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_ENTRY) ||
+> +	    child->ptrace_event == PTRACE_EVENT_SECCOMP) {
+>  		int i;
+>  
+>  		info.op = PTRACE_SYSCALL_INFO_ENTRY;
+> @@ -917,7 +919,8 @@ static int ptrace_get_syscall(struct task_struct *child,
+>  		for (i = 0; i < ARRAY_SIZE(args); i++)
+>  			info.entry.args[i] = args[i];
+>  		actual_size = offsetofend(struct ptrace_syscall_info, entry);
+> -	} else if (child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_EXIT) {
+> +	} else if (child->ptrace_event == 0 &&
+> +		   child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_EXIT) {
+>  		info.op = PTRACE_SYSCALL_INFO_EXIT;
+>  		info.arch = syscall_get_arch(child);
+>  		info.exit.rval = syscall_get_error(child, regs);
+> -- 
+> 2.19.1
+> 
+
