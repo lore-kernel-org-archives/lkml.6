@@ -2,215 +2,394 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DCDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BEFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD3C20862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:56:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="WOgPI7+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD3C20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9356C20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:57:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9356C20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeKZWul (ORCPT
+        id S1726552AbeKZWvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:50:41 -0500
-Received: from mail-eopbgr20089.outbound.protection.outlook.com ([40.107.2.89]:2752
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726287AbeKZWul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:50:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmypB9cmzhlZtUh6Xye82NMmj9bxMgaldK31PaFV5sw=;
- b=WOgPI7+nZvANl9Ps3cF9UAE0FYkHNTNWnwpT3IV9KT/Vp1fh6tPwktriFN+yM2lLrEQZNCe04X0YGQw7/ndrxWWdqcZP7qSmiz99ioMPcx1Fa/epvk0yGlNteCBRbeFLYApMiKrhSbXX7mQFXuu8vXNlSVG2BwmkIDh4odziQgs=
-Received: from VI1PR08MB4223.eurprd08.prod.outlook.com (20.178.13.96) by
- VI1PR08MB3405.eurprd08.prod.outlook.com (20.177.58.223) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 26 Nov 2018 11:56:36 +0000
-Received: from VI1PR08MB4223.eurprd08.prod.outlook.com
- ([fe80::b9e5:694c:a7d1:d37b]) by VI1PR08MB4223.eurprd08.prod.outlook.com
- ([fe80::b9e5:694c:a7d1:d37b%4]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
- 11:56:36 +0000
-From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Rich Felker <dalias@libc.org>
-CC:     nd <nd@arm.com>, Florian Weimer <fweimer@redhat.com>,
-        carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
-Thread-Topic: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
-Thread-Index: AQHUgcmYxLh54Hb0r0GDFIJAvPiE/6Vb3dCAgAAH4gCAAALtAIAACQMAgAALv8yAAAU3AIAAA3NZgAAC1ACAAU9hQIAAFdiAgAArwgCAAAb7gIAABiiAgAAMMACAACrKgIAEHJ0A
-Date:   Mon, 26 Nov 2018 11:56:36 +0000
-Message-ID: <00967681-1fcf-6b22-cbd2-4a09840b8ab9@arm.com>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
- <20181122171010.GH23599@brightrain.aerifal.cx>
- <871s7cvt1l.fsf@oldenburg.str.redhat.com>
- <20181123142843.GJ23599@brightrain.aerifal.cx>
- <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com>
- <20181123173019.GK23599@brightrain.aerifal.cx>
- <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com>
- <20181123183558.GM23599@brightrain.aerifal.cx>
- <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-originating-ip: [217.140.106.49]
-x-clientproxiedby: CWLP265CA0382.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:5e::34) To VI1PR08MB4223.eurprd08.prod.outlook.com
- (2603:10a6:803:b5::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Szabolcs.Nagy@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB3405;6:QkjpbUi7Buaap6co8cJgJmaNaRVAPwheknd3sbViR9cVH3E8gHRi0m46g4eME4zILff0VMW4vXx8c8mFyi8RsUKnG44AomgkNB7oQwCeudrlu0D0elbGN8hVXJmcC0cPo/pSlZg64Ful4/LH+xA3ZHkDNoVy57uFKX84dok/gmgEyMu4r47pfP4zknXgkdLyHD4L/36pIJjP/20RUG0M0teFlzHq/J4ZKu7kd6ctLnXf7M5VSs1EfX+GipofTZcATHKwGBuqMkTgfMYffAAzMmJxC0J39B0wTbuFsmEHqniZ1V57BxbUwcX+pX0shHBWeB9nA1SOBqry4HuyeQin/pZDFrcdZvpoLZS4PpaRjcR38+3TGRZ1Wfn5XTJJrm/KPKT3G6ZoNvg+17PF8kUutwcrUhGP5MmG+I5ZS7nxcRwOlZuvfzkDpOvrpX7rwdNBXYwEpg/NzPUEpUhu6ZFIDw==;5:KbDOtd+07p7KLEI7Yf7htF+NVMMPnzOWx3m9bvDBeZX2NgEI0IQGCLUN07bl2KVZFdQeOLgGhNXPdkg/4O8Pa+09LtJHBNwyAvaROKS69rRcCSzj4FoH8XDJyNTvuNi0XMlOyfVQgzbA2f8dkIiz74wnmg8l8P20EVFByNsNchM=;7:t5rROvF9+DiKBlIs5a5M8zYBI2kV1RQPEWZB7rhKj00Cylr7AR/2WFi0IkiLC0k0Ri8yvBXdaBwCvCVWqdCiSBF/4TCVd5MHyt442lzWINDUYZKV7XKdS8HOvs+52FXfJXknuOLVy1D4kPpRlB3iAA==
-x-ms-office365-filtering-correlation-id: 9c7c794a-f659-4cf8-1080-08d65396377b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3405;
-x-ms-traffictypediagnostic: VI1PR08MB3405:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VI1PR08MB3405D2CE9587E691E813875FEDD70@VI1PR08MB3405.eurprd08.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(278428928389397);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231443)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR08MB3405;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3405;
-x-forefront-prvs: 086831DFB4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(396003)(366004)(136003)(199004)(189003)(6436002)(217873002)(4326008)(8936002)(478600001)(8676002)(81156014)(81166006)(99286004)(5660300001)(65826007)(54906003)(14454004)(229853002)(186003)(105586002)(58126008)(93886005)(3846002)(6116002)(316002)(25786009)(72206003)(110136005)(97736004)(7736002)(6486002)(305945005)(7416002)(2616005)(53546011)(6512007)(6506007)(386003)(102836004)(31686004)(486006)(44832011)(446003)(11346002)(68736007)(26005)(65806001)(476003)(66066001)(65956001)(6246003)(53936002)(39060400002)(76176011)(106356001)(14444005)(31696002)(256004)(52116002)(2906002)(86362001)(36756003)(71190400001)(71200400001)(64126003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3405;H:VI1PR08MB4223.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: TO8/8NbO6f0Ar7sDJlLKBaJ7bchezr1mGfoWdyknK3wyNMfIa3QB/UCkUl2vC6JbhLAirEgNUF8wyODwoPQ69OHlnv3a7/oPVmCv35BrCoQ5tbgGEou2zC+GLNbwQctoiziXRa+FQnB5cP1hmDmrnSYy359Q6wEaPnsd7Yu2//JefFI6sSeU/BaXl0lJ5D3KQp9NqyN70LB9WKRWRuFLUmBCARYWnBuDV1ZsW1vaj7ywmWFBV3yBUwCRjCRMZkwF/uRqoLsS+6p3tYJorxMxOErz4ycWvIIDfcD/OhBot1gXWazbsmGfLvGjngLd1BxKPbosEx9DZCVkQxSHMqGELezM2xEMOGOa69Qp118mpVA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8401165586C1614F817C35E872CA2917@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c7c794a-f659-4cf8-1080-08d65396377b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 11:56:36.4998
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3405
+        Mon, 26 Nov 2018 17:51:48 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:57826 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbeKZWvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:51:48 -0500
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id 4bxi1z0013XaVaC01bxiZN; Mon, 26 Nov 2018 12:57:42 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gRFWH-00079C-UV
+        for linux-kernel@vger.kernel.org; Mon, 26 Nov 2018 12:57:41 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gRFWH-0003va-SJ
+        for linux-kernel@vger.kernel.org; Mon, 26 Nov 2018 12:57:41 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v4.20-rc4
+Date:   Mon, 26 Nov 2018 12:57:41 +0100
+Message-Id: <20181126115741.15054-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjMvMTEvMTggMjE6MDksIE1hdGhpZXUgRGVzbm95ZXJzIHdyb3RlOg0KPiAtLS0tLSBPbiBO
-b3YgMjMsIDIwMTgsIGF0IDE6MzUgUE0sIFJpY2ggRmVsa2VyIGRhbGlhc0BsaWJjLm9yZyB3cm90
-ZToNCj4gDQo+PiBPbiBGcmksIE5vdiAyMywgMjAxOCBhdCAxMjo1MjoyMVBNIC0wNTAwLCBNYXRo
-aWV1IERlc25veWVycyB3cm90ZToNCj4+PiAtLS0tLSBPbiBOb3YgMjMsIDIwMTgsIGF0IDEyOjMw
-IFBNLCBSaWNoIEZlbGtlciBkYWxpYXNAbGliYy5vcmcgd3JvdGU6DQo+Pj4NCj4+Pj4gT24gRnJp
-LCBOb3YgMjMsIDIwMTggYXQgMTI6MDU6MjBQTSAtMDUwMCwgTWF0aGlldSBEZXNub3llcnMgd3Jv
-dGU6DQo+Pj4+PiAtLS0tLSBPbiBOb3YgMjMsIDIwMTgsIGF0IDk6MjggQU0sIFJpY2ggRmVsa2Vy
-IGRhbGlhc0BsaWJjLm9yZyB3cm90ZToNCj4+Pj4+IFsuLi5dDQo+Pj4+Pj4NCj4+Pj4+PiBBYnNv
-bHV0ZWx5LiBBcyBsb25nIGFzIGl0J3MgaW4gbGliYywgaW1wbGljaXQgZGVzdHJ1Y3Rpb24gd2ls
-bCBoYXBwZW4uDQo+Pj4+Pj4gQWN0dWFsbHkgSSB0aGluayB0aGUgZ2xpYmMgY29kZSBzaG91bmQg
-dW5jb25kaXRpb25hbGx5IHVucmVnaXN0ZXIgdGhlDQo+Pj4+Pj4gcnNlcSBhZGRyZXNzIGF0IGV4
-aXQgKGFmdGVyIGJsb2NraW5nIHNpZ25hbHMsIHNvIG5vIGFwcGxpY2F0aW9uIGNvZGUNCj4+Pj4+
-PiBjYW4gcnVuKSBpbiBjYXNlIGEgdGhpcmQtcGFydHkgcnNlcSBsaWJyYXJ5IHdhcyBsaW5rZWQg
-YW5kIGZhaWxlZCB0bw0KPj4+Pj4+IGRvIHNvIGJlZm9yZSB0aHJlYWQgZXhpdCAoZS5nLiBkdWUg
-dG8gbWlzbWF0Y2hlZCByZWYgY291bnRzKSByYXRoZXINCj4+Pj4+PiB0aGFuIHJlc3BlY3Rpbmcg
-dGhlIHJlZmVyZW5jZSBjb3VudCwgc2luY2UgaXQga25vd3MgaXQncyB0aGUgbGFzdA0KPj4+Pj4+
-IHVzZXIuIFRoaXMgd291bGQgbWFrZSBwb3RlbnRpYWxseS1idWdneSBjb2RlIHNhZmVyLg0KPj4+
-Pj4NCj4+Pj4+IE9LLCBsZXQgbWUgZ28gYWhlYWQgd2l0aCBhIGZldyBpZGVhcy9xdWVzdGlvbnMg
-YWxvbmcgdGhhdCBwYXRoLg0KPj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBeXl5eXl5eXl5eXl5eXl4NCj4+Pj4+DQo+Pj4+PiBMZXQncyBzYXkgb3Vy
-IHN0YXRlZCBnb2FsIGlzIHRvIGxldCB0aGUgImV4aXQiIHN5c3RlbSBjYWxsIGZyb20gdGhlDQo+
-Pj4+PiBnbGliYyB0aHJlYWQgZXhpdCBwYXRoIHBlcmZvcm0gcnNlcSB1bnJlZ2lzdHJhdGlvbiAo
-d2l0aG91dCBleHBsaWNpdA0KPj4+Pj4gdW5yZWdpc3RyYXRpb24gYmVmb3JlaGFuZCkuIExldCdz
-IGxvb2sgYXQgd2hhdCB3ZSBuZWVkLg0KPj4+Pg0KPj4+PiBUaGlzIGlzIG5vdCAiYWxvbmcgdGhh
-dCBwYXRoIi4gVGhlIGFib3ZlLXF1b3RlZCB0ZXh0IGlzIG5vdCBhYm91dA0KPj4+PiBhc3N1bWlu
-ZyBpdCdzIHNhZmUgdG8gbWFrZSBTWVNfZXhpdCB3aXRob3V0IHVucmVnaXN0ZXJpbmcgdGhlIHJz
-ZXENCj4+Pj4gb2JqZWN0LCBidXQgcmF0aGVyIGFib3V0IGdsaWJjIGJlaW5nIGFibGUgdG8gcGVy
-Zm9ybSB0aGUNCj4+Pj4gcnNlcS11bnJlZ2lzdGVyIHN5c2NhbGwgd2l0aG91dCBjYXJpbmcgYWJv
-dXQgcmVmZXJlbmNlIGNvdW50cywgc2luY2UNCj4+Pj4gaXQga25vd3Mgbm8gb3RoZXIgY29kZSB0
-aGF0IG1pZ2h0IGRlcGVuZCBvbiByc2VxIGNhbiBydW4gYWZ0ZXIgaXQuDQo+Pj4NCj4+PiBXaGVu
-IHNheWluZyAiYWxvbmcgdGhhdCBwYXRoIiwgd2hhdCBJIG1lYW4gaXM6IGlmIHdlIGdvIGluIHRo
-YXQgZGlyZWN0aW9uLA0KPj4+IHRoZW4gd2Ugc2hvdWxkIGxvb2sgaW50byBnb2luZyBhbGwgdGhl
-IHdheSB0aGVyZSwgYW5kIHJlbHkgb24gdGhyZWFkDQo+Pj4gZXhpdCB0byBpbXBsaWNpdGx5IHVu
-cmVnaXN0ZXIgdGhlIFRMUyBhcmVhLg0KPj4+DQo+Pj4gRG8geW91IHNlZSBhbnkgcmVhc29uIGZv
-ciBkb2luZyBhbiBleHBsaWNpdCB1bnJlZ2lzdHJhdGlvbiBhdCB0aHJlYWQNCj4+PiBleGl0IHJh
-dGhlciB0aGFuIHNpbXBseSByZWx5IG9uIHRoZSBleGl0IHN5c3RlbSBjYWxsID8NCj4+DQo+PiBX
-aGV0aGVyIHRoaXMgaXMgbmVlZGVkIGlzIGFuIGltcGxlbWVudGF0aW9uIGRldGFpbCBvZiBnbGli
-YyB0aGF0DQo+PiBzaG91bGQgYmUgcGVybWl0dGVkIHRvIHZhcnkgYmV0d2VlbiB2ZXJzaW9ucy4g
-VW5sZXNzIGdsaWJjIHdhbnRzIHRvDQo+PiBwcm9taXNlIHRoYXQgaXQgd291bGQgYmVjb21lIGEg
-cHVibGljIGd1YXJhbnRlZSwgaXQncyBub3QgcGFydCBvZiB0aGUNCj4+IGRpc2N1c3Npb24gYXJv
-dW5kIHRoZSBBUEkvQUJJLiBPbmx5IHBhcnQgb2YgdGhlIGRpc2N1c3Npb24gYXJvdW5kDQo+PiBp
-bXBsZW1lbnRhdGlvbiBpbnRlcm5hbHMgb2YgdGhlIGdsaWJjIHJzZXEgc3R1ZmYuDQo+Pg0KPj4g
-T2YgY291cnNlIEkgbWF5IGJlIGJpYXNlZCB0aGlua2luZyBhcHBsaWNhdGlvbiBjb2RlIHNob3Vs
-ZCBub3QgYXNzdW1lDQo+PiB0aGlzIHNpbmNlIGl0J3Mgbm90IHRydWUgb24gbXVzbCAtLSBmb3Ig
-ZGV0YWNoZWQgdGhyZWFkcywgdGhlIHRocmVhZA0KPj4gZnJlZXMgaXRzIG93biBzdGFjayBiZWZv
-cmUgZXhpdGluZyAoYW5kIHRodXMgaGFzIHRvIHVucmVnaXN0ZXINCj4+IHNldF90aWRfYWRkcmVz
-cyBhbmQgc2V0X3JvYnVzdGxpc3QgYmVmb3JlIGV4aXRpbmcpLg0KPiANCj4gT0ssIHNvIG9uIGds
-aWJjLCB0aGUgaW1wbGVtZW50YXRpb24gY291bGQgcmVseSBvbiBleGl0IHNpZGUtZWZmZWN0IHRv
-DQo+IGltcGxpY2l0bHkgdW5yZWdpc3RlciByc2VxLiBPbiBtdXNsLCBiYXNlZCBvbiB0aGUgc2Nl
-bmFyaW8geW91IGRlc2NyaWJlLA0KPiB0aGUgbGlicmFyeSBzaG91bGQgdW5yZWdpc3RlciByc2Vx
-IGV4cGxpY2l0bHkgYmVmb3JlIHN0YWNrIHJlY2xhaW0uDQo+IA0KPiBBbSBJIHVuZGVyc3RhbmRp
-bmcgdGhlIHNpdHVhdGlvbiBjb3JyZWN0bHkgPw0KDQppIHRoaW5rIHRoZSBwb2ludCBpcyB0aGF0
-IHlvdSBkb24ndCBuZWVkIHRvIGtub3cgdGhlc2UNCmRldGFpbHMgaW4gb3JkZXIgdG8gY29tZSB1
-cCB3aXRoIGEgZGVzaWduIHRoYXQgYWxsb3dzDQpib3RoIGltcGxlbWVudGF0aW9ucy4gKHRoZW4g
-dGhlIGxpYmMgY2FuIGNoYW5nZSBsYXRlcikNCg0Kc28NCi0gaXMgdGhlcmUgYSBuZWVkIGZvciBw
-dWJsaWMgdW5yZWdpc3RlciBhcGkgKGRvZXMgdGhlDQp1c2VyIGRvIGl0IG9yIHRoZSByc2VxIGxp
-YnJhcnkgaW1wbGljaXRseSB1bnJlZ2lzdGVycyk/DQotIGlzIHRoZXJlIGEgbmVlZCBmb3IgcmVm
-IGNvdW50aW5nIChvciB0aGUgcnNlcSBsaWINCnVuY29uZGl0aW9uYWxseSB1bnJlZ2lzdGVycyBh
-dCB0aGUgZW5kIG9mIGEgdGhyZWFkLA0KdGhlIGxpYmMgY2FuIGNlcnRhaW5seSBkbyB0aGlzKT8N
-Cg0KPj4+IE9LLCBBRkFJVSBzbyB5b3UgYXJndWUgZm9yIGxlYXZpbmcgdGhlIF9fcnNlcV9hYmkg
-c3ltYm9sICJ3ZWFrIi4gSnVzdCBtYWtpbmcNCj4+PiBzdXJlIEkgY29ycmVjdGx5IHVuZGVyc3Rh
-bmQgeW91ciBwb3NpdGlvbi4NCj4+DQo+PiBJIGRvbid0IHRoaW5rIGl0IG1hdHRlcnMsIGFuZCBJ
-IGRvbid0IHRoaW5rIG1ha2luZyBpdCB3ZWFrIGlzDQo+PiBtZWFuaW5nZnVsIG9yIHVzZWZ1bCAo
-d2VhayBpbiBhIHNoYXJlZCBsaWJyYXJ5IGlzIGxhcmdlbHkgbWVhbmluZ2xlc3MpDQo+PiBidXQg
-bWF5YmUgSSdtIG1pc3Npbmcgc29tZXRoaW5nIGhlcmUuDQo+IA0KPiBVc2luZyBhICJ3ZWFrIiBz
-eW1ib2wgaW4gZWFybHkgYWRvcHRlciBsaWJyYXJpZXMgaXMgaW1wb3J0YW50LCBzbyB0aGV5DQo+
-IGNhbiBiZSBsb2FkZWQgdG9nZXRoZXIgaW50byB0aGUgc2FtZSBwcm9jZXNzIHdpdGhvdXQgY2F1
-c2luZyBsb2FkZXINCj4gZXJyb3JzIGR1ZSB0byBtYW55IGRlZmluaXRpb25zIG9mIHRoZSBzYW1l
-IHN0cm9uZyBzeW1ib2wuDQo+IA0KPiBVc2luZyAid2VhayIgaW4gYSBDIGxpYnJhcnkgaXMgc29t
-ZXRoaW5nIEknbSBub3Qgc3VyZSBpcyBhIGNoYXJhY3RlcmlzdGljDQo+IHdlIHdhbnQgb3IgbmVl
-ZCwgYmVjYXVzZSBJIGRvdWJ0IHdlIHdvdWxkIGV2ZXIgd2FudCB0byBsb2FkIHR3byBsaWJjIGF0
-IHRoZQ0KPiBzYW1lIHRpbWUgaW4gYSBnaXZlbiBwcm9jZXNzLg0KPiANCj4gVGhlIG9ubHkgcmVh
-c29uIEkgc2VlIGZvciB1c2luZyAid2VhayIgZm9yIHRoZSBfX3JzZXFfYWJpIHN5bWJvbCBpbiB0
-aGUNCj4gbGliYyBpcyBpZiB3ZSB3YW50IHRvIGFsbG93IGVhcmx5IGFkb3B0ZXIgYXBwbGljYXRp
-b25zIHRvIGRlZmluZQ0KPiBfX3JzZXFfYWJpIGFzIGEgc3Ryb25nIHN5bWJvbCwgd2hpY2ggd291
-bGQgbWFrZSBzb21lIHNlbnNlLg0KDQp3ZWFrIHJlYWxseSBkb2VzIG5vdCBtYXR0ZXIgaW4gZHlu
-YW1pYyBsaW5raW5nDQoodW5sZXNzIHlvdSBzZXQgdGhlIExEX0RZTkFNSUNfV0VBSyBlbnYgdmFy
-IGZvcg0KYmFja3dhcmQgY29tcGF0IHdpdGggdmVyeSBvbGQgZ2xpYmMsIG9yIGlmIGl0J3MNCmFu
-IHVuZGVmaW5lZCB3ZWFrIHJlZmVyZW5jZSkNCg0KPj4gSnVzdCBibG9ja2luZyBhdCBzdGFydC9l
-eGl0IHdvbid0IHNvbHZlIHRoZSBwcm9ibGVtIGJlY2F1c2UNCj4+IGdsb2JhbC1keW5hbWljIFRM
-UyBpbiBnbGliYyBpbnZvbHZlcyBkeW5hbWljIGFsbG9jYXRpb24sIHdoaWNoIGlzIGhhcmQNCj4+
-IHRvIG1ha2UgQVMtc2FmZSBhbmQgb2YgY291cnNlIGNhbiBmYWlsLCBsZWF2aW5nIG5vIHdheSB0
-byBtYWtlIGZvcndhcmQNCj4+IHByb2dyZXNzLg0KPiANCj4gSG93IGhhcmQgd291bGQgaXQgYmUg
-dG8gY3JlYXRlIGEgYXN5bmMtc2lnbmFsLXNhZmUgbWVtb3J5IHBvb2wsIHdoaWNoIHdvdWxkDQo+
-IGJlIGFsd2F5cyBhY2Nlc3NlZCB3aXRoIHNpZ25hbHMgYmxvY2tlZCwgc28gd2UgY291bGQgZml4
-IHRob3NlIGNvcm5lci1jYXNlcw0KPiBmb3IgZ29vZCA/DQoNCnRoYXQgaXMgaGFyZC4NCg0KaW4g
-bXVzbCB0bHMgYWNjZXNzIGlzIGFzLXNhZmUsIGJ1dCBpdCB1c2VzIGEgZGlmZmVyZW50DQphcHBy
-b2FjaDogaXQgZG9lcyBhbGwgYWxsb2NhdGlvbnMgYXQgdGhyZWFkIGNyZWF0aW9uIG9yDQpkbG9w
-ZW4gdGltZS4NCg0KZ2xpYmMgaGFzIGZ1cnRoZXIgaXNzdWVzIGJlY2F1c2UgaXQgc3VwcG9ydHMg
-ZGxjbG9zZQ0Kd2l0aCBtb2R1bGUgdW5sb2FkaW5nIGFuZCB0aGVuIGR5bmFtaWMgdGxzIHJlbGF0
-ZWQNCmludGVybmFsIHN0cnVjdHVyZXMgYXJlIGhhcmQgdG8gZnJlZSAoaXQgaXMgdmFsaWQgdG8N
-CmltcGxlbWVudCBkbGNsb3NlIGFzIGEgbm9vcCwgd2hpY2ggaXMgd2hhdCBtdXNsIGRvZXMuDQp0
-bHMgYWNjZXNzIG5lZWRzIHRvIHN5bmNocm9uaXplIHdpdGggZGxvcGVuIGFuZCBkbGNsb3NlDQp3
-aGVuIGFjY2Vzc2luZyBpbnRlcm5hbCBzdHJ1Y3R1cmVzLCBidXQgeW91IG5lZWQgYQ0KbG9jay1m
-cmVlIG1lY2hhbmlzbSBpZiB0aGUgYWNjZXNzIGhhcyB0byBiZSBhcy1zYWZlLA0KYW5kIGRsY2xv
-c2UgaXMgaGFyZGVyIHRvIGRvIHRoYXQgd2F5IHRoYW4gZGxvcGVuKQ0K
+Below is the list of build error/warning regressions/improvements in
+v4.20-rc4[1] compared to v4.19[2].
+
+Summarized:
+  - build errors: +3/-0
+  - build warnings: +492/-411
+
+JFYI, when comparing v4.20-rc4[1] to v4.20-rc3[3], the summaries are:
+  - build errors: +1/-0
+  - build warnings: +105/-113
+
+Happy fixing! ;-)
+
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/2e6e902d185027f8e3cb8b7305238f7e35d6a436/ (all 240 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
+[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/9ff01193a20d391e8dbce4403dd5ef87c7eaaca6/ (all 240 configs)
+
+
+*** ERRORS ***
+
+3 error regressions:
+  + /kisskb/src/arch/s390/kernel/nospec-branch.c: error: macro "memcpy" passed 6 arguments, but takes just 3:  => 130:61
+  + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8800:3
+  + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iounmap' [-Werror=implicit-function-declaration]:  => 8417:3
+
+
+*** WARNINGS ***
+
+[Deleted 602 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on powerpc-all{mod,yes}config*]
+
+492 warning regressions:
+  + /kisskb/src/arch/arc/mm/tlb.c: warning: ISO C90 forbids variable length array 'pd0' [-Wvla]:  => 914:2
+  + /kisskb/src/arch/arc/mm/tlb.c: warning: variable length array 'pd0' is used [-Wvla]:  => 914:2
+  + /kisskb/src/arch/m68k/atari/config.c: warning: variable length array 'switches' is used [-Wvla]:  => 151:2
+  + /kisskb/src/arch/m68k/kernel/signal.c: warning: variable length array 'buf' is used [-Wvla]:  => 654:3
+  + /kisskb/src/arch/s390/kernel/machine_kexec.c: warning: 'do_start_kdump' defined but not used [-Wunused-function]:  => 145:22
+  + /kisskb/src/arch/s390/kernel/nospec-branch.c: warning: statement with no effect [-Wunused-value]:  => 130:3
+  + /kisskb/src/arch/um/os-Linux/umid.c: warning: ISO C90 forbids variable length array 'dir' [-Wvla]:  => 388:2
+  + /kisskb/src/arch/um/os-Linux/umid.c: warning: ISO C90 forbids variable length array 'file' [-Wvla]:  => 213:2, 138:2
+  + /kisskb/src/arch/x86/xen/mmu_pv.c: warning: 'i' may be used uninitialized in this function [-Wuninitialized]:  => 2787:12
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: warning: (near initialization for 'wm.sets') [-Wmissing-braces]:  => 94:9
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer_debug.c: warning: (near initialization for 'wm.sets') [-Wmissing-braces]:  => 74:9
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer_debug.c: warning: missing braces around initializer [-Wmissing-braces]:  => 74:9
+  + /kisskb/src/drivers/gpu/drm/drm_atomic_uapi.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat=]:  => 131:21
+  + /kisskb/src/drivers/i2c/busses/i2c-nvidia-gpu.c: warning: 'gpu_i2c_resume' defined but not used [-Wunused-function]:  => 344:12
+  + /kisskb/src/drivers/lightnvm/core.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]:  => 977:6
+  + /kisskb/src/drivers/mtd/nand/raw/mpc5121_nfc.c: warning: unused variable 'mtd' [-Wunused-variable]:  => 306:19
+  + /kisskb/src/drivers/net/ethernet/broadcom/bnxt/bnxt.h: warning: "writeq" redefined [enabled by default]:  => 1630:0
+  + /kisskb/src/drivers/net/ethernet/broadcom/bnxt/bnxt.h: warning: "writeq" redefined:  => 1630, 1630:0
+  + /kisskb/src/drivers/net/ethernet/broadcom/bnxt/bnxt.h: warning: "writeq_relaxed" redefined [enabled by default]:  => 1638:0
+  + /kisskb/src/drivers/net/ethernet/broadcom/bnxt/bnxt.h: warning: "writeq_relaxed" redefined:  => 1638:0, 1638
+  + /kisskb/src/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: warning: the frame size of 1232 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 218:1
+  + /kisskb/src/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: warning: the frame size of 1256 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 218:1
+  + /kisskb/src/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: warning: the frame size of 1272 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 218:1
+  + /kisskb/src/drivers/net/ethernet/mellanox/mlx5/core/en_stats.c: warning: the frame size of 1560 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 218:1
+  + /kisskb/src/drivers/net/wireless/quantenna/qtnfmac/commands.c: warning: 'resp' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 133:54
+  + /kisskb/src/drivers/net/wireless/quantenna/qtnfmac/commands.c: warning: 'resp' may be used uninitialized in this function [-Wuninitialized]:  => 132:11, 133:38
+  + /kisskb/src/drivers/scsi/myrs.c: warning: 'sshdr.sense_key' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 821:24
+  + /kisskb/src/fs/ubifs/replay.c: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 633:1
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U  a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 5a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U d20>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U e60>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33, 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U10a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1820>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U18c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1e60>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U23c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2460>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3280>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U38c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3c80>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4320>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U43c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4d20>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4e60>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5320>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5c80>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5d20>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5e60>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6280>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6820>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7000>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7500>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7e60>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U80a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9320>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9460>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U96e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9c80>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33, 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9dc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua960>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uad20>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub5a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub820>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc960>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uce60>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud0a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud1e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud320>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud500>]' may be used uninitialized in this function [-Wuninitialized]:  => 152:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udbe0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udc80>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udf00>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf140>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 133:33
+  + /kisskb/src/mm/slub.c: warning: 'deactivate_slab.isra.37' uses dynamic stack allocation [enabled by default]:  => 2170:1
+  + /kisskb/src/mm/slub.c: warning: 'get_partial_node.isra.39' uses dynamic stack allocation [enabled by default]:  => 1870:1
+  + /kisskb/src/mm/slub.c: warning: 'unfreeze_partials.isra.38' uses dynamic stack allocation [enabled by default]:  => 2238:1
+  + /kisskb/src/sound/pci/hda/patch_ca0132.c: warning: assignment makes pointer from integer without a cast [enabled by default]:  => 8800:18
+  + /kisskb/src/sound/soc/codecs/wm9712.c: warning: 'regmap' may be used uninitialized in this function [-Wuninitialized]:  => 666:31
+  + warning: vmlinux.o(.text+0x2f0d4c): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x2f1524): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x2f7e6c): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x2f8644): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x33610): Section mismatch in reference from the function setup_scache() to the function .init.text:loongson3_sc_init():  => N/A
+  + warning: vmlinux.o(.text+0x35c4): Section mismatch in reference from the variable __boot_from_prom to the function .init.text:prom_init():  => N/A
+  + warning: vmlinux.o(.text+0x36c01c): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x36c7f4): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x37f04): Section mismatch in reference from the function mips_sc_init() to the function .init.text:mips_sc_probe_cm3():  => N/A
+  + warning: vmlinux.o(.text+0x3844): Section mismatch in reference from the variable start_here_multiplatform to the function .init.text:early_setup():  => N/A
+  + warning: vmlinux.o(.text+0x3878): Section mismatch in reference from the variable start_here_common to the function .init.text:start_kernel():  => N/A
+  + warning: vmlinux.o(.text+0x4232cc): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4235b8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x42aacc): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x42adb8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4a58ec): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4a5bd8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+
+411 warning improvements:
+  - /kisskb/src/arch/s390/crypto/aes_s390.c: warning: 'fallback_blk_dec' uses dynamic stack allocation [enabled by default]: 217:1 => 
+  - /kisskb/src/arch/s390/crypto/aes_s390.c: warning: 'fallback_blk_enc' uses dynamic stack allocation [enabled by default]: 234:1 => 
+  - /kisskb/src/arch/s390/crypto/aes_s390.c: warning: 'xts_fallback_decrypt' uses dynamic stack allocation [enabled by default]: 486:1 => 
+  - /kisskb/src/arch/s390/crypto/aes_s390.c: warning: 'xts_fallback_encrypt' uses dynamic stack allocation [enabled by default]: 505:1 => 
+  - /kisskb/src/arch/s390/kernel/perf_cpum_sf.c: warning: 'perf_push_sample' uses dynamic stack allocation [enabled by default]: 1075:1 => 
+  - /kisskb/src/arch/sparc/include/asm/cmpxchg_64.h: warning: value computed is not used [-Wunused-value]: 55:22 => 
+  - /kisskb/src/arch/um/os-Linux/skas/process.c: warning: control reaches end of non-void function [-Wreturn-type]: 613:1 => 
+  - /kisskb/src/arch/x86/xen/mmu.c: warning: 'i' may be used uninitialized in this function [-Wuninitialized]: 156:12 => 
+  - /kisskb/src/crypto/algif_aead.c: warning: 'crypto_aead_copy_sgl' uses dynamic stack allocation [enabled by default]: 90:1 => 
+  - /kisskb/src/crypto/algif_hash.c: warning: 'hash_accept' uses dynamic stack allocation [enabled by default]: 276:1 => 
+  - /kisskb/src/crypto/authenc.c: warning: 'crypto_authenc_copy_assoc' uses dynamic stack allocation [enabled by default]: 197:1 => 
+  - /kisskb/src/crypto/authencesn.c: warning: 'crypto_authenc_esn_copy' uses dynamic stack allocation [enabled by default]: 194:1 => 
+  - /kisskb/src/crypto/cbc.c: warning: 'crypto_cbc_decrypt' uses dynamic stack allocation [enabled by default]: 79:1 => 
+  - /kisskb/src/crypto/ccm.c: warning: 'crypto_ccm_auth' uses dynamic stack allocation [enabled by default]: 235:1 => 
+  - /kisskb/src/crypto/cryptd.c: warning: 'cryptd_skcipher_decrypt' uses dynamic stack allocation [enabled by default]: 533:1 => 
+  - /kisskb/src/crypto/cryptd.c: warning: 'cryptd_skcipher_encrypt' uses dynamic stack allocation [enabled by default]: 505:1 => 
+  - /kisskb/src/crypto/echainiv.c: warning: 'echainiv_encrypt' uses dynamic stack allocation [enabled by default]: 88:1 => 
+  - /kisskb/src/crypto/gcm.c: warning: 'crypto_rfc4543_copy_src_to_dst' uses dynamic stack allocation [enabled by default]: 1077:1 => 
+  - /kisskb/src/crypto/hmac.c: warning: 'hmac_setkey' uses dynamic stack allocation [enabled by default]: 88:1 => 
+  - /kisskb/src/crypto/seqiv.c: warning: 'seqiv_aead_encrypt' uses dynamic stack allocation [enabled by default]: 115:1 => 
+  - /kisskb/src/crypto/shash.c: warning: 'shash_final_unaligned' uses dynamic stack allocation [enabled by default]: 141:1 => 
+  - /kisskb/src/crypto/shash.c: warning: 'shash_update_unaligned' uses dynamic stack allocation [enabled by default]: 105:1 => 
+  - /kisskb/src/crypto/xcbc.c: warning: 'crypto_xcbc_digest_setkey' uses dynamic stack allocation [enabled by default]: 79:1 => 
+  - /kisskb/src/drivers/block/cryptoloop.c: warning: 'cryptoloop_transfer' uses dynamic stack allocation [enabled by default]: 167:1 => 
+  - /kisskb/src/drivers/block/drbd/drbd_receiver.c: warning: 'drbd_do_auth' uses dynamic stack allocation [enabled by default]: 5400:1 => 
+  - /kisskb/src/drivers/block/drbd/drbd_worker.c: warning: 'drbd_csum_bio' uses dynamic stack allocation [enabled by default]: 352:1 => 
+  - /kisskb/src/drivers/block/drbd/drbd_worker.c: warning: 'drbd_csum_ee' uses dynamic stack allocation [enabled by default]: 325:1 => 
+  - /kisskb/src/drivers/crypto/ccree/cc_cipher.c: warning: 'cc_cipher_setkey' uses dynamic stack allocation [enabled by default]: 383:1 => 
+  - /kisskb/src/drivers/crypto/chelsio/chcr_algo.c: warning: 'chcr_ahash_setkey' uses dynamic stack allocation [enabled by default]: 2081:1 => 
+  - /kisskb/src/drivers/crypto/chelsio/chcr_algo.c: warning: 'chcr_authenc_setkey' uses dynamic stack allocation [enabled by default]: 3496:1 => 
+  - /kisskb/src/drivers/crypto/chelsio/chcr_algo.c: warning: 'chcr_cipher_fallback' uses dynamic stack allocation [enabled by default]: 699:1 => 
+  - /kisskb/src/drivers/crypto/mediatek/mtk-sha.c: warning: 'mtk_sha_finish_hmac' uses dynamic stack allocation [enabled by default]: 373:1 => 
+  - /kisskb/src/drivers/crypto/mediatek/mtk-sha.c: warning: 'mtk_sha_setkey' uses dynamic stack allocation [enabled by default]: 834:1 => 
+  - /kisskb/src/drivers/crypto/qce/ablkcipher.c: warning: 'qce_ablkcipher_crypt' uses dynamic stack allocation [enabled by default]: 229:1 => 
+  - /kisskb/src/drivers/crypto/s5p-sss.c: warning: 's5p_hash_shash_digest' uses dynamic stack allocation [enabled by default]: 1534:1 => 
+  - /kisskb/src/drivers/firmware/google/coreboot_table.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 102:9 => 
+  - /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: warning: (near initialization for 'blnd_cfg.black_color') [-Wmissing-braces]: 1903:9 => 
+  - /kisskb/src/drivers/gpu/drm/drm_atomic.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat=]: 441:21 => 
+  - /kisskb/src/drivers/iio/proximity/isl29501.c: warning: 'msb' may be used uninitialized in this function [-Wuninitialized]: 253:34, 253:7 => 
+  - /kisskb/src/drivers/infiniband/sw/rxe/rxe_icrc.c: warning: 'rxe_icrc_hdr' uses dynamic stack allocation [enabled by default]: 96:1 => 
+  - /kisskb/src/drivers/infiniband/sw/rxe/rxe_mr.c: warning: 'rxe_mem_copy' uses dynamic stack allocation [enabled by default]: 431:1 => 
+  - /kisskb/src/drivers/infiniband/sw/rxe/rxe_recv.c: warning: 'rxe_rcv' uses dynamic stack allocation [enabled by default]: 423:1 => 
+  - /kisskb/src/drivers/infiniband/sw/rxe/rxe_req.c: warning: 'fill_packet.isra.33' uses dynamic stack allocation [enabled by default]: 506:1 => 
+  - /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_essiv_init' uses dynamic stack allocation [enabled by default]: 350:1 => 
+  - /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_lmk_one.isra.26' uses dynamic stack allocation [enabled by default]: 645:1 => 
+  - /kisskb/src/drivers/md/dm-crypt.c: warning: 'crypt_iv_tcw_whitening.isra.25' uses dynamic stack allocation [enabled by default]: 792:1 => 
+  - /kisskb/src/drivers/md/dm-integrity.c: warning: '__journal_read_write' uses dynamic stack allocation [enabled by default]: 1648:1 => 
+  - /kisskb/src/drivers/md/dm-integrity.c: warning: 'do_journal_write' uses dynamic stack allocation [enabled by default]: 2060:1 => 
+  - /kisskb/src/drivers/md/dm-integrity.c: warning: 'integrity_metadata' uses dynamic stack allocation [enabled by default]: 1415:1 => 
+  - /kisskb/src/drivers/md/dm-integrity.c: warning: 'integrity_sector_checksum' uses dynamic stack allocation [enabled by default]: 1311:1 => 
+  - /kisskb/src/drivers/md/dm-integrity.c: warning: 'section_mac' uses dynamic stack allocation [enabled by default]: 574:1 => 
+  - /kisskb/src/drivers/md/dm-verity-fec.c: warning: 'fec_read_bufs' uses dynamic stack allocation [enabled by default]: 301:1 => 
+  - /kisskb/src/drivers/mtd/nand/raw/qcom_nandc.c: warning: "PAGE_READ" redefined: 154 => 
+  - /kisskb/src/drivers/net/ppp/ppp_mppe.c: warning: 'mppe_compress' uses dynamic stack allocation [enabled by default]: 445:1 => 
+  - /kisskb/src/drivers/net/ppp/ppp_mppe.c: warning: 'mppe_decompress' uses dynamic stack allocation [enabled by default]: 670:1 => 
+  - /kisskb/src/drivers/net/ppp/ppp_mppe.c: warning: 'mppe_rekey' uses dynamic stack allocation [enabled by default]: 186:1 => 
+  - /kisskb/src/drivers/nfc/s3fwrn5/firmware.c: warning: 's3fwrn5_fw_download' uses dynamic stack allocation [enabled by default]: 501:1 => 
+  - /kisskb/src/drivers/pinctrl/cirrus/pinctrl-madera-core.c: warning: 'reg' may be used uninitialized in this function [-Wuninitialized]: 660:3 => 
+  - /kisskb/src/drivers/pinctrl/cirrus/pinctrl-madera-core.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 659:5 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_add_vlan_id' uses dynamic stack allocation [enabled by default]: 311:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_del_vlan_id' uses dynamic stack allocation [enabled by default]: 325:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_dev_init' uses dynamic stack allocation [enabled by default]: 487:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_query_rgid' uses dynamic stack allocation [enabled by default]: 209:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_register_dmb' uses dynamic stack allocation [enabled by default]: 276:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_signal_ieq' uses dynamic stack allocation [enabled by default]: 353:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'ism_unregister_dmb' uses dynamic stack allocation [enabled by default]: 297:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'query_info' uses dynamic stack allocation [enabled by default]: 84:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'register_ieq' uses dynamic stack allocation [enabled by default]: 140:1 => 
+  - /kisskb/src/drivers/s390/net/ism_drv.c: warning: 'register_sba' uses dynamic stack allocation [enabled by default]: 111:1 => 
+  - /kisskb/src/drivers/staging/comedi/drivers/pcl818.c: warning: 'last_chan' may be used uninitialized in this function [-Wuninitialized]: 337:6 => 
+  - /kisskb/src/drivers/staging/fsl-dpaa2/ethsw/ethsw.c: warning: 'err' may be used uninitialized in this function [-Wuninitialized]: 720:11, 927:2 => 
+  - /kisskb/src/drivers/usb/wusbcore/crypto.c: warning: 'wusb_ccm_mac' uses dynamic stack allocation [enabled by default]: 286:1 => 
+  - /kisskb/src/fs/crypto/keyinfo.c: warning: 'derive_essiv_salt' uses dynamic stack allocation [enabled by default]: 250:1 => 
+  - /kisskb/src/fs/ecryptfs/crypto.c: warning: 'ecryptfs_hash_digest' uses dynamic stack allocation [enabled by default]: 75:1 => 
+  - /kisskb/src/fs/nfsd/nfs4recover.c: warning: 'nfs4_make_rec_clidname' uses dynamic stack allocation [enabled by default]: 147:1 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 3c0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U a00>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U aa0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U c80>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1000>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1320>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2820>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U28c0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2be0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U30a0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3460>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3780>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U40a0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4280>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4460>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4640>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4820>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4aa0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5460>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5640>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5820>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5dc0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6500>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6640>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6f00>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U76e0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7960>]' may be used uninitialized in this function [-Wuninitialized]: 129:33, 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7dc0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8280>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U85a0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8640>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8dc0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9000>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U91e0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33, 148:32 => 133:33
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U95a0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9a00>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9d20>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua500>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uaa00>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uaaa0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uae60>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub000>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub0a0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub780>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ubbe0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc320>]' may be used uninitialized in this function [-Wuninitialized]: 148:32, 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc3c0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc820>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud640>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud6e0>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uda00>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uddc0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue3c0>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ueb40>]' may be used uninitialized in this function [-Wuninitialized]: 148:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf820>]' may be used uninitialized in this function [-Wuninitialized]: 129:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ufa00>]' may be used uninitialized in this function [-Wuninitialized]: 129:33, 148:32 => 
+  - /kisskb/src/kernel/sched/core.c: warning: unused variable 'steal' [-Wunused-variable]: 139:6 => 
+  - /kisskb/src/lib/libcrc32c.c: warning: 'crc32c' uses dynamic stack allocation [enabled by default]: 59:1 => 
+  - /kisskb/src/lib/test_ubsan.c: warning: 'test_ubsan_out_of_bounds' uses dynamic stack allocation [enabled by default]: 67:1 => 
+  - /kisskb/src/lib/test_ubsan.c: warning: 'test_ubsan_vla_bound_not_positive' uses dynamic stack allocation [enabled by default]: 51:1 => 
+  - /kisskb/src/lib/ubsan.c: warning: ignoring attribute 'noreturn' in declaration of a built-in function '__ubsan_handle_builtin_unreachable' because it conflicts with attribute 'const' [-Wattributes]: 432:1 => 
+  - /kisskb/src/mm/nobootmem.c: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]: 65:8 => 
+  - /kisskb/src/mm/slub.c: warning: 'deactivate_slab.isra.50' uses dynamic stack allocation [enabled by default]: 2132:1 => 
+  - /kisskb/src/mm/slub.c: warning: 'get_partial_node.isra.52' uses dynamic stack allocation [enabled by default]: 1832:1 => 
+  - /kisskb/src/mm/slub.c: warning: 'unfreeze_partials.isra.51' uses dynamic stack allocation [enabled by default]: 2200:1 => 
+  - /kisskb/src/mm/swap_state.c: warning: 'error' may be used uninitialized in this function [-Wuninitialized]: 135:5 => 
+  - /kisskb/src/net/bridge/netfilter/ebtables.c: warning: 'compat_copy_everything_to_user' uses dynamic stack allocation [enabled by default]: 1906:1 => 
+  - /kisskb/src/net/ceph/crypto.c: warning: 'ceph_aes_crypt.isra.4' uses dynamic stack allocation [enabled by default]: 278:1 => 
+  - /kisskb/src/net/mac802154/llsec.c: warning: 'llsec_do_decrypt_unauth.isra.3' uses dynamic stack allocation [enabled by default]: 859:1 => 
+  - /kisskb/src/net/mac802154/llsec.c: warning: 'llsec_do_encrypt_unauth.isra.4' uses dynamic stack allocation [enabled by default]: 641:1 => 
+  - /kisskb/src/net/rxrpc/rxkad.c: warning: 'rxkad_decrypt_response.isra.6' uses dynamic stack allocation [enabled by default]: 1051:1 => 
+  - /kisskb/src/net/rxrpc/rxkad.c: warning: 'rxkad_encrypt_response.isra.7' uses dynamic stack allocation [enabled by default]: 772:1 => 
+  - /kisskb/src/net/rxrpc/rxkad.c: warning: 'rxkad_prime_packet_security' uses dynamic stack allocation [enabled by default]: 141:1 => 
+  - /kisskb/src/net/rxrpc/rxkad.c: warning: 'rxkad_secure_packet' uses dynamic stack allocation [enabled by default]: 313:1 => 
+  - /kisskb/src/net/rxrpc/rxkad.c: warning: 'rxkad_verify_packet' uses dynamic stack allocation [enabled by default]: 564:1 => 
+  - /kisskb/src/net/sctp/auth.c: warning: 'sctp_auth_calculate_hmac' uses dynamic stack allocation [enabled by default]: 778:1 => 
+  - /kisskb/src/net/sctp/sm_make_chunk.c: warning: 'sctp_pack_cookie.isra.9' uses dynamic stack allocation [enabled by default]: 1700:1 => 
+  - /kisskb/src/net/sctp/sm_make_chunk.c: warning: 'sctp_unpack_cookie' uses dynamic stack allocation [enabled by default]: 1877:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'gss_decrypt_xdr_buf' uses dynamic stack allocation [enabled by default]: 634:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'gss_encrypt_xdr_buf' uses dynamic stack allocation [enabled by default]: 555:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'gss_krb5_aes_decrypt' uses dynamic stack allocation [enabled by default]: 942:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'gss_krb5_aes_encrypt' uses dynamic stack allocation [enabled by default]: 849:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'gss_krb5_cts_crypt' uses dynamic stack allocation [enabled by default]: 728:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'krb5_decrypt' uses dynamic stack allocation [enabled by default]: 129:1 => 
+  - /kisskb/src/net/sunrpc/auth_gss/gss_krb5_crypto.c: warning: 'krb5_encrypt' uses dynamic stack allocation [enabled by default]: 91:1 => 
+  - /kisskb/src/net/sunrpc/stats.c: warning: 'rpc_clnt_show_stats' uses dynamic stack allocation [enabled by default]: 268:1 => 
+  - /kisskb/src/net/tipc/topsrv.c: warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]: 660:2 => 
+  - /kisskb/src/security/apparmor/crypto.c: warning: 'aa_calc_hash' uses dynamic stack allocation [enabled by default]: 64:1 => 
+  - /kisskb/src/security/apparmor/crypto.c: warning: 'aa_calc_profile_hash' uses dynamic stack allocation [enabled by default]: 106:1 => 
+  - /kisskb/src/security/integrity/ima/ima_crypto.c: warning: 'calc_buffer_shash_tfm' uses dynamic stack allocation [enabled by default]: 600:1 => 
+  - /kisskb/src/security/integrity/ima/ima_crypto.c: warning: 'ima_calc_boot_aggregate_tfm' uses dynamic stack allocation [enabled by default]: 667:1 => 
+  - /kisskb/src/security/integrity/ima/ima_crypto.c: warning: 'ima_calc_field_array_hash_tfm.isra.3' uses dynamic stack allocation [enabled by default]: 493:1 => 
+  - /kisskb/src/security/integrity/ima/ima_crypto.c: warning: 'ima_calc_file_hash_tfm' uses dynamic stack allocation [enabled by default]: 388:1 => 
+  - /kisskb/src/security/keys/encrypted-keys/encrypted.c: warning: 'calc_hash' uses dynamic stack allocation [enabled by default]: 337:1 => 
+  - warning: There are too many unreachable loose objects; run 'git prune' to remove them.: N/A => 
+  - warning: drivers/hwmon/ibmpowernv.o(.text+0xfe8): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label(): N/A => 
+  - warning: vmlinux.o(.text+0x2f3bf0): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x2f4434): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x2fa9d0): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x2fb214): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x336d8): Section mismatch in reference from the function setup_scache() to the function .init.text:loongson3_sc_init(): N/A => 
+  - warning: vmlinux.o(.text+0x3679c0): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x368204): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x36b4): Section mismatch in reference from the variable __boot_from_prom to the function .init.text:prom_init(): N/A => 
+  - warning: vmlinux.o(.text+0x380e0): Section mismatch in reference from the function mips_sc_init() to the function .init.text:mips_sc_probe_cm3(): N/A => 
+  - warning: vmlinux.o(.text+0x3944): Section mismatch in reference from the variable start_here_multiplatform to the function .init.text:early_setup(): N/A => 
+  - warning: vmlinux.o(.text+0x3978): Section mismatch in reference from the variable start_here_common to the function .init.text:start_kernel(): N/A => 
+  - warning: vmlinux.o(.text+0x42332c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x423628): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x42aa6c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x42ad68): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x49e40c): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x49e708): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory(): N/A => 
+  - warning: vmlinux.o(.text+0x4df549c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x26a8): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x2718): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x2820): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x293c): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping(): N/A => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
