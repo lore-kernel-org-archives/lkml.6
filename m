@@ -2,105 +2,69 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82396C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA766C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4399521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:50:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4399521104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 48C4221104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:50:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="WoMJG2+t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C4221104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enneenne.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbeKZVnx (ORCPT
+        id S1726333AbeKZVn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:43:53 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59694 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeKZVnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:43:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDB1F351D;
-        Mon, 26 Nov 2018 02:50:09 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 636DE3F5AF;
-        Mon, 26 Nov 2018 02:50:08 -0800 (PST)
-Date:   Mon, 26 Nov 2018 10:50:05 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Qian Cai <cai@gmx.us>
-Cc:     Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>, arnd@arndb.de,
-        linux kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] debugobjects: scale the static pool size
-Message-ID: <20181126105005.GA33554@arrakis.emea.arm.com>
-References: <20181120232810.2503-1-cai@gmx.us>
- <20181121021157.3061-1-cai@gmx.us>
- <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
- <EAB01918-727E-4E6F-AC7F-0417CA469D5A@gmx.us>
- <211af3b2-bc56-2d1b-c6c2-f6853797a7a1@gmx.us>
- <473f6a6e-1a14-d07c-b0f0-4d96e3232d1a@redhat.com>
- <5abb31e1-b5f2-718d-3a48-b0d8a73d6e5c@gmx.us>
- <0cba9054-99dd-9dbe-3da8-e10d25752c5b@gmx.us>
+        Mon, 26 Nov 2018 16:43:59 -0500
+Received: from smtpcmd02101.aruba.it ([62.149.158.101]:35946 "EHLO
+        smtpcmd02101.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeKZVn7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:43:59 -0500
+Received: from [192.168.1.9] ([93.146.66.165])
+        by smtpcmd02.ad.aruba.it with bizsmtp
+        id 4aj61z01a3Zw7e501aj7yx; Mon, 26 Nov 2018 11:43:08 +0100
+Subject: Re: [PATCH -next] pps: using ERR_PTR instead of NULL while
+ pps_register_source fails
+To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        richardcochran@gmail.com, sudipm.mukherjee@gmail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20181126102422.24028-1-yuehaibing@huawei.com>
+From:   Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <44edc27b-e679-24e8-aef1-fe5b7570f982@enneenne.com>
+Date:   Mon, 26 Nov 2018 11:43:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0cba9054-99dd-9dbe-3da8-e10d25752c5b@gmx.us>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126102422.24028-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
+        t=1543228988; bh=MluToJhWCZX1nXl3wYU9v5bVHpn+Q0Lqn+8O9JqB60s=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=WoMJG2+t+5t20Vr8fdBEpN50FCGp8tlZk4FNWAyoLDu063xiZZwYmEvVA3fahCizA
+         7zKQRy8oV01FNC9zdpa/GBzAn41tQkBT0yL7QWk1tNqkF+7G14z+M2xZjCmjUAkT89
+         ZxSt93+eT+YIMXYpqNjZ/7YmXFwOoZOugrVBQPOcgnGtNKga5ymeriHu/0N9LEqDhL
+         xRhI0IulLaCuI1gxPE5r0eTRzjDZhwxf3Ww0+1t2FTahuEtKwx0JQry80WndvQe9qE
+         SRc84o3DmwAcsn6iWUDc3bakUAJfWx+su4eQd38D8eGiAcExmarYwRqPRKFtktfot7
+         B2PfWhNDfSjww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:45:54AM -0500, Qian Cai wrote:
-> On 11/25/18 11:52 PM, Qian Cai wrote:
-> > BTW, calling debug_objects_mem_init() before kmemleak_init() actually
-> > could trigger a loop on machines with 160+ CPUs until the pool is filled
-> > up,
-> > 
-> > debug_objects_pool_min_level += num_possible_cpus() * 4;
-> > 
-> > [1] while (obj_pool_free < debug_objects_pool_min_level)
-> > 
-> > kmemleak_init
-> >    kmemleak_ignore (from replaced static debug objects)
-> >      make_black_object
-> >        put_object
-> >          __call_rcu (kernel/rcu/tree.c)
-> >            debug_rcu_head_queue
-> >              debug_object_activate
-> >                debug_object_init
-> >                  fill_pool
-> >                    kmemleak_ignore (looping in [1])
-> >                      make_black_object
-> >                        ...
-> > 
-> > I think until this is resolved, there is no way to move
-> > debug_objects_mem_init() before kmemleak_init().
+On 26/11/2018 11:24, YueHaibing wrote:
+> pps_register_source() has keeps error codes in a local variable,
+> but it does not make use of the code. This patch let it return
+> the errcode in case of failure.
 > 
-> I believe this is a separate issue that kmemleak is broken with
-> CONFIG_DEBUG_OBJECTS_RCU_HEAD anyway where the infinite loop above could be
-> triggered in the existing code as well, i.e., once the pool need be refilled
-> (fill_pool()) after the system boot up, debug object creation will call
-> kmemleak_ignore() and it will create a new rcu debug_object_init(), and then
-> it will call fill_pool() again and again. As the results, the system is
-> locking up during kernel compilations.
-> 
-> Hence, I'll send out a patch for debug objects with large CPUs anyway and
-> deal with kmemleak + CONFIG_DEBUG_OBJECTS_RCU_HEAD issue later.
+> Suggested-by: Richard Cochran <richardcochran@gmail.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-I haven't hit this before but I can see why it happens. Kmemleak uses
-RCU for freeing its own data structures to avoid a recursive call to
-sl*b (kmem_cache_free()). Since we already tell kmemleak to ignore the
-debug_objects_cache allocations, I think we could as well add
-SLAB_NOLEAKTRACE to kmem_cache_create() (I haven't tried yet, this was
-not a documented API for kmemleak, rather used to avoid kmemleak
-tracking itself).
-
--- 
-Catalin
+Acked-by: Rodolfo Giometti <giometti@enneenne.com>
