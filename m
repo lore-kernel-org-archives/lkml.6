@@ -2,101 +2,100 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1884C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D29C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 774B620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EAD2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:16:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQsLW93Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774B620855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1zgxT6p/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EAD2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbeKZTH4 (ORCPT
+        id S1726266AbeKZTJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:07:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726164AbeKZTHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:07:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FA442086E;
-        Mon, 26 Nov 2018 08:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543220074;
-        bh=8ukvXMCc3Gu2teV2zI0yJSYwANp43x7k33vqpKeEbbw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PQsLW93Z9AEcD+H0HIeI3DyOR18pOPSV9CgefF5dUzfx3FA+Mwmbjv+IHigHDvCng
-         TTCAJI3HOuQQzHykCAcvdHAhE9buiX1DzWty82X4M7cI3z0Q/9GySPKXibEFK8A65B
-         ojBDOteHeCO+jJEk3PHEBKP+QyWhuQ2meJTqu02g=
-Date:   Mon, 26 Nov 2018 09:14:32 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Amanoel Dawod <amanoel@amanoeldawod.com>
-Cc:     akpm@linux-foundation.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fonts: New Terminus large console font
-Message-ID: <20181126081432.GA30722@kroah.com>
-References: <20181126034734.9423-1-amanoeladawod@gmail.com>
- <20181126065646.GA9680@kroah.com>
- <CACd_pd8o5vA85ppNp3hzm+awBvwq6VEONij6rHAPExmPfjaWRA@mail.gmail.com>
+        Mon, 26 Nov 2018 14:09:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45565 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeKZTJW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:09:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v6so17816983wrr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:16:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NGqFs2PFaLlGrGO7grCWGkhmYr5kPA8K8eAuGVHnppo=;
+        b=1zgxT6p/aIGtBiI5xjby6ate96hQl2CzVHFfo43WG+/mb56LdssSLdh/zSJ0r4yfNa
+         sbr2I3k4JTe3Q1NC1XDIjkLGwcpRY5yINBmNEB7Qs/ng6epWtbY6mtldXvbhsHl+GBqo
+         LZKPV3bxrAfFkVD3tbw/Yeg78a82utVx8M+KiuaPyT+9F8C00+afrknx+rFdCHHbhE0+
+         lBuErZp1Zf9HadLJFkS3Idu/7sTH7l3lmhvDkmKruuWsVXgQwmu1fGLe6jiVLIzyzqiq
+         bVl7yisq5oHKsTASrMUBDL0dj/TosZ7KMyOemWdgEqrk/QfWnFFdMLtxnBUO5qqK+kse
+         Wnqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NGqFs2PFaLlGrGO7grCWGkhmYr5kPA8K8eAuGVHnppo=;
+        b=QmLPIW0W3ZTVbCAn4iwZstqu00VrRcTP+hqvT363sj16D1/8wAbPtWinDvHxk3o/iQ
+         ye1M4xTmnuejlpWSE1RznQF7ZdLWbEHoPCZf1sS5325o6cwm2Q6cB12a4bYE7iUyXgJm
+         lsx3F17BrE/KmC/Xr8CZHKAo1WNDBiJt5shytsvnlNC0F8QHz1Nui3AXzakBsApkRD+i
+         8QxGd1nRu2hGAsZ86hDynu7qke9t4rFJJYnIPIeT/T1/473OGNACIXK/bMwn0vATbutY
+         lXEaEW591/x77ITOSpvHZBBJGhhxp57gZQGrZZqrZhRb2gK6QScXLyPrVkSBQt/Av2yQ
+         i7Mg==
+X-Gm-Message-State: AA+aEWb4Y8xpjsHVe65t4T/+ORcQE6g21FVth++0xvKW5qVAANiYDMVq
+        /RPE/eoyOM/qynbf5LofFd82UA==
+X-Google-Smtp-Source: AFSGD/XfAEPbICqhVjpn8q0v8Qm3oWs7hFwy2e/GNMyEaE6MflXaekV1+YhR8hat/MqZIv4zWKMYrw==
+X-Received: by 2002:a5d:6aca:: with SMTP id u10mr21943294wrw.310.1543220160895;
+        Mon, 26 Nov 2018 00:16:00 -0800 (PST)
+Received: from debian-brgl.home (lfbn-mar-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
+        by smtp.gmail.com with ESMTPSA id b10-v6sm39988564wrt.49.2018.11.26.00.15.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 00:16:00 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] MAINTAINERS: remove a duplicate entry for gpio-mockup
+Date:   Mon, 26 Nov 2018 09:15:58 +0100
+Message-Id: <20181126081558.32175-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACd_pd8o5vA85ppNp3hzm+awBvwq6VEONij6rHAPExmPfjaWRA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+I'll be getting all GPIO e-mail now, so remove my name from reviewers
+of gpio-mockup.
 
-A: No.
-Q: Should I include quotations after my reply?
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 380e43f585d3..021c73808212 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6299,7 +6299,6 @@ F:	drivers/media/rc/gpio-ir-tx.c
+ 
+ GPIO MOCKUP DRIVER
+ M:	Bamvor Jian Zhang <bamv2005@gmail.com>
+-R:	Bartosz Golaszewski <brgl@bgdev.pl>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-mockup.c
+-- 
+2.19.1
 
-http://daringfireball.net/2007/07/on_top
-
-On Mon, Nov 26, 2018 at 03:09:31AM -0500, Amanoel Dawod wrote:
-> Changing the name did not break anything. Pretty much I dumped the original
-> .psf file to .inc
-> format with new naming using psftools extracting the bitmap data. Then
-> manually editing it
-> removing useless header, leaving bitmaps data alone.
-
-I did not refer to any name, just the #define that you changed.
-
-> Do you mean adding it at end of lists with other fonts? if that's what you
-> mean,
-> no real reason, but just wanted it to be after sun12x22 always as in
-> Kconfig.
-
-You can put it wherever you want in the Kconfig file (but you should put
-it at the end, as it is a new font.)  I mean the #defines, you need to
-just add it at the end please, do not change any existing #defines.
-
-
-> Please let me know if that must be changed.
-> Now regarding "From:" line, please accept my apology as it my first time
-> dealing
-> with submissions and git send-mail. Should I re-submit the patch with
-> modified subject line?
-
-Not subject line, From: line from your email client.  And you need to
-change the patch anyway before it could be added, so you have to resend
-it :)
-
-thanks,
-
-greg k-h
