@@ -2,54 +2,49 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAD_ENC_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB1FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5821CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 558362089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E89521104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1+J1KHN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 558362089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbRwnR23"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E89521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeKZVvk (ORCPT
+        id S1729096AbeKZVvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32898 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeKZVvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:39 -0500
+        id S1726200AbeKZVvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0A6221104;
-        Mon, 26 Nov 2018 10:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 741F92146F;
+        Mon, 26 Nov 2018 10:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229875;
-        bh=CvjCbr8nby7ftXkExZ3yYN/GGpfob6ABRgSdCGJXQAs=;
+        s=default; t=1543229877;
+        bh=utfwebwFfuGBGhmsaByEc1ZJHhhZR8qCW8dI+qdRyhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B1+J1KHNjCXIRwc4mr9cjFKsfZbbh3iTcHfUko/jQ6h/eH/bUhHycbw4eyAPbz+kg
-         PWY7M55sjJLDp5LbluhRhcrDe7UEyQZRoZvKuI7x3aFhQDK/s4972RWlrHhsvdi+JN
-         B/JEgmjT/76ZDpAC4vYBTWbmOiECHH6J8T0kXnYs=
+        b=rbRwnR23LIjK18vYohKEMhz366MW+S6xaEzN5HkwK+/9krpmvLq5hkoVWYfXiRDZR
+         DnLuZCH9Iz1U8NKXaGYfIe/pxqtL37azi1HY7F3KFUIlMyIjdeYMFqsyTHS6ur7mfG
+         c/7/GO0tQ+9DLNOtGuj228+ZG1h+yf2wcV/HWJiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 04/46] hfsplus: prevent btree data loss on root split
-Date:   Mon, 26 Nov 2018 11:50:53 +0100
-Message-Id: <20181126105046.059782129@linuxfoundation.org>
+Subject: [PATCH 4.9 05/46] um: Give start_idle_thread() a return code
+Date:   Mon, 26 Nov 2018 11:50:54 +0100
+Message-Id: <20181126105046.168063599@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -67,57 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a3021d4f5295aa073c7bf5c5e4de60a2e292578 ]
+[ Upstream commit 7ff1e34bbdc15acab823b1ee4240e94623d50ee8 ]
 
-Creating, renaming or deleting a file may cause catalog corruption and
-data loss.  This bug is randomly triggered by xfstests generic/027, but
-here is a faster reproducer:
+Fixes:
+arch/um/os-Linux/skas/process.c:613:1: warning: control reaches end of
+non-void function [-Wreturn-type]
 
-  truncate -s 50M fs.iso
-  mkfs.hfsplus fs.iso
-  mount fs.iso /mnt
-  i=100
-  while [ $i -le 150 ]; do
-    touch /mnt/$i &>/dev/null
-    ((++i))
-  done
-  i=100
-  while [ $i -le 150 ]; do
-    mv /mnt/$i /mnt/$(perl -e "print $i x82") &>/dev/null
-    ((++i))
-  done
-  umount /mnt
-  fsck.hfsplus -n fs.iso
+longjmp() never returns but gcc still warns that the end of the function
+can be reached.
+Add a return code and debug aid to detect this impossible case.
 
-The bug is triggered whenever hfs_brec_update_parent() needs to split the
-root node.  The height of the btree is not increased, which leaves the new
-node orphaned and its records lost.
-
-Link: http://lkml.kernel.org/r/26d882184fc43043a810114258f45277752186c7.1535682461.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/brec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/um/os-Linux/skas/process.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 754fdf8c6356..1002a0c08319 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -427,6 +427,10 @@ skip:
- 	if (new_node) {
- 		__be32 cnid;
+diff --git a/arch/um/os-Linux/skas/process.c b/arch/um/os-Linux/skas/process.c
+index 23025d645160..0a99d4515065 100644
+--- a/arch/um/os-Linux/skas/process.c
++++ b/arch/um/os-Linux/skas/process.c
+@@ -578,6 +578,11 @@ int start_idle_thread(void *stack, jmp_buf *switch_buf)
+ 		fatal_sigsegv();
+ 	}
+ 	longjmp(*switch_buf, 1);
++
++	/* unreachable */
++	printk(UM_KERN_ERR "impossible long jump!");
++	fatal_sigsegv();
++	return 0;
+ }
  
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
+ void initial_thread_cb_skas(void (*proc)(void *), void *arg)
 -- 
 2.17.1
 
