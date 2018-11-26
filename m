@@ -2,228 +2,210 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DE5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41489C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C06220663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F153920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:47:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="rhVrKzQX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C06220663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K6wNsDoc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F153920663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeKZWkL (ORCPT
+        id S1726543AbeKZWlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:40:11 -0500
-Received: from mail-eopbgr740070.outbound.protection.outlook.com ([40.107.74.70]:54144
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726219AbeKZWkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:40:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r1Ero1ArpJYXV+3FHt+MywoO/c3TPjbSqWBfXSQHIA0=;
- b=rhVrKzQXLxg6iQdrfpYoXDlLCxCWRLfK6+cB4gqQXVMkkHTx3mwovnkampDRNjBpdr0gSa5GKB1bbkpkIZuIRFK1a9k9dCuL3egmtXceIXkY6rAUF6azvZBsh3rmUWsYq1+BsAioyhBbGlOOTJghUX/kg19o0fv/e3qV2/1BNt0=
-Received: from CY1PR05MB2780.namprd05.prod.outlook.com (10.167.18.26) by
- CY1PR05MB1897.namprd05.prod.outlook.com (10.162.167.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Mon, 26 Nov 2018 11:46:10 +0000
-Received: from CY1PR05MB2780.namprd05.prod.outlook.com
- ([fe80::15b6:42fc:a2fb:5a10]) by CY1PR05MB2780.namprd05.prod.outlook.com
- ([fe80::15b6:42fc:a2fb:5a10%8]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
- 11:46:10 +0000
-From:   Slavomir Kaslev <kaslevs@vmware.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     syzbot <syzbot+ce18da013d76d837144d@syzkaller.appspotmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kgraul@linux.ibm.com" <kgraul@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "stranche@codeaurora.org" <stranche@codeaurora.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING in csum_and_copy_to_iter
-Thread-Topic: WARNING in csum_and_copy_to_iter
-Thread-Index: AQHUhD7qPzh66tdLZ0mFVn+6Poo4OaVfuiwAgAI2YoA=
-Date:   Mon, 26 Nov 2018 11:46:10 +0000
-Message-ID: <CAE0o1NuWWMnfPiY-gmRqgGsjqwoH6pdNQYXL1ak8HauPOnrPmg@mail.gmail.com>
-References: <0000000000001ecaa1057b6e4489@google.com>
- <20181124200357.GC2217@ZenIV.linux.org.uk> <20181124211918.GA20435@box>
- <20181124214436.GD2217@ZenIV.linux.org.uk>
- <20181125015104.GE2217@ZenIV.linux.org.uk>
-In-Reply-To: <20181125015104.GE2217@ZenIV.linux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM5PR2001CA0007.namprd20.prod.outlook.com
- (2603:10b6:4:16::17) To CY1PR05MB2780.namprd05.prod.outlook.com
- (2a01:111:e400:c63a::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kaslevs@vmware.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [209.85.166.174]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR05MB1897;20:FL84MnsbWZZFCRpwNaenZ/+jVMGrYoU1/mHffMsv34MCJZEqz9+4JZf3UDgKIf8+JUu7py3GxJkKnh/cHdgCYvhU0V/F0qYjLKP1jaqROc/l77Cxqj4hrCGVLlBbbg1w+TFzlJXOPeabHtOuj+nLFMKq80t8WhoeYXKEP1tiOaE=
-x-ms-office365-filtering-correlation-id: ee287b3f-9045-46c1-31e6-08d65394c25b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR05MB1897;
-x-ms-traffictypediagnostic: CY1PR05MB1897:
-x-microsoft-antispam-prvs: <CY1PR05MB1897BF7CA0B638527A0B0435DAD70@CY1PR05MB1897.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231443)(944501410)(52105112)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY1PR05MB1897;BCL:0;PCL:0;RULEID:;SRVR:CY1PR05MB1897;
-x-forefront-prvs: 086831DFB4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(346002)(376002)(199004)(189003)(99286004)(11346002)(55446002)(2906002)(476003)(14454004)(66066001)(61266001)(53936002)(6512007)(9686003)(61726006)(305945005)(7736002)(93886005)(86362001)(6862004)(446003)(6116002)(3846002)(316002)(486006)(68736007)(25786009)(76176011)(81156014)(6506007)(106356001)(8676002)(54906003)(102836004)(256004)(14444005)(53546011)(6486002)(81166006)(97736004)(386003)(5660300001)(105586002)(498394004)(478600001)(6246003)(33896004)(8936002)(450100002)(6436002)(52116002)(6306002)(7116003)(107886003)(26005)(71190400001)(186003)(71200400001)(966005)(4326008)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR05MB1897;H:CY1PR05MB2780.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: D4R+HaEdpjJo8w24dFK4E3J2khdbMHY05nH91oKjHwuDu3asZhHrfckQeCEF5ginqZDmzDHgqx+AHfLNxd2WJqsLKKtZjKPneMridt9MTex9A6V+omGpSJeQrA/jFI+kylCgPCMRmpijGu8cFTpymNyBYK57On6dBqESPWdtgTW3AiNCruyl5gr2QMQPajCZYSAJhOKx9aAWo0BShWw+zUNxra4xvDUam0V5mhB6HY2ovbfiG7lwWlnkYa0RkqYNE1u+1U4lqxPby6/6w8qdVHL2iHlsExBkccD3UwvNLJH+65fEK+sHtONXYi1+kQ/f5gDneNaShHOUpbdvUGOm5uRxstBg2BrWxrCfUgo7jlo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F053741FE74923409A84F09F10B03A8C@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 26 Nov 2018 17:41:17 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35724 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbeKZWlQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:41:16 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z9so6460482pfi.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 03:47:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I2zTlTanZjPRAmmCMrV8Av3VM9MBIRikEXeJDI4P4YY=;
+        b=K6wNsDocxDC/xIxHJ+byIQ2go99Sp+YfD5k+xFpSjxwuTXfkRPAinVxzsEEajvTjIm
+         h/Ye0NRlog8cUVOGLVMBrczRA3Iv4cZZTIWiNGGdVWGBBvR3yCk71LmJrMqVni4K+h1h
+         D1Z4vZGHMjrL7zJhGFXPYN35NptxpXUUlGs1g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I2zTlTanZjPRAmmCMrV8Av3VM9MBIRikEXeJDI4P4YY=;
+        b=cmFOTi7TZ/KFiBZ3Vu+fZHp+tGPyqjqOwKNY5gDya7ZtxYciA+JotB3akz33JH3tNW
+         SMJRgg1Rq3kPuCV6XMcIOqwds9vuvJ3Rm7kjnNbf5SOiQDs95jrCnMe/gmkeDhT1dH4v
+         cKZ56yulNeV7LjPpFGGRHDx0K5dVHqcEFVhe9rwPLcrQQEoggO8C5onf3YMfA8pZPlCK
+         hbE78E/RvJxwIXuX1W+4uYplPMbgBOBNk74KoFMN+OCH5r7hTgI4pbmBHwbllju8ER4C
+         rifZKeiyAWjzmmj1q6oy2AvlvA6/5bm+BNHXHh9SBCWd5zSvUicmpHFInRoYnCC/oihH
+         HePw==
+X-Gm-Message-State: AA+aEWZgiPoy/6pgLe2m3kmSSsVaTDA34tvGZmpcCJd4K/dAzZV3TX40
+        O4bPctTa2BQk232RdX2XlIaKi33KfXwzZqC/crtCrg==
+X-Google-Smtp-Source: AFSGD/VjiAZOX/3CWwJI5cmsp/S7aaOxVk08mAAYxEVr/JJomwgvRnT3C52giC/YHdmgQ8vi5s/5r4JTik+hsMlHA6A=
+X-Received: by 2002:a63:fb46:: with SMTP id w6mr24676992pgj.321.1543232842623;
+ Mon, 26 Nov 2018 03:47:22 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee287b3f-9045-46c1-31e6-08d65394c25b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 11:46:10.3806
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR05MB1897
+References: <1542873780-13911-1-git-send-email-jjian.zhou@mediatek.com>
+In-Reply-To: <1542873780-13911-1-git-send-email-jjian.zhou@mediatek.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Mon, 26 Nov 2018 19:47:10 +0800
+Message-ID: <CANMq1KCO7tUGpXBR6x8cWiVd+5if2sPxU5N9J2aiMtuWuff3eg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: mediatek: add MT8183 SDIO driver support
+To:     jjian.zhou@mediatek.com
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        ryder.lee@mediatek.com, sean.wang@mediatek.com,
+        linux-mmc@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        lkml <linux-kernel@vger.kernel.org>, yong.mao@mediatek.com,
+        Hsin-Yi Wang <hsinyi@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU3VuLCBOb3YgMjUsIDIwMTggYXQgMzo1MiBBTSBBbCBWaXJvIDx2aXJvQHplbml2LmxpbnV4
-Lm9yZy51az4gd3JvdGU6DQo+DQo+IE9uIFNhdCwgTm92IDI0LCAyMDE4IGF0IDA5OjQ0OjM2UE0g
-KzAwMDAsIEFsIFZpcm8gd3JvdGU6DQo+DQo+ID4gTm8gcG9pbnQsIElNTyAtIHRoZSBmaXggaXNu
-J3QgaGFyZCBhbmQgYmlzZWN0IGhhemFyZCBjcmVhdGVkIGJ5IHRoZSB3aG9sZSB0aGluZw0KPiA+
-IGlzIGJvdGggbWlsZCAoc3B1cmlvdXMgV0FSTigpIGluIGNhc2UgdGhhdCB1c2VkIHRvIGZhaWwg
-YW55d2F5KSBfYW5kXyB3b24ndA0KPiA+IGRpc2FwcGVhciBmcm9tIHJldmVydGluZywgb2J2aW91
-c2x5LiAgSSdsbCBwb3N0IGEgZml4IGxhdGVyIHRvbmlnaHQuLi4NCj4NCj4gRldJVywgSSB0aGlu
-ayB0aGUgZm9sbG93aW5nIG91Z2h0IHRvIHdvcms7IGl0J3Mgb2J2aW91c2x5IGEgcGFpciBvZiBj
-b21taXRzDQo+IChpbnRyb2R1Y3Rpb24gb2YgY29udmVuaWVuY2UgaGVscGVyL3N3aXRjaCB0byBp
-dHMgdXNlICsgY3N1bV9hbmRfY29weV90b19pdGVyKCkNCj4gZm9yIElURVJfUElQRSksIGFzIHdl
-bGwgYXMgY29tbWl0IG1lc3NhZ2UsIGV0Yy4sIGJ1dCBJIHdvdWxkIHJlYWxseSBhcHByZWNpYXRl
-DQo+IGlmIGZvbGtzIGdhdmUgaXQgYSBsb29rIF9hbmRfIGEgYmVhdGluZy4NCg0KVGVzdGVkIHRo
-ZSBwYXRjaCBpbiBxZW11LCBzcGxpY2UgcmVhZGluZyBmcm9tIHVkcCBhbmQgdnNvY2sgc29ja2V0
-cyAod2l0aA0KaHR0cHM6Ly9naXRodWIuY29tL3NrYXNsZXYvdGhydSksIGFuZCBpdCBzZWVtcyB0
-byB3b3JrIGdyZWF0Lg0KDQpObyB3YXJuaW5ncyBvciBzdXNwaWNpb3VzIG1lc3NhZ2VzIGluIGRt
-ZXNnIHdpdGgga2VybmVsIGNvbmZpZyBzaW1pbGFyIHRvIHdoYXQNCnN5emJvdCBpcyB1c2luZw0K
-aHR0cHM6Ly9naXRodWIuY29tL2dvb2dsZS9zeXprYWxsZXIvYmxvYi9tYXN0ZXIvZG9jcy9saW51
-eC9rZXJuZWxfY29uZmlncy5tZA0KDQo+IFNpZ25lZC1vZmYtYnk6IEFsIFZpcm8gPHZpcm9AemVu
-aXYubGludXgub3JnLnVrPg0KPiAtLS0NCj4gZGlmZiAtLWdpdCBhL2xpYi9pb3ZfaXRlci5jIGIv
-bGliL2lvdl9pdGVyLmMNCj4gaW5kZXggN2ViY2NiNWMxNjM3Li42MjE5ODQ3NDMyNjggMTAwNjQ0
-DQo+IC0tLSBhL2xpYi9pb3ZfaXRlci5jDQo+ICsrKyBiL2xpYi9pb3ZfaXRlci5jDQo+IEBAIC01
-NjAsNiArNTYwLDQ0IEBAIHN0YXRpYyBzaXplX3QgY29weV9waXBlX3RvX2l0ZXIoY29uc3Qgdm9p
-ZCAqYWRkciwgc2l6ZV90IGJ5dGVzLA0KPiAgICAgICAgIHJldHVybiBieXRlczsNCj4gIH0NCj4N
-Cj4gK3N0YXRpYyBfX3dzdW0gY3N1bV9hbmRfbWVtY3B5KHZvaWQgKnRvLCBjb25zdCB2b2lkICpm
-cm9tLCBzaXplX3QgbGVuLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBfX3dzdW0g
-c3VtLCBzaXplX3Qgb2ZmKQ0KPiArew0KPiArICAgICAgIF9fd3N1bSBuZXh0ID0gY3N1bV9wYXJ0
-aWFsX2NvcHlfbm9jaGVjayhmcm9tLCB0bywgbGVuLCAwKTsNCj4gKyAgICAgICByZXR1cm4gY3N1
-bV9ibG9ja19hZGQoc3VtLCBuZXh0LCBvZmYpOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgc2l6ZV90
-IGNzdW1fYW5kX2NvcHlfdG9fcGlwZV9pdGVyKGNvbnN0IHZvaWQgKmFkZHIsIHNpemVfdCBieXRl
-cywNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBfX3dzdW0gKmNzdW0sIHN0cnVj
-dCBpb3ZfaXRlciAqaSkNCj4gK3sNCj4gKyAgICAgICBzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpw
-aXBlID0gaS0+cGlwZTsNCj4gKyAgICAgICBzaXplX3QgbiwgcjsNCj4gKyAgICAgICBzaXplX3Qg
-b2ZmID0gMDsNCj4gKyAgICAgICBfX3dzdW0gc3VtID0gKmNzdW07DQo+ICsgICAgICAgaW50IGlk
-eDsNCj4gKw0KPiArICAgICAgIGlmICghc2FuaXR5KGkpKQ0KPiArICAgICAgICAgICAgICAgcmV0
-dXJuIDA7DQo+ICsNCj4gKyAgICAgICBieXRlcyA9IG4gPSBwdXNoX3BpcGUoaSwgYnl0ZXMsICZp
-ZHgsICZyKTsNCj4gKyAgICAgICBpZiAodW5saWtlbHkoIW4pKQ0KPiArICAgICAgICAgICAgICAg
-cmV0dXJuIDA7DQo+ICsgICAgICAgZm9yICggOyBuOyBpZHggPSBuZXh0X2lkeChpZHgsIHBpcGUp
-LCByID0gMCkgew0KPiArICAgICAgICAgICAgICAgc2l6ZV90IGNodW5rID0gbWluX3Qoc2l6ZV90
-LCBuLCBQQUdFX1NJWkUgLSByKTsNCj4gKyAgICAgICAgICAgICAgIGNoYXIgKnAgPSBrbWFwX2F0
-b21pYyhwaXBlLT5idWZzW2lkeF0ucGFnZSk7DQo+ICsgICAgICAgICAgICAgICBzdW0gPSBjc3Vt
-X2FuZF9tZW1jcHkocCArIHIsIGFkZHIsIGNodW5rLCBzdW0sIG9mZik7DQo+ICsgICAgICAgICAg
-ICAgICBrdW5tYXBfYXRvbWljKHApOw0KPiArICAgICAgICAgICAgICAgaS0+aWR4ID0gaWR4Ow0K
-PiArICAgICAgICAgICAgICAgaS0+aW92X29mZnNldCA9IHIgKyBjaHVuazsNCj4gKyAgICAgICAg
-ICAgICAgIG4gLT0gY2h1bms7DQo+ICsgICAgICAgICAgICAgICBvZmYgKz0gY2h1bms7DQo+ICsg
-ICAgICAgICAgICAgICBhZGRyICs9IGNodW5rOw0KPiArICAgICAgIH0NCj4gKyAgICAgICBpLT5j
-b3VudCAtPSBieXRlczsNCj4gKyAgICAgICAqY3N1bSA9IHN1bTsNCj4gKyAgICAgICByZXR1cm4g
-Ynl0ZXM7DQo+ICt9DQo+ICsNCj4gIHNpemVfdCBfY29weV90b19pdGVyKGNvbnN0IHZvaWQgKmFk
-ZHIsIHNpemVfdCBieXRlcywgc3RydWN0IGlvdl9pdGVyICppKQ0KPiAgew0KPiAgICAgICAgIGNv
-bnN0IGNoYXIgKmZyb20gPSBhZGRyOw0KPiBAQCAtMTM2OCwxNyArMTQwNiwxNSBAQCBzaXplX3Qg
-Y3N1bV9hbmRfY29weV9mcm9tX2l0ZXIodm9pZCAqYWRkciwgc2l6ZV90IGJ5dGVzLCBfX3dzdW0g
-KmNzdW0sDQo+ICAgICAgICAgICAgICAgICBlcnIgPyB2Lmlvdl9sZW4gOiAwOw0KPiAgICAgICAg
-IH0pLCAoew0KPiAgICAgICAgICAgICAgICAgY2hhciAqcCA9IGttYXBfYXRvbWljKHYuYnZfcGFn
-ZSk7DQo+IC0gICAgICAgICAgICAgICBuZXh0ID0gY3N1bV9wYXJ0aWFsX2NvcHlfbm9jaGVjayhw
-ICsgdi5idl9vZmZzZXQsDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAodG8gKz0gdi5idl9sZW4pIC0gdi5idl9sZW4sDQo+IC0gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2LmJ2X2xlbiwgMCk7DQo+ICsgICAg
-ICAgICAgICAgICBzdW0gPSBjc3VtX2FuZF9tZW1jcHkoKHRvICs9IHYuYnZfbGVuKSAtIHYuYnZf
-bGVuLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHAgKyB2LmJ2X29m
-ZnNldCwgdi5idl9sZW4sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-c3VtLCBvZmYpOw0KPiAgICAgICAgICAgICAgICAga3VubWFwX2F0b21pYyhwKTsNCj4gLSAgICAg
-ICAgICAgICAgIHN1bSA9IGNzdW1fYmxvY2tfYWRkKHN1bSwgbmV4dCwgb2ZmKTsNCj4gICAgICAg
-ICAgICAgICAgIG9mZiArPSB2LmJ2X2xlbjsNCj4gICAgICAgICB9KSwoew0KPiAtICAgICAgICAg
-ICAgICAgbmV4dCA9IGNzdW1fcGFydGlhbF9jb3B5X25vY2hlY2sodi5pb3ZfYmFzZSwNCj4gLSAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh0byArPSB2Lmlv
-dl9sZW4pIC0gdi5pb3ZfbGVuLA0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgdi5pb3ZfbGVuLCAwKTsNCj4gLSAgICAgICAgICAgICAgIHN1bSA9IGNz
-dW1fYmxvY2tfYWRkKHN1bSwgbmV4dCwgb2ZmKTsNCj4gKyAgICAgICAgICAgICAgIHN1bSA9IGNz
-dW1fYW5kX21lbWNweSgodG8gKz0gdi5pb3ZfbGVuKSAtIHYuaW92X2xlbiwNCj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2Lmlvdl9iYXNlLCB2Lmlvdl9sZW4sDQo+ICsg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3VtLCBvZmYpOw0KPiAgICAgICAg
-ICAgICAgICAgb2ZmICs9IHYuaW92X2xlbjsNCj4gICAgICAgICB9KQ0KPiAgICAgICAgICkNCj4g
-QEAgLTE0MTIsMTcgKzE0NDgsMTUgQEAgYm9vbCBjc3VtX2FuZF9jb3B5X2Zyb21faXRlcl9mdWxs
-KHZvaWQgKmFkZHIsIHNpemVfdCBieXRlcywgX193c3VtICpjc3VtLA0KPiAgICAgICAgICAgICAg
-ICAgMDsNCj4gICAgICAgICB9KSwgKHsNCj4gICAgICAgICAgICAgICAgIGNoYXIgKnAgPSBrbWFw
-X2F0b21pYyh2LmJ2X3BhZ2UpOw0KPiAtICAgICAgICAgICAgICAgbmV4dCA9IGNzdW1fcGFydGlh
-bF9jb3B5X25vY2hlY2socCArIHYuYnZfb2Zmc2V0LA0KPiAtICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgKHRvICs9IHYuYnZfbGVuKSAtIHYuYnZfbGVuLA0K
-PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdi5idl9s
-ZW4sIDApOw0KPiArICAgICAgICAgICAgICAgc3VtID0gY3N1bV9hbmRfbWVtY3B5KCh0byArPSB2
-LmJ2X2xlbikgLSB2LmJ2X2xlbiwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBwICsgdi5idl9vZmZzZXQsIHYuYnZfbGVuLA0KPiArICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHN1bSwgb2ZmKTsNCj4gICAgICAgICAgICAgICAgIGt1bm1hcF9hdG9t
-aWMocCk7DQo+IC0gICAgICAgICAgICAgICBzdW0gPSBjc3VtX2Jsb2NrX2FkZChzdW0sIG5leHQs
-IG9mZik7DQo+ICAgICAgICAgICAgICAgICBvZmYgKz0gdi5idl9sZW47DQo+ICAgICAgICAgfSks
-KHsNCj4gLSAgICAgICAgICAgICAgIG5leHQgPSBjc3VtX3BhcnRpYWxfY29weV9ub2NoZWNrKHYu
-aW92X2Jhc2UsDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAodG8gKz0gdi5pb3ZfbGVuKSAtIHYuaW92X2xlbiwNCj4gLSAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHYuaW92X2xlbiwgMCk7DQo+IC0gICAgICAg
-ICAgICAgICBzdW0gPSBjc3VtX2Jsb2NrX2FkZChzdW0sIG5leHQsIG9mZik7DQo+ICsgICAgICAg
-ICAgICAgICBzdW0gPSBjc3VtX2FuZF9tZW1jcHkoKHRvICs9IHYuaW92X2xlbikgLSB2Lmlvdl9s
-ZW4sDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdi5pb3ZfYmFzZSwg
-di5pb3ZfbGVuLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN1bSwg
-b2ZmKTsNCj4gICAgICAgICAgICAgICAgIG9mZiArPSB2Lmlvdl9sZW47DQo+ICAgICAgICAgfSkN
-Cj4gICAgICAgICApDQo+IEBAIC0xNDM4LDggKzE0NzIsMTIgQEAgc2l6ZV90IGNzdW1fYW5kX2Nv
-cHlfdG9faXRlcihjb25zdCB2b2lkICphZGRyLCBzaXplX3QgYnl0ZXMsIF9fd3N1bSAqY3N1bSwN
-Cj4gICAgICAgICBjb25zdCBjaGFyICpmcm9tID0gYWRkcjsNCj4gICAgICAgICBfX3dzdW0gc3Vt
-LCBuZXh0Ow0KPiAgICAgICAgIHNpemVfdCBvZmYgPSAwOw0KPiArDQo+ICsgICAgICAgaWYgKHVu
-bGlrZWx5KGlvdl9pdGVyX2lzX3BpcGUoaSkpKQ0KPiArICAgICAgICAgICAgICAgcmV0dXJuIGNz
-dW1fYW5kX2NvcHlfdG9fcGlwZV9pdGVyKGFkZHIsIGJ5dGVzLCBjc3VtLCBpKTsNCj4gKw0KPiAg
-ICAgICAgIHN1bSA9ICpjc3VtOw0KPiAtICAgICAgIGlmICh1bmxpa2VseShpb3ZfaXRlcl9pc19w
-aXBlKGkpIHx8IGlvdl9pdGVyX2lzX2Rpc2NhcmQoaSkpKSB7DQo+ICsgICAgICAgaWYgKHVubGlr
-ZWx5KGlvdl9pdGVyX2lzX2Rpc2NhcmQoaSkpKSB7DQo+ICAgICAgICAgICAgICAgICBXQVJOX09O
-KDEpOyAgICAgLyogZm9yIG5vdyAqLw0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+ICAg
-ICAgICAgfQ0KPiBAQCAtMTQ1NSwxNyArMTQ5MywxNSBAQCBzaXplX3QgY3N1bV9hbmRfY29weV90
-b19pdGVyKGNvbnN0IHZvaWQgKmFkZHIsIHNpemVfdCBieXRlcywgX193c3VtICpjc3VtLA0KPiAg
-ICAgICAgICAgICAgICAgZXJyID8gdi5pb3ZfbGVuIDogMDsNCj4gICAgICAgICB9KSwgKHsNCj4g
-ICAgICAgICAgICAgICAgIGNoYXIgKnAgPSBrbWFwX2F0b21pYyh2LmJ2X3BhZ2UpOw0KPiAtICAg
-ICAgICAgICAgICAgbmV4dCA9IGNzdW1fcGFydGlhbF9jb3B5X25vY2hlY2soKGZyb20gKz0gdi5i
-dl9sZW4pIC0gdi5idl9sZW4sDQo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBwICsgdi5idl9vZmZzZXQsDQo+IC0gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICB2LmJ2X2xlbiwgMCk7DQo+ICsgICAgICAgICAgICAg
-ICBzdW0gPSBjc3VtX2FuZF9tZW1jcHkocCArIHYuYnZfb2Zmc2V0LA0KPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIChmcm9tICs9IHYuYnZfbGVuKSAtIHYuYnZfbGVuLA0K
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHYuYnZfbGVuLCBzdW0sIG9m
-Zik7DQo+ICAgICAgICAgICAgICAgICBrdW5tYXBfYXRvbWljKHApOw0KPiAtICAgICAgICAgICAg
-ICAgc3VtID0gY3N1bV9ibG9ja19hZGQoc3VtLCBuZXh0LCBvZmYpOw0KPiAgICAgICAgICAgICAg
-ICAgb2ZmICs9IHYuYnZfbGVuOw0KPiAgICAgICAgIH0pLCh7DQo+IC0gICAgICAgICAgICAgICBu
-ZXh0ID0gY3N1bV9wYXJ0aWFsX2NvcHlfbm9jaGVjaygoZnJvbSArPSB2Lmlvdl9sZW4pIC0gdi5p
-b3ZfbGVuLA0KPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgdi5pb3ZfYmFzZSwNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHYuaW92X2xlbiwgMCk7DQo+IC0gICAgICAgICAgICAgICBzdW0gPSBjc3VtX2Js
-b2NrX2FkZChzdW0sIG5leHQsIG9mZik7DQo+ICsgICAgICAgICAgICAgICBzdW0gPSBjc3VtX2Fu
-ZF9tZW1jcHkodi5pb3ZfYmFzZSwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIChmcm9tICs9IHYuaW92X2xlbikgLSB2Lmlvdl9sZW4sDQo+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB2Lmlvdl9sZW4sIHN1bSwgb2ZmKTsNCj4gICAgICAgICAgICAg
-ICAgIG9mZiArPSB2Lmlvdl9sZW47DQo+ICAgICAgICAgfSkNCj4gICAgICAgICApDQo=
+On Thu, Nov 22, 2018 at 4:03 PM Jjian Zhou <jjian.zhou@mediatek.com> wrote:
+>
+> MT8183 need SDIO driver. So it need add new code
+> to support it.
+
+The description does not seem to match what is going on below: I don't
+see anything that is obviously MT8183-specific. At first glance, this
+seems like a patch that makes it possible to enable MMC_CAP_SDIO_IRQ
+("cap-sdio-irq" dt property).
+
+Can you describe in more detail what is going on here?
+
+> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+> Signed-off-by: Yong mao <yong.mao@mediatek.com>
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 51 ++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 48 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index 6334cc7..da2a047 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
+>                 struct mmc_request *mrq, struct mmc_command *cmd)
+>  {
+>         u32 rawcmd;
+> +       unsigned long flags;
+>
+>         WARN_ON(host->cmd);
+>         host->cmd = cmd;
+> @@ -1131,7 +1132,12 @@ static void msdc_start_command(struct msdc_host *host,
+>         cmd->error = 0;
+>         rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+>
+> +       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> +               spin_lock_irqsave(&host->lock, flags);
+>         sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
+> +       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> +               spin_unlock_irqrestore(&host->lock, flags);
+> +
+>         writel(cmd->arg, host->base + SDC_ARG);
+>         writel(rawcmd, host->base + SDC_CMD);
+>  }
+> @@ -1351,6 +1357,27 @@ static void msdc_request_timeout(struct work_struct *work)
+>         }
+>  }
+>
+> +static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+> +{
+> +       unsigned long flags;
+> +       struct msdc_host *host = mmc_priv(mmc);
+> +
+> +       if (enb)
+> +               pm_runtime_get_sync(host->dev);
+> +
+> +       spin_lock_irqsave(&host->lock, flags);
+> +       if (enb)
+> +               sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> +       else
+> +               sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> +       spin_unlock_irqrestore(&host->lock, flags);
+> +
+> +       if (!enb) {
+> +               pm_runtime_mark_last_busy(host->dev);
+> +               pm_runtime_put_autosuspend(host->dev);
+> +       }
+> +}
+> +
+>  static irqreturn_t msdc_irq(int irq, void *dev_id)
+>  {
+>         struct msdc_host *host = (struct msdc_host *) dev_id;
+> @@ -1373,7 +1400,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+>                 data = host->data;
+>                 spin_unlock_irqrestore(&host->lock, flags);
+>
+> -               if (!(events & event_mask))
+> +               if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
+> +                       msdc_enable_sdio_irq(host->mmc, 0);
+> +                       sdio_signal_irq(host->mmc);
+> +               }
+> +
+> +               if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+>                         break;
+>
+>                 if (!mrq) {
+> @@ -1493,8 +1525,11 @@ static void msdc_init_hw(struct msdc_host *host)
+>          */
+>         sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+>
+> -       /* disable detect SDIO device interrupt function */
+> -       sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       /* Config SDIO device detect interrupt function */
+> +       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> +               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       else
+> +               sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+>
+>         /* Configure to default data timeout */
+>         sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+> @@ -2013,6 +2048,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+>         sdr_clr_bits(host->base + EMMC_IOCON, 1);
+>  }
+>
+> +static void msdc_ack_sdio_irq(struct mmc_host *mmc)
+> +{
+> +       msdc_enable_sdio_irq(mmc, 1);
+> +}
+> +
+>  static const struct mmc_host_ops mt_msdc_ops = {
+>         .post_req = msdc_post_req,
+>         .pre_req = msdc_pre_req,
+> @@ -2020,6 +2060,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+>         .set_ios = msdc_ops_set_ios,
+>         .get_ro = mmc_gpio_get_ro,
+>         .get_cd = mmc_gpio_get_cd,
+> +       .enable_sdio_irq = msdc_enable_sdio_irq,
+> +       .ack_sdio_irq = msdc_ack_sdio_irq,
+>         .start_signal_voltage_switch = msdc_ops_switch_volt,
+>         .card_busy = msdc_card_busy,
+>         .execute_tuning = msdc_execute_tuning,
+> @@ -2147,6 +2189,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+>         else
+>                 mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
+>
+> +       if (mmc->caps & MMC_CAP_SDIO_IRQ)
+> +               mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
+> +
+>         mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+>         /* MMC core transfer sizes tunable parameters */
+>         mmc->max_segs = MAX_BD_NUM;
+> --
+> 1.9.1
+>
