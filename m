@@ -2,122 +2,132 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BC1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CE1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E0F2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D615220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:25:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jzy/6IZK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E0F2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bh2iNHkP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D615220855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeKZSRy (ORCPT
+        id S1726361AbeKZSSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 13:17:54 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:38329 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeKZSRy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 13:17:54 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id wAQ7N1v2019779;
-        Mon, 26 Nov 2018 16:23:02 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com wAQ7N1v2019779
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543216982;
-        bh=EVlnJuD564s3iKhkGNA25MnT6jwnG/kSDI2uoW+5WsM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jzy/6IZKekAZkco1m0zRyaD4FBymgARBDn01NvHInhugJ6o7Nh0B4T6ABOGqjz13p
-         x3GW0hHIGfuoVW9/CL83XrRY19O9dU7crPDyhxwUvx/ABtx5Fn7D2/xCAc+kco1wdU
-         36b9PPF8AlAW7x3Dzngg+6exrgIB3evh6smy1SIhPFZ5IQTqPTNH2ICpfLorOQBQrZ
-         r0nXl0M28EOETsqb8GRAvnL8OirWjmEfuCjJYTI0HK035w/kSERLUk6NA6j7T/jIps
-         RT2nfpp72NL4wXe3V8iZDhrj8E2YfdttOU38EL7yxSjKcOK3TJBn2BTe8gnzHN3ViG
-         4Ok35jmCo1MXA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] kconfig: fix reverse dependency with tristate if-conditional
-Date:   Mon, 26 Nov 2018 16:22:48 +0900
-Message-Id: <1543216969-2227-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 26 Nov 2018 13:18:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726154AbeKZSSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 13:18:23 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1615C2082F;
+        Mon, 26 Nov 2018 07:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543217110;
+        bh=GWEBpZjVeXmJBonohJuqsClJV8am9rTVd0fhz7F4FQY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Bh2iNHkPOoVhGdAeI8Pclx8S3uYC4+TlLZSxGQfYk6v92EGVoanZwlxg0ctd3idHa
+         5iwHm1l7NABv5WI5QZ9fVFQon3IepR/v+OX1dVt+z7Ok7bPubeVZ1wte4xxeGapnEx
+         9hecqCJjZA5Bg4p39Ccz4TowdkrsWvFu35zmJhfU=
+Date:   Mon, 26 Nov 2018 16:25:06 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC][PATCH 06/14] fgraph: Move function graph specific code
+ into fgraph.c
+Message-Id: <20181126162506.0b82ab1e8fb7a3dd573eb221@kernel.org>
+In-Reply-To: <20181123061133.GA195223@google.com>
+References: <20181122012708.491151844@goodmis.org>
+        <20181122012803.442190047@goodmis.org>
+        <20181123061133.GA195223@google.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A Kconfig property can have an optional if-expression, which describes
-its visibility. The property is visible when the if-expression part is
-evaluated to 'y' or 'm'.
+On Thu, 22 Nov 2018 22:11:33 -0800
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-The 'select' and 'imply' properties are internally converted to reverse
-dependencies, but they are wrongly converted if they have a tristate
-if-expression.
+> On Wed, Nov 21, 2018 at 08:27:14PM -0500, Steven Rostedt wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > To make the function graph infrastructure more managable, the code needs to
+> > be in its own file (fgraph.c). Move the code that is specific for managing
+> > the function graph infrastructure out of ftrace.c and into fgraph.c
+> > 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> I think this patch causes a build error if CONFIG_FUNCTION_PROFILER is
+> disabled but function graph is enabled. The following diff fixes it for me.
 
-Example:
+Good catch, I also confirmed it.
 
-  config A
-          tristate "a"
+I think we'd better to define an empty stub of ftrace_graph_graph_time_control(enable)
+in trace.h instead, since fgraph_graph_time is not used if CONFIG_FUNCTION_PROFILER=n.
 
-  config B
-          tristate "b"
-          select A if C
+Thank you,
 
-  config C
-          tristate "c"
+> 
+> thanks,
+> 
+>  - Joel
+> 
+>  ----8<------
+>  
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 3b8c307c7ff0..ce38bb962f91 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -382,6 +382,15 @@ static void ftrace_update_pid_func(void)
+>  	update_ftrace_function();
+>  }
+>  
+> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+> +static bool fgraph_graph_time = true;
+> +
+> +void ftrace_graph_graph_time_control(bool enable)
+> +{
+> +	fgraph_graph_time = enable;
+> +}
+> +#endif
+> +
+>  #ifdef CONFIG_FUNCTION_PROFILER
+>  struct ftrace_profile {
+>  	struct hlist_node		node;
+> @@ -783,12 +792,6 @@ function_profile_call(unsigned long ip, unsigned long parent_ip,
+>  }
+>  
+>  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+> -static bool fgraph_graph_time = true;
+> -
+> -void ftrace_graph_graph_time_control(bool enable)
+> -{
+> -	fgraph_graph_time = enable;
+> -}
+>  
+>  static int profile_graph_entry(struct ftrace_graph_ent *trace)
+>  {
 
-Currently, the reverse dependency of 'A' results in 'B && C'.
-It is incorrect because the combination of B=y and C=m allows
-'A' to become 'm', while its lower limit must be 'y'.
 
-The reverse dependency should be 'B && C != n'.
-
-Randy Dunlap reported that people are trying to fix an individual
-Kconfig file [1], and I also found another example in the past,
-commit 9d9c98e89ee2 ("pcmcia: fix yenta dependency on PCCARD_NONSTATIC")
-but I suspect this is a bug of Kconfig itself.
-
-[1] https://www.spinics.net/lists/netfilter-devel/msg56985.html
-
-Reported-by: Taehee Yoo <ap420073@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/kconfig/menu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-index 4cf15d4..2b18833 100644
---- a/scripts/kconfig/menu.c
-+++ b/scripts/kconfig/menu.c
-@@ -401,11 +401,13 @@ void menu_finalize(struct menu *parent)
- 				if (prop->type == P_SELECT) {
- 					struct symbol *es = prop_get_symbol(prop);
- 					es->rev_dep.expr = expr_alloc_or(es->rev_dep.expr,
--							expr_alloc_and(expr_alloc_symbol(menu->sym), expr_copy(dep)));
-+							expr_alloc_and(expr_alloc_symbol(menu->sym),
-+									expr_trans_compare(dep, E_UNEQUAL, &symbol_no)));
- 				} else if (prop->type == P_IMPLY) {
- 					struct symbol *es = prop_get_symbol(prop);
- 					es->implied.expr = expr_alloc_or(es->implied.expr,
--							expr_alloc_and(expr_alloc_symbol(menu->sym), expr_copy(dep)));
-+							expr_alloc_and(expr_alloc_symbol(menu->sym),
-+									expr_trans_compare(dep, E_UNEQUAL, &symbol_no)));
- 				}
- 			}
- 		}
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
