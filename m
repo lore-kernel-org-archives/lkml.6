@@ -2,89 +2,79 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9CBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC01CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B8B20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:16:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B8B20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id 6DEFE20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:18:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZcE3wsk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DEFE20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbeK0GLE (ORCPT
+        id S1726511AbeK0GNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:11:04 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21729 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbeK0GLE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:11:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1543259743; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=eXZTEmv3Bg6ItBDSzvBut5Sea5g/JQsFGC7zIf2oFg4IwFfx2HwYsP9v2tnZUN8KjMLSzFwxJYUv/I9S3BIpEHw+fYHBogATBChypExfgCWnzeixEd+zQtZeQ4qUY2S26UafGeLVPWosN9wa4fq/Qn9JurD8zUrQV8/Eg/PBKe4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1543259743; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=NXUfmg6T6R7QXiYDCCrKuqomD8dCXuyJnEHVcyBQiqE=; 
-        b=ftbub+mjLyi3WfrnJmbXL/V6Eznyoarjs8FFpFCZlj7wa4tLj5gaiUU6zw1Ov0QTI55PMMhL7mm6e7oxiw5I7Cf8HF8CtzD1PasGSPANpUaeiIrUUcFGe2UfUkhPWI4zFNJKRoysenMs8NSvEoXUjxAb4rkD/BA/nNwmrwBsIP8=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 154325974190643.82636583836552; Mon, 26 Nov 2018 11:15:41 -0800 (PST)
-Message-ID: <a4b30f21571d620db8d4ce311df5856f38b3d1a7.camel@mniewoehner.de>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <49ec628f42fa7833f6a75d4a8b15d64789c70bf7.camel@mniewoehner.de>
-References: <1541962653.3190.7.camel@HansenPartnership.com>
-         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
-         <1541968191.3190.12.camel@HansenPartnership.com>
-         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
-         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
-         <1541972556.3734.90.camel@linux.ibm.com>
-         <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
-         <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
-         <20181118081833.GH5897@linux.intel.com>
-         <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
-         <20181119134956.GD8755@linux.intel.com>
-         <49ec628f42fa7833f6a75d4a8b15d64789c70bf7.camel@mniewoehner.de>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Mon, 26 Nov 2018 20:15:38 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+        Tue, 27 Nov 2018 01:13:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeK0GNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:13:20 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 064E02086B;
+        Mon, 26 Nov 2018 19:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543259895;
+        bh=nJBtae/sPV1x/mtSxanE6H4TS0FxMbQR/RHrZtIhfzQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hZcE3wskRfWTwXM99ZBUIWQDXas3LnLlzFPVp5KnsDv0j6//Zv7Nhopf3W5OWK1lN
+         1XkhNIyZzABbHQagTKhN5l/l9/yZtc7d7cKLk9iPfzMnTCpxhuW79B7R6Q17DYOuy2
+         N27AOb+gL3n6+x31A6L8ct6erDbfSCZK1WCtQKso=
+Date:   Mon, 26 Nov 2018 20:18:12 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     kys@microsoft.com
+Cc:     will.deacon@arm.com, catalin.marinas@armm.com,
+        mark.rutland@arm.com, marc.zyngier@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, sthemmin@microsoft.com,
+        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: Re: [PATCH 1/4] arm64: hyperv: Add core Hyper-V include files
+Message-ID: <20181126191812.GA32208@kroah.com>
+References: <20181122030914.16274-1-kys@linuxonhyperv.com>
+ <20181122031059.16338-1-kys@linuxonhyperv.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122031059.16338-1-kys@linuxonhyperv.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi again,
+On Thu, Nov 22, 2018 at 03:10:56AM +0000, kys@linuxonhyperv.com wrote:
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/hyperv-tlfs.h
+> @@ -0,0 +1,338 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * This file contains definitions from the Hyper-V Hypervisor Top-Level
+> + * Functional Specification (TLFS):
+> + * https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdocs.microsoft.com%2Fen-us%2Fvirtualization%2Fhyper-v-on-windows%2Freference%2Ftlfs&amp;data=02%7C01%7Ckys%40microsoft.com%7Cc831a45fd63e4a4b083908d641216aa8%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636768009113747528&amp;sdata=jRSrs9ZWXdmeS7LQUEpoSyUfBS7a5KLYy%2FolFdE2tI0%3D&amp;reserved=0
 
-after some experiments I finally found a solution...
-There seems to be a bug in TPM2.0 firmware version (1.3.1.0) included in Lenovos
-UEFI image but they do not provide an update.
+"interesting" url :(
 
-I have extracted the firmware version 1.3.2.8 from Dell's XPS15 TPM2.0 firmware
-update and used this to replace the firmware in my Lenovo UEFI image.
-After flashing this version via UEFI Setup the TPM2.0 gets detected and now is
-fully working. WTF.
+Care to use a real one?
 
-For anyone having the same problem: binwalk, uefi-firmware-parser, uefipatch and
-flashrom are your friends ;-)
+thanks,
 
-Best regards
-Michael
-
-
+greg k-h
