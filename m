@@ -2,108 +2,247 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2706DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287E5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC04A20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC04A20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E18B920645
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18B920645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeK1G0p (ORCPT
+        id S1726953AbeK1G1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:26:45 -0500
-Received: from mga12.intel.com ([192.55.52.136]:11295 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbeK1G0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:26:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:27:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="91387684"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Nov 2018 11:27:47 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gRj1O-0003jJ-75; Tue, 27 Nov 2018 21:27:46 +0200
-Date:   Tue, 27 Nov 2018 21:27:46 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wed, 28 Nov 2018 01:27:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725872AbeK1G1Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:27:24 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARJP87L075034
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:28:28 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p194qys6w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:28:28 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Tue, 27 Nov 2018 19:28:27 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 19:28:23 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARJSM4414745656
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 19:28:22 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3AC4278060;
+        Tue, 27 Nov 2018 19:28:22 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D4E87805F;
+        Tue, 27 Nov 2018 19:28:16 +0000 (GMT)
+Received: from oc6728276242.ibm.com (unknown [9.85.193.218])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Nov 2018 19:28:16 +0000 (GMT)
+Subject: Re: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Eddie James <eajames@linux.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] i2c: acpi: Return error pointers from
- i2c_acpi_new_device()
-Message-ID: <20181127192746.GZ10650@smile.fi.intel.com>
-References: <20181127153728.47866-1-andriy.shevchenko@linux.intel.com>
- <20181127153728.47866-6-andriy.shevchenko@linux.intel.com>
- <c6a0201e-d69e-7646-dcae-0b1b6fe42451@redhat.com>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        robh+dt@kernel.org, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com
+References: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+ <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Tue, 27 Nov 2018 13:28:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6a0201e-d69e-7646-dcae-0b1b6fe42451@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18112719-0004-0000-0000-000014B940E1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010132; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01123626; UDB=6.00583316; IPR=6.00903755;
+ MB=3.00024357; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 19:28:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112719-0005-0000-0000-000089A783A8
+Message-Id: <b3474816-832c-4553-f625-cad97d9bbe87@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 05:14:06PM +0100, Hans de Goede wrote:
-> On 27-11-18 16:37, Andy Shevchenko wrote:
-> > The caller would like to know the reason why the i2c_acpi_new_device() fails.
-> > For example, if adapter is not available, it might be in the future and we
-> > would like to re-probe the clients again. But at the same time we would like to
-> > bail out if the error seems unrecoverable, such as invalid argument supplied.
-> > To achieve this, return error pointer in some cases.
 
-> >   	acpi_dev_free_resource_list(&resource_list);
-> > -	if (ret < 0 || !info->addr)
-> > -		return NULL;
-> > +	if (!info->addr)
-> > +		return ERR_PTR(-EADDRNOTAVAIL);
-> >   	adapter = i2c_acpi_find_adapter_by_handle(lookup.adapter_handle);
-> >   	if (!adapter)
-> > -		return NULL;
-> > +		return ERR_PTR(-ENODEV);
 
-> Why not simply return -EPROBE_DEFER here (and simplify the callers a lot).
+On 11/15/2018 03:20 AM, Hans Verkuil wrote:
+> On 11/12/2018 10:00 PM, Eddie James wrote:
+>> From: Eddie James <eajames@linux.vnet.ibm.com>
+>>
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting as a service processor, the Video Engine can
+>> capture the host processor graphics output.
+>>
+>> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+>> interface by way of videobuf2. Each frame, the driver triggers the hardware to
+>> capture the host graphics output and compress it to JPEG format.
+> I reviewed the driver, and there is still confusion about active timings and
+> detected timings. You are really close, but it is still not right.
+>
+> The timings returned by G_DV_TIMINGS should never change, unless by calling
+> S_DV_TIMINGS. The format returned by G_FMT should never change, unless by
+> calling S_DV_TIMINGS (which implicitly changes the format) or S_FMT.
+>
+> Timings changes from the video or calling QUERY_DV_TIMINGS should have NO
+> effect on the timings/format returned by G_DV_TIMINGS/G_FMT.
+>
+> Obviously, if the video timings change, then streaming will halt and an event
+> is issued so userspace can take action.
 
-> This is the only case where we really want to defer.
+Thanks, I have made some changes for v6.
 
-> > +	client = i2c_new_device(adapter, info);
-> > +	if (!client)
-> > +		return ERR_PTR(-ENODEV);
-> 
-> If you look at i2c_new_device, it can fail because it is
-> out of memory, the i2c slave address is invalid, or
-> their already is an i2c slave with the same address,
-> iow if this were to return an ERR_PTR itself, this
-> would return -ENOMEM, -EINVAL or -EBUSY and never
-> -EPROBE_DEFER.
+>
+>> v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
+>>
+>> v4l2-compliance SHA: not available, 32 bits
+> <snip>
+>
+>> Control ioctls (Input 0):
+>> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>> 	test VIDIOC_QUERYCTRL: OK
+>> 	test VIDIOC_G/S_CTRL: OK
+>> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>> 		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
+> That's weird. It's not clear to me why this fails.
+>
+>> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+>> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>> 	Standard Controls: 3 Private Controls: 0
+>>
+>> Format ioctls (Input 0):
+>> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>> 	test VIDIOC_G/S_PARM: OK
+>> 	test VIDIOC_G_FBUF: OK (Not Supported)
+>> 	test VIDIOC_G_FMT: OK
+>> 	test VIDIOC_TRY_FMT: OK
+>> 	test VIDIOC_S_FMT: OK
+>> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>> 	test Cropping: OK (Not Supported)
+>> 	test Composing: OK (Not Supported)
+>> 	test Scaling: OK (Not Supported)
+>>
+>> Codec ioctls (Input 0):
+>> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+>>
+>> Buffer ioctls (Input 0):
+>> 		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
+> I updated v4l2-compliance, as this test was a bit too strict.
+>
+>> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+>> 	test VIDIOC_EXPBUF: OK (Not Supported)
+>>
+>> Test input 0:
+>>
+>> Streaming ioctls:
+>> 	test read/write: OK
+>> 	test blocking wait: OK
+>> 	test MMAP: OK
+>> 	test USERPTR: OK (Not Supported)
+>> 		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
+>> 		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
+> You need to add:
+>
+> 	.vidioc_expbuf = vb2_ioctl_expbuf,
+>
+> to aspeed_video_ioctl_ops.
+>
+>> 	test DMABUF: FAIL
+>>
+>> Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
+>>
+>> The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
+>> these tests. None of the failing tests even ran last time I submitted my
+>> series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
+> When developing new drivers you should use the master branch of
+> https://git.linuxtv.org/media_tree.git/
 
-It would change the behaviour.
+Our 4.18 tree has quite a few chip-specific patches that I need that are 
+not upstreamed yet, so it's not possible for me to use that.
 
-In any case, it's only two users and both written by you, so, just to be sure
-you aware of this change and bless it.
+Thanks,
+Eddie
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+>
+> The v4l-utils repo is kept in sync with the latest code from that master branch.
+>
+> Regards,
+>
+> 	Hans
+>
+>> Changes since v4:
+>>   - Set real min and max resolution in enum_dv_timings
+>>   - Add check for vb2_is_busy before settings the timings
+>>   - Set max frame rate to the actual max rather than max + 1
+>>   - Correct the input status to 0.
+>>   - Rework resolution change to only set the relevant h/w regs during startup or
+>>     when set_timings is called.
+>>
+>> Changes since v3:
+>>   - Switch update reg function to use u32 clear rather than unsigned long mask
+>>   - Add timing information from host VGA signal
+>>   - Fix binding documentation mispelling
+>>   - Fix upper case hex values
+>>   - Add wait_prepare and wait_finish
+>>   - Set buffer state to queued (rather than error) if streaming fails to start
+>>   - Switch engine busy print statement to error
+>>   - Removed a couple unecessary type assignments in v4l2 ioctls
+>>   - Added query_dv_timings, fixed get_dv_timings
+>>   - Corrected source change event to fire if and only if size actually changes
+>>   - Locked open and release
+>>
+>> Changes since v2:
+>>   - Switch to streaming interface. This involved a lot of changes.
+>>   - Rework memory allocation due to using videobuf2 buffers, but also only
+>>     allocate the necessary size of source buffer rather than the max size
+>>
+>> Changes since v1:
+>>   - Removed le32_to_cpu calls for JPEG header data
+>>   - Reworked v4l2 ioctls to be compliant.
+>>   - Added JPEG controls
+>>   - Updated devicetree docs according to Rob's suggestions.
+>>   - Added myself to MAINTAINERS
+>>
+>> Eddie James (2):
+>>    dt-bindings: media: Add Aspeed Video Engine binding documentation
+>>    media: platform: Add Aspeed Video Engine driver
+>>
+>>   .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+>>   MAINTAINERS                                        |    8 +
+>>   drivers/media/platform/Kconfig                     |    9 +
+>>   drivers/media/platform/Makefile                    |    1 +
+>>   drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
+>>   5 files changed, 1755 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>
 
