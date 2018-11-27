@@ -2,94 +2,114 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2785BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4706AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09FB2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09FB2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 105022086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:52:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKbstYlZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105022086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbeK1Cud (ORCPT
+        id S1730300AbeK1Cuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:50:33 -0500
-Received: from mga11.intel.com ([192.55.52.93]:56624 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbeK1Cud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:50:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:52:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="93733830"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Nov 2018 07:52:13 -0800
-Date:   Tue, 27 Nov 2018 07:52:13 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-mm@kvack.org, "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [PATCH] mm: warn only once if page table misaccounting is
- detected
-Message-ID: <20181127155213.GB27075@linux.intel.com>
-References: <20181127083603.39041-1-heiko.carstens@de.ibm.com>
+        Tue, 27 Nov 2018 21:50:35 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33775 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729553AbeK1Cue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:50:34 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l11so22280396qtp.0;
+        Tue, 27 Nov 2018 07:52:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jSBS27Lb+H+ppje/JL4hQgwKKAkb9lzscvdbxKK+lp0=;
+        b=lKbstYlZotF8DIfjM5+XZP7yl5oVEm0tMl/M43NjPZ2ZlzBVf9IlzdL2chinLL5sr3
+         DiTFQaJMPei6/Tx8GtwJUgCwl0pcguhEnJet301lK9fCAW30ZBqiSiT0wnKIuc5coOyP
+         xE8mb2RVLEs02q44hfLa/IyrYDVOrHLm7eNVNhJ8nO5rAGQPr2NmCjIL2AN8j21k5F62
+         n3+pqTytMxqyBFpMxXdGUcDWrTvjtWVJ/5z69Ze92vMTSI3dYk7sgxmOVFm75C8fDv3C
+         dwXHrLz2maqqcqqHKfM+0eAhjeeVTcMiNLTmZ4LEVypOR1ZnWo2p+LKWty8rVtQxudD+
+         ztsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jSBS27Lb+H+ppje/JL4hQgwKKAkb9lzscvdbxKK+lp0=;
+        b=PPQKNQcrIL6EFpfulqVNtXcsjNTY8SS4IIMLu5zhFtsG4pA5kV62jbU/0VOufLI0ST
+         dNuJ7v/034wl2QqKBxcQfPxS59ZFCLABrvJTxC8T3SP8JtI7jdd2O2//FPaWNY5oCFb6
+         VoN4jiA2rhHF8zWqk8hrr/oOGfyksP+rvXrha7x0Otg2DJPo8Gl/ipgHs2r5ozkIzem2
+         G9B8aikAXV5XzVeEWc6zD8Zk5aJS9S0dPezjMqxGdHuts/SrsAR5i9/qc9AnuADcnfvX
+         Y9YkEhAEHRwrshQi2rHoalrizoExzm98zylb/bovqYJobrftoQjRHQfTlIaDCoaS/qdJ
+         A1Dw==
+X-Gm-Message-State: AGRZ1gIGpRElleFBBtoLEQNsb3N9YsqVq/dkfGic2EzvN9uUE7fqYtR+
+        4kkFI2IA3kz99duVhwTtOiI/TST2SB/fORNJ0x0=
+X-Google-Smtp-Source: AFSGD/WHMHGVxeQ5sj3WDc4LVGejCxaXR18AZnS8Om9PUyvBxlGf+HwOUh2Utg48cpMTyk7uRv91EshR0FVduMHyhsI=
+X-Received: by 2002:ac8:1909:: with SMTP id t9mr30333331qtj.327.1543333933780;
+ Tue, 27 Nov 2018 07:52:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127083603.39041-1-heiko.carstens@de.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181127025752.6459-1-ayman.bagabas@gmail.com>
+ <20181127025752.6459-3-ayman.bagabas@gmail.com> <s5hwooyye9c.wl-tiwai@suse.de>
+In-Reply-To: <s5hwooyye9c.wl-tiwai@suse.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 27 Nov 2018 17:52:02 +0200
+Message-ID: <CAHp75Vd_k3Gu93hOUOLXD90O_eM3wy2K3QfMN0789PQEOixS=w@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] x86: add support for Huawei WMI hotkeys.
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:36:03AM +0100, Heiko Carstens wrote:
-> Use pr_alert_once() instead of pr_alert() if page table misaccounting
-> has been detected.
-> 
-> If this happens once it is very likely that there will be numerous
-> other occurrence as well, which would flood dmesg and the console with
-> hardly any added information. Therefore print the warning only once.
-> 
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
->  kernel/fork.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff89c7b..c887e9eba89f 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -647,8 +647,8 @@ static void check_mm(struct mm_struct *mm)
->  	}
->  
->  	if (mm_pgtables_bytes(mm))
-> -		pr_alert("BUG: non-zero pgtables_bytes on freeing mm: %ld\n",
-> -				mm_pgtables_bytes(mm));
-> +		pr_alert_once("BUG: non-zero pgtables_bytes on freeing mm: %ld\n",
-> +			      mm_pgtables_bytes(mm));
+On Tue, Nov 27, 2018 at 1:02 PM Takashi Iwai <tiwai@suse.de> wrote:
+> On Tue, 27 Nov 2018 03:57:48 +0100,
+> Ayman Bagabas wrote:
 
-I found the print-always behavior to be useful when developing a driver
-that mucked with PTEs directly via vmf_insert_pfn() and had issues with
-racing against exit_mmap().  It was nice to be able to recompile only
-the driver and rely on dmesg to let me know when I messed up yet again.
+> > +     handle = ACPI_HANDLE(&inputdev->dev);
+> > +     args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
+> > +     args[1].integer.value = 0x04;
+> > +
+> > +     if (acpi_has_method(handle, method = "\\_SB.PCI0.LPCB.EC0.SPIN")) {
+>
+> This looks ugly...  And checkpatch also complains.
 
-Would pr_alert_ratelimited() suffice?
+Good point.
+Actually another question is what handle do we get here? Can we check
+method name by relative path, i.e. "SPIN" / "WPIN" instead?
 
->  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
->  	VM_BUG_ON_MM(mm->pmd_huge_pte, mm);
-> -- 
-> 2.16.4
-> 
+> > +             args[0].integer.value = 0;
+> > +             args[2].integer.value = on ? 1 : 0;
+> > +     } else if (acpi_has_method(handle, method = "\\_SB.PCI0.LPCB.EC0.WPIN")) {
+> > +             args[0].integer.value = 1;
+> > +             args[2].integer.value = on ? 0 : 1;
+> > +     } else {
+> > +             dev_err(&inputdev->dev, "Unable to find ACPI method\n");
+> > +             return -ENOSYS;
+> > +     }
+>
+> Can these checks be done at initialization phase?  It doesn't seem
+> needed to be executed at each call.
+
+Agree.
+
+-- 
+With Best Regards,
+Andy Shevchenko
