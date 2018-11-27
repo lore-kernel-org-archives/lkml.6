@@ -2,97 +2,122 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9227EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A93EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B71C2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B71C2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 3790F2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIHOZUtG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3790F2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbeK1FKd (ORCPT
+        id S1728791AbeK1FMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:10:33 -0500
-Received: from ms.lwn.net ([45.79.88.28]:42482 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725752AbeK1FKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:10:33 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 70DC72D5;
-        Tue, 27 Nov 2018 18:11:49 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 11:11:48 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
- perf-security.rst file
-Message-ID: <20181127111148.75746f02@lwn.net>
-In-Reply-To: <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
-References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com>
-        <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
-Organization: LWN.net
+        Wed, 28 Nov 2018 00:12:09 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41206 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725752AbeK1FMJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:12:09 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 70so8215990pgh.8;
+        Tue, 27 Nov 2018 10:13:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u8yuH4e0STk5KDQ9hTcIUxNWTa338Pb2c9uWexqmiHA=;
+        b=lIHOZUtGuY0Qdsf7qsjfu+T7rE604X/6sql1QW+LLRQVMqodex9EcbcUywB6I2ZeHa
+         GcRM2jiHbKO+0R+dnVmbtvYYqyHOCG6c/iofWRtc3wQyR2TOtY+IyIa3HTyv2g46MOrh
+         kTrhmx4mIZc4fO795rmrwi8benKPsAmog/TFN10yB50dyGShlqLNwXmp5guxpj1ELUL6
+         J3vBDATihx4Jwno4hmDWbJ5G1eDbPGwffXRRMSDNjjPP7YCd6K1KlJ+QKA4GVDYzpzTk
+         5DDCC/BmASdadnHgc0c7BdasHl3ikYVvol4MTspqfrrjyZPs2j/xpppEBR1zXuZ1nIBx
+         KP1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u8yuH4e0STk5KDQ9hTcIUxNWTa338Pb2c9uWexqmiHA=;
+        b=eo51J9uwtA/TKl2Srp89/hbKDCQ2KvG5jfet+OV0BUrsuu2z5O5pzODTjJhgdH54Rx
+         cStcPzTZ1MYq6Zi9yz9okE4qN3ScsFaURTdkvaUCY2d6aVzU0s0Sn8u7CJZmrAZ7iVyV
+         53N8dV7DKXpvke0NUH08smrfjesXjfBkd0XtMwoUzYP5MFmNZYVhRs2q66oF4JzXC5q0
+         g+pGb+Jm4ubYJwRheew7lDalzcadGyASRFsj026++Acn6D1gtDGby0jKggw8CUxYHsMJ
+         +GnRrLdwGJUA5YUHmI6NcPf12frjs0A2z1avQad6L0/NybFTnYSCXSjIMPtDh/R+OLIv
+         dsIw==
+X-Gm-Message-State: AGRZ1gITKP//AHpInvQZMMxkEuns8C6tAJsbzXMiaJzvOCADpv2jfarW
+        cpaCRqvuzC1tIZRWHkLe41+jrGSv
+X-Google-Smtp-Source: AJdET5e6e+RvhDnYLwwKwriuKb/L9TjnEAU+Pm2tSSOA9GJJQYIvl3nY9GCp1fTACz7h06kVFH2FBQ==
+X-Received: by 2002:a62:cd44:: with SMTP id o65mr33707658pfg.222.1543342404727;
+        Tue, 27 Nov 2018 10:13:24 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
+        by smtp.googlemail.com with ESMTPSA id w10-v6sm5772108pfg.1.2018.11.27.10.13.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 10:13:24 -0800 (PST)
+Subject: Re: [PATCH] i2c: i2c-tegra: replace spin_lock_irqsave with spin_lock
+ in ISR
+To:     jun qian <hangdianqj@163.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180911145446.53621-1-hangdianqj@163.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9d98e98f-c4e6-f202-659b-288be5358117@gmail.com>
+Date:   Tue, 27 Nov 2018 21:13:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180911145446.53621-1-hangdianqj@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 11:15:37 +0300
-Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+On 11.09.2018 17:54, jun qian wrote:
+> As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
+> 
+> Signed-off-by: jun qian <hangdianqj@163.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 60c8561fbe65..59f31d3a508f 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -608,11 +608,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	u32 status;
+>  	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+>  	struct tegra_i2c_dev *i2c_dev = dev_id;
+> -	unsigned long flags;
+>  
+>  	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
+>  
+> -	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
+> +	spin_lock(&i2c_dev->xfer_lock);
+>  	if (status == 0) {
+>  		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
+>  			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
+> @@ -670,7 +669,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  
+>  	complete(&i2c_dev->msg_complete);
+>  done:
+> -	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
+> +	spin_unlock(&i2c_dev->xfer_lock);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> 
 
-> +To perform security checks, the Linux implementation splits processes into two
-> +categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
-> +to as superuser or root), and b) unprivileged processes (whose effective UID is
-> +nonzero). Privileged processes bypass all kernel security permission checks so
-> +perf_events performance monitoring is fully available to privileged processes
-> +without access, scope and resource restrictions.
-> +
-> +Unprivileged processes are subject to a full security permission check based on
-> +the process's credentials [5]_ (usually: effective UID, effective GID, and
-> +supplementary group list).
-> +
-> +Linux divides the privileges traditionally associated with superuser into
-> +distinct units, known as capabilities [6]_ , which can be independently enabled
-> +and disabled on per-thread basis for processes and files of unprivileged users.
-> +
-> +Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
-> +privileged processes with respect to perf_events performance monitoring and
-> +bypass *scope* permissions checks in the kernel.
-> +
-> +Unprivileged processes using perf_events system call API is also subject for
-> +PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
-> +determines whether monitoring is permitted. So unprivileged processes provided
-> +with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
-
-It's good to have more information here.  I could certainly quibble
-further with things - a process with CAP_SYS_ADMIN is not "unprivileged"!
-- but I don't want to stand in the way of this any further.  I *would*
-still like to see an ack from the perf world, though.
-
-With regard to Kees's comment on merging the two patches; I would probably
-add the new document to index.rst in the same patch, but it doesn't matter
-that much.  Not worth redoing the patch just for that.
-
-jon
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
