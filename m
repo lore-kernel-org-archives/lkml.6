@@ -2,121 +2,165 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C97CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEC7C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0D6208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:03:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4VbEsZf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0D6208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 667B1208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667B1208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeK0L7a (ORCPT
+        id S1727715AbeK0MDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:59:30 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34038 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbeK0L73 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:59:29 -0500
-Received: by mail-it1-f193.google.com with SMTP id x124so543020itd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:03:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=99qsmslrCZHFziv0Q8mZFoLamTN89o/3EFXsZdgoblY=;
-        b=H4VbEsZf6piHB3UA9ZCrZn/XSE1dMDWYRfEseEFTu2exikG8jw/BcnnZ6BNYduikuy
-         tqVfmFVaHAH9hpd80UvX9YpYAk87NBNnq2gpAUqCwMR/VzIKFJWYqefVWWRX8485dhy+
-         s8DPB1l1WORi1yF3vsR1cPlN/6LICYMdGW+rbJBvETmqyEHf0MY/Vr4ZN9OB+d+EtOnP
-         RPCSB2uQiwMVHhiqzpQG777dfJz2h6PHvUqmDivkIr1pDBen6eMPWqDlg82vh6EnTBdR
-         RHdE8wZQmXNNaJLpZyoL+AeZA3JH3U3RYY3DPBjSmgb7JH7g+mwGdNnpIwbLc6TZCV11
-         EaFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=99qsmslrCZHFziv0Q8mZFoLamTN89o/3EFXsZdgoblY=;
-        b=XzLJ/1MdHDpHV6eVzc/J+RJEISKx9BFkzWY0aOT49CGhcPwM/yFQ7OZz8FI8Htf8Gn
-         SpJo6KIpIluqJt3GL7BYLY57iTrMnwfTlLwyJ04q9ol3WR5lGnLapFviEEmhJBBtBBhY
-         RAIRhpluhKYW2gr6pwtiFgbtK1fMwm9uytyzOk3stYwC1JcU1mWJRMmOy+aCC3Bb9cFm
-         2BBL6CLNv756V++dgXsKbzGpLdtGR5z6mankritHYjnhCbE7tSygQ6uuwmEX28xrYZnN
-         GD6TcKTvo8ZHnNDqRWFciXn1rV5fYRZVXOsG0sVsTTspW1Hxn6X4jUjMRZ60wOkvrShf
-         3vwQ==
-X-Gm-Message-State: AA+aEWaslD2FiwxHwCl/Qpp+dMOJO8zXfwxVrEIB76qfuBHP3RwQqNN3
-        Q9zHglmYwkd1SGWtM4TzlkiLmL/aIveQHHNEZQ8=
-X-Google-Smtp-Source: AFSGD/XclNfSVPaz66EPf3ynwoxEhZ5AZZtDaXliliwlY255IUtmhnNEKsflzt9qE2eiOvG1q0CBotYrvyOobffA7fo=
-X-Received: by 2002:a02:5184:: with SMTP id s126mr21216354jaa.12.1543280606391;
- Mon, 26 Nov 2018 17:03:26 -0800 (PST)
+        Tue, 27 Nov 2018 07:03:42 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34701 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727542AbeK0MDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 07:03:42 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5EF81DD7F1482;
+        Tue, 27 Nov 2018 09:07:34 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 09:07:26 +0800
+Subject: Re: [PATCH rdma-next 3/3] RDMA/hns: Modify hns RoCE device's name
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
+ <1542986065-44265-4-git-send-email-xavier.huwei@huawei.com>
+ <20181123203958.GJ3395@ziepe.ca> <5BF94B9F.5030409@huawei.com>
+ <20181126031354.GA15463@ziepe.ca> <5BFBB002.8020703@huawei.com>
+ <20181126174402.GC32083@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <charles.chenxin@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5BFC98CE.6010404@huawei.com>
+Date:   Tue, 27 Nov 2018 09:07:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-References: <20181126145107.31597-1-tiny.windzz@gmail.com> <CAHC9VhSjBTVXAXKiNsgPDJUCsxPnd3DJVA1pjSQqN0ct=RaxJg@mail.gmail.com>
-In-Reply-To: <CAHC9VhSjBTVXAXKiNsgPDJUCsxPnd3DJVA1pjSQqN0ct=RaxJg@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Tue, 27 Nov 2018 09:03:39 +0800
-Message-ID: <CAEExFWtbJaCJba7+ttOVw0V6Y7wSJ=8zVzNHKQJHuGuTgqQPYg@mail.gmail.com>
-Subject: Re: [PATCH] audit: remove some duplicated includes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     eparis@redhat.com, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181126174402.GC32083@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 7:36 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Nov 26, 2018 at 9:51 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
-> >
-> > audit.h and skbuff.h are included twice.It's unnecessary.
-> > hence just remove them.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  kernel/audit.c | 3 ---
-> >  1 file changed, 3 deletions(-)
->
-> While there are two header files named audit.h, they are different
-> files as one lives in include/linux/audit.h, the other in
-> kernel/audit.h.  Granted, kernel/audit.h does include the
-> include/linux/audit.h file but it should be protected from multiple
-> inclusion by the _LINUX_AUDIT_H_ definition.
->
-> I currently prefer to keep both <linux/audit.h> and "audit.h" in
-> audit.c to help make the dependencies explicit in audit.c itself.
-Hi Paul:
 
-How about fs.h and others?
 
-MBR,
-Yangtao
+On 2018/11/27 1:44, Jason Gunthorpe wrote:
+> On Mon, Nov 26, 2018 at 04:34:10PM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2018/11/26 11:13, Jason Gunthorpe wrote:
+>>> On Sat, Nov 24, 2018 at 09:01:19PM +0800, Wei Hu (Xavier) wrote:
+>>>> On 2018/11/24 4:39, Jason Gunthorpe wrote:
+>>>>> On Fri, Nov 23, 2018 at 11:14:25PM +0800, Wei Hu (Xavier) wrote:
+>>>>>> This patch modifies the name of hns RoCE device's name in order
+>>>>>> to ensure that the name is consistent before and after reset.
+>>>>>>
+>>>>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>>>>>>  drivers/infiniband/hw/hns/hns_roce_device.h | 1 +
+>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 3 +++
+>>>>>>  drivers/infiniband/hw/hns/hns_roce_main.c   | 4 +++-
+>>>>>>  3 files changed, 7 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>>>> index 259977b..a8cfe76 100644
+>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>>>> @@ -954,6 +954,7 @@ struct hns_roce_dev {
+>>>>>>  	struct pci_dev		*pci_dev;
+>>>>>>  	struct device		*dev;
+>>>>>>  	struct hns_roce_uar     priv_uar;
+>>>>>> +	char			name[IB_DEVICE_NAME_MAX];
+>>>>>>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
+>>>>>>  	spinlock_t		sm_lock;
+>>>>>>  	spinlock_t		bt_cmd_lock;
+>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>>>> index 1d639a0..678c7ec 100644
+>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>>>> @@ -6110,6 +6110,9 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
+>>>>>>  		hr_dev->irq[i] = pci_irq_vector(handle->pdev,
+>>>>>>  						i + handle->rinfo.base_vector);
+>>>>>>  
+>>>>>> +	snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+>>>>>> +		 handle->rinfo.netdev->name);
+>>>>> Why is this making up its own driver name? How is this avoiding
+>>>>> colliding with an existing name?
+>>>>>
+>>>>> This is very dangerous since we now have device renaming, the driver
+>>>>> could fail to load with no recovery.
+>>>> Hi, Jason
+>>>>        
+>>>>     The NIC driver notifies the RoCE driver to perform reset related
+>>>> processing by calling the .reset_notify() interface registered by the
+>>>> RoCE driver. If the RoCE reset processing fails, .reset_notify()
+>>>> returns non-zero, and then hns NIC driver will reschedule the
+>>>> reset task again.
+>>>>    
+>>>>     The current hardware version in hip08 SoC cannot support
+>>>> after reset process the application still communicates with the
+>>>> resources like QP requested before reset. In RoCE reset process,
+>>>> we will release the resources through ib_unregister_device, after
+>>>> the hardware reset is completed, driver will re-execute
+>>>> ib_register_device.
+>>>>    
+>>>>     Currently, we find that the ib_device's name after reset
+>>>> and the one before reset may be different. We can specify the
+>>>> device name to solve this problem.
+>>> No, now you just have unsolved races.
+>>>
+>>> If you want to reset like this then you will need to do some kind of
+>>> revision to the IB core code to not loose the name assigned to the
+>>> device and not hacks like this.
+>> Hi, Jason
+>>
+>>     In fact, We only specified the name of the ib_device to be generated
+>> when
+>> calling ib_register_device on the hip08 SoC, and doesn't modify its name
+>> during the existence of ib_device.
+>>
+>>     In this example, if you always use hns_%d when registering, I think that
+>> no matter how you modify IB core code, we can't solve this problem. We
+>> need to specify the name of the ib_device device when calling
+>> ib_register_device, and this name should be unique in the OS.
+>>
+>>     The NIC and the RoCE hardware engine share the function On the hip08
+>> SoC.
+>> The NIC driver will execute register_netdev firstly, and then the RoCE
+>> driver will
+>> execute ib_register_device. In the following statement, where
+>> handle->rinfo.netdev->name is the name of the corresponding net_device
+>> device,
+>> this will ensure the uniqueness of the hnsXXX ib_device's name on the OS.
+>>
+>>     snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+>>          handle->rinfo.netdev->name);
+> It does not. We support rename in ib_core now, so users can set device
+> names to whatever they like and break these naming assumptions.
 >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 2a8058764aa6..a677715891d0 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -62,11 +62,8 @@
-> >  #include <linux/pid.h>
-> >  #include <linux/slab.h>
-> >
-> > -#include <linux/audit.h>
-> > -
-> >  #include <net/sock.h>
-> >  #include <net/netlink.h>
-> > -#include <linux/skbuff.h>
-> >  #ifdef CONFIG_SECURITY
-> >  #include <linux/security.h>
-> >  #endif
-> > --
-> > 2.17.0
+> The only solution I can see is to make a reset function in IB core
+> that retains the name but forces all clients to disconnect and
+> reconnect.
+Hi, Jason
+    I got your opinion, we will think about how to deal with it.
+    Please pull this patch out of the series.
+    Thanks you very much!
+
+    Best Regards
+Xavier
+> Jason
 >
-> --
-> paul moore
-> www.paul-moore.com
+> .
+>
+
+
