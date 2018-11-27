@@ -2,108 +2,259 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C96CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D32AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F36C214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F36C214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 0169F20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:07:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWwmAtll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0169F20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeK1CD4 (ORCPT
+        id S1729137AbeK1CFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:03:56 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:40998 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbeK1CDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:03:55 -0500
-Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wARF3p3n029992
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 27 Nov 2018 07:04:02 -0800
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 27 Nov 2018 07:03:41 -0800
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- 196372E0841; Tue, 27 Nov 2018 10:03:41 -0500 (EST)
-Date:   Tue, 27 Nov 2018 10:03:41 -0500
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     kbuild test robot <lkp@intel.com>, <kbuild-all@01.org>,
-        <linux-kernel@vger.kernel.org>,
-        David Dajun Chen <dchen@diasemi.com>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular
-Message-ID: <20181127150340.GG14659@windriver.com>
-References: <1542861179-8941-3-git-send-email-paul.gortmaker@windriver.com>
- <201811231036.wIjm7GBh%fengguang.wu@intel.com>
- <20181123031456.GD14659@windriver.com>
- <20181123144328.GE14659@windriver.com>
- <20181127130711.GL4272@dell>
+        Tue, 27 Nov 2018 21:05:30 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33641 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeK1CFa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:05:30 -0500
+Received: by mail-yb1-f195.google.com with SMTP id i78-v6so9181641ybg.0;
+        Tue, 27 Nov 2018 07:07:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mzAW69s9eGTuJ0C3JrLJHBadtkZa9Tepo9iyuGTMr0w=;
+        b=iWwmAtlljLr0/mebLV/XzxRLjFaqpz+aNoGuFKv9w1K25Kq4j5Hk5dcJfk7KlwuzRe
+         1BTbA17umELRlQX/1dL1UCZn5/auew/YmRruVgUq+M9iZA6EIq4LgshpJF4HIET9l5I1
+         e7RWis7vyQnM0A0/4fKwTwA21uWmncWKg8AI8g2valFidEcWPbirCwUczy+LW7+nWJX7
+         /7cADMFvZMqPXrOgVA2+7HAPhcUmzmXj/QRv2/rvvEZXCm04s/CHUcc4Ya858Mhim0kK
+         wnjN1X2WxN7Dy1454b3f3PHlb9SE1KNS31lLorwTaNlCsJAzfbWcnvnqqis2951WfJ0m
+         J3vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mzAW69s9eGTuJ0C3JrLJHBadtkZa9Tepo9iyuGTMr0w=;
+        b=POwqfOZ3231Y7flT6J8hqiooX1CwwJINQPZzlyJnwsc/XMHbhumo7BvbIViffivSkO
+         1CnJ5ht2ld/4u/MUXkSt0dDwoe5lOPIMszji+XbptQBqHsHfiRPNrG7SgFdEnuFeVpgr
+         DSTS5f/lRs7DTECGmKb/EPGPKncx4b+WWgwTJfBs7biYEBfioQ6b7DHd9kADH+Lv75Ub
+         9duZRDwB/+OKX1/f2apfIVYDdOvc3tXu7hWERZ05mAsavYZ5ZzZv0sPHzBE49oZhz0Xx
+         fvsowox/MdS9r5wRNLGj3kpmKDQrOhow+xpBEgjR22xJmEtY0vqIq9mIX4vlibPTStOP
+         hQdw==
+X-Gm-Message-State: AA+aEWbumkVFsMhmf72GWn1l16vmt5l4j7pmId0376CHb5FRgEyeXxRI
+        nV0ndiwwVgRhuuYeyGKwYDvAzCQPjypwW6lywaA=
+X-Google-Smtp-Source: AJdET5cy2fzhlmi1Pwq47D3rL/t6P/TdbpEQNow7Bxr84HulYR/ez4ewI54t2zEyECOuLdTARCII4Rf8g7gaYLl73Ik=
+X-Received: by 2002:a25:6004:: with SMTP id u4-v6mr34646878ybb.462.1543331236775;
+ Tue, 27 Nov 2018 07:07:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181127130711.GL4272@dell>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <00000000000074e10d0576cc48f1@google.com> <0000000000001ec857057ba01589@google.com>
+In-Reply-To: <0000000000001ec857057ba01589@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Nov 2018 17:07:05 +0200
+Message-ID: <CAOQ4uxgiERNAyX4PDHf1DQLBg56rBANWLe575TGkz_WpbxaoCg@mail.gmail.com>
+Subject: Re: possible deadlock in ovl_write_iter
+To:     syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular] On 27/11/2018 (Tue 13:07) Lee Jones wrote:
+On Tue, Nov 27, 2018 at 9:06 AM syzbot
+<syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    6f8b52ba442c Merge tag 'hwmon-for-v4.20-rc5' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=120f3905400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=695726bc473f9c36a4b6
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cad225400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13813093400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com
+>
+> overlayfs: filesystem on './file0' not supported as upperdir
+>
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.20.0-rc4+ #351 Not tainted
+> ------------------------------------------------------
+> syz-executor338/5996 is trying to acquire lock:
+> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock
+> include/linux/fs.h:757 [inline]
+> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at:
+> ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>
+> but task is already holding lock:
+> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested fs/pipe.c:62
+> [inline]
+> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+> fs/pipe.c:70
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #2 (&pipe->mutex/1){+.+.}:
+>         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>         __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+>         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+>         pipe_lock_nested fs/pipe.c:62 [inline]
+>         pipe_lock+0x6e/0x80 fs/pipe.c:70
+>         iter_file_splice_write+0x27d/0x1050 fs/splice.c:700
+>         do_splice_from fs/splice.c:851 [inline]
+>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>         __do_sys_splice fs/splice.c:1414 [inline]
+>         __se_sys_splice fs/splice.c:1394 [inline]
+>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (sb_writers#3){.+.+}:
+>         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
+> [inline]
+>         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+>         __sb_start_write+0x214/0x370 fs/super.c:1387
+>         sb_start_write include/linux/fs.h:1597 [inline]
+>         mnt_want_write+0x3f/0xc0 fs/namespace.c:360
+>         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+>         ovl_setattr+0x10b/0xaf0 fs/overlayfs/inode.c:30
+>         notify_change+0xbde/0x1110 fs/attr.c:334
+>         do_truncate+0x1bd/0x2d0 fs/open.c:63
+>         handle_truncate fs/namei.c:3008 [inline]
+>         do_last fs/namei.c:3424 [inline]
+>         path_openat+0x375f/0x5150 fs/namei.c:3534
+>         do_filp_open+0x255/0x380 fs/namei.c:3564
+>         do_sys_open+0x568/0x700 fs/open.c:1063
+>         __do_sys_openat fs/open.c:1090 [inline]
+>         __se_sys_openat fs/open.c:1084 [inline]
+>         __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&ovl_i_mutex_key[depth]){+.+.}:
+>         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>         inode_lock include/linux/fs.h:757 [inline]
+>         ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>         call_write_iter include/linux/fs.h:1857 [inline]
+>         new_sync_write fs/read_write.c:474 [inline]
+>         __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>         __kernel_write+0x10c/0x370 fs/read_write.c:506
+>         write_pipe_buf+0x180/0x240 fs/splice.c:797
+>         splice_from_pipe_feed fs/splice.c:503 [inline]
+>         __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>         splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>         default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>         do_splice_from fs/splice.c:851 [inline]
+>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>         __do_sys_splice fs/splice.c:1414 [inline]
+>         __se_sys_splice fs/splice.c:1394 [inline]
+>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>    &ovl_i_mutex_key[depth] --> sb_writers#3 --> &pipe->mutex/1
+>
+>   Possible unsafe locking scenario:
+>
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&pipe->mutex/1);
+>                                 lock(sb_writers#3);
+>                                 lock(&pipe->mutex/1);
+>    lock(&ovl_i_mutex_key[depth]);
+>
+>   *** DEADLOCK ***
+>
+> 2 locks held by syz-executor338/5996:
+>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: file_start_write
+> include/linux/fs.h:2810 [inline]
+>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: do_splice+0xd2e/0x1430
+> fs/splice.c:1146
+>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested
+> fs/pipe.c:62 [inline]
+>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+> fs/pipe.c:70
+>
+> stack backtrace:
+> CPU: 0 PID: 5996 Comm: syz-executor338 Not tainted 4.20.0-rc4+ #351
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x244/0x39d lib/dump_stack.c:113
+>   print_circular_bug.isra.35.cold.54+0x1bd/0x27d
+> kernel/locking/lockdep.c:1221
+>   check_prev_add kernel/locking/lockdep.c:1863 [inline]
+>   check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+>   validate_chain kernel/locking/lockdep.c:2347 [inline]
+>   __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+>   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>   down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>   inode_lock include/linux/fs.h:757 [inline]
+>   ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>   call_write_iter include/linux/fs.h:1857 [inline]
+>   new_sync_write fs/read_write.c:474 [inline]
+>   __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>   __kernel_write+0x10c/0x370 fs/read_write.c:506
+>   write_pipe_buf+0x180/0x240 fs/splice.c:797
+>   splice_from_pipe_feed fs/splice.c:503 [inline]
+>   __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>   splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>   default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>   do_splice_from fs/splice.c:851 [inline]
+>   do_splice+0x64a/0x1430 fs/splice.c:1147
+>   __do_sys_splice fs/splice.c:1414 [inline]
+>   __se_sys_splice fs/splice.c:1394 [inline]
+>   __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x445ad9
+> Code: e8 5c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f18e3f71cd8 EFLAGS: 00000216 ORIG_RAX: 0000000000000113
+> RAX: ffffffffffffffda RBX: 00000000006dac78 RCX: 0000000000445ad9
+> RDX: 000000000000000a RSI: 0000000000000000 RDI: 0000000000000007
+> RBP: 00000000006dac70 R08: 000100000000000a R09: 0000000000000007
+> R10: 0000000000000000 R11: 0000000000000216 R12: 00000000006dac7c
+> R13: 00007ffde0706e9f R14: 00007f18e3f729c0 R15: 00000000006dad4c
+>
 
-> On Fri, 23 Nov 2018, Paul Gortmaker wrote:
+This looks like a false positive because lockdep is not aware of
+s_stack_depth of the file (fs) associated with the pipe.
 
-[...]
+HOWEVER, because overlayfs calls do_splice_direct() on copy up,
+it is important to make sure that higher layer do_splice_direct() cannot
+recursively trigger copy up.
 
-> > My other pending MFD patches have a trivial runtime behavior change;
-> > deleting a ".remove" field/function - that will never be used for a
-> > non-module case, but in theory could be (pointlessly) triggered by
-> > forcing a driver unbind.  (see mainline 98b72b94def9 as an example)
-> > Patches like this were left behind for a future send batch.
-> 
-> What about when .remove() is invoked during shutdown?
-
-It is my understanding that .remove is not invoked during shutdown.
-
-If we step outside of MFD and look at mainline commit 7aa8619a66aea5
-("iommu/arm-smmu-v3: Implement shutdown method") -- you can see it adds
-a shutdown that is just a wrapper around the remove function.
-
-If shutdown called remove, then this commit would cause the remove
-function to get called *twice* on a shutdown.
-
-I also don't see any obvious coupling in drivers/base/platform.c - they
-seem independent, but it is possible I've overlooked something?
+At this time, overlayfs does the copy up on open for write, so any
+higher layer do_splice_direct() will already get an out file that has been
+copied up, but with future plans for "lazy copy up on first write", we need
+to be careful.
 
 Thanks,
-Paul.
-
-----------
-static int platform_drv_remove(struct device *_dev)
-{
-        struct platform_driver *drv = to_platform_driver(_dev->driver);
-        struct platform_device *dev = to_platform_device(_dev);
-        int ret = 0;
-
-        if (drv->remove)
-                ret = drv->remove(dev);
-        dev_pm_domain_detach(_dev, true);
-
-        return ret;
-}
-
-static void platform_drv_shutdown(struct device *_dev)
-{
-        struct platform_driver *drv = to_platform_driver(_dev->driver);
-        struct platform_device *dev = to_platform_device(_dev);
-
-        if (drv->shutdown)
-                drv->shutdown(dev);
-}
-----------
+Amir.
