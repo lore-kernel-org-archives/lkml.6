@@ -2,108 +2,104 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E32C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67A5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79CB208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20F52146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:01:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bV71GiCI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79CB208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="UrSrkcc7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20F52146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeK0Lyl (ORCPT
+        id S1727656AbeK0L53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:54:41 -0500
-Received: from m12-13.163.com ([220.181.12.13]:51077 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbeK0Lyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:54:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=yNuIu
-        RMSYL/aoMcojHqluyNNc4n3j+uR47c8cisLZmE=; b=bV71GiCIwlrW/qUeRT8XO
-        TeXCqf5dTgIdeALB9lecvl4SJUepncKSmMcf+lqPdJzq256J2NLAoceqUSlie0YT
-        ToPzn8aycz4vBWgtXvvGB1kKKacbRVQM5m7hQ2Nscivn7f07P/OfCKrLQ+YjL6oe
-        VXnW8zGbp0/GuzAFsNnj9I=
-Received: from bp (unknown [106.120.213.96])
-        by smtp9 (Coremail) with SMTP id DcCowADHIsWulvxbHu37Bw--.23962S2;
-        Tue, 27 Nov 2018 08:58:22 +0800 (CST)
-Date:   Tue, 27 Nov 2018 08:58:23 +0800
-From:   PanBian <bianpan2016@163.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [Xen-devel] [PATCH] pvcalls-front: fixes incorrect error handling
-Message-ID: <20181127005823.GB125510@bp>
-Reply-To: PanBian <bianpan2016@163.com>
-References: <1542852432-30019-1-git-send-email-bianpan2016@163.com>
- <1f765e81-ed89-d110-74b1-cc8029a4555f@oracle.com>
+        Tue, 27 Nov 2018 06:57:29 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39189 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727468AbeK0L53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:57:29 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i6so6163667oia.6
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aQ7nONK8cOdTAxJGznQAP2rEX4jRNiKILVq1drt4mak=;
+        b=UrSrkcc7z9Yd4NRYVZ/CM+Jiwvtuli/fxa4GCewTGQbKocpklTDekO8WUx2KSzVAWp
+         y0NQHDq4yYC1b+A9B5/rXdb4vEbvxE15JimI/MnkNIiVJsqWWjI+xF4L4hknWUq0TtWo
+         SXTq2O1iaEpu+XtJD4LkEDmn0w1PSG86q5WjuL849b5X/hproxa6sDelCrvSvjwhmKes
+         HcusQ0ov6xSpZZkjYDptJLsD/5xeTtDygCqquXbKaY9tbirHy26GKF4/+JZwL+e0bPDZ
+         C+NdMEQ1gte1dV3mYRtF4i7ghBOirFG9GCPLfttXKj+ERI9RyRgYHa4AMnuQ2/TG+Cmu
+         0nmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aQ7nONK8cOdTAxJGznQAP2rEX4jRNiKILVq1drt4mak=;
+        b=dQtiJGg/NifzWCf9HWK4r318Zu54BwCuDAtVC65aUttSYX7XNBB6o26fua1ob6PNdG
+         JYaP6g/HZ93uphJmfb3J6OYnpbEd5ExnwjnFBf6hy96kkdHokiH5E9+fNryRLhZta39z
+         T3lZc1l/FXDawvcw73/qcDg0ueTKaf/EjEHXPtovZw/JrL8XRoTOZW6PeJqIcaDVSlb6
+         XlUfM3CRMYYdDxf8UTGvwllO/WdlTm1xSoUMAHxwZe5JdNUtQne63GXaDOJ/7gOJ8cb7
+         KoW1HM4+7GLpxhQd20BLYwG8rZb4WRZk9bICGwF3bfhioBBhdJ/fOiovdCQi/tM2ygXz
+         3U3Q==
+X-Gm-Message-State: AA+aEWaDSBF0HH+i0P0dHRU+ji7SbnkyXxAGPDankcY2/T5LIhHnPN/w
+        rH0KgvCOdOX3oPdU6Ji1nL4SpSuX2smw592CaIbjJA==
+X-Google-Smtp-Source: AFSGD/W2WI+qAZ+fShsTrKX67Z+tjLxn5JLhIKR+EGgT/1w6WgD3hcP0DmSdkPLi/VOwgPgcjuc+h4OJ0LzZFhgkKQU=
+X-Received: by 2002:aca:5205:: with SMTP id g5mr1034965oib.149.1543280485480;
+ Mon, 26 Nov 2018 17:01:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f765e81-ed89-d110-74b1-cc8029a4555f@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-CM-TRANSID: DcCowADHIsWulvxbHu37Bw--.23962S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WrW3ur1DXw45tFy3GF1UGFg_yoW8XrWrpF
-        s7JF1jyF48tasayrZFqa1Yvry5Za1Iq348Wry2kan0kr13CFy8tFyFk34v9w4v9r4rGF1f
-        Zw4jqFy7CFsxA37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j_hL8UUUUU=
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiDg8MclXlpnQALgAAsz
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+ <154170040562.12967.17831655390715808287.stgit@ahduyck-desk1.jf.intel.com>
+In-Reply-To: <154170040562.12967.17831655390715808287.stgit@ahduyck-desk1.jf.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 26 Nov 2018 17:01:14 -0800
+Message-ID: <CAPcyv4j5P7OWbof8gMUmFRswR4YVQAJEZTAPNGhUup_y3XRYiw@mail.gmail.com>
+Subject: Re: [driver-core PATCH v6 1/9] workqueue: Provide queue_work_node to
+ queue work near a given NUMA node
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        bvanassche@acm.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 03:31:39PM -0500, Boris Ostrovsky wrote:
-> On 11/21/18 9:07 PM, Pan Bian wrote:
-> > kfree() is incorrectly used to release the pages allocated by
-> > __get_free_page() and __get_free_pages(). Use the matching deallocators
-> > i.e., free_page() and free_pages(), respectively.
-> >
-> > Signed-off-by: Pan Bian <bianpan2016@163.com>
-> > ---
-> >  drivers/xen/pvcalls-front.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-> > index 2f11ca7..77224d8 100644
-> > --- a/drivers/xen/pvcalls-front.c
-> > +++ b/drivers/xen/pvcalls-front.c
-> > @@ -385,8 +385,8 @@ static int create_active(struct sock_mapping *map, int *evtchn)
-> >  out_error:
-> >  	if (*evtchn >= 0)
-> >  		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
-> > -	kfree(map->active.data.in);
-> > -	kfree(map->active.ring);
-> > +	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
-> 
-> Is map->active.data.in guaranteed to be NULL when entering this routine?
+On Thu, Nov 8, 2018 at 10:06 AM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
+>
+> Provide a new function, queue_work_node, which is meant to schedule work on
+> a "random" CPU of the requested NUMA node. The main motivation for this is
+> to help assist asynchronous init to better improve boot times for devices
+> that are local to a specific node.
+>
+> For now we just default to the first CPU that is in the intersection of the
+> cpumask of the node and the online cpumask. The only exception is if the
+> CPU is local to the node we will just use the current CPU. This should work
+> for our purposes as we are currently only using this for unbound work so
+> the CPU will be translated to a node anyway instead of being directly used.
+>
+> As we are only using the first CPU to represent the NUMA node for now I am
+> limiting the scope of the function so that it can only be used with unbound
+> workqueues.
+>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-I am not sure yet. Sorry for that. I observed the mismatches between
-__get_free_page and kfree, and submitted the patch.
-
-But I think your consideration is reasonable. A better solution is to
-directly free bytes, a local variable that holds __get_free_pages return
-value. If you agree, I will rewrite the patch.
-
-Thanks,
-Pan
-
-> 
-> -boris
-> 
-> > +	free_page((unsigned long)map->active.ring);
-> >  	return ret;
-> >  }
-> >  
-> 
-
+Acked-by: Dan Williams <dan.j.williams@intel.com>
