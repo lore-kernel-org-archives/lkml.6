@@ -2,78 +2,163 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F51BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9771C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2965208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:22:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IX+HIAIU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2965208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 89D7720817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:23:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D7720817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbeK1CU3 (ORCPT
+        id S1729589AbeK1CV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:20:29 -0500
-Received: from mail-lf1-f47.google.com ([209.85.167.47]:42729 "EHLO
-        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbeK1CU3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:20:29 -0500
-Received: by mail-lf1-f47.google.com with SMTP id l10so16726525lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:22:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=D0TC7u4pmpmpc+9j8m0s5YIQH8WK1Up0qkNyaGtjkf4=;
-        b=IX+HIAIU1wZxIifrfjYQFXOz3ZZinW1MymmZ767KiRUhYAD1WWQPYk31+YmrrnxMVy
-         uOLmy2cZcoAHh61Ilguanj265NKzKzerBZaMAA00xy3QP34WIR5wyLCJHnSrQGHsMz6o
-         3SzDOGPfSk93Ii/pKkscvnErLcGzQWyirrnW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=D0TC7u4pmpmpc+9j8m0s5YIQH8WK1Up0qkNyaGtjkf4=;
-        b=sSzicOyMgK8ixY3TsmcGl5ga/Cbcs5kF30UlD1JyBjePTBwC6ZAupD/upK2cY1WLPg
-         /jSntEJ2qdtPfxHxKp66q+AGeLYZuE20Q7oFZvIrtIDEzCbn4ZHmO6Dg7XEZzOoiqkCb
-         1xDfPNUipbbmUdGI9D9RN1OFfF4DAf4E2V9HXcHprjag9UhirnOlX1Zz/+F5hkzCWwTc
-         Ls5Gqav5W0cHLkgcYCuSHBT915SCuVQoN9aHg+X4RPt78Vy8OiAFj+FrbVnKOYysVxXT
-         VvTeajS6ICdIYIp5m0LjzLVl5f7TkQSHjci05sbRrxhoPUxtiV63Z4lff2PBg+hvP1IH
-         LG7A==
-X-Gm-Message-State: AGRZ1gK1At+3HmyxJs99ZC93pRU5ZXN3k5UA6AAD5tV8tPrao9bxMV8B
-        3OZq5CgIMx5CEpfftCj2HXr+sn8FAio6e7Lq1nbM1N1xvAw=
-X-Google-Smtp-Source: AJdET5dPvGc5zODgTtJs5UrrLHVD2WhJ8MWWsD60wQDI5p+4hYvT9ZQLWc0YEE/q8NJBuzbgxvusCtjGt9a6OBPu6EM=
-X-Received: by 2002:a19:1019:: with SMTP id f25mr18619464lfi.54.1543332132499;
- Tue, 27 Nov 2018 07:22:12 -0800 (PST)
+        Tue, 27 Nov 2018 21:21:59 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15608 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726381AbeK1CV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:21:59 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 55D7B9A55D8E2;
+        Tue, 27 Nov 2018 23:23:38 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 23:23:28 +0800
+Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
+ license identifier
+To:     Greg KH <gregkh@linuxfoundation.org>
+References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
+ <20181127144333.GA11004@kroah.com>
+CC:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <8ae3a984-b4d4-f2eb-4aaa-b460441fa403@huawei.com>
+Date:   Tue, 27 Nov 2018 15:23:24 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 27 Nov 2018 20:52:00 +0530
-Message-ID: <CA+G9fYvgDP2+D2mgqxJJJYm1DTgxbByxjKuVGBFOa-m_fT7Q-Q@mail.gmail.com>
-Subject: File not found: /sys/kernel/debug/tracing/events/syscalls
-To:     open list <linux-kernel@vger.kernel.org>
-Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        rostedt@goodmis.org, mingo@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127144333.GA11004@kroah.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While debugging the selftests/bpf: get_cgroup_id_user test failure on arm64
-where the test is expecting trace file
-/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id
-but this path not enabled after enabling required kernel configuration also.
-CONFIG_FTRACE_SYSCALLS=y
+On 27/11/2018 14:43, Greg KH wrote:
 
-strace output:
-open(\"/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id\",
-O_RDONLY) = -1 ENOENT (No such file or directory)
+Hi Greg,
 
-This problem noticed on Linux mainline kernel version 4.20.0-rc3.
+> On Tue, Nov 27, 2018 at 10:15:32PM +0800, John Garry wrote:
+>> Currently sas_task.c has no license specifier, so add SPDX license
+>> identifier for GPL-2.0+.
+>>
+>> As mentioned in commit b24413180f56 ("License cleanup: add SPDX GPL-2.0
+>> license identifier to files with no license"), files with no license in
+>> the kernel are under default kernel license.
+>
+> The default is GPLv2, not v2+.
 
-Best regards
-Naresh Kamboju
+So sas_task.c should be v2.
+
+>
+>>
+>> While I'm at it, all other libsas source code files are updated to use
+>> SPDX license identifier for GPL-2.0+.
+>>
+>> Signed-off-by: John Garry <john.garry@huawei.com>
+>>
+>> diff --git a/drivers/scsi/libsas/Kconfig b/drivers/scsi/libsas/Kconfig
+>> index 13739bfa..bdc6bce 100644
+>> --- a/drivers/scsi/libsas/Kconfig
+>> +++ b/drivers/scsi/libsas/Kconfig
+>> @@ -4,22 +4,7 @@
+>>  # Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
+>>  # Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
+>>  #
+>> -# This file is licensed under GPLv2.
+>> -#
+>> -# This program is free software; you can redistribute it and/or
+>> -# modify it under the terms of the GNU General Public License as
+>> -# published by the Free Software Foundation; version 2 of the
+>> -# License.
+>> -#
+>> -# This program is distributed in the hope that it will be useful,
+>> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>> -# General Public License for more details.
+>> -#
+>> -# You should have received a copy of the GNU General Public License
+>> -# along with this program; if not, write to the Free Software
+>> -# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+>> -# USA
+>> +# SPDX-License-Identifier: GPL-2.0+
+>
+> No, the above license is GPLv2 only, do NOT change the license of a file
+> unless you have permission to do so.
+
+Of course. That was not my intention. My mistake.
+
+>
+> Also, the spdx line goes at the first line of the file.
+
+JFYI, checkpatch.pl does pick up on this for .c/.h files but not this one.
+
+>
+>
+>>  #
+>>
+>>  config SCSI_SAS_LIBSAS
+>> diff --git a/drivers/scsi/libsas/Makefile b/drivers/scsi/libsas/Makefile
+>> index 5d51520..75998b7 100644
+>> --- a/drivers/scsi/libsas/Makefile
+>> +++ b/drivers/scsi/libsas/Makefile
+>> @@ -4,22 +4,7 @@
+>>  # Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
+>>  # Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
+>>  #
+>> -# This file is licensed under GPLv2.
+>> -#
+>> -# This program is free software; you can redistribute it and/or
+>> -# modify it under the terms of the GNU General Public License as
+>> -# published by the Free Software Foundation; version 2 of the
+>> -# License.
+>> -#
+>> -# This program is distributed in the hope that it will be useful,
+>> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>> -# General Public License for more details.
+>> -#
+>> -# You should have received a copy of the GNU General Public License
+>> -# along with this program; if not, write to the Free Software
+>> -# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+>> -# USA
+>> +# SPDX-License-Identifier: GPL-2.0+
+>
+> Again you changed the license, not good :(
+
+I was thrown by having a different license for the Kconfig+Makefile vs 
+.c/.h.
+
+>
+> Please do not make these types of changes unless you really know what
+> you are doing, it is not ok to change the license of files.
+
+Right, of course.
+
+>
+> greg k-h
+>
+
+Thanks, I'll fix them properly,
+John
+
+
+
