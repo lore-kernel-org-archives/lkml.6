@@ -2,73 +2,68 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D9EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5543C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69DC2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69DC2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id A5CA12133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:19:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5CA12133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeK1FQd (ORCPT
+        id S1729011AbeK1FRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:16:33 -0500
-Received: from muru.com ([72.249.23.125]:55378 "EHLO muru.com"
+        Wed, 28 Nov 2018 00:17:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725740AbeK1FQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:16:33 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id EFE978030;
-        Tue, 27 Nov 2018 18:17:50 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 10:17:46 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-Message-ID: <20181127181746.GU53235@atomide.com>
-References: <20181119161906.GP53235@atomide.com>
- <20181119171406.GQ53235@atomide.com>
- <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
- <20181123164827.GE53235@atomide.com>
- <20181126093625.GA10878@ulmo>
- <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com>
- <20181126102541.GC10878@ulmo>
- <20181126193212.GN53235@atomide.com>
- <149b3b6b-e52e-4942-151b-6df4358f5a7a@nvidia.com>
- <20181127175538.GS53235@atomide.com>
+        id S1725740AbeK1FRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:17:46 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFD812086B;
+        Tue, 27 Nov 2018 18:19:00 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 13:18:59 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: ftrace: Fix to enable syscall events on arm64
+Message-ID: <20181127131859.79ce7da9@gandalf.local.home>
+In-Reply-To: <20181127165848.GA19569@arm.com>
+References: <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+        <154333618522.27355.8094935453351562295.stgit@devbox>
+        <20181127165848.GA19569@arm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127175538.GS53235@atomide.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [181127 17:55]:
-> The only option that works for omap5 at palmas end is if
-> PALMAS_POLARITY_CTRL_INT_POLARITY is cleared. Setting the SoC internal
-> pulls does not make a difference, so I suspect there is either some
-> unknown pull-up/pull-down configuration register in palmas, or there
-> is an external pull resistor.
+On Tue, 27 Nov 2018 16:58:49 +0000
+Will Deacon <will.deacon@arm.com> wrote:
 
-Remuxing the palmas interrupt to gpio_wk16 instead of sys_nirq1
-makes the palmas interrupt work just fine configured with active-low
-or active-high with the internal pulls. So palmas.c is doing the
-right thing, and the issue configuring palmas interrupt active-high
-with sys_nirq1 on omap5 is somewhere between omap wkupegen and GIC.
+> This looks fine to me, but I'm curious about whether this is supposed to
+> work with compat syscalls as well, where the prefix is "__arm64_compat_".
+> 
+> If we broadly follow the x86 lead, we'd have:
+> 
+> 	return (!strncmp(sym, "__arm64_", 8) && !strcmp(sym + 8, name)) ||
+> 		(!strncmp(sym, "__arm64_compat_", 15) && !strcmp(sym + 15, name));
+> 
+> Do we need to handle compat (i.e. 32-bit) tasks here?
 
-Regards,
+Only if you want to trace compat syscalls as well ;-)
 
-Tony
+-- Steve
