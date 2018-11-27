@@ -2,155 +2,81 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23AAC04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC7C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2A2520873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:08:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2A2520873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 499AA20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:09:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499AA20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730623AbeK1DGy (ORCPT
+        id S1730638AbeK1DIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:06:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbeK1DGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:06:54 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 576E73154862;
-        Tue, 27 Nov 2018 16:08:31 +0000 (UTC)
-Received: from x1.home (ovpn-116-133.phx2.redhat.com [10.3.116.133])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 98CB65D75D;
-        Tue, 27 Nov 2018 16:08:30 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 09:08:30 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bharat Bhushan <bharat.bhushan@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        Jan Glauber <jglauber@cavium.com>,
-        Maik Broemme <mbroemme@libmpq.org>,
-        Chris Blake <chrisrblake93@gmail.com>
-Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Message-ID: <20181127090830.084fedf1@x1.home>
-In-Reply-To: <20181127153356.GA112381@google.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-        <20181127153356.GA112381@google.com>
-Organization: Red Hat
+        Tue, 27 Nov 2018 22:08:19 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:36519 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbeK1DIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:08:19 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gRfvu-0002uu-OT; Tue, 27 Nov 2018 09:09:54 -0700
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gRfu8-0004Jo-Cb; Tue, 27 Nov 2018 09:09:54 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     syzbot <syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de, dave@stgolabs.net,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        manfred@colorfullife.com, syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: corrupted list in freeary
+References: <0000000000004eade9057ba76eae@google.com>
+Date:   Tue, 27 Nov 2018 10:07:53 -0600
+In-Reply-To: <0000000000004eade9057ba76eae@google.com> (syzbot's message of
+        "Tue, 27 Nov 2018 07:52:03 -0800")
+Message-ID: <87d0qqjyg6.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 27 Nov 2018 16:08:31 +0000 (UTC)
+Content-Type: text/plain
+X-XM-SPF: eid=1gRfu8-0004Jo-Cb;;;mid=<87d0qqjyg6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/cXWga0qtpWa3KJpTXZM7Dd/T+3kN+bgk=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on in02.mta.xmission.com); SA Timed out after 110 secs
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 09:33:56 -0600
-Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-> [+cc David, Jan, Alex, Maik, Chris]
-> 
-> On Tue, Nov 27, 2018 at 08:46:33AM +0000, Bharat Bhushan wrote:
-> > NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-> > bus reset with e1000e. Link state of device does not comes UP and so
-> > config space never accessible again.  
-> 
-> Previous similar commits:
-> 
->   822155100e58 ("PCI: Mark Cavium CN8xxx to avoid bus reset")
->   8e2e03179923 ("PCI: Mark Atheros AR9580 to avoid bus reset")
->   9ac0108c2bac ("PCI: Mark Atheros AR9485 and QCA9882 to avoid bus reset")
->   c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
-> 
-> 1) Please make your subject match (remove the spurious "bus" at the
-> end)
-> 
-> 2) This should probably be marked for stable (v3.14 and later, since
-> the quirk itself appeared in v3.19 and marked for v3.14 and later
-> stable kernels).  Maybe even mark it as "Fixes: c3e59ee4e766..." to
-> connect it.
-> 
-> 3) The 1957:80c0 PCI ID doesn't appear in https://pci-ids.ucw.cz/; can
-> you add it?
-> 
-> 4) Is there a hardware erratum for this?  If so, please include the
-> URL here.
-> 
-> 5) Can you reproduce the problem using the same endpoint (e1000e) on a
-> different system with a different bridge?
-> 
-> 6) Have you looked at this with a PCIe analyzer?  It would be very
-> interesting to compare the boot-time or system reboot path with the
-> individual bus reset path you're fixing.
-> 
-> Since there are several similar reports and they sometimes involve the
-> same devices (both your patch and 822155100e58 mention e1000e), I'm a
-> little suspicious that we're doing something wrong in the bus reset
-> path.
 
-I agree, entirely excluding bus resets is not something to be taken
-lightly.  It's less than ideal for an endpoint and a fairly major
-functional gap for a downstream port.  It should really be considered
-a last resort.
+syzbot <syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com> writes:
 
-> I think bus reset uses Secondary Bus Reset in the Bridge Control
-> register.  That's a generic mechanism that I would expect to be pretty
-> well-tested.  I suspect the BIOS probably uses it in the reboot path,
-> and the device probably works after that.
-> 
-> So I wonder if the Linux delay isn't quite long enough, or our first
-> access to the device isn't quite right, e.g., maybe there's some issue
-> with the bus/device number capture (PCIe r4.0, sec 2.2.6.2).
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    e195ca6cb6f2 Merge branch 'for-linus' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10d3e6a3400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c92d3646e35bc5d1a909
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Tweaking the delay would be a reasonable solution, though we are seeing
-some issues where users with lots of assigned devices that require bus
-resets experience long delays as vfio file descriptors are closed
-sequentially on exit.  So perhaps we could flag downstream ports
-requiring an extra delay, if that becomes a solution.  Your mention of
-the bus/device number also reminds me of the issue we saw on
-Threadripper where there were patches proposed to re-write the
-secondary and subordinate bus numbers after reset.  AMD was able to
-resolve that in a firmware update, but there could be something similar
-occurring here. Thanks,
+I don't have this commit.  I don't have a clue where it find this
+commit.  I can't possibly look into this let alone debug this.
 
-Alex
+That is not a useful but report.  Please fix your bot.
 
-> > Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
-> > ---
-> >  drivers/pci/quirks.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index 4700d24e5d55..b9ae4e9f101a 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -3391,6 +3391,13 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
-> >   */
-> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CAVIUM, 0xa100, quirk_no_bus_reset);
-> >  
-> > +/*
-> > + * NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-> > + * bus reset. Link state of device does not comes UP and so config space
-> > + * never accessible again.
-> > + */
-> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x80c0, quirk_no_bus_reset);
-> > +
-> >  static void quirk_no_pm_reset(struct pci_dev *dev)
-> >  {
-> >  	/*
-> > -- 
-> > 2.19.1
-> >   
+Eric
+
 
