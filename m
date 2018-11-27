@@ -2,172 +2,178 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC84C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DCAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 241102133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ECC720828
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="amznbjpY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241102133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw7y+OaV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ECC720828
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbeK0LXo (ORCPT
+        id S1728143AbeK0LXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:23:44 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44886 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeK0LXn (ORCPT
+        Tue, 27 Nov 2018 06:23:53 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37329 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbeK0LXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:23:43 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k8so4037026pls.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:27:46 -0800 (PST)
+        Tue, 27 Nov 2018 06:23:52 -0500
+Received: by mail-yb1-f194.google.com with SMTP id d18-v6so8332573yba.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:27:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/T57492GUH9ZY+82mh7i4CE9AsqTtkI3ZG3pO+ZjY+4=;
-        b=amznbjpYNr+SvajVa96b3wIXXjTFt8U4Gj+tTlY99W3HxDSPOJAlJmL5OUd3M3De6N
-         7jj9XsbJ1iSVRRpnQQ7H+kk1lK0MXltxllQxufO1n2dSxve8Os11shGA4rd1fbNJoddP
-         3/B/vdItFQmY8UQRA1NuPkhMH/iskBwNvpYHQ=
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=upaAYPnV5iffyx3OgwSGDZq87TL22iwJEQS396VwPxQ=;
+        b=Mw7y+OaVKIX+Ho/DejxjLCTY225C4b+nMZJu3lhYt80ujmuQ4h3phJOboeNtlb4Xd/
+         xJLyihG+HUUcO0BqlkPJx2eYR2iVA+SI63LFvaMqRvoeGnrRD6xFOl+TBT7VYFpSh29U
+         +MIbsbiqsZNBF2Nh9DCBR+UU1/EByATOs5+p15HaVkQbMOvzllU/tayNmCwJ7b6bbqMa
+         vwiWlQ/M5cJDJtY5VmM9cuRyrhKtNHFMVgHTEXsMWKDgKVrjRCA4cBheeKPDYku9QHld
+         XxIXG93EM9gm8vB+Xk3s4Y5pmy2yRvrSgtOqWB3Oo6k2PHBVPGQXLXUbaLoL+VAYfUXQ
+         SAiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/T57492GUH9ZY+82mh7i4CE9AsqTtkI3ZG3pO+ZjY+4=;
-        b=mxwbElyc/RzUTw/5a8088OQpKhZN8sAgT23yLjLrqg7xf3cMVkYwG63ap1qe9xZMGn
-         f/04/2MgBgRBVBOKAuQzz8JezdEeL8SoFxBg/9Y/xG7+/t1tnBqIe7Z2ybGDxSKS3FdD
-         LC7FFaXWHkS0GwP+G+9eQk8EVdYkKLo9BOTvjTaGv/XUzAnt+Z7HUmGQSQS54qCgYTia
-         ht2z9qz0iPiVuVKbie6gJgJB20EQaI0FzLuINvgkzUzv5B8qaX0P2NMKszH/7moXO1tg
-         N6+4p61rRTp/y2SDdH4Rkt9Qd/LDxDAnb+X1bsP0oWQZ63owEvZOk4mtGiA7J0RkWzvG
-         2o6A==
-X-Gm-Message-State: AA+aEWY7XFUAzla78cSlh8KLsAu2e9M7yqdCZ/VMnY5wVgnfPSatWopd
-        I444h7M8oJdcHK/QhAvGeTD2eg==
-X-Google-Smtp-Source: AFSGD/UeXzvxGdXrqPLKKDBSaGMQGE0SmYNLLOJu1ey8T2IQlCSw6i+JhdqRSXMl8xPeRaTBIUjOFw==
-X-Received: by 2002:a17:902:3064:: with SMTP id u91mr29602774plb.325.1543278466185;
-        Mon, 26 Nov 2018 16:27:46 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id v2sm1861533pgs.0.2018.11.26.16.27.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 16:27:45 -0800 (PST)
-Date:   Mon, 26 Nov 2018 16:27:44 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] Bluetooth: hci_qca: Fix frame reassembly errors
- for wcn3990
-Message-ID: <20181127002744.GZ22824@google.com>
-References: <20181122121512.13136-1-bgodavar@codeaurora.org>
- <20181122121512.13136-4-bgodavar@codeaurora.org>
- <20181127000950.GY22824@google.com>
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=upaAYPnV5iffyx3OgwSGDZq87TL22iwJEQS396VwPxQ=;
+        b=kwRe0VrMA8DPfcg8810wYFTzQngpIT5R9Q/7DRNQHGx6jlNuljRVGnxZn2TMrAtWi6
+         kdqOg1CKGbWT7FL+OwH8BgVdazk9hdMkjld3gx6RJuMWO7hYdk2OcE1uMFvi7siojWNh
+         F9Y7wFIcMPrrYVHbfrQfvXPYxKOoTZ1/aFKWdwlS1M0jDKmRoB2i7bMzE5zQMGxxMUKv
+         aH6TIDGTYuv/eOWMeMVsgGc8s9KhHzY8NA/Gx7yxfNBVlW2ZlXRcCT/JoJdC5ow1DcOn
+         gp2NhP6mvEd8SxVNYhys4wMSdo+WAeo4GKkoZ46HERgvPZurw5NVzOgKIyMECK0Yg2SQ
+         l12A==
+X-Gm-Message-State: AGRZ1gK+RzD0Sv2fDDGK89UBctaNjBVy6hYKWDp3keJ4I10NqTT/eAdG
+        MCjpnfp+8N1piKbci0crq+A=
+X-Google-Smtp-Source: AJdET5fdLq6EeW9zbZ2hLscz6d9kzAbWaSSO/rsmJFAL7Pq3HLJwEoFtPTFiGxgmJAvufMwNQRCHgQ==
+X-Received: by 2002:a25:8041:: with SMTP id a1-v6mr29549813ybn.53.1543278473984;
+        Mon, 26 Nov 2018 16:27:53 -0800 (PST)
+Received: from [10.67.49.109] (igp-prod-emp-gw.vpn.broadcom.com. [192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id u84sm493929ywb.12.2018.11.26.16.27.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 16:27:52 -0800 (PST)
+Subject: Re: [PATCH v2 0/2] perf tests: Check for ARM [vectors] page
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
+References: <20181025175508.6967-1-f.fainelli@gmail.com>
+ <29ea3732-0018-42ff-da09-646ee71a61cb@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <149abe10-7ce5-5bf6-6182-6ca05969719c@gmail.com>
+Date:   Mon, 26 Nov 2018 16:27:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <29ea3732-0018-42ff-da09-646ee71a61cb@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181127000950.GY22824@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:09:50PM -0800, Matthias Kaehlcke wrote:
-> On Thu, Nov 22, 2018 at 05:45:12PM +0530, Balakrishna Godavarthi wrote:
-> > During initalization of wcn3990, we observed UART is reading some
-> > stray bytes on the Rx line. This is logging Frame reassembly errors
-> > on the serial console. This could be because of tristate of Tx line
-> > of wcn3990 during boot up.
-> > 
-> > [  176.929612] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-> > [  176.945734] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-> > [  176.953298] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-> > [  177.010660] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-> > [  177.067633] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-> > 
-> > Now we enable a flag during bootup to stop executing proto receive
-> > function and clear it back once the initialization is done.
-> > 
-> > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > v2:
-> >  * Updated commit text & comments.
-> > v1: 
-> >  * initial patch
-> > ---
-> >  drivers/bluetooth/hci_qca.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> > index ed905ea1c58a..2f3d9e16ba5a 100644
-> > --- a/drivers/bluetooth/hci_qca.c
-> > +++ b/drivers/bluetooth/hci_qca.c
-> > @@ -56,6 +56,7 @@
-> >  
-> >  /* Controller states */
-> >  #define STATE_IN_BAND_SLEEP_ENABLED	1
-> > +#define STATE_DISCARD_RX		2
-> >  
-> >  #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
-> >  #define IBS_TX_IDLE_TIMEOUT_MS		2000
-> > @@ -511,6 +512,7 @@ static int qca_open(struct hci_uart *hu)
-> >  		} else {
-> >  			hu->init_speed = qcadev->init_speed;
-> >  			hu->oper_speed = qcadev->oper_speed;
-> > +			set_bit(STATE_DISCARD_RX, &qca->flags);
-> >  			ret = qca_power_setup(hu, true);
-> >  			if (ret) {
-> >  				destroy_workqueue(qca->workqueue);
-> > @@ -903,6 +905,13 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
-> >  	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
-> >  		return -EUNATCH;
-> >  
-> > +	/* We discard Rx data received while device is in booting
-> > +	 * stage, This is because of BT chip Tx line is in tristate.
-> > +	 * Due to this we read some garbage data on UART Rx.
-> > +	 */
-> > +	if (test_bit(STATE_DISCARD_RX, &qca->flags))
-> > +		return 0;
-> > +
-> >  	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
-> >  				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
-> >  	if (IS_ERR(qca->rx_skb)) {
-> > @@ -1193,6 +1202,7 @@ static int qca_setup(struct hci_uart *hu)
-> >  		if (ret)
-> >  			return ret;
-> >  
-> > +		clear_bit(STATE_DISCARD_RX, &qca->flags);
-> >  		ret = qca_read_soc_version(hdev, &soc_ver);
-> >  		if (ret)
-> >  			return ret;
-> > @@ -1269,6 +1279,14 @@ static const struct qca_vreg_data qca_soc_data = {
-> >  
-> >  static void qca_power_shutdown(struct hci_uart *hu)
-> >  {
-> > +	struct qca_data *qca = hu->priv;
-> > +
-> > +	/* From this point we go into power off state,
-> > +	 * disable IBS and discard all the queued data.
-> > +	 */
-> > +	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+On 11/13/18 2:44 PM, Florian Fainelli wrote:
+> On 10/25/18 10:55 AM, Florian Fainelli wrote:
+>> Hi all,
+>>
+>> I just painfully learned that perf would segfault when
+>> CONFIG_KUSER_HELPERS is disabled because it unconditionally makes use of
+>> it. This patch series adds an ARM test for that by leveraging the
+>> existing find_vdso_map() function and making it more generic and capable
+>> of location any map within /proc/self/maps.
 > 
-> Is IBS actually related to the frame reassembly errors or is this
-> addressing a different issue? In 100 iteratios of 'hciconfig up/down'
-> without clearing the flag I didn't observe any frame reassembly
-> errors.
+> Did not get much feedback, you are all probably busy attending LPC
+> conferences, but I was wondering if this did make sense or if there is a
+> better approach that should be looked at?
+> 
+> I am starting to see additional tests failing that require some ARM
+> (32-bit) specific changes, and not accumulating too many of these fixes
+> on top of that series would be neat.
+> 
+> Thank you!
 
-Looks like this addresses the "Bluetooth: Received HCI_IBS_SLEEP_IND
-in rx state 0" messages that are seen when the interface is brought up
-on a system with firmware binaries (with IBS support?). Please spin
-this out into a separate patch.
+Ping? Would you prefer a resend to avoid any possible conflicts? Thanks
 
-Thanks
+> 
+>>
+>> Changes in v2:
+>>
+>> - use strlen() instead of sizeof() -1 since we made the page name a
+>>   parameter
+>> - use TEST_OK/TEST_FAIL in lieu of 0/-1
+>> - added an error message indicating CONFIG_KUSER_HELPERS might be
+>>   disabled
+>>
+>> Florian Fainelli (2):
+>>   perf tools: Make find_vdso_map() more modular
+>>   perf tests: Add a test for the ARM 32-bit [vectors] page
+>>
+>>  tools/perf/arch/arm/tests/Build          |  1 +
+>>  tools/perf/arch/arm/tests/arch-tests.c   |  4 +++
+>>  tools/perf/arch/arm/tests/vectors-page.c | 24 ++++++++++++++++++
+>>  tools/perf/tests/tests.h                 |  5 ++++
+>>  tools/perf/util/find-map.c               | 31 ++++++++++++++++++++++++
+>>  tools/perf/util/find-vdso-map.c          | 30 +++--------------------
+>>  6 files changed, 68 insertions(+), 27 deletions(-)
+>>  create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+>>  create mode 100644 tools/perf/util/find-map.c
+>>
+> 
+> 
 
-Matthias
+
+-- 
+Florian
