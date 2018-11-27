@@ -2,251 +2,355 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EEEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C970C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FB9208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:42:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FB9208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id BD4E0208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="njAwbGc2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4E0208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbeK1Dkr (ORCPT
+        id S1731302AbeK1Dos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:40:47 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:59084 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730999AbeK1Dkq (ORCPT
+        Tue, 27 Nov 2018 22:44:48 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41703 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbeK1Dos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:40:46 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 48947679805;
-        Tue, 27 Nov 2018 17:41:57 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 27 Nov
- 2018 17:41:56 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Tue, 27 Nov 2018 17:41:56 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH] mtd: nand: spi: Add initial support for Toshiba
- TC58CVG2S0H
-Thread-Topic: [PATCH] mtd: nand: spi: Add initial support for Toshiba
- TC58CVG2S0H
-Thread-Index: AQHUdz2L3HigzaAOUUKXPQ4ku2nhHqVjxsKAgAAC1ACAABdiAA==
-Date:   Tue, 27 Nov 2018 16:41:56 +0000
-Message-ID: <1655b66f-37e2-427f-a047-8305f86fc22c@kontron.de>
-References: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
- <0fc1f198-0e87-01af-5a0e-3d21613c39f3@kontron.de>
- <CAJiuCceD=qyasCUPqjyGQso3JGoxz4g_yg3uj18wP-2CKY9wyg@mail.gmail.com>
-In-Reply-To: <CAJiuCceD=qyasCUPqjyGQso3JGoxz4g_yg3uj18wP-2CKY9wyg@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9F41DC327DD25C4AA87E128CA44484F0@snt-world.com>
-Content-Transfer-Encoding: base64
+        Tue, 27 Nov 2018 22:44:48 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d18so22459576qto.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:46:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mUxz2xfMPRZjQFT/e0eqLXnH2zHC88BqsCk3X8voHdw=;
+        b=njAwbGc2ktVdF9KhQtpS+jLe302Jo4RhrTdfQQQbLDJnMIi68f3mVqY6Gt6Wuarp4g
+         pX4nWs5hz6QhcK9mzeFuBNheOGlElXjH9hSwpI2D/ouaDvx9715HjMKygUHpBJckdcM6
+         j520xlAQjXPbNGXeOBVBJ9dPVYKFhQm8iTjiqoavCOmNW51YAN5tEwXoNeLPgQYlIcM2
+         YzvzFGmAs6hfOdCp6SKdVOu9Wisfbi6ol6LQ6q4qypSXTI1MgA3ppmtLWulG0YNNe1Dc
+         w0uIqkiQxFP8ldfh+JD6ZskW3o0p+bOFM8eCO9HD+zh8jwqwXyjSAd1w7vcvYDyenjp+
+         yd6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mUxz2xfMPRZjQFT/e0eqLXnH2zHC88BqsCk3X8voHdw=;
+        b=VYXVntNu6gV3qLqBDUj2d7yv1y4eZqlt/F5TDaxd6ayabXInPfZFcRJEfQyohuwFhi
+         S3OxhSFR4iQN3xuThU6GxaE/6jLRjcxAQTbjnUO4y6lYisiTM4nxXChBbLKpYwlvMjmI
+         TV83QwO0kzduiz/fEWMsL8Can3zaYr2S23+vTOpbXXaGrmWvdadtYqGwGLhAzNuHaZ+r
+         xNg4KqXa1gm3wAk6tJKk/Smg1LdXpG/VmYFDVj7gJiNjwL9FkjTcc31zip8JaSqkG5SZ
+         rW5SDLvQIYbwCFpJ6JQCQ3Vdfq3xLlv/uouo1ttSt1rI4BJN8c38WFeA8wgT4j8z7Pxv
+         YemQ==
+X-Gm-Message-State: AA+aEWZgfAf4YhMcvT/GcrolkKCyB+1gy5Uq69ngypVKf68rvKNID6HR
+        ShBdVa5EXbNqR8pi3S9xneM0PA==
+X-Google-Smtp-Source: AFSGD/WxHTS5mINEnV3wRkW1YQMOkPBAaMcOWSO7jFpVMMDKwzE3Qkvj3YWQ5fuOGVUPM+NE9SVYfA==
+X-Received: by 2002:a0c:cb85:: with SMTP id p5mr31430394qvk.162.1543337178836;
+        Tue, 27 Nov 2018 08:46:18 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:9b77])
+        by smtp.gmail.com with ESMTPSA id t40sm2554132qth.46.2018.11.27.08.46.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 08:46:18 -0800 (PST)
+Date:   Tue, 27 Nov 2018 11:46:17 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: Hackbench pipes regression bisected to PSI
+Message-ID: <20181127164617.GA29488@cmpxchg.org>
+References: <20181126133420.GN23260@techsingularity.net>
+ <20181126160724.GA21268@cmpxchg.org>
+ <20181126165446.GQ23260@techsingularity.net>
+ <20181126173218.GA22640@cmpxchg.org>
+ <20181126232926.GS23260@techsingularity.net>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 48947679805.AE403
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com,
-        peron.clem@gmail.com, richard@nod.at
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126232926.GS23260@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2zDqW1lbnQsDQoNCk9uIDI3LjExLjE4IDE2OjE4LCBDbMOpbWVudCBQw6lyb24gd3JvdGU6
-DQo+IEhpIEZyaWVkZXIsDQo+IA0KPiBPbiBUdWUsIDI3IE5vdiAyMDE4IGF0IDE2OjA4LCBTY2hy
-ZW1wZiBGcmllZGVyDQo+IDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPj4N
-Cj4+ICtDbMOpbWVudCBQw6lyb24NCj4+DQo+PiBIaSBDbMOpbWVudCwNCj4+DQo+PiBGWUksIHRo
-aXMgaGFzIGFscmVhZHkgYmVlbiBtZXJnZWQgdG8gbmFuZC9uZXh0Lg0KPiBKdXN0IHdhbnQgdG8g
-cG9pbnQgdGhlIGRpZmZlcmVuY2UgdGhhdCBJIG1hZGUgd2hlbiBJIHRyeSB0byBpbnRyb2R1Y2Ug
-bXkgZHJpdmVyLg0KPiBUaGUgZGF0YXNoZWV0IEkgdXNlZCBpcyB0aGlzIG9uZSA6DQo+IGh0dHBz
-Oi8vbWVkaWEuZGlnaWtleS5jb20vcGRmL0RhdGElMjBTaGVldHMvVG9zaGliYSUyMFBERnMvVEM1
-OENWRzJTMEh4QUl4X1JldjEuMV8yMDE2LTExLTA4LnBkZg0KPiANCj4+DQo+PiBSZWdhcmRzLA0K
-Pj4gRnJpZWRlcg0KPj4NCj4+IE9uIDA4LjExLjE4IDA5OjI5LCBGcmllZGVyIFNjaHJlbXBmIHdy
-b3RlOg0KPj4+IEFkZCBtaW5pbWFsIHN1cHBvcnQgZm9yIHRoZSBUb3NoaWJhIFRDNThDVkcyUzBI
-IFNQSSBOQU5EIGNoaXAuDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBm
-IDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+Pj4gLS0tDQo+Pj4gICAgZHJpdmVycy9t
-dGQvbmFuZC9zcGkvTWFrZWZpbGUgIHwgICAyICstDQo+Pj4gICAgZHJpdmVycy9tdGQvbmFuZC9z
-cGkvY29yZS5jICAgIHwgICAxICsNCj4+PiAgICBkcml2ZXJzL210ZC9uYW5kL3NwaS90b3NoaWJh
-LmMgfCAxMzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+Pj4gICAgaW5j
-bHVkZS9saW51eC9tdGQvc3BpbmFuZC5oICAgIHwgICAxICsNCj4+PiAgICA0IGZpbGVzIGNoYW5n
-ZWQsIDEzOSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9tdGQvbmFuZC9zcGkvTWFrZWZpbGUgYi9kcml2ZXJzL210ZC9uYW5kL3NwaS9N
-YWtlZmlsZQ0KPj4+IGluZGV4IGI3NGUwNzQuLmJlNWY3MzUgMTAwNjQ0DQo+Pj4gLS0tIGEvZHJp
-dmVycy9tdGQvbmFuZC9zcGkvTWFrZWZpbGUNCj4+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL3Nw
-aS9NYWtlZmlsZQ0KPj4+IEBAIC0xLDMgKzEsMyBAQA0KPj4+ICAgICMgU1BEWC1MaWNlbnNlLUlk
-ZW50aWZpZXI6IEdQTC0yLjANCj4+PiAtc3BpbmFuZC1vYmpzIDo9IGNvcmUubyBtYWNyb25peC5v
-IG1pY3Jvbi5vIHdpbmJvbmQubw0KPj4+ICtzcGluYW5kLW9ianMgOj0gY29yZS5vIG1hY3Jvbml4
-Lm8gbWljcm9uLm8gdG9zaGliYS5vIHdpbmJvbmQubw0KPj4+ICAgIG9iai0kKENPTkZJR19NVERf
-U1BJX05BTkQpICs9IHNwaW5hbmQubw0KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9uYW5k
-L3NwaS9jb3JlLmMgYi9kcml2ZXJzL210ZC9uYW5kL3NwaS9jb3JlLmMNCj4+PiBpbmRleCAzMGY4
-MzY0Li44N2JkZjJhIDEwMDY0NA0KPj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQvc3BpL2NvcmUu
-Yw0KPj4+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvc3BpL2NvcmUuYw0KPj4+IEBAIC03NjYsNiAr
-NzY2LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBuYW5kX29wcyBzcGluYW5kX29wcyA9IHsNCj4+
-PiAgICBzdGF0aWMgY29uc3Qgc3RydWN0IHNwaW5hbmRfbWFudWZhY3R1cmVyICpzcGluYW5kX21h
-bnVmYWN0dXJlcnNbXSA9IHsNCj4+PiAgICAgICAgJm1hY3Jvbml4X3NwaW5hbmRfbWFudWZhY3R1
-cmVyLA0KPj4+ICAgICAgICAmbWljcm9uX3NwaW5hbmRfbWFudWZhY3R1cmVyLA0KPj4+ICsgICAg
-ICZ0b3NoaWJhX3NwaW5hbmRfbWFudWZhY3R1cmVyLA0KPj4+ICAgICAgICAmd2luYm9uZF9zcGlu
-YW5kX21hbnVmYWN0dXJlciwNCj4+PiAgICB9Ow0KPj4+DQo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbXRkL25hbmQvc3BpL3Rvc2hpYmEuYyBiL2RyaXZlcnMvbXRkL25hbmQvc3BpL3Rvc2hpYmEu
-Yw0KPj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+Pj4gaW5kZXggMDAwMDAwMC4uMjk0YmNmNg0K
-Pj4+IC0tLSAvZGV2L251bGwNCj4+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL3NwaS90b3NoaWJh
-LmMNCj4+PiBAQCAtMCwwICsxLDEzNiBAQA0KPj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
-cjogR1BMLTIuMA0KPj4+ICsvKg0KPj4+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTggZXhjZWV0IGVs
-ZWN0cm9uaWNzIEdtYkgNCj4+PiArICogQ29weXJpZ2h0IChjKSAyMDE4IEtvbnRyb24gRWxlY3Ry
-b25pY3MgR21iSA0KPj4+ICsgKg0KPj4+ICsgKiBBdXRob3I6IEZyaWVkZXIgU2NocmVtcGYgPGZy
-aWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+PiArICovDQo+Pj4gKw0KPj4+ICsjaW5jbHVk
-ZSA8bGludXgvZGV2aWNlLmg+DQo+Pj4gKyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCj4+PiAr
-I2luY2x1ZGUgPGxpbnV4L210ZC9zcGluYW5kLmg+DQo+Pj4gKw0KPj4+ICsjZGVmaW5lIFNQSU5B
-TkRfTUZSX1RPU0hJQkEgICAgICAgICAgMHg5OA0KPj4+ICsNCj4+PiArc3RhdGljIFNQSU5BTkRf
-T1BfVkFSSUFOVFMocmVhZF9jYWNoZV92YXJpYW50cywNCj4+PiArICAgICAgICAgICAgIFNQSU5B
-TkRfUEFHRV9SRUFEX0ZST01fQ0FDSEVfWDRfT1AoMCwgMSwgTlVMTCwgMCksDQo+Pj4gKyAgICAg
-ICAgICAgICBTUElOQU5EX1BBR0VfUkVBRF9GUk9NX0NBQ0hFX1gyX09QKDAsIDEsIE5VTEwsIDAp
-LA0KPj4+ICsgICAgICAgICAgICAgU1BJTkFORF9QQUdFX1JFQURfRlJPTV9DQUNIRV9PUCh0cnVl
-LCAwLCAxLCBOVUxMLCAwKSwNCj4+PiArICAgICAgICAgICAgIFNQSU5BTkRfUEFHRV9SRUFEX0ZS
-T01fQ0FDSEVfT1AoZmFsc2UsIDAsIDEsIE5VTEwsIDApKTsNCj4+PiArDQo+Pj4gK3N0YXRpYyBT
-UElOQU5EX09QX1ZBUklBTlRTKHdyaXRlX2NhY2hlX3ZhcmlhbnRzLA0KPj4+ICsgICAgICAgICAg
-ICAgU1BJTkFORF9QUk9HX0xPQUQodHJ1ZSwgMCwgTlVMTCwgMCkpOw0KPj4+ICsNCj4+PiArc3Rh
-dGljIFNQSU5BTkRfT1BfVkFSSUFOVFModXBkYXRlX2NhY2hlX3ZhcmlhbnRzLA0KPj4+ICsgICAg
-ICAgICAgICAgU1BJTkFORF9QUk9HX0xPQUQoZmFsc2UsIDAsIE5VTEwsIDApKTsNCj4+PiArDQo+
-Pj4gK3N0YXRpYyBpbnQgdGM1OGN2ZzJzMGhfb29ibGF5b3V0X2VjYyhzdHJ1Y3QgbXRkX2luZm8g
-Km10ZCwgaW50IHNlY3Rpb24sDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBzdHJ1Y3QgbXRkX29vYl9yZWdpb24gKnJlZ2lvbikNCj4+PiArew0KPj4+ICsgICAgIGlmIChz
-ZWN0aW9uID4gNykNCj4+PiArICAgICAgICAgICAgIHJldHVybiAtRVJBTkdFOw0KPj4+ICsNCj4+
-PiArICAgICByZWdpb24tPm9mZnNldCA9IDEyOCArIDE2ICogc2VjdGlvbjsNCj4+PiArICAgICBy
-ZWdpb24tPmxlbmd0aCA9IDE2Ow0KPiANCj4gSGVyZSB5b3UgZXhwb3NlIHRoZSBFQ0MgYml0cyBo
-YXMgOCBzZWN0aW9ucyBvZiAxNiBieXRlcy4NCj4gQnV0IHJlZ2FyZGluZyB0aGUgZGF0YXNoZWV0
-IHRoaXMgc2hvdWxkIG5vdCBiZSBhY2Nlc3NlZCBwYWdlIDMyLg0KPiAiVGhlIEVDQyBwYXJpdHkg
-Y29kZSBnZW5lcmF0ZWQgYnkgaW50ZXJuYWwgRUNDIGlzIHN0b3JlZCBpbiBjb2x1bW4NCj4gYWRk
-cmVzc2VzIDQyMjQtNDM1MSBhbmQgdGhlIHVzZXJzIGNhbm5vdCBhY2Nlc3MgdG8gdGhlc2Ugc3Bl
-Y2lmaWMNCj4gYWRkcmVzc2VzIHdoZW4gaW50ZXJuYWwgRUNDIGlzIGVuYWJsZWQuIg0KDQpUaGlz
-IGlzIGp1c3QgdG8gbGV0IHRoZSBvdGhlciBsYXllcnMga25vdywgd2hlcmUgdGhlIGJ5dGVzIHVz
-ZWQgZm9yIEVDQyANCmFyZS4gQXMgbG9uZyBhcyB0aGUgZHJpdmVyIHVzZXMgdGhlIG9uLWNoaXAg
-RUNDIGl0IHdvbid0IHdyaXRlIHRvIHRoaXMgDQphcmVhLiBTbyB0aGlzIGlzIGNvcnJlY3QgdW5s
-ZXNzIEkgbWlzdW5kZXJzdG9vZCB0aGlzIGNvbmNlcHQuIEFsbCB0aGUgDQpvdGhlciBzdXBwb3J0
-ZWQgU1BJIE5BTkQgY2hpcHMgdXNlIHRoZSBzYW1lIGFwcHJvYWNoLg0KDQo+IA0KPj4+ICsNCj4+
-PiArDQo+Pj4gKyAgICAgcmV0dXJuIDA7DQo+Pj4gK30NCj4+PiArDQo+Pj4gK3N0YXRpYyBpbnQg
-dGM1OGN2ZzJzMGhfb29ibGF5b3V0X2ZyZWUoc3RydWN0IG10ZF9pbmZvICptdGQsIGludCBzZWN0
-aW9uLA0KPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBtdGRf
-b29iX3JlZ2lvbiAqcmVnaW9uKQ0KPj4+ICt7DQo+Pj4gKyAgICAgaWYgKHNlY3Rpb24gPiA3KQ0K
-Pj4+ICsgICAgICAgICAgICAgcmV0dXJuIC1FUkFOR0U7DQo+Pj4gKw0KPj4+ICsgICAgIHJlZ2lv
-bi0+b2Zmc2V0ID0gMiArIDE2ICogc2VjdGlvbjsNCj4+PiArICAgICByZWdpb24tPmxlbmd0aCA9
-IDE0Ow0KPiANCj4gVGhpcyByZXNlcnZlZCAyIGJ5dGVzIGZvciBCQk0gZm9yIGVhY2ggc2VjdGlv
-bi4NCj4gQnV0IG1heWJlIHdlIGNvdWxkIGRlY2xhcmUgdGhpcyBhcyAxIHNlY3Rpb24gb2YgMTI4
-Ynl0ZXM6DQo+IA0KPiBpZiAoc2VjdGlvbikNCj4gICAgICAgICAgIHJldHVybiAtRVJBTkdFOw0K
-PiANCj4gcmVnaW9uLT5vZmZzZXQgPSAyOw0KPiByZWdpb24tPmxlbmd0aCA9IDEyNjsNCg0KVGhl
-IGRhdGFzaGVldCAocC4gMzIpIGRlc2NyaWJlcyB0aGF0IHRoZSBPT0IgZGF0YSBvZiBhIHBhZ2Ug
-aXMgZGl2aWRlZCANCmludG8gOCBzZWN0aW9ucy4gU28gd2h5IHNob3VsZCB3ZSBub3QgcmVmbGVj
-dCB0aGlzIGluIHRoZSBzb2Z0d2FyZT8NClByb2JhYmx5IGl0IHdvdWxkIGJlIHN1ZmZpY2llbnQg
-dG8gcmVzZXJ2ZSB0d28gYnl0ZXMgZm9yIHRoZSBiYWQgYmxvY2sgDQptYXJrZXIgYXQgdGhlIGJl
-Z2lubmluZywgaW5zdGVhZCBvZiB0d28gYnl0ZXMgaW4gZWFjaCBzZWN0aW9uLiBCdXQgSSdtIA0K
-bm90IHN1cmUgYWJvdXQgdGhpcyBhbmQgaXQgZG9lc24ndCByZWFsbHkgaHVydC4NCg0KPiANCj4+
-PiArDQo+Pj4gKw0KPj4+ICsgICAgIHJldHVybiAwOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0
-aWMgY29uc3Qgc3RydWN0IG10ZF9vb2JsYXlvdXRfb3BzIHRjNThjdmcyczBoX29vYmxheW91dCA9
-IHsNCj4+PiArICAgICAuZWNjID0gdGM1OGN2ZzJzMGhfb29ibGF5b3V0X2VjYywNCj4+PiArICAg
-ICAuZnJlZSA9IHRjNThjdmcyczBoX29vYmxheW91dF9mcmVlLA0KPj4+ICt9Ow0KPj4+ICsNCj4+
-PiArc3RhdGljIGludCB0YzU4Y3ZnMnMwaF9lY2NfZ2V0X3N0YXR1cyhzdHJ1Y3Qgc3BpbmFuZF9k
-ZXZpY2UgKnNwaW5hbmQsDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-dTggc3RhdHVzKQ0KPj4+ICt7DQo+Pj4gKyAgICAgc3RydWN0IG5hbmRfZGV2aWNlICpuYW5kID0g
-c3BpbmFuZF90b19uYW5kKHNwaW5hbmQpOw0KPj4+ICsgICAgIHU4IG1iZiA9IDA7DQo+Pj4gKyAg
-ICAgc3RydWN0IHNwaV9tZW1fb3Agb3AgPSBTUElOQU5EX0dFVF9GRUFUVVJFX09QKDB4MzAsICZt
-YmYpOw0KPj4+ICsNCj4+PiArICAgICBzd2l0Y2ggKHN0YXR1cyAmIFNUQVRVU19FQ0NfTUFTSykg
-ew0KPj4+ICsgICAgIGNhc2UgU1RBVFVTX0VDQ19OT19CSVRGTElQUzoNCj4+PiArICAgICAgICAg
-ICAgIHJldHVybiAwOw0KPj4+ICsNCj4+PiArICAgICBjYXNlIFNUQVRVU19FQ0NfVU5DT1JfRVJS
-T1I6DQo+Pj4gKyAgICAgICAgICAgICByZXR1cm4gLUVCQURNU0c7DQo+Pj4gKw0KPj4+ICsgICAg
-IGNhc2UgU1RBVFVTX0VDQ19IQVNfQklURkxJUFM6DQo+Pj4gKyAgICAgICAgICAgICAvKg0KPj4+
-ICsgICAgICAgICAgICAgICogTGV0J3MgdHJ5IHRvIHJldHJpZXZlIHRoZSByZWFsIG1heGltdW0g
-bnVtYmVyIG9mIGJpdGZsaXBzDQo+Pj4gKyAgICAgICAgICAgICAgKiBpbiBvcmRlciB0byBhdm9p
-ZCBmb3JjaW5nIHRoZSB3ZWFyLWxldmVsaW5nIGxheWVyIHRvIG1vdmUNCj4+PiArICAgICAgICAg
-ICAgICAqIGRhdGEgYXJvdW5kIGlmIGl0J3Mgbm90IG5lY2Vzc2FyeS4NCj4+PiArICAgICAgICAg
-ICAgICAqLw0KPj4+ICsgICAgICAgICAgICAgaWYgKHNwaV9tZW1fZXhlY19vcChzcGluYW5kLT5z
-cGltZW0sICZvcCkpDQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIHJldHVybiBuYW5kLT5lY2Ny
-ZXEuc3RyZW5ndGg7DQo+Pj4gKw0KPj4+ICsgICAgICAgICAgICAgbWJmID4+PSA0Ow0KPj4+ICsN
-Cj4+PiArICAgICAgICAgICAgIGlmIChXQVJOX09OKG1iZiA+IG5hbmQtPmVjY3JlcS5zdHJlbmd0
-aCB8fCAhbWJmKSkNCj4+PiArICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIG5hbmQtPmVjY3Jl
-cS5zdHJlbmd0aDsNCj4+PiArDQo+Pj4gKyAgICAgICAgICAgICByZXR1cm4gbWJmOw0KPj4+ICsN
-Cj4gDQo+IFRoZXNlIHRha2UgdGFrZSBjYXJlIG9mIDAsIDB4MSBhbmQgMHgyIGJ1dCBub3QgMHgz
-IHdoaWNoIGlzIHZhbGlkDQoNCkhtLCB5b3UncmUgcmlnaHQuIFdlIGRvbid0IGNhcmUgaWYgaXQg
-aXMgMHgxIG9yIDB4MyAoYm90aCBtZWFuIHRoYXQgDQpiaXRmbGlwcyB3ZXJlIGNvcnJlY3RlZCks
-IGJ1dCB3ZSBjdXJyZW50bHkgb25seSBjaGVjayBmb3IgMHgxLg0KDQpJIHdpbGwgc2VuZCBhIGZp
-eCBmb3IgdGhpcyB0b21vcnJvdy4NCg0KVGhhbmtzLA0KRnJpZWRlcg0KDQo+IHBhZ2UgMjYgb2Yg
-dGhlIGRhdGFzaGVldCA6DQo+IA0KPiBFQ0Mgc3RhdHVzIGJpdHMgaW5kaWNhdGUgdGhlIHN0YXR1
-cyBvZiBpbnRlcm5hbCBFQ0Mgb3BlcmF0aW9uDQo+IDAwYjogTm8gYml0IGZsaXBzIHdlcmUgZGV0
-ZWN0ZWQgaW4gcHJldmlvdXMgcGFnZSByZWFkLg0KPiAwMWI6IEJpdCBmbGlwcyB3ZXJlIGRldGVj
-dGVkIGFuZCBjb3JyZWN0ZWQuIEJpdCBmbGlwIGNvdW50IGRpZCBub3QNCj4gZXhjZWVkIHRoZSBi
-aXQgZmxpcCBkZXRlY3Rpb24gdGhyZXNob2xkLiBUaGUgdGhyZXNob2xkIGlzIHNldCBieSBiaXRz
-DQo+IFs3OjRdIGluIGFkZHJlc3MgMTBoIGluIHRoZSBmZWF0dXJlIHRhYmxlLg0KPiAxMGI6IE11
-bHRpcGxlIGJpdCBmbGlwcyB3ZXJlIGRldGVjdGVkIGFuZCBub3QgY29ycmVjdGVkLg0KPiAxMWI6
-IEJpdCBmbGlwcyB3ZXJlIGRldGVjdGVkIGFuZCBjb3JyZWN0ZWQuIEJpdCBmbGlwIGNvdW50IGV4
-Y2VlZGVkDQo+IHRoZSBiaXQgZmxpcCBkZXRlY3Rpb24gdGhyZXNob2xkLiBUaGUgdGhyZXNob2xk
-IGlzIHNldCBieSBiaXRzIFs3OjRdDQo+IGluIGFkZHJlc3MgMTBoIGluIHRoZSBmZWF0dXJlIHRh
-YmxlDQo+IA0KPiBSZWdhcmRzLA0KPiBDbGVtZW50DQo+IA0KPj4+ICsgICAgIGRlZmF1bHQ6DQo+
-Pj4gKyAgICAgICAgICAgICBicmVhazsNCj4+PiArICAgICB9DQo+Pj4gKw0KPj4+ICsgICAgIHJl
-dHVybiAtRUlOVkFMOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHNw
-aW5hbmRfaW5mbyB0b3NoaWJhX3NwaW5hbmRfdGFibGVbXSA9IHsNCj4+PiArICAgICBTUElOQU5E
-X0lORk8oIlRDNThDVkcyUzBIIiwgMHhDRCwNCj4+PiArICAgICAgICAgICAgICAgICAgTkFORF9N
-RU1PUkcoMSwgNDA5NiwgMjU2LCA2NCwgMjA0OCwgMSwgMSwgMSksDQo+Pj4gKyAgICAgICAgICAg
-ICAgICAgIE5BTkRfRUNDUkVRKDgsIDUxMiksDQo+Pj4gKyAgICAgICAgICAgICAgICAgIFNQSU5B
-TkRfSU5GT19PUF9WQVJJQU5UUygmcmVhZF9jYWNoZV92YXJpYW50cywNCj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZ3cml0ZV9jYWNoZV92YXJpYW50cywN
-Cj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZ1cGRhdGVf
-Y2FjaGVfdmFyaWFudHMpLA0KPj4+ICsgICAgICAgICAgICAgICAgICBTUElOQU5EX0hBU19RRV9C
-SVQsDQo+Pj4gKyAgICAgICAgICAgICAgICAgIFNQSU5BTkRfRUNDSU5GTygmdGM1OGN2ZzJzMGhf
-b29ibGF5b3V0LA0KPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdGM1OGN2
-ZzJzMGhfZWNjX2dldF9zdGF0dXMpKSwNCj4+PiArfTsNCj4+PiArDQo+Pj4gK3N0YXRpYyBpbnQg
-dG9zaGliYV9zcGluYW5kX2RldGVjdChzdHJ1Y3Qgc3BpbmFuZF9kZXZpY2UgKnNwaW5hbmQpDQo+
-Pj4gK3sNCj4+PiArICAgICB1OCAqaWQgPSBzcGluYW5kLT5pZC5kYXRhOw0KPj4+ICsgICAgIGlu
-dCByZXQ7DQo+Pj4gKw0KPj4+ICsgICAgIC8qDQo+Pj4gKyAgICAgICogVG9zaGliYSBTUEkgTkFO
-RCByZWFkIElEIG5lZWRzIGEgZHVtbXkgYnl0ZSwNCj4+PiArICAgICAgKiBzbyB0aGUgZmlyc3Qg
-Ynl0ZSBpbiBpZCBpcyBnYXJiYWdlLg0KPj4+ICsgICAgICAqLw0KPj4+ICsgICAgIGlmIChpZFsx
-XSAhPSBTUElOQU5EX01GUl9UT1NISUJBKQ0KPj4+ICsgICAgICAgICAgICAgcmV0dXJuIDA7DQo+
-Pj4gKw0KPj4+ICsgICAgIHJldCA9IHNwaW5hbmRfbWF0Y2hfYW5kX2luaXQoc3BpbmFuZCwgdG9z
-aGliYV9zcGluYW5kX3RhYmxlLA0KPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgQVJSQVlfU0laRSh0b3NoaWJhX3NwaW5hbmRfdGFibGUpLA0KPj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgaWRbMl0pOw0KPj4+ICsgICAgIGlmIChyZXQpDQo+Pj4gKyAg
-ICAgICAgICAgICByZXR1cm4gcmV0Ow0KPj4+ICsNCj4+PiArICAgICByZXR1cm4gMTsNCj4+PiAr
-fQ0KPj4+ICsNCj4+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlcl9v
-cHMgdG9zaGliYV9zcGluYW5kX21hbnVmX29wcyA9IHsNCj4+PiArICAgICAuZGV0ZWN0ID0gdG9z
-aGliYV9zcGluYW5kX2RldGVjdCwNCj4+PiArfTsNCj4+PiArDQo+Pj4gK2NvbnN0IHN0cnVjdCBz
-cGluYW5kX21hbnVmYWN0dXJlciB0b3NoaWJhX3NwaW5hbmRfbWFudWZhY3R1cmVyID0gew0KPj4+
-ICsgICAgIC5pZCA9IFNQSU5BTkRfTUZSX1RPU0hJQkEsDQo+Pj4gKyAgICAgLm5hbWUgPSAiVG9z
-aGliYSIsDQo+Pj4gKyAgICAgLm9wcyA9ICZ0b3NoaWJhX3NwaW5hbmRfbWFudWZfb3BzLA0KPj4+
-ICt9Ow0KPj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L210ZC9zcGluYW5kLmggYi9pbmNs
-dWRlL2xpbnV4L210ZC9zcGluYW5kLmgNCj4+PiBpbmRleCAwODhmZjk2Li44MTZjNGIwIDEwMDY0
-NA0KPj4+IC0tLSBhL2luY2x1ZGUvbGludXgvbXRkL3NwaW5hbmQuaA0KPj4+ICsrKyBiL2luY2x1
-ZGUvbGludXgvbXRkL3NwaW5hbmQuaA0KPj4+IEBAIC0xOTYsNiArMTk2LDcgQEAgc3RydWN0IHNw
-aW5hbmRfbWFudWZhY3R1cmVyIHsNCj4+PiAgICAvKiBTUEkgTkFORCBtYW51ZmFjdHVyZXJzICov
-DQo+Pj4gICAgZXh0ZXJuIGNvbnN0IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciBtYWNyb25p
-eF9zcGluYW5kX21hbnVmYWN0dXJlcjsNCj4+PiAgICBleHRlcm4gY29uc3Qgc3RydWN0IHNwaW5h
-bmRfbWFudWZhY3R1cmVyIG1pY3Jvbl9zcGluYW5kX21hbnVmYWN0dXJlcjsNCj4+PiArZXh0ZXJu
-IGNvbnN0IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciB0b3NoaWJhX3NwaW5hbmRfbWFudWZh
-Y3R1cmVyOw0KPj4+ICAgIGV4dGVybiBjb25zdCBzdHJ1Y3Qgc3BpbmFuZF9tYW51ZmFjdHVyZXIg
-d2luYm9uZF9zcGluYW5kX21hbnVmYWN0dXJlcjsNCj4+Pg0KPj4+ICAgIC8qKg0KPj4+
+On Mon, Nov 26, 2018 at 11:29:26PM +0000, Mel Gorman wrote:
+> The following is a comparision using CONFIG_PSI=n as a baseline against
+> your patch and a vanilla kernel
+> 
+>                          4.20.0-rc4             4.20.0-rc4             4.20.0-rc4
+>                 kconfigdisable-v1r1                vanilla        psidisable-v1r1
+> Amean     1       1.3100 (   0.00%)      1.3923 (  -6.28%)      1.3427 (  -2.49%)
+> Amean     3       3.8860 (   0.00%)      4.1230 *  -6.10%*      3.8860 (  -0.00%)
+> Amean     5       6.8847 (   0.00%)      8.0390 * -16.77%*      6.7727 (   1.63%)
+> Amean     7       9.9310 (   0.00%)     10.8367 *  -9.12%*      9.9910 (  -0.60%)
+> Amean     12     16.6577 (   0.00%)     18.2363 *  -9.48%*     17.1083 (  -2.71%)
+> Amean     18     26.5133 (   0.00%)     27.8833 *  -5.17%*     25.7663 (   2.82%)
+> Amean     24     34.3003 (   0.00%)     34.6830 (  -1.12%)     32.0450 (   6.58%)
+> Amean     30     40.0063 (   0.00%)     40.5800 (  -1.43%)     41.5087 (  -3.76%)
+> Amean     32     40.1407 (   0.00%)     41.2273 (  -2.71%)     39.9417 (   0.50%)
+> 
+> It's showing that the vanilla kernel takes a hit (as the bisection
+> indicated it would) and that disabling PSI by default is reasonably
+> close in terms of performance for this particular workload on this
+> particular machine so;
+> 
+> Tested-by: Mel Gorman <mgorman@techsingularity.net>
+
+Thanks for testing it. Let's add these results to the changelog:
+
+---
+
+From 347b69a52d1ec7e71df1108cbc5703d6dd0616ba Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Mon, 26 Nov 2018 09:39:23 -0500
+Subject: [PATCH] psi: make disabling/enabling easier for vendor kernels
+
+Mel Gorman reports a hackbench regression with psi that would prohibit
+shipping the suse kernel with it default-enabled, but he'd still like
+users to be able to opt in at little to no cost to others.
+
+With the current combination of CONFIG_PSI and the psi_disabled bool
+set from the commandline, this is a challenge. Do the following things
+to make it easier:
+
+1. Add a config option CONFIG_PSI_DEFAULT_ENABLED that allows distros
+   to enable CONFIG_PSI in their kernel, but leaving the feature
+   disabled unless a user requests it at boot-time.
+
+   To avoid double negatives, rename psi_disabled= to psi=.
+
+2. Make psi_disabled a static branch to eliminate any branch costs
+   when the feature is disabled.
+
+In terms of numbers before and after this patch, Mel says:
+
+: The following is a comparision using CONFIG_PSI=n as a baseline against
+: your patch and a vanilla kernel
+: 
+:                          4.20.0-rc4             4.20.0-rc4             4.20.0-rc4
+:                 kconfigdisable-v1r1                vanilla        psidisable-v1r1
+: Amean     1       1.3100 (   0.00%)      1.3923 (  -6.28%)      1.3427 (  -2.49%)
+: Amean     3       3.8860 (   0.00%)      4.1230 *  -6.10%*      3.8860 (  -0.00%)
+: Amean     5       6.8847 (   0.00%)      8.0390 * -16.77%*      6.7727 (   1.63%)
+: Amean     7       9.9310 (   0.00%)     10.8367 *  -9.12%*      9.9910 (  -0.60%)
+: Amean     12     16.6577 (   0.00%)     18.2363 *  -9.48%*     17.1083 (  -2.71%)
+: Amean     18     26.5133 (   0.00%)     27.8833 *  -5.17%*     25.7663 (   2.82%)
+: Amean     24     34.3003 (   0.00%)     34.6830 (  -1.12%)     32.0450 (   6.58%)
+: Amean     30     40.0063 (   0.00%)     40.5800 (  -1.43%)     41.5087 (  -3.76%)
+: Amean     32     40.1407 (   0.00%)     41.2273 (  -2.71%)     39.9417 (   0.50%)
+: 
+: It's showing that the vanilla kernel takes a hit (as the bisection
+: indicated it would) and that disabling PSI by default is reasonably
+: close in terms of performance for this particular workload on this
+: particular machine so;
+
+Tested-by: Mel Gorman <mgorman@techsingularity.net>
+Reported-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ .../admin-guide/kernel-parameters.txt         |  4 +++
+ include/linux/psi.h                           |  3 +-
+ init/Kconfig                                  |  9 ++++++
+ kernel/sched/psi.c                            | 30 +++++++++++++------
+ kernel/sched/stats.h                          |  8 ++---
+ 5 files changed, 40 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 19f4423e70d9..8760a343c6d8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3504,6 +3504,10 @@
+ 			before loading.
+ 			See Documentation/blockdev/ramdisk.txt.
+ 
++	psi=		[KNL] Enable or disable pressure stall information
++			tracking.
++			Format: <bool>
++
+ 	psmouse.proto=	[HW,MOUSE] Highest PS2 mouse protocol extension to
+ 			probe for; one of (bare|imps|exps|lifebook|any).
+ 	psmouse.rate=	[HW,MOUSE] Set desired mouse report rate, in reports
+diff --git a/include/linux/psi.h b/include/linux/psi.h
+index 8e0725aac0aa..7006008d5b72 100644
+--- a/include/linux/psi.h
++++ b/include/linux/psi.h
+@@ -1,6 +1,7 @@
+ #ifndef _LINUX_PSI_H
+ #define _LINUX_PSI_H
+ 
++#include <linux/jump_label.h>
+ #include <linux/psi_types.h>
+ #include <linux/sched.h>
+ 
+@@ -9,7 +10,7 @@ struct css_set;
+ 
+ #ifdef CONFIG_PSI
+ 
+-extern bool psi_disabled;
++extern struct static_key_false psi_disabled;
+ 
+ void psi_init(void);
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index a4112e95724a..cf5b5a0dcbc2 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -509,6 +509,15 @@ config PSI
+ 
+ 	  Say N if unsure.
+ 
++config PSI_DEFAULT_DISABLED
++	bool "Require boot parameter to enable pressure stall information tracking"
++	default n
++	depends on PSI
++	help
++	  If set, pressure stall information tracking will be disabled
++	  per default but can be enabled through passing psi_enable=1
++	  on the kernel commandline during boot.
++
+ endmenu # "CPU/Task time and stats accounting"
+ 
+ config CPU_ISOLATION
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 3d7355d7c3e3..fe24de3fbc93 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -136,8 +136,18 @@
+ 
+ static int psi_bug __read_mostly;
+ 
+-bool psi_disabled __read_mostly;
+-core_param(psi_disabled, psi_disabled, bool, 0644);
++DEFINE_STATIC_KEY_FALSE(psi_disabled);
++
++#ifdef CONFIG_PSI_DEFAULT_DISABLED
++bool psi_enable;
++#else
++bool psi_enable = true;
++#endif
++static int __init setup_psi(char *str)
++{
++	return kstrtobool(str, &psi_enable) == 0;
++}
++__setup("psi=", setup_psi);
+ 
+ /* Running averages - we need to be higher-res than loadavg */
+ #define PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
+@@ -169,8 +179,10 @@ static void group_init(struct psi_group *group)
+ 
+ void __init psi_init(void)
+ {
+-	if (psi_disabled)
++	if (!psi_enable) {
++		static_branch_enable(&psi_disabled);
+ 		return;
++	}
+ 
+ 	psi_period = jiffies_to_nsecs(PSI_FREQ);
+ 	group_init(&psi_system);
+@@ -549,7 +561,7 @@ void psi_memstall_enter(unsigned long *flags)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	*flags = current->flags & PF_MEMSTALL;
+@@ -579,7 +591,7 @@ void psi_memstall_leave(unsigned long *flags)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (*flags)
+@@ -600,7 +612,7 @@ void psi_memstall_leave(unsigned long *flags)
+ #ifdef CONFIG_CGROUPS
+ int psi_cgroup_alloc(struct cgroup *cgroup)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return 0;
+ 
+ 	cgroup->psi.pcpu = alloc_percpu(struct psi_group_cpu);
+@@ -612,7 +624,7 @@ int psi_cgroup_alloc(struct cgroup *cgroup)
+ 
+ void psi_cgroup_free(struct cgroup *cgroup)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	cancel_delayed_work_sync(&cgroup->psi.clock_work);
+@@ -637,7 +649,7 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled) {
++	if (static_branch_likely(&psi_disabled)) {
+ 		/*
+ 		 * Lame to do this here, but the scheduler cannot be locked
+ 		 * from the outside, so we move cgroups from inside sched/.
+@@ -673,7 +685,7 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+ {
+ 	int full;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return -EOPNOTSUPP;
+ 
+ 	update_stats(group);
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 4904c4677000..aa0de240fb41 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -66,7 +66,7 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
+ {
+ 	int clear = 0, set = TSK_RUNNING;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (!wakeup || p->sched_psi_wake_requeue) {
+@@ -86,7 +86,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ {
+ 	int clear = TSK_RUNNING, set = 0;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (!sleep) {
+@@ -102,7 +102,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ 
+ static inline void psi_ttwu_dequeue(struct task_struct *p)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 	/*
+ 	 * Is the task being migrated during a wakeup? Make sure to
+@@ -128,7 +128,7 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
+ 
+ static inline void psi_task_tick(struct rq *rq)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (unlikely(rq->curr->flags & PF_MEMSTALL))
+-- 
+2.19.1
+
