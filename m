@@ -5,29 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A587DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721A1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751142145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:39:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751142145D
+	by mail.kernel.org (Postfix) with ESMTP id 3A10621104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:43:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A10621104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbeK1Hiy (ORCPT
+        id S1726412AbeK1HmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:38:54 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:58290 "EHLO
+        Wed, 28 Nov 2018 02:42:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:58307 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbeK1Hiy (ORCPT
+        with ESMTP id S1726181AbeK1HmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:38:54 -0500
+        Wed, 28 Nov 2018 02:42:07 -0500
 Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gRk92-0002mi-SR; Tue, 27 Nov 2018 21:39:45 +0100
-Date:   Tue, 27 Nov 2018 21:39:44 +0100 (CET)
+        id 1gRkC8-0002oW-M3; Tue, 27 Nov 2018 21:42:56 +0100
+Date:   Tue, 27 Nov 2018 21:42:56 +0100 (CET)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
 cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -52,9 +52,9 @@ cc:     LKML <linux-kernel@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>
 Subject: Re: [patch V2 18/28] x86/speculation: Prepare for per task indirect
  branch speculation control
-In-Reply-To: <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
-Message-ID: <alpine.DEB.2.21.1811272138290.1875@nanos.tec.linutronix.de>
-References: <20181125183328.318175777@linutronix.de> <20181125185005.176917199@linutronix.de> <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
+In-Reply-To: <alpine.DEB.2.21.1811272138290.1875@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1811272142000.1875@nanos.tec.linutronix.de>
+References: <20181125183328.318175777@linutronix.de> <20181125185005.176917199@linutronix.de> <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com> <alpine.DEB.2.21.1811272138290.1875@nanos.tec.linutronix.de>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -66,32 +66,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018, Lendacky, Thomas wrote:
-> On 11/25/2018 12:33 PM, Thomas Gleixner wrote:
-> > --- a/arch/x86/kernel/process.c
-> > +++ b/arch/x86/kernel/process.c
-> > @@ -406,6 +406,11 @@ static __always_inline void spec_ctrl_up
-> >  	if (static_cpu_has(X86_FEATURE_SSBD))
-> >  		msr |= ssbd_tif_to_spec_ctrl(tifn);
+On Tue, 27 Nov 2018, Thomas Gleixner wrote:
+> On Tue, 27 Nov 2018, Lendacky, Thomas wrote:
+> > On 11/25/2018 12:33 PM, Thomas Gleixner wrote:
+> > > --- a/arch/x86/kernel/process.c
+> > > +++ b/arch/x86/kernel/process.c
+> > > @@ -406,6 +406,11 @@ static __always_inline void spec_ctrl_up
+> > >  	if (static_cpu_has(X86_FEATURE_SSBD))
+> > >  		msr |= ssbd_tif_to_spec_ctrl(tifn);
+> > 
+> > I did some quick testing and found my original logic was flawed. Since
+> > spec_ctrl_update_msr() can now be called for STIBP, an additional check
+> > is needed to set the SSBD MSR bit.
+> > 
+> > Both X86_FEATURE_VIRT_SSBD and X86_FEATURE_LS_CFG_SSBD cause
+> > X86_FEATURE_SSBD to be set. Before this patch, spec_ctrl_update_msr() was
+> > only called if X86_FEATURE_SSBD was set and one of the other SSBD features
+> > wasn't set. But now, STIBP can cause spec_ctrl_update_msr() to get called
+> > and cause the SSBD MSR bit to be set when it shouldn't (could result in
+> > a GP fault).
 > 
-> I did some quick testing and found my original logic was flawed. Since
-> spec_ctrl_update_msr() can now be called for STIBP, an additional check
-> is needed to set the SSBD MSR bit.
-> 
-> Both X86_FEATURE_VIRT_SSBD and X86_FEATURE_LS_CFG_SSBD cause
-> X86_FEATURE_SSBD to be set. Before this patch, spec_ctrl_update_msr() was
-> only called if X86_FEATURE_SSBD was set and one of the other SSBD features
-> wasn't set. But now, STIBP can cause spec_ctrl_update_msr() to get called
-> and cause the SSBD MSR bit to be set when it shouldn't (could result in
-> a GP fault).
+> The below should fix that. We have the same logic in x86_virt_spec_ctrl()
 
-The below should fix that. We have the same logic in x86_virt_spec_ctrl()
+Actually it's incomplete. Full version below.
 
 Thanks,
 
 	tglx
 
-8<---------------
+8<-----------------
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
 @@ -403,10 +403,11 @@ static __always_inline void spec_ctrl_up
@@ -109,3 +112,13 @@ Thanks,
  		msr |= ssbd_tif_to_spec_ctrl(tifn);
  
  	/* Only evaluate if conditional STIBP is enabled */
+@@ -440,7 +441,8 @@ static __always_inline void __speculatio
+ 			amd_set_ssb_virt_state(tifn);
+ 		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 			amd_set_core_ssb_state(tifn);
+-		else if (static_cpu_has(X86_FEATURE_SSBD))
++		else if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
++			 static_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			updmsr  = true;
+ 	}
+ 
