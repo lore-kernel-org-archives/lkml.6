@@ -2,168 +2,165 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC10C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB44C04EB8
 	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23895208E4
+	by mail.kernel.org (Postfix) with ESMTP id 945A7208E4
 	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:42:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23895208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qin4Zdva"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945A7208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbeK0Mi6 (ORCPT
+        id S1728157AbeK0Mi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:38:58 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41184 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbeK0Mi6 (ORCPT
+        Tue, 27 Nov 2018 07:38:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42358 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727542AbeK0Mi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Nov 2018 07:38:58 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j21so17842743oii.8;
-        Mon, 26 Nov 2018 17:42:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o2Hd4o4Sm+vFnSrCajknYBXU89D4Z/ZUfBVjtzkQ0NI=;
-        b=Ibq7LizDJmGjs5CpN2C3zPXS7s7vg/y7fZi98zGIGWBRb5t+DDxfrbdAJJlGDTVw5I
-         AjNbjv0fHVl+OpbROxjtiZq0FgwpZ/q1bsQD3tZVzp4XeDUhRjM9k0PpC3d6V/KjfmxH
-         BeWMZJMkAh8VreEDI8s9jBPSLTXxM0HnX4gqPm2dhlmtmVij/x1GmTWX/HyLdpoHf1c4
-         LhdCJQuDaZfYcWyNrGLGGbhJ/6+rSRNBoSxtOV8iAXmWLUnmTq1a9QNtmmS1fwXQqkyM
-         l6Gi8ba2TaBBHqnFRf5ZCbm4CtN76HYQ4nfhB7E3zxw23IajfkOJAAmrg/OwbI00azF9
-         3KjA==
-X-Gm-Message-State: AGRZ1gIzO1m+/YwxK583wnL9ED96HpMpeEhn6NZBntKggOaR55RhfeIa
-        Rbk/AbjmPq9Uzn9YQRzdpA==
-X-Google-Smtp-Source: AJdET5fOHpeU1WhlXKUlAUPbBysVTRfyQXJMllx/6/3yGbZLy4+bh7BLCN62TUz1iUcVEXEi/UlB/w==
-X-Received: by 2002:aca:cc:: with SMTP id 195mr17287036oia.297.1543282968785;
-        Mon, 26 Nov 2018 17:42:48 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x9sm598150otq.73.2018.11.26.17.42.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 17:42:48 -0800 (PST)
-Date:   Mon, 26 Nov 2018 19:42:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        viresh.kumar@linaro.org, Chris Redpath <chris.redpath@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V4 2/2] base/drivers/arch_topology: Default dmips-mhz if
- they are not set in DT
-Message-ID: <20181127014247.GA26233@bogus>
-References: <1543234847-21611-1-git-send-email-daniel.lezcano@linaro.org>
- <1543234847-21611-2-git-send-email-daniel.lezcano@linaro.org>
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAR1cwIQ146577;
+        Tue, 27 Nov 2018 01:42:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=s5dRQ8CRGQQ7Iql8WJuQgIjftbcQQ2UAyPT96bhbf4c=;
+ b=qin4ZdvaBliDOkYB6TmDnwz1BjxFkdafVTliMGKalbvyocrqHHm6FV64wZCgRvlsEIxe
+ NUxRcowijGY1ne/H2Y38lLb5u3NcUlnEV9I6seTM3w00ekVC9tVIUmqFI1ilQxIyawrb
+ J13R0hSdVg3cCNxPtZ0t7IOkEoXt94lCtWXADH6igr3oQcc0Ug57OR9MTJ0PIB2hfHlj
+ ETVcKvZPi+/PhstwLtGGOgfk6fz7sjiK2TLfRHKJricTI9YqbEz+s8ilU+A4mn0eq5yW
+ YIMmhKmidAQ+EgRQPJBchdyE1AHSV40LBH130lZb6UVMdzw8Vf0YnQzLn6f5vLuev92F Cg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2nxy9r150n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 01:42:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAR1gX5q013290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 01:42:34 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAR1gVI8006179;
+        Tue, 27 Nov 2018 01:42:32 GMT
+Received: from [10.159.138.192] (/10.159.138.192)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 26 Nov 2018 17:42:31 -0800
+Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     zhong jiang <zhongjiang@huawei.com>,
+        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
+        David Rientjes <rientjes@google.com>, iamjoonsoo.kim@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
+ <5BF36EE9.9090808@huawei.com>
+ <CADZGycb=kxdqSdbdXNWwmgyWp2CtC3-UFmy1-PqtdgS2BrmyjA@mail.gmail.com>
+ <476b5d35-1894-680c-2bd9-b399a3f4d9ed@oracle.com>
+ <20181127003638.2oyudcyene6hb6sb@master>
+From:   Wengang Wang <wen.gang.wang@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <6e9efd77-b6af-40f4-56b0-c0572930b3e0@oracle.com>
+Date:   Mon, 26 Nov 2018 17:42:28 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543234847-21611-2-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181127003638.2oyudcyene6hb6sb@master>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811270010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 01:20:43PM +0100, Daniel Lezcano wrote:
-> In the case of asymmetric SoC with the same micro-architecture, we
-> have a group of CPUs with smaller OPPs than the other group. One
-> example is the 96boards dragonboard 820c. There is no dmips/MHz
-> difference between both groups, so no need to specify the values in
-> the DT. Unfortunately, without these defined, there is no scaling
-> capacity computation triggered, so we need to write
-> 'capacity-dmips-mhz' for each CPU with the same value in order to
-> force the scaled capacity computation.
-> 
-> In order to fix this situation, allocate 'raw_capacity' so the pointer
-> is set and the init_cpu_capacity_callback() function can be called.
-> 
-> This was tested on db820c:
->  - specified values in the DT (correct results)
->  - partial values defined in the DT (error + fallback to defaults)
->  - no specified values in the DT (correct results)
-> 
-> correct results are:
->   cat /sys/devices/system/cpu/cpu*/cpu_capacity
->    758
->    758
->   1024
->   1024
-> 
->   ... respectively for CPU0, CPU1, CPU2 and CPU3.
-> 
-> That reflects the capacity for the max frequencies 1593600 and 2150400.
-> 
-> Cc: Chris Redpath <chris.redpath@linaro.org>
-> Cc: Quentin Perret <quentin.perret@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Amit Kucheria <amit.kucheria@linaro.org>
-> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>
-> Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/cpu-capacity.txt |  6 ++++++
 
-Acked-by: Rob Herring <robh@kernel.org>
 
->  drivers/base/arch_topology.c                           | 13 ++++++++++++-
->  2 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/cpu-capacity.txt b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-> index 84262cd..f53a3c9 100644
-> --- a/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-> +++ b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-> @@ -54,6 +54,12 @@ fall back to the default capacity value for every CPU. If cpufreq is not
->  available, final capacities are calculated by directly using capacity-dmips-
->  mhz values (normalized w.r.t. the highest value found while parsing the DT).
->  
-> +If capacity-dmips-mhz is not specified or if the parsing fails, the
-> +default capacity value will be computed against the highest frequency.
-> +When all CPUs have the same OPP, they will have the same capacity
-> +value otherwise the capacity will be scaled down for CPUs having lower
-> +frequencies.
-> +
->  ===========================================
->  4 - Examples
->  ===========================================
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index fd5325b..e0c5b60 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -243,9 +243,20 @@ static int __init register_cpufreq_notifier(void)
->  	 * until we have the necessary code to parse the cpu capacity, so
->  	 * skip registering cpufreq notifier.
->  	 */
-> -	if (!acpi_disabled || !raw_capacity)
-> +	if (!acpi_disabled)
->  		return -EINVAL;
->  
-> +	if (!raw_capacity) {
-> +
-> +		pr_info("cpu_capacity: No capacity defined in DT, set default "
-> +		       "values to %ld\n", SCHED_CAPACITY_SCALE);
-> +
-> +		raw_capacity = kmalloc_array(num_possible_cpus(),
-> +					     sizeof(*raw_capacity), GFP_KERNEL);
-> +		if (!raw_capacity)
-> +			return -ENOMEM;
-> +	}
-> +
->  	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
->  		pr_err("cpu_capacity: failed to allocate memory for cpus_to_visit\n");
->  		return -ENOMEM;
-> -- 
-> 2.7.4
-> 
+On 2018/11/26 16:36, Wei Yang wrote:
+> On Mon, Nov 26, 2018 at 08:57:54AM -0800, Wengang Wang wrote:
+>>
+>> On 2018/11/25 17:59, Wei Yang wrote:
+>>> On Tue, Nov 20, 2018 at 10:58 AM zhong jiang <zhongjiang@huawei.com> wrote:
+>>>> On 2018/11/17 9:33, Wengang Wang wrote:
+>>>>> The this_cpu_cmpxchg makes the do-while loop pass as long as the
+>>>>> s->cpu_slab->partial as the same value. It doesn't care what happened to
+>>>>> that slab. Interrupt is not disabled, and new alloc/free can happen in the
+>>>>> interrupt handlers. Theoretically, after we have a reference to the it,
+>>>>> stored in _oldpage_, the first slab on the partial list on this CPU can be
+>>>>> moved to kmem_cache_node and then moved to different kmem_cache_cpu and
+>>>>> then somehow can be added back as head to partial list of current
+>>>>> kmem_cache_cpu, though that is a very rare case. If that rare case really
+>>>>> happened, the reading of oldpage->pobjects may get a 0xdead0000
+>>>>> unexpectedly, stored in _pobjects_, if the reading happens just after
+>>>>> another CPU removed the slab from kmem_cache_node, setting lru.prev to
+>>>>> LIST_POISON2 (0xdead000000000200). The wrong _pobjects_(negative) then
+>>>>> prevents slabs from being moved to kmem_cache_node and being finally freed.
+>>>>>
+>>>>> We see in a vmcore, there are 375210 slabs kept in the partial list of one
+>>>>> kmem_cache_cpu, but only 305 in-use objects in the same list for
+>>>>> kmalloc-2048 cache. We see negative values for page.pobjects, the last page
+>>>>> with negative _pobjects_ has the value of 0xdead0004, the next page looks
+>>>>> good (_pobjects is 1).
+>>>>>
+>>>>> For the fix, I wanted to call this_cpu_cmpxchg_double with
+>>>>> oldpage->pobjects, but failed due to size difference between
+>>>>> oldpage->pobjects and cpu_slab->partial. So I changed to call
+>>>>> this_cpu_cmpxchg_double with _tid_. I don't really want no alloc/free
+>>>>> happen in between, but just want to make sure the first slab did expereince
+>>>>> a remove and re-add. This patch is more to call for ideas.
+>>>> Have you hit the really issue or just review the code ?
+>>>>
+>>>> I did hit the issue and fixed in the upstream patch unpredictably by the following patch.
+>>>> e5d9998f3e09 ("slub: make ->cpu_partial unsigned int")
+>>>>
+>>> Zhong,
+>>>
+>>> I took a look into your upstream patch, while I am confused how your patch
+>>> fix this issue?
+>>>
+>>> In put_cpu_partial(), the cmpxchg compare cpu_slab->partial (a page struct)
+>>> instead of the cpu_partial (an unsigned integer). I didn't get the
+>>> point of this fix.
+>> I think the patch can't prevent pobjects from being set as 0xdead0000 (the
+>> primary 4 bytes of LIST_POISON2).
+>> But if pobjects is treated as unsigned integer,
+>>
+>> 2266???????????????????????????????????????????????? pobjects = oldpage->pobjects;
+>> 2267???????????????????????????????????????????????? pages = oldpage->pages;
+>> 2268???????????????????????????????????????????????? if (drain && pobjects > s->cpu_partial) {
+>> 2269???????????????????????????????????????????????????????????????? unsigned long flags;
+>>
+> Ehh..., you mean (0xdead0000 > 0x02) ?
+Yes.
+
+> This is really a bad thing, if it wordarounds the problem like this.
+It does.
+> I strongly don't agree this is a *fix*. This is too tricky.
+It's tricky. I don't know for what purpose the patch went in. The commit 
+message was just saying _pobjects_ should be "unsigned"...
+
+thanks,
+wengang
+
+>> line 2268 will be true in put_cpu_partial(), thus code goes to
+>> unfreeze_partials(). This way the slabs in the cpu partial list can be moved
+>> to kmem_cache_nod and then freed. So it fixes (or say workarounds) the
+>> problem I see here (huge number of empty slabs stay in cpu partial list).
+>>
+>> thanks
+>> wengang
+>>
+>>>> Thanks,
+>>>> zhong jiang
+
