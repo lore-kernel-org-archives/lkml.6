@@ -2,91 +2,94 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056C0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812DAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2432086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2432086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D6F382086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:43:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="lffPMhuM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F382086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enneenne.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbeK0TjT (ORCPT
+        id S1729633AbeK0Tk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:39:19 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56287 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728985AbeK0TjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:39:19 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BF6D020D29; Tue, 27 Nov 2018 09:42:08 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8757620736;
-        Tue, 27 Nov 2018 09:41:58 +0100 (CET)
-Date:   Tue, 27 Nov 2018 09:41:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 07/43] drm/sun4i: backend: Use a specific function to
- check if a plane is supported
-Message-ID: <20181127084158.inmmvsf6ayhlhk7l@flea>
-References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
- <20181123092515.2511-8-paul.kocialkowski@bootlin.com>
+        Tue, 27 Nov 2018 14:40:57 -0500
+Received: from smtpcmd0756.aruba.it ([62.149.156.56]:55998 "EHLO
+        smtpcmd0756.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729443AbeK0Tk5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:40:57 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Nov 2018 14:40:56 EST
+Received: from [192.168.1.15] ([79.3.83.244])
+        by smtpcmd07.ad.aruba.it with bizsmtp
+        id 4wce1z01T5GHDdK01wcfkp; Tue, 27 Nov 2018 09:36:40 +0100
+Subject: Re: [PATCH -next] pps: using ERR_PTR instead of NULL while
+ pps_register_source fails
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        richardcochran@gmail.com, sudipm.mukherjee@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20181126102422.24028-1-yuehaibing@huawei.com>
+ <44edc27b-e679-24e8-aef1-fe5b7570f982@enneenne.com>
+ <20181127073410.GA13965@kroah.com>
+From:   Rodolfo Giometti <giometti@enneenne.com>
+Message-ID: <53ba0e4e-5848-e6cb-4abf-39db292ba7f3@enneenne.com>
+Date:   Tue, 27 Nov 2018 09:36:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="r4e3kxbttdwz4bfo"
-Content-Disposition: inline
-In-Reply-To: <20181123092515.2511-8-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181127073410.GA13965@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aruba.it; s=a1;
+        t=1543307800; bh=2Ww4w7otSP2eNOBa04gLKF+S28Nruw+OsArTXxoC4wc=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=lffPMhuMQYY5iEGq0bUFRDd9LEL19IAfduy1uhF6Wlu6+5T7cDTpSnltXGBILW2v1
+         4GsdoFkzobAyF+SdFt126VeZeKE8Zm6qMjjyZE04EiBPS45056l3NTQjRGnhQFRAaX
+         AaiyLsU3X45uE00XnpEOnGM6WpuJfQAo+nYzN6gwOuzq8k1mVpkCCSf8XdFZ7leJrL
+         4lBgiaOnBhSbSrN1SmwijZdwW4DeTWnc3WvojDtIlb2aNj1d4BW/+2Ppi9wm/uIGpd
+         aMDvGnIdjYc+zsiuCged4Nq7f6b63HfUIH2i8810gwqz3+W9lKYWlM+n/bDlFTm4op
+         Hnqf12MT5ZSNQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27/11/2018 08:34, Greg KH wrote:
+> On Mon, Nov 26, 2018 at 11:43:06AM +0100, Rodolfo Giometti wrote:
+>> On 26/11/2018 11:24, YueHaibing wrote:
+>>> pps_register_source() has keeps error codes in a local variable,
+>>> but it does not make use of the code. This patch let it return
+>>> the errcode in case of failure.
+>>>
+>>> Suggested-by: Richard Cochran <richardcochran@gmail.com>
+>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>
+>> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+> 
+> You are the maintainer of this file, shouldn't you be the one sending it
+> off to Linus or putting it in your tree somewhere?
 
---r4e3kxbttdwz4bfo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This subsystem never had an official tree and in the past I simply acked the 
+code and patches was taken by you (or other maintainers) for inclusion... I know 
+it's not usual by it worked as is since right now!
 
-On Fri, Nov 23, 2018 at 10:24:39AM +0100, Paul Kocialkowski wrote:
-> Before this patch, it is assumed that a plane is supported either
-> through the frontend or through the backend alone. However, the DRM
-> interface does not allow finely reporting our hardware capabilities
-> and there are cases where neither are support.
->=20
-> In particular, some plane formats are supported by the backend and not
-> the frontend, so they can only be supported without scaling.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+However if you prefer having an official tree even for LinuxPPS I can do it and 
+then sending my pull requests to Linus! Just let me know what is better for you! :-)
 
-Applied, thanks!
-Maxime
+Ciao,
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Rodolfo
 
---r4e3kxbttdwz4bfo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0DVgAKCRDj7w1vZxhR
-xTuuAP4q20tNz9Ot2w4bzGbMVJSvpu0Wsiq/KthxpopYEHNUeQD+Kw8w9wtJYaId
-5mcTNjAtvPhqY920G81p/Y/obh3V6wE=
-=cDms
------END PGP SIGNATURE-----
-
---r4e3kxbttdwz4bfo--
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
