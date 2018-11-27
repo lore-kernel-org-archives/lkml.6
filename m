@@ -2,126 +2,104 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD36CC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C31C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866B02146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:46:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC332086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fK6BJjM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866B02146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="s49tnqEc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC332086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbeK0Tnp (ORCPT
+        id S1729685AbeK0TpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:43:45 -0500
-Received: from mail-eopbgr40062.outbound.protection.outlook.com ([40.107.4.62]:56160
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728882AbeK0Tno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:43:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ozH8T2oUtKR9CuTkvOxEDqr41xlBAP4sYJszAZloRDA=;
- b=fK6BJjM+ovzhWyEpszkgbSXClP8Zjj/5AJmOze2Qs4omoXNb6bk22bRDdPOYmREafCN5CWNnUVfkxow/dUem2/viBMnWGB0BoSaBpKlRLsJnxEJtWXFiMY2RTOAlGHUAlk7ZwEeGgTP+6KmREBSg25sBZQziMmAKNTseVlfQzqU=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB1454.eurprd04.prod.outlook.com (10.163.166.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Tue, 27 Nov 2018 08:46:33 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::21f7:a45b:3d8f:d16a%2]) with mapi id 15.20.1339.032; Tue, 27 Nov 2018
- 08:46:33 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>
-Subject: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Topic: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Thread-Index: AQHUhi2yh4+Qm28J50ixacdSn4eZIg==
-Date:   Tue, 27 Nov 2018 08:46:33 +0000
-Message-ID: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.19.1
-x-clientproxiedby: PN1PR0101CA0032.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:c::18) To VI1PR04MB4845.eurprd04.prod.outlook.com
- (2603:10a6:803:54::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1454;6:plY3jUE282DD2R3nPE6isVXi7SlZL+M4Kd5xmu6w/ERTjWqCvE5ZHPqmjg7ndaUjCWHcRI78C4alwvVgLWtZslrovGr9x6tRRWC8WB8aF3tf5Dwo6LehS7fCirQDiUsiQ+KkrRXpM2B7Pew57zUTPNS4mEeaE684Ye+gwHN+bmSK0gbqHNzjV3tOz+kr2DX36qkvQtWq07Q7VIXKXp+2ELWREkRbN6p2v6ZntgoRB3BzriPOo6iZhaUgYm9gMmjUhTbmZYuh9JOjFKTxBD/vJCQsgVCbekTxzIVoHtiqHzxEk4N+sD0tDl139TMx4GV87nHqGYQc0yVSPYM6JchjwcOWZzXqZcocyrdBoT3UU9IcUvAPyuDTKSONPSpoJp8ehtnVOjAhb0Ql0yTF4JIz7lxZGRvn38TByuBExSuXUACsKWsK4mwrfHAiown9yrq+6aFFPGDmksxHkrBHTk+hMw==;5:YZcy9Sf2qilf7/xwO0kb5D8Yk1xmCtKysnXVu3zr5NMov0KsLQB2VK5i3xR1D301XagnTBfz10Glqi/ox+PzkC4/uc8yFeLHR+QGP9sfzSkcY1CAP4GI8MbgQw3yaGzsDtUgHLzE5B3T2fDEgtDNTFyBRISzIaQYGvdZomAFZMU=;7:I1fC+TgiaNWGbi/7ZPga884by33UReDYCjhb700jRFHyqMdmgn9J737qBFs5XVbxdWBK07N8kgKmcziBMq1z12DA5TLaDimOCr2K+8Ia6WRGFdq6oUq2+gbW5deyKI2RJbuYbPYAnnTCCLS75gRbkg==
-x-ms-office365-filtering-correlation-id: a72cea3e-057a-4a74-76ce-08d65444d4e5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1454;
-x-ms-traffictypediagnostic: VI1PR04MB1454:
-x-microsoft-antispam-prvs: <VI1PR04MB1454A044BDCAF584822115FC9AD00@VI1PR04MB1454.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1454;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1454;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(396003)(346002)(199004)(189003)(6436002)(5660300001)(66066001)(105586002)(256004)(478600001)(68736007)(6486002)(106356001)(52116002)(86362001)(99286004)(2906002)(81156014)(81166006)(102836004)(55236004)(8936002)(8676002)(36756003)(25786009)(386003)(6506007)(4326008)(39060400002)(7736002)(14454004)(6512007)(2201001)(305945005)(53936002)(476003)(2616005)(1857600001)(486006)(26005)(6116002)(97736004)(50226002)(3846002)(1076002)(2501003)(71190400001)(71200400001)(110136005)(54906003)(186003)(78486014)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1454;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: P83iaMoYiKmhkp48nlItzCCDtBnDlmBcqLsrGpQaQdt9BUNvDmg/bBvyHFrW/qHLnBfAFN/Y/IgbdVlMr//o2gVd4xq1ycu0GjIkwSbARjDizLjkHiAC7/xvGRn543vKZ2RtYzdrdV56LO0Q0UA5SJ+EMs4XdP4mDxdm1zv7XaKwvZCH0iHuAt7CwaQkG3n4PN6fzHcq8QWZ1d72k5scUin4daFm0slXboAIVAs+T4g4vVCn3GPC9ch4XHUKUyJlsFBc5mP8MNgVlBqb9LAXxSHLKRA2mrauRSP2rWF3lfTwXY5Xd13QHfbpxRPIDCNwLrmSR3w1huPABw7Uzaje6eX/snh1ovHS/oZ4UITnOKY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Nov 2018 14:45:16 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35735 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbeK0TpP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:45:15 -0500
+Received: by mail-lf1-f66.google.com with SMTP id e26so15779271lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 00:48:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UGetyeGloFdXMAyPCmZTYPSFP+5M1fESfeEH0CNG9Sk=;
+        b=s49tnqEcQPZggH4VwmdZ9ltcZFkHAr8c+8wqwGGv7RSkgX+3F/zyjYVd+yE0EysY5p
+         0VPpksHSTb7FWomuN36okAI3gWMlurcgczpYoYNUvdx7/EAntTVawBSC+kb2NJkK3sTR
+         PduWUJEwd4LVGMMvokVyY6wi0OYI7HL9nDbqD6xIvicj/CSTwMLLQIqV5p7uI+HKB1Hb
+         +qyJkhemA9mDDlq8g1KRPkYSMr1NqruUfg6j70X/7maogE+xehAoEdkbLZ4tNwRnwL4p
+         6PFgGYqIJI4u5FGaDG9pfl/1PUy1Vh0FH4aobmA90aNdHwrB6+8ziIFqOYYMw8JG32QE
+         6s6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UGetyeGloFdXMAyPCmZTYPSFP+5M1fESfeEH0CNG9Sk=;
+        b=XcUi8Sfu2Xi65/uE8ouGk6XM15fL8oeKYEWehPeXpj4ZS9BkCpcf6xrk5NIOaPgDAG
+         jypR41ut+ID3USaYq5ZWWQXQQA8PqNY+p0nFF6/lSo1w6M2+i0qxwD0j/gOXICxAHDwO
+         FS34K6vDKJZo3moY23RVCOfUl4Z7NysUlYJkknRNL3BJJZPMmVS1Zb3mw250vPBBSy3J
+         8xgv5jrHjCAl41/U2DU/fGRla7DHGOMO+AI9HHsivmcW4fonMvz2a+W5/KGoR/lWoH4a
+         wUXCoKEbH3zwHTJcQKxkdXyZciao8LxPnDfSyBGO5M/DnIv8v1hwwgdMjH+4y/IghLMR
+         XaCA==
+X-Gm-Message-State: AGRZ1gJSKtgvbSfICe8X6oSHRrSLjDkc2deDMe/N8WDmd6pvO3+5YQQx
+        k+cAObe8YnOtTV4ac9Z3JVNsBaNbLRQ=
+X-Google-Smtp-Source: AJdET5c3BaGSJKhKByiB+RpMCfgz6q+7QfIft2m+ZbQluagKZe+ap8le6B2yDWOXFmejZKC6x/qu0Q==
+X-Received: by 2002:a19:702:: with SMTP id 2mr17782101lfh.144.1543308484059;
+        Tue, 27 Nov 2018 00:48:04 -0800 (PST)
+Received: from [192.168.0.200] ([31.173.86.208])
+        by smtp.gmail.com with ESMTPSA id x16sm466816lff.26.2018.11.27.00.48.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 00:48:02 -0800 (PST)
+Subject: Re: [PATCH] libceph: fix use after free
+To:     Pan Bian <bianpan2016@163.com>, Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1543302127-14435-1-git-send-email-bianpan2016@163.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <54c1bcc5-6df5-ba24-2774-98f6333c57b3@cogentembedded.com>
+Date:   Tue, 27 Nov 2018 11:47:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a72cea3e-057a-4a74-76ce-08d65444d4e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 08:46:33.1602
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1454
+In-Reply-To: <1543302127-14435-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-bus reset with e1000e. Link state of device does not comes UP and so
-config space never accessible again.
+Hello!
 
-Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
----
- drivers/pci/quirks.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 27.11.2018 10:02, Pan Bian wrote:
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 4700d24e5d55..b9ae4e9f101a 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3391,6 +3391,13 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x00=
-33, quirk_no_bus_reset);
-  */
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CAVIUM, 0xa100, quirk_no_bus_reset)=
-;
-=20
-+/*
-+ * NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-+ * bus reset. Link state of device does not comes UP and so config space
-+ * never accessible again.
-+ */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x80c0, quirk_no_bus_res=
-et);
-+
- static void quirk_no_pm_reset(struct pci_dev *dev)
- {
- 	/*
---=20
-2.19.1
+> The function ceph_monc_handle_map calls kfree(old) to free the old
+> monitor map, old points to monc->monmap. However, after that, it reads
+> monc->monmap->epoch and passes it to __ceph_monc_got_map. This result in
+> a use-after-free bug. The patch moves the free operation after the call
+> to __ceph_monc_got_map.
+> 
+> Fixes: 82dcabad750("libceph: revamp subs code, switch to SUBSCRIBE2
 
+    Space needed before (.
+
+> protocol")
+
+    Never break up the commit summary in this tag.
+
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+[...]
+
+MBR, Sergei
