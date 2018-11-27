@@ -2,236 +2,117 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FAEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F91C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3571208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C312086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:01:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KePq9Y9U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3571208E4
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="foFl1T1d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C312086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbeK0V6k (ORCPT
+        id S1730978AbeK0V6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:58:40 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37468 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728971AbeK0V6k (ORCPT
+        Tue, 27 Nov 2018 16:58:54 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34591 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbeK0V6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:58:40 -0500
-Received: by mail-io1-f66.google.com with SMTP id a3so16608700ioc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 03:01:08 -0800 (PST)
+        Tue, 27 Nov 2018 16:58:54 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b3so18626986ede.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 03:01:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AAPngoy+EfnG7X4UDXVKcO9nMmLLIF06kz5w1LLJ4Sw=;
-        b=KePq9Y9UT7cSmwmmLy/KpFworwijAr6p/X2tRjtHnAANV4J2K7o163Pbwpi0MpujdG
-         nisILwF/ATcmO7eEDrbdEOgHOf9VMXBx42iMp5f98ie1nbxipeB/aWOEFdLw93DaGajK
-         P9BatI5do2ak6zjDJRf4+UFKN7apo8ay+MdsQ=
+        h=from:to:cc:subject:date:message-id;
+        bh=O/D9kbnAYZwk5S050zq7rQZlhZQPJhRryIL1wLBWUrU=;
+        b=foFl1T1d1YXalNJRZ86A5IWZmeBSFcZTCOPtU4kgzcXHOtsavw3kQMR2sWnzMniaSL
+         zFx8hX0MUsHePoROzuMHSYYOqcSa66WoVay2Ef6M44hDcppxW58rBZRjGwmIzhaIGGif
+         lHAvvjiY3g6fSp7o8FHll0DpvdCaa8/6HTDi8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AAPngoy+EfnG7X4UDXVKcO9nMmLLIF06kz5w1LLJ4Sw=;
-        b=daqxXJ5I38krunmvMY3cg22HqNrkqdh1QvAO8Vp2sPNyMW0oEhZ3s7DSscLH70TG6p
-         rVFklrme4BtFkwZUl7EHuifGUpz4/QB2RJ/UNapqsuuxdlpWsBbeK4EqzVRFFSimhc0o
-         SD0t3wgEh5HuLBCMf4uXoNKaL+hoUnO+XiszAZuv4pfWXCEXRORd7oy/ZP5zhjQLipcW
-         7kh4WirtsT2xmcedh/zmGiSJosZB5pxxzXdwkmq4tfYy5Zd3nw0cqCuh7q0rjKq3TTXO
-         21Y7Ndy6ahoREHBLfgPxdwR3BRX8T3edqKxySSMjppt2sw2PHklxbvXVmFyMlq7adcbz
-         ekTA==
-X-Gm-Message-State: AA+aEWa1Jb/OxxrEHUpadR7U3FsVrkXttn4h7sWgfyOm4Hw9rpcg2inO
-        M1A09TVis/hh84buavcQo7TFS/a/qkd/OJdDzpXtmg==
-X-Google-Smtp-Source: AFSGD/Wt7TxidqhyoV4lAQt52Aqx0DdCXfClOBxKflMhJu4TahjpNB0+n1NmWJDNv7+cL6Nu/26R1y2kKoXrPG/PDFI=
-X-Received: by 2002:a6b:e50d:: with SMTP id y13mr22844590ioc.114.1543316467670;
- Tue, 27 Nov 2018 03:01:07 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
- <12093630fdd7d8b43ebcb0340691e0f2200e26c6.1542097288.git-series.maxime.ripard@bootlin.com>
- <CAMty3ZBO6B=vgduv5u28zC8P1DOm1TYGFAVjDtJOpU8dozrk=A@mail.gmail.com> <20181127103106.vykudp36vkyy5vme@flea>
-In-Reply-To: <20181127103106.vykudp36vkyy5vme@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 27 Nov 2018 16:30:55 +0530
-Message-ID: <CAMty3ZAhGAN2nEJkiRLHqFHz9Oi1WboiyqLL4ox+-0z7NhbG8w@mail.gmail.com>
-Subject: Re: [PATCH 5/5] DO NOT MERGE: ARM: dts: bananapi: Add Camera support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        laurent.pinchart@ideasonboard.com,
-        linux-media <linux-media@vger.kernel.org>, a.hajda@samsung.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, frowand.list@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=O/D9kbnAYZwk5S050zq7rQZlhZQPJhRryIL1wLBWUrU=;
+        b=DUrEsNEzhQ+tw1ENDWK6wTREr1pWzlRYhiLf5CwOM93/tGXmo2puVf7Uu4KjDruWMG
+         CBj2YwBNM95qSzLPDkCMiTI1rfRQUBd5+acHVFTrgxQlwUkQfK0Izc6o1TAfDNLImUbz
+         fmBodoiXuA7b3M5o+BCkEhkBTVZNn6lnTjiUnLqy3JXRvNGHOxLgEGFIlRq6TT4o4Wk1
+         UG3j5FlH9ByZXzu7KKMF9+9R5VMTd9B413xTLImal+dy1ThGf4X6oiYOXmtprh5Lweo8
+         C8jaCdy7T66pOgpj//aVCEX0aTEnDG3A2sdxD7NolHUm/3xP9cHQbeqIumooZKuOONeT
+         4clA==
+X-Gm-Message-State: AA+aEWZYgDZcy1XinQ8D7RFGFKmiRYcwgzSvd+Z/RC8lImIBsYXYN8uD
+        8UqW8ERvV/rQAuvaBFQQvCZe+tyhpJqXVQ==
+X-Google-Smtp-Source: AFSGD/V2XB7bdR8Rw5wmrGGYtxtHmq8el66L81hapfl5+i/AcHLEev1ZHvmiOxqTj9hdbbdp5xAIQw==
+X-Received: by 2002:a50:bb08:: with SMTP id y8mr26826227ede.10.1543316481034;
+        Tue, 27 Nov 2018 03:01:21 -0800 (PST)
+Received: from andrea.amarulasolutions.com (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm519172ejm.14.2018.11.27.03.01.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 03:01:20 -0800 (PST)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched/fair: Clean up comment in nohz_idle_balance()
+Date:   Tue, 27 Nov 2018 12:01:10 +0100
+Message-Id: <20181127110110.5533-1-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 4:01 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Nov 27, 2018 at 12:26:09PM +0530, Jagan Teki wrote:
-> > On Tue, Nov 13, 2018 at 1:54 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > ---
-> > >  arch/arm/boot/dts/sun7i-a20-bananapi.dts | 98 +++++++++++++++++++++++++-
-> > >  1 file changed, 98 insertions(+)
-> > >
-> > > diff --git a/arch/arm/boot/dts/sun7i-a20-bananapi.dts b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-> > > index 70dfc4ac0bb5..18dbff9f1ce9 100644
-> > > --- a/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-> > > +++ b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
-> > > @@ -54,6 +54,9 @@
-> > >         compatible = "lemaker,bananapi", "allwinner,sun7i-a20";
-> > >
-> > >         aliases {
-> > > +               i2c0 = &i2c0;
-> > > +               i2c1 = &i2c1;
-> > > +               i2c2 = &i2c2;
-> > >                 serial0 = &uart0;
-> > >                 serial1 = &uart3;
-> > >                 serial2 = &uart7;
-> > > @@ -63,6 +66,41 @@
-> > >                 stdout-path = "serial0:115200n8";
-> > >         };
-> > >
-> > > +       reg_cam: cam {
-> > > +               compatible = "regulator-fixed";
-> > > +               regulator-name = "cam";
-> > > +               regulator-min-microvolt = <5000000>;
-> > > +               regulator-max-microvolt = <5000000>;
-> > > +               vin-supply = <&reg_vcc5v0>;
-> > > +               gpio = <&pio 7 16 GPIO_ACTIVE_HIGH>;
-> > > +               enable-active-high;
-> > > +               regulator-always-on;
-> > > +       };
-> > > +
-> > > +        reg_cam_avdd: cam-avdd {
-> > > +                compatible = "regulator-fixed";
-> > > +                regulator-name = "cam500b-avdd";
-> > > +                regulator-min-microvolt = <2800000>;
-> > > +                regulator-max-microvolt = <2800000>;
-> > > +                vin-supply = <&reg_cam>;
-> > > +        };
-> > > +
-> > > +        reg_cam_dovdd: cam-dovdd {
-> > > +                compatible = "regulator-fixed";
-> > > +                regulator-name = "cam500b-dovdd";
-> > > +                regulator-min-microvolt = <1800000>;
-> > > +                regulator-max-microvolt = <1800000>;
-> > > +                vin-supply = <&reg_cam>;
-> > > +        };
-> > > +
-> > > +        reg_cam_dvdd: cam-dvdd {
-> > > +                compatible = "regulator-fixed";
-> > > +                regulator-name = "cam500b-dvdd";
-> > > +                regulator-min-microvolt = <1500000>;
-> > > +                regulator-max-microvolt = <1500000>;
-> > > +                vin-supply = <&reg_cam>;
-> > > +        };
-> > > +
-> > >         hdmi-connector {
-> > >                 compatible = "hdmi-connector";
-> > >                 type = "a";
-> > > @@ -120,6 +158,27 @@
-> > >                 >;
-> > >  };
-> > >
-> > > +&csi0 {
-> > > +       pinctrl-names = "default";
-> > > +       pinctrl-0 = <&csi0_pins_a>;
-> > > +       status = "okay";
-> > > +
-> > > +       port {
-> > > +               #address-cells = <1>;
-> > > +               #size-cells = <0>;
-> > > +
-> > > +               csi_from_ov5640: endpoint {
-> > > +                        remote-endpoint = <&ov5640_to_csi>;
-> > > +                        bus-width = <8>;
-> > > +                        data-shift = <2>;
-> > > +                        hsync-active = <1>; /* Active high */
-> > > +                        vsync-active = <0>; /* Active low */
-> > > +                        data-active = <1>;  /* Active high */
-> > > +                        pclk-sample = <1>;  /* Rising */
-> > > +                };
-> > > +       };
-> > > +};
-> > > +
-> > >  &de {
-> > >         status = "okay";
-> > >  };
-> > > @@ -167,6 +226,39 @@
-> > >         };
-> > >  };
-> > >
-> > > +&i2c1 {
-> > > +       pinctrl-names = "default";
-> > > +       pinctrl-0 = <&i2c1_pins_a>;
-> > > +       status = "okay";
-> > > +
-> > > +       camera: camera@21 {
-> > > +               compatible = "ovti,ov5640";
-> > > +               reg = <0x21>;
-> > > +                clocks = <&ccu CLK_CSI0>;
-> > > +                clock-names = "xclk";
-> > > +               assigned-clocks = <&ccu CLK_CSI0>;
-> > > +               assigned-clock-rates = <24000000>;
-> > > +
-> > > +                reset-gpios = <&pio 7 14 GPIO_ACTIVE_LOW>;
-> > > +                powerdown-gpios = <&pio 7 19 GPIO_ACTIVE_HIGH>;
-> > > +                AVDD-supply = <&reg_cam_avdd>;
-> > > +                DOVDD-supply = <&reg_cam_dovdd>;
-> > > +                DVDD-supply = <&reg_cam_dvdd>;
-> > > +
-> > > +                port {
-> > > +                        ov5640_to_csi: endpoint {
-> > > +                                remote-endpoint = <&csi_from_ov5640>;
-> > > +                                bus-width = <8>;
-> > > +                                data-shift = <2>;
-> > > +                                hsync-active = <1>; /* Active high */
-> > > +                                vsync-active = <0>; /* Active low */
-> > > +                                data-active = <1>;  /* Active high */
-> > > +                                pclk-sample = <1>;  /* Rising */
-> > > +                        };
-> > > +                };
-> > > +       };
-> >
-> > Does ov5640 need any further patches, wrt linux-next? I'm trying to
-> > test this on top of linux-next but the slave id seems not detecting.
-> >
-> > [    2.304711] ov5640 1-0021: Linked as a consumer to regulator.5
-> > [    2.310639] ov5640 1-0021: Linked as a consumer to regulator.6
-> > [    2.316592] ov5640 1-0021: Linked as a consumer to regulator.4
-> > [    2.351540] ov5640 1-0021: ov5640_init_slave_id: failed with -6
-> > [    2.357543] ov5640 1-0021: Dropping the link to regulator.5
-> > [    2.363224] ov5640 1-0021: Dropping the link to regulator.6
-> > [    2.368829] ov5640 1-0021: Dropping the link to regulator.4
-> >
-> > Here is the full log [1], please let me know if I miss anything, I
-> > even tried to remove MCLK pin
->
-> You seem to have made local modifications to your tree, what are they?
-> This indicates that the communication over i2c doesn't work, what is
-> your setup?
+Concerning the comment associated to the atomic_fetch_andnot() in
+nohz_idle_balance(), Vincent explains [1]:
 
-I just used your commits on linux-next [2], with the setup similar in
-Page 5 on datasheet[3]. The only difference is csi build issue, I have
-updated similar fix you mentioned on sun6i_csi [4]
+  "[...] the comment is useless and can be removed [...]  it was
+   referring to a line code above the comment that was present in
+   a previous iteration of the patchset. This line disappeared in
+   final version but the comment has stayed."
 
-[2] https://github.com/amarula/linux-amarula/commits/CSI-A20
-[3] https://www.tme.eu/gb/Document/187887186b98a8f78b47da2774a34f4c/BPI-CAMERA.pdf
-[4] https://github.com/amarula/linux-amarula/commit/a6762ecd38f000e2bd02dd255f6fd0c1ae755429#diff-0809a7f97ca58771c1cda186e73ec657
+So remove the comment.
+
+Vincent also points out that the full ordering associated to the
+atomic_fetch_andnot() primitive could be relaxed, but this patch
+insists on the current more conservative/fully ordered solution:
+
+"Performance" isn't a concern, stay away from "correctness"/subtle
+relaxed (re)ordering if possible..., just make sure not to confuse
+the next reader with misleading/out-of-date comments.
+
+[1] http://lkml.kernel.org/r/CAKfTPtBjA-oCBRkO6__npQwL3+HLjzk7riCcPU1R7YdO-EpuZg@mail.gmail.com
+
+Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ac855b2f47746..db514993565b2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9533,9 +9533,7 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ 		return false;
+ 	}
+ 
+-	/*
+-	 * barrier, pairs with nohz_balance_enter_idle(), ensures ...
+-	 */
++	/* could be _relaxed() */
+ 	flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+ 	if (!(flags & NOHZ_KICK_MASK))
+ 		return false;
+-- 
+2.17.1
+
