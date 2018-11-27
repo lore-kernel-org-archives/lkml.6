@@ -2,151 +2,493 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72DDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB54C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9822086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:07:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BJCUJrUx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9822086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E4362086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4362086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbeK0TEx (ORCPT
+        id S1729382AbeK0TFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:04:53 -0500
-Received: from mail-eopbgr10051.outbound.protection.outlook.com ([40.107.1.51]:53706
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727574AbeK0TEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:04:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=39e3m9eQY1nq7xFGYh3vlsvPwzcoQwuJC8tgk7axfec=;
- b=BJCUJrUxOjv3op7Zum38nYSrdkW/ej05dV89HINjB5sHF4B4vb57rCHtyONslbz/9iAsWvCx2R2SYdYVJVFDLWFoZDpt2KaWDTCYK6Yf6bpYOnxuMW2CxHAs1gBXBoAEokicDNAcCzNg0rm/kLEcOPyMiq8xa3OvAGbI+xJH3Yc=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5268.eurprd04.prod.outlook.com (20.177.42.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Tue, 27 Nov 2018 08:07:43 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 08:07:43 +0000
-From:   Aisheng DONG <aisheng.dong@nxp.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] can: flexcan: Implement CAN Runtime PM
-Thread-Topic: [PATCH] can: flexcan: Implement CAN Runtime PM
-Thread-Index: AQHUZ5CBGViPzGvSBkmCEccitD7z+6VagACAgAjzfCCAAAmWAIAAAzhw
-Date:   Tue, 27 Nov 2018 08:07:43 +0000
-Message-ID: <AM0PR04MB421185C8A83EE9549052A91180D00@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
- <24a43a20-7302-c449-06b3-5ee8f6c051a0@pengutronix.de>
- <DB7PR04MB461851E4A4C494E8AC91AAEEE6D00@DB7PR04MB4618.eurprd04.prod.outlook.com>
- <7449a067-e9b2-5cdf-7fae-9b9d5acdac87@pengutronix.de>
-In-Reply-To: <7449a067-e9b2-5cdf-7fae-9b9d5acdac87@pengutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5268;6:g2R0VNWnprfR8S8Hx3qe9W4IwhQFltjM7WXLcoE94hZrp3awdkN9Y//2rQpya4zmcho9CpwP+d6l10EvXzSKXErAWJG2YVgXXHqUYX5jp+UC7uIbeGo1EjK2N0W5kStwAW/Yz3Ti6ePi40iRsA4GyNGD3IjdZVuXpBILW90d897dDev5d57jBNEMo7CgUUDJsSnoRIIUKUfztkS4nNZpT56tlZtsdRv5tuCGZxnnfIw/2XPPoIMr8Gy1PxDC7QXqqu8IF+eq4iEffyag6sx9RWy7gAyGGNZRsIbkRWGL9CFtoJ1ix4+oMM/FkLrJF+Q4YK5Kx39/GNNnyDOm06650wdX8/EKh2a7IN7VVIlviQgmczuFAErlwCP6fdQ65G+AFu5TThS61+7/3+2XlVFvWq5v6g8XTCjntlN0ukqerfOi8v+UdyT66vAUZBs18ANmzBA4GLhTUD6wiY6V1rHMOw==;5:1TSl01jpvlSiRDSjiCkYdrJA8RJufMI1pjDT3LV7djw8DbNqf/z8CLdIaOUlooxbejNQe2k7EK7rHyJrSvfVc/XLQY3+VUI8gGdRMuwjcsl7qC0QqVM1CTqoag/Ku/h9Oapv1d2BIJhzEIh/mCgTq2Y853mR32qXDVu0NxbpnT4=;7:OJ9wbV72Ng6DIrh7bH1ZDENblTM/fZ4LOEEvFq+PiASGx0AYIA+UvUKOf7mlvj46/zfdO8b2073y/hZfrj88xd+WUSH8RoaIBv0iYbcKV0WK3UW0ciyUBrXj1HRYUW2ZX2pYNo58JI82lpjwZqmbuA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4477319d-fe99-4f00-e2ab-08d6543f68c9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5268;
-x-ms-traffictypediagnostic: AM0PR04MB5268:
-x-microsoft-antispam-prvs: <AM0PR04MB52687BF9297BF9C7FFEC3F3A80D00@AM0PR04MB5268.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231443)(944501410)(4982022)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5268;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5268;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(366004)(396003)(39860400002)(23433003)(13464003)(189003)(199004)(14444005)(256004)(316002)(8676002)(478600001)(14454004)(45080400002)(6116002)(8936002)(476003)(4326008)(68736007)(6246003)(11346002)(3846002)(446003)(99286004)(229853002)(66066001)(9686003)(93886005)(2906002)(2201001)(6436002)(966005)(575784001)(81156014)(81166006)(6306002)(71190400001)(71200400001)(86362001)(76176011)(33656002)(105586002)(7736002)(305945005)(5660300001)(7696005)(186003)(486006)(102836004)(6506007)(53936002)(26005)(2501003)(97736004)(106356001)(55016002)(25786009)(54906003)(74316002)(110136005)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5268;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ZxOd5LY7AroRAaQH5vQM0BHPrSQlYEVtEn2eageudS2jvBWzDjg+BCqZ6zqQcJWpI8EIuaSZSJ9pznmIuCDt8zW4axehsO/H1JEB6pbKSefLMpBDXyKSq8Sxf3ZIc5o52yrwKN3xxx4tNNrpl3+q7r2mY9BsywSYFoVGjEAcmGuxG9ZT/2s/FX2aLXQrH0BpCe4t9jApljUyyeIHAaUa2JK3YauIwGIYcrnL6Tu7AH31NXQHIu2sl9c0phpOBUUrG8uBr7Qi0rnTqv2JnwMolVT+vpXuXmKWx8+xHNZ2v9oy0djlySY7Q1p+G89Q/v4PFi2hxiaacWkCC3o543zy2mcucFm5CJE9xX58slRo0WQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 27 Nov 2018 14:05:11 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54366 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727574AbeK0TFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:05:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6B2BB20D29; Tue, 27 Nov 2018 09:08:05 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AADAA20787;
+        Tue, 27 Nov 2018 09:07:33 +0100 (CET)
+Date:   Tue, 27 Nov 2018 09:07:33 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        thierry.reding@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 6/6] ARM: PWM: add allwinner sun8i R40/T3/V40 PWM
+ support.
+Message-ID: <20181127080733.4e6rljjta3azf2rf@flea>
+References: <20181125162319.GA5422@arx-s1>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4477319d-fe99-4f00-e2ab-08d6543f68c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 08:07:43.6037
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5268
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="holjhqzbg3phhdgk"
+Content-Disposition: inline
+In-Reply-To: <20181125162319.GA5422@arx-s1>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJjIEtsZWluZS1CdWRkZSBb
-bWFpbHRvOm1rbEBwZW5ndXRyb25peC5kZV0NCj4gU2VudDogVHVlc2RheSwgTm92ZW1iZXIgMjcs
-IDIwMTggMzo1MiBQTQ0KPiBUbzogSm9ha2ltIFpoYW5nIDxxaWFuZ3FpbmcuemhhbmdAbnhwLmNv
-bT47IHdnQGdyYW5kZWdnZXIuY29tOw0KPiBkYXZlbUBkYXZlbWxvZnQubmV0DQo+IENjOiBsaW51
-eC1jYW5Admdlci5rZXJuZWwub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsg
-QWlzaGVuZw0KPiBET05HIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSF0gY2FuOiBmbGV4Y2FuOiBJbXBsZW1lbnQgQ0FOIFJ1bnRpbWUgUE0NCj4gDQo+IE9uIDEx
-LzI3LzE4IDg6NDQgQU0sIEpvYWtpbSBaaGFuZyB3cm90ZToNCj4gPj4+IEZsZXhjYW4gd2lsbCBi
-ZSBkaXNhYmxlZCBkdXJpbmcgc3VzcGVuZCBpZiBubyB3YWtldXAgZnVuY3Rpb24NCj4gPj4+IHJl
-cXVpcmVkIGFuZCBlbmFibGVkIGFmdGVyIHJlc3VtZSBhY2NvcmRpbmdseS4gRHVyaW5nIHRoaXMg
-cGVyaW9kLA0KPiA+Pj4gd2UgY291bGQgZXhwbGljaXRseSBkaXNhYmxlIGNsb2Nrcy4NCj4gPj4+
-DQo+ID4+PiBJbXBsZW1lbnQgUnVudGltZSBQTSB3aGljaCB3aWxsOg0KPiA+Pj4gMSkgS2VlcCBk
-ZXZpY2UgaW4gc3VzcGVuZCBzdGF0ZSAoY2xvY2tzIGRpc2FibGVkKSBpZiBpdCdzIG5vdA0KPiA+
-Pj4gb3Blbm5lZA0KPiA+Pj4gMikgTWFrZSBQb3dlciBEb21haW4gZnJhbWV3b3JrIGJlIGFibGUg
-dG8gc2h1dGRvd24gdGhlIGNvcnJlc3BvbmRpbmcNCj4gPj4+IHBvd2VyIGRvbWFpbiBvZiB0aGlz
-IGRldmljZS4NCj4gPj4NCj4gPj4gV2l0aG91dCBDT05GSUdfUE0gdGhlIGRldmljZSBmYWlscyB0
-byBwcm9iZToNCj4gPj4NCj4gPj4+IFsgIDIxNC40MjA2MDZdIGZsZXhjYW4gMjA5MDAwMC5mbGV4
-Y2FuOiAyMDkwMDAwLmZsZXhjYW4gc3VwcGx5DQo+ID4+PiB4Y2VpdmVyIG5vdCBmb3VuZCwgdXNp
-bmcgZHVtbXkgcmVndWxhdG9yIFsgIDIxNC40NDU5NTJdIGZsZXhjYW4NCj4gPj4+IDIwOTAwMDAu
-ZmxleGNhbjogTGlua2VkIGFzIGEgY29uc3VtZXIgdG8gcmVndWxhdG9yLjAgWyAgMjE0LjQ1MzQ0
-OF0NCj4gPj4+IGZsZXhjYW4gMjA5MDAwMC5mbGV4Y2FuOiByZWdpc3RlcmluZyBuZXRkZXYgZmFp
-bGVkIFsgIDIxNC40NTk2NjZdDQo+ID4+PiBmbGV4Y2FuIDIwOTAwMDAuZmxleGNhbjogRHJvcHBp
-bmcgdGhlIGxpbmsgdG8gcmVndWxhdG9yLjAgWw0KPiA+Pj4gMjE0LjQ3MjA2Nl0gZmxleGNhbjog
-cHJvYmUgb2YgMjA5MDAwMC5mbGV4Y2FuIGZhaWxlZCB3aXRoIGVycm9yIC0xMTANCj4gDQo+ID4g
-SSB3b3VsZCBzZW50IFYyIHJlYmFzZWQgb24gcGF0Y2ggImNhbjogZmxleGNhbjogYWRkIHNlbGYg
-d2FrZXVwDQo+ID4gc3VwcG9ydCIsIGFuZCBydW50aW1lIHBtIHdvcmtzIG5vcm1hbGx5IG9uIE1Y
-NlNYLVNEQiBhbmQgTVg3RC1TREIuDQo+ID4gU28sIGNvdWxkIHlvdSB0ZWxsIG1lIHdoaWNoIGJv
-YXJkIHlvdSB0ZXN0ZWQgb24gdGhhdCBjYXVzZXMgdGhlIGRldmljZQ0KPiA+IHByb2JlIGZhaWxl
-ZD8NCj4gDQo+IEkgdGVzdGVkIG9uIGFuIGlteDZkbCByaW90Ym9hcmQNCj4gKGh0dHBzOi8vZW1l
-YTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZl
-bGl4aXIuDQo+IGJvb3RsaW4uY29tJTJGbGludXglMkZsYXRlc3QlMkZzb3VyY2UlMkZhcmNoJTJG
-YXJtJTJGYm9vdCUyRmR0cyUyRmkNCj4gbXg2ZGwtcmlvdGJvYXJkLmR0cyZhbXA7ZGF0YT0wMiU3
-QzAxJTdDYWlzaGVuZy5kb25nJTQwbnhwLmNvbSU3QzgNCj4gNGNmZDNmM2EwOGI0Yzc5NTNmZDA4
-ZDY1NDNkNDJjMSU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNg0KPiAzNSU3QzAlN0Mw
-JTdDNjM2Nzg5MDE5NDIwNTY5NTM0JmFtcDtzZGF0YT1ydWdLcG1WYU5uMGFqVGRjdHlpJQ0KPiAy
-RiUyQm53ciUyRnFxSUJjaWtBUDdlWExwNmZjQSUzRCZhbXA7cmVzZXJ2ZWQ9MA0KPiArIHBhdGNo
-ZXMgdG8gZW5hYmxlIENBTjEpIHdpdGggYW4gZXh0ZXJuYWwgUEhZLg0KPiANCj4gPiBBbmQgdGhh
-dCBDT05GSUdfUE0gaGFzIHNldCBpbiBpbXhfdjZfdjdfZGVmY29uZmlnIHdoaWNoIGNvbmZpZyBm
-aWxlIEkNCj4gdXNlZC4NCj4gDQo+IEkgZGlzYWJsZWQgQ09ORklHX1BNIG9uIHB1cnBvc2UuDQoN
-CkpvYWtpbSwNCllvdSBuZWVkIHJ1biB0aGUgc2FtZSB0ZXN0IGFzIE1hcmMuDQoNCkkgZ3Vlc3Mg
-SXQgbWlnaHQgYmVjYXVzZSB3aXRob3V0IENPTkZJR19QTSwgUnVudGltZSBQTSBBUEkNClNpbXBs
-eSByZXR1cm4gcG9zaXRpdmUgYnV0IHRoZSBjbG9jayBtYXkgc3RpbGwgbm90IGVuYWJsZWQsIHRo
-dXMgY2F1c2UNCmEgQ0FOIGVuYWJsZSB0aW1lb3V0Lg0KDQpZb3UgY2FuIGNoZWNrIGl0Lg0KDQpS
-ZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0KPiANCj4gTWFyYw0KPiANCj4gLS0NCj4gUGVuZ3V0cm9u
-aXggZS5LLiAgICAgICAgICAgICAgICAgIHwgTWFyYyBLbGVpbmUtQnVkZGUgICAgICAgICAgIHwN
-Cj4gSW5kdXN0cmlhbCBMaW51eCBTb2x1dGlvbnMgICAgICAgIHwgUGhvbmU6ICs0OS0yMzEtMjgy
-Ni05MjQgICAgIHwNCj4gVmVydHJldHVuZyBXZXN0L0RvcnRtdW5kICAgICAgICAgIHwgRmF4OiAg
-ICs0OS01MTIxLTIwNjkxNy01NTU1IHwNCj4gQW10c2dlcmljaHQgSGlsZGVzaGVpbSwgSFJBIDI2
-ODYgIHwNCj4gaHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20v
-P3VybD1odHRwJTNBJTJGJTJGd3d3Lg0KPiBwZW5ndXRyb25peC5kZSZhbXA7ZGF0YT0wMiU3QzAx
-JTdDYWlzaGVuZy5kb25nJTQwbnhwLmNvbSU3Qzg0Y2ZkMw0KPiBmM2EwOGI0Yzc5NTNmZDA4ZDY1
-NDNkNDJjMSU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTcNCj4gQzAlN0MwJTdD
-NjM2Nzg5MDE5NDIwNTY5NTM0JmFtcDtzZGF0YT1VczZjTzlRZllrdyUyQjZOaGo2OHpMcg0KPiB3
-ck54VUNSamNDMFdEZG1yOU1PekhNJTNEJmFtcDtyZXNlcnZlZD0wICAgfA0K
+
+--holjhqzbg3phhdgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+On Mon, Nov 26, 2018 at 12:23:19AM +0800, Hao Zhang wrote:
+> The sun8i R40/T3/V40 PWM has 8 PWM channals and divides to 4 PWM pairs,
+> each PWM pair built-in 1 clock module, 2 timer logic module and 1
+> programmable dead-time generator, it also support waveform capture.
+> It has 2 clock sources OSC24M and APB1, it is different with the
+> sun4i-pwm driver, Therefore add a new driver for it.
+>=20
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+> ---
+>  drivers/pwm/Kconfig     |  12 +-
+>  drivers/pwm/Makefile    |   1 +
+>  drivers/pwm/pwm-sun8i.c | 418 ++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 430 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/pwm/pwm-sun8i.c
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 504d252..6105ac8 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -426,7 +426,7 @@ config PWM_STMPE
+>  	  expanders.
+> =20
+>  config PWM_SUN4I
+> -	tristate "Allwinner PWM support"
+> +	tristate "Allwinner SUN4I PWM support"
+
+That should be a separate patch.
+
+(also, your patch series don't seem to have the threading properly
+configured, you might want to fix that.)
+
+>  	depends on ARCH_SUNXI || COMPILE_TEST
+>  	depends on HAS_IOMEM && COMMON_CLK
+>  	help
+> @@ -435,6 +435,16 @@ config PWM_SUN4I
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-sun4i.
+> =20
+> +config PWM_SUN8I
+> +	tristate "Allwinner SUN8I (R40/V40/T3) PWM support"
+> +	depends on ARCH_SUNXI || COMPILE_TEST
+> +	depends on HAS_IOMEM && COMMON_CLK
+> +	help
+> +	  Generic PWM framework driver for Allwinner R40/V40/T3 SoCs.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm-sun8i.
+> +
+
+sun8i here (and in the rest of the driver) is too vague. There's
+already plenty of SoCs part of the sun8i family that are supported by
+the other driver. sun8i-r40 would be a better fit (and there's no need
+to mention all the rebranding that allwinner has done with the R40,
+just use R40).
+
+>  config PWM_TEGRA
+>  	tristate "NVIDIA Tegra PWM support"
+>  	depends on ARCH_TEGRA
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 9c676a0..32c8d2d 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_PWM_STM32)		+=3D pwm-stm32.o
+>  obj-$(CONFIG_PWM_STM32_LP)	+=3D pwm-stm32-lp.o
+>  obj-$(CONFIG_PWM_STMPE)		+=3D pwm-stmpe.o
+>  obj-$(CONFIG_PWM_SUN4I)		+=3D pwm-sun4i.o
+> +obj-$(CONFIG_PWM_SUN8I)		+=3D pwm-sun8i.o
+>  obj-$(CONFIG_PWM_TEGRA)		+=3D pwm-tegra.o
+>  obj-$(CONFIG_PWM_TIECAP)	+=3D pwm-tiecap.o
+>  obj-$(CONFIG_PWM_TIEHRPWM)	+=3D pwm-tiehrpwm.o
+> diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
+> new file mode 100644
+> index 0000000..d8597e4
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-sun8i.c
+> @@ -0,0 +1,418 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/time.h>
+> +#include <linux/regmap.h>
+> +
+> +#define PWM_IRQ_ENABLE_REG	0x0000
+> +#define PCIE(ch)		BIT(ch)
+> +
+> +#define PWM_IRQ_STATUS_REG	0x0004
+> +#define PIS(ch)			BIT(ch)
+> +
+> +#define CAPTURE_IRQ_ENABLE_REG	0x0010
+> +#define CRIE(ch)		BIT((ch) * 2)
+> +#define CFIE(ch)		BIT((ch) * 2 + 1)
+> +
+> +#define CAPTURE_IRQ_STATUS_REG	0x0014
+> +#define CRIS(ch)		BIT((ch) * 2)
+> +#define CFIS(ch)		BIT((ch) * 2 + 1)
+> +
+> +#define CLK_CFG_REG(ch)		(0x0020 + ((ch) >> 1) * 4)
+> +#define CLK_SRC_SEL		GENMASK(8, 7)
+> +#define CLK_SRC_BYPASS_SEC	BIT(6)
+> +#define CLK_SRC_BYPASS_FIR	BIT(5)
+> +#define CLK_GATING		BIT(4)
+> +#define CLK_DIV_M		GENMASK(3, 0)
+> +
+> +#define PWM_DZ_CTR_REG(ch)	(0x0030 + ((ch) >> 1) * 4)
+> +#define PWM_DZ_INTV		GENMASK(15, 8)
+> +#define PWM_DZ_EN		BIT(0)
+> +
+> +#define PWM_ENABLE_REG		0x0040
+> +#define PWM_EN(ch)		BIT(ch)
+> +
+> +#define CAPTURE_ENABLE_REG	0x0044
+> +#define CAP_EN(ch)		BIT(ch)
+> +
+> +#define PWM_CTR_REG(ch)		(0x0060 + (ch) * 0x20)
+> +#define PWM_PERIOD_RDY		BIT(11)
+> +#define PWM_PUL_START		BIT(10)
+> +#define PWM_MODE		BIT(9)
+> +#define PWM_ACT_STA		BIT(8)
+> +#define PWM_PRESCAL_K		GENMASK(7, 0)
+> +
+> +#define PWM_PERIOD_REG(ch)	(0x0064 + (ch) * 0x20)
+> +#define PWM_ENTIRE_CYCLE	GENMASK(31, 16)
+> +#define PWM_ACT_CYCLE		GENMASK(15, 0)
+> +
+> +#define PWM_CNT_REG(ch)		(0x0068 + (ch) * 0x20)
+> +#define PWM_CNT_VAL		GENMASK(15, 0)
+> +
+> +#define CAPTURE_CTR_REG(ch)	(0x006c + (ch) * 0x20)
+> +#define CAPTURE_CRLF		BIT(2)
+> +#define CAPTURE_CFLF		BIT(1)
+> +#define CAPINV			BIT(0)
+> +
+> +#define CAPTURE_RISE_REG(ch)	(0x0070 + (ch) * 0x20)
+> +#define CAPTURE_CRLR		GENMASK(15, 0)
+> +
+> +#define CAPTURE_FALL_REG(ch)	(0x0074 + (ch) * 0x20)
+> +#define CAPTURE_CFLR		GENMASK(15, 0)
+> +
+> +struct sun8i_pwm_chip {
+> +	struct pwm_chip chip;
+> +	struct clk *clk;
+> +	void __iomem *base;
+> +	const struct sun8i_pwm_data *data;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static struct sun8i_pwm_chip *to_sun8i_pwm_chip(struct pwm_chip *chip)
+> +{
+> +	return container_of(chip, struct sun8i_pwm_chip, chip);
+> +}
+> +
+> +static u32 sun8i_pwm_read(struct sun8i_pwm_chip *sun8i_pwm,
+> +			  unsigned long offset)
+> +{
+> +	u32 val;
+> +
+> +	regmap_read(sun8i_pwm->regmap, offset, &val);
+> +	return val;
+> +}
+> +
+> +static void sun8i_pwm_set_bit(struct sun8i_pwm_chip *sun8i_pwm,
+> +			      unsigned long reg, u32 bit)
+> +{
+> +	regmap_update_bits(sun8i_pwm->regmap, reg, bit, bit);
+> +}
+> +
+> +static void sun8i_pwm_clear_bit(struct sun8i_pwm_chip *sun8i_pwm,
+> +				unsigned long reg, u32 bit)
+> +{
+> +	regmap_update_bits(sun8i_pwm->regmap, reg, bit, 0);
+> +}
+> +
+> +static void sun8i_pwm_set_value(struct sun8i_pwm_chip *sun8i_pwm,
+> +				unsigned long reg, u32 mask, u32 val)
+> +{
+> +	regmap_update_bits(sun8i_pwm->regmap, reg, mask, val);
+> +}
+> +
+> +static void sun8i_pwm_set_polarity(struct sun8i_pwm_chip *chip, u32 ch,
+> +				   enum pwm_polarity polarity)
+> +{
+> +	if (polarity =3D=3D PWM_POLARITY_NORMAL)
+> +		sun8i_pwm_set_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
+> +	else
+> +		sun8i_pwm_clear_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
+> +}
+> +
+> +static int sun8i_pwm_config(struct sun8i_pwm_chip *sun8i_pwm, u8 ch,
+> +			    struct pwm_state *state)
+> +{
+> +	u64 clk_rate, clk_div, val;
+> +	u16 prescaler =3D 0;
+> +	u16 div_id =3D 0;
+> +	struct clk *clk;
+> +	bool is_clk;
+> +	int ret;
+> +
+> +	clk_rate =3D clk_get_rate(sun8i_pwm->clk);
+> +
+> +	/* check period and select clock source */
+> +	val =3D state->period * clk_rate;
+> +	do_div(val, NSEC_PER_SEC);
+> +	is_clk =3D devm_clk_name_match(sun8i_pwm->clk, "mux-0");
+> +	if (val <=3D 1 && is_clk) {
+> +		clk =3D devm_clk_get(sun8i_pwm->chip.dev, "mux-1");
+> +		if (IS_ERR(clk)) {
+> +			dev_err(sun8i_pwm->chip.dev,
+> +				"Period expects a larger value\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		clk_rate =3D clk_get_rate(clk);
+> +		val =3D state->period * clk_rate;
+> +		do_div(val, NSEC_PER_SEC);
+> +		if (val <=3D 1) {
+> +			dev_err(sun8i_pwm->chip.dev,
+> +				"Period expects a larger value\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* change clock source to "mux-1" */
+> +		clk_disable_unprepare(sun8i_pwm->clk);
+> +		devm_clk_put(sun8i_pwm->chip.dev, sun8i_pwm->clk);
+> +		sun8i_pwm->clk =3D clk;
+> +
+> +		ret =3D clk_prepare_enable(sun8i_pwm->clk);
+> +		if (ret) {
+> +			dev_err(sun8i_pwm->chip.dev,
+> +				"Failed to enable PWM clock\n");
+> +			return ret;
+> +		}
+> +
+> +	} else {
+> +		dev_err(sun8i_pwm->chip.dev,
+> +			"Period expects a larger value\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	is_clk =3D devm_clk_name_match(sun8i_pwm->clk, "mux-0");
+> +	if (is_clk)
+> +		sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
+> +				    CLK_SRC_SEL, 0 << 7);
+> +	else
+> +		sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
+> +				    CLK_SRC_SEL, 1 << 7);
+> +
+> +	dev_info(sun8i_pwm->chip.dev, "clock source freq:%lldHz\n", clk_rate);
+
+This is pretty much reimplementing the clock framework. I guess you'd
+be better off just modeling this clock as a clock registered in the
+framework. It will take care by itself of the combination of muxing
+and rate, and making sure the parent clocks are properly enabled when
+needed.
+
+> +	/* calculate and set prescaler, div table, PWM entire cycle */
+> +	clk_div =3D val;
+> +	while (clk_div > 65535) {
+> +		prescaler++;
+> +		clk_div =3D val;
+> +		do_div(clk_div, 1U << div_id);
+> +		do_div(clk_div, prescaler + 1);
+> +
+> +		if (prescaler =3D=3D 255) {
+> +			prescaler =3D 0;
+> +			div_id++;
+> +			if (div_id =3D=3D 9) {
+> +				dev_err(sun8i_pwm->chip.dev,
+> +					"unsupport period value\n");
+> +				return -EINVAL;
+> +			}
+> +		}
+> +	}
+> +
+> +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
+> +			    PWM_ENTIRE_CYCLE, clk_div << 16);
+> +	sun8i_pwm_set_value(sun8i_pwm, PWM_CTR_REG(ch),
+> +			    PWM_PRESCAL_K, prescaler << 0);
+> +	sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
+> +			    CLK_DIV_M, div_id << 0);
+> +
+> +	/* set duty cycle */
+> +	val =3D state->period;
+> +	do_div(val, clk_div);
+> +	clk_div =3D state->duty_cycle;
+> +	do_div(clk_div, val);
+> +	if (clk_div > 65535)
+> +		clk_div =3D 65535;
+> +
+> +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
+> +			    PWM_ACT_CYCLE, clk_div << 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			   struct pwm_state *state)
+> +{
+> +	int ret;
+> +	struct sun8i_pwm_chip *sun8i_pwm =3D to_sun8i_pwm_chip(chip);
+> +	struct pwm_state cstate;
+> +
+> +	pwm_get_state(pwm, &cstate);
+> +	if (!cstate.enabled) {
+> +		ret =3D clk_prepare_enable(sun8i_pwm->clk);
+> +		if (ret) {
+> +			dev_err(chip->dev, "Failed to enable PWM clock\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if ((cstate.period !=3D state->period) ||
+> +	    (cstate.duty_cycle !=3D state->duty_cycle)) {
+> +		ret =3D sun8i_pwm_config(sun8i_pwm, pwm->hwpwm, state);
+> +		if (ret) {
+> +			dev_err(chip->dev, "Failed to config PWM\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (state->polarity !=3D cstate.polarity)
+> +		sun8i_pwm_set_polarity(sun8i_pwm, pwm->hwpwm, state->polarity);
+> +
+> +	if (state->enabled) {
+> +		sun8i_pwm_set_bit(sun8i_pwm,
+> +				  CLK_CFG_REG(pwm->hwpwm), CLK_GATING);
+> +
+> +		sun8i_pwm_set_bit(sun8i_pwm,
+> +				  PWM_ENABLE_REG, PWM_EN(pwm->hwpwm));
+> +	} else {
+> +		sun8i_pwm_clear_bit(sun8i_pwm,
+> +				    CLK_CFG_REG(pwm->hwpwm), CLK_GATING);
+> +
+> +		sun8i_pwm_clear_bit(sun8i_pwm,
+> +				    PWM_ENABLE_REG, PWM_EN(pwm->hwpwm));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void sun8i_pwm_get_state(struct pwm_chip *chip, struct pwm_device=
+ *pwm,
+> +				struct pwm_state *state)
+> +{
+> +	struct sun8i_pwm_chip *sun8i_pwm =3D to_sun8i_pwm_chip(chip);
+> +	u64 clk_rate, tmp;
+> +	u32 val;
+> +	u16 clk_div, act_cycle;
+> +	u8 prescal, div_id;
+> +	u8 chn =3D pwm->hwpwm;
+> +
+> +	clk_rate =3D clk_get_rate(sun8i_pwm->clk);
+> +
+> +	val =3D sun8i_pwm_read(sun8i_pwm, PWM_CTR_REG(chn));
+> +	if (PWM_ACT_STA & val)
+> +		state->polarity =3D PWM_POLARITY_NORMAL;
+> +	else
+> +		state->polarity =3D PWM_POLARITY_INVERSED;
+> +
+> +	prescal =3D PWM_PRESCAL_K & val;
+> +
+> +	val =3D sun8i_pwm_read(sun8i_pwm, PWM_ENABLE_REG);
+> +	if (PWM_EN(chn) & val)
+> +		state->enabled =3D true;
+> +	else
+> +		state->enabled =3D false;
+> +
+> +	val =3D sun8i_pwm_read(sun8i_pwm, PWM_PERIOD_REG(chn));
+> +	act_cycle =3D PWM_ACT_CYCLE & val;
+> +	clk_div =3D val >> 16;
+> +
+> +	val =3D sun8i_pwm_read(sun8i_pwm, CLK_CFG_REG(chn));
+> +	div_id =3D CLK_DIV_M & val;
+> +
+> +	tmp =3D act_cycle * prescal * (1U << div_id) * NSEC_PER_SEC;
+> +	state->duty_cycle =3D DIV_ROUND_CLOSEST_ULL(tmp, clk_rate);
+> +	tmp =3D clk_div * prescal * (1U << div_id) * NSEC_PER_SEC;
+> +	state->period =3D DIV_ROUND_CLOSEST_ULL(tmp, clk_rate);
+> +}
+> +
+> +static const struct regmap_config sun8i_pwm_regmap_config =3D {
+> +	.reg_bits =3D 32,
+> +	.reg_stride =3D 4,
+> +	.val_bits =3D 32,
+> +	.max_register =3D CAPTURE_FALL_REG(7),
+> +};
+> +
+> +static const struct pwm_ops sun8i_pwm_ops =3D {
+> +	.apply =3D sun8i_pwm_apply,
+> +	.get_state =3D sun8i_pwm_get_state,
+> +	.owner =3D THIS_MODULE,
+> +};
+> +
+> +static const struct of_device_id sun8i_pwm_dt_ids[] =3D {
+> +	{
+> +		.compatible =3D "allwinner,sun8i-r40-pwm",
+> +		.data =3D NULL,
+
+Do you really need that field if you leave it NULL?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--holjhqzbg3phhdgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/z7RQAKCRDj7w1vZxhR
+xTnfAP0cEBYqdLGGj7/hFYGkt6MHRyFsJZzEQSk+NPex++X9wQEA8P6Wt6OyCSeV
+I0fK4MSXikN5xXW1/7i2LEkyppy5nwA=
+=sNtU
+-----END PGP SIGNATURE-----
+
+--holjhqzbg3phhdgk--
