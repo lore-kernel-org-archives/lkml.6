@@ -2,239 +2,195 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAC6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235F8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83F220817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83F220817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DEF2121104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:48:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=temperror (0-bit key) header.d=twistedcode.net header.i=@twistedcode.net header.b="e4FVEJeQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c/n4LMHF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF2121104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twistedcode.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbeK1BoN (ORCPT
+        id S1728535AbeK1Bqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:44:13 -0500
-Received: from mga14.intel.com ([192.55.52.115]:62065 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbeK1BoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:44:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 06:46:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="112292528"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga001.jf.intel.com with ESMTP; 27 Nov 2018 06:46:04 -0800
-Date:   Tue, 27 Nov 2018 06:46:04 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 12/13] x86/fault: Decode page fault OOPSes better
-Message-ID: <20181127144603.GA3130@linux.intel.com>
-References: <cover.1542667307.git.luto@kernel.org>
- <9c621efcf6a86f7d215941dab3dca0acd1274638.1542667307.git.luto@kernel.org>
+        Tue, 27 Nov 2018 20:46:32 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:55711 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726299AbeK1Bqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:46:32 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 65E6120F8A;
+        Tue, 27 Nov 2018 09:48:22 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 27 Nov 2018 09:48:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=twistedcode.net;
+         h=reply-to:subject:to:cc:references:from:message-id:date
+        :mime-version:in-reply-to:content-type
+        :content-transfer-encoding; s=mesmtp; bh=63QVLgq8HmDjBDAkbFyhBla
+        LZJkTIC5pdEe+IBu24/k=; b=e4FVEJeQRahhpHuzlc2W1NC62tNefo78zH/WsrN
+        8QW3G61wnsMKNw7N4M5fnAK3kKFp3FXPbsVppfoG70Kbdtrx4CGQUwFAb4Il7Iva
+        U/mXdO9KBpYNvrTsdV2zczjr8lmbfN5pIgTQEZNNK0YSmeMcYGHrE3ii46rQTMBH
+        kmwM=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :reply-to:subject:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm1; bh=63QVLgq8HmDjBDAkbFyhBlaLZJkTI
+        C5pdEe+IBu24/k=; b=c/n4LMHF6caHun3mFepif+PNmn05KObOzNi55pxC3J8kF
+        fCRVJQAGnO33qNBMuDI1CSiAUPWvebP/Yxlq96YB/Ia6P3mFxWuvZVJI3TatqJua
+        1d3PpYJ5Vvb3B6vIaTTP8lhJHQVt65PA2QdiJaKnPcKc1xyepIz8XQraC/xMRWAX
+        KXbMMsRvhz0oZQwy06/m/MLyhXVMlqyoVA5hYXeAtfuPiBk5R+GMTAVT4Fb6zRmI
+        UGBXv+9Yje+4FJglHV9MlaaRZZgTdt/8WqOD/7wNLKR/g3Pst2DBoR8OEmZJyCsZ
+        pGWxCSPj+KW7ZeyKtYnd/SOOXDi300I+Hl3SvTwNA==
+X-ME-Sender: <xms:NVn9W1q-UqlWiosGwt-9DjHp5hae52fWvIGWdQ8aSLavhcZ0lsLO0w>
+X-ME-Proxy: <xmx:NVn9Wz-KkEQJt3f-i1d-0ZovT5KDfPxk5LPKpGvVvWueJXD98VRv_A>
+    <xmx:NVn9W7_R6TXZkbsXlSk6DC-4Uz2mk7nJNcbSjsKqTz7npVGZqCr8WA>
+    <xmx:NVn9W3Smq9Jas9246yj97vVq26ky_JAMzuUEkegz5Q8wxUd8QWqIDw>
+    <xmx:NVn9W9G4RVNF41d8MFTYvDweNuAVw8QJ2S7H7A0FhgAl26F0rLdyDw>
+    <xmx:NVn9W3MG2mpZ8tya5EYf8ykK-Fk6hQNss6elNipDFx3gjKN-g1Wm5w>
+    <xmx:Nln9Wxa9NIsD7ACFTQixLRT7ZHS8vUVZsYwgVXXY2xI1BXDtDXC3WQ>
+Received: from [192.168.1.2] (d220-122.icpnet.pl [109.173.220.122])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CE271E49C6;
+        Tue, 27 Nov 2018 09:48:20 -0500 (EST)
+Reply-To: grendel@twistedcode.net
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+To:     Guenter Roeck <linux@roeck-us.net>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+From:   Marek Habersack <grendel@twistedcode.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=grendel@twistedcode.net; prefer-encrypt=mutual;
+ keydata= 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
+Organization: I just...
+Message-ID: <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+Date:   Tue, 27 Nov 2018 15:48:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c621efcf6a86f7d215941dab3dca0acd1274638.1542667307.git.luto@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:45:36PM -0800, Andy Lutomirski wrote:
-> One of Linus' favorite hobbies seems to be looking at OOPSes and
-> decoding the error code in his head.  This is not one of my favorite
-> hobbies :)
+On 27/11/2018 15:32, Guenter Roeck wrote:
+Hi,
+
+You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=yes in your kernel config. Starting with 4.19.1 it somehow
+interferes with ext4 and causes problems similar to the ones you list below. Ever since I disabled MQ (either recompile
+your kernel or add `scsi_mod.use_blk_mq=0` to the kernel command line) none of those errors came back.
+
+hope it helps,
+
+marek
+> [trying again, this time with correct kernel.org address]
 > 
-> Teach the page fault OOPS hander to decode the error code.  If it's
-> a !USER fault from user mode, print an explicit note to that effect
-> and print out the addresses of various tables that might cause such
-> an error.
+> Hi,
 > 
-> With this patch applied, if I intentionally point the LDT at 0x0 and
-> run the x86 selftests, I get:
+> I have seen the following and similar problems several times,
+> with both v4.19.3 and v4.19.4:
 > 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> HW error: normal kernel read fault
-> This was a system access from user code
-> IDT: 0xfffffe0000000000 (limit=0xfff) GDT: 0xfffffe0000001000 (limit=0x7f)
-> LDTR: 0x50 -- base=0x0 limit=0xfff7
-> TR: 0x40 -- base=0xfffffe0000003000 limit=0x206f
-> PGD 800000000456e067 P4D 800000000456e067 PUD 4623067 PMD 0
-> SMP PTI
-> CPU: 0 PID: 153 Comm: ldt_gdt_64 Not tainted 4.19.0+ #1317
-> Hardware name: ...
-> RIP: 0033:0x401454
+> Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602889: comm git: bad
+> extra_isize 33661 (inode size 256)
+> Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on device sdb1-8.
+> Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1): Remounting filesystem read-only
+> Nov 23 04:32:25 mars kernel: [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602881: comm rm: bad
+> extra_isize 33685 (inode size 256)
+> ...
 > 
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
-> ---
->  arch/x86/mm/fault.c | 84 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
+> Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device sda1): ext4_lookup:1578: inode #238034131: comm
+> updatedb.mlocat: deleted inode referenced: 238160407
+> Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on device sda1-8.
+> Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1): Remounting filesystem read-only
+> ...
 > 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 092ed6b1df8a..f34241fcc633 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -27,6 +27,7 @@
->  #include <asm/vm86.h>			/* struct vm86			*/
->  #include <asm/mmu_context.h>		/* vma_pkey()			*/
->  #include <asm/efi.h>			/* efi_recover_from_page_fault()*/
-> +#include <asm/desc.h>			/* store_idt(), ...		*/
->  
->  #define CREATE_TRACE_POINTS
->  #include <asm/trace/exceptions.h>
-> @@ -571,10 +572,53 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
->  	return 0;
->  }
->  
-> +static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
-> +{
-> +	u32 offset = (index >> 3) * sizeof(struct desc_struct);
-> +	unsigned long addr;
-> +	struct ldttss_desc desc;
-> +
-> +	if (index == 0) {
-> +		pr_alert("%s: NULL\n", name);
-> +		return;
-> +	}
-> +
-> +	if (offset + sizeof(struct ldttss_desc) >= gdt->size) {
-> +		pr_alert("%s: 0x%hx -- out of bounds\n", name, index);
-> +		return;
-> +	}
-> +
-> +	if (probe_kernel_read(&desc, (void *)(gdt->address + offset),
-> +			      sizeof(struct ldttss_desc))) {
-> +		pr_alert("%s: 0x%hx -- GDT entry is not readable\n",
-> +			 name, index);
-> +		return;
-> +	}
-> +
-> +	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
-> +#ifdef CONFIG_X86_64
-> +	addr |= ((u64)desc.base3 << 32);
-> +#endif
-> +	pr_alert("%s: 0x%hx -- base=0x%lx limit=0x%x\n",
-> +		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
-> +}
-> +
-> +static void errstr(unsigned long ec, char *buf, unsigned long mask,
-> +		   const char *txt)
-> +{
-> +	if (ec & mask) {
-> +		if (buf[0])
-> +			strcat(buf, " ");
-> +		strcat(buf, txt);
-> +	}
-> +}
-> +
->  static void
->  show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->  		unsigned long address)
->  {
-> +	char errtxt[64];
-> +
->  	if (!oops_may_print())
->  		return;
->  
-> @@ -602,6 +646,46 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->  		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
->  		 (void *)address);
->  
-> +	errtxt[0] = 0;
-> +	errstr(error_code, errtxt, X86_PF_PROT, "PROT");
-> +	errstr(error_code, errtxt, X86_PF_WRITE, "WRITE");
-> +	errstr(error_code, errtxt, X86_PF_USER, "USER");
-> +	errstr(error_code, errtxt, X86_PF_RSVD, "RSVD");
-> +	errstr(error_code, errtxt, X86_PF_INSTR, "INSTR");
-> +	errstr(error_code, errtxt, X86_PF_PK, "PK");
-> +	pr_alert("HW error: %s\n", error_code ? errtxt :
-> +		 "normal kernel read fault");
-
-What about something like this instead of manually handling the case
-where error_code==0 so that we get e.g. "!PROT KERNEL READ" instead of
-"normal kernel read fault"?  Not sure !PROT and/or KERNEL are needed,
-but getting at least "PROT READ" seems useful.
-
-	errstr(!error_code, errtxt, X86_PF_PROT, "!PROT");
-	errstr(!error_code, errtxt, X86_PF_USER, "KERNEL");
-	errstr(!error_code, errtxt, X86_PF_WRITE | X86_PF_INSTR, "READ");
-
-And change the pr_alert to "HW error code:"?
-
-The original is confusing (to me) because "HW error: normal kernel read fault"
-obfuscates the fact that we're printing the #PF error code, i.e. it looks
-like an arbitrary kernel message.
-
-
-This:
-
-    HW error code: !PROT KERNEL READ
-    This was a system access from user code
-
-or:
-
-    HW error code: !PROT READ
-    This was a system access from user code
-
-or:
-
-    HW error code: KERNEL READ
-    This was a system access from user code
-
-or:
-    HW error code: READ
-    This was a system access from user code
-
-are all less confusing IMO.
-
-> +	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
-> +		struct desc_ptr idt, gdt;
-> +		u16 ldtr, tr;
-> +
-> +		pr_alert("This was a system access from user code\n");
-> +
-> +		/*
-> +		 * This can happen for quite a few reasons.  The more obvious
-> +		 * ones are faults accessing the GDT, or LDT.  Perhaps
-> +		 * surprisingly, if the CPU tries to deliver a benign or
-> +		 * contributory exception from user code and gets a page fault
-> +		 * during delivery, the page fault can be delivered as though
-> +		 * it originated directly from user code.  This could happen
-> +		 * due to wrong permissions on the IDT, GDT, LDT, TSS, or
-> +		 * kernel or IST stack.
-> +		 */
-> +		store_idt(&idt);
-> +
-> +		/* Usable even on Xen PV -- it's just slow. */
-> +		native_store_gdt(&gdt);
-> +
-> +		pr_alert("IDT: 0x%lx (limit=0x%hx) GDT: 0x%lx (limit=0x%hx)\n",
-> +			 idt.address, idt.size, gdt.address, gdt.size);
-> +
-> +		store_ldt(ldtr);
-> +		show_ldttss(&gdt, "LDTR", ldtr);
-> +
-> +		store_tr(tr);
-> +		show_ldttss(&gdt, "TR", tr);
-> +	}
-> +
->  	dump_pagetable(address);
->  }
->  
-> -- 
-> 2.17.2
+> Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device sda1): ext4_lookup:1578: inode #52038457: comm
+> nfsd: deleted inode referenced: 52043796
+> Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on device sda1-8.
+> Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1): Remounting filesystem read-only
 > 
+> 
+> The same systems running v4.18.6 never experienced a problem.
+> 
+> Has anyone else seen similar problems ? Is there anything I can do
+> to help tracking down the problem ?
+> 
+> Thanks,
+> Guenter
+> 
+
