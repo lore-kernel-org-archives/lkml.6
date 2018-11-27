@@ -2,135 +2,83 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 940E2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA216C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9BF20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:13:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9BF20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8AC282086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC282086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whu.edu.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbeK0SKt (ORCPT
+        id S1729015AbeK0SLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 13:10:49 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56660 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbeK0SKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 13:10:49 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gRXZ6-00084q-Ot; Tue, 27 Nov 2018 08:13:48 +0100
-Date:   Tue, 27 Nov 2018 08:13:48 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jiri Kosina <jikos@kernel.org>
-cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
-In-Reply-To: <nycvar.YFH.7.76.1811270800090.21108@cbobk.fhfr.pm>
-Message-ID: <alpine.DEB.2.21.1811270809450.1682@nanos.tec.linutronix.de>
-References: <20181121201430.559770965@linutronix.de> <20181121201724.227260385@linutronix.de> <f976eb35-5dcd-387e-eb29-f7c6636fd17b@linux.intel.com> <alpine.DEB.2.21.1811222352340.1665@nanos.tec.linutronix.de> <20181123073735.GA12959@gmail.com>
- <c51dd20a-2cea-1bd1-bee7-48ca25f9bdb9@linux.intel.com> <alpine.DEB.2.21.1811262244510.1682@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811270800090.21108@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 27 Nov 2018 13:11:03 -0500
+Received: from app1.whu.edu.cn ([202.114.64.88]:41626 "EHLO whu.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728903AbeK0SLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 13:11:03 -0500
+X-Greylist: delayed 1169 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Nov 2018 13:11:01 EST
+Received: from localhost (unknown [114.255.3.133])
+        by email1 (Coremail) with SMTP id AQBjCgDn7_sj6vxbZSk7CA--.65433S2;
+        Tue, 27 Nov 2018 14:54:33 +0800 (CST)
+From:   Peng Wang <rocking@whu.edu.cn>
+To:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Wang <rocking@whu.edu.cn>
+Subject: [PATCH] cgroup: remove unused member "cgrp_ancestor_id_storage" in struct cgroup_root
+Date:   Tue, 27 Nov 2018 14:53:57 +0800
+Message-Id: <20181127065357.28130-1-rocking@whu.edu.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQBjCgDn7_sj6vxbZSk7CA--.65433S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF1DKr48uw1DCry7WrW7Jwb_yoWxZrX_Aa
+        4ftayDKrWxKwsrtw1vqFnIyayFkw4xtr1qgFsayFyDXanxXrs8Aw43Ary7ArW7uFZ3ZFn5
+        Xa4xWr4kJrn5ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbcxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+        Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+        0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+        jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+        1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8AwCF
+        04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+        18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
+        r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+        1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUj0zuJUUUUU==
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018, Jiri Kosina wrote:
-> On Mon, 26 Nov 2018, Thomas Gleixner wrote:
-> 
-> How about the minimalistic aproach below? (only compile tested so far, 
-> applies on top of your latest WIP.x86/pti branch). The downside of course 
-> is wasting another TIF bit.
+"cgrp_ancestor_id_storage" is not used, so let's clean it up.
 
-We need to waste another TIF bit in any case.
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+---
+ include/linux/cgroup-defs.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
->  	 *
->  	 * This can only happen for SECCOMP mitigation. For PRCTL it's
->  	 * always the current task.
-> +	 *
-> +	 * If we are updating non-current task, set a flag for it to always
-> +	 * perform the MSR sync on a first context switch, to make sure
-> +	 * the TIF_SPEC_IB above is not out of sync with the MSR value during
-> +	 * task's runtime.
->  	 */
->  	if (tsk == current && update)
->  		speculation_ctrl_update_current();
-> +	else
-> +		set_tsk_thread_flag(tsk, TIF_SPEC_UPDATE);
-> +
->  }
->  
->  static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 3f5e351bdd37..78208234e63e 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -449,8 +449,20 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
->  	 * otherwise avoid the MSR write.
->  	 */
->  	if (IS_ENABLED(CONFIG_SMP) &&
-> -	    static_branch_unlikely(&switch_to_cond_stibp))
-> +	    static_branch_unlikely(&switch_to_cond_stibp)) {
->  		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
-> +		/*
-> +		 * We need to update the MSR if remote task did set
-> +		 * TIF_SPEC_UPDATE on us, and therefore MSR value and
-> +		 * the TIF_SPEC_IB values might be out of sync.
-> +		 *
-> +		 * This can only happen if seccomp task has updated
-> +		 * one of its remote threads.
-> +		 */
-> +		if (IS_ENABLED(CONFIG_SECCOMP) && !updmsr &&
-> +				(tifn & TIF_SPEC_UPDATE))
-> +			updmsr = true;
-> +	}
->  
->  	if (updmsr)
->  		spec_ctrl_update_msr(tifn);
-> @@ -496,6 +508,8 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
->  		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
->  
->  	__speculation_ctrl_update(tifp, tifn);
-> +	if (IS_ENABLED(CONFIG_SECCOMP))
-> +		clear_tsk_thread_flag(next_p, TIF_SPEC_UPDATE);
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 5e1694fe035b..639a96576ef3 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -467,9 +467,6 @@ struct cgroup_root {
+ 	/* The root cgroup.  Root is destroyed on its release. */
+ 	struct cgroup cgrp;
+ 
+-	/* for cgrp->ancestor_ids[0] */
+-	int cgrp_ancestor_id_storage;
+-
+ 	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
+ 	atomic_t nr_cgrps;
+ 
+-- 
+2.19.1
 
-That's racy and does not prevent the situation because the TIF flags are
-updated befor the UPDATE bit is set. So __speculation_ctrl_update() might
-see the new bits, but not TIF_SPEC_UPDATE. You really need shadow storage
-to avoid that.
-
-Thanks,
-
-	tglx
