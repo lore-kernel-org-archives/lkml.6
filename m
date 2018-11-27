@@ -5,105 +5,100 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842B0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209ECC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2611420873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:47:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2611420873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sorico.fr
+	by mail.kernel.org (Postfix) with ESMTP id DC0DE20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0DE20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730860AbeK0Vob (ORCPT
+        id S1730865AbeK0VrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:44:31 -0500
-Received: from mout01.posteo.de ([185.67.36.141]:59166 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729540AbeK0Voa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:44:30 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id D7523160064
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 11:46:58 +0100 (CET)
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4340pT1znXz6tm7;
-        Tue, 27 Nov 2018 11:46:57 +0100 (CET)
-Subject: Re: DMA: atmel_serial: Opening and closing the serial device
- repeatedly causes kmalloc-32 slab leak
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        richard.genoud@gmail.com
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, dmaengine@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Mario Forner <m.forner@be4energy.com>,
-        Vinod Koul <vkoul@kernel.org>
-References: <22061488.b0eNpyQjWt@linux-7rm0>
- <83753d21-f3c8-c8dd-75d7-741cb597d1a3@sorico.fr>
- <20181127095843.GF19871@piout.net>
-From:   Richard Genoud <richard@sorico.fr>
-Message-ID: <febddc12-200d-139f-18f0-fcb055951324@sorico.fr>
-Date:   Tue, 27 Nov 2018 11:46:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 27 Nov 2018 16:47:09 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44677 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeK0VrJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:47:09 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m6so7181287oig.11;
+        Tue, 27 Nov 2018 02:49:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y08LsoIPBnrDcbGcz3cWKb7D9hVOHDZAlTkgiibhUg4=;
+        b=uheck62QOf7NC9e0vwIFdIunrA2wQegR3QfJ7qHXevmZTwku9IqImTuXapGK53XBR8
+         drXcjlAtrFCMrsnS+yA33pJLtuQHyNJ7Qdb2g2rAXh0tlXPNs5lXxfaZb/roLMHecUiT
+         pD/e1eQ3qhFalNudWg2R5y3o8/NNZxWrBOwxfnyJ1KExI0CcG99wCLoVSvcNzT1l8Iuv
+         n5YvuyB0zamhfJRN/o8hmzIPPFCtJG6nu8yKWP5DIVRIctIPb7vzJwNHWoQBmLDdrc50
+         0B6c1Whvcnb3YiinDchdEuN+Vh0rHJoZgxzAwhZ8goS5fuV2xHg8k2FDk4U9YRcWYuBb
+         ucdg==
+X-Gm-Message-State: AGRZ1gKqG+Qe1bascLCeE7z1DZUpiKIBGXDthsgIMrZ62wnaATEaVduI
+        wzAZc4qDv25ku2VJKm3Dg8nxXhjOLuiFjSPqeX4=
+X-Google-Smtp-Source: AJdET5fcNjJkzug7J0cC02hTuNfX0fVikBJBOUWPwgKz79SRZewABQlUFHKDJi2i1S1hSv4joLMjcEuNUxZQiVLTxk4=
+X-Received: by 2002:aca:7581:: with SMTP id q123mr18526913oic.176.1543315779234;
+ Tue, 27 Nov 2018 02:49:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181127095843.GF19871@piout.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
+ <1543216072-9623-2-git-send-email-harini.katakam@xilinx.com>
+ <5de882e3-65ac-7ff1-bb55-7537666dfc77@microchip.com> <20181126145210.GD12116@lunn.ch>
+ <CAFcVECK=4e-+1u3X+OuLoAEicUtrkTX3C0wzAugMRcJSP0N-Vg@mail.gmail.com> <74937246-dc7d-db1c-df00-5db856192eac@microchip.com>
+In-Reply-To: <74937246-dc7d-db1c-df00-5db856192eac@microchip.com>
+From:   Harini Katakam <harinik@xilinx.com>
+Date:   Tue, 27 Nov 2018 16:19:28 +0530
+Message-ID: <CAFcVECLSBb3nQcQa3+W6jVq8cubgLA=-vBvwrX-yLWUKdP50EA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] net: macb: Check MDIO state before read/write and
+ use timeouts
+To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Harini Katakam <harini.katakam@xilinx.com>,
+        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        sai.pavan.boddu@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 27/11/2018 à 10:58, Alexandre Belloni a écrit :
-> Hello Richard,
-> 
-> On 27/11/2018 10:51:13+0100, richard.genoud@gmail.com wrote:
->> Hi all,
->>
->> I reproduced the memory leak on my board (at91sam9g35-cm) with a 4.20-rc3.
->>
->> It triggered an OOM after a couple of hours running a code like this:
->> #include <sys/types.h>
->> #include <sys/stat.h>
->> #include <fcntl.h>
->> #include <unistd.h>
->>
->>
->> int main(int argc, char **argv)
->> {
->> 	int fd;
->> 	do {
->> 		fd = open("/dev/ttyS1", O_RDONLY);
->> 		close(fd);
->> 	} while (true);
->> 	return 0;
->> }
->>
->> As Mario pointed out, this only happens when atmel,use-dma-{r,t}x are
->> used in the device-tree.
->>
->> Adding:
->> CONFIG_DEBUG_SLAB=y
->> CONFIG_DEBUG_SLAB_LEAK=y
->> Doesn't show anything suspect in /proc/slab_allocators
->>
->> From what I found until now, it's something done in :
->> dma_request_slave_channel();
->> that leaks kmalloc-32
->> Mabe I missed something, but it seems that everything DMA related is
->> deallocated in atmel_release_{tx,rx}_dma().
->>
->> Is this ringing a bell ?
->>
-> 
-> Yes, this is known issue and it has yet to be worked on.
-> 
+Hi Claudiu,
 
-After a talk on freenode, Alex found the problem.
-A patch is on its way.
+<snip>
+> >>>>
+> >>>> Replace the while loop in MDIO read/write functions with a timeout.
+> >>>> In addition, add a check for MDIO bus busy before initiating a new
+> >>>> operation as well to make sure there is no ongoing MDIO operation.
+> >>>
+> >>> Is this MDIO bus busy check necessary? The caller of
+> >>> macb_mdio_read/macb_mdio_write locks the mdio bus mutex before calling it
+> >>> (e.g. mdiobus_read).
+> >>
+> >> Hi Claudiu
+> >>
+> >> It depends on the implementation. A write operation you could just
+> >> launch, but not wait for it to complete, allowing you to do other
+> >> stuff while the hardware is busy. For the next operation you then do
+> >> need to check the previous operation has completed.
+> >>
+> >> I've not checked it is actually implemented this way.
+> >
+> > Yes, as Andrew mentioned, a previous MDIO bus operation cannot
+> > be assumed to be complete always - for ex., in case of a timeout.
+> > There is a chance that the MDIO bus bit is busy when mdio_read/write
+> > is called.
+>
+> Thank you for your responses. I see it now.
+>
+> Then, do you think it would be better to have a new API part of struct
+> mii_bus that drivers should register so that, the mii core to check if the
+> bus is idle before lunching a new request?
 
-Thanks !
+Sure, let me explore this option.
+
+Regards,
+Harini
