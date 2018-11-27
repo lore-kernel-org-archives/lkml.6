@@ -2,120 +2,70 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78995C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87726C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3B3208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3B3208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 46AC2208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+DzafQ4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46AC2208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730135AbeK0ULn (ORCPT
+        id S1730153AbeK0ULp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:11:43 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34330 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730120AbeK0ULm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:11:42 -0500
-Received: by mail-oi1-f196.google.com with SMTP id h25so18677081oig.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:14:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8VeYNIEhl6I0P815TUv2St4I1yjEEHZt1/hiJSlXg7A=;
-        b=KxQpMLA2SIClrYUYP6kYtUdJoPO0exi+rpjO5vy2QgZzGbPlZ8ECLlm2qIMEEN9RyQ
-         oV3VdMb914tJffM0+kO9RfUaMUWPS1hmZe6RvHJiBiDP3Kte25rlLUpcnvOA1d0yiWyR
-         OPWlXmiLQT2QnULchz9IbcBDn3aWXA+Y8SfsE9akn6Eg1aqTlJ3HCVdczwbnJI4FPS7L
-         aFtfXlR3uKRm/7LVlg20x/yw2Xx3HCkG5ln12AZ5ztSv5qw11sSA4GN2IP9YwgUnS3QS
-         JaGR0X8xWObDVIM1uzqjdJXHzJtk0EHqJKQyac9xdXq9jaNgb21QHUvQ++aKQhQd5/ex
-         Ptxg==
-X-Gm-Message-State: AGRZ1gJgeTPuXHF+IgQHxU7D7Og/qEFlsnZlpWV7KS9uPrUZNd8rxlVU
-        9T/eG4d+FJmUJVGyEc1K0iO6fhlO8sb1HARTSBELp2PoVOSwJA==
-X-Google-Smtp-Source: AJdET5fRctI/moiaQ2GrAOfxzAysxckeQVwW7ze1F2DCXt/kdNAEc016UedbNS/rMJUj5UlgS1H1vDppNrwe2b0u7m0=
-X-Received: by 2002:aca:50cf:: with SMTP id e198mr18396498oib.343.1543310067736;
- Tue, 27 Nov 2018 01:14:27 -0800 (PST)
+        Tue, 27 Nov 2018 15:11:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730120AbeK0ULo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:11:44 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDC5420989;
+        Tue, 27 Nov 2018 09:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543310069;
+        bh=3JbcYND1I76NoKoDOpd7gQ5ZKdNCPNWV7bLGsSd7PSs=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=B+DzafQ44H6eltE9uhlLFoN+g6dPBtYV7HnwKr4LWXONqzSHum9SW/nSaI4lt3xvU
+         DF2MYflj0KCl33FagDyS1Dz1E3Va0qI74nTc5wAQpADHPqdYedO2Bf75lQ5q4NULMn
+         mthDlXMXDO4YfM5KC8jiecYiHI+EhsKDIKcajMm8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
-In-Reply-To: <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 27 Nov 2018 10:14:16 +0100
-Message-ID: <CAFqZXNvUg9wNV4DBsFa+_Kkr5AMrdSGOkGuJmmF17MC59ASCig@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
+ <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
+Message-ID: <154331006901.88331.9760589510991406736@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v10 3/3] clk: qcom: Add lpass clock controller driver for SDM845
+Date:   Tue, 27 Nov 2018 01:14:29 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 9:53 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Tue, Nov 27, 2018 at 1:52 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Paul,
-> >
-> > Today's linux-next merge of the selinux tree got a conflict in:
-> >
-> >   security/selinux/hooks.c
-> >
-> > between commit:
-> >
-> >   0472421f47a9 ("vfs: Remove unused code after filesystem context changes")
-> >
-> > from the vfs tree and commit:
-> >
-> >   2cbdcb882f97 ("selinux: always allow mounting submounts")
-> >
-> > from the selinux tree.
-> >
-> > I fixed it up (the former removed the function updated by the latter -
-> > I am not sure if there are further changes necessary) and can carry the
-> > fix as necessary. This is now fixed as far as linux-next is concerned,
-> > but any non trivial conflicts should be mentioned to your upstream
-> > maintainer when your tree is submitted for merging.  You may also want
-> > to consider cooperating with the maintainer of the conflicting tree to
-> > minimise any particularly complex conflicts.
->
-> Hm... seems that there was some massive overhaul in the VFS code right
-> at the wrong moment... There are new hooks for mounting now and the
-> code that our commit changes is now here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
+Quoting Taniya Das (2018-11-21 23:53:41)
+> +
+> +static struct clk_branch lpass_qdsp6ss_core_clk =3D {
+> +       .halt_reg =3D 0x20,
+> +       /* CLK_OFF would not toggle until LPASS is not out of reset */
 
-For convenience, here are direct links to the most important -next VFS
-commits that are related:
+Is this really "CLK_OFF won't toggle until LPASS it out of reset"?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=c87c47c34750e9ee1ff0345593f3cbf6726b9d4e
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=4786c3427b2517ee9c685f95bf5b3185e332e64d
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=37744f3d21f8dbf6bb65e1ecef38c2cf9503d202
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0472421f47a97be4b741d55ffd18f68ed9ba7cea
-
->
-> It seems that the logic is still the same, just now our patch (or the
-> VFS one) needs to be updated to change the above line as such
-> (untested pseudo-patch):
->
-> - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
-> + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
->
-> Thanks for the heads up, Stephen!
->
-> --
-> Ondrej Mosnacek <omosnace at redhat dot com>
-> Associate Software Engineer, Security Technologies
-> Red Hat, Inc.
-
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
