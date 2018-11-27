@@ -2,143 +2,266 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0426FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46E0C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6D42082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BFCD2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="otO5Qbqh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC6D42082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d5XXjmI/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFCD2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732109AbeK1FGU (ORCPT
+        id S1728974AbeK1FIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:06:20 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46756 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbeK1FGU (ORCPT
+        Wed, 28 Nov 2018 00:08:04 -0500
+Received: from casper.infradead.org ([85.118.1.10]:56588 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeK1FIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:06:20 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so8200647pgp.13;
-        Tue, 27 Nov 2018 10:07:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Mogpe9JL6oeKtsiZ1ynqs/olNsUodWWuDr2L0lucg9E=;
-        b=otO5Qbqh/7K0bU3FDDeXuDRzzKALaCL+BH4OVSrU5d3zmuJH7JNqRB0oJ9JI8Dbk3Z
-         qzlP3kGa2vUGp9biJQT2LBRHK4NYeX6mrgzx6cBFDukWxPgZXS5sv7NNJyRkQFzDa5bg
-         IRozX6XGFvkU5NQ4qCWRWrPLIZWqAK5PcO0STU4p2lzG/+ChTBpBMYnvs6jjkQAc/nga
-         2qAau3syWPFzOfop1W7ABIEJnxPx1nK9wdYcGNHGvxd0y1++XnU2WAwHUPo+g3a2rKV0
-         91kpAX/yikReaDFP/X7xrlrTSz00wj7fVcQcElHw2u4VTMol7SvC6rKvVEwDoqS6iiWF
-         S2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Mogpe9JL6oeKtsiZ1ynqs/olNsUodWWuDr2L0lucg9E=;
-        b=OGMJ6hMMNuhgggOBTl5H5MeDsnyymNRrDML1c7QecQrUlcM/VPlLBkYzBjWbX+bwX+
-         vb8URQ2I3snOwPOQbxcmlZ9ijBDvI2EDzlt5RIADNv7Y2x7qbIWy6YeFlbiPRN9yoaaU
-         zW10mtboFWixo5Tp0UAsxqZo34KwebaT7vaIZxReytfML6nC1ZCGcuaOhRd9uxBpmmhE
-         8buO1GMoRQXboiRdc0Mxe1gWJh7a6A57uYftsWaee28oypKO/BMZQ+/fD4S5ICl1yqeO
-         +8gJUV0mPKl5kPmKM/x7kcJpd5fykeL92XOPDurdzGJ+5trGyM/54vViuUfCIABFqE03
-         XF6w==
-X-Gm-Message-State: AA+aEWbw5iWUX4OwFe9bNfxw7bMnPLbccOSSyhQomj31UWeYkETlDwl8
-        zwMtdBDozAJkrhChwlk/Gt8ynplG
-X-Google-Smtp-Source: AFSGD/U6Yk9oOsIqu3k9l8wloiKTZqxR6FgVmFLQbWvoTX76hzNdsJqTSzJmIXs/zRm1kYMc4wdvEw==
-X-Received: by 2002:a65:6215:: with SMTP id d21mr30090942pgv.289.1543342056685;
-        Tue, 27 Nov 2018 10:07:36 -0800 (PST)
-Received: from [10.10.115.44] ([192.19.218.250])
-        by smtp.gmail.com with ESMTPSA id v89sm5936994pfk.12.2018.11.27.10.07.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 10:07:35 -0800 (PST)
-Subject: Re: [Intel-wired-lan] [PATCH net] ixgbe: recognize 1000BaseLX SFP
- modules as 1Gbps
-To:     David Miller <davem@davemloft.net>, jelsasser@appneta.com
-Cc:     jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <40FD0CE5-973C-4A7F-91BD-66C1A1699223@appneta.com>
- <937675447ad1ec2665d0b6f70390d498a01255d0.camel@intel.com>
- <F6168EB4-8C74-456F-B571-6492162CFA0F@appneta.com>
- <20181126.205247.1196368459821644290.davem@davemloft.net>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- w0j9Sw==
-Message-ID: <9e45af90-0a62-79a1-8eac-0bc27cf3d531@gmail.com>
-Date:   Tue, 27 Nov 2018 10:07:24 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 28 Nov 2018 00:08:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ua8H6UU3jYjEv1ObkJcgmqyMo6pCP6bE58BHg3AYZcY=; b=d5XXjmI/ivSmvchHH6UsQT449E
+        eokYVy2K5tYCmd7S2/2tpt5Kup+q9WBlPIrPX3JYkn1UJZ0wnl66PNSeExJjHL8/R59GDplcUS/8I
+        4WhVWa8sp9Tzt3Ui4UrUylsaESN6WqkcFPoKlSHdvqRcYgDlW4DydK11n3BgpQmb1XCLDDleNzrm3
+        0ww43tlRRXNfrbBCEsgteun/7nso4gOTKbSbbgXRbUNcUyGjEWfUHbTaPDehPoEZvlEnoYKyWk1P+
+        gOTjuSL4RJHFDRJ5X+V6HqXS2AOIhRPovS/GqrW36w6GEj2efSJK2uoiWO5ZGb6t/qurMhNvu5oiw
+        wtEDsUsQ==;
+Received: from 177.17.130.159.dynamic.adsl.gvt.net.br ([177.17.130.159] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRhnQ-0003j2-JE; Tue, 27 Nov 2018 18:09:18 +0000
+Date:   Tue, 27 Nov 2018 16:09:11 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     stakanov <stakanov@eclipso.eu>
+Cc:     Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
+        Malcolm Priestley <tvboxspy@gmail.com>
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181127160911.2e4ba1fc@coco.lan>
+In-Reply-To: <45396912.h74atscUxZ@roadrunner.suse>
+References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
+        <1673172.qrKGPYx0fj@roadrunner.suse>
+        <20181127104946.195487ec@coco.lan>
+        <45396912.h74atscUxZ@roadrunner.suse>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181126.205247.1196368459821644290.davem@davemloft.net>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Tue, 27 Nov 2018 16:58:58 +0100
+stakanov <stakanov@eclipso.eu> escreveu:
+
+> In data marted=C3=AC 27 novembre 2018 13:49:46 CET, Mauro Carvalho Chehab=
+ ha=20
+> scritto:
+> > Hi Stakanov,
+> >=20
+> > Em Tue, 27 Nov 2018 11:02:57 +0100
+> >=20
+> > stakanov <stakanov@eclipso.eu> escreveu:
+> > > In data luned=C3=AC 26 novembre 2018 14:31:09 CET, Takashi Iwai ha sc=
+ritto:
+> > > > On Fri, 23 Nov 2018 18:26:25 +0100,
+> > > >=20
+> > > > Mauro Carvalho Chehab wrote:
+> > > > > Takashi,
+> > > > >=20
+> > > > > Could you please produce a Kernel for Stakanov to test
+> > > > > with the following patches:
+> > > > >=20
+> > > > > https://patchwork.linuxtv.org/patch/53044/
+> > > > > https://patchwork.linuxtv.org/patch/53045/
+> > > > > https://patchwork.linuxtv.org/patch/53046/
+> > > > > https://patchwork.linuxtv.org/patch/53128/
+> > > >=20
+> > > > Sorry for the late reaction.  Now it's queued to OBS
+> > > > home:tiwai:bsc1116374-2 repo.  It'll be ready in an hour or so.
+> > > > It's based on 4.20-rc4.
+> > > >=20
+> > > > Stakanov, please give it a try later.
+> > > >=20
+> > > >=20
+> > > > thanks,
+> > > >=20
+> > > > Takashi
+> > >=20
+> > > O.K. this unbricks partially the card.
+> >=20
+> > From the logs, the Kernel is now working as expected.
+> >=20
+> > > Now hotbird does search and does sync
+> > > on all channels. Quality is very good. Astra still does interrupt the
+> > > search immediately and does not receive a thing. So it is a 50% brick
+> > > still, but it is a huge progress compared to before.
+> >=20
+> > As I said before, you need to tell Kaffeine what's the LNBf that you're
+> > using. The LNBf is a physical device[1] that it is installed on your
+> > satellite dish. There's no way to auto-detect the model you actually ha=
+ve,
+> > so you need to provide this information to the digital TV software you'=
+re
+> > using.
+> >=20
+> > [1] It looks like this:
+> > 	https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Astra_lnb.jp=
+g/
+> 240
+> > px-Astra_lnb.jpg
+> >=20
+> > The "Universal" one is for an old universal model sold in Europe about
+> > 15 years ago. It doesn't support all transponders found on an Astra
+> > satellite.
+> >=20
+> > For those, you need to use the LNBf that it is known as "Astra 1E"[2].
+> >=20
+> > [2] The name is there just for historical reasons. The actual Astra 1E
+> > satellite was retired, but another satellite occupies the same orbital
+> > position (19.2=C2=B0E), and they keep adding/retiring satellites there =
+as
+> > needed (https://en.wikipedia.org/wiki/Astra_19.2%C2%B0E).
+> >=20
+> > As I pointed you on a past e-mail, when you set the DVB-S board on
+> > Kaffeine, you should have explicitly set it.
+> >=20
+> > If you start Kaffeine in English:
+> >=20
+> > 	$ LANG=3DC kaffeine
+> >=20
+> > You'll see it at the following menu:
+> >=20
+> > 	Television -> Configure Television -> Device 0
+> >=20
+> > (assuming that your device is device 0)
+> >=20
+> > There, you need to tell that you'll be using a DiSEqC swith. It
+> > will then allow you to select up to 4 satellite sources. Once you
+> > set a source, it will allow you to edit the LNB <n> Settings
+> > (where <n> will be 1 to 4). Clicking there, it will present you
+> > a menu with all known LNBf models. Astra 1E is the third option[3].
+> >=20
+> > [3] yeah, on a separate discussion, we should likely rename "Astra 1E"
+> > to just "Astra", and place it as the first option. I'll do such change,
+> > but it will be at v4l-utils package (libdvbv5) and it will probably
+> > take some time until distros start packaging the new version, even
+> > if we add it to the stable branch.
+> >=20
+> > > I paste the output of the directory below, unfortunately the opensuse
+> > > paste
+> > > does not work currently so I try here, sorry if this is long.
+> > >=20
+> > > Content of the directory 99-media.conf created following the indicati=
+ons
+> > > (please bear in mind that I have also another card installed (Hauppau=
+ge
+> > > 5525) although it was not branched to the sat cable and i did change =
+the
+> > > settings in Kaffeine to use only the technisat. But my understanding =
+is
+> > > limited if this may give "noise" in the output, so I thought to under=
+line
+> > > it, just FYI.
+> > > Output:
+> > Looks ok to me.
+> >=20
+> > > [  649.009548] cx23885 0000:03:00.0: invalid short VPD tag 01 at offs=
+et 1
+> > > [  649.011439] r8169 0000:06:00.0: invalid short VPD tag 00 at offset=
+ 1
+> >=20
+> > Those two above are weird... It seems to be related to some issue that
+> > the PCI core detected:
+> >=20
+> > drivers/pci/vpd.c:                      pci_warn(dev, "invalid %s VPD t=
+ag
+> > %02x at offset %zu",
+> >=20
+> > I've no idea what they mean, nor if you'll face any issues related to i=
+t.
+> >=20
+> > Thanks,
+> > Mauro
+> The two are known annoyances especially the cx23885 complaining in the lo=
+gs=20
+> about a "wrong revision". But as they AFAIK do not cause major issues or=
+=20
+> havoc, it is not a problem, at least for me.=20
+
+Ok, good!
+
+> Now, the card suddenly works. The only thing you have to do (limited to t=
+his=20
+> technisat PCI card, not applicable to the Hauppauge PCI-e mounted on the =
+same=20
+> machine) is to set the "square" to high voltage, limited for Astra. Hotbi=
+rd=20
+> scans better without this, with "no setting send" as I do for the Hauppau=
+ge as=20
+> well.=20
+> This must be something weird related to our sat dish.
+
+That setting is needed if you have a longer cabling, thinner wiring or
+loses at the connectors. Not really an issue. Just a setup that makes the
+DVB card to use a higher voltage when powering up the LNBf and switching
+the polarization, in order to compensate for cable loses.
+
+>=20
+> But the GOOD news is: yes now you made it! The card works. And yes, you s=
+hould=20
+> really rename ASTRA E setting. Maybe also be more clear or give some hint=
+ in=20
+> kaffeine when hovering over it, about how to set it, for some reason it c=
+ame=20
+> straightforward to me to click on the right radio button to select the ty=
+pe of=20
+> satellite,  but I did not understand, nor did suspect, I would be able to=
+ set,=20
+> or that I would have to set the left button (must be a cultural deformati=
+on,=20
+> or whatever). Once you told me about I did find it, but in my very limite=
+d=20
+> experience, I think that could be enhanced.
+
+Just pushed a patch renaming it. That patch will make Astra the default on
+Kaffeine too:
+
+	https://patchwork.linuxtv.org/patch/53172/
+
+It is for the DVB library used by Kaffeine.
+>=20
+> So congratulations. It works and now I am officially even more impressed =
+about=20
+> Linux and the spirit behind it. Compliments and thank you all for your wo=
+rk=20
+> and time!
+>=20
+> Regards.=20
+>=20
+>=20
+>=20
+> _________________________________________________________________
+> ________________________________________________________
+> Ihre E-Mail-Postf=C3=A4cher sicher & zentral an einem Ort. Jetzt wechseln=
+ und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
+>=20
+>=20
 
 
-On 11/26/2018 8:52 PM, David Miller wrote:
-> From: Josh Elsasser <jelsasser@appneta.com>
-> Date: Mon, 26 Nov 2018 16:54:11 -0800
-> 
->> Jeff Kirsher <jeffrey.t.kirsher@intel.com> wrote:
->>
->>> No need to re-spin the patch, just reply with the additional "Fixes"
->>> tag and if patchwork does not pick it up, I will add it to the patch I
->>> have in my tree for validation and review.
->>
->> Thanks, let’s try that.
->>
->> Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x SFP+”)
-> 
-> Unfortunately, patchwork isn't smart enough to pick up Fixes: tags
-> still.
-> 
 
-This is something that can be added easily in the patchwork
-administration panel, maybe ask Jeremy or Stephen to do that?
--- 
-Florian
+Thanks,
+Mauro
