@@ -2,108 +2,116 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB911C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EC8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8129C20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34EEA20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f4erISSE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8129C20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QoGb9CHW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34EEA20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeK1Jtw (ORCPT
+        id S1726712AbeK1Jtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:49:52 -0500
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:34371 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeK1Jtv (ORCPT
+        Wed, 28 Nov 2018 04:49:55 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33349 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeK1Jtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:49:51 -0500
-Received: by mail-lj1-f182.google.com with SMTP id u6-v6so21611049ljd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:50:25 -0800 (PST)
+        Wed, 28 Nov 2018 04:49:53 -0500
+Received: by mail-yw1-f66.google.com with SMTP id q11so9915177ywa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:50:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=aOvCWGaG+QwdWQnwx64Hl42p81ImXtRWxbsAGCUP7FE=;
-        b=f4erISSE49NhPNad62QpCBMPcTkIfjMzxMyZf/uyV4h2Oqi5lRzqMS6ILpUZubXyx9
-         UvimG4zUs2DYtbgTcsMrMhZhwkdW57EZAbV11MWEW5EhVQ01czGUk8FJNpKeb/rvP+uv
-         PgoTK6TpO259UKlUE7ocAvBx3pvwzQdJkhB+M=
+        bh=Gxd2c4cHXDCaojmIun0dqsNVAUESyY75uu1aUTy7jBk=;
+        b=QoGb9CHWfCdCggZmyzbZ0eXJ0w/Yol0jgj2FArNP0dhTygJWUKSo5y3aGTYtfaKDvC
+         HbMGsa0myKuN8RIERKjzpGp3d8T8L1REX2DAFFyLjbxDCdgVodJdanCj93OLPjKB45vO
+         sFuHVFwW+3YsIlMskKV2ua6aSSBsFb8Tvxcno=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=aOvCWGaG+QwdWQnwx64Hl42p81ImXtRWxbsAGCUP7FE=;
-        b=MSF74YXGMU7i0K3Up6hdOzDg+Az4f6CJRnxK2XWB5aBnnvKEC7jcmUTQ4K5OCzENSJ
-         MKzlcGVPOgXYbDd7K4xY/M99eoNv8TBXWxSLJ9JEIWvGYv76gs2b3vVgMnYIcfdBBhth
-         JRsZsImfgSWf/E/J0xRxDYRSP/k1sib04jukF/URChfzxmPbWBlUUjosigIBWFYiqb0W
-         mXwqJScMC5THh+CYyF+VvWR9FLTkhnzL8soGh0uNxJ+8xOrplvZsgp4+OqpHllWeHa8i
-         PvgyzwSZ7Gw3szg0FYBB4Glw8Y41xcRMvuOUQxoiiCnYorDF1+dLvEo5KTmZhIC/uKKS
-         m0NA==
-X-Gm-Message-State: AA+aEWbv51XpYNz5C+ttNNUC/aOeQgrqCYlo93iD8TQnE9C+hPcwQpw/
-        t2eVZjXzSBeZMQ66rkd9/y0G9r3+0uk=
-X-Google-Smtp-Source: AFSGD/Vv1fwGMBL1shib4SQsUzQ3PCBYtsb/1yZUpz1dX1zhijcKgBDMDeTypjGN7WEm2pG+2DpmKQ==
-X-Received: by 2002:a2e:9e95:: with SMTP id f21-v6mr21254273ljk.128.1543359023778;
-        Tue, 27 Nov 2018 14:50:23 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id b17sm877341lfc.21.2018.11.27.14.50.22
+        bh=Gxd2c4cHXDCaojmIun0dqsNVAUESyY75uu1aUTy7jBk=;
+        b=DpDCzTCJD3R+UmvooXtpxJGjTAde+uMeuFIexinFlSyBLrfDzhy+J1lqDv48FgXFLM
+         XUTFl4p4BU9XmMZ/mw6w51dkgJmH4d0p0UkXcakklD2IvvV7za2qXWZFcUuyP+5xT0Up
+         v390nuXcHtNy0ZnveMAg8GHEWqAN6XNhF4y1QFhucfH88kR2PXEHNNhGZ/wAX37gFimU
+         b176pNFoHjsYCPAsRo+rQU8rbys99Pd+lyQ+iNIod5/o7e7RW29GlN3dfC0cfvYNxzv4
+         +0+aqrZVGkIM1nSKYSsFIbmSwU0dpF6+wvnbwqr8TpQzU5D+5aBPck/V5XLHB4X8APeb
+         PjRw==
+X-Gm-Message-State: AA+aEWYwCzzbfhMeRsgt7l/lN+QIlwbBICoyKvecuPs+oWxX70hIF3yP
+        zw+cYpVkqK2UfxImksfAoPE69XCx7bc=
+X-Google-Smtp-Source: AFSGD/VcgPd+ODdRkgWvmCRL5KpIhE5gAXX6S4SRELAiGkIIp4SNMeB2mTU3GSoQhhCd6V+wBQy/Ag==
+X-Received: by 2002:a81:7d5:: with SMTP id 204mr12953255ywh.143.1543359026929;
+        Tue, 27 Nov 2018 14:50:26 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id z128sm1249162ywb.96.2018.11.27.14.50.25
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 14:50:22 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id c19-v6so21624464lja.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:50:22 -0800 (PST)
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr23475934ljj.6.1543359021483;
- Tue, 27 Nov 2018 14:50:21 -0800 (PST)
+        Tue, 27 Nov 2018 14:50:25 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id p144-v6so9794434yba.11
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:50:25 -0800 (PST)
+X-Received: by 2002:a25:a445:: with SMTP id f63-v6mr34005552ybi.171.1543359024985;
+ Tue, 27 Nov 2018 14:50:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
- <20181127205737.GI16136@redhat.com>
-In-Reply-To: <20181127205737.GI16136@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 27 Nov 2018 14:50:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiEUPBzAOPkH1aHypnxW6+vVtmCw_vsOPgNZtOvQnrG8w@mail.gmail.com>
-Message-ID: <CAHk-=wiEUPBzAOPkH1aHypnxW6+vVtmCw_vsOPgNZtOvQnrG8w@mail.gmail.com>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     rong.a.chen@intel.com, Michal Hocko <mhocko@suse.com>,
-        s.priebe@profihost.ag, alex.williamson@redhat.com,
-        mgorman@techsingularity.net, zi.yan@cs.rutgers.edu,
-        Vlastimil Babka <vbabka@suse.cz>, rientjes@google.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 14:50:24
+ -0800 (PST)
+In-Reply-To: <c9c572ed-05a1-cec9-97e9-2b66cb58afcc@intel.com>
+References: <20181119154334.18265-1-tiny.windzz@gmail.com> <c9c572ed-05a1-cec9-97e9-2b66cb58afcc@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 27 Nov 2018 14:50:24 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJuHQOi3C7_xH7Fo2H-=EmzKkwAPWmWPOUNb0WWMTLnJQ@mail.gmail.com>
+Message-ID: <CAGXu5jJuHQOi3C7_xH7Fo2H-=EmzKkwAPWmWPOUNb0WWMTLnJQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/mm/dump_pagetables: Change to use DEFINE_SHOW_ATTRIBUTE
+ macro
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:57 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+On Mon, Nov 19, 2018 at 9:06 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+> On 11/19/18 7:43 AM, Yangtao Li wrote:
+>> -static const struct file_operations ptdump_curusr_fops = {
+>> -     .owner          = THIS_MODULE,
+>> -     .open           = ptdump_open_curusr,
+>> -     .read           = seq_read,
+>> -     .llseek         = seq_lseek,
+>> -     .release        = single_release,
+>> -};
+>> +DEFINE_SHOW_ATTRIBUTE(ptdump_curusr);
 >
-> This difference can only happen with defrag=always, and that's not the
-> current upstream default.
+> FWIW, I rather dislike this conversion and the DEFINE_SHOW_ATTRIBUTE()
+> approach in general.  It makes it basically impossible to go from
+> ptdump_curusr to ptdump_open_curusr without opening up the macro and
+> reverse-engineering it.
+>
+> My test is that for these macros to be sane, I need to be able to find
+> "ptdump_open_curusr" by grepping for "ptdump_curusr".  This fails the test.
 
-Ok, thanks. That makes it a bit less critical.
+Er, "ptdump_curusr" matches the generated name "ptdump_curusr_show",
+is that what you mean?
 
-> That MADV_HUGEPAGE causes flights with NUMA balancing is not great
-> indeed, qemu needs NUMA locality too, but then the badness caused by
-> __GFP_THISNODE was a larger regression in the worst case for qemu.
-[...]
-> So the short term alternative again would be the alternate patch that
-> does __GFP_THISNODE|GFP_ONLY_COMPACT appended below.
+> I don't think saving a few lines of code is worth the obfuscation.
 
-Sounds like we should probably do this. Particularly since Vlastimil
-pointed out that we'd otherwise have issues with the back-port for 4.4
-where that "defrag=always" was the default.
+This is the standard boilerplate for attributes, though. I'd be nice
+to drop all the copy/pasted code...
 
-The patch doesn't look horrible, and it directly addresses this
-particular issue.
-
-Is there some reason we wouldn't want to do it?
-
-               Linus
+-- 
+Kees Cook
