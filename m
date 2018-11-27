@@ -2,202 +2,362 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30A1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BD1C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805A820873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:48:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805A820873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D24CE20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:50:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cn89HzmN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24CE20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbeK0RpL (ORCPT
+        id S1728879AbeK0Rro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 12:45:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50520 "EHLO mx1.redhat.com"
+        Tue, 27 Nov 2018 12:47:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728571AbeK0RpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 12:45:11 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726363AbeK0Rro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 12:47:44 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1DB9280F7B;
-        Tue, 27 Nov 2018 06:48:20 +0000 (UTC)
-Received: from localhost (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CAE816E3B;
-        Tue, 27 Nov 2018 06:48:19 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 14:48:16 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com,
-        bp@alien8.de, mingo@kernel.org, tglx@linutronix.de,
-        k-hagio@ab.jp.nec.com, anderson@redhat.com, james.morse@arm.com,
-        osandov@fb.com, x86@kernel.org, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to
- vmcoreinfo
-Message-ID: <20181127064816.GE1824@MiWiFi-R3L-srv>
-References: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
- <20181126012824.GB1824@MiWiFi-R3L-srv>
- <CACi5LpPqdzNxi4=UQqVgT6aCyn9nx+sjM-ds0Xx6qBji_xgP1g@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id DC5A720873;
+        Tue, 27 Nov 2018 06:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543301452;
+        bh=VtOtSY7bZLEn1TABMVBxv8ngRENN25VwFk8pfsORqnI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Cn89HzmN9nEPzX0AXsfct0kqIy3S65GmU/25Ho+juHU+R7L9d2QeziYGuwwNfTcye
+         AXBXYYHr1NaSM8Y6o6UlWEWCz5SAHK1J9duCPaOchIbrEsado1das0sCJhwkuqS+1W
+         PdFZP6braQZIyZUXlbYrK8To32S+R2yIdn0bjxnE=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2] clk: qcom: Move to menuconfig and reduce lines
+Date:   Mon, 26 Nov 2018 22:50:51 -0800
+Message-Id: <20181127065051.54389-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACi5LpPqdzNxi4=UQqVgT6aCyn9nx+sjM-ds0Xx6qBji_xgP1g@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 27 Nov 2018 06:48:20 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 at 01:01am, Bhupesh Sharma wrote:
-> > But it's not live debugging feature of makedumpfile. Makedumpfile can't be
-> > used to live debug. The feature is called '--mem-usage' in makedumpfile,
-> > in fact it's used to estimate how big the vmcore could be so that customer
-> > can deply an appropriate size of storage space to store it. Because both
-> > kcore and vmcore are all elf files which the 1st kernel's memory is
-> > mapped to, even though they are different, kcore is dynamically changing.
-> > This is more likely a precision in order of of magnitude. This is a feature
-> > required by redhat customer.
-> 
-> Indeed this is a live debugging feature - see we are running this in
-> the primary kernel
-> context, not in kdump context. We are trying to debug a kernel we are
-> presently running (in this case determining the page mapping)
-> hence the term live debugging.
+We duplicate the 'depends on' in almost every Kconfig here, and it's
+getting out of hand now that we have tens of options for various SoC
+drivers here. Let's clean it up a little by making a menuconfig for a
+submenu and adding an if wrapper around the driver section.
 
-Thanks for redefining '--mem-usage' of makedumpfile as a live debugging
-feature. I am the author of this feature, I don't know it has this
-awesome attribute. Can you post patch to refresh it's doc or man page
-about this live debugging thing? I think it's important, I am
-astonished. I noticed Boris said you are adding this to support live
-debug, just not sure if he is misled by you, or he also think this
-vmcore size estimating feature of makedumpfile is live debugging
-feature. 
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
 
-> 
-> Also, this feature is not limited to redhat - we are talking in
-> upstream makedumpfile context here - it is used by other projects as
-> well which can have even a simple busybox rootfs configuration (e.g.
-> qemu).
+Changes from v1:
+ * Don't remove full depends on lines when they have something else
 
-Yes, it's not limited to redhat, I am just saying its origin.
+ drivers/clk/qcom/Kconfig | 43 +++++++++-------------------------------
+ 1 file changed, 9 insertions(+), 34 deletions(-)
 
-> 
-> > I thought you are talking about using DaveA's crash utility to live
-> > debug the running kernel, like we usually do with gdb.
-> >
-> >         gdb vmlinux /proc/kcore
-> >
-> > Yes, this gdb live debugging is broken because of KASLR. We have bug about
-> > this, while it has not been fixed. Using Crash utility to replace gdb is
-> > one way if Crash code is adjusted.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index a611531df115..cf1dec367192 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -9,16 +9,17 @@ config QCOM_GDSC
+ config QCOM_RPMCC
+ 	bool
+ 
+-config COMMON_CLK_QCOM
++menuconfig COMMON_CLK_QCOM
+ 	tristate "Support for Qualcomm's clock controllers"
+ 	depends on OF
+ 	depends on ARCH_QCOM || COMPILE_TEST
+ 	select REGMAP_MMIO
+ 	select RESET_CONTROLLER
+ 
++if COMMON_CLK_QCOM
++
+ config QCOM_A53PLL
+ 	tristate "MSM8916 A53 PLL"
+-	depends on COMMON_CLK_QCOM
+ 	default ARCH_QCOM
+ 	help
+ 	  Support for the A53 PLL on MSM8916 devices. It provides
+@@ -28,7 +29,6 @@ config QCOM_A53PLL
+ 
+ config QCOM_CLK_APCS_MSM8916
+ 	tristate "MSM8916 APCS Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	depends on QCOM_APCS_IPC || COMPILE_TEST
+ 	default ARCH_QCOM
+ 	help
+@@ -39,7 +39,7 @@ config QCOM_CLK_APCS_MSM8916
+ 
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+-	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
++	depends on MFD_QCOM_RPM
+ 	select QCOM_RPMCC
+ 	help
+ 	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+@@ -52,7 +52,7 @@ config QCOM_CLK_RPM
+ 
+ config QCOM_CLK_SMD_RPM
+ 	tristate "RPM over SMD based Clock Controller"
+-	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
++	depends on QCOM_SMD_RPM
+ 	select QCOM_RPMCC
+ 	help
+ 	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+@@ -65,7 +65,7 @@ config QCOM_CLK_SMD_RPM
+ 
+ config QCOM_CLK_RPMH
+ 	tristate "RPMh Clock Driver"
+-	depends on COMMON_CLK_QCOM && QCOM_RPMH
++	depends on QCOM_RPMH
+ 	help
+ 	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
+ 	 SoCs. It accepts requests from other hardware subsystems via RSC.
+@@ -75,7 +75,6 @@ config QCOM_CLK_RPMH
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on apq8084 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -85,7 +84,6 @@ config APQ_MMCC_8084
+ 	tristate "APQ8084 Multimedia Clock Controller"
+ 	select APQ_GCC_8084
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the multimedia clock controller on apq8084 devices.
+ 	  Say Y if you want to support multimedia devices such as display,
+@@ -93,7 +91,6 @@ config APQ_MMCC_8084
+ 
+ config IPQ_GCC_4019
+ 	tristate "IPQ4019 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on ipq4019 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -101,7 +98,6 @@ config IPQ_GCC_4019
+ 
+ config IPQ_GCC_806X
+ 	tristate "IPQ806x Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on ipq806x devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -110,7 +106,6 @@ config IPQ_GCC_806X
+ config IPQ_LCC_806X
+ 	tristate "IPQ806x LPASS Clock Controller"
+ 	select IPQ_GCC_806X
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the LPASS clock controller on ipq806x devices.
+ 	  Say Y if you want to use audio devices such as i2s, pcm,
+@@ -118,7 +113,6 @@ config IPQ_LCC_806X
+ 
+ config IPQ_GCC_8074
+ 	tristate "IPQ8074 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for global clock controller on ipq8074 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -127,7 +121,6 @@ config IPQ_GCC_8074
+ 
+ config MSM_GCC_8660
+ 	tristate "MSM8660 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8660 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -136,7 +129,6 @@ config MSM_GCC_8660
+ config MSM_GCC_8916
+ 	tristate "MSM8916 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8916 devices.
+ 	  Say Y if you want to use devices such as UART, SPI i2c, USB,
+@@ -144,7 +136,6 @@ config MSM_GCC_8916
+ 
+ config MSM_GCC_8960
+ 	tristate "APQ8064/MSM8960 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on apq8064/msm8960 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -153,7 +144,6 @@ config MSM_GCC_8960
+ config MSM_LCC_8960
+ 	tristate "APQ8064/MSM8960 LPASS Clock Controller"
+ 	select MSM_GCC_8960
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the LPASS clock controller on apq8064/msm8960 devices.
+ 	  Say Y if you want to use audio devices such as i2s, pcm,
+@@ -161,7 +151,6 @@ config MSM_LCC_8960
+ 
+ config MDM_GCC_9615
+ 	tristate "MDM9615 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on mdm9615 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -170,7 +159,6 @@ config MDM_GCC_9615
+ config MDM_LCC_9615
+ 	tristate "MDM9615 LPASS Clock Controller"
+ 	select MDM_GCC_9615
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the LPASS clock controller on mdm9615 devices.
+ 	  Say Y if you want to use audio devices such as i2s, pcm,
+@@ -179,7 +167,6 @@ config MDM_LCC_9615
+ config MSM_MMCC_8960
+ 	tristate "MSM8960 Multimedia Clock Controller"
+ 	select MSM_GCC_8960
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the multimedia clock controller on msm8960 devices.
+ 	  Say Y if you want to support multimedia devices such as display,
+@@ -188,7 +175,6 @@ config MSM_MMCC_8960
+ config MSM_GCC_8974
+ 	tristate "MSM8974 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8974 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -198,7 +184,6 @@ config MSM_MMCC_8974
+ 	tristate "MSM8974 Multimedia Clock Controller"
+ 	select MSM_GCC_8974
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the multimedia clock controller on msm8974 devices.
+ 	  Say Y if you want to support multimedia devices such as display,
+@@ -206,7 +191,6 @@ config MSM_MMCC_8974
+ 
+ config MSM_GCC_8994
+ 	tristate "MSM8994 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8994 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -215,7 +199,6 @@ config MSM_GCC_8994
+ config MSM_GCC_8996
+ 	tristate "MSM8996 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8996 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -225,7 +208,6 @@ config MSM_MMCC_8996
+ 	tristate "MSM8996 Multimedia Clock Controller"
+ 	select MSM_GCC_8996
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the multimedia clock controller on msm8996 devices.
+ 	  Say Y if you want to support multimedia devices such as display,
+@@ -233,7 +215,6 @@ config MSM_MMCC_8996
+ 
+ config MSM_GCC_8998
+ 	tristate "MSM8998 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on msm8998 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -241,7 +222,6 @@ config MSM_GCC_8998
+ 
+ config QCS_GCC_404
+ 	tristate "QCS404 Global Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on QCS404 devices.
+ 	  Say Y if you want to use multimedia devices or peripheral
+@@ -249,7 +229,6 @@ config QCS_GCC_404
+ 
+ config SDM_CAMCC_845
+ 	tristate "SDM845 Camera Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	select SDM_GCC_845
+ 	help
+ 	  Support for the camera clock controller on SDM845 devices.
+@@ -258,7 +237,6 @@ config SDM_CAMCC_845
+ config SDM_GCC_660
+ 	tristate "SDM660 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on SDM660 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -267,7 +245,6 @@ config SDM_GCC_660
+ config SDM_GCC_845
+ 	tristate "SDM845 Global Clock Controller"
+ 	select QCOM_GDSC
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the global clock controller on SDM845 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+@@ -275,7 +252,6 @@ config SDM_GCC_845
+ 
+ config SDM_VIDEOCC_845
+ 	tristate "SDM845 Video Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	select SDM_GCC_845
+ 	select QCOM_GDSC
+ 	help
+@@ -286,7 +262,6 @@ config SDM_VIDEOCC_845
+ config SDM_DISPCC_845
+ 	tristate "SDM845 Display Clock Controller"
+ 	select SDM_GCC_845
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the display clock controller on Qualcomm Technologies, Inc
+ 	  SDM845 devices.
+@@ -304,7 +279,6 @@ config SPMI_PMIC_CLKDIV
+ 
+ config QCOM_HFPLL
+ 	tristate "High-Frequency PLL (HFPLL) Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+@@ -312,7 +286,6 @@ config QCOM_HFPLL
+ 
+ config KPSS_XCC
+ 	tristate "KPSS Clock Controller"
+-	depends on COMMON_CLK_QCOM
+ 	help
+ 	  Support for the Krait ACC and GCC clock controllers. Say Y
+ 	  if you want to support CPU frequency scaling on devices such
+@@ -320,8 +293,10 @@ config KPSS_XCC
+ 
+ config KRAITCC
+ 	tristate "Krait Clock Controller"
+-	depends on COMMON_CLK_QCOM && ARM
++	depends on ARM
+ 	select KRAIT_CLOCKS
+ 	help
+ 	  Support for the Krait CPU clocks on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling.
++
++endif
+-- 
+Sent by a computer through tubes
 
-......
-
-> > > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> > > index 4c8acdfdc5a7..6161d77c5bfb 100644
-> > > --- a/arch/x86/kernel/machine_kexec_64.c
-> > > +++ b/arch/x86/kernel/machine_kexec_64.c
-> > > @@ -356,6 +356,9 @@ void arch_crash_save_vmcoreinfo(void)
-> > >       VMCOREINFO_SYMBOL(init_top_pgt);
-> > >       vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
-> > >                       pgtable_l5_enabled());
-> > > +#ifdef CONFIG_RANDOMIZE_BASE
-> >
-> > Finally, embracing it into CONFIG_RANDOMIZE_BASE ifdefery seems not
-> > right. The latest kernel is using page_offset_base to do the dynamic
-> > memory layout between level4 and level5 changing. This may not work in
-> > 5-level system with CONFIG_RANDOMIZE_BASE=n.
-> 
-> I think you missed the v2 change log and the build-bot error on v1
-> (see here: <https://patchwork.kernel.org/patch/10657933/#22291691>).
-> With .config files which have CONFIG_RANDOMIZE_BASE=n, we get the
-> following compilation error
-> without the #ifdef jugglery:
-
-Which line of your v2 change log did I miss?
-
-Ask again, what if I set
-CONFIG_DYNAMIC_MEMORY_LAYOUT=y && CONFIG_RANDOMIZE_MEMORY=n
-in a kernel with LEVEL5 enabled to make kernel be able to switch
-into l4 and l5 dynamically?
-
-Is there anything wrong if I add it like this:
-
-#ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
-	VMCOREINFO_SYMBOL(node_data);
-#endif
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
-unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
-EXPORT_SYMBOL(page_offset_base);
-...
-#endif
-
-config DYNAMIC_MEMORY_LAYOUT
-        bool
-        ---help---
-          This option makes base addresses of vmalloc and vmemmap as well as
-          __PAGE_OFFSET movable during boot.
-
-config RANDOMIZE_MEMORY
-        bool "Randomize the kernel memory sections"
-        depends on X86_64
-        depends on RANDOMIZE_BASE
-        select DYNAMIC_MEMORY_LAYOUT
-        default RANDOMIZE_BASE
-        ---help---
-           Randomizes the base virtual address of kernel memory sections
-           (physical memory mapping, vmalloc & vmemmap). This security feature
-           makes exploits relying on predictable memory locations less reliable.
-
-           The order of allocations remains unchanged. Entropy is generated in
-           the same way as RANDOMIZE_BASE. Current implementation in the optimal
-           configuration have in average 30,000 different possible virtual
-           addresses for each memory section.
-
-           If unsure, say Y.
-
-> 
->  arch/x86/kernel/machine_kexec_64.o: In function `arch_crash_save_vmcoreinfo':
->  arch/x86/kernel/machine_kexec_64.c:359: undefined reference to
-> `page_offset_base'
->  arch/x86/kernel/machine_kexec_64.c:359: undefined reference to
-> `page_offset_base'
-> 
-> Anyways, with Kazu's and Boris's comments on the v2, I understand that
-> adding 'page_offset_base' variable to vmcoreinfo is useful for x86
-> kernel.
-
-Please notice that the makedumpfile '--mem-usage' bug has been fixed by
-below commit. Adding 'page_offset_base' into vmcoreinfo is 50:50 to
-me. Adding it to vmcoreinfo to expose, or deducing it from kcore/vmcore
-program segment, both is fine to me since both has pro and con. Adding
-it you have to give a good log, based on good understanding, but
-not those confusing self invented term and the useless test results,
-and wrong code.
-
-commit 1ea989bf6a93db377689c16b61e9c2c6a9bafa17 (HEAD -> devel, origin/devel)
-Author: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Date:   Wed Nov 21 13:57:31 2018 -0500
-
-    [PATCH] x86_64: fix failure of getting kcore vmcoreinfo on kernel 4.19
-
-> I will now work on the v3 to take into account review comments and
-> also work with Lianbo to get the same added to the overall vmcoreinfo
-> documentation he is preparing for x86.
-
-So please do not post new version directly without replying to confirm if
-we have agreement on concerns, then saying that is requested by me or
-other people.
-
-Thanks
-Baoquan
