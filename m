@@ -2,208 +2,111 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EB6C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AE8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7102208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7102208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+	by mail.kernel.org (Postfix) with ESMTP id 2A9CE208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:29:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RsIxt8yS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9CE208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbeK1AXb (ORCPT
+        id S1727238AbeK1A1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:23:31 -0500
-Received: from ms.tdt.de ([195.243.126.94]:58679 "EHLO mail.dev.tdt.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727148AbeK1AXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:23:31 -0500
-Received: from feckert01.dev.tdt.de (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id A16A621C5B;
-        Tue, 27 Nov 2018 13:25:33 +0000 (UTC)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        dvhart@infradead.org, andy@infradead.org,
-        Eckert.Florian@googlemail.com
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v5 2/2] platform: Add reset button device for PC Engines APU boards
-Date:   Tue, 27 Nov 2018 14:25:08 +0100
-Message-Id: <20181127132508.5501-3-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181127132508.5501-1-fe@dev.tdt.de>
-References: <20181127132508.5501-1-fe@dev.tdt.de>
+        Tue, 27 Nov 2018 19:27:14 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8225 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbeK1A1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:27:14 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bfd46b60000>; Tue, 27 Nov 2018 05:29:27 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 27 Nov 2018 05:29:18 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 27 Nov 2018 05:29:18 -0800
+Received: from [10.26.11.97] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 27 Nov
+ 2018 13:29:15 +0000
+From:   Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4.4 00/70] 4.4.165-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181126105046.722096341@linuxfoundation.org>
+Message-ID: <e41ee9fc-73f5-ff0c-e2d6-d23913c5581f@nvidia.com>
+Date:   Tue, 27 Nov 2018 13:29:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543325367; bh=0pg0S814bx0/N6geUtnsxZeYVGohFUYVFe6auXsMdY0=;
+        h=X-PGP-Universal:From:Subject:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=RsIxt8ySpQvVYXU1xG8RgurfCA7xXnEWLvr2nHD2WoZh6soJSRjiwDcf/d69unqoj
+         +X5DRLaST9qqo2SuYKfJhi9pHxkBJHHx89WsDBbgNyjmLRLROZbPk1vKQekcP/aOmP
+         ykQNCPHJtonLCjyJbb58yBdTWYSSlZdTCAvZuv4zEu2kks1AzRT1bYImzBSknf/MsJ
+         NFPjlt/fk8DDHE4XRD+jqP9fp5WivZ7BpDl88BpObNTwhyMQaCIKjt8dGz8Z3eboZO
+         yvhBaoHoRBfrx7i44gu3tX/5CrunkbZetTsSPc/5pyOCxMjWC1O11b1c1+woijWJCf
+         gSe5hUT+ZIDfw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
-This device uses the gpio-apu driver for APU borads from PC Engines.
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/platform/x86/Kconfig                  |  11 +++
- drivers/platform/x86/Makefile                 |   1 +
- drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
- 3 files changed, 126 insertions(+)
- create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
+On 26/11/2018 10:50, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.165 release.
+> There are 70 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 28 10:50:16 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.165-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 54f6a40c75c6..5cd27c2174cb 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_atomisp2_pm.
- 
-+config PCENGINES_APU_PLATFORM
-+	bool "PCEngines APU System Support"
-+	depends on X86_64 && DMI && GPIOLIB
-+	help
-+	  This option enables system support for the PCEngines APU platform.
-+	  At present this just adds the GPIO reset button platform device on
-+	  APU2/APU3 boards.
-+
-+	  Note: You must still enable the drivers for GPIO and LED support
-+	  (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
-+
- endif # X86_PLATFORM_DEVICES
- 
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 39ae94135406..f899cc4c6b48 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
- obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
- obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
-+obj-$(CONFIG_PCENGINES_APU_PLATFORM)	+= pcengines-apu-platform.o
-diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
-new file mode 100644
-index 000000000000..3bfbaa93cb11
---- /dev/null
-+++ b/drivers/platform/x86/pcengines-apu-platform.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * System Specific setup for PC-Engines APU2/APU3 devices
-+ *
-+ * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-+ */
-+
-+#include <linux/dmi.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/input.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Mainline" bios */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
-+
-+static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Mainline" bios */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
-+
-+
-+static struct gpio_keys_button apu_gpio_buttons[] = {
-+	{
-+		.code			= KEY_RESTART,
-+		.gpio			= 20,
-+		.active_low		= 1,
-+		.desc			= "Reset button",
-+		.type			= EV_KEY,
-+		.debounce_interval	= 60,
-+	}
-+};
-+
-+static struct gpio_keys_platform_data apu_buttons_data = {
-+	.buttons		= apu_gpio_buttons,
-+	.nbuttons		= ARRAY_SIZE(apu_gpio_buttons),
-+	.poll_interval		= 20,
-+};
-+
-+static struct platform_device apu_button_dev = {
-+	.name			= "gpio-keys-polled",
-+	.id			= 1,
-+	.dev = {
-+		.platform_data		= &apu_buttons_data,
-+	}
-+};
-+
-+static int __init apu_init(void)
-+{
-+	if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
-+		!(dmi_check_system(apu3_gpio_dmi_table))) {
-+		return -ENODEV;
-+	}
-+
-+	return platform_device_register(&apu_button_dev);
-+}
-+
-+static void __exit apu_exit(void)
-+{
-+	platform_device_unregister(&apu_button_dev);
-+}
-+
-+module_init(apu_init);
-+module_exit(apu_exit);
+Looks like this has been updated to -rc2 now, but regardless, all tests
+are passing for Tegra ...
+
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    12 tests:	12 pass, 0 fail
+
+Linux version:	4.4.165-rc2-g4209bc7
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.11.0
-
+nvpublic
