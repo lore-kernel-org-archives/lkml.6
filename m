@@ -2,130 +2,257 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31173C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14F1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A2E208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60889208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HTtW0wCY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A2E208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsOAx8iC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60889208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbeK0RKx (ORCPT
+        id S1728678AbeK0RK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 12:10:53 -0500
-Received: from mail-eopbgr140070.outbound.protection.outlook.com ([40.107.14.70]:20953
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727537AbeK0RKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 12:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O1yt2V7YtcWLqU7JSajahtmUMbUWeOPU9/TZc3n184s=;
- b=HTtW0wCYxFufufIIO1wgA2JwJDoAjZMYGzrIiGbdF/+6t4/ZOYiDoZRgHm9NniDPRjTApWGM/aBSZJh5Fyj02BEHxy1pBAcLiQPHPTpGgMOowgN49OWtYk0b/Q9738jHDQIY0ineXhSMANm3BNwC7cZOJScfWdSuID8CXKP+Qaw=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3739.eurprd04.prod.outlook.com (52.134.67.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.27; Tue, 27 Nov 2018 06:13:59 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%2]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 06:13:59 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH] defconfig: arm64: add i.MX system controller thermal support
-Thread-Topic: [PATCH] defconfig: arm64: add i.MX system controller thermal
- support
-Thread-Index: AQHUhhhigLVS7kcDk0+lVk/DQgR+0g==
-Date:   Tue, 27 Nov 2018 06:13:59 +0000
-Message-ID: <1543298903-8389-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0088.apcprd03.prod.outlook.com
- (2603:1096:203:72::28) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3739;6:HrZCooHEIS1InIx5qy/sXV/sjFI0f5XeL5Bk3fRrskuRhPiTErnoYYbrkMEMtwBZ11pAt26v1XX9mNMLUXYmLE2tjpTKH/F2GmL/d6+7XA9uL5NpqpHO0opm+3LPNImIHlx239huegaZx2/DUKPqCVSVJk3nSSkL6wvCdKg6l6ZoSujNAYP8jPyf4ASe6MncdnFb0R8TiqNjSnl7g4qOlHO4PDYU6ERpSZ2dK/MB0lt0VrmVb22LciGIDI1ndDCkMJC6tqqpMXdQSbVs4/Vrm3uVymJVJ8jSzeAq/bHTV6fs4Gqzzld+KT50wx1+qFYOWykS1g39fiJP4IPSlT3Vy5+OktjKa+wEBqbWgvIgo+CIdVFg4wrwWeT7Mi1wOm16x6fxw4uU9pZRj+unEw6cu8T1XzTAATRKc4Sj6XyFarP7SZgsRvraI45Wjg+bMC9L9BwuGsGIc32Xvr1QP6SuzQ==;5:aVlYmn0DeaWzLzFYB4iDHv7rs2JOurubCnb1H6/6+qocr6YH1B4m5GSNqhVEhGXrytXQh/3BeK49GGfqfZ6y8Ff75XB+o2qWYpqdztwiuzgurbWBxNCiwrvycwegTdNq46BWscU5y7CJArRQyONagjvAZblUYRldxVQCHmBGciQ=;7:McPffIs2gykgnodHs15PGbqehcAopDgiQpx+YrLGV1v8Vn+3q2WmRPlz9um+kvevUG/y2VVmRn74VEBb1VqZubPzQMDLkG2cAf4dLo03uaMcT/00rMOletkK5+E1Klbsbk3r5LOppKwSoqJd0cMW8A==
-x-ms-office365-filtering-correlation-id: 1c3d0cac-f714-4151-6c63-08d6542f84bf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3739;
-x-ms-traffictypediagnostic: DB3PR0402MB3739:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <DB3PR0402MB3739E8FC3C4D5C290F5E89BCF5D00@DB3PR0402MB3739.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231443)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3739;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3739;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(376002)(396003)(366004)(199004)(189003)(66066001)(6436002)(7416002)(2501003)(486006)(1857600001)(14454004)(4326008)(6306002)(97736004)(8936002)(8676002)(81166006)(81156014)(186003)(2906002)(102836004)(478600001)(86362001)(53936002)(2201001)(52116002)(7736002)(50226002)(2616005)(71190400001)(316002)(966005)(110136005)(106356001)(26005)(6506007)(386003)(5660300001)(476003)(6486002)(105586002)(6116002)(3846002)(305945005)(99286004)(6512007)(256004)(36756003)(68736007)(25786009)(71200400001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3739;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: h8TN+TRGF8fWufbS+nAptTgCZXT58nw68Wnm7h2n71YCWKUt2kzs+Fiyc03rtlcpg8U+hQOKrivLU5Fx6nxfeFpXr9+GpCx+V2p1wpO18CqfinxiqyVCqEZ7UqRkG+adXkYxGlWq2QeT21dWYkOjfChlHx+7g+U9q0H+o+Pt1fUySuXk2uo7gInGbunmSZo+j7K/YMfu/lqq729MwP6z8RST48EzV8FafnOtJkAQ6EhlP58V3eCecPxXUWf1fl/OjJPJ7xDC5NEjfpINmfPfDMDz+zDdSGkyJOXgLBqbGRL0jeIqXabX8sgLGCRIDbwLxdUhYbSxWqmt/2pfPeFH0/K/HqWfAR+J+YDjgGMK0Y4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Nov 2018 12:10:59 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41578 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeK0RK6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 12:10:58 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so19101475otk.8;
+        Mon, 26 Nov 2018 22:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E3Rocm4TVfMsl3lAt5FIAvVO26xIqoZzAyjatZrgsXo=;
+        b=hsOAx8iC7Xl7I7K61nkh+og3g2vsFMSExgsuaCBWZjcu84ew0iyjQul2UXZeUIjFUo
+         ni+qPNrEt/BSFCSuFhlsYMne4QPmbmKw8dKfYEgw18E+MevgEtorDsr92DQ9gnHFDX/g
+         rf8i5dFqH4RFPC3k1Kx4LleJMz11v57CumLYfaMk6Ze28QF3Ey1dNpc549vgJWmVkyHQ
+         5twtNt16Fd70qp6MQOY5rMqxS2aYV8sCAKLyUBnp9xorsQpasQQ+Tnoj7RdgkGkfHQHH
+         bCnFueIU1MnUp7zyQtn+AYA/rFolcp/yZ+NLmg6zCNpgio4bWcoMWnBwyqcw9RdcFYF4
+         4Msw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E3Rocm4TVfMsl3lAt5FIAvVO26xIqoZzAyjatZrgsXo=;
+        b=bsXamHVHighex53rNRiHyL+XGpfDJ+8z9TshjJvZ6W6Yh3IDhs23cqz/TVaht54rjd
+         l9x/ZP/PSRYfoirZV3h5jYQN68PItEFUrdoLQF0eArI08CA445ia8LK6zNDIO9e1sLtg
+         XDWfXYpm0wI+u16ldYbRCzBvVmTmnFC/Fy4idCbNHidMmXsN/JqSl5ER5K5N1KlWkjFo
+         6wErN3c08weaYT6oMkbFDJxHP8HxWh9qdkKe3z0MhSm+cqwnOwk09CoLoC3yazLgh26z
+         DwTzwQsEJoEHVeEQhrLVBcYrpO/ZalOblNf04lrKjVrN79otpIzft+hsSPJOEpQRMQHR
+         0b6g==
+X-Gm-Message-State: AA+aEWZv2+JvL13e5aqrgp/5aTUPVlsBgyFtSJx5XFtbAl0Er8omk1qV
+        TT3SrY6wAmBgQuqCBMnSxMBUNZg9RQw1MGxsKfw=
+X-Google-Smtp-Source: AFSGD/XqTYoy0p+iF8uChg/HtS7q+kw7fp4t47pkUAP4wR4euDfXBFGDzylPCcFg8y3nQJsNSVYmqR8RL6DIzwxqrgY=
+X-Received: by 2002:a9d:19e8:: with SMTP id k95mr16355416otk.209.1543299250996;
+ Mon, 26 Nov 2018 22:14:10 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c3d0cac-f714-4151-6c63-08d6542f84bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 06:13:59.1993
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3739
+References: <000000000000ce78d7057b9e2ee1@google.com>
+In-Reply-To: <000000000000ce78d7057b9e2ee1@google.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Tue, 27 Nov 2018 14:14:06 +0800
+Message-ID: <CANRm+CykdB1-g0j0y+2AngDBkdeX=L4c6KxF_Yup4EN0QTJpEA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in kvm_write_guest_offset_cached
+To:     syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com
+Cc:     kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables CONFIG_IMX_SC_THERMAL by default.
+On Tue, 27 Nov 2018 at 12:51, syzbot
+<syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-	This patch is based on https://patchwork.kernel.org/patch/10677315/
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Is there beauty C codes?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d3aa3f7..6d224f7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -376,6 +376,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=3Dm
- CONFIG_THERMAL_GOV_POWER_ALLOCATOR=3Dy
- CONFIG_CPU_THERMAL=3Dy
- CONFIG_THERMAL_EMULATION=3Dy
-+CONFIG_IMX_SC_THERMAL=3Dy
- CONFIG_ROCKCHIP_THERMAL=3Dm
- CONFIG_RCAR_GEN3_THERMAL=3Dy
- CONFIG_ARMADA_THERMAL=3Dy
---=20
-2.7.4
+Regards,
+Wanpeng Li
 
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=174d326d400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ff40b9bc4835ea83211c
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f5df7b400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in mark_page_dirty_in_slot
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:2056 [inline]
+> BUG: KASAN: use-after-free in kvm_write_guest_offset_cached+0x693/0x6b0
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1988
+> Read of size 8 at addr ffff8801b9363778 by task syz-executor1/30438
+>
+> CPU: 1 PID: 30438 Comm: syz-executor1 Not tainted 4.20.0-rc1-next-20181109+
+> #110
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x244/0x39d lib/dump_stack.c:113
+>   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+>   kasan_report_error mm/kasan/report.c:354 [inline]
+>   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>   mark_page_dirty_in_slot arch/x86/kvm/../../../virt/kvm/kvm_main.c:2056
+> [inline]
+>   kvm_write_guest_offset_cached+0x693/0x6b0
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1988
+>   kvm_steal_time_set_preempted arch/x86/kvm/x86.c:3241 [inline]
+>   kvm_arch_vcpu_put+0x365/0x420 arch/x86/kvm/x86.c:3268
+>   kvm_sched_out+0x91/0xb0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3993
+>   __fire_sched_out_preempt_notifiers kernel/sched/core.c:2503 [inline]
+>   fire_sched_out_preempt_notifiers kernel/sched/core.c:2511 [inline]
+>   prepare_task_switch kernel/sched/core.c:2617 [inline]
+>   context_switch kernel/sched/core.c:2796 [inline]
+>   __schedule+0x11ca/0x21d0 kernel/sched/core.c:3472
+>   preempt_schedule_irq+0xb9/0x140 kernel/sched/core.c:3699
+>   retint_kernel+0x1b/0x2d
+> RIP: 0010:search_memslots include/linux/kvm_host.h:955 [inline]
+> RIP: 0010:__gfn_to_memslot include/linux/kvm_host.h:976 [inline]
+> RIP: 0010:__kvm_gfn_to_hva_cache_init+0x2ed/0xd10
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1935
+> Code: 3c 02 00 0f 85 0d 0a 00 00 4d 03 6c 24 08 48 89 df 4c 89 ee e8 04 16
+> 78 00 4c 39 eb 0f 82 6e 01 00 00 45 31 ed e8 43 15 78 00 <44> 89 fe 44 89
+> ef e8 c8 15 78 00 45 39 fd 0f 8d cf 00 00 00 e8 2a
+> RSP: 0018:ffff8801cbfee970 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+> RAX: ffff8801b9a4c280 RBX: 0000000000000000 RCX: ffffffff8107942f
+> RDX: 0000000000000000 RSI: ffffffff8107936d RDI: 0000000000000006
+> RBP: ffff8801cbfeeb60 R08: ffff8801b9a4c280 R09: ffffed00342bb209
+> R10: ffffed00342bb209 R11: ffff8801a15d904b R12: 0000000000000017
+> R13: 0000000000000017 R14: 0000000000000016 R15: 0000000000000017
+>   kvm_gfn_to_hva_cache_init+0x15a/0x340
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1963
+>   kvm_set_msr_common+0x1a0c/0x2670 arch/x86/kvm/x86.c:2549
+>   vmx_set_msr+0x759/0x1f90 arch/x86/kvm/vmx.c:4360
+>   kvm_set_msr+0x18a/0x370 arch/x86/kvm/x86.c:1324
+>   do_set_msr+0x10d/0x1a0 arch/x86/kvm/x86.c:1353
+>   __msr_io arch/x86/kvm/x86.c:2905 [inline]
+>   msr_io+0x222/0x380 arch/x86/kvm/x86.c:2941
+>   kvm_arch_vcpu_ioctl+0x961/0x3b00 arch/x86/kvm/x86.c:3956
+>   kvm_vcpu_ioctl+0x278/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2748
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457569
+> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fc292e62c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+> RDX: 0000000020000280 RSI: 000000004008ae89 RDI: 0000000000000005
+> RBP: 000000000072c040 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc292e636d4
+> R13: 00000000004bff9d R14: 00000000004d0970 R15: 00000000ffffffff
+>
+> Allocated by task 30427:
+>   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>   set_track mm/kasan/kasan.c:460 [inline]
+>   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>   __do_kmalloc_node mm/slab.c:3684 [inline]
+>   __kmalloc_node+0x50/0x70 mm/slab.c:3691
+>   kmalloc_node include/linux/slab.h:589 [inline]
+>   kvmalloc_node+0xb9/0xf0 mm/util.c:416
+>   kvmalloc include/linux/mm.h:577 [inline]
+>   kvzalloc include/linux/mm.h:585 [inline]
+>   __kvm_set_memory_region+0x116e/0x2d50
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1023
+>   kvm_set_memory_region+0x2e/0x50
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1085
+>   kvm_vm_ioctl_set_memory_region
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1097 [inline]
+>   kvm_vm_ioctl+0x652/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2995
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 30427:
+>   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>   set_track mm/kasan/kasan.c:460 [inline]
+>   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>   __cache_free mm/slab.c:3498 [inline]
+>   kfree+0xcf/0x230 mm/slab.c:3817
+>   kvfree+0x61/0x70 mm/util.c:445
+>   __kvm_set_memory_region+0x1cb3/0x2d50
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1067
+>   kvm_set_memory_region+0x2e/0x50
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1085
+>   kvm_vm_ioctl_set_memory_region
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:1097 [inline]
+>   kvm_vm_ioctl+0x652/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2995
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8801b9363080
+>   which belongs to the cache kmalloc-64k of size 65536
+> The buggy address is located 1784 bytes inside of
+>   65536-byte region [ffff8801b9363080, ffff8801b9373080)
+> The buggy address belongs to the page:
+> page:ffffea0006e4d800 count:1 mapcount:0 mapping:ffff8801da802500 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000010200(slab|head)
+> raw: 02fffc0000010200 ffffea0006906808 ffffea0007034808 ffff8801da802500
+> raw: 0000000000000000 ffff8801b9363080 0000000100000001 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>   ffff8801b9363600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff8801b9363680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8801b9363700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                                  ^
+>   ffff8801b9363780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff8801b9363800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
