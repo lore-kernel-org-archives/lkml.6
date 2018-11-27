@@ -2,119 +2,199 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD14C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F343C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D21C8208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D21C8208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+	by mail.kernel.org (Postfix) with ESMTP id 23C40208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:21:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C40208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbeK0LQr (ORCPT
+        id S1728102AbeK0LR3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:16:47 -0500
-Received: from mail.us.es ([193.147.175.20]:57014 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeK0LQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:16:47 -0500
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id AD865EDB11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:20:49 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 9CE70DA4D0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:20:49 +0100 (CET)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 928ABDA4C7; Tue, 27 Nov 2018 01:20:49 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id B250BDA4C8;
-        Tue, 27 Nov 2018 01:20:47 +0100 (CET)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 27 Nov 2018 01:20:47 +0100 (CET)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
+        Tue, 27 Nov 2018 06:17:29 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:44461 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbeK0LR2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:17:28 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 433kwn0VdLz1qvNr;
+        Tue, 27 Nov 2018 01:21:29 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 433kwm6mPvz1rJqb;
+        Tue, 27 Nov 2018 01:21:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 49SQ-BZXilHV; Tue, 27 Nov 2018 01:21:27 +0100 (CET)
+X-Auth-Info: LQOpPDedD8azYRxfCdpk5dRPSYlDxD01Zj5qVk0xkN4=
+Received: from crub (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 78A804265A31;
-        Tue, 27 Nov 2018 01:20:47 +0100 (CET)
-Date:   Tue, 27 Nov 2018 01:20:47 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, bridge@lists.linux-foundation.org,
-        tyhicks@canonical.com, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com
-Subject: Re: [PATCH net-next 1/2] br_netfilter: add struct netns_brnf
-Message-ID: <20181127002047.7jzpfy32oupsthtj@salvia>
-References: <20181107134859.19896-1-christian@brauner.io>
- <20181107134859.19896-2-christian@brauner.io>
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 27 Nov 2018 01:21:27 +0100 (CET)
+Date:   Tue, 27 Nov 2018 01:21:27 +0100
+From:   Anatolij Gustschin <agust@denx.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, atull@kernel.org, mdf@kernel.org
+Subject: Re: [PATCH v2 2/3] spi: add FTDI MPSSE SPI controller driver
+Message-ID: <20181127012127.24e455b6@crub>
+In-Reply-To: <20181121124237.GC8059@sirena.org.uk>
+References: <20181120002821.12794-1-agust@denx.de>
+ <20181120002821.12794-3-agust@denx.de>
+ <20181121124237.GC8059@sirena.org.uk>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181107134859.19896-2-christian@brauner.io>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 21 Nov 2018 12:42:37 +0000
+Mark Brown broonie@kernel.org wrote:
+...
+>>  obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
+>> +obj-$(CONFIG_SPI_FTDI_MPSSE)		+= spi-ftdi-mpsse.o
+>>  
+>>  # SPI slave protocol handlers
+>>  obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o  
+>
+>Please keep the Makefile sorted.
 
-On Wed, Nov 07, 2018 at 02:48:58PM +0100, Christian Brauner wrote:
-[...]
-> diff --git a/include/net/netns/netfilter.h b/include/net/netns/netfilter.h
-> index ca043342c0eb..eedbd1ac940e 100644
-> --- a/include/net/netns/netfilter.h
-> +++ b/include/net/netns/netfilter.h
-> @@ -35,4 +35,20 @@ struct netns_nf {
->  	bool			defrag_ipv6;
->  #endif
->  };
-> +
-> +struct netns_brnf {
-> +#ifdef CONFIG_SYSCTL
-> +	struct ctl_table_header *ctl_hdr;
-> +#endif
-> +
-> +	/* default value is 1 */
-> +	int call_iptables;
-> +	int call_ip6tables;
-> +	int call_arptables;
-> +
-> +	/* default value is 0 */
-> +	int filter_vlan_tagged;
-> +	int filter_pppoe_tagged;
-> +	int pass_vlan_indev;
-> +};
+Will fix it in v3.
 
-I have spun on this several times, wondering if there's a way to avoid
-scratching these many bytes per netns to expose these sysctl entries
-that are plain on/off toggles... You said this:
+>> +++ b/drivers/spi/spi-ftdi-mpsse.c
+>> @@ -0,0 +1,673 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * FTDI FT232H MPSSE SPI controller driver  
+>
+>Please make the entire comment block here a C++ one so it looks more
+>consistent.
 
->Currently, the /proc/sys/net/bridge folder is only created in the
->initial network namespace
+Okay.
 
-I think we can add one single sysctl to expose these as flags from net
-namespaces. Idea is to keep the existing (legacy) sysctl entries for
-init_net only, and add a new single new one that exposes these as flags
-(should be also available for consistency in init_net I'd suggest).
-Flags could be map in this way, eg.
+>> +	struct gpiod_lookup_table *lookup[13];  
+>
+>This magic number for the size of the lookup table is not good.
 
-        0x1     call_iptables
-        0x2     call_ip6tables
-        0x4     call_arptables
-        0x8     filter_vlan_tagged
-        ...
+Will fix it in v3.
 
-Also documentation would be good to have for this.
+>> +static void ftdi_spi_chipselect(struct ftdi_spi *priv, struct spi_device *spi,
+>> +				bool value)
+>> +{
+>> +	int cs = spi->chip_select;
+>> +
+>> +	dev_dbg(&priv->master->dev, "%s: CS %d, cs mode %d, val %d\n",
+>> +		__func__, cs, (spi->mode & SPI_CS_HIGH), value);
+>> +
+>> +	gpiod_set_raw_value_cansleep(priv->cs_gpios[cs], value);
+>> +}  
+>
+>This is just a gpio chip select - can't it be handled by the core chip
+>select code?
 
-Would this idea fly for you? Thanks.
+spi core chip select code doesn't use gpio_desc based API yet.
+But it can be handled using .set_cs(), I'll convert the driver
+to use .set_cs().
+
+>> +	remaining = len;
+>> +	do {
+>> +		stride = min_t(size_t, remaining, SZ_64K - 3);  
+>
+>Rather than having a magic number for the buffer size it would be better
+>to either have a driver specific constant that's used consistently or
+>just use sizeof() when it's referenced in the code.  That way if the
+>buffer size is changed nothing will get missed.
+
+sizeof() is better choice here, will use it in v3.
+
+>> +		/* Last transfer with cs_change set, stop keeping CS */
+>> +		if (list_is_last(&t->transfer_list, &msg->transfers)) {
+>> +			keep_cs = true;
+>> +			break;
+>> +		}
+>> +		ftdi_spi_chipselect(priv, spi, !(spi->mode & SPI_CS_HIGH));
+>> +		usleep_range(10, 15);
+>> +		ftdi_spi_chipselect(priv, spi, spi->mode & SPI_CS_HIGH);  
+>
+>I'm not clear what this is intended to do?  It's overall not clear to me
+>that the driver needs to use transfer_one_message and not transfer_one,
+>the latter keeps more of the code in common code.
+
+It has been a while since I started with this driver, I don't remember
+the intention of this chip select toggling here. I'll convert the
+driver to use .transfer_one().
+
+>> +	/* Find max. slave chipselect number */
+>> +	num_cs = pd->spi_info_len;
+>> +	for (i = 0; i < num_cs; i++) {
+>> +		if (max_cs < pd->spi_info[i].chip_select)
+>> +			max_cs = pd->spi_info[i].chip_select;
+>> +	}
+>> +
+>> +	if (max_cs > 12) {
+>> +		dev_err(dev, "Invalid max CS in platform data: %d\n", max_cs);
+>> +		return -EINVAL;
+>> +	}
+>> +	dev_dbg(dev, "CS count %d, max CS %d\n", num_cs, max_cs);
+>> +	max_cs += 1; /* including CS0 */  
+>
+>Why not just size the array based on the platform data?
+
+The driver must also support multiple SPI slaves with additional control
+pins (besides SPI chip-select gpios). There are devices with not adjacent
+chip-select gpios or devices with single chip-select gpio starting at
+some offset. The array size is not always the number of chip-selects
+or the max. chip-select, e.g.:
+
+$ tree /sys/bus/spi/devices/
+/sys/bus/spi/devices/
+├── spi0.4 -> ../../../devices/pci0000:00/0000:00:1d.0/usb2/2-1/2-1.2/2-1.2.4/2-1.2.4:1.0/ftdi-mpsse-spi.0/spi_master/spi0/spi0.4
+├── spi1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb2/2-1/2-1.2/2-1.2.3/2-1.2.3:1.0/ftdi-mpsse-spi.1/spi_master/spi1/spi1.0
+├── spi1.12 -> ../../../devices/pci0000:00/0000:00:1d.0/usb2/2-1/2-1.2/2-1.2.3/2-1.2.3:1.0/ftdi-mpsse-spi.1/spi_master/spi1/spi1.12
+├── spi1.4 -> ../../../devices/pci0000:00/0000:00:1d.0/usb2/2-1/2-1.2/2-1.2.3/2-1.2.3:1.0/ftdi-mpsse-spi.1/spi_master/spi1/spi1.4
+└── spi1.8 -> ../../../devices/pci0000:00/0000:00:1d.0/usb2/2-1/2-1.2/2-1.2.3/2-1.2.3:1.0/ftdi-mpsse-spi.1/spi_master/spi1/spi1.8
+
+$ sudo cat /sys/kernel/debug/gpio
+gpiochip1: GPIOs 486-498, parent: usb/2-1.2.3:1.0, ftdi-mpsse-gpio.1, can sleep:
+ gpio-486 (mpsse.1-CS          |spi-cs              ) out hi ACTIVE LOW
+ gpio-487 (mpsse.1-GPIOL0      |confd               ) in  hi 
+ gpio-488 (mpsse.1-GPIOL1      |nstat               ) in  hi ACTIVE LOW
+ gpio-489 (mpsse.1-GPIOL2      |nconfig             ) out hi ACTIVE LOW
+ gpio-490 (mpsse.1-GPIOL3      |spi-cs              ) out hi ACTIVE LOW
+ gpio-491 (mpsse.1-GPIOH0      |confd               ) in  hi 
+ gpio-492 (mpsse.1-GPIOH1      |nstat               ) in  hi ACTIVE LOW
+ gpio-493 (mpsse.1-GPIOH2      |nconfig             ) out hi ACTIVE LOW
+ gpio-494 (mpsse.1-GPIOH3      |spi-cs              ) out hi ACTIVE LOW
+ gpio-495 (mpsse.1-GPIOH4      |confd               ) in  hi 
+ gpio-496 (mpsse.1-GPIOH5      |nstat               ) in  hi ACTIVE LOW
+ gpio-497 (mpsse.1-GPIOH6      |nconfig             ) out hi ACTIVE LOW
+ gpio-498 (mpsse.1-GPIOH7      |spi-cs              ) out hi 
+
+gpiochip0: GPIOs 499-511, parent: usb/2-1.2.4:1.0, ftdi-mpsse-gpio.0, can sleep:
+ gpio-499 (mpsse.0-CS          )
+ gpio-500 (mpsse.0-GPIOL0      )
+ gpio-501 (mpsse.0-GPIOL1      )
+ gpio-502 (mpsse.0-GPIOL2      )
+ gpio-503 (mpsse.0-GPIOL3      |spi-cs              ) out hi ACTIVE LOW
+ gpio-504 (mpsse.0-GPIOH0      |confd               ) in  hi 
+ gpio-505 (mpsse.0-GPIOH1      |nstat               ) in  hi ACTIVE LOW
+ gpio-506 (mpsse.0-GPIOH2      |nconfig             ) out hi ACTIVE LOW
+ gpio-507 (mpsse.0-GPIOH3      )
+ gpio-508 (mpsse.0-GPIOH4      )
+ gpio-509 (mpsse.0-GPIOH5      )
+ gpio-510 (mpsse.0-GPIOH6      )
+ gpio-511 (mpsse.0-GPIOH7      )
+
+Thanks,
+Anatolij
