@@ -3,107 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFDFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175A3C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E06821104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E06821104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DF11C2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF11C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbeK1DZo (ORCPT
+        id S1731034AbeK1D0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:25:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:46497 "EHLO mga06.intel.com"
+        Tue, 27 Nov 2018 22:26:18 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49533 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730658AbeK1DZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:25:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 08:27:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="asc'?scan'208";a="93746030"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Nov 2018 08:27:17 -0800
-Message-ID: <2c43f30e8af44350d2585e48f4fade5e8b93ce0a.camel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH net] ixgbe: recognize 1000BaseLX SFP
- modules as 1Gbps
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     David Miller <davem@davemloft.net>, jelsasser@appneta.com
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 27 Nov 2018 08:27:33 -0800
-In-Reply-To: <20181126.205247.1196368459821644290.davem@davemloft.net>
-References: <40FD0CE5-973C-4A7F-91BD-66C1A1699223@appneta.com>
-         <937675447ad1ec2665d0b6f70390d498a01255d0.camel@intel.com>
-         <F6168EB4-8C74-456F-B571-6492162CFA0F@appneta.com>
-         <20181126.205247.1196368459821644290.davem@davemloft.net>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-GCYkdZdqfpEkSaGQum8j"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        id S1730444AbeK1D0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:26:18 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F3A3A20747; Tue, 27 Nov 2018 17:27:50 +0100 (CET)
+Received: from localhost (unknown [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C37042037D;
+        Tue, 27 Nov 2018 17:27:40 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 3/6] clk: mvebu: add CPU clock driver for Armada 7K/8K
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+        <20180922181709.13007-4-gregory.clement@bootlin.com>
+        <153980089252.5275.819540708953283855@swboyd.mtv.corp.google.com>
+        <87y39tufwe.fsf@bootlin.com>
+Date:   Tue, 27 Nov 2018 17:27:40 +0100
+In-Reply-To: <87y39tufwe.fsf@bootlin.com> (Gregory CLEMENT's message of "Fri,
+        16 Nov 2018 00:22:59 +0100")
+Message-ID: <87wooymqo3.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephen,
+ 
+ On ven., nov. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
---=-GCYkdZdqfpEkSaGQum8j
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>>> +static int ap_cpu_clock_probe(struct platform_device *pdev)
+>>> +{
+>>> +       int ret, nclusters = 0, cluster_index = 0;
+>>> +       struct device *dev = &pdev->dev;
+>>> +       struct device_node *dn, *np = dev->of_node;
+>>> +       struct ap_cpu_clk *ap_cpu_clk;
+>>> +       struct regmap *regmap;
+>>> +
+>>> +       regmap = syscon_node_to_regmap(np->parent);
+>>
+>> Can we just call dev_get_remap() on pdev->dev.parent?
+>
+> we could do regmap = dev_get_regmap(pdev->dev.parent, NULL); instead of
+> this line. But is it really better?
 
-On Mon, 2018-11-26 at 20:52 -0800, David Miller wrote:
-> From: Josh Elsasser <jelsasser@appneta.com>
-> Date: Mon, 26 Nov 2018 16:54:11 -0800
->=20
-> > Jeff Kirsher <jeffrey.t.kirsher@intel.com> wrote:
-> >=20
-> > > No need to re-spin the patch, just reply with the additional
-> > > "Fixes"
-> > > tag and if patchwork does not pick it up, I will add it to the
-> > > patch I
-> > > have in my tree for validation and review.
-> >=20
-> > Thanks, let=E2=80=99s try that.
-> >=20
-> > Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for
-> > X550EM_x SFP+=E2=80=9D)
->=20
-> Unfortunately, patchwork isn't smart enough to pick up Fixes: tags
-> still.
+Actually we can't, because we really depend on a syscon and at this
+moment there is no regmap. It is the syscon_node_to_regmap function which
+creates this regmap when needed.
 
-:-( I will get it added to the patch in my tree then.  Thanks Dave for
-the info.
+Gregory
 
---=-GCYkdZdqfpEkSaGQum8j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlv9cHUACgkQ5W/vlVpL
-7c4AVxAApo7ftOCzmBoD4+o9s6l9sYb44hJYC3W/dmA1zUoZbdUVq9USUr1KRN4v
-PEHaGO4qQ9w9f7jOl4dg24MFXEVf5TnDgtvV959L9zdCY6imA0b7G3aaKGbpERpl
-SH6a00R4N4+/uyKcHzTGyTLW1H7dgmo4UwlYd4JamRQdpVI65tKhTBKI/kFpnTbv
-kY12crr5MqQB7K1x0WrdY6wVYZPS3elgnLe7mWsGePIVyL8Hs7PE9OuM2rMMt09l
-ceE890j0x7e9cqOVZ9jWPIQlW3yz5WXR1DgTytlT/kyCqjsfP/B1YBwf+LjxHsNj
-nnEjm+HZ2h3aqrQ4CXKo0CH4vxPWO+gh3nyV33wtGZXDuiXp5xmcZzX1AbWppTkA
-uxckHl8bGWuy7iYSuRzS0USjGePqbQnvvPKyFm6V6gIWt5KEk0A/JB96Uo9jdfLU
-LoLdA/O5LTRnLN1axh8kqiROrqCIpKSGF1/Es4GJSoZ/MhJZXN80myKRk60wb7SG
-nRYr764rJuXWSNNT0dDg8c0gC36cHXAJptFNgk1cVWcqdK3VVuKb5N7U3xPGvRlD
-UPztXDvF8mBl01lfZHUeU4Hv7n7u4Uh4pOeeeBSizxoUWkfFwTzaVwOSJ882nNXO
-gh4Ps36ILiikC7xmZPu1oUlBKw981613RoMzXzYO0gKW/ZRv3uk=
-=BDkI
------END PGP SIGNATURE-----
-
---=-GCYkdZdqfpEkSaGQum8j--
-
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
