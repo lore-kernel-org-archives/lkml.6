@@ -2,135 +2,118 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9368AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F60C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60649208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:17:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60649208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 43480208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:20:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43480208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeK0TOL (ORCPT
+        id S1728914AbeK0TRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:14:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:24335 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728976AbeK0TOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:14:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 00:17:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="284798233"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Nov 2018 00:17:04 -0800
-Received: from [10.125.251.223] (abudanko-mobl.ccr.corp.intel.com [10.125.251.223])
-        by linux.intel.com (Postfix) with ESMTP id 7B7225803C2;
-        Tue, 27 Nov 2018 00:17:01 -0800 (PST)
-Subject: Re: [PATCH v1 2/2]: Documentation/admin-guide: introduce
- perf-security.rst file
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Tue, 27 Nov 2018 14:17:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43230 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728599AbeK0TRH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:17:07 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAR8Js1P060051
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 03:20:02 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p128s076t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 03:20:01 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <brueckner@linux.ibm.com>;
+        Tue, 27 Nov 2018 08:19:54 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 08:19:47 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAR8Jk7a55115794
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 08:19:46 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FA96A4055;
+        Tue, 27 Nov 2018 08:19:46 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB5D4A404D;
+        Tue, 27 Nov 2018 08:19:45 +0000 (GMT)
+Received: from lynx.boeblingen.de.ibm.com (unknown [9.152.224.146])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 27 Nov 2018 08:19:45 +0000 (GMT)
+Received: from brueckh by lynx.boeblingen.de.ibm.com with local (Exim 4.90_1)
+        (envelope-from <brueckner@linux.ibm.com>)
+        id 1gRYav-0001sE-I5; Tue, 27 Nov 2018 09:19:45 +0100
+Date:   Tue, 27 Nov 2018 09:19:45 +0100
+From:   Hendrik Brueckner <brueckner@linux.ibm.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
-References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
- <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
- <20181119103337.GZ9761@hirez.programming.kicks-ass.net>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <acc29e9c-39ce-d255-66aa-1886a351476e@linux.intel.com>
-Date:   Tue, 27 Nov 2018 11:17:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        linux-s390@vger.kernel.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org
+Subject: Re: [PATCH v2 15/20] s390: perf/events: advertise PMU exclusion
+ capability
+References: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
+ <1543230756-15319-16-git-send-email-andrew.murray@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181119103337.GZ9761@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543230756-15319-16-git-send-email-andrew.murray@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18112708-0008-0000-0000-0000029913EB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112708-0009-0000-0000-0000220356F6
+Message-Id: <20181127081945.GA4817@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=763 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Nov 26, 2018 at 11:12:31AM +0000, Andrew Murray wrote:
+> The s390 cpum_cf and cpum_sf PMUs have the capability to exclude
+> events based on context. Let's advertise that we support the
+> PERF_PMU_CAP_EXCLUDE capability to ensure that perf doesn't
+> prevent us from handling events where any exclusion flags are set.
+> 
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+>  arch/s390/kernel/perf_cpum_cf.c | 1 +
+>  arch/s390/kernel/perf_cpum_sf.c | 2 ++
+>  2 files changed, 3 insertions(+)
 
-On 19.11.2018 13:33, Peter Zijlstra wrote:
-> On Mon, Nov 19, 2018 at 08:42:52AM +0300, Alexey Budankov wrote:
->>
->> Implement initial version of perf-security.rst documentation file 
->> initially covering security concerns related to PCL/Perf performance 
->> monitoring in multiuser environments.
-> 
-> Ditch the PCL thing. That's not a term used anywhere in the kernel.
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 
-Addressed. Please see v4.
-
-> 
-> Also:
-> 
->> +PCL/Perf unprivileged users
->> +---------------------------
->> +
->> +PCL/Perf *scope* and *access* control for unprivileged processes is governed by
->> +perf_event_paranoid [2]_ setting:
->> +
->> +**-1**:
->> +     Impose no *scope* and *access* restrictions on using PCL performance
->> +     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
->> +     ignored when allocating memory buffers for storing performance data.
->> +     This is the least secure mode since allowed monitored *scope* is
->> +     maximized and no PCL specific limits are imposed on *resources*
->> +     allocated for performance monitoring.
->> +
->> +**>=0**:
->> +     *scope* includes per-process and system wide performance monitoring
->> +     but excludes raw tracepoints and ftrace function tracepoints monitoring.
->> +     CPU and system events happened when executing either in user or
->> +     in kernel space can be monitored and captured for later analysis.
->> +     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
->> +     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
->> +
->> +**>=1**:
->> +     *scope* includes per-process performance monitoring only and excludes
->> +     system wide performance monitoring. CPU and system events happened when
->> +     executing either in user or in kernel space can be monitored and
->> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
->> +     locking limit is imposed but ignored for unprivileged processes with
->> +     CAP_IPC_LOCK capability.
->> +
->> +**>=2**:
->> +     *scope* includes per-process performance monitoring only. CPU and system
->> +     events happened when executing in user space only can be monitored and
->> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
->> +     locking limit is imposed but ignored for unprivileged processes with
->> +     CAP_IPC_LOCK capability.
->> +
->> +**>=3**:
->> +     Restrict *access* to PCL performance monitoring for unprivileged processes.
->> +     This is the default on Debian and Android [7]_ , [8]_ .
-> 
-> that ** crud is unreadable.
-> 
-> http://lkml.kernel.org/r/094556ca-ea87-9c4a-2115-600d2833fb2a@darmarit.de
-> 
-
-Addressed. Please see v4.
-
-Thanks,
-Alexey
