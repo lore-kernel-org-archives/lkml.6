@@ -2,100 +2,103 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDD2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCF3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29EE421104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:26:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29EE421104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 9FE4D20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:29:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iHAvcci0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE4D20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732080AbeK1FZH (ORCPT
+        id S1728916AbeK1F2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:25:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbeK1FZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:25:07 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF59120851;
-        Tue, 27 Nov 2018 18:26:19 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 13:26:18 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, stable@kernel.org
-Subject: Re: [for-next][PATCH 04/18] arm64: function_graph: Simplify with
- function_graph_entry()
-Message-ID: <20181127132618.2b3e1944@gandalf.local.home>
-In-Reply-To: <20181127180722.GB19216@arm.com>
-References: <20181122002801.501220343@goodmis.org>
-        <20181122003331.917870132@goodmis.org>
-        <20181127180722.GB19216@arm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 28 Nov 2018 00:28:19 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:36096 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeK1F2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:28:18 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wARIT6ZA025235;
+        Tue, 27 Nov 2018 12:29:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543343346;
+        bh=YKpyO6SimyLQviWcyNd4OWhdXIVXmAzGjWGQ82BXiBQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iHAvcci0FJKnIK/ApV5FnSPAjRWfviiIUfJG7F9/7LnWxmgLdnKudDSrBEfkXUsnC
+         y/rA+5psSeqXUokC+OSPPFMcQAz+t5zmVcqTV0srTI6ygMEdnUQRjKkI1irOe4o6N7
+         51pFSyiH4qfwQQ25qVQEAZ7Y3CV3ulYbT9VB7y7k=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wARIT6Ne056884
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 12:29:06 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 27
+ Nov 2018 12:29:05 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 27 Nov 2018 12:29:05 -0600
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wARIT5cE008537;
+        Tue, 27 Nov 2018 12:29:05 -0600
+Subject: Re: [PATCH linux-next 09/10] dt-bindings: net: ti: deprecate
+ cpsw-phy-sel bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Andrew Lunn <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20181126001531.12974-1-grygorii.strashko@ti.com>
+ <20181126001531.12974-10-grygorii.strashko@ti.com>
+ <20181126195838.GA19167@bogus>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <06fde096-15cb-e2c9-f1e4-dad43a4e0fca@ti.com>
+Date:   Tue, 27 Nov 2018 12:29:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181126195838.GA19167@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 18:07:23 +0000
-Will Deacon <will.deacon@arm.com> wrote:
 
-> On Wed, Nov 21, 2018 at 07:28:05PM -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > The function_graph_entry() function does the work of calling the function
-> > graph hook function and the management of the shadow stack, simplifying the
-> > work done in the architecture dependent prepare_ftrace_return().
-> > 
-> > Have arm64 use the new code, and remove the shadow stack management as well as
-> > having to set up the trace structure.
-> > 
-> > This is needed to prepare for a fix of a design bug on how the curr_ret_stack
-> > is used.
-> > 
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: stable@kernel.org
-> > Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  arch/arm64/kernel/ftrace.c | 15 +--------------
-> >  1 file changed, 1 insertion(+), 14 deletions(-)  
+
+On 11/26/18 1:58 PM, Rob Herring wrote:
+> On Sun, Nov 25, 2018 at 06:15:30PM -0600, Grygorii Strashko wrote:
+>> The cpsw-phy-sel driver was replaced with new PHY driver phy-gmii-sel, so
+>> deprecate cpsw-phy-sel bindings.
+>>
+>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>> Cc: Tony Lindgren <tony@atomide.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>>   Documentation/devicetree/bindings/net/cpsw-phy-sel.txt | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Minor nit: the subject refers to function_graph_entry(), but looks like
-> you settled on function_graph_enter() in the end.
-
-Ah you're right!
-
+> Please add acks/reviewed-bys when posting new versions.
 > 
-> Anyway, looks like no change for us, so:
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
 
-Thanks!
+Sry, missed your ask for this patch.
 
--- Steve
+-- 
+regards,
+-grygorii
