@@ -2,101 +2,118 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12486C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2676DC04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF3FA208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:49:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Frb3vTyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3FA208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id EF101208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF101208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbeK1DsR (ORCPT
+        id S1731422AbeK1Dsf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:48:17 -0500
-Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:58582 "EHLO
-        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729321AbeK1DsR (ORCPT
+        Tue, 27 Nov 2018 22:48:35 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33002 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeK1Dse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:48:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1543337387;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=F1BHzZ5aX6F/cjHQOy9JOoTV5AqgXTRV8TX/oyCxgEM=;
-        b=Frb3vTygO3nJKf5UEWUGLn1kdK9I85MCdX95jMYkEf9epLFu+3FdOU7yAxKIpF80
-        Vpy+NusMrad+1kO4Axx3jmb1aJ4NlbNzIOfb1D9N6cRzrT6Vocpdx/y3H8R+ab/iAL7
-        C2Y+LkARC19RJ21r2RP0eLn3NJ0xbwnISstSlQv0=
-Date:   Tue, 27 Nov 2018 16:49:47 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Mike Rapoport <rppt@linux.ibm.com>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
- migrated
-In-Reply-To: <20181127105602.GC16502@rapoport-lnx>
-Message-ID: <010001675613a406-89de05df-ccf6-4bfa-ae3b-6f94148d514a-000000@email.amazonses.com>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils> <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com> <alpine.LSU.2.11.1811251900300.1278@eggly.anvils> <alpine.LSU.2.11.1811261121330.1116@eggly.anvils> <20181126205351.GM3065@bombadil.infradead.org>
- <20181127105602.GC16502@rapoport-lnx>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 27 Nov 2018 22:48:34 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so20775939otl.0;
+        Tue, 27 Nov 2018 08:50:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EJCj7vK0zBuuvOMxLpjkEUxKpjWVJIgSW7zI2E5ss2o=;
+        b=dWmtDY5xk3ucXPSMvAeStQULn2ue2nIy+3wkGoU8luP0GAOlItf7qGCt10AMhTNYnS
+         BZOiO4oT5mpP+V07GJYiVKyVrNF02qagrjB3x/TxSymMATSyn8p8MvI5PVHlHuRvToyv
+         URI/gHIM2pCaQomeEHHVuno1t2x7y1O7XGQAD1rUBNMKdo9zj54l8Ciw0fe29v8Chlpz
+         pLLNndT6Xman1YCXgY/KYrz2T4rA2uDxxxpwGpaKDLPV3DXoYmQRUxKXkUBagwG+EgRA
+         GRygc0nR218aRJ3DlHzEcn6QzxG+yG25NfkWgklZE6Gm2Yr7AF1bs/y8pKkfXC5w7Gvu
+         03vA==
+X-Gm-Message-State: AGRZ1gJVhYCWQIZIbYeIkDSSnQMxTmhVMXsG9WGZLhSfMLHYj8FwoJPM
+        WV4ioU3DxE88o2DkgC9+5lxdIPfLlEj2aTe8pls=
+X-Google-Smtp-Source: AFSGD/WeVBJI0BfxUWVjFs31XL8yQEMlnqITpaAUMyNroLh3tvj5yvobAv1/KZd+fOR6zF4q8a59nI8gIH2BE38cUl4=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr19276782otg.139.1543337404384;
+ Tue, 27 Nov 2018 08:50:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.11.27-54.240.9.35
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+References: <20181126111526.56340-1-mika.westerberg@linux.intel.com>
+ <20181126111526.56340-2-mika.westerberg@linux.intel.com> <20181127001711.GC212532@google.com>
+ <20181127085426.GI2296@lahna.fi.intel.com>
+In-Reply-To: <20181127085426.GI2296@lahna.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 27 Nov 2018 17:49:53 +0100
+Message-ID: <CAJZ5v0gxap5qWQTrmrTmzfvL0RerZ1T1MUPyh6b1FAHY9N0Ryw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] PCI / ACPI: Identify untrusted PCI devices
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>, ckellner@redhat.com,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018, Mike Rapoport wrote:
-
-> >  * @page: The page to wait for.
-> >  *
-> >  * The caller should hold a reference on @page.  They expect the page to
-> >  * become unlocked relatively soon, but do not wish to hold up migration
-> >  * (for example) by holding the reference while waiting for the page to
-> >  * come unlocked.  After this function returns, the caller should not
-> >  * dereference @page.
-> >  */
+On Tue, Nov 27, 2018 at 9:54 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> How about:
+> On Mon, Nov 26, 2018 at 06:17:11PM -0600, Bjorn Helgaas wrote:
+> > Hi Mika,
 >
-> They expect the page to become unlocked relatively soon, but they can wait
-> for the page to come unlocked without holding the reference, to allow
-> other users of the @page (for example migration) to continue.
+> Hi,
+>
+> > On Mon, Nov 26, 2018 at 02:15:23PM +0300, Mika Westerberg wrote:
+> > > Recent systems with Thunderbolt ports may support IOMMU natively.
+> >
+> > This sentence doesn't make sense to me.  There's no logical connection
+> > between having an IOMMU and having a Thunderbolt port.
+> >
+> > > This means that the platform utilizes IOMMU to prevent DMA attacks
+> > > over externally exposed PCIe root ports (typically Thunderbolt
+> > > ports)
+> >
+> > Nor this one.  The platform only uses the IOMMU to prevent DMA attacks
+> > if the OS chooses to do that.
+>
+> I guess I'm trying to say here that the recent changes add such support
+> to the platform BIOS that allows the OS to enable IOMMU without being
+> compromised by a malicious device that is already connected. The BIOS
+> sets the new ACPI DMAR bit in that case.
+>
+> > > The system BIOS marks these PCIe root ports as being externally facing
+> > > ports by implementing following ACPI _DSD [1] under the root port in
+> > > question:
+> >
+> > There's no standard that requires this, so the best we can say is that
+> > a system BIOS *may* mark externally facing ports with this mechanism.
+>
+> There is no standard but I'm quite sure this is something that will be
+> required to be implemented properly by the OEM by Microsoft hardware
+> compatibility suite.
 
-All of this seems a bit strange and it seems unnecessary? Maybe we need a
-better explanation?
-
-A process has no refcount on a page struct and is waiting for it to become
-unlocked? Why? Should it not simply ignore that page and continue? It
-cannot possibly do anything with the page since it does not hold a
-refcount.
-
-In order to do anything with the page struct it would have to obtain a
-refcount and possibly lock the page. That would already wait for the
-page to become unlocked.
-
-
-
+I think it would be fair to say that future versions of Windows will
+expect the firmware to identify the "externally facing" root PCIe
+ports as per the above which practically means that it is as good as a
+formal standard in the Windows world.
