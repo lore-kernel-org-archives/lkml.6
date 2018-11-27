@@ -2,55 +2,64 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEC7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CC3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667B1208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:07:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667B1208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FCE4204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FCE4204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeK0MDm (ORCPT
+        id S1727947AbeK0MEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:03:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34701 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727542AbeK0MDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 07:03:42 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5EF81DD7F1482;
-        Tue, 27 Nov 2018 09:07:34 +0800 (CST)
-Received: from [127.0.0.1] (10.57.115.182) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
- 09:07:26 +0800
-Subject: Re: [PATCH rdma-next 3/3] RDMA/hns: Modify hns RoCE device's name
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
- <1542986065-44265-4-git-send-email-xavier.huwei@huawei.com>
- <20181123203958.GJ3395@ziepe.ca> <5BF94B9F.5030409@huawei.com>
- <20181126031354.GA15463@ziepe.ca> <5BFBB002.8020703@huawei.com>
- <20181126174402.GC32083@ziepe.ca>
-CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <charles.chenxin@huawei.com>, <liuyixian@huawei.com>,
-        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5BFC98CE.6010404@huawei.com>
-Date:   Tue, 27 Nov 2018 09:07:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 27 Nov 2018 07:04:51 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33508 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeK0MEv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 07:04:51 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAR18jmJ004421;
+        Mon, 26 Nov 2018 19:08:45 -0600
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAR18joR033650
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 26 Nov 2018 19:08:45 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 26
+ Nov 2018 19:08:45 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 26 Nov 2018 19:08:44 -0600
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAR18inQ008247;
+        Mon, 26 Nov 2018 19:08:44 -0600
+Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: drop vid0 configuration
+ in dual_mac modey
+To:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20181125234626.28474-1-grygorii.strashko@ti.com>
+ <20181126162644.GA23230@khorivan>
+ <7f2c5e66-3b42-f921-c52d-236f5adc44bf@ti.com>
+ <20181126200757.GB23230@khorivan>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <472813b7-2e57-1a42-3f15-c8c54570e7da@ti.com>
+Date:   Mon, 26 Nov 2018 19:08:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181126174402.GC32083@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181126200757.GB23230@khorivan>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -58,109 +67,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/11/27 1:44, Jason Gunthorpe wrote:
-> On Mon, Nov 26, 2018 at 04:34:10PM +0800, Wei Hu (Xavier) wrote:
+On 11/26/18 2:07 PM, Ivan Khoronzhuk wrote:
+> On Mon, Nov 26, 2018 at 12:57:20PM -0600, Grygorii Strashko wrote:
 >>
->> On 2018/11/26 11:13, Jason Gunthorpe wrote:
->>> On Sat, Nov 24, 2018 at 09:01:19PM +0800, Wei Hu (Xavier) wrote:
->>>> On 2018/11/24 4:39, Jason Gunthorpe wrote:
->>>>> On Fri, Nov 23, 2018 at 11:14:25PM +0800, Wei Hu (Xavier) wrote:
->>>>>> This patch modifies the name of hns RoCE device's name in order
->>>>>> to ensure that the name is consistent before and after reset.
->>>>>>
->>>>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
->>>>>>  drivers/infiniband/hw/hns/hns_roce_device.h | 1 +
->>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 3 +++
->>>>>>  drivers/infiniband/hw/hns/hns_roce_main.c   | 4 +++-
->>>>>>  3 files changed, 7 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->>>>>> index 259977b..a8cfe76 100644
->>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->>>>>> @@ -954,6 +954,7 @@ struct hns_roce_dev {
->>>>>>  	struct pci_dev		*pci_dev;
->>>>>>  	struct device		*dev;
->>>>>>  	struct hns_roce_uar     priv_uar;
->>>>>> +	char			name[IB_DEVICE_NAME_MAX];
->>>>>>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
->>>>>>  	spinlock_t		sm_lock;
->>>>>>  	spinlock_t		bt_cmd_lock;
->>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>> index 1d639a0..678c7ec 100644
->>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>> @@ -6110,6 +6110,9 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
->>>>>>  		hr_dev->irq[i] = pci_irq_vector(handle->pdev,
->>>>>>  						i + handle->rinfo.base_vector);
->>>>>>  
->>>>>> +	snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
->>>>>> +		 handle->rinfo.netdev->name);
->>>>> Why is this making up its own driver name? How is this avoiding
->>>>> colliding with an existing name?
->>>>>
->>>>> This is very dangerous since we now have device renaming, the driver
->>>>> could fail to load with no recovery.
->>>> Hi, Jason
->>>>        
->>>>     The NIC driver notifies the RoCE driver to perform reset related
->>>> processing by calling the .reset_notify() interface registered by the
->>>> RoCE driver. If the RoCE reset processing fails, .reset_notify()
->>>> returns non-zero, and then hns NIC driver will reschedule the
->>>> reset task again.
->>>>    
->>>>     The current hardware version in hip08 SoC cannot support
->>>> after reset process the application still communicates with the
->>>> resources like QP requested before reset. In RoCE reset process,
->>>> we will release the resources through ib_unregister_device, after
->>>> the hardware reset is completed, driver will re-execute
->>>> ib_register_device.
->>>>    
->>>>     Currently, we find that the ib_device's name after reset
->>>> and the one before reset may be different. We can specify the
->>>> device name to solve this problem.
->>> No, now you just have unsolved races.
+>>
+>> On 11/26/18 10:26 AM, Ivan Khoronzhuk wrote:
+>>> On Sun, Nov 25, 2018 at 05:46:26PM -0600, Grygorii Strashko wrote:
+>>>> In dual_mac mode CPSW driver uses vid1 and vid2 by default to implement
+>>>> dual mac mode wich are used to configure pvids for each external ports.
+>>>> But, historicaly, it also adds vid0 to ALE table and sets "untag" bits for both
+>>>> ext. ports. As result, it's imposible to use priority tagged packets in
+>>>> dual mac mode.
+>>>>
+>>>> Hence, drop vid0 configuration in dual mac mode as it's not required for dual
+>>>> mac mode functionality and, this way, make it possible to use priority
+>>>> tagged packet in dual mac mode.
+>>> So, now it's enabled to be added via regular ndo.
+>>> I have similar change in mind, but was going to send it after
+>>> mcast/ucast, and - enabling same vlans patch...
 >>>
->>> If you want to reset like this then you will need to do some kind of
->>> revision to the IB core code to not loose the name assigned to the
->>> device and not hacks like this.
->> Hi, Jason
+>>> 2 things stopped me to add this:
+>>>
+>>> 1) Moving it to be enabled via regular call is Ok, but in dual mac mode
+>>> it causes overlaps, at least while vid deletion. So decided to wait till
+>>> same vlans series is applied.
 >>
->>     In fact, We only specified the name of the ib_device to be generated
->> when
->> calling ib_register_device on the hip08 SoC, and doesn't modify its name
->> during the existence of ib_device.
+>> TI driver documentation mentions this restriction
+>> "While adding VLAN id to the eth interfaces,
+>> same VLAN id should not be added in both interfaces which will lead to VLAN
+>> forwarding and act as switch"
+> It's not accurate now.
+> This sw bug "acting like a switch" was fixed indirectly in LKML ).
+> And at least for upstream version, not TISDK, desc should be updated,
+> but better do this when it fixed completely and merged with TISDK.
+> 
+> I know about this "written" restriction
+> (for tiSDK, and it's not TRM after all ...),
+> it can be avoided and it's partly avoided now ...
+> 
+> Also, for notice, while you add any of the vlans to any of
+> the ports, vlan0 is added to both of them.....restricted it or not.
+> Thanks to last changes in the driver it's not "acting like a switch"
+> The patch in question enables this in ndo, not me.
+> 
+> #ip link add link eth0 name eth0.400 type vlan id 400
+> [  326.538989] 8021q: 802.1Q VLAN Support v1.8
+> [  326.543217] 8021q: adding VLAN 0 to HW filter on device eth0
+> [  326.554645] 8021q: adding VLAN 0 to HW filter on device eth1
+> [  326.572236] net eth0: Adding vlanid 400 to vlan filter
+> 
+> I just propose to extend it later, when it's correct to do.
+> But if no harm (basically no harm, only if someone decides
+> to add vlan0 to both ports and then delete on one of them)
+> , at least you should take this into account.
+> 
 >>
->>     In this example, if you always use hns_%d when registering, I think that
->> no matter how you modify IB core code, we can't solve this problem. We
->> need to specify the name of the ib_device device when calling
->> ib_register_device, and this name should be unique in the OS.
+>>>
+>>> 2) Wanted implement somehow similar handling for single port boards
+>>> in one patch, not only for dual mac mode. This part was not clear and
+>>> not verified completely...
+>>>
+>>> So, if it's needed now, maybe better at this moment only remove
+>>> untag field? and remove vlan0 later, once other vlan changes applied.
+>>>
+>>> Say:
+>>>
+>>> cpsw_ale_add_vlan(cpsw->ale, cpsw->data.default_vlan,
+>>>            ALE_ALL_PORTS, 0, ALE_ALL_PORTS, 0);
+>>>
+>>> instead of:
+>>> cpsw_ale_add_vlan(cpsw->ale, cpsw->data.default_vlan,
+>>>            ALE_ALL_PORTS, ALE_ALL_PORTS, 0, 0);
+>>>
 >>
->>     The NIC and the RoCE hardware engine share the function On the hip08
->> SoC.
->> The NIC driver will execute register_netdev firstly, and then the RoCE
->> driver will
->> execute ib_register_device. In the following statement, where
->> handle->rinfo.netdev->name is the name of the corresponding net_device
->> device,
->> this will ensure the uniqueness of the hnsXXX ib_device's name on the OS.
->>
->>     snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
->>          handle->rinfo.netdev->name);
-> It does not. We support rename in ib_core now, so users can set device
-> names to whatever they like and break these naming assumptions.
->
-> The only solution I can see is to make a reset function in IB core
-> that retains the name but forces all clients to disconnect and
-> reconnect.
-Hi, Jason
-    I got your opinion, we will think about how to deal with it.
-    Please pull this patch out of the series.
-    Thanks you very much!
+>> This patch affects only dual_mac mode and in this mode adding vid0 by default is
+>> definitely make no sense in any case.
+> The above proposition is only to your change, only for dual-mac.
+> 
+Thank you for your review. Seems not everything works as expected with this patch,
+so ignore it please.
 
-    Best Regards
-Xavier
-> Jason
->
-> .
->
-
-
+regards,
+-grygorii
