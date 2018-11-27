@@ -2,179 +2,100 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD8BC04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 782E5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90AC4208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:34:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bx4gPVm9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AC4208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E01720989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:36:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E01720989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbeK0QbN (ORCPT
+        id S1728594AbeK0Qd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 11:31:13 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44223 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728171AbeK0QbM (ORCPT
+        Tue, 27 Nov 2018 11:33:29 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40562 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728147AbeK0Qd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 11:31:12 -0500
-Received: by mail-yw1-f67.google.com with SMTP id h138-v6so6824556ywa.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 21:34:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/omSkAw6P4Rj7FKfx5WJTuN6rcUIqdUCq/wshJQTtw0=;
-        b=Bx4gPVm9X1ZbEiUOLyAtfukRlonEjTcdM86nr32HpuBEtfrZiKkmk2U6iQTUB/v/H7
-         2uhOzByMV8JAEvAyQf6cX4xhGOXWWaGPIn3/4GqcW2e7HVDu6PFZa5rV3N3pWIAsKjYi
-         GEd0s5BXK1pk0hb3GsA0NmgH7GM0p6FikQ+hc=
+        Tue, 27 Nov 2018 11:33:29 -0500
+Received: by mail-oi1-f196.google.com with SMTP id t204so18230277oie.7;
+        Mon, 26 Nov 2018 21:36:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/omSkAw6P4Rj7FKfx5WJTuN6rcUIqdUCq/wshJQTtw0=;
-        b=sOYeFN5pi2egaIqfjvDiXUF/kdcmda41wEZUZAchHoNcFqeMX2d1hcZAgq9tFndr//
-         OkPGRDfggQQhZ3lCCeYEMM7jQUUMqlxRxk2RwKqDHnSf2FDrV0kwF3CfIQdKJ7Yk9/VD
-         3U0xZCx+GCeHXGUY5oBpITchxvEf1N7G6Rm+p3Yhd/3Fb9N2Avmo00EwO9WJiJSUgYkg
-         8a7yFxMtds/enKzpPrwuaUORiE0GnyhFQ9OAPbWmAvcbXUarIoyEYVnB0cyEOrOuBUjH
-         ohZkCsQFkM0K2U2o9qDbRh89Vr9AgFtzHZRuthTdrT/cDQOj3WCVLyPDPUjzRDc5jqrE
-         gf9w==
-X-Gm-Message-State: AGRZ1gLKmGfnGZCnWlECshZLo99Jm2h2duDGMQYGdIWzcfqxwSVislv/
-        RwMhZWc5Fp7BMzIOnzojquknSmlJxpo=
-X-Google-Smtp-Source: AJdET5fMA+g0qHPl86vMloWAR6NkK/Qv9TC74c/Ass0kFCHrv7RK89tRKcUYSMlvG1j1le4ZEvQTiA==
-X-Received: by 2002:a81:4d42:: with SMTP id a63mr32615217ywb.189.1543296869995;
-        Mon, 26 Nov 2018 21:34:29 -0800 (PST)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id r188sm689059ywb.30.2018.11.26.21.34.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 21:34:27 -0800 (PST)
-Received: by mail-yw1-f47.google.com with SMTP id f65so8633724ywc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 21:34:27 -0800 (PST)
-X-Received: by 2002:a81:760b:: with SMTP id r11-v6mr30130739ywc.353.1543296866988;
- Mon, 26 Nov 2018 21:34:26 -0800 (PST)
+        bh=CP37VBRo9cA/6pU/vvEmlSlENMaQ1d1t5TqQL1UZU88=;
+        b=XrOrx9MlImpj1VWAY4CukC63ts7+fK3Ceoo1ThXTQRlavjkkqT3qVttPi7OT/k9YqS
+         CHxhR+Ez7XMiTeM8VJfxdCIq4ephe+ck6mlkyVT/fdkxtbsoCVOEdTbg+mqfubXsv9Ws
+         z6433QJki2t7yNieaLaBWtMfm+MgP9VGg4v+i4vwgYvL71hb/J906iAHm6dXGB0SktrZ
+         vd05ggEU/EyGyhkLo22Q+die6gPeq5aghNF7mrYxwRbeHWg/I9chYc5FlTFWg/nL1o5n
+         MMkWpdHslcEV/XQqe0otvAI0epTz2BqcCJEJhRpG053P6wv76JOk106XdJkCSxq7A9El
+         APJQ==
+X-Gm-Message-State: AA+aEWYt6s7+KZ4FsO0D6BGNXR6NiB8zIkSUVPtm3juPiRPqV/hF+4E8
+        tHWbMhSNLHDWtSoeGVTnfrxbrfdbo4LHr5lE4UQ=
+X-Google-Smtp-Source: AFSGD/V543qRLR+dTBUsr6ESQ1f5KBZmVzGYteAAeS9o0idqFwJux+mc1feSPl1C02cy0RCOHswaAMGk2eYRehBRz9k=
+X-Received: by 2002:aca:5b43:: with SMTP id p64mr206847oib.41.1543297006842;
+ Mon, 26 Nov 2018 21:36:46 -0800 (PST)
 MIME-Version: 1.0
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com> <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
-In-Reply-To: <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 26 Nov 2018 21:34:15 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-Message-ID: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
+ <1543216072-9623-2-git-send-email-harini.katakam@xilinx.com>
+ <5de882e3-65ac-7ff1-bb55-7537666dfc77@microchip.com> <20181126145210.GD12116@lunn.ch>
+In-Reply-To: <20181126145210.GD12116@lunn.ch>
+From:   Harini Katakam <harinik@xilinx.com>
+Date:   Tue, 27 Nov 2018 11:06:36 +0530
+Message-ID: <CAFcVECK=4e-+1u3X+OuLoAEicUtrkTX3C0wzAugMRcJSP0N-Vg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] net: macb: Check MDIO state before read/write and
+ use timeouts
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        Harini Katakam <harini.katakam@xilinx.com>,
+        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        sai.pavan.boddu@xilinx.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+Hi Claudiu,
+On Mon, Nov 26, 2018 at 8:22 PM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Nov 26, 2018 at 02:46:01PM +0000, Claudiu.Beznea@microchip.com wrote:
+> > Hi Harini,
+> >
+> > On 26.11.2018 09:07, Harini Katakam wrote:
+> > > From: Harini Katakam <harinik@xilinx.com>
+> > >
+> > > Replace the while loop in MDIO read/write functions with a timeout.
+> > > In addition, add a check for MDIO bus busy before initiating a new
+> > > operation as well to make sure there is no ongoing MDIO operation.
+> >
+> > Is this MDIO bus busy check necessary? The caller of
+> > macb_mdio_read/macb_mdio_write locks the mdio bus mutex before calling it
+> > (e.g. mdiobus_read).
+>
+> Hi Claudiu
+>
+> It depends on the implementation. A write operation you could just
+> launch, but not wait for it to complete, allowing you to do other
+> stuff while the hardware is busy. For the next operation you then do
+> need to check the previous operation has completed.
+>
+> I've not checked it is actually implemented this way.
 
-Hmmm... the "From: Kees..." in the body is missing. Are you using "git
-send-email"?
+Yes, as Andrew mentioned, a previous MDIO bus operation cannot
+be assumed to be complete always - for ex., in case of a timeout.
+There is a chance that the MDIO bus bit is busy when mdio_read/write
+is called.
 
->
-> This adds a flag for the current "major" LSMs to distinguish them when
-> we have a universal method for ordering all LSMs. It's called "legacy"
-> since the distinction of "major" will go away in the blob-sharing world.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> ---
->  include/linux/lsm_hooks.h  | 3 +++
->  security/apparmor/lsm.c    | 1 +
->  security/selinux/hooks.c   | 1 +
->  security/smack/smack_lsm.c | 1 +
->  security/tomoyo/tomoyo.c   | 1 +
->  5 files changed, 7 insertions(+)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index aaeb7fa24dc4..63c0e102de20 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -2039,8 +2039,11 @@ extern char *lsm_names;
->  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->                                 char *lsm);
->
-> +#define LSM_FLAG_LEGACY_MAJOR  BIT(0)
-> +
->  struct lsm_info {
->         const char *name;       /* Required. */
-> +       unsigned long flags;    /* Optional: flags describing LSM */
->         int (*init)(void);      /* Required. */
->  };
->
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 42446a216f3b..2edd35ca5044 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
->
->  DEFINE_LSM(apparmor) = {
->         .name = "apparmor",
-> +       .flags = LSM_FLAG_LEGACY_MAJOR,
->         .init = apparmor_init,
->  };
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 7ce683259357..56c6f1849c80 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
->     all processes and objects when they are created. */
->  DEFINE_LSM(selinux) = {
->         .name = "selinux",
-> +       .flags = LSM_FLAG_LEGACY_MAJOR,
->         .init = selinux_init,
->  };
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 81fb4c1631e9..3639e55b1f4b 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4891,5 +4891,6 @@ static __init int smack_init(void)
->   */
->  DEFINE_LSM(smack) = {
->         .name = "smack",
-> +       .flags = LSM_FLAG_LEGACY_MAJOR,
->         .init = smack_init,
->  };
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index 1b5b5097efd7..09f7af130d3a 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
->
->  DEFINE_LSM(tomoyo) = {
->         .name = "tomoyo",
-> +       .flags = LSM_FLAG_LEGACY_MAJOR,
->         .init = tomoyo_init,
->  };
-> --
-> 2.14.5
->
->
-
-
--- 
-Kees Cook
+Regards,
+Harini
