@@ -2,95 +2,73 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C666C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D9EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4732086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4732086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E69DC2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:17:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69DC2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbeK1FQP (ORCPT
+        id S1728833AbeK1FQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:16:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49492 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725740AbeK1FQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:16:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 771EDAFF6;
-        Tue, 27 Nov 2018 18:17:29 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 19:17:27 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     rong.a.chen@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
-        s.priebe@profihost.ag, alex.williamson@redhat.com,
-        mgorman@techsingularity.net, zi.yan@cs.rutgers.edu,
-        Vlastimil Babka <vbabka@suse.cz>, rientjes@google.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181127181727.GD6923@dhcp22.suse.cz>
-References: <20181127062503.GH6163@shao2-debian>
- <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+        Wed, 28 Nov 2018 00:16:33 -0500
+Received: from muru.com ([72.249.23.125]:55378 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725740AbeK1FQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:16:33 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id EFE978030;
+        Tue, 27 Nov 2018 18:17:50 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 10:17:46 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Belisko Marek <marek.belisko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
+Message-ID: <20181127181746.GU53235@atomide.com>
+References: <20181119161906.GP53235@atomide.com>
+ <20181119171406.GQ53235@atomide.com>
+ <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
+ <20181123164827.GE53235@atomide.com>
+ <20181126093625.GA10878@ulmo>
+ <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com>
+ <20181126102541.GC10878@ulmo>
+ <20181126193212.GN53235@atomide.com>
+ <149b3b6b-e52e-4942-151b-6df4358f5a7a@nvidia.com>
+ <20181127175538.GS53235@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+In-Reply-To: <20181127175538.GS53235@atomide.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-11-18 09:08:50, Linus Torvalds wrote:
-> On Mon, Nov 26, 2018 at 10:24 PM kernel test robot
-> <rong.a.chen@intel.com> wrote:
-> >
-> > FYI, we noticed a -61.3% regression of vm-scalability.throughput due
-> > to commit ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
-> > MADV_HUGEPAGE mappings")
-> 
-> Well, that's certainly noticeable and not good.
-> 
-> Andrea, I suspect it might be causing fights with auto numa migration..
-> 
-> Lots more system time, but also look at this:
-> 
-> >    1122389 ±  9%     +17.2%    1315380 ±  4%  proc-vmstat.numa_hit
-> >     214722 ±  5%     +21.6%     261076 ±  3%  proc-vmstat.numa_huge_pte_updates
-> >    1108142 ±  9%     +17.4%    1300857 ±  4%  proc-vmstat.numa_local
-> >     145368 ± 48%     +63.1%     237050 ± 17%  proc-vmstat.numa_miss
-> >     159615 ± 44%     +57.6%     251573 ± 16%  proc-vmstat.numa_other
-> >     185.50 ± 81%   +8278.6%      15542 ± 40%  proc-vmstat.numa_pages_migrated
-> 
-> Should the commit be reverted? Or perhaps at least modified?
+* Tony Lindgren <tony@atomide.com> [181127 17:55]:
+> The only option that works for omap5 at palmas end is if
+> PALMAS_POLARITY_CTRL_INT_POLARITY is cleared. Setting the SoC internal
+> pulls does not make a difference, so I suspect there is either some
+> unknown pull-up/pull-down configuration register in palmas, or there
+> is an external pull resistor.
 
-Well, the commit is trying to revert to the behavior before
-5265047ac301 because there are real usecases that suffered from that
-change and bug reports as a result of that.
+Remuxing the palmas interrupt to gpio_wk16 instead of sys_nirq1
+makes the palmas interrupt work just fine configured with active-low
+or active-high with the internal pulls. So palmas.c is doing the
+right thing, and the issue configuring palmas interrupt active-high
+with sys_nirq1 on omap5 is somewhere between omap wkupegen and GIC.
 
-will-it-scale is certainly worth considering but it is an artificial
-testcase. A higher NUMA miss rate is an expected side effect of the
-patch because the fallback to a different NUMA node is more likely. The
-__GFP_THISNODE side effect is basically introducing node-reclaim
-behavior for THPages. Another thing is that there is no good behavior
-for everybody. Reclaim locally vs. THP on a remote node is hard to
-tell by default. We have discussed that at length and there were some
-conclusions. One of them is that we need a numa policy to tell whether
-a expensive localility is preferred over remote allocation.  Also we
-definitely need a better pro-active defragmentation to allow larger
-pages on a local node. This is a work in progress and this patch is a
-stop gap fix.
+Regards,
 
--- 
-Michal Hocko
-SUSE Labs
+Tony
