@@ -2,166 +2,133 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2847DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE84C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB93208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="Qc/ij4U1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB93208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 3295D21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3295D21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbeK1GET (ORCPT
+        id S1732219AbeK1GE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:04:19 -0500
-Received: from mail-eopbgr80102.outbound.protection.outlook.com ([40.107.8.102]:29373
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        Wed, 28 Nov 2018 01:04:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57368 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729277AbeK1GES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:04:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hNsXYTWThRAYB7IX2I4Dgnb1GP8uIzWV7RiLfGw832Q=;
- b=Qc/ij4U1ShmgHHuozFoqHxWqy1gYOILNxsxmxeX1AoDkXDv9yV66Rexm+j55inIyEjZHydElVrO/ji+EnVAFlXwMty1VRl/dzShkoSFviTGZ4XWzbMKQ17fusqv9Sp+WFhl+MCPjvJwwsOETeOHLu2Oqi8Jjx9bYN2sF1aODLSU=
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com (20.177.61.74) by
- VI1PR08MB3453.eurprd08.prod.outlook.com (20.177.59.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Tue, 27 Nov 2018 19:05:11 +0000
-Received: from VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::5d2c:980a:d77e:34e2]) by VI1PR08MB3599.eurprd08.prod.outlook.com
- ([fe80::5d2c:980a:d77e:34e2%3]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 19:05:11 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-CC:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
-Thread-Topic: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
-Thread-Index: AQHUhZ9mV1oam64KnkyNE5PKjfame6ViQ1QAgAE8eQCAACZZgIAAVtOA
-Date:   Tue, 27 Nov 2018 19:05:11 +0000
-Message-ID: <20181127190506.GB5147@rkaganip.lan>
-References: <20181126154732.23025-1-vkuznets@redhat.com>
- <20181126154732.23025-4-vkuznets@redhat.com>
- <e565638e-d6cc-bbd9-f99e-c835ef1be5b7@redhat.com>
- <20181127083706.GB16047@rkaganb.sw.ru>
- <9d0e9796-b71e-9437-8cd4-a898fd503871@redhat.com>
-In-Reply-To: <9d0e9796-b71e-9437-8cd4-a898fd503871@redhat.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Paolo_Bonzini_<pbonz?=
- =?iso-8859-2?Q?ini@redhat.com>,=09Vitaly_Kuznetsov_<vkuznets@redhat.com>,?=
- =?iso-8859-2?Q?_kvm@vger.kernel.org,=09Radim_Kr=E8m=E1=F8_<rkrcmar@redhat?=
- =?iso-8859-2?Q?.com>,=09linux-kernel@vger.kernel.org,=09"K._Y._Srinivasan?=
- =?iso-8859-2?Q?"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsoft?=
- =?iso-8859-2?Q?.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,_x86@k?=
- =?iso-8859-2?Q?ernel.org,=09"Michael_Kelley_(EOSG)"_<Michael.H.Kelley@mic?=
- =?iso-8859-2?Q?rosoft.com>?=
-x-originating-ip: [2a02:2168:904c:fe00:cfed:f2f6:11c1:3d78]
-x-clientproxiedby: HE1PR0902CA0022.eurprd09.prod.outlook.com
- (2603:10a6:3:e5::32) To VI1PR08MB3599.eurprd08.prod.outlook.com
- (2603:10a6:803:85::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB3453;20:0B9w28ynj9oBnh6XYCm6ztUKHxOFS7/YTDhfBrP7hC099UCZEaA43byY8sqGOqu61+vySYeLU8aJ1okiE4Mq969KmVdujoKwNKFYmA49jGXjLoX95RwwB19ZCiD0OiwzRW6TpxkSj4AUBPHvJUmU01n52YgqpdPQbbfoddwScm8=
-x-ms-office365-filtering-correlation-id: 7bed181c-8fe6-4f03-defe-08d6549b4170
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3453;
-x-ms-traffictypediagnostic: VI1PR08MB3453:
-x-microsoft-antispam-prvs: <VI1PR08MB34535A3E9AD1EA72CE0679F4C9D00@VI1PR08MB3453.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231443)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR08MB3453;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3453;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(136003)(346002)(376002)(366004)(189003)(199004)(51444003)(54094003)(7416002)(478600001)(97736004)(4326008)(486006)(106356001)(33656002)(105586002)(305945005)(6436002)(229853002)(7736002)(68736007)(6486002)(14454004)(6916009)(25786009)(186003)(86362001)(6116002)(1076002)(6512007)(9686003)(71190400001)(71200400001)(316002)(58126008)(93886005)(81156014)(76176011)(446003)(81166006)(8936002)(6506007)(8676002)(386003)(54906003)(2906002)(53546011)(11346002)(5660300001)(476003)(102836004)(256004)(99286004)(33896004)(52116002)(36756003)(53936002)(6246003)(46003)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB3453;H:VI1PR08MB3599.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nJarVN5m5QfRhhMoaHhx5FRhiJpEFs1G4Zm/Qk4E0IXvQmNux4a/mov/5HsoOan13ReWWkLP3nMir204DjRqCAFNBeXx7EGtj21hcx7Y9dEM8k+pQgtO8qp1UwgWLkHS7qZ0hmrRP/fG/PD9l1LOWFG188qQ6SViAq27DxepE4qg6bvJCSx0Mn5QxXqQ0daHkwbXQKWGKSJBy4Mr8+pOb2hfB/r7mVUVNA5SKfO74z7WsodyxTJn196ZQJ595EqLZt95YRvCV2MudB/ndukzGC1oRFVGjYEnc7vYBsoUjBQRMK1wsneoQLd0q1LQPOLITJNKdb98v5ZexXaR1r4tamfEZObut8UAxBqc3K/q8oQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <F038FB406149404DB80A232F56A68EDC@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1729277AbeK1GE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:04:27 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 950B0ACD7;
+        Tue, 27 Nov 2018 19:05:34 +0000 (UTC)
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        rong.a.chen@intel.com
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>, s.priebe@profihost.ag,
+        alex.williamson@redhat.com, mgorman@techsingularity.net,
+        zi.yan@cs.rutgers.edu, rientjes@google.com, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        lkp@01.org
+References: <20181127062503.GH6163@shao2-debian>
+ <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <e4994820-ad41-a510-f579-7b0fc97d8d6f@suse.cz>
+Date:   Tue, 27 Nov 2018 20:05:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bed181c-8fe6-4f03-defe-08d6549b4170
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 19:05:11.7676
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3453
+In-Reply-To: <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 02:54:21PM +0100, Paolo Bonzini wrote:
-> On 27/11/18 09:37, Roman Kagan wrote:
-> > On Mon, Nov 26, 2018 at 05:44:24PM +0100, Paolo Bonzini wrote:
-> >> On 26/11/18 16:47, Vitaly Kuznetsov wrote:
-> >>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> >>> index 5cd5647120f2..b21b5ceb8d26 100644
-> >>> --- a/arch/x86/kvm/x86.c
-> >>> +++ b/arch/x86/kvm/x86.c
-> >>> @@ -2997,6 +2997,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kv=
-m, long ext)
-> >>>  	case KVM_CAP_HYPERV_TLBFLUSH:
-> >>>  	case KVM_CAP_HYPERV_SEND_IPI:
-> >>>  	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
-> >>> +	case KVM_CAP_HYPERV_STIMER_DIRECT:
-> >>>  	case KVM_CAP_PCI_SEGMENT:
-> >>>  	case KVM_CAP_DEBUGREGS:
-> >>>  	case KVM_CAP_X86_ROBUST_SINGLESTEP:
-> >>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> >>> index 2b7a652c9fa4..b8da14cee8e5 100644
-> >>> --- a/include/uapi/linux/kvm.h
-> >>> +++ b/include/uapi/linux/kvm.h
-> >>> @@ -975,6 +975,7 @@ struct kvm_ppc_resize_hpt {
-> >>>  #define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
-> >>>  #define KVM_CAP_EXCEPTION_PAYLOAD 164
-> >>>  #define KVM_CAP_ARM_VM_IPA_SIZE 165
-> >>> +#define KVM_CAP_HYPERV_STIMER_DIRECT 166
-> >>
-> >> I wonder if all these capabilities shouldn't be replaced by a single
-> >> KVM_GET_HYPERV_SUPPORTED_CPUID ioctl, or something like that.
-> >=20
-> > Hmm, why?  Are we running short of cap numbers?
-> >=20
-> > Capabilities are a well-established and unambiguous negotiation
-> > mechanism, why invent another one?  Besides, not all features map
-> > conveniently onto cpuid bits, e.g. currently we have two versions of
-> > SynIC support, which differ in the way the userspace deals with it, but
-> > not in the cpuid bits we expose in the guest.  IMO such an ioctl would
-> > bring more complexity rather than less.
->=20
-> Yes, in that case (for bugfixes basically) you'd have to use
-> capabilities.  But if the feature is completely hidden to userspace
-> except for the CPUID bit, it seems like a ioctl would be more consistent
-> with the rest of the KVM API.
+On 11/27/18 6:08 PM, Linus Torvalds wrote:
+> On Mon, Nov 26, 2018 at 10:24 PM kernel test robot
+> <rong.a.chen@intel.com> wrote:
+>>
+>> FYI, we noticed a -61.3% regression of vm-scalability.throughput due
+>> to commit ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
+>> MADV_HUGEPAGE mappings")
+> 
+> Well, that's certainly noticeable and not good.
+> 
+> Andrea, I suspect it might be causing fights with auto numa migration..
+> 
+> Lots more system time, but also look at this:
+> 
+>>    1122389 ±  9%     +17.2%    1315380 ±  4%  proc-vmstat.numa_hit
+>>     214722 ±  5%     +21.6%     261076 ±  3%  proc-vmstat.numa_huge_pte_updates
+>>    1108142 ±  9%     +17.4%    1300857 ±  4%  proc-vmstat.numa_local
+>>     145368 ± 48%     +63.1%     237050 ± 17%  proc-vmstat.numa_miss
+>>     159615 ± 44%     +57.6%     251573 ± 16%  proc-vmstat.numa_other
+>>     185.50 ± 81%   +8278.6%      15542 ± 40%  proc-vmstat.numa_pages_migrated
+> 
+> Should the commit be reverted? Or perhaps at least modified?
 
-So there will be some features that are more equal than others?
+This part of the test's config is important:
 
-I think that it's the current scheme which is more consistent: there are
-features that are implemented in KVM, and there are caps for negotiating
-them with userspace, and then -- separately -- there's a mix of bits to
-show to the guest in response to CPUID, which only the userspace has to
-bother with.
+thp_defrag: always
 
-Thanks,
-Roman.
+While the commit targets MADV_HUGEPAGE mappings (such as Andrea's
+kvm-qemu usecase), with defrag=always, all mappings behave almost as a
+MADV_HUGEPAGE mapping. That's no longer a default for some years now and
+I think nobody recommends it. In the default configuration nothing
+changes for non-madvise mappings.
+
+Vlastimil
+
+>                      Linus
+> 
+
