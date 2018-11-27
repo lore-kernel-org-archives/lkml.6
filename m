@@ -2,91 +2,93 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6391EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C5C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2090720828
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71E2121104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:35:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kiny+nMq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2090720828
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Kwhz7LTV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E2121104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeK0L3k (ORCPT
+        id S1727809AbeK0LbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:29:40 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:51250 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbeK0L3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:29:40 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAR0TKa9101241;
-        Tue, 27 Nov 2018 00:33:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=L3qtZDcQKEJiij0iw9h/FZGfacmPzn1o6HxucdjXFew=;
- b=kiny+nMqMntic4/ICce1+OVjkt5kpWQK2SxLj2GDjQk/yjBUBS2qwD++BY0JfmUF0b9t
- YLThp2Pyd9eEZre8y9c9Gi/lMamojt3lxxbktnrY5WU6jmvY/cnWCrHthc4LUj/mkpZ/
- 0U72ZDEpyaw3xeQctPanHvd/K0Y2ORd9bo5kGWtBtLV1h4Y1sNe6Y2rm2OAoe1NaNayw
- uK/Y0Jg5QQQHvZvUXjUQVkirN7tK99oZfBuFe++EHB5BNGX4C/HOVp0bW/hnprTCCuZu
- p5NVp/fn52Kg2agCMaup5o0YwY4IHaeQTTW+CbY3t1CqSCIFKd85ehU/idc00nvXlMNS 6w== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2nxy9r0yq0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 00:33:35 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAR0XYMX010657
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 00:33:34 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAR0XXep004298;
-        Tue, 27 Nov 2018 00:33:34 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 16:33:33 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [RFC PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20181120103515.25280-4-mhocko@kernel.org>
-Date:   Mon, 26 Nov 2018 17:33:32 -0700
-Cc:     linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0ACDD94B-75AD-4DD0-B2E3-32C0EDFBAA5E@oracle.com>
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-4-mhocko@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=504
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270001
+        Tue, 27 Nov 2018 06:31:21 -0500
+Received: from m12-15.163.com ([220.181.12.15]:56401 "EHLO m12-15.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727456AbeK0LbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:31:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=pILGacqwFxE2s3edWv
+        IJ1QuH9Lszzm0YDswJvUE2GJU=; b=Kwhz7LTVZBqCUr45+aj3qq9mjc/tBjGMxG
+        moZ2GCHsAhfFrsUNuB3BhPV4/M1tGJdqpK74q0yysfOKOUvTZoc19rJCvYRrorh2
+        krpravBR604mLwQ9GKjgP8tTMdKqPH9Q8vR6XW0VJhagssYRdg5jxVg/74OmXdTj
+        8LbWMfV+I=
+Received: from bp.localdomain (unknown [106.120.213.96])
+        by smtp11 (Coremail) with SMTP id D8CowADX6DHikPxbqYR1AA--.4456S3;
+        Tue, 27 Nov 2018 08:33:40 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-xfs@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
+Subject: [PATCH V2] xfs: libxfs: move xfs_perag_put late
+Date:   Tue, 27 Nov 2018 08:33:38 +0800
+Message-Id: <1543278818-117362-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: D8CowADX6DHikPxbqYR1AA--.4456S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JFy7JF1rKw4kZF1UXF1UZFb_yoWDXrb_Ka
+        1xtFs7A34ktrW7J3W5Xws5t3WUtF4fG393uayfJFW3K34UGFn3ZwsrXrn0qFy3urWaqFZ8
+        W3yDGFW3Krya9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8RuWJUUUUU==
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZBwMclQHCrrVeAAAsI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The function xfs_alloc_get_freelist calls xfs_perag_put to drop the
+reference. However, pag->pagf_btreeblks is read and write after the 
+put operation. This patch moves the put operation late.
+
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+V2: correct the commit log
+---
+ fs/xfs/libxfs/xfs_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index e1c0c0d..4be387d 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -2435,7 +2435,6 @@ xfs_alloc_get_freelist(
+ 	be32_add_cpu(&agf->agf_flcount, -1);
+ 	xfs_trans_agflist_delta(tp, -1);
+ 	pag->pagf_flcount--;
+-	xfs_perag_put(pag);
+ 
+ 	logflags = XFS_AGF_FLFIRST | XFS_AGF_FLCOUNT;
+ 	if (btreeblk) {
+@@ -2443,6 +2442,7 @@ xfs_alloc_get_freelist(
+ 		pag->pagf_btreeblks++;
+ 		logflags |= XFS_AGF_BTREEBLKS;
+ 	}
++	xfs_perag_put(pag);
+ 
+ 	xfs_alloc_log_agf(tp, agbp, logflags);
+ 	*bnop = bno;
+-- 
+2.7.4
 
 
-This determines whether the page can theoretically be THP-mapped , but =
-is the intention to also check for proper alignment and/or preexisting =
-PAGESIZE page cache mappings for the address range?
-
-I'm having to deal with both these issues in the text page THP prototype =
-I've been working on for some time now.
-
-    Thanks,
-         William Kucharski=
