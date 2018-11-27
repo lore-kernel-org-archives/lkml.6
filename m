@@ -2,43 +2,43 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AADC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8CDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC0E20663
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC0E20663
+	by mail.kernel.org (Postfix) with ESMTP id E95F321104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:16:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95F321104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeK1GMA (ORCPT
+        id S1727619AbeK1GPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:12:00 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30885 "EHLO mga14.intel.com"
+        Wed, 28 Nov 2018 01:15:07 -0500
+Received: from mga03.intel.com ([134.134.136.65]:38765 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbeK1GMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:12:00 -0500
+        id S1727491AbeK1GPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:15:06 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:13:07 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:16:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="253430624"
+   d="scan'208";a="112741007"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 27 Nov 2018 11:13:07 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 27 Nov 2018 11:16:13 -0800
 Received: from [10.251.85.27] (abudanko-mobl.ccr.corp.intel.com [10.251.85.27])
-        by linux.intel.com (Postfix) with ESMTP id E953C580322;
-        Tue, 27 Nov 2018 11:13:02 -0800 (PST)
-Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
- perf-security.rst file
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
+        by linux.intel.com (Postfix) with ESMTP id 864BD58041B;
+        Tue, 27 Nov 2018 11:16:08 -0800 (PST)
+Subject: Re: [PATCH v4 2/2] Documentation/admin-guide: update admin-guide
+ index.rst
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jonatan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Andi Kleen <ak@linux.intel.com>,
@@ -52,16 +52,16 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         <kernel-hardening@lists.openwall.com>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com>
- <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
- <20181127111148.75746f02@lwn.net>
+ <abf0f0ec-15c5-59eb-8657-e1e0e1f396b6@linux.intel.com>
+ <CAGXu5jJWTyEzXODmeKkko5A212TAe1KSWGuONRvF7Tt+RY+5Sw@mail.gmail.com>
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <5e1e9c08-dff5-956d-4c2b-8ee090c387c3@linux.intel.com>
-Date:   Tue, 27 Nov 2018 22:13:01 +0300
+Message-ID: <2e78e2e7-539c-041f-ae0c-feb09f595e97@linux.intel.com>
+Date:   Tue, 27 Nov 2018 22:16:07 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181127111148.75746f02@lwn.net>
+In-Reply-To: <CAGXu5jJWTyEzXODmeKkko5A212TAe1KSWGuONRvF7Tt+RY+5Sw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,49 +70,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.11.2018 21:11, Jonathan Corbet wrote:
-> On Tue, 27 Nov 2018 11:15:37 +0300
-> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
-> 
->> +To perform security checks, the Linux implementation splits processes into two
->> +categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
->> +to as superuser or root), and b) unprivileged processes (whose effective UID is
->> +nonzero). Privileged processes bypass all kernel security permission checks so
->> +perf_events performance monitoring is fully available to privileged processes
->> +without access, scope and resource restrictions.
->> +
->> +Unprivileged processes are subject to a full security permission check based on
->> +the process's credentials [5]_ (usually: effective UID, effective GID, and
->> +supplementary group list).
->> +
->> +Linux divides the privileges traditionally associated with superuser into
->> +distinct units, known as capabilities [6]_ , which can be independently enabled
->> +and disabled on per-thread basis for processes and files of unprivileged users.
->> +
->> +Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
->> +privileged processes with respect to perf_events performance monitoring and
->> +bypass *scope* permissions checks in the kernel.
->> +
->> +Unprivileged processes using perf_events system call API is also subject for
->> +PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
->> +determines whether monitoring is permitted. So unprivileged processes provided
->> +with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
-> 
-> It's good to have more information here.  I could certainly quibble
-> further with things - a process with CAP_SYS_ADMIN is not "unprivileged"!
-> - but I don't want to stand in the way of this any further.  I *would*
-> still like to see an ack from the perf world, though.
+Hello Kees,
 
-Thanks for meaningful comments! Looking forward to ack from perf world.
+On 27.11.2018 20:23, Kees Cook wrote:
+> On Tue, Nov 27, 2018 at 12:16 AM, Alexey Budankov
+> <alexey.budankov@linux.intel.com> wrote:
+>>
+>> Extend index.rst index file at admin-guide root directory with
+>> the reference to perf-security.rst file being introduced.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  Documentation/admin-guide/index.rst | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> Seems like this could just be folded into patch 1? I'm not sure Jon's
+> preference here, though.
+
+Let's stick to Jon's preference in comments on v4 2/2.
+
+Thanks for review!
+
+-Alexey
 
 > 
-> With regard to Kees's comment on merging the two patches; I would probably
-> add the new document to index.rst in the same patch, but it doesn't matter
-> that much.  Not worth redoing the patch just for that.
-
-Thanks,
-Alexey
-
+> -Kees
 > 
-> jon
+>>
+>> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+>> index 965745d5fb9a..0a491676685e 100644
+>> --- a/Documentation/admin-guide/index.rst
+>> +++ b/Documentation/admin-guide/index.rst
+>> @@ -76,6 +76,7 @@ configure specific aspects of kernel behavior to your liking.
+>>     thunderbolt
+>>     LSM/index
+>>     mm/index
+>> +   perf-security
+>>
+>>  .. only::  subproject and html
+> 
+> 
 > 
