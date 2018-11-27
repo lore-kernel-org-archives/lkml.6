@@ -2,83 +2,215 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F54FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC08C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7A3208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7A3208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 26FE6208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FE6208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeK1Ao1 (ORCPT
+        id S1727568AbeK1Aok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:44:27 -0500
-Received: from mga05.intel.com ([192.55.52.43]:20267 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeK1Ao1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:44:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 05:46:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="92841171"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2018 05:46:24 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gRdh1-0001cs-LI; Tue, 27 Nov 2018 15:46:23 +0200
-Date:   Tue, 27 Nov 2018 15:46:23 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/13] i2c: acpi: Return error pointers from
- i2c_acpi_new_device()
-Message-ID: <20181127134623.GR10650@smile.fi.intel.com>
-References: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
- <20181126150858.16901-6-andriy.shevchenko@linux.intel.com>
- <20181127090432.GK2296@lahna.fi.intel.com>
- <98674437-9374-32d4-4b25-dedd0cad5bea@redhat.com>
- <20181127114953.GQ2296@lahna.fi.intel.com>
+        Tue, 27 Nov 2018 19:44:40 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37998 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726463AbeK1Aok (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:44:40 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 50ADB634C87;
+        Tue, 27 Nov 2018 15:46:39 +0200 (EET)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gRdhH-0001fw-2k; Tue, 27 Nov 2018 15:46:39 +0200
+Date:   Tue, 27 Nov 2018 15:46:38 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Wen Nuan <leo.wen@rock-chips.com>
+Cc:     mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+        rdunlap@infradead.org, jacob2.chen@rock-chips.com,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        eddie.cai@rock-chips.com
+Subject: Re: [PATCH v4 2/2] dt-bindings: Document the Rockchip RK1608 bindings
+Message-ID: <20181127134638.2cj2e3rk742ipoe5@valkosipuli.retiisi.org.uk>
+References: <1520491122-5629-1-git-send-email-leo.wen@rock-chips.com>
+ <1520491122-5629-3-git-send-email-leo.wen@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181127114953.GQ2296@lahna.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520491122-5629-3-git-send-email-leo.wen@rock-chips.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 01:49:53PM +0200, Mika Westerberg wrote:
-> On Tue, Nov 27, 2018 at 10:16:25AM +0100, Hans de Goede wrote:
-> > One problem is that i2c_new_device() currently simply returns NULL on all
-> > errors. Andy, you could take a look how much work it is to make that return
-> > an ERR_PTR too, or just check its return value and return ERR_PTR(-ENXIO) if
-> > it fails for now...
-> 
-> I would use -ENODEV here and -EINVAL in case there is no ACPI companion :)
+Hi Leo,
 
-Sounds more traditional than ENXIO.
-I would go the way Mika proposed if there is no objection.
+I found this, and thought of replying. It's an old patch. Feel free to ping
+if you don't get replies.
+
+On Thu, Mar 08, 2018 at 02:38:42PM +0800, Wen Nuan wrote:
+> From: Leo Wen <leo.wen@rock-chips.com>
+> 
+> Add DT bindings documentation for Rockchip RK1608.
+> 
+> Changes V4:
+> - Revise the comment of node.
+> - Revise the comment of 'endpoint@1'.
+> 
+> Signed-off-by: Leo Wen <leo.wen@rock-chips.com>
+> ---
+>  Documentation/devicetree/bindings/media/rk1608.txt | 95 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 96 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/rk1608.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rk1608.txt b/Documentation/devicetree/bindings/media/rk1608.txt
+> new file mode 100644
+> index 0000000..ea23d2d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rk1608.txt
+> @@ -0,0 +1,95 @@
+> +Rockchip RK1608 as a PreISP to link on Soc
+> +------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible		: "rockchip,rk1608";
+> +- reg			: SPI slave address of the rk1608;
+> +- clocks		: Must contain an entry for each entry in clock-names;
+> +- clock-names		: Must contain "mclk" for the device's master clock;
+> +- reset-gpios		: GPIO connected to reset pin;
+> +- irq-gpios		: GPIO connected to irq pin;
+> +- sleepst-gpios		: GPIO connected to sleepst pin;
+
+There are quite a few sleep-gpios in the current bindings. How about
+aligning the naming?
+
+> +- wakeup-gpios		: GPIO connected to wakeup pin;
+> +- powerdown-gpios	: GPIO connected to powerdown pin;
+> +- pinctrl-names		: Should contain only one value - "default";
+> +- pinctrl-0		: Pin control group to be used for this controller;
+> +
+> +Optional properties:
+> +
+> +- spi-max-frequency	: Maximum SPI clocking speed of the device;
+> +
+> +The device node should contain one or two port child nodes with child
+> +'endpoint' node. There are two ports then port@0 must
+> +describe the output and port@1 input channels. Please refer to the
+> +bindings defined in
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+
+I think that to be meaningful, you actually need two port nodes. Must ->
+shall.
+
+> +
+> +endpoint node
+> +-------------
+> +
+> +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
+> +	       video-interfaces.txt. If present it should be <1> - the device
+> +	       supports only one data lane without re-mapping.
+
+You still have four lanes in the example below.
+
+> +
+> +Note1: Since no data is generated in RK1608，so this is meaningful that you need
+> +a extra sensor (such as a camera) mounted on RK1608. You need to use endpoint@x
+> +to match these sensors.
+> +
+> +Note2:You must set the current value of the spi pins to be 8mA, if they are not.
+> +
+> +Example:
+> +&spi0 {
+> +	status = "okay";
+> +	spi_rk1608@00 {
+> +		compatible =  "rockchip,rk1608";
+> +		status = "okay";
+> +		reg = <0>;
+> +		spi-max-frequency = <24000000>;
+> +		link-freqs = /bits/ 64 <LINK_FREQ>;
+> +		clocks = <&cru SCLK_SPI0>, <&cru SCLK_VIP_OUT>,
+> +		<&cru DCLK_VOP0>, <&cru ACLK_VIP>, <&cru HCLK_VIP>,
+> +		<&cru PCLK_ISP_IN>, <&cru PCLK_ISP_IN>,
+> +		<&cru PCLK_ISP_IN>, <&cru SCLK_MIPIDSI_24M>,
+> +		<&cru PCLK_MIPI_CSI>;
+> +		clock-names = "mclk", "mipi_clk",  "pd_cif", "aclk_cif",
+> +			"hclk_cif", "cif0_in", "g_pclkin_cif",
+> +			"cif0_out", "clk_mipi_24m", "hclk_mipiphy";
+> +		reset-gpios = <&gpio6 0 GPIO_ACTIVE_HIGH>;
+> +		irq-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>;
+> +		sleepst-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
+> +		wakeup-gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
+> +		powerdown-gpios = <&gpio8 0 GPIO_ACTIVE_HIGH>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&rk1608_irq_gpios &rk1608_wake_gpios
+> +			     &rk1608_sleep_gpios>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			port@0 {
+
+reg missing here and the port below.
+
+> +				mipi_dphy_out0: endpoint@0 {
+
+No need for "@0" as you only have a single endpoint.
+
+> +					remote-endpoint = <&mipi_dphy_in0>;
+> +					clock-lanes = <0>;
+> +					data-lanes = <1 2 3 4>;
+> +					clock-noncontinuous;
+> +					link-frequencies =
+> +						/bits/ 64 <LINK_FREQ>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				sensor_in0: endpoint@0 {
+
+reg missing here and below.
+
+> +					remote-endpoint = <&sensor_out0>;
+> +				};
+> +				/* If you have a second sensor,
+> +				 * add the 'endpoint@1' node here.
+> +				 */
+> +				sensor_in1: endpoint@1 {
+> +					remote-endpoint = <&sensor_out1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b2a98e3..04d227b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -141,6 +141,7 @@ M:	Leo Wen <leo.wen@rock-chips.com>
+>  S:	Maintained
+>  F:	drivers/media/spi/rk1608.c
+>  F:	drivers/media/spi/rk1608.h
+> +F:	Documentation/devicetree/bindings/media/rk1608.txt
+>  
+>  3C59X NETWORK DRIVER
+>  M:	Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
 
-
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
