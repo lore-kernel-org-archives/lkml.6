@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F80C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D186BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E94208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975C82086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqtMKBtY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E94208E7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fRpjW4u6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975C82086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbeK0VyS (ORCPT
+        id S1729200AbeK0VzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:54:18 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41557 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730948AbeK0VyS (ORCPT
+        Tue, 27 Nov 2018 16:55:09 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35699 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729075AbeK0VzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:54:18 -0500
-Received: by mail-wr1-f66.google.com with SMTP id x10so22184477wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 02:56:46 -0800 (PST)
+        Tue, 27 Nov 2018 16:55:09 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 96so22212520wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 02:57:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lgN5iq/QCKYXZG2ugqx/LbDXFr7vzoH2nxJHO0iQbZ0=;
-        b=CqtMKBtY92lrMKDtVpqyH/inDmT9PkF99pfI6KeDkXwfFbgS6ZnpuXOa0t27qBWyVG
-         TXzQWwOOXVurGIRIpybAbwUwxfg4cH2GEtXqy/FRtGNiBV673BigNMI4D83+n3HucyLQ
-         UYXljPQ70dPiS+74BHXDKDaKi6pkhrSSietfA=
+        bh=L1Z7YTA6x/xzyt+ShupwiuCkWyAwa1/XgCcPq78pEww=;
+        b=fRpjW4u6KVh3CECuuQ5yBkehuBBlSwJFVyiZ685oaLUQk5SM2bSZs1ICn+KGryT0Ds
+         12rQfJSndlhEaP+dlN3nxfFrpW4ShmaZ9bSgoKCqDem2YF364L401Vy0LRU8CfmYLBwL
+         5vGfZn2yFXHb7mXZ3263tFYR2NssTt5qgp950=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lgN5iq/QCKYXZG2ugqx/LbDXFr7vzoH2nxJHO0iQbZ0=;
-        b=GFvNXmjna4S/scEAgr3O/CxQkHeiOxaBiJIijTedKDJg5TaY8EjjQ0vEqtPnvKTEOj
-         R2IHbJV6ItsXKnIKBDx3inuScctbHLqZ77aAeDP9PT9ygFRiaE9Nrc2JCl/020sSVZtz
-         gHlVYxNS//dnh3ZYJ7OUlBxoJCcgZ786OaHhV+HwwwzNZKXQwneuqIbU3eHUsFv6hjsx
-         yglLcZQiVjmR63XHA7U3mb61s64+mPgWEn200LJuYjW67+f0grK6bzkEo6w1hU9VmxXU
-         7tPdXepcim5h8skPFsc/vW3aJxy8Y9tYIZccTJGwi5w7wdwvb2OsZYdeeXA8dfGe0jAV
-         0OLw==
-X-Gm-Message-State: AA+aEWY62nRGzuX3sQPC3EAKZueVMMdjJX5NWhqv3nUN+xRCQdMGmCnL
-        ynHlnUn8Jj6Ah9jOQ0tiJYU3jA==
-X-Google-Smtp-Source: AFSGD/UYl1LAqiFF4eFBuaUUMHcn0RKAAQdBAk+By4SEp/R4YYiVQysnlg1qBl5CE8r8eXxMAyb24A==
-X-Received: by 2002:a05:6000:108d:: with SMTP id y13mr24675922wrw.135.1543316206175;
-        Tue, 27 Nov 2018 02:56:46 -0800 (PST)
+        bh=L1Z7YTA6x/xzyt+ShupwiuCkWyAwa1/XgCcPq78pEww=;
+        b=pduZ8CxpJq3obpfRlLX/5QHTCvtBYK8dAprgzJ0tbu5jVppc5xBM9P3V868Zp0GsQy
+         aQ6OtYLRKYUmbO0ep1YVjx1paTCF4/3ojdKcHa/bqexaBUBGEBB9pZI8bJGOz/o+CQY/
+         Ula1KU6nC5JeqkfKEaOjCeoE4bl6n8FAsq7x+j0htcszFcRilmO7YpcOgbOWfv3mExu/
+         tFGzuKbsRl4/R63Wr4Bdoj7SSoCA6p5Qd/jUJ5zJDFx5ivCESr4kJpX5AMIyMrJsG9hd
+         MhljK2XPDrDQ8p7r9G6fWyR405z3ZD/ilNXAKCu52CVFLVj8Fk5UDzmrZT6uosBtGxpc
+         x67Q==
+X-Gm-Message-State: AA+aEWZl3j5zc8SvDZWsonipMY0QbBuGihMVsyHhr0fMTLQoKE+1bpWp
+        cXM2/qsQkFn18byN9t+T+/D2aQ==
+X-Google-Smtp-Source: AFSGD/WIgQ74uVrPuIXGbQzDdT1rf26UD/bJLoMuzNEq8w2CUFPrb7tRy/yi+aOxNGggIiYL4f9Zow==
+X-Received: by 2002:a5d:4acb:: with SMTP id y11mr26524987wrs.281.1543316256612;
+        Tue, 27 Nov 2018 02:57:36 -0800 (PST)
 Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id y13sm2621103wrw.85.2018.11.27.02.56.44
+        by smtp.gmail.com with ESMTPSA id a17sm4900963wrs.58.2018.11.27.02.57.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 02:56:45 -0800 (PST)
-Date:   Tue, 27 Nov 2018 10:56:42 +0000
+        Tue, 27 Nov 2018 02:57:35 -0800 (PST)
+Date:   Tue, 27 Nov 2018 10:57:33 +0000
 From:   Daniel Thompson <daniel.thompson@linaro.org>
 To:     Brian Masney <masneyb@onstation.org>
 Cc:     lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org,
@@ -64,50 +64,67 @@ Cc:     lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         jonathan@marek.ca, ctatlor97@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: trivial: add ti,lm3630a binding
-Message-ID: <20181127105642.uu56phxjfl7bjl2p@holly.lan>
+Subject: Re: [PATCH 2/2] backlight: lm3630a: add backlight driver match_table
+Message-ID: <20181127105733.5t275fixa3utnkaz@holly.lan>
 References: <20181124141703.29232-1-masneyb@onstation.org>
+ <20181124141703.29232-2-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181124141703.29232-1-masneyb@onstation.org>
+In-Reply-To: <20181124141703.29232-2-masneyb@onstation.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 09:17:02AM -0500, Brian Masney wrote:
-> Add a trivial binding for the Texas Instruments LM3630A Backlight Chip.
+On Sat, Nov 24, 2018 at 09:17:03AM -0500, Brian Masney wrote:
+> From: Jonathan Marek <jonathan@marek.ca>
+> 
+> Add device tree support to the lm3630a driver.
+> 
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> [masneyb@onstation.org: checkpatch fixes; add 'a' to compatible string]
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> This is part of upstreaming various components of the LG Nexus 5
+> (hammerhead) phone.
+> 
+>  drivers/video/backlight/lm3630a_bl.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> index 2030a6b77a09..159d4013d9c2 100644
+> --- a/drivers/video/backlight/lm3630a_bl.c
+> +++ b/drivers/video/backlight/lm3630a_bl.c
+> @@ -470,11 +470,18 @@ static const struct i2c_device_id lm3630a_id[] = {
+>  	{}
+>  };
 
-It's quite unusual for a backlight device to have a trivial binding.
-
-The driver supports fairly extensive parametrization via struct
-lm3530a_platform_data. It is really the case that none of these
-properties should ever be set via DT?
+Similar to my reply to the DT bindings: I would have expected there
+to be code to handle DT properties here.
 
 
 Daniel.
 
 
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
->  Documentation/devicetree/bindings/trivial-devices.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
-> index 6ab001fa1ed4..86486368dc35 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.txt
-> +++ b/Documentation/devicetree/bindings/trivial-devices.txt
-> @@ -182,6 +182,7 @@ taos,tsl2550		Ambient Light Sensor with SMBUS/Two Wire Serial Interface
->  ti,ads7828		8-Channels, 12-bit ADC
->  ti,ads7830		8-Channels, 8-bit ADC
->  ti,amc6821		Temperature Monitoring and Fan Control
-> +ti,lm3630a		Texas Instruments LM3630A Backlight Chip
->  ti,tsc2003		I2C Touch-Screen Controller
->  ti,tmp102		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
->  ti,tmp103		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
+
+>  
+> +static const struct of_device_id lm3630a_match_table[] = {
+> +	{ .compatible = "ti,lm3630a", },
+> +	{ },
+> +};
+> +
+> +
+>  MODULE_DEVICE_TABLE(i2c, lm3630a_id);
+>  
+>  static struct i2c_driver lm3630a_i2c_driver = {
+>  	.driver = {
+>  		   .name = LM3630A_NAME,
+> +		   .of_match_table = lm3630a_match_table,
+>  		   },
+>  	.probe = lm3630a_probe,
+>  	.remove = lm3630a_remove,
 > -- 
 > 2.17.2
 > 
