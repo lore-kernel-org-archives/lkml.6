@@ -2,192 +2,165 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECE2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAADBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D04021104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76A0921104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ukloI+yI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D04021104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="Mp7E0uPc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A0921104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbeK1DCs (ORCPT
+        id S1730519AbeK1DEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:02:48 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52230 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729960AbeK1DCs (ORCPT
+        Tue, 27 Nov 2018 22:04:51 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40086 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbeK1DEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:02:48 -0500
-Received: by mail-it1-f196.google.com with SMTP id i7so35005035iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:04:25 -0800 (PST)
+        Tue, 27 Nov 2018 22:04:51 -0500
+Received: by mail-io1-f65.google.com with SMTP id n9so17377546ioh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:06:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=33GOBKEvyV4rGfBRlWYpwFsQUZViulrxDDjf9gGtxiw=;
-        b=ukloI+yIJMcyVZEoRVubH18W6bwzEBUFRAzzATYrs5hHYwgXKotyACivDOUQikDqtV
-         GdSxMe6shQzd98cd0qYGTQcG60anvLjOfwdRVyULaDpryjm1nlesPC6Q/4JOeHvSPgM3
-         8qREBKXyDOVsuM9ci0XQRmQ5BvXbO8ILkq9QRVjgDFCtCDKb4ErjxTTjtU2CObZCVBxn
-         u5vXqEooPTn0Xu8yxXeyFiYoOQDNs60NHz5lV19t9ie1VNZXTamMzETd283zwsiBfweX
-         WIvValxJoABHuikAGW2eH8yf8ZLOTNMPyzuS26IdcWOGDsg+TK9df2yDXg/TBj5TSV4u
-         yK3Q==
+        bh=1vbSG5j1FoM0i56JGB6Z6dbizmzXkxB2ylt63ftiNcM=;
+        b=Mp7E0uPcDHsNtTDV3i3uC1c2KMllKJLrm9J6Mg1JT3Dz/LEWjYaNwXmicmh2UjY8IB
+         en202y8DkWbHv/8mbMl4w9RyUsXC9Z9mLICWODbo8ojb30vX/b6cQY/H7/Q0AaqqcXsp
+         hdKzfEVEDjvx0c70GGnsgDsnnmZNXlf7jB/yEDrGp2VB9kPSC+D+Y2BF4O1OiJOPspS9
+         fq6npGNBYqWoSDC387Ywe5oFX7gx3OfqepWaBGSLjbD9Yz3f1vfzj8WnfZhxqLQZEPMP
+         nznHRq1wL5z3IaWqhH7QFLOzpGtDdIBcyl2W65fbxZMpFsBjt26PdfEkoRHto0IL029k
+         Hm2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=33GOBKEvyV4rGfBRlWYpwFsQUZViulrxDDjf9gGtxiw=;
-        b=EhwAQ4RtAa0EY3yTZ9bKQcxjY1KLnJ8X1j81H+UxJe8LARuiC6wIf2QHcc9xC0+BbJ
-         NF1LHcftkJn+s4Bsygq38GOjQgrrNA/aP1bCKfCrUwAJZLjnb2ZNq6eBv9EPu5w5a2XC
-         1EKCcRKExsq7sUFtC7M5s8xoPvD/FObe+4RKkbECMBpvRvKhe/EzWq8mIigJ+kgXqNzy
-         bc+R+nr3Sc26+5DfP7eNcK1ihXBUDDP4Ap9rkP9XkDYD/RrQMzbI7RWMB5XEl4YaLZqX
-         wc8n13jr2zif+VGdqsiwJq5+7IKVyHrsp1Cspssm/sCBkdOTj4plii3AjxdVx2oe9JyN
-         Xvdg==
-X-Gm-Message-State: AGRZ1gKucsSfa+5Bcqhab6JwngW8oq+no769RwI+ctub02GSiD9i4KZv
-        y8DHHa1panXNQCDpXlWsFNB+5yyJzQdwCL6QLgoDgA==
-X-Google-Smtp-Source: AFSGD/XS/kSgoWsACK49X5irY5p0dFNv/k9IN4hZeu0XKD0E3A0LlTEngS5zb2qpn/9R8JsVpd+5gC2kx4LiUqY2Xzc=
-X-Received: by 2002:a02:4f88:: with SMTP id r8mr29584514jad.69.1543334665077;
- Tue, 27 Nov 2018 08:04:25 -0800 (PST)
+        bh=1vbSG5j1FoM0i56JGB6Z6dbizmzXkxB2ylt63ftiNcM=;
+        b=b09Q3rOxOK29OiT+mTUOByXya5C/rew2JG5NcKfzxHr7C31K03/mi9T+Zg0scGmKUI
+         ufjpNBIcuD2sEoJutwC/ApLCxZVMv3KRQfZpxnwsqjk1BJL1we5RMxflKKIcyOEGz/n/
+         ntO1qp1ybMWUsiV8zHixf+rt3lpVP8rzeovIH4fqE69GTe4kOPuMfkj0WTCbHkmbqxyF
+         Rd5Xlu/WLHLkmS1e7YN76PvelQSw0kiOYgwrObCqjTsqBYdvqHdpO+mY8VPMELwUFS0h
+         ByEp/PuOGNehnZaUMxRrCX4y0M8wqV/GLmO+pvTp1+ZYiAgqT02JqHHksx0AuyyVBArG
+         JZjA==
+X-Gm-Message-State: AA+aEWYJTd3Z8t23X5A+3TWNRuHqctPX7G0+8R87gVWDUz++Ve8rVMPK
+        mkK5e7jn0qDi6N1S9YKl5l5g7pQ8zNYKM1HAFyT2aw==
+X-Google-Smtp-Source: AFSGD/VYe4I9WtBbKeT9YWjRDL3zdWyKLI5aWZYOu0Uv2GD9sRw3P/rfP9h+NYQP55NZDGfCIF0STIAg/g9PYr+s8Oo=
+X-Received: by 2002:a5e:d514:: with SMTP id e20mr28309947iom.291.1543334788563;
+ Tue, 27 Nov 2018 08:06:28 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:7050:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 08:04:24
- -0800 (PST)
-In-Reply-To: <20181123173739.osgvnnhmptdgtlnl@lakrids.cambridge.arm.com>
-References: <cover.1542648335.git.andreyknvl@google.com> <0288334225edc99d98d70c896494e19c3bd9361a.1542648335.git.andreyknvl@google.com>
- <20181123173739.osgvnnhmptdgtlnl@lakrids.cambridge.arm.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 27 Nov 2018 17:04:24 +0100
-Message-ID: <CAAeHK+xgmM9Fs2Yw8Cv8zGhz_hg6G31uhHabudibj7wszmCVAw@mail.gmail.com>
-Subject: Re: [PATCH v11 09/24] arm64: move untagged_addr macro from uaccess.h
- to memory.h
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
+References: <1542877322-24548-1-git-send-email-wesley.sheng@microchip.com> <1542877322-24548-3-git-send-email-wesley.sheng@microchip.com>
+In-Reply-To: <1542877322-24548-3-git-send-email-wesley.sheng@microchip.com>
+From:   Jon Mason <jdmason@kudzu.us>
+Date:   Tue, 27 Nov 2018 11:06:16 -0500
+Message-ID: <CAPoiz9xRV3ny1EQZGXc3moPHUxESTkDz5rMd8+E_Ag4sFNKQ8w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ntb_hw_switchtec: Added support of >=4G memory windows
+To:     wesley.sheng@microchip.com
+Cc:     Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org,
+        linux-ntb@googlegroups.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        wesleyshenggit@sina.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 6:37 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Mon, Nov 19, 2018 at 06:26:25PM +0100, Andrey Konovalov wrote:
->> Move the untagged_addr() macro from arch/arm64/include/asm/uaccess.h
->> to arch/arm64/include/asm/memory.h to be later reused by KASAN.
->>
->> Also make the untagged_addr() macro accept all kinds of address types
->> (void *, unsigned long, etc.). This allows not to specify type casts in
->> each place where the macro is used. This is done by using __typeof__.
->>
->> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
->> ---
->>  arch/arm64/include/asm/memory.h  | 8 ++++++++
->>  arch/arm64/include/asm/uaccess.h | 7 -------
->>  2 files changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
->> index 05fbc7ffcd31..deb95be44392 100644
->> --- a/arch/arm64/include/asm/memory.h
->> +++ b/arch/arm64/include/asm/memory.h
->> @@ -73,6 +73,14 @@
->>  #define KERNEL_START      _text
->>  #define KERNEL_END        _end
->>
->> +/*
->> + * When dealing with data aborts, watchpoints, or instruction traps we may end
->> + * up with a tagged userland pointer. Clear the tag to get a sane pointer to
->> + * pass on to access_ok(), for instance.
->> + */
->> +#define untagged_addr(addr)  \
->> +     (__typeof__(addr))sign_extend64((__u64)(addr), 55)
+On Wed, Nov 21, 2018 at 9:19 PM Wesley Sheng <wesley.sheng@microchip.com> wrote:
 >
-> Minor nits:
+> From: Paul Selles <paul.selles@microchip.com>
 >
-> * s/__u64/u64/ (or s/__u64/unsigned long/), since this isn't a UAPI
->   header.
+> Current Switchtec's BAR setup registers are limited to 32bits,
+> corresponding to the maximum MW (memory window) size is <4G.
 >
-> * Please move this down into the #ifndef __ASSEMBLY__ block, after we
->   include <linux/bitops.h>, which is necessary for sign_extend64().
+> Increase the MW sizes with the addition of the BAR Setup Extension
+> Register for the upper 32bits of a 64bits MW size. This increases the MW
+> range to between 4K and 2^63.
 >
-> With those fixed up, this patch looks sound to me:
+> Reported-by: Boris Glimcher <boris.glimcher@emc.com>
+> Signed-off-by: Paul Selles <paul.selles@microchip.com>
+> Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+> ---
+>  drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 9 +++++++--
+>  include/linux/switchtec.h              | 6 +++++-
+>  2 files changed, 12 insertions(+), 3 deletions(-)
 >
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+> index 9916bc5..32850fb 100644
+> --- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+> +++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+> @@ -264,6 +264,7 @@ static void switchtec_ntb_mw_clr_direct(struct switchtec_ntb *sndev, int idx)
+>         ctl_val &= ~NTB_CTRL_BAR_DIR_WIN_EN;
+>         iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+>         iowrite32(0, &ctl->bar_entry[bar].win_size);
+> +       iowrite32(0, &ctl->bar_ext_entry[bar].win_size);
+>         iowrite64(sndev->self_partition, &ctl->bar_entry[bar].xlate_addr);
+>  }
 >
-> Thanks,
-> Mark.
+> @@ -286,7 +287,9 @@ static void switchtec_ntb_mw_set_direct(struct switchtec_ntb *sndev, int idx,
+>         ctl_val |= NTB_CTRL_BAR_DIR_WIN_EN;
+>
+>         iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+> -       iowrite32(xlate_pos | size, &ctl->bar_entry[bar].win_size);
+> +       iowrite32(xlate_pos | (size & 0xFFFFF000),
+> +                 &ctl->bar_entry[bar].win_size);
+> +       iowrite32(size >> 32, &ctl->bar_ext_entry[bar].win_size);
 
-Will do in v12, thanks!
+Thanks for the patches.  Overall the look good.  Per the kbuild email,
+size_t is 32bits on 32bit arch.  So, this is going to have compile
+warnings on those.  Please address this and resubmit.
 
+Also, patches 1 and 3 are bug fixes.  Please do the following, reorder
+the patches to make the bug fixes first and add a "Fixes" line to the
+commit messages (see
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes).
+This will allow me to split up the series and get the bug fixes into
+v4.20 (and the stable trees).
+
+Thanks,
+Jon
+
+>         iowrite64(sndev->self_partition | addr,
+>                   &ctl->bar_entry[bar].xlate_addr);
+>  }
+> @@ -1053,7 +1056,9 @@ static int crosslink_setup_mws(struct switchtec_ntb *sndev, int ntb_lut_idx,
+>                 ctl_val |= NTB_CTRL_BAR_DIR_WIN_EN;
 >
->> +
->>  /*
->>   * Generic and tag-based KASAN require 1/8th and 1/16th of the kernel virtual
->>   * address space for the shadow region respectively. They can bloat the stack
->> diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
->> index 07c34087bd5e..281a1e47263d 100644
->> --- a/arch/arm64/include/asm/uaccess.h
->> +++ b/arch/arm64/include/asm/uaccess.h
->> @@ -96,13 +96,6 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
->>       return ret;
->>  }
->>
->> -/*
->> - * When dealing with data aborts, watchpoints, or instruction traps we may end
->> - * up with a tagged userland pointer. Clear the tag to get a sane pointer to
->> - * pass on to access_ok(), for instance.
->> - */
->> -#define untagged_addr(addr)          sign_extend64(addr, 55)
->> -
->>  #define access_ok(type, addr, size)  __range_ok(addr, size)
->>  #define user_addr_max                        get_fs
->>
->> --
->> 2.19.1.1215.g8438c0b245-goog
->>
->
+>                 iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+> -               iowrite32(xlate_pos | size, &ctl->bar_entry[bar].win_size);
+> +               iowrite32(xlate_pos | (size & 0xFFFFF000),
+> +                         &ctl->bar_entry[bar].win_size);
+> +               iowrite32(size >> 32, &ctl->bar_ext_entry[bar].win_size);
+>                 iowrite64(sndev->peer_partition | addr,
+>                           &ctl->bar_entry[bar].xlate_addr);
+>         }
+> diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
+> index eee0412..1e6e333 100644
+> --- a/include/linux/switchtec.h
+> +++ b/include/linux/switchtec.h
+> @@ -248,7 +248,11 @@ struct ntb_ctrl_regs {
+>                 u32 win_size;
+>                 u64 xlate_addr;
+>         } bar_entry[6];
+> -       u32 reserved2[216];
+> +       struct {
+> +               u32 win_size;
+> +               u32 reserved[3];
+> +       } bar_ext_entry[6];
+> +       u32 reserved2[192];
+>         u32 req_id_table[256];
+>         u32 reserved3[512];
+>         u64 lut_entry[512];
 > --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20181123173739.osgvnnhmptdgtlnl%40lakrids.cambridge.arm.com.
-> For more options, visit https://groups.google.com/d/optout.
+> 2.7.4
+>
