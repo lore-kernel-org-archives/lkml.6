@@ -2,137 +2,115 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CE0C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F7EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5824221104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUQmMh/g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5824221104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A90722133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90722133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbeK1CcP (ORCPT
+        id S1729831AbeK1Ccf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:32:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56352 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 21:32:35 -0500
+Received: from mga03.intel.com ([134.134.136.65]:12009 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729309AbeK1CcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:32:15 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13D0020817;
-        Tue, 27 Nov 2018 15:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543332838;
-        bh=BYOy+4knfpODYIdWjSTvvSHRhY0PnDameul8lIism8E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pUQmMh/g1400+U65+Wm0vcFYSlV0UXbGwtZIq+h7AjBWOUoFct2AKErS8CfEJ1NoU
-         L1y88QbAogInSCi+h6uLZPdhiJzrZbaY9OnWIsLE02tv+D7DXezaS4lVGOyTdeAsUM
-         ncm0tNwWrYbUnDkSNTPHNmjDYKYtTH2TaH+4TLJE=
-Date:   Tue, 27 Nov 2018 09:33:56 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Bharat Bhushan <bharat.bhushan@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        David Daney <david.daney@cavium.com>,
-        Jan Glauber <jglauber@cavium.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Maik Broemme <mbroemme@libmpq.org>,
-        Chris Blake <chrisrblake93@gmail.com>
-Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
-Message-ID: <20181127153356.GA112381@google.com>
-References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
+        id S1726406AbeK1Cce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:32:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:34:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
+   d="scan'208";a="101271946"
+Received: from jpmellod-mobl.amr.corp.intel.com (HELO [10.254.99.42]) ([10.254.99.42])
+  by FMSMGA003.fm.intel.com with ESMTP; 27 Nov 2018 07:34:17 -0800
+Subject: Re: [PATCH 1/2 RESEND v7] resource: add the new I/O resource
+ descriptor 'IORES_DESC_RESERVED'
+To:     lijiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, x86@kernel.org,
+        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
+        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
+        bhe@redhat.com
+References: <20181124051223.19994-1-lijiang@redhat.com>
+ <20181124051223.19994-2-lijiang@redhat.com>
+ <ae405fe9-94fd-3fb7-decd-c7821cf95b7d@intel.com>
+ <460c5552-a48e-3523-275a-7f94d0f08f9b@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <703ce20d-be09-9b8d-d457-5b002a50dff7@intel.com>
+Date:   Tue, 27 Nov 2018 07:34:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <460c5552-a48e-3523-275a-7f94d0f08f9b@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc David, Jan, Alex, Maik, Chris]
+On 11/27/18 2:04 AM, lijiang wrote:
+> What happens if we don't modify this functions
+> __ioremap_check_desc_other()? -When SEV is active, it might map these
+> reserved regions with the encryption mask. That is incorrect. 
 
-On Tue, Nov 27, 2018 at 08:46:33AM +0000, Bharat Bhushan wrote:
-> NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-> bus reset with e1000e. Link state of device does not comes UP and so
-> config space never accessible again.
+This is missing another sentence or two to "connect the dots".
 
-Previous similar commits:
-
-  822155100e58 ("PCI: Mark Cavium CN8xxx to avoid bus reset")
-  8e2e03179923 ("PCI: Mark Atheros AR9580 to avoid bus reset")
-  9ac0108c2bac ("PCI: Mark Atheros AR9485 and QCA9882 to avoid bus reset")
-  c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
-
-1) Please make your subject match (remove the spurious "bus" at the
-end)
-
-2) This should probably be marked for stable (v3.14 and later, since
-the quirk itself appeared in v3.19 and marked for v3.14 and later
-stable kernels).  Maybe even mark it as "Fixes: c3e59ee4e766..." to
-connect it.
-
-3) The 1957:80c0 PCI ID doesn't appear in https://pci-ids.ucw.cz/; can
-you add it?
-
-4) Is there a hardware erratum for this?  If so, please include the
-URL here.
-
-5) Can you reproduce the problem using the same endpoint (e1000e) on a
-different system with a different bridge?
-
-6) Have you looked at this with a PCIe analyzer?  It would be very
-interesting to compare the boot-time or system reboot path with the
-individual bus reset path you're fixing.
-
-Since there are several similar reports and they sometimes involve the
-same devices (both your patch and 822155100e58 mention e1000e), I'm a
-little suspicious that we're doing something wrong in the bus reset
-path.
-
-I think bus reset uses Secondary Bus Reset in the Bridge Control
-register.  That's a generic mechanism that I would expect to be pretty
-well-tested.  I suspect the BIOS probably uses it in the reboot path,
-and the device probably works after that.
-
-So I wonder if the Linux delay isn't quite long enough, or our first
-access to the device isn't quite right, e.g., maybe there's some issue
-with the bus/device number capture (PCIe r4.0, sec 2.2.6.2).
-
-> Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
-> ---
->  drivers/pci/quirks.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 4700d24e5d55..b9ae4e9f101a 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -3391,6 +3391,13 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
->   */
->  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CAVIUM, 0xa100, quirk_no_bus_reset);
->  
-> +/*
-> + * NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
-> + * bus reset. Link state of device does not comes UP and so config space
-> + * never accessible again.
-> + */
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x80c0, quirk_no_bus_reset);
-> +
->  static void quirk_no_pm_reset(struct pci_dev *dev)
->  {
->  	/*
-> -- 
-> 2.19.1
-> 
+SEV uses data that comes from the e820 table to tell whether or not the
+memory should be encrypted?  If we don't reflect these reserved areas in
+the e820 table, the SEV code will set up encrypted mappings for device
+memory, for instance?
