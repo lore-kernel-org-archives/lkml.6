@@ -2,70 +2,72 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48062C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37DEC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 105522082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD92620989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I0rKrgcz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105522082F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NiQKl+6s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD92620989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbeK0XAF (ORCPT
+        id S1730543AbeK0XAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:00:05 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43767 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeK0XAF (ORCPT
+        Tue, 27 Nov 2018 18:00:16 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32934 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730486AbeK0XAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:00:05 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so8243590pfk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 04:02:24 -0800 (PST)
+        Tue, 27 Nov 2018 18:00:16 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c123so7554856pfb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 04:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tktT1SUa7RmLbPg6StnIGtD+g4ZsELo16pz2ELFtQF0=;
-        b=I0rKrgcz5kwOgeB/yfikT0b/AFxAkfReZQRBE8Wp0ruHHc9O2eViWn6++ZTyLUjWT/
-         9027ErJCrJY72Xm0T+6hyxbOm55ehAoe1rR3YfyPUk1PoovFXrS5ja49aO/RYShHT95i
-         A9gi1CpYZvByn01UU0FCbiRi0gIsmNUNugqfQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=48JQhctEJOoIDWxAa76+1Gc2OHJ05xQ1fJBQHON4z9Q=;
+        b=NiQKl+6swRF51v8ax65q0KNW369dXl08FhBgedrF+JwaJ8y4wjEulJkfmQJGiPaB+g
+         RC/u2aBKEyq6hV7jwDNmQZ+Rj5k6xq/BBzX4puGi2Zq8IsdIMM78nfOFvzb1WnCSQVCC
+         gUtNHwocybIfmVRZqSWs+NVuFs62MTKk721bo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tktT1SUa7RmLbPg6StnIGtD+g4ZsELo16pz2ELFtQF0=;
-        b=KEt0MOXRjGA3GS6Mjw2CdkObOeF8+8XdiObdzm8J9EYwa7rT+puSGZ6rR6BrrPjINC
-         aBLEh7BGQ8I5kocWtVchE2yrUkXKfcFw3TbLV368LAiIbnPHiAPVvXhQZpt8I2hvQAmF
-         voactZqvdcj+5O3jbuKYI4V8eXCrHZtVpyPfgUhzzl7d0w3UFQc1ZqI5RXUGtx+BDVd9
-         2/vLGWFUf/Oy9Ba0fh0zFZbjRmSZTGt2bIuIRoJVdFOysA+o6vsSqtOqIOWEZuvLPfjI
-         mLauQXV7Ulf6HI2L/FdNV7cmj2POCGOdUhGLewF4zoVoDb7JO8CWDm/pySKihi0ZOoPz
-         jyGA==
-X-Gm-Message-State: AGRZ1gKBVflCtkzyA+HsFuFmGVZGwzfw9VGYzmG/SrrTkDzshIv7XrLk
-        gle+cQR3ZcAIIVKXXgs20U9rlGYfSX8=
-X-Google-Smtp-Source: AJdET5fpl4p0vuGCUfnQ28sB3TLMI0pjujMx58duyHw22SzSIjIwS5MyNnXA90BXjGxdhvPsTsz9Hw==
-X-Received: by 2002:a62:cd44:: with SMTP id o65mr32312341pfg.222.1543320143978;
-        Tue, 27 Nov 2018 04:02:23 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=48JQhctEJOoIDWxAa76+1Gc2OHJ05xQ1fJBQHON4z9Q=;
+        b=Zrc6RtKfYJYaKBDAS0ttKFPXOTuqjRc3lQPhMuUaAFYKhSDpt8W0eTLNhCR76f0eQK
+         Y6XtW1u3oYGKJNU/Wh3xQ7qi6kewrOe8+B/4H9cyArwzT3K0C4Tr4/V5bosOvD9YYFVz
+         v1a9FnzRSPpULD44p841Gi3EatjLFUfBTfqxVKpJkdIZ/b6iimOROuEfXDNGM47eizr8
+         sAD9BQ+T4N9HJfsT/y4rYiFZrsJl9f3HY32hCH0fekLXh6sPwTMhoG0Cy10cO+nu7xtI
+         Cfi5ioyCZHCV+BMFPlQ7lM88c2G5vak7/Vr+BSSj0e9hUm3TknDLZe7mKRfTH+DUAoju
+         T5Tg==
+X-Gm-Message-State: AGRZ1gKUe6beq8xlFLc2IcTCB8yMjMTIDQqWCf/vyQkEC9/9KZA/1Yqz
+        n9c/bMgxll12GBDLx6MUVFh0I+js7po=
+X-Google-Smtp-Source: AJdET5dupqCEC+w7EsbNX+X6sXfpAqLEErWP4qzuG6gzZlCw1uJEHTSE6Q8Nw0b99i55WZY0Zrue5g==
+X-Received: by 2002:a62:32c4:: with SMTP id y187-v6mr32619461pfy.4.1543320154963;
+        Tue, 27 Nov 2018 04:02:34 -0800 (PST)
 Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id m85sm8312778pfj.171.2018.11.27.04.02.21
+        by smtp.gmail.com with ESMTPSA id m85sm8312778pfj.171.2018.11.27.04.02.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 04:02:22 -0800 (PST)
+        Tue, 27 Nov 2018 04:02:34 -0800 (PST)
 From:   Cheng-Yi Chiang <cychiang@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
         dgreid@chromium.org, tzungbi@chromium.org,
         Rohit kumar <rohitkr@codeaurora.org>,
         Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH 1/3] mfd: cros_ec: Add commands to control codec
-Date:   Tue, 27 Nov 2018 20:00:39 +0800
-Message-Id: <20181127120041.90759-1-cychiang@chromium.org>
+Subject: [PATCH 2/3] ASoC: Documentation: Add google,cros-ec-codec
+Date:   Tue, 27 Nov 2018 20:00:40 +0800
+Message-Id: <20181127120041.90759-2-cychiang@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+In-Reply-To: <20181127120041.90759-1-cychiang@chromium.org>
+References: <20181127120041.90759-1-cychiang@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,118 +75,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add EC host commands to control codec on EC.
+Add documentation for Chrome EC codec driver.
 
 Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
 ---
- include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ .../bindings/sound/google,cros-ec-codec.txt   | 24 +++++++++++++++++++
+ MAINTAINERS                                   |  5 ++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 07fe4ea0361d3..a3ac792f4915b 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -4077,6 +4077,100 @@ struct __ec_align1 ec_response_i2c_passthru_protect {
- 	uint8_t status;		/* Status flags (0: unlocked, 1: locked) */
- };
- 
-+/*****************************************************************************/
-+/* Commands for I2S recording on audio codec. */
+diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+new file mode 100644
+index 0000000000000..57718382b3a36
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+@@ -0,0 +1,24 @@
++* Audio codec controlled by ChromeOS EC
 +
-+#define EC_CMD_CODEC_I2S 0x00BC
++Google's ChromeOS EC codec is a digital mic codec provided by the
++Embedded Controller (EC) and is controlled via a host-command interface.
 +
-+enum ec_codec_i2s_subcmd {
-+	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
-+	EC_CODEC_SET_GAIN = 0x1,
-+	EC_CODEC_GET_GAIN = 0x2,
-+	EC_CODEC_I2S_ENABLE = 0x3,
-+	EC_CODEC_I2S_SET_CONFIG = 0x4,
-+	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
-+	EC_CODEC_I2S_SET_BCLK = 0x6,
-+};
++An EC codec node should only be found as a sub-node of the EC node (see
++Documentation/devicetree/bindings/mfd/cros-ec.txt).
 +
-+enum ec_sample_depth_value {
-+	EC_CODEC_SAMPLE_DEPTH_16 = 0,
-+	EC_CODEC_SAMPLE_DEPTH_24 = 1,
-+};
++Required properties:
++- compatible: Must contain "google,cros-ec-codec"
++- #sound-dai-cells: Should be 1. The cell specifies number of DAIs.
 +
-+enum ec_i2s_config {
-+	EC_DAI_FMT_I2S = 0,
-+	EC_DAI_FMT_RIGHT_J = 1,
-+	EC_DAI_FMT_LEFT_J = 2,
-+	EC_DAI_FMT_PCM_A = 3,
-+	EC_DAI_FMT_PCM_B = 4,
-+	EC_DAI_FMT_PCM_TDM = 5,
-+};
++Example:
 +
-+struct ec_param_codec_i2s {
-+	/*
-+	 * enum ec_codec_i2s_subcmd
-+	 */
-+	uint8_t cmd;
-+	union {
-+		/*
-+		 * EC_CODEC_SET_SAMPLE_DEPTH
-+		 * Value should be one of ec_sample_depth_value.
-+		 */
-+		uint8_t depth;
++cros-ec@0 {
++	compatible = "google,cros-ec-spi";
 +
-+		/*
-+		 * EC_CODEC_SET_GAIN
-+		 * Value should be 0~43 for both channels.
-+		 */
-+		struct ec_param_codec_i2s_set_gain {
-+			uint8_t left;
-+			uint8_t right;
-+		} __packed gain;
++	...
 +
-+		/*
-+		 * EC_CODEC_I2S_ENABLE
-+		 * 1 to enable, 0 to disable.
-+		 */
-+		uint8_t i2s_enable;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_COFNIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		uint8_t i2s_config;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_TDM_CONFIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		struct ec_param_codec_i2s_tdm {
-+			/*
-+			 * 0 to 496
-+			 */
-+			int16_t ch0_delay;
-+			/*
-+			 * -1 to 496
-+			 */
-+			int16_t ch1_delay;
-+			uint8_t adjacent_to_ch0;
-+			uint8_t adjacent_to_ch1;
-+		} __packed tdm_param;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_BCLK
-+		 */
-+		uint32_t bclk;
++	cros_ec_codec: ec-codec {
++		compatible = "google,cros-ec-codec";
++		#sound-dai-cells = <1>;
 +	};
-+} __packed;
-+
-+/*
-+ * For subcommand EC_CODEC_GET_GAIN.
-+ */
-+struct ec_response_codec_gain {
-+	uint8_t left;
-+	uint8_t right;
-+} __packed;
-+
- /*****************************************************************************/
- /* System commands */
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 91b4218195aac..5cf8ab296cc61 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3552,6 +3552,11 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+ F:	drivers/platform/chrome/
  
++CHROME EC CODEC DRIVER
++M:	Cheng-Yi Chiang <cychiang@chromium.org>
++S:	Maintained
++F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
++
+ CIRRUS LOGIC AUDIO CODEC DRIVERS
+ M:	Brian Austin <brian.austin@cirrus.com>
+ M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
