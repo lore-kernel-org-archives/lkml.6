@@ -2,351 +2,598 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DA0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A70C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849E420660
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533BA208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:55:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="YecWw6vn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849E420660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gevtSiaF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533BA208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731601AbeK1DwE (ORCPT
+        id S1731429AbeK1DyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:52:04 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41231 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731584AbeK1DwD (ORCPT
+        Tue, 27 Nov 2018 22:54:22 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51743 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729507AbeK1DyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:52:03 -0500
-Received: by mail-yw1-f65.google.com with SMTP id f65so9411092ywc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:53:32 -0800 (PST)
+        Tue, 27 Nov 2018 22:54:21 -0500
+Received: by mail-wm1-f66.google.com with SMTP id j207so15503592wmj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:55:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DOFhC4xf3dILnVmSMTvFksDMfcI8cd5oCAq/Eq05nFI=;
-        b=YecWw6vn6Ajh8o4B5VNfhEgUnqSTAHFG+Que8uj6MvQHogsBqANxjHCKq+46kNWHln
-         Su/AU13hjOXPMPu2tfTQcYwwOI7MfFWG2nd6TLrMIzXaXLKk5RPJQBJQnGA9RdmA3HQK
-         B2QXzlvELBywWttLJ+oKu3a1SjKDj/fqU0rA61tT1vxDBOFvv8ys21AUCTkYa8j0UPAz
-         2Rc9YY7rg2J6abZXB9Q2UfgjpCMdcqiORkRAkjZ2YOdbEasP1iGFt39weFH+jpw8Z/+u
-         MTz1Sa2TvdUnhuhUdnyPD78bPxm77rucuvdF7MJQXKtmZSXeewrXU4TNLDYxSUkqM3P/
-         paLA==
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QU/IMdll7/RvCs2/bt2szIgzeMmtcDqSQCABoI5tL5s=;
+        b=gevtSiaF7KBUsmMNbC6dOuhu5G6cn/GW9c2OKqpOlQF8ti2iu85crBJANbVjxzFswT
+         9t8IeZw+QEXdK/8V7WSvb5TvdnIVlWCkQetu2uCDzsXYz5CRfemvZWDktNy1nXFevHMa
+         sorWxt2UcWN/0DhKbLbvi4HGKh6QuTuuzNsIpibmuqi49zxQHOz83tGOK/BQqjp4xb0h
+         HxaLm86Ea79mbScYuGDRp7Qqhr01e7Y6pTjEGIu8bvR25GY1R9N1Am3D3PX9Xg95o5pB
+         bgVcmou/OgWSAdIR1zKWeP59Xd6gqQHEKdCCmQZH1T6E0GkWoJmAIUHUlAOy4RbQ8jo5
+         XIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DOFhC4xf3dILnVmSMTvFksDMfcI8cd5oCAq/Eq05nFI=;
-        b=ohnUhMDOvgvjcp2X+Y+f8NIhu6k8CWyi5YRIdvfHQ3qwJxsYKAosSuSs3z+6Qgq5R/
-         3z8G7CcK81tsQGEe15IR4KP4CBVZOPBtafiQ3+CZggr37tFuHDIRYPdADaxyfv3xKzkz
-         VyLSXHBdOjMgKfaLHyRJPygVC6MTH2LBGAI6zr71dh1MCvrv/EZo7YTSw6EiwYZCtc7G
-         5qAAt6xXceESd665G9WVus/GpplRV3PWNYu/iR2VV2kEyNrOj0gtcktx5wiTQKA/ED58
-         q1NUcaiXtaXvLePtbLwxg+3qzvvxHCm8HYN7sc2ZEq6dNECVlHPvmvpF1nMnahKRSv6v
-         +N8Q==
-X-Gm-Message-State: AA+aEWbpzS3yG0hCOyrkGinEo7bv8xCFUsrh5VnUCNZg0aCUxcNYei5r
-        pZNKHmC/zQeMuETXf35eifAKwA==
-X-Google-Smtp-Source: AFSGD/UgEalWMP8NXnN4DL8Sal9q697yEFirakIbvkf2cypW/823CXUs5b1jiN3Zrc6TVgvzndxNRQ==
-X-Received: by 2002:a81:7a0e:: with SMTP id v14mr14883516ywc.115.1543337611759;
-        Tue, 27 Nov 2018 08:53:31 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::5:9b77])
-        by smtp.gmail.com with ESMTPSA id w1sm1608087ywd.49.2018.11.27.08.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 08:53:30 -0800 (PST)
-Date:   Tue, 27 Nov 2018 11:53:29 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: Hackbench pipes regression bisected to PSI
-Message-ID: <20181127165329.GA29728@cmpxchg.org>
-References: <20181126133420.GN23260@techsingularity.net>
- <20181126160724.GA21268@cmpxchg.org>
- <20181126165446.GQ23260@techsingularity.net>
- <20181126173218.GA22640@cmpxchg.org>
- <20181126232926.GS23260@techsingularity.net>
- <20181127164617.GA29488@cmpxchg.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QU/IMdll7/RvCs2/bt2szIgzeMmtcDqSQCABoI5tL5s=;
+        b=KirXzN+BpU3NlCzYDDAT7dBPncpBBbjmr3BeYKyi47lLWgYktQT5t+ALqJwSEiMH1z
+         qqopNqVPxoHGA4nEPYky2StJ6sDxFFRDztc/aad9roQSB4aMTOIuLdbnNK4pIHobXAin
+         Ix/sVzFSAsk+I4CdN6H9bsHQLunHFNMk1/ZGyiBp2/SpFKq5Gk06CRx1L+jz/G9JTN/+
+         hruXDyYla2XvJEAXTKLbWGujMJY0Q5rOfilHoV8yxlSch2Uvk6lpmAdHxZvakcD2fp8m
+         Lax4hDw2CGkRvwQikKRnjtLGiyPq47otRLsweNyUU+4vjfPZ5aeZVLXeZgno6cQTSqIr
+         wpug==
+X-Gm-Message-State: AGRZ1gJUL9SHpKw1kdZKivSNeb3eVQ0KBA2sdhXUtJy21iYmCEA6rz4V
+        5f7wZNUHEoV9YUlihviPpV99bg==
+X-Google-Smtp-Source: AFSGD/UuQnNXacCW3ga85auobJ4mZjyFJcYCHyGc1Ca3oiztGK0FEOhg3BYY/u65KK2j1U6YEOVF7Q==
+X-Received: by 2002:a1c:1849:: with SMTP id 70-v6mr27940854wmy.110.1543337747789;
+        Tue, 27 Nov 2018 08:55:47 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
+        by smtp.gmail.com with ESMTPSA id k73sm6383099wmd.36.2018.11.27.08.55.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 08:55:46 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v12 00/25] kasan: add software tag-based mode for arm64
+Date:   Tue, 27 Nov 2018 17:55:18 +0100
+Message-Id: <cover.1543337629.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127164617.GA29488@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 11:46:17AM -0500, Johannes Weiner wrote:
-> From 347b69a52d1ec7e71df1108cbc5703d6dd0616ba Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Mon, 26 Nov 2018 09:39:23 -0500
-> Subject: [PATCH] psi: make disabling/enabling easier for vendor kernels
-> 
-> Mel Gorman reports a hackbench regression with psi that would prohibit
-> shipping the suse kernel with it default-enabled, but he'd still like
-> users to be able to opt in at little to no cost to others.
-> 
-> With the current combination of CONFIG_PSI and the psi_disabled bool
-> set from the commandline, this is a challenge. Do the following things
-> to make it easier:
-> 
-> 1. Add a config option CONFIG_PSI_DEFAULT_ENABLED that allows distros
+This patchset adds a new software tag-based mode to KASAN [1].
+(Initially this mode was called KHWASAN, but it got renamed,
+ see the naming rationale at the end of this section).
 
-This should be:          CONFIG_PSI_DEFAULT_DISABLED
+The plan is to implement HWASan [2] for the kernel with the incentive,
+that it's going to have comparable to KASAN performance, but in the same
+time consume much less memory, trading that off for somewhat imprecise
+bug detection and being supported only for arm64.
 
-Refreshed the patch.
+The underlying ideas of the approach used by software tag-based KASAN are:
 
----
+1. By using the Top Byte Ignore (TBI) arm64 CPU feature, we can store
+   pointer tags in the top byte of each kernel pointer.
 
-From dc1511101b4c6aa3f7cfb91d8634a682fe7c147e Mon Sep 17 00:00:00 2001
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Mon, 26 Nov 2018 09:39:23 -0500
-Subject: [PATCH] psi: make disabling/enabling easier for vendor kernels
+2. Using shadow memory, we can store memory tags for each chunk of kernel
+   memory.
 
-Mel Gorman reports a hackbench regression with psi that would prohibit
-shipping the suse kernel with it default-enabled, but he'd still like
-users to be able to opt in at little to no cost to others.
+3. On each memory allocation, we can generate a random tag, embed it into
+   the returned pointer and set the memory tags that correspond to this
+   chunk of memory to the same value.
 
-With the current combination of CONFIG_PSI and the psi_disabled bool
-set from the commandline, this is a challenge. Do the following things
-to make it easier:
+4. By using compiler instrumentation, before each memory access we can add
+   a check that the pointer tag matches the tag of the memory that is being
+   accessed.
 
-1. Add a config option CONFIG_PSI_DEFAULT_DISABLED that allows distros
-   to enable CONFIG_PSI in their kernel but leave the feature disabled
-   unless a user requests it at boot-time.
+5. On a tag mismatch we report an error.
 
-   To avoid double negatives, rename psi_disabled= to psi=.
+With this patchset the existing KASAN mode gets renamed to generic KASAN,
+with the word "generic" meaning that the implementation can be supported
+by any architecture as it is purely software.
 
-2. Make psi_disabled a static branch to eliminate any branch costs
-   when the feature is disabled.
+The new mode this patchset adds is called software tag-based KASAN. The
+word "tag-based" refers to the fact that this mode uses tags embedded into
+the top byte of kernel pointers and the TBI arm64 CPU feature that allows
+to dereference such pointers. The word "software" here means that shadow
+memory manipulation and tag checking on pointer dereference is done in
+software. As it is the only tag-based implementation right now, "software
+tag-based" KASAN is sometimes referred to as simply "tag-based" in this
+patchset.
 
-In terms of numbers before and after this patch, Mel says:
+A potential expansion of this mode is a hardware tag-based mode, which would
+use hardware memory tagging support (announced by Arm [3]) instead of
+compiler instrumentation and manual shadow memory manipulation.
 
-: The following is a comparision using CONFIG_PSI=n as a baseline against
-: your patch and a vanilla kernel
-:
-:                          4.20.0-rc4             4.20.0-rc4             4.20.0-rc4
-:                 kconfigdisable-v1r1                vanilla        psidisable-v1r1
-: Amean     1       1.3100 (   0.00%)      1.3923 (  -6.28%)      1.3427 (  -2.49%)
-: Amean     3       3.8860 (   0.00%)      4.1230 *  -6.10%*      3.8860 (  -0.00%)
-: Amean     5       6.8847 (   0.00%)      8.0390 * -16.77%*      6.7727 (   1.63%)
-: Amean     7       9.9310 (   0.00%)     10.8367 *  -9.12%*      9.9910 (  -0.60%)
-: Amean     12     16.6577 (   0.00%)     18.2363 *  -9.48%*     17.1083 (  -2.71%)
-: Amean     18     26.5133 (   0.00%)     27.8833 *  -5.17%*     25.7663 (   2.82%)
-: Amean     24     34.3003 (   0.00%)     34.6830 (  -1.12%)     32.0450 (   6.58%)
-: Amean     30     40.0063 (   0.00%)     40.5800 (  -1.43%)     41.5087 (  -3.76%)
-: Amean     32     40.1407 (   0.00%)     41.2273 (  -2.71%)     39.9417 (   0.50%)
-:
-: It's showing that the vanilla kernel takes a hit (as the bisection
-: indicated it would) and that disabling PSI by default is reasonably
-: close in terms of performance for this particular workload on this
-: particular machine so;
+Same as generic KASAN, software tag-based KASAN is strictly a debugging
+feature.
 
-Tested-by: Mel Gorman <mgorman@techsingularity.net>
-Reported-by: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- .../admin-guide/kernel-parameters.txt         |  4 +++
- include/linux/psi.h                           |  3 +-
- init/Kconfig                                  |  9 ++++++
- kernel/sched/psi.c                            | 30 +++++++++++++------
- kernel/sched/stats.h                          |  8 ++---
- 5 files changed, 40 insertions(+), 14 deletions(-)
+[1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 19f4423e70d9..8760a343c6d8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3504,6 +3504,10 @@
- 			before loading.
- 			See Documentation/blockdev/ramdisk.txt.
- 
-+	psi=		[KNL] Enable or disable pressure stall information
-+			tracking.
-+			Format: <bool>
-+
- 	psmouse.proto=	[HW,MOUSE] Highest PS2 mouse protocol extension to
- 			probe for; one of (bare|imps|exps|lifebook|any).
- 	psmouse.rate=	[HW,MOUSE] Set desired mouse report rate, in reports
-diff --git a/include/linux/psi.h b/include/linux/psi.h
-index 8e0725aac0aa..7006008d5b72 100644
---- a/include/linux/psi.h
-+++ b/include/linux/psi.h
-@@ -1,6 +1,7 @@
- #ifndef _LINUX_PSI_H
- #define _LINUX_PSI_H
- 
-+#include <linux/jump_label.h>
- #include <linux/psi_types.h>
- #include <linux/sched.h>
- 
-@@ -9,7 +10,7 @@ struct css_set;
- 
- #ifdef CONFIG_PSI
- 
--extern bool psi_disabled;
-+extern struct static_key_false psi_disabled;
- 
- void psi_init(void);
- 
-diff --git a/init/Kconfig b/init/Kconfig
-index a4112e95724a..cf5b5a0dcbc2 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -509,6 +509,15 @@ config PSI
- 
- 	  Say N if unsure.
- 
-+config PSI_DEFAULT_DISABLED
-+	bool "Require boot parameter to enable pressure stall information tracking"
-+	default n
-+	depends on PSI
-+	help
-+	  If set, pressure stall information tracking will be disabled
-+	  per default but can be enabled through passing psi_enable=1
-+	  on the kernel commandline during boot.
-+
- endmenu # "CPU/Task time and stats accounting"
- 
- config CPU_ISOLATION
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 3d7355d7c3e3..fe24de3fbc93 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -136,8 +136,18 @@
- 
- static int psi_bug __read_mostly;
- 
--bool psi_disabled __read_mostly;
--core_param(psi_disabled, psi_disabled, bool, 0644);
-+DEFINE_STATIC_KEY_FALSE(psi_disabled);
-+
-+#ifdef CONFIG_PSI_DEFAULT_DISABLED
-+bool psi_enable;
-+#else
-+bool psi_enable = true;
-+#endif
-+static int __init setup_psi(char *str)
-+{
-+	return kstrtobool(str, &psi_enable) == 0;
-+}
-+__setup("psi=", setup_psi);
- 
- /* Running averages - we need to be higher-res than loadavg */
- #define PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
-@@ -169,8 +179,10 @@ static void group_init(struct psi_group *group)
- 
- void __init psi_init(void)
- {
--	if (psi_disabled)
-+	if (!psi_enable) {
-+		static_branch_enable(&psi_disabled);
- 		return;
-+	}
- 
- 	psi_period = jiffies_to_nsecs(PSI_FREQ);
- 	group_init(&psi_system);
-@@ -549,7 +561,7 @@ void psi_memstall_enter(unsigned long *flags)
- 	struct rq_flags rf;
- 	struct rq *rq;
- 
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	*flags = current->flags & PF_MEMSTALL;
-@@ -579,7 +591,7 @@ void psi_memstall_leave(unsigned long *flags)
- 	struct rq_flags rf;
- 	struct rq *rq;
- 
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	if (*flags)
-@@ -600,7 +612,7 @@ void psi_memstall_leave(unsigned long *flags)
- #ifdef CONFIG_CGROUPS
- int psi_cgroup_alloc(struct cgroup *cgroup)
- {
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return 0;
- 
- 	cgroup->psi.pcpu = alloc_percpu(struct psi_group_cpu);
-@@ -612,7 +624,7 @@ int psi_cgroup_alloc(struct cgroup *cgroup)
- 
- void psi_cgroup_free(struct cgroup *cgroup)
- {
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	cancel_delayed_work_sync(&cgroup->psi.clock_work);
-@@ -637,7 +649,7 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
- 	struct rq_flags rf;
- 	struct rq *rq;
- 
--	if (psi_disabled) {
-+	if (static_branch_likely(&psi_disabled)) {
- 		/*
- 		 * Lame to do this here, but the scheduler cannot be locked
- 		 * from the outside, so we move cgroups from inside sched/.
-@@ -673,7 +685,7 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
- {
- 	int full;
- 
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return -EOPNOTSUPP;
- 
- 	update_stats(group);
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 4904c4677000..aa0de240fb41 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -66,7 +66,7 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
- {
- 	int clear = 0, set = TSK_RUNNING;
- 
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	if (!wakeup || p->sched_psi_wake_requeue) {
-@@ -86,7 +86,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
- {
- 	int clear = TSK_RUNNING, set = 0;
- 
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	if (!sleep) {
-@@ -102,7 +102,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
- 
- static inline void psi_ttwu_dequeue(struct task_struct *p)
- {
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 	/*
- 	 * Is the task being migrated during a wakeup? Make sure to
-@@ -128,7 +128,7 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
- 
- static inline void psi_task_tick(struct rq *rq)
- {
--	if (psi_disabled)
-+	if (static_branch_likely(&psi_disabled))
- 		return;
- 
- 	if (unlikely(rq->curr->flags & PF_MEMSTALL))
+[2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+
+[3] https://community.arm.com/processors/b/blog/posts/arm-a-profile-architecture-2018-developments-armv85a
+
+
+====== Rationale
+
+On mobile devices generic KASAN's memory usage is significant problem. One
+of the main reasons to have tag-based KASAN is to be able to perform a
+similar set of checks as the generic one does, but with lower memory
+requirements.
+
+Comment from Vishwath Mohan <vishwath@google.com>:
+
+I don't have data on-hand, but anecdotally both ASAN and KASAN have proven
+problematic to enable for environments that don't tolerate the increased
+memory pressure well. This includes,
+(a) Low-memory form factors - Wear, TV, Things, lower-tier phones like Go,
+(c) Connected components like Pixel's visual core [1].
+
+These are both places I'd love to have a low(er) memory footprint option at
+my disposal.
+
+Comment from Evgenii Stepanov <eugenis@google.com>:
+
+Looking at a live Android device under load, slab (according to
+/proc/meminfo) + kernel stack take 8-10% available RAM (~350MB). KASAN's
+overhead of 2x - 3x on top of it is not insignificant.
+
+Not having this overhead enables near-production use - ex. running
+KASAN/KHWASAN kernel on a personal, daily-use device to catch bugs that do
+not reproduce in test configuration. These are the ones that often cost
+the most engineering time to track down.
+
+CPU overhead is bad, but generally tolerable. RAM is critical, in our
+experience. Once it gets low enough, OOM-killer makes your life miserable.
+
+[1] https://www.blog.google/products/pixel/pixel-visual-core-image-processing-and-machine-learning-pixel-2/
+
+
+====== Technical details
+
+Software tag-based KASAN mode is implemented in a very similar way to the
+generic one. This patchset essentially does the following:
+
+1. TCR_TBI1 is set to enable Top Byte Ignore.
+
+2. Shadow memory is used (with a different scale, 1:16, so each shadow
+   byte corresponds to 16 bytes of kernel memory) to store memory tags.
+
+3. All slab objects are aligned to shadow scale, which is 16 bytes.
+
+4. All pointers returned from the slab allocator are tagged with a random
+   tag and the corresponding shadow memory is poisoned with the same value.
+
+5. Compiler instrumentation is used to insert tag checks. Either by
+   calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
+   CONFIG_KASAN_INLINE flags are reused).
+
+6. When a tag mismatch is detected in callback instrumentation mode
+   KASAN simply prints a bug report. In case of inline instrumentation,
+   clang inserts a brk instruction, and KASAN has it's own brk handler,
+   which reports the bug.
+
+7. The memory in between slab objects is marked with a reserved tag, and
+   acts as a redzone.
+
+8. When a slab object is freed it's marked with a reserved tag.
+
+Bug detection is imprecise for two reasons:
+
+1. We won't catch some small out-of-bounds accesses, that fall into the
+   same shadow cell, as the last byte of a slab object.
+
+2. We only have 1 byte to store tags, which means we have a 1/256
+   probability of a tag match for an incorrect access (actually even
+   slightly less due to reserved tag values).
+
+Despite that there's a particular type of bugs that tag-based KASAN can
+detect compared to generic KASAN: use-after-free after the object has been
+allocated by someone else.
+
+
+====== Testing
+
+Some kernel developers voiced a concern that changing the top byte of
+kernel pointers may lead to subtle bugs that are difficult to discover.
+To address this concern deliberate testing has been performed.
+
+It doesn't seem feasible to do some kind of static checking to find
+potential issues with pointer tagging, so a dynamic approach was taken.
+All pointer comparisons/subtractions have been instrumented in an LLVM
+compiler pass and a kernel module that would print a bug report whenever
+two pointers with different tags are being compared/subtracted (ignoring
+comparisons with NULL pointers and with pointers obtained by casting an
+error code to a pointer type) has been used. Then the kernel has been
+booted in QEMU and on an Odroid C2 board and syzkaller has been run.
+
+This yielded the following results.
+
+The two places that look interesting are:
+
+is_vmalloc_addr in include/linux/mm.h
+is_kernel_rodata in mm/util.c
+
+Here we compare a pointer with some fixed untagged values to make sure
+that the pointer lies in a particular part of the kernel address space.
+Since tag-based KASAN doesn't add tags to pointers that belong to rodata
+or vmalloc regions, this should work as is. To make sure debug checks to
+those two functions that check that the result doesn't change whether
+we operate on pointers with or without untagging has been added.
+
+A few other cases that don't look that interesting:
+
+Comparing pointers to achieve unique sorting order of pointee objects
+(e.g. sorting locks addresses before performing a double lock):
+
+tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
+pipe_double_lock in fs/pipe.c
+unix_state_double_lock in net/unix/af_unix.c
+lock_two_nondirectories in fs/inode.c
+mutex_lock_double in kernel/events/core.c
+
+ep_cmp_ffd in fs/eventpoll.c
+fsnotify_compare_groups fs/notify/mark.c
+
+Nothing needs to be done here, since the tags embedded into pointers
+don't change, so the sorting order would still be unique.
+
+Checks that a pointer belongs to some particular allocation:
+
+is_sibling_entry in lib/radix-tree.c
+object_is_on_stack in include/linux/sched/task_stack.h
+
+Nothing needs to be done here either, since two pointers can only belong
+to the same allocation if they have the same tag.
+
+Overall, since the kernel boots and works, there are no critical bugs.
+As for the rest, the traditional kernel testing way (use until fails) is
+the only one that looks feasible.
+
+Another point here is that tag-based KASAN is available under a separate
+config option that needs to be deliberately enabled. Even though it might
+be used in a "near-production" environment to find bugs that are not found
+during fuzzing or running tests, it is still a debug tool.
+
+
+====== Benchmarks
+
+The following numbers were collected on Odroid C2 board. Both generic and
+tag-based KASAN were used in inline instrumentation mode.
+
+Boot time [1]:
+* ~1.7 sec for clean kernel
+* ~5.0 sec for generic KASAN
+* ~5.0 sec for tag-based KASAN
+
+Network performance [2]:
+* 8.33 Gbits/sec for clean kernel
+* 3.17 Gbits/sec for generic KASAN
+* 2.85 Gbits/sec for tag-based KASAN
+
+Slab memory usage after boot [3]:
+* ~40 kb for clean kernel
+* ~105 kb (~260% overhead) for generic KASAN
+* ~47 kb (~20% overhead) for tag-based KASAN
+
+KASAN memory overhead consists of three main parts:
+1. Increased slab memory usage due to redzones.
+2. Shadow memory (the whole reserved once during boot).
+3. Quaratine (grows gradually until some preset limit; the more the limit,
+   the more the chance to detect a use-after-free).
+
+Comparing tag-based vs generic KASAN for each of these points:
+1. 20% vs 260% overhead.
+2. 1/16th vs 1/8th of physical memory.
+3. Tag-based KASAN doesn't require quarantine.
+
+[1] Time before the ext4 driver is initialized.
+[2] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
+[3] Measured as `cat /proc/meminfo | grep Slab`.
+
+
+====== Some notes
+
+A few notes:
+
+1. The patchset can be found here:
+   https://github.com/xairy/kasan-prototype/tree/khwasan
+
+2. Building requires a recent Clang version (7.0.0 or later).
+
+3. Stack instrumentation is not supported yet and will be added later.
+
+
+====== Changes
+
+Changes in v12:
+- Rebased onto ef78e5ec (4.20-rc4+).
+- Used u64 instead of __u64 in arch/arm64/include/asm/memory.h as it isn't
+  a UAPI header.
+- Moved the untagged_addr() macro down into the #ifndef __ASSEMBLY__
+  block, after we include <linux/bitops.h>, which is necessary for
+  sign_extend64().
+- New patch: "kasan, arm64: select HAVE_ARCH_KASAN_SW_TAGS", that selects
+  HAVE_ARCH_KASAN_SW_TAGS for arm64 after all the necessary infrastructure
+  code is added.
+- Minor style fixes.
+
+Changes in v11:
+- Rebased onto 9ff01193 (4.20-rc3).
+- Moved KASAN_SHADOW_SCALE_SHIFT definition to arch/arm64/Makefile.
+- Added and used CC_HAS_KASAN_GENERIC and CC_HAS_KASAN_SW_TAGS configs to
+  detect compiler support.
+- New patch: "kasan: rename kasan_zero_page to kasan_early_shadow_page".
+- New patch: "arm64: move untagged_addr macro from uaccess.h to memory.h".
+- Renamed KASAN_SET_TAG/... macros in arch/arm64/include/asm/memory.h to
+  __tag_set/... and reused them later in KASAN core code instead of
+  redefining.
+- Removed tag reset from the __kimg_to_phys() macro.
+- Fixed tagged pointer handling in arm64 fault handling logic.
+
+Changes in v10:
+- Rebased onto 65102238 (4.20-rc1).
+- Don't ignore kasan_kmalloc() return valued in kmem_cache_alloc_trace()
+  and kmem_cache_alloc_node_trace() in include/linux/slab.h.
+- New patch: don't ignore kasan_kmalloc return value in
+  early_kmem_cache_node_alloc.
+- New patch: added __must_check annotations to KASAN hooks that assign
+  tags.
+- Changed KASAN clang version requirement to 7.0.0 (as we need rL329612).
+- Moved __no_sanitize_address definition from compiler_attributes.h to
+  compiler-gcc.h and compiler-clang.h.
+
+Changes in v9:
+- Fixed kasan_init_slab_obj() hook when KASAN is disabled.
+- Added assign_tag() function that preassigns tags for caches with
+  constructors.
+- Fixed KASAN_TAG_MASK redefinition in include/linux/mm.h vs
+  mm/kasan/kasan.h.
+
+Changes in v8:
+- Rebased onto 7876320f (4.19-rc4).
+- Renamed KHWASAN to software tag-based KASAN (see the top of the cover
+  letter for details).
+- Explicitly called tag-based KASAN a debug tool.
+- Reused kasan_init_slab_obj() callback to preassign tags to caches
+  without constructors, remove khwasan_preset_sl(u/a)b_tag().
+- Moved move obj_to_index to include/linux/slab_def.h from mm/slab.c.
+- Moved cache->s_mem untagging to alloc_slabmgmt() for SLAB.
+- Fixed check_memory_region() to correctly handle user memory accesses and
+  size == 0 case.
+- Merged __no_sanitize_hwaddress into __no_sanitize_address.
+- Defined KASAN_SET_TAG and KASAN_RESET_TAG macros for non KASAN builds to
+  avoid duplication of __kimg_to_phys, _virt_addr_is_linear and
+  page_to_virt macros.
+- Fixed and simplified find_first_bad_addr for generic KASAN.
+- Use non symbolized example KASAN report in documentation.
+- Mention clang version requirements for both KASAN modes in the Kconfig
+  options and in the documentation.
+- Various small fixes.
+
+Version v7 got accidentally skipped.
+
+Changes in v6:
+- Rebased onto 050cdc6c (4.19-rc1+).
+- Added notes regarding patchset testing into the cover letter.
+
+Changes in v5:
+- Rebased onto 1ffaddd029 (4.18-rc8).
+- Preassign tags for objects from caches with constructors and
+  SLAB_TYPESAFE_BY_RCU caches.
+- Fix SLAB allocator support by untagging page->s_mem in
+  kasan_poison_slab().
+- Performed dynamic testing to find potential places where pointer tagging
+  might result in bugs [1].
+- Clarified and fixed memory usage benchmarks in the cover letter.
+- Added a rationale for having KHWASAN to the cover letter.
+
+Changes in v4:
+- Fixed SPDX comment style in mm/kasan/kasan.h.
+- Fixed mm/kasan/kasan.h changes being included in a wrong patch.
+- Swapped "khwasan, arm64: fix up fault handling logic" and "khwasan: add
+  tag related helper functions" patches order.
+- Rebased onto 6f0d349d (4.18-rc2+).
+
+Changes in v3:
+- Minor documentation fixes.
+- Fixed CFLAGS variable name in KASAN makefile.
+- Added a "SPDX-License-Identifier: GPL-2.0" line to all source files
+  under mm/kasan.
+- Rebased onto 81e97f013 (4.18-rc1+).
+
+Changes in v2:
+- Changed kmalloc_large_node_hook to return tagged pointer instead of
+  using an output argument.
+- Fix checking whether -fsanitize=hwaddress is supported by the compiler.
+- Removed duplication of -fno-builtin for KASAN and KHWASAN.
+- Removed {} block for one line for_each_possible_cpu loop.
+- Made set_track() static inline as it is used only in common.c.
+- Moved optimal_redzone() to common.c.
+- Fixed using tagged pointer for shadow calculation in
+  kasan_unpoison_shadow().
+- Restored setting cache->align in kasan_cache_create(), which was
+  accidentally lost.
+- Simplified __kasan_slab_free(), kasan_alloc_pages() and kasan_kmalloc().
+- Removed tagging from kasan_kmalloc_large().
+- Added page_kasan_tag_reset() to kasan_poison_slab() and removed
+  !PageSlab() check from page_to_virt.
+- Reset pointer tag in _virt_addr_is_linear.
+- Set page tag for each page when multiple pages are allocated or freed.
+- Added a comment as to why we ignore cma allocated pages.
+
+Changes in v1:
+- Rebased onto 4.17-rc4.
+- Updated benchmarking stats.
+- Documented compiler version requirements, memory usage and slowdown.
+- Dropped kvm patches, as clang + arm64 + kvm is completely broken [1].
+
+Changes in RFC v3:
+- Renamed CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS to
+  CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW respectively.
+- Switch to -fsanitize=kernel-hwaddress instead of -fsanitize=hwaddress.
+- Removed unnecessary excessive shadow initialization.
+- Removed khwasan_enabled flag (it's not needed since KHWASAN is
+  initialized before any slab caches are used).
+- Split out kasan_report.c and khwasan_report.c from report.c.
+- Moved more common KASAN and KHWASAN functions to common.c.
+- Added tagging to pagealloc.
+- Rebased onto 4.17-rc1.
+- Temporarily dropped patch that adds kvm support (arm64 + kvm + clang
+  combo is broken right now [2]).
+
+Changes in RFC v2:
+- Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
+- Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
+- Added a comment regarding the non-atomic RMW sequence in
+  khwasan_random_tag().
+- Made all tag related functions accept const void *.
+- Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
+- Untagged pointers in show_ptr in fault handling logic.
+- Untagged pointers passed to KVM.
+- Added two reserved tag values: 0xFF and 0xFE.
+- Used the reserved tag 0xFF to disable validity checking (to resolve the
+  issue with pointer tag being lost after page_address + kmap usage).
+- Used the reserved tag 0xFE to mark redzones and freed objects.
+- Added mnemonics for esr manipulation in KHWASAN brk handler.
+- Added a comment about the -recover flag.
+- Some minor cleanups and fixes.
+- Rebased onto 3215b9d5 (4.16-rc6+).
+- Tested on real hardware (Odroid C2 board).
+- Added better benchmarks.
+
+[1] https://lkml.org/lkml/2018/7/18/765
+[2] https://lkml.org/lkml/2018/4/19/775
+
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+
+Andrey Konovalov (25):
+  kasan, mm: change hooks signatures
+  kasan, slub: handle pointer tags in early_kmem_cache_node_alloc
+  kasan: move common generic and tag-based code to common.c
+  kasan: rename source files to reflect the new naming scheme
+  kasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_SW_TAGS
+  kasan, arm64: adjust shadow size for tag-based mode
+  kasan: rename kasan_zero_page to kasan_early_shadow_page
+  kasan: initialize shadow to 0xff for tag-based mode
+  arm64: move untagged_addr macro from uaccess.h to memory.h
+  kasan: add tag related helper functions
+  kasan, arm64: untag address in _virt_addr_is_linear
+  kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
+  kasan, arm64: fix up fault handling logic
+  kasan, arm64: enable top byte ignore for the kernel
+  kasan, mm: perform untagged pointers comparison in krealloc
+  kasan: split out generic_report.c from report.c
+  kasan: add bug reporting routines for tag-based mode
+  mm: move obj_to_index to include/linux/slab_def.h
+  kasan: add hooks implementation for tag-based mode
+  kasan, arm64: add brk handler for inline instrumentation
+  kasan, mm, arm64: tag non slab memory allocated via pagealloc
+  kasan: add __must_check annotations to kasan hooks
+  kasan, arm64: select HAVE_ARCH_KASAN_SW_TAGS
+  kasan: update documentation
+  kasan: add SPDX-License-Identifier mark to source files
+
+ Documentation/dev-tools/kasan.rst      | 232 +++++----
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/Makefile                    |  11 +-
+ arch/arm64/include/asm/brk-imm.h       |   2 +
+ arch/arm64/include/asm/kasan.h         |   8 +-
+ arch/arm64/include/asm/memory.h        |  42 +-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/include/asm/uaccess.h       |   7 -
+ arch/arm64/kernel/traps.c              |  68 ++-
+ arch/arm64/mm/fault.c                  |  31 +-
+ arch/arm64/mm/kasan_init.c             |  56 ++-
+ arch/arm64/mm/proc.S                   |   8 +-
+ arch/s390/mm/dump_pagetables.c         |  17 +-
+ arch/s390/mm/kasan_init.c              |  33 +-
+ arch/x86/mm/dump_pagetables.c          |  11 +-
+ arch/x86/mm/kasan_init_64.c            |  55 ++-
+ arch/xtensa/mm/kasan_init.c            |  18 +-
+ include/linux/compiler-clang.h         |   6 +-
+ include/linux/compiler-gcc.h           |   6 +
+ include/linux/compiler_attributes.h    |  13 -
+ include/linux/kasan.h                  | 101 +++-
+ include/linux/mm.h                     |  29 ++
+ include/linux/page-flags-layout.h      |  10 +
+ include/linux/slab.h                   |   4 +-
+ include/linux/slab_def.h               |  13 +
+ lib/Kconfig.kasan                      |  96 +++-
+ mm/cma.c                               |  11 +
+ mm/kasan/Makefile                      |  15 +-
+ mm/kasan/{kasan.c => common.c}         | 656 +++++++++----------------
+ mm/kasan/generic.c                     | 344 +++++++++++++
+ mm/kasan/generic_report.c              | 153 ++++++
+ mm/kasan/{kasan_init.c => init.c}      |  71 +--
+ mm/kasan/kasan.h                       |  59 ++-
+ mm/kasan/quarantine.c                  |   1 +
+ mm/kasan/report.c                      | 272 +++-------
+ mm/kasan/tags.c                        | 161 ++++++
+ mm/kasan/tags_report.c                 |  58 +++
+ mm/page_alloc.c                        |   1 +
+ mm/slab.c                              |  29 +-
+ mm/slab.h                              |   2 +-
+ mm/slab_common.c                       |   6 +-
+ mm/slub.c                              |  51 +-
+ scripts/Makefile.kasan                 |  53 +-
+ 43 files changed, 1825 insertions(+), 997 deletions(-)
+ rename mm/kasan/{kasan.c => common.c} (59%)
+ create mode 100644 mm/kasan/generic.c
+ create mode 100644 mm/kasan/generic_report.c
+ rename mm/kasan/{kasan_init.c => init.c} (82%)
+ create mode 100644 mm/kasan/tags.c
+ create mode 100644 mm/kasan/tags_report.c
+
 -- 
-2.19.1
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
