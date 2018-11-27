@@ -2,118 +2,145 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8518EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17B8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D6CE208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:10:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="YmnfKY3l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6CE208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 97776204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97776204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbeK0MGe (ORCPT
+        id S1727787AbeK0MMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:06:34 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46552 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbeK0MGe (ORCPT
+        Tue, 27 Nov 2018 07:12:38 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43989 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeK0MMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 07:06:34 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so18560530otm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:10:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LkWcpopzHxXW/iV/00jVgivQKk+wbO0XDFbFuOkxAYY=;
-        b=YmnfKY3lq0HfAxk/T7Kfc4wD0KWh/tZW/9LMDWeCVrxWoekk0CFBINcTUhZuBHXF+E
-         0dBNHY/tj/0EZox13Jkq6fNyQyZ7AcdY5N1wU7NzrvllXhOVL24VTxwOdJX0Ve2OeZnj
-         EV9dIYHhnOaW4EHtxePg/v7/Lk6wMmMHAq1nq1qiMd0lWKzcK/oR9D5wj5uzC/bVmo3/
-         AfPvVtvAZ5j1eMquS594CuLMF+oP6aaUBPDRCKsL/PibTXkphR2UTmeXx7vH0504BoQQ
-         DFzH4JVCsOTbA9lw73Q3hWgxuQ4HrnGvTN+4Ma4RCL9vUhBhPdVc7NPEGisBBs3vlBz+
-         f13Q==
+        Tue, 27 Nov 2018 07:12:37 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w73so7471415pfk.10;
+        Mon, 26 Nov 2018 17:16:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LkWcpopzHxXW/iV/00jVgivQKk+wbO0XDFbFuOkxAYY=;
-        b=d6Cmz8ab0vGAN3f6sBaIe7W63ntO31Ib1ivew1xAfEMlHDVxYQ4RNhB/qA8a+wndL/
-         4qWhsnd9lJOzrwT71sNYW+sW3WomeRKwaNnq+4dTEhjqwOR4P2kLEW5mVZUcl02KCo/D
-         plIpmsWHDfca8hCpJjwFDSgJowefDk0ILi/XUHsfF1BLIY0Zyc7Yn3BRaJsi7d5FakvH
-         //qLljcLF6GAY0eUPrlPVmkjzpQRZlSVhcyaLUz9ng0uVg1NflaXpDTCkMY5Fsx+mUeT
-         BaiMnmcaahcxtctjML+9ZeZCIZT0tbrKZpcgggOOlSK8P7WNhSw0sc//dDiIfatbEcoL
-         n7ew==
-X-Gm-Message-State: AA+aEWaWXvW3ulOJ1giiguE8gwQuGWnmvNIKc5XrLFZAfcGOY74OCSkS
-        BvGj75I33Q5nD3Hr8hOqtay1RmJ14AuvVZZn0X2i6w==
-X-Google-Smtp-Source: AFSGD/W0i8HJRl0iLpfGbyBDy92+rEjBJnCJUlO0wPQnMCNSbG2xPUlsYMekDwWzWTt5nXH28ccXO8SAH6iY6R+e5rg=
-X-Received: by 2002:a9d:a78:: with SMTP id 111mr12378507otg.229.1543281029326;
- Mon, 26 Nov 2018 17:10:29 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8W2Osg6pvIeMVmHW9jM3t0Qqf0upyJLlR7xsbDIQT6c=;
+        b=MlllTpfdnMtBJiGdD1UxaDGvpnDiLjsSXGV4Z3DALccR/xhczO3PWPMGLcVmN81jVf
+         c7DSkc4nCqAhovzGFgCxUylG+PhNOYtax4I8PGUWmYMmGdB/FAQE1K4OCYlKzDPz3zcM
+         sScgBQKW7XSCrVrRtAlYVLO3YmacJLB275WVFE3TOBe0vG3VnVk5nrkjO2q9HAY9WwvO
+         E7/sYSTcwOo2z0iso5GS6j0E7u2qLXfJTL/zCx8rEjjoERVkiBklb7U3rQD5gyb9dSY/
+         O+joKow7bDUjWKzS3fPwwRtBH4oJ7yrQ0bvfqO+SJcGRdItpm40bgep4ljGOenj1xttd
+         KqEQ==
+X-Gm-Message-State: AA+aEWZSD1CiA9ewnpdfmRZdJ8LZZQpvslNbiixpvyAX3i3aEZqOP63B
+        8gry9HNNhm1wiM6/tjWpsSc=
+X-Google-Smtp-Source: AFSGD/WzRtEMbfmOoY4aLba8ko/qy6Ezc6FDjj6NIdskZD5RdG9dQgA8jX3+4CoGVTnX+bnksiuUwQ==
+X-Received: by 2002:a63:ea15:: with SMTP id c21mr25904963pgi.361.1543281391876;
+        Mon, 26 Nov 2018 17:16:31 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id h74sm2045176pfd.35.2018.11.26.17.16.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 17:16:29 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 26 Nov 2018 17:16:27 -0800
+Date:   Mon, 26 Nov 2018 17:16:27 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Radoslaw Burny <rburny@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Seth Forshee <seth.forshee@canonical.com>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, jsperbeck@google.com
+Subject: Re: [PATCH] fs: Make /proc/sys inodes be owned by global root.
+Message-ID: <20181127011627.GI4922@garbanzo.do-not-panic.com>
+References: <20181126172607.125782-1-rburny@google.com>
 MIME-Version: 1.0
-References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
- <154170041079.12967.13132220574997822111.stgit@ahduyck-desk1.jf.intel.com>
-In-Reply-To: <154170041079.12967.13132220574997822111.stgit@ahduyck-desk1.jf.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 17:10:18 -0800
-Message-ID: <CAPcyv4jZdgkJ=12GJ_CoN5Van5=Ag+mGTjJjCWtj7oGD5dBG2w@mail.gmail.com>
-Subject: Re: [driver-core PATCH v6 2/9] async: Add support for queueing on
- specific NUMA node
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126172607.125782-1-rburny@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 10:06 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> Introduce four new variants of the async_schedule_ functions that allow
-> scheduling on a specific NUMA node.
->
-> The first two functions are async_schedule_near and
-> async_schedule_near_domain end up mapping to async_schedule and
-> async_schedule_domain, but provide NUMA node specific functionality. They
-> replace the original functions which were moved to inline function
-> definitions that call the new functions while passing NUMA_NO_NODE.
->
-> The second two functions are async_schedule_dev and
-> async_schedule_dev_domain which provide NUMA specific functionality when
-> passing a device as the data member and that device has a NUMA node other
-> than NUMA_NO_NODE.
->
-> The main motivation behind this is to address the need to be able to
-> schedule device specific init work on specific NUMA nodes in order to
-> improve performance of memory initialization.
+On Mon, Nov 26, 2018 at 06:26:07PM +0100, Radoslaw Burny wrote:
+> Due to a recent commit (d151ddc00498 - fs: Update i_[ug]id_(read|write)
+> to translate relative to s_user_ns),
 
-What Andrew tends to due when an enhancement is spread over multiple
-patches is to duplicate the motivation in each patch. So here you
-could include the few sentences you wrote about the performance
-benefits of this work:
+Recent? This is commit is from 2014 and present upstream since v4.8.
+And the commit ID you mentioned in your commit log seems to be
+incorrect. I get:
 
-"What I have seen on several systems is a pretty significant improvement
-in initialization time for persistent memory. In the case of 3TB of
-memory being initialized on a single node the improvement in the worst
-case was from about 36s down to 26s for total initialization time."
+81754357770ebd900801231e7bc8d151ddc00498a fs: Update i_[ug]id_(read|write) to translate relative to s_user_ns
 
-...and conclude that the data shows a general benefit for affinitizing
-async work to a specific numa node.
+> inodes under /proc/sys have -1
+> written to their i_uid/i_gid members if a containing userns does not
+> have entries for root in the uid/gid_map.
 
-With that changelog clarification:
+Thanks for the description of how to run into the issue described but
+is there also a practical use case today where this is happening? I ask
+as it would be good to know the severity of the issue in the real world
+today.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> This wouldn't normally matter, because these values are not used for
+> access checks. However, a later change (0bd23d09b874 - Don't modify
+> inodes with a uid or gid unknown to the vfs) changes the kernel to
+> prevent opens for write if the i_uid/i_gid field in the inode is -1,
+> even if the /proc/sys-specific access checks would otherwise pass.
+> 
+> This causes a problem: in a userns without root mapping, even the
+> namespace creator cannot write to e.g. /proc/sys/kernel/shmmax.
+> This change fixes the problem by overriding i_uid/i_gid back to
+> GLOBAL_ROOT_UID/GID.
+
+We really need Seth and Eric to provide guidance here as they were
+the ones devising this long ago, but to me your solution seems backward.
+Why allow any namespace to muck with /proc/sys/ seettings?
+
+Let's recall that this case was a corner case, and writeback was the
+biggest concern, and for that it was decided that you'd simply not get
+write access, and so its read only. Its not clear to me if things like
+proc were considered. For the regular file case the situation can be
+addressed with  chown, however we can't chown proc files.
+
+> Tested: Used a repro program that creates a user namespace without any
+> mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
+> Before the change, it shows uid/gid of 65534,
+
+I thought you said it would be uid/gid -1 without your patch?
+
+> with the change it's 0.
+
+Note that a good way to also test issues is with the lib/test_sysctl.c
+module and the tools/testing/selftests/sysctl/sysctl.sh script, so if
+you can device a test there, once we decide what to do that would be
+appreciated.
+
+  Luis
+
+> Signed-off-by: Radoslaw Burny <rburny@google.com>
+> ---
+>  fs/proc/proc_sysctl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index c5cbbdff3c3d..67379a389658 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+>  
+>  	if (root->set_ownership)
+>  		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
+> +	else {
+> +		inode->i_uid = GLOBAL_ROOT_UID;
+> +		inode->i_gid = GLOBAL_ROOT_GID;
+> +	}
+>  
+>  out:
+>  	return inode;
+> -- 
+> 2.20.0.rc0.387.gc7a69e6b6c-goog
+> 
