@@ -2,154 +2,139 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DECC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF25C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29985208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29985208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 439CB208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439CB208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbeK1CSO (ORCPT
+        id S1729540AbeK1CSU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:18:14 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47512 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbeK1CSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:18:14 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D294120711; Tue, 27 Nov 2018 16:19:58 +0100 (CET)
-Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9519E2039F;
-        Tue, 27 Nov 2018 16:19:48 +0100 (CET)
-Date:   Tue, 27 Nov 2018 16:19:48 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        laurent.pinchart@ideasonboard.com,
-        linux-media <linux-media@vger.kernel.org>, a.hajda@samsung.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, frowand.list@gmail.com
-Subject: Re: [PATCH 5/5] DO NOT MERGE: ARM: dts: bananapi: Add Camera support
-Message-ID: <20181127151948.gaqodlnkiuh3vkud@flea>
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
- <12093630fdd7d8b43ebcb0340691e0f2200e26c6.1542097288.git-series.maxime.ripard@bootlin.com>
- <CAMty3ZBO6B=vgduv5u28zC8P1DOm1TYGFAVjDtJOpU8dozrk=A@mail.gmail.com>
- <20181127103106.vykudp36vkyy5vme@flea>
- <CAMty3ZAhGAN2nEJkiRLHqFHz9Oi1WboiyqLL4ox+-0z7NhbG8w@mail.gmail.com>
+        Tue, 27 Nov 2018 21:18:20 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35771 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbeK1CST (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:18:19 -0500
+Received: by mail-io1-f71.google.com with SMTP id f24so4646092ioo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:20:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=e8FgVxOsUSeruPUeG4qV+ObMqGV7Pv9UFHGczhF15BU=;
+        b=F4PAUME3BxDfMojhUWxuBpy2Un1WuJXWD/x2YIWJDqV++o+AQscbfkBeV72noHceat
+         8IU3pZEwZLBUcdSYziQ3wQkoSCt2AorbcMz08YuIop7tiHblrgkVvWgZDflnkxHg5CZ3
+         quLnNbm9q+XnvSRNhSJFeuKBDj4cqGLLLLJqUDQFWL7BcVI0f25WA+BfovZo74+v2B3i
+         DTyKxhWXS8XMIg8xrFhOs4pp/dq73MM1ivuzgxj+DvzaTvIHdAfd1JIMI19zZsfL8NWM
+         2prTScY8mqFW60uxiu5sK88E7TYawW8eUW5t/wphTgxmRMeW0MAf3fhseaeKKoNKemcI
+         153Q==
+X-Gm-Message-State: AA+aEWYTPkfdXuaimblihfMj6AYRzVVCUFzvupSBgiHUX76ZRLEwjEPT
+        848d5AkwcojU9s2utVr4b31rvbfTdHY2T0ux+gunzojT+Gdo
+X-Google-Smtp-Source: AFSGD/WAyTRnE9L4GGdS+1VKqXCj0LHn2F3kTWQ3b1OL2ClUNvoXxCJQvhgza7vecRNC9vpEsv3J/aRI9u/jBom9x7toAdNPAkFR
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7kvhaimtko2tapu3"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAhGAN2nEJkiRLHqFHz9Oi1WboiyqLL4ox+-0z7NhbG8w@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a24:7515:: with SMTP id y21mr687634itc.38.1543332004160;
+ Tue, 27 Nov 2018 07:20:04 -0800 (PST)
+Date:   Tue, 27 Nov 2018 07:20:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e10044057ba6fbcf@google.com>
+Subject: KASAN: out-of-bounds in update_curr
+From:   syzbot <syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---7kvhaimtko2tapu3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 27, 2018 at 04:30:55PM +0530, Jagan Teki wrote:
-> > > > +&i2c1 {
-> > > > +       pinctrl-names =3D "default";
-> > > > +       pinctrl-0 =3D <&i2c1_pins_a>;
-> > > > +       status =3D "okay";
-> > > > +
-> > > > +       camera: camera@21 {
-> > > > +               compatible =3D "ovti,ov5640";
-> > > > +               reg =3D <0x21>;
-> > > > +                clocks =3D <&ccu CLK_CSI0>;
-> > > > +                clock-names =3D "xclk";
-> > > > +               assigned-clocks =3D <&ccu CLK_CSI0>;
-> > > > +               assigned-clock-rates =3D <24000000>;
-> > > > +
-> > > > +                reset-gpios =3D <&pio 7 14 GPIO_ACTIVE_LOW>;
-> > > > +                powerdown-gpios =3D <&pio 7 19 GPIO_ACTIVE_HIGH>;
-> > > > +                AVDD-supply =3D <&reg_cam_avdd>;
-> > > > +                DOVDD-supply =3D <&reg_cam_dovdd>;
-> > > > +                DVDD-supply =3D <&reg_cam_dvdd>;
-> > > > +
-> > > > +                port {
-> > > > +                        ov5640_to_csi: endpoint {
-> > > > +                                remote-endpoint =3D <&csi_from_ov5=
-640>;
-> > > > +                                bus-width =3D <8>;
-> > > > +                                data-shift =3D <2>;
-> > > > +                                hsync-active =3D <1>; /* Active hi=
-gh */
-> > > > +                                vsync-active =3D <0>; /* Active lo=
-w */
-> > > > +                                data-active =3D <1>;  /* Active hi=
-gh */
-> > > > +                                pclk-sample =3D <1>;  /* Rising */
-> > > > +                        };
-> > > > +                };
-> > > > +       };
-> > >
-> > > Does ov5640 need any further patches, wrt linux-next? I'm trying to
-> > > test this on top of linux-next but the slave id seems not detecting.
-> > >
-> > > [    2.304711] ov5640 1-0021: Linked as a consumer to regulator.5
-> > > [    2.310639] ov5640 1-0021: Linked as a consumer to regulator.6
-> > > [    2.316592] ov5640 1-0021: Linked as a consumer to regulator.4
-> > > [    2.351540] ov5640 1-0021: ov5640_init_slave_id: failed with -6
-> > > [    2.357543] ov5640 1-0021: Dropping the link to regulator.5
-> > > [    2.363224] ov5640 1-0021: Dropping the link to regulator.6
-> > > [    2.368829] ov5640 1-0021: Dropping the link to regulator.4
-> > >
-> > > Here is the full log [1], please let me know if I miss anything, I
-> > > even tried to remove MCLK pin
-> >
-> > You seem to have made local modifications to your tree, what are they?
-> > This indicates that the communication over i2c doesn't work, what is
-> > your setup?
->=20
-> I just used your commits on linux-next [2], with the setup similar in
-> Page 5 on datasheet[3]. The only difference is csi build issue, I have
-> updated similar fix you mentioned on sun6i_csi [4]
->=20
-> [2] https://github.com/amarula/linux-amarula/commits/CSI-A20
-> [3] https://www.tme.eu/gb/Document/187887186b98a8f78b47da2774a34f4c/BPI-C=
-AMERA.pdf
-> [4] https://github.com/amarula/linux-amarula/commit/a6762ecd38f000e2bd02d=
-d255f6fd0c1ae755429#diff-0809a7f97ca58771c1cda186e73ec657
-
-That branch doesn't have any commit with the same ID that you have in
-your boot log.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7kvhaimtko2tapu3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/1glAAKCRDj7w1vZxhR
-xQPFAQCORfq8rEIh8lqEKA8obv0BQ2hSg0qXBI81KifgMKGiqgEAoIT3nDy7NRaQ
-Cj/6IxkSTP4ZdQEtr4bfvhcqdn7aeAw=
-=3CHx
------END PGP SIGNATURE-----
-
---7kvhaimtko2tapu3--
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgNGJmZmM2NjlkNjI0IG5ldDogcmVtb3ZlIHVuc2FmZSBza2JfaW5zZXJ0KCkNCmdp
+dCB0cmVlOiAgICAgICBuZXQtbmV4dA0KY29uc29sZSBvdXRwdXQ6IGh0dHBzOi8vc3l6a2FsbGVy
+LmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTEzODVkYjgzNDAwMDAwDQprZXJuZWwgY29uZmlnOiAg
+aHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8uY29uZmlnP3g9YzM2YTcyYWYyMTIzZTc4
+YQ0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRp
+ZD1kM2JmNmFhZTI2OTQyZGM5YzhkYw0KY29tcGlsZXI6ICAgICAgIGdjYyAoR0NDKSA4LjAuMSAy
+MDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0Kc3l6IHJlcHJvOiAgICAgIGh0dHBzOi8vc3l6a2FsbGVy
+LmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTA3YjQyNmQ0MDAwMDANCkMgcmVwcm9kdWNlcjog
+ICBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLmM/eD0xMWIyZTUzMzQwMDAw
+MA0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93
+aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KUmVwb3J0ZWQtYnk6IHN5emJvdCtkM2JmNmFhZTI2OTQy
+ZGM5YzhkY0BzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQoNCkRFQlVHX0xPQ0tTX1dBUk5fT04o
+IWhsb2NrLT5uZXN0X2xvY2spDQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0N
+CkJhZCBvciBtaXNzaW5nIHVzZXJjb3B5IHdoaXRlbGlzdD8gS2VybmVsIG1lbW9yeSBvdmVyd3Jp
+dGUgYXR0ZW1wdCBkZXRlY3RlZCAgDQp0byBTTEFCIG9iamVjdCAndGFza19zdHJ1Y3QnIChvZmZz
+ZXQgMTQzMiwgc2l6ZSAyKSENCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0t
+LS0tLS0tLS0tDQpCVUc6IEtBU0FOOiBvdXQtb2YtYm91bmRzIGluIGNhbGNfZGVsdGFfZmFpciBr
+ZXJuZWwvc2NoZWQvZmFpci5jOjYzMCAgDQpbaW5saW5lXQ0KQlVHOiBLQVNBTjogb3V0LW9mLWJv
+dW5kcyBpbiB1cGRhdGVfY3VycisweDljMC8weGJkMCBrZXJuZWwvc2NoZWQvZmFpci5jOjgyNA0K
+a2VybmVsIEJVRyBhdCBtbS9zbGFiLmM6NDQyNSENClJlYWQgb2Ygc2l6ZSA4IGF0IGFkZHIgZmZm
+Zjg4ODFkOWI0YTRjMCBieSB0YXNrIGtzb2Z0aXJxZC8wLzkNCmludmFsaWQgb3Bjb2RlOiAwMDAw
+IFsjMV0gUFJFRU1QVCBTTVAgS0FTQU4NCg0KQ1BVOiAxIFBJRDogMzggQ29tbTog77+977+977+9
+2YHvv73vv73vv71kC++/ve+/ve+/ve+/ve+/ve+/vSBOb3QgdGFpbnRlZCA0LjIwLjAtcmMzKyAj
+MzE0DQpDUFU6IDAgUElEOiA5IENvbW06IGtzb2Z0aXJxZC8wIE5vdCB0YWludGVkIDQuMjAuMC1y
+YzMrICMzMTQNCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29v
+Z2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQpIYXJkd2FyZSBu
+YW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwg
+QklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAwMDEwOl9fY2hlY2tfaGVhcF9vYmplY3Qr
+MHhhNy8weGI1IG1tL3NsYWIuYzo0NDUwDQpDYWxsIFRyYWNlOg0KQ29kZTogNDggYzcgYzcgNWQg
+ZGYgMTQgODkgZTggOTcgZTMgMGEgMDAgNWQgYzMgNDEgOGIgOTEgMDQgMDEgMDAgMDAgNDggMjkg
+IA0KYzcgNDggMzkgZDcgNzcgYmUgNDggMDEgZDAgNDggMjkgYzggNDggMzkgZjAgNzIgYjMgNWQg
+YzMgPDBmPiAwYiA0OCBjNyBjNyAgDQo1ZCBkZiAxNCA4OSBlOCBmZCBlYiAwYSAwMCA0NCA4OSBl
+OSA0OCBjNyBjNyAxOCBlMA0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo3NyBbaW5s
+aW5lXQ0KICBkdW1wX3N0YWNrKzB4MjQ0LzB4MzlkIGxpYi9kdW1wX3N0YWNrLmM6MTEzDQpSU1A6
+IDAwMTg6ZmZmZjg4ODFkOWI0OWVhOCBFRkxBR1M6IDAwMDEwMDkzDQpSQVg6IDAwMDAwMDAwMDAw
+YTU3ZWIgUkJYOiAxZmZmZjExMDNiMzY5M2RjIFJDWDogMDAwMDAwMDAwMDAwMDAwYw0KUkRYOiBm
+ZmZmODg4MWQ5YjRhNDQwIFJTSTogMDAwMDAwMDAwMDAwMDAwMSBSREk6IGZmZmY4ODgxZDliNGEw
+ODgNClJCUDogZmZmZjg4ODFkOWI0OWVhOCBSMDg6IGZmZmY4ODgxZDliNGE0NDAgUjA5OiBmZmZm
+ODg4MWRhOTcwMTgwDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZC43KzB4OS8weDFm
+ZiBtbS9rYXNhbi9yZXBvcnQuYzoyNTYNClIxMDogMDAwMDAwMDA0YWZkNjhlZiBSMTE6IDAwMDAw
+MDAwMDAwMDAwMDAgUjEyOiBmZmZmODg4MWQ5YjRhMDg4DQogIGthc2FuX3JlcG9ydF9lcnJvciBt
+bS9rYXNhbi9yZXBvcnQuYzozNTQgW2lubGluZV0NCiAga2FzYW5fcmVwb3J0LmNvbGQuOCsweDI0
+Mi8weDMwOSBtbS9rYXNhbi9yZXBvcnQuYzo0MTINClIxMzogMDAwMDAwMDAwMDAwMDAwMSBSMTQ6
+IGZmZmZlYTAwMDc2NmQyODAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxDQpGUzogIDAwMDAwMDAwMDAw
+MDAwMDAoMDAwMCkgR1M6ZmZmZjg4ODFkYWYwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAw
+MDAwDQogIF9fYXNhbl9yZXBvcnRfbG9hZDhfbm9hYm9ydCsweDE0LzB4MjAgbW0va2FzYW4vcmVw
+b3J0LmM6NDMzDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
+MDMzDQogIGNhbGNfZGVsdGFfZmFpciBrZXJuZWwvc2NoZWQvZmFpci5jOjYzMCBbaW5saW5lXQ0K
+ICB1cGRhdGVfY3VycisweDljMC8weGJkMCBrZXJuZWwvc2NoZWQvZmFpci5jOjgyNA0KQ1IyOiAw
+MDAwMDAwY2ZmYzVmYTE4IENSMzogMDAwMDAwMDFiZmFkZjAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2
+ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAw
+MDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYw
+IERSNzogMDAwMDAwMDAwMDAwMDQwMA0KQ2FsbCBUcmFjZToNCk1vZHVsZXMgbGlua2VkIGluOg0K
+LS0tWyBlbmQgdHJhY2UgMDRhZjExNmZmNDA1ZWZlZSBdLS0tDQpSSVA6IDAwMTA6X19jaGVja19o
+ZWFwX29iamVjdCsweGE3LzB4YjUgbW0vc2xhYi5jOjQ0NTANCkNvZGU6IDQ4IGM3IGM3IDVkIGRm
+IDE0IDg5IGU4IDk3IGUzIDBhIDAwIDVkIGMzIDQxIDhiIDkxIDA0IDAxIDAwIDAwIDQ4IDI5ICAN
+CmM3IDQ4IDM5IGQ3IDc3IGJlIDQ4IDAxIGQwIDQ4IDI5IGM4IDQ4IDM5IGYwIDcyIGIzIDVkIGMz
+IDwwZj4gMGIgNDggYzcgYzcgIA0KNWQgZGYgMTQgODkgZTggZmQgZWIgMGEgMDAgNDQgODkgZTkg
+NDggYzcgYzcgMTggZTANClJTUDogMDAxODpmZmZmODg4MWQ5YjQ5ZWE4IEVGTEFHUzogMDAwMTAw
+OTMNClJBWDogMDAwMDAwMDAwMDBhNTdlYiBSQlg6IDFmZmZmMTEwM2IzNjkzZGMgUkNYOiAwMDAw
+MDAwMDAwMDAwMDBjDQogIGVucXVldWVfZW50aXR5KzB4M2Y1LzB4MjBhMCBrZXJuZWwvc2NoZWQv
+ZmFpci5jOjM4NzENClJEWDogZmZmZjg4ODFkOWI0YTQ0MCBSU0k6IDAwMDAwMDAwMDAwMDAwMDEg
+UkRJOiBmZmZmODg4MWQ5YjRhMDg4DQpSQlA6IGZmZmY4ODgxZDliNDllYTggUjA4OiBmZmZmODg4
+MWQ5YjRhNDQwIFIwOTogZmZmZjg4ODFkYTk3MDE4MA0KUjEwOiAwMDAwMDAwMDRhZmQ2OGVmIFIx
+MTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6IGZmZmY4ODgxZDliNGEwODgNClIxMzogMDAwMDAwMDAw
+MDAwMDAwMSBSMTQ6IGZmZmZlYTAwMDc2NmQyODAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxDQpGUzog
+IDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6ZmZmZjg4ODFkYWYwMDAwMCgwMDAwKSBrbmxHUzow
+MDAwMDAwMDAwMDAwMDAwDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
+MDgwMDUwMDMzDQpDUjI6IDAwMDAwMDBjZmZjNWZhMTggQ1IzOiAwMDAwMDAwMWJmYWRmMDAwIENS
+NDogMDAwMDAwMDAwMDE0MDZlMA0KRFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAw
+MDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6
+IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwDQoNCg0KLS0tDQpUaGlzIGJ1
+ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NClNlZSBodHRw
+czovL2dvby5nbC90cHNtRUogZm9yIG1vcmUgaW5mb3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6
+Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNv
+bS4NCg0Kc3l6Ym90IHdpbGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0
+dHBzOi8vZ29vLmdsL3Rwc21FSiNidWctc3RhdHVzLXRyYWNraW5nIGZvciBob3cgdG8gY29tbXVu
+aWNhdGUgd2l0aCAgDQpzeXpib3QuDQpzeXpib3QgY2FuIHRlc3QgcGF0Y2hlcyBmb3IgdGhpcyBi
+dWcsIGZvciBkZXRhaWxzIHNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiN0ZXN0aW5nLXBhdGNo
+ZXMNCg==
