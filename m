@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85163C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3356C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E9121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E9121104
+	by mail.kernel.org (Postfix) with ESMTP id 6C78021104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C78021104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbeK1A6U (ORCPT
+        id S1726663AbeK1BCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:58:20 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43641 "EHLO
+        Tue, 27 Nov 2018 20:02:03 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43722 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbeK1A6U (ORCPT
+        with ESMTP id S1726346AbeK1BCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:58:20 -0500
+        Tue, 27 Nov 2018 20:02:03 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1gRduR-0000jh-LN; Tue, 27 Nov 2018 14:00:15 +0000
+        id 1gRdy0-0000wV-PQ; Tue, 27 Nov 2018 14:03:56 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Derek Chickles <derek.chickles@caviumnetworks.com>,
-        Satanand Burla <satananda.burla@caviumnetworks.com>,
-        Felix Manlunas <felix.manlunas@caviumnetworks.com>,
-        Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] liquidio: fix spelling mistake "deferal" -> "deferral"
-Date:   Tue, 27 Nov 2018 14:00:15 +0000
-Message-Id: <20181127140015.26409-1-colin.king@canonical.com>
+Subject: [PATCH] coresight: fix spelling mistake "deffered" -> "deferred"
+Date:   Tue, 27 Nov 2018 14:03:56 +0000
+Message-Id: <20181127140356.26626-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,25 +50,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the oct_stats_strings array, fix it.
+There is a spelling mistake in the dev_info error message, fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/cavium/liquidio/lio_ethtool.c | 2 +-
+ drivers/hwtracing/coresight/coresight-stm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
-index 4c3925af53bc..abe5d0dac851 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
-@@ -111,7 +111,7 @@ static const char oct_stats_strings[][ETH_GSTRING_LEN] = {
- 	"mac_tx_one_collision",
- 	"mac_tx_multi_collision",
- 	"mac_tx_max_collision_fail",
--	"mac_tx_max_deferal_fail",
-+	"mac_tx_max_deferral_fail",
- 	"mac_tx_fifo_err",
- 	"mac_tx_runts",
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index 35d6f9709274..ef339ff22090 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -856,7 +856,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	if (stm_register_device(dev, &drvdata->stm, THIS_MODULE)) {
+ 		dev_info(dev,
+-			 "stm_register_device failed, probing deffered\n");
++			 "stm_register_device failed, probing deferred\n");
+ 		return -EPROBE_DEFER;
+ 	}
  
 -- 
 2.19.1
