@@ -2,274 +2,202 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25435C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAE2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE362086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFB112086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:50:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b5tnvH91"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE362086B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dorU7GEe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB112086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbeK1CrP (ORCPT
+        id S1730143AbeK1CtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:47:15 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41731 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730078AbeK1CrO (ORCPT
+        Tue, 27 Nov 2018 21:49:04 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36464 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbeK1CtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:47:14 -0500
-Received: by mail-io1-f66.google.com with SMTP id s22so17315969ioc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:48:54 -0800 (PST)
+        Tue, 27 Nov 2018 21:49:04 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so34652897itj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:50:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vRaCOVuizc2HcY0I4GKrFk4fUFcdOXXnY/dPKJfxTAg=;
-        b=b5tnvH91CN+eZqZr8O07IPEQjLM2TbFV8QPlnM+CJapqaml31ZlCj9eSWdxFk/94Km
-         rZm2OC1tgIlOiOdMfXAtnPQXe29WHzxsVk1ONhGpljNXqYu4TNRdafhnv5vEu7EgNJDF
-         Fw6GhayKsqSFe012E9iQF2wlrqbXljhlEkF5Br8JmzgmKUI07MUzr8XR9DKb/0Bo7S5c
-         BEXHG7cgTFsKuSSiXOedWMAbAQhzM1VNWsrpuQy6Ug0b+rZY1/fDT71ZAS1hx4l/w/10
-         DwrZhKvdHzYRsjNAW/9QiVwbxtjcn/p35FLLYDUe+adP9o3SWEkw8weE186o0u0XFTo8
-         2PKg==
+         :cc:content-transfer-encoding;
+        bh=Bwm22j+2QRnkEaMqpznfeN3T67moQntFqqbXkU3w4gc=;
+        b=dorU7GEeIj6Lwhj3wzCwLQrqN9cupsvUlIdOWOhulw5fv18WLVuJ23ZxdGZYjZIkEm
+         2KJAw51HKWbf73T3C79EzFxJCNluKeyhZGL+DeoB3Jbtg6ZINQxUffP72g0XuUWx1Mhn
+         3LYpws6CKlu8Uq6P84G14dI+sOPmbRxGe3c/5OG4laYEtIurrA6HP3q9WPNk8uZ0wRB3
+         asVNdHGxWbM1iCv0IfMrlMGmv0OQ5JnBtoU+I5ElItJCPI7+weaDM9RklqyqjnvIpFgn
+         Knm7PswrF1tAkxcS/wPUEghWIn9F8+u3p/B8bLbEYPeQp26D1hQ48axpb4F2SVY2WkOx
+         sf2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vRaCOVuizc2HcY0I4GKrFk4fUFcdOXXnY/dPKJfxTAg=;
-        b=jOOtE9MvdeEfIu1FoooIYZEhMcTV4Ht86eCnfyxSCdxFRAEsRISdlTwitDt7NZRNKT
-         StXaB/6EAfx91yr9lNdhAgo9fSAFHJo6dH5+Lxl3Qn+UJA5NkEqGB+E+xF/vNxZKRFf+
-         dumeRAvgfKfmVTVHVnl8PRXZtjiDevp+hrig21EsRai9BucqjPB5U9wu4Fb4Vf5RbfLO
-         NIYozorP8psxO7eX/DpP7HRPyyhei8Be1lKD7pqeVyGPWylU5JGbmhyaBbbcg5mL+yPG
-         oWhNSSeHgxNUoPDOCMvkXe0gbRsLAE9Tu7S6MFMQUCmWHYulRnnjwlbgUpJhIrgFir1h
-         rCOw==
-X-Gm-Message-State: AA+aEWbICXtvya3MthOkPMVPNgK6d1+T8zYpANG+a7EyeF3q8xMfSErY
-        Ptq7+ay15PteFMxsfiDNj/NkdEv1Bj3l6mYHdeABcw==
-X-Google-Smtp-Source: AFSGD/VHoDGWfeZ55TujvNiqTYjr89GCP/QlqZSBEYokrM/dK4SC3ZWfOTNhscIEgtNiFR/doXUhOw+/MSBctoXp5HE=
-X-Received: by 2002:a5d:8497:: with SMTP id t23mr17894966iom.11.1543333733854;
- Tue, 27 Nov 2018 07:48:53 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Bwm22j+2QRnkEaMqpznfeN3T67moQntFqqbXkU3w4gc=;
+        b=BVcd60PZ/9FuRlsQoVZrnG9yG+KcDCiN5FnrtcH7kr3O30SPK3OD0wLjU22pUQ5ocg
+         kOQKLZfJOr121QBG/Tax6JdwwB1mSHDuLtY337fHO2SsfhGojDBIt1AZ9U2kiuiNW0w5
+         yYfZSOCsTk4iuHmo/k4eR0pAR9mB1ANH77gmw7497r7+pZA75Ot08BYyDXhRn5t2ck4I
+         jIhRZmMXPScrBF5a/x5ZWPhtau69y2syLNHEVh64nhuNenfzNV9TPx0IMO0tZADfQDcP
+         kXeq3CK6w7RwhEs1pZmN3++rJchrxmmo6Urjf0GvHBUNqrhnuXxNSF8J1TeQfvrgan3Y
+         7AdA==
+X-Gm-Message-State: AGRZ1gIm9LNSxHw1TRwwkzJ5jnUWG4vpbAqFxrn1+zVS36bx38thmR60
+        Aqa5Kd20xVpnEc1CsNZY/aKv2AvlfTJUMtMYhdYyHQ==
+X-Google-Smtp-Source: AFSGD/VRRKjNtb1rH1Fy9SGgHmZBDaD0FSG5We2gneUmJQLT+ThQA5czHtrTRgP5CjDJxmDFpejXbNkLHzu4NE93lV4=
+X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr25069343itl.144.1543333843448;
+ Tue, 27 Nov 2018 07:50:43 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 07:48:33
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 07:50:21
  -0800 (PST)
-In-Reply-To: <CAOQ4uxgiERNAyX4PDHf1DQLBg56rBANWLe575TGkz_WpbxaoCg@mail.gmail.com>
-References: <00000000000074e10d0576cc48f1@google.com> <0000000000001ec857057ba01589@google.com>
- <CAOQ4uxgiERNAyX4PDHf1DQLBg56rBANWLe575TGkz_WpbxaoCg@mail.gmail.com>
+In-Reply-To: <000000000000e10044057ba6fbcf@google.com>
+References: <000000000000e10044057ba6fbcf@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 27 Nov 2018 16:48:33 +0100
-Message-ID: <CACT4Y+bkAcCcy3p-iKe4jAzA=ZOk-WmbZrD0yOG96sjA7o-cXA@mail.gmail.com>
-Subject: Re: possible deadlock in ovl_write_iter
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
+Date:   Tue, 27 Nov 2018 16:50:21 +0100
+Message-ID: <CACT4Y+bKDG92jaGGGD99UHHxKNtbawynWNxe7rjQqxN6URMFEA@mail.gmail.com>
+Subject: Re: KASAN: out-of-bounds in update_curr
+To:     syzbot <syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com>,
+        netdev <netdev@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 4:07 PM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Tue, Nov 27, 2018 at 9:06 AM syzbot
-> <syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com> wrote:
->>
->> syzbot has found a reproducer for the following crash on:
->>
->> HEAD commit:    6f8b52ba442c Merge tag 'hwmon-for-v4.20-rc5' of git://git...
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=120f3905400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
->> dashboard link: https://syzkaller.appspot.com/bug?extid=695726bc473f9c36a4b6
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cad225400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13813093400000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com
->>
->> overlayfs: filesystem on './file0' not supported as upperdir
->>
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 4.20.0-rc4+ #351 Not tainted
->> ------------------------------------------------------
->> syz-executor338/5996 is trying to acquire lock:
->> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock
->> include/linux/fs.h:757 [inline]
->> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at:
->> ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
->>
->> but task is already holding lock:
->> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested fs/pipe.c:62
->> [inline]
->> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
->> fs/pipe.c:70
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #2 (&pipe->mutex/1){+.+.}:
->>         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
->>         __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
->>         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
->>         pipe_lock_nested fs/pipe.c:62 [inline]
->>         pipe_lock+0x6e/0x80 fs/pipe.c:70
->>         iter_file_splice_write+0x27d/0x1050 fs/splice.c:700
->>         do_splice_from fs/splice.c:851 [inline]
->>         do_splice+0x64a/0x1430 fs/splice.c:1147
->>         __do_sys_splice fs/splice.c:1414 [inline]
->>         __se_sys_splice fs/splice.c:1394 [inline]
->>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
->>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> -> #1 (sb_writers#3){.+.+}:
->>         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
->> [inline]
->>         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
->>         __sb_start_write+0x214/0x370 fs/super.c:1387
->>         sb_start_write include/linux/fs.h:1597 [inline]
->>         mnt_want_write+0x3f/0xc0 fs/namespace.c:360
->>         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
->>         ovl_setattr+0x10b/0xaf0 fs/overlayfs/inode.c:30
->>         notify_change+0xbde/0x1110 fs/attr.c:334
->>         do_truncate+0x1bd/0x2d0 fs/open.c:63
->>         handle_truncate fs/namei.c:3008 [inline]
->>         do_last fs/namei.c:3424 [inline]
->>         path_openat+0x375f/0x5150 fs/namei.c:3534
->>         do_filp_open+0x255/0x380 fs/namei.c:3564
->>         do_sys_open+0x568/0x700 fs/open.c:1063
->>         __do_sys_openat fs/open.c:1090 [inline]
->>         __se_sys_openat fs/open.c:1084 [inline]
->>         __x64_sys_openat+0x9d/0x100 fs/open.c:1084
->>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> -> #0 (&ovl_i_mutex_key[depth]){+.+.}:
->>         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
->>         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
->>         inode_lock include/linux/fs.h:757 [inline]
->>         ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
->>         call_write_iter include/linux/fs.h:1857 [inline]
->>         new_sync_write fs/read_write.c:474 [inline]
->>         __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
->>         __kernel_write+0x10c/0x370 fs/read_write.c:506
->>         write_pipe_buf+0x180/0x240 fs/splice.c:797
->>         splice_from_pipe_feed fs/splice.c:503 [inline]
->>         __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
->>         splice_from_pipe+0x1ec/0x340 fs/splice.c:662
->>         default_file_splice_write+0x3c/0x90 fs/splice.c:809
->>         do_splice_from fs/splice.c:851 [inline]
->>         do_splice+0x64a/0x1430 fs/splice.c:1147
->>         __do_sys_splice fs/splice.c:1414 [inline]
->>         __se_sys_splice fs/splice.c:1394 [inline]
->>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
->>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> other info that might help us debug this:
->>
->> Chain exists of:
->>    &ovl_i_mutex_key[depth] --> sb_writers#3 --> &pipe->mutex/1
->>
->>   Possible unsafe locking scenario:
->>
->>         CPU0                    CPU1
->>         ----                    ----
->>    lock(&pipe->mutex/1);
->>                                 lock(sb_writers#3);
->>                                 lock(&pipe->mutex/1);
->>    lock(&ovl_i_mutex_key[depth]);
->>
->>   *** DEADLOCK ***
->>
->> 2 locks held by syz-executor338/5996:
->>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: file_start_write
->> include/linux/fs.h:2810 [inline]
->>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: do_splice+0xd2e/0x1430
->> fs/splice.c:1146
->>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested
->> fs/pipe.c:62 [inline]
->>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
->> fs/pipe.c:70
->>
->> stack backtrace:
->> CPU: 0 PID: 5996 Comm: syz-executor338 Not tainted 4.20.0-rc4+ #351
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>   __dump_stack lib/dump_stack.c:77 [inline]
->>   dump_stack+0x244/0x39d lib/dump_stack.c:113
->>   print_circular_bug.isra.35.cold.54+0x1bd/0x27d
->> kernel/locking/lockdep.c:1221
->>   check_prev_add kernel/locking/lockdep.c:1863 [inline]
->>   check_prevs_add kernel/locking/lockdep.c:1976 [inline]
->>   validate_chain kernel/locking/lockdep.c:2347 [inline]
->>   __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
->>   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
->>   down_write+0x8a/0x130 kernel/locking/rwsem.c:70
->>   inode_lock include/linux/fs.h:757 [inline]
->>   ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
->>   call_write_iter include/linux/fs.h:1857 [inline]
->>   new_sync_write fs/read_write.c:474 [inline]
->>   __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
->>   __kernel_write+0x10c/0x370 fs/read_write.c:506
->>   write_pipe_buf+0x180/0x240 fs/splice.c:797
->>   splice_from_pipe_feed fs/splice.c:503 [inline]
->>   __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
->>   splice_from_pipe+0x1ec/0x340 fs/splice.c:662
->>   default_file_splice_write+0x3c/0x90 fs/splice.c:809
->>   do_splice_from fs/splice.c:851 [inline]
->>   do_splice+0x64a/0x1430 fs/splice.c:1147
->>   __do_sys_splice fs/splice.c:1414 [inline]
->>   __se_sys_splice fs/splice.c:1394 [inline]
->>   __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
->>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x445ad9
->> Code: e8 5c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
->> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
->> ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007f18e3f71cd8 EFLAGS: 00000216 ORIG_RAX: 0000000000000113
->> RAX: ffffffffffffffda RBX: 00000000006dac78 RCX: 0000000000445ad9
->> RDX: 000000000000000a RSI: 0000000000000000 RDI: 0000000000000007
->> RBP: 00000000006dac70 R08: 000100000000000a R09: 0000000000000007
->> R10: 0000000000000000 R11: 0000000000000216 R12: 00000000006dac7c
->> R13: 00007ffde0706e9f R14: 00007f18e3f729c0 R15: 00000000006dad4c
->>
+On Tue, Nov 27, 2018 at 4:20 PM, syzbot
+<syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
-> This looks like a false positive because lockdep is not aware of
-> s_stack_depth of the file (fs) associated with the pipe.
-
-There must be some annotation to tell lockdep about this.
+> syzbot found the following crash on:
+>
+> HEAD commit:    4bffc669d624 net: remove unsafe skb_insert()
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1385db8340000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc36a72af2123e=
+78a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd3bf6aae26942dc=
+9c8dc
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D107b426d400=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11b2e53340000=
+0
 
 
+From reproducer it looks like something network related. So +netdev.
+This also happened on net-next and there seems to be several memory-
+corruption-looking crashes on net-next.
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit=
+:
+> Reported-by: syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com
 >
-> HOWEVER, because overlayfs calls do_splice_direct() on copy up,
-> it is important to make sure that higher layer do_splice_direct() cannot
-> recursively trigger copy up.
+> DEBUG_LOCKS_WARN_ON(!hlock->nest_lock)
+> ------------[ cut here ]------------
+> Bad or missing usercopy whitelist? Kernel memory overwrite attempt detect=
+ed
+> to SLAB object 'task_struct' (offset 1432, size 2)!
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> ------------[ cut here ]------------
+> BUG: KASAN: out-of-bounds in calc_delta_fair kernel/sched/fair.c:630
+> [inline]
+> BUG: KASAN: out-of-bounds in update_curr+0x9c0/0xbd0 kernel/sched/fair.c:=
+824
+> kernel BUG at mm/slab.c:4425!
+> Read of size 8 at addr ffff8881d9b4a4c0 by task ksoftirqd/0/9
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
 >
-> At this time, overlayfs does the copy up on open for write, so any
-> higher layer do_splice_direct() will already get an out file that has been
-> copied up, but with future plans for "lazy copy up on first write", we need
-> to be careful.
+> CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=BD=
+=EF=BF=BDd =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not taint=
+ed 4.20.0-rc3+ #314
+> CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc3+ #314
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
+> Call Trace:
+> Code: 48 c7 c7 5d df 14 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 2=
+9
+> c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7=
+ 5d
+> df 14 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 18 e0
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x244/0x39d lib/dump_stack.c:113
+> RSP: 0018:ffff8881d9b49ea8 EFLAGS: 00010093
+> RAX: 00000000000a57eb RBX: 1ffff1103b3693dc RCX: 000000000000000c
+> RDX: ffff8881d9b4a440 RSI: 0000000000000001 RDI: ffff8881d9b4a088
+> RBP: ffff8881d9b49ea8 R08: ffff8881d9b4a440 R09: ffff8881da970180
+>  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+> R10: 000000004afd68ef R11: 0000000000000000 R12: ffff8881d9b4a088
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+> R13: 0000000000000001 R14: ffffea000766d280 R15: 0000000000000001
+> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
+000
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  calc_delta_fair kernel/sched/fair.c:630 [inline]
+>  update_curr+0x9c0/0xbd0 kernel/sched/fair.c:824
+> CR2: 0000000cffc5fa18 CR3: 00000001bfadf000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> Modules linked in:
+> ---[ end trace 04af116ff405efee ]---
+> RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
+> Code: 48 c7 c7 5d df 14 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 2=
+9
+> c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7=
+ 5d
+> df 14 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 18 e0
+> RSP: 0018:ffff8881d9b49ea8 EFLAGS: 00010093
+> RAX: 00000000000a57eb RBX: 1ffff1103b3693dc RCX: 000000000000000c
+>  enqueue_entity+0x3f5/0x20a0 kernel/sched/fair.c:3871
+> RDX: ffff8881d9b4a440 RSI: 0000000000000001 RDI: ffff8881d9b4a088
+> RBP: ffff8881d9b49ea8 R08: ffff8881d9b4a440 R09: ffff8881da970180
+> R10: 000000004afd68ef R11: 0000000000000000 R12: ffff8881d9b4a088
+> R13: 0000000000000001 R14: ffffea000766d280 R15: 0000000000000001
+> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000cffc5fa18 CR3: 00000001bfadf000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 >
-> Thanks,
-> Amir.
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 >
 > --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CAOQ4uxgiERNAyX4PDHf1DQLBg56rBANWLe575TGkz_WpbxaoCg%40mail.gmail.com.
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000e10044057ba6=
+fbcf%40google.com.
 > For more options, visit https://groups.google.com/d/optout.
