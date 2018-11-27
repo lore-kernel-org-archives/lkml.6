@@ -2,86 +2,84 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F38C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21273C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47F02213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F02213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DA63F20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:29:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA63F20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbeK1B1O (ORCPT
+        id S1728514AbeK1B1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:27:14 -0500
-Received: from mga03.intel.com ([134.134.136.65]:5443 "EHLO mga03.intel.com"
+        Tue, 27 Nov 2018 20:27:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeK1B1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:27:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 06:29:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="114457902"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Nov 2018 06:29:05 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 4/4] driver core: Add fwnode member to struct device_connection
-Date:   Tue, 27 Nov 2018 17:28:55 +0300
-Message-Id: <20181127142855.73899-5-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181127142855.73899-1-heikki.krogerus@linux.intel.com>
-References: <20181127142855.73899-1-heikki.krogerus@linux.intel.com>
+        id S1726346AbeK1B1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:27:33 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29BD2208E4;
+        Tue, 27 Nov 2018 14:29:27 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 09:29:25 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched, trace: Fix prev_state output in sched_switch
+ tracepoint
+Message-ID: <20181127092925.46c77ae7@gandalf.local.home>
+In-Reply-To: <CAEU1=PkZQGEZueS=cLOT9kbGeMBptKRL=A56BrBgG85R9PrHDA@mail.gmail.com>
+References: <1540882473-1103-1-git-send-email-pkondeti@codeaurora.org>
+        <CAEU1=PkZQGEZueS=cLOT9kbGeMBptKRL=A56BrBgG85R9PrHDA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will prepare the device connection API for connections
-described in firmware.
+On Tue, 27 Nov 2018 15:04:25 +0530
+Pavan Kondeti <pkondeti@codeaurora.org> wrote:
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- include/linux/device.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+> Hi Peter/Thomas,
+> 
+> On Tue, Oct 30, 2018 at 12:25 PM Pavankumar Kondeti
+> <pkondeti@codeaurora.org> wrote:
+> >
+> > commit 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
+> > tried to fix the problem introduced by a previous commit efb40f588b43
+> > ("sched/tracing: Fix trace_sched_switch task-state printing"). However
+> > the prev_state output in sched_switch is still broken.
+> >
+> > task_state_index() uses fls() which considers the LSB as 1. Left
+> > shifting 1 by this value gives an incorrect mapping to the task state.
+> > Fix this by decrementing the value returned by __get_task_state()
+> > before shifting.
+> >
+> > Fixes: 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
+> > Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
+> > ---
+> >  include/trace/events/sched.h | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)  
+> 
+> Can you please review this patch?
+> 
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 1b25c7a43f4c..25e0409e0b0c 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -757,11 +757,17 @@ struct device_dma_parameters {
- 
- /**
-  * struct device_connection - Device Connection Descriptor
-+ * @fwnode: The device node of the connected device
-  * @endpoint: The names of the two devices connected together
-  * @id: Unique identifier for the connection
-  * @list: List head, private, for internal use only
-+ *
-+ * NOTE: @fwnode is not used together with @endpoint. @fwnode is used when
-+ * platform firmware defines the connection. When the connection is registeded
-+ * with device_connection_add() @endpoint is used instead.
-  */
- struct device_connection {
-+	struct fwnode_handle	*fwnode;
- 	const char		*endpoint[2];
- 	const char		*id;
- 	struct list_head	list;
--- 
-2.19.2
+I've already tested this patch. I'm working on getting other patches
+upstream and this looks like it should be marked for stable. I'll take
+it.
 
+Thanks!
+
+-- Steve
