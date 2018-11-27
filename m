@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118E6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66BDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67CF213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:49:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67CF213A2
+	by mail.kernel.org (Postfix) with ESMTP id 6FF38213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF38213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbeK0Uqi (ORCPT
+        id S1730388AbeK0UrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:46:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:32994 "EHLO mail.bootlin.com"
+        Tue, 27 Nov 2018 15:47:18 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33089 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730320AbeK0Uqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:46:38 -0500
+        id S1729869AbeK0UrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:47:18 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B1D1620736; Tue, 27 Nov 2018 10:49:16 +0100 (CET)
+        id 40638207A8; Tue, 27 Nov 2018 10:49:56 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8493120DC4;
-        Tue, 27 Nov 2018 10:49:06 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:49:06 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0D0D820DD6;
+        Tue, 27 Nov 2018 10:49:46 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:49:46 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -41,16 +41,16 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v4 06/17] irqchip/sun4i: Move IC specific register
- offsets to struct
-Message-ID: <20181127094906.l7mebisuoikrivf2@flea>
+Subject: Re: [RFC PATCH v4 07/17] irqchip/sun4i: Add support for Allwinner
+ ARMv5 F1C100s
+Message-ID: <20181127094946.zm4rzbscqc5okupl@flea>
 References: <cover.1543131714.git.mesihkilinc@gmail.com>
- <0242923026be282e26fe9e50d9bb0ec3d5ae355f.1543131714.git.mesihkilinc@gmail.com>
+ <1f3cce09623052eaa90093f13ea9d13047a2b250.1543131714.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rdqrcqhrj4mj4mce"
+        protocol="application/pgp-signature"; boundary="gsrcfvey53yqwqsi"
 Content-Disposition: inline
-In-Reply-To: <0242923026be282e26fe9e50d9bb0ec3d5ae355f.1543131714.git.mesihkilinc@gmail.com>
+In-Reply-To: <1f3cce09623052eaa90093f13ea9d13047a2b250.1543131714.git.mesihkilinc@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,14 +58,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rdqrcqhrj4mj4mce
+--gsrcfvey53yqwqsi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 25, 2018 at 10:43:09AM +0300, Mesih Kilinc wrote:
-> This patch moves IC specific register offsets to sun4i_irq_chip_data
-> struct in order to support different chips.
+65;5402;1c
+On Sun, Nov 25, 2018 at 10:43:10AM +0300, Mesih Kilinc wrote:
+> This patch adds support for suniv Allwinner ARMv5 F1C100s SoC which has
+> stripped version of interrupt controller that found in A10/A13.
 >=20
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
@@ -78,15 +79,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---rdqrcqhrj4mj4mce
+--gsrcfvey53yqwqsi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0TEgAKCRDj7w1vZxhR
-xWR0AQC7KaPGZ7JHd71fN9CUv3GaockBwLkMYJl+hFkyF0qwEgD+KXOoNXuFi2Zt
-8a7z/ErKAi/rmimJnCyNs5Skvr27OQg=
-=Vl97
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0TOgAKCRDj7w1vZxhR
+xfmPAP0WpnCQ+cK5l/QXMbNIaf8Z7CrfjRI3tezRCBlHPyvAdAEA9yXNwrSb2aLF
+2U4xtNEV4YUa3OZWCtraX7/VFVrPaQg=
+=E2QK
 -----END PGP SIGNATURE-----
 
---rdqrcqhrj4mj4mce--
+--gsrcfvey53yqwqsi--
