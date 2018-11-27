@@ -2,123 +2,277 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6E7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1848C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF02F2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8136B2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maximintegrated.onmicrosoft.com header.i=@maximintegrated.onmicrosoft.com header.b="qzK6rUzg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF02F2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maximintegrated.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tYtP65yD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8136B2133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732040AbeK1Evs (ORCPT
+        id S1732059AbeK1Evw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:51:48 -0500
-Received: from mail-eopbgr760127.outbound.protection.outlook.com ([40.107.76.127]:6160
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726288AbeK1Evr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:51:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=maximintegrated.onmicrosoft.com; s=selector1-maximintegrated-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L2V1n/cshd3N+bruk0UAi68dJupB+gx+GS0lfBM4cFo=;
- b=qzK6rUzgTFVQs84F4gflNbP5ti6OO5Yqmwa4wQCuQ6fuNtS2Elz2W/MloLN1PBop2iNGqNxtPR2Jn+3/Kkm1m21XQDGWFtriPRfcXwv+AtmzDsqROXBhbf2H4lIiTqNHVpG/dwl/wTyu7Aw26dWe2A0RFtDGTL4TByjt/jLCM0U=
-Received: from DM6PR11MB3131.namprd11.prod.outlook.com (20.177.219.96) by
- DM6PR11MB2939.namprd11.prod.outlook.com (20.177.217.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.16; Tue, 27 Nov 2018 17:53:03 +0000
-Received: from DM6PR11MB3131.namprd11.prod.outlook.com
- ([fe80::2dfb:d623:d7cb:cbe1]) by DM6PR11MB3131.namprd11.prod.outlook.com
- ([fe80::2dfb:d623:d7cb:cbe1%3]) with mapi id 15.20.1361.018; Tue, 27 Nov 2018
- 17:53:03 +0000
-From:   Ryan Lee <RyanS.Lee@maximintegrated.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Grant Grundler <grundler@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Benson Leung <bleung@chromium.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ASoC: max98373: Added max98373_reset for stable amp reset
-Thread-Topic: [PATCH] ASoC: max98373: Added max98373_reset for stable amp
- reset
-Thread-Index: AQHUhbhJ96XSCK8z8UOo2bPiHw7S7qVjg1+AgABlRSA=
-Date:   Tue, 27 Nov 2018 17:53:03 +0000
-Message-ID: <DM6PR11MB3131108A98DB6394C3009D4BE7D00@DM6PR11MB3131.namprd11.prod.outlook.com>
-References: <20181126183942.2631-1-ryans.lee@maximintegrated.com>
- <20181127115035.GB3206@sirena.org.uk>
-In-Reply-To: <20181127115035.GB3206@sirena.org.uk>
-Accept-Language: en-US, ko-KR
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [204.17.143.20]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR11MB2939;6:iGso+H+53QR3kg72tLsrriguXbA49CJRvuFjN7zSiqLpFEXSQl/9tJu65x8ERMODvKGFoIce7RKa/s6r91U6vuttNwVS9e0PXNp6LvQ1yO0TFt4kWRF0kxTnlOJCv6QD1TItkRLn8SeiFA2JXV+a0+cjdknfoDGGwaoA26L/4x7C99fLfkIkuIuGlBpSCN6ZUIu67JTH0uJxV1XMfxeCPTp/s4T0zc4+fFst9MkiZTJqvs+cxnNdhU2h8NJ0rk3RW4NXDR5Gq5i5kiFhaia4sebMJbNpG7PU8W7Th0GX0IqaM7xz5IkfVIbxuHw0e1IwoGWhPIDfsbKuUUBe+yzh9JrU0JmqJtR1NR6B+gy6xztvisdzcNtY7j307QtXOX5jMfZ/fB3JRQH8WaKmZi/GUCq5EdlD4KMIPofcACRxOTvMPIziD9CAbjStPsPkEn70dT8TY55eQU7PoB8inEWiYg==;5:whDjfZPMyrHRKtYzOAiOSTnj6ZkKZwx4KbL95U+9wGsegnan6p+em8yRJL/BwS8VDZQBsTML2gDYMVkS1pH84JnhJYkhhWsOK4qNeacA/TP/n6QGpeHk+FOpG7HfCRclJZikiEIpXVROv9Yny/pRx4E0FLA4r3pxjPz9fv+JoLQ=;7:h+QK0TP/L+LfeDKnGrIZedQh9mqJ2KrW7g6t2jrRaxtm0Z/bsgDoyS9h630YCXxPueHbG3OHEcZq4uppHQKylfj7XOWoXp0lABV7GeDgIs0PrP6BZy5mX2ZQpRsQakZPkXp9G4TlT89b05G12mLsfQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e5554c72-178d-45bf-ef91-08d654912dfb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR11MB2939;
-x-ms-traffictypediagnostic: DM6PR11MB2939:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=RyanS.Lee@maximintegrated.com; 
-x-microsoft-antispam-prvs: <DM6PR11MB2939126FF37E55352D9C439FE7D00@DM6PR11MB2939.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231443)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM6PR11MB2939;BCL:0;PCL:0;RULEID:;SRVR:DM6PR11MB2939;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(39860400002)(366004)(136003)(54534003)(13464003)(199004)(189003)(6246003)(39060400002)(97736004)(72206003)(68736007)(3846002)(4326008)(102836004)(478600001)(186003)(99286004)(2906002)(6116002)(86362001)(6506007)(476003)(7736002)(11346002)(7696005)(66066001)(446003)(76176011)(33656002)(305945005)(26005)(8936002)(6916009)(71200400001)(8676002)(5660300001)(54906003)(6436002)(71190400001)(74316002)(486006)(316002)(14454004)(25786009)(106356001)(81166006)(55016002)(9686003)(14444005)(53936002)(105586002)(81156014)(256004)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR11MB2939;H:DM6PR11MB3131.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: maximintegrated.com does not
- designate permitted sender hosts)
-x-microsoft-antispam-message-info: X8jhaCyL9Mh1M8AvZlb6soP+ilqC4U9eaTUEf7HFzR9Sgrk0g6BtBWs/X3R8nAL8FPv6CbotZPqmxy5jBebXl4NbSD6QsIYFkJFqCmEwuBxaE2r3pbvB504cOKDcW6+es7oLWaIKkCbQM6X7T74BSNVvGEgTBFHRnTa2ty4D8AxnGfQrc7580unJjpxkVAyg59w1HoWu0oxQwzO6O0DYjkab1ZKpER5uZYWq5LNl2BQdQK+hSW2uH0XjOmF03g0hb95ukeLyphdjuOgOZCkl80e5KdEnWjLHHfwqkO4hE0Ie40AkiAJP7vm+CvO2lqLKmRnYfNQUA5ro5Y/tox9c1GJCRPDg1haeDew3R21K9zs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Nov 2018 23:51:52 -0500
+Received: from casper.infradead.org ([85.118.1.10]:54308 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeK1Evv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 23:51:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=7wBeI4hZNJWcSvFRu/rTx+euC7pDu8Mpq74z4pk6WiM=; b=tYtP65yDcMR6d8Rm0LNxamycM0
+        1Te30wxKjU/1V+pqzfhBRr3LAvtbl480fFJMqDexrg5qUc9WBz8lcD0uZwrb+TNMdnof61y91STPz
+        Q+9tMLUkqlwNP3KKxytc/rTmsAdRcWiIlMW0Kay4Wc/dnZxxoooXQgKPK8H65LImlS6ftqJ+XLuS9
+        6zOQM8EJ0KubLMQ0IaGOTin+8zxtUFYdLQk+ki4WrtHbMv9pPRAEkt3rfeMRhufoz11wOePnbHMig
+        kiyAGIEsvXas/w/VUGiFdVm3pTh5JRp/cAlqJ4HVLg8K39v+xd20VbKzuyZXjf0pmS8bazdtFdOhV
+        h2cOA0Zg==;
+Received: from 177.17.130.159.dynamic.adsl.gvt.net.br ([177.17.130.159] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRhXn-0002k0-Lo; Tue, 27 Nov 2018 17:53:08 +0000
+Date:   Tue, 27 Nov 2018 15:53:01 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     stakanov <stakanov@eclipso.eu>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
+        Malcolm Priestley <tvboxspy@gmail.com>
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181127155301.751e545e@coco.lan>
+In-Reply-To: <s5hk1kywlrp.wl-tiwai@suse.de>
+References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
+        <1673172.qrKGPYx0fj@roadrunner.suse>
+        <20181127104946.195487ec@coco.lan>
+        <45396912.h74atscUxZ@roadrunner.suse>
+        <s5hk1kywlrp.wl-tiwai@suse.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: maximintegrated.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5554c72-178d-45bf-ef91-08d654912dfb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 17:53:03.6886
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fbd909df-ea69-4788-a554-f24b7854ad03
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2939
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: Mark Brown <broonie@kernel.org>
->Sent: Tuesday, November 27, 2018 3:51 AM
->To: Ryan Lee <RyanS.Lee@maximintegrated.com>
->Cc: Liam Girdwood <lgirdwood@gmail.com>; Jaroslav Kysela
-><perex@perex.cz>; Takashi Iwai <tiwai@suse.com>; Grant Grundler
-><grundler@chromium.org>; Kuninori Morimoto
-><kuninori.morimoto.gx@renesas.com>; Benson Leung
-><bleung@chromium.org>; alsa-devel@alsa-project.org; linux-
->kernel@vger.kernel.org
->Subject: Re: [PATCH] ASoC: max98373: Added max98373_reset for stable amp
->reset
->
->On Mon, Nov 26, 2018 at 06:46:05PM +0000, Ryan Lee wrote:
->> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
->> ---
->
->This really needs a changelog to explain what is going on here, and we nee=
-d
->some more documentation in the code.  It is *extremely* unusual to have to
->poll for reset like this, and if the failure mode is I/O errors that's goi=
-ng to be
->pretty painful.
-OK. I agree that this is very unusual. I wanted to make this code change ve=
-ry conservative and this caused unusual overhead.
-Let me fix this.
+Em Tue, 27 Nov 2018 17:03:22 +0100
+Takashi Iwai <tiwai@suse.de> escreveu:
+
+> On Tue, 27 Nov 2018 16:58:58 +0100,
+> stakanov wrote:
+> >=20
+> > In data marted=C3=AC 27 novembre 2018 13:49:46 CET, Mauro Carvalho Cheh=
+ab ha=20
+> > scritto: =20
+> > > Hi Stakanov,
+> > >=20
+> > > Em Tue, 27 Nov 2018 11:02:57 +0100
+> > >=20
+> > > stakanov <stakanov@eclipso.eu> escreveu: =20
+> > > > In data luned=C3=AC 26 novembre 2018 14:31:09 CET, Takashi Iwai ha =
+scritto: =20
+> > > > > On Fri, 23 Nov 2018 18:26:25 +0100,
+> > > > >=20
+> > > > > Mauro Carvalho Chehab wrote: =20
+> > > > > > Takashi,
+> > > > > >=20
+> > > > > > Could you please produce a Kernel for Stakanov to test
+> > > > > > with the following patches:
+> > > > > >=20
+> > > > > > https://patchwork.linuxtv.org/patch/53044/
+> > > > > > https://patchwork.linuxtv.org/patch/53045/
+> > > > > > https://patchwork.linuxtv.org/patch/53046/
+> > > > > > https://patchwork.linuxtv.org/patch/53128/ =20
+> > > > >=20
+> > > > > Sorry for the late reaction.  Now it's queued to OBS
+> > > > > home:tiwai:bsc1116374-2 repo.  It'll be ready in an hour or so.
+> > > > > It's based on 4.20-rc4.
+> > > > >=20
+> > > > > Stakanov, please give it a try later.
+> > > > >=20
+> > > > >=20
+> > > > > thanks,
+> > > > >=20
+> > > > > Takashi =20
+> > > >=20
+> > > > O.K. this unbricks partially the card. =20
+> > >=20
+> > > From the logs, the Kernel is now working as expected.
+> > >  =20
+> > > > Now hotbird does search and does sync
+> > > > on all channels. Quality is very good. Astra still does interrupt t=
+he
+> > > > search immediately and does not receive a thing. So it is a 50% bri=
+ck
+> > > > still, but it is a huge progress compared to before. =20
+> > >=20
+> > > As I said before, you need to tell Kaffeine what's the LNBf that you'=
+re
+> > > using. The LNBf is a physical device[1] that it is installed on your
+> > > satellite dish. There's no way to auto-detect the model you actually =
+have,
+> > > so you need to provide this information to the digital TV software yo=
+u're
+> > > using.
+> > >=20
+> > > [1] It looks like this:
+> > > 	https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Astra_lnb.=
+jpg/ =20
+> > 240 =20
+> > > px-Astra_lnb.jpg
+> > >=20
+> > > The "Universal" one is for an old universal model sold in Europe about
+> > > 15 years ago. It doesn't support all transponders found on an Astra
+> > > satellite.
+> > >=20
+> > > For those, you need to use the LNBf that it is known as "Astra 1E"[2].
+> > >=20
+> > > [2] The name is there just for historical reasons. The actual Astra 1E
+> > > satellite was retired, but another satellite occupies the same orbital
+> > > position (19.2=C2=B0E), and they keep adding/retiring satellites ther=
+e as
+> > > needed (https://en.wikipedia.org/wiki/Astra_19.2%C2%B0E).
+> > >=20
+> > > As I pointed you on a past e-mail, when you set the DVB-S board on
+> > > Kaffeine, you should have explicitly set it.
+> > >=20
+> > > If you start Kaffeine in English:
+> > >=20
+> > > 	$ LANG=3DC kaffeine
+> > >=20
+> > > You'll see it at the following menu:
+> > >=20
+> > > 	Television -> Configure Television -> Device 0
+> > >=20
+> > > (assuming that your device is device 0)
+> > >=20
+> > > There, you need to tell that you'll be using a DiSEqC swith. It
+> > > will then allow you to select up to 4 satellite sources. Once you
+> > > set a source, it will allow you to edit the LNB <n> Settings
+> > > (where <n> will be 1 to 4). Clicking there, it will present you
+> > > a menu with all known LNBf models. Astra 1E is the third option[3].
+> > >=20
+> > > [3] yeah, on a separate discussion, we should likely rename "Astra 1E"
+> > > to just "Astra", and place it as the first option. I'll do such chang=
+e,
+> > > but it will be at v4l-utils package (libdvbv5) and it will probably
+> > > take some time until distros start packaging the new version, even
+> > > if we add it to the stable branch.
+> > >  =20
+> > > > I paste the output of the directory below, unfortunately the opensu=
+se
+> > > > paste
+> > > > does not work currently so I try here, sorry if this is long.
+> > > >=20
+> > > > Content of the directory 99-media.conf created following the indica=
+tions
+> > > > (please bear in mind that I have also another card installed (Haupp=
+auge
+> > > > 5525) although it was not branched to the sat cable and i did chang=
+e the
+> > > > settings in Kaffeine to use only the technisat. But my understandin=
+g is
+> > > > limited if this may give "noise" in the output, so I thought to und=
+erline
+> > > > it, just FYI.
+> > > > Output: =20
+> > > Looks ok to me.
+> > >  =20
+> > > > [  649.009548] cx23885 0000:03:00.0: invalid short VPD tag 01 at of=
+fset 1
+> > > > [  649.011439] r8169 0000:06:00.0: invalid short VPD tag 00 at offs=
+et 1 =20
+> > >=20
+> > > Those two above are weird... It seems to be related to some issue that
+> > > the PCI core detected:
+> > >=20
+> > > drivers/pci/vpd.c:                      pci_warn(dev, "invalid %s VPD=
+ tag
+> > > %02x at offset %zu",
+> > >=20
+> > > I've no idea what they mean, nor if you'll face any issues related to=
+ it.
+> > >=20
+> > > Thanks,
+> > > Mauro =20
+> > The two are known annoyances especially the cx23885 complaining in the =
+logs=20
+> > about a "wrong revision". But as they AFAIK do not cause major issues o=
+r=20
+> > havoc, it is not a problem, at least for me.=20
+> > Now, the card suddenly works. The only thing you have to do (limited to=
+ this=20
+> > technisat PCI card, not applicable to the Hauppauge PCI-e mounted on th=
+e same=20
+> > machine) is to set the "square" to high voltage, limited for Astra. Hot=
+bird=20
+> > scans better without this, with "no setting send" as I do for the Haupp=
+auge as=20
+> > well.=20
+> > This must be something weird related to our sat dish.
+> >=20
+> > But the GOOD news is: yes now you made it! The card works. And yes, you=
+ should=20
+> > really rename ASTRA E setting. Maybe also be more clear or give some hi=
+nt in=20
+> > kaffeine when hovering over it, about how to set it, for some reason it=
+ came=20
+> > straightforward to me to click on the right radio button to select the =
+type of=20
+> > satellite,  but I did not understand, nor did suspect, I would be able =
+to set,=20
+> > or that I would have to set the left button (must be a cultural deforma=
+tion,=20
+> > or whatever). Once you told me about I did find it, but in my very limi=
+ted=20
+> > experience, I think that could be enhanced.
+> >=20
+> > So congratulations. It works and now I am officially even more impresse=
+d about=20
+> > Linux and the spirit behind it. Compliments and thank you all for your =
+work=20
+> > and time! =20
+>=20
+> Good to hear that now everything nailed down.
+> So, the patch
+>   https://patchwork.linuxtv.org/patch/53128/
+> is needed in addition to=20
+>   https://patchwork.linuxtv.org/patch/53044/
+
+Yes.
+
+> If so, Mauro, please don't forget to put Fixes and stable tags, so
+> that both will be backported to stable trees.
+
+Yeah, I'll do that.
+>=20
+> Meanwhile I'll backport it to openSUSE kernels so that the issue will
+> be fixed in the next kernel update.
+
+Btw, I'm adding this to v4l-utils (both upstream and stable):
+
+	https://patchwork.linuxtv.org/patch/53172/
+
+Despite being applied against version 1.16, It should be easy to
+backport it (if openSUSE is using an older version - probably it is,
+since version 1.16 is brand new).
+
+It is not really a bugfix (it is just renaming an entry's full name
+and moving it to be at the beginning of the file). It shouldn't
+cause any regression (as it doesn't change the short name for the
+LNBf), but it may help new users, as, with that, the default
+european LNBf will the the one with the extended frequency range
+required for Astra satellites.
+
+Thanks,
+Mauro
