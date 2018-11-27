@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D74FAC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E1CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB8522086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB8522086B
+	by mail.kernel.org (Postfix) with ESMTP id B948E2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B948E2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbeK0UTk (ORCPT
+        id S1730223AbeK0UTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:19:40 -0500
-Received: from ozlabs.org ([203.11.71.1]:51597 "EHLO ozlabs.org"
+        Tue, 27 Nov 2018 15:19:43 -0500
+Received: from ozlabs.org ([203.11.71.1]:45379 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbeK0UTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:19:39 -0500
+        id S1729950AbeK0UTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:19:42 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 433ywt1bZFz9s9h; Tue, 27 Nov 2018 20:22:22 +1100 (AEDT)
+        id 433ywx58C4z9s3Z; Tue, 27 Nov 2018 20:22:24 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: c3d6a64bd1e82ea486bff46b17d5403c2d2602d6
-In-Reply-To: <5bdfb8db.1c69fb81.c8f62.9586@mx.google.com>
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        benh@kernel.crashing.org, paulus@samba.org, joe@perches.com,
-        darren@stevens-zone.net, christophe.leroy@c-s.fr,
-        geoff@infradead.org
+X-powerpc-patch-commit: 267acedffc614b78ec09bc279f921a6b9a38585e
+In-Reply-To: <20181106143930.8604-1-tiny.windzz@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>, benh@kernel.crashing.org,
+        paulus@samba.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, jrdr.linux@gmail.com,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: Re: arch/powerpc: Use dma_zalloc_coherent
-Message-Id: <433ywt1bZFz9s9h@ozlabs.org>
-Date:   Tue, 27 Nov 2018 20:22:22 +1100 (AEDT)
+Subject: Re: powerpc/vas: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Message-Id: <433ywx58C4z9s3Z@ozlabs.org>
+Date:   Tue, 27 Nov 2018 20:22:23 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-05 at 03:28:23 UTC, Sabyasachi Gupta wrote:
-> Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
+On Tue, 2018-11-06 at 14:39:30 UTC, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 > 
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/c3d6a64bd1e82ea486bff46b17d540
+https://git.kernel.org/powerpc/c/267acedffc614b78ec09bc279f921a
 
 cheers
