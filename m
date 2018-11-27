@@ -2,118 +2,100 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2676DC04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5E1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF101208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF101208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D313208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D313208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731422AbeK1Dsf (ORCPT
+        id S1731433AbeK1Ds4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:48:35 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33002 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeK1Dse (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:48:34 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i20so20775939otl.0;
-        Tue, 27 Nov 2018 08:50:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EJCj7vK0zBuuvOMxLpjkEUxKpjWVJIgSW7zI2E5ss2o=;
-        b=dWmtDY5xk3ucXPSMvAeStQULn2ue2nIy+3wkGoU8luP0GAOlItf7qGCt10AMhTNYnS
-         BZOiO4oT5mpP+V07GJYiVKyVrNF02qagrjB3x/TxSymMATSyn8p8MvI5PVHlHuRvToyv
-         URI/gHIM2pCaQomeEHHVuno1t2x7y1O7XGQAD1rUBNMKdo9zj54l8Ciw0fe29v8Chlpz
-         pLLNndT6Xman1YCXgY/KYrz2T4rA2uDxxxpwGpaKDLPV3DXoYmQRUxKXkUBagwG+EgRA
-         GRygc0nR218aRJ3DlHzEcn6QzxG+yG25NfkWgklZE6Gm2Yr7AF1bs/y8pKkfXC5w7Gvu
-         03vA==
-X-Gm-Message-State: AGRZ1gJVhYCWQIZIbYeIkDSSnQMxTmhVMXsG9WGZLhSfMLHYj8FwoJPM
-        WV4ioU3DxE88o2DkgC9+5lxdIPfLlEj2aTe8pls=
-X-Google-Smtp-Source: AFSGD/WeVBJI0BfxUWVjFs31XL8yQEMlnqITpaAUMyNroLh3tvj5yvobAv1/KZd+fOR6zF4q8a59nI8gIH2BE38cUl4=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr19276782otg.139.1543337404384;
- Tue, 27 Nov 2018 08:50:04 -0800 (PST)
+        Tue, 27 Nov 2018 22:48:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34674 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726492AbeK1Ds4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:48:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A7013AF57;
+        Tue, 27 Nov 2018 16:50:24 +0000 (UTC)
+Subject: Re: [RFC PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
+To:     William Kucharski <william.kucharski@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-api@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181120103515.25280-1-mhocko@kernel.org>
+ <20181120103515.25280-4-mhocko@kernel.org>
+ <0ACDD94B-75AD-4DD0-B2E3-32C0EDFBAA5E@oracle.com>
+ <20181127131707.GW12455@dhcp22.suse.cz>
+ <04647F77-FE93-4A8E-90C1-4245709B88A5@oracle.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <283f38d9-1142-60b6-0b84-7129b7f9781e@suse.cz>
+Date:   Tue, 27 Nov 2018 17:50:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181126111526.56340-1-mika.westerberg@linux.intel.com>
- <20181126111526.56340-2-mika.westerberg@linux.intel.com> <20181127001711.GC212532@google.com>
- <20181127085426.GI2296@lahna.fi.intel.com>
-In-Reply-To: <20181127085426.GI2296@lahna.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 27 Nov 2018 17:49:53 +0100
-Message-ID: <CAJZ5v0gxap5qWQTrmrTmzfvL0RerZ1T1MUPyh6b1FAHY9N0Ryw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] PCI / ACPI: Identify untrusted PCI devices
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, ckellner@redhat.com,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <04647F77-FE93-4A8E-90C1-4245709B88A5@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 9:54 AM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> On Mon, Nov 26, 2018 at 06:17:11PM -0600, Bjorn Helgaas wrote:
-> > Hi Mika,
->
-> Hi,
->
-> > On Mon, Nov 26, 2018 at 02:15:23PM +0300, Mika Westerberg wrote:
-> > > Recent systems with Thunderbolt ports may support IOMMU natively.
-> >
-> > This sentence doesn't make sense to me.  There's no logical connection
-> > between having an IOMMU and having a Thunderbolt port.
-> >
-> > > This means that the platform utilizes IOMMU to prevent DMA attacks
-> > > over externally exposed PCIe root ports (typically Thunderbolt
-> > > ports)
-> >
-> > Nor this one.  The platform only uses the IOMMU to prevent DMA attacks
-> > if the OS chooses to do that.
->
-> I guess I'm trying to say here that the recent changes add such support
-> to the platform BIOS that allows the OS to enable IOMMU without being
-> compromised by a malicious device that is already connected. The BIOS
-> sets the new ACPI DMAR bit in that case.
->
-> > > The system BIOS marks these PCIe root ports as being externally facing
-> > > ports by implementing following ACPI _DSD [1] under the root port in
-> > > question:
-> >
-> > There's no standard that requires this, so the best we can say is that
-> > a system BIOS *may* mark externally facing ports with this mechanism.
->
-> There is no standard but I'm quite sure this is something that will be
-> required to be implemented properly by the OEM by Microsoft hardware
-> compatibility suite.
+On 11/27/18 3:50 PM, William Kucharski wrote:
+> 
+> I was just double checking that this was meant to be more of a check done
+> before code elsewhere performs additional checks and does the actual THP
+> mapping, not an all-encompassing go/no go check for THP mapping.
 
-I think it would be fair to say that future versions of Windows will
-expect the firmware to identify the "externally facing" root PCIe
-ports as per the above which practically means that it is as good as a
-formal standard in the Windows world.
+Yes, the code doing the actual mapping is still checking also alignment etc.
