@@ -2,371 +2,96 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E11C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E81C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E017E2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:57:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E017E2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E1CC02086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ix5CyBZY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1CC02086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeK1H4u (ORCPT
+        id S1726621AbeK1H5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:56:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36382 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbeK1H4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:56:50 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16C9BC059B89;
-        Tue, 27 Nov 2018 20:57:41 +0000 (UTC)
-Received: from sky.random (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0BEC5C1B2;
-        Tue, 27 Nov 2018 20:57:37 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 15:57:37 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     rong.a.chen@intel.com, Michal Hocko <mhocko@suse.com>,
-        s.priebe@profihost.ag, alex.williamson@redhat.com,
-        mgorman@techsingularity.net, zi.yan@cs.rutgers.edu,
-        Vlastimil Babka <vbabka@suse.cz>, rientjes@google.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181127205737.GI16136@redhat.com>
-References: <20181127062503.GH6163@shao2-debian>
- <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 27 Nov 2018 20:57:41 +0000 (UTC)
+        Wed, 28 Nov 2018 02:57:24 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54041 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeK1H5X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:57:23 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y1so410602wmi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:58:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3VZ2NLWzQN6I1sonLGUAKwWIQMJmqOFvAQ3LoVPLKHw=;
+        b=Ix5CyBZYTTDbLV7wf3XH04lQgsOybe2RmF4ReRCdXruH0yZn+lOjT44WO5Ao9TAjmc
+         DiahcovlvTU1cMpFQc4ejELZG2qAc6QCsl6+Y1ko9LD8ec/vrUTF+D1DmLj7aEIXyMP6
+         LkNUjQGO2kinPYCCjBfEWdLFYh9mKo1B5Kx8miV6gc6iLnC79BdZeXjpae1gXeA6hFKu
+         91zQgWHdGwjg0oISfCh78vCJm0hd/JfSl4lZRSvm+HneQAnh0uwpSzD6MCzKGY1huSOV
+         1f8Vv7xp5gowaAdW5GY8DsFM/I1Fu4Qmy1Hg3zwI5IkpV3GSOEnRzJd1EsQjmaVvSTAZ
+         JAYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3VZ2NLWzQN6I1sonLGUAKwWIQMJmqOFvAQ3LoVPLKHw=;
+        b=a8kgWmLUNvFIAO+35CSZmgVBy+4MPOxoqdNSbsN3LwVCYgTDamjbLcCW7SD5SGf9vk
+         H4yAeuJLFIDnfzg+Bgr7Hi9bJOeYza36tYFAuWaSTh00vC34ssPxQVDj9WzgXU67j0yF
+         2vG1RaqQFP6bbVlYCrUQfz2D7pKe3gYH0hMdcid5FG8Qvm+86YjVQ+cJTryWevW2jv70
+         jqW4+qwvVfQX9+vw6U/fXY9gghq4EMO4Kkdx2z4cYn5+8YuxQKVgvgXX06zW9DuK7WaY
+         FoI3F4CeZUxcvG6v4PLSFzWqY186UBq5jgfQ9VqPaDzRdSmtZDtChPh3pDMwi+UN3KW3
+         16kw==
+X-Gm-Message-State: AA+aEWZmySen9Fa07HRfkqrqTU2nARfrchFuOq3aK/jrlsMVxUJXn/e5
+        49/PAf3ibyT11ymMK43GI/o=
+X-Google-Smtp-Source: AFSGD/Xt7ZEVl+xBi3oMfdFbYJHD3rUqUFOidA+kIqGDDlWgENO3Xy3gOk95diLF8NzFAbKEwfXxjw==
+X-Received: by 2002:a1c:f404:: with SMTP id z4mr404708wma.68.1543352293204;
+        Tue, 27 Nov 2018 12:58:13 -0800 (PST)
+Received: from localhost (host102-98-dynamic.181-80-r.retail.telecomitalia.it. [80.181.98.102])
+        by smtp.gmail.com with ESMTPSA id c13sm8414232wrb.38.2018.11.27.12.58.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 12:58:12 -0800 (PST)
+From:   Cristian Sicilia <sicilia.cristian@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Carmeli Tamir <carmeli.tamir@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Arkadiusz Lis <areklis909@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Cristian Sicilia <sicilia.cristian@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Parenthesis fix
+Date:   Tue, 27 Nov 2018 21:57:15 +0100
+Message-Id: <1543352237-1978-1-git-send-email-sicilia.cristian@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543274351-25762-3-git-send-email-sicilia.cristian@gmail.com>
+References: <1543274351-25762-3-git-send-email-sicilia.cristian@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+In the first patch there is a fix of some parenthesis that terminate
+on end of line and some parameters that are not aligned with
+previous parenthesis.
 
-On Tue, Nov 27, 2018 at 09:08:50AM -0800, Linus Torvalds wrote:
-> On Mon, Nov 26, 2018 at 10:24 PM kernel test robot
-> <rong.a.chen@intel.com> wrote:
-> >
-> > FYI, we noticed a -61.3% regression of vm-scalability.throughput due
-> > to commit ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
-> > MADV_HUGEPAGE mappings")
-> 
-> Well, that's certainly noticeable and not good.
-
-Noticed this email too.
-
-This difference can only happen with defrag=always, and that's not the
-current upstream default.
-
-        thp_enabled: always
-        thp_defrag: always
-        ^^^^^^^^^^^^^^^^^^ emulates MADV_HUGEPAGE always set
-
-> Andrea, I suspect it might be causing fights with auto numa migration..
-
-That MADV_HUGEPAGE causes flights with NUMA balancing is not great
-indeed, qemu needs NUMA locality too, but then the badness caused by
-__GFP_THISNODE was a larger regression in the worst case for qemu.
-
-When the kernel wants to allocate a THP from node A, if there are no
-THP generated on node A but there are in node B, they'll be picked from
-node B now.
-
-__GFP_THISNODE previously prevented any THP to be allocated from any
-node except A. This introduces a higher chance of initial misplacement
-which NUMA balancing will correct over time, but it should only apply
-to long lived allocations under MADV_HUGEPAGE. Perhaps the workload
-here uses short lived allocations and sets defrag=always which is not
-optimal to begin with?
-
-The motivation of the fix, is that the previous code invoked reclaim
-with __GFP_THISNODE set. That looked insecure and such behavior should
-only have been possible under a mlock/mempolicy
-capability. __GFP_THISNODE is like a transient but still privileged
-mbind for reclaim.
-
-Before the fix, __GFP_THISNODE would end up swapping out everything
-from node A to free 4k pages from node A, despite perhaps there were
-gigabytes of memory free in node B. That caused severe regression to
-threaded workloads whose memory spanned more than one NUMA node. So
-again going back doesn't sounds great for NUMA in general.
-
-The vmscalability test is most certainly not including any
-multithreaded process whose memory doesn't fit in a single NUMA node
-or we'd see also the other side of the tradeoff. It'd be nice to add
-such a test to be sure that the old __GFP_THISNODE behavior won't
-happen again for apps that don't fit in a single node.
-
-> Lots more system time, but also look at this:
-> 
-> >    1122389 ±  9%     +17.2%    1315380 ±  4%  proc-vmstat.numa_hit
-> >     214722 ±  5%     +21.6%     261076 ±  3%  proc-vmstat.numa_huge_pte_updates
-> >    1108142 ±  9%     +17.4%    1300857 ±  4%  proc-vmstat.numa_local
-> >     145368 ± 48%     +63.1%     237050 ± 17%  proc-vmstat.numa_miss
-> >     159615 ± 44%     +57.6%     251573 ± 16%  proc-vmstat.numa_other
-> >     185.50 ± 81%   +8278.6%      15542 ± 40%  proc-vmstat.numa_pages_migrated
-> 
-> Should the commit be reverted? Or perhaps at least modified?
-
-I proposed two solutions, the other one required a new minor feature:
-__GFP_ONLY_COMPACT. The other solution wouldn't regress like
-above. The THP utilization ratio would decrease though (it had margin
-for improvement though).
-
-Kirill preferred the __GFP_ONLY_COMPACT, I was mostly neutral because
-it's a tradeoff.
-
-So the short term alternative again would be the alternate patch that
-does __GFP_THISNODE|GFP_ONLY_COMPACT appended below.
-
-There's no particular problem in restricting only compaction to the
-local node and to skip reclaim entirely during a THP allocation as
-long as reclaim is skipped entirely.
-
-David implemented a hardcoded version of GFP_COMPACTONLY too which was
-runtime equivalent, but it was hardcoded for THP only the allocator,
-but it looks less flexible to hardcode it for THP.
-
-The current fix you merged is simpler overall and puts us back to a
-"stable" state without introducing new (minor) features.
-
-The below is for further review of the potential alternative (which
-has still margin for improvement).
-
-=======
-From: Andrea Arcangeli <aarcange@redhat.com>
-Subject: [PATCH 1/2] mm: thp: consolidate policy_nodemask call
-
-Just a minor cleanup.
-
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
----
- mm/mempolicy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 01f1a14facc4..d6512ef28cde 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2026,6 +2026,8 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- 		goto out;
- 	}
- 
-+	nmask = policy_nodemask(gfp, pol);
-+
- 	if (unlikely(IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && hugepage)) {
- 		int hpage_node = node;
- 
-@@ -2043,7 +2045,6 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- 						!(pol->flags & MPOL_F_LOCAL))
- 			hpage_node = pol->v.preferred_node;
- 
--		nmask = policy_nodemask(gfp, pol);
- 		if (!nmask || node_isset(hpage_node, *nmask)) {
- 			mpol_cond_put(pol);
- 			page = __alloc_pages_node(hpage_node,
-@@ -2052,7 +2053,6 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- 		}
- 	}
- 
--	nmask = policy_nodemask(gfp, pol);
- 	preferred_nid = policy_node(gfp, pol, node);
- 	page = __alloc_pages_nodemask(gfp, order, preferred_nid, nmask);
- 	mpol_cond_put(pol);
+The second patch is a proposal that avoid the long line refactoring
+code removing cast pointer.
 
 
-From: Andrea Arcangeli <aarcange@redhat.com>
-Subject: [PATCH 2/2] mm: thp: fix transparent_hugepage/defrag = madvise || always
+Cristian Sicilia (2):
+  staging: emxx_udc: Align parameter with parenthesis
+  staging: emxx_udc: Remove cast and move all in one line.
 
-qemu uses MADV_HUGEPAGE which allows direct compaction (i.e.
-__GFP_DIRECT_RECLAIM is set).
+ drivers/staging/emxx_udc/emxx_udc.c | 282 ++++++++++++++----------------------
+ 1 file changed, 111 insertions(+), 171 deletions(-)
 
-The problem is that direct compaction combined with the NUMA
-__GFP_THISNODE logic in mempolicy.c is telling reclaim to swap very
-hard the local node, instead of failing the allocation if there's no
-THP available in the local node.
-
-Such logic was ok until __GFP_THISNODE was added to the THP allocation
-path even with MPOL_DEFAULT.
-
-The idea behind the __GFP_THISNODE addition, is that it is better to
-provide local memory in PAGE_SIZE units than to use remote NUMA THP
-backed memory. That largely depends on the remote latency though, on
-threadrippers for example the overhead is relatively low in my
-experience.
-
-The combination of __GFP_THISNODE and __GFP_DIRECT_RECLAIM results in
-extremely slow qemu startup with vfio, if the VM is larger than the
-size of one host NUMA node. This is because it will try very hard to
-unsuccessfully swapout get_user_pages pinned pages as result of the
-__GFP_THISNODE being set, instead of falling back to PAGE_SIZE
-allocations and instead of trying to allocate THP on other nodes (it
-would be even worse without vfio type1 GUP pins of course, except it'd
-be swapping heavily instead).
-
-It's very easy to reproduce this by setting
-transparent_hugepage/defrag to "always", even with a simple memhog.
-
-1) This can be fixed by retaining the __GFP_THISNODE logic also for
-   __GFP_DIRECT_RELCAIM by allowing only one compaction run. Not even
-   COMPACT_SKIPPED (i.e. compaction failing because not enough free
-   memory in the zone) should be allowed to invoke reclaim.
-
-2) An alternative is not use __GFP_THISNODE if __GFP_DIRECT_RELCAIM
-   has been set by the caller (i.e. MADV_HUGEPAGE or
-   defrag="always"). That would keep the NUMA locality restriction
-   only when __GFP_DIRECT_RECLAIM is not set by the caller. So THP
-   will be provided from remote nodes if available before falling back
-   to PAGE_SIZE units in the local node, but an app using defrag =
-   always (or madvise with MADV_HUGEPAGE) supposedly prefers that.
-
-These are the results of 1) (higher GB/s is better).
-
-Finished: 30 GB mapped, 10.188535s elapsed, 2.94GB/s
-Finished: 34 GB mapped, 12.274777s elapsed, 2.77GB/s
-Finished: 38 GB mapped, 13.847840s elapsed, 2.74GB/s
-Finished: 42 GB mapped, 14.288587s elapsed, 2.94GB/s
-
-Finished: 30 GB mapped, 8.907367s elapsed, 3.37GB/s
-Finished: 34 GB mapped, 10.724797s elapsed, 3.17GB/s
-Finished: 38 GB mapped, 14.272882s elapsed, 2.66GB/s
-Finished: 42 GB mapped, 13.929525s elapsed, 3.02GB/s
-
-These are the results of 2) (higher GB/s is better).
-
-Finished: 30 GB mapped, 10.163159s elapsed, 2.95GB/s
-Finished: 34 GB mapped, 11.806526s elapsed, 2.88GB/s
-Finished: 38 GB mapped, 10.369081s elapsed, 3.66GB/s
-Finished: 42 GB mapped, 12.357719s elapsed, 3.40GB/s
-
-Finished: 30 GB mapped, 8.251396s elapsed, 3.64GB/s
-Finished: 34 GB mapped, 12.093030s elapsed, 2.81GB/s
-Finished: 38 GB mapped, 11.824903s elapsed, 3.21GB/s
-Finished: 42 GB mapped, 15.950661s elapsed, 2.63GB/s
-
-This is current upstream (higher GB/s is better).
-
-Finished: 30 GB mapped, 8.821632s elapsed, 3.40GB/s
-Finished: 34 GB mapped, 341.979543s elapsed, 0.10GB/s
-Finished: 38 GB mapped, 761.933231s elapsed, 0.05GB/s
-Finished: 42 GB mapped, 1188.409235s elapsed, 0.04GB/s
-
-vfio is a good test because by pinning all memory it avoids the
-swapping and reclaim only wastes CPU, a memhog based test would
-created swapout storms and supposedly show a bigger stddev.
-
-What is better between 1) and 2) depends on the hardware and on the
-software. Virtualization EPT/NTP gets a bigger boost from THP as well
-than host applications.
-
-This commit implements 1).
-
-Reported-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
----
- include/linux/gfp.h | 18 ++++++++++++++++++
- mm/mempolicy.c      | 12 +++++++++++-
- mm/page_alloc.c     |  4 ++++
- 3 files changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index a6afcec53795..3c04d5d90e6d 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -44,6 +44,7 @@ struct vm_area_struct;
- #else
- #define ___GFP_NOLOCKDEP	0
- #endif
-+#define ___GFP_ONLY_COMPACT	0x1000000u
- /* If the above are modified, __GFP_BITS_SHIFT may need updating */
- 
- /*
-@@ -178,6 +179,21 @@ struct vm_area_struct;
-  *   definitely preferable to use the flag rather than opencode endless
-  *   loop around allocator.
-  *   Using this flag for costly allocations is _highly_ discouraged.
-+ *
-+ * __GFP_ONLY_COMPACT: Only invoke compaction. Do not try to succeed
-+ * the allocation by freeing memory. Never risk to free any
-+ * "PAGE_SIZE" memory unit even if compaction failed specifically
-+ * because of not enough free pages in the zone. This only makes sense
-+ * only in combination with __GFP_THISNODE (enforced with a
-+ * VM_WARN_ON), to restrict the THP allocation in the local node that
-+ * triggered the page fault and fallback into PAGE_SIZE allocations in
-+ * the same node. We don't want to invoke reclaim because there may be
-+ * plenty of free memory already in the local node. More importantly
-+ * there may be even plenty of free THP available in remote nodes so
-+ * we should allocate those if something instead of reclaiming any
-+ * memory in the local node. Implementation detail: set ___GFP_NORETRY
-+ * too so that ___GFP_ONLY_COMPACT only needs to be checked in a slow
-+ * path.
-  */
- #define __GFP_IO	((__force gfp_t)___GFP_IO)
- #define __GFP_FS	((__force gfp_t)___GFP_FS)
-@@ -187,6 +203,8 @@ struct vm_area_struct;
- #define __GFP_RETRY_MAYFAIL	((__force gfp_t)___GFP_RETRY_MAYFAIL)
- #define __GFP_NOFAIL	((__force gfp_t)___GFP_NOFAIL)
- #define __GFP_NORETRY	((__force gfp_t)___GFP_NORETRY)
-+#define __GFP_ONLY_COMPACT	((__force gfp_t)(___GFP_NORETRY | \
-+						 ___GFP_ONLY_COMPACT))
- 
- /*
-  * Action modifiers
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index d6512ef28cde..6bf839f20dcc 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2047,8 +2047,18 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- 
- 		if (!nmask || node_isset(hpage_node, *nmask)) {
- 			mpol_cond_put(pol);
-+			/*
-+			 * We restricted the allocation to the
-+			 * hpage_node so we must use
-+			 * __GFP_ONLY_COMPACT to allow at most a
-+			 * compaction attempt and not ever get into
-+			 * reclaim or it'll swap heavily with
-+			 * transparent_hugepage/defrag = always (or
-+			 * madvise under MADV_HUGEPAGE).
-+			 */
- 			page = __alloc_pages_node(hpage_node,
--						gfp | __GFP_THISNODE, order);
-+						  gfp | __GFP_THISNODE |
-+						  __GFP_ONLY_COMPACT, order);
- 			goto out;
- 		}
- 	}
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a790ef4be74e..01a5c2bd0860 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4144,6 +4144,10 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 			 */
- 			if (compact_result == COMPACT_DEFERRED)
- 				goto nopage;
-+			if (gfp_mask & __GFP_ONLY_COMPACT) {
-+				VM_WARN_ON(!(gfp_mask & __GFP_THISNODE));
-+				goto nopage;
-+			}
- 
- 			/*
- 			 * Looks like reclaim/compaction is worth trying, but
-
+-- 
+2.7.4
 
