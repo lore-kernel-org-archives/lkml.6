@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F2BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9C4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30522208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857C221104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcW1nE/K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30522208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQyAVmhW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857C221104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbeK0SoE (ORCPT
+        id S1729250AbeK0Soh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 13:44:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60454 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 13:44:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728977AbeK0SoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 13:44:04 -0500
+        id S1728267AbeK0Sog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 13:44:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A76520873;
-        Tue, 27 Nov 2018 07:47:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15AF8208E4;
+        Tue, 27 Nov 2018 07:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543304824;
-        bh=VOUZVm+M6ynB92zawdUpHZncJfii4t/hF9/tp6sLaz0=;
+        s=default; t=1543304856;
+        bh=K+d22Zf274fFjQIphFwcpU7QVwmcWO8btEd2ONO7tS4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TcW1nE/KN/qnujPWhNA6rMrCN6QGiS9I3FVKNr+BHhLqNFpsC6iGrm8Cw5orraTnQ
-         qnbllMt6LxqNNdhBj2viq7nlwzOUXpmWFulE0ty4Lp5QYwkENQx3jLsP0zun5oGmQv
-         O/vv1z+xFoPLde5i3COVy8vah049EpUO6GO4pXls=
-Date:   Tue, 27 Nov 2018 08:47:02 +0100
+        b=fQyAVmhWhK2h28DwOyJnyhikUHcoV8rkzCX3c/0nEhrkPh2/A4+jZ0u5HMC42WtLG
+         tcO3WECsMGdhhhIdpSIRd3d0WRRWa9byRHCfIm1VsD8MEco2Wn8nCzfLCNfNmijXaX
+         hqh+F6twc/F4deMeiLe544HZo7ZbSrmdn4b6Np8A=
+Date:   Tue, 27 Nov 2018 08:47:34 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     thesven73@gmail.com
 Cc:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org,
@@ -51,7 +51,7 @@ Cc:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH anybus v4 1/7] fieldbus_dev: add Fieldbus Device
  subsystem.
-Message-ID: <20181127074702.GE13965@kroah.com>
+Message-ID: <20181127074734.GF13965@kroah.com>
 References: <20181121150709.6030-1-TheSven73@googlemail.com>
  <20181121150709.6030-2-TheSven73@googlemail.com>
 MIME-Version: 1.0
@@ -76,19 +76,10 @@ On Wed, Nov 21, 2018 at 10:07:03AM -0500, thesven73@gmail.com wrote:
 > 
 > Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
 
-License nit:
+Your "From:" line does not match this address or name at all, which
+means no one can apply this :(
 
-> --- /dev/null
-> +++ b/drivers/fieldbus/dev_core.c
-> @@ -0,0 +1,355 @@
-> +// SPDX-License-Identifier: GPL-2.0
-
-That's great, but then you write:
-
-> +MODULE_LICENSE("GPL");
-
-Which means "GPLv2+".  So this MODULE_LICENSE() should be "GPL v2",
-right?
+Please fix for your next round of patches.
 
 thanks,
 
