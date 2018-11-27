@@ -2,39 +2,38 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8174C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EB6C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8AF8208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8AF8208E4
+	by mail.kernel.org (Postfix) with ESMTP id A7102208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:25:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7102208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeK1AX3 (ORCPT
+        id S1727196AbeK1AXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:23:29 -0500
-Received: from ms.tdt.de ([195.243.126.94]:58672 "EHLO mail.dev.tdt.de"
+        Tue, 27 Nov 2018 19:23:31 -0500
+Received: from ms.tdt.de ([195.243.126.94]:58679 "EHLO mail.dev.tdt.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbeK1AX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:23:28 -0500
+        id S1727148AbeK1AXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:23:31 -0500
 Received: from feckert01.dev.tdt.de (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id C09D321C57;
-        Tue, 27 Nov 2018 13:25:30 +0000 (UTC)
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id A16A621C5B;
+        Tue, 27 Nov 2018 13:25:33 +0000 (UTC)
 From:   Florian Eckert <fe@dev.tdt.de>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
         dvhart@infradead.org, andy@infradead.org,
         Eckert.Florian@googlemail.com
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         platform-driver-x86@vger.kernel.org, Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v5 1/2] gpio: Add driver for PC Engines APU boards
-Date:   Tue, 27 Nov 2018 14:25:07 +0100
-Message-Id: <20181127132508.5501-2-fe@dev.tdt.de>
+Subject: [PATCH v5 2/2] platform: Add reset button device for PC Engines APU boards
+Date:   Tue, 27 Nov 2018 14:25:08 +0100
+Message-Id: <20181127132508.5501-3-fe@dev.tdt.de>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181127132508.5501-1-fe@dev.tdt.de>
 References: <20181127132508.5501-1-fe@dev.tdt.de>
@@ -43,199 +42,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new device driver "gpio-apu" which will handle the GPIOs on APU2
-and APU3 devices from PC Engines.
-
-APU2 (https://pcengines.ch/schema/apu2c.pdf page 7):
-- G32 is "button_reset" connected to the smd-button on the frontpanel
-- G50 is "mpcie2_reset" connected to mPCIe2 reset line
-- G51 is "mpcie3_reset" connected to mPCIe3 reset line
-
-APU3 (https://pcengines.ch/schema/apu3c.pdf page 7):
-- G32 is "button_reset" connected to the smd-button on the frontpanel
-- G50 is "mpcie2_reset" connected to mPCIe2 reset line
-- G51 is "mpcie3_reset" connected to mPCIe3 reset line
-- G33 is "simswap" connected to SIM switch IC to swap the SIM between
-  mPCIe2 and mPCIe3 slot
+Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
+This device uses the gpio-apu driver for APU borads from PC Engines.
 
 Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 ---
- drivers/gpio/Kconfig    |   7 ++
- drivers/gpio/Makefile   |   1 +
- drivers/gpio/gpio-apu.c | 288 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 296 insertions(+)
- create mode 100644 drivers/gpio/gpio-apu.c
+ drivers/platform/x86/Kconfig                  |  11 +++
+ drivers/platform/x86/Makefile                 |   1 +
+ drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
+ 3 files changed, 126 insertions(+)
+ create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 833a1b51c948..e89937f6051e 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -117,6 +117,13 @@ config GPIO_AMDPT
- 	  driver for GPIO functionality on Promontory IOHub
- 	  Require ACPI ASL code to enumerate as a platform device.
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 54f6a40c75c6..5cd27c2174cb 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called intel_atomisp2_pm.
  
-+config GPIO_APU
-+	tristate "PC Engines APU2/APU3 GPIO support"
-+	depends on X86
++config PCENGINES_APU_PLATFORM
++	bool "PCEngines APU System Support"
++	depends on X86_64 && DMI && GPIOLIB
 +	help
-+	  Say Y here to support GPIO functionality on APU2/APU3 boards
-+	  from PC Engines.
++	  This option enables system support for the PCEngines APU platform.
++	  At present this just adds the GPIO reset button platform device on
++	  APU2/APU3 boards.
 +
- config GPIO_ASPEED
- 	tristate "Aspeed GPIO support"
- 	depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 671c4477c951..9c27523fb189 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_GPIO_ALTERA)  	+= gpio-altera.o
- obj-$(CONFIG_GPIO_ALTERA_A10SR)	+= gpio-altera-a10sr.o
- obj-$(CONFIG_GPIO_AMD8111)	+= gpio-amd8111.o
- obj-$(CONFIG_GPIO_AMDPT)	+= gpio-amdpt.o
-+obj-$(CONFIG_GPIO_APU)		+= gpio-apu.o
- obj-$(CONFIG_GPIO_ARIZONA)	+= gpio-arizona.o
- obj-$(CONFIG_GPIO_ATH79)	+= gpio-ath79.o
- obj-$(CONFIG_GPIO_ASPEED)	+= gpio-aspeed.o
-diff --git a/drivers/gpio/gpio-apu.c b/drivers/gpio/gpio-apu.c
++	  Note: You must still enable the drivers for GPIO and LED support
++	  (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
++
+ endif # X86_PLATFORM_DEVICES
+ 
+ config PMC_ATOM
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 39ae94135406..f899cc4c6b48 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+ obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
+ obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
+ obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
++obj-$(CONFIG_PCENGINES_APU_PLATFORM)	+= pcengines-apu-platform.o
+diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
 new file mode 100644
-index 000000000000..609972d11847
+index 000000000000..3bfbaa93cb11
 --- /dev/null
-+++ b/drivers/gpio/gpio-apu.c
-@@ -0,0 +1,288 @@
++++ b/drivers/platform/x86/pcengines-apu-platform.c
+@@ -0,0 +1,114 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/* PC Engines APU2/APU3 GPIO device driver
++/*
++ * System Specific setup for PC-Engines APU2/APU3 devices
 + *
 + * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
 + */
 +
-+#include <linux/bits.h>
 +#include <linux/dmi.h>
-+#include <linux/err.h>
-+#include <linux/gpio/driver.h>
++#include <linux/gpio_keys.h>
 +#include <linux/input.h>
-+#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
-+
-+#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
-+#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
-+#define APU_GPIO_BIT_RD        16
-+#define APU_GPIO_BIT_WR        22
-+#define APU_GPIO_BIT_DIR       23
-+
-+struct apu_gpio_pdata {
-+	struct gpio_chip chip;
-+	unsigned long *offset;		/* base register offset */
-+	void __iomem **addr;		/* remapped iomem addresses */
-+	spinlock_t lock;		/* lock register access */
-+};
-+
-+static struct platform_device *apu_gpio_pdev;
-+
-+/* APU2 */
-+static unsigned long apu2_gpio_offset[] = {
-+	APU_FCH_GPIO_BASE + 89 * sizeof(u32),
-+	APU_FCH_GPIO_BASE + 67 * sizeof(u32),
-+	APU_FCH_GPIO_BASE + 66 * sizeof(u32),
-+};
-+static const char * const apu2_gpio_names[] = {
-+	"button_reset",
-+	"mpcie2_reset",
-+	"mpcie3_reset",
-+};
-+
-+/* APU3 */
-+static unsigned long apu3_gpio_offset[] = {
-+	APU_FCH_GPIO_BASE + 89 * sizeof(u32),
-+	APU_FCH_GPIO_BASE + 67 * sizeof(u32),
-+	APU_FCH_GPIO_BASE + 66 * sizeof(u32),
-+	APU_FCH_GPIO_BASE + 90 * sizeof(u32),
-+};
-+static const char * const apu3_gpio_names[] = {
-+	"button_reset",
-+	"mpcie2_reset",
-+	"mpcie3_reset",
-+	"simswap",
-+};
-+
-+static int gpio_apu_get_dir(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u32 val;
-+	struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
-+
-+	spin_lock(&apu_gpio->lock);
-+
-+	val = ~ioread32(apu_gpio->addr[offset]);
-+
-+	spin_unlock(&apu_gpio->lock);
-+
-+	return !!(val & BIT(APU_GPIO_BIT_DIR));
-+}
-+
-+static int gpio_apu_dir_in(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u32 val;
-+	struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
-+
-+	spin_lock(&apu_gpio->lock);
-+
-+	val = ioread32(apu_gpio->addr[offset]);
-+	val &= ~BIT(APU_GPIO_BIT_DIR);
-+	iowrite32(val, apu_gpio->addr[offset]);
-+
-+	spin_unlock(&apu_gpio->lock);
-+
-+	return 0;
-+}
-+
-+static int gpio_apu_dir_out(struct gpio_chip *chip, unsigned int offset,
-+		int value)
-+{
-+	u32 val;
-+	struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
-+
-+	spin_lock(&apu_gpio->lock);
-+
-+	val = ioread32(apu_gpio->addr[offset]);
-+	val |= BIT(APU_GPIO_BIT_DIR);
-+	iowrite32(val, apu_gpio->addr[offset]);
-+
-+	spin_unlock(&apu_gpio->lock);
-+
-+	return 0;
-+}
-+
-+static int gpio_apu_get_data(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u32 val;
-+	struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
-+
-+	spin_lock(&apu_gpio->lock);
-+
-+	val = ioread32(apu_gpio->addr[offset]);
-+
-+	spin_unlock(&apu_gpio->lock);
-+
-+	return !!(val & BIT(APU_GPIO_BIT_RD));
-+}
-+
-+static void gpio_apu_set_data(struct gpio_chip *chip, unsigned int offset,
-+		int value)
-+{
-+	u32 val;
-+	struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
-+
-+	spin_lock(&apu_gpio->lock);
-+
-+	val = ioread32(apu_gpio->addr[offset]);
-+	if (value)
-+		val |= BIT(APU_GPIO_BIT_WR);
-+	else
-+		val &= ~BIT(APU_GPIO_BIT_WR);
-+	iowrite32(val, apu_gpio->addr[offset]);
-+
-+	spin_unlock(&apu_gpio->lock);
-+}
 +
 +static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
 +	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
@@ -263,7 +129,7 @@ index 000000000000..609972d11847
 +		}
 +	},
 +	{}
-+}
++};
 +MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
 +
 +static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
@@ -295,101 +161,49 @@ index 000000000000..609972d11847
 +};
 +MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
 +
-+static int __init apu_gpio_probe(struct platform_device *pdev)
-+{
-+	unsigned int i;
-+	struct apu_gpio_pdata *apu_gpio;
 +
-+	apu_gpio = devm_kzalloc(&pdev->dev, sizeof(*apu_gpio), GFP_KERNEL);
-+	if (!apu_gpio)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, apu_gpio);
-+	spin_lock_init(&apu_gpio->lock);
-+
-+	apu_gpio->chip.label = KBUILD_MODNAME;
-+	apu_gpio->chip.base = 20;
-+	apu_gpio->chip.get_direction = gpio_apu_get_dir;
-+	apu_gpio->chip.direction_input = gpio_apu_dir_in;
-+	apu_gpio->chip.direction_output = gpio_apu_dir_out;
-+	apu_gpio->chip.get = gpio_apu_get_data;
-+	apu_gpio->chip.set = gpio_apu_set_data;
-+
-+	if (dmi_check_system(apu3_gpio_dmi_table)) {
-+		apu_gpio->addr = devm_kzalloc(&pdev->dev,
-+				sizeof(apu3_gpio_offset),
-+				GFP_KERNEL);
-+
-+		if (!apu_gpio->addr)
-+			return -ENOMEM;
-+
-+		apu_gpio->offset = apu3_gpio_offset;
-+		apu_gpio->chip.names = apu3_gpio_names;
-+		apu_gpio->chip.ngpio = ARRAY_SIZE(apu3_gpio_offset);
-+		for (i = 0; i < ARRAY_SIZE(apu3_gpio_offset); i++) {
-+			apu_gpio->addr[i] = devm_ioremap(&pdev->dev,
-+					apu_gpio->offset[i], sizeof(u32));
-+			if (!apu_gpio->addr[i])
-+				return -ENOMEM;
-+		}
-+	} else if (dmi_check_system(apu2_gpio_dmi_table)) {
-+		apu_gpio->addr = devm_kzalloc(&pdev->dev,
-+				sizeof(apu2_gpio_offset),
-+				GFP_KERNEL);
-+
-+		if (!apu_gpio->addr)
-+			return -ENOMEM;
-+
-+		apu_gpio->offset = apu2_gpio_offset;
-+		apu_gpio->chip.names = apu2_gpio_names;
-+		apu_gpio->chip.ngpio = ARRAY_SIZE(apu2_gpio_offset);
-+		for (i = 0; i < ARRAY_SIZE(apu2_gpio_offset); i++) {
-+			apu_gpio->addr[i] = devm_ioremap(&pdev->dev,
-+					apu_gpio->offset[i], sizeof(u32));
-+			if (!apu_gpio->addr[i])
-+				return -ENOMEM;
-+		}
++static struct gpio_keys_button apu_gpio_buttons[] = {
++	{
++		.code			= KEY_RESTART,
++		.gpio			= 20,
++		.active_low		= 1,
++		.desc			= "Reset button",
++		.type			= EV_KEY,
++		.debounce_interval	= 60,
 +	}
-+
-+	return devm_gpiochip_add_data(&pdev->dev, &apu_gpio->chip, apu_gpio);
-+}
-+
-+static struct platform_driver apu_gpio_driver = {
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+	},
-+	.probe = apu_gpio_probe,
 +};
 +
-+static int __init apu_gpio_init(void)
++static struct gpio_keys_platform_data apu_buttons_data = {
++	.buttons		= apu_gpio_buttons,
++	.nbuttons		= ARRAY_SIZE(apu_gpio_buttons),
++	.poll_interval		= 20,
++};
++
++static struct platform_device apu_button_dev = {
++	.name			= "gpio-keys-polled",
++	.id			= 1,
++	.dev = {
++		.platform_data		= &apu_buttons_data,
++	}
++};
++
++static int __init apu_init(void)
 +{
 +	if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
 +		!(dmi_check_system(apu3_gpio_dmi_table))) {
-+		pr_err("No PC Engines board detected\n");
 +		return -ENODEV;
 +	}
 +
-+	apu_gpio_pdev = platform_device_register_simple(KBUILD_MODNAME,
-+			-1, NULL, 0);
-+	if (IS_ERR(apu_gpio_pdev))
-+		return PTR_ERR(apu_gpio_pdev);
-+
-+
-+	return platform_driver_register(&apu_gpio_driver);
++	return platform_device_register(&apu_button_dev);
 +}
 +
-+static void __exit apu_gpio_exit(void)
++static void __exit apu_exit(void)
 +{
-+	platform_device_unregister(apu_gpio_pdev);
-+	platform_driver_unregister(&apu_gpio_driver);
++	platform_device_unregister(&apu_button_dev);
 +}
 +
-+module_init(apu_gpio_init);
-+module_exit(apu_gpio_exit);
-+
-+MODULE_AUTHOR("Florian Eckert");
-+MODULE_DESCRIPTION("PC Engines APU2/APU3 family GPIO driver");
-+MODULE_LICENSE("GPL v2");
++module_init(apu_init);
++module_exit(apu_exit);
 -- 
 2.11.0
 
