@@ -2,106 +2,104 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0467C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEA9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF1F21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF1F21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3ACF121104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:09:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7HYtqwf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ACF121104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeK1IEx (ORCPT
+        id S1726570AbeK1IIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 03:04:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42082 "EHLO mx1.redhat.com"
+        Wed, 28 Nov 2018 03:08:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbeK1IEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 03:04:53 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726273AbeK1IIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 03:08:10 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 566F4308A94F;
-        Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A5AC5DD73;
-        Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 948752208FC; Tue, 27 Nov 2018 16:05:42 -0500 (EST)
-Date:   Tue, 27 Nov 2018 16:05:42 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: overlayfs access checks on underlying layers
-Message-ID: <20181127210542.GA2599@redhat.com>
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 496032086B;
+        Tue, 27 Nov 2018 21:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543352938;
+        bh=oa/ucYvyNcqNqg3rsTT8fgFZ5kTbtEyLSbFjJCWUaLQ=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=m7HYtqwfuhEcrHZHUZobbuIvQtFtQli1We9S5y2o1X+Vtcaw/+2/XdfuIhde5XgNO
+         SZUZrwkC7JtMhfeJiFMrkLkKhV8U+PO2ZZD27rh0nffe2Tmf4MUtIrhSzRW3ozImjF
+         JeTptBTclfK5Ad6vh60FBGBiZS1b8qd4v7oCgVWA=
+Date:   Tue, 27 Nov 2018 13:08:56 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        PanBian <bianpan2016@163.com>, Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [Xen-devel] [PATCH] pvcalls-front: fixes incorrect error
+ handling
+In-Reply-To: <0af126ad-1a74-e4c7-d74f-658a46757b9d@oracle.com>
+Message-ID: <alpine.DEB.2.10.1811271307020.4577@sstabellini-ThinkPad-X260>
+References: <1542852432-30019-1-git-send-email-bianpan2016@163.com> <1f765e81-ed89-d110-74b1-cc8029a4555f@oracle.com> <20181127005823.GB125510@bp> <alpine.DEB.2.10.1811271233550.4577@sstabellini-ThinkPad-X260>
+ <0af126ad-1a74-e4c7-d74f-658a46757b9d@oracle.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 08:58:06PM +0100, Miklos Szeredi wrote:
-> [resending with fixed email address for Paul Moore]
+On Tue, 27 Nov 2018, Boris Ostrovsky wrote:
+> On 11/27/18 3:37 PM, Stefano Stabellini wrote:
+> > On Tue, 27 Nov 2018, PanBian wrote:
+> >> On Mon, Nov 26, 2018 at 03:31:39PM -0500, Boris Ostrovsky wrote:
+> >>> On 11/21/18 9:07 PM, Pan Bian wrote:
+> >>>> kfree() is incorrectly used to release the pages allocated by
+> >>>> __get_free_page() and __get_free_pages(). Use the matching deallocators
+> >>>> i.e., free_page() and free_pages(), respectively.
+> >>>>
+> >>>> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> >>>> ---
+> >>>>  drivers/xen/pvcalls-front.c | 4 ++--
+> >>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> >>>> index 2f11ca7..77224d8 100644
+> >>>> --- a/drivers/xen/pvcalls-front.c
+> >>>> +++ b/drivers/xen/pvcalls-front.c
+> >>>> @@ -385,8 +385,8 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+> >>>>  out_error:
+> >>>>  	if (*evtchn >= 0)
+> >>>>  		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+> >>>> -	kfree(map->active.data.in);
+> >>>> -	kfree(map->active.ring);
+> >>>> +	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
+> >>> Is map->active.data.in guaranteed to be NULL when entering this routine?
+> >> I am not sure yet. Sorry for that. I observed the mismatches between
+> >> __get_free_page and kfree, and submitted the patch.
+> >>
+> >> But I think your consideration is reasonable. A better solution is to
+> >> directly free bytes, a local variable that holds __get_free_pages return
+> >> value. If you agree, I will rewrite the patch.
+> > Like Boris said, map->active.ring and map->active.data.in are not
+> > guaranteed to be NULL or != NULL here. For instance,map->active.ring can
+> > be != NULL and map->active.data.in can be NULL. However, free_pages and
+> > free_page should be able to cope with it, the same way that kfree is
+> > able to cope with it?
 > 
-> Moving discussion from github[1] to here.
-> 
-> To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
-> underlying layers") was added in 4.20-rc1 to make overlayfs access
-> checks on underlying "real" filesystems more consistent.  The
-> discussion leading up to this commit can be found at [2].  The commit
-> broke some selinux-testsuite cases, possibly indicating a security
-> hole opened by this commit.
-> 
-> The model this patch tries to follow is that if "cp --preserve=all"
-> was allowed to the mounter from underlying layer to the overlay layer,
-> then operation is allowed.  That means even if mounter's creds doesn't
-> provide permission to for example execute underying file X, if
-> mounter's creds provide sufficient permission to perform "cp
-> --preserve=all X Y"  and original creds allow execute on Y, then the
-> operation is allowed.  This provides consistency in the face of
-> copy-ups.  Consistency is only provided in sane setups, where mounter
-> has sufficient privileges to access both the lower and upper layers.
+> If map->active.data.in can be non-NULL on entry to this routine then I
+> think this has been a problem all along. Pan's suggestion to use bytes
+> for freeing is going to solve this (assuming bytes will be initialized
+> to NULL).
 
-[cc daniel walsh]
-
-I think current selinux testsuite tests are written keeping these
-rules in mind.
-
-1. Check overlay inode creds in the context of task and underlying
-   inode creds (lower/upper), in the context of mounter.
-
-2. For a lower inode, if said file is being copied up, then only
-   check MAY_READ on lower. This is equivalent to mounter creating
-   a copy of file and providing caller access to it (context mount).
-
-For the case of special devices, we do not copy up these. So should
-we continue to do check on lower inode in the context of mounter
-(instead of not doing any check on lower at all).
-
-For being able to execute a file, should we atleast check MAY_READ
-on lower.
-
-I am not sure why did we have to drop current checks on special file
-and execute. I will read through the thread you pointed out.
-
-Thanks
-Vivek
+Why is it a problem? map->active.data.in and map->active.ring are only
+!= NULL if they need to be freed. Otherwise, they are NULL. All structs
+are always initialized to zero. I don't think there are any issues.
