@@ -2,245 +2,185 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AD5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1D5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F49920659
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE38020659
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:28:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="DUIekVKg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F49920659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KlfhoZWM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE38020659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731650AbeK1EXv (ORCPT
+        id S1731662AbeK1E1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:23:51 -0500
-Received: from mail-eopbgr780045.outbound.protection.outlook.com ([40.107.78.45]:57408
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726183AbeK1EXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:23:50 -0500
+        Tue, 27 Nov 2018 23:27:32 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37757 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731510AbeK1E1c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 23:27:32 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so35240774iti.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:28:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PV1XXXKcSNBqgmq1xcHMYuwaiSDdl0B68lrfEqdBJjE=;
- b=DUIekVKg4Ng+pwsf8kofBmLPSjrN3IQpSaI/EktIUKdVsgQtpK+aLyTFx6Avlf0p3DaYK/5bHotmWVijDIORRiGErwc7iEqycVJ4vXmJ+X7iqQUhX2bwmfuIFyerxyzgjqe7QB4m0lWPhLuib30jHgAOqlMcx85CV7CyFAZ6838=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB0623.namprd12.prod.outlook.com (10.163.208.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.16; Tue, 27 Nov 2018 17:25:09 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 17:25:08 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 18/28] x86/speculation: Prepare for per task indirect
- branch speculation control
-Thread-Topic: [patch V2 18/28] x86/speculation: Prepare for per task indirect
- branch speculation control
-Thread-Index: AQHUhPC7rHYdSONo60ydeUeoiJQu3qVj4mSA
-Date:   Tue, 27 Nov 2018 17:25:08 +0000
-Message-ID: <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185005.176917199@linutronix.de>
-In-Reply-To: <20181125185005.176917199@linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN2PR01CA0073.prod.exchangelabs.com (2603:10b6:800::41) To
- SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB0623;20:1krLdOG8SynfppRlSn0PuFCENdARVjLS+XOGywnFI92R6iEMnuwa8ph4dv3ywVwWlXFDd5+tDX7w5ivWeKJBpDwz00/kBoh9uwQHk5ru2iwTNB/KBeCjXXJXM4cJ00PZ9mgafGL2edmlyUAdro46MP0EbyQ5j72/EHNN2GXx3KYb44CqToc2qSqBTqfjH3BpbICQqASgCidTWusq3achm2CiS5bavhypB06niDaexhrdG7GC0rQenBle+AZtwtsL
-x-ms-office365-filtering-correlation-id: 32907ab0-93fa-4353-4608-08d6548d473a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0623;
-x-ms-traffictypediagnostic: SN1PR12MB0623:
-x-microsoft-antispam-prvs: <SN1PR12MB06236BAA7DD6EF5A0C194F88ECD00@SN1PR12MB0623.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0623;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0623;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(39860400002)(376002)(199004)(189003)(106356001)(31686004)(478600001)(72206003)(76176011)(99286004)(52116002)(53546011)(105586002)(102836004)(8936002)(6512007)(14454004)(25786009)(6506007)(386003)(26005)(186003)(71190400001)(2906002)(3846002)(6116002)(53936002)(6246003)(71200400001)(81166006)(476003)(4326008)(39060400002)(256004)(14444005)(316002)(5660300001)(110136005)(36756003)(54906003)(7736002)(7416002)(305945005)(6486002)(229853002)(68736007)(486006)(446003)(6436002)(11346002)(86362001)(66066001)(575784001)(2616005)(31696002)(8676002)(97736004)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0623;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: YF2cAp91QzspO4vQ9Ijkn0NqAZzLMxLloKa2wiyAZoTg1ZEwUfoqC+U750myBoe7EaTKavp/JVaHt9FXU16thi744onoG0JOgvsI9ZpHTbvW+VA1+R4s2wPIfgZz5qdhSaKql5fUlcvlotfpOiCzNz0J8mqkIegYRDB1sE7wgxDhin8DMuG0ATmitDgFqUlpBPUPTorBZEVaSgnz8JZegIOeTJ9YwgwP6bEDV94aIDUNFGWgAppCka0SxB+FD05iK1lA6b4ShfOt1honFhpZv2ePavUcWzFED2VXjK7tfYpRbiTnHbNsVJ1Suub65W8tXjDKaMy0uDJTEiz6iQZvBZo8De4reTspiGuAifGLXxs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <07D3FF3642E26A41ABB5F3838B3886AE@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=R54rcm9i1O3/vapsG6b7Bk69Dxa8PcW9ozp5iuX3CeU=;
+        b=KlfhoZWMVerQd5UONN5UQZQZ6MiJ0nmxIOl8FI/eKEgHNSEyR6pljjpr92ey//qKd1
+         1ZRhGkJERzVjerFEI+2AZpBCd7fwZQunhjch73OGTEF0PLCaC1iN3KJlgycZS5AnokBd
+         yufTuAX1LLUiwfw72DqjYMZtIuD+8GhgUZaFk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=R54rcm9i1O3/vapsG6b7Bk69Dxa8PcW9ozp5iuX3CeU=;
+        b=Sv/LwMCTqceHUhg424QiC01QakzOUS7TtH3zEHSFR8St63X7NSVu9/8Fkraz9mfjlX
+         g6BIQcK3ZaoOtqxq4s+G04A4eJH95cra7oPUFVy4obruMBh9uUuX0smoad100qTzBlkt
+         j0u3gBxD8dDVSaCP1pCfw5T0sWhVW8M3b5UzCIY+Au+oLHVDihmwQc4gqIWjsjLsrRDA
+         9RjlIe1ZK2GRdP8zsWJy48Kc59ZNI+K3KLcaDnWZDv7ok+eLrhFvmNBFFDZRepJWiXK4
+         cUEilZqUsg4raX458LiaYupHd0/tV5bbFlMj3ZtZSqpd4v9xvGjAJtEuTUPnk869BsWy
+         l4RQ==
+X-Gm-Message-State: AA+aEWbFTb8PFyKlRxYnLuiNWQ5wQQS6CWkBvR7B6197sRuGNZfLYe7N
+        9EFfbzPFpU23nKGrbm+NcL5sfvGZseHCeQ7sR+PYMG/Y
+X-Google-Smtp-Source: AFSGD/W/UebMRCBg1ILW3Lj/Wn5uCtQTQ5/gS3tCWyTtf4SGbySIXlm2NT8dIwj1x1SH+FswBikBS0GoRELX/LPrRis=
+X-Received: by 2002:a05:660c:344:: with SMTP id b4mr7146805itl.51.1543339735054;
+ Tue, 27 Nov 2018 09:28:55 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32907ab0-93fa-4353-4608-08d6548d473a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 17:25:08.7408
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0623
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-4-daniel.vetter@ffwll.ch> <20181127074918.GT4266@phenom.ffwll.local>
+ <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
+In-Reply-To: <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 27 Nov 2018 18:28:43 +0100
+Message-ID: <CAKMK7uGSP7wWHSRFsCv90qCyHiSBS+o9CK1BPUXbGj6Crcy_Cg@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 3/3] mm, notifier: Add a lockdep map for invalidate_range_start
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMjUvMjAxOCAxMjozMyBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiBUbyBhdm9p
-ZCB0aGUgb3ZlcmhlYWQgb2YgU1RJQlAgYWx3YXlzIG9uLCBpdCdzIG5lY2Vzc2FyeSB0byBhbGxv
-dyBwZXIgdGFzaw0KPiBjb250cm9sIG9mIFNUSUJQLg0KPiANCj4gQWRkIGEgbmV3IHRhc2sgZmxh
-ZyBUSUZfU1BFQ19JQiBhbmQgZXZhbHVhdGUgaXQgZHVyaW5nIGNvbnRleHQgc3dpdGNoIGlmDQo+
-IFNNVCBpcyBhY3RpdmUgYW5kIGZsYWcgZXZhbHVhdGlvbiBpcyBlbmFibGVkIGJ5IHRoZSBzcGVj
-dWxhdGlvbiBjb250cm9sDQo+IGNvZGUuIEFkZCB0aGUgY29uZGl0aW9uYWwgZXZhbHVhdGlvbiB0
-byB4ODZfdmlydF9zcGVjX2N0cmwoKSBhcyB3ZWxsIHNvIHRoZQ0KPiBndWVzdC9ob3N0IHN3aXRj
-aCB3b3JrcyBwcm9wZXJseS4NCj4gDQo+IFRoaXMgaGFzIG5vIGVmZmVjdCBiZWNhdXNlIFRJRl9T
-UEVDX0lCIGNhbm5vdCBiZSBzZXQgeWV0IGFuZCB0aGUgc3RhdGljIGtleQ0KPiB3aGljaCBjb250
-cm9scyBldmFsdWF0aW9uIGlzIG9mZi4gUHJlcGFyYXRvcnkgcGF0Y2ggZm9yIGFkZGluZyB0aGUg
-Y29udHJvbA0KPiBjb2RlLg0KPiANCj4gWyB0Z2x4OiBTaW1wbGlmeSB0aGUgY29udGV4dCBzd2l0
-Y2ggbG9naWMgYW5kIG1ha2UgdGhlIFRJRiBldmFsdWF0aW9uDQo+ICAgCWRlcGVuZCBvbiBTTVA9
-eSBhbmQgb24gdGhlIHN0YXRpYyBrZXkgY29udHJvbGxpbmcgdGhlIGNvbmRpdGlvbmFsDQo+ICAg
-CXVwZGF0ZS4gUmVuYW1lIGl0IHRvIFRJRl9TUEVDX0lCIGJlY2F1c2UgaXQgY29udHJvbHMgYm90
-aCBTVElCUCBhbmQNCj4gICAJSUJQQiBdDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBUaW0gQ2hlbiA8
-dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFRob21hcyBHbGVp
-eG5lciA8dGdseEBsaW51dHJvbml4LmRlPg0KPiANCj4gLS0tDQo+IA0KPiB2MSAtPiB2MjogUmVt
-b3ZlIHBvaW50bGVzcyBpbmNsdWRlLiBVc2UgY29uc2lzdGVudCBjb21tZW50cy4NCj4gDQo+IC0t
-LQ0KPiAgYXJjaC94ODYvaW5jbHVkZS9hc20vbXNyLWluZGV4LmggICB8ICAgIDUgKysrLS0NCj4g
-IGFyY2gveDg2L2luY2x1ZGUvYXNtL3NwZWMtY3RybC5oICAgfCAgIDEyICsrKysrKysrKysrKw0K
-PiAgYXJjaC94ODYvaW5jbHVkZS9hc20vdGhyZWFkX2luZm8uaCB8ICAgIDUgKysrKy0NCj4gIGFy
-Y2gveDg2L2tlcm5lbC9jcHUvYnVncy5jICAgICAgICAgfCAgICA0ICsrKysNCj4gIGFyY2gveDg2
-L2tlcm5lbC9wcm9jZXNzLmMgICAgICAgICAgfCAgIDIzICsrKysrKysrKysrKysrKysrKysrKy0t
-DQo+ICA1IGZpbGVzIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+
-IA0KPiAtLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tc3ItaW5kZXguaA0KPiArKysgYi9hcmNo
-L3g4Ni9pbmNsdWRlL2FzbS9tc3ItaW5kZXguaA0KPiBAQCAtNDEsOSArNDEsMTAgQEANCj4gIA0K
-PiAgI2RlZmluZSBNU1JfSUEzMl9TUEVDX0NUUkwJCTB4MDAwMDAwNDggLyogU3BlY3VsYXRpb24g
-Q29udHJvbCAqLw0KPiAgI2RlZmluZSBTUEVDX0NUUkxfSUJSUwkJCSgxIDw8IDApICAgLyogSW5k
-aXJlY3QgQnJhbmNoIFJlc3RyaWN0ZWQgU3BlY3VsYXRpb24gKi8NCj4gLSNkZWZpbmUgU1BFQ19D
-VFJMX1NUSUJQCQkJKDEgPDwgMSkgICAvKiBTaW5nbGUgVGhyZWFkIEluZGlyZWN0IEJyYW5jaCBQ
-cmVkaWN0b3JzICovDQo+ICsjZGVmaW5lIFNQRUNfQ1RSTF9TVElCUF9TSElGVAkJMQkgICAvKiBT
-aW5nbGUgVGhyZWFkIEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0b3IgKFNUSUJQKSBiaXQgKi8NCj4g
-KyNkZWZpbmUgU1BFQ19DVFJMX1NUSUJQCQkJKDEgPDwgU1BFQ19DVFJMX1NUSUJQX1NISUZUKQkv
-KiBTVElCUCBtYXNrICovDQo+ICAjZGVmaW5lIFNQRUNfQ1RSTF9TU0JEX1NISUZUCQkyCSAgIC8q
-IFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBEaXNhYmxlIGJpdCAqLw0KPiAtI2RlZmluZSBTUEVD
-X0NUUkxfU1NCRAkJCSgxIDw8IFNQRUNfQ1RSTF9TU0JEX1NISUZUKSAgIC8qIFNwZWN1bGF0aXZl
-IFN0b3JlIEJ5cGFzcyBEaXNhYmxlICovDQo+ICsjZGVmaW5lIFNQRUNfQ1RSTF9TU0JECQkJKDEg
-PDwgU1BFQ19DVFJMX1NTQkRfU0hJRlQpCS8qIFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBEaXNh
-YmxlICovDQo+ICANCj4gICNkZWZpbmUgTVNSX0lBMzJfUFJFRF9DTUQJCTB4MDAwMDAwNDkgLyog
-UHJlZGljdGlvbiBDb21tYW5kICovDQo+ICAjZGVmaW5lIFBSRURfQ01EX0lCUEIJCQkoMSA8PCAw
-KSAgIC8qIEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0aW9uIEJhcnJpZXIgKi8NCj4gLS0tIGEvYXJj
-aC94ODYvaW5jbHVkZS9hc20vc3BlYy1jdHJsLmgNCj4gKysrIGIvYXJjaC94ODYvaW5jbHVkZS9h
-c20vc3BlYy1jdHJsLmgNCj4gQEAgLTUzLDEyICs1MywyNCBAQCBzdGF0aWMgaW5saW5lIHU2NCBz
-c2JkX3RpZl90b19zcGVjX2N0cmwoDQo+ICAJcmV0dXJuICh0aWZuICYgX1RJRl9TU0JEKSA+PiAo
-VElGX1NTQkQgLSBTUEVDX0NUUkxfU1NCRF9TSElGVCk7DQo+ICB9DQo+ICANCj4gK3N0YXRpYyBp
-bmxpbmUgdTY0IHN0aWJwX3RpZl90b19zcGVjX2N0cmwodTY0IHRpZm4pDQo+ICt7DQo+ICsJQlVJ
-TERfQlVHX09OKFRJRl9TUEVDX0lCIDwgU1BFQ19DVFJMX1NUSUJQX1NISUZUKTsNCj4gKwlyZXR1
-cm4gKHRpZm4gJiBfVElGX1NQRUNfSUIpID4+IChUSUZfU1BFQ19JQiAtIFNQRUNfQ1RSTF9TVElC
-UF9TSElGVCk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBzc2Jk
-X3NwZWNfY3RybF90b190aWYodTY0IHNwZWNfY3RybCkNCj4gIHsNCj4gIAlCVUlMRF9CVUdfT04o
-VElGX1NTQkQgPCBTUEVDX0NUUkxfU1NCRF9TSElGVCk7DQo+ICAJcmV0dXJuIChzcGVjX2N0cmwg
-JiBTUEVDX0NUUkxfU1NCRCkgPDwgKFRJRl9TU0JEIC0gU1BFQ19DVFJMX1NTQkRfU0hJRlQpOw0K
-PiAgfQ0KPiAgDQo+ICtzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgc3RpYnBfc3BlY19jdHJs
-X3RvX3RpZih1NjQgc3BlY19jdHJsKQ0KPiArew0KPiArCUJVSUxEX0JVR19PTihUSUZfU1BFQ19J
-QiA8IFNQRUNfQ1RSTF9TVElCUF9TSElGVCk7DQo+ICsJcmV0dXJuIChzcGVjX2N0cmwgJiBTUEVD
-X0NUUkxfU1RJQlApIDw8IChUSUZfU1BFQ19JQiAtIFNQRUNfQ1RSTF9TVElCUF9TSElGVCk7DQo+
-ICt9DQo+ICsNCj4gIHN0YXRpYyBpbmxpbmUgdTY0IHNzYmRfdGlmX3RvX2FtZF9sc19jZmcodTY0
-IHRpZm4pDQo+ICB7DQo+ICAJcmV0dXJuICh0aWZuICYgX1RJRl9TU0JEKSA/IHg4Nl9hbWRfbHNf
-Y2ZnX3NzYmRfbWFzayA6IDBVTEw7DQo+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RocmVh
-ZF9pbmZvLmgNCj4gKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdGhyZWFkX2luZm8uaA0KPiBA
-QCAtODMsNiArODMsNyBAQCBzdHJ1Y3QgdGhyZWFkX2luZm8gew0KPiAgI2RlZmluZSBUSUZfU1lT
-Q0FMTF9FTVUJCTYJLyogc3lzY2FsbCBlbXVsYXRpb24gYWN0aXZlICovDQo+ICAjZGVmaW5lIFRJ
-Rl9TWVNDQUxMX0FVRElUCTcJLyogc3lzY2FsbCBhdWRpdGluZyBhY3RpdmUgKi8NCj4gICNkZWZp
-bmUgVElGX1NFQ0NPTVAJCTgJLyogc2VjdXJlIGNvbXB1dGluZyAqLw0KPiArI2RlZmluZSBUSUZf
-U1BFQ19JQgkJOQkvKiBJbmRpcmVjdCBicmFuY2ggc3BlY3VsYXRpb24gbWl0aWdhdGlvbiAqLw0K
-PiAgI2RlZmluZSBUSUZfVVNFUl9SRVRVUk5fTk9USUZZCTExCS8qIG5vdGlmeSBrZXJuZWwgb2Yg
-dXNlcnNwYWNlIHJldHVybiAqLw0KPiAgI2RlZmluZSBUSUZfVVBST0JFCQkxMgkvKiBicmVha3Bv
-aW50ZWQgb3Igc2luZ2xlc3RlcHBpbmcgKi8NCj4gICNkZWZpbmUgVElGX1BBVENIX1BFTkRJTkcJ
-MTMJLyogcGVuZGluZyBsaXZlIHBhdGNoaW5nIHVwZGF0ZSAqLw0KPiBAQCAtMTEwLDYgKzExMSw3
-IEBAIHN0cnVjdCB0aHJlYWRfaW5mbyB7DQo+ICAjZGVmaW5lIF9USUZfU1lTQ0FMTF9FTVUJKDEg
-PDwgVElGX1NZU0NBTExfRU1VKQ0KPiAgI2RlZmluZSBfVElGX1NZU0NBTExfQVVESVQJKDEgPDwg
-VElGX1NZU0NBTExfQVVESVQpDQo+ICAjZGVmaW5lIF9USUZfU0VDQ09NUAkJKDEgPDwgVElGX1NF
-Q0NPTVApDQo+ICsjZGVmaW5lIF9USUZfU1BFQ19JQgkJKDEgPDwgVElGX1NQRUNfSUIpDQo+ICAj
-ZGVmaW5lIF9USUZfVVNFUl9SRVRVUk5fTk9USUZZCSgxIDw8IFRJRl9VU0VSX1JFVFVSTl9OT1RJ
-RlkpDQo+ICAjZGVmaW5lIF9USUZfVVBST0JFCQkoMSA8PCBUSUZfVVBST0JFKQ0KPiAgI2RlZmlu
-ZSBfVElGX1BBVENIX1BFTkRJTkcJKDEgPDwgVElGX1BBVENIX1BFTkRJTkcpDQo+IEBAIC0xNDYs
-NyArMTQ4LDggQEAgc3RydWN0IHRocmVhZF9pbmZvIHsNCj4gIA0KPiAgLyogZmxhZ3MgdG8gY2hl
-Y2sgaW4gX19zd2l0Y2hfdG8oKSAqLw0KPiAgI2RlZmluZSBfVElGX1dPUktfQ1RYU1cJCQkJCQkJ
-XA0KPiAtCShfVElGX0lPX0JJVE1BUHxfVElGX05PQ1BVSUR8X1RJRl9OT1RTQ3xfVElGX0JMT0NL
-U1RFUHxfVElGX1NTQkQpDQo+ICsJKF9USUZfSU9fQklUTUFQfF9USUZfTk9DUFVJRHxfVElGX05P
-VFNDfF9USUZfQkxPQ0tTVEVQfAkJXA0KPiArCSBfVElGX1NTQkR8X1RJRl9TUEVDX0lCKQ0KPiAg
-DQo+ICAjZGVmaW5lIF9USUZfV09SS19DVFhTV19QUkVWIChfVElGX1dPUktfQ1RYU1d8X1RJRl9V
-U0VSX1JFVFVSTl9OT1RJRlkpDQo+ICAjZGVmaW5lIF9USUZfV09SS19DVFhTV19ORVhUIChfVElG
-X1dPUktfQ1RYU1cpDQo+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQo+ICsrKyBi
-L2FyY2gveDg2L2tlcm5lbC9jcHUvYnVncy5jDQo+IEBAIC0xNDgsNiArMTQ4LDEwIEBAIHg4Nl92
-aXJ0X3NwZWNfY3RybCh1NjQgZ3Vlc3Rfc3BlY19jdHJsLA0KPiAgCQkgICAgc3RhdGljX2NwdV9o
-YXMoWDg2X0ZFQVRVUkVfQU1EX1NTQkQpKQ0KPiAgCQkJaG9zdHZhbCB8PSBzc2JkX3RpZl90b19z
-cGVjX2N0cmwodGktPmZsYWdzKTsNCj4gIA0KPiArCQkvKiBDb25kaXRpb25hbCBTVElCUCBlbmFi
-bGVkPyAqLw0KPiArCQlpZiAoc3RhdGljX2JyYW5jaF91bmxpa2VseSgmc3dpdGNoX3RvX2NvbmRf
-c3RpYnApKQ0KPiArCQkJaG9zdHZhbCB8PSBzdGlicF90aWZfdG9fc3BlY19jdHJsKHRpLT5mbGFn
-cyk7DQo+ICsNCj4gIAkJaWYgKGhvc3R2YWwgIT0gZ3Vlc3R2YWwpIHsNCj4gIAkJCW1zcnZhbCA9
-IHNldGd1ZXN0ID8gZ3Vlc3R2YWwgOiBob3N0dmFsOw0KPiAgCQkJd3Jtc3JsKE1TUl9JQTMyX1NQ
-RUNfQ1RSTCwgbXNydmFsKTsNCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL3Byb2Nlc3MuYw0KPiAr
-KysgYi9hcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzcy5jDQo+IEBAIC00MDYsNiArNDA2LDExIEBAIHN0
-YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCBzcGVjX2N0cmxfdXANCj4gIAlpZiAoc3RhdGljX2Nw
-dV9oYXMoWDg2X0ZFQVRVUkVfU1NCRCkpDQo+ICAJCW1zciB8PSBzc2JkX3RpZl90b19zcGVjX2N0
-cmwodGlmbik7DQoNCkkgZGlkIHNvbWUgcXVpY2sgdGVzdGluZyBhbmQgZm91bmQgbXkgb3JpZ2lu
-YWwgbG9naWMgd2FzIGZsYXdlZC4gU2luY2UNCnNwZWNfY3RybF91cGRhdGVfbXNyKCkgY2FuIG5v
-dyBiZSBjYWxsZWQgZm9yIFNUSUJQLCBhbiBhZGRpdGlvbmFsIGNoZWNrDQppcyBuZWVkZWQgdG8g
-c2V0IHRoZSBTU0JEIE1TUiBiaXQuDQoNCkJvdGggWDg2X0ZFQVRVUkVfVklSVF9TU0JEIGFuZCBY
-ODZfRkVBVFVSRV9MU19DRkdfU1NCRCBjYXVzZQ0KWDg2X0ZFQVRVUkVfU1NCRCB0byBiZSBzZXQu
-IEJlZm9yZSB0aGlzIHBhdGNoLCBzcGVjX2N0cmxfdXBkYXRlX21zcigpIHdhcw0Kb25seSBjYWxs
-ZWQgaWYgWDg2X0ZFQVRVUkVfU1NCRCB3YXMgc2V0IGFuZCBvbmUgb2YgdGhlIG90aGVyIFNTQkQg
-ZmVhdHVyZXMNCndhc24ndCBzZXQuIEJ1dCBub3csIFNUSUJQIGNhbiBjYXVzZSBzcGVjX2N0cmxf
-dXBkYXRlX21zcigpIHRvIGdldCBjYWxsZWQNCmFuZCBjYXVzZSB0aGUgU1NCRCBNU1IgYml0IHRv
-IGJlIHNldCB3aGVuIGl0IHNob3VsZG4ndCAoY291bGQgcmVzdWx0IGluDQphIEdQIGZhdWx0KS4N
-Cg0KVGhhbmtzLA0KVG9tDQoNCj4gIA0KPiArCS8qIE9ubHkgZXZhbHVhdGUgaWYgY29uZGl0aW9u
-YWwgU1RJQlAgaXMgZW5hYmxlZCAqLw0KPiArCWlmIChJU19FTkFCTEVEKENPTkZJR19TTVApICYm
-DQo+ICsJICAgIHN0YXRpY19icmFuY2hfdW5saWtlbHkoJnN3aXRjaF90b19jb25kX3N0aWJwKSkN
-Cj4gKwkJbXNyIHw9IHN0aWJwX3RpZl90b19zcGVjX2N0cmwodGlmbik7DQo+ICsNCj4gIAl3cm1z
-cmwoTVNSX0lBMzJfU1BFQ19DVFJMLCBtc3IpOw0KPiAgfQ0KPiAgDQo+IEBAIC00MTgsMTAgKzQy
-MywxNiBAQCBzdGF0aWMgX19hbHdheXNfaW5saW5lIHZvaWQgc3BlY19jdHJsX3VwDQo+ICBzdGF0
-aWMgX19hbHdheXNfaW5saW5lIHZvaWQgX19zcGVjdWxhdGlvbl9jdHJsX3VwZGF0ZSh1bnNpZ25l
-ZCBsb25nIHRpZnAsDQo+ICAJCQkJCQkgICAgICB1bnNpZ25lZCBsb25nIHRpZm4pDQo+ICB7DQo+
-ICsJdW5zaWduZWQgbG9uZyB0aWZfZGlmZiA9IHRpZnAgXiB0aWZuOw0KPiAgCWJvb2wgdXBkbXNy
-ID0gZmFsc2U7DQo+ICANCj4gLQkvKiBJZiBUSUZfU1NCRCBpcyBkaWZmZXJlbnQsIHNlbGVjdCB0
-aGUgcHJvcGVyIG1pdGlnYXRpb24gbWV0aG9kICovDQo+IC0JaWYgKCh0aWZwIF4gdGlmbikgJiBf
-VElGX1NTQkQpIHsNCj4gKwkvKg0KPiArCSAqIElmIFRJRl9TU0JEIGlzIGRpZmZlcmVudCwgc2Vs
-ZWN0IHRoZSBwcm9wZXIgbWl0aWdhdGlvbg0KPiArCSAqIG1ldGhvZC4gTm90ZSB0aGF0IGlmIFNT
-QkQgbWl0aWdhdGlvbiBpcyBkaXNhYmxlZCBvciBwZXJtYW5lbnRlbHkNCj4gKwkgKiBlbmFibGVk
-IHRoaXMgYnJhbmNoIGNhbid0IGJlIHRha2VuIGJlY2F1c2Ugbm90aGluZyBjYW4gc2V0DQo+ICsJ
-ICogVElGX1NTQkQuDQo+ICsJICovDQo+ICsJaWYgKHRpZl9kaWZmICYgX1RJRl9TU0JEKSB7DQo+
-ICAJCWlmIChzdGF0aWNfY3B1X2hhcyhYODZfRkVBVFVSRV9WSVJUX1NTQkQpKQ0KPiAgCQkJYW1k
-X3NldF9zc2JfdmlydF9zdGF0ZSh0aWZuKTsNCj4gIAkJZWxzZSBpZiAoc3RhdGljX2NwdV9oYXMo
-WDg2X0ZFQVRVUkVfTFNfQ0ZHX1NTQkQpKQ0KPiBAQCAtNDMwLDYgKzQ0MSwxNCBAQCBzdGF0aWMg
-X19hbHdheXNfaW5saW5lIHZvaWQgX19zcGVjdWxhdGlvDQo+ICAJCQl1cGRtc3IgID0gdHJ1ZTsN
-Cj4gIAl9DQo+ICANCj4gKwkvKg0KPiArCSAqIE9ubHkgZXZhbHVhdGUgVElGX1NQRUNfSUIgaWYg
-Y29uZGl0aW9uYWwgU1RJQlAgaXMgZW5hYmxlZCwNCj4gKwkgKiBvdGhlcndpc2UgYXZvaWQgdGhl
-IE1TUiB3cml0ZS4NCj4gKwkgKi8NCj4gKwlpZiAoSVNfRU5BQkxFRChDT05GSUdfU01QKSAmJg0K
-PiArCSAgICBzdGF0aWNfYnJhbmNoX3VubGlrZWx5KCZzd2l0Y2hfdG9fY29uZF9zdGlicCkpDQo+
-ICsJCXVwZG1zciB8PSAhISh0aWZfZGlmZiAmIF9USUZfU1BFQ19JQik7DQo+ICsNCj4gIAlpZiAo
-dXBkbXNyKQ0KPiAgCQlzcGVjX2N0cmxfdXBkYXRlX21zcih0aWZuKTsNCj4gIH0NCj4gDQo+IA0K
+On Tue, Nov 27, 2018 at 5:50 PM Chris Wilson <chris@chris-wilson.co.uk> wro=
+te:
+>
+> Quoting Daniel Vetter (2018-11-27 07:49:18)
+> > On Thu, Nov 22, 2018 at 05:51:06PM +0100, Daniel Vetter wrote:
+> > > This is a similar idea to the fs_reclaim fake lockdep lock. It's
+> > > fairly easy to provoke a specific notifier to be run on a specific
+> > > range: Just prep it, and then munmap() it.
+> > >
+> > > A bit harder, but still doable, is to provoke the mmu notifiers for
+> > > all the various callchains that might lead to them. But both at the
+> > > same time is really hard to reliable hit, especially when you want to
+> > > exercise paths like direct reclaim or compaction, where it's not
+> > > easy to control what exactly will be unmapped.
+> > >
+> > > By introducing a lockdep map to tie them all together we allow lockde=
+p
+> > > to see a lot more dependencies, without having to actually hit them
+> > > in a single challchain while testing.
+> > >
+> > > Aside: Since I typed this to test i915 mmu notifiers I've only rolled
+> > > this out for the invaliate_range_start callback. If there's
+> > > interest, we should probably roll this out to all of them. But my
+> > > undestanding of core mm is seriously lacking, and I'm not clear on
+> > > whether we need a lockdep map for each callback, or whether some can
+> > > be shared.
+> > >
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: David Rientjes <rientjes@google.com>
+> > > Cc: "J=C3=A9r=C3=B4me Glisse" <jglisse@redhat.com>
+> > > Cc: Michal Hocko <mhocko@suse.com>
+> > > Cc: "Christian K=C3=B6nig" <christian.koenig@amd.com>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > Cc: linux-mm@kvack.org
+> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> >
+> > Any comments on this one here? This is really the main ingredient for
+> > catching deadlocks in mmu notifier callbacks. The other two patches are
+> > more the icing on the cake.
+> >
+> > Thanks, Daniel
+> >
+> > > ---
+> > >  include/linux/mmu_notifier.h | 7 +++++++
+> > >  mm/mmu_notifier.c            | 7 +++++++
+> > >  2 files changed, 14 insertions(+)
+> > >
+> > > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifie=
+r.h
+> > > index 9893a6432adf..a39ba218dbbe 100644
+> > > --- a/include/linux/mmu_notifier.h
+> > > +++ b/include/linux/mmu_notifier.h
+> > > @@ -12,6 +12,10 @@ struct mmu_notifier_ops;
+> > >
+> > >  #ifdef CONFIG_MMU_NOTIFIER
+> > >
+> > > +#ifdef CONFIG_LOCKDEP
+> > > +extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
+> > > +#endif
+> > > +
+> > >  /*
+> > >   * The mmu notifier_mm structure is allocated and installed in
+> > >   * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
+> > > @@ -267,8 +271,11 @@ static inline void mmu_notifier_change_pte(struc=
+t mm_struct *mm,
+> > >  static inline void mmu_notifier_invalidate_range_start(struct mm_str=
+uct *mm,
+> > >                                 unsigned long start, unsigned long en=
+d)
+> > >  {
+> > > +     mutex_acquire(&__mmu_notifier_invalidate_range_start_map, 0, 0,
+> > > +                   _RET_IP_);
+>
+> Would not lock_acquire_shared() be more appropriate, i.e. treat this as
+> a rwsem_acquire_read()?
+
+read lock critical sections can't create any dependencies against any
+other read lock critical section of the same lock. Switching this to a
+read lock would just render the annotation pointless (if you don't
+include at least some write lock critical section somewhere, but I
+have no idea where you'd do that). A read lock that you only ever take
+for reading essentially doesn't do anything at all.
+
+So not clear on why you're suggesting this?
+
+It's the exact same idea like fs_reclaim of intserting a fake lock to
+tie all possible callchains to a given functions together with all
+possible callchains from that function. Of course this is only valid
+if all NxM combinations could happen in theory. For fs_reclaim that's
+true because direct reclaim can pick anything it wants to
+shrink/evict. For mmu notifier that's true as long as we assume any
+mmu notifier can be in use by any process, which only depends upon
+sufficiently contrived/evil userspace.
+
+I guess I could use lock_map_acquire/release() wrappers for this like
+fs_reclaim, would be a bit more clear.
+-Daniel
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
