@@ -2,75 +2,149 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB96AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F0C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745C12086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745C12086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id DF3EE20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:27:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3EE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbeK1KZK (ORCPT
+        id S1726647AbeK1K11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:25:10 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:45644 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeK1KZK (ORCPT
+        Wed, 28 Nov 2018 05:27:27 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:35212 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbeK1K11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 05:25:10 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2E3F114E09804;
-        Tue, 27 Nov 2018 15:25:40 -0800 (PST)
-Date:   Tue, 27 Nov 2018 15:25:39 -0800 (PST)
-Message-Id: <20181127.152539.1127313634090592618.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     igor.russkikh@aquantia.com, nikita.danilov@aquantia.com,
-        yana.esina@aquantia.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: aquantia: return 'err' if set MPI_DEINIT
- state fails
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181124101641.7072-1-yuehaibing@huawei.com>
-References: <20181124101641.7072-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 27 Nov 2018 15:25:40 -0800 (PST)
+        Wed, 28 Nov 2018 05:27:27 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 6507B72CC59;
+        Wed, 28 Nov 2018 02:27:53 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 50F697CD0D7; Wed, 28 Nov 2018 02:27:53 +0300 (MSK)
+Date:   Wed, 28 Nov 2018 02:27:53 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        strace-devel@lists.strace.io, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
+ support to PTRACE_GET_SYSCALL_INFO
+Message-ID: <20181127232753.GA18755@altlinux.org>
+References: <20181125022150.46258a20@akathisia>
+ <20181125022340.5703400f@akathisia>
+ <20181126143524.GB1660@redhat.com>
+ <20181127040732.1c9f7965@akathisia>
+ <20181127123116.GA13284@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+In-Reply-To: <20181127123116.GA13284@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 24 Nov 2018 18:16:41 +0800
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:260:7:
->  warning: variable 'err' set but not used [-Wunused-but-set-variable]
-> 
-> 'err' should be returned while set MPI_DEINIT state fails
-> in hw_atl_utils_soft_reset.
-> 
-> Fixes: cce96d1883da ("net: aquantia: Regression on reset with 1.x firmware")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied.
+On Tue, Nov 27, 2018 at 01:31:17PM +0100, Oleg Nesterov wrote:
+> On 11/27, Elvira Khabirova wrote:
+> > On Mon, 26 Nov 2018 15:35:24 +0100, Oleg Nesterov wrote:
+> > > On 11/25, Elvira Khabirova wrote:
+> > > >
+> > > > Extend PTRACE_GET_SYSCALL_INFO to support PTRACE_EVENT_SECCOMP stop=
+s.
+> > > > The information returned is the same as for syscall-enter-stops.
+> > >
+> > > Oh, this is not nice ;) there must be a better option, I hope... Plus
+> > >
+> > >
+> > > Can't ptrace_get_syscall() check
+> > >
+> > > 	child->exit_code =3D=3D (PTRACE_EVENT_SECCOMP << 8) | SIGTRAP;
+> > >
+> > > to detect the PTRACE_EVENT_SECCOMP case?
+> >
+> > Nope; looks like exit_code is zeroed after wait().
+>=20
+> Yes, thanks for correcting me,
+>=20
+> but we can use child->last_siginfo->si_code.
 
-But this AQ_HW_STATE_FOR macro _MUST_ be fixed.
+Yes, this approach works, thanks!
 
-No macro should have invisible references to variables like this, and
-that is exactly what leads to bugs like this.  CPP macros written this
-way make it impossible to properly audit code.
+> Just like ptrace_request(PTRACE_LISTEN)
+> does but you can do this lockless (no need to lock_task_sighand()).
 
-'err' should be an explicit argument given to this function instead of
-how it works now.
+Why this can be done lockless?  All other places in that file do
+the locking, so I'd rather add a comment in the new code.
+
+> And if we require that the user of ptrace_get_syscall() should also use T=
+RACESYSGOOD
+> then ptrace_get_syscall() can probably do something like
+>=20
+> 	int entry;
+>=20
+> 	if (!child->last_siginfo)
+> 		return -EINVAL;
+> 	else if (child->last_siginfo->si_code =3D=3D (PTRACE_EVENT_SECCOMP << 8)=
+ | SIGTRAP)
+> 		entry =3D 1;
+> 	else if (child->last_siginfo->si_code =3D=3D SIGTRAP | 0x80)
+> 		entry =3D child->ptrace_message =3D=3D PTRACE_EVENTMSG_SYSCALL_ENTRY;
+> 	else
+> 		return -EINVAL;
+>=20
+> and this way PTRACE_EVENTMSG_SYSCALL_ENTRY/EXIT can't confict with seccom=
+p or
+> anything else.
+>=20
+> No?
+>=20
+> Of course, debugger can do PTRACE_SETSIGINFO and confuse itself but proba=
+bly we
+> do not care?
+
+The only potential issue I could think of is whether PTRACE_SETSIGINFO
+could be used this way to cause an information leak by making
+PTRACE_GET_SYSCALL_INFO access some unrelated data.
+
+
+--=20
+ldv
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJb/dL4AAoJEAVFT+BVnCUIF/MQAMC9+XrGx9ayW2qY4YB/NhyN
+Y45xc4uPFby1DPp0rzogf2SJ0A8A5j6TH1uDXNg4yDEh8o0Ov4oTKqbeKl6PorM1
+jf0zk2rENykAdZX503kaI5HWMgddR7q1q8XyjsyDL1FUwQtBito+pbC5cr82hfkY
+96UqJmm8XlbRbDIkZkuGE8SAnTbEufBg2eY9RvamuBKsOSbqN+03kP9ThQ2Ecen4
+6dgdnX00hpCL3HFCjXbymjmKZGoY4hAVpKpZK76W6yaIXaBnaJ/OGC8n638Hw43Q
+9Tt2FDgslQDYJyeBuL+GuW6IznUp38EG4g6iHZLL1UHZUMVYdKgQcdaOsd3lXY25
+89Z7dnBcQz0P3K1Jmgc/GgZzO0xeCsEATuVWzdNPj09mMok0b++nHFnD5Yeb9nDt
+ndAiE9h6RnpHy2aYma05SLH7nd7CpcEbC8GIR5pMUd3F+QzPX2QNTC1S9QLNqByf
+4RelqJB88Rj44NBGKWW83+I+zhpCGpsrwU4Fn8c2kLgHzZFuWwROjP5RYE0nV40Y
+qhP1irq1PcWg9V6OY0T6wxPV2Tfa8tuvxCxVSZ35YhrTqbgKMYxfyjk3MyUJs7FG
+qUH+ntArYQ2NiAeSQsU8WGD8yONDiBEJbF9EeqAApUvJTcuIRoj/xyOBiaQi7uDi
+S0KILWIMBBkcuXJR9Hmp
+=F6Fd
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
