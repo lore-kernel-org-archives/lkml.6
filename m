@@ -2,97 +2,201 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39623C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AD9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEB32086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3F3B2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hxjXg+BO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEB32086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jHJf0BOu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F3B2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbeK0WsX (ORCPT
+        id S1731046AbeK0Wsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 17:48:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46286 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeK0WsX (ORCPT
+        Tue, 27 Nov 2018 17:48:52 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:38006 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeK0Wsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 17:48:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eXiFuGEYL063RlTNRT8iWSBcS71jHHw57uP7Nz7aM7Y=; b=hxjXg+BOawFwbRG2lWLovBhOx
-        cIAa0I1+FdkQABM44HnsXNhnfU9MNj39+hrvGUBqE5rO1i7VitYo5PHZC5rtruqvw94+DjZiFvNQ5
-        9mQQAPXa4PboR5sEWIEePISubuWrZEwImRuH44Upk4OJt3WP8UW/HTAczC0Plm0Mv5vxg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gRbsx-0008Ts-Lp; Tue, 27 Nov 2018 11:50:35 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4D1041125056; Tue, 27 Nov 2018 11:50:35 +0000 (GMT)
-Date:   Tue, 27 Nov 2018 11:50:35 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Ryan Lee <RyanS.Lee@maximintegrated.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Grant Grundler <grundler@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Benson Leung <bleung@chromium.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: max98373: Added max98373_reset for stable amp reset
-Message-ID: <20181127115035.GB3206@sirena.org.uk>
-References: <20181126183942.2631-1-ryans.lee@maximintegrated.com>
+        Tue, 27 Nov 2018 17:48:52 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 5EB2310C0EAD;
+        Tue, 27 Nov 2018 03:51:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543319473; bh=CqWTuvOUNaWe1aqKHQT21C1KgEuEBx4kR7UCiblxfYU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=jHJf0BOuxTyqyiLnJ5nnYQqDofmWFk2TFGKkx54MPegjVokZKw6Z2GHp4dKEQCxVI
+         YBxwch0aIp/cN3DLpsynfcYaezj/LR8WOpyT3WL0OVVD2HIvtjIoCNvKsbHE7QThGf
+         M6atfznjJtI7IBCI4uBN8vybEWZJz53G6W84WxkaUQKX3rxe40E77qDweHlwwwj6X5
+         fPb7Xfu3rn4sTzycdEbxXkA9hUP2uSf1/Y2Ep1QFoQ59n1b0siWNK04GpFvKcrKQp4
+         6ucKTh/r2wxpMZHYDbNvW+iRhyC/EF93Y69l498nGIW48H/GOCOHmBiVKPM47HQrpF
+         3q8pu9hmqWIyA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 0B86D3271;
+        Tue, 27 Nov 2018 03:51:10 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 27 Nov 2018 03:51:09 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 27 Nov 2018 12:51:07 +0100
+Received: from [10.0.2.15] (10.107.19.128) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 27 Nov
+ 2018 12:51:07 +0100
+Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
+ bus specific parts
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        vitor <vitor.soares@synopsys.com>
+CC:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
+        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
+        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
+        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
+        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
+        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
+        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
+        <joao.pinto@synopsys.com>
+References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
+ <20181122210202.6af50fcc@bbrezillon>
+ <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
+ <20181123135004.7fd1cd58@bbrezillon>
+ <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
+ <20181126133550.51469816@bbrezillon>
+ <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
+ <20181126195618.352eafb1@bbrezillon>
+ <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
+ <20181126223334.08105d89@bbrezillon>
+From:   vitor <vitor.soares@synopsys.com>
+Message-ID: <0912ea50-b365-d583-9d33-1dff236acbad@synopsys.com>
+Date:   Tue, 27 Nov 2018 11:50:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mojUlQ0s9EVzWg2t"
-Content-Disposition: inline
-In-Reply-To: <20181126183942.2631-1-ryans.lee@maximintegrated.com>
-X-Cookie: This end up.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126223334.08105d89@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.19.128]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Boris
 
---mojUlQ0s9EVzWg2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 26/11/18 21:33, Boris Brezillon wrote:
+> On Mon, 26 Nov 2018 20:11:39 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
+>
+> Look at the bus discovery mechanism, the notion of DCR (close to the
+> concept of USB class), or the fact that each dev has a unique
+> manufacturer+PID pair (which resemble the product/vendor ID concept)
+> that allows us to easily bind a dev to a driver without requiring a
+> static description.
 
-On Mon, Nov 26, 2018 at 06:46:05PM +0000, Ryan Lee wrote:
-> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
-> ---
 
-This really needs a changelog to explain what is going on here, and we
-need some more documentation in the code.  It is *extremely* unusual to
-have to poll for reset like this, and if the failure mode is I/O errors
-that's going to be pretty painful.
+The major feature close to USB is this one and it can be found in others 
+protocols (standardization process).
 
---mojUlQ0s9EVzWg2t
-Content-Type: application/pgp-signature; name="signature.asc"
+Just to close this topic I3C vs USB, IMO it's wrong to pass the message 
+that the I3C is closer to USB than I2C even more because I3C support the 
+I2C on the fly.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv9L4oACgkQJNaLcl1U
-h9A9dAf/YNgemguFt+88Dci5UTRiy8trzQVPKNreg51M7R/0pOnk/fyAC76I3xUj
-F545w42n+Crp2QiRzn8ONI3Vn4ycdTS9LaUI4jNmubYLQ3cYODGHPREvciFEmpqH
-cPoCmhPytfuIwf22bUdMgL2BI13WQDSpJJwskYjz66wcu1HRlZyGLUq7Lk2p+nrR
-gr1Rq+2yCCZiUzTs5eEvEwNP07ePngofy7gMNVeuSWzdiT9fBRPEio0rs8+VXvwr
-rm+btK3IOGcB6Yc/weV1djHZbxDo6fUhiDS90gSb99sE0J+RX/vhXsjHL+LtYxqJ
-wWkk7OOlNy9WknhGx6wmXEnhStRK/A==
-=5YXq
------END PGP SIGNATURE-----
+>
+>>
+>> I'm not sure but I think that a controller cannot change between gadget
+>> to host in USB in runtime.
+> That's called USB OTG. Okay, to be fair, it's not exactly the same, and
+> the mastership handover in I3C is probably more complex than what we
+> have with USB OTG (I'm not a USB expert, so I might be wrong here).
+>
+>> Even so, this kind of behavior is more likely
+>> to have in an I3C bus.
+> Maybe.
 
---mojUlQ0s9EVzWg2t--
+
+Sorry, with the proliferation of sensors I cannot see a multi master 
+sensor network based on USB.
+
+
+>> Sorry for that and don't take me wrong... maybe I should rise this
+>> question early but this only came up now when I started splitting and
+>> thinking where to put what is for master for slave, what is common and
+>> the thing of putting everything of controller in a folder.
+> So you have such a dual-role controller?
+
+
+Yes, we already talked about secondary master support.
+
+
+> What I call a slave controller would be something that lets you reply to
+> SDR/DDR transactions or fill a generic regmap that would be exposed to
+> other masters on the bus. This way we could implement generic slave
+> drivers in Linux (the same way we have gadget drivers). Anything else
+> is likely to be to specific to be exposed as a generic framework.
+
+
+I would bet to do something like in i2c, we don't need the same level of 
+complexity found in USB.
+
+
+>>
+>> Taking the USB as exemple do you prefer a dwc folder on i3c root?
+> Hm, not sure I like this idea either. So I see 2 options:
+>
+> 1/ put all controller drivers (both master and slave ones) in a common
+>     directory (drivers/i3c/controllers) as you suggest, and prefix them
+>     correctly (i3c-master-<ip>.c, i3c-slave-<ip>.c and i3c-dual-<ip>.c)
+
+
+I agree with the controller folder but not with prefix. Please check 
+what is already in the kernel.
+
+
+> 2/ place them in separate directories: drivers/i3c/{master,slave,dual}
+>
+> I'm fine either way.
+
+
+In this case and taking what is already in the kernel it will be 
+drivers/i3c/{master, slave, dwc, other with the same architecture as dwc}.
+
+
+>>> I'm okay changing it, but I want to understand why the proposed
+>>> separation is not good.
+>>
+>> I already tell you my use case and as I said maybe someone can advise :)
+>>
+> I think I understand your concerns now, but only because you started to
+> mention a few things that were not clearly stated before (at least, I
+> didn't understand it this way), like the fact that your controller (and
+> probably others too) supports dual-role, or the fact that you plan to
+> expose your IP through the PCI bus.
+
+
+I miss to mention PCI but since the beginning refer the slave and the 
+common part.
+
+Splitting the driver is something that soon or later I will have to do. 
+If you prefer later I'm ok with that.
+
+
+I think this discussion is starting to be counterproductive with arguing 
+of both parts. Unfortunately I don't see anyone given their inputs too.
+
+To be clear, the subsystem is nice and I working with daily. As I said 
+this is something that I dealing now and I'm telling what I think that 
+is not correct.
+
