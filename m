@@ -2,106 +2,100 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68109C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7ECC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 318D520873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 318D520873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id E82BE208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:06:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82BE208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbeK0VDB (ORCPT
+        id S1730535AbeK0VDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:03:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726404AbeK0VDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:03:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A63F1AEB9;
-        Tue, 27 Nov 2018 10:05:36 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3F2D51E07ED; Tue, 27 Nov 2018 11:05:36 +0100 (CET)
-Date:   Tue, 27 Nov 2018 11:05:36 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     PanBian <bianpan2016@163.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH V2] namei: free new_dentry late
-Message-ID: <20181127100536.GF16301@quack2.suse.cz>
-References: <1543104923-81192-1-git-send-email-bianpan2016@163.com>
- <20181127092551.GC16301@quack2.suse.cz>
- <20181127095712.GA32100@bp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127095712.GA32100@bp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 27 Nov 2018 16:03:42 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52303 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeK0VDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:03:42 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gRaFu-0004NI-73; Tue, 27 Nov 2018 11:06:10 +0100
+Message-ID: <1543313169.2507.39.camel@pengutronix.de>
+Subject: Re: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        Chris Healy <cphealy@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Date:   Tue, 27 Nov 2018 11:06:09 +0100
+In-Reply-To: <CAHQ1cqH6LT4GsxUchrmVG1m3fqawgyUjxdHvh=SzxhBiQOd8eg@mail.gmail.com>
+References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
+         <20181117181225.10737-4-andrew.smirnov@gmail.com>
+         <ce2ac1a880ce2a7a39f0e42b5059676daa748e52.camel@nxp.com>
+         <CAHQ1cqH6LT4GsxUchrmVG1m3fqawgyUjxdHvh=SzxhBiQOd8eg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-11-18 17:57:12, PanBian wrote:
-> On Tue, Nov 27, 2018 at 10:25:51AM +0100, Jan Kara wrote:
-> > On Sun 25-11-18 08:15:23, Pan Bian wrote:
-> > > After calling dput(new_dentry), new_dentry is passed to fsnotify_move.
-> > > This may result in a use-after-free bug. This patch moves the put
-> > > operation late.
-> > > 
-> > > Fixes: da1ce0670c14("vfs: add cross-rename")
-> > > Signed-off-by: Pan Bian <bianpan2016@163.com>
+Hi Andrey,
+
+Am Montag, den 26.11.2018, 10:24 -0800 schrieb Andrey Smirnov:
+> On Tue, Nov 20, 2018 at 2:49 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
 > > 
-> > The code is actually fine AFAICT. One new_dentry reference is passed into
-> > vfs_rename() and another one is acquired directly inside vfs_rename(). That
-> > is the one dropped early but there's still the original reference passed in
-> > protecting new_dentry from freeing. Am I missing something?
+> > On Sat, 2018-11-17 at 10:12 -0800, Andrey Smirnov wrote:
+> > > @@ -921,7 +1004,28 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+> > > -     case IMX7D:
+> > > +     case IMX8MQ:
+> > > +             if (of_property_read_u32(node, "fsl,iomux-gpr1x",
+> > > +                                      &imx6_pcie->gpr1x)) {
+> > > +                     dev_err(dev, "Failed to get GPR1x address\n");
+> > > +                     return -EINVAL;
+> > > +             }
+> > 
+> > This is for distinguishing multiple controllers on the SOC but other
+> > registers and bits might differ. Isn't it preferable to have a property
+> > for controller id instead of adding many registers to DT?
+> > 
 > 
-> I am not quite sure about the actual execution logic. But I guess new_dentry 
-> reference may be dropped outside vfs_rename in cocurrent executions.
-> Otherwise, there is no need to acquire & drop new_dentry reference as it
-> is always alive along vfs_rename.
+> I liked encoding necessary info in DT directly slightly better than
+> encoding abstract ID and then decoding it further in the driver code.
+> OTOH, I am not really attached to that path. Lucas, can you comment on
+> this please?
 
-I don't think that's the case. The dget() - dput() pair just looks
-superfluous to me in vfs_rename(). Am I missing something Miklos?
+Yes, after rereading the patch with this in mind I agree that having
+the GPR offset on DT directly is IMO the better approach than an
+abstract ID.
 
-								Honza
+One other thing I noticed is that we probably need some property to
+encode if the clock is supplied by an external clkgen, or if the clock
+is provided by the i.MX. Hardcoding this in the driver will lead to DT
+backward compatibility headaches later on if someone decides to build a
+board with the clock provided from the i.MX.
 
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 0cab649..8b104d9 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -4498,7 +4498,6 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> > >  		unlock_two_nondirectories(source, target);
-> > >  	else if (target)
-> > >  		inode_unlock(target);
-> > > -	dput(new_dentry);
-> > >  	if (!error) {
-> > >  		fsnotify_move(old_dir, new_dir, old_name.name, is_dir,
-> > >  			      !(flags & RENAME_EXCHANGE) ? target : NULL, old_dentry);
-> > > @@ -4507,6 +4506,7 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> > >  				      new_is_dir, NULL, new_dentry);
-> > >  		}
-> > >  	}
-> > > +	dput(new_dentry);
-> > >  	release_dentry_name_snapshot(&old_name);
-> > >  
-> > >  	return error;
-> > > -- 
-> > > 2.7.4
-> > > 
-> > > 
-> > -- 
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Lucas
