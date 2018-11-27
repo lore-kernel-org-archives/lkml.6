@@ -2,202 +2,270 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAE2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6E7C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB112086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:50:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dorU7GEe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB112086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 5266A2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:51:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5266A2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbeK1CtE (ORCPT
+        id S1730180AbeK1Ctd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:49:04 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36464 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbeK1CtE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:49:04 -0500
-Received: by mail-it1-f194.google.com with SMTP id c9so34652897itj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:50:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Bwm22j+2QRnkEaMqpznfeN3T67moQntFqqbXkU3w4gc=;
-        b=dorU7GEeIj6Lwhj3wzCwLQrqN9cupsvUlIdOWOhulw5fv18WLVuJ23ZxdGZYjZIkEm
-         2KJAw51HKWbf73T3C79EzFxJCNluKeyhZGL+DeoB3Jbtg6ZINQxUffP72g0XuUWx1Mhn
-         3LYpws6CKlu8Uq6P84G14dI+sOPmbRxGe3c/5OG4laYEtIurrA6HP3q9WPNk8uZ0wRB3
-         asVNdHGxWbM1iCv0IfMrlMGmv0OQ5JnBtoU+I5ElItJCPI7+weaDM9RklqyqjnvIpFgn
-         Knm7PswrF1tAkxcS/wPUEghWIn9F8+u3p/B8bLbEYPeQp26D1hQ48axpb4F2SVY2WkOx
-         sf2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Bwm22j+2QRnkEaMqpznfeN3T67moQntFqqbXkU3w4gc=;
-        b=BVcd60PZ/9FuRlsQoVZrnG9yG+KcDCiN5FnrtcH7kr3O30SPK3OD0wLjU22pUQ5ocg
-         kOQKLZfJOr121QBG/Tax6JdwwB1mSHDuLtY337fHO2SsfhGojDBIt1AZ9U2kiuiNW0w5
-         yYfZSOCsTk4iuHmo/k4eR0pAR9mB1ANH77gmw7497r7+pZA75Ot08BYyDXhRn5t2ck4I
-         jIhRZmMXPScrBF5a/x5ZWPhtau69y2syLNHEVh64nhuNenfzNV9TPx0IMO0tZADfQDcP
-         kXeq3CK6w7RwhEs1pZmN3++rJchrxmmo6Urjf0GvHBUNqrhnuXxNSF8J1TeQfvrgan3Y
-         7AdA==
-X-Gm-Message-State: AGRZ1gIm9LNSxHw1TRwwkzJ5jnUWG4vpbAqFxrn1+zVS36bx38thmR60
-        Aqa5Kd20xVpnEc1CsNZY/aKv2AvlfTJUMtMYhdYyHQ==
-X-Google-Smtp-Source: AFSGD/VRRKjNtb1rH1Fy9SGgHmZBDaD0FSG5We2gneUmJQLT+ThQA5czHtrTRgP5CjDJxmDFpejXbNkLHzu4NE93lV4=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr25069343itl.144.1543333843448;
- Tue, 27 Nov 2018 07:50:43 -0800 (PST)
+        Tue, 27 Nov 2018 21:49:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48423 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726624AbeK1Ctd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:49:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 47D0820747; Tue, 27 Nov 2018 16:51:12 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BBA592037D;
+        Tue, 27 Nov 2018 16:50:35 +0100 (CET)
+Date:   Tue, 27 Nov 2018 16:50:28 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc:     linux-sunxi@googlegroups.com, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH v2 2/2] media: cedrus: Add H264 decoding
+ support
+Message-ID: <20181127155028.5ukw3g6zjbnvarbp@flea>
+References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
+ <20181115145650.9827-3-maxime.ripard@bootlin.com>
+ <2826880.kP3DS59ZBy@jernej-laptop>
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 07:50:21
- -0800 (PST)
-In-Reply-To: <000000000000e10044057ba6fbcf@google.com>
-References: <000000000000e10044057ba6fbcf@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 27 Nov 2018 16:50:21 +0100
-Message-ID: <CACT4Y+bKDG92jaGGGD99UHHxKNtbawynWNxe7rjQqxN6URMFEA@mail.gmail.com>
-Subject: Re: KASAN: out-of-bounds in update_curr
-To:     syzbot <syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com>,
-        netdev <netdev@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="p3rurrndtsnns4ps"
+Content-Disposition: inline
+In-Reply-To: <2826880.kP3DS59ZBy@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 4:20 PM, syzbot
-<syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    4bffc669d624 net: remove unsafe skb_insert()
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1385db8340000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc36a72af2123e=
-78a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd3bf6aae26942dc=
-9c8dc
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D107b426d400=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11b2e53340000=
-0
 
+--p3rurrndtsnns4ps
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From reproducer it looks like something network related. So +netdev.
-This also happened on net-next and there seems to be several memory-
-corruption-looking crashes on net-next.
+Hi Jernej,
 
+Thanks for your review!
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit=
-:
-> Reported-by: syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com
->
-> DEBUG_LOCKS_WARN_ON(!hlock->nest_lock)
-> ------------[ cut here ]------------
-> Bad or missing usercopy whitelist? Kernel memory overwrite attempt detect=
-ed
-> to SLAB object 'task_struct' (offset 1432, size 2)!
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> ------------[ cut here ]------------
-> BUG: KASAN: out-of-bounds in calc_delta_fair kernel/sched/fair.c:630
-> [inline]
-> BUG: KASAN: out-of-bounds in update_curr+0x9c0/0xbd0 kernel/sched/fair.c:=
-824
-> kernel BUG at mm/slab.c:4425!
-> Read of size 8 at addr ffff8881d9b4a4c0 by task ksoftirqd/0/9
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
->
-> CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=BD=
-=EF=BF=BDd =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not taint=
-ed 4.20.0-rc3+ #314
-> CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc3+ #314
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
-> Call Trace:
-> Code: 48 c7 c7 5d df 14 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 2=
-9
-> c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7=
- 5d
-> df 14 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 18 e0
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x244/0x39d lib/dump_stack.c:113
-> RSP: 0018:ffff8881d9b49ea8 EFLAGS: 00010093
-> RAX: 00000000000a57eb RBX: 1ffff1103b3693dc RCX: 000000000000000c
-> RDX: ffff8881d9b4a440 RSI: 0000000000000001 RDI: ffff8881d9b4a088
-> RBP: ffff8881d9b49ea8 R08: ffff8881d9b4a440 R09: ffff8881da970180
->  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-> R10: 000000004afd68ef R11: 0000000000000000 R12: ffff8881d9b4a088
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-> R13: 0000000000000001 R14: ffffea000766d280 R15: 0000000000000001
-> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
-000
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  calc_delta_fair kernel/sched/fair.c:630 [inline]
->  update_curr+0x9c0/0xbd0 kernel/sched/fair.c:824
-> CR2: 0000000cffc5fa18 CR3: 00000001bfadf000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> Modules linked in:
-> ---[ end trace 04af116ff405efee ]---
-> RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
-> Code: 48 c7 c7 5d df 14 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 2=
-9
-> c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7=
- 5d
-> df 14 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 18 e0
-> RSP: 0018:ffff8881d9b49ea8 EFLAGS: 00010093
-> RAX: 00000000000a57eb RBX: 1ffff1103b3693dc RCX: 000000000000000c
->  enqueue_entity+0x3f5/0x20a0 kernel/sched/fair.c:3871
-> RDX: ffff8881d9b4a440 RSI: 0000000000000001 RDI: ffff8881d9b4a088
-> RBP: ffff8881d9b49ea8 R08: ffff8881d9b4a440 R09: ffff8881da970180
-> R10: 000000004afd68ef R11: 0000000000000000 R12: ffff8881d9b4a088
-> R13: 0000000000000001 R14: ffffea000766d280 R15: 0000000000000001
-> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000cffc5fa18 CR3: 00000001bfadf000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000e10044057ba6=
-fbcf%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+On Sat, Nov 24, 2018 at 09:43:43PM +0100, Jernej =C5=A0krabec wrote:
+> > +enum cedrus_h264_sram_off {
+> > +	CEDRUS_SRAM_H264_PRED_WEIGHT_TABLE	=3D 0x000,
+> > +	CEDRUS_SRAM_H264_FRAMEBUFFER_LIST	=3D 0x100,
+> > +	CEDRUS_SRAM_H264_REF_LIST_0		=3D 0x190,
+> > +	CEDRUS_SRAM_H264_REF_LIST_1		=3D 0x199,
+> > +	CEDRUS_SRAM_H264_SCALING_LIST_8x8	=3D 0x200,
+> > +	CEDRUS_SRAM_H264_SCALING_LIST_4x4	=3D 0x218,
+>=20
+> I triple checked above address and it should be 0x220. For easier=20
+> implementation later, you might want to add second scaling list address f=
+or=20
+> 8x8 at 0x210. Then you can do something like:
+>=20
+> cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_8x8_0,
+> 			       scaling->scaling_list_8x8[0],
+> 			       sizeof(scaling->scaling_list_8x8[0]));
+> cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_8x8_1,
+> 			       scaling->scaling_list_8x8[3],
+> 			       sizeof(scaling->scaling_list_8x8[0]));
+> cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_4x4,
+> 			       scaling->scaling_list_4x4,
+> 			       sizeof(scaling->scaling_list_4x4));
+>=20
+> I know that it's not implemented here, just FYI.
+
+Ack. I guess I can just leave it out entirely for now, since it's not
+implemented.
+
+> > +static void cedrus_fill_ref_pic(struct cedrus_ctx *ctx,
+> > +				struct cedrus_buffer *buf,
+> > +				unsigned int top_field_order_cnt,
+> > +				unsigned int bottom_field_order_cnt,
+> > +				struct cedrus_h264_sram_ref_pic *pic)
+> > +{
+> > +	struct vb2_buffer *vbuf =3D &buf->m2m_buf.vb.vb2_buf;
+> > +	unsigned int position =3D buf->codec.h264.position;
+> > +
+> > +	pic->top_field_order_cnt =3D top_field_order_cnt;
+> > +	pic->bottom_field_order_cnt =3D bottom_field_order_cnt;
+> > +	pic->frame_info =3D buf->codec.h264.pic_type << 8;
+> > +
+> > +	pic->luma_ptr =3D cedrus_buf_addr(vbuf, &ctx->dst_fmt, 0) - PHYS_OFFS=
+ET;
+> > +	pic->chroma_ptr =3D cedrus_buf_addr(vbuf, &ctx->dst_fmt, 1) - PHYS_OF=
+FSET;
+>=20
+> I think subtracting PHYS_OFFSET breaks driver on H3 boards with 2 GiB of =
+RAM.=20
+> Isn't that unnecessary anyway due to
+>=20
+> dev->dev->dma_pfn_offset =3D PHYS_PFN_OFFSET;
+>=20
+> in cedrus_hw.c?
+>=20
+> This comment is meant for all PHYS_OFFSET subtracting in this patch.
+
+PHYS_OFFSET was needed on some older SoCs, and the dma_pfn_offset
+trick wasn't working, I hacked it and forgot about it. I'll try to
+figure it out for the next version.
+
+> > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
+> > +				   struct cedrus_run *run,
+> > +				   const u8 *ref_list, u8 num_ref,
+> > +				   enum cedrus_h264_sram_off sram)
+> > +{
+> > +	const struct v4l2_ctrl_h264_decode_param *decode =3D run->h264.decode=
+_param;
+> > +	struct vb2_queue *cap_q =3D &ctx->fh.m2m_ctx->cap_q_ctx.q;
+> > +	struct cedrus_dev *dev =3D ctx->dev;
+> > +	u32 sram_array[CEDRUS_MAX_REF_IDX / sizeof(u32)];
+> > +	unsigned int size, i;
+> > +
+> > +	memset(sram_array, 0, sizeof(sram_array));
+> > +
+> > +	for (i =3D 0; i < num_ref; i +=3D 4) {
+> > +		unsigned int j;
+> > +
+> > +		for (j =3D 0; j < 4; j++) {
+>=20
+> I don't think you have to complicate with two loops here.=20
+> cedrus_h264_write_sram() takes void* and it aligns to 4 anyway. So as lon=
+g=20
+> input buffer is multiple of 4 (u8[CEDRUS_MAX_REF_IDX] qualifies for that)=
+, you=20
+> can use single for loop with "u8 sram_array[CEDRUS_MAX_REF_IDX]". This sh=
+ould=20
+> make code much more readable.
+
+This wasn't really about the alignment, but in order to get the
+offsets in the u32 and the array more easily.
+
+Breaking out the loop will make that computation less easy on the eye,
+so I guess it's very subjective.
+
+> > +			const struct v4l2_h264_dpb_entry *dpb;
+> > +			const struct cedrus_buffer *cedrus_buf;
+> > +			const struct vb2_v4l2_buffer *ref_buf;
+> > +			unsigned int position;
+> > +			int buf_idx;
+> > +			u8 ref_idx =3D i + j;
+> > +			u8 dpb_idx;
+> > +
+> > +			if (ref_idx >=3D num_ref)
+> > +				break;
+> > +
+> > +			dpb_idx =3D ref_list[ref_idx];
+> > +			dpb =3D &decode->dpb[dpb_idx];
+> > +
+> > +			if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> > +				continue;
+> > +
+> > +			buf_idx =3D vb2_find_tag(cap_q, dpb->tag, 0);
+> > +			if (buf_idx < 0)
+> > +				continue;
+> > +
+> > +			ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
+> > +			cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
+> > +			position =3D cedrus_buf->codec.h264.position;
+> > +
+> > +			sram_array[i] |=3D position << (j * 8 + 1);
+> > +			if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
+>=20
+> You newer set above flag to buffer so this will be always false.
+
+As far as I know, the field is supposed to be set by the userspace.
+
+> > +	// sequence parameters
+> > +	reg =3D BIT(19);
+>=20
+> This one can be inferred from sps->chroma_format_idc.
+
+I'll look into this
+
+> > +	reg |=3D (sps->pic_width_in_mbs_minus1 & 0xff) << 8;
+> > +	reg |=3D sps->pic_height_in_map_units_minus1 & 0xff;
+> > +	if (sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY)
+> > +		reg |=3D BIT(18);
+> > +	if (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD)
+> > +		reg |=3D BIT(17);
+> > +	if (sps->flags & V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE)
+> > +		reg |=3D BIT(16);
+> > +	cedrus_write(dev, VE_H264_FRAME_SIZE, reg);
+> > +
+> > +	// slice parameters
+> > +	reg =3D 0;
+> > +	/*
+> > +	 * FIXME: This bit marks all the frames as references. This
+> > +	 * should probably be set based on nal_ref_idc, but the libva
+> > +	 * doesn't pass that information along, so this is not always
+> > +	 * available. We should find something else, maybe change the
+> > +	 * kernel UAPI somehow?
+> > +	 */
+> > +	reg |=3D BIT(12);
+>=20
+> I really think you should use nal_ref_idc here as it is in specification.=
+  You=20
+> can still fake the data from libva backend. I don't think that any driver=
+=20
+> needs this for anything else than check if it is 0 or not.
+
+Yeah, Tomasz suggested the same thing as a reply to the cover letter,
+I'll change that in the next version.
+
+> > +	reg |=3D (slice->slice_type & 0xf) << 8;
+> > +	reg |=3D slice->cabac_init_idc & 0x3;
+> > +	reg |=3D BIT(5);
+> > +	if (slice->flags & V4L2_H264_SLICE_FLAG_FIELD_PIC)
+> > +		reg |=3D BIT(4);
+> > +	if (slice->flags & V4L2_H264_SLICE_FLAG_BOTTOM_FIELD)
+> > +		reg |=3D BIT(3);
+> > +	if (slice->flags & V4L2_H264_SLICE_FLAG_DIRECT_SPATIAL_MV_PRED)
+> > +		reg |=3D BIT(2);
+> > +	cedrus_write(dev, VE_H264_SLICE_HDR, reg);
+> > +
+> > +	reg =3D 0;
+>=20
+> You might want to set bit 12 here, which enables active reference picture=
+=20
+> override. However, I'm not completely sure about that.
+
+Did you find some videos that were broken because of this?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--p3rurrndtsnns4ps
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/1nxAAKCRDj7w1vZxhR
+xXXaAQCxnoyFkARNoVqY85RLkFqNDWvUbnnxQGp13qf8ei5ERgD/UGcHTw8EuhOf
+a7BQjc7Jr9ix6V63FdMDIJjtGkG+Tg8=
+=/9dX
+-----END PGP SIGNATURE-----
+
+--p3rurrndtsnns4ps--
