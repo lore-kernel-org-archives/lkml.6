@@ -2,116 +2,102 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE8DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09407C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E783120873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:24:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aC4c3gBG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E783120873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CEAAC20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAAC20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729469AbeK0TVQ (ORCPT
+        id S1729363AbeK0T1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:21:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44610 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729393AbeK0TVP (ORCPT
+        Tue, 27 Nov 2018 14:27:34 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:34758 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729152AbeK0T1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:21:15 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so17359012wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 00:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ik8Olk2vN6kLe6zSI0+hBnOrSwZKDk4ik8r18iyrE9k=;
-        b=aC4c3gBGSKlBohq5VaP3xx8DfSt0OkJF8MD0cKE74M8u7zgIvQkJ9r5C4QJAbQ3ApQ
-         /f6sZBRcrzPvuvAFUaFHBynhxut5FUN8l7ENICt+CZDBMAIaJI8MBqL5QhU7JPdEotMF
-         llhO+hv8FshW/OEPbEGoureveaY5QT6BPPDhQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ik8Olk2vN6kLe6zSI0+hBnOrSwZKDk4ik8r18iyrE9k=;
-        b=MNy5HGdu0YeXmpYqBdqT5mOzF4+rxI7VGjyDhcStvXY/WJXDz+jWQznXRqaa/volOH
-         Wz2v1WrEPJfX0SKmzxGC0Bamhc9zPoNuptXrSEciYemsSMX55knwzb4S1Crpb/Debo0n
-         IJVl55bZtbjtUUXlVHwheBrn1rrwmrCF1eVjgcCsdkN+vnHXYCGyX7QRqhHz0LNlLQn3
-         OHn0igZoiEIs5b5yjUNQyxOdeo/59+uo67SGJnVmC4KOv7CKMQQVGfDQC0C4/KqpxU1Y
-         tE88TmBrk1SZ6b8svSZ3d143KixXEXboGjX/FeX+EHVUAs5iFeLrWnXqokfhh2cqNlOW
-         EDqQ==
-X-Gm-Message-State: AA+aEWYFVIhQAhv5HVHGQlV0RvWnhZnqjsWufBeEgZVn0noT02p2LZD2
-        iIQrimtQRIv5Tv4gIwUed9HMaA==
-X-Google-Smtp-Source: AFSGD/XkVf2UW6ws81ol/Uh93l0DsYfCyunyTEzlPL123aI4xbHVeEa5jBbY2KpbtKFOORDODMsCAg==
-X-Received: by 2002:adf:ce02:: with SMTP id p2mr29010333wrn.185.1543307048931;
-        Tue, 27 Nov 2018 00:24:08 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id q9sm6014684wrp.0.2018.11.27.00.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 00:24:08 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: sdm845: add video nodes
-To:     Alexandre Courbot <acourbot@chromium.org>, mgottam@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-References: <1542708506-12680-1-git-send-email-mgottam@codeaurora.org>
- <CAPBb6MVzmxfRstUrTOtkJdCDaZEZO=UeP_u3btGKrsKasBijRg@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <7e306c60-8603-a8c4-cbb3-526f8a63ee39@linaro.org>
-Date:   Tue, 27 Nov 2018 10:24:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAPBb6MVzmxfRstUrTOtkJdCDaZEZO=UeP_u3btGKrsKasBijRg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 27 Nov 2018 14:27:34 -0500
+Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 2235067968C;
+        Tue, 27 Nov 2018 09:30:25 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
+ (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 27 Nov
+ 2018 09:30:24 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Tue, 27 Nov 2018 09:30:24 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
+Thread-Topic: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
+Thread-Index: AQHUhiUV+bbi1IymHUOKrtHQUP0AvaVjN6EAgAACMwA=
+Date:   Tue, 27 Nov 2018 08:30:24 +0000
+Message-ID: <9365718c-4993-7e3b-1519-8fef0c08c0db@kontron.de>
+References: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
+ <20181127092232.3a6d1661@bbrezillon>
+In-Reply-To: <20181127092232.3a6d1661@bbrezillon>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7FB3C31B07BFE1458731A2FD4C566831@snt-world.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 2235067968C.AC08A
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
-
-On 11/27/18 9:31 AM, Alexandre Courbot wrote:
-> On Tue, Nov 20, 2018 at 7:08 PM Malathi Gottam <mgottam@codeaurora.org> wrote:
->>
->> This adds video nodes to sdm845 based on the examples
->> in the bindings.
->>
->> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->> ---
->>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 34 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index 0c9a2aa..d82487d 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -84,6 +84,10 @@
->>                         reg = <0 0x86200000 0 0x2d00000>;
->>                         no-map;
->>                 };
->> +               venus_region: venus@95800000 {
->> +                       reg = <0x0 0x95800000 0x0 0x500000>;
-> 
-> Note that the driver expects a size of 0x600000 here and will fail to
-> probe if this is smaller.
-> 
-
-I have to send a patch to fix that size mismatch as we discussed that it
-the other mail thread.
-
--- 
-regards,
-Stan
+T24gMjcuMTEuMTggMDk6MjIsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24gVHVlLCAyNyBO
+b3YgMjAxOCAwNzo0NDo1MiArMDAwMA0KPiBTY2hyZW1wZiBGcmllZGVyIDxmcmllZGVyLnNjaHJl
+bXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPiANCj4+IEZpeCB0aGUgc2l6ZSBvZiB0aGUgYnVmZmVy
+IGFsbG9jYXRlZCB0byBzdG9yZSB0aGUgaW4tbWVtb3J5IEJCVC4NCj4+IFRoaXMgYnVnIHdhcyBw
+cmV2aW91c2x5IGhpZGRlbiBieSBhIGRpZmZlcmVudCBidWcsIHRoYXQgd2FzIGZpeGVkIGluDQo+
+PiBkMDk4MDkzYmEwNmUuDQo+IA0KPiBPb3BzIDotLy4NCj4gDQo+Pg0KPj4gRml4ZXM6IDljMzcz
+NmEzZGUyMSAoIm10ZDogbmFuZDogQWRkIGNvcmUgaW5mcmFzdHJ1Y3R1cmUgdG8gZGVhbCB3aXRo
+IE5BTkQgZGV2aWNlcyIpDQo+PiBDYzogPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+DQo+PiBTaWdu
+ZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+
+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9tdGQvbmFuZC9iYnQuYyB8IDMgKystDQo+PiAgIDEgZmls
+ZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+DQo+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9tdGQvbmFuZC9iYnQuYyBiL2RyaXZlcnMvbXRkL25hbmQvYmJ0LmMNCj4+
+IGluZGV4IDU2Y2RlMzguLmMxMjQ5N2YgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL210ZC9uYW5k
+L2JidC5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9uYW5kL2JidC5jDQo+PiBAQCAtMjcsNyArMjcs
+OCBAQCBpbnQgbmFuZGRldl9iYnRfaW5pdChzdHJ1Y3QgbmFuZF9kZXZpY2UgKm5hbmQpDQo+PiAg
+IAl1bnNpZ25lZCBpbnQgbndvcmRzID0gRElWX1JPVU5EX1VQKG5ibG9ja3MgKiBiaXRzX3Blcl9i
+bG9jaywNCj4+ICAgCQkJCQkgICBCSVRTX1BFUl9MT05HKTsNCj4+ICAgDQo+PiAtCW5hbmQtPmJi
+dC5jYWNoZSA9IGt6YWxsb2MobndvcmRzLCBHRlBfS0VSTkVMKTsNCj4+ICsJbmFuZC0+YmJ0LmNh
+Y2hlID0ga3phbGxvYyhud29yZHMgKiAoQklUU19QRVJfTE9ORyAvIEJJVFNfUEVSX0JZVEUpLA0K
+PiANCj4gSSBwcmVmZXINCj4gDQo+IAkJCQkJICogc2l6ZW9mKCpuYW5kLT5iYnQuY2FjaGUpDQo+
+IElmIHlvdSdyZSBva2F5IHdpdGggdGhpcyBjaGFuZ2UsIEknbGwgZml4IGl0IHdoZW4gYXBwbHlp
+bmcgKG5vIG5lZWQgdG8NCj4gc2VuZCBhIG5ldyB2ZXJzaW9uKS4NCg0KU3VyZSwgdGhhdCdzIG9r
+Lg==
