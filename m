@@ -3,98 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C10C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50CCC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D1F20817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:24:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D1F20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AB9FE20817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9FE20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbeK1CXB (ORCPT
+        id S1729649AbeK1C0E convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:23:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41829 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729358AbeK1CXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:23:00 -0500
-Received: by mail-ed1-f68.google.com with SMTP id z28so19322375edi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:24:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6s9TFEq8z5uulZK6ZHMDxb3n29zKuDmW2mRXkv2Mo1o=;
-        b=j1cVmG5X+O4lz9+RFQGhVaFIP0hmXi9VCtgyuK38V3hd1Gq/XNn7PVk/O7qT4I1R1w
-         SkofaXdwna33o7uSaOr5Wew+9oUvGZfcuXwaRo/QhQT4BZ7dRsweLiKMqw3c5A/JVZB0
-         j01OYHlWsm/dmOwVguIDXMKAPljnWyXXky3sxm0e6cDhYAI6U8h3WvsF46vnUhAkjY9w
-         f2GiMBdAWypmHevJG3+hfrW/PLpO9hOHMmnHHe58qnz3oGKpDYAEZoDd+sGQ39zAhN15
-         XHdj9PRMVNZeL/nyocHUvoLMpcN1Nb9vJm2nS+sw16wfYUtcHQl9kPVpvcDE9XDrRpXY
-         RpwQ==
-X-Gm-Message-State: AA+aEWbJNCU1N5H7/VKKy4j28shHZc0r2HqWNIDMRwHkaDqy3YE8vBWs
-        //xtr4q8l/drboHwF1os19a4/FU0MJo=
-X-Google-Smtp-Source: AFSGD/VGH5M89nIas5sS3Zchzt0m7v8BRY+Yb0FFMbEgYBIbxF4kXG0bOL6hY+CljNzuhx55bB2u3Q==
-X-Received: by 2002:a50:c299:: with SMTP id o25mr27850991edf.281.1543332283729;
-        Tue, 27 Nov 2018 07:24:43 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id x38sm1079659edx.24.2018.11.27.07.24.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 07:24:42 -0800 (PST)
-Subject: Re: [PATCH v2 05/13] i2c: acpi: Return error pointers from
- i2c_acpi_new_device()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
- <20181126150858.16901-6-andriy.shevchenko@linux.intel.com>
- <20181127090432.GK2296@lahna.fi.intel.com>
- <98674437-9374-32d4-4b25-dedd0cad5bea@redhat.com>
- <20181127114953.GQ2296@lahna.fi.intel.com>
- <20181127134623.GR10650@smile.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <beaa7a4d-4548-7be9-604d-f9b80dee3980@redhat.com>
-Date:   Tue, 27 Nov 2018 16:24:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 27 Nov 2018 21:26:04 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:48840 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729309AbeK1C0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:26:04 -0500
+X-Greylist: delayed 444 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Nov 2018 21:26:03 EST
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id E2002149B5; Tue, 27 Nov 2018 15:20:24 +0000 (GMT)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: fix insert_pfn() return value
+References: <20181127144351.9137-1-mans@mansr.com>
+        <20181127150852.GA10377@bombadil.infradead.org>
+Date:   Tue, 27 Nov 2018 15:20:24 +0000
+In-Reply-To: <20181127150852.GA10377@bombadil.infradead.org> (Matthew Wilcox's
+        message of "Tue, 27 Nov 2018 07:08:52 -0800")
+Message-ID: <yw1x8t1elf7r.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20181127134623.GR10650@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Matthew Wilcox <willy@infradead.org> writes:
 
-On 27-11-18 14:46, Andy Shevchenko wrote:
-> On Tue, Nov 27, 2018 at 01:49:53PM +0200, Mika Westerberg wrote:
->> On Tue, Nov 27, 2018 at 10:16:25AM +0100, Hans de Goede wrote:
->>> One problem is that i2c_new_device() currently simply returns NULL on all
->>> errors. Andy, you could take a look how much work it is to make that return
->>> an ERR_PTR too, or just check its return value and return ERR_PTR(-ENXIO) if
->>> it fails for now...
->>
->> I would use -ENODEV here and -EINVAL in case there is no ACPI companion :)
-> 
-> Sounds more traditional than ENXIO.
-> I would go the way Mika proposed if there is no objection.
+> On Tue, Nov 27, 2018 at 02:43:51PM +0000, Mans Rullgard wrote:
+>> Commit 9b5a8e00d479 ("mm: convert insert_pfn() to vm_fault_t") accidentally
+>> made insert_pfn() always return an error.  Fix this.
+>
+> Umm.  VM_FAULT_NOPAGE is not an error.  It's saying "I inserted the PFN,
+> there's no struct page for the core VM to do anything with".  Which is
+> the correct response from a device driver which has called insert_pfn().
+>
+> Could you explain a bit more what led you to think there's a problem here?
 
-Works for me, go for it.
+Apparently some (not in mainline) driver code had been hastily converted
+to the vm_fault_t codes, and that is where the error is.  Sorry for the
+noise.  Please disregard this.
 
-Regards,
+(The quickest way to get the correct answer is still to send a bad
+patch.)
 
-Han
+> Also, rather rude of you not to cc the patch author when you claim to
+> be fixing a bug in their patch.
 
+Sorry about that.  Blame the get-maintainers script.
+
+-- 
+Måns Rullgård
