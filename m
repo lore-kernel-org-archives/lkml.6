@@ -2,141 +2,107 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682B5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1074C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CAB21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6E8213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:45:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ag8IHJ3V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CAB21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WApThJJP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6E8213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeK1Blp (ORCPT
+        id S1728449AbeK1Bn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:41:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35218 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 20:43:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726381AbeK1Blo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:41:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1726485AbeK1Bn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:43:58 -0500
+Received: from quaco.infradead.org (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83FEC20817;
-        Tue, 27 Nov 2018 14:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEE6D21104;
+        Tue, 27 Nov 2018 14:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543329816;
-        bh=6pzUgwS5MX2otTwkscnzJkYqPkKIhSKpGZHda5OdE98=;
+        s=default; t=1543329949;
+        bh=X6x56D+vlszlWYO7Ff7W+ANaSTJL/n/+0iR0Ps7WMoU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ag8IHJ3VAWjwc/nKqLiUHyhJS2dECpN3iaHMteU9r2UDksID0tK62BEo6pMlaEe0S
-         1AGCTZaYRwt818yb+15C42YNLhxlrpJ5Npz8nL+pv9KUfV4cxzlKTKN1SZW/ydtm+H
-         O6VG7keyWZ8vtuE2A7rhru8Cm4h333KPwp5phfrE=
-Date:   Tue, 27 Nov 2018 15:43:33 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
- license identifier
-Message-ID: <20181127144333.GA11004@kroah.com>
-References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
+        b=WApThJJPNdpLH2Xvk/mJrIeAbqqp2xSqBLu+/alx4ohsW/VnpICH///aCGYUSWzKK
+         OhjsR6mtS0a6FKA/8o8t3zkldWJRNfNeVGhfB575c/5x3WyDajVW/YEWKGB8ltJQl5
+         kKG01DtA4CYgwmap79F8MA8O4tvYpjRAg//77dfo=
+Received: by quaco.infradead.org (Postfix, from userid 1000)
+        id A31AF41114; Tue, 27 Nov 2018 11:45:44 -0300 (-03)
+Date:   Tue, 27 Nov 2018 11:45:44 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        David Miller <davem@davemloft.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH V2 1/3] perf tools: Add fallback functions for cases
+ where cpumode is insufficient
+Message-ID: <20181127144544.GG15747@kernel.org>
+References: <20181106210712.12098-1-adrian.hunter@intel.com>
+ <20181106210712.12098-2-adrian.hunter@intel.com>
+ <20181127141036.GF15747@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181127141036.GF15747@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:15:32PM +0800, John Garry wrote:
-> Currently sas_task.c has no license specifier, so add SPDX license
-> identifier for GPL-2.0+.
+Em Tue, Nov 27, 2018 at 11:10:36AM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Tue, Nov 06, 2018 at 11:07:10PM +0200, Adrian Hunter escreveu:
+> > For branch stacks or branch samples, the sample cpumode might not be
+> > correct because it applies only to the sample 'ip' and not necessary to
+> > 'addr' or branch stack addresses. Add fallback functions that can be used
+> > to deal with those cases
 > 
-> As mentioned in commit b24413180f56 ("License cleanup: add SPDX GPL-2.0
-> license identifier to files with no license"), files with no license in
-> the kernel are under default kernel license.
-
-The default is GPLv2, not v2+.
-
+> I've split this into two, and the first is causing this:
 > 
-> While I'm at it, all other libsas source code files are updated to use
-> SPDX license identifier for GPL-2.0+.
+> root@quaco ~]# perf top
+> perf: Segmentation fault
+> -------- backtrace --------
+> perf[0x59baca]
+> /lib64/libc.so.6(+0x385bf)[0x7fa2775dc5bf]
+> perf(perf_env__arch+0x34)[0x4b4514]
+> perf(perf_env__single_address_space+0x1b)[0x57944b]
+> perf(perf_session__new+0x17c)[0x4fdb3c]
+> perf(cmd_top+0x162c)[0x45109c]
+> perf[0x4a621e]
+> perf(main+0x61c)[0x42cbfc]
+> /lib64/libc.so.6(__libc_start_main+0xf2)[0x7fa2775c8412]
+> perf(_start+0x2d)[0x42ce2d]
+> [root@quaco ~]#
 > 
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> 
-> diff --git a/drivers/scsi/libsas/Kconfig b/drivers/scsi/libsas/Kconfig
-> index 13739bfa..bdc6bce 100644
-> --- a/drivers/scsi/libsas/Kconfig
-> +++ b/drivers/scsi/libsas/Kconfig
-> @@ -4,22 +4,7 @@
->  # Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
->  # Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
->  #
-> -# This file is licensed under GPLv2.
-> -#
-> -# This program is free software; you can redistribute it and/or
-> -# modify it under the terms of the GNU General Public License as
-> -# published by the Free Software Foundation; version 2 of the
-> -# License.
-> -#
-> -# This program is distributed in the hope that it will be useful,
-> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> -# General Public License for more details.
-> -#
-> -# You should have received a copy of the GNU General Public License
-> -# along with this program; if not, write to the Free Software
-> -# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-> -# USA
-> +# SPDX-License-Identifier: GPL-2.0+
+> Its the case where the env info comes from the running machine, via
+> uname(), I'm working on a fix.
 
-No, the above license is GPLv2 only, do NOT change the license of a file
-unless you have permission to do so.
+So I'll graft this just before your patch.
 
-Also, the spdx line goes at the first line of the file.
+- Arnaldo
 
-
->  #
->  
->  config SCSI_SAS_LIBSAS
-> diff --git a/drivers/scsi/libsas/Makefile b/drivers/scsi/libsas/Makefile
-> index 5d51520..75998b7 100644
-> --- a/drivers/scsi/libsas/Makefile
-> +++ b/drivers/scsi/libsas/Makefile
-> @@ -4,22 +4,7 @@
->  # Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
->  # Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
->  #
-> -# This file is licensed under GPLv2.
-> -#
-> -# This program is free software; you can redistribute it and/or
-> -# modify it under the terms of the GNU General Public License as
-> -# published by the Free Software Foundation; version 2 of the
-> -# License.
-> -#
-> -# This program is distributed in the hope that it will be useful,
-> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> -# General Public License for more details.
-> -#
-> -# You should have received a copy of the GNU General Public License
-> -# along with this program; if not, write to the Free Software
-> -# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-> -# USA
-> +# SPDX-License-Identifier: GPL-2.0+
-
-Again you changed the license, not good :(
-
-Please do not make these types of changes unless you really know what
-you are doing, it is not ok to change the license of files.
-
-greg k-h
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 59f38c7693f8..4c23779e271a 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -166,7 +166,7 @@ const char *perf_env__arch(struct perf_env *env)
+ 	struct utsname uts;
+ 	char *arch_name;
+ 
+-	if (!env) { /* Assume local operation */
++	if (!env || !env->arch) { /* Assume local operation */
+ 		if (uname(&uts) < 0)
+ 			return NULL;
+ 		arch_name = uts.machine;
