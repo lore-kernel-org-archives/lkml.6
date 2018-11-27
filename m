@@ -2,195 +2,110 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235F8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04555C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF2121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB7B92133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:50:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=temperror (0-bit key) header.d=twistedcode.net header.i=@twistedcode.net header.b="e4FVEJeQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c/n4LMHF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF2121104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twistedcode.net
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="e6x7WjVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7B92133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeK1Bqc (ORCPT
+        id S1728491AbeK1BsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:46:32 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:55711 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726299AbeK1Bqc (ORCPT
+        Tue, 27 Nov 2018 20:48:24 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47276 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbeK1BsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:46:32 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 65E6120F8A;
-        Tue, 27 Nov 2018 09:48:22 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 27 Nov 2018 09:48:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=twistedcode.net;
-         h=reply-to:subject:to:cc:references:from:message-id:date
-        :mime-version:in-reply-to:content-type
-        :content-transfer-encoding; s=mesmtp; bh=63QVLgq8HmDjBDAkbFyhBla
-        LZJkTIC5pdEe+IBu24/k=; b=e4FVEJeQRahhpHuzlc2W1NC62tNefo78zH/WsrN
-        8QW3G61wnsMKNw7N4M5fnAK3kKFp3FXPbsVppfoG70Kbdtrx4CGQUwFAb4Il7Iva
-        U/mXdO9KBpYNvrTsdV2zczjr8lmbfN5pIgTQEZNNK0YSmeMcYGHrE3ii46rQTMBH
-        kmwM=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :reply-to:subject:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm1; bh=63QVLgq8HmDjBDAkbFyhBlaLZJkTI
-        C5pdEe+IBu24/k=; b=c/n4LMHF6caHun3mFepif+PNmn05KObOzNi55pxC3J8kF
-        fCRVJQAGnO33qNBMuDI1CSiAUPWvebP/Yxlq96YB/Ia6P3mFxWuvZVJI3TatqJua
-        1d3PpYJ5Vvb3B6vIaTTP8lhJHQVt65PA2QdiJaKnPcKc1xyepIz8XQraC/xMRWAX
-        KXbMMsRvhz0oZQwy06/m/MLyhXVMlqyoVA5hYXeAtfuPiBk5R+GMTAVT4Fb6zRmI
-        UGBXv+9Yje+4FJglHV9MlaaRZZgTdt/8WqOD/7wNLKR/g3Pst2DBoR8OEmZJyCsZ
-        pGWxCSPj+KW7ZeyKtYnd/SOOXDi300I+Hl3SvTwNA==
-X-ME-Sender: <xms:NVn9W1q-UqlWiosGwt-9DjHp5hae52fWvIGWdQ8aSLavhcZ0lsLO0w>
-X-ME-Proxy: <xmx:NVn9Wz-KkEQJt3f-i1d-0ZovT5KDfPxk5LPKpGvVvWueJXD98VRv_A>
-    <xmx:NVn9W7_R6TXZkbsXlSk6DC-4Uz2mk7nJNcbSjsKqTz7npVGZqCr8WA>
-    <xmx:NVn9W3Smq9Jas9246yj97vVq26ky_JAMzuUEkegz5Q8wxUd8QWqIDw>
-    <xmx:NVn9W9G4RVNF41d8MFTYvDweNuAVw8QJ2S7H7A0FhgAl26F0rLdyDw>
-    <xmx:NVn9W3MG2mpZ8tya5EYf8ykK-Fk6hQNss6elNipDFx3gjKN-g1Wm5w>
-    <xmx:Nln9Wxa9NIsD7ACFTQixLRT7ZHS8vUVZsYwgVXXY2xI1BXDtDXC3WQ>
-Received: from [192.168.1.2] (d220-122.icpnet.pl [109.173.220.122])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CE271E49C6;
-        Tue, 27 Nov 2018 09:48:20 -0500 (EST)
-Reply-To: grendel@twistedcode.net
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-To:     Guenter Roeck <linux@roeck-us.net>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
- <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
-From:   Marek Habersack <grendel@twistedcode.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=grendel@twistedcode.net; prefer-encrypt=mutual;
- keydata= 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
-Organization: I just...
-Message-ID: <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
-Date:   Tue, 27 Nov 2018 15:48:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 27 Nov 2018 20:48:24 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAREmd4P009606;
+        Tue, 27 Nov 2018 14:50:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=oyccUdWIelEWKpwjvGBKca5PSCy0iL8os39pB4V7K4A=;
+ b=e6x7WjVEvtRFfA0tSUmiNT0L5SnP9kIXSZrjt4r4mOIqhw54Wt9ORZbquCAssrYcl3pa
+ cfTnNlFIN77rJdZ3RXSe+5CfjgSPrZPWtAwhRXkzCt6JfZjsyBNXwhkEgCMfKaLlR58p
+ tyPO7FNhiW8SIjJeaTVfZx44YaaP+hWpJhd60fxCPxCh7tUg+Iz9VJtqqeqf/MRTDsM/
+ jH8Dv10fMo+2N5ki1SgTQaz5ZdK/hsbPp1PKf2pqABf0s0HK2ifDNPsRolQsSpOli3ob
+ yMWPKXXkfG2HCnDF0K0BIsdVfCVaP66+8Ju/JkKKg6ovXbCY8Erk8nal2k/ltGNJotQC FQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nxx2u4e35-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 14:50:10 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAREo9iu027744
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 14:50:10 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAREo9w6000653;
+        Tue, 27 Nov 2018 14:50:09 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Nov 2018 06:50:09 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181127131707.GW12455@dhcp22.suse.cz>
+Date:   Tue, 27 Nov 2018 07:50:08 -0700
+Cc:     linux-api@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: 7bit
+Message-Id: <04647F77-FE93-4A8E-90C1-4245709B88A5@oracle.com>
+References: <20181120103515.25280-1-mhocko@kernel.org>
+ <20181120103515.25280-4-mhocko@kernel.org>
+ <0ACDD94B-75AD-4DD0-B2E3-32C0EDFBAA5E@oracle.com>
+ <20181127131707.GW12455@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=631
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811270128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/11/2018 15:32, Guenter Roeck wrote:
-Hi,
 
-You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=yes in your kernel config. Starting with 4.19.1 it somehow
-interferes with ext4 and causes problems similar to the ones you list below. Ever since I disabled MQ (either recompile
-your kernel or add `scsi_mod.use_blk_mq=0` to the kernel command line) none of those errors came back.
 
-hope it helps,
+> On Nov 27, 2018, at 6:17 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> This is only about the process wide flag to disable THP. I do not see
+> how this can be alighnement related. I suspect you wanted to ask in the
+> smaps patch?
 
-marek
-> [trying again, this time with correct kernel.org address]
+No, answered below.
+
 > 
-> Hi,
+>> I'm having to deal with both these issues in the text page THP
+>> prototype I've been working on for some time now.
 > 
-> I have seen the following and similar problems several times,
-> with both v4.19.3 and v4.19.4:
-> 
-> Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602889: comm git: bad
-> extra_isize 33661 (inode size 256)
-> Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on device sdb1-8.
-> Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1): Remounting filesystem read-only
-> Nov 23 04:32:25 mars kernel: [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602881: comm rm: bad
-> extra_isize 33685 (inode size 256)
-> ...
-> 
-> Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device sda1): ext4_lookup:1578: inode #238034131: comm
-> updatedb.mlocat: deleted inode referenced: 238160407
-> Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on device sda1-8.
-> Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1): Remounting filesystem read-only
-> ...
-> 
-> Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device sda1): ext4_lookup:1578: inode #52038457: comm
-> nfsd: deleted inode referenced: 52043796
-> Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on device sda1-8.
-> Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1): Remounting filesystem read-only
-> 
-> 
-> The same systems running v4.18.6 never experienced a problem.
-> 
-> Has anyone else seen similar problems ? Is there anything I can do
-> to help tracking down the problem ?
-> 
-> Thanks,
-> Guenter
-> 
+> Could you be more specific about the issue and how the alignment comes
+> into the game? The only thing I can think of is to not report VMAs
+> smaller than the THP as eligible. Is this what you are looking for?
+
+Basically, if the faulting VA is one that cannot be mapped with a THP
+due to alignment or size constraints, it may be "eligible" for THP
+mapping but ultimately can't be.
+
+I was just double checking that this was meant to be more of a check done
+before code elsewhere performs additional checks and does the actual THP
+mapping, not an all-encompassing go/no go check for THP mapping.
+
+    Thanks,
+         William Kucharski
 
