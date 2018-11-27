@@ -2,134 +2,149 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E99C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82501C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B17208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42DBA208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9LWi4gI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B17208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFvCYUdP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DBA208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeK1IOT (ORCPT
+        id S1726770AbeK1IPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 03:14:19 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34436 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeK1IOT (ORCPT
+        Wed, 28 Nov 2018 03:15:15 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45721 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeK1IPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 03:14:19 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so24207224wrw.1;
-        Tue, 27 Nov 2018 13:15:06 -0800 (PST)
+        Wed, 28 Nov 2018 03:15:15 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so8423022pgc.12;
+        Tue, 27 Nov 2018 13:16:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cke1sTS+A87UV3r1vzgzLnjfWNjpjwinc/lnl7tc5qc=;
-        b=D9LWi4gIhRSAW+JDG06KMzIttQZAwK73aiDYv1ahqhHpByhQ52Op2LMOkO0sRkK4jE
-         GFoaHiuQxK5YzaG2WgZ1PPyLBPBiaKT8DxV5K1fpOf9nBDm5H6meLXhVwspsg1MYiroK
-         mH/wMabi3eaTw6OuaE/7cNl3u3zzxOayy18DTGnMOl9J0Xpx7XVr46ovm6B/M71/qTkI
-         OMKxm75oSDEejHJ2EENQEot9Ws81DOSOokfKnqXrK6u6kbqDUyTC/4FcOiV3smWS3j4g
-         pklB6URjz0LshuVhrGM/KmzPY0RZsKtw8rtlzfX94egsF2ijnQT5hu11yDm2H8CLHI42
-         x8bA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=POLOYIiJuU8CSX2TWzyy+YnWmRatYsfe9ljSBPA02cc=;
+        b=ZFvCYUdPkDH7NO0rp6JgX1scwTdNTO8jtyDg7Rwsfu2WJCKOnycrvqEYrFlEr/cmKI
+         aeOjz2bskKgyZvu8lcXfVqHlDRi4k+fbk+EhjmScBxi53fhER9x9BZuIh3e9DiQDnjfC
+         RjfTuHmUzn9LmJsIs5uiHMe1h/8aVb3BUmqJdd/qfjMS679ratilbx3u/6LPkZl+oUGb
+         eQ54kVVLrev7o8CxgOLedEcQEP6KaTbhGB49Hvl8daEeetNklnYqDYubYvVENHDZxrwS
+         brHRLhvU8eZZBLcZlOlAdQXRnLZjl/sVWsDae715iO1f+vPg9/obZv0J4ZGjRa6wOqad
+         TrHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cke1sTS+A87UV3r1vzgzLnjfWNjpjwinc/lnl7tc5qc=;
-        b=kQwCWtX/1z2ztfxyqgbXAq31EgAFgJFpvOrUhRQPwbSRkAUDZe8USJNQF6lcHuddUX
-         xmyDMP69Kl8JmRRjEm9CeZQaM9lgQbGN/7YZ7aAnYU06unC4JOzXEGOUf9VWc/KtQ+vg
-         gJEZ2+7vUh5gEM/kjatpcPLq38aCANs1FOJ0MBfNLzrR8R9zwqw/JsrwcQkdEHZ/nnyR
-         /tjS3eOGpboJprSt/igWDUnmrSpiXKvkNU5WwGkM/5ZTGVyTxfGklHipq4vtfVQ3B6k6
-         BMlnoBmYtA7F45MN/GWf3eVZjkZHHUnccogOvKn1ErfjJylP5l5m1occjgZ/I7UooWd+
-         jy7w==
-X-Gm-Message-State: AA+aEWbNoN00H4Zo2xRyNkQUemMWgBRguib876is1HGeTt1OTttn/TEL
-        0Ab9Z+NSjxetvJA3Wg6/JdOOEMUZrABzBQNDOgDM2yz7xtI=
-X-Google-Smtp-Source: AFSGD/VJuZDVpXnAQn6MMwW1MiogX97yYqgAdBi5DORyRCY6y8r4/ShMCdLO/3DiNc1zqj2hk+NB0FkHHDjWRs/iisM=
-X-Received: by 2002:adf:c7cc:: with SMTP id y12mr21642457wrg.52.1543353305687;
- Tue, 27 Nov 2018 13:15:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=POLOYIiJuU8CSX2TWzyy+YnWmRatYsfe9ljSBPA02cc=;
+        b=JOXNzdmVwkwJSO0c1X2bLD0077wWMOxQmNR/J3gmNyDy/ttkTSd2PyP+Fms5S/I2oL
+         kofYSZVGkFWknaCYAGqQYqEETymkacPniSJP2gQw5YZEGuK6iACgUqmLHeoLFkIGFvdz
+         GgpKcqbG2InRUVcqTPxlR4CUyK7sKWAG9d98hKwMY2RmjnNtfgyyKZDjSxTMHTqSBDGt
+         hio5rosDEaHxSDXctYz8g2LiUrYiiOKRyVX10yrxLnB+l07y3oiAexYa30M+zlkY1akn
+         R8oNnUcQ5QslZfhUjVgFlY9j2mYtVCr1xUeWDKuQzcmBe63ljQa4N8l2uEfLoBLJuCCQ
+         n5ZA==
+X-Gm-Message-State: AA+aEWa4PXdcjl29dZzMJA6mN8SfEd+R5voVTLjqUGAIl8pcbQkrvUbX
+        ASIjsvEs4R/3EBtx/7cMQr4z8PCrkqY=
+X-Google-Smtp-Source: AFSGD/XiXnPx8nsrAwbkwBA1FsS2iMO2juvBawJVCbnt6kjMC7HFbLiLGwtBdZhmWYphxFeYJ/Q3RA==
+X-Received: by 2002:a63:fe48:: with SMTP id x8mr31264176pgj.261.1543353363014;
+        Tue, 27 Nov 2018 13:16:03 -0800 (PST)
+Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
+        by smtp.gmail.com with ESMTPSA id 69sm6193028pgg.86.2018.11.27.13.16.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 13:16:02 -0800 (PST)
+Date:   Wed, 28 Nov 2018 06:16:00 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-mm@kvack.org, linux-sh@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, openrisc@lists.librecores.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH 4/5] openrisc: simplify pte_alloc_one_kernel()
+Message-ID: <20181127211600.GB3235@lianli.shorne-pla.net>
+References: <1543182277-8819-1-git-send-email-rppt@linux.ibm.com>
+ <1543182277-8819-5-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
- <20181117181225.10737-4-andrew.smirnov@gmail.com> <ce2ac1a880ce2a7a39f0e42b5059676daa748e52.camel@nxp.com>
- <CAHQ1cqH6LT4GsxUchrmVG1m3fqawgyUjxdHvh=SzxhBiQOd8eg@mail.gmail.com>
- <1543313169.2507.39.camel@pengutronix.de> <VI1PR04MB5533DE497786CD80D4FE0941EED00@VI1PR04MB5533.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5533DE497786CD80D4FE0941EED00@VI1PR04MB5533.eurprd04.prod.outlook.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Tue, 27 Nov 2018 13:14:54 -0800
-Message-ID: <CAHQ1cqEGABcH3EG9yGo7Ns2fPR1s_u1YPtFoKRjUh50=aa=J2Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Cc:     Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        Chris Healy <cphealy@gmail.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543182277-8819-5-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 2:46 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
->
-> On 11/27/18 12:06 PM, Lucas Stach wrote:
-> > Hi Andrey,
-> >
-> > Am Montag, den 26.11.2018, 10:24 -0800 schrieb Andrey Smirnov:
-> >> On Tue, Nov 20, 2018 at 2:49 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> >>>
-> >>> On Sat, 2018-11-17 at 10:12 -0800, Andrey Smirnov wrote:
-> >>>> @@ -921,7 +1004,28 @@ static int imx6_pcie_probe(struct platform_device *pdev)
-> >>>> -     case IMX7D:
-> >>>> +     case IMX8MQ:
-> >>>> +             if (of_property_read_u32(node, "fsl,iomux-gpr1x",
-> >>>> +                                      &imx6_pcie->gpr1x)) {
-> >>>> +                     dev_err(dev, "Failed to get GPR1x address\n");
-> >>>> +                     return -EINVAL;
-> >>>> +             }
-> >>>
-> >>> This is for distinguishing multiple controllers on the SOC but other
-> >>> registers and bits might differ. Isn't it preferable to have a property
-> >>> for controller id instead of adding many registers to DT?
-> >>
-> >> I liked encoding necessary info in DT directly slightly better than
-> >> encoding abstract ID and then decoding it further in the driver code.
-> >> OTOH, I am not really attached to that path. Lucas, can you comment on
-> >> this please?
-> >
-> > Yes, after rereading the patch with this in mind I agree that having
-> > the GPR offset on DT directly is IMO the better approach than an
-> > abstract ID.
->
-> But it's not a single offset, for example the device_type (EP/RC) has
-> bits for the two controllers side-by-side in GPR12.
->
+On Sun, Nov 25, 2018 at 11:44:36PM +0200, Mike Rapoport wrote:
+> The pte_alloc_one_kernel() function allocates a page using
+> __get_free_page(GFP_KERNEL) when mm initialization is complete and
+> memblock_phys_alloc() on the earlier stages. The physical address of the
+> page allocated with memblock_phys_alloc() is converted to the virtual
+> address and in the both cases the allocated page is cleared using
+> clear_page().
+> 
+> The code is simplified by replacing __get_free_page() with
+> get_zeroed_page() and by replacing memblock_phys_alloc() with
+> memblock_alloc().
 
-Playing devil's advocate for a bit:
+Hello Mike,
 
-More specifically, currently the following per-controller bits need to
-be configured:
+This looks fine to me.  How do you plan to get this merged?  Will you be taking
+care of the whole series or so you want me to queue this openrisc part?
 
-- Location of the "device type" field within GPR12
-- GPR register to use to control PCIn_CLKREQ_B_OVERRIDE_EN and
-PCIn_CLKREQ_B_OVERRIDE_EN (GPR14 vs GPR16)
-- Now that Philip spoke against PCIE_CTRL_APPS_CLK_REQ being exposed
-via reset controller driver, we need to know which SRC register to use
-to control that bit (SRC_PCIEPHY_RCR vs. SRC_PCIE2_RCR)
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Thanks,
-Andrey Smirnov
+Acked-by: Stafford Horne <shorne@gmail.com>
+
+> ---
+>  arch/openrisc/mm/ioremap.c | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/openrisc/mm/ioremap.c b/arch/openrisc/mm/ioremap.c
+> index c969752..cfef989 100644
+> --- a/arch/openrisc/mm/ioremap.c
+> +++ b/arch/openrisc/mm/ioremap.c
+> @@ -123,13 +123,10 @@ pte_t __ref *pte_alloc_one_kernel(struct mm_struct *mm,
+>  {
+>  	pte_t *pte;
+>  
+> -	if (likely(mem_init_done)) {
+> -		pte = (pte_t *) __get_free_page(GFP_KERNEL);
+> -	} else {
+> -		pte = (pte_t *) __va(memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE));
+> -	}
+> +	if (likely(mem_init_done))
+> +		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
+> +	else
+> +		pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>  
+> -	if (pte)
+> -		clear_page(pte);
+>  	return pte;
+>  }
+> -- 
+> 2.7.4
+> 
