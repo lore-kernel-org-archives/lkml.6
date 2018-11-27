@@ -2,185 +2,131 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1D5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188EAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE38020659
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:28:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KlfhoZWM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE38020659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id E216B214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E216B214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731662AbeK1E1c (ORCPT
+        id S1731686AbeK1E1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:27:32 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:37757 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731510AbeK1E1c (ORCPT
+        Tue, 27 Nov 2018 23:27:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55708 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726586AbeK1E1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:27:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id b5so35240774iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:28:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=R54rcm9i1O3/vapsG6b7Bk69Dxa8PcW9ozp5iuX3CeU=;
-        b=KlfhoZWMVerQd5UONN5UQZQZ6MiJ0nmxIOl8FI/eKEgHNSEyR6pljjpr92ey//qKd1
-         1ZRhGkJERzVjerFEI+2AZpBCd7fwZQunhjch73OGTEF0PLCaC1iN3KJlgycZS5AnokBd
-         yufTuAX1LLUiwfw72DqjYMZtIuD+8GhgUZaFk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=R54rcm9i1O3/vapsG6b7Bk69Dxa8PcW9ozp5iuX3CeU=;
-        b=Sv/LwMCTqceHUhg424QiC01QakzOUS7TtH3zEHSFR8St63X7NSVu9/8Fkraz9mfjlX
-         g6BIQcK3ZaoOtqxq4s+G04A4eJH95cra7oPUFVy4obruMBh9uUuX0smoad100qTzBlkt
-         j0u3gBxD8dDVSaCP1pCfw5T0sWhVW8M3b5UzCIY+Au+oLHVDihmwQc4gqIWjsjLsrRDA
-         9RjlIe1ZK2GRdP8zsWJy48Kc59ZNI+K3KLcaDnWZDv7ok+eLrhFvmNBFFDZRepJWiXK4
-         cUEilZqUsg4raX458LiaYupHd0/tV5bbFlMj3ZtZSqpd4v9xvGjAJtEuTUPnk869BsWy
-         l4RQ==
-X-Gm-Message-State: AA+aEWbFTb8PFyKlRxYnLuiNWQ5wQQS6CWkBvR7B6197sRuGNZfLYe7N
-        9EFfbzPFpU23nKGrbm+NcL5sfvGZseHCeQ7sR+PYMG/Y
-X-Google-Smtp-Source: AFSGD/W/UebMRCBg1ILW3Lj/Wn5uCtQTQ5/gS3tCWyTtf4SGbySIXlm2NT8dIwj1x1SH+FswBikBS0GoRELX/LPrRis=
-X-Received: by 2002:a05:660c:344:: with SMTP id b4mr7146805itl.51.1543339735054;
- Tue, 27 Nov 2018 09:28:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-4-daniel.vetter@ffwll.ch> <20181127074918.GT4266@phenom.ffwll.local>
- <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
-In-Reply-To: <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 27 Nov 2018 18:28:43 +0100
-Message-ID: <CAKMK7uGSP7wWHSRFsCv90qCyHiSBS+o9CK1BPUXbGj6Crcy_Cg@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 3/3] mm, notifier: Add a lockdep map for invalidate_range_start
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        Tue, 27 Nov 2018 23:27:53 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARHT8na006018
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:29:16 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p17j38ee2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:29:16 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pfsmorigo@linux.vnet.ibm.com>;
+        Tue, 27 Nov 2018 17:29:16 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 17:29:12 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARHTB4519988524
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 17:29:11 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B27BD7805E;
+        Tue, 27 Nov 2018 17:29:11 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 923767805C;
+        Tue, 27 Nov 2018 17:29:08 +0000 (GMT)
+Received: from dublin.ltc.br.ibm.com (unknown [9.85.175.111])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Nov 2018 17:29:08 +0000 (GMT)
+From:   Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] MAINTAINERS: change NX/VMX maintainers
+Date:   Tue, 27 Nov 2018 15:27:21 -0200
+X-Mailer: git-send-email 2.14.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112717-0004-0000-0000-000014B9308C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010131; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01123586; UDB=6.00583293; IPR=6.00903715;
+ MB=3.00024356; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 17:29:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112717-0005-0000-0000-000089A73AD0
+Message-Id: <20181127172739.24621-1-pfsmorigo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=871 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 5:50 PM Chris Wilson <chris@chris-wilson.co.uk> wro=
-te:
->
-> Quoting Daniel Vetter (2018-11-27 07:49:18)
-> > On Thu, Nov 22, 2018 at 05:51:06PM +0100, Daniel Vetter wrote:
-> > > This is a similar idea to the fs_reclaim fake lockdep lock. It's
-> > > fairly easy to provoke a specific notifier to be run on a specific
-> > > range: Just prep it, and then munmap() it.
-> > >
-> > > A bit harder, but still doable, is to provoke the mmu notifiers for
-> > > all the various callchains that might lead to them. But both at the
-> > > same time is really hard to reliable hit, especially when you want to
-> > > exercise paths like direct reclaim or compaction, where it's not
-> > > easy to control what exactly will be unmapped.
-> > >
-> > > By introducing a lockdep map to tie them all together we allow lockde=
-p
-> > > to see a lot more dependencies, without having to actually hit them
-> > > in a single challchain while testing.
-> > >
-> > > Aside: Since I typed this to test i915 mmu notifiers I've only rolled
-> > > this out for the invaliate_range_start callback. If there's
-> > > interest, we should probably roll this out to all of them. But my
-> > > undestanding of core mm is seriously lacking, and I'm not clear on
-> > > whether we need a lockdep map for each callback, or whether some can
-> > > be shared.
-> > >
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: David Rientjes <rientjes@google.com>
-> > > Cc: "J=C3=A9r=C3=B4me Glisse" <jglisse@redhat.com>
-> > > Cc: Michal Hocko <mhocko@suse.com>
-> > > Cc: "Christian K=C3=B6nig" <christian.koenig@amd.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > > Cc: linux-mm@kvack.org
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> >
-> > Any comments on this one here? This is really the main ingredient for
-> > catching deadlocks in mmu notifier callbacks. The other two patches are
-> > more the icing on the cake.
-> >
-> > Thanks, Daniel
-> >
-> > > ---
-> > >  include/linux/mmu_notifier.h | 7 +++++++
-> > >  mm/mmu_notifier.c            | 7 +++++++
-> > >  2 files changed, 14 insertions(+)
-> > >
-> > > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifie=
-r.h
-> > > index 9893a6432adf..a39ba218dbbe 100644
-> > > --- a/include/linux/mmu_notifier.h
-> > > +++ b/include/linux/mmu_notifier.h
-> > > @@ -12,6 +12,10 @@ struct mmu_notifier_ops;
-> > >
-> > >  #ifdef CONFIG_MMU_NOTIFIER
-> > >
-> > > +#ifdef CONFIG_LOCKDEP
-> > > +extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
-> > > +#endif
-> > > +
-> > >  /*
-> > >   * The mmu notifier_mm structure is allocated and installed in
-> > >   * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
-> > > @@ -267,8 +271,11 @@ static inline void mmu_notifier_change_pte(struc=
-t mm_struct *mm,
-> > >  static inline void mmu_notifier_invalidate_range_start(struct mm_str=
-uct *mm,
-> > >                                 unsigned long start, unsigned long en=
-d)
-> > >  {
-> > > +     mutex_acquire(&__mmu_notifier_invalidate_range_start_map, 0, 0,
-> > > +                   _RET_IP_);
->
-> Would not lock_acquire_shared() be more appropriate, i.e. treat this as
-> a rwsem_acquire_read()?
+Add Breno and Nayna as NX/VMX crypto driver maintainers. Also change my
+email address to my personal account and remove Leonidas since he's not
+working with the driver anymore.
 
-read lock critical sections can't create any dependencies against any
-other read lock critical section of the same lock. Switching this to a
-read lock would just render the annotation pointless (if you don't
-include at least some write lock critical section somewhere, but I
-have no idea where you'd do that). A read lock that you only ever take
-for reading essentially doesn't do anything at all.
+Signed-off-by: Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
+---
+ MAINTAINERS | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-So not clear on why you're suggesting this?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 380e43f585d3..b7a4da8f2e33 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7017,8 +7017,9 @@ F:	crypto/842.c
+ F:	lib/842/
+ 
+ IBM Power in-Nest Crypto Acceleration
+-M:	Leonidas S. Barbosa <leosilva@linux.vnet.ibm.com>
+-M:	Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
++M:	Breno Leitão <leitao@debian.org>
++M:	Nayna Jain <nayna@linux.ibm.com>
++M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+ F:	drivers/crypto/nx/Makefile
+@@ -7084,8 +7085,9 @@ S:	Supported
+ F:	drivers/scsi/ibmvscsi_tgt/
+ 
+ IBM Power VMX Cryptographic instructions
+-M:	Leonidas S. Barbosa <leosilva@linux.vnet.ibm.com>
+-M:	Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
++M:	Breno Leitão <leitao@debian.org>
++M:	Nayna Jain <nayna@linux.ibm.com>
++M:	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+ F:	drivers/crypto/vmx/Makefile
+-- 
+2.14.4
 
-It's the exact same idea like fs_reclaim of intserting a fake lock to
-tie all possible callchains to a given functions together with all
-possible callchains from that function. Of course this is only valid
-if all NxM combinations could happen in theory. For fs_reclaim that's
-true because direct reclaim can pick anything it wants to
-shrink/evict. For mmu notifier that's true as long as we assume any
-mmu notifier can be in use by any process, which only depends upon
-sufficiently contrived/evil userspace.
-
-I guess I could use lock_map_acquire/release() wrappers for this like
-fs_reclaim, would be a bit more clear.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
