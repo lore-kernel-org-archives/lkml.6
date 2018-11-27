@@ -2,96 +2,277 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 034D9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908D9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6DF12145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DF12145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 47EF92145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aR4pRpym"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47EF92145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731891AbeK1Dze (ORCPT
+        id S1731900AbeK1Dzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:55:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36058 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730080AbeK1Dzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:55:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8AEE9AF86;
-        Tue, 27 Nov 2018 16:57:00 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 17:56:59 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 27 Nov 2018 22:55:39 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42612 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731784AbeK1Dy7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:54:59 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so23437657wrx.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:56:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zstYfFUM8JCpnxw1Tbdi2+5o2Ofx4Ch1nUlOE/Rv2dg=;
+        b=aR4pRpymE+CP9XTk9XMcEkb4x8W0Sjx8bq24P8tbJj9npfknYJBXYh+ERBr61KUf75
+         Q/qLV5uDTb/q0AezDQJJHyH796cuqqbtPY5/dAwSDXQ35uaHW0DXZs2NHdyHYnBDdIJA
+         NLwl1lcyglLSnayHUj/Nt/+G5ly+BlUblicnl2Ho9dyrLl1lwN+9IpEvq1qxG1RXo3+z
+         6QMNRROEeuEkhzU+Pbp5vhT9RM5U4Gr2rgfpLUZh+e5nckbcsgQaWeLJgp6ftpu8lgTR
+         DVR/JZKcQkEp6rOpkks2FA/pOkD3p1lnaiG4hZ+9mKcowCDGVf7hyv7pQo1Gx0RXnlLt
+         MiuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zstYfFUM8JCpnxw1Tbdi2+5o2Ofx4Ch1nUlOE/Rv2dg=;
+        b=bxVsyva1CZKC7vLNLxhOnvzHsnMFV27BPZOAWSJW0jUwrkZWs8rWpbB3lCVQMsxqnZ
+         AnpXQ1A1/0eQd7+KUFlq3mtTyXWBm1BYH2hkVSGtjbWU0OSnn9BguriMnprkV4EtZaT8
+         3nJvaspTpXIFZKxlp3fafn8zoWqqG7XVX2Skk2fSI6iVI3P30Wz94LWWlGVvvL/e8uJ7
+         dgCP403/Vg7sTDrH6P9DqmqXHiJij3b0nd98SxpNVtk5z1uLOirBB4WKnKjZ/c6eJMpY
+         jLPgb2AnMk7MyzQvC2Oq9HftLUWOWA0TwECHcGGGLeecqWsSy4wZmz3COwyOjjimVewZ
+         VKNw==
+X-Gm-Message-State: AA+aEWYcR5l4zatYOxYXW+FccQIMa0IuWT7M2dAWa6Tn5gbEHC70nFUl
+        RyyrWbCZGFsXR4okpokoiM4rsA==
+X-Google-Smtp-Source: AFSGD/Xbrc3BeOjO5BB99nM1cCXcMcyl7v/lfxPXx4Msnm6Carr2MM5IwjmALehkzEUGkVbadaIBnw==
+X-Received: by 2002:a05:6000:1287:: with SMTP id f7mr29808746wrx.302.1543337785909;
+        Tue, 27 Nov 2018 08:56:25 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
+        by smtp.gmail.com with ESMTPSA id k73sm6383099wmd.36.2018.11.27.08.56.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 08:56:24 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
- migrated
-Message-ID: <20181127165659.GC6923@dhcp22.suse.cz>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
- <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
- <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
- <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
- <20181126205351.GM3065@bombadil.infradead.org>
- <20181127105602.GC16502@rapoport-lnx>
- <010001675613a406-89de05df-ccf6-4bfa-ae3b-6f94148d514a-000000@email.amazonses.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v12 20/25] kasan, arm64: add brk handler for inline instrumentation
+Date:   Tue, 27 Nov 2018 17:55:38 +0100
+Message-Id: <e825441eda1dbbbb7f583f826a66c94e6f88316a.1543337629.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+In-Reply-To: <cover.1543337629.git.andreyknvl@google.com>
+References: <cover.1543337629.git.andreyknvl@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <010001675613a406-89de05df-ccf6-4bfa-ae3b-6f94148d514a-000000@email.amazonses.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-11-18 16:49:47, Cristopher Lameter wrote:
-> On Tue, 27 Nov 2018, Mike Rapoport wrote:
-> 
-> > >  * @page: The page to wait for.
-> > >  *
-> > >  * The caller should hold a reference on @page.  They expect the page to
-> > >  * become unlocked relatively soon, but do not wish to hold up migration
-> > >  * (for example) by holding the reference while waiting for the page to
-> > >  * come unlocked.  After this function returns, the caller should not
-> > >  * dereference @page.
-> > >  */
-> >
-> > How about:
-> >
-> > They expect the page to become unlocked relatively soon, but they can wait
-> > for the page to come unlocked without holding the reference, to allow
-> > other users of the @page (for example migration) to continue.
-> 
-> All of this seems a bit strange and it seems unnecessary? Maybe we need a
-> better explanation?
-> 
-> A process has no refcount on a page struct and is waiting for it to become
-> unlocked? Why? Should it not simply ignore that page and continue? It
-> cannot possibly do anything with the page since it does not hold a
-> refcount.
+Tag-based KASAN inline instrumentation mode (which embeds checks of shadow
+memory into the generated code, instead of inserting a callback) generates
+a brk instruction when a tag mismatch is detected.
 
-So do you suggest busy waiting on the page under migration?
+This commit adds a tag-based KASAN specific brk handler, that decodes the
+immediate value passed to the brk instructions (to extract information
+about the memory access that triggered the mismatch), reads the register
+values (x0 contains the guilty address) and reports the bug.
+
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/include/asm/brk-imm.h |  2 +
+ arch/arm64/kernel/traps.c        | 68 +++++++++++++++++++++++++++++++-
+ include/linux/kasan.h            |  3 ++
+ 3 files changed, 71 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/include/asm/brk-imm.h b/arch/arm64/include/asm/brk-imm.h
+index ed693c5bcec0..2945fe6cd863 100644
+--- a/arch/arm64/include/asm/brk-imm.h
++++ b/arch/arm64/include/asm/brk-imm.h
+@@ -16,10 +16,12 @@
+  * 0x400: for dynamic BRK instruction
+  * 0x401: for compile time BRK instruction
+  * 0x800: kernel-mode BUG() and WARN() traps
++ * 0x9xx: tag-based KASAN trap (allowed values 0x900 - 0x9ff)
+  */
+ #define FAULT_BRK_IMM			0x100
+ #define KGDB_DYN_DBG_BRK_IMM		0x400
+ #define KGDB_COMPILED_DBG_BRK_IMM	0x401
+ #define BUG_BRK_IMM			0x800
++#define KASAN_BRK_IMM			0x900
+ 
+ #endif
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 5f4d9acb32f5..04bdc53716ef 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -35,6 +35,7 @@
+ #include <linux/sizes.h>
+ #include <linux/syscalls.h>
+ #include <linux/mm_types.h>
++#include <linux/kasan.h>
+ 
+ #include <asm/atomic.h>
+ #include <asm/bug.h>
+@@ -284,10 +285,14 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
+ 	}
+ }
+ 
+-void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
++void __arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
+ {
+ 	regs->pc += size;
++}
+ 
++void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
++{
++	__arm64_skip_faulting_instruction(regs, size);
+ 	/*
+ 	 * If we were single stepping, we want to get the step exception after
+ 	 * we return from the trap.
+@@ -959,7 +964,7 @@ static int bug_handler(struct pt_regs *regs, unsigned int esr)
+ 	}
+ 
+ 	/* If thread survives, skip over the BUG instruction and continue: */
+-	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
++	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ 	return DBG_HOOK_HANDLED;
+ }
+ 
+@@ -969,6 +974,58 @@ static struct break_hook bug_break_hook = {
+ 	.fn = bug_handler,
+ };
+ 
++#ifdef CONFIG_KASAN_SW_TAGS
++
++#define KASAN_ESR_RECOVER	0x20
++#define KASAN_ESR_WRITE	0x10
++#define KASAN_ESR_SIZE_MASK	0x0f
++#define KASAN_ESR_SIZE(esr)	(1 << ((esr) & KASAN_ESR_SIZE_MASK))
++
++static int kasan_handler(struct pt_regs *regs, unsigned int esr)
++{
++	bool recover = esr & KASAN_ESR_RECOVER;
++	bool write = esr & KASAN_ESR_WRITE;
++	size_t size = KASAN_ESR_SIZE(esr);
++	u64 addr = regs->regs[0];
++	u64 pc = regs->pc;
++
++	if (user_mode(regs))
++		return DBG_HOOK_ERROR;
++
++	kasan_report(addr, size, write, pc);
++
++	/*
++	 * The instrumentation allows to control whether we can proceed after
++	 * a crash was detected. This is done by passing the -recover flag to
++	 * the compiler. Disabling recovery allows to generate more compact
++	 * code.
++	 *
++	 * Unfortunately disabling recovery doesn't work for the kernel right
++	 * now. KASAN reporting is disabled in some contexts (for example when
++	 * the allocator accesses slab object metadata; this is controlled by
++	 * current->kasan_depth). All these accesses are detected by the tool,
++	 * even though the reports for them are not printed.
++	 *
++	 * This is something that might be fixed at some point in the future.
++	 */
++	if (!recover)
++		die("Oops - KASAN", regs, 0);
++
++	/* If thread survives, skip over the brk instruction and continue: */
++	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
++	return DBG_HOOK_HANDLED;
++}
++
++#define KASAN_ESR_VAL (0xf2000000 | KASAN_BRK_IMM)
++#define KASAN_ESR_MASK 0xffffff00
++
++static struct break_hook kasan_break_hook = {
++	.esr_val = KASAN_ESR_VAL,
++	.esr_mask = KASAN_ESR_MASK,
++	.fn = kasan_handler,
++};
++#endif
++
+ /*
+  * Initial handler for AArch64 BRK exceptions
+  * This handler only used until debug_traps_init().
+@@ -976,6 +1033,10 @@ static struct break_hook bug_break_hook = {
+ int __init early_brk64(unsigned long addr, unsigned int esr,
+ 		struct pt_regs *regs)
+ {
++#ifdef CONFIG_KASAN_SW_TAGS
++	if ((esr & KASAN_ESR_MASK) == KASAN_ESR_VAL)
++		return kasan_handler(regs, esr) != DBG_HOOK_HANDLED;
++#endif
+ 	return bug_handler(regs, esr) != DBG_HOOK_HANDLED;
+ }
+ 
+@@ -983,4 +1044,7 @@ int __init early_brk64(unsigned long addr, unsigned int esr,
+ void __init trap_init(void)
+ {
+ 	register_break_hook(&bug_break_hook);
++#ifdef CONFIG_KASAN_SW_TAGS
++	register_break_hook(&kasan_break_hook);
++#endif
+ }
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index a477ce2abdc9..8da7b7a4397a 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -173,6 +173,9 @@ void kasan_init_tags(void);
+ 
+ void *kasan_reset_tag(const void *addr);
+ 
++void kasan_report(unsigned long addr, size_t size,
++		bool is_write, unsigned long ip);
++
+ #else /* CONFIG_KASAN_SW_TAGS */
+ 
+ static inline void kasan_init_tags(void) { }
 -- 
-Michal Hocko
-SUSE Labs
+2.20.0.rc0.387.gc7a69e6b6c-goog
+
