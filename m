@@ -2,89 +2,109 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077E6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1027AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1AF20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1AF20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CE12620873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Kpyk88uI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE12620873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730106AbeK0ULR (ORCPT
+        id S1730119AbeK0ULj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:11:17 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59016 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbeK0ULR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:11:17 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7C9D1207BC; Tue, 27 Nov 2018 10:14:01 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4BAE920736;
-        Tue, 27 Nov 2018 10:13:51 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:13:51 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 32/43] drm/sun4i: Pass modifier to backend and
- frontend format support helpers
-Message-ID: <20181127091351.ho4fmn2miph3xph7@flea>
-References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
- <20181123092515.2511-33-paul.kocialkowski@bootlin.com>
+        Tue, 27 Nov 2018 15:11:39 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2169 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729387AbeK0ULj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:11:39 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bfd0af20001>; Tue, 27 Nov 2018 01:14:26 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 27 Nov 2018 01:14:24 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 27 Nov 2018 01:14:24 -0800
+Received: from [10.26.11.97] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 27 Nov
+ 2018 09:14:21 +0000
+Subject: Re: [PATCH 4.14 00/62] 4.14.84-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181126105050.592727680@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <652adb77-bb9e-f4d4-7975-b61f9ac20947@nvidia.com>
+Date:   Tue, 27 Nov 2018 09:14:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o2z3clxxp56bjh4n"
-Content-Disposition: inline
-In-Reply-To: <20181123092515.2511-33-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543310066; bh=kt27ZvOsSUj5Po5gjtO2LyfCFPpPRXfvH8R3eRUAl7c=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Kpyk88uIVbc7EEl/2awEgEfDLOTDIYSDyzUdqnVV7rihEb6sc6oLz6agi7PjauwuL
+         2HxYcx3SJR4+2pQ1eZKV3YyKRBzqI7w0/CCZ2QNBU+G/nJTYbdRuzBOx2uBMMgHw/I
+         dG9ALoNF4YTQIKMnBgWR+zF6jvBcKht86afCczamHM7kTwVaA/t5OH1lXIqpLNvlRq
+         dpIdaNp6nRivrSF9dJSTNmTvdJorP75nNdOJLy72dwergrM6aivlM222BXLRANN7us
+         /p3oCYR+RflQjEC1Eh5sbTfuMbCjgg16IQuwqZf2eDjakNiz/f6vXl4FMCM/Hhts2A
+         47CfXswry4RJA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---o2z3clxxp56bjh4n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/11/2018 10:50, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.84 release.
+> There are 62 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 28 10:50:20 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.84-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-On Fri, Nov 23, 2018 at 10:25:04AM +0100, Paul Kocialkowski wrote:
-> To prepare the introduction of tiled mode support, pass the framebuffer
-> format modifier to the helpers dealing with format support.
->=20
-> Since only linear mode is supported for now, add corresponding checks in
-> each helper.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-Applied, thanks!
-Maxime
+Linux version:	4.14.84-rc1-gc203efd
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers
+Jon
 
---o2z3clxxp56bjh4n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0KzwAKCRDj7w1vZxhR
-xRSkAP435R8bFF8rbr0/IqwKN6aKg9/6+XHV/wA45fsIZLThYQD/UipFoPtbCcwj
-ue2dc/T8R7KkizKWTP8eE+sb5uMoBQg=
-=pDjq
------END PGP SIGNATURE-----
-
---o2z3clxxp56bjh4n--
+-- 
+nvpublic
