@@ -2,493 +2,258 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531D1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5745C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BEC20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:25:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02BEC20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F5F620664
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:28:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iD44wv+d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F5F620664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbeK0OWJ (ORCPT
+        id S1728389AbeK0OZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 09:22:09 -0500
-Received: from mga02.intel.com ([134.134.136.20]:51986 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727633AbeK0OWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 09:22:08 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 19:25:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,285,1539673200"; 
-   d="scan'208";a="95412674"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by orsmga008.jf.intel.com with ESMTP; 26 Nov 2018 19:25:41 -0800
-Date:   Tue, 27 Nov 2018 11:32:56 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] panic: Avoid the extra noise dmesg
-Message-ID: <20181127033256.2xvjvjhmqu3hqhpm@shbuild888>
-References: <1539242268-63036-1-git-send-email-feng.tang@intel.com>
- <20181011093500.GB9848@hirez.programming.kicks-ass.net>
- <20181011095941.mlh675ag5v4fpgos@shbuild888>
- <20181022095515.wxq6dhvix4ujkskv@shbuild888>
- <20181108130503.a35cf6yfbkd232go@shbuild888>
- <20181126155952.46d0c641a69746d33f4212e6@linux-foundation.org>
+        Tue, 27 Nov 2018 09:25:02 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38228 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728346AbeK0OZB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 09:25:01 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAR3OGDv023064;
+        Tue, 27 Nov 2018 03:28:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=RFfRhE9xgMtQpr+uaQ0hn/y5rMjhmrtTotR0iMKd88A=;
+ b=iD44wv+d1w8VbQMQNkVvK/npb4OenpdnhAMyNISi1JMBbK8RotpSYn60++bGSApG7oQN
+ zYOxD0imNxZ5ZfVDZj1f4M1+557jOVv1jtmGSs97ENIKwz5Tv3nnAVpt6R1mShxjMq5u
+ JrCqvqRpcgb9wT5Q0q7VwcFZlexAvNucMaItxia1WQcI4ha4smV7TwH1Q96AaX3p8Mjt
+ 0OjVsagJFC3Wqq2C17rAYZ8BKEPC/McYSLRuO2CfQVGLpSjU9m+lqBDM67L3TeYqcKXl
+ V0e0qm+iqu7GjgMFEOXShDQ7LcfuEv/6YPTS88mYI0fe/XWLQHnIN4+2bGeSRoWHcg+0 1Q== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2nxxkq9ddn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 03:28:26 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAR3SP2v016092
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 03:28:26 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAR3SORf023886;
+        Tue, 27 Nov 2018 03:28:24 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 26 Nov 2018 19:28:24 -0800
+Subject: Re: [Xen-devel] [PATCH v3] xen/balloon: Mark unallocated host memory
+ as UNUSABLE
+To:     Igor Druzhinin <igor.druzhinin@citrix.com>,
+        xen-devel@lists.xen.org, linux-kernel@vger.kernel.org
+Cc:     jgross@suse.com, helgaas@kernel.org, christian.koenig@amd.com,
+        JBeulich@suse.com
+References: <1513778746-6155-1-git-send-email-boris.ostrovsky@oracle.com>
+ <7c833e3a-4a0b-e80c-91e2-4348d6959651@citrix.com>
+ <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
+ <f955576f-532d-d4de-e7eb-718dae4b14c1@citrix.com>
+ <3dd5153d-0f17-0e3b-7ebb-5579a7200765@oracle.com>
+ <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ xsFNBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABzTNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT7CwXgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uzsFNBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABwsFfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <bec58747-dd34-2f2a-135c-c32b39087a3d@oracle.com>
+Date:   Mon, 26 Nov 2018 22:28:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126155952.46d0c641a69746d33f4212e6@linux-foundation.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811270026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On 11/26/18 2:57 PM, Igor Druzhinin wrote:
+> On 26/11/2018 19:42, Boris Ostrovsky wrote:
+>> On 11/26/18 12:10 PM, Igor Druzhinin wrote:
+>>> On 26/11/2018 16:25, Boris Ostrovsky wrote:
+>>>> On 11/25/18 8:00 PM, Igor Druzhinin wrote:
+>>>>> On 20/12/2017 14:05, Boris Ostrovsky wrote:
+>>>>>> Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
+>>>>>> reservation") left host memory not assigned to dom0 as available for
+>>>>>> memory hotplug.
+>>>>>>
+>>>>>> Unfortunately this also meant that those regions could be used by
+>>>>>> others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
+>>>>>> on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
+>>>>>> addresses as MMIO.
+>>>>>>
+>>>>>> To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
+>>>>>> effectively reverting f5775e0b6116) and keep track of that region as
+>>>>>> a hostmem resource that can be used for the hotplug.
+>>>>>>
+>>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>>> This commit breaks Xen balloon memory hotplug for us in Dom0 with
+>>>>> "hoplug_unpopulated" set to 1. The issue is that the common kernel
+>>>>> memory onlining procedures require "System RAM" resource to be 1-st
+>>>>> level. That means by inserting it under "Unusable memory" as the commit
+>>>>> above does (intentionally or not) we make it 2-nd level and break memory
+>>>>> onlining.
+>>>> What do you mean by 1st and 2nd level?
+>>>>
+>>> I mean the level of a resource in IOMEM tree (the one that's printed
+>>> from /proc/iomem). 1-st level means its parent is root and so on.
+>> Ah, OK. Doesn't
+>> additional_memory_resource()->insert_resource(iomem_resource) place the
+>> RAM at 1st level? And if not, can we make it so?
+>>
+> That'd mean splitting "Unusable memory" resource. Since it's allocated
+> from bootmem it has proven to be quite difficult but there are seem to
+> be special functions available particularly for memory resource
+> management operations that I've not yet experimented with. So the answer
+> is probably - maybe yes but not straightforward.
+>
+>>>>> There are multiple ways to fix it depending on what was the intention of
+>>>>> original commit and what exactly it tried to workaround. It seems it
+>>>>> does several things at once:
+>>>>> 1) Marks non-Dom0 host memory "Unusable memory" in resource tree.
+>>>>> 2) Keeps track of all the areas safe for hotplug in Dom0
+>>>>> 3) Changes allocation algorithms itself in balloon driver to use those areas
+>>>> Pretty much. (3) is true in the sense that memory is first allocated
+>>>> from hostmem_resource (which is non-dom0 RAM).
+>>>>
+>>>>> Are all the things above necessary to cover the issue in fa564ad96366
+>>>>> ("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
+>>>>> 60-7f)")?
+>>>> Not anymore, as far as that particular commit is concerned, but that's
+>>>> because of 03a551734 ("x86/PCI: Move and shrink AMD 64-bit window to
+>>>> avoid conflict") which was introduced after balloon patch. IIRC there
+>>>> were some issues with fa564ad96366 unrelated to balloon.
+>>>>
+>>> If it's not a problem anymore IIUC, can we revert the change as it still
+>>> breaks "hotplug_unpopulated=1" for the reasons I described above?
+>> Since this seems to have broken existing feature this would be an
+>> option. But before going that route I'd like to see if we can fix the patch.
+>>
+>> I have been unable to reproduce your problem. Can you describe what you did?
+>>
+> It doesn't happen on all configurations as sometimes the memory is
+> successfully hotplugged to a hole depending on the size of Dom0 memory.
+> But we reproduced it quite reliably with small Dom0 sizes like 752MB.
+>
+> XenServer is using this feature to hotplug additional memory for grant
+> table operations so we started a VM and observed a stable hang.
+>
+>>>>> Can we remove "Unusable memory" resources as soon as we finished
+>>>>> booting? Is removing on-demand is preferable over "shoot them all" in
+>>>>> that case?
+>>>> The concern is that in principle nothing prevents someone else to do
+>>>> exact same thing fa564ad96366 did, which is grab something from right
+>>>> above end of RAM as the kernel sees it. And that can be done at any point.
+>>>>
+>>> Nothing prevents - true, but that's plainly wrong from OS point of view
+>>> to grab physical ranges for something without knowing what's actually
+>>> behind on that platform. 
+>> I am not sure I agree that this is plainly wrong. If not for BIOS issues
+>> that 03a551734cf mentions I think what the original implementation of
+>> fa564ad963 did was perfectly reasonable. Which is why I would prefer to
+>> keep keep the hostmem resource *if possible*.
+>>
+> Exactly, those *are* BIOS issues and are not supposed to be workarounded
+> by the OS. And as the next commit showed even the workaround didn't
+> quite helped with it.
+>
+> I agree that having hotmem as a precaution is fine but only if there is
+> a non-cringy way to keep things working with it which I'm not sure does
+> exist.
 
-On Mon, Nov 26, 2018 at 03:59:52PM -0800, Andrew Morton wrote:
-> On Thu, 8 Nov 2018 21:05:03 +0800 Feng Tang <feng.tang@intel.com> wrote:
-> 
-> > Sometimes when debugging kernel panic, we saw many extra noisy error
-> > messages after the expected end:
-> > 
-> > [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
-> > [   35.749975] ------------[ cut here ]------------
-> 
-> What are these "noisy messages"?  The above looks OK?
+We have most of the interfaces in the resource framework to do what we
+want. I put together a semi-working prototype but the tricky part is
+resource locking --- we need to remove a chunk from hostmem (which will
+cause hostmem to be resized and possibly split), and insert this chunk
+to iomem's top level as System RAM, all while holding resource_lock.
 
-Yes, the above is the sane messages :) and contains the necessary context
-info for debug.
+I haven't been able to come up with an acceptable interface for that.
 
-The noisy messages are those following messages, I tried to capture one with
-sysrq and paste it in the tail of this mail as it's big (for a 4 cores
-machine) 
+Given that we are actually broken I guess I am OK with reverting the
+patch, but please make sure this works on AMD boxes (I think family 15h
+is what needs to be tested).
 
-> > When panic happens under console mode, the screen will first show the panic
-> > call stack, but will immediately be overrided by noisy extra messages, like
-> > this for every CPU except the panic one:
-> > 
-> > 	WARNING: CPU: 1 PID: 280 at kernel/sched/core.c:1198 set_task_cpu+0x183/0x190
-> > 	Call Trace:
-> > 	<IRQ>
-> > 	try_to_wake_up
-> > 	default_wake_function
-> > 	autoremove_wake_function
-> > 	__wake_up_common
-> > 	__wake_up_common_lock
-> > 	__wake_up
-> > 	wake_up_klogd_work_func
-> > 	irq_work_run_list
-> > 	irq_work_tick
-> > 	update_process_times
-> > 	tick_sched_timer
-> > 	__hrtimer_run_queues
-> > 	hrtimer_interrupt
-> > 	smp_apic_timer_interrupt
-> > 	apic_timer_interrupt
-> 
-> And this output looks OK as well.
- 
-Yes, this is fine also. What I mean is it will be a little noisy if each and
-every CPU will dump similar info, which will make it hard to find the real panic
-context if a user has no serial console but a LCD.
+-boris
 
-> > Which make debugging more difficult, as the original context is
-> > lost on screen.
-> > 
-> > Keeping the CPU IRQ disabled will void these messages, as we code
-> > run to this point, the user has chosed not to reboot, nor do
-> > some extra handling with panic notifier, not much point in
-> > re-enabling the interrupt.
-> 
-> And please have another attempt at the above paragraph?
 
-Sorry for the unclear info, will try to sanitize it.
 
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -295,7 +295,6 @@ void panic(const char *fmt, ...)
-> >  	}
-> >  #endif
-> >  	pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
-> > -	local_irq_enable();
-> >  	for (i = 0; ; i += PANIC_TIMER_STEP) {
-> >  		touch_softlockup_watchdog();
-> >  		if (i >= i_next) {
-> 
-> The patch looks reasonable, but the description is just too hard for me
-> to follow, sorry.  Please spend a bit more time over that and resend?
+>
+> Igor
+>
+>> -boris
+>>
+>>
+>>> I think we shouldn't consider this as a valid
+>>> thing to do and don't try to workaround initially incorrect code.
+>>>
+>>>> -boris
+>>>>
+>>>>> Does it even make sense to remove the 1-st level only restriction in
+>>>>> kernel/resource.c ?
+>>>>
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
 
-Sure and thanks for your review! 
-
-- Feng
--------
-
-Panic log:
-
-#echo c > /proc/sysrq-trigger 
-[   62.918474] sysrq: SysRq : Trigger a crash
-[   62.918643] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[   62.918906] PGD 67e36067 P4D 67e36067 PUD 6189f067 PMD 0 
-[   62.919092] Oops: 0002 [#1] PREEMPT SMP
-[   62.919226] CPU: 3 PID: 336 Comm: bash Tainted: G     U  W         4.19.0-19.iot-lts2018-sos-g6b95688-dirty #44
-[   62.919563] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   62.919726] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   62.920332] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   62.920508] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   62.920744] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   62.920979] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   62.921216] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   62.921457] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   62.921693] FS:  00007f3d2fb94740(0000) GS:ffff9939b4b80000(0000) knlGS:0000000000000000
-[   62.921959] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   62.922150] CR2: 0000000000000000 CR3: 000000006185d000 CR4: 00000000003406e0
-[   62.922385] Call Trace:
-[   62.922476]  __handle_sysrq+0xef/0x140
-[   62.922605]  write_sysrq_trigger+0x4c/0x50
-[   62.922746]  proc_reg_write+0x40/0x70
-[   62.922874]  __vfs_write+0x35/0x180
-[   62.922997]  ? __this_cpu_preempt_check+0x13/0x20
-[   62.923156]  vfs_write+0xc5/0x1c0
-[   62.923271]  ksys_write+0x53/0xc0
-[   62.923388]  ? __audit_syscall_exit+0x20d/0x2a0
-[   62.923541]  __x64_sys_write+0x15/0x20
-[   62.923671]  do_syscall_64+0x4e/0x100
-[   62.923800]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   62.923970] RIP: 0033:0x7f3d2fca0664
-[   62.924093] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 99 20 0e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 49 89 d4 55 48 89 f5 53
-[   62.924699] RSP: 002b:00007ffcf9071e98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   62.924949] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f3d2fca0664
-[   62.925184] RDX: 0000000000000002 RSI: 0000000000ee8190 RDI: 0000000000000001
-[   62.925420] RBP: 0000000000ee8190 R08: 000000000000000a R09: 00007f3d2fb94740
-[   62.925655] R10: 00000000004b8f41 R11: 0000000000000246 R12: 00007f3d2fd7e760
-[   62.925890] R13: 0000000000000002 R14: 00007f3d2fd7a280 R15: 00007f3d2fd79740
-[   62.926126] Modules linked in:
-[   62.926234] CR2: 0000000000000000
-[   62.926349] ---[ end trace 416678827625f99b ]---
-[   62.936473] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   62.936644] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   62.937260] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   62.937438] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   62.937677] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   62.937917] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   62.938158] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   62.938396] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   62.938636] FS:  00007f3d2fb94740(0000) GS:ffff9939b4b80000(0000) knlGS:0000000000000000
-[   62.938905] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   62.939099] CR2: 0000000000000000 CR3: 000000006185d000 CR4: 00000000003406e0
-[   62.939339] Kernel panic - not syncing: Fatal exception
-[   62.939941] reboot: panic mode set: p,w
-[   62.940100] Kernel Offset: 0x38000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[   62.950783] ---[ end Kernel panic - not syncing: Fatal exception ]---
-[   62.951034] ------------[ cut here ]------------
-[   62.951201] sched: Unexpected reschedule of offline CPU#1!
-[   62.951409] WARNING: CPU: 3 PID: 336 at arch/x86/kernel/smp.c:141 native_smp_send_reschedule+0x3a/0x40
-[   62.951732] Modules linked in:
-[   62.951848] CPU: 3 PID: 336 Comm: bash Tainted: G     UD W         4.19.0-19.iot-lts2018-sos-g6b95688-dirty #44
-[   62.952199] RIP: 0010:native_smp_send_reschedule+0x3a/0x40
-[   62.952394] Code: c0 84 c0 74 17 48 8b 05 c4 40 54 01 be fd 00 00 00 48 8b 40 30 e8 f6 a8 dc 00 5d c3 89 fe 48 c7 c7 00 7a 45 ba e8 e6 e2 05 00 <0f> 0b 5d c3 66 90 55 48 89 e5 41 54 53 48 83 ec 20 65 48 8b 04 25
-[   62.953037] RSP: 0018:ffff9939b4b83cd8 EFLAGS: 00010082
-[   62.953222] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[   62.953472] RDX: 0000000000000007 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   62.953721] RBP: ffff9939b4b83cd8 R08: 0000000000000000 R09: 0000000000000c65
-[   62.953970] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000000
-[   62.954219] R13: ffff9939a46e28c8 R14: ffff9939a46e2140 R15: 0000000000020480
-[   62.954469] FS:  00007f3d2fb94740(0000) GS:ffff9939b4b80000(0000) knlGS:0000000000000000
-[   62.954753] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   62.954955] CR2: 0000000000000000 CR3: 000000006185d000 CR4: 00000000003406e0
-[   62.955205] Call Trace:
-[   62.955299]  <IRQ>
-[   62.955380]  try_to_wake_up+0x386/0x3f0
-[   62.955521]  default_wake_function+0xd/0x10
-[   62.955673]  autoremove_wake_function+0x11/0x60
-[   62.955836]  __wake_up_common+0x82/0x150
-[   62.955979]  ? __queue_work+0x125/0x330
-[   62.956119]  __wake_up_common_lock+0x7b/0xc0
-[   62.956273]  __wake_up+0xe/0x10
-[   62.956390]  wake_up_klogd_work_func+0x47/0x70
-[   62.956552]  irq_work_run_list+0x55/0x80
-[   62.956694]  irq_work_tick+0x55/0x60
-[   62.956825]  update_process_times+0x3d/0x50
-[   62.956977]  tick_sched_handle+0x24/0x60
-[   62.957120]  tick_sched_timer+0x37/0x80
-[   62.957259]  ? tick_sched_do_timer+0x60/0x60
-[   62.957413]  __hrtimer_run_queues+0xf3/0x190
-[   62.957567]  hrtimer_interrupt+0x11d/0x250
-[   62.957718]  smp_apic_timer_interrupt+0x60/0xa0
-[   63.577258]  apic_timer_interrupt+0xf/0x20
-[   63.579677]  </IRQ>
-[   63.579759] RIP: 0010:panic+0x19b/0x1f4
-[   63.579897] Code: 89 01 90 69 09 b9 48 c7 c6 80 c3 92 ba 48 c7 c7 e0 e1 45 ba c7 05 15 d7 59 01 00 00 00 00 e8 ee 56 05 00 fb 66 0f 1f 44 00 00 <45> 31 e4 45 31 f6 31 db e8 9c d6 0a 00 4c 39 f3 7c 1d 41 83 f4 01
-[   63.580536] RSP: 0018:ffff9939a5ed3af0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-[   63.580800] RAX: 0000000000000039 RBX: 0000000000000000 RCX: 0000000000000000
-[   63.581048] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   63.581296] RBP: ffff9939a5ed3b68 R08: 0000000000000000 R09: 0000000000000c63
-[   63.581544] R10: 000000000000064b R11: ffffffffba932f0d R12: ffffffffba450f06
-[   63.581792] R13: ffff9939a5ed3b78 R14: 0000000000000046 R15: 0000000000000000
-[   63.582046]  oops_end+0x9d/0xb0
-[   63.582163]  no_context+0x12d/0x320
-[   63.582290]  __bad_area_nosemaphore+0x7c/0x1d0
-[   63.582450]  bad_area_nosemaphore+0xf/0x20
-[   63.582598]  __do_page_fault+0xa7/0x570
-[   63.582737]  do_page_fault+0x22/0x30
-[   63.582869]  page_fault+0x1e/0x30
-[   63.582992] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   63.583163] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   63.583802] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   63.583986] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   63.584234] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   63.584482] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   63.584730] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   63.584978] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   63.585229]  ? sysrq_handle_crash+0x9/0x20
-[   63.585377]  __handle_sysrq+0xef/0x140
-[   63.585513]  write_sysrq_trigger+0x4c/0x50
-[   63.585662]  proc_reg_write+0x40/0x70
-[   63.585795]  __vfs_write+0x35/0x180
-[   63.585925]  ? __this_cpu_preempt_check+0x13/0x20
-[   63.586093]  vfs_write+0xc5/0x1c0
-[   63.586214]  ksys_write+0x53/0xc0
-[   63.586336]  ? __audit_syscall_exit+0x20d/0x2a0
-[   63.586498]  __x64_sys_write+0x15/0x20
-[   63.586635]  do_syscall_64+0x4e/0x100
-[   63.586768]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   63.586948] RIP: 0033:0x7f3d2fca0664
-[   63.587078] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 99 20 0e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 49 89 d4 55 48 89 f5 53
-[   63.587716] RSP: 002b:00007ffcf9071e98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   63.587980] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f3d2fca0664
-[   63.588228] RDX: 0000000000000002 RSI: 0000000000ee8190 RDI: 0000000000000001
-[   63.588476] RBP: 0000000000ee8190 R08: 000000000000000a R09: 00007f3d2fb94740
-[   63.588724] R10: 00000000004b8f41 R11: 0000000000000246 R12: 00007f3d2fd7e760
-[   63.588972] R13: 0000000000000002 R14: 00007f3d2fd7a280 R15: 00007f3d2fd79740
-[   63.589222] ---[ end trace 416678827625f99c ]---
-[   63.589394] WARNING: CPU: 3 PID: 336 at kernel/sched/core.c:1163 set_task_cpu+0x145/0x150
-[   63.589680] Modules linked in:
-[   63.589793] CPU: 3 PID: 336 Comm: bash Tainted: G     UD W         4.19.0-19.iot-lts2018-sos-g6b95688-dirty #44
-[   63.590143] RIP: 0010:set_task_cpu+0x145/0x150
-[   63.590302] Code: 5e 5d c3 80 8b 94 04 00 00 04 e9 76 ff ff ff 0f 0b e9 00 ff ff ff f7 43 60 fd ff ff ff 0f 84 0a ff ff ff 0f 0b e9 03 ff ff ff <0f> 0b e9 12 ff ff ff 0f 1f 40 00 55 48 89 e5 41 56 49 89 f6 41 55
-[   63.590943] RSP: 0018:ffff9939b4b83c10 EFLAGS: 00010046
-[   63.591128] RAX: 0000000000000200 RBX: ffff9939a7d26180 RCX: ffff9939a7d26180
-[   63.591377] RDX: ffff9939b4b20401 RSI: 0000000000000002 RDI: ffff9939a7d26180
-[   63.591625] RBP: ffff9939b4b83c30 R08: ffff9939a7d2be78 R09: 0000000000000000
-[   63.591874] R10: 0000000000000046 R11: ffffffffba932f0d R12: 0000000000000002
-[   63.592122] R13: ffff9939a7d26908 R14: 0000000000000002 R15: ffff9939a7d264f0
-[   63.592371] FS:  00007f3d2fb94740(0000) GS:ffff9939b4b80000(0000) knlGS:0000000000000000
-[   63.592653] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   63.592855] CR2: 0000000000000000 CR3: 000000006185d000 CR4: 00000000003406e0
-[   63.593103] Call Trace:
-[   63.593194]  <IRQ>
-[   63.593272]  try_to_wake_up+0x13a/0x3f0
-[   63.593413]  default_wake_function+0xd/0x10
-[   63.593563]  __wake_up_common+0x82/0x150
-[   63.593706]  __wake_up_locked+0x11/0x20
-[   63.593847]  ep_poll_callback+0xcc/0x330
-[   63.593989]  __wake_up_common+0x82/0x150
-[   63.594131]  ? __queue_work+0x125/0x330
-[   63.594270]  __wake_up_common_lock+0x7b/0xc0
-[   63.594424]  __wake_up+0xe/0x10
-[   63.594540]  wake_up_klogd_work_func+0x47/0x70
-[   63.594699]  irq_work_run_list+0x55/0x80
-[   63.594841]  irq_work_tick+0x55/0x60
-[   63.594971]  update_process_times+0x3d/0x50
-[   63.595122]  tick_sched_handle+0x24/0x60
-[   63.595264]  tick_sched_timer+0x37/0x80
-[   63.595403]  ? tick_sched_do_timer+0x60/0x60
-[   63.595557]  __hrtimer_run_queues+0xf3/0x190
-[   63.595711]  hrtimer_interrupt+0x11d/0x250
-[   63.595859]  smp_apic_timer_interrupt+0x60/0xa0
-[   63.596021]  apic_timer_interrupt+0xf/0x20
-[   63.596168]  </IRQ>
-[   63.596249] RIP: 0010:panic+0x19b/0x1f4
-[   63.596387] Code: 89 01 90 69 09 b9 48 c7 c6 80 c3 92 ba 48 c7 c7 e0 e1 45 ba c7 05 15 d7 59 01 00 00 00 00 e8 ee 56 05 00 fb 66 0f 1f 44 00 00 <45> 31 e4 45 31 f6 31 db e8 9c d6 0a 00 4c 39 f3 7c 1d 41 83 f4 01
-[   63.597027] RSP: 0018:ffff9939a5ed3af0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-[   63.597292] RAX: 0000000000000039 RBX: 0000000000000000 RCX: 0000000000000000
-[   63.597540] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   63.597789] RBP: ffff9939a5ed3b68 R08: 0000000000000000 R09: 0000000000000c63
-[   64.191896] R10: 000000000000064b R11: ffffffffba932f0d R12: ffffffffba450f06
-[   64.192145] R13: ffff9939a5ed3b78 R14: 0000000000000046 R15: 0000000000000000
-[   64.192398]  oops_end+0x9d/0xb0
-[   64.192514]  no_context+0x12d/0x320
-[   64.192642]  __bad_area_nosemaphore+0x7c/0x1d0
-[   64.192802]  bad_area_nosemaphore+0xf/0x20
-[   64.192949]  __do_page_fault+0xa7/0x570
-[   64.193089]  do_page_fault+0x22/0x30
-[   64.193220]  page_fault+0x1e/0x30
-[   64.193342] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   64.193513] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   64.194154] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   64.194339] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   64.194588] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   64.194837] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   64.195085] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   64.195334] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   64.195585]  ? sysrq_handle_crash+0x9/0x20
-[   64.195734]  __handle_sysrq+0xef/0x140
-[   64.195870]  write_sysrq_trigger+0x4c/0x50
-[   64.196018]  proc_reg_write+0x40/0x70
-[   64.196151]  __vfs_write+0x35/0x180
-[   64.196279]  ? __this_cpu_preempt_check+0x13/0x20
-[   64.196447]  vfs_write+0xc5/0x1c0
-[   64.196569]  ksys_write+0x53/0xc0
-[   64.196690]  ? __audit_syscall_exit+0x20d/0x2a0
-[   64.196853]  __x64_sys_write+0x15/0x20
-[   64.196988]  do_syscall_64+0x4e/0x100
-[   64.197122]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   64.197302] RIP: 0033:0x7f3d2fca0664
-[   64.197431] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 99 20 0e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 49 89 d4 55 48 89 f5 53
-[   64.394050] RSP: 002b:00007ffcf9071e98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.394315] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f3d2fca0664
-[   64.394563] RDX: 0000000000000002 RSI: 0000000000ee8190 RDI: 0000000000000001
-[   64.394812] RBP: 0000000000ee8190 R08: 000000000000000a R09: 00007f3d2fb94740
-[   64.395061] R10: 00000000004b8f41 R11: 0000000000000246 R12: 00007f3d2fd7e760
-[   64.395309] R13: 0000000000000002 R14: 00007f3d2fd7a280 R15: 00007f3d2fd79740
-[   64.395559] ---[ end trace 416678827625f99d ]---
-[   64.395735] ------------[ cut here ]------------
-[   64.395899] sched: Unexpected reschedule of offline CPU#2!
-[   64.396095] WARNING: CPU: 3 PID: 336 at arch/x86/kernel/smp.c:141 native_smp_send_reschedule+0x3a/0x40
-[   64.396417] Modules linked in:
-[   64.396531] CPU: 3 PID: 336 Comm: bash Tainted: G     UD W         4.19.0-19.iot-lts2018-sos-g6b95688-dirty #44
-[   64.396880] RIP: 0010:native_smp_send_reschedule+0x3a/0x40
-[   64.397074] Code: c0 84 c0 74 17 48 8b 05 c4 40 54 01 be fd 00 00 00 48 8b 40 30 e8 f6 a8 dc 00 5d c3 89 fe 48 c7 c7 00 7a 45 ba e8 e6 e2 05 00 <0f> 0b 5d c3 66 90 55 48 89 e5 41 54 53 48 83 ec 20 65 48 8b 04 25
-[   64.397715] RSP: 0018:ffff9939b4b83ba0 EFLAGS: 00010  64.532707]  irq_work_tick+0x55/0x60
-[   64.532838]  update_process_times+0x3d/0x50
-[   64.532988]  tick_sched_handle+0x24/0x60
-[   64.533130]  tick_sched_timer+0x37/0x80
-[   64.533270]  ? tick_sched_do_timer+0x60/0x60
-[   64.533423]  __hrtimer_run_queues+0xf3/0x190
-[   64.533577]  hrtimer_interrupt+0x11d/0x250
-[   64.533725]  smp_apic_timer_interrupt+0x60/0xa0
-[   64.533887]  apic_timer_interrupt+0xf/0x20
-[   64.534034]  </IRQ>
-[   64.534115] RIP: 0010:panic+0x19b/0x1f4
-[   64.534253] Code: 89 01 90 69 09 b9 48 c7 c6 80 c3 92 ba 48 c7 c7 e0 e1 45 ba c7 05 15 d7 59 01 00 00 00 00 e8 ee 56 05 00 fb 66 0f 1f 44 00 00 <45> 31 e4 45 31 f6 31 db e8 9c d6 0a 00 4c 39 f3 7c 1d 41 83 f4 01
-[   64.534894] RSP: 0018:ffff9939a5ed3af0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-[   64.535158] RAX: 0000000000000039 RBX: 0000000000000000 RCX: 0000000000000000
-[   64.535407] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   64.535655] RBP: ffff9939a5ed3b68 R08: 0000000000000000 R09: 0000000000000c63
-[   64.535904] R10: 000000000000064b R11: ffffffffba932f0d R12: ffffffffba450f06
-[   64.536153] R13: ffff9939a5ed3b78 R14: 0000000000000046 R15: 0000000000000000
-[   64.536405]  oops_end+0x9d/0xb0
-[   64.536521]  no_context+0x12d/0x320
-[   64.536649]  __bad_area_nosemaphore+0x7c/0x1d0
-[   64.536809]  bad_area_nosemaphore+0xf/0x20
-[   64.536956]  __do_page_fault+0xa7/0x570
-[   64.537096]  do_page_fault+0x22/0x30
-[   64.537227]  page_fault+0x1e/0x30
-[   64.537349] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   64.537520] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   64.538164] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   64.538349] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   64.538598] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   64.538846] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   64.539095] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   64.539343] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   64.539594]  ? sysrq_handle_crash+0x9/0x20
-[   64.539743]  __handle_sysrq+0xef/0x140
-[   64.539879]  write_sysrq_trigger+0x4c/0x50
-[   64.540027]  proc_reg_write+0x40/0x70
-[   64.540160]  __vfs_write+0x35/0x180
-[   64.540289]  ? __this_cpu_preempt_check+0x13/0x20
-[   64.540457]  vfs_write+0xc5/0x1c0
-[   64.540578]  ksys_write+0x53/0xc0
-[   64.540700]  ? __audit_syscall_exit+0x20d/0x2a0
-[   64.540862]  __x64_sys_write+0x15/0x20
-[   64.540998]  do_syscall_64+0x4e/0x100
-[   64.541132]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   64.541311] RIP: 0033:0x7f3d2fca0664
-[   64.541441] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 99 20 0e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 49 89 d4 55 48 89 f5 53
-[   64.542080] RSP: 002b:00007ffcf9071e98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.542345] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f3d2fca0664
-[   64.542593] RDX: 0000000000000002 RSI: 0000000000ee8190 RDI: 0000000000000001
-[   64.542842] RBP: 0000000000ee8190 R08: 000000000000000a R09: 00007f3d2fb94740
-[   64.543090] R10: 00000000004b8f41 R11: 0000000000000246 R12: 00007f3d2fd7e760
-[   64.543339] R13: 0000000000000002 R14: 00007f3d2fd7a280 R15: 00007f3d2fd79740
-[   64.543589] ---[ end trace 416678827625f99e ]---
-[   64.543775] ------------[ cut here ]------------
-[   64.543942] sched: Unexpected reschedule of offline CPU#0!
-[   64.544138] WARNING: CPU: 3 PID: 336 at arch/x86/kernel/smp.c:141 native_smp_send_reschedule+0x3a/0x40
-[   64.544460] Modules linked in:
-[   64.544573] CPU: 3 PID: 336 Comm: bash Tainted: G     UD W         4.19.0-19.iot-lts2018-sos-g6b95688-dirty #44
-[   64.544923] RIP: 0010:native_smp_send_reschedule+0x3a/0x40
-[   64.545117] Code: c0 84 c0 74 17 48 8b 05 c4 40 54 01 be fd 00 00 00 48 8b 40 30 e8 f6 a8 dc 00 5d c3 89 fe 48 c7 c7 00 7a 45 ba e8 e6 e2 05 00 <0f> 0b 5d c3 66 90 55 48 89 e5 41 54 53 48 83 ec 20 65 48 8b 04 25
-[   64.545755] RSP: 0018:ffff9939b4b83e28 EFLAGS: 00010086
-[   64.545939] RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
-[   64.546187] RDX: 0000000000000007 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   64.546434] RBP: ffff9939b4b83e28 R08: 0000000000000000 R09: 0000000000000d5e
-[   64.546682] R10: 0000000000000400 R11: ffffffffba932f0d R12: 0000000000000000
-[   64.546930] R13: 0000000000000003 R14: ffff9939a3650280 R15: ffff9939b4b9be00
-[   64.547178] FS:  00007f3d2fb94740(0000) GS:ffff9939b4b80000(0000) knlGS:0000000000000000
-[   64.547458] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   64.547659] CR2: 0000000000000000 CR3: 000000006185d000 CR4: 00000000003406e0
-[   64.547906] Call Trace:
-[   64.547997]  <IRQ>
-[   64.548074]  kick_ilb+0x8b/0xa0
-[   64.548190]  trigger_load_balance+0xb1/0x1a0
-[   64.548344]  scheduler_tick+0xa4/0xd0
-[   64.548477]  update_process_times+0x42/0x50
-[   64.548627]  tick_sched_handle+0x24/0x60
-[   64.548769]  tick_sched_timer+0x37/0x80
-[   64.548908]  ? tick_sched_do_timer+0x60/0x60
-[   64.549060]  __hrtimer_run_queues+0xf3/0x190
-[   64.549214]  hrtimer_interrupt+0x11d/0x250
-[   64.549362]  smp_apic_timer_interrupt+0x60/0xa0
-[   64.549523]  apic_timer_interrupt+0xf/0x20
-[   64.549670]  </IRQ>
-[   64.549750] RIP: 0010:panic+0x19b/0x1f4
-[   64.549888] Code: 89 01 90 69 09 b9 48 c7 c6 80 c3 92 ba 48 c7 c7 e0 e1 45 ba c7 05 15 d7 59 01 00 00 00 00 e8 ee 56 05 00 fb 66 0f 1f 44 00 00 <45> 31 e4 45 31 f6 31 db e8 9c d6 0a 00 4c 39 f3 7c 1d 41 83 f4 01
-[   64.550525] RSP: 0018:ffff9939a5ed3af0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-[   64.550789] RAX: 0000000000000039 RBX: 0000000000000000 RCX: 0000000000000000
-[   64.551036] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 00000000ffffffff
-[   64.551284] RBP: ffff9939a5ed3b68 R08: 0000000000000000 R09: 0000000000000c63
-[   64.551532] R10: 000000000000064b R11: ffffffffba932f0d R12: ffffffffba450f06
-[   64.551779] R13: ffff9939a5ed3b78 R14: 0000000000000046 R15: 0000000000000000
-[   64.552031]  oops_end+0x9d/0xb0
-[   64.552146]  no_context+0x12d/0x320
-[   64.552274]  __bad_area_nosemaphore+0x7c/0x1d0
-[   64.552433]  bad_area_nosemaphore+0xf/0x20
-[   64.552580]  __do_page_fault+0xa7/0x570
-[   64.552720]  do_page_fault+0x22/0x30
-[   64.552850]  page_fault+0x1e/0x30
-[   64.552972] RIP: 0010:sysrq_handle_crash+0x16/0x20
-[   64.553141] Code: d5 e8 8e c2 bc ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e8 77 31 c3 ff c7 05 65 9e 16 01 01 00 00 00 0f ae f8 <c6> 04 25 00 00 00 00 01 5d c3 55 48 89 e5 fb 66 0f 1f 44 00 00 e8
-[   64.553779] RSP: 0018:ffff9939a5ed3d98 EFLAGS: 00010246
-[   64.553964] RAX: 0000000000000000 RBX: 0000000000000063 RCX: 0000000000000000
-[   64.554212] RDX: 0000000000000000 RSI: ffffffffba47f75b RDI: 0000000000000063
-[   64.554460] RBP: ffff9939a5ed3d98 R08: 0000000000000000 R09: 0000000000000c2e
-[   64.554709] R10: 0000000000000000 R11: ffffffffba932f0d R12: 0000000000000003
-[   64.554957] R13: 0000000000000000 R14: ffffffffba6807e0 R15: 0000000000000000
-[   64.555207]  ? sysrq_handle_crash+0x9/0x20
-[   64.555355]  __handle_sysrq+0xef/0x140
-[   64.555491]  write_sysrq_trigger+0x4c/0x50
-[   64.555638]  proc_reg_write+0x40/0x70
-[   64.555771]  __vfs_write+0x35/0x180
-[   64.555898]  ? __this_cpu_preempt_check+0x13/0x20
-[   64.556066]  vfs_write+0xc5/0x1c0
-[   64.556187]  ksys_write+0x53/0xc0
-[   64.556308]  ? __audit_syscall_exit+0x20d/0x2a0
-[   64.556470]  __x64_sys_write+0x15/0x20
-[   64.556606]  do_syscall_64+0x4e/0x100
-[   64.556739]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   64.556918] RIP: 0033:0x7f3d2fca0664
-[   64.557047] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 99 20 0e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 41 54 49 89 d4 55 48 89 f5 53
-[   64.557685] RSP: 002b:00007ffcf9071e98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   65.374953] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f3d2fca0664
-[   65.376235] RDX: 0000000000000002 RSI: 0000000000ee8190 RDI: 0000000000000001
-[   65.376482] RBP: 0000000000ee8190 R08: 000000000000000a R09: 00007f3d2fb94740
-[   65.376730] R10: 00000000004b8f41 R11: 0000000000000246 R12: 00007f3d2fd7e760
-[   65.376978] R13: 0000000000000002 R14: 00007f3d2fd7a280 R15: 00007f3d2fd79740
-[   65.377228] ---[ end trace 416678827625f99f ]---
