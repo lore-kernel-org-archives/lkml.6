@@ -6,79 +6,96 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A7DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDD2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495AC20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495AC20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 29EE421104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29EE421104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731763AbeK1FX3 (ORCPT
+        id S1732080AbeK1FZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:23:29 -0500
-Received: from www62.your-server.de ([213.133.104.62]:60340 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeK1FX3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:23:29 -0500
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gRi2M-0003j8-1c; Tue, 27 Nov 2018 19:24:42 +0100
-Received: from [178.197.249.21] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gRi2L-000RJe-Qs; Tue, 27 Nov 2018 19:24:41 +0100
-Subject: Re: [PATCH] arm64/bpf: use movn/movk/movk sequence to generate kernel
- addresses
-To:     Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, ast@fb.com
-References: <20181123172902.21480-1-ard.biesheuvel@linaro.org>
- <20181127182203.GA19721@arm.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <c8f11ce3-1ab4-5e54-85f6-2431c7eb8a7a@iogearbox.net>
-Date:   Tue, 27 Nov 2018 19:24:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 28 Nov 2018 00:25:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbeK1FZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:25:07 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF59120851;
+        Tue, 27 Nov 2018 18:26:19 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 13:26:18 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, stable@kernel.org
+Subject: Re: [for-next][PATCH 04/18] arm64: function_graph: Simplify with
+ function_graph_entry()
+Message-ID: <20181127132618.2b3e1944@gandalf.local.home>
+In-Reply-To: <20181127180722.GB19216@arm.com>
+References: <20181122002801.501220343@goodmis.org>
+        <20181122003331.917870132@goodmis.org>
+        <20181127180722.GB19216@arm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181127182203.GA19721@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25158/Tue Nov 27 15:16:14 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2018 07:22 PM, Will Deacon wrote:
-> Hi Ard,
+On Tue, 27 Nov 2018 18:07:23 +0000
+Will Deacon <will.deacon@arm.com> wrote:
+
+> On Wed, Nov 21, 2018 at 07:28:05PM -0500, Steven Rostedt wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > The function_graph_entry() function does the work of calling the function
+> > graph hook function and the management of the shadow stack, simplifying the
+> > work done in the architecture dependent prepare_ftrace_return().
+> > 
+> > Have arm64 use the new code, and remove the shadow stack management as well as
+> > having to set up the trace structure.
+> > 
+> > This is needed to prepare for a fix of a design bug on how the curr_ret_stack
+> > is used.
+> > 
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: stable@kernel.org
+> > Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  arch/arm64/kernel/ftrace.c | 15 +--------------
+> >  1 file changed, 1 insertion(+), 14 deletions(-)  
 > 
-> On Fri, Nov 23, 2018 at 06:29:02PM +0100, Ard Biesheuvel wrote:
->> On arm64, all executable code is guaranteed to reside in the vmalloc
->> space (or the module space), and so jump targets will only use 48
->> bits at most, and the remaining bits are guaranteed to be 0x1.
->>
->> This means we can generate an immediate jump address using a sequence
->> of one MOVN (move wide negated) and two MOVK instructions, where the
->> first one sets the lower 16 bits but also sets all top bits to 0x1.
->>
->> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> ---
+> Minor nit: the subject refers to function_graph_entry(), but looks like
+> you settled on function_graph_enter() in the end.
+
+Ah you're right!
+
+> 
+> Anyway, looks like no change for us, so:
 > 
 > Acked-by: Will Deacon <will.deacon@arm.com>
-> 
-> Denial, Alexei, shall I take this via arm64, or would you rather take
-> it via davem?
 
-Yeah we can take it via bpf trees, thanks.
+Thanks!
 
-Cheers,
-Daniel
+-- Steve
