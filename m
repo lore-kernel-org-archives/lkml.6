@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699E7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDE2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5D021104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5D021104
+	by mail.kernel.org (Postfix) with ESMTP id DFC2C21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC2C21104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbeK1CgA (ORCPT
+        id S1730211AbeK1CgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:36:00 -0500
-Received: from mga09.intel.com ([134.134.136.24]:6965 "EHLO mga09.intel.com"
+        Tue, 27 Nov 2018 21:36:04 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54880 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729923AbeK1CgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:36:00 -0500
+        id S1730051AbeK1CgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:36:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:37:38 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:37:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="103934185"
+   d="scan'208";a="92906471"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 27 Nov 2018 07:37:35 -0800
+  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2018 07:37:35 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AE296587; Tue, 27 Nov 2018 17:37:29 +0200 (EET)
+        id B93AF63F; Tue, 27 Nov 2018 17:37:29 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org,
@@ -44,9 +44,9 @@ To:     Darren Hart <dvhart@infradead.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 10/13] platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
-Date:   Tue, 27 Nov 2018 17:37:25 +0200
-Message-Id: <20181127153728.47866-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 11/13] platform/x86: i2c-multi-instantiate: Allow to have same slaves
+Date:   Tue, 27 Nov 2018 17:37:26 +0200
+Message-Id: <20181127153728.47866-12-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181127153728.47866-1-andriy.shevchenko@linux.intel.com>
 References: <20181127153728.47866-1-andriy.shevchenko@linux.intel.com>
@@ -57,46 +57,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If ACPI table provides an Interrupt() resource we may consider to use it
-instead of GpioInt() one.
+Currently the driver will not enumerate the devices where I2C slaves
+are of the same type.
 
-Here we leave an error condition, when getting IRQ resource, to the driver
-to decide how to proceed, because some drivers may consider IRQ resource
-optional.
+Add an instance number to make them unique.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/platform/x86/i2c-multi-instantiate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-index efee77a11419..a1e6ec12ef73 100644
+index a1e6ec12ef73..2e4ec09c57b6 100644
 --- a/drivers/platform/x86/i2c-multi-instantiate.c
 +++ b/drivers/platform/x86/i2c-multi-instantiate.c
-@@ -18,6 +18,7 @@
- #define IRQ_RESOURCE_TYPE	GENMASK(1, 0)
- #define IRQ_RESOURCE_NONE	0
- #define IRQ_RESOURCE_GPIO	1
-+#define IRQ_RESOURCE_APIC	2
- 
- struct i2c_inst_data {
- 	const char *type;
-@@ -104,6 +105,14 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
- 			}
- 			board_info.irq = ret;
- 			break;
-+		case IRQ_RESOURCE_APIC:
-+			ret = platform_get_irq(pdev, inst_data[i].irq_idx);
-+			if (ret < 0) {
-+				dev_dbg(dev, "Error requesting irq at index %d: %d\n",
-+					inst_data[i].irq_idx, ret);
-+			}
-+			board_info.irq = ret;
-+			break;
- 		default:
- 			board_info.irq = 0;
- 			break;
+@@ -92,8 +92,8 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
+ 	for (i = 0; i < multi->num_clients && inst_data[i].type; i++) {
+ 		memset(&board_info, 0, sizeof(board_info));
+ 		strlcpy(board_info.type, inst_data[i].type, I2C_NAME_SIZE);
+-		snprintf(name, sizeof(name), "%s-%s", match->id,
+-			 inst_data[i].type);
++		snprintf(name, sizeof(name), "%s-%s.%d", match->id,
++			 inst_data[i].type, i);
+ 		board_info.dev_name = name;
+ 		switch (inst_data[i].flags & IRQ_RESOURCE_TYPE) {
+ 		case IRQ_RESOURCE_GPIO:
 -- 
 2.19.2
 
