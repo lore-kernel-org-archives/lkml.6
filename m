@@ -3,50 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E1CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A80C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B948E2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B948E2086B
+	by mail.kernel.org (Postfix) with ESMTP id 6C5C0208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:22:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5C0208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbeK0UTn (ORCPT
+        id S1730242AbeK0UTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:19:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:45379 "EHLO ozlabs.org"
+        Tue, 27 Nov 2018 15:19:48 -0500
+Received: from ozlabs.org ([203.11.71.1]:47365 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbeK0UTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:19:42 -0500
+        id S1729975AbeK0UTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:19:48 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 433ywx58C4z9s3Z; Tue, 27 Nov 2018 20:22:24 +1100 (AEDT)
+        id 433yx13B0jz9sB7; Tue, 27 Nov 2018 20:22:29 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 267acedffc614b78ec09bc279f921a6b9a38585e
-In-Reply-To: <20181106143930.8604-1-tiny.windzz@gmail.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>, benh@kernel.crashing.org,
-        paulus@samba.org
+X-powerpc-patch-commit: d64cf54e89c86487c1369991af79d8331c3e8988
+In-Reply-To: <1542117416-52357-1-git-send-email-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Kate Stewart" <kstewart@linuxfoundation.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Yangtao Li <tiny.windzz@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: powerpc/vas: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Message-Id: <433ywx58C4z9s3Z@ozlabs.org>
-Date:   Tue, 27 Nov 2018 20:22:23 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [-next] powerpc64/ftrace: Drop pointless static qualifier in is_b_op()
+Message-Id: <433yx13B0jz9sB7@ozlabs.org>
+Date:   Tue, 27 Nov 2018 20:22:29 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 14:39:30 UTC, Yangtao Li wrote:
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On Tue, 2018-11-13 at 13:56:56 UTC, YueHaibing wrote:
+> There is no need to have the 'intoffset' variable static since new value
+> always be assigned before use it.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/267acedffc614b78ec09bc279f921a
+https://git.kernel.org/powerpc/c/d64cf54e89c86487c1369991af79d8
 
 cheers
