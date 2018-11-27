@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057BBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81447C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3AE208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3AE208E4
+	by mail.kernel.org (Postfix) with ESMTP id 4DA6E208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA6E208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbeK0Tt3 (ORCPT
+        id S1729822AbeK0TuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:49:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56947 "EHLO mail.bootlin.com"
+        Tue, 27 Nov 2018 14:50:15 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57083 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbeK0Tt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:49:28 -0500
+        id S1729387AbeK0TuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:50:15 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6BFF320DD9; Tue, 27 Nov 2018 09:52:17 +0100 (CET)
+        id 0173520DDE; Tue, 27 Nov 2018 09:53:03 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4051D20DC1;
-        Tue, 27 Nov 2018 09:52:07 +0100 (CET)
-Date:   Tue, 27 Nov 2018 09:52:07 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id B1EC520F45;
+        Tue, 27 Nov 2018 09:52:33 +0100 (CET)
+Date:   Tue, 27 Nov 2018 09:52:33 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -37,16 +37,16 @@ Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Chen-Yu Tsai <wens@csie.org>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 14/43] drm/sun4i: backend: Avoid counting YUV planes
- that use the frontend
-Message-ID: <20181127085207.5e3wgt7blfhzyrqd@flea>
+Subject: Re: [PATCH v2 15/43] drm/sun4i: Rename sun4i_backend_layer_formats
+ to sun4i_layer_formats
+Message-ID: <20181127085233.4vvhv6vw3uksj7yg@flea>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
- <20181123092515.2511-15-paul.kocialkowski@bootlin.com>
+ <20181123092515.2511-16-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cx3xecxlyrlqa7rg"
+        protocol="application/pgp-signature"; boundary="nuesp5fzg643vzg5"
 Content-Disposition: inline
-In-Reply-To: <20181123092515.2511-15-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20181123092515.2511-16-paul.kocialkowski@bootlin.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,18 +54,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cx3xecxlyrlqa7rg
+--nuesp5fzg643vzg5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 23, 2018 at 10:24:46AM +0100, Paul Kocialkowski wrote:
-> Our hardware has a limited number of YUV planes (usually 1) that can be
-> supported using the backend only. However, YUV planes can also be
-> supported by the frontend and must then not be counted when checking for
-> that limitation.
->=20
-> Only count the YUV plane when the frontend is not used.
+On Fri, Nov 23, 2018 at 10:24:47AM +0100, Paul Kocialkowski wrote:
+> Since more formats can be supported by the frontend, rename the
+> variable listing the layer formats to avoid suggesting that the backend
+> itself supports all the listed formats.
 >=20
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
@@ -77,15 +74,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---cx3xecxlyrlqa7rg
+--nuesp5fzg643vzg5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0FtwAKCRDj7w1vZxhR
-xXvbAP9ngUysvnWNxOlT1vZSG29sdWb+4DSy7XYgWrokSvoPbgD+KW0Cp3uutlGM
-yDsHe7mdMkMlVGeGRMEMyPNVhEUIog4=
-=AF1v
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0F0QAKCRDj7w1vZxhR
+xcyPAPsF8oE/H4BiqfNYeNgIlwJqtttL62lHWMXFQIRBd3wMnAD9FaVm22TlYyFK
+kOyyUOrys5G8IcLyyW2m7LSaTryK/QQ=
+=gP7S
 -----END PGP SIGNATURE-----
 
---cx3xecxlyrlqa7rg--
+--nuesp5fzg643vzg5--
