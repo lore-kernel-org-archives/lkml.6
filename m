@@ -2,116 +2,139 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0D0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947B9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A760208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:00:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="mvdtw7Eb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A760208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6663F208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6663F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbeK0R5N (ORCPT
+        id S1728853AbeK0R56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 12:57:13 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41968 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeK0R5N (ORCPT
+        Tue, 27 Nov 2018 12:57:58 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:57932 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728625AbeK0R56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 12:57:13 -0500
-Received: by mail-ot1-f68.google.com with SMTP id u16so19181940otk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 23:00:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wl8sBScMZNM+xRd5P2NninIaWx8EbP/d9eQyxsxEsZ4=;
-        b=mvdtw7EbLSCK9KvG2uL0l9Cc0k3nyyovNDbJgXTyxCvMp9efwL5774nVluQBC3dH2N
-         YfV+k6DaLRTHbD4ouwtXpa/ygYER2g1i49pPLMVePBGOnMHfFZT6Tb/frFxZltoIWQFu
-         DABBYRduyTk8CRH32O+hGsPU6Y55tz7rwQerEl+gN83VSOVv9AMeosiJvbj6zK5Ql7O+
-         /+kuh1fKrpRsuyhtvUqCVNlftAjgt7sEP7TV22gS4LpO0BGZVVNNcs01v2N3t3wcI/Xi
-         K8KlUe6TJb6j/4BBDkt3emLYGvEdnaFLDtRCPa4WmN/Uq4uMfeLuLI8E7XZreNozUii3
-         v6ew==
+        Tue, 27 Nov 2018 12:57:58 -0500
+Received: by mail-it1-f200.google.com with SMTP id n124so302105itb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 23:01:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wl8sBScMZNM+xRd5P2NninIaWx8EbP/d9eQyxsxEsZ4=;
-        b=gojU4iaZPx0OeJqC7fclNbQxZ6PpRvI40OzkDJl9ys0lhhx0rjnJQ02Do6mFKPcS9S
-         1t3738IPOOpF3o+njoymGCB+LOOxAtVRnLZ9yYxJBG4rKd9rCYKyOZak1ICUNU/f1t29
-         TRhnxUWZOneDRaTpxo+CBUyzdrrnQ7Pr6M6wJXyOdPLcMq9P4ZOOhU23gL06wzVE+62k
-         WgL3yXtQhnJLOkunzPpqaZDu/IKmbgSkQfv43fbvHZVV5TzL711hFR64adn5YeJcp948
-         c5horA479xgTiBKh7FPFysQtpxC6Ilgv+sLbrmQI52A9jC4FKbksKEVjOJpXFUx06k4L
-         duDw==
-X-Gm-Message-State: AA+aEWYCce+fO5dEbiVGnSOifuU0JbHcEvoHJnFYKVKBHr3aKZ12fxfL
-        Ri6io5lhHAIEu4Bqp8es8xRH7itjFhKM5Egi7QG33Q==
-X-Google-Smtp-Source: AJdET5dmkQsx4f/iw6e97KP3aFOAgRhAWLqCmVrM6mrh2PNL845KofjO83rF4MvvaUNlnwSerIVqTZmifENNRHNcHQ4=
-X-Received: by 2002:a9d:7dd5:: with SMTP id k21mr18037823otn.214.1543302019822;
- Mon, 26 Nov 2018 23:00:19 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=3kBuP/Jn2G6r3hit2KxtJTWG9RdyOTMW6Vif2Nh//pc=;
+        b=QAKdAcwtP2CSUW+ZKM8PmVSw2ERqioKaXU3ujsayAt9PZ6OSbD3CGFuxWMx+CIf0G5
+         s5CHtYTupeY3oAM3qgmPRSOxqNJk07cCTvBhPTrdd8DnPjayZQsbUd1JVrpa75954hsY
+         WLgWre4QOhduu5RH6niu9XxpPgmleiNyX1VA/5/BV7SS/yNlaeVpV2cmbofkCdekrUBI
+         oPPVi3XEPgwZxgS9tr1b1Zp0/vsLVP6Kzcq+mlwMthPcKTaANHf7m2iwcnqHhv4sElDm
+         pmHiX/g7PPyJDBFjVqPmlPsyfLgLeyNnMMdauMybKMaoDlqAr+J2g9UcksZgD1EGRPsf
+         gpkw==
+X-Gm-Message-State: AA+aEWbkC1S39ilF6KGmTTEauLr67swpQgVaBkYsOJ+GN6+njGCof78b
+        zee2n2cSwZLsH9Ryr8Bn56LdhHKk66OgTlLR5nh8SdMCoMlt
+X-Google-Smtp-Source: AFSGD/WbdzFVH+hymfo2JY7+P8WvXySSkuqvNkJ9MMVLtHmJMt/ROTtzsLhAu66PH4nd3IYvAQF4HtkzDO6sRGhlQR7N9WazGzXU
 MIME-Version: 1.0
-References: <20181114224921.12123-2-keith.busch@intel.com> <20181114224921.12123-3-keith.busch@intel.com>
-In-Reply-To: <20181114224921.12123-3-keith.busch@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 23:00:09 -0800
-Message-ID: <CAPcyv4jNpgzpfG1awrxspTeQ1JOK-4-Wu6Kb6cd6NGY6Atj3cg@mail.gmail.com>
-Subject: Re: [PATCH 2/7] node: Add heterogenous memory performance
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:3b6e:: with SMTP id i46mr9256849jaf.16.1543302064862;
+ Mon, 26 Nov 2018 23:01:04 -0800 (PST)
+Date:   Mon, 26 Nov 2018 23:01:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005b7c64057ba003fb@google.com>
+Subject: BUG: unable to handle kernel paging request in tpg_fill_plane_buffer
+From:   syzbot <syzbot+aa8212f63ea8ffaf3bfa@syzkaller.appspotmail.com>
+To:     bwinther@cisco.com, hverkuil@xs4all.nl, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 2:53 PM Keith Busch <keith.busch@intel.com> wrote:
->
-> Heterogeneous memory systems provide memory nodes with latency
-> and bandwidth performance attributes that are different from other
-> nodes. Create an interface for the kernel to register these attributes
-> under the node that provides the memory. If the system provides this
-> information, applications can query the node attributes when deciding
-> which node to request memory.
->
-> When multiple memory initiators exist, accessing the same memory target
-> from each may not perform the same as the other. The highest performing
-> initiator to a given target is considered to be a local initiator for
-> that target. The kernel provides performance attributes only for the
-> local initiators.
->
-> The memory's compute node should be symlinked in sysfs as one of the
-> node's initiators.
->
-> The following example shows the new sysfs hierarchy for a node exporting
-> performance attributes:
->
->   # tree /sys/devices/system/node/nodeY/initiator_access
->   /sys/devices/system/node/nodeY/initiator_access
->   |-- read_bandwidth
->   |-- read_latency
->   |-- write_bandwidth
->   `-- write_latency
+Hello,
 
-With the expectation that there will be nodes that are initiator-only,
-target-only, or both I think this interface should indicate that. The
-1:1 "local" designation of HMAT should not be directly encoded in the
-interface, it's just a shortcut for finding at least one initiator in
-the set that can realize the advertised performance. At least if the
-interface can enumerate the set of initiators then it becomes clear
-whether sysfs can answer a performance enumeration question or if the
-application needs to consult an interface with specific knowledge of a
-given initiator-target pairing.
+syzbot found the following crash on:
 
-It seems a precursor to these patches is arranges for offline node
-devices to be created for the ACPI proximity domains that are
-offline-by default for reserved memory ranges.
+HEAD commit:    6f8b52ba442c Merge tag 'hwmon-for-v4.20-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fd354d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=aa8212f63ea8ffaf3bfa
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+aa8212f63ea8ffaf3bfa@syzkaller.appspotmail.com
+
+BUG: unable to handle kernel paging request at ffffc90005b5c340
+PGD 1da95a067 P4D 1da95a067 PUD 1da95b067 PMD 1c4863067 PTE 0
+Oops: 0002 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5439 Comm: vivid-000-vid-c Not tainted 4.20.0-rc4+ #130
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:memcpy_erms+0x6/0x10 arch/x86/lib/memcpy_64.S:54
+Code: 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3  
+48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f  
+80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe
+RSP: 0018:ffff888150467518 EFLAGS: 00010246
+RAX: ffffc90005b5c340 RBX: 0000000000000080 RCX: 0000000000000080
+RDX: 0000000000000080 RSI: ffffc90001da3000 RDI: ffffc90005b5c340
+RBP: ffff888150467538 R08: fffff52000b6b878 R09: fffff52000b6b868
+R10: fffff52000b6b877 R11: ffffc90005b5c3bf R12: ffffc90005b5c340
+R13: ffffc90001da3000 R14: dffffc0000000000 R15: ffff8881cb2c5e50
+FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90005b5c340 CR3: 00000001846a4000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  memcpy include/linux/string.h:352 [inline]
+  tpg_fill_plane_pattern drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2382  
+[inline]
+  tpg_fill_plane_buffer+0x193f/0x44c0  
+drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:2481
+  vivid_fillbuff+0x1d0d/0x68e0  
+drivers/media/platform/vivid/vivid-kthread-cap.c:473
+  vivid_thread_vid_cap_tick  
+drivers/media/platform/vivid/vivid-kthread-cap.c:709 [inline]
+  vivid_thread_vid_cap+0xbc1/0x2650  
+drivers/media/platform/vivid/vivid-kthread-cap.c:813
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+CR2: ffffc90005b5c340
+---[ end trace 22cabf1d47b26daf ]---
+RIP: 0010:memcpy_erms+0x6/0x10 arch/x86/lib/memcpy_64.S:54
+Code: 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3  
+48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3 0f 1f  
+80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe
+RSP: 0018:ffff888150467518 EFLAGS: 00010246
+RAX: ffffc90005b5c340 RBX: 0000000000000080 RCX: 0000000000000080
+RDX: 0000000000000080 RSI: ffffc90001da3000 RDI: ffffc90005b5c340
+RBP: ffff888150467538 R08: fffff52000b6b878 R09: fffff52000b6b868
+R10: fffff52000b6b877 R11: ffffc90005b5c3bf R12: ffffc90005b5c340
+R13: ffffc90001da3000 R14: dffffc0000000000 R15: ffff8881cb2c5e50
+FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90005b5c340 CR3: 00000001846a4000 CR4: 00000000001406f0
+kobject: 'loop0' (00000000664d120c): kobject_uevent_env
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'loop0' (00000000664d120c): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
