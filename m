@@ -2,111 +2,155 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDDAC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F23AAC04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A95121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:07:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nt7lbEA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A95121104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C2A2520873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:08:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2A2520873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbeK1DFq (ORCPT
+        id S1730623AbeK1DGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:05:46 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51323 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729891AbeK1DFq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:05:46 -0500
-Received: by mail-wm1-f68.google.com with SMTP id j207so15323437wmj.1;
-        Tue, 27 Nov 2018 08:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=d4NbTJWphuMJdohuzHDZOP0oH/Mu3HlA/pO53KFZRbc=;
-        b=Nt7lbEA5p85p/aXpYA5/1MwnCfjsGhSFfpejmsYFLmJ6RBk50MfYqKJZ7e+nuQuQVK
-         ceFq1Ct+Nssocpo5mVQZt2vG7pEeEf2cni33sHUATatmdM41SQxgKXiW9ofnh3dSWau8
-         WAGaYNa1aOsmIsF4EIS8+R+FQD47tvnu4ffI16F00eFFwykqtWWZAkPcjbWyHjUnuWL5
-         BmsMdCqpFaGaUrEsTu8jZUHbgGgC7HlAwWWQcXJ7Fcc+o2dYadHJJroqaBaFzpoHabiT
-         Qi3wYbgyspzl1TDvBaQCT65T47gW1e1F2gnlD3GyQR9coG+q/zYPYg0tY5lU+acrp7ji
-         viWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=d4NbTJWphuMJdohuzHDZOP0oH/Mu3HlA/pO53KFZRbc=;
-        b=ABE549JrUIf01v8lvfjjYI/9hJFGx/UoLlWcJumcns75dgOjxD434RDfTvx4HRjnLJ
-         YdvWF+xBN/qYDPz3CNWF3FO0V6CFb1sBJS7eKQQGwhBrsrUEMMamu8GlpiB+H+Cc3f3L
-         eaWJQ4loGD4IrJ8a3fPyOv3mODpzwv6pOIq60AxCmh2SXJXqZkhinW8vTWC9BSRwOUkO
-         7JCabnVodtsQWvzz0MvnDI7XPnBSIZrxblIZpw9RGdnKsXIrD5OZu/eKeQc5d+uI+o2h
-         b/M+agdq0dJ6Pd1E8fmpRpWNvWmrqQijVyMCdaxCKtdzgGWok/LmxEloyHZpAti9g62I
-         2hwA==
-X-Gm-Message-State: AA+aEWYth3wBYsT+gamC+L5XCYKt4Ia4NmWzj1uuy/cgecvo3obaF6NV
-        W/HZ5bpfbQ98pEOI8nj7Qjs=
-X-Google-Smtp-Source: AFSGD/U0W8fE/GZhYduX6YrvQviSf81n/KELl2VQZZ4L9rhjaPx9b4znlCIus7tCa6zUz/gK13W8jw==
-X-Received: by 2002:a1c:7011:: with SMTP id l17mr2667096wmc.34.1543334842142;
-        Tue, 27 Nov 2018 08:07:22 -0800 (PST)
-Received: from localhost ([46.227.18.67])
-        by smtp.gmail.com with ESMTPSA id b18sm3014766wrw.83.2018.11.27.08.07.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 08:07:21 -0800 (PST)
-From:   Richard Genoud <richard.genoud@gmail.com>
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mario Forner <m.forner@be4energy.com>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Richard Genoud <richard.genoud@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] dmaengine: at_hdmac: fix module unloading
-Date:   Tue, 27 Nov 2018 17:06:35 +0100
-Message-Id: <20181127160635.11836-2-richard.genoud@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181127160635.11836-1-richard.genoud@gmail.com>
-References: <20181127160635.11836-1-richard.genoud@gmail.com>
+        Tue, 27 Nov 2018 22:06:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeK1DGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:06:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 576E73154862;
+        Tue, 27 Nov 2018 16:08:31 +0000 (UTC)
+Received: from x1.home (ovpn-116-133.phx2.redhat.com [10.3.116.133])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 98CB65D75D;
+        Tue, 27 Nov 2018 16:08:30 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 09:08:30 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bharat Bhushan <bharat.bhushan@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
+        David Daney <david.daney@cavium.com>,
+        Jan Glauber <jglauber@cavium.com>,
+        Maik Broemme <mbroemme@libmpq.org>,
+        Chris Blake <chrisrblake93@gmail.com>
+Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
+Message-ID: <20181127090830.084fedf1@x1.home>
+In-Reply-To: <20181127153356.GA112381@google.com>
+References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
+        <20181127153356.GA112381@google.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 27 Nov 2018 16:08:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_dma_controller_free() was not called on module onloading.
-This lead to a soft lockup:
-watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
-Modules linked in: at_hdmac [last unloaded: at_hdmac]
-when of_dma_request_slave_channel() tried to call ofdma->of_dma_xlate().
+On Tue, 27 Nov 2018 09:33:56 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Cc: stable@vger.kernel.org
-Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
----
- drivers/dma/at_hdmac.c | 2 ++
- 1 file changed, 2 insertions(+)
+> [+cc David, Jan, Alex, Maik, Chris]
+> 
+> On Tue, Nov 27, 2018 at 08:46:33AM +0000, Bharat Bhushan wrote:
+> > NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
+> > bus reset with e1000e. Link state of device does not comes UP and so
+> > config space never accessible again.  
+> 
+> Previous similar commits:
+> 
+>   822155100e58 ("PCI: Mark Cavium CN8xxx to avoid bus reset")
+>   8e2e03179923 ("PCI: Mark Atheros AR9580 to avoid bus reset")
+>   9ac0108c2bac ("PCI: Mark Atheros AR9485 and QCA9882 to avoid bus reset")
+>   c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
+> 
+> 1) Please make your subject match (remove the spurious "bus" at the
+> end)
+> 
+> 2) This should probably be marked for stable (v3.14 and later, since
+> the quirk itself appeared in v3.19 and marked for v3.14 and later
+> stable kernels).  Maybe even mark it as "Fixes: c3e59ee4e766..." to
+> connect it.
+> 
+> 3) The 1957:80c0 PCI ID doesn't appear in https://pci-ids.ucw.cz/; can
+> you add it?
+> 
+> 4) Is there a hardware erratum for this?  If so, please include the
+> URL here.
+> 
+> 5) Can you reproduce the problem using the same endpoint (e1000e) on a
+> different system with a different bridge?
+> 
+> 6) Have you looked at this with a PCIe analyzer?  It would be very
+> interesting to compare the boot-time or system reboot path with the
+> individual bus reset path you're fixing.
+> 
+> Since there are several similar reports and they sometimes involve the
+> same devices (both your patch and 822155100e58 mention e1000e), I'm a
+> little suspicious that we're doing something wrong in the bus reset
+> path.
 
-diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-index 1b7f0ca0d5cd..01d936c9fe89 100644
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -2006,6 +2006,8 @@ static int at_dma_remove(struct platform_device *pdev)
- 	struct resource		*io;
- 
- 	at_dma_off(atdma);
-+	if (pdev->dev.of_node)
-+		of_dma_controller_free(pdev->dev.of_node);
- 	dma_async_device_unregister(&atdma->dma_common);
- 
- 	dma_pool_destroy(atdma->memset_pool);
+I agree, entirely excluding bus resets is not something to be taken
+lightly.  It's less than ideal for an endpoint and a fairly major
+functional gap for a downstream port.  It should really be considered
+a last resort.
+
+> I think bus reset uses Secondary Bus Reset in the Bridge Control
+> register.  That's a generic mechanism that I would expect to be pretty
+> well-tested.  I suspect the BIOS probably uses it in the reboot path,
+> and the device probably works after that.
+> 
+> So I wonder if the Linux delay isn't quite long enough, or our first
+> access to the device isn't quite right, e.g., maybe there's some issue
+> with the bus/device number capture (PCIe r4.0, sec 2.2.6.2).
+
+Tweaking the delay would be a reasonable solution, though we are seeing
+some issues where users with lots of assigned devices that require bus
+resets experience long delays as vfio file descriptors are closed
+sequentially on exit.  So perhaps we could flag downstream ports
+requiring an extra delay, if that becomes a solution.  Your mention of
+the bus/device number also reminds me of the issue we saw on
+Threadripper where there were patches proposed to re-write the
+secondary and subordinate bus numbers after reset.  AMD was able to
+resolve that in a firmware update, but there could be something similar
+occurring here. Thanks,
+
+Alex
+
+> > Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
+> > ---
+> >  drivers/pci/quirks.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 4700d24e5d55..b9ae4e9f101a 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -3391,6 +3391,13 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
+> >   */
+> >  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CAVIUM, 0xa100, quirk_no_bus_reset);
+> >  
+> > +/*
+> > + * NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
+> > + * bus reset. Link state of device does not comes UP and so config space
+> > + * never accessible again.
+> > + */
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x80c0, quirk_no_bus_reset);
+> > +
+> >  static void quirk_no_pm_reset(struct pci_dev *dev)
+> >  {
+> >  	/*
+> > -- 
+> > 2.19.1
+> >   
+
