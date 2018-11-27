@@ -1,110 +1,136 @@
 Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80304C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317ACC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53131208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53131208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id BBF262086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:38:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnV7TnO3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF262086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbeK0RWr (ORCPT
+        id S1728835AbeK0Rey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 12:22:47 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46254 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbeK0RWq (ORCPT
+        Tue, 27 Nov 2018 12:34:54 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39945 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727684AbeK0Rex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 12:22:46 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so19091908otm.13;
-        Mon, 26 Nov 2018 22:25:58 -0800 (PST)
+        Tue, 27 Nov 2018 12:34:53 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so7386907pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 22:38:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=FCOOcHkAfoAGjfJYYFY3kt7fdCfH3+5Z87al/sdnHNI=;
+        b=VnV7TnO3TV54TrSNlbNbMpS7TKGug7hrNF3EyS7oZtQDTRZmvLrjYp1uR8d3TuLhvv
+         aMJX9nh61MKW73x/X3h9SxJjmMIpy6WuYKGtcA8LB659gBFQtQUU0anHzxJcLVQKYtD8
+         XoFvqRR3x9c6OuQ1EBOEEWvmx/RVUb31Z45TPrfqQhViZz1zddYGs6jr7dTuyi93RfkA
+         Gz80NQ1jTl7WisF4R0ZIFv031nxRN+fJ2lA05FTHx5O/ECvscpLechf8p+8ey3PXAjDX
+         pLX8kd/O+Dy00vFwQPEpjilgVf8W079VKudgA01+gumZNPDEmz6ZPYBDsmcbYDVRevVC
+         okxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xBGZS2iSGQKOpLGh4MPzN1VqDyg0NeZrjdJ7gFacL9k=;
-        b=IPR1LoWJkzbJ357wjycXfmBIdl6isd6pnPcELgtos346jIsmzNAV+pmd3J9Ofk7Yi2
-         atnyzy2+LL2Uqn/8ulZv5ozQ+ej2RL4TUgxI2ONBHNBT4Ezk8+UxlTxGwHoSxjmQVXCU
-         /gTBAlLXpwHNsh9lzhbcF28wuojDUVWDGF5VYHi/zi4lMFyBTyfy9pRBdjkqTfT8Yk4u
-         e5Alc0KraxCtG2tQP0r/Ej+hg9/t1phQ9RWpIuQbW4newwpKzQx/w9TDNTLU86d926W2
-         Y+F8lAhiBCVi7t6rDxtaRPhrD35kihuwPmNROfFDbSTm+JZXvbMXJu4Fp05o/Fiomy1M
-         FrMw==
-X-Gm-Message-State: AA+aEWah70w+VQ5ZtYuFu1Yn7fwgEE8swUaVyhpxBSjBL5iwwVmmASHY
-        xMyBvMg/qBZN0bQi6UkFS1xilNcxBGPLliySJiQ=
-X-Google-Smtp-Source: AFSGD/UkLUD/iWLggdoIjvJhCF7wUraK36IVutZ9FhA4Htw5oVtfGpa0ZSxg3/7XhsGVQ8qJvIJE4uQ35clxgzyB2q0=
-X-Received: by 2002:a9d:1421:: with SMTP id h30mr1812025oth.321.1543299957895;
- Mon, 26 Nov 2018 22:25:57 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=FCOOcHkAfoAGjfJYYFY3kt7fdCfH3+5Z87al/sdnHNI=;
+        b=DuJ/egysFJ0UvDbD1yXdlzrkF4pd7KaoN/DaB8A0xhKX4CC16jgozyZNmbbGp+KMuT
+         vuhNIs4U6UEyQy8JtAzhDtWvZNVzng1DUEYPP7Bys9nax0gvqTJRaDHwyfdkUJpLh/ep
+         jgZzF9PeMNue0JITscmuokDGFStv6ijBMVVAFhVh32XsGXqKRB0///nlbLWlLpAzicFE
+         zG/muL4usvciJc9jX3z43PStvNRLRzdY1yTO6M1fycWHFORWC2j2IbvoRlZ0jx7NO82N
+         Xhoj3vrr1yeHqVDtY9ORDcYaJDCA3hpsDWeBxhZKmVKThgcYLuiyh8Hx5r8xA1pWTz1S
+         0ugw==
+X-Gm-Message-State: AA+aEWb/VIV1P5Z/2TZwqz34pQ3xXGYlVNjaNwZv55gKTy46EBWEntMp
+        2FaJkrU5ZJQqkP+fX3S2MXj2Bh+6
+X-Google-Smtp-Source: AFSGD/Uz8qGbU1l3O6bulSxOaa6S3asH+vjd8hwh+y/fBJF8P7lBjdfCbfj0MINKB42CpNrVSDgDEg==
+X-Received: by 2002:a63:6dc8:: with SMTP id i191mr27130365pgc.215.1543300682949;
+        Mon, 26 Nov 2018 22:38:02 -0800 (PST)
+Received: from gmail.com (c-73-140-212-29.hsd1.wa.comcast.net. [73.140.212.29])
+        by smtp.gmail.com with ESMTPSA id r4sm2959982pgn.54.2018.11.26.22.38.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 22:38:02 -0800 (PST)
+Date:   Mon, 26 Nov 2018 22:38:00 -0800
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ptrace: take into account saved_sigmask in
+ PTRACE_{GET,SET}SIGMASK
+Message-ID: <20181127063758.GA10422@gmail.com>
+References: <20181120060616.6043-1-avagin@gmail.com>
+ <20181122114751.GA28270@redhat.com>
 MIME-Version: 1.0
-References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
- <1543216072-9623-5-git-send-email-harini.katakam@xilinx.com> <c844298e-d997-940f-be85-fd3442d01be5@microchip.com>
-In-Reply-To: <c844298e-d997-940f-be85-fd3442d01be5@microchip.com>
-From:   Harini Katakam <harinik@xilinx.com>
-Date:   Tue, 27 Nov 2018 11:55:47 +0530
-Message-ID: <CAFcVEC+yyvQckJaj9HrkUtsJSsAKs0F5akRkgBceMqbOAcdx3g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] net: macb: Add support for suspend/resume with
- full power down
-To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>, appanad@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181122114751.GA28270@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Claudiu,
+On Thu, Nov 22, 2018 at 12:47:52PM +0100, Oleg Nesterov wrote:
+> On 11/19, Andrei Vagin wrote:
+> >
+> >  	case PTRACE_SETSIGMASK: {
+> >  		sigset_t new_set;
+> > @@ -962,6 +971,8 @@ int ptrace_request(struct task_struct *child, long request,
+> >  		child->blocked = new_set;
+> >  		spin_unlock_irq(&child->sighand->siglock);
+> >
+> > +		clear_tsk_restore_sigmask(child);
+> > +
+> 
+> I am not sure I understand this change...
+> 
+> I forgot everything I knew about criu, but iiuc PTRACE_SETSIGMASK is used
+> at "restore" time, doesn't this mean that TIF_RESTORE_SIGMASK/restore_sigmask
+> can not be set?
 
-On Mon, Nov 26, 2018 at 8:16 PM <Claudiu.Beznea@microchip.com> wrote:
->
->
->
-> On 26.11.2018 09:07, Harini Katakam wrote:
-<snip>
->
-> In the previous version you said you encountered some crashes while
-> stressing this part if macb_open()/macb_close() was used in here. Could you
-> share the tests so that I can debug it on my side?
+PTRACE_SETSIGMASK isn't used on restore. On restore, criu generates
+sigframe and calls sigreturn to restore registers, fpu state, sigmask
+and resume a process. šWhen the kernel constructs a signal frame, it
+calls sigmask_to_save() to get a process signal mask. With this patch,
+PTRACE_GETSIGMASK returns the same signal mask what is returned by
+sigmask_to_save().
 
-Sure, my tests include doing a series of suspend/resume -- it is done
-as part of a
-random regression script. On ZynqMP, it includes the following to do an
-FPD off suspend and then use either UART or WOL as a wake source and
-repeat the same, sometimes pinging in between:
+In CRIU, we don't need to set TIF_RESTORE_SIGMASK, because all processes
+are dumped when they are in user-space.
 
-echo pm_request_wakeup 8 1 0 1 > /sys/kernel/debug/zynqmp-firmware/pm
-echo pm_force_powerdown 6 > /sys/kernel/debug/zynqmp-firmware/pm
-echo enabled > /sys/devices/platform/amba/ff000000.serial/tty/ttyPS0/power/wakeup
-echo enabled > /sys/devices/platform/amba/ff0e0000.ethernet/net/eth0/power/wakeup
-echo mem > /sys/power/state
+> 
+> IOW, could you please explain how PTRACE_SETSIGMASK should be used, and why
+> it doesn't do something like
+> 
 
-ping does not work sometimes and after a few iterations (sometimes
-20), a crash can be
-observed tracing from "kfree_skb_list" to "macb_free_consistent". From
-the flow, the
-only explanation I could come up with was that there was an attempt to
-free buffers that
-may not have been allocated. Also, this was time consuming in the
-suspend/resume path.
+CRIU uses PTRACE_SETSIGMASKšwhen it injects a parasite code into a
+target process. In this case, we have to be sure that when the process
+is resumed by PTRACE_CONT, it will not start handling signals and
+executing signal handlers.
 
-<snip>
-> > +     } else {
-> > +             macb_writel(bp, NCR, MACB_BIT(MPE));
->
-> Just asking... shouldn't other registers be restored here after SoC power
-> is cut off?
-Ideally yes. But in this series, I'm just attempting to re-initialize
-to a working
-state. I can try context save/restore later.
+> 	if (test_tsk_restore_sigmask(child))
+> 		child->saved_sigmask = new_set;
+> 	else
+> 		child->blocked = new_set;
+> 
+> which looks symmetrical to PTRACE_GETSIGMASK?
 
-Regards,
-Harini
+If we set child->saved_sigmask, the child can start handling signals
+which are not set in child->blocked.
+
+> 
+> Oleg.
+> 
