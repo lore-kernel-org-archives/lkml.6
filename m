@@ -2,104 +2,120 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C129EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58945C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9590C2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9590C2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 23E702086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E702086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeK0UZ1 convert rfc822-to-8bit (ORCPT
+        id S1730235AbeK0UZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:25:27 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59913 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbeK0UZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:25:26 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CF764207AD; Tue, 27 Nov 2018 10:28:07 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8721520736;
-        Tue, 27 Nov 2018 10:27:57 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:27:57 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
-Message-ID: <20181127102757.6adc5649@xps13>
-In-Reply-To: <9365718c-4993-7e3b-1519-8fef0c08c0db@kontron.de>
-References: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
-        <20181127092232.3a6d1661@bbrezillon>
-        <9365718c-4993-7e3b-1519-8fef0c08c0db@kontron.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 27 Nov 2018 15:25:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46008 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729147AbeK0UZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:25:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3A531AF79;
+        Tue, 27 Nov 2018 09:28:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id AD15C1E07ED; Tue, 27 Nov 2018 10:28:36 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:28:36 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: clean up indentation issues, remove extraneous tabs
+Message-ID: <20181127092836.GD16301@quack2.suse.cz>
+References: <20181123163043.14178-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123163043.14178-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote on Tue, 27 Nov
-2018 08:30:24 +0000:
-
-> On 27.11.18 09:22, Boris Brezillon wrote:
-> > On Tue, 27 Nov 2018 07:44:52 +0000
-> > Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
-> >   
-> >> Fix the size of the buffer allocated to store the in-memory BBT.
-> >> This bug was previously hidden by a different bug, that was fixed in
-> >> d098093ba06e.  
-> > 
-> > Oops :-/.
-> >   
-> >>
-> >> Fixes: 9c3736a3de21 ("mtd: nand: Add core infrastructure to deal with NAND devices")
-> >> Cc: <stable@vger.kernel.org>
-> >> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >> ---
-> >>   drivers/mtd/nand/bbt.c | 3 ++-
-> >>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/mtd/nand/bbt.c b/drivers/mtd/nand/bbt.c
-> >> index 56cde38..c12497f 100644
-> >> --- a/drivers/mtd/nand/bbt.c
-> >> +++ b/drivers/mtd/nand/bbt.c
-> >> @@ -27,7 +27,8 @@ int nanddev_bbt_init(struct nand_device *nand)
-> >>   	unsigned int nwords = DIV_ROUND_UP(nblocks * bits_per_block,
-> >>   					   BITS_PER_LONG);
-> >>   
-> >> -	nand->bbt.cache = kzalloc(nwords, GFP_KERNEL);
-> >> +	nand->bbt.cache = kzalloc(nwords * (BITS_PER_LONG / BITS_PER_BYTE),  
-> > 
-> > I prefer
-> > 
-> > 					 * sizeof(*nand->bbt.cache)
-> > If you're okay with this change, I'll fix it when applying (no need to
-> > send a new version).  
+On Fri 23-11-18 16:30:43, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Sure, that's ok.
+> There are several lines that are indented too far, clean these
+> up by removing the tabs.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I also prefer with the sizeof() operator. Thanks for fixing this!
+The patch looks good. You can add:
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
-Thanks,
-Miquèl
+> ---
+>  fs/ext4/migrate.c | 12 ++++++------
+>  fs/ext4/super.c   |  2 +-
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+> index 61a9d1927817..5ae61cd8c5c9 100644
+> --- a/fs/ext4/migrate.c
+> +++ b/fs/ext4/migrate.c
+> @@ -535,22 +535,22 @@ int ext4_ext_migrate(struct inode *inode)
+>  	if (i_data[EXT4_IND_BLOCK]) {
+>  		retval = update_ind_extent_range(handle, tmp_inode,
+>  				le32_to_cpu(i_data[EXT4_IND_BLOCK]), &lb);
+> -			if (retval)
+> -				goto err_out;
+> +		if (retval)
+> +			goto err_out;
+>  	} else
+>  		lb.curr_block += max_entries;
+>  	if (i_data[EXT4_DIND_BLOCK]) {
+>  		retval = update_dind_extent_range(handle, tmp_inode,
+>  				le32_to_cpu(i_data[EXT4_DIND_BLOCK]), &lb);
+> -			if (retval)
+> -				goto err_out;
+> +		if (retval)
+> +			goto err_out;
+>  	} else
+>  		lb.curr_block += max_entries * max_entries;
+>  	if (i_data[EXT4_TIND_BLOCK]) {
+>  		retval = update_tind_extent_range(handle, tmp_inode,
+>  				le32_to_cpu(i_data[EXT4_TIND_BLOCK]), &lb);
+> -			if (retval)
+> -				goto err_out;
+> +		if (retval)
+> +			goto err_out;
+>  	}
+>  	/*
+>  	 * Build the last extent
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 5603a4a1a864..15fc71398747 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1940,7 +1940,7 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
+>  #ifdef CONFIG_FS_DAX
+>  		ext4_msg(sb, KERN_WARNING,
+>  		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+> -			sbi->s_mount_opt |= m->mount_opt;
+> +		sbi->s_mount_opt |= m->mount_opt;
+>  #else
+>  		ext4_msg(sb, KERN_INFO, "dax option not supported");
+>  		return -1;
+> -- 
+> 2.19.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
