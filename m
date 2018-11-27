@@ -2,610 +2,199 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590D2C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACF0C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F4120663
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD8A20663
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dy+xhZRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0F4120663
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPsIy7MU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD8A20663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeK1GUf (ORCPT
+        id S1726771AbeK1GUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:20:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41270 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 01:20:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726425AbeK1GUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:20:34 -0500
+        id S1726369AbeK1GUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:20:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F1F82133F;
-        Tue, 27 Nov 2018 19:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B9E020663;
+        Tue, 27 Nov 2018 19:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543346261;
-        bh=072xMx/Wan+w0bae0i1WK9JDIJrP+wldvsA8wfaA1xQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dy+xhZRDInmBFpK1kS27hGL4G4sl7R8XqlUgZgqYYwv0OL3Qudg/Ih05xKPXMkF8c
-         bXN65H9WKRDQiNqZrTp2TpEElNzZa9PqN2Pbk3ducMjj18LKZQCrUyCMtvQ66PrFXV
-         TDt1mYd3Z+YD8TyxCdv1PnZ1PQyZ6tJqfL1Wy6b8=
-Date:   Tue, 27 Nov 2018 20:17:39 +0100
+        s=default; t=1543346256;
+        bh=2L3ngjp9OIRfC1joeHlgFMk38uI5DZjL7f+N7Dq45Rs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DPsIy7MUCCbDw9xc1gqKzLD+06jKV3wXUyDglg402+nb/TqokD4SSbUR7vpo5pToK
+         UKEsHEqm4I7flGTwRXAh4w2sCeGAHlsGtYJKGf3cnjwLNU2GFlG2yhUoSyvXrwJJ3f
+         VTU4rbGYBIgK3lZb/a7vrR8F7xsNAcNRQwFwGwzo=
+Date:   Tue, 27 Nov 2018 20:17:34 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.127
-Message-ID: <20181127191739.GB1312@kroah.com>
-References: <20181127191734.GA1312@kroah.com>
+Subject: Linux 3.18.127
+Message-ID: <20181127191734.GA1312@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
 Content-Disposition: inline
-In-Reply-To: <20181127191734.GA1312@kroah.com>
 User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 14472990c4bd..7c78eb797de8 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 126
-+SUBLEVEL = 127
- EXTRAVERSION =
- NAME = Diseased Newt
- 
-diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
-index 8ad2b34ad151..6661bfc2b3b4 100644
---- a/arch/s390/kernel/vdso32/Makefile
-+++ b/arch/s390/kernel/vdso32/Makefile
-@@ -29,7 +29,7 @@ GCOV_PROFILE := n
- $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
- 
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32)
-+$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32) FORCE
- 	$(call if_changed,vdso32ld)
- 
- # strip rule for the .so file
-@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
- 
- # assembly rules for the .S files
--$(obj-vdso32): %.o: %.S
-+$(obj-vdso32): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso32as)
- 
- # actual build commands
- quiet_cmd_vdso32ld = VDSO32L $@
--      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso32as = VDSO32A $@
-       cmd_vdso32as = $(CC) $(a_flags) -c -o $@ $<
- 
-diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
-index 2a8ddfd12a5b..5b7712f8eb4f 100644
---- a/arch/s390/kernel/vdso64/Makefile
-+++ b/arch/s390/kernel/vdso64/Makefile
-@@ -29,7 +29,7 @@ GCOV_PROFILE := n
- $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
- 
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64)
-+$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64) FORCE
- 	$(call if_changed,vdso64ld)
- 
- # strip rule for the .so file
-@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
- 
- # assembly rules for the .S files
--$(obj-vdso64): %.o: %.S
-+$(obj-vdso64): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso64as)
- 
- # actual build commands
- quiet_cmd_vdso64ld = VDSO64L $@
--      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso64as = VDSO64A $@
-       cmd_vdso64as = $(CC) $(a_flags) -c -o $@ $<
- 
-diff --git a/arch/um/os-Linux/skas/process.c b/arch/um/os-Linux/skas/process.c
-index 908579f2b0ab..258e741f61a8 100644
---- a/arch/um/os-Linux/skas/process.c
-+++ b/arch/um/os-Linux/skas/process.c
-@@ -694,6 +694,11 @@ int start_idle_thread(void *stack, jmp_buf *switch_buf)
- 		fatal_sigsegv();
- 	}
- 	longjmp(*switch_buf, 1);
-+
-+	/* unreachable */
-+	printk(UM_KERN_ERR "impossible long jump!");
-+	fatal_sigsegv();
-+	return 0;
- }
- 
- void initial_thread_cb_skas(void (*proc)(void *), void *arg)
-diff --git a/drivers/acpi/acpi_platform.c b/drivers/acpi/acpi_platform.c
-index ce115ed71a2a..ec60c5a89239 100644
---- a/drivers/acpi/acpi_platform.c
-+++ b/drivers/acpi/acpi_platform.c
-@@ -29,6 +29,7 @@ static const struct acpi_device_id forbidden_id_list[] = {
- 	{"PNP0200",  0},	/* AT DMA Controller */
- 	{"ACPI0009", 0},	/* IOxAPIC */
- 	{"ACPI000A", 0},	/* IOAPIC */
-+	{"SMB0001",  0},	/* ACPI SMBUS virtual device */
- 	{"", 0},
- };
- 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 7e94459a489a..5f4e6a3c2dde 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -999,6 +999,11 @@ static struct attribute_group zram_disk_attr_group = {
- 	.attrs = zram_disk_attrs,
- };
- 
-+static const struct attribute_group *zram_disk_attr_groups[] = {
-+	&zram_disk_attr_group,
-+	NULL,
-+};
-+
- static int create_device(struct zram *zram, int device_id)
- {
- 	int ret = -ENOMEM;
-@@ -1060,22 +1065,14 @@ static int create_device(struct zram *zram, int device_id)
- 		zram->disk->queue->limits.discard_zeroes_data = 0;
- 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, zram->disk->queue);
- 
-+	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
- 	add_disk(zram->disk);
- 
--	ret = sysfs_create_group(&disk_to_dev(zram->disk)->kobj,
--				&zram_disk_attr_group);
--	if (ret < 0) {
--		pr_warn("Error creating sysfs group");
--		goto out_free_disk;
--	}
- 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
- 	zram->meta = NULL;
- 	zram->max_comp_streams = 1;
- 	return 0;
- 
--out_free_disk:
--	del_gendisk(zram->disk);
--	put_disk(zram->disk);
- out_free_queue:
- 	blk_cleanup_queue(zram->queue);
- out:
-@@ -1084,9 +1081,6 @@ out:
- 
- static void destroy_device(struct zram *zram)
- {
--	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
--			&zram_disk_attr_group);
--
- 	del_gendisk(zram->disk);
- 	put_disk(zram->disk);
- 
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index d59123d39e87..4547dc238fc7 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -85,7 +85,6 @@ config BT_HCIUART_LL
- config BT_HCIUART_3WIRE
- 	bool "Three-wire UART (H5) protocol support"
- 	depends on BT_HCIUART
--	depends on BT_HCIUART_SERDEV
- 	help
- 	  The HCI Three-wire UART Transport Layer makes it possible to
- 	  user the Bluetooth HCI over a serial port interface. The HCI
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 848d602efc06..c810b3be6b48 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -273,6 +273,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
- 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
- };
- 
- static int exynos5420_clk_suspend(void)
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index d0f0a7943d88..d88dbedeaa77 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -5144,7 +5144,7 @@ static bool mutex_is_locked_by(struct mutex *mutex, struct task_struct *task)
- 	if (!mutex_is_locked(mutex))
- 		return false;
- 
--#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_MUTEXES)
-+#if defined(CONFIG_SMP) && !defined(CONFIG_DEBUG_MUTEXES)
- 	return mutex->owner == task;
- #else
- 	/* Since UP may be pre-empted, we cannot assume that we own the lock */
-diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
-index 1a2032c2c1fb..f6863adc15ad 100644
---- a/drivers/hid/uhid.c
-+++ b/drivers/hid/uhid.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/compat.h>
-+#include <linux/cred.h>
- #include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/hid.h>
-@@ -24,6 +25,7 @@
- #include <linux/spinlock.h>
- #include <linux/uhid.h>
- #include <linux/wait.h>
-+#include <linux/uaccess.h>
- 
- #define UHID_NAME	"uhid"
- #define UHID_BUFSIZE	32
-@@ -721,6 +723,17 @@ static ssize_t uhid_char_write(struct file *file, const char __user *buffer,
- 
- 	switch (uhid->input_buf.type) {
- 	case UHID_CREATE:
-+		/*
-+		 * 'struct uhid_create_req' contains a __user pointer which is
-+		 * copied from, so it's unsafe to allow this with elevated
-+		 * privileges (e.g. from a setuid binary) or via kernel_write().
-+		 */
-+		if (file->f_cred != current_cred() || uaccess_kernel()) {
-+			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
-+				    task_tgid_vnr(current), current->comm);
-+			ret = -EACCES;
-+			goto unlock;
-+		}
- 		ret = uhid_dev_create(uhid, &uhid->input_buf);
- 		break;
- 	case UHID_CREATE2:
-diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
-index 4b1a347d2b3a..70bc21b69481 100644
---- a/drivers/media/v4l2-core/v4l2-event.c
-+++ b/drivers/media/v4l2-core/v4l2-event.c
-@@ -194,6 +194,22 @@ int v4l2_event_pending(struct v4l2_fh *fh)
- }
- EXPORT_SYMBOL_GPL(v4l2_event_pending);
- 
-+static void __v4l2_event_unsubscribe(struct v4l2_subscribed_event *sev)
-+{
-+	struct v4l2_fh *fh = sev->fh;
-+	unsigned int i;
-+
-+	lockdep_assert_held(&fh->subscribe_lock);
-+	assert_spin_locked(&fh->vdev->fh_lock);
-+
-+	/* Remove any pending events for this subscription */
-+	for (i = 0; i < sev->in_use; i++) {
-+		list_del(&sev->events[sev_pos(sev, i)].list);
-+		fh->navailable--;
-+	}
-+	list_del(&sev->list);
-+}
-+
- int v4l2_event_subscribe(struct v4l2_fh *fh,
- 			 const struct v4l2_event_subscription *sub, unsigned elems,
- 			 const struct v4l2_subscribed_event_ops *ops)
-@@ -225,27 +241,23 @@ int v4l2_event_subscribe(struct v4l2_fh *fh,
- 
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 	found_ev = v4l2_event_subscribed(fh, sub->type, sub->id);
-+	if (!found_ev)
-+		list_add(&sev->list, &fh->subscribed);
- 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 
- 	if (found_ev) {
- 		/* Already listening */
- 		kfree(sev);
--		goto out_unlock;
--	}
--
--	if (sev->ops && sev->ops->add) {
-+	} else if (sev->ops && sev->ops->add) {
- 		ret = sev->ops->add(sev, elems);
- 		if (ret) {
-+			spin_lock_irqsave(&fh->vdev->fh_lock, flags);
-+			__v4l2_event_unsubscribe(sev);
-+			spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 			kfree(sev);
--			goto out_unlock;
- 		}
- 	}
- 
--	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
--	list_add(&sev->list, &fh->subscribed);
--	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
--
--out_unlock:
- 	mutex_unlock(&fh->subscribe_lock);
- 
- 	return ret;
-@@ -280,7 +292,6 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
- {
- 	struct v4l2_subscribed_event *sev;
- 	unsigned long flags;
--	int i;
- 
- 	if (sub->type == V4L2_EVENT_ALL) {
- 		v4l2_event_unsubscribe_all(fh);
-@@ -292,14 +303,8 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 
- 	sev = v4l2_event_subscribed(fh, sub->type, sub->id);
--	if (sev != NULL) {
--		/* Remove any pending events for this subscription */
--		for (i = 0; i < sev->in_use; i++) {
--			list_del(&sev->events[sev_pos(sev, i)].list);
--			fh->navailable--;
--		}
--		list_del(&sev->list);
--	}
-+	if (sev != NULL)
-+		__v4l2_event_unsubscribe(sev);
- 
- 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 
-diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
-index 60843a275abd..6b3349458578 100644
---- a/drivers/misc/atmel-ssc.c
-+++ b/drivers/misc/atmel-ssc.c
-@@ -129,7 +129,7 @@ static const struct of_device_id atmel_ssc_dt_ids[] = {
- MODULE_DEVICE_TABLE(of, atmel_ssc_dt_ids);
- #endif
- 
--static inline const struct atmel_ssc_platform_data * __init
-+static inline const struct atmel_ssc_platform_data *
- 	atmel_ssc_get_driver_data(struct platform_device *pdev)
- {
- 	if (pdev->dev.of_node) {
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index db292c085399..f4da7490741e 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -841,14 +841,17 @@ int __uio_register_device(struct module *owner,
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
- 
-+	info->uio_dev = idev;
-+
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		ret = devm_request_irq(idev->dev, info->irq, uio_interrupt,
- 				  info->irq_flags, info->name, idev);
--		if (ret)
-+		if (ret) {
-+			info->uio_dev = NULL;
- 			goto err_request_irq;
-+		}
- 	}
- 
--	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 82d5451cc8b6..cc0646c25cbd 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1730,6 +1730,9 @@ static const struct usb_device_id acm_ids[] = {
- 	{ USB_DEVICE(0x0572, 0x1328), /* Shiro / Aztech USB MODEM UM-3100 */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
-+	{ USB_DEVICE(0x0572, 0x1349), /* Hiro (Conexant) USB MODEM H50228 */
-+	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
-+	},
- 	{ USB_DEVICE(0x20df, 0x0001), /* Simtec Electronics Entropy Key */
- 	.driver_info = QUIRK_CONTROL_LINE_STATE, },
- 	{ USB_DEVICE(0x2184, 0x001c) },	/* GW Instek AFG-2225 */
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index ab99f1dc827f..5c64ab2e46d9 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -229,6 +229,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
- 	  USB_QUIRK_DELAY_CTRL_MSG },
- 
-+	/* Corsair K70 LUX RGB */
-+	{ USB_DEVICE(0x1b1c, 0x1b33), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
- 
-@@ -249,6 +252,11 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
- 
-+	/* Raydium Touchscreen */
-+	{ USB_DEVICE(0x2386, 0x3114), .driver_info = USB_QUIRK_NO_LPM },
-+
-+	{ USB_DEVICE(0x2386, 0x3119), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* DJI CineSSD */
- 	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
- 
-diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
-index b3d245ef46ef..11d87b1953ba 100644
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -63,6 +63,7 @@ static const struct usb_device_id appledisplay_table[] = {
- 	{ APPLEDISPLAY_DEVICE(0x9219) },
- 	{ APPLEDISPLAY_DEVICE(0x921c) },
- 	{ APPLEDISPLAY_DEVICE(0x921d) },
-+	{ APPLEDISPLAY_DEVICE(0x9222) },
- 	{ APPLEDISPLAY_DEVICE(0x9236) },
- 
- 	/* Terminating entry */
-diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-index 95965503afcb..e3f9cf332304 100644
---- a/fs/exofs/super.c
-+++ b/fs/exofs/super.c
-@@ -100,6 +100,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
- 		token = match_token(p, tokens, args);
- 		switch (token) {
- 		case Opt_name:
-+			kfree(opts->dev_name);
- 			opts->dev_name = match_strdup(&args[0]);
- 			if (unlikely(!opts->dev_name)) {
- 				EXOFS_ERR("Error allocating dev_name");
-@@ -868,8 +869,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
- 	int ret;
- 
- 	ret = parse_options(data, &opts);
--	if (ret)
-+	if (ret) {
-+		kfree(opts.dev_name);
- 		return ERR_PTR(ret);
-+	}
- 
- 	if (!opts.dev_name)
- 		opts.dev_name = dev_name;
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 2a6f3c67cb3f..2e713673df42 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -424,6 +424,10 @@ skip:
- 	if (new_node) {
- 		__be32 cnid;
- 
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 754fdf8c6356..1002a0c08319 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -427,6 +427,10 @@ skip:
- 	if (new_node) {
- 		__be32 cnid;
- 
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 59b29acb6419..0ec755043174 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
- 	struct dir_context ctx;
- 	struct dentry *xadir;
- 	int count;
-+	int err;
- 	struct dentry *dentries[8];
- };
- 
-@@ -205,6 +206,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
- 
- 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
- 	if (IS_ERR(dentry)) {
-+		dbuf->err = PTR_ERR(dentry);
- 		return PTR_ERR(dentry);
- 	} else if (!dentry->d_inode) {
- 		/* A directory entry exists, but no file? */
-@@ -213,6 +215,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
- 			       "not found for file %s.\n",
- 			       dentry->d_name.name, dbuf->xadir->d_name.name);
- 		dput(dentry);
-+		dbuf->err = -EIO;
- 		return -EIO;
- 	}
- 
-@@ -260,6 +263,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
- 		err = reiserfs_readdir_inode(dir->d_inode, &buf.ctx);
- 		if (err)
- 			break;
-+		if (buf.err) {
-+			err = buf.err;
-+			break;
-+		}
- 		if (!buf.count)
- 			break;
- 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index ecd3319dac33..ee7e1b8afd3a 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -2,6 +2,9 @@
- #define __LINUX_UACCESS_H__
- 
- #include <linux/preempt.h>
-+
-+#define uaccess_kernel() segment_eq(get_fs(), KERNEL_DS)
-+
- #include <asm/uaccess.h>
- 
- /*
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index 29090f3db677..28c089cb13f1 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -26,7 +26,7 @@ ifeq ($(ARCH),arm)
-         CFLAGS += -I../../../arch/arm/include -mfpu=neon
-         HAS_NEON = yes
- endif
--ifeq ($(ARCH),arm64)
-+ifeq ($(ARCH),aarch64)
-         CFLAGS += -I../../../arch/arm64/include
-         HAS_NEON = yes
- endif
-@@ -37,7 +37,7 @@ ifeq ($(IS_X86),yes)
-                     gcc -c -x assembler - >&/dev/null &&	\
-                     rm ./-.o && echo -DCONFIG_AS_AVX2=1)
- else ifeq ($(HAS_NEON),yes)
--        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
-+        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
-         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
- else
-         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
-diff --git a/net/core/dev.c b/net/core/dev.c
-index da0b7f3b0517..df4d5f546ecf 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4201,6 +4201,10 @@ static void napi_reuse_skb(struct napi_struct *napi, struct sk_buff *skb)
- 	skb->vlan_tci = 0;
- 	skb->dev = napi->dev;
- 	skb->skb_iif = 0;
-+
-+	/* eth_type_trans() assumes pkt_type is PACKET_HOST */
-+	skb->pkt_type = PACKET_HOST;
-+
- 	skb->encapsulation = 0;
- 	skb_shinfo(skb)->gso_type = 0;
- 	skb->truesize = SKB_TRUESIZE(skb_end_offset(skb));
-diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
-index 6de975ae7f5b..3cdd34d2a9fc 100644
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -512,7 +512,7 @@ EXPORT_SYMBOL_GPL(xdr_commit_encode);
- static __be32 *xdr_get_next_encode_buffer(struct xdr_stream *xdr,
- 		size_t nbytes)
- {
--	static __be32 *p;
-+	__be32 *p;
- 	int space_left;
- 	int frag1bytes, frag2bytes;
- 
+
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 3.18.127 kernel.
+
+All users of the 3.18 kernel series must upgrade.
+
+The updated 3.18.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-3.18.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                             |    2 -
+ arch/s390/kernel/vdso32/Makefile     |    6 ++--
+ arch/s390/kernel/vdso64/Makefile     |    6 ++--
+ arch/um/os-Linux/skas/process.c      |    5 ++++
+ drivers/acpi/acpi_platform.c         |    1=20
+ drivers/block/zram/zram_drv.c        |   18 ++++----------
+ drivers/bluetooth/Kconfig            |    1=20
+ drivers/clk/samsung/clk-exynos5420.c |    1=20
+ drivers/gpu/drm/i915/i915_gem.c      |    2 -
+ drivers/hid/uhid.c                   |   13 ++++++++++
+ drivers/media/v4l2-core/v4l2-event.c |   43 +++++++++++++++++++-----------=
+-----
+ drivers/misc/atmel-ssc.c             |    2 -
+ drivers/uio/uio.c                    |    7 ++++-
+ drivers/usb/class/cdc-acm.c          |    3 ++
+ drivers/usb/core/quirks.c            |    8 ++++++
+ drivers/usb/misc/appledisplay.c      |    1=20
+ fs/exofs/super.c                     |    5 +++-
+ fs/hfs/brec.c                        |    4 +++
+ fs/hfsplus/brec.c                    |    4 +++
+ fs/reiserfs/xattr.c                  |    7 +++++
+ include/linux/uaccess.h              |    3 ++
+ lib/raid6/test/Makefile              |    4 +--
+ net/core/dev.c                       |    4 +++
+ net/sunrpc/xdr.c                     |    2 -
+ 24 files changed, 105 insertions(+), 47 deletions(-)
+
+Al Viro (1):
+      new helper: uaccess_kernel()
+
+Chengguang Xu (1):
+      fs/exofs: fix potential memory leak in mount option parsing
+
+Dan Carpenter (1):
+      uio: Fix an Oops on load
+
+Emmanuel Pescosta (1):
+      usb: quirks: Add delay-init quirk for Corsair K70 LUX RGB
+
+Eric Biggers (1):
+      HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
+
+Eric Dumazet (1):
+      net-gro: reset skb->pkt_type in napi_reuse_skb()
+
+Ernesto A. Fern=E1ndez (2):
+      hfs: prevent btree data loss on root split
+      hfsplus: prevent btree data loss on root split
+
+Greg Kroah-Hartman (2):
+      Revert "Bluetooth: h5: Fix missing dependency on BT_HCIUART_SERDEV"
+      Linux 3.18.127
+
+Hans de Goede (1):
+      ACPI / platform: Add SMB0001 HID to forbidden_id_list
+
+Jann Horn (1):
+      reiserfs: propagate errors from fill_with_dentries() properly
+
+Jeremy Linton (1):
+      lib/raid6: Fix arm64 test build
+
+Kai-Heng Feng (1):
+      USB: quirks: Add no-lpm quirk for Raydium touchscreens
+
+Maarten Jacobs (1):
+      usb: cdc-acm: add entry for Hiro (Conexant) modem
+
+Marek Szyprowski (1):
+      clk: samsung: exynos5420: Enable PERIS clocks for suspend
+
+Mattias Jacobsson (1):
+      USB: misc: appledisplay: add 20" Apple Cinema Display
+
+Minchan Kim (1):
+      zram: close udev startup race condition as default groups
+
+Nathan Chancellor (1):
+      misc: atmel-ssc: Fix section annotation on atmel_ssc_get_driver_data
+
+Richard Weinberger (1):
+      um: Give start_idle_thread() a return code
+
+Sakari Ailus (1):
+      media: v4l: event: Add subscription to list before calling "add" oper=
+ation
+
+Sasha Levin (1):
+      Revert "Revert "drm/i915: Fix mutex->owner inspection race under DEBU=
+G_MUTEXES""
+
+Vasily Gorbik (1):
+      s390/vdso: add missing FORCE to build targets
+
+YueHaibing (1):
+      SUNRPC: drop pointless static qualifier in xdr_get_next_encode_buffer=
+()
+
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlv9mEwACgkQONu9yGCS
+aT4bBQ/9E+5Er/I+0V6kBpwqtUrl6tiicV4Yh0cXY8zsfhScRiGO9A5o4e/DKYCd
++7mSjh1JjQMZMrV7uHSYa4ir2ShI7ANXGZUQQL1JvuG4GutAvPENLUUyfANDu5KU
+MFj2rZjcTdS1/knZQhkbNBd957s/ocLtwJOuJyf7VkrsnSxo1NB9/for23effoJ3
+iwmEoQY4S7xvb+w50fosPuppjwtOQX+bsHZ21pLPlJM9W5+b+CZmwpb4YIf706SM
+fVwbd0rzdRzAIm/unm4xCZHZh8WPp0MnnWN4OHvxbJirLzZykgWhXmC6nXXgSWyX
+TVd14Kktkc/VAIniTnjfrlHrVyaCNOquiPzzUgm0Ppkj8DTFX3ZtadOVDw/UQyBT
+1NCAstFEdW+oQTBDQkVpY74DxsxZVPNsun2jMjgNIZWoLbMrUHqsAlw2ycn/4ZMu
+eFkUOg1qhM96znUtrS62qyaA44r81/6G6H2SMzb5Nph3F2X95XrDT53V/Z160niL
+usqaYdxXPz0t0YFJac+bN+dG9jwtINvJQ9f7pRS3qLtWhVG03Mi56JwsnmiIWiDF
+hTrafRcnetJUYs5RoTAkeeVkQ8tVCZSTOH7y+dWmP15OZQ63bR/5arLdcGB7WW6e
+4fM2BZLumOjYHLZiNGVchVmZuVXhpnd4xUyfdn5ABCMaF2KEns0=
+=XNX1
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
