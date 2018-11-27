@@ -2,104 +2,121 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67A5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C97CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20F52146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F0D6208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:03:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="UrSrkcc7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20F52146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4VbEsZf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0D6208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbeK0L53 (ORCPT
+        id S1727739AbeK0L7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:57:29 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39189 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbeK0L53 (ORCPT
+        Tue, 27 Nov 2018 06:59:30 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:34038 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727542AbeK0L73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:57:29 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i6so6163667oia.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:01:25 -0800 (PST)
+        Tue, 27 Nov 2018 06:59:29 -0500
+Received: by mail-it1-f193.google.com with SMTP id x124so543020itd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:03:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aQ7nONK8cOdTAxJGznQAP2rEX4jRNiKILVq1drt4mak=;
-        b=UrSrkcc7z9Yd4NRYVZ/CM+Jiwvtuli/fxa4GCewTGQbKocpklTDekO8WUx2KSzVAWp
-         y0NQHDq4yYC1b+A9B5/rXdb4vEbvxE15JimI/MnkNIiVJsqWWjI+xF4L4hknWUq0TtWo
-         SXTq2O1iaEpu+XtJD4LkEDmn0w1PSG86q5WjuL849b5X/hproxa6sDelCrvSvjwhmKes
-         HcusQ0ov6xSpZZkjYDptJLsD/5xeTtDygCqquXbKaY9tbirHy26GKF4/+JZwL+e0bPDZ
-         C+NdMEQ1gte1dV3mYRtF4i7ghBOirFG9GCPLfttXKj+ERI9RyRgYHa4AMnuQ2/TG+Cmu
-         0nmw==
+        bh=99qsmslrCZHFziv0Q8mZFoLamTN89o/3EFXsZdgoblY=;
+        b=H4VbEsZf6piHB3UA9ZCrZn/XSE1dMDWYRfEseEFTu2exikG8jw/BcnnZ6BNYduikuy
+         tqVfmFVaHAH9hpd80UvX9YpYAk87NBNnq2gpAUqCwMR/VzIKFJWYqefVWWRX8485dhy+
+         s8DPB1l1WORi1yF3vsR1cPlN/6LICYMdGW+rbJBvETmqyEHf0MY/Vr4ZN9OB+d+EtOnP
+         RPCSB2uQiwMVHhiqzpQG777dfJz2h6PHvUqmDivkIr1pDBen6eMPWqDlg82vh6EnTBdR
+         RHdE8wZQmXNNaJLpZyoL+AeZA3JH3U3RYY3DPBjSmgb7JH7g+mwGdNnpIwbLc6TZCV11
+         EaFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aQ7nONK8cOdTAxJGznQAP2rEX4jRNiKILVq1drt4mak=;
-        b=dQtiJGg/NifzWCf9HWK4r318Zu54BwCuDAtVC65aUttSYX7XNBB6o26fua1ob6PNdG
-         JYaP6g/HZ93uphJmfb3J6OYnpbEd5ExnwjnFBf6hy96kkdHokiH5E9+fNryRLhZta39z
-         T3lZc1l/FXDawvcw73/qcDg0ueTKaf/EjEHXPtovZw/JrL8XRoTOZW6PeJqIcaDVSlb6
-         XlUfM3CRMYYdDxf8UTGvwllO/WdlTm1xSoUMAHxwZe5JdNUtQne63GXaDOJ/7gOJ8cb7
-         KoW1HM4+7GLpxhQd20BLYwG8rZb4WRZk9bICGwF3bfhioBBhdJ/fOiovdCQi/tM2ygXz
-         3U3Q==
-X-Gm-Message-State: AA+aEWaDSBF0HH+i0P0dHRU+ji7SbnkyXxAGPDankcY2/T5LIhHnPN/w
-        rH0KgvCOdOX3oPdU6Ji1nL4SpSuX2smw592CaIbjJA==
-X-Google-Smtp-Source: AFSGD/W2WI+qAZ+fShsTrKX67Z+tjLxn5JLhIKR+EGgT/1w6WgD3hcP0DmSdkPLi/VOwgPgcjuc+h4OJ0LzZFhgkKQU=
-X-Received: by 2002:aca:5205:: with SMTP id g5mr1034965oib.149.1543280485480;
- Mon, 26 Nov 2018 17:01:25 -0800 (PST)
+        bh=99qsmslrCZHFziv0Q8mZFoLamTN89o/3EFXsZdgoblY=;
+        b=XzLJ/1MdHDpHV6eVzc/J+RJEISKx9BFkzWY0aOT49CGhcPwM/yFQ7OZz8FI8Htf8Gn
+         SpJo6KIpIluqJt3GL7BYLY57iTrMnwfTlLwyJ04q9ol3WR5lGnLapFviEEmhJBBtBBhY
+         RAIRhpluhKYW2gr6pwtiFgbtK1fMwm9uytyzOk3stYwC1JcU1mWJRMmOy+aCC3Bb9cFm
+         2BBL6CLNv756V++dgXsKbzGpLdtGR5z6mankritHYjnhCbE7tSygQ6uuwmEX28xrYZnN
+         GD6TcKTvo8ZHnNDqRWFciXn1rV5fYRZVXOsG0sVsTTspW1Hxn6X4jUjMRZ60wOkvrShf
+         3vwQ==
+X-Gm-Message-State: AA+aEWaslD2FiwxHwCl/Qpp+dMOJO8zXfwxVrEIB76qfuBHP3RwQqNN3
+        Q9zHglmYwkd1SGWtM4TzlkiLmL/aIveQHHNEZQ8=
+X-Google-Smtp-Source: AFSGD/XclNfSVPaz66EPf3ynwoxEhZ5AZZtDaXliliwlY255IUtmhnNEKsflzt9qE2eiOvG1q0CBotYrvyOobffA7fo=
+X-Received: by 2002:a02:5184:: with SMTP id s126mr21216354jaa.12.1543280606391;
+ Mon, 26 Nov 2018 17:03:26 -0800 (PST)
 MIME-Version: 1.0
-References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
- <154170040562.12967.17831655390715808287.stgit@ahduyck-desk1.jf.intel.com>
-In-Reply-To: <154170040562.12967.17831655390715808287.stgit@ahduyck-desk1.jf.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 17:01:14 -0800
-Message-ID: <CAPcyv4j5P7OWbof8gMUmFRswR4YVQAJEZTAPNGhUup_y3XRYiw@mail.gmail.com>
-Subject: Re: [driver-core PATCH v6 1/9] workqueue: Provide queue_work_node to
- queue work near a given NUMA node
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
+References: <20181126145107.31597-1-tiny.windzz@gmail.com> <CAHC9VhSjBTVXAXKiNsgPDJUCsxPnd3DJVA1pjSQqN0ct=RaxJg@mail.gmail.com>
+In-Reply-To: <CAHC9VhSjBTVXAXKiNsgPDJUCsxPnd3DJVA1pjSQqN0ct=RaxJg@mail.gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Tue, 27 Nov 2018 09:03:39 +0800
+Message-ID: <CAEExFWtbJaCJba7+ttOVw0V6Y7wSJ=8zVzNHKQJHuGuTgqQPYg@mail.gmail.com>
+Subject: Re: [PATCH] audit: remove some duplicated includes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     eparis@redhat.com, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 10:06 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
+On Tue, Nov 27, 2018 at 7:36 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> Provide a new function, queue_work_node, which is meant to schedule work on
-> a "random" CPU of the requested NUMA node. The main motivation for this is
-> to help assist asynchronous init to better improve boot times for devices
-> that are local to a specific node.
+> On Mon, Nov 26, 2018 at 9:51 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> >
+> > audit.h and skbuff.h are included twice.It's unnecessary.
+> > hence just remove them.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  kernel/audit.c | 3 ---
+> >  1 file changed, 3 deletions(-)
 >
-> For now we just default to the first CPU that is in the intersection of the
-> cpumask of the node and the online cpumask. The only exception is if the
-> CPU is local to the node we will just use the current CPU. This should work
-> for our purposes as we are currently only using this for unbound work so
-> the CPU will be translated to a node anyway instead of being directly used.
+> While there are two header files named audit.h, they are different
+> files as one lives in include/linux/audit.h, the other in
+> kernel/audit.h.  Granted, kernel/audit.h does include the
+> include/linux/audit.h file but it should be protected from multiple
+> inclusion by the _LINUX_AUDIT_H_ definition.
 >
-> As we are only using the first CPU to represent the NUMA node for now I am
-> limiting the scope of the function so that it can only be used with unbound
-> workqueues.
->
-> Acked-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> I currently prefer to keep both <linux/audit.h> and "audit.h" in
+> audit.c to help make the dependencies explicit in audit.c itself.
+Hi Paul:
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+How about fs.h and others?
+
+MBR,
+Yangtao
+>
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 2a8058764aa6..a677715891d0 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -62,11 +62,8 @@
+> >  #include <linux/pid.h>
+> >  #include <linux/slab.h>
+> >
+> > -#include <linux/audit.h>
+> > -
+> >  #include <net/sock.h>
+> >  #include <net/netlink.h>
+> > -#include <linux/skbuff.h>
+> >  #ifdef CONFIG_SECURITY
+> >  #include <linux/security.h>
+> >  #endif
+> > --
+> > 2.17.0
+>
+> --
+> paul moore
+> www.paul-moore.com
