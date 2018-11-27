@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D7DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB01C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151E820660
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31A9320660
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:19:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="OYodd667"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151E820660
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="U9ymHlwq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A9320660
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbeK1DSK (ORCPT
+        id S1730900AbeK1DSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:18:10 -0500
-Received: from mail-eopbgr80079.outbound.protection.outlook.com ([40.107.8.79]:11920
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        Tue, 27 Nov 2018 22:18:12 -0500
+Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:31807
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730663AbeK1DSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:18:08 -0500
+        id S1726390AbeK1DSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:18:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BGJWXK4zoU9TgoHpOXUZYze2VTo48OeLHj5lzwa4ldo=;
- b=OYodd667Hm9X9TbU5s1NTAmxdQOh/UZb6+ko+6/Nc10GVeaBtOaaLEl4LbByFpuG5Y8H0B3yeUqmr4CCp59lrc3W9P5t6BSr5YgfU8PDO3YLXhP6AXoNwVPn/MCRrn6K+xwAhPue5sM6c5/I+hcbvKeUvJE5y+RqMmWv9PQ0YJo=
+ bh=djZv8RISWHSXZQJ945tL5xjw15gGX5SCvdvZYnpXPSc=;
+ b=U9ymHlwq7KXdBLHjof8YrEwJO5HhnPIRlB1NWSdlr2AAQKdGV4Z619npj/KIdqGA0ws533RSB4QiIPidrKG1x1OUgdFCoufY7vUuQKcXAC1ZKnS2PygmTE78U4TevsfTt9N43680Hkp55Mda0tLkaIqxdcDYNC4okHVwpDyFWBE=
 Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
- VI1PR0802MB2256.eurprd08.prod.outlook.com (10.172.13.135) with Microsoft SMTP
+ VI1PR0802MB2525.eurprd08.prod.outlook.com (10.175.20.139) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Tue, 27 Nov 2018 16:19:33 +0000
+ 15.20.1361.16; Tue, 27 Nov 2018 16:19:35 +0000
 Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
  ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
  ([fe80::3d5c:5229:b634:b1ac%11]) with mapi id 15.20.1361.019; Tue, 27 Nov
- 2018 16:19:33 +0000
+ 2018 16:19:35 +0000
 From:   Dave Rodgman <dave.rodgman@arm.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     nd <nd@arm.com>,
@@ -54,11 +54,11 @@ CC:     nd <nd@arm.com>,
         "sonnyrao@google.com" <sonnyrao@google.com>,
         "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: [PATCH 4/7] lib/lzo: 64-bit CTZ on arm64
-Thread-Topic: [PATCH 4/7] lib/lzo: 64-bit CTZ on arm64
-Thread-Index: AQHUhmz7NhQTQFWpAkKa/DN5+6ly9A==
-Date:   Tue, 27 Nov 2018 16:19:33 +0000
-Message-ID: <20181127161913.23863-5-dave.rodgman@arm.com>
+Subject: [PATCH 7/7] lib/lzo: separate lzo-rle from lzo
+Thread-Topic: [PATCH 7/7] lib/lzo: separate lzo-rle from lzo
+Thread-Index: AQHUhmz8mgLwzeoYokiWGTdfe93T2Q==
+Date:   Tue, 27 Nov 2018 16:19:35 +0000
+Message-ID: <20181127161913.23863-8-dave.rodgman@arm.com>
 References: <20181127161913.23863-1-dave.rodgman@arm.com>
 In-Reply-To: <20181127161913.23863-1-dave.rodgman@arm.com>
 Accept-Language: en-GB, en-US
@@ -74,64 +74,467 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=dave.rodgman@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2256;6:2sluLxddBizVCnSTztDFGreaM0WQpgIku6JDW53yGujUER28zEzb6oV30D4ptp7LqYqVF51ODI/pNCSZyYvpbpdV0eNXYVC83Z/lIeXLESHyUbG2eyKYU4k547+0tkZLs6i7N84+Y8rTFkhtkXBlw5GQG5qB1JLxqX7H2SoCE6/G4pJyHOOC0i33RMngfP1qaeeVZ3pyYH+SkiEiZ+jmS2lBFucLWTSqJk8JhX5u7oIBDbmXsqOjgr7qPH4feBAHD5xw7i71ucr9Ag1pXdTNMXUw908kyBItapiivZUX6kBm29AfzJZHboQ4k5XFsyhomlvtUqsdv7EcIFiopMvzBjryXMYUTIhM1lUa7RxBByYa13YrB+kYWFcFjzQ6c/s0AaGr8W/xaa4BYliYaRgf5IA0KUC94NqkXbSLR2e/iUfOFdsDdQ0QZVQw+YZyNG1/xoET4cakGZ6vmt4Xf2nzNA==;5:LfEnbWoa1tSJJZGM2HDKEda8Fei5nl/eX5tF9qD7aIt1RQ3XTRrSYRE3aQGwsMdnIa8SDX9sjxxEAnWP9XSogi9rdbODN1MlV/4Mydol+MK071KZ+2KwAyevbu5bnnTs5RWUd6r1s9GFogNDWtvexnzjfrOKOz8cK6RyRITSmGw=;7:S/0L+gRmLhO1dAefm9beHEbNO6ocfYlTOfqXKTSNc4FkTSE8Pexmj0/qHuIiuuoWGm6sJ7cYeOSrAgxjgLLg/BCCu1O7MyI33oJBtfgO/r9lYs7Zoi4OwekYCvcc7sO/Wnzsz68C/TooEHYgEuovSQ==
-x-ms-office365-filtering-correlation-id: 7a3df203-2f95-43c7-0635-08d654841da4
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2525;6:fXF+143yOWIIGJhZB7QZQOVxCVGujKAuBH6h/akk43JA7MfH8HMVQPASgdb1d7MU6LQH6Ml1uDfJ0jAHdpvXjs4SfJpuB7RIU6ab90UP6V0L7i69nITCqSPrcpY7gp0539yKfjdMlJ9Wx2S840y765GGTiPtvQBn2NfSq/5CNL+cAa7jD+dhGMDhGpuaqxCcMerMaV53JSXFMqO3Sv9a8ibP74RpEptp1jao9Y2KWlxk536rwHF3SnQr8KN6TpmijqlS2Xoknqqs7RpR1gtMge0nC9A3RG3g/1EuliULy02dbgnPu7vZLzYzkELe3wOXZh35vzlPcQAbdyjQqESruIOgIkldOgfDeDIm8aPzjaf9DLEsglznsWYBJGPlrEascd8+7iXSDDGkAptj5UAEliNNy8W9t3hWnHNF1JkY00na79hU8jtdmYYxqQO7Z8H8m9v/HdaGr9X1PTFAQ8ZLaQ==;5:wkGsvQx/pRK2UwrvehKP1UE0MOQTyZFqI6ozw96xRPbAbXJowLR8IpDHm31ADhqp/abCa99+RkNvi+QBQF2D7Mtu5ETKW1cL9T5bcw/Gels/pb5UcsHRSDecF07jnfOfxflTbliROu+kc5acnMPqSWbHso+19vcM0JMzTlu+8FE=;7:Q1nWMxi8wmuLTZ42Z0yyPIRv1BCMngeL47jxn+bJ6l1mMGaerSGcoPOp9qUPhh6LgqH2DcKhJEbJjBf19FOTz9jWoLus0t8qcsman7p00XPDmUFY5HfJJoP58g7k6JRisqWNgNEgNTdPeIoVYgVzjA==
+x-ms-office365-filtering-correlation-id: 7bd94437-0b94-48ab-9415-08d654841ef8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2256;
-x-ms-traffictypediagnostic: VI1PR0802MB2256:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2525;
+x-ms-traffictypediagnostic: VI1PR0802MB2525:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <VI1PR0802MB225662592B2140DDDC916DEF8FD00@VI1PR0802MB2256.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <VI1PR0802MB25252847827FB1BD80CC4F7C8FD00@VI1PR0802MB2525.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231443)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2256;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2256;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231443)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2525;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2525;
 x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(346002)(396003)(376002)(199004)(189003)(2906002)(106356001)(14444005)(105586002)(2351001)(256004)(6486002)(52116002)(53936002)(99286004)(6512007)(5660300001)(54906003)(7416002)(7736002)(6116002)(305945005)(1076002)(5640700003)(6916009)(446003)(486006)(3846002)(39060400002)(11346002)(76176011)(6436002)(316002)(476003)(2616005)(44832011)(68736007)(4326008)(102836004)(386003)(66066001)(71200400001)(36756003)(478600001)(25786009)(50226002)(26005)(6506007)(186003)(8936002)(8676002)(81156014)(81166006)(2501003)(97736004)(86362001)(71190400001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2256;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(366004)(136003)(346002)(199004)(189003)(71190400001)(6486002)(14454004)(71200400001)(186003)(6512007)(305945005)(25786009)(26005)(68736007)(7416002)(81166006)(81156014)(36756003)(97736004)(66066001)(4326008)(8676002)(486006)(476003)(6916009)(44832011)(2616005)(86362001)(5640700003)(575784001)(256004)(14444005)(4744004)(2501003)(39060400002)(11346002)(446003)(53936002)(386003)(316002)(102836004)(2351001)(7736002)(5660300001)(52116002)(54906003)(2906002)(106356001)(99286004)(6436002)(1076002)(478600001)(105586002)(50226002)(6116002)(8936002)(3846002)(76176011)(6506007)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2525;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: APHzJAILuXGeJbv/MwOecUCkL+RAW5jO35yFthDjUsRB464J5a7yMFLGvkY0UXaqOQiGLtJPOYFKCDNrqtUs0S/bqMiAY3VXRxRCeEp8/B+CdL/MuxSDa9tyeRSeB9zuL4cebsw21cVANLI14nSRhuvwSX3cczBveWS9BujKKVEwZapiQcFfr8UhCD7xSkjoj6lSXDXmKOkNvKqBj1vO5YDn8muZzfCjJZiabIjuIgEsLKBSFA3+l6kn1ozKkrLNQnNynwL8Vhh/BuCCreyRiuicrF/7FcyTZYZqZVHGv9JckXyw6/WMTtUKSj4eEqHJ8VonoyarEIjJd/II0a5AKZyknihNwe089prI4mnTwgw=
+x-microsoft-antispam-message-info: 76RPFfrSMDJGJYrVbXGfDPUkUXf8eoWQapUtNhH86nWz2Bv2G/r1JePTncGnmujj+dYmPohx/iZWMRrEZ0Lqqlgs3d3stkLeqCR4pBUTBV87OMyYosDkxkSfKEZtVSPp9Usx3RkhX3xRiMW//iszWcLr7s13tp0BykFYHdGlTDFDad9u6HPl0jZkRmHnY55trmOfXdzNlhmVI4Dp9Q7SCg/RbAOafFuq0Glm31GVtQdntTXVTLJ+5TFkYYH+q6RQdqDXKsXzuGWcJdEGzvTwndWeFyF5wDjpfWR7cqsxa/xr6nwg+U8i5HeiUj+tfKX0ALk8gLGZzBhEwugDNFfu+s0OLeU0tdFlaEkNc8oG/d0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a3df203-2f95-43c7-0635-08d654841da4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 16:19:33.1891
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bd94437-0b94-48ab-9415-08d654841ef8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 16:19:35.4039
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2256
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2525
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matt Sealey <matt.sealey@arm.com>
+To prevent any issues with persistent data, separate lzo-rle
+from lzo so that it is treated as a separate algorithm, and
+lzo is still available.
 
-LZO leaves some performance on the table by not realising that arm64 can
-optimize count-trailing-zeros bit operations.
+Use lzo-rle as the default algorithm for
+zram.
 
-Add CONFIG_ARM64 to the checked definitions alongside CONFIG_X86_64 to
-enable the use of rbit/clz instructions on full 64-bit quantities.
-
-Signed-off-by: Matt Sealey <matt.sealey@arm.com>
 Signed-off-by: Dave Rodgman <dave.rodgman@arm.com>
 ---
- lib/lzo/lzodefs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/lzo.txt         |  12 ++-
+ crypto/Makefile               |   2 +-
+ crypto/lzo-rle.c              | 175 ++++++++++++++++++++++++++++++++++++++=
+++++
+ crypto/tcrypt.c               |   4 +-
+ drivers/block/zram/zcomp.c    |   1 +
+ drivers/block/zram/zram_drv.c |   2 +-
+ include/linux/lzo.h           |   4 +
+ lib/lzo/lzo1x_compress.c      |  42 +++++++---
+ lib/lzo/lzodefs.h             |   3 +-
+ 9 files changed, 227 insertions(+), 18 deletions(-)
+ create mode 100644 crypto/lzo-rle.c
 
+diff --git a/Documentation/lzo.txt b/Documentation/lzo.txt
+index 306c60344ca7..f79934225d8d 100644
+--- a/Documentation/lzo.txt
++++ b/Documentation/lzo.txt
+@@ -88,6 +88,10 @@ length encoding. This improves speed for data with many =
+zeros, which is a
+ common case for zram. This modifies the bitstream in a backwards compatibl=
+e way
+ (v1 can correctly decompress v0 compressed data, but v0 cannot read v1 dat=
+a).
+=20
++For maximum compatibility, both versions are available under different nam=
+es
++(lzo and lzo-rle). Differences in the encoding are noted in this document =
+with
++e.g.: version 1 only.
++
+ Byte sequences
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+@@ -99,8 +103,8 @@ Byte sequences
+                 invalid at this place.
+=20
+       17      : bitstream version. If the first byte is 17, the next byte
+-                gives the bitstream version. If the first byte is not 17,
+-                the bitstream version is 0.
++                gives the bitstream version (version 1 only). If the first=
+ byte
++                is not 17, the bitstream version is 0.
+=20
+       18..21  : copy 0..3 literals
+                 state =3D (byte - 17) =3D 0..3  [ copy <state> literals ]
+@@ -154,8 +158,8 @@ Byte sequences
+            state =3D S (copy S literals after this block)
+            End of stream is reached if distance =3D=3D 16384
+=20
+-        In version 1, this instruction is also used to encode a run of zer=
+os if
+-        distance =3D 0xbfff, i.e. H =3D 1 and the D bits are all 1.
++        In version 1 only, this instruction is also used to encode a run o=
+f
++        zeros if distance =3D 0xbfff, i.e. H =3D 1 and the D bits are all =
+1.
+            In this case, it is followed by a fourth byte, X.
+            run length =3D ((X << 3) | (0 0 0 0 0 L L L)) + 4.
+=20
+diff --git a/crypto/Makefile b/crypto/Makefile
+index 5e789dc2d4fd..23491b70e601 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -127,7 +127,7 @@ obj-$(CONFIG_CRYPTO_CRC32C) +=3D crc32c_generic.o
+ obj-$(CONFIG_CRYPTO_CRC32) +=3D crc32_generic.o
+ obj-$(CONFIG_CRYPTO_CRCT10DIF) +=3D crct10dif_common.o crct10dif_generic.o
+ obj-$(CONFIG_CRYPTO_AUTHENC) +=3D authenc.o authencesn.o
+-obj-$(CONFIG_CRYPTO_LZO) +=3D lzo.o
++obj-$(CONFIG_CRYPTO_LZO) +=3D lzo.o lzo-rle.o
+ obj-$(CONFIG_CRYPTO_LZ4) +=3D lz4.o
+ obj-$(CONFIG_CRYPTO_LZ4HC) +=3D lz4hc.o
+ obj-$(CONFIG_CRYPTO_842) +=3D 842.o
+diff --git a/crypto/lzo-rle.c b/crypto/lzo-rle.c
+new file mode 100644
+index 000000000000..ea9c75b1db49
+--- /dev/null
++++ b/crypto/lzo-rle.c
+@@ -0,0 +1,175 @@
++/*
++ * Cryptographic API.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as publishe=
+d by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WIT=
+HOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License f=
+or
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along=
+ with
++ * this program; if not, write to the Free Software Foundation, Inc., 51
++ * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
++ *
++ */
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/crypto.h>
++#include <linux/vmalloc.h>
++#include <linux/mm.h>
++#include <linux/lzo.h>
++#include <crypto/internal/scompress.h>
++
++struct lzorle_ctx {
++	void *lzorle_comp_mem;
++};
++
++static void *lzorle_alloc_ctx(struct crypto_scomp *tfm)
++{
++	void *ctx;
++
++	ctx =3D kvmalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
++	if (!ctx)
++		return ERR_PTR(-ENOMEM);
++
++	return ctx;
++}
++
++static int lzorle_init(struct crypto_tfm *tfm)
++{
++	struct lzorle_ctx *ctx =3D crypto_tfm_ctx(tfm);
++
++	ctx->lzorle_comp_mem =3D lzorle_alloc_ctx(NULL);
++	if (IS_ERR(ctx->lzorle_comp_mem))
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void lzorle_free_ctx(struct crypto_scomp *tfm, void *ctx)
++{
++	kvfree(ctx);
++}
++
++static void lzorle_exit(struct crypto_tfm *tfm)
++{
++	struct lzorle_ctx *ctx =3D crypto_tfm_ctx(tfm);
++
++	lzorle_free_ctx(NULL, ctx->lzorle_comp_mem);
++}
++
++static int __lzorle_compress(const u8 *src, unsigned int slen,
++			  u8 *dst, unsigned int *dlen, void *ctx)
++{
++	size_t tmp_len =3D *dlen; /* size_t(ulong) <-> uint on 64 bit */
++	int err;
++
++	err =3D lzorle1x_1_compress(src, slen, dst, &tmp_len, ctx);
++
++	if (err !=3D LZO_E_OK)
++		return -EINVAL;
++
++	*dlen =3D tmp_len;
++	return 0;
++}
++
++static int lzorle_compress(struct crypto_tfm *tfm, const u8 *src,
++			unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct lzorle_ctx *ctx =3D crypto_tfm_ctx(tfm);
++
++	return __lzorle_compress(src, slen, dst, dlen, ctx->lzorle_comp_mem);
++}
++
++static int lzorle_scompress(struct crypto_scomp *tfm, const u8 *src,
++			 unsigned int slen, u8 *dst, unsigned int *dlen,
++			 void *ctx)
++{
++	return __lzorle_compress(src, slen, dst, dlen, ctx);
++}
++
++static int __lzorle_decompress(const u8 *src, unsigned int slen,
++			    u8 *dst, unsigned int *dlen)
++{
++	int err;
++	size_t tmp_len =3D *dlen; /* size_t(ulong) <-> uint on 64 bit */
++
++	err =3D lzo1x_decompress_safe(src, slen, dst, &tmp_len);
++
++	if (err !=3D LZO_E_OK)
++		return -EINVAL;
++
++	*dlen =3D tmp_len;
++	return 0;
++}
++
++static int lzorle_decompress(struct crypto_tfm *tfm, const u8 *src,
++			  unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	return __lzorle_decompress(src, slen, dst, dlen);
++}
++
++static int lzorle_sdecompress(struct crypto_scomp *tfm, const u8 *src,
++			   unsigned int slen, u8 *dst, unsigned int *dlen,
++			   void *ctx)
++{
++	return __lzorle_decompress(src, slen, dst, dlen);
++}
++
++static struct crypto_alg alg =3D {
++	.cra_name		=3D "lzo-rle",
++	.cra_flags		=3D CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_ctxsize		=3D sizeof(struct lzorle_ctx),
++	.cra_module		=3D THIS_MODULE,
++	.cra_init		=3D lzorle_init,
++	.cra_exit		=3D lzorle_exit,
++	.cra_u			=3D { .compress =3D {
++	.coa_compress		=3D lzorle_compress,
++	.coa_decompress		=3D lzorle_decompress } }
++};
++
++static struct scomp_alg scomp =3D {
++	.alloc_ctx		=3D lzorle_alloc_ctx,
++	.free_ctx		=3D lzorle_free_ctx,
++	.compress		=3D lzorle_scompress,
++	.decompress		=3D lzorle_sdecompress,
++	.base			=3D {
++		.cra_name	=3D "lzo-rle",
++		.cra_driver_name =3D "lzo-rle-scomp",
++		.cra_module	 =3D THIS_MODULE,
++	}
++};
++
++static int __init lzorle_mod_init(void)
++{
++	int ret;
++
++	ret =3D crypto_register_alg(&alg);
++	if (ret)
++		return ret;
++
++	ret =3D crypto_register_scomp(&scomp);
++	if (ret) {
++		crypto_unregister_alg(&alg);
++		return ret;
++	}
++
++	return ret;
++}
++
++static void __exit lzorle_mod_fini(void)
++{
++	crypto_unregister_alg(&alg);
++	crypto_unregister_scomp(&scomp);
++}
++
++module_init(lzorle_mod_init);
++module_exit(lzorle_mod_fini);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("LZO-RLE Compression Algorithm");
++MODULE_ALIAS_CRYPTO("lzo-rle");
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index 0590a9204562..c1c56c9771cf 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -76,8 +76,8 @@ static char *check[] =3D {
+ 	"cast6", "arc4", "michael_mic", "deflate", "crc32c", "tea", "xtea",
+ 	"khazad", "wp512", "wp384", "wp256", "tnepres", "xeta",  "fcrypt",
+ 	"camellia", "seed", "salsa20", "rmd128", "rmd160", "rmd256", "rmd320",
+-	"lzo", "cts", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
+-	"streebog256", "streebog512",
++	"lzo", "lzo-rle", "cts", "sha3-224", "sha3-256", "sha3-384",
++	"sha3-512", "streebog256", "streebog512",
+ 	NULL
+ };
+=20
+diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+index 4ed0a78fdc09..4d9a38890965 100644
+--- a/drivers/block/zram/zcomp.c
++++ b/drivers/block/zram/zcomp.c
+@@ -20,6 +20,7 @@
+=20
+ static const char * const backends[] =3D {
+ 	"lzo",
++	"lzo-rle",
+ #if IS_ENABLED(CONFIG_CRYPTO_LZ4)
+ 	"lz4",
+ #endif
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 4879595200e1..984072868422 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -41,7 +41,7 @@ static DEFINE_IDR(zram_index_idr);
+ static DEFINE_MUTEX(zram_index_mutex);
+=20
+ static int zram_major;
+-static const char *default_compressor =3D "lzo";
++static const char *default_compressor =3D "lzo-rle";
+=20
+ /* Module params (documentation at end) */
+ static unsigned int num_devices =3D 1;
+diff --git a/include/linux/lzo.h b/include/linux/lzo.h
+index 547a86c71e1b..e95c7d1092b2 100644
+--- a/include/linux/lzo.h
++++ b/include/linux/lzo.h
+@@ -24,6 +24,10 @@
+ int lzo1x_1_compress(const unsigned char *src, size_t src_len,
+ 		     unsigned char *dst, size_t *dst_len, void *wrkmem);
+=20
++/* This requires 'wrkmem' of size LZO1X_1_MEM_COMPRESS */
++int lzorle1x_1_compress(const unsigned char *src, size_t src_len,
++		     unsigned char *dst, size_t *dst_len, void *wrkmem);
++
+ /* safe decompression with overrun testing */
+ int lzo1x_decompress_safe(const unsigned char *src, size_t src_len,
+ 			  unsigned char *dst, size_t *dst_len);
+diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+index fa8d4ff38531..1a1cd5e84391 100644
+--- a/lib/lzo/lzo1x_compress.c
++++ b/lib/lzo/lzo1x_compress.c
+@@ -20,7 +20,8 @@
+ static noinline size_t
+ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		    unsigned char *out, size_t *out_len,
+-		    size_t ti, void *wrkmem, signed char *state_offset)
++		    size_t ti, void *wrkmem, signed char *state_offset,
++		    const unsigned char bitstream_version)
+ {
+ 	const unsigned char *ip;
+ 	unsigned char *op;
+@@ -46,7 +47,7 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_le=
+n,
+ 			break;
+ 		dv =3D get_unaligned_le32(ip);
+=20
+-		if (dv =3D=3D 0) {
++		if (dv =3D=3D 0 && bitstream_version) {
+ 			const unsigned char *ir =3D ip + 4;
+ 			const unsigned char *limit =3D ip_end
+ 				< (ip + MAX_ZERO_RUN_LENGTH + 1)
+@@ -282,30 +283,36 @@ lzo1x_1_do_compress(const unsigned char *in, size_t i=
+n_len,
+ 	return in_end - (ii - ti);
+ }
+=20
+-int lzo1x_1_compress(const unsigned char *in, size_t in_len,
++int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
+ 		     unsigned char *out, size_t *out_len,
+-		     void *wrkmem)
++		     void *wrkmem, const unsigned char bitstream_version)
+ {
+ 	const unsigned char *ip =3D in;
+ 	unsigned char *op =3D out;
+ 	size_t l =3D in_len;
+ 	size_t t =3D 0;
+ 	signed char state_offset =3D -2;
++	unsigned int m4_max_offset;
+=20
+ 	// LZO v0 will never write 17 as first byte,
+ 	// so this is used to version the bitstream
+-	*op++ =3D 17;
+-	*op++ =3D LZO_VERSION;
++	if (bitstream_version > 0) {
++		*op++ =3D 17;
++		*op++ =3D bitstream_version;
++		m4_max_offset =3D M4_MAX_OFFSET_V1;
++	} else {
++		m4_max_offset =3D M4_MAX_OFFSET_V0;
++	}
+=20
+ 	while (l > 20) {
+-		size_t ll =3D l <=3D (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
++		size_t ll =3D l <=3D (m4_max_offset + 1) ? l : (m4_max_offset + 1);
+ 		uintptr_t ll_end =3D (uintptr_t) ip + ll;
+ 		if ((ll_end + ((t + ll) >> 5)) <=3D ll_end)
+ 			break;
+ 		BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
+ 		memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
+-		t =3D lzo1x_1_do_compress(ip, ll, op, out_len,
+-					t, wrkmem, &state_offset);
++		t =3D lzo1x_1_do_compress(ip, ll, op, out_len, t, wrkmem,
++					&state_offset, bitstream_version);
+ 		ip +=3D ll;
+ 		op +=3D *out_len;
+ 		l  -=3D ll;
+@@ -348,7 +355,24 @@ int lzo1x_1_compress(const unsigned char *in, size_t i=
+n_len,
+ 	*out_len =3D op - out;
+ 	return LZO_E_OK;
+ }
++
++int lzo1x_1_compress(const unsigned char *in, size_t in_len,
++		     unsigned char *out, size_t *out_len,
++		     void *wrkmem)
++{
++	return lzogeneric1x_1_compress(in, in_len, out, out_len, wrkmem, 0);
++}
++
++int lzorle1x_1_compress(const unsigned char *in, size_t in_len,
++		     unsigned char *out, size_t *out_len,
++		     void *wrkmem)
++{
++	return lzogeneric1x_1_compress(in, in_len, out, out_len,
++				       wrkmem, LZO_VERSION);
++}
++
+ EXPORT_SYMBOL_GPL(lzo1x_1_compress);
++EXPORT_SYMBOL_GPL(lzorle1x_1_compress);
+=20
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("LZO1X-1 Compressor");
 diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
-index c0193f726db0..c8965dc181df 100644
+index 682359058b3c..c0657441a35d 100644
 --- a/lib/lzo/lzodefs.h
 +++ b/lib/lzo/lzodefs.h
-@@ -28,7 +28,7 @@
+@@ -52,7 +52,8 @@
+ #define M1_MAX_OFFSET	0x0400
+ #define M2_MAX_OFFSET	0x0800
+ #define M3_MAX_OFFSET	0x4000
+-#define M4_MAX_OFFSET	0xbffe
++#define M4_MAX_OFFSET_V0	0xbfff
++#define M4_MAX_OFFSET_V1	0xbffe
 =20
- #if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN)
- #error "conflicting endian definitions"
--#elif defined(CONFIG_X86_64)
-+#elif defined(CONFIG_X86_64) || defined(CONFIG_ARM64)
- #define LZO_USE_CTZ64	1
- #define LZO_USE_CTZ32	1
- #elif defined(CONFIG_X86) || defined(CONFIG_PPC)
+ #define M1_MIN_LEN	2
+ #define M1_MAX_LEN	2
 --=20
 2.16.4
 
