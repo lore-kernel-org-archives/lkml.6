@@ -2,98 +2,106 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F020FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0467C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFE9E2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:04:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="wqUG50Df"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE9E2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DF1F21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF1F21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbeK1ID6 (ORCPT
+        id S1726788AbeK1IEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 03:03:58 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34666 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbeK1ID5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 03:03:57 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a132so15556703qkg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 13:04:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DKhHMZUmO4T2JI4GxBQQCY43PdHMrucN4JTGGfDXF4A=;
-        b=wqUG50DfArZzDI2OENoPA7BlkLdyZFZecJxoqhGbU8JT0QLUgpjFdZ28glcNyCIpJH
-         lvr+lLx0UGFkPTk3rpMRBui/6wna+WpJuCEG5yyCTyzthtoEOhkbdpADrH710MDpqA5K
-         p41XUCY6XCpQtI+G2GXbRfA5+6BVCxJHcnjN3Q/rjVlm5CdB+aI2uqdadGHA6XJCFdxd
-         gqgCWUXPHoFfWikX98jJGDE/DLxV5UJXDHIx8DvkUlWLMsDrD5OebyirJ1GEM7YijMdv
-         lT/Xrom2boQMjjaUHykYIVLkke9UJFiPzcPkarS5z2iT+zJE9SP3WgKg8Q0ICAX7SEKZ
-         mzmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DKhHMZUmO4T2JI4GxBQQCY43PdHMrucN4JTGGfDXF4A=;
-        b=ZdXavND9ijTYW0PA0/0q3kX6RJdRuGag1nuf65uxA3MPywIKacKtnPUUnOjfo+lRE4
-         iAyzCZ1GPG3tP4qAi3qQURvKQS/d4YpU0gW0+LVKZsnSF/EPuOD2UDuQX8P2k5l6HmGy
-         X4knH9559r7qmLWX+mCyvl919LB+9ZJJDou6nzDO9jccK2grj37gwo8Q+xK9uCabsqkg
-         y1q0yXIHPD5BBwdGQcr97+FG+2ho1t2h7KOpq6TFxXn635lU6Op0+0Dpcv8w3sVvAb+q
-         4QR6ZN5SFXBMpuuaYJtm4xq9s0/cBj1zjZieL/s4wzwvP9LG0GNdDsHbQ1mVm4oQ1hr3
-         rhSA==
-X-Gm-Message-State: AA+aEWYE6xh1SNpfjND1fiTj5KuD7XHX7yfE8ulweI6+EMuqh+v9wHnC
-        gX6mqDyOXJ6y4ySEdh0J7BhTnQ==
-X-Google-Smtp-Source: AFSGD/VBweFeKfke3uTryRrU3AtmvjqVKtxOzIWXhtbP8prOB9czS9a0tZ35vjaIimeaMLPe9DOSCA==
-X-Received: by 2002:a37:6749:: with SMTP id b70mr31414512qkc.41.1543352686559;
-        Tue, 27 Nov 2018 13:04:46 -0800 (PST)
-Received: from localhost ([2620:10d:c091:180::1:4c40])
-        by smtp.gmail.com with ESMTPSA id j36sm2901421qtk.15.2018.11.27.13.04.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 13:04:45 -0800 (PST)
-Date:   Tue, 27 Nov 2018 16:04:44 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/13] blkcg: introduce common blkg association logic
-Message-ID: <20181127210443.pornubsaa6vcbgih@macbook-pro-91.dhcp.thefacebook.com>
-References: <20181126211946.77067-1-dennis@kernel.org>
- <20181126211946.77067-5-dennis@kernel.org>
+        Wed, 28 Nov 2018 03:04:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeK1IEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 03:04:53 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 566F4308A94F;
+        Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A5AC5DD73;
+        Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 948752208FC; Tue, 27 Nov 2018 16:05:42 -0500 (EST)
+Date:   Tue, 27 Nov 2018 16:05:42 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181127210542.GA2599@redhat.com>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181126211946.77067-5-dennis@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 27 Nov 2018 21:05:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:19:37PM -0500, Dennis Zhou wrote:
-> There are 3 ways blkg association can happen: association with the
-> current css, with the page css (swap), or from the wbc css (writeback).
+On Tue, Nov 27, 2018 at 08:58:06PM +0100, Miklos Szeredi wrote:
+> [resending with fixed email address for Paul Moore]
 > 
-> This patch handles how association is done for the first case where we
-> are associating bsaed on the current css. If there is already a blkg
-> associated, the css will be reused and association will be redone as the
-> request_queue may have changed.
+> Moving discussion from github[1] to here.
 > 
-> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
+> underlying layers") was added in 4.20-rc1 to make overlayfs access
+> checks on underlying "real" filesystems more consistent.  The
+> discussion leading up to this commit can be found at [2].  The commit
+> broke some selinux-testsuite cases, possibly indicating a security
+> hole opened by this commit.
+> 
+> The model this patch tries to follow is that if "cp --preserve=all"
+> was allowed to the mounter from underlying layer to the overlay layer,
+> then operation is allowed.  That means even if mounter's creds doesn't
+> provide permission to for example execute underying file X, if
+> mounter's creds provide sufficient permission to perform "cp
+> --preserve=all X Y"  and original creds allow execute on Y, then the
+> operation is allowed.  This provides consistency in the face of
+> copy-ups.  Consistency is only provided in sane setups, where mounter
+> has sufficient privileges to access both the lower and upper layers.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+[cc daniel walsh]
 
-Thanks,
+I think current selinux testsuite tests are written keeping these
+rules in mind.
 
-Josef
+1. Check overlay inode creds in the context of task and underlying
+   inode creds (lower/upper), in the context of mounter.
+
+2. For a lower inode, if said file is being copied up, then only
+   check MAY_READ on lower. This is equivalent to mounter creating
+   a copy of file and providing caller access to it (context mount).
+
+For the case of special devices, we do not copy up these. So should
+we continue to do check on lower inode in the context of mounter
+(instead of not doing any check on lower at all).
+
+For being able to execute a file, should we atleast check MAY_READ
+on lower.
+
+I am not sure why did we have to drop current checks on special file
+and execute. I will read through the thread you pointed out.
+
+Thanks
+Vivek
