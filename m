@@ -2,277 +2,188 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1848C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DD8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8136B2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:53:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tYtP65yD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8136B2133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1473F2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1473F2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbeK1Evw (ORCPT
+        id S1732073AbeK1ExX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:51:52 -0500
-Received: from casper.infradead.org ([85.118.1.10]:54308 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbeK1Evv (ORCPT
+        Tue, 27 Nov 2018 23:53:23 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:47897 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbeK1ExX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:51:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7wBeI4hZNJWcSvFRu/rTx+euC7pDu8Mpq74z4pk6WiM=; b=tYtP65yDcMR6d8Rm0LNxamycM0
-        1Te30wxKjU/1V+pqzfhBRr3LAvtbl480fFJMqDexrg5qUc9WBz8lcD0uZwrb+TNMdnof61y91STPz
-        Q+9tMLUkqlwNP3KKxytc/rTmsAdRcWiIlMW0Kay4Wc/dnZxxoooXQgKPK8H65LImlS6ftqJ+XLuS9
-        6zOQM8EJ0KubLMQ0IaGOTin+8zxtUFYdLQk+ki4WrtHbMv9pPRAEkt3rfeMRhufoz11wOePnbHMig
-        kiyAGIEsvXas/w/VUGiFdVm3pTh5JRp/cAlqJ4HVLg8K39v+xd20VbKzuyZXjf0pmS8bazdtFdOhV
-        h2cOA0Zg==;
-Received: from 177.17.130.159.dynamic.adsl.gvt.net.br ([177.17.130.159] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRhXn-0002k0-Lo; Tue, 27 Nov 2018 17:53:08 +0000
-Date:   Tue, 27 Nov 2018 15:53:01 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     stakanov <stakanov@eclipso.eu>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Ira Krufky <mkrufky@linuxtv.org>,
-        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
-        Malcolm Priestley <tvboxspy@gmail.com>
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Message-ID: <20181127155301.751e545e@coco.lan>
-In-Reply-To: <s5hk1kywlrp.wl-tiwai@suse.de>
-References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
-        <1673172.qrKGPYx0fj@roadrunner.suse>
-        <20181127104946.195487ec@coco.lan>
-        <45396912.h74atscUxZ@roadrunner.suse>
-        <s5hk1kywlrp.wl-tiwai@suse.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Nov 2018 23:53:23 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 434BHz6wy1z1qvfq;
+        Tue, 27 Nov 2018 18:54:39 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 434BHz6Gdwz1qql3;
+        Tue, 27 Nov 2018 18:54:39 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 9CdPwTT_BfWa; Tue, 27 Nov 2018 18:54:38 +0100 (CET)
+X-Auth-Info: 0bfDACX0Q98IdavS0ndksZeHfOJVDjF6K1ClBV7Dhns=
+Received: from crub.agik.hopto.org (p508DE362.dip0.t-ipconnect.de [80.141.227.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 27 Nov 2018 18:54:38 +0100 (CET)
+From:   Anatolij Gustschin <agust@denx.de>
+To:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, atull@kernel.org,
+        mdf@kernel.org
+Subject: [PATCH v3 0/3] Add support for ARRI FPGA configuration
+Date:   Tue, 27 Nov 2018 18:54:35 +0100
+Message-Id: <20181127175438.16116-1-agust@denx.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 27 Nov 2018 17:03:22 +0100
-Takashi Iwai <tiwai@suse.de> escreveu:
+This series adds drivers and FPGA manager support required
+for FT232H based ARRI FPGA configuration adapters.
 
-> On Tue, 27 Nov 2018 16:58:58 +0100,
-> stakanov wrote:
-> >=20
-> > In data marted=C3=AC 27 novembre 2018 13:49:46 CET, Mauro Carvalho Cheh=
-ab ha=20
-> > scritto: =20
-> > > Hi Stakanov,
-> > >=20
-> > > Em Tue, 27 Nov 2018 11:02:57 +0100
-> > >=20
-> > > stakanov <stakanov@eclipso.eu> escreveu: =20
-> > > > In data luned=C3=AC 26 novembre 2018 14:31:09 CET, Takashi Iwai ha =
-scritto: =20
-> > > > > On Fri, 23 Nov 2018 18:26:25 +0100,
-> > > > >=20
-> > > > > Mauro Carvalho Chehab wrote: =20
-> > > > > > Takashi,
-> > > > > >=20
-> > > > > > Could you please produce a Kernel for Stakanov to test
-> > > > > > with the following patches:
-> > > > > >=20
-> > > > > > https://patchwork.linuxtv.org/patch/53044/
-> > > > > > https://patchwork.linuxtv.org/patch/53045/
-> > > > > > https://patchwork.linuxtv.org/patch/53046/
-> > > > > > https://patchwork.linuxtv.org/patch/53128/ =20
-> > > > >=20
-> > > > > Sorry for the late reaction.  Now it's queued to OBS
-> > > > > home:tiwai:bsc1116374-2 repo.  It'll be ready in an hour or so.
-> > > > > It's based on 4.20-rc4.
-> > > > >=20
-> > > > > Stakanov, please give it a try later.
-> > > > >=20
-> > > > >=20
-> > > > > thanks,
-> > > > >=20
-> > > > > Takashi =20
-> > > >=20
-> > > > O.K. this unbricks partially the card. =20
-> > >=20
-> > > From the logs, the Kernel is now working as expected.
-> > >  =20
-> > > > Now hotbird does search and does sync
-> > > > on all channels. Quality is very good. Astra still does interrupt t=
-he
-> > > > search immediately and does not receive a thing. So it is a 50% bri=
-ck
-> > > > still, but it is a huge progress compared to before. =20
-> > >=20
-> > > As I said before, you need to tell Kaffeine what's the LNBf that you'=
-re
-> > > using. The LNBf is a physical device[1] that it is installed on your
-> > > satellite dish. There's no way to auto-detect the model you actually =
-have,
-> > > so you need to provide this information to the digital TV software yo=
-u're
-> > > using.
-> > >=20
-> > > [1] It looks like this:
-> > > 	https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Astra_lnb.=
-jpg/ =20
-> > 240 =20
-> > > px-Astra_lnb.jpg
-> > >=20
-> > > The "Universal" one is for an old universal model sold in Europe about
-> > > 15 years ago. It doesn't support all transponders found on an Astra
-> > > satellite.
-> > >=20
-> > > For those, you need to use the LNBf that it is known as "Astra 1E"[2].
-> > >=20
-> > > [2] The name is there just for historical reasons. The actual Astra 1E
-> > > satellite was retired, but another satellite occupies the same orbital
-> > > position (19.2=C2=B0E), and they keep adding/retiring satellites ther=
-e as
-> > > needed (https://en.wikipedia.org/wiki/Astra_19.2%C2%B0E).
-> > >=20
-> > > As I pointed you on a past e-mail, when you set the DVB-S board on
-> > > Kaffeine, you should have explicitly set it.
-> > >=20
-> > > If you start Kaffeine in English:
-> > >=20
-> > > 	$ LANG=3DC kaffeine
-> > >=20
-> > > You'll see it at the following menu:
-> > >=20
-> > > 	Television -> Configure Television -> Device 0
-> > >=20
-> > > (assuming that your device is device 0)
-> > >=20
-> > > There, you need to tell that you'll be using a DiSEqC swith. It
-> > > will then allow you to select up to 4 satellite sources. Once you
-> > > set a source, it will allow you to edit the LNB <n> Settings
-> > > (where <n> will be 1 to 4). Clicking there, it will present you
-> > > a menu with all known LNBf models. Astra 1E is the third option[3].
-> > >=20
-> > > [3] yeah, on a separate discussion, we should likely rename "Astra 1E"
-> > > to just "Astra", and place it as the first option. I'll do such chang=
-e,
-> > > but it will be at v4l-utils package (libdvbv5) and it will probably
-> > > take some time until distros start packaging the new version, even
-> > > if we add it to the stable branch.
-> > >  =20
-> > > > I paste the output of the directory below, unfortunately the opensu=
-se
-> > > > paste
-> > > > does not work currently so I try here, sorry if this is long.
-> > > >=20
-> > > > Content of the directory 99-media.conf created following the indica=
-tions
-> > > > (please bear in mind that I have also another card installed (Haupp=
-auge
-> > > > 5525) although it was not branched to the sat cable and i did chang=
-e the
-> > > > settings in Kaffeine to use only the technisat. But my understandin=
-g is
-> > > > limited if this may give "noise" in the output, so I thought to und=
-erline
-> > > > it, just FYI.
-> > > > Output: =20
-> > > Looks ok to me.
-> > >  =20
-> > > > [  649.009548] cx23885 0000:03:00.0: invalid short VPD tag 01 at of=
-fset 1
-> > > > [  649.011439] r8169 0000:06:00.0: invalid short VPD tag 00 at offs=
-et 1 =20
-> > >=20
-> > > Those two above are weird... It seems to be related to some issue that
-> > > the PCI core detected:
-> > >=20
-> > > drivers/pci/vpd.c:                      pci_warn(dev, "invalid %s VPD=
- tag
-> > > %02x at offset %zu",
-> > >=20
-> > > I've no idea what they mean, nor if you'll face any issues related to=
- it.
-> > >=20
-> > > Thanks,
-> > > Mauro =20
-> > The two are known annoyances especially the cx23885 complaining in the =
-logs=20
-> > about a "wrong revision". But as they AFAIK do not cause major issues o=
-r=20
-> > havoc, it is not a problem, at least for me.=20
-> > Now, the card suddenly works. The only thing you have to do (limited to=
- this=20
-> > technisat PCI card, not applicable to the Hauppauge PCI-e mounted on th=
-e same=20
-> > machine) is to set the "square" to high voltage, limited for Astra. Hot=
-bird=20
-> > scans better without this, with "no setting send" as I do for the Haupp=
-auge as=20
-> > well.=20
-> > This must be something weird related to our sat dish.
-> >=20
-> > But the GOOD news is: yes now you made it! The card works. And yes, you=
- should=20
-> > really rename ASTRA E setting. Maybe also be more clear or give some hi=
-nt in=20
-> > kaffeine when hovering over it, about how to set it, for some reason it=
- came=20
-> > straightforward to me to click on the right radio button to select the =
-type of=20
-> > satellite,  but I did not understand, nor did suspect, I would be able =
-to set,=20
-> > or that I would have to set the left button (must be a cultural deforma=
-tion,=20
-> > or whatever). Once you told me about I did find it, but in my very limi=
-ted=20
-> > experience, I think that could be enhanced.
-> >=20
-> > So congratulations. It works and now I am officially even more impresse=
-d about=20
-> > Linux and the spirit behind it. Compliments and thank you all for your =
-work=20
-> > and time! =20
->=20
-> Good to hear that now everything nailed down.
-> So, the patch
->   https://patchwork.linuxtv.org/patch/53128/
-> is needed in addition to=20
->   https://patchwork.linuxtv.org/patch/53044/
+Patch 1/3 adds FT232H interface driver (for ARRI USB PIDs)
+implementing commonly used FTDI USB transfer operations and
+ACBUS/MPSSE GPIO controllers. Depending on USB PIDs it creates
+platform devices for MPSSE SPI bus with attached SPI slaves
+or platform devices for ARRI FPP FPGA manager.
 
-Yes.
+Patch 2/3 adds MPSSE SPI controller driver which registers
+an FTDI USB-SPI bus with attached SPI slaves from description
+in platform data, so existing SPI protocol drivers can be
+used for these slave devices (in our case altera-ps-spi).
+Via interface driver in patch 1/3 it is easily possible to add
+support for other slave devices using custom USB PIDs (e.g.
+spi-nor flash W25Q32 with m25p80 driver has beed used for
+testing MPSSE SPI controller driver).
 
-> If so, Mauro, please don't forget to put Fixes and stable tags, so
-> that both will be backported to stable trees.
+Patch 3/3 adds FPGA manager driver for ARRI FPP adapters for
+FPGA configuration via Altera fast passive parallel interface.
 
-Yeah, I'll do that.
->=20
-> Meanwhile I'll backport it to openSUSE kernels so that the issue will
-> be fixed in the next kernel update.
+Changes since v2:
+  Patch 1/3
+  - use unsigned type for baudrate and clk divider calculation
+    (don't mix signed/unsigned types)
+  - switch to unsigned int for 'encoded_divisor' 
+  - use DIV_ROUND_CLOSEST() in ftdi_to_clkbits()
+  - update error messages in ftdi_convert_baudrate()
+  - update return code check of ftdi_to_clkbits()
+  - fix boolconv coccinelle warning
+  - add and use macro for MPSSE GPIOs number
+  - update struct mpsse_spi_platform_data to drop pin description
+    fields and add mpsse_spi_dev_data struct instead. This allows
+    easier pin description and init for multiple SPI devices with
+    multiple control pins. Pass pin description via platform_data
+    of spi_bus_info for esier IO pin init code in MPSSE driver.
+    Update spi_board_info table accordingly
+  - keep Makefile entry sorted
 
-Btw, I'm adding this to v4l-utils (both upstream and stable):
+  Patch 2/3
+  - keep Makefile entry sorted
+  - make the entire comment block a C++ one
+  - don't use magic number for the size of the lookup table
+  - use sizeof() instead of magic number for the buffer size
+  - rework gpio chip select function to use it as .set_cs()
+  - convert to use transfer_one instead of transfer_one_message
+  - update dev_*() to use MPSSE platform device prefix
+  - s/spi_master/spi_controller
+  - use u16 for chip_select vars and update dev_dbg format
+  - use unsigned type for index vars
+  - reduce arguments number for ftdi_spi_tx()/ftdi_spi_rx()
+  - fix ftdi_spi_tx() to send all buffer data correctly even if
+    the USB driver signals transfer of less data than requested
+  - update ftdi_spi_init_io() to differentiate between platform
+    data for devices using MPSSE I/O pins and other SPI devices
+    (e.g. using flash_platform_data, mmc_spi_platform_data, etc.).
+    This makes the driver more generic and allows using multiple
+    SPI slaves on the MPSSE bus
+  - reduce !xfer->len checks
 
-	https://patchwork.linuxtv.org/patch/53172/
+  Patch 3/3
+    fix 'specified bound 8 equals destination size' gcc 8 warning
 
-Despite being applied against version 1.16, It should be easy to
-backport it (if openSUSE is using an older version - probably it is,
-since version 1.16 is brand new).
+Changes since v1:
+  Patch 1/3
+  - add myself as a maintainer for these drivers
+  - update copyright line to include 2018
+  - include required linux headers
+  - fix gcc 7.3.0 build warnings -Wunused-const-variable=
+  - make ftdi functions and spi_board_info struct static
+  - use KBUILD_MODNAME in drivers struct
+  - use dev_err() for error messages instead of dev_info()
+  - drop not needed output about number of used MPSSE pins
+    since it is constant (not configurable)
+  - remove ftdi function prototypes from header ft232h-intf.h
+    as these are not exported anymore
+  - update comments (don't use kernel-doc format as we do not
+    export symbols anymore and functions are "static")
 
-It is not really a bugfix (it is just renaming an entry's full name
-and moving it to be at the beginning of the file). It shouldn't
-cause any regression (as it doesn't change the short name for the
-LNBf), but it may help new users, as, with that, the default
-european LNBf will the the one with the extended frequency range
-required for Astra satellites.
+  Patch 2/3
+  - fix build breakage when building with ARCH=i386 allmodconfig
+  - add checks for ops->lock/ops->unlock presence in pdata
+  - update copyright line to include 2018
+  - remove printing numbers in parentheses (%d)
 
-Thanks,
-Mauro
+  Patch 3/3
+  - update copyright line to include 2018
+  - add sysfs ABI documentation
+ 
+Changes since initial version (MFD based):
+  - don't use MFD framework
+  - don't use original FT232H USB PID (it is too generic and collides
+    with existing ftdi_sio driver)
+  - don't add separate CBUS GPIO driver based on FT232H MFD device
+  - redesign/rework the drivers as described under [4]
+  - add basic FT232H interface driver under drivers/usb/misc/
+  - use custom reserved USB PIDs in the USB driver for adapter devices
+  - add notes about borrowed protocol code from libftdi to commit log
+    and header file
+  - add MPSSE SPI controller driver supporting USB-SPI bus with
+    dynamically added SPI slaves from description in platform data
+    (the initial attempt didn't include USB SPI bus support for PS-
+     SPI FPGA configuration via USB)
+  - rework FPP fpga manager driver based on new FT232H interface
+    driver and extend it according to CPLD changes for additional
+    support of new hardware revision B.
+
+Anatolij Gustschin (3):
+  usb: misc: add driver for FT232H based FPGA configuration devices
+  spi: add FTDI MPSSE SPI controller driver
+  fpga: Add fpga manager driver for ARRI Altera FPP
+
+ .../ABI/testing/sysfs-driver-ftdi-fifo-fpp    |    7 +
+ MAINTAINERS                                   |    8 +
+ drivers/fpga/Kconfig                          |    7 +
+ drivers/fpga/Makefile                         |    1 +
+ drivers/fpga/ftdi-fifo-fpp.c                  |  594 +++++++
+ drivers/spi/Kconfig                           |    7 +
+ drivers/spi/Makefile                          |    1 +
+ drivers/spi/spi-ftdi-mpsse.c                  |  651 ++++++++
+ drivers/usb/misc/Kconfig                      |    9 +
+ drivers/usb/misc/Makefile                     |    1 +
+ drivers/usb/misc/ft232h-intf.c                | 1467 +++++++++++++++++
+ include/linux/usb/ft232h-intf.h               |  206 +++
+ 12 files changed, 2959 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
+ create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+ create mode 100644 drivers/spi/spi-ftdi-mpsse.c
+ create mode 100644 drivers/usb/misc/ft232h-intf.c
+ create mode 100644 include/linux/usb/ft232h-intf.h
+
+-- 
+2.17.1
+
