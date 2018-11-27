@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CA9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC16EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CCDE20817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CCDE20817
+	by mail.kernel.org (Postfix) with ESMTP id 7D158208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D158208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbeK0VWZ convert rfc822-to-8bit (ORCPT
+        id S1730809AbeK0VWc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:22:25 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:40878 "EHLO
+        Tue, 27 Nov 2018 16:22:32 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:40968 "EHLO
         skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeK0VWF (ORCPT
+        with ESMTP id S1726416AbeK0VWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:22:05 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
+        Tue, 27 Nov 2018 16:22:24 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id BDC4F67A70A;
-        Tue, 27 Nov 2018 11:24:36 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 53A5D67A70A;
+        Tue, 27 Nov 2018 11:24:51 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 27 Nov
- 2018 11:24:36 +0100
+ 2018 11:24:50 +0100
 Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
  sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Tue, 27 Nov 2018 11:24:36 +0100
+ 15.01.1466.003; Tue, 27 Nov 2018 11:24:50 +0100
 From:   Schrempf Frieder <frieder.schrempf@kontron.de>
 To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
         "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
         "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
         "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
@@ -53,18 +51,21 @@ CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
         "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
         "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
         "han.xu@nxp.com" <han.xu@nxp.com>,
-        "Schrempf Frieder" <frieder.schrempf@kontron.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 7/9] ARM: dts: ls1021a: Remove fsl,qspi-has-second-chip as
- it is not used
-Thread-Topic: [PATCH v6 7/9] ARM: dts: ls1021a: Remove
- fsl,qspi-has-second-chip as it is not used
-Thread-Index: AQHUhjtl7MHDWa24eEqwt7mGMpoc+g==
-Date:   Tue, 27 Nov 2018 10:24:36 +0000
-Message-ID: <1543314174-28580-8-git-send-email-frieder.schrempf@kontron.de>
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v6 9/9] MAINTAINERS: Move the Freescale QSPI driver to the SPI
+ framework
+Thread-Topic: [PATCH v6 9/9] MAINTAINERS: Move the Freescale QSPI driver to
+ the SPI framework
+Thread-Index: AQHUhjttbAAHhZHyQEmwDRYmlezXcA==
+Date:   Tue, 27 Nov 2018 10:24:50 +0000
+Message-ID: <1543314174-28580-10-git-send-email-frieder.schrempf@kontron.de>
 References: <1543314174-28580-1-git-send-email-frieder.schrempf@kontron.de>
 In-Reply-To: <1543314174-28580-1-git-send-email-frieder.schrempf@kontron.de>
 Accept-Language: de-DE, en-US
@@ -77,47 +78,49 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: BDC4F67A70A.A19FB
+X-SnT-MailScanner-ID: 53A5D67A70A.AEED9
 X-SnT-MailScanner: Found to be clean
 X-SnT-MailScanner-SpamCheck: 
 X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, david.wolfe@nxp.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        fabio.estevam@nxp.com, han.xu@nxp.com, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, robh+dt@kernel.org, shawnguo@kernel.org,
-        yogeshnarayan.gaur@nxp.com
+X-SnT-MailScanner-To: akpm@linux-foundation.org, arnd@arndb.de,
+        boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, davem@davemloft.net,
+        david.wolfe@nxp.com, dwmw2@infradead.org, fabio.estevam@nxp.com,
+        gregkh@linuxfoundation.org, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        mchehab+samsung@kernel.org, miquel.raynal@bootlin.com,
+        nicolas.ferre@microchip.com, prabhakar.kushwaha@nxp.com,
+        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After switching to the new FSL QSPI driver the property
-'fsl,qspi-has-second-chip' is not needed anymore.
-
-The driver now uses the 'reg' property to determine the bus and
-the chipselect.
+The driver was ported to the SPI framework so it can be used as
+a generic SPI memory driver and not only for SPI NOR.
+Reflect this transition in the MAINTAINERS file.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-index 6a83f30..d3a1a73 100644
---- a/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-+++ b/arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts
-@@ -203,7 +203,6 @@
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f485597..1ff3c5b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5932,9 +5932,9 @@ F:	Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
  
- &qspi {
--	fsl,qspi-has-second-chip;
- 	status = "okay";
+ FREESCALE QUAD SPI DRIVER
+ M:	Han Xu <han.xu@nxp.com>
+-L:	linux-mtd@lists.infradead.org
++L:	linux-spi@vger.kernel.org
+ S:	Maintained
+-F:	drivers/mtd/spi-nor/fsl-quadspi.c
++F:	drivers/spi/spi-fsl-qspi.c
  
- 	flash: flash@0 {
+ FREESCALE QUICC ENGINE LIBRARY
+ M:	Qiang Zhao <qiang.zhao@nxp.com>
 -- 
 2.7.4
