@@ -2,185 +2,158 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41300C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E0EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A842146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:03:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="sO0/VK35"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A842146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F01420873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F01420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbeK0VBN (ORCPT
+        id S1730605AbeK0VBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:01:13 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41723 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbeK0VBM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:01:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so8106485pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 02:03:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dN98w9I5INwpkhNGUkRMYFLzjCSv+OZAezmuQZQ+ddo=;
-        b=sO0/VK35tm2AheeAcYzA8s7RURZ57m91yq8ZClthssKGmyBE/DzDNmWwXICHAPEoCT
-         wgCE4TCmHXWEsQh/920Likcc1cCtzDSq+/w/o29GX/wO5Az2cNv62WorklTHu+Al65Qn
-         9tioKsYLZPceBNI9WHETYbmRNDkJr++BMPGMcSVXow0f5v/84qUbOieKHEVekdxl/xwJ
-         +roGcwklYBi97zCAM3eFGvFshTZ4z7QUuxExXyJBjbTTlz4+iPHm6jmXcAizx+Tn1V29
-         2dHNfyWUwEnudRQvw9e+LzD/xbWsruDA4O/vfFISTUBwFw0KnuspwIdKy5nmV7Sit+3s
-         cDTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dN98w9I5INwpkhNGUkRMYFLzjCSv+OZAezmuQZQ+ddo=;
-        b=MTPIoSZLUnO9MCrFHztpN8JIWhKSrTARl4QkQbVRR5Sq7O2LvU/5kMlBGVUIglpMdM
-         XQdJtHrna+o2Rn7FPSN9ylNdRWrzK6J8qgmjRSnWBPTSLvfdFE3Ro5+XgKIoQjVRGQNc
-         kmhpjTEQDPbK25tRt6rXsp5rmwokdZdzhYFQhvu4+rbQHL2gXo8ETSLCmDtOCZafLt2c
-         UK8WQiXA4QrGReL33lJi5HsDTKgE5Vr1FrAyBZeJMtyR1Q5DROGxYOB29OROmITqPpLj
-         iK6tf9JXhmTwQ7dBvRibc10t4p5xMEelwKPAYJkGl899P+eLU514mHVQi75a1Y0OyV0M
-         LwVg==
-X-Gm-Message-State: AA+aEWYEZ0vpMku8gfBlB+KqLjBX29SfJNzO8q8fJqtQqjo1apFKaKWa
-        rQo7jSliX/HtjukBDLiIBUEHiQ==
-X-Google-Smtp-Source: AFSGD/VWhAb0ja271OBzyvwMk5MnCTwXQ7xN2UawQd5izyWUcv400qLQFMnJKNH+y569tQY8t3i/Zg==
-X-Received: by 2002:a63:6ecf:: with SMTP id j198mr29093500pgc.3.1543313029266;
-        Tue, 27 Nov 2018 02:03:49 -0800 (PST)
-Received: from anup-ubuntu64.qualcomm.com ([49.207.48.241])
-        by smtp.googlemail.com with ESMTPSA id t87sm9519590pfk.122.2018.11.27.02.03.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 02:03:48 -0800 (PST)
-From:   Anup Patel <anup@brainfault.org>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2 4/4] irqchip: sifive-plic: Implement irq_set_affinity() for SMP host
-Date:   Tue, 27 Nov 2018 15:33:17 +0530
-Message-Id: <20181127100317.12809-5-anup@brainfault.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181127100317.12809-1-anup@brainfault.org>
-References: <20181127100317.12809-1-anup@brainfault.org>
+        Tue, 27 Nov 2018 16:01:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730371AbeK0VBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:01:46 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F52D3086267;
+        Tue, 27 Nov 2018 10:04:23 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-79.pek2.redhat.com [10.72.12.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B87F3174A8;
+        Tue, 27 Nov 2018 10:04:05 +0000 (UTC)
+Subject: Re: [PATCH 1/2 RESEND v7] resource: add the new I/O resource
+ descriptor 'IORES_DESC_RESERVED'
+To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, x86@kernel.org,
+        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
+        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
+        bhe@redhat.com
+References: <20181124051223.19994-1-lijiang@redhat.com>
+ <20181124051223.19994-2-lijiang@redhat.com>
+ <ae405fe9-94fd-3fb7-decd-c7821cf95b7d@intel.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <460c5552-a48e-3523-275a-7f94d0f08f9b@redhat.com>
+Date:   Tue, 27 Nov 2018 18:04:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <ae405fe9-94fd-3fb7-decd-c7821cf95b7d@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 27 Nov 2018 10:04:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently on SMP host, all CPUs take external interrupts routed via
-PLIC. All CPUs will try to claim a given external interrupt but only
-one of them will succeed while other CPUs would simply resume whatever
-they were doing before. This means if we have N CPUs then for every
-external interrupt N-1 CPUs will always fail to claim it and waste
-their CPU time.
+在 2018年11月27日 04:52, Dave Hansen 写道:
+> On 11/23/18 9:12 PM, Lianbo Jiang wrote:
+>> The upstream kernel can not accurately add the e820 reserved type to> kdump krenel e820 table.
+> 
+> 	^ kernel
+> 
+>> Kdump uses walk_iomem_res_desc() to iterate io resources, then adds
+>> the matched resource ranges to the e820 table for kdump kernel. But,
+>> when convert the e820 type to the iores descriptor, several e820
+>> types are converted to 'IORES_DESC_NONE' in this function e820_type
+>> _to_iores_desc(). So the walk_iomem_res_desc() will get the redundant
+>> types(such as E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820_TYPE_KERN) when
+>> walk through io resources with the descriptor 'IORES_DESC_NONE'.
+> 
+> Let me see if I understand.
+> 
+> When doing kexec, the old kernel makes a new e820 table for the new
+> kernel.  The old kernel constructs the new e820 table from
+> 'iomem_resource'.  But, when creating the 'iomem_resource' tree,
+> reserved areas like E820_TYPE_RESERVED are not properly passed through.
+>  This causes problems like described in the next patch.
+> 
 
-Instead of above, external interrupts should be taken by only one CPU
-and we should have provision to explicity specify IRQ affinity from
-kernel-space or user-space.
+When doing kexec_file_load, the old kernel need to pass the e820 reserved ranges
+to the kdump kernel. But kernel can not exactly match the e820 reserved ranges when
+walking through the iomem resources with the descriptor 'IORES_DESC_NONE', because
+the descriptor 'IORES_DESC_NONE' contains four e820 types, such as 'E820_TYPE_RAM',
+'E820_TYPE_UNUSABLE', 'E820_TYPE_RESERVED_KERN', 'E820_TYPE_RESERVED'. It may pass
+these four types to the kdump kernel, this is not desired result.
 
-This patch provides irq_set_affinity() implementation for PLIC driver.
-It also updates irq_enable() such that PLIC interrupts are only enabled
-for one of CPUs specified in IRQ affinity mask.
+Please refer to this function e820_type_to_iores_desc(). (arch/x86/kernel/e820.c)
 
-With this patch in-place, we can change IRQ affinity at any-time from
-user-space using procfs.
+>> This patch adds the new I/O resource descriptor 'IORES_DESC_RESERVED'
+>> for the iomem resources search interfaces. It is helpful to exactly
+>> match the reserved resource ranges when walking through iomem resources.
+> 
+> It's more than that, though.  You're specifically storing the reserved
+> area(s) when we see them come through the firmware.
+> 
+>> Furthermore, in order to make it still work after the new descriptor
+>> is added, these codes originally related to 'IORES_DESC_NONE' have
+>> been updated.
+> 
+> It would be nice to explain why they needed to be updated and what
+> breaks if they are not.
+> 
 
-Example:
+If these code paths have not been updated, the reserved regions descriptor is still marked
+as the 'IORES_DESC_NONE' instead of 'IORES_DESC_RESERVED', this is not correct and it is 
+also easily confused.
 
-/ # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
-  8:         44          0          0          0  SiFive PLIC   8  virtio0
- 10:         48          0          0          0  SiFive PLIC  10  ttyS0
-IPI0:        55        663         58        363  Rescheduling interrupts
-IPI1:         0          1          3         16  Function call interrupts
-/ #
-/ #
-/ # echo 4 > /proc/irq/10/smp_affinity
-/ #
-/ # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
-  8:         45          0          0          0  SiFive PLIC   8  virtio0
- 10:        160          0         17          0  SiFive PLIC  10  ttyS0
-IPI0:        68        693         77        410  Rescheduling interrupts
-IPI1:         0          2          3         16  Function call interrupts
+And also cause some errors, such as the following function __ioremap_check_desc_other().
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
- drivers/irqchip/irq-sifive-plic.c | 35 +++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+>> index 5378d10f1d31..91b6112e7489 100644
+>> --- a/arch/x86/mm/ioremap.c
+>> +++ b/arch/x86/mm/ioremap.c
+>> @@ -83,7 +83,14 @@ static bool __ioremap_check_ram(struct resource *res)
+>>  
+>>  static int __ioremap_check_desc_other(struct resource *res)
+>>  {
+>> -	return (res->desc != IORES_DESC_NONE);
+>> +	/*
+>> +	 * The E820_TYPE_RESERVED was converted to the IORES_DESC_NONE
+>> +	 * before the new IORES_DESC_RESERVED is added, so it contained
+>> +	 * the e820 reserved type. In order to make it still work for
+>> +	 * SEV, here keep it the same as before.
+>> +	 */
+>> +	return ((res->desc != IORES_DESC_NONE) ||
+>> +		(res->desc != IORES_DESC_RESERVED));
+>>  }
+> 
+> After reading the changelog and the comment, I still have no idea why
+> this hunk is here.  Could you try to explain a bit more?
+> 
+> 
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index ffd4deaca057..fec7da3797fa 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -98,14 +98,42 @@ static void plic_irq_toggle(const struct cpumask *mask, int hwirq, int enable)
- 
- static void plic_irq_enable(struct irq_data *d)
- {
--	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 1);
-+	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
-+					   cpu_online_mask);
-+	WARN_ON(cpu >= nr_cpu_ids);
-+	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
- }
- 
- static void plic_irq_disable(struct irq_data *d)
- {
--	plic_irq_toggle(irq_data_get_affinity_mask(d), d->hwirq, 0);
-+	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
- }
- 
-+#ifdef CONFIG_SMP
-+static int plic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
-+			    bool force)
-+{
-+	unsigned int cpu;
-+
-+	if (!force)
-+		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-+	else
-+		cpu = cpumask_first(mask_val);
-+
-+	if (cpu >= nr_cpu_ids)
-+		return -EINVAL;
-+
-+	if (!irqd_irq_disabled(d)) {
-+		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
-+		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
-+	}
-+
-+	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+
-+	return IRQ_SET_MASK_OK_DONE;
-+}
-+#endif
-+
- static struct irq_chip plic_chip = {
- 	.name		= "SiFive PLIC",
- 	/*
-@@ -114,6 +142,9 @@ static struct irq_chip plic_chip = {
- 	 */
- 	.irq_enable	= plic_irq_enable,
- 	.irq_disable	= plic_irq_disable,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity = plic_set_affinity,
-+#endif
- };
- 
- static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
--- 
-2.17.1
+Thanks for your comment.
 
+What happens if we don't modify this functions __ioremap_check_desc_other()?
+-When SEV is active, it might map these reserved regions with the encryption mask. That is incorrect.
+Therefore, keep it the same as before in order to make it still work for the SEV case.
+
+**BTW**:
+In this function __ioremap_check_desc_other(), it should use the '&&' operator instead of
+the '||' operator. I made a mistake in this function(sorry for this), i will improve this
+function in patch v8 and post again like this:
+
+static int __ioremap_check_desc_other(struct resource *res)
+{
+    return ((res->desc != IORES_DESC_NONE) &&
+            (res->desc != IORES_DESC_RESERVED));
+}
+
+
+Regards,
+Lianbo
