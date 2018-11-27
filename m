@@ -2,95 +2,90 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D01C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C5AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612582086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:25:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612582086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 160DE2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160DE2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbeK0UXL (ORCPT
+        id S1730158AbeK0UYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:23:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45648 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728512AbeK0UXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:23:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 09EC2AF8D;
-        Tue, 27 Nov 2018 09:25:53 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 028551E07ED; Tue, 27 Nov 2018 10:25:51 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:25:51 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Pan Bian <bianpan2016@163.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] namei: free new_dentry late
-Message-ID: <20181127092551.GC16301@quack2.suse.cz>
-References: <1543104923-81192-1-git-send-email-bianpan2016@163.com>
+        Tue, 27 Nov 2018 15:24:02 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59830 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728266AbeK0UYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:24:02 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 52839207BC; Tue, 27 Nov 2018 10:26:44 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 233C7207A8;
+        Tue, 27 Nov 2018 10:26:34 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:26:34 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 38/43] drm/sun4i: Move access control before setting
+ the register as documented
+Message-ID: <20181127092634.fq47rifbodtu7tk7@flea>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+ <20181123092515.2511-39-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7zpweo5ev7pd4bed"
 Content-Disposition: inline
-In-Reply-To: <1543104923-81192-1-git-send-email-bianpan2016@163.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181123092515.2511-39-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 25-11-18 08:15:23, Pan Bian wrote:
-> After calling dput(new_dentry), new_dentry is passed to fsnotify_move.
-> This may result in a use-after-free bug. This patch moves the put
-> operation late.
-> 
-> Fixes: da1ce0670c14("vfs: add cross-rename")
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
 
-The code is actually fine AFAICT. One new_dentry reference is passed into
-vfs_rename() and another one is acquired directly inside vfs_rename(). That
-is the one dropped early but there's still the original reference passed in
-protecting new_dentry from freeing. Am I missing something?
+--7zpweo5ev7pd4bed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-								Honza
+On Fri, Nov 23, 2018 at 10:25:10AM +0100, Paul Kocialkowski wrote:
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>=20
+> Unlike what is currently being done, the ACCESS_CTRL bit documentation as=
+ks
+> that this bit should be set before modifying any register. The code in the
+> BSP also does this, so make sure we do this as well.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-> ---
-> V2: correct the fixes commit information
-> ---
->  fs/namei.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 0cab649..8b104d9 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4498,7 +4498,6 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  		unlock_two_nondirectories(source, target);
->  	else if (target)
->  		inode_unlock(target);
-> -	dput(new_dentry);
->  	if (!error) {
->  		fsnotify_move(old_dir, new_dir, old_name.name, is_dir,
->  			      !(flags & RENAME_EXCHANGE) ? target : NULL, old_dentry);
-> @@ -4507,6 +4506,7 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  				      new_is_dir, NULL, new_dentry);
->  		}
->  	}
-> +	dput(new_dentry);
->  	release_dentry_name_snapshot(&old_name);
->  
->  	return error;
-> -- 
-> 2.7.4
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This patch (and the subsequent ones) are missing your SoB.
+
+Maxime
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--7zpweo5ev7pd4bed
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0NygAKCRDj7w1vZxhR
+xagcAQCR3nmGAkBaPNZOnJGj7ONr4EPT6xOHFUTrc91GzvQUCQEA5uXd4t/oEC4w
+OrBnealKA9GlQ0QgDkVL7DyBtO6V7wc=
+=g0nt
+-----END PGP SIGNATURE-----
+
+--7zpweo5ev7pd4bed--
