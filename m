@@ -2,131 +2,246 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4420C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE70C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC0520645
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="EBkthBG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC0520645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2503720645
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2503720645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeK1GeF (ORCPT
+        id S1726312AbeK1Ggn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:34:05 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38365 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbeK1GeE (ORCPT
+        Wed, 28 Nov 2018 01:36:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33714 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725764AbeK1Ggn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:34:04 -0500
-Received: by mail-ot1-f67.google.com with SMTP id e12so16941000otl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 11:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zt/HPt2I52kAIi43ZeE047SCEvC+Uq20a3Gf9oKeX/Q=;
-        b=EBkthBG+jJK0clfkZrz63Rxubl5gaEH5o9umU8B1GIsU9Du1LIosV0tsEU+52t+06E
-         3BW35byrDDhlHU7ZTaPoT8YGKnUW0+hhr/+s0HgC9QLytoKcBcT0Lot3jfI+X6nlngUt
-         7zC0Wdy66/ync5LeFnYyiBDTQNWBuz6F5xCZAe5bJiwM+laynayh9cQp25UEd0oxpfNy
-         05C8++HXE1wp6aViDdfiL3lffqXfdJmOud/yfO+oVl0J60OB/FP4bo6idnWr2SWTQI5o
-         W4Ie1XalckYAEWCh+BTpBcvl/cR/Z1mJBNDR0XaQ47CcFiDgMxaYAkcCDxqxBETwFGqN
-         kAcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zt/HPt2I52kAIi43ZeE047SCEvC+Uq20a3Gf9oKeX/Q=;
-        b=sNfUsD7tVCtV8ea/imiuV0A01fZgYjm/6z/c/sOzYOezihQzdzC8o/I7JaVC4et+iU
-         oyZowIEM/DFv7qOFrfUfwTKHdUm7NTNM0OUoHBS48JiOqHK1lpkAoEkHcr9LfTreEHJM
-         buTp/2cjIyVu5OxsFRp94xYYNgefkOAFH6AkIqDsxGUuaWRLpRoCh85oNjFhZAV6RBR8
-         859CHipqUZnK+u3odRkH9OfsKw1NpZ+0/5fsadMbCu60J5980JOul+y4/DcdG+sXOcoU
-         CsetawUbH8Rpu7UweWeRjRvfLH9uIHKoSl/X+jUrxIJ/kWzke/uNHyD8nXgRY4TBQS/u
-         h6zw==
-X-Gm-Message-State: AA+aEWbk5n1im9Ljjaq2Dn4k3/aim9c3n8ypE9ERUu8vOLNhmrbb2NO5
-        HZc0aajlt8TG/k2tlGvSY8prOi3abwFMJu1C/afbJQ==
-X-Google-Smtp-Source: AFSGD/WWmCh8nUJaFTGdY9LheMUQztbPWw2w8YV/WvTOKb7IZ73OG7YEOLr4BGVuPYi9pSh5vGrVqGLz1CIWcy4t3Pc=
-X-Received: by 2002:a9d:3ac:: with SMTP id f41mr14796999otf.98.1543347307859;
- Tue, 27 Nov 2018 11:35:07 -0800 (PST)
-MIME-Version: 1.0
-References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
- <154170044652.12967.17419321472770956712.stgit@ahduyck-desk1.jf.intel.com>
- <CAPcyv4jmTbHZbs2KHhH2_S6=mxxkwdiJCDL6widexMzePhNFBg@mail.gmail.com> <2031cf4705d76dd4d0f722a600a6a106cce2ba41.camel@linux.intel.com>
-In-Reply-To: <2031cf4705d76dd4d0f722a600a6a106cce2ba41.camel@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 27 Nov 2018 11:34:56 -0800
-Message-ID: <CAPcyv4gWwsYOeXVNDoDy4v=SU6bRyBG1fgSu84y64jGApaJ91g@mail.gmail.com>
-Subject: Re: [driver-core PATCH v6 9/9] libnvdimm: Schedule device
- registration on node local to the device
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Nov 2018 01:36:43 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARJSnrO095764
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:46 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p17yjunje-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:46 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
+        Tue, 27 Nov 2018 19:37:45 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 19:37:42 -0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARJbf9N20381712
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 19:37:41 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B91F112065;
+        Tue, 27 Nov 2018 19:37:41 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 724A4112061;
+        Tue, 27 Nov 2018 19:37:40 +0000 (GMT)
+Received: from oc6728276242.ibm.com (unknown [9.85.193.218])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Nov 2018 19:37:40 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH v6 0/2] media: platform: Add Aspeed Video Engine driver
+Date:   Tue, 27 Nov 2018 13:37:35 -0600
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18112719-0072-0000-0000-000003D00983
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010132; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01123629; UDB=6.00582089; IPR=6.00903758;
+ MB=3.00024357; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 19:37:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112719-0073-0000-0000-00004A3FE607
+Message-Id: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:04 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> On Mon, 2018-11-26 at 18:21 -0800, Dan Williams wrote:
-> > On Thu, Nov 8, 2018 at 10:07 AM Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> > >
-> > > Force the device registration for nvdimm devices to be closer to the actual
-> > > device. This is achieved by using either the NUMA node ID of the region, or
-> > > of the parent. By doing this we can have everything above the region based
-> > > on the region, and everything below the region based on the nvdimm bus.
-> > >
-> > > By guaranteeing NUMA locality I see an improvement of as high as 25% for
-> > > per-node init of a system with 12TB of persistent memory.
-> > >
-> >
-> > It seems the speed-up is achieved with just patches 1, 2, and 9 from
-> > this series, correct? I wouldn't want to hold up that benefit while
-> > the driver-core bits are debated.
->
-> Actually patch 6 ends up impacting things for persistent memory as
-> well. The problem is that all the async calls to add interfaces only do
-> anything if the driver is already loaded. So there are cases such as
-> the X86_PMEM_LEGACY_DEVICE case where the memory regions end up still
-> being serialized because the devices are added before the driver.
+The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+can capture and compress video data from digital or analog sources. With
+the Aspeed chip acting as a service processor, the Video Engine can
+capture the host processor graphics output.
 
-Ok, but is the patch 6 change generally useful outside of the
-libnvdimm case? Yes, local hacks like MODULE_SOFTDEP are terrible for
-global problems, but what I'm trying to tease out if this change
-benefits other async probing subsystems outside of libnvdimm, SCSI
-perhaps? Bart can you chime in with the benefits you see so it's clear
-to Greg that the driver-core changes are a generic improvement?
+This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+interface by way of videobuf2. Each frame, the driver triggers the hardware to
+capture the host graphics output and compress it to JPEG format.
 
-> > You can add:
-> >
-> >     Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> >
-> > ...if the series needs to be kept together, but as far as I can see
-> > the workqueue changes enable 2 sub-topics of development and it might
-> > make sense for Tejun to take those first 2 and then Greg and I can
-> > base any follow-up topics on that stable baseline.
->
-> I had originally put this out there for Tejun to apply, but him and
-> Greg had talked and Greg agreed to apply the set. If it works for you I
-> would prefer to just keep it together for now as I don't believe there
-> will be too many more revisions of this needed.
->
+v4l2-compliance SHA: ac9596560fedb3cd29148ef90b03778d76f1cd9a, 32 bits
 
-That works for me.
+Compliance test for device /dev/video0:
+
+Driver Info:
+	Driver name      : aspeed-video
+	Card type        : Aspeed Video Engine
+	Bus info         : platform:aspeed-video
+	Driver version   : 4.18.19
+	Capabilities     : 0x85200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x05200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+		fail: v4l2-test-controls.cpp(831): failed to find event for control 'Chroma Subsampling'
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 3 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK
+	test blocking wait: OK
+	test MMAP: OK                                     
+	test USERPTR: OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total: 48, Succeeded: 47, Failed: 1, Warnings: 0
+
+Changes since v5:
+ - Rework resolution change and v4l2 timings functions again with active and
+   detected timings.
+ - Renamed a few things.
+ - Fixed polarities in the timings.
+
+Changes since v4:
+ - Set real min and max resolution in enum_dv_timings
+ - Add check for vb2_is_busy before settings the timings
+ - Set max frame rate to the actual max rather than max + 1
+ - Correct the input status to 0.
+ - Rework resolution change to only set the relevant h/w regs during startup or
+   when set_timings is called.
+
+Changes since v3:
+ - Switch update reg function to use u32 clear rather than unsigned long mask
+ - Add timing information from host VGA signal
+ - Fix binding documentation mispelling
+ - Fix upper case hex values
+ - Add wait_prepare and wait_finish
+ - Set buffer state to queued (rather than error) if streaming fails to start
+ - Switch engine busy print statement to error
+ - Removed a couple unecessary type assignments in v4l2 ioctls
+ - Added query_dv_timings, fixed get_dv_timings
+ - Corrected source change event to fire if and only if size actually changes
+ - Locked open and release
+
+Changes since v2:
+ - Switch to streaming interface. This involved a lot of changes.
+ - Rework memory allocation due to using videobuf2 buffers, but also only
+   allocate the necessary size of source buffer rather than the max size
+
+Changes since v1:
+ - Removed le32_to_cpu calls for JPEG header data
+ - Reworked v4l2 ioctls to be compliant.
+ - Added JPEG controls
+ - Updated devicetree docs according to Rob's suggestions.
+ - Added myself to MAINTAINERS
+
+Eddie James (2):
+  dt-bindings: media: Add Aspeed Video Engine binding documentation
+  media: platform: Add Aspeed Video Engine driver
+
+ .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/platform/Kconfig                     |    9 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/aspeed-video.c              | 1719 ++++++++++++++++++++
+ 5 files changed, 1763 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+ create mode 100644 drivers/media/platform/aspeed-video.c
+
+-- 
+1.8.3.1
+
