@@ -2,109 +2,157 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95472C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFB4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C962086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:45:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mu9q7aG5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C962086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A32C821104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 21:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32C821104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbeK1Io5 (ORCPT
+        id S1726869AbeK1IpJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 03:44:57 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33276 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbeK1Io5 (ORCPT
+        Wed, 28 Nov 2018 03:45:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726286AbeK1IpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 03:44:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so8350089pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 13:45:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=wEOjbLOxIkjHyqa3SDWN3iRzvPOUlK/+shxFweLQHs8=;
-        b=mu9q7aG5IDEbvCdyfiWwkvJ/PahNcqMqzBTOkQnlKn4dq69lfbxWPzdHvjyeC9BUVI
-         4vVmow/Shz+gArI/VNBgSE1GzzB2lr5aSN+HJ0euqm+QV+VGNV5KsAGRiPJocJ/KXgOf
-         YaOzxQuKGsAndwjXW/nkNQVWSRPJ2wEYmrcEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=wEOjbLOxIkjHyqa3SDWN3iRzvPOUlK/+shxFweLQHs8=;
-        b=Z/fX8JsmwtW+w2bppsuXDdhuQKqGugEArhi6RxUpOCd+sZiTiIev+ESo5xrxXfXMdD
-         jq5Sk/ObpHFLUPjL7rkmp1rxrAEl3JUic0cwSXGq0vN5sknLn2ajALNIQph1BfIlPg7z
-         Q+0uqp32QC40ft8IGChWSS24uLZ/edg75FwN3G21q2WRWmFdhneE+KA3Tkx3Pgsu7I3V
-         Gp2tR0gubWsuqqQd6CmxNnYuurgCTrujQXk+0wnJUKVJintmy4Q++PG+aSTlCi8FtgW/
-         8wm5Oewqd2885GtFSW80mO3gH+l3siDQzuKEipBn49RmaSiWpUelTGUq14/GpZD14t48
-         MmVg==
-X-Gm-Message-State: AA+aEWYlaNWrYuQcOkADrIB50HyCIYJlaeNffmAdUEugqIlGqNqy6Vvz
-        FGs3w6k6ZvEz8yEoPqptmEseKefHhd4=
-X-Google-Smtp-Source: AFSGD/V/mlZEh5yjvUgv6ExLmof9wLpjgwhOXzlHoaxXTmPd4El+XjrAEz3aJgXAkB9cLgBXDWfmpg==
-X-Received: by 2002:a63:1e17:: with SMTP id e23mr30584346pge.130.1543355140699;
-        Tue, 27 Nov 2018 13:45:40 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id t5sm6688189pfb.60.2018.11.27.13.45.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 13:45:39 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 28 Nov 2018 03:45:09 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARLjJVP030135
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 16:45:52 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1cgrkujx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 16:45:51 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 27 Nov 2018 21:45:49 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Nov 2018 21:45:44 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARLjhwB61210818
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 21:45:43 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0918EA4065;
+        Tue, 27 Nov 2018 21:45:43 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5B4AA4054;
+        Tue, 27 Nov 2018 21:45:42 +0000 (GMT)
+Received: from [9.148.204.175] (unknown [9.148.204.175])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Nov 2018 21:45:42 +0000 (GMT)
+Date:   Tue, 27 Nov 2018 23:45:40 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <alpine.LSU.2.11.1811271258070.4506@eggly.anvils>
+References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils> <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com> <alpine.LSU.2.11.1811251900300.1278@eggly.anvils> <alpine.LSU.2.11.1811261121330.1116@eggly.anvils> <20181127105848.GD16502@rapoport-lnx> <alpine.LSU.2.11.1811271258070.4506@eggly.anvils>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181127182123.GC28236@codeaurora.org>
-Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        thierry.reding@gmail.com
-References: <20181121000648.29262-1-ilina@codeaurora.org>
- <20181121000648.29262-3-ilina@codeaurora.org>
- <154283618199.88331.10217252750356423959@swboyd.mtv.corp.google.com>
- <20181126161455.GA28236@codeaurora.org>
- <154330994255.88331.11409511159882116164@swboyd.mtv.corp.google.com>
- <20181127182123.GC28236@codeaurora.org>
-Message-ID: <154335513853.88331.9713562640538396853@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RFC v3 2/3] dt-bindings: sdm845-pinctrl: add wakeup interrupt parent
- for GPIO
-Date:   Tue, 27 Nov 2018 13:45:38 -0800
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is migrated
+To:     Hugh Dickins <hughd@google.com>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        David Herrmann <dh.herrmann@gmail.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Mike Rapoport <rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18112721-0008-0000-0000-000002997382
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112721-0009-0000-0000-00002203B8E6
+Message-Id: <E1C5FE6D-7BF7-40F5-85F9-BBD86D53EFC2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_18:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=675 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811270183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-11-27 10:21:23)
-> On Tue, Nov 27 2018 at 02:12 -0700, Stephen Boyd wrote:
-> >
-> >Two reasons. First, simplicity. The TLMM driver just needs to pass the
-> >gpio number up to the PDC gpio domain and then that domain can figure
-> >out what hwirq it maps to within the PDC hw irq space. I don't see any
-> >reason why we have to know the hwirq of PDC within the TLMM driver
-> >besides "let's not be different".
-> >
-> >And second, it makes it easier for us to implement the MPM case in the
-> >TLMM driver by letting the TLMM code just ask "should I mask the irq
-> >here or not?" by passing that with a wrapper struct around the fwspec
-> >and a dedicated domain in the PDC/MPM driver. Keeping less things in the
-> >TLMM driver and not driving the decision from DT but from tables in the
-> >PDC driver also keeps things simple and reduces DT parsing code/time.
-> >
-> Couldn't this be simply achieved by matching the compatible flags for
-> PDC/MPM bindings for the wakeup-parent in the TLMM driver? =
-
-> =
 
 
-It could be, but then we would be making TLMM highly aware of the wakeup
-parent and have to do compatible string matching in two places, instead
-of making TLMM more abstractly aware that it needs to keep things masked
-while irq parent deals with the interrupts.
+On November 27, 2018 11:08:50 PM GMT+02:00, Hugh Dickins <hughd@google.com> wrote:
+>On Tue, 27 Nov 2018, Mike Rapoport wrote:
+>> On Mon, Nov 26, 2018 at 11:27:07AM -0800, Hugh Dickins wrote:
+>> > 
+>> > +/*
+>> > + * A choice of three behaviors for wait_on_page_bit_common():
+>> > + */
+>> > +enum behavior {
+>> > +	EXCLUSIVE,	/* Hold ref to page and take the bit when woken, like
+>> > +			 * __lock_page() waiting on then setting PG_locked.
+>> > +			 */
+>> > +	SHARED,		/* Hold ref to page and check the bit when woken, like
+>> > +			 * wait_on_page_writeback() waiting on PG_writeback.
+>> > +			 */
+>> > +	DROP,		/* Drop ref to page before wait, no check when woken,
+>> > +			 * like put_and_wait_on_page_locked() on PG_locked.
+>> > +			 */
+>> > +};
+>> 
+>> Can we please make it:
+>> 
+>> /**
+>>  * enum behavior - a choice of three behaviors for
+>wait_on_page_bit_common()
+>>  */
+>> enum behavior {
+>> 	/**
+>> 	 * @EXCLUSIVE: Hold ref to page and take the bit when woken,
+>> 	 * like __lock_page() waiting on then setting %PG_locked.
+>> 	 */
+>> 	EXCLUSIVE,
+>> 	/**
+>> 	 * @SHARED: Hold ref to page and check the bit when woken,
+>> 	 * like wait_on_page_writeback() waiting on %PG_writeback.
+>> 	 */
+>> 	SHARED,
+>> 	/**
+>> 	 * @DROP: Drop ref to page before wait, no check when woken,
+>> 	 * like put_and_wait_on_page_locked() on %PG_locked.
+>> 	 */
+>> 	DROP,
+>> };
+>
+>I'm with Matthew, I'd prefer not: the first looks a more readable,
+>less cluttered comment to me than the second: this is just an arg
+>to an internal helper in mm/filemap.c, itself not kernel-doc'ed.
+
+Hmm, indeed, making this kernel-doc would be premature.
+I was thinking about including this in a future description of the filemap internals, but until that would get written lot of things may change.
+
+>But the comment is not there for me: if consensus is that the
+>second is preferable, then sure, we can change it over.
+>
+>Hugh
+
+-- 
+Sincerely yours,
+Mike.
 
