@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A8BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42158C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A6E20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6A6E20873
+	by mail.kernel.org (Postfix) with ESMTP id 120B02133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120B02133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbeK1Cgl (ORCPT
+        id S1729922AbeK1Cfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:36:41 -0500
-Received: from mga01.intel.com ([192.55.52.88]:4572 "EHLO mga01.intel.com"
+        Tue, 27 Nov 2018 21:35:51 -0500
+Received: from mga17.intel.com ([192.55.52.151]:3843 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729944AbeK1Cfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:35:52 -0500
+        id S1726488AbeK1Cfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:35:51 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:37:34 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:37:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="112314255"
+   d="scan'208";a="285519329"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 27 Nov 2018 07:37:30 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 27 Nov 2018 07:37:30 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5FF28374; Tue, 27 Nov 2018 17:37:29 +0200 (EET)
+        id 53AEF1D1; Tue, 27 Nov 2018 17:37:29 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org,
@@ -44,9 +44,9 @@ To:     Darren Hart <dvhart@infradead.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 04/13] platform/x86: i2c-multi-instantiate: Defer probe when no adapter found
-Date:   Tue, 27 Nov 2018 17:37:19 +0200
-Message-Id: <20181127153728.47866-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 03/13] platform/x86: i2c-multi-instantiate: Accept errors of i2c_acpi_new_device()
+Date:   Tue, 27 Nov 2018 17:37:18 +0200
+Message-Id: <20181127153728.47866-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181127153728.47866-1-andriy.shevchenko@linux.intel.com>
 References: <20181127153728.47866-1-andriy.shevchenko@linux.intel.com>
@@ -57,28 +57,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Likewise the rest of the i2c_acpi_new_device() users, defer the probe
-of the i2c-multi-intantiate driver in case adapter is not yet found.
+In the future i2c_acpi_new_device() will return error pointer in some cases.
+Prepare i2c-multi-instantiate driver to support that.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/i2c-multi-instantiate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-index bab79bdeebc7..0e3a36f3ef64 100644
+index 5456581b473c..bab79bdeebc7 100644
 --- a/drivers/platform/x86/i2c-multi-instantiate.c
 +++ b/drivers/platform/x86/i2c-multi-instantiate.c
-@@ -73,7 +73,7 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
+@@ -72,9 +72,14 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
+ 			board_info.irq = ret;
  		}
  		multi->clients[i] = i2c_acpi_new_device(dev, i, &board_info);
- 		if (!multi->clients[i])
--			ret = -ENODEV;
-+			ret = -EPROBE_DEFER; /* Wait for i2c-adapter to load */
- 		else if (IS_ERR(multi->clients[i]))
- 			ret = PTR_ERR(multi->clients[i]);
- 		else
+-		if (!multi->clients[i]) {
+-			dev_err(dev, "Error creating i2c-client, idx %d\n", i);
++		if (!multi->clients[i])
+ 			ret = -ENODEV;
++		else if (IS_ERR(multi->clients[i]))
++			ret = PTR_ERR(multi->clients[i]);
++		else
++			ret = 0;
++		if (ret) {
++			dev_err(dev, "Error creating i2c-client, idx %d\n", i);
+ 			goto error;
+ 		}
+ 	}
 -- 
 2.19.2
 
