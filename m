@@ -2,91 +2,93 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276D3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A208C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24BB208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:55:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X4vl2QUM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24BB208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id A1B2820873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B2820873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbeK0SwR (ORCPT
+        id S1729333AbeK0Sww (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 13:52:17 -0500
-Received: from m12-11.163.com ([220.181.12.11]:51536 "EHLO m12-11.163.com"
+        Tue, 27 Nov 2018 13:52:52 -0500
+Received: from a.mx.secunet.com ([62.96.220.36]:59226 "EHLO a.mx.secunet.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728977AbeK0SwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 13:52:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=i2bcApeV8atCnz4/Q7
-        5l4r8++FCD2b8hoWXfmw7d/fg=; b=X4vl2QUMuSk7R134sT6PcuVYTTYghdSNI2
-        Fqj7PHHEX3CIA32bRMRIke2pOStDAr8xh1pSD8wr8MyrXv7+v5z2yEL2aH7ji00M
-        DGZLqwkksY4XxjJN6z4pH7M1QM1PGDkFXELSOLq8b13KWmDgwxaQE7HSQnDnaBp5
-        JlhLe+WnU=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp7 (Coremail) with SMTP id C8CowAC3GPw8+PxboYqRCA--.739S3;
-        Tue, 27 Nov 2018 15:54:49 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] NFC: netlink: remove unexpected nfc_put_device
-Date:   Tue, 27 Nov 2018 15:54:35 +0800
-Message-Id: <1543305275-23051-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: C8CowAC3GPw8+PxboYqRCA--.739S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XryfJw1rJrW5JrWUKr17Wrg_yoWDArgEyw
-        1rtr48Wrs5X3s3JF42kr4UAF92kF42gF4xG3WxKr4rAa45Xay5ZFWkAw4fAr17uw43CFW7
-        X3WkKFWkJry7XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0oUDJUUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiVAIMclUMGLObWgAAsb
+        id S1728838AbeK0Sww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 13:52:52 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id 4A955201C6;
+        Tue, 27 Nov 2018 08:55:49 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id jVJj1LJKIjWJ; Tue, 27 Nov 2018 08:55:48 +0100 (CET)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 804DA20189;
+        Tue, 27 Nov 2018 08:55:48 +0100 (CET)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 08:55:48 +0100
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 18C3D31811F1;
+ Tue, 27 Nov 2018 08:55:48 +0100 (CET)
+Date:   Tue, 27 Nov 2018 08:55:48 +0100
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+CC:     Mathias Krause <minipli@googlemail.com>,
+        Pan Bian <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Pan Bian <bianpan2013@163.com>
+Subject: Re: [net] xfrm_user: use xfrm_state_put to free xfrm_state_alloc
+ return value
+Message-ID: <20181127075548.GK3581@gauss3.secunet.de>
+References: <1542783468-67482-1-git-send-email-bianpan2016@163.com>
+ <20181121080045.4vtozqc6eyeyis2n@gondor.apana.org.au>
+ <20181121200923.GA12460@jig.fritz.box>
+ <20181122144321.5gmyynui254qfeoq@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181122144321.5gmyynui254qfeoq@gondor.apana.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 580B7939-5C31-4F5A-B070-15A864CF67D0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The functions nfc_genl_llc_set_params and nfc_genl_llc_sdreq drops the
-reference to dev via nfc_put_device on the error branch that no local
-device is found. However, the error handling block reads dev's field and
-then put dev again. This may result in use-after-free bugs. The patch
-removes the unexpected call to nfc_put_device.
+On Thu, Nov 22, 2018 at 10:43:21PM +0800, Herbert Xu wrote:
+> On Wed, Nov 21, 2018 at 09:09:23PM +0100, Mathias Krause wrote:
+> > 
+> > -- >8 --
+> > 
+> > Subject: [PATCH] xfrm_user: fix freeing of xfrm states on acquire
+> > 
+> > Commit 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct
+> > xfrm_state") moved xfrm state objects to use their own slab cache.
+> > However, it missed to adapt xfrm_user to use this new cache when
+> > freeing xfrm states.
+> > 
+> > Fix this by introducing and make use of a new helper for freeing
+> > xfrm_state objects.
+> > 
+> > Fixes: 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct xfrm_state")
+> > Reported-by: Pan Bian <bianpan2016@163.com>
+> > Cc: <stable@vger.kernel.org> # v4.18+
+> > Signed-off-by: Mathias Krause <minipli@googlemail.com>
+> 
+> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- net/nfc/netlink.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/net/nfc/netlink.c b/net/nfc/netlink.c
-index 376181c..e1f2057 100644
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -1107,7 +1107,6 @@ static int nfc_genl_llc_set_params(struct sk_buff *skb, struct genl_info *info)
- 
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
-@@ -1167,7 +1166,6 @@ static int nfc_genl_llc_sdreq(struct sk_buff *skb, struct genl_info *info)
- 
- 	local = nfc_llcp_find_local(dev);
- 	if (!local) {
--		nfc_put_device(dev);
- 		rc = -ENODEV;
- 		goto exit;
- 	}
--- 
-2.7.4
-
-
+Applied, thanks everyone!
