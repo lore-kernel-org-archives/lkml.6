@@ -2,220 +2,195 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3247C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFA2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DACD208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:41:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h/yvZ/od"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DACD208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B2CD9208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2CD9208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeK0Mhl (ORCPT
+        id S1728034AbeK0Mix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:37:41 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39288 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeK0Mhk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 07:37:40 -0500
-Received: by mail-ot1-f68.google.com with SMTP id g27so18645429oth.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o5RnrTMKKxcHKxat3En3dRHQKj3rXNQfdF6ztUbQ3rI=;
-        b=h/yvZ/odo+70dB7p2OPAIq6ORBwji0oRNm3DabapKWkGWAQHNVlYlMcvBZr9hOoXn2
-         7ZtNzcyByoxsciqMDy/5BBSYp0dYBnix90+HhDvUsVTNFUSmjK9dtCYX3tkhzU1z/kuP
-         hmz9Gsp0VpFdmbTyRolI1CWPieDsctbbTNeYfMm37D/QGbK9EE2HHbnm3yeXOUUG37kT
-         UTinrtTR0W5QfhujxejwGyh8d74xgaMmlk1TaB/vNg5nLkhh8QIeoqPJ5ld78JH4YUB6
-         Hcy9aRjXhQmOxY8S2yCjLGZ1q70HTpTEqJhK1+Oh0SZjcKWHfUp3DfCz0TJCbfNHgnNP
-         YI6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o5RnrTMKKxcHKxat3En3dRHQKj3rXNQfdF6ztUbQ3rI=;
-        b=WLO1vg+jGK+9W0V3HwZfRHu48Q+MU+m/7X6DvKFSTLxp7DAGCkpNS9BA/2kt+kGLwl
-         ptf3jPxkf889+a5R/LD+Dq9OQjf7t7384UxtjtbFmzf6jMjmr4TbY4QXHmeWXHasWqpL
-         HD6X66oE6kdRk8llr7iccq7HQ8w+4Tb2a8Hm8YrLznTKDXmIpSjNOnxRl4GShmxRlV1B
-         vJnjdukl7qx2F3cAbI3ptzZNw5CArUQQxCqSdJ3/mbTIX2D/sCVH+zSYuy9pKgs3TJwp
-         xVUA1iqtIkssUzkMXOq02VsLg1q2O4SdU55CtR64iYxkVlDuEzC5o12RUHxpOsHbCCty
-         ZrqQ==
-X-Gm-Message-State: AA+aEWb/HQ4oiyGQmA01m2ll0pGPC3Y19TRjqAjTyyoP77Jowq0urFU0
-        /894W6b9oBVHAdW/JDEehtT6rLixRkIs5z9fKY+E7g==
-X-Google-Smtp-Source: AFSGD/VI114OAvjTxXpV72u+CNG5XLRtY7PaIBQBQmMwXtUb8jVPzdWoResMHdR460ML8ZkPPwBW1HmuoflURVhOTqY=
-X-Received: by 2002:a9d:65c8:: with SMTP id z8mr17227030oth.338.1543282890976;
- Mon, 26 Nov 2018 17:41:30 -0800 (PST)
+        Tue, 27 Nov 2018 07:38:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15162 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727456AbeK0Miw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 07:38:52 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1D8B079596269;
+        Tue, 27 Nov 2018 09:42:41 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 09:42:40 +0800
+Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+To:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sahitya Tummala <stummala@codeaurora.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
+ <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
+Date:   Tue, 27 Nov 2018 09:42:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181023235750.103146-1-brendanhiggins@google.com> <1543036529.4680.655.camel@oracle.com>
-In-Reply-To: <1543036529.4680.655.camel@oracle.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 26 Nov 2018 17:41:19 -0800
-Message-ID: <CAFd5g45oPSp870hJLDSHiMfU7Mh-EvpYcFdAaOQxecXNde5PSw@mail.gmail.com>
-Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Knut Omang <knut.omang@oracle.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
-        shuah@kernel.org, brakmo@fb.com, richard@nod.at,
-        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
-        mpe@ellerman.id.au, Tim.Bird@sony.com,
-        linux-um@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rostedt@goodmis.org, kieran.bingham@ideasonboard.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Joel Stanley <joel@jms.id.au>, linux-kselftest@vger.kernel.org,
-        khilman@baylibre.com, joe@perches.com, dan.j.williams@intel.com,
-        jdike@addtoit.com, kunit-dev@googlegroups.com,
-        hidenori.yamaji@sony.com, alan.maguire@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 9:15 PM Knut Omang <knut.omang@oracle.com> wrote:
->
-> On Tue, 2018-10-23 at 16:57 -0700, Brendan Higgins wrote:
-<snip>
->
-> Brendan, I regret you weren't at this year's testing and fuzzing workshop at
-> LPC last week so we could have continued our discussions from last year there!
+On 2018/11/27 8:30, Jaegeuk Kim wrote:
+> On 11/26, Sahitya Tummala wrote:
+>> When there is a failure in f2fs_fill_super() after/during
+>> the recovery of fsync'd nodes, it frees the current sbi and
+>> retries again. This time the mount is successful, but the files
+>> that got recovered before retry, still holds the extent tree,
+>> whose extent nodes list is corrupted since sbi and sbi->extent_list
+>> is freed up. The list_del corruption issue is observed when the
+>> file system is getting unmounted and when those recoverd files extent
+>> node is being freed up in the below context.
+>>
+>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+>> <...>
+>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+>> task: fffffff1f46f2280 task.stack: ffffff8008068000
+>> lr : __list_del_entry_valid+0x94/0xb4
+>> pc : __list_del_entry_valid+0x94/0xb4
+>> <...>
+>> Call trace:
+>> __list_del_entry_valid+0x94/0xb4
+>> __release_extent_node+0xb0/0x114
+>> __free_extent_tree+0x58/0x7c
+>> f2fs_shrink_extent_tree+0xdc/0x3b0
+>> f2fs_leave_shrinker+0x28/0x7c
+>> f2fs_put_super+0xfc/0x1e0
+>> generic_shutdown_super+0x70/0xf4
+>> kill_block_super+0x2c/0x5c
+>> kill_f2fs_super+0x44/0x50
+>> deactivate_locked_super+0x60/0x8c
+>> deactivate_super+0x68/0x74
+>> cleanup_mnt+0x40/0x78
+>> __cleanup_mnt+0x1c/0x28
+>> task_work_run+0x48/0xd0
+>> do_notify_resume+0x678/0xe98
+>> work_pending+0x8/0x14
+>>
+>> Fix this by cleaning up inodes, extent tree and nodes of those
+>> recovered files before freeing up sbi and before next retry.
+>>
+>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>> ---
+>> v2:
+>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
+>>
+>>  fs/f2fs/f2fs.h     |  1 +
+>>  fs/f2fs/shrinker.c |  2 +-
+>>  fs/f2fs/super.c    | 13 ++++++++++++-
+>>  3 files changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 1e03197..aaee63b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+>>  						struct rb_root_cached *root);
+>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
+>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
+>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+>>  void f2fs_drop_extent_tree(struct inode *inode);
+>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
+>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+>> index 9e13db9..7e3c13b 100644
+>> --- a/fs/f2fs/shrinker.c
+>> +++ b/fs/f2fs/shrinker.c
+>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+>>  	return count > 0 ? count : 0;
+>>  }
+>>  
+>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>>  {
+>>  	return atomic_read(&sbi->total_zombie_tree) +
+>>  				atomic_read(&sbi->total_ext_node);
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index af58b2c..769e7b1 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>>  	sbi->readdir_ra = 1;
+>>  }
+>>  
+>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
+>> +{
+>> +	struct super_block *sb = sbi->sb;
+>> +
+>> +	sync_filesystem(sb);
+> 
+> This writes another checkpoint, which would not be what this retrial intended.
 
-Likewise! Unfortunately, I could not make it. So it goes.
+Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
+as below:
 
->
-> I hope we can work on this for a while longer before anything gets merged.
-> Maybe it can be topic for a longer session in a future test related workshop?
+int f2fs_sync_fs(struct super_block *sb, int sync)
+{
+...
+	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+		return -EAGAIN;
+...
+}
 
-I don't see why we cannot just discuss it here as we are already
-doing. Besides, you are mostly interested in out of tree testing,
-right? I don't see how this precludes anything that you are trying to
-do with KTF.
+And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
+IIUC.
 
-I think the best way to develop something like what I am trying to do
-with KUnit is gradually, in tree, and with the active input and
-participation of the Linux kernel community.
+Thanks,
 
->
-> Links to more info about KTF:
-> ------
-> Git repo: https://github.com/oracle/ktf
-> Formatted docs: http://heim.ifi.uio.no/~knuto/ktf/
->
-> LWN mention from my presentation at LPC'17: https://lwn.net/Articles/735034/
-> Oracle blog post: https://blogs.oracle.com/linux/oracles-new-kernel-test-framework-for-linux-v2
-> OSS'18 presentation slides: https://events.linuxfoundation.org/wp-content/uploads/2017/12/Test-Driven-Kernel-Development-Knut-Omang-Oracle.pdf
->
-> In the documentation (see http://heim.ifi.uio.no/~knuto/ktf/introduction.html)
-> we present some more motivation for choices made with KTF.
-> As described in that introduction, we believe in a more pragmatic approach
-> to unit testing for the kernel than the classical "mock everything" approach,
-> except for typical heavily algorithmic components that has interfaces simple to mock,
-> such as container implementations, or components like page table traversal
-> algorithms or memory allocators, where the benefit of being able to "listen"
-> on the mock interfaces needed pays handsomely off.
+> How about adding a condition in f2fs_may_extent_tree() when adding extents?
+> Likewise, if (shrinker is not registered) return false;
+> 
+> 
+>> +	shrink_dcache_sb(sb);
+>> +	evict_inodes(sb);
+>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
+>> +}
+>> +
+>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  {
+>>  	struct f2fs_sb_info *sbi;
+>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+>>  	 */
+>>  	truncate_inode_pages_final(META_MAPPING(sbi));
+>> +	/* cleanup recovery and quota inodes */
+>> +	f2fs_cleanup_inodes(sbi);
+>>  	f2fs_unregister_sysfs(sbi);
+>>  free_root_inode:
+>>  	dput(sb->s_root);
+>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  	/* give only one another chance */
+>>  	if (retry) {
+>>  		retry = false;
+>> -		shrink_dcache_sb(sb);
+>>  		goto try_onemore;
+>>  	}
+>>  	return err;
+>> -- 
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
+> .
+> 
 
-I am not advocating that we mock everything. Using as much real code
-dependencies as possible for code under test is a pretty common
-position, and one which I adhere to myself.
-
->
-> We also used strategies to compile kernel code in user mode,
-> for parts of the code which seemed easy enough to mock interfaces for.
-> I also looked at UML back then, but dismissed it in favor of the
-> more lightweight approach of just compiling the code under test
-> directly in user mode, with a minimal partly hand crafted, flat mock layer.
-
-Is this new? When I tried your code out, I had to install the kernel
-objects into my host kernel. Indeed, your documentation references
-having to install kernel modules on the host:
-http://heim.ifi.uio.no/~knuto/ktf/installation.html
-
->
-> > KUnit is heavily inspired by JUnit, Python's unittest.mock, and
-> > Googletest/Googlemock for C++. KUnit provides facilities for defining
-> > unit test cases, grouping related test cases into test suites, providing
-> > common infrastructure for running tests, mocking, spying, and much more.
->
-> I am curious, with the intention of only running in user mode anyway,
-
-I made it possible to "port" KUnit to other architectures.
-Nevertheless, I believe all unit tests should be able to run without
-depending on hardware or some special test harness. If I see a unit
-test, I should not need to know anything about it just to run it.
-Since there is no way to have all possible hardware configurations a
-priori, all tests must be able to be run in a place that doesn't
-depend in hardware; hence they should all be runnable as just normal
-plane old user space programs with no dependency on a host kernel or
-host hardware.
-
-> why not try to build upon Googletest/Googlemock (or a similar C unit
-> test framework if C is desired), instead of "reinventing"
-> specific kernel macros for the tests?
-
-I would love to reuse Googletest/Googlemock if it were possible; I
-have used it a lot on other projects that I have worked on and think
-it is great, but I need something I can check into the Linux kernel;
-this requirement rules out Googletest/Googlemock since it depends on
-C++. There are existing frameworks for C, true, but we then need to
-check that into the Linux kernel or have the kernel depend on that; to
-me that seemed like a lot more work than just reimplementing what we
-need, which isn't much. Most of the hard parts are specific to the
-kernel anyway.
-
->
-> > A unit test is supposed to test a single unit of code in isolation,
-> > hence the name. There should be no dependencies outside the control of
-> > the test; this means no external dependencies, which makes tests orders
-> > of magnitudes faster. Likewise, since there are no external dependencies,
-> > there are no hoops to jump through to run the tests. Additionally, this
-> > makes unit tests deterministic: a failing unit test always indicates a
-> > problem. Finally, because unit tests necessarily have finer granularity,
-> > they are able to test all code paths easily solving the classic problem
-> > of difficulty in exercising error handling code.
->
-> I think it is clearly a trade-off here: Tests run in an isolated, mocked
-> environment are subject to fewer external components. But the more complex
-> the mock environment gets, the more likely it also is to be a source of errors,
-> nondeterminism and capacity limits itself, also the mock code would typically be
-> less well tested than the mocked parts of the kernel, so it is by no means any
-> silver bullet, precise testing with a real kernel on real hardware is still
-> often necessary and desired.
-
-I think you are misunderstand me. By isolation, I just mean no code
-under test should depend on anything outside of the control of the
-test environment. As I mention above, reusing real code for test
-dependencies is highly encouraged.
-
-As for running against hardware, yes, we need tests for that too, but
-that falls under integration testing; it is possible to use what I
-have here as a basis for that, but for right now, I just want to focus
-on the problem of unit testing: I think this patchset is large enough
-as it is.
-
->
-> If the code under test is fairly standalone and complex enough, building a mock
-> environment for it and test it independently may be worth it, but pragmatically,
-> if the same functionality can be relatively easily exercised within the kernel,
-> that would be my first choice.
->
-> I like to think about all sorts of testing and assertion making as adding more
-> redundancy. When errors surface you can never be sure whether it is a problem
-> with the test, the test framework, the environment, or an actual error, and
-> all places have to be fixed before the test can pass.
-
-Yep, I totally agree, but this is why I think test isolation is so
-important. If one test, or one piece of code is running that doesn't
-need to be, it makes debugging tests that much more complicated.
-
-Cheers!
