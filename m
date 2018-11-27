@@ -2,73 +2,75 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE70C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B07C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2503720645
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2503720645
+	by mail.kernel.org (Postfix) with ESMTP id F1860208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1860208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbeK1Ggn (ORCPT
+        id S1726370AbeK1Ggr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:36:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33714 "EHLO
+        Wed, 28 Nov 2018 01:36:47 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42506 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725764AbeK1Ggn (ORCPT
+        by vger.kernel.org with ESMTP id S1726321AbeK1Ggq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:36:43 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARJSnrO095764
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:46 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p17yjunje-1
+        Wed, 28 Nov 2018 01:36:46 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARJSpj5078718
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:48 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p18fuj6q4-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:46 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:37:47 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Tue, 27 Nov 2018 19:37:45 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 27 Nov 2018 19:37:47 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 27 Nov 2018 19:37:42 -0000
+        Tue, 27 Nov 2018 19:37:43 -0000
 Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARJbf9N20381712
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARJbhfs17432596
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Nov 2018 19:37:41 GMT
+        Tue, 27 Nov 2018 19:37:43 GMT
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B91F112065;
-        Tue, 27 Nov 2018 19:37:41 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EBA99112062;
+        Tue, 27 Nov 2018 19:37:42 +0000 (GMT)
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 724A4112061;
-        Tue, 27 Nov 2018 19:37:40 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 4B060112065;
+        Tue, 27 Nov 2018 19:37:42 +0000 (GMT)
 Received: from oc6728276242.ibm.com (unknown [9.85.193.218])
         by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Nov 2018 19:37:40 +0000 (GMT)
+        Tue, 27 Nov 2018 19:37:42 +0000 (GMT)
 From:   Eddie James <eajames@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
         linux-aspeed@lists.ozlabs.org, hverkuil@xs4all.nl,
         robh+dt@kernel.org, mchehab@kernel.org,
         linux-media@vger.kernel.org, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v6 0/2] media: platform: Add Aspeed Video Engine driver
-Date:   Tue, 27 Nov 2018 13:37:35 -0600
+Subject: [PATCH v6 1/2] dt-bindings: media: Add Aspeed Video Engine binding documentation
+Date:   Tue, 27 Nov 2018 13:37:36 -0600
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+References: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18112719-0072-0000-0000-000003D00983
+x-cbid: 18112719-0060-0000-0000-000002DA4BDE
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010132; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01123629; UDB=6.00582089; IPR=6.00903758;
- MB=3.00024357; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 19:37:44
+ PH=3.00000004; SC=3.00000270; SDB=6.01123629; UDB=6.00583318; IPR=6.00903758;
+ MB=3.00024357; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 19:37:46
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112719-0073-0000-0000-00004A3FE607
-Message-Id: <1543347457-59224-1-git-send-email-eajames@linux.ibm.com>
+x-cbparentid: 18112719-0061-0000-0000-000047573257
+Message-Id: <1543347457-59224-2-git-send-email-eajames@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_16:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -81,167 +83,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-can capture and compress video data from digital or analog sources. With
-the Aspeed chip acting as a service processor, the Video Engine can
-capture the host processor graphics output.
+Document the bindings.
 
-This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
-interface by way of videobuf2. Each frame, the driver triggers the hardware to
-capture the host graphics output and compress it to JPEG format.
-
-v4l2-compliance SHA: ac9596560fedb3cd29148ef90b03778d76f1cd9a, 32 bits
-
-Compliance test for device /dev/video0:
-
-Driver Info:
-	Driver name      : aspeed-video
-	Card type        : Aspeed Video Engine
-	Bus info         : platform:aspeed-video
-	Driver version   : 4.18.19
-	Capabilities     : 0x85200001
-		Video Capture
-		Read/Write
-		Streaming
-		Extended Pix Format
-		Device Capabilities
-	Device Caps      : 0x05200001
-		Video Capture
-		Read/Write
-		Streaming
-		Extended Pix Format
-
-Required ioctls:
-	test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-	test second /dev/video0 open: OK
-	test VIDIOC_QUERYCAP: OK
-	test VIDIOC_G/S_PRIORITY: OK
-	test for unlimited opens: OK
-
-Debug ioctls:
-	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-	test VIDIOC_LOG_STATUS: OK (Not Supported)
-
-Input ioctls:
-	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-	test VIDIOC_ENUMAUDIO: OK (Not Supported)
-	test VIDIOC_G/S/ENUMINPUT: OK
-	test VIDIOC_G/S_AUDIO: OK (Not Supported)
-	Inputs: 1 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-	Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
-	test VIDIOC_DV_TIMINGS_CAP: OK
-	test VIDIOC_G/S_EDID: OK (Not Supported)
-
-Control ioctls (Input 0):
-	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-	test VIDIOC_QUERYCTRL: OK
-	test VIDIOC_G/S_CTRL: OK
-	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-		fail: v4l2-test-controls.cpp(831): failed to find event for control 'Chroma Subsampling'
-	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
-	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-	Standard Controls: 3 Private Controls: 0
-
-Format ioctls (Input 0):
-	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-	test VIDIOC_G/S_PARM: OK
-	test VIDIOC_G_FBUF: OK (Not Supported)
-	test VIDIOC_G_FMT: OK
-	test VIDIOC_TRY_FMT: OK
-	test VIDIOC_S_FMT: OK
-	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-	test Cropping: OK (Not Supported)
-	test Composing: OK (Not Supported)
-	test Scaling: OK (Not Supported)
-
-Codec ioctls (Input 0):
-	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-Buffer ioctls (Input 0):
-	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-	test VIDIOC_EXPBUF: OK
-	test Requests: OK (Not Supported)
-
-Test input 0:
-
-Streaming ioctls:
-	test read/write: OK
-	test blocking wait: OK
-	test MMAP: OK                                     
-	test USERPTR: OK (Not Supported)
-	test DMABUF: Cannot test, specify --expbuf-device
-
-Total: 48, Succeeded: 47, Failed: 1, Warnings: 0
-
-Changes since v5:
- - Rework resolution change and v4l2 timings functions again with active and
-   detected timings.
- - Renamed a few things.
- - Fixed polarities in the timings.
-
-Changes since v4:
- - Set real min and max resolution in enum_dv_timings
- - Add check for vb2_is_busy before settings the timings
- - Set max frame rate to the actual max rather than max + 1
- - Correct the input status to 0.
- - Rework resolution change to only set the relevant h/w regs during startup or
-   when set_timings is called.
-
-Changes since v3:
- - Switch update reg function to use u32 clear rather than unsigned long mask
- - Add timing information from host VGA signal
- - Fix binding documentation mispelling
- - Fix upper case hex values
- - Add wait_prepare and wait_finish
- - Set buffer state to queued (rather than error) if streaming fails to start
- - Switch engine busy print statement to error
- - Removed a couple unecessary type assignments in v4l2 ioctls
- - Added query_dv_timings, fixed get_dv_timings
- - Corrected source change event to fire if and only if size actually changes
- - Locked open and release
-
-Changes since v2:
- - Switch to streaming interface. This involved a lot of changes.
- - Rework memory allocation due to using videobuf2 buffers, but also only
-   allocate the necessary size of source buffer rather than the max size
-
-Changes since v1:
- - Removed le32_to_cpu calls for JPEG header data
- - Reworked v4l2 ioctls to be compliant.
- - Added JPEG controls
- - Updated devicetree docs according to Rob's suggestions.
- - Added myself to MAINTAINERS
-
-Eddie James (2):
-  dt-bindings: media: Add Aspeed Video Engine binding documentation
-  media: platform: Add Aspeed Video Engine driver
-
- .../devicetree/bindings/media/aspeed-video.txt     |   26 +
- MAINTAINERS                                        |    8 +
- drivers/media/platform/Kconfig                     |    9 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/aspeed-video.c              | 1719 ++++++++++++++++++++
- 5 files changed, 1763 insertions(+)
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/media/aspeed-video.txt     | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
- create mode 100644 drivers/media/platform/aspeed-video.c
 
+diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+new file mode 100644
+index 0000000..78b464a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+@@ -0,0 +1,26 @@
++* Device tree bindings for Aspeed Video Engine
++
++The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs can
++capture and compress video data from digital or analog sources.
++
++Required properties:
++ - compatible:		"aspeed,ast2400-video-engine" or
++			"aspeed,ast2500-video-engine"
++ - reg:			contains the offset and length of the VE memory region
++ - clocks:		clock specifiers for the syscon clocks associated with
++			the VE (ordering must match the clock-names property)
++ - clock-names:		"vclk" and "eclk"
++ - resets:		reset specifier for the syscon reset associated with
++			the VE
++ - interrupts:		the interrupt associated with the VE on this platform
++
++Example:
++
++video-engine@1e700000 {
++    compatible = "aspeed,ast2500-video-engine";
++    reg = <0x1e700000 0x20000>;
++    clocks = <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon ASPEED_CLK_GATE_ECLK>;
++    clock-names = "vclk", "eclk";
++    resets = <&syscon ASPEED_RESET_VIDEO>;
++    interrupts = <7>;
++};
 -- 
 1.8.3.1
 
