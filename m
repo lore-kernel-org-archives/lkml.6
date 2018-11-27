@@ -2,277 +2,126 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908D9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D597DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47EF92145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F0C32145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:57:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aR4pRpym"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47EF92145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="iNugaPRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0C32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeK1Dzj (ORCPT
+        id S1731907AbeK1Dzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:55:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42612 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731784AbeK1Dy7 (ORCPT
+        Tue, 27 Nov 2018 22:55:48 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33463 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731768AbeK1Dyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:54:59 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so23437657wrx.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:56:26 -0800 (PST)
+        Tue, 27 Nov 2018 22:54:53 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c206so19939778oib.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:56:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zstYfFUM8JCpnxw1Tbdi2+5o2Ofx4Ch1nUlOE/Rv2dg=;
-        b=aR4pRpymE+CP9XTk9XMcEkb4x8W0Sjx8bq24P8tbJj9npfknYJBXYh+ERBr61KUf75
-         Q/qLV5uDTb/q0AezDQJJHyH796cuqqbtPY5/dAwSDXQ35uaHW0DXZs2NHdyHYnBDdIJA
-         NLwl1lcyglLSnayHUj/Nt/+G5ly+BlUblicnl2Ho9dyrLl1lwN+9IpEvq1qxG1RXo3+z
-         6QMNRROEeuEkhzU+Pbp5vhT9RM5U4Gr2rgfpLUZh+e5nckbcsgQaWeLJgp6ftpu8lgTR
-         DVR/JZKcQkEp6rOpkks2FA/pOkD3p1lnaiG4hZ+9mKcowCDGVf7hyv7pQo1Gx0RXnlLt
-         MiuA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+TUKvNyWHtP7n3h7wLLhST1c5AhhjeLrIUlsLCYZqe8=;
+        b=iNugaPRR31iHt+uG/Z+fg3BS3fX3BqNOPO43l0UN3QbmyzZMv4DG36GDgycK6JGnXw
+         6iW/SWuZxfuZDq3n2+IvTNKyAePrakGXcepVLH5DVufkI8tInT4pfVCfi7JHu8x+sHrl
+         ejyvpjC9WvmqPbTvCmSm8LlOreeoP99dcObRetlsWQwiG5v3K+PXo3D/nZz3Ch1M3uW1
+         J+YjcLhQ+ut16nifn7GP7unzUmIATqK8SXMhvpGCbYLiScA/zHZOafr3mVdAr+lVCRZj
+         rby+Q7SncGyGSBwD+twKoqrDrvvZPdDnCG7S4ZfWK2Ft5assAm7nPVUOjiE720txehd9
+         LHOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zstYfFUM8JCpnxw1Tbdi2+5o2Ofx4Ch1nUlOE/Rv2dg=;
-        b=bxVsyva1CZKC7vLNLxhOnvzHsnMFV27BPZOAWSJW0jUwrkZWs8rWpbB3lCVQMsxqnZ
-         AnpXQ1A1/0eQd7+KUFlq3mtTyXWBm1BYH2hkVSGtjbWU0OSnn9BguriMnprkV4EtZaT8
-         3nJvaspTpXIFZKxlp3fafn8zoWqqG7XVX2Skk2fSI6iVI3P30Wz94LWWlGVvvL/e8uJ7
-         dgCP403/Vg7sTDrH6P9DqmqXHiJij3b0nd98SxpNVtk5z1uLOirBB4WKnKjZ/c6eJMpY
-         jLPgb2AnMk7MyzQvC2Oq9HftLUWOWA0TwECHcGGGLeecqWsSy4wZmz3COwyOjjimVewZ
-         VKNw==
-X-Gm-Message-State: AA+aEWYcR5l4zatYOxYXW+FccQIMa0IuWT7M2dAWa6Tn5gbEHC70nFUl
-        RyyrWbCZGFsXR4okpokoiM4rsA==
-X-Google-Smtp-Source: AFSGD/Xbrc3BeOjO5BB99nM1cCXcMcyl7v/lfxPXx4Msnm6Carr2MM5IwjmALehkzEUGkVbadaIBnw==
-X-Received: by 2002:a05:6000:1287:: with SMTP id f7mr29808746wrx.302.1543337785909;
-        Tue, 27 Nov 2018 08:56:25 -0800 (PST)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id k73sm6383099wmd.36.2018.11.27.08.56.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 08:56:24 -0800 (PST)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org
-Cc:     Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v12 20/25] kasan, arm64: add brk handler for inline instrumentation
-Date:   Tue, 27 Nov 2018 17:55:38 +0100
-Message-Id: <e825441eda1dbbbb7f583f826a66c94e6f88316a.1543337629.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-In-Reply-To: <cover.1543337629.git.andreyknvl@google.com>
-References: <cover.1543337629.git.andreyknvl@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+TUKvNyWHtP7n3h7wLLhST1c5AhhjeLrIUlsLCYZqe8=;
+        b=t90PZ0BhAe+sbpTfbD5t98X3m8tIWnB0xqlULjtHOHg8tneOfIUbnBcOD4xjGEFJkD
+         icg5AP8JK4Ac/2ZCnt1zjD4V4z4cWdGaZB2JYr+g1Vikj71mNMlRlVpGzaiYWyaAqen8
+         CHunkaQrtpXOhI7M+STEaxLyWs5r/cDQIWVXRIppLRplKfAWWxRmsxBIgs3nzqG7emLc
+         kYUEXCFukTSUEXp8QjrTcz7YVUU2DH4qVAKzJDlHIqniOSEzvHHXbPc/FqQVMuDMBR3J
+         4Mvr4mynKD0Djnsmq3KVaoVvtTFLUPfI9C5Bh67owamh0zDWaF8ISHpBCiY1pbEVB6BM
+         qJfg==
+X-Gm-Message-State: AGRZ1gLaGCAJxXiuq/HvteU/lxqtzJpYhMvDuL1M4sxf+K3B3XapdjFW
+        tpU7DXzmQgHzmr3BjaQdhn+V+HrZsMZgNyDTazRaFA==
+X-Google-Smtp-Source: AJdET5dMDF8d/U8yTBm1sFW8FaTew4YZ9l61WYCemifGuHHKCEkBNBfpUryxZcYcjk9BhLOTCr6mXAZEgOB9Lisswf0=
+X-Received: by 2002:aca:d944:: with SMTP id q65-v6mr19304787oig.0.1543337781677;
+ Tue, 27 Nov 2018 08:56:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181114224902.12082-1-keith.busch@intel.com> <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
+ <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com> <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
+ <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com> <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
+ <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com> <ac942498-8966-6a9b-0e55-c79ae167c679@arm.com>
+ <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com> <CAPcyv4jnnnXi9Fqaf-d7AdnKrTMDCWr-e9tAx+G6nphrEPYm=w@mail.gmail.com>
+ <b9962dfa-924f-77f7-a40f-407dd20e9082@intel.com> <CAPcyv4hVFMvut9+Rq7G41yyKzV072U33YEeHNh160VBr3QW-nw@mail.gmail.com>
+ <325d0e69-053a-ae9c-eede-7cdf28b1dbd6@arm.com>
+In-Reply-To: <325d0e69-053a-ae9c-eede-7cdf28b1dbd6@arm.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 27 Nov 2018 08:56:09 -0800
+Message-ID: <CAPcyv4iA+yA_OZMUSbJTV=c9=QsRAcLjzLK94uuVsMTaPu6eTg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
+To:     anshuman.khandual@arm.com
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tag-based KASAN inline instrumentation mode (which embeds checks of shadow
-memory into the generated code, instead of inserting a callback) generates
-a brk instruction when a tag mismatch is detected.
+On Tue, Nov 27, 2018 at 2:15 AM Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 11/26/2018 11:38 PM, Dan Williams wrote:
+> > On Mon, Nov 26, 2018 at 8:42 AM Dave Hansen <dave.hansen@intel.com> wrote:
+> >>
+> >> On 11/23/18 1:13 PM, Dan Williams wrote:
+> >>>> A new system call makes total sense to me.  I have the same concern
+> >>>> about the completeness of what's exposed in sysfs, I just don't see a
+> >>>> _route_ to completeness with sysfs itself.  Thus, the minimalist
+> >>>> approach as a first step.
+> >>> Outside of platform-firmware-id to Linux-numa-node-id what other
+> >>> userspace API infrastructure does the kernel need to provide? It seems
+> >>> userspace enumeration of memory attributes is fully enabled once the
+> >>> firmware-to-Linux identification is established.
+> >>
+> >> It would be nice not to have each app need to know about each specific
+> >> platform's firmware.
+> >
+> > The app wouldn't need to know if it uses a common library. Whether the
+> > library calls into the kernel or not is an implementation detail. If
+> > it is information that only the app cares about and the kernel does
+> > not consume, why have a syscall?
+>
+> If we just care about platform-firmware-id <--> Linux-numa-node-id mapping
+> and fetching memory attribute from the platform (and hiding implementation
+> details in a library) then the following interface should be sufficient.
+>
+> /sys/devices/system/node/nodeX/platform_id
+>
+> But as the series proposes (and rightly so) kernel needs to start providing
+> ABI interfaces for memory attributes instead of hiding them in libraries.
 
-This commit adds a tag-based KASAN specific brk handler, that decodes the
-immediate value passed to the brk instructions (to extract information
-about the memory access that triggered the mismatch), reads the register
-values (x0 contains the guilty address) and reports the bug.
+Yes, I can get on board with sysfs providing a subset of the
+performance description for administrators to discover the common case
+via scripting and leave the exhaustive attribute description to a
+separate interface. I was pushing back on the notion that sysfs must
+be that exhaustive interface... we're making progress.
 
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- arch/arm64/include/asm/brk-imm.h |  2 +
- arch/arm64/kernel/traps.c        | 68 +++++++++++++++++++++++++++++++-
- include/linux/kasan.h            |  3 ++
- 3 files changed, 71 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/include/asm/brk-imm.h b/arch/arm64/include/asm/brk-imm.h
-index ed693c5bcec0..2945fe6cd863 100644
---- a/arch/arm64/include/asm/brk-imm.h
-+++ b/arch/arm64/include/asm/brk-imm.h
-@@ -16,10 +16,12 @@
-  * 0x400: for dynamic BRK instruction
-  * 0x401: for compile time BRK instruction
-  * 0x800: kernel-mode BUG() and WARN() traps
-+ * 0x9xx: tag-based KASAN trap (allowed values 0x900 - 0x9ff)
-  */
- #define FAULT_BRK_IMM			0x100
- #define KGDB_DYN_DBG_BRK_IMM		0x400
- #define KGDB_COMPILED_DBG_BRK_IMM	0x401
- #define BUG_BRK_IMM			0x800
-+#define KASAN_BRK_IMM			0x900
- 
- #endif
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 5f4d9acb32f5..04bdc53716ef 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -35,6 +35,7 @@
- #include <linux/sizes.h>
- #include <linux/syscalls.h>
- #include <linux/mm_types.h>
-+#include <linux/kasan.h>
- 
- #include <asm/atomic.h>
- #include <asm/bug.h>
-@@ -284,10 +285,14 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
- 	}
- }
- 
--void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
-+void __arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
- {
- 	regs->pc += size;
-+}
- 
-+void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
-+{
-+	__arm64_skip_faulting_instruction(regs, size);
- 	/*
- 	 * If we were single stepping, we want to get the step exception after
- 	 * we return from the trap.
-@@ -959,7 +964,7 @@ static int bug_handler(struct pt_regs *regs, unsigned int esr)
- 	}
- 
- 	/* If thread survives, skip over the BUG instruction and continue: */
--	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
- 	return DBG_HOOK_HANDLED;
- }
- 
-@@ -969,6 +974,58 @@ static struct break_hook bug_break_hook = {
- 	.fn = bug_handler,
- };
- 
-+#ifdef CONFIG_KASAN_SW_TAGS
-+
-+#define KASAN_ESR_RECOVER	0x20
-+#define KASAN_ESR_WRITE	0x10
-+#define KASAN_ESR_SIZE_MASK	0x0f
-+#define KASAN_ESR_SIZE(esr)	(1 << ((esr) & KASAN_ESR_SIZE_MASK))
-+
-+static int kasan_handler(struct pt_regs *regs, unsigned int esr)
-+{
-+	bool recover = esr & KASAN_ESR_RECOVER;
-+	bool write = esr & KASAN_ESR_WRITE;
-+	size_t size = KASAN_ESR_SIZE(esr);
-+	u64 addr = regs->regs[0];
-+	u64 pc = regs->pc;
-+
-+	if (user_mode(regs))
-+		return DBG_HOOK_ERROR;
-+
-+	kasan_report(addr, size, write, pc);
-+
-+	/*
-+	 * The instrumentation allows to control whether we can proceed after
-+	 * a crash was detected. This is done by passing the -recover flag to
-+	 * the compiler. Disabling recovery allows to generate more compact
-+	 * code.
-+	 *
-+	 * Unfortunately disabling recovery doesn't work for the kernel right
-+	 * now. KASAN reporting is disabled in some contexts (for example when
-+	 * the allocator accesses slab object metadata; this is controlled by
-+	 * current->kasan_depth). All these accesses are detected by the tool,
-+	 * even though the reports for them are not printed.
-+	 *
-+	 * This is something that might be fixed at some point in the future.
-+	 */
-+	if (!recover)
-+		die("Oops - KASAN", regs, 0);
-+
-+	/* If thread survives, skip over the brk instruction and continue: */
-+	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+	return DBG_HOOK_HANDLED;
-+}
-+
-+#define KASAN_ESR_VAL (0xf2000000 | KASAN_BRK_IMM)
-+#define KASAN_ESR_MASK 0xffffff00
-+
-+static struct break_hook kasan_break_hook = {
-+	.esr_val = KASAN_ESR_VAL,
-+	.esr_mask = KASAN_ESR_MASK,
-+	.fn = kasan_handler,
-+};
-+#endif
-+
- /*
-  * Initial handler for AArch64 BRK exceptions
-  * This handler only used until debug_traps_init().
-@@ -976,6 +1033,10 @@ static struct break_hook bug_break_hook = {
- int __init early_brk64(unsigned long addr, unsigned int esr,
- 		struct pt_regs *regs)
- {
-+#ifdef CONFIG_KASAN_SW_TAGS
-+	if ((esr & KASAN_ESR_MASK) == KASAN_ESR_VAL)
-+		return kasan_handler(regs, esr) != DBG_HOOK_HANDLED;
-+#endif
- 	return bug_handler(regs, esr) != DBG_HOOK_HANDLED;
- }
- 
-@@ -983,4 +1044,7 @@ int __init early_brk64(unsigned long addr, unsigned int esr,
- void __init trap_init(void)
- {
- 	register_break_hook(&bug_break_hook);
-+#ifdef CONFIG_KASAN_SW_TAGS
-+	register_break_hook(&kasan_break_hook);
-+#endif
- }
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index a477ce2abdc9..8da7b7a4397a 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -173,6 +173,9 @@ void kasan_init_tags(void);
- 
- void *kasan_reset_tag(const void *addr);
- 
-+void kasan_report(unsigned long addr, size_t size,
-+		bool is_write, unsigned long ip);
-+
- #else /* CONFIG_KASAN_SW_TAGS */
- 
- static inline void kasan_init_tags(void) { }
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
-
+I still think we need /sys/devices/system/node/nodeX/platform_id to
+enable higher order platform enumeration tooling, but that need not be
+the end of the kernel interface description.
