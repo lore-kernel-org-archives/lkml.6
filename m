@@ -2,139 +2,78 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF25C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F51BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439CB208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:20:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439CB208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C2965208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:22:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IX+HIAIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2965208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbeK1CSU (ORCPT
+        id S1729582AbeK1CU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:18:20 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:35771 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbeK1CST (ORCPT
+        Tue, 27 Nov 2018 21:20:29 -0500
+Received: from mail-lf1-f47.google.com ([209.85.167.47]:42729 "EHLO
+        mail-lf1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbeK1CU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:18:19 -0500
-Received: by mail-io1-f71.google.com with SMTP id f24so4646092ioo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:20:04 -0800 (PST)
+        Tue, 27 Nov 2018 21:20:29 -0500
+Received: by mail-lf1-f47.google.com with SMTP id l10so16726525lfh.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 07:22:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=D0TC7u4pmpmpc+9j8m0s5YIQH8WK1Up0qkNyaGtjkf4=;
+        b=IX+HIAIU1wZxIifrfjYQFXOz3ZZinW1MymmZ767KiRUhYAD1WWQPYk31+YmrrnxMVy
+         uOLmy2cZcoAHh61Ilguanj265NKzKzerBZaMAA00xy3QP34WIR5wyLCJHnSrQGHsMz6o
+         3SzDOGPfSk93Ii/pKkscvnErLcGzQWyirrnW8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=e8FgVxOsUSeruPUeG4qV+ObMqGV7Pv9UFHGczhF15BU=;
-        b=F4PAUME3BxDfMojhUWxuBpy2Un1WuJXWD/x2YIWJDqV++o+AQscbfkBeV72noHceat
-         8IU3pZEwZLBUcdSYziQ3wQkoSCt2AorbcMz08YuIop7tiHblrgkVvWgZDflnkxHg5CZ3
-         quLnNbm9q+XnvSRNhSJFeuKBDj4cqGLLLLJqUDQFWL7BcVI0f25WA+BfovZo74+v2B3i
-         DTyKxhWXS8XMIg8xrFhOs4pp/dq73MM1ivuzgxj+DvzaTvIHdAfd1JIMI19zZsfL8NWM
-         2prTScY8mqFW60uxiu5sK88E7TYawW8eUW5t/wphTgxmRMeW0MAf3fhseaeKKoNKemcI
-         153Q==
-X-Gm-Message-State: AA+aEWYTPkfdXuaimblihfMj6AYRzVVCUFzvupSBgiHUX76ZRLEwjEPT
-        848d5AkwcojU9s2utVr4b31rvbfTdHY2T0ux+gunzojT+Gdo
-X-Google-Smtp-Source: AFSGD/WAyTRnE9L4GGdS+1VKqXCj0LHn2F3kTWQ3b1OL2ClUNvoXxCJQvhgza7vecRNC9vpEsv3J/aRI9u/jBom9x7toAdNPAkFR
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=D0TC7u4pmpmpc+9j8m0s5YIQH8WK1Up0qkNyaGtjkf4=;
+        b=sSzicOyMgK8ixY3TsmcGl5ga/Cbcs5kF30UlD1JyBjePTBwC6ZAupD/upK2cY1WLPg
+         /jSntEJ2qdtPfxHxKp66q+AGeLYZuE20Q7oFZvIrtIDEzCbn4ZHmO6Dg7XEZzOoiqkCb
+         1xDfPNUipbbmUdGI9D9RN1OFfF4DAf4E2V9HXcHprjag9UhirnOlX1Zz/+F5hkzCWwTc
+         Ls5Gqav5W0cHLkgcYCuSHBT915SCuVQoN9aHg+X4RPt78Vy8OiAFj+FrbVnKOYysVxXT
+         VvTeajS6ICdIYIp5m0LjzLVl5f7TkQSHjci05sbRrxhoPUxtiV63Z4lff2PBg+hvP1IH
+         LG7A==
+X-Gm-Message-State: AGRZ1gK1At+3HmyxJs99ZC93pRU5ZXN3k5UA6AAD5tV8tPrao9bxMV8B
+        3OZq5CgIMx5CEpfftCj2HXr+sn8FAio6e7Lq1nbM1N1xvAw=
+X-Google-Smtp-Source: AJdET5dPvGc5zODgTtJs5UrrLHVD2WhJ8MWWsD60wQDI5p+4hYvT9ZQLWc0YEE/q8NJBuzbgxvusCtjGt9a6OBPu6EM=
+X-Received: by 2002:a19:1019:: with SMTP id f25mr18619464lfi.54.1543332132499;
+ Tue, 27 Nov 2018 07:22:12 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:7515:: with SMTP id y21mr687634itc.38.1543332004160;
- Tue, 27 Nov 2018 07:20:04 -0800 (PST)
-Date:   Tue, 27 Nov 2018 07:20:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e10044057ba6fbcf@google.com>
-Subject: KASAN: out-of-bounds in update_curr
-From:   syzbot <syzbot+d3bf6aae26942dc9c8dc@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 27 Nov 2018 20:52:00 +0530
+Message-ID: <CA+G9fYvgDP2+D2mgqxJJJYm1DTgxbByxjKuVGBFOa-m_fT7Q-Q@mail.gmail.com>
+Subject: File not found: /sys/kernel/debug/tracing/events/syscalls
+To:     open list <linux-kernel@vger.kernel.org>
+Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        rostedt@goodmis.org, mingo@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgNGJmZmM2NjlkNjI0IG5ldDogcmVtb3ZlIHVuc2FmZSBza2JfaW5zZXJ0KCkNCmdp
-dCB0cmVlOiAgICAgICBuZXQtbmV4dA0KY29uc29sZSBvdXRwdXQ6IGh0dHBzOi8vc3l6a2FsbGVy
-LmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTEzODVkYjgzNDAwMDAwDQprZXJuZWwgY29uZmlnOiAg
-aHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC8uY29uZmlnP3g9YzM2YTcyYWYyMTIzZTc4
-YQ0KZGFzaGJvYXJkIGxpbms6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRp
-ZD1kM2JmNmFhZTI2OTQyZGM5YzhkYw0KY29tcGlsZXI6ICAgICAgIGdjYyAoR0NDKSA4LjAuMSAy
-MDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0Kc3l6IHJlcHJvOiAgICAgIGh0dHBzOi8vc3l6a2FsbGVy
-LmFwcHNwb3QuY29tL3gvcmVwcm8uc3l6P3g9MTA3YjQyNmQ0MDAwMDANCkMgcmVwcm9kdWNlcjog
-ICBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLmM/eD0xMWIyZTUzMzQwMDAw
-MA0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93
-aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KUmVwb3J0ZWQtYnk6IHN5emJvdCtkM2JmNmFhZTI2OTQy
-ZGM5YzhkY0BzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQoNCkRFQlVHX0xPQ0tTX1dBUk5fT04o
-IWhsb2NrLT5uZXN0X2xvY2spDQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0N
-CkJhZCBvciBtaXNzaW5nIHVzZXJjb3B5IHdoaXRlbGlzdD8gS2VybmVsIG1lbW9yeSBvdmVyd3Jp
-dGUgYXR0ZW1wdCBkZXRlY3RlZCAgDQp0byBTTEFCIG9iamVjdCAndGFza19zdHJ1Y3QnIChvZmZz
-ZXQgMTQzMiwgc2l6ZSAyKSENCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0t
-LS0tLS0tLS0tDQpCVUc6IEtBU0FOOiBvdXQtb2YtYm91bmRzIGluIGNhbGNfZGVsdGFfZmFpciBr
-ZXJuZWwvc2NoZWQvZmFpci5jOjYzMCAgDQpbaW5saW5lXQ0KQlVHOiBLQVNBTjogb3V0LW9mLWJv
-dW5kcyBpbiB1cGRhdGVfY3VycisweDljMC8weGJkMCBrZXJuZWwvc2NoZWQvZmFpci5jOjgyNA0K
-a2VybmVsIEJVRyBhdCBtbS9zbGFiLmM6NDQyNSENClJlYWQgb2Ygc2l6ZSA4IGF0IGFkZHIgZmZm
-Zjg4ODFkOWI0YTRjMCBieSB0YXNrIGtzb2Z0aXJxZC8wLzkNCmludmFsaWQgb3Bjb2RlOiAwMDAw
-IFsjMV0gUFJFRU1QVCBTTVAgS0FTQU4NCg0KQ1BVOiAxIFBJRDogMzggQ29tbTog77+977+977+9
-2YHvv73vv73vv71kC++/ve+/ve+/ve+/ve+/ve+/vSBOb3QgdGFpbnRlZCA0LjIwLjAtcmMzKyAj
-MzE0DQpDUFU6IDAgUElEOiA5IENvbW06IGtzb2Z0aXJxZC8wIE5vdCB0YWludGVkIDQuMjAuMC1y
-YzMrICMzMTQNCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29v
-Z2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQpIYXJkd2FyZSBu
-YW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwg
-QklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAwMDEwOl9fY2hlY2tfaGVhcF9vYmplY3Qr
-MHhhNy8weGI1IG1tL3NsYWIuYzo0NDUwDQpDYWxsIFRyYWNlOg0KQ29kZTogNDggYzcgYzcgNWQg
-ZGYgMTQgODkgZTggOTcgZTMgMGEgMDAgNWQgYzMgNDEgOGIgOTEgMDQgMDEgMDAgMDAgNDggMjkg
-IA0KYzcgNDggMzkgZDcgNzcgYmUgNDggMDEgZDAgNDggMjkgYzggNDggMzkgZjAgNzIgYjMgNWQg
-YzMgPDBmPiAwYiA0OCBjNyBjNyAgDQo1ZCBkZiAxNCA4OSBlOCBmZCBlYiAwYSAwMCA0NCA4OSBl
-OSA0OCBjNyBjNyAxOCBlMA0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo3NyBbaW5s
-aW5lXQ0KICBkdW1wX3N0YWNrKzB4MjQ0LzB4MzlkIGxpYi9kdW1wX3N0YWNrLmM6MTEzDQpSU1A6
-IDAwMTg6ZmZmZjg4ODFkOWI0OWVhOCBFRkxBR1M6IDAwMDEwMDkzDQpSQVg6IDAwMDAwMDAwMDAw
-YTU3ZWIgUkJYOiAxZmZmZjExMDNiMzY5M2RjIFJDWDogMDAwMDAwMDAwMDAwMDAwYw0KUkRYOiBm
-ZmZmODg4MWQ5YjRhNDQwIFJTSTogMDAwMDAwMDAwMDAwMDAwMSBSREk6IGZmZmY4ODgxZDliNGEw
-ODgNClJCUDogZmZmZjg4ODFkOWI0OWVhOCBSMDg6IGZmZmY4ODgxZDliNGE0NDAgUjA5OiBmZmZm
-ODg4MWRhOTcwMTgwDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZC43KzB4OS8weDFm
-ZiBtbS9rYXNhbi9yZXBvcnQuYzoyNTYNClIxMDogMDAwMDAwMDA0YWZkNjhlZiBSMTE6IDAwMDAw
-MDAwMDAwMDAwMDAgUjEyOiBmZmZmODg4MWQ5YjRhMDg4DQogIGthc2FuX3JlcG9ydF9lcnJvciBt
-bS9rYXNhbi9yZXBvcnQuYzozNTQgW2lubGluZV0NCiAga2FzYW5fcmVwb3J0LmNvbGQuOCsweDI0
-Mi8weDMwOSBtbS9rYXNhbi9yZXBvcnQuYzo0MTINClIxMzogMDAwMDAwMDAwMDAwMDAwMSBSMTQ6
-IGZmZmZlYTAwMDc2NmQyODAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxDQpGUzogIDAwMDAwMDAwMDAw
-MDAwMDAoMDAwMCkgR1M6ZmZmZjg4ODFkYWYwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAw
-MDAwDQogIF9fYXNhbl9yZXBvcnRfbG9hZDhfbm9hYm9ydCsweDE0LzB4MjAgbW0va2FzYW4vcmVw
-b3J0LmM6NDMzDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
-MDMzDQogIGNhbGNfZGVsdGFfZmFpciBrZXJuZWwvc2NoZWQvZmFpci5jOjYzMCBbaW5saW5lXQ0K
-ICB1cGRhdGVfY3VycisweDljMC8weGJkMCBrZXJuZWwvc2NoZWQvZmFpci5jOjgyNA0KQ1IyOiAw
-MDAwMDAwY2ZmYzVmYTE4IENSMzogMDAwMDAwMDFiZmFkZjAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2
-ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAw
-MDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYw
-IERSNzogMDAwMDAwMDAwMDAwMDQwMA0KQ2FsbCBUcmFjZToNCk1vZHVsZXMgbGlua2VkIGluOg0K
-LS0tWyBlbmQgdHJhY2UgMDRhZjExNmZmNDA1ZWZlZSBdLS0tDQpSSVA6IDAwMTA6X19jaGVja19o
-ZWFwX29iamVjdCsweGE3LzB4YjUgbW0vc2xhYi5jOjQ0NTANCkNvZGU6IDQ4IGM3IGM3IDVkIGRm
-IDE0IDg5IGU4IDk3IGUzIDBhIDAwIDVkIGMzIDQxIDhiIDkxIDA0IDAxIDAwIDAwIDQ4IDI5ICAN
-CmM3IDQ4IDM5IGQ3IDc3IGJlIDQ4IDAxIGQwIDQ4IDI5IGM4IDQ4IDM5IGYwIDcyIGIzIDVkIGMz
-IDwwZj4gMGIgNDggYzcgYzcgIA0KNWQgZGYgMTQgODkgZTggZmQgZWIgMGEgMDAgNDQgODkgZTkg
-NDggYzcgYzcgMTggZTANClJTUDogMDAxODpmZmZmODg4MWQ5YjQ5ZWE4IEVGTEFHUzogMDAwMTAw
-OTMNClJBWDogMDAwMDAwMDAwMDBhNTdlYiBSQlg6IDFmZmZmMTEwM2IzNjkzZGMgUkNYOiAwMDAw
-MDAwMDAwMDAwMDBjDQogIGVucXVldWVfZW50aXR5KzB4M2Y1LzB4MjBhMCBrZXJuZWwvc2NoZWQv
-ZmFpci5jOjM4NzENClJEWDogZmZmZjg4ODFkOWI0YTQ0MCBSU0k6IDAwMDAwMDAwMDAwMDAwMDEg
-UkRJOiBmZmZmODg4MWQ5YjRhMDg4DQpSQlA6IGZmZmY4ODgxZDliNDllYTggUjA4OiBmZmZmODg4
-MWQ5YjRhNDQwIFIwOTogZmZmZjg4ODFkYTk3MDE4MA0KUjEwOiAwMDAwMDAwMDRhZmQ2OGVmIFIx
-MTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6IGZmZmY4ODgxZDliNGEwODgNClIxMzogMDAwMDAwMDAw
-MDAwMDAwMSBSMTQ6IGZmZmZlYTAwMDc2NmQyODAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxDQpGUzog
-IDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6ZmZmZjg4ODFkYWYwMDAwMCgwMDAwKSBrbmxHUzow
-MDAwMDAwMDAwMDAwMDAwDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAw
-MDgwMDUwMDMzDQpDUjI6IDAwMDAwMDBjZmZjNWZhMTggQ1IzOiAwMDAwMDAwMWJmYWRmMDAwIENS
-NDogMDAwMDAwMDAwMDE0MDZlMA0KRFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAw
-MDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6
-IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwDQoNCg0KLS0tDQpUaGlzIGJ1
-ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NClNlZSBodHRw
-czovL2dvby5nbC90cHNtRUogZm9yIG1vcmUgaW5mb3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6
-Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNv
-bS4NCg0Kc3l6Ym90IHdpbGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0
-dHBzOi8vZ29vLmdsL3Rwc21FSiNidWctc3RhdHVzLXRyYWNraW5nIGZvciBob3cgdG8gY29tbXVu
-aWNhdGUgd2l0aCAgDQpzeXpib3QuDQpzeXpib3QgY2FuIHRlc3QgcGF0Y2hlcyBmb3IgdGhpcyBi
-dWcsIGZvciBkZXRhaWxzIHNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiN0ZXN0aW5nLXBhdGNo
-ZXMNCg==
+While debugging the selftests/bpf: get_cgroup_id_user test failure on arm64
+where the test is expecting trace file
+/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id
+but this path not enabled after enabling required kernel configuration also.
+CONFIG_FTRACE_SYSCALLS=y
+
+strace output:
+open(\"/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id\",
+O_RDONLY) = -1 ENOENT (No such file or directory)
+
+This problem noticed on Linux mainline kernel version 4.20.0-rc3.
+
+Best regards
+Naresh Kamboju
