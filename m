@@ -2,86 +2,126 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52086C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B365AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 199612086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:59:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199612086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 6E20D20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:10:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eiDx/9K5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E20D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeK1J7S (ORCPT
+        id S1726457AbeK1KKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:59:18 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:42524 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeK1J7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:59:18 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 380F014A6A0BC;
-        Tue, 27 Nov 2018 14:59:51 -0800 (PST)
-Date:   Tue, 27 Nov 2018 14:59:50 -0800 (PST)
-Message-Id: <20181127.145950.2178672310020332163.davem@davemloft.net>
-To:     3erndeckstein@gmail.com
-Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, 3ernd.Eckstein@gmail.com,
-        Oliver.Zweigle@faro.com
-Subject: Re: [PATCH] usbnet: ipheth: fix potential recvmsg bug and recvmsg
- bug 2
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1542977486-15363-1-git-send-email-3ernd.Eckstein@gmail.com>
-References: <1542977486-15363-1-git-send-email-3ernd.Eckstein@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 27 Nov 2018 14:59:51 -0800 (PST)
+        Wed, 28 Nov 2018 05:10:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:60921 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeK1KKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 05:10:20 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 434KJn3wf7z9s29;
+        Wed, 28 Nov 2018 10:10:48 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543360250;
+        bh=LsV7gXOxmTTkA156TUtDznRtZ6l5G5hDZNZpUGmIrsk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=eiDx/9K5ei1BYzBiJR8fqjTwC3aWLqNdbzqXepZOVFxrpb4+hhnn3xDP+KYqAAp37
+         t8O1Pe+xc8XF/ColGP9xQYYsUyG7HEwC/FuJ6cR3UzFAaAH/WIOt7AE16Kuzegl3YP
+         epd6tNX1BeNfFM5ZJ6oAvt85b2IQv5IoJc0tR1zdWtQ+ZAYUPGJS9yOZnc9BkFXuC6
+         L54WWQH0dkzJmy4/bT3ZKFRCvAz/80GoMHBadPGoYC5Gh4JjhtTqPFAGz5CJhNStBJ
+         qBCoB28QrbxcOlzoWH0a59HcGXiIKroIoQjkrjkh/GHkOYK4cNl0WsXyPd5qgFKExQ
+         twnx7EUKK9soA==
+Date:   Wed, 28 Nov 2018 10:10:48 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the vfs tree with the ext3 tree
+Message-ID: <20181128101048.01864df2@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kwbht/nHU92K0rlCuHV/fVQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bernd Eckstein <3erndeckstein@gmail.com>
-Date: Fri, 23 Nov 2018 13:51:26 +0100
+--Sig_/kwbht/nHU92K0rlCuHV/fVQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> The bug is not easily reproducable, as it may occur very infrequently
-> (we had machines with 20minutes heavy downloading before it occurred)
-> However, on a virual machine (VMWare on Windows 10 host) it occurred
-> pretty frequently (1-2 seconds after a speedtest was started)
-> 
-> dev->tx_skb mab be freed via dev_kfree_skb_irq on a callback
-> before it is set.
-> 
-> This causes the following problems:
-> - double free of the skb or potential memory leak
-> - in dmesg: 'recvmsg bug' and 'recvmsg bug 2' and eventually
->   general protection fault
-> 
-> Example dmesg output:
- ...
-> The proposed patch eliminates a potential racing condition.
-> Before, usb_submit_urb was called and _after_ that, the skb was attached
-> (dev->tx_skb). So, on a callback it was possible, however unlikely that the
-> skb was freed before it was set. That way (because dev->tx_skb was not set
-> to NULL after it was freed), it could happen that a skb from a earlier
-> transmission was freed a second time (and the skb we should have freed did
-> not get freed at all)
-> 
-> Now we free the skb directly in ipheth_tx(). It is not passed to the
-> callback anymore, eliminating the posibility of a double free of the same
-> skb. Depending on the retval of usb_submit_urb() we use dev_kfree_skb_any()
-> respectively dev_consume_skb_any() to free the skb.
-> 
-> Signed-off-by: Oliver Zweigle <Oliver.Zweigle@faro.com>
-> Signed-off-by: Bernd Eckstein <3ernd.Eckstein@gmail.com>
+Hi Al,
 
-Applied and queued up for -stable, thanks.
+Today's linux-next merge of the vfs tree got a conflict in:
+
+  fs/Makefile
+
+between commit:
+
+  d44170a7ba48 ("fs: common implementation of file type")
+
+from the ext3 tree and commits:
+
+  229e55402816 ("vfs: Add configuration parser helpers")
+  37744f3d21f8 ("vfs: Implement a filesystem superblock creation/configurat=
+ion context")
+  1d9c8fafbf6f ("vfs: syscall: Add fsopen() to prepare for superblock creat=
+ion")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/Makefile
+index 23fcd8c164a3,e3ea8093b178..000000000000
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@@ -13,7 -13,7 +13,8 @@@ obj-y :=3D	open.o read_write.o file_table
+  		seq_file.o xattr.o libfs.o fs-writeback.o \
+  		pnode.o splice.o sync.o utimes.o d_path.o \
+  		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ -		fs_context.o fs_parser.o fsopen.o
+++		fs_context.o fs_parser.o fsopen.o \
+ +		fs_types.o
+ =20
+  ifeq ($(CONFIG_BLOCK),y)
+  obj-y +=3D	buffer.o block_dev.o direct-io.o mpage.o
+
+--Sig_/kwbht/nHU92K0rlCuHV/fVQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv9zvgACgkQAVBC80lX
+0Gw2Agf/T0+1ogTrw7dBOrcSIyGa0MiqQLltpGlf5ztY2z0229pvG8t6HIIrMB7o
+EVwBg9wHOmYylZqjm8TwQPJ2FLyDMmXhQzzzXbMUmjI1SjrbDnFXR0wbCqmI6/YV
+Us0Opbyq8peWMvSpBZbtSCNUKqNvIfaY8SE2ZaS1BDkFp8kxut03D0A3T4eNSvO1
+R4VqBu62QGzGzOtV6IKoaSXeL49DlcG5X2M54Fl0+BoRoLgwuUwKsBFEYftNexoH
+p2ccgrcMNFSksK51c0GmX8hj0OtwV+H7ariGH0amAiIn97zoBiJTF9LfwH0rhMMc
+UtgMORcod37QYCPzLdgt42+QpavZIg==
+=IXae
+-----END PGP SIGNATURE-----
+
+--Sig_/kwbht/nHU92K0rlCuHV/fVQ--
