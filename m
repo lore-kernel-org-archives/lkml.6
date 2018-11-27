@@ -2,59 +2,71 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D22C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25523C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD01208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD01208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D48C4208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:00:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gmfbVoF+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D48C4208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbeK1C5i (ORCPT
+        id S1730411AbeK1C6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:57:38 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:58394 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeK1C5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:57:38 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4347kp25Ptz9v0bq;
-        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id HZqsiMQnoPpC; Tue, 27 Nov 2018 16:59:14 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4347kp1Pytz9v0bb;
-        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9483C8B832;
-        Tue, 27 Nov 2018 16:59:15 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id aJ5j15rPczHl; Tue, 27 Nov 2018 16:59:15 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F3CDE8B827;
-        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
-Subject: Re: [PATCH] lkdtm: do not depend on CONFIG_BLOCK
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <ca27a073c872e243be1d17a89afb4b4aeb9a298b.1541714054.git.christophe.leroy@c-s.fr>
- <20181127074316.GC13965@kroah.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <8daf27d0-0f58-2dd6-c1bb-7b634494212a@c-s.fr>
-Date:   Tue, 27 Nov 2018 15:59:11 +0000
+        Tue, 27 Nov 2018 21:58:33 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:34059 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729832AbeK1C6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:58:33 -0500
+Received: by mail-wr1-f50.google.com with SMTP id j2so23266555wrw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:00:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WTXIdCbjdGM8VNo5aan412GRCqRkpI0TBB9+gxr3xmE=;
+        b=gmfbVoF+UyE0laPj6kVvneas0BuhJ01n2kN6Km9ZNhilqOFpZc+5dMYv0BK9M3evDG
+         QYqeUCVP9GI8CBASeIqy4DlbWpKVcH4yL8hnpC4TvTaST3YW60qRjaUQtP+jq1y9/n4Y
+         Wt3dfl1X43iEtakc1H4xvpt2L6GvBLcSAFTYo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WTXIdCbjdGM8VNo5aan412GRCqRkpI0TBB9+gxr3xmE=;
+        b=B18UzftRf+bCN/tRnhK0Ugsqg2+2X2z2EgYHTNtuwjglxBjxwX7wz0r9XdSv3rkUsl
+         RRbRpsVcYP/Q3hind2VNkphMgLRnjATwnM8/OEVls/JUIU8bX6UVDvF7XLQeJ0cGEr/j
+         DHao/OlI2nCdU5qrcpjy/1kLHISYbk0fq2HyP6G00PQoKpK5MsfB0t+rSwBYzwc1AchL
+         FxGIE66JgNj9Ms79E+WThi/rQAJhCP8uZSsx5mjRH5yGPsWnYNFnMBteQf85+JRi9zOO
+         ZmoGmoYTp8ncymgkXaWG6h58vsZA2r5OX8Dyxrl04PNBfq3ksxSrMin4svV59QJOrPWu
+         fuww==
+X-Gm-Message-State: AA+aEWZxcN0S8F7q2ZlKgfl/Yi2HRwqXMA9zuJyJNW9Mc2uS+3DINiBR
+        HVNm2FkgF0LsdUMPl3KW3UfqepeSZRA=
+X-Google-Smtp-Source: AFSGD/VwDlCrsg1R98q7s5oZUPPisj3o+5U0I5oLq6ahBC3Xlh1QGnQRufB/2KZSS8osXZDAv0OWzg==
+X-Received: by 2002:adf:c7cc:: with SMTP id y12mr20705736wrg.52.1543334410662;
+        Tue, 27 Nov 2018 08:00:10 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id n62sm3107453wmd.25.2018.11.27.08.00.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 08:00:09 -0800 (PST)
+Subject: Re: [PATCH] slimbus: ngd: fix spelling mistake "exeeds" -> "exceeds"
+To:     Colin King <colin.king@canonical.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181127143451.27580-1-colin.king@canonical.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <f4b18827-25dc-14b0-2aef-04167b88456b@linaro.org>
+Date:   Tue, 27 Nov 2018 16:00:08 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181127074316.GC13965@kroah.com>
+In-Reply-To: <20181127143451.27580-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,197 +77,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 11/27/2018 07:43 AM, Greg Kroah-Hartman wrote:
-> On Fri, Nov 09, 2018 at 07:05:51AM +0000, Christophe Leroy wrote:
->> Most parts of lkdtm don't require CONFIG_BLOCK.
->>
->> This patch limits dependency to CONFIG_BLOCK in order to give embedded
->> platforms which don't select CONFIG_BLOCK the opportunity to use LKDTM.
->>
->> Fixes: fddd9cf82c9f ("make LKDTM depend on BLOCK")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   drivers/misc/lkdtm/core.c | 7 ++++++-
->>   lib/Kconfig.debug         | 1 -
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
->> index 2837dc77478e..bc76756b7eda 100644
->> --- a/drivers/misc/lkdtm/core.c
->> +++ b/drivers/misc/lkdtm/core.c
->> @@ -40,9 +40,12 @@
->>   #include <linux/interrupt.h>
->>   #include <linux/hrtimer.h>
->>   #include <linux/slab.h>
->> -#include <scsi/scsi_cmnd.h>
->>   #include <linux/debugfs.h>
->>   
->> +#ifdef CONFIG_BLOCK
->> +#include <scsi/scsi_cmnd.h>
->> +#endif
+On 27/11/18 14:34, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Why would this config option be needed to be checked just to be able to
-> include a .h file?
-
-Because if including that file regardless of the config option, you get:
-
-   CALL    scripts/checksyscalls.sh
-   CC      drivers/misc/lkdtm/core.o
-In file included from ./include/scsi/scsi_cmnd.h:7:0,
-                  from drivers/misc/lkdtm/core.c:45:
-./include/linux/t10-pi.h:40:41: warning: 'struct request' declared 
-inside parameter list
-  static inline u32 t10_pi_ref_tag(struct request *rq)
-                                          ^
-./include/linux/t10-pi.h:40:41: warning: its scope is only this 
-definition or declaration, which is probably not what you want
-./include/linux/t10-pi.h:61:8: warning: 'struct request' declared inside 
-parameter list
-         unsigned int intervals)
-         ^
-./include/linux/t10-pi.h:64:42: warning: 'struct request' declared 
-inside parameter list
-  static inline void t10_pi_prepare(struct request *rq, u8 protection_type)
-                                           ^
-In file included from ./include/scsi/scsi_cmnd.h:12:0,
-                  from drivers/misc/lkdtm/core.c:45:
-./include/scsi/scsi_device.h:435:4: error: unknown type name 'req_flags_t'
-     req_flags_t rq_flags, int *resid);
-     ^
-./include/scsi/scsi_device.h: In function 'scsi_execute_req':
-./include/scsi/scsi_device.h:442:2: error: implicit declaration of 
-function '__scsi_execute' [-Werror=implicit-function-declaration]
-   __scsi_execute(sdev, cmd, data_direction, buffer, bufflen, \
-   ^
-./include/scsi/scsi_device.h:451:9: note: in expansion of macro 
-'scsi_execute'
-   return scsi_execute(sdev, cmd, data_direction, buffer,
-          ^
-In file included from ./include/scsi/scsi_request.h:5:0,
-                  from ./include/scsi/scsi_cmnd.h:13,
-                  from drivers/misc/lkdtm/core.c:45:
-./include/linux/blk-mq.h: At top level:
-./include/linux/blk-mq.h:100:9: error: type defaults to 'int' in 
-declaration of 'blk_status_t' [-Werror=implicit-int]
-  typedef blk_status_t (queue_rq_fn)(struct blk_mq_hw_ctx *,
-          ^
-./include/linux/blk-mq.h:100:9: error: 'blk_status_t' declared as 
-function returning a function
-./include/linux/blk-mq.h:101:16: warning: parameter names (without 
-types) in function declaration
-    const struct blk_mq_queue_data *);
-                 ^
-./include/linux/blk-mq.h:123:2: error: unknown type name 'queue_rq_fn'
-   queue_rq_fn  *queue_rq;
-   ^
-./include/linux/blk-mq.h:144:2: error: unknown type name 'softirq_done_fn'
-   softirq_done_fn  *complete;
-   ^
-./include/linux/blk-mq.h:223:31: error: 'blk_mq_req_flags_t' undeclared 
-here (not in a function)
-   BLK_MQ_REQ_NOWAIT = (__force blk_mq_req_flags_t)(1 << 0),
-                                ^
-./include/linux/blk-mq.h:233:3: error: expected declaration specifiers 
-or '...' before 'blk_mq_req_flags_t'
-    blk_mq_req_flags_t flags);
-    ^
-./include/linux/blk-mq.h:235:20: error: expected declaration specifiers 
-or '...' before 'blk_mq_req_flags_t'
-    unsigned int op, blk_mq_req_flags_t flags,
-                     ^
-In file included from ./arch/powerpc/include/asm/atomic.h:11:0,
-                  from ./include/linux/atomic.h:7,
-                  from ./include/linux/spinlock.h:436,
-                  from ./include/linux/wait.h:9,
-                  from ./include/linux/wait_bit.h:8,
-                  from ./include/linux/fs.h:6,
-                  from drivers/misc/lkdtm/core.c:34:
-./include/linux/blk-mq.h: In function 'blk_mq_mark_complete':
-./include/linux/blk-mq.h:306:20: error: dereferencing pointer to 
-incomplete type 'struct request'
-   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
-                     ^
-./arch/powerpc/include/asm/cmpxchg.h:483:19: note: in definition of 
-macro 'cmpxchg'
-       __typeof__(*(ptr)) _o_ = (o);      \
-                    ^
-./include/linux/blk-mq.h:306:29: error: 'MQ_RQ_IN_FLIGHT' undeclared 
-(first use in this function)
-   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
-                              ^
-./arch/powerpc/include/asm/cmpxchg.h:483:32: note: in definition of 
-macro 'cmpxchg'
-       __typeof__(*(ptr)) _o_ = (o);      \
-                                 ^
-./include/linux/blk-mq.h:306:29: note: each undeclared identifier is 
-reported only once for each function it appears in
-   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
-                              ^
-./arch/powerpc/include/asm/cmpxchg.h:483:32: note: in definition of 
-macro 'cmpxchg'
-       __typeof__(*(ptr)) _o_ = (o);      \
-                                 ^
-./include/linux/blk-mq.h:306:46: error: 'MQ_RQ_COMPLETE' undeclared 
-(first use in this function)
-   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
-                                               ^
-./arch/powerpc/include/asm/cmpxchg.h:484:32: note: in definition of 
-macro 'cmpxchg'
-       __typeof__(*(ptr)) _n_ = (n);      \
-                                 ^
-In file included from ./include/scsi/scsi_request.h:5:0,
-                  from ./include/scsi/scsi_cmnd.h:13,
-                  from drivers/misc/lkdtm/core.c:45:
-./include/linux/blk-mq.h: In function 'blk_mq_rq_from_pdu':
-./include/linux/blk-mq.h:316:22: error: invalid application of 'sizeof' 
-to incomplete type 'struct request'
-   return pdu - sizeof(struct request);
-                       ^
-./include/linux/blk-mq.h: In function 'blk_mq_rq_to_pdu':
-./include/linux/blk-mq.h:320:2: error: invalid use of undefined type 
-'struct request'
-   return rq + 1;
-   ^
-In file included from drivers/misc/lkdtm/core.c:45:0:
-./include/scsi/scsi_cmnd.h: In function 'scsi_bidi_cmnd':
-./include/scsi/scsi_cmnd.h:214:9: error: implicit declaration of 
-function 'blk_bidi_rq' [-Werror=implicit-function-declaration]
-   return blk_bidi_rq(cmd->request) &&
-          ^
-./include/scsi/scsi_cmnd.h: In function 'scsi_get_lba':
-./include/scsi/scsi_cmnd.h:307:9: error: implicit declaration of 
-function 'blk_rq_pos' [-Werror=implicit-function-declaration]
-   return blk_rq_pos(scmd->request);
-          ^
-cc1: some warnings being treated as errors
-make[1]: *** [drivers/misc/lkdtm/core.o] Error 1
-make: *** [drivers/misc/lkdtm/core.o] Error 2
-
-
+> There is a spelling mistake in a dev_err message, fix this.
 > 
-> And shouldn't you be depending on SCSI instead?
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/slimbus/qcom-ngd-ctrl.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes maybe. I did make it depend on CONFIG_BLOCK because it was what it 
-was depending on in the Kconfig. I'll send a v2
-
-Christophe
-
-> 
->> +
->>   #ifdef CONFIG_IDE
->>   #include <linux/ide.h>
->>   #endif
->> @@ -101,7 +104,9 @@ static struct crashpoint crashpoints[] = {
->>   	CRASHPOINT("FS_DEVRW",		 "ll_rw_block"),
->>   	CRASHPOINT("MEM_SWAPOUT",	 "shrink_inactive_list"),
->>   	CRASHPOINT("TIMERADD",		 "hrtimer_start"),
->> +# ifdef CONFIG_BLOCK
->>   	CRASHPOINT("SCSI_DISPATCH_CMD",	 "scsi_dispatch_cmd"),
->> +# endif
-> 
-> Again, scsi?
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Thanks Applied!
