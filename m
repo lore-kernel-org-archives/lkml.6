@@ -2,158 +2,154 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A442C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D486C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5687921104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KqHH8yew"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5687921104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 01B80208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B80208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732186AbeK1F6I (ORCPT
+        id S1732203AbeK1F6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:58:08 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35608 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729446AbeK1F6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:58:08 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c126so114103wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 10:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=VPbmyas9NlZ6E8jNGd5atlSp+2kjXH4RHxf4hQaqr5E=;
-        b=KqHH8yewrjxLbKLIdYdPuJs7H9D4T2N8PrHGC49h2+HkPYIPgwUCujFbStV1okHUZY
-         soJY9SJRFbKUxw4fGsKwi4ad/KHRIB/ARXkloqfI/tJWbdoa3RF2fBBO67D4nvn8bJV5
-         4ELMmDzSBQrZxECdrXkLwa9Z2UaIcP8uzy5bw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=VPbmyas9NlZ6E8jNGd5atlSp+2kjXH4RHxf4hQaqr5E=;
-        b=N5TDSyAgrGfuUv7GDCsFdNaJNUsImJIv8Ar6JsOY4OwSLB2/04PNYVPewek8gnu3Wn
-         IfeBISiKDmxY+Fq0DhKFcO++Ghu1yTMdg1tmRq+FCPMZ5DJ+EZhp2nQGCbtm3cVb7oOQ
-         /r2uhJz5te8aXpDOsCyZNvecetdlRcQL/xWFycF20okb3Kw62PJfPf7yghPn1GskjJOM
-         3eqSRZj1wdUfyrgt75M1IHaprreVdwytAzFpsFO9GH4TvnhZT5nT8eKSzYer2OsMBPdJ
-         bdBk3IxNcTlN3SprXtNhtlyJhWZKiOquTqtLVkVhsc/S1WKvlaOXmGPHK+SoHONYWPRR
-         DNGg==
-X-Gm-Message-State: AA+aEWYrz5nPcPTQTvur9fXakCcdAhXNcP/k5nnl/yvX6NbccER6PDq+
-        NhcyXRmfVM28OSbil9YoxI4Ao65N2t8=
-X-Google-Smtp-Source: AFSGD/WI4iWVv+aPWNwu/yi6N6cHBe1LZwcMADfpCV105p5kdKRT66hbRmde0M7wu90C/gNz33wNKw==
-X-Received: by 2002:a1c:400b:: with SMTP id n11mr73966wma.85.1543345155624;
-        Tue, 27 Nov 2018 10:59:15 -0800 (PST)
-Received: from localhost ([49.248.92.105])
-        by smtp.gmail.com with ESMTPSA id 129sm84582wmd.18.2018.11.27.10.59.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 10:59:15 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v3 2/2] drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
-Date:   Wed, 28 Nov 2018 00:28:41 +0530
-Message-Id: <e526504923c569e575b8916f77b5c207679316e9.1543343156.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1543343156.git.amit.kucheria@linaro.org>
-References: <cover.1543343156.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1543343156.git.amit.kucheria@linaro.org>
-References: <cover.1543343156.git.amit.kucheria@linaro.org>
+        Wed, 28 Nov 2018 00:58:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:45760 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726600AbeK1F6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:58:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 172632ED2;
+        Tue, 27 Nov 2018 10:59:47 -0800 (PST)
+Received: from [192.168.100.243] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62EA3F575;
+        Tue, 27 Nov 2018 10:59:46 -0800 (PST)
+Subject: Re: [PATCH 5/5] efi: permit calling efi_mem_reserve_persistent from
+ atomic context
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org
+References: <20181114175544.12860-1-ard.biesheuvel@linaro.org>
+ <20181114175544.12860-6-ard.biesheuvel@linaro.org>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <a8346212-70cb-0bbb-9e29-e21fa2ee5040@arm.com>
+Date:   Tue, 27 Nov 2018 12:59:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20181114175544.12860-6-ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cleans up the directory a bit allowing just one place to look for
-thermal related drivers for QCOM platforms instead of being scattered in
-the root directory and the qcom/ subdirectory. Compile-tested with
-ARCH=arm64 defconfig and the driver explicitly enabled with menuconfig.
+Hi Ard,
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/Kconfig                           | 11 -----------
- drivers/thermal/Makefile                          |  1 -
- drivers/thermal/qcom/Kconfig                      | 11 +++++++++++
- drivers/thermal/qcom/Makefile                     |  1 +
- drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
- 5 files changed, 12 insertions(+), 12 deletions(-)
- rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 772ab9dadda7..344f6459862b 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -374,17 +374,6 @@ config TANGO_THERMAL
- 
- source "drivers/thermal/tegra/Kconfig"
- 
--config QCOM_SPMI_TEMP_ALARM
--	tristate "Qualcomm SPMI PMIC Temperature Alarm"
--	depends on OF && SPMI && IIO
--	select REGMAP_SPMI
--	help
--	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
--	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
--	  trip points. The temperature reported by the thermal sensor reflects the
--	  real time die temperature if an ADC is present or an estimate of the
--	  temperature based upon the over temperature stage value.
--
- config GENERIC_ADC_THERMAL
- 	tristate "Generic ADC based thermal sensor"
- 	depends on IIO
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 031f61e7dfe8..415361685480 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -29,7 +29,6 @@ thermal_sys-$(CONFIG_DEVFREQ_THERMAL) += devfreq_cooling.o
- 
- # platform thermal drivers
- obj-y				+= broadcom/
--obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
- obj-$(CONFIG_SPEAR_THERMAL)	+= spear_thermal.o
- obj-$(CONFIG_ROCKCHIP_THERMAL)	+= rockchip_thermal.o
- obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
-diff --git a/drivers/thermal/qcom/Kconfig b/drivers/thermal/qcom/Kconfig
-index be32e5abce3c..cdb455ffd575 100644
---- a/drivers/thermal/qcom/Kconfig
-+++ b/drivers/thermal/qcom/Kconfig
-@@ -9,3 +9,14 @@ config QCOM_TSENS
- 	  thermal zone device via the mode file results in disabling the sensor.
- 	  Also able to set threshold temperature for both hot and cold and update
- 	  when a threshold is reached.
-+
-+config QCOM_SPMI_TEMP_ALARM
-+	tristate "Qualcomm SPMI PMIC Temperature Alarm"
-+	depends on OF && SPMI && IIO
-+	select REGMAP_SPMI
-+	help
-+	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
-+	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
-+	  trip points. The temperature reported by the thermal sensor reflects the
-+	  real time die temperature if an ADC is present or an estimate of the
-+	  temperature based upon the over temperature stage value.
-diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
-index a821929ede0b..717a08600bb5 100644
---- a/drivers/thermal/qcom/Makefile
-+++ b/drivers/thermal/qcom/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
- qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
-+obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
-diff --git a/drivers/thermal/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-similarity index 100%
-rename from drivers/thermal/qcom-spmi-temp-alarm.c
-rename to drivers/thermal/qcom/qcom-spmi-temp-alarm.c
--- 
-2.17.1
+On 11/14/2018 11:55 AM, Ard Biesheuvel wrote:
+> Currently, efi_mem_reserve_persistent() may not be called from atomic
+> context, since both the kmalloc() call and the memremap() call may
+> sleep.
+> 
+> The kmalloc() call is easy enough to fix, but the memremap() call
+> needs to be moved into an init hook since we cannot control the
+> memory allocation behavior of memremap() at the call site.
+
+So, at first glance this looks correct until I noticed that 
+its_cpu_init_lpis() is being called before the early_initcalls are run.
+
+This results in the WARN_ON triggering with the following backtrace:
+
+[    0.000000]  its_cpu_init_lpis+0x1d4/0x2e0
+[    0.000000]  its_cpu_init+0x78/0x1b4
+[    0.000000]  gic_init_bases+0x2c4/0x2e0
+[    0.000000]  gic_acpi_init+0x158/0x270
+[    0.000000]  acpi_match_madt+0x4c/0x84
+[    0.000000]  acpi_table_parse_entries_array+0x140/0x218
+[    0.000000]  acpi_table_parse_entries+0x70/0x98
+[    0.000000]  acpi_table_parse_madt+0x40/0x50
+[    0.000000]  __acpi_probe_device_table+0x88/0xe0
+[    0.000000]  irqchip_init+0x38/0x40
+[    0.000000]  init_IRQ+0xfc/0x130
+[    0.000000]  start_kernel+0x344/0x4cc
+
+due to the efi_memreserve_root not yet being set.
+
+
+
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>   drivers/firmware/efi/efi.c | 31 +++++++++++++++++++------------
+>   1 file changed, 19 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index 72a4da76d274..fad7c62cfc0e 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -967,36 +967,43 @@ bool efi_is_table_address(unsigned long phys_addr)
+>   }
+>   
+>   static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
+> +static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
+>   
+>   int efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+>   {
+> -	struct linux_efi_memreserve *rsv, *parent;
+> +	struct linux_efi_memreserve *rsv;
+>   
+> -	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
+> +	if (!efi_memreserve_root)
+>   		return -ENODEV;
+>   
+> -	rsv = kmalloc(sizeof(*rsv), GFP_KERNEL);
+> +	rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
+>   	if (!rsv)
+>   		return -ENOMEM;
+>   
+> -	parent = memremap(efi.mem_reserve, sizeof(*rsv), MEMREMAP_WB);
+> -	if (!parent) {
+> -		kfree(rsv);
+> -		return -ENOMEM;
+> -	}
+> -
+>   	rsv->base = addr;
+>   	rsv->size = size;
+>   
+>   	spin_lock(&efi_mem_reserve_persistent_lock);
+> -	rsv->next = parent->next;
+> -	parent->next = __pa(rsv);
+> +	rsv->next = efi_memreserve_root->next;
+> +	efi_memreserve_root->next = __pa(rsv);
+>   	spin_unlock(&efi_mem_reserve_persistent_lock);
+>   
+> -	memunmap(parent);
+> +	return 0;
+> +}
+>   
+> +static int __init efi_memreserve_root_init(void)
+> +{
+> +	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
+> +		return -ENODEV;
+> +
+> +	efi_memreserve_root = memremap(efi.mem_reserve,
+> +				       sizeof(*efi_memreserve_root),
+> +				       MEMREMAP_WB);
+> +	if (!efi_memreserve_root)
+> +		return -ENOMEM;
+>   	return 0;
+>   }
+> +early_initcall(efi_memreserve_root_init);
+>   
+>   #ifdef CONFIG_KEXEC
+>   static int update_efi_random_seed(struct notifier_block *nb,
+> 
 
