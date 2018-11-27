@@ -2,142 +2,152 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA55C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0062C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243EA20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6837E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytheb-org.20150623.gappssmtp.com header.i=@bytheb-org.20150623.gappssmtp.com header.b="fMWJBE2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243EA20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bytheb.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="Bg2SaTrs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6837E208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbeK1BWO (ORCPT
+        id S1727569AbeK1BYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:22:14 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37047 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbeK1BWN (ORCPT
+        Tue, 27 Nov 2018 20:24:23 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41265 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbeK1BYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:22:13 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 131so14652710qkd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 06:24:08 -0800 (PST)
+        Tue, 27 Nov 2018 20:24:23 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so16580278lfj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 06:26:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytheb-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=MEjLDeRU2dXk5wJZxd7AQVmboa9sN/Vlo+zQRTCwzXE=;
-        b=fMWJBE2vGOTIEV+J/kA2+fvR01ler+PP1qznbGRf74g3vYY4eq6lgxFnlHczdo9lI6
-         X3k5xkMiY6roBZ8rjdqFpNzCxXzjeo5AYBJYUfDSBsAs1JLa53E4BOw6JL5N82Bd2Lj/
-         OIKaRE5awfzIOTADifYzlNV2V1fMaWshAuY41llAtbcftkuSCmIzr2215AuM5B86Wmhr
-         xtwrdBSNkdlIBVhT7pN0hhgmlfOoaALMNJdqqr84frfcSpqMBc9jI+iuzib5KFEs0X8N
-         uG3dI+yMkWQFn2mChrNIX+YCQIGmL+mQo8CM5VfUcwwoBsKxRJ72z1SV4CjUdtAo/+sI
-         /2jw==
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IVCP6KjXw4SdUwbraedFu0XHwLpTkR+LBKdggOrcVKs=;
+        b=Bg2SaTrsDEw+KHgOQyc850or4mspu7N2ECj7kE4F0P4XJgX67Cf/kkHts9jFtQckIO
+         duh0lFE+pJ4ng2o53589zA+aPfGz8lIZR7Fj9mA3bfAO8Ibj6Puu4U775RVBAFsgFU7E
+         0ObOtfqyAjyg2Nqaf5u40n1FpJtodm6ar8c756peSV0bUSXQN3GlNewel9TCKn3AA8oN
+         yjbN0Wu2IrR7X3k5BdUrQH8FFOSN8knRqk/dAiT3xBancd6z2kcXUBvV5OjbntxWKMtj
+         rFII2mUuL5JRFzJ+wnBVSZHyzW03HKznjsFDoz3JuPiI1w1MHHVGrZqrTfArK4lZb769
+         Z8ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=MEjLDeRU2dXk5wJZxd7AQVmboa9sN/Vlo+zQRTCwzXE=;
-        b=SmYbtmvvqKGFFm0V+cFe8/twhiq7ehN1ryjZHch5tWag2Iq83tI+l8Kp7rbfG/bBTt
-         MtwMAhLG3tbaTLh4K1XIDRGFurcBkMZ6kwdQ60EYTkxIkHHG9N+HcyODS/vdR34ALQww
-         Xn1Lj44teOtDnIsThTqX158cyzjPm0mWaIO2HnfqWFKU9X5p1YpXiCQJv82ApM2kF2px
-         NrxLuR2JvwLj7rAaORizENBLqlD3bN7wBYnWzoVol6FyKMKWTst1Vk4ifimn4DYAC7F7
-         5gApvO6T6J167hZD00yjea3HXIIgSil4dUC1Ap/F7ce+uTQJkq84DGCK2fxKbuNG15NT
-         2vSA==
-X-Gm-Message-State: AA+aEWYak7BJXpjDH25JUA/JXTxBC0ETWUTuWBJ36pyBlk+1zvZv3yxs
-        nXEVpjEhifMqCXZuhZptJa/s9g==
-X-Google-Smtp-Source: AFSGD/WHpvnycv9aHsJ6AhLXthJLPULMEDXFU9OD53zCynJjV+MUhSzsWPSAiJ6ao6+asynKPXZ3/w==
-X-Received: by 2002:a37:4bc3:: with SMTP id y186mr19581739qka.55.1543328647896;
-        Tue, 27 Nov 2018 06:24:07 -0800 (PST)
-Received: from dhcp-25.97.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id k38sm2375697qkh.72.2018.11.27.06.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 06:24:07 -0800 (PST)
-From:   Aaron Conole <aconole@bytheb.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jesper Brouer <brouer@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Rony Efraim <ronye@mellanox.com>,
-        Simon Horman <horms@verge.net.au>,
-        Marcelo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [RFC -next v0 1/3] bpf: modular maps
-References: <20181125180919.13996-1-aconole@bytheb.org>
-        <20181125180919.13996-2-aconole@bytheb.org>
-        <20181127020608.4vucwmhrtu2cxrwu@ast-mbp.dhcp.thefacebook.com>
-Date:   Tue, 27 Nov 2018 09:24:05 -0500
-In-Reply-To: <20181127020608.4vucwmhrtu2cxrwu@ast-mbp.dhcp.thefacebook.com>
-        (Alexei Starovoitov's message of "Mon, 26 Nov 2018 18:06:09 -0800")
-Message-ID: <f7tftvmd2ey.fsf@dhcp-25.97.bos.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IVCP6KjXw4SdUwbraedFu0XHwLpTkR+LBKdggOrcVKs=;
+        b=F7YcBe/HsipNXM9RI2mOSlcqHw0IS+xBXWkYICO5pJmS0qe9u5JbLjBeTiDQ+/puzj
+         lcIE2YzUpwRJiJlRTVUan+XIoRNaFBh/iRoE0sVYwX8cvPOpCKv7T558m2vdJSRZ6gIY
+         l8CUg6b/J/uKHRV2QvGiGAjd5LCdAMwjacmze0Dgp4yaO0QPev8yKjvSuYLVdIfOwKWj
+         yqpylbK5UXmHpSUYvAgOnTdQ0VaC1ae3uydg2DTPXVY2/s1wYS2uC92pRMMQ76HLQFua
+         ed6LsaoNDIWlXwaIK7Lrcq/VX1gQP6Ci2gLl6HbhlcNMA/ZR8bQeFDMPK43Tyr8O/e1L
+         yTIg==
+X-Gm-Message-State: AGRZ1gIwSBYtlupddzfaRlKFgFBQmBSy6Wq+XW7bl/YuH7X9TAtZr2AM
+        vXL0oj5KwtTYMruFl018keXh1tmFMYM=
+X-Google-Smtp-Source: AJdET5fbmdnN3V+HnExkc3D9LiQ1DcNKht6W7TAdapfNWXsWBbtQlSJYS2kNc+zj10uKEWg3pPSp/Q==
+X-Received: by 2002:a19:a86:: with SMTP id 128mr18014259lfk.139.1543328776402;
+        Tue, 27 Nov 2018 06:26:16 -0800 (PST)
+Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id f29sm614699lfa.46.2018.11.27.06.26.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 06:26:15 -0800 (PST)
+Subject: Re: [PATCH] lightnvm: pblk: adjust the position of the lock
+To:     javier@cnexlabs.com
+Cc:     suhua.tanke@gmail.com, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181127015309.2374-1-suhua.tanke@gmail.com>
+ <F75BC3C7-FACE-4C04-A9BE-5A3AA25D3466@cnexlabs.com>
+ <a53eb78d-90d3-f84e-a0bf-9acbc32671f4@lightnvm.io>
+ <ACAA275B-AC2C-4147-AF88-E250771CA1DD@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <55a08621-53cd-66b0-5b31-ca2bd6b26861@lightnvm.io>
+Date:   Tue, 27 Nov 2018 15:26:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ACAA275B-AC2C-4147-AF88-E250771CA1DD@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On 11/27/2018 03:24 PM, Javier Gonzalez wrote:
+> 
+>> On 27 Nov 2018, at 15.22, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 11/27/2018 01:57 PM, Javier Gonzalez wrote:
+>>>> On 27 Nov 2018, at 02.53, Hua Su <suhua.tanke@gmail.com> wrote:
+>>>>
+>>>> Add lock protection for list operations.
+>>>> Signed-off-by: Hua Su <suhua.tanke@gmail.com>
+>>>> ---
+>>>> drivers/lightnvm/pblk-core.c | 17 ++++++++++-------
+>>>> 1 file changed, 10 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+>>>> index 6944aac43b01..e490df217dac 100644
+>>>> --- a/drivers/lightnvm/pblk-core.c
+>>>> +++ b/drivers/lightnvm/pblk-core.c
+>>>> @@ -1286,24 +1286,27 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
+>>>>     list_del(&line->list);
+>>>>
+>>>>     ret = pblk_line_prepare(pblk, line);
+>>>> -    if (ret) {
+>>>> -        list_add(&line->list, &l_mg->free_list);
+>>>> -        spin_unlock(&l_mg->free_lock);
+>>>> -        return ret;
+>>>> -    }
+>>>> -    spin_unlock(&l_mg->free_lock);
+>>>> +    if (ret)
+>>>> +        goto out;
+>>>>
+>>>>     ret = pblk_line_alloc_bitmaps(pblk, line);
+>>>>     if (ret)
+>>>> -        return ret;
+>>>> +        goto out;
+>>>>
+>>>>     if (!pblk_line_init_bb(pblk, line, 0)) {
+>>>>         list_add(&line->list, &l_mg->free_list);
+>>>> +        spin_unlock(&l_mg->free_lock);
+>>>>         return -EINTR;
+>>>>     }
+>>>> +    spin_unlock(&l_mg->free_lock);
+>>>>
+>>>>     pblk_rl_free_lines_dec(&pblk->rl, line, true);
+>>>>     return 0;
+>>>> +
+>>>> +out:
+>>>> +    list_add(&line->list, &l_mg->free_list);
+>>>> +    spin_unlock(&l_mg->free_lock);
+>>>> +    return ret;
+>>>> }
+>>>>
+>>>> void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
+>>>> --
+>>>> 2.19.1
+>>> This path is only touched by the recovery path, which is single
+>>> threaded, so there is no race condition as is. Also, if recovery fails,
+>>> pblk will not create the instance at all. This said, it would be
+>>> good to protect the list_add on the pblk_line_init_bb() error path in
+>>> case this code is used for some other purpose in the future.
+>>
+>> I like your explanation here. Another option is that we could add a comment to notify the developer that it safe in this context?
+> 
+> Sure. Do you want to add it? Or should I send it?
+> 
+> Javier
+> 
 
-> On Sun, Nov 25, 2018 at 01:09:17PM -0500, Aaron Conole wrote:
->> This commit allows for map operations to be loaded by an lkm, rather than
->> needing to be baked into the kernel at compile time.
->
-> Nack.
-> Please see Documentation/bpf/bpf_design_QA.rst
-
-Thanks for the review, Alexei!  I hadn't been aware of this doc, so it's
-good to read through it.
-
-I see that the following is there:
-
-   Q: New functionality via kernel modules?
-   ----------------------------------------
-   Q: Can BPF functionality such as new program or map types, new
-   helpers, etc be added out of kernel module code?
-
-   A: NO.
-
-So, I think that means that even changing the helpers would be of no
-value (since it would only be useful in the event that the kernel were
-compiled with netfilter linked in, rather than as a module - and I doubt
-there's any place where that would be true).
-
-BUT, as I wrote in my cover I have some alternative approaches that I've
-thought about, and I'm listing here.  Can you let me know if any would
-be acceptable?  If none are, is there an alternative approach you would
-support?
-
-  1. Introduce flowmap again, this time, basically having it close to a
-     copy of the hashmap.  Introduce a few function calls that allow an
-     external module to easily manipulate all maps of that type to insert
-     / remove / update entries.  This makes it similar to, for example,
-     devmap.
-
-  2. Introduce a way to share maps between modules.  IE:
-     something like bpf_helper_expose_map(map_id, module_name).  Then have
-     netfilter and eBPF share access to the hashmap.  Netfilter and the
-     ebpf program will need to agree on the key and value size, and will
-     push data in/out.
-
-  3. Introduce an xdp/ebpf hook in the flowmap.
-     IE: nft add flowmap xx { .program=foo.o }
-     Then that will be called with a context, and can update a shared map
-     with userspace.  I haven't though out all the logistics on how to do
-     this, but it would put the onus of sharing the information on the
-     bpf program writer.
-
-What do you think?
+Please send it. Thanks!
