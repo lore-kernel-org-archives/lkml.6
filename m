@@ -2,103 +2,164 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A66C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACD8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60CC7208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:32:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EzHoXGNb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60CC7208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BA6B208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:34:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA6B208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeK1AaE (ORCPT
+        id S1727387AbeK1AcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:30:04 -0500
-Received: from mail-io1-f74.google.com ([209.85.166.74]:38123 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbeK1AaD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:30:03 -0500
-Received: by mail-io1-f74.google.com with SMTP id l12so21753749iop.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 05:32:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=0x98bOJuAVkDdHDZ1/E8Wz7Dv4wK/V7vxU55zlPZenA=;
-        b=EzHoXGNb+UErVyniVY/VeHHrvxS2TQcz/DGSRmykMUgu5pmE1qhFfLQrP0ak2SsE9F
-         mxCm7Le/Ux36tctl0jsPFnhKkeU8r5EO1JqdAZ++P7AbcXBRx9Q57j9F7zWoe0B7+XWd
-         LdGFm803ydegXgXH2tLzQCas+Tcs8ocQEakkf48PogmZBSlFwYjgz4e3vW23Ofm4UjjT
-         m9mn5GcvEItfJrpcNLzmCHs0XYM6gJY4bmPR0QLLxNMmZexUapHtoSWwdICrqZaYimQu
-         FwZJMm9ZPnME0nESQb06F2IMJbuwgGgCSP9r9jC8Gu+6h7nhMAzqNb76RDpwbfJKyCs6
-         JxBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=0x98bOJuAVkDdHDZ1/E8Wz7Dv4wK/V7vxU55zlPZenA=;
-        b=T8ltFRI5NrxWHYA56hk7oAh6yl8LS/IT27dUccnIFBhkeRmCA6W8WfGxQ6eyXA4gnk
-         gJLkdgfeT3sfMqMZ88gnYHNaNZtJ2kueA6pEUr2r1AMXyT7re1EtrkK53XzFvcCDNUl9
-         iBiu42eR0qFpGWxFz3ZJj07blKYBELz7dMnHMT6UYbc5FJSjvU/jDVCLlawUnHt0Vzql
-         KB+mTAoqCPJ+l8YaUYLyMNnqX1kKo8xWGAYOb2dHl1WF5+51vNtO+H1i0eSIcK/jWx4D
-         iz9dlGr74FJJZjhP3uiF+lEXZO/2/J1xnJ9WBm5EwfAO/nV8vIkCsGO6xh19YAiH1lME
-         Hwtg==
-X-Gm-Message-State: AA+aEWYH7dGdnWW6oqBWbopz9cOP21+kiKiIUOXDIX6xXvJk5ZZEhsdW
-        oLRDt752jBbFz27Qn8E1sSQKHsU5qQ==
-X-Google-Smtp-Source: AFSGD/VPf2hUp62itkSewGyOa71oswgLrY9qY4sutKYlRMghib84bGI2KyYeWmrXH/g45UtE0Dz/Js08Ug==
-X-Received: by 2002:a24:5dd4:: with SMTP id w203mr397233ita.8.1543325526820;
- Tue, 27 Nov 2018 05:32:06 -0800 (PST)
-Date:   Tue, 27 Nov 2018 14:32:00 +0100
-Message-Id: <20181127133200.38322-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-Subject: [PATCH v2] x86/fpu: XRSTOR is expected to raise #GP
-From:   Jann Horn <jannh@google.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, jannh@google.com
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 27 Nov 2018 19:32:20 -0500
+Received: from mga01.intel.com ([192.55.52.88]:55944 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727342AbeK1AcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:32:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 05:34:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
+   d="scan'208";a="93416820"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga008.fm.intel.com with SMTP; 27 Nov 2018 05:34:19 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 27 Nov 2018 15:34:18 +0200
+Date:   Tue, 27 Nov 2018 15:34:18 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        alexandros.frantzis@collabora.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+Message-ID: <20181127133418.GT9144@intel.com>
+References: <20181123215326.14274-1-helen.koike@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181123215326.14274-1-helen.koike@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 75045f77f7a7 ("x86/extable: Introduce _ASM_EXTABLE_UA for uaccess
-fixups") incorrectly replaced the fixup entry for XSTATE_OP with a
-user-#PF-only fixup. XRSTOR can also raise #GP if the xstate content is
-invalid, and _ASM_EXTABLE_UA doesn't expect that.
-Change this fixup back to _ASM_EXTABLE so that #GP gets fixed up.
+On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
+> Allow userspace to identify if the driver supports async update.
 
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Fixes: 75045f77f7a7 ("x86/extable: Introduce _ASM_EXTABLE_UA for uaccess fixups")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- arch/x86/include/asm/fpu/internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And what exactly is an "async update"?
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5f7290e6e954..69dcdf195b61 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -226,7 +226,7 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
- 		     "3: movl $-2,%[err]\n\t"				\
- 		     "jmp 2b\n\t"					\
- 		     ".popsection\n\t"					\
--		     _ASM_EXTABLE_UA(1b, 3b)				\
-+		     _ASM_EXTABLE(1b, 3b)				\
- 		     : [err] "=r" (err)					\
- 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
- 		     : "memory")
+I keep asking people to come up with the a better name for this, and to
+document what it actually means. Recently I've been think we should
+maybe just adopt the vulkan terminology (immediate/fifo/mailbox) to
+avoid introducing yet another set of names for the same thing. We'd
+still want to document things properly though.
+
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> [prepared for upstream]
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> 
+> ---
+> Hi,
+> 
+> This patch introduces the ASYNC_UPDATE cap, which originated from the
+> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user to
+> figure that async_update exists.
+> 
+> This was tested using a small program that exercises the uAPI for easy
+> sanity testing. The program was created by Alexandros and modified by
+> Enric to test the capability flag [2].
+> 
+> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
+> the patch to update cursors asynchronously through atomic plus the patch
+> that introduces the ATOMIC_AMEND flag for the drm/rockchip driver.
+> 
+> To test, just build the program and use the --atomic flag to use the cursor
+> plane with the ATOMIC_AMEND flag. E.g.
+> 
+>   drm_cursor --atomic
+> 
+> [1] https://patchwork.freedesktop.org/patch/243088/
+> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
+> 
+> Thanks
+> Helen
+> 
+> 
+>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
+>  include/uapi/drm/drm.h      |  1 +
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+> index 94bd872d56c4..4a7e0f874171 100644
+> --- a/drivers/gpu/drm/drm_ioctl.c
+> +++ b/drivers/gpu/drm/drm_ioctl.c
+> @@ -31,6 +31,7 @@
+>  #include <drm/drm_ioctl.h>
+>  #include <drm/drmP.h>
+>  #include <drm/drm_auth.h>
+> +#include <drm/drm_modeset_helper_vtables.h>
+>  #include "drm_legacy.h"
+>  #include "drm_internal.h"
+>  #include "drm_crtc_internal.h"
+> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>  {
+>  	struct drm_get_cap *req = data;
+>  	struct drm_crtc *crtc;
+> +	struct drm_plane *plane;
+>  
+>  	req->value = 0;
+>  
+> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>  	case DRM_CAP_CRTC_IN_VBLANK_EVENT:
+>  		req->value = 1;
+>  		break;
+> +	case DRM_CAP_ASYNC_UPDATE:
+> +		req->value = 1;
+> +		list_for_each_entry(plane, &dev->mode_config.plane_list, head) {
+> +			if (!plane->helper_private->atomic_async_update) {
+> +				req->value = 0;
+> +				break;
+> +			}
+> +		}
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> index 300f336633f2..ff01540cbb1d 100644
+> --- a/include/uapi/drm/drm.h
+> +++ b/include/uapi/drm/drm.h
+> @@ -649,6 +649,7 @@ struct drm_gem_open {
+>  #define DRM_CAP_PAGE_FLIP_TARGET	0x11
+>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT	0x12
+>  #define DRM_CAP_SYNCOBJ		0x13
+> +#define DRM_CAP_ASYNC_UPDATE		0x14
+>  
+>  /** DRM_IOCTL_GET_CAP ioctl argument type */
+>  struct drm_get_cap {
+> -- 
+> 2.19.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
-
+Ville Syrjälä
+Intel
