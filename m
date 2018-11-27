@@ -2,158 +2,103 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FBEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7875C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E59520873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 883DD208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DjcoRErJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E59520873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7KANS72"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883DD208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbeK1HXc (ORCPT
+        id S1726500AbeK1HYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:23:32 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44504 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbeK1HXc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:23:32 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wARK9Spm061600;
-        Tue, 27 Nov 2018 20:23:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=t1Zp36dUK6XUmQ5JJmzu7dDrurM+bsdAK/OsvtyvG7E=;
- b=DjcoRErJ87tbzuBMlKUoZBtNKCT/7CDlBVXf12367j9lzycqKTD+i1YvgX+/liheWPAw
- UuJTzKT7VBXUZPps/+F1ekMYpiCcfwL1cIBza+nL80R40lIEB8K90VUxZAxyoy1phALz
- +fHceuMA/puTpsrDUi/mAJDtyJtYPiYDHWWSsC9pIkgBu9kraBOh8hmIg/mrHlf9LsA0
- 94sHPlZyEdzzmw5WTIzWFBDjjKOD5kJH9zOxNtFSOkC2DO8DNzCJP5rwN5EmvadePh5v
- BvRpL604oGn+bVvFcqqocwaISuiBAFPHJBOZ4XFzLol7O5bNdUek6J5FC1P22w1mCbAp QA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2nxy9r6bfb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 20:23:51 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wARKNonH010125
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 20:23:50 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wARKNnEH017510;
-        Tue, 27 Nov 2018 20:23:49 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Nov 2018 12:23:49 -0800
-Date:   Tue, 27 Nov 2018 12:23:59 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-Cc:     "'Daniel Jordan'" <daniel.m.jordan@oracle.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "aaron.lu@intel.com" <aaron.lu@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "jgg@mellanox.com" <jgg@mellanox.com>,
-        "jwadams@google.com" <jwadams@google.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "prasad.singamsetty@oracle.com" <prasad.singamsetty@oracle.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
-        peterz@infradead.org, dhaval.giani@oracle.com
-Subject: Re: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
- initialization within each node
-Message-ID: <20181127202359.biav42vbfchprmo5@ca-dmjordan1.us.oracle.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-12-daniel.m.jordan@oracle.com>
- <AT5PR8401MB1169798EBEF1EE5EBA3ABFFFABC70@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <20181112165412.vizeiv6oimsuxkbk@ca-dmjordan1.us.oracle.com>
- <AT5PR8401MB1169B05F889BCF8EF113E053ABC10@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <20181119160137.72zha7dbsr3adkfs@ca-dmjordan1.us.oracle.com>
- <AT5PR8401MB1169AA00F542BA2E3204FC24ABD00@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+        Wed, 28 Nov 2018 02:24:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbeK1HYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:24:20 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D7D420873;
+        Tue, 27 Nov 2018 20:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543350316;
+        bh=lhOOZSdDHB39hiHUJ1gc3PVNwldijxaEv1yJeDjOJbE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s7KANS72ytXRKFgaBrsx5PAwmMrR/rUpEQ5DNEPfLZuRwUAe2UHrfB8dMoL1hIbx9
+         N+XjnphPOSs+nj5D8Injv0MvHOPTburaDA3v2gcPEZK3cwGLFbnOjK2kXeDMf8ZuVe
+         Pna4FXPyQKObIFI4Utb3wGK7wjut/eZ/2oTK9Ubs=
+Date:   Tue, 27 Nov 2018 14:25:14 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Patrick Talbert <ptalbert@redhat.com>
+Subject: Re: [Bug] SD card reader in Acer Aspire S5 broken in 4.20-rc
+Message-ID: <20181127202514.GB112381@google.com>
+References: <2960808.4YCFhzuD0k@aspire.rjw.lan>
+ <1675729.7aZxPkvRd8@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AT5PR8401MB1169AA00F542BA2E3204FC24ABD00@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270172
+In-Reply-To: <1675729.7aZxPkvRd8@aspire.rjw.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:12:28AM +0000, Elliott, Robert (Persistent Memory) wrote:
-> I ran a short test with:
-> * HPE ProLiant DL360 Gen9 system
-> * Intel Xeon E5-2699 CPU with 18 physical cores (0-17) and 
->   18 hyperthreaded cores (36-53)
-> * DDR4 NVDIMM-Ns (which run at regular DRAM DIMM speeds)
-> * fio workload generator
-> * cores on one CPU socket talking to a pmem device on the same CPU
-> * large (1 MiB) random writes (to minimize the threads getting CPU cache
->   hits from each other)
+On Mon, Nov 26, 2018 at 11:37:20PM +0100, Rafael J. Wysocki wrote:
+> On Monday, November 26, 2018 7:03:58 PM CET Rafael J. Wysocki wrote:
+> > Hi Bjorn,
+> > 
+> > The SD card reader in my Acer Aspire S5 doesn't work with 4.20-rc.
+> > 
+> > Here's what lspci -v says about it (in a bad kernel):
+> > 
+> > 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS5209 PCI Express Card Reader 
+> > (rev 01)
+> >         Subsystem: Acer Incorporated [ALI] Device 0704
+> >         Flags: bus master, fast devsel, latency 0, IRQ 35
+> >         Memory at d9001000 (32-bit, non-prefetchable) [size=4K]
+> >         Capabilities: [40] Power Management version 3
+> >         Capabilities: [50] MSI: Enable+ Count=1/1 Maskable- 64bit+
+> >         Capabilities: [70] Express Endpoint, MSI 00
+> >         Capabilities: [100] Advanced Error Reporting
+> >         Capabilities: [140] Device Serial Number 00-00-00-01-00-4c-e0-00
+> >         Kernel driver in use: rtsx_pci
+> >         Kernel modules: rtsx_pci
+
+Thanks a lot for bisecting this!
+
+With a good kernel (v4.19 or v4.20-rc with 17c91487364f reverted),
+would you mind collecting "lspci -vv" output, the dmesg log with
+"pci=earlydump", and the FADT dump?
+
+I'm interested in the initial state of the device at handoff from
+BIOS, and what Linux changes even when aspm_disabled is set.
+
+If we can't figure out a way to fix both this issue and the one fixed
+by 17c91487364f, I guess the fallback will be to revert 17c91487364f
+since it's better to allow a system that was previously broken to
+remain broken than it is to break a system that previously worked.
+
+But obviously I hope we can figure out a solution that fixes both
+cases.
+
+> > When it doesn't work, it doesn't generate any interrupts on device insertion
+> > and removal and this seems to be reproducible 100% of the time.
 > 
-> Results:
-> * 31.7 GB/s    four threads, four physical cores (0,1,2,3)
-> * 22.2 GB/s    four threads, two physical cores (0,1,36,37)
-> * 21.4 GB/s    two threads, two physical cores (0,1)
-> * 12.1 GB/s    two threads, one physical core (0,36)
-> * 11.2 GB/s    one thread, one physical core (0)
+> So reverting 17c91487364f (PCI/ASPM: Do not initialize link state when
+> aspm_disabled is set) on top of 4.20-rc4 makes the problem go away.
 > 
-> So, I think it's important that the initialization threads run on
-> separate physical cores.
-
-Thanks for running this.  And fair enough, in this test using both siblings
-gives only a 4-8% speedup over one, so it makes sense to use only cores in the
-calculation.
-
-As for how to actually do this, some arches have smp_num_siblings, but there
-should be a generic interface to provide that.
-
-It's also possible to calculate this from the existing
-topology_sibling_cpumask, but the first option is better IMHO.  Open to
-suggestions.
-
-> For the number of cores to use, one approach is:
->     memory bandwidth (number of interleaved channels * speed)
-> divided by 
->     CPU core max sustained write bandwidth
-> 
-> For example, this 2133 MT/s system is roughly:
->     68 GB/s    (4 * 17 GB/s nominal)
-> divided by
->     11.2 GB/s  (one core's performance)
-> which is 
->     6 cores
-> 
-> ACPI HMAT will report that 68 GB/s number.  I'm not sure of
-> a good way to discover the 11.2 GB/s number.
-
-Yes, this would be nice to do if we could know the per-core number, with the
-caveat that a single number like this would be most useful for the CPU-memory
-pair it was calculated for, so the kernel could at least calculate it for jobs
-operating on local memory.
-
-Some BogoMIPS-like calibration may work, but I'll wait for ACPI HMAT support in
-the kernel.
+> I guess that the device in question needs pcie_aspm_cap_init() to be
+> called for it even though the FADT says "NO_ASPM".
