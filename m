@@ -2,87 +2,89 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0848C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CACC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FAB2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:39:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FAB2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 288932086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:39:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288932086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbeK0TgK (ORCPT
+        id S1729602AbeK0TgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:36:10 -0500
-Received: from mga04.intel.com ([192.55.52.120]:49193 "EHLO mga04.intel.com"
+        Tue, 27 Nov 2018 14:36:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55976 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728985AbeK0TgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:36:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 00:39:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="277497479"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2018 00:39:00 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 89E3921B94; Tue, 27 Nov 2018 10:38:59 +0200 (EET)
-Date:   Tue, 27 Nov 2018 10:38:59 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: imx274: don't declare events, they are not
- implemented
-Message-ID: <20181127083859.zljff4wk4hikel56@paasikivi.fi.intel.com>
-References: <20181127083445.27737-1-luca@lucaceresoli.net>
+        id S1728985AbeK0TgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:36:14 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C4BE420DBE; Tue, 27 Nov 2018 09:39:04 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 84EA5207BC;
+        Tue, 27 Nov 2018 09:38:43 +0100 (CET)
+Date:   Tue, 27 Nov 2018 09:38:43 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 04/43] drm/sun4i: backend: Add a helper and a list for
+ supported formats
+Message-ID: <20181127083843.l54uihmhcr3pnt3e@flea>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+ <20181123092515.2511-5-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mtayvwtqvdfoyfem"
 Content-Disposition: inline
-In-Reply-To: <20181127083445.27737-1-luca@lucaceresoli.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181123092515.2511-5-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
 
-On Tue, Nov 27, 2018 at 09:34:43AM +0100, Luca Ceresoli wrote:
-> The V4L2_SUBDEV_FL_HAS_EVENTS flag should not be set, event are just
-> not implemented.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+--mtayvwtqvdfoyfem
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The driver supports controls, and so control events can be subscribed and
-received by the user. Therefore I don't see a reason to remove the flag.
+On Fri, Nov 23, 2018 at 10:24:36AM +0100, Paul Kocialkowski wrote:
+> In order to check whether the backend supports a specific format, an
+> explicit list and a related helper are introduced.
+>=20
+> The prototype of this helper is added to the header so that it can be
+> called from sun4i_layer later (when introducing tiled mode support).
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-> ---
->  drivers/media/i2c/imx274.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-> index 95a0e7d9851a..78746c51071d 100644
-> --- a/drivers/media/i2c/imx274.c
-> +++ b/drivers/media/i2c/imx274.c
-> @@ -1878,7 +1878,7 @@ static int imx274_probe(struct i2c_client *client,
->  	imx274->client = client;
->  	sd = &imx274->sd;
->  	v4l2_i2c_subdev_init(sd, client, &imx274_subdev_ops);
-> -	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
-> +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
->  
->  	/* initialize subdev media pad */
->  	imx274->pad.flags = MEDIA_PAD_FL_SOURCE;
+Applied, thanks!
+Maxime
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--mtayvwtqvdfoyfem
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0CkwAKCRDj7w1vZxhR
+xVaSAP4k82n2zIyeA145XghVMNgatbjWVosY4MrFxg3seUO90QD9E1114dlL66ss
+A/TlwHoZNnZ9zxjc2PqaGZWiBzEOqwc=
+=Zd5o
+-----END PGP SIGNATURE-----
+
+--mtayvwtqvdfoyfem--
