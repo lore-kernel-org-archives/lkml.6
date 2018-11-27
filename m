@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B71C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152EBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C3E2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D746A2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IVlxy/Fe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C3E2082F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GkJejCkr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D746A2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732164AbeK1Eyy (ORCPT
+        id S1732168AbeK1EzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:54:54 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36482 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731749AbeK1Eyx (ORCPT
+        Tue, 27 Nov 2018 23:55:24 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:38977 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731749AbeK1EzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:54:53 -0500
-Received: by mail-yw1-f68.google.com with SMTP id y194so9509089ywg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:12 -0800 (PST)
+        Tue, 27 Nov 2018 23:55:23 -0500
+Received: by mail-yb1-f196.google.com with SMTP id w17-v6so9428302ybl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=JW0aEvufzitQixWSWQWj26FogOCWOXctwaJai/3NkaM=;
-        b=IVlxy/FedZwhPFUBQWpe8Wav7myRdSfCDzFwJNqjid/+IutjwpXwWOHrP1+oPxFhX6
-         FMG/vDK5CmB2EbaNBR/n+KpH9hCtu/KelW3X2UbZ7rblg1BtSYwyN0scBeBt0TH7gT0V
-         tB4BOJobqsP9FpGVj8bxBk6WTrRbeXrVkCuj4=
+        bh=+UdKTrr72ZMfamSGJHOfjJQJkKjC3HcwfZA9g1yZ9kM=;
+        b=GkJejCkrWIjAReJ2ehQtGHnWqpNiagLhQnePPH+yiumZEUZ/CU6SKc+747K4PC10p6
+         sXxALYpTxZjWjwzYqUEetIsByFR6Bbm98QLuCoW/jFHEnhzfQzQ7gzTOHLqWzdco3Eoz
+         77OXz6T3p/LAgAWgWiGlS2GY14SfP/INxM/I4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=JW0aEvufzitQixWSWQWj26FogOCWOXctwaJai/3NkaM=;
-        b=P8hWOmQBgu6qUbTco/oTnoOD5GEPOj1GXHJGh5ZsaCiDSrMiG6tTf2bamhedVVGAgz
-         niBR5yNXg2uVU1Y2i5xNz8HOJQkDVlOCefM5ivmzMJamMtT41e4/8zGSCfZeLbSaRNE+
-         IZt9Zb1UlM6tq9epd5IyqkhdWYHF7Ul53WXX7jExIkcrQca/+IvwPuM0ivHoYeqxU5+a
-         jmDotcEsc/8mZMdylvbRDymKozVrLKb8XzAGjpSdQFqleNZWjWKS7wLhcf9moPE/7Q01
-         mlVHnlleQgKb2hCgntRpu4h2pmSk5SqREpDSw571FHpiIMLvp28/x+/ouH7qx3zXkkd9
-         r4IQ==
-X-Gm-Message-State: AGRZ1gLU4YicT5xr7KEyQikkPGVIeIm1xiSeWu5jY8AMkeveh5O6xvYt
-        tQa0TFDqhKF/huiK3P2DhtcN36hP5D4=
-X-Google-Smtp-Source: AJdET5eu2JieWZi1xgI0HdR5R660eFXL8FPfHkZLnb0KLYH1FIN4sF9H4WU/dZsw6rRDK5R6SkA2Ew==
-X-Received: by 2002:a81:36d8:: with SMTP id d207-v6mr35941066ywa.71.1543341371598;
-        Tue, 27 Nov 2018 09:56:11 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 206-v6sm2167967ywp.0.2018.11.27.09.56.10
+        bh=+UdKTrr72ZMfamSGJHOfjJQJkKjC3HcwfZA9g1yZ9kM=;
+        b=rp2LFVijG1fLma0UG89O4uzu3t6sRYXiEjefnZCfJ35adSS73bNage6gsXWIAvxhIE
+         aXL0Ltyx/lfkCxjGPpGP8zItuH30652KYg5wMMZohviBct6tlNjQeJYT9g/b1a5u62uU
+         l28789JKicLYqNx1WPlvGEzdrwMnoNAhb8qcGAK3rJSsgOBf3ELoGbheejgKMwq7jPaN
+         5e8ZvUyn9Ppl3hBdWZW0x7nWFFdkw3HxxCioE3WMxkztSk7cesxLWvZZgOjZRlIbfBYO
+         pYqQgJUrFaEsqFvXL3tKZfcKjmvVjrFcvG+EehBSDsARppid+PJN9fDeCmWeQ+54Bk1+
+         WTUg==
+X-Gm-Message-State: AA+aEWb4NbSDz00A/5qI5wQF8fc5Ywtot1JYt1qNWsKKCbPXNkPZglwJ
+        rfHFgvbdlBxMBBYeR55GGGrWHnqOxP0=
+X-Google-Smtp-Source: AFSGD/Ukrhh5Tle2XytsW96AwdgvAt+gwV6Hk4yM+iQdb9oOfj6Zy3PH9ukLkJ/ROsE7JMkxz+nWxw==
+X-Received: by 2002:a25:b081:: with SMTP id f1-v6mr35081061ybj.65.1543341401861;
+        Tue, 27 Nov 2018 09:56:41 -0800 (PST)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id f10sm4204163ywb.26.2018.11.27.09.56.40
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 09:56:10 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id i17-v6so9414344ybp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:10 -0800 (PST)
-X-Received: by 2002:a25:7644:: with SMTP id r65-v6mr29657454ybc.403.1543341369944;
- Tue, 27 Nov 2018 09:56:09 -0800 (PST)
+        Tue, 27 Nov 2018 09:56:40 -0800 (PST)
+Received: by mail-yw1-f43.google.com with SMTP id f65so9506195ywc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:40 -0800 (PST)
+X-Received: by 2002:a81:2890:: with SMTP id o138mr36415736ywo.168.1543341400228;
+ Tue, 27 Nov 2018 09:56:40 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:56:09
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:56:39
  -0800 (PST)
-In-Reply-To: <20181127031218.24419-2-dan.rue@linaro.org>
-References: <20181127031218.24419-1-dan.rue@linaro.org> <20181127031218.24419-2-dan.rue@linaro.org>
+In-Reply-To: <20181127031218.24419-3-dan.rue@linaro.org>
+References: <20181127031218.24419-1-dan.rue@linaro.org> <20181127031218.24419-3-dan.rue@linaro.org>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 27 Nov 2018 09:56:09 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJWQX2qwwL4_1wQUWOGU9ZDay8ddZaLLJQJ-1S8h5cgzA@mail.gmail.com>
-Message-ID: <CAGXu5jJWQX2qwwL4_1wQUWOGU9ZDay8ddZaLLJQJ-1S8h5cgzA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] selftests: firmware: remove use of non-standard diff
- -Z option
+Date:   Tue, 27 Nov 2018 09:56:39 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK=oOHsM50iGDcp4PzOHv58r2-XfryAs0N=gfjD+rEaQg@mail.gmail.com>
+Message-ID: <CAGXu5jK=oOHsM50iGDcp4PzOHv58r2-XfryAs0N=gfjD+rEaQg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selftests: firmware: add CONFIG_FW_LOADER_USER_HELPER_FALLBACK
+ to config
 To:     Dan Rue <dan.rue@linaro.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -85,15 +85,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Nov 26, 2018 at 7:12 PM, Dan Rue <dan.rue@linaro.org> wrote:
-> diff -Z is used to trim the trailing whitespace when comparing the
-> loaded firmware file with the source firmware file. However, per the
-> comment in the source code, -Z should not be necessary. In testing, the
-> input and output files are identical.
->
-> Additionally, -Z is not a standard option and is not available in
-> environments such as busybox. When -Z is not supported, diff fails with
-> a usage error, which is suppressed, but then causes read_firmwares() to
-> exit with a false failure message.
+> CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y is required for fw_fallback.sh.
+> Without it, fw_fallback.sh fails with 'usermode helper disabled so
+> ignoring test'. Enable the config in selftest so that it gets built by
+> default.
 >
 > Signed-off-by: Dan Rue <dan.rue@linaro.org>
 
@@ -102,36 +97,20 @@ Acked-by: Kees Cook <keescook@chromium.org>
 -Kees
 
 > ---
->  tools/testing/selftests/firmware/fw_filesystem.sh | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+>  tools/testing/selftests/firmware/config | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
-> index a4320c4b44dc..466cf2f91ba0 100755
-> --- a/tools/testing/selftests/firmware/fw_filesystem.sh
-> +++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-> @@ -155,11 +155,8 @@ read_firmwares()
->  {
->         for i in $(seq 0 3); do
->                 config_set_read_fw_idx $i
-> -               # Verify the contents are what we expect.
-> -               # -Z required for now -- check for yourself, md5sum
-> -               # on $FW and DIR/read_firmware will yield the same. Even
-> -               # cmp agrees, so something is off.
-> -               if ! diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
-> +               # Verify the contents match
-> +               if ! diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
->                         echo "request #$i: firmware was not loaded" >&2
->                         exit 1
->                 fi
-> @@ -171,7 +168,7 @@ read_firmwares_expect_nofile()
->         for i in $(seq 0 3); do
->                 config_set_read_fw_idx $i
->                 # Ensures contents differ
-> -               if diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
-> +               if diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
->                         echo "request $i: file was not expected to match" >&2
->                         exit 1
->                 fi
+> diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
+> index bf634dda0720..913a25a4a32b 100644
+> --- a/tools/testing/selftests/firmware/config
+> +++ b/tools/testing/selftests/firmware/config
+> @@ -1,5 +1,6 @@
+>  CONFIG_TEST_FIRMWARE=y
+>  CONFIG_FW_LOADER=y
+>  CONFIG_FW_LOADER_USER_HELPER=y
+> +CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+>  CONFIG_IKCONFIG=y
+>  CONFIG_IKCONFIG_PROC=y
 > --
 > 2.19.1
 >
