@@ -2,156 +2,141 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50004C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B71C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AD362082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C3E2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="hW0i1vwU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD362082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IVlxy/Fe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C3E2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbeK1Eyb (ORCPT
+        id S1732164AbeK1Eyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:54:31 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36863 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732125AbeK1Eyb (ORCPT
+        Tue, 27 Nov 2018 23:54:54 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36482 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731749AbeK1Eyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:54:31 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so8211314pgm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:55:50 -0800 (PST)
+        Tue, 27 Nov 2018 23:54:53 -0500
+Received: by mail-yw1-f68.google.com with SMTP id y194so9509089ywg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=FjEPeuDTsdYAOiyxauMSBTAn10p+ceWBu+lwCNn0SIM=;
-        b=hW0i1vwUNt77K8T7jvjWIZMICrvFScql4kNtD32rMfygjfU/IJOimXFdveRqcEt5sl
-         6N3rukKFtHprjpMr657n2HzokbZr8QaDMcdH+Npk6dMFHucIQsrKmnIw4UdfGH9LP6o2
-         zX5OGraIBeEE/TNkL1Vw5bMVKS3d8og5qn5HQqbAL83vPwhNYSDSVIJZ1IIcoTASMw8R
-         9sbnnV0bghCOr6HrY5xchAXaIQMazjQdQHkKRXWe9sSN25nEKRPEvgF8ahf3rzmGZAPG
-         aQbS/UA24eHW70RvkemSb+1rFiaS51uWGHPYKOb+gNgFxLm53Ov2zLUBtlcfQ+iVTnX1
-         K3uA==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=JW0aEvufzitQixWSWQWj26FogOCWOXctwaJai/3NkaM=;
+        b=IVlxy/FedZwhPFUBQWpe8Wav7myRdSfCDzFwJNqjid/+IutjwpXwWOHrP1+oPxFhX6
+         FMG/vDK5CmB2EbaNBR/n+KpH9hCtu/KelW3X2UbZ7rblg1BtSYwyN0scBeBt0TH7gT0V
+         tB4BOJobqsP9FpGVj8bxBk6WTrRbeXrVkCuj4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=FjEPeuDTsdYAOiyxauMSBTAn10p+ceWBu+lwCNn0SIM=;
-        b=Cm+iyBhlLUCv2qU2H27G2xSaHQzUl3XK2oDyp6yGemDJAd7d8KL5m//Cbt7QoVwvjz
-         /tUVg4tCFNpb+G9hnzL7FeYNTP8uyLUF3/LydqyjW7/n2ybt8nJxF2xjw216fZ7RfB/Z
-         hSm6AyYapFb6t0AX1n4Wq3PU0UDnWfeBE8358Dg+qnpdA6LdTY4Gl9J6HeqgSZHOXLJZ
-         5RjmUYbk5tgO085Neg/iV3Yu3v8VaSyvtF4xzWPM7Al5Psdl6pMf7GLlRH2HuHNSKV8A
-         W10+lu59DkrJi725hft4YapRCkqemlRir9GhbPHGLVVCFXJcUYsI/bhOTzO9stq13dO9
-         5kZA==
-X-Gm-Message-State: AGRZ1gIgFopez3ZMuI8UWNM3SzeFBN9apvZEUPGFNG99x0wPDuerEsg0
-        Kz9SHh9bMU3K9EDBwNIluJqWMQ==
-X-Google-Smtp-Source: AFSGD/WH1fQ8xZDJ5jkh14AEbgr5S74X3K+41t97ya22qpdI+/NmcUVX2HD0tiwiprjBbu0uYjJxwQ==
-X-Received: by 2002:a63:a112:: with SMTP id b18mr30258592pgf.440.1543341349908;
-        Tue, 27 Nov 2018 09:55:49 -0800 (PST)
-Received: from ?IPv6:2600:1010:b02c:1f41:9d9b:cc3f:d42b:6cdd? ([2600:1010:b02c:1f41:9d9b:cc3f:d42b:6cdd])
-        by smtp.gmail.com with ESMTPSA id z14sm4913525pgv.47.2018.11.27.09.55.46
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=JW0aEvufzitQixWSWQWj26FogOCWOXctwaJai/3NkaM=;
+        b=P8hWOmQBgu6qUbTco/oTnoOD5GEPOj1GXHJGh5ZsaCiDSrMiG6tTf2bamhedVVGAgz
+         niBR5yNXg2uVU1Y2i5xNz8HOJQkDVlOCefM5ivmzMJamMtT41e4/8zGSCfZeLbSaRNE+
+         IZt9Zb1UlM6tq9epd5IyqkhdWYHF7Ul53WXX7jExIkcrQca/+IvwPuM0ivHoYeqxU5+a
+         jmDotcEsc/8mZMdylvbRDymKozVrLKb8XzAGjpSdQFqleNZWjWKS7wLhcf9moPE/7Q01
+         mlVHnlleQgKb2hCgntRpu4h2pmSk5SqREpDSw571FHpiIMLvp28/x+/ouH7qx3zXkkd9
+         r4IQ==
+X-Gm-Message-State: AGRZ1gLU4YicT5xr7KEyQikkPGVIeIm1xiSeWu5jY8AMkeveh5O6xvYt
+        tQa0TFDqhKF/huiK3P2DhtcN36hP5D4=
+X-Google-Smtp-Source: AJdET5eu2JieWZi1xgI0HdR5R660eFXL8FPfHkZLnb0KLYH1FIN4sF9H4WU/dZsw6rRDK5R6SkA2Ew==
+X-Received: by 2002:a81:36d8:: with SMTP id d207-v6mr35941066ywa.71.1543341371598;
+        Tue, 27 Nov 2018 09:56:11 -0800 (PST)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id 206-v6sm2167967ywp.0.2018.11.27.09.56.10
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 09:55:47 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <20181127164129.GB4170@linux.intel.com>
-Date:   Tue, 27 Nov 2018 09:55:45 -0800
-Cc:     "Dr. Greg" <greg@enjellic.com>, Andy Lutomirski <luto@kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
-References: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com> <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181126215145.GC868@linux.intel.com> <20181126230436.GA6737@linux.intel.com> <20181127085533.GA12247@wind.enjellic.com> <20181127164129.GB4170@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Tue, 27 Nov 2018 09:56:10 -0800 (PST)
+Received: by mail-yb1-f181.google.com with SMTP id i17-v6so9414344ybp.13
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:10 -0800 (PST)
+X-Received: by 2002:a25:7644:: with SMTP id r65-v6mr29657454ybc.403.1543341369944;
+ Tue, 27 Nov 2018 09:56:09 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:56:09
+ -0800 (PST)
+In-Reply-To: <20181127031218.24419-2-dan.rue@linaro.org>
+References: <20181127031218.24419-1-dan.rue@linaro.org> <20181127031218.24419-2-dan.rue@linaro.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 27 Nov 2018 09:56:09 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJWQX2qwwL4_1wQUWOGU9ZDay8ddZaLLJQJ-1S8h5cgzA@mail.gmail.com>
+Message-ID: <CAGXu5jJWQX2qwwL4_1wQUWOGU9ZDay8ddZaLLJQJ-1S8h5cgzA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] selftests: firmware: remove use of non-standard diff
+ -Z option
+To:     Dan Rue <dan.rue@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 26, 2018 at 7:12 PM, Dan Rue <dan.rue@linaro.org> wrote:
+> diff -Z is used to trim the trailing whitespace when comparing the
+> loaded firmware file with the source firmware file. However, per the
+> comment in the source code, -Z should not be necessary. In testing, the
+> input and output files are identical.
+>
+> Additionally, -Z is not a standard option and is not available in
+> environments such as busybox. When -Z is not supported, diff fails with
+> a usage error, which is suppressed, but then causes read_firmwares() to
+> exit with a false failure message.
+>
+> Signed-off-by: Dan Rue <dan.rue@linaro.org>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  tools/testing/selftests/firmware/fw_filesystem.sh | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
+> index a4320c4b44dc..466cf2f91ba0 100755
+> --- a/tools/testing/selftests/firmware/fw_filesystem.sh
+> +++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+> @@ -155,11 +155,8 @@ read_firmwares()
+>  {
+>         for i in $(seq 0 3); do
+>                 config_set_read_fw_idx $i
+> -               # Verify the contents are what we expect.
+> -               # -Z required for now -- check for yourself, md5sum
+> -               # on $FW and DIR/read_firmware will yield the same. Even
+> -               # cmp agrees, so something is off.
+> -               if ! diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
+> +               # Verify the contents match
+> +               if ! diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
+>                         echo "request #$i: firmware was not loaded" >&2
+>                         exit 1
+>                 fi
+> @@ -171,7 +168,7 @@ read_firmwares_expect_nofile()
+>         for i in $(seq 0 3); do
+>                 config_set_read_fw_idx $i
+>                 # Ensures contents differ
+> -               if diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
+> +               if diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
+>                         echo "request $i: file was not expected to match" >&2
+>                         exit 1
+>                 fi
+> --
+> 2.19.1
+>
 
 
-> On Nov 27, 2018, at 8:41 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.=
-com> wrote:
->=20
->> On Tue, Nov 27, 2018 at 02:55:33AM -0600, Dr. Greg wrote:
->> Since the thread has become a bit divergent I wanted to note that we
->> have offered a proposal for a general policy management framework
->> based on MRSIGNER values.  This framework is consistent with the SGX
->> security model, ie. cryptographic rather then DAC based policy
->> controls.  This framework also allows a much more flexible policy
->> implementation that doesn't result in combinatoric issues.
->>=20
->> Our framework also allows the preservation of the current ABI which
->> allows an EINITTOKEN to be passed in from userspace.  The framework
->> also supports the ability to specify that only a kernel based launch
->> enclave (LE) should be available if the platform owner or distribution
->> should desire to implement such a model.
->>=20
->> The policy management framework is straight forward.  Three linked
->> lists or their equivalent which are populated through /sysfs
->> pseudo-files or equivalent plumbing.  Each list is populated with
->> MRSIGNER values for signing keys that are allowed to initialize
->> enclaves under three separate conditions.
->>=20
->> 1.) General enclaves without special attribute bits.
->>=20
->> 2.) Enclaves with the SGX_FLAGS_PROVISION_KEY attribute set. - i.e.,
->> 'Provisioning Enclaves'.
->>=20
->> 3.) Enclaves with the SGX_FLAGS_LICENSE_KEY attribute set - i.e., 'Launch=
 
->> Enclaves'.
->>=20
->> An all-null MRSIGNER value serves as a 'sealing' value that locks a
->> list from any further modifications.
->>=20
->> This architecture allows platform policies to be specified and then
->> sealed at early boot by the root user.  At that point cryptographic
->> policy controls are in place rather then DAC based controls, the
->> latter of which have perpetual security liabilities in addition to the
->> useability constraints inherent in a DAC or device node model.
->>=20
->> We have developed an independent implementation of the PSW and
->> arguably have as much experience with issues surrounding how to
->> interact with the device driver as anyone.  We have spent a lot of
->> time thinking about these issues and the above framework provides the
->> most flexible architecture available.
->=20
-> Sounds like a lot bloat and policy added to the kernel whereas with
-> Andy's proposal you can implement logic to a daemon and provide only
-> mechanism to do it.
->=20
->=20
-
-Well, almost. We=E2=80=99d need SGX_IOC_FREEZE_MR{ENCLAVE,SIGNER} or similar=
-.  Or maybe the daemon could handle the entire loading process.  But this ca=
-n wait until after the main driver is upstream.
-
-This does lead to a question: enclaves are kind-of-sort-of mapped into a giv=
-en address space. What happens if you issue the various ioctls in the contex=
-t of a different mm?  For that matter, can two processes mmap the same encla=
-ve?=
+-- 
+Kees Cook
