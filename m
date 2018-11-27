@@ -2,106 +2,118 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F2BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F04C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9953820989
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:34:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cYJ3T9uV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cYJ3T9uV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9953820989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DBCEF2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:34:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCEF2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbeK0Ub6 (ORCPT
+        id S1730319AbeK0UcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:31:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60022 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbeK0Ub6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:31:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CD0C060BFA; Tue, 27 Nov 2018 09:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543311279;
-        bh=TJtma5UiwK2M4mgc34I/F/Q5xaapkpIstkPgCpjpgHE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cYJ3T9uVI1tEPv5P5mJysMhsRTqTwZvLEnagDjm32wE9qGxHjGsx4g8hkWc93bLLJ
-         RKwjklVrVgHbf8lTBATD167eJ0EAQW2VX/832eOL2mgiu9qIPAUhEaBIcwhZy3NvA7
-         IkLzzH5Jh9Y9oVaTg29DUV+6aoQYlDXwMOcwTEG4=
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 27 Nov 2018 15:32:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729387AbeK0UcP (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:32:15 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: pkondeti@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D220B60BE8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543311279;
-        bh=TJtma5UiwK2M4mgc34I/F/Q5xaapkpIstkPgCpjpgHE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cYJ3T9uVI1tEPv5P5mJysMhsRTqTwZvLEnagDjm32wE9qGxHjGsx4g8hkWc93bLLJ
-         RKwjklVrVgHbf8lTBATD167eJ0EAQW2VX/832eOL2mgiu9qIPAUhEaBIcwhZy3NvA7
-         IkLzzH5Jh9Y9oVaTg29DUV+6aoQYlDXwMOcwTEG4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D220B60BE8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Received: by mail-ed1-f45.google.com with SMTP id j6so18375797edp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:34:38 -0800 (PST)
-X-Gm-Message-State: AGRZ1gIyHCDs8TkNcnhuX9qgOE4hkfN5sHj+LRHMk3fy5n/Mv8BVe8OG
-        5HoFUN3hfVXdd1vDpAGJDk4LSVkIMF+ShHjAkv0=
-X-Google-Smtp-Source: AJdET5fD7+YFnPrH0DFZU2xtKV7OjmpGs7EtCu0+xOBUXE0OIu7+kmU3c2GA/8ta9ngjWdnGhME8y0+crydMIM62NMI=
-X-Received: by 2002:a17:906:92d1:: with SMTP id d17-v6mr22731711ejx.96.1543311277506;
- Tue, 27 Nov 2018 01:34:37 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D0993082A36;
+        Tue, 27 Nov 2018 09:34:58 +0000 (UTC)
+Received: from krava (ovpn-204-23.brq.redhat.com [10.40.204.23])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 87B825C6A6;
+        Tue, 27 Nov 2018 09:34:55 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 10:34:54 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH 2/2] perf report: Display average IPC and IPC coverage
+ per symbol
+Message-ID: <20181127093454.GF8908@krava>
+References: <1543225254-5858-1-git-send-email-yao.jin@linux.intel.com>
+ <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
+ <20181126095537.GC18780@krava>
+ <bda91905-c08a-87e0-e49c-27eeaf9b711d@linux.intel.com>
 MIME-Version: 1.0
-References: <1540882473-1103-1-git-send-email-pkondeti@codeaurora.org>
-In-Reply-To: <1540882473-1103-1-git-send-email-pkondeti@codeaurora.org>
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-Date:   Tue, 27 Nov 2018 15:04:25 +0530
-X-Gmail-Original-Message-ID: <CAEU1=PkZQGEZueS=cLOT9kbGeMBptKRL=A56BrBgG85R9PrHDA@mail.gmail.com>
-Message-ID: <CAEU1=PkZQGEZueS=cLOT9kbGeMBptKRL=A56BrBgG85R9PrHDA@mail.gmail.com>
-Subject: Re: [PATCH] sched, trace: Fix prev_state output in sched_switch tracepoint
-To:     Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bda91905-c08a-87e0-e49c-27eeaf9b711d@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 27 Nov 2018 09:34:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter/Thomas,
+On Tue, Nov 27, 2018 at 11:42:12AM +0800, Jin, Yao wrote:
+> 
+> 
+> On 11/26/2018 5:55 PM, Jiri Olsa wrote:
+> > On Mon, Nov 26, 2018 at 05:40:54PM +0800, Jin Yao wrote:
+> > 
+> > SNIP
+> > 
+> > > diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> > > index f96c005..94f62c8 100644
+> > > --- a/tools/perf/util/sort.c
+> > > +++ b/tools/perf/util/sort.c
+> > > @@ -13,6 +13,7 @@
+> > >   #include "strlist.h"
+> > >   #include <traceevent/event-parse.h>
+> > >   #include "mem-events.h"
+> > > +#include "annotate.h"
+> > >   #include <linux/kernel.h>
+> > >   regex_t		parent_regex;
+> > > @@ -422,6 +423,47 @@ struct sort_entry sort_srcline_to = {
+> > >   	.se_width_idx	= HISTC_SRCLINE_TO,
+> > >   };
+> > > +static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
+> > > +					size_t size, unsigned int width)
+> > > +{
+> > > +
+> > > +	struct symbol *sym = he->ms.sym;
+> > > +	struct map *map = he->ms.map;
+> > > +	struct perf_evsel *evsel = hists_to_evsel(he->hists);
+> > > +	struct annotation *notes;
+> > > +	double ipc = 0.0, coverage = 0.0;
+> > > +	char tmp[64];
+> > > +
+> > > +	if (!sym)
+> > > +		return repsep_snprintf(bf, size, "%-*s", width, "-");
+> > > +
+> > > +	if (!sym->annotated &&
+> > > +	    symbol__annotate2(sym, map, evsel, &annotation__default_options,
+> > > +			      NULL) < 0) {
+> > > +		return 0;
+> > > +	}
+> > 
+> > this seems to make the sorting extra long, would you
+> > please consider progress bar update for this?
+> > 
+> > should be added somewhere around hists sorting code
+> > 
+> 
+> Hi Jiri,
+> 
+> Sorting doesn't take long time in my test but the session event processing
+> takes some time.
+> 
+> I just think maybe we need a new ops for stdio progress bar like what the
+> tui_progress__ops does now. That should be benefit for all stdio usages.
+> 
+> That may be another separate patch-set.
 
-On Tue, Oct 30, 2018 at 12:25 PM Pavankumar Kondeti
-<pkondeti@codeaurora.org> wrote:
->
-> commit 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
-> tried to fix the problem introduced by a previous commit efb40f588b43
-> ("sched/tracing: Fix trace_sched_switch task-state printing"). However
-> the prev_state output in sched_switch is still broken.
->
-> task_state_index() uses fls() which considers the LSB as 1. Left
-> shifting 1 by this value gives an incorrect mapping to the task state.
-> Fix this by decrementing the value returned by __get_task_state()
-> before shifting.
->
-> Fixes: 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
-> Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-> ---
->  include/trace/events/sched.h | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+sure, thanks
 
-Can you please review this patch?
-
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-Linux Foundation Collaborative Project
+jirka
