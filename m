@@ -2,281 +2,293 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FCAC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F188CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB6621104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA6B120989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:13:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOT+BOdI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB6621104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XPNIkTLX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6B120989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeK1BIl (ORCPT
+        id S1726957AbeK1BLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:08:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbeK1BIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:08:41 -0500
-Received: from quaco.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 425E620989;
-        Tue, 27 Nov 2018 14:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543327838;
-        bh=H8WL5kGEKYCikoDG4GE7Rw9HgQwWLELs2jEwP9Y40w4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vOT+BOdIE/a+MQW/sDGurVLRXYHxkIsvTH29bQSngcTHLAjTN0YfIGcleb0Z/NoiK
-         dUzo1I9HYOUEQqUowpFCqHxjZuniTH1Z1yBiF9IRN8H9Q/cgOFyRClRr3LFkQNzC1q
-         xywpd87yITqHp1VeTvbzM1JbAvYkafERUmBpKNTQ=
-Received: by quaco.infradead.org (Postfix, from userid 1000)
-        id 1D48141114; Tue, 27 Nov 2018 11:10:36 -0300 (-03)
-Date:   Tue, 27 Nov 2018 11:10:36 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org, leo.yan@linaro.org,
-        David Miller <davem@davemloft.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH V2 1/3] perf tools: Add fallback functions for cases
- where cpumode is insufficient
-Message-ID: <20181127141036.GF15747@kernel.org>
-References: <20181106210712.12098-1-adrian.hunter@intel.com>
- <20181106210712.12098-2-adrian.hunter@intel.com>
+        Tue, 27 Nov 2018 20:11:17 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36026 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeK1BLR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:11:17 -0500
+Received: by mail-io1-f67.google.com with SMTP id m19so17061402ioh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 06:13:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ivlhOnd4wBZxhGPr0WI/WbCsXUH5ZaF3kZdjzpcQwT0=;
+        b=XPNIkTLXglaV1rJzD1YQJvjQjd+hc8xcyStCwj5Lh2hxfgFOVROf4BeIemN29OaInS
+         cVIeHy6Iu/Nz/XJbV3GXuxwV+kI3rcARZadtJK2X8X6KqXdDuCqBf4WhR+0vskA/cEAD
+         Z5rki2Qq97oiew5ZG+I7NAZxumyBUwwPZt9aIYPoWg5/hpEwJKzYb7tKnbmFP7bpxtdt
+         /sjlk5wumx3/J6kMdD6npt6SVDX+kA7uJ2YxJRYnqineXMEVZqiy7W0fYuaZAn2U732H
+         cyiUmxqjMGcr3tSEtAT/hxXKo9L0wLsZhcNyzAFj3evawLrTETpwUgJ1c3tMk960wdFy
+         RJkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ivlhOnd4wBZxhGPr0WI/WbCsXUH5ZaF3kZdjzpcQwT0=;
+        b=JpNKpQJaeAxXK1KIzztgHMAjh5X/ApzIx50kMVW6MscN7XazrvObDTY23SU/ngdNCH
+         qBpa5ef2xjfGXKFu6sq74O3VdzCCt0t0+7zc8XkR4S03iydR3MVzJ5x6asg34YwhM7VB
+         oOuVsHgJuCCwuZw8Z/6pMGiXQyGeJnmqtcpufcJFD9bCSd/NYaeigL74j70hbd9JKZpA
+         OzO95CfEsLqNcsRBVuTKqqmI3OEaCI9S7eRzG7EdGHhFaz4PVtxwvF9mDieffiV9ZR7k
+         3LdQUzIBZsRXRZS2NPtntak4EsCciraWSyPA/AKvFbouNUbm00f1mXt7CFqRT/knrNv/
+         ylcg==
+X-Gm-Message-State: AA+aEWZvDytDQbd6QiGFS5E8FTAH/jUAQQ6Nkt2FhB8fP4+7QSYSgB64
+        MTBQZqV8gz66ZWQmTxwNWyMPYVXkHIXZUEf+WsHc5A==
+X-Google-Smtp-Source: AFSGD/UVH3Dy63Vq7UYS7IU7KOJ2m4KBDsVxbwwnMVuDSLLO04ppoGmSz1onEsQlIzZPBOelRJY14YnxSYHZtlAIl6g=
+X-Received: by 2002:a6b:f104:: with SMTP id e4mr22777798iog.271.1543327993409;
+ Tue, 27 Nov 2018 06:13:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106210712.12098-2-adrian.hunter@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 06:12:52
+ -0800 (PST)
+In-Reply-To: <CAOQ4uxiUr6g0PYBh5wRc2ct8zyVV+o70Sc9LRBMa=Bfgry3eOA@mail.gmail.com>
+References: <00000000000074e10d0576cc48f1@google.com> <0000000000001ec857057ba01589@google.com>
+ <CAOQ4uxiUr6g0PYBh5wRc2ct8zyVV+o70Sc9LRBMa=Bfgry3eOA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 27 Nov 2018 15:12:52 +0100
+Message-ID: <CACT4Y+ZMp6Y8QPYy_dDR2vGuyiVTFYoHAi9NxJH-4gY_JF0cyg@mail.gmail.com>
+Subject: Re: possible deadlock in ovl_write_iter
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Nov 06, 2018 at 11:07:10PM +0200, Adrian Hunter escreveu:
-> For branch stacks or branch samples, the sample cpumode might not be
-> correct because it applies only to the sample 'ip' and not necessary to
-> 'addr' or branch stack addresses. Add fallback functions that can be used
-> to deal with those cases
+On Tue, Nov 27, 2018 at 8:44 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Tue, Nov 27, 2018 at 9:06 AM syzbot
+> <syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com> wrote:
+>>
+>> syzbot has found a reproducer for the following crash on:
+>>
+>> HEAD commit:    6f8b52ba442c Merge tag 'hwmon-for-v4.20-rc5' of git://git...
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=120f3905400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=695726bc473f9c36a4b6
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cad225400000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13813093400000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com
+>>
+>> overlayfs: filesystem on './file0' not supported as upperdir
+>>
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 4.20.0-rc4+ #351 Not tainted
+>> ------------------------------------------------------
+>> syz-executor338/5996 is trying to acquire lock:
+>> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock
+>> include/linux/fs.h:757 [inline]
+>> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at:
+>> ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>>
+>> but task is already holding lock:
+>> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested fs/pipe.c:62
+>> [inline]
+>> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+>> fs/pipe.c:70
+>>
+>> which lock already depends on the new lock.
+>>
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #2 (&pipe->mutex/1){+.+.}:
+>>         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>>         __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+>>         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+>>         pipe_lock_nested fs/pipe.c:62 [inline]
+>>         pipe_lock+0x6e/0x80 fs/pipe.c:70
+>>         iter_file_splice_write+0x27d/0x1050 fs/splice.c:700
+>>         do_splice_from fs/splice.c:851 [inline]
+>>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>>         __do_sys_splice fs/splice.c:1414 [inline]
+>>         __se_sys_splice fs/splice.c:1394 [inline]
+>>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> -> #1 (sb_writers#3){.+.+}:
+>>         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
+>> [inline]
+>>         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+>>         __sb_start_write+0x214/0x370 fs/super.c:1387
+>>         sb_start_write include/linux/fs.h:1597 [inline]
+>>         mnt_want_write+0x3f/0xc0 fs/namespace.c:360
+>>         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+>>         ovl_setattr+0x10b/0xaf0 fs/overlayfs/inode.c:30
+>>         notify_change+0xbde/0x1110 fs/attr.c:334
+>>         do_truncate+0x1bd/0x2d0 fs/open.c:63
+>>         handle_truncate fs/namei.c:3008 [inline]
+>>         do_last fs/namei.c:3424 [inline]
+>>         path_openat+0x375f/0x5150 fs/namei.c:3534
+>>         do_filp_open+0x255/0x380 fs/namei.c:3564
+>>         do_sys_open+0x568/0x700 fs/open.c:1063
+>>         __do_sys_openat fs/open.c:1090 [inline]
+>>         __se_sys_openat fs/open.c:1084 [inline]
+>>         __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> -> #0 (&ovl_i_mutex_key[depth]){+.+.}:
+>>         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>>         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>>         inode_lock include/linux/fs.h:757 [inline]
+>>         ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>>         call_write_iter include/linux/fs.h:1857 [inline]
+>>         new_sync_write fs/read_write.c:474 [inline]
+>>         __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>>         __kernel_write+0x10c/0x370 fs/read_write.c:506
+>>         write_pipe_buf+0x180/0x240 fs/splice.c:797
+>>         splice_from_pipe_feed fs/splice.c:503 [inline]
+>>         __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>>         splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>>         default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>>         do_splice_from fs/splice.c:851 [inline]
+>>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>>         __do_sys_splice fs/splice.c:1414 [inline]
+>>         __se_sys_splice fs/splice.c:1394 [inline]
+>>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> other info that might help us debug this:
+>>
+>> Chain exists of:
+>>    &ovl_i_mutex_key[depth] --> sb_writers#3 --> &pipe->mutex/1
+>>
+>>   Possible unsafe locking scenario:
+>>
+>>         CPU0                    CPU1
+>>         ----                    ----
+>>    lock(&pipe->mutex/1);
+>>                                 lock(sb_writers#3);
+>>                                 lock(&pipe->mutex/1);
+>>    lock(&ovl_i_mutex_key[depth]);
+>>
+>>   *** DEADLOCK ***
+>>
+>> 2 locks held by syz-executor338/5996:
+>>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: file_start_write
+>> include/linux/fs.h:2810 [inline]
+>>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: do_splice+0xd2e/0x1430
+>> fs/splice.c:1146
+>>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested
+>> fs/pipe.c:62 [inline]
+>>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+>> fs/pipe.c:70
+>>
+>> stack backtrace:
+>> CPU: 0 PID: 5996 Comm: syz-executor338 Not tainted 4.20.0-rc4+ #351
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:77 [inline]
+>>   dump_stack+0x244/0x39d lib/dump_stack.c:113
+>>   print_circular_bug.isra.35.cold.54+0x1bd/0x27d
+>> kernel/locking/lockdep.c:1221
+>>   check_prev_add kernel/locking/lockdep.c:1863 [inline]
+>>   check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+>>   validate_chain kernel/locking/lockdep.c:2347 [inline]
+>>   __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+>>   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>>   down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>>   inode_lock include/linux/fs.h:757 [inline]
+>>   ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>>   call_write_iter include/linux/fs.h:1857 [inline]
+>>   new_sync_write fs/read_write.c:474 [inline]
+>>   __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>>   __kernel_write+0x10c/0x370 fs/read_write.c:506
+>>   write_pipe_buf+0x180/0x240 fs/splice.c:797
+>>   splice_from_pipe_feed fs/splice.c:503 [inline]
+>>   __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>>   splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>>   default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>>   do_splice_from fs/splice.c:851 [inline]
+>>   do_splice+0x64a/0x1430 fs/splice.c:1147
+>>   __do_sys_splice fs/splice.c:1414 [inline]
+>>   __se_sys_splice fs/splice.c:1394 [inline]
+>>   __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x445ad9
+>> Code: e8 5c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+>> ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+>> RSP: 002b:00007f18e3f71cd8 EFLAGS: 00000216 ORIG_RAX: 0000000000000113
+>> RAX: ffffffffffffffda RBX: 00000000006dac78 RCX: 0000000000445ad9
+>> RDX: 000000000000000a RSI: 0000000000000000 RDI: 0000000000000007
+>> RBP: 00000000006dac70 R08: 000100000000000a R09: 0000000000000007
+>> R10: 0000000000000000 R11: 0000000000000216 R12: 00000000006dac7c
+>> R13: 00007ffde0706e9f R14: 00007f18e3f729c0 R15: 00000000006dad4c
+>>
+>
+> Dmitry,
+>
+> FYI, this is not the same root cause as this report with the same syzbot id:
+> https://syzkaller.appspot.com/text?tag=CrashReport&x=16a074a1400000
+>
+> The former report (which syzbot has no repro for) is fixed by:
+> "knernel/acct.c: fix locking order when switching acct files"
+> It is available on: https://github.com/amir73il/linux ovl-fixes
+> but Miklos did not get around to properly reviewing the patch yet
+> and neither did Al...
+>
+> The commit message of my also includes a very simple reproducer.
+> Perhaps you want to split those two reports into two different syzbot
+> report ids?
+>
+> Can you do that?
+> If yes, let me know, so will change the reported by tag on my fix.
 
-I've split this into two, and the first is causing this:
 
-root@quaco ~]# perf top
-perf: Segmentation fault
--------- backtrace --------
-perf[0x59baca]
-/lib64/libc.so.6(+0x385bf)[0x7fa2775dc5bf]
-perf(perf_env__arch+0x34)[0x4b4514]
-perf(perf_env__single_address_space+0x1b)[0x57944b]
-perf(perf_session__new+0x17c)[0x4fdb3c]
-perf(cmd_top+0x162c)[0x45109c]
-perf[0x4a621e]
-perf(main+0x61c)[0x42cbfc]
-/lib64/libc.so.6(__libc_start_main+0xf2)[0x7fa2775c8412]
-perf(_start+0x2d)[0x42ce2d]
-[root@quaco ~]#
+ETOOMANYBUGS :)
 
-Its the case where the env info comes from the running machine, via
-uname(), I'm working on a fix.
+syzkaller extract crash identity from crash message, what you see in
+email subject and then uses it to sort crashes into bug buckets. It's
+not always precise. And I think it can't be 100% precise. In the end
+there can be 2 completely identical crash reports, yet caused by
+different root causes. There can also be radically different crashes,
+yet caused by the same root cause.
 
-- Arnaldo
- 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: stable@vger.kernel.org # 4.19
-> ---
->  tools/perf/arch/common.c  | 10 ++++++++++
->  tools/perf/arch/common.h  |  1 +
->  tools/perf/util/event.c   | 27 +++++++++++++++++++++++++++
->  tools/perf/util/machine.c | 27 +++++++++++++++++++++++++++
->  tools/perf/util/machine.h |  3 +++
->  tools/perf/util/session.c |  4 ++++
->  tools/perf/util/thread.h  |  4 ++++
->  7 files changed, 76 insertions(+)
-> 
-> diff --git a/tools/perf/arch/common.c b/tools/perf/arch/common.c
-> index 82657c01a3b8..5f69fd0b745a 100644
-> --- a/tools/perf/arch/common.c
-> +++ b/tools/perf/arch/common.c
-> @@ -200,3 +200,13 @@ int perf_env__lookup_objdump(struct perf_env *env, const char **path)
->  
->  	return perf_env__lookup_binutils_path(env, "objdump", path);
->  }
-> +
-> +/*
-> + * Some architectures have a single address space for kernel and user addresses,
-> + * which makes it possible to determine if an address is in kernel space or user
-> + * space.
-> + */
-> +bool perf_env__single_address_space(struct perf_env *env)
-> +{
-> +	return strcmp(perf_env__arch(env), "sparc");
-> +}
-> diff --git a/tools/perf/arch/common.h b/tools/perf/arch/common.h
-> index 2167001b18c5..c298a446d1f6 100644
-> --- a/tools/perf/arch/common.h
-> +++ b/tools/perf/arch/common.h
-> @@ -5,5 +5,6 @@
->  #include "../util/env.h"
->  
->  int perf_env__lookup_objdump(struct perf_env *env, const char **path);
-> +bool perf_env__single_address_space(struct perf_env *env);
->  
->  #endif /* ARCH_PERF_COMMON_H */
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index e9c108a6b1c3..9431b20c1337 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -1577,6 +1577,24 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
->  	return al->map;
->  }
->  
-> +/*
-> + * For branch stacks or branch samples, the sample cpumode might not be correct
-> + * because it applies only to the sample 'ip' and not necessary to 'addr' or
-> + * branch stack addresses. If possible, use a fallback to deal with those cases.
-> + */
-> +struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-> +				struct addr_location *al)
-> +{
-> +	struct map *map = thread__find_map(thread, cpumode, addr, al);
-> +	struct machine *machine = thread->mg->machine;
-> +	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode, addr);
-> +
-> +	if (map || addr_cpumode == cpumode)
-> +		return map;
-> +
-> +	return thread__find_map(thread, addr_cpumode, addr, al);
-> +}
-> +
->  struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
->  				   u64 addr, struct addr_location *al)
->  {
-> @@ -1586,6 +1604,15 @@ struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
->  	return al->sym;
->  }
->  
-> +struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-> +				      u64 addr, struct addr_location *al)
-> +{
-> +	al->sym = NULL;
-> +	if (thread__find_map_fb(thread, cpumode, addr, al))
-> +		al->sym = map__find_symbol(al->map, al->addr);
-> +	return al->sym;
-> +}
-> +
->  /*
->   * Callers need to drop the reference to al->thread, obtained in
->   * machine__findnew_thread()
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 8f36ce813bc5..9397e3f2444d 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2592,6 +2592,33 @@ int machine__get_kernel_start(struct machine *machine)
->  	return err;
->  }
->  
-> +u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr)
-> +{
-> +	u8 addr_cpumode = cpumode;
-> +	bool kernel_ip;
-> +
-> +	if (!machine->single_address_space)
-> +		goto out;
-> +
-> +	kernel_ip = machine__kernel_ip(machine, addr);
-> +	switch (cpumode) {
-> +	case PERF_RECORD_MISC_KERNEL:
-> +	case PERF_RECORD_MISC_USER:
-> +		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_KERNEL :
-> +					   PERF_RECORD_MISC_USER;
-> +		break;
-> +	case PERF_RECORD_MISC_GUEST_KERNEL:
-> +	case PERF_RECORD_MISC_GUEST_USER:
-> +		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_GUEST_KERNEL :
-> +					   PERF_RECORD_MISC_GUEST_USER;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +out:
-> +	return addr_cpumode;
-> +}
-> +
->  struct dso *machine__findnew_dso(struct machine *machine, const char *filename)
->  {
->  	return dsos__findnew(&machine->dsos, filename);
-> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-> index d856b85862e2..ebde3ea70225 100644
-> --- a/tools/perf/util/machine.h
-> +++ b/tools/perf/util/machine.h
-> @@ -42,6 +42,7 @@ struct machine {
->  	u16		  id_hdr_size;
->  	bool		  comm_exec;
->  	bool		  kptr_restrict_warned;
-> +	bool		  single_address_space;
->  	char		  *root_dir;
->  	char		  *mmap_name;
->  	struct threads    threads[THREADS__TABLE_SIZE];
-> @@ -99,6 +100,8 @@ static inline bool machine__kernel_ip(struct machine *machine, u64 ip)
->  	return ip >= kernel_start;
->  }
->  
-> +u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr);
-> +
->  struct thread *machine__find_thread(struct machine *machine, pid_t pid,
->  				    pid_t tid);
->  struct comm *machine__thread_exec_comm(struct machine *machine,
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 7d2c8ce6cfad..f8eab197f35c 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -24,6 +24,7 @@
->  #include "thread.h"
->  #include "thread-stack.h"
->  #include "stat.h"
-> +#include "arch/common.h"
->  
->  static int perf_session__deliver_event(struct perf_session *session,
->  				       union perf_event *event,
-> @@ -150,6 +151,9 @@ struct perf_session *perf_session__new(struct perf_data *data,
->  		session->machines.host.env = &perf_env;
->  	}
->  
-> +	session->machines.host.single_address_space =
-> +		perf_env__single_address_space(session->machines.host.env);
-> +
->  	if (!data || perf_data__is_write(data)) {
->  		/*
->  		 * In O_RDONLY mode this will be performed when reading the
-> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> index 30e2b4c165fe..5920c3bb8ffe 100644
-> --- a/tools/perf/util/thread.h
-> +++ b/tools/perf/util/thread.h
-> @@ -96,9 +96,13 @@ struct thread *thread__main_thread(struct machine *machine, struct thread *threa
->  
->  struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
->  			     struct addr_location *al);
-> +struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-> +				struct addr_location *al);
->  
->  struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
->  				   u64 addr, struct addr_location *al);
-> +struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-> +				      u64 addr, struct addr_location *al);
->  
->  void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
->  					struct addr_location *al);
-> -- 
-> 2.17.1
+Manually patching up things won't work, how will syzkaller sort future
+crashes into buckets? Is it the first one? The second one? Or a new
+third one?
+The logic for extracting bug identity can be improved:
+https://github.com/google/syzkaller/blob/master/pkg/report/linux.go
+but I don't know how exactly for this case. Deadlocks are a bit tricky
+(well, like most crashes).
 
--- 
-
-- Arnaldo
+This does not tend to be too bad in practice. You hit an example of
+the problem, but overall it does not happen too frequently. The
+overall plan for dealing with this is fixing bugs. One by one. Once
+this one is marked as fixed and closed by syzbot, it will report any
+other bugs hiding behind it in new bug reports (maybe there are not
+even two, maybe there are five, who knows).
