@@ -2,215 +2,173 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC08C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936A2C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26FE6208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FE6208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 65234208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65234208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeK1Aok (ORCPT
+        id S1727602AbeK1Atm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:44:40 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37998 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726463AbeK1Aok (ORCPT
+        Tue, 27 Nov 2018 19:49:42 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41792 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727569AbeK1Atm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:44:40 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 50ADB634C87;
-        Tue, 27 Nov 2018 15:46:39 +0200 (EET)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gRdhH-0001fw-2k; Tue, 27 Nov 2018 15:46:39 +0200
-Date:   Tue, 27 Nov 2018 15:46:38 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Wen Nuan <leo.wen@rock-chips.com>
-Cc:     mchehab@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        rdunlap@infradead.org, jacob2.chen@rock-chips.com,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        eddie.cai@rock-chips.com
-Subject: Re: [PATCH v4 2/2] dt-bindings: Document the Rockchip RK1608 bindings
-Message-ID: <20181127134638.2cj2e3rk742ipoe5@valkosipuli.retiisi.org.uk>
-References: <1520491122-5629-1-git-send-email-leo.wen@rock-chips.com>
- <1520491122-5629-3-git-send-email-leo.wen@rock-chips.com>
+        Tue, 27 Nov 2018 19:49:42 -0500
+Received: by mail-ot1-f66.google.com with SMTP id u16so20128813otk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 05:51:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hi9iX299DQInLmJAtW0O641VhL4ev2inw/6dRwxQFJs=;
+        b=AWSZPcZyaHBaNGwILCBSWAV6yYNPc2udlvGdHIWJEyeaKSXJE2nJtll5bgBi7NGrrN
+         j7f0kYQ9UnWyqd1EkLkSZ2YNsP6kNa2RuZ0FiyJQco94smCqdOgAkUjrY110UbVyid+n
+         trqCePPpW9UuUAgHu2TJeEcE1EljFakrLyDsIUVpfSq3bKaOF3/IacSThv4NoyDg4IQM
+         Z7VceINl8GTeHOsPR0KUWN259PbI+nVOij3VLC2ytvBS+oloIWe3E1+trpTkL9YJJdDU
+         tLTX0pTQBg0/MZCcX4hLq/J9/E36XMFqs1m/QX8Ob4Kize5XgCRZEtVOEJ99FHkBUhZ2
+         0+Jg==
+X-Gm-Message-State: AA+aEWawIiGwoqKowOKVj5QNl9UH+x4O4/g/U7DZLKKiXnGTts5GTvJt
+        F46jorbCvrh6H74WOqGLpjUtQhlAB/uhvoOnQUkjDw==
+X-Google-Smtp-Source: AFSGD/UDcoixmjnUyxh5EzfsBxtQ71PdZ8mHdE7/ClPe90U6fIFnE6upOU7KnluvdE5WW5BhrW/bDS1IUOKpe3OgPdM=
+X-Received: by 2002:a9d:32c7:: with SMTP id u65mr17415964otb.236.1543326702007;
+ Tue, 27 Nov 2018 05:51:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520491122-5629-3-git-send-email-leo.wen@rock-chips.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com> <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+In-Reply-To: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 27 Nov 2018 14:51:30 +0100
+Message-ID: <CAFqZXNvcYWNh2fmgY7wF8QOmRBfhaqqYAKG1kYFDcn496ah26Q@mail.gmail.com>
+Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+To:     keescook@chromium.org
+Cc:     casey@schaufler-ca.com, s.mesoraca16@gmail.com,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        mic@digikod.net,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
+        adobriyan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
+On Tue, Nov 27, 2018 at 2:27 PM Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Hmmm... the "From: Kees..." in the body is missing. Are you using "git
+> send-email"?
 
-I found this, and thought of replying. It's an old patch. Feel free to ping
-if you don't get replies.
+Not to mention that you are sending (only) to the old SELinux mailing
+list. The new list is at selinux@vger.kernel.org, see:
 
-On Thu, Mar 08, 2018 at 02:38:42PM +0800, Wen Nuan wrote:
-> From: Leo Wen <leo.wen@rock-chips.com>
-> 
-> Add DT bindings documentation for Rockchip RK1608.
-> 
-> Changes V4:
-> - Revise the comment of node.
-> - Revise the comment of 'endpoint@1'.
-> 
-> Signed-off-by: Leo Wen <leo.wen@rock-chips.com>
-> ---
->  Documentation/devicetree/bindings/media/rk1608.txt | 95 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/rk1608.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/rk1608.txt b/Documentation/devicetree/bindings/media/rk1608.txt
-> new file mode 100644
-> index 0000000..ea23d2d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/rk1608.txt
-> @@ -0,0 +1,95 @@
-> +Rockchip RK1608 as a PreISP to link on Soc
-> +------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible		: "rockchip,rk1608";
-> +- reg			: SPI slave address of the rk1608;
-> +- clocks		: Must contain an entry for each entry in clock-names;
-> +- clock-names		: Must contain "mclk" for the device's master clock;
-> +- reset-gpios		: GPIO connected to reset pin;
-> +- irq-gpios		: GPIO connected to irq pin;
-> +- sleepst-gpios		: GPIO connected to sleepst pin;
+https://lore.kernel.org/selinux/8263f9fa-16f1-1d0a-e391-61d609e50d7d@tycho.nsa.gov/
 
-There are quite a few sleep-gpios in the current bindings. How about
-aligning the naming?
-
-> +- wakeup-gpios		: GPIO connected to wakeup pin;
-> +- powerdown-gpios	: GPIO connected to powerdown pin;
-> +- pinctrl-names		: Should contain only one value - "default";
-> +- pinctrl-0		: Pin control group to be used for this controller;
-> +
-> +Optional properties:
-> +
-> +- spi-max-frequency	: Maximum SPI clocking speed of the device;
-> +
-> +The device node should contain one or two port child nodes with child
-> +'endpoint' node. There are two ports then port@0 must
-> +describe the output and port@1 input channels. Please refer to the
-> +bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-
-I think that to be meaningful, you actually need two port nodes. Must ->
-shall.
-
-> +
-> +endpoint node
-> +-------------
-> +
-> +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-> +	       video-interfaces.txt. If present it should be <1> - the device
-> +	       supports only one data lane without re-mapping.
-
-You still have four lanes in the example below.
-
-> +
-> +Note1: Since no data is generated in RK1608，so this is meaningful that you need
-> +a extra sensor (such as a camera) mounted on RK1608. You need to use endpoint@x
-> +to match these sensors.
-> +
-> +Note2:You must set the current value of the spi pins to be 8mA, if they are not.
-> +
-> +Example:
-> +&spi0 {
-> +	status = "okay";
-> +	spi_rk1608@00 {
-> +		compatible =  "rockchip,rk1608";
-> +		status = "okay";
-> +		reg = <0>;
-> +		spi-max-frequency = <24000000>;
-> +		link-freqs = /bits/ 64 <LINK_FREQ>;
-> +		clocks = <&cru SCLK_SPI0>, <&cru SCLK_VIP_OUT>,
-> +		<&cru DCLK_VOP0>, <&cru ACLK_VIP>, <&cru HCLK_VIP>,
-> +		<&cru PCLK_ISP_IN>, <&cru PCLK_ISP_IN>,
-> +		<&cru PCLK_ISP_IN>, <&cru SCLK_MIPIDSI_24M>,
-> +		<&cru PCLK_MIPI_CSI>;
-> +		clock-names = "mclk", "mipi_clk",  "pd_cif", "aclk_cif",
-> +			"hclk_cif", "cif0_in", "g_pclkin_cif",
-> +			"cif0_out", "clk_mipi_24m", "hclk_mipiphy";
-> +		reset-gpios = <&gpio6 0 GPIO_ACTIVE_HIGH>;
-> +		irq-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>;
-> +		sleepst-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
-> +		wakeup-gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
-> +		powerdown-gpios = <&gpio8 0 GPIO_ACTIVE_HIGH>;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&rk1608_irq_gpios &rk1608_wake_gpios
-> +			     &rk1608_sleep_gpios>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			port@0 {
-
-reg missing here and the port below.
-
-> +				mipi_dphy_out0: endpoint@0 {
-
-No need for "@0" as you only have a single endpoint.
-
-> +					remote-endpoint = <&mipi_dphy_in0>;
-> +					clock-lanes = <0>;
-> +					data-lanes = <1 2 3 4>;
-> +					clock-noncontinuous;
-> +					link-frequencies =
-> +						/bits/ 64 <LINK_FREQ>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				sensor_in0: endpoint@0 {
-
-reg missing here and below.
-
-> +					remote-endpoint = <&sensor_out0>;
-> +				};
-> +				/* If you have a second sensor,
-> +				 * add the 'endpoint@1' node here.
-> +				 */
-> +				sensor_in1: endpoint@1 {
-> +					remote-endpoint = <&sensor_out1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b2a98e3..04d227b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -141,6 +141,7 @@ M:	Leo Wen <leo.wen@rock-chips.com>
->  S:	Maintained
->  F:	drivers/media/spi/rk1608.c
->  F:	drivers/media/spi/rk1608.h
-> +F:	Documentation/devicetree/bindings/media/rk1608.txt
->  
->  3C59X NETWORK DRIVER
->  M:	Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
+>
+> >
+> > This adds a flag for the current "major" LSMs to distinguish them when
+> > we have a universal method for ordering all LSMs. It's called "legacy"
+> > since the distinction of "major" will go away in the blob-sharing world.
+> >
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: John Johansen <john.johansen@canonical.com>
+> > ---
+> >  include/linux/lsm_hooks.h  | 3 +++
+> >  security/apparmor/lsm.c    | 1 +
+> >  security/selinux/hooks.c   | 1 +
+> >  security/smack/smack_lsm.c | 1 +
+> >  security/tomoyo/tomoyo.c   | 1 +
+> >  5 files changed, 7 insertions(+)
+> >
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index aaeb7fa24dc4..63c0e102de20 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -2039,8 +2039,11 @@ extern char *lsm_names;
+> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> >                                 char *lsm);
+> >
+> > +#define LSM_FLAG_LEGACY_MAJOR  BIT(0)
+> > +
+> >  struct lsm_info {
+> >         const char *name;       /* Required. */
+> > +       unsigned long flags;    /* Optional: flags describing LSM */
+> >         int (*init)(void);      /* Required. */
+> >  };
+> >
+> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> > index 42446a216f3b..2edd35ca5044 100644
+> > --- a/security/apparmor/lsm.c
+> > +++ b/security/apparmor/lsm.c
+> > @@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
+> >
+> >  DEFINE_LSM(apparmor) = {
+> >         .name = "apparmor",
+> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
+> >         .init = apparmor_init,
+> >  };
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 7ce683259357..56c6f1849c80 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
+> >     all processes and objects when they are created. */
+> >  DEFINE_LSM(selinux) = {
+> >         .name = "selinux",
+> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
+> >         .init = selinux_init,
+> >  };
+> >
+> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> > index 81fb4c1631e9..3639e55b1f4b 100644
+> > --- a/security/smack/smack_lsm.c
+> > +++ b/security/smack/smack_lsm.c
+> > @@ -4891,5 +4891,6 @@ static __init int smack_init(void)
+> >   */
+> >  DEFINE_LSM(smack) = {
+> >         .name = "smack",
+> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
+> >         .init = smack_init,
+> >  };
+> > diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> > index 1b5b5097efd7..09f7af130d3a 100644
+> > --- a/security/tomoyo/tomoyo.c
+> > +++ b/security/tomoyo/tomoyo.c
+> > @@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
+> >
+> >  DEFINE_LSM(tomoyo) = {
+> >         .name = "tomoyo",
+> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
+> >         .init = tomoyo_init,
+> >  };
+> > --
+> > 2.14.5
+> >
+> >
+>
+>
+> --
+> Kees Cook
+> _______________________________________________
+> Selinux mailing list
+> Selinux@tycho.nsa.gov
+> To unsubscribe, send email to Selinux-leave@tycho.nsa.gov.
+> To get help, send an email containing "help" to Selinux-request@tycho.nsa.gov.
 
 -- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
