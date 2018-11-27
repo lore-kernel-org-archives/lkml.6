@@ -2,141 +2,112 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D26C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B669C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E78D42086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF514213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:54:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEZTxU42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E78D42086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="KgSSMt4L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF514213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbeK1HwJ (ORCPT
+        id S1726587AbeK1Hxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:52:09 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44636 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbeK1HwJ (ORCPT
+        Wed, 28 Nov 2018 02:53:40 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45791 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbeK1Hxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:52:09 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n32so23408198qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:53:00 -0800 (PST)
+        Wed, 28 Nov 2018 02:53:40 -0500
+Received: by mail-yw1-f65.google.com with SMTP id d190so9737973ywd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:54:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:subject:to:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AQUiIJOLWZFE4x01YNLwqqGKGYG9SZd26ZrvQsZHVPY=;
-        b=DEZTxU42ksvBE6plXoiagaUiPdn6x3b0IiaN+DCuwMYDLcBfu6z486yDQ3cEdWRWhY
-         Hx3EFzEq+NoA2ED3mbjUWpmng1QnOTmUosRFPaSBTEazgmMzWfNqFXfQb7iyDNb2O5BW
-         cMZit1eMW9ddCVnQXazuOTPoYmNhA2wI0Cjo4=
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bqyE1nmXeAtPZbB2AL1Q4bwPXAN2rTBpblfeBKlhVg4=;
+        b=KgSSMt4L+4tqXR2s+UHTYAZflYlIuedUbXzViNuZYxBCrGfB2P6tWYKhhL9LqkWnIY
+         uIWLGg625SPIus4yfa8vQ4Rn0berTLnGHGJa0iC2cJa1eD73Mt8pBBGxNhs12Ms1ggKI
+         uksj6n+fKLc9mFWtfr5/rf0CwViWF9qHyxCrZ5RORsfJAT+ehnebXCrGtBK2naK75PTa
+         ZR/Etd+hEl93Th/ytTmMiCidhAapEKabckiaf41BfTMzQlwxwJd5YIaSy8qZoovKLOD6
+         z3SMMTiPewSfzgbh5hyY0w6FVDCe/+tBO5ZYPm47xWSCJszcmh28uTamHa22akWBpx2D
+         BYuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=AQUiIJOLWZFE4x01YNLwqqGKGYG9SZd26ZrvQsZHVPY=;
-        b=cps6TjgCuNZY2m0Fo2PtCjynNvONIwsD8ypunDwLzRCn827NA00cyHcZMrnj8bIQkW
-         sc6DsrhSVitsrhNVXBin5Ame9LHtTUqzUij9qBKrxcRwHoVNpGfGD4qUwVSisErM2AwP
-         f2kL11jdEwrx9ox06LAk+qnR3KX2mQdBQj8VaL/RwjmWEj3wzwCDckdYRcq97KhIb8Sx
-         BTl8RICsclstGhElRHoPGjMEuKFvTUKbO1iL8dnL+mjufs08Ww8w2wsrs6k0/GUBXf43
-         QZKmFNvJzSsqTcKUe58dJjHZfY1kog4BgNL271aa4NP9bgunaf1kmTWmyGkXDYSniV+t
-         5DIg==
-X-Gm-Message-State: AA+aEWaFmjyscsP30dVjx30Dify7bAFvHb2Nesa3KW9hOj0ESOfu/YcF
-        6KJn5s8Qh3zIr3iQsfv2apY2Qw==
-X-Google-Smtp-Source: AFSGD/Uj/SgZ4k/FSm4nl5b49cr640sZt+6Bf50MtS3plBovNy07xEelqoZ0pdmi988rMm2+T7Maqw==
-X-Received: by 2002:a0c:ed4f:: with SMTP id v15mr32075635qvq.237.1543351979601;
-        Tue, 27 Nov 2018 12:52:59 -0800 (PST)
-Received: from [192.168.49.18] ([138.204.25.29])
-        by smtp.gmail.com with ESMTPSA id n26sm2001338qkg.74.2018.11.27.12.52.55
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bqyE1nmXeAtPZbB2AL1Q4bwPXAN2rTBpblfeBKlhVg4=;
+        b=mZLvC8a3JmbjzVN4ouw1BfR22aajXKsawcbZw4xPlUmXufaL5b6Njt6gqnyLxedXZC
+         MP/3HpJDqkHDC08gEdncz6jxO+YTowKgUzOZlqqZxuqxxQ15eFziVCOLVfMl5rvaN+42
+         Z2QZiPBe3MZHnFxVWEQhxf1yAyxR/PMLppWhdULBkb5If6PhVxijPvdTPOrIzIvGCKK8
+         gK+G8b5TJePu9j/M7qMOM6UvFOnXC/+aWFZC52Nydqu9Qh1aaYyEX40Y4Kt1trZ6g05k
+         ry+ImLOJeBJkOyszznavafsfikkeV5XphAKvwpl8fWbldVmOanAZBU0wv+TI6PvrrsC+
+         asAQ==
+X-Gm-Message-State: AA+aEWZFdU1eRndsAvuTKR2OX7UCd56g3UnC6eJ6ERpBMF50sQmBI5k1
+        u1ua/QqtnQ2YCCr3RyiiP1NLhg==
+X-Google-Smtp-Source: AFSGD/W3fopZM4IlQqmVurdng6nsmhdzsV0f1hTb8FMPFwdnrBuIfh5RMX8fJIu21kFMB7sYYy4xfQ==
+X-Received: by 2002:a81:3883:: with SMTP id f125mr8960690ywa.507.1543352071016;
+        Tue, 27 Nov 2018 12:54:31 -0800 (PST)
+Received: from localhost ([2620:10d:c091:180::1:4c40])
+        by smtp.gmail.com with ESMTPSA id r20sm5290513ywa.13.2018.11.27.12.54.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 12:52:58 -0800 (PST)
-Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Timothy E Baldwin <T.E.Baldwin99@members.leeds.ac.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm: always update thread_info->syscall
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <20181126225335.10477-1-rafael.tinoco@linaro.org>
- <20181126233303.GZ30658@n2100.armlinux.org.uk>
- <20181126234111.GA30658@n2100.armlinux.org.uk>
- <20181126234456.GB30658@n2100.armlinux.org.uk>
- <ad23e3dc-eee0-f9af-2f12-bfd7a14cd546@linaro.org>
- <20181127105620.GD30658@n2100.armlinux.org.uk>
- <20181127153553.GE30658@n2100.armlinux.org.uk>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Organization: Linaro
-Message-ID: <df0f7e94-8577-2789-a749-77855387909e@linaro.org>
-Date:   Tue, 27 Nov 2018 18:52:54 -0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 27 Nov 2018 12:54:30 -0800 (PST)
+Date:   Tue, 27 Nov 2018 15:54:29 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/13] blkcg: fix ref count issue with bio_blkcg() using
+ task_css
+Message-ID: <20181127205427.v2x7ezd6jgkxg562@macbook-pro-91.dhcp.thefacebook.com>
+References: <20181126211946.77067-1-dennis@kernel.org>
+ <20181126211946.77067-2-dennis@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181127153553.GE30658@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126211946.77067-2-dennis@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 1:35 PM, Russell King - ARM Linux wrote:
-> On x86 (32-bit app on 64-bit kernel), it has this behaviour:
+On Mon, Nov 26, 2018 at 04:19:34PM -0500, Dennis Zhou wrote:
+> The bio_blkcg() function turns out to be inconsistent and consequently
+> dangerous to use. The first part returns a blkcg where a reference is
+> owned by the bio meaning it does not need to be rcu protected. However,
+> the third case, the last line, is problematic:
 > 
-> $ ./syscall-test
-> 162 0xffcc5a6c 0xffcc5a6c 0x48d09000 0x0 0xffcc5af4 0xffcc5a74 0xffcc5a2c 0xf77dfa59
-> 162 0xffcc5a6c 0xffcc5a6c 0x48d09000 0x0 0xffcc5af4 0xffcc5a74 0xffcc5a2c 0xf77dfa59
+> 	return css_to_blkcg(task_css(current, io_cgrp_id));
 > 
-> which looks good, except:
+> This can race against task migration and the cgroup dying. It is also
+> semantically different as it must be called rcu protected and is
+> susceptible to failure when trying to get a reference to it.
 > 
-> $ strace -o /dev/null -f ./syscall-test
-> 162 0xffc0070c 0xffc0070c 0x48d09000 0x0 0xffc00794 0xffc00714 0xffc006cc 0xf77f3a59
-> 0 0xffc0070c 0xffc0070c 0x48d09000 0x0 0xffc00794 0xffc00714 0xffc006cc 0xf77f3a59
+> This patch adds association ahead of calling bio_blkcg() rather than
+> after. This makes association a required and explicit step along the
+> code paths for calling bio_blkcg(). In blk-iolatency, association is
+> moved above the bio_blkcg() call to ensure it will not return %NULL.
 > 
-> So, if we're syscall ptracing a program, __NR_restart_syscall gets
-> exposed through this interface, but if we aren't, it isn't exposed.
-> Which version is correct?  *shrug*, no documentation...
+> BFQ uses the old bio_blkcg() function, but I do not want to address it
+> in this series due to the complexity. I have created a private version
+> documenting the inconsistency and noting not to use it.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> Acked-by: Tejun Heo <tj@kernel.org>
 
-I looked around and could only find people using this interface as an
-alternate mechanism - than ptracing - for discovering what a task was
-doing a certain moment (Mostly during hangs. I haven't found a good
-schematic way - or tool - that uses it, but I might be wrong there). For
-that purpose, it would be better *not* to update when restart_syscall
-happens, unless the hang is right there =o).
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-If you check:
-https://bugs.linaro.org/show_bug.cgi?id=3783#c11
+Thanks,
 
-The only syscalls being updated now - that I could get, without any
-workload - were 252 (epoll_wait) or 252 (sched_getaffinity):
-
-252 0x7 0xbee80578 0x1b 0xffffffff 0xbee80578 0x7 0xbee80550 0xb6e9d286
-252 0xa 0xbef3d930 0x9 0xffffffff 0x0 0x6c 0xbef3d908 0xb6e6f286
-142 0x4 0x0 0xbea3eb2c 0x0 0x0 0x6c 0xbea3ea88 0xb6e40286
-252 0x4 0xbe8d59e8 0x9 0xffffffff 0xbe8d59e8 0x4 0xbe8d59c0 0xb6e11286
-
-All others I got zeroed, and that's where everything started.
-
-Please, let me know if you still want a v2, or something else... like
-fixing it and making it to ignore the restart_syscall for *at least*
-having the same behavior across diff archs.
-
-If it is not worth, I'll just blacklist those tests in our functional
-tests environment and move on =).
-
-Thanks a lot, very best rgds,
--- 
-Rafael D. Tinoco
-Linaro Kernel Validation
+Josef
