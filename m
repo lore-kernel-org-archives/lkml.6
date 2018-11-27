@@ -2,155 +2,155 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC96C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FE6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A6620873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE06208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwP/Mfvs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A6620873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuZ2oPRG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE06208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeK1Jwj (ORCPT
+        id S1726585AbeK1JxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:52:39 -0500
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:42767 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeK1Jwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:52:38 -0500
-Received: by mail-pf1-f176.google.com with SMTP id 64so9117882pfr.9;
-        Tue, 27 Nov 2018 14:53:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8AyOc1My/dt/Ck8Gv1XJwTK8IgtOFiMnAyigJ/HMreA=;
-        b=WwP/Mfvs5KCeO6ZkqVtFku1WJoeSq2PWAQFsqoAKM8G7xsDcDz8VEr4jwTCLIuVZs2
-         Sgy3MZZWWuQjiA8CUx3V9/mzdTKbyH5wLzsy5tQP8SeMLstmFRvlAUyYn5bP2RqWvjMr
-         kfJGuF0wEC8WpVwEzHty06nJLZ4PMFgz3ut+UnOCGvAi53lw8C52nTzP+lnP2s5ONjrg
-         CUUMCBE+XeV4hBGAtcZtCSPNB6we6LUI3UFcoNW8q1wOfWXECTdERkJokkK8M1iLjII7
-         m/RE1/ju+EJBnbsHDbP71lXow7C09hhs6BGAJDLF7mbU4xE4MpT1y0DAhyBDoGt/aAzm
-         YwNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8AyOc1My/dt/Ck8Gv1XJwTK8IgtOFiMnAyigJ/HMreA=;
-        b=M40hSjWcKOs+S/cEsqRGcE4tw9mLYCS3ghnTRM/vb3IF10OCrGj31O3YgJAMYtL9Rj
-         pVH9sS2iNqYEUvNkau0RkmbtEn3zTOc36Bg3x9tyqm5fL8/xjBkLHIStYU3ky1gksV3d
-         rfBRZEBINSfU0D+uReoq6UfTbt+La8QZ5paHFHmrtAp4YUBTw4Dfh4xFdtyXIo7uqkgY
-         L/ErefP6+k26fn2iZ+4+dxOcZIRYgJWlDqtks0AOo3TlO0IbS/RHdxLIo2N0cRbl0Kt9
-         +9S8kSxgPEU7KLL+9eXgQsto5KnrbJJE4oGjynvkA9iMnDWLSqLGxEbfjs7oVt0hvb6s
-         D9vg==
-X-Gm-Message-State: AA+aEWbAjmfAlr7GV3xxS5Y/F2RG41LKRijUsF9HDZt0dmrQwF0syO5o
-        6LzGD+HCTaRzox7zVo2onIo=
-X-Google-Smtp-Source: AFSGD/WWHzEqapUJzLM2ffLVDyE6COEKLi4Z15bg8EOO6v2mxobX3mi4ufdiZUVUojOitG2xVCCigQ==
-X-Received: by 2002:a62:44d8:: with SMTP id m85mr16134313pfi.164.1543359192219;
-        Tue, 27 Nov 2018 14:53:12 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id p9-v6sm6358763pfa.22.2018.11.27.14.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 14:53:11 -0800 (PST)
-Date:   Tue, 27 Nov 2018 12:53:07 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH] selftests: add TPM 2.0 tests
-Message-ID: <20181127225307.3wc3gd7zmfauie6i@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
- <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kdifjrdhqbntdhag"
-Content-Disposition: inline
-In-Reply-To: <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
-User-Agent: NeoMutt/20180716
+        Wed, 28 Nov 2018 04:53:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeK1JxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 04:53:13 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E55D020873;
+        Tue, 27 Nov 2018 22:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543359226;
+        bh=GpqdiLhClF0PhPpqB0mzFFr5Fe2HY+PrZHc+Ksi6DC8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XuZ2oPRGEi6z8gEDhummxx/Nvew+Ysj+LFBJIGUT6Y8DLPYah6m0Q75jlJT91dOPQ
+         VhLapbMOdzs9kiPS+s2kxlFgYUybOVjDTBi7FoMmcmGs8FqAFtelDYQz+AyLPXM/qm
+         ADV3G2EYqj2kYtUfagLHSJc18eNLcrzL49Wf5Wyc=
+Message-ID: <1543359225.4223.5.camel@kernel.org>
+Subject: Re: [PATCH v7 09/16] tracing: Add hist trigger snapshot() action
+ test case
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Tue, 27 Nov 2018 16:53:45 -0600
+In-Reply-To: <20181126220332.215b461779d1d57f37b46e20@kernel.org>
+References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+         <a40dadf6ffa267a1a573b62bb1c9b4db9d91f744.1542221863.git.tom.zanussi@linux.intel.com>
+         <20181126220332.215b461779d1d57f37b46e20@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Masami,
 
---kdifjrdhqbntdhag
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 27, 2018 at 12:49:00PM -1000, Joey Pabalinas wrote:
-> > +    def start_auth_session(self, session_type, name_alg =3D TPM2_ALG_S=
-HA1):
-> > +        fmt =3D '>HII IIH16sHBHH'
-> > +        cmd =3D struct.pack(fmt,
-> > +                          TPM2_ST_NO_SESSIONS,
-> > +                          struct.calcsize(fmt),
-> > +                          TPM2_CC_START_AUTH_SESSION,
-> > +                          TPM2_RH_NULL,
-> > +                          TPM2_RH_NULL,
-> > +                          16,
-> > +                          '\0' * 16,
-> > +                          0,
-> > +                          session_type,
-> > +                          TPM2_ALG_NULL,
-> > +                          name_alg)
+On Mon, 2018-11-26 at 22:03 +0900, Masami Hiramatsu wrote:
+> On Wed, 14 Nov 2018 14:18:06 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > Add a test case verifying the basic functionality of the
+> > hist:snapshot() action.
+> > 
+> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > ---
+> >  .../inter-event/trigger-snapshot-action-hist.tc    | 43
+> > ++++++++++++++++++++++
+> >  1 file changed, 43 insertions(+)
+> >  create mode 100644
+> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
+> > snapshot-action-hist.tc
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > new file mode 100644
+> > index 000000000000..a0a51e6a6a0c
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-snapshot-action-hist.tc
+> > @@ -0,0 +1,43 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# description: event trigger - test inter-event histogram trigger
+> > snapshot action
 > > +
-> > +        return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
+> > +fail() { #msg
+> > +    echo $1
+> > +    exit_fail
+> > +}
 > > +
-> > +    def __calc_pcr_digest(self, pcrs, bank_alg =3D TPM2_ALG_SHA1,
-> > +                          digest_alg =3D TPM2_ALG_SHA1):
-> > +        x =3D []
->=20
-> Is there a reason for using `'\0' * 16` there instead of just 0?
+> > +if [ ! -f set_event ]; then
+> > +    echo "event tracing is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +if [ ! -f snapshot ]; then
+> > +    echo "snapshot is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +grep -q "onchange(var)" README > /dev/null || exit_unsupported #
+> > version issue
+> > +
+> > +grep -q "snapshot()" README > /dev/null || exit_unsupported #
+> > version issue
+> 
+> "grep -q ... > /dev/null" is redundant, since -q doesn't show
+> anything.
+> please drop "> /dev/null" redirection.
+> 
+> > +
+> > +echo "Test snapshot action"
+> > +
+> > +echo 1 > /sys/kernel/debug/tracing/events/sched/enable
+> > +
+> > +echo
+> > 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio):onc
+> > hange($newprio).snapshot() if comm=="ping"' >>
+> > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+> 
+> This tests onchange().snapshot(), but document change only describes
+> onmax().snapshot().
+> Maybe we should improve document too.
+> 
 
-Nevermind, I keep forgetting that the * operator on strings performs
-repetition. I've been programming too much C lately, it seems.
+Yes, good point, will do.
 
-Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
+> > +
+> > +ping $LOCALHOST -c 3
+> > +nice -n 1 ping $LOCALHOST -c 3
+> > +
+> > +echo 0 > /sys/kernel/debug/tracing/events/sched/enable
+> 
+> Shouldn't we stop tracing instead of disabling the event?
+> 
 
---=20
-Cheers,
-Joey Pabalinas
+This is just reversing the enable, so should be fine, but I can stop
+tracing instead if you prefer.
 
---kdifjrdhqbntdhag
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
+Tom
 
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv9ytIACgkQ2rGdfm9D
-tVI8YBAAj8anlvZDjgpEaTmqa5oicbayoo+Zl5VmO6NgWvuPOs4DBx7PDeBlCUl2
-qF7CYw8aWlSgW1XqsZQIrP33cnzp7rD4tmGuEvtx985e3o/zuru4e0QEtBadPA+G
-6Bijx7Ba/9ddE4lRa8bSuN0ePEYWMKI+RQ9bPJEuBlMqUbugsYOP4BdZQMYhLOHB
-mFqmCgOjIOiW69ydAEou3rLaco4hjUh2O/UmCeY6q8peEzPz5Hmb+oy1y/Q2jcMA
-PQcFX7Ngwmxy2zLEI6oCd50kI1RhP7XeYOF9SYfvOAeK08aKsbk1r7/zeVM2K9bt
-dZhSx6fxl0mwwr755V8qjeiArDkmv5ugtqySlWo0v23kbK1lBFsWIri9nOygCVXU
-Ns4fYBa/d4AYTJGKsV3FA8WLWHNc039iMm5AjPPjbUHNzgUw30RwgGXwyLh/zZdo
-KtmhtSr9a26w7IHvffxxfZJRjJuoZH27n9/7KJAxS4GYI1YePxZmg1mOmY809m+e
-xr3XiESPRh/1SwjWPYdYvrAAJeVHlDEtnceDRpqr4JBBDB7q/ZdkrIkCYqElw2Iq
-zbFhiN3G6+FUB35WWzT+TBD4AzVSZDzwXqoPSn9+POWmtJZqO+CjkMmNOjO88LgE
-29HJPFu3nbg3z/RTN2AVVDq4fceMHFnv/91Pc7ODHRLWh/lrMF8=
-=CD+q
------END PGP SIGNATURE-----
 
---kdifjrdhqbntdhag--
