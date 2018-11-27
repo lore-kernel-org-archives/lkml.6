@@ -2,134 +2,145 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CBFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B182C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2DC20659
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:32:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p/5wjr/3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2DC20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 4E61020659
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:34:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E61020659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731729AbeK1Eaf (ORCPT
+        id S1731733AbeK1EdV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:30:35 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44323 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeK1Eaf (ORCPT
+        Tue, 27 Nov 2018 23:33:21 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:57218 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726499AbeK1EdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:30:35 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so8167173pgr.11;
-        Tue, 27 Nov 2018 09:31:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4KbMhYn/V8t0IeagEe6fAI5kRBQVT4RVnVQITtUUNhU=;
-        b=p/5wjr/3vXnbYpxX6DKLv6Tc7i1s068AmQPMbqErZwdp2EznAmhxHLDV0zvv7UteyH
-         mjQDSH98haR3lSGNlUwAPYMLPedevjFe1zkAlf+aTcHDpqLIzpnrYUngY+aY+m5nHaG2
-         VOQ/3vuQcqYfwk6gB3AzEj6ErKLIhio7ZQh1WOyZZemtMPAVVOrMqBQmDSZGix0UD5Vn
-         eoTdJkJCpvUHgpP0IhU0EiKXFhHzorKK6Q45+SN1ebx022GBftGVUVRMYbFfu8MLJwJu
-         YhrbU+Z+ozVl49HJmDyU12n3+Uc+puTj6WrdawFb871RjQP1x/i8zsOKoslnisLRbXAC
-         efWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4KbMhYn/V8t0IeagEe6fAI5kRBQVT4RVnVQITtUUNhU=;
-        b=I/uHR5n4gMQPNcne48SlSfKpw2Ji1F6PXYFILvhK8M4pyHdxQTpqx4z5YYgR4a18Tl
-         VhbJa7RrK5m9PrtWh5WFvNq8h+ldQh0UHvLv/gi0sk0kZctJ2OTL7fTDunH3eAi9cUoY
-         x9nlLFnErSlIqGW7akUU6kM41mtXQRAJWYyJUNboxXmW7o1EPmCzsg2PMTJh4d1BB4go
-         kX6AjN9PMxVG9uYBf9zaTZRw46CCCZIQB5YyZ9RcZnXrb0J7Cg9d7A8/fW5G2kiOcSwX
-         jf1TBdDYTnXobj0ss93Pgeo5hfbvHQ2F0Jdx6yl3HbULzjsp7/weVQuk1cSKa80dT3hQ
-         RqDQ==
-X-Gm-Message-State: AA+aEWa8XfsBfrs8RYkvnFILcfqAfGXaSgpJSflWKkROoLRjZ5YxfUbC
-        cQcU3BAbj1+reFu/rGb8bn8D0i1f
-X-Google-Smtp-Source: AJdET5fuJB2Dx7hkd2I4xwdiZg9zO2ajeh4mmj5G/kWRhhUkDykRorMBybEfx6GRCl0PyAzBfvlAfQ==
-X-Received: by 2002:a63:dd15:: with SMTP id t21mr29013983pgg.347.1543339918231;
-        Tue, 27 Nov 2018 09:31:58 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b27sm5516447pfh.113.2018.11.27.09.31.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 09:31:56 -0800 (PST)
-Date:   Tue, 27 Nov 2018 09:31:55 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Marek Habersack <grendel@twistedcode.net>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-Message-ID: <20181127173155.GA12015@roeck-us.net>
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
- <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
- <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+        Tue, 27 Nov 2018 23:33:21 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14675435-1500050 
+        for multiple; Tue, 27 Nov 2018 17:34:00 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+To:     Daniel Vetter <daniel@ffwll.ch>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <CAKMK7uGSP7wWHSRFsCv90qCyHiSBS+o9CK1BPUXbGj6Crcy_Cg@mail.gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-4-daniel.vetter@ffwll.ch>
+ <20181127074918.GT4266@phenom.ffwll.local>
+ <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
+ <CAKMK7uGSP7wWHSRFsCv90qCyHiSBS+o9CK1BPUXbGj6Crcy_Cg@mail.gmail.com>
+Message-ID: <154334003817.11623.5449603736660799102@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [Intel-gfx] [PATCH 3/3] mm,
+ notifier: Add a lockdep map for invalidate_range_start
+Date:   Tue, 27 Nov 2018 17:33:58 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 03:48:19PM +0100, Marek Habersack wrote:
-> On 27/11/2018 15:32, Guenter Roeck wrote:
-> Hi,
+Quoting Daniel Vetter (2018-11-27 17:28:43)
+> On Tue, Nov 27, 2018 at 5:50 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> >
+> > Quoting Daniel Vetter (2018-11-27 07:49:18)
+> > > On Thu, Nov 22, 2018 at 05:51:06PM +0100, Daniel Vetter wrote:
+> > > > This is a similar idea to the fs_reclaim fake lockdep lock. It's
+> > > > fairly easy to provoke a specific notifier to be run on a specific
+> > > > range: Just prep it, and then munmap() it.
+> > > >
+> > > > A bit harder, but still doable, is to provoke the mmu notifiers for
+> > > > all the various callchains that might lead to them. But both at the
+> > > > same time is really hard to reliable hit, especially when you want to
+> > > > exercise paths like direct reclaim or compaction, where it's not
+> > > > easy to control what exactly will be unmapped.
+> > > >
+> > > > By introducing a lockdep map to tie them all together we allow lockdep
+> > > > to see a lot more dependencies, without having to actually hit them
+> > > > in a single challchain while testing.
+> > > >
+> > > > Aside: Since I typed this to test i915 mmu notifiers I've only rolled
+> > > > this out for the invaliate_range_start callback. If there's
+> > > > interest, we should probably roll this out to all of them. But my
+> > > > undestanding of core mm is seriously lacking, and I'm not clear on
+> > > > whether we need a lockdep map for each callback, or whether some can
+> > > > be shared.
+> > > >
+> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > Cc: David Rientjes <rientjes@google.com>
+> > > > Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> > > > Cc: Michal Hocko <mhocko@suse.com>
+> > > > Cc: "Christian König" <christian.koenig@amd.com>
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > > > Cc: linux-mm@kvack.org
+> > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > >
+> > > Any comments on this one here? This is really the main ingredient for
+> > > catching deadlocks in mmu notifier callbacks. The other two patches are
+> > > more the icing on the cake.
+> > >
+> > > Thanks, Daniel
+> > >
+> > > > ---
+> > > >  include/linux/mmu_notifier.h | 7 +++++++
+> > > >  mm/mmu_notifier.c            | 7 +++++++
+> > > >  2 files changed, 14 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+> > > > index 9893a6432adf..a39ba218dbbe 100644
+> > > > --- a/include/linux/mmu_notifier.h
+> > > > +++ b/include/linux/mmu_notifier.h
+> > > > @@ -12,6 +12,10 @@ struct mmu_notifier_ops;
+> > > >
+> > > >  #ifdef CONFIG_MMU_NOTIFIER
+> > > >
+> > > > +#ifdef CONFIG_LOCKDEP
+> > > > +extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
+> > > > +#endif
+> > > > +
+> > > >  /*
+> > > >   * The mmu notifier_mm structure is allocated and installed in
+> > > >   * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
+> > > > @@ -267,8 +271,11 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
+> > > >  static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+> > > >                                 unsigned long start, unsigned long end)
+> > > >  {
+> > > > +     mutex_acquire(&__mmu_notifier_invalidate_range_start_map, 0, 0,
+> > > > +                   _RET_IP_);
+> >
+> > Would not lock_acquire_shared() be more appropriate, i.e. treat this as
+> > a rwsem_acquire_read()?
 > 
-> You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=yes in your kernel config. Starting with 4.19.1 it somehow
-
-Yes, it is enabled in my configuration.
-
-> interferes with ext4 and causes problems similar to the ones you list below. Ever since I disabled MQ (either recompile
-> your kernel or add `scsi_mod.use_blk_mq=0` to the kernel command line) none of those errors came back.
+> read lock critical sections can't create any dependencies against any
+> other read lock critical section of the same lock. Switching this to a
+> read lock would just render the annotation pointless (if you don't
+> include at least some write lock critical section somewhere, but I
+> have no idea where you'd do that). A read lock that you only ever take
+> for reading essentially doesn't do anything at all.
 > 
-I'll try that. Thanks a lot for the hint!
+> So not clear on why you're suggesting this?
 
-Guenter
-
-> hope it helps,
-> 
-> marek
-> > [trying again, this time with correct kernel.org address]
-> > 
-> > Hi,
-> > 
-> > I have seen the following and similar problems several times,
-> > with both v4.19.3 and v4.19.4:
-> > 
-> > Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602889: comm git: bad
-> > extra_isize 33661 (inode size 256)
-> > Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on device sdb1-8.
-> > Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1): Remounting filesystem read-only
-> > Nov 23 04:32:25 mars kernel: [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602881: comm rm: bad
-> > extra_isize 33685 (inode size 256)
-> > ...
-> > 
-> > Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device sda1): ext4_lookup:1578: inode #238034131: comm
-> > updatedb.mlocat: deleted inode referenced: 238160407
-> > Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on device sda1-8.
-> > Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1): Remounting filesystem read-only
-> > ...
-> > 
-> > Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device sda1): ext4_lookup:1578: inode #52038457: comm
-> > nfsd: deleted inode referenced: 52043796
-> > Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on device sda1-8.
-> > Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1): Remounting filesystem read-only
-> > 
-> > 
-> > The same systems running v4.18.6 never experienced a problem.
-> > 
-> > Has anyone else seen similar problems ? Is there anything I can do
-> > to help tracking down the problem ?
-> > 
-> > Thanks,
-> > Guenter
-> > 
-> 
+Just that it's not acting as a mutex, so emulating one looks wrong.
+-Chris
