@@ -2,110 +2,99 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E02EFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45934C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA10220873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:17:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fwidiE+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA10220873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1110E20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:19:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1110E20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730185AbeK0UOp (ORCPT
+        id S1730061AbeK0UQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:14:45 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44087 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729800AbeK0UOo (ORCPT
+        Tue, 27 Nov 2018 15:16:19 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36560 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729387AbeK0UQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:14:44 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so17532803wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:17:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4hLd/YZOhBHGeRM1odD7WiGR03qRbtKTGVwyvu+NDqc=;
-        b=fwidiE+d+XjYlDLcrpqPSLazX+ymyUx69CXKzO4Wfpv7dHSCTxFxxK2goOnFUENxZq
-         yKRASyHFBW3ct/L9g047vdjQQ5L/FBTfTPQZt6CDW6CUHQRaCKA/6UVz18ou2brJ7Gh8
-         uLU4Il059SN7j4CrAtCo2i+oTCmrhn2oOm2SY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4hLd/YZOhBHGeRM1odD7WiGR03qRbtKTGVwyvu+NDqc=;
-        b=Mrlul58cGHmvJVxpxmC+BN9LzjnFU4fzBHXxKbntXiJj06UcWK7TEsFWMHXpatISVb
-         QfZKi5FQv7ElGsMAbcRZWf3e1qkOkc72br6khRlZ2er6P4ZEyPG9GlB1L5ktWyw12SXN
-         cgxy61P0Vsx7hTLbk9cZLe9x7LDajI06RSEUum70eKicNovIk8UdCS1tv5J0eB47thaP
-         4nC8h8bElEt5M0lfcHTw/y6+SUod1uIKRUnscVIX9VFAy/wS/tSuLkc7tdIEry/0wNhf
-         2WateWm9XflQJmCJwcwvTF5iq523mQ2UQbxdSDzNX1YBqF+Nor+2iDR9xp6d2Ai8HffW
-         BrVQ==
-X-Gm-Message-State: AA+aEWZD27pnNEw+Yz2IafOfBjm5DZSb+3vFX3a5s7GotOAASzo50Jd4
-        A6SB9s+mPgn2j9Cld0M+KdDYkQ==
-X-Google-Smtp-Source: AFSGD/XiNCd5tAskL2Jd0OeM+hXlfVQDsbFg5qpdJOqiOqkYA7HPR3xVZzmos106NKPMou4DdeC7Uw==
-X-Received: by 2002:adf:ba8e:: with SMTP id p14mr18155097wrg.230.1543310248256;
-        Tue, 27 Nov 2018 01:17:28 -0800 (PST)
-Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id 6sm4174247wmk.26.2018.11.27.01.17.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 01:17:27 -0800 (PST)
-Subject: Re: [alsa-devel] [PATCH 4/4] ASoC: qcom: Kconfig: select config for
- codec
-To:     Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     oder_chiou@realtek.com, alsa-devel@alsa-project.org,
-        tzungbi@chromium.org, Mark Brown <broonie@kernel.org>,
-        Rohit kumar <rohitkr@codeaurora.org>, dgreid@chromium.org
-References: <20181124110948.209019-1-cychiang@chromium.org>
- <20181124110948.209019-4-cychiang@chromium.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <4a59167e-1219-dc0a-61e8-4c1fde0e4c0c@linaro.org>
-Date:   Tue, 27 Nov 2018 09:17:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 27 Nov 2018 15:16:19 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAR9Iw2p002054;
+        Tue, 27 Nov 2018 03:18:58 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x63txc-1;
+        Tue, 27 Nov 2018 03:18:58 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 20E74611C8B8;
+        Tue, 27 Nov 2018 03:18:58 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 09:18:57 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAR9Iu72031018; Tue,
+ 27 Nov 2018 09:18:56 GMT
+Date:   Tue, 27 Nov 2018 09:18:56 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
+Message-ID: <20181127091856.GQ16508@imbe.wolfsonmicro.main>
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
+ <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
+ <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
+ <20181123105729.GM16508@imbe.wolfsonmicro.main>
+ <20181123132522.GE2089@sirena.org.uk>
+ <CACRpkdZKJGFmYFKBHdiayRsA2ona2zWfJ+xckJxD1UBsj39=sA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181124110948.209019-4-cychiang@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZKJGFmYFKBHdiayRsA2ona2zWfJ+xckJxD1UBsj39=sA@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=874 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811270084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 24/11/18 11:09, Cheng-Yi Chiang wrote:
-> Select SND_SOC_RT5663 and SND_SOC_MAX98927 for SND_SOC_SDM845.
+On Mon, Nov 26, 2018 at 10:53:40PM +0100, Linus Walleij wrote:
+> On Fri, Nov 23, 2018 at 2:25 PM Mark Brown <broonie@kernel.org> wrote:
+> I suspect maybe the lesser evil is to bite the bullet, invent
+> gpiod_get_from_of_node() which is the missing API (we currently
+> only have devm_gpiod_get_from_of_node()) and simply
+> fix up the converted regulator drivers to avoid devm_*
+> retrieveal in the same manner as wm8994 (the already
+> queued patch). This will make the regulator core own the
+> refcounting as it does today.
 > 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-> ---
->   sound/soc/qcom/Kconfig | 2 ++
->   1 file changed, 2 insertions(+)
+> It's a bit unelegant but it's very straight forward and I know
+> I can fix it up qucikly.
 > 
-> diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-> index 2a4c912d1e484..3528c4279cbae 100644
-> --- a/sound/soc/qcom/Kconfig
-> +++ b/sound/soc/qcom/Kconfig
-> @@ -100,6 +100,8 @@ config SND_SOC_SDM845
->   	depends on QCOM_APR
->   	select SND_SOC_QDSP6
->   	select SND_SOC_QCOM_COMMON
-> +	select SND_SOC_RT5663
-> +	select SND_SOC_MAX98927
->   	help
->   	  To add support for audio on Qualcomm Technologies Inc.
->   	  SDM845 SoC-based systems.
-> 
+> Unless anyone thinks it's a bad idea I will try to make a
+> small fix series like that and a GPIO patch you can also
+> carry in the regulator tree with it.
+
+This issue I ran into following that path is it becomes rather
+fiddly to have regulator_register behave sensibly with respect to
+the GPIO. Obviously in the success case the core now owns the
+GPIO and no issues. However, in the failure case it's not clear if
+we want to core to release the GPIO or not, and consistently
+doing either is fairly hard. But if your happy to have a go at it
+I don't have any objections to it as a solution.
+
+Thanks,
+Charles
