@@ -2,199 +2,128 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90054C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F9BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516A920659
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119B720659
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:39:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="JNAjZG/q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516A920659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n8Ig5tAb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 119B720659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731762AbeK1Ehw (ORCPT
+        id S1732009AbeK1EiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:37:52 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40489 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731680AbeK1Ehw (ORCPT
+        Tue, 27 Nov 2018 23:38:05 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34451 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731576AbeK1EiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:37:52 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d3so19720304edx.7
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:39:12 -0800 (PST)
+        Tue, 27 Nov 2018 23:38:05 -0500
+Received: by mail-ua1-f68.google.com with SMTP id z23so7924485uam.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=sqzm5xsTimMxJ268T1BBbr9FBv4mPMIcZWlKkUkTEVU=;
-        b=JNAjZG/qd0O6CmxpXft8tIz4N1Dl2RRP9cEJtPsKog64XBB6IwatE81j+Bv3+TUw7R
-         Tf/sQCD/fpop/ejzCWAidzMU7+oj7ve2y7ZntJ4JArhld/wg92blfgUnn4wHFa88B4Lc
-         9gh7q5siYgK0Y9+kQ4DawLeEPKN84dxg5NGWY=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SxG22gKp3uE4WIbzN+Oih1tHSp7o6ihhKSzDyg1OL+k=;
+        b=n8Ig5tAbA7o3/Ez/WMYwOM6FQ8Y7htlXMticvVSwbTd68NwdFgyL/WgOnsMP1ni1pW
+         +STDRZ2AFIiJAy+B5Z9uUEyF+oxnMtVjLcHdm9Hmx/v9AvHS61VlBIbAUOani6h8lpAJ
+         yz3zvL8AcXhbiLN04crZSzLzeHZC9ti8UKCIw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=sqzm5xsTimMxJ268T1BBbr9FBv4mPMIcZWlKkUkTEVU=;
-        b=Qch0UrwxOQP8lmHmEGjhLc7J3t1CCJ09JN2y3UPsqjp6a/llzOVp2pcDhVkdbQJYSh
-         ru2TcwJnc7v2/EFp2jfd7jvRqsuITxLwkbxWRSjeXazgUHMqdntYitr+rP8+WE8CRQBy
-         ljtj3qYgpagtlGIciMzd6N4+Grxd9pAbiJMG4PGIlae4QcAk5W/w2vnepukUuAVqKvkv
-         kIGarkDHj5kxn5UWS8K+yDjteMaOtJpMN8v6BXipcQR10k7P96buCO32RTZv6N0986sK
-         SarqlngxwwV0dwe6P+2OsDpMWEMEPe1gVTDFVxOo3DgqGJieeVzwFYuUgtBMuuxGZiVb
-         y7zQ==
-X-Gm-Message-State: AGRZ1gKPqN+JlED+q9XmMSduQvIlw+jb6ucr4A/T1M2LGEGnHZFheCLz
-        Duh+eA1W+uP7TlFhqdY9jeI3yA==
-X-Google-Smtp-Source: AJdET5cBJyQUwvJzIyWN1zK3Y83bEMcphR/j94kpvEihFsnQMmuAD/2rXWfVxtfQ/JGYRgJFi7i+WQ==
-X-Received: by 2002:a17:906:2972:: with SMTP id x18-v6mr24746087ejd.28.1543340351858;
-        Tue, 27 Nov 2018 09:39:11 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id i24sm1088936edq.0.2018.11.27.09.39.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 09:39:10 -0800 (PST)
-Date:   Tue, 27 Nov 2018 18:39:08 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [Intel-gfx] [PATCH 3/3] mm, notifier: Add a lockdep map for
- invalidate_range_start
-Message-ID: <20181127173908.GC4266@phenom.ffwll.local>
-Mail-Followup-To: Chris Wilson <chris@chris-wilson.co.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>, Jerome Glisse <jglisse@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-4-daniel.vetter@ffwll.ch>
- <20181127074918.GT4266@phenom.ffwll.local>
- <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
- <CAKMK7uGSP7wWHSRFsCv90qCyHiSBS+o9CK1BPUXbGj6Crcy_Cg@mail.gmail.com>
- <154334003817.11623.5449603736660799102@skylake-alporthouse-com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SxG22gKp3uE4WIbzN+Oih1tHSp7o6ihhKSzDyg1OL+k=;
+        b=MxiiNMS6FF800hRVpwdwo6wF1NGrfrRCJCDWwZBoJRcH0gNafHf9Z7cHv/1M1CzdXU
+         uHFhRm9IT09RRt+cbeAsmbWCxCSt3DseN232DQ688ws1HvIzeT65x2FWkakL+c3a32jn
+         MjIf644/pTMGlrmo0U1HaJc5JtT9uQBTDAr6JTug40fKRsknPvll+Ntf3iWcLrKAPyLT
+         G7PFA4n8fKWn0OJVW4WObS4af+HDjrvrlacOLIW6bkT7iY6Aw7dKWCoaWMUQ0FOjHGn1
+         kRLa9q8YENSj/8hh6daf8kZxlYWmbESNAEwzB96y0zdEx7EUuaweJbLSBE/Qx+HTUh5s
+         Retw==
+X-Gm-Message-State: AA+aEWboG/tThf1YJVRE+QVyLFfu+8etM8uIFVd71rQWUB/zwoN6JdTk
+        I/sJjbkX5Opn5tdkCSmqcP1Lb1iM0nQ=
+X-Google-Smtp-Source: AFSGD/W507/zee/qMZIFioHQWNceZHPgNvwjwPN4D00O0UP8/8jK1ZzCbAhOgYgsfoKVBfFhUzQyOw==
+X-Received: by 2002:ab0:5b1c:: with SMTP id u28mr14145975uae.135.1543340365895;
+        Tue, 27 Nov 2018 09:39:25 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id n15sm2866187vsi.5.2018.11.27.09.39.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 09:39:24 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id t17so14283363vsc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:39:24 -0800 (PST)
+X-Received: by 2002:a67:6cc1:: with SMTP id h184mr14355429vsc.149.1543340364044;
+ Tue, 27 Nov 2018 09:39:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <154334003817.11623.5449603736660799102@skylake-alporthouse-com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181127035133.225592-3-dianders@chromium.org> <201811271333.8ZTVxYUT%fengguang.wu@intel.com>
+In-Reply-To: <201811271333.8ZTVxYUT%fengguang.wu@intel.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 27 Nov 2018 09:39:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=V087x+56aWFtJxg31O09cFUm00grH7bq1rLSwoq68WdA@mail.gmail.com>
+Message-ID: <CAD=FV=V087x+56aWFtJxg31O09cFUm00grH7bq1rLSwoq68WdA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, jhogan@kernel.org,
+        linux-hexagon@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        dalias@libc.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        paulus@samba.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        christophe.leroy@c-s.fr, mpe@ellerman.id.au, paul.burton@mips.com,
+        rkuo@codeaurora.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 05:33:58PM +0000, Chris Wilson wrote:
-> Quoting Daniel Vetter (2018-11-27 17:28:43)
-> > On Tue, Nov 27, 2018 at 5:50 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > >
-> > > Quoting Daniel Vetter (2018-11-27 07:49:18)
-> > > > On Thu, Nov 22, 2018 at 05:51:06PM +0100, Daniel Vetter wrote:
-> > > > > This is a similar idea to the fs_reclaim fake lockdep lock. It's
-> > > > > fairly easy to provoke a specific notifier to be run on a specific
-> > > > > range: Just prep it, and then munmap() it.
-> > > > >
-> > > > > A bit harder, but still doable, is to provoke the mmu notifiers for
-> > > > > all the various callchains that might lead to them. But both at the
-> > > > > same time is really hard to reliable hit, especially when you want to
-> > > > > exercise paths like direct reclaim or compaction, where it's not
-> > > > > easy to control what exactly will be unmapped.
-> > > > >
-> > > > > By introducing a lockdep map to tie them all together we allow lockdep
-> > > > > to see a lot more dependencies, without having to actually hit them
-> > > > > in a single challchain while testing.
-> > > > >
-> > > > > Aside: Since I typed this to test i915 mmu notifiers I've only rolled
-> > > > > this out for the invaliate_range_start callback. If there's
-> > > > > interest, we should probably roll this out to all of them. But my
-> > > > > undestanding of core mm is seriously lacking, and I'm not clear on
-> > > > > whether we need a lockdep map for each callback, or whether some can
-> > > > > be shared.
-> > > > >
-> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > > Cc: David Rientjes <rientjes@google.com>
-> > > > > Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> > > > > Cc: Michal Hocko <mhocko@suse.com>
-> > > > > Cc: "Christian König" <christian.koenig@amd.com>
-> > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > > > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > > > > Cc: linux-mm@kvack.org
-> > > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > >
-> > > > Any comments on this one here? This is really the main ingredient for
-> > > > catching deadlocks in mmu notifier callbacks. The other two patches are
-> > > > more the icing on the cake.
-> > > >
-> > > > Thanks, Daniel
-> > > >
-> > > > > ---
-> > > > >  include/linux/mmu_notifier.h | 7 +++++++
-> > > > >  mm/mmu_notifier.c            | 7 +++++++
-> > > > >  2 files changed, 14 insertions(+)
-> > > > >
-> > > > > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> > > > > index 9893a6432adf..a39ba218dbbe 100644
-> > > > > --- a/include/linux/mmu_notifier.h
-> > > > > +++ b/include/linux/mmu_notifier.h
-> > > > > @@ -12,6 +12,10 @@ struct mmu_notifier_ops;
-> > > > >
-> > > > >  #ifdef CONFIG_MMU_NOTIFIER
-> > > > >
-> > > > > +#ifdef CONFIG_LOCKDEP
-> > > > > +extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
-> > > > > +#endif
-> > > > > +
-> > > > >  /*
-> > > > >   * The mmu notifier_mm structure is allocated and installed in
-> > > > >   * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
-> > > > > @@ -267,8 +271,11 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
-> > > > >  static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-> > > > >                                 unsigned long start, unsigned long end)
-> > > > >  {
-> > > > > +     mutex_acquire(&__mmu_notifier_invalidate_range_start_map, 0, 0,
-> > > > > +                   _RET_IP_);
-> > >
-> > > Would not lock_acquire_shared() be more appropriate, i.e. treat this as
-> > > a rwsem_acquire_read()?
-> > 
-> > read lock critical sections can't create any dependencies against any
-> > other read lock critical section of the same lock. Switching this to a
-> > read lock would just render the annotation pointless (if you don't
-> > include at least some write lock critical section somewhere, but I
-> > have no idea where you'd do that). A read lock that you only ever take
-> > for reading essentially doesn't do anything at all.
-> > 
-> > So not clear on why you're suggesting this?
-> 
-> Just that it's not acting as a mutex, so emulating one looks wrong.
+Hi,
 
-Ok, I think switching to lock_map_acquire/release should address that.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On Mon, Nov 26, 2018 at 9:39 PM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Douglas,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on kgdb/kgdb-next]
+> [also build test ERROR on v4.20-rc4 next-20181126]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Douglas-Anderson/kgdb-Fix-kgdb_roundup_cpus/20181127-115425
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git kgdb-next
+> config: sparc64-allyesconfig (attached as .config)
+> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=sparc64
+>
+> Note: the linux-review/Douglas-Anderson/kgdb-Fix-kgdb_roundup_cpus/20181127-115425 HEAD b8d0502e65f2d7a2187baa69870146a6fbf18c9f builds fine.
+>       It only hurts bisectibility.
+>
+> All errors (new ones prefixed by >>):
+>
+>    kernel/debug/debug_core.c: In function 'kgdb_roundup_cpus':
+> >> kernel/debug/debug_core.c:261:18: error: 'struct debuggerinfo_struct' has no member named 'rounding_up'
+>        kgdb_info[cpu].rounding_up = false;
+>                      ^
+
+Oops, I squashed this into the wrong patch.  It should have been in
+patch #3.  Sorry about that.  I'll send out a quick v6.
