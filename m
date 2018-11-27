@@ -2,292 +2,230 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429C7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7AEC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F278C2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:54:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="F2NE1RLd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F278C2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 81C3A208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C3A208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeK1JyU (ORCPT
+        id S1726887AbeK1Jye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:54:20 -0500
-Received: from rcdn-iport-5.cisco.com ([173.37.86.76]:34090 "EHLO
-        rcdn-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbeK1JyT (ORCPT
+        Wed, 28 Nov 2018 04:54:34 -0500
+Received: from nov-007-i651.relay.mailchannels.net ([46.232.183.205]:11596
+        "EHLO nov-007-i651.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726451AbeK1Jye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:54:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=4984; q=dns/txt; s=iport;
-  t=1543359293; x=1544568893;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=wQyeyHXswUoX+PDb2qH7y5udUscH6lVO+syNe/Qngbc=;
-  b=F2NE1RLdO7ajpXuG6ogp+PeVOvp5uLA4bX8OWDDntB7rddD6ZAfhSbXQ
-   sXoWJOg5g/mYZI7/CxVS08hlZVw9ayBKh3rsew4oHCKgkg4mMxiYGUxbY
-   zFaPj+RlHIAljeqe3fJXKpeDED2FkUhJPgEizuKozJodeFcUpC9e434mw
-   k=;
-X-IronPort-AV: E=Sophos;i="5.56,288,1539648000"; 
-   d="scan'208";a="270695280"
-Received: from rcdn-core-3.cisco.com ([173.37.93.154])
-  by rcdn-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 22:54:53 +0000
-Received: from [10.154.208.155] ([10.154.208.155])
-        by rcdn-core-3.cisco.com (8.15.2/8.15.2) with ESMTP id wARMsnVH020095;
-        Tue, 27 Nov 2018 22:54:49 GMT
-Subject: [PATCH v5 2/2] selftests/prctl: selftest for pre-coredump signal
- notification
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Cc:     Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
- <24d8585c-e1d8-b363-35e5-5343142c3355@cisco.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <2814952f-9409-dbed-eefc-7156ede4cf99@cisco.com>
-Date:   Tue, 27 Nov 2018 14:54:51 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 28 Nov 2018 04:54:34 -0500
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 56E0E2EC0011;
+        Tue, 27 Nov 2018 22:55:03 +0000 (UTC)
+Received: from srv17.tophost.ch (swiss-ingress-2.mailchannels.ch [46.232.183.6])
+        by relay.mailchannels.net (Postfix) with ESMTPA id F18162EC0008;
+        Tue, 27 Nov 2018 22:54:59 +0000 (UTC)
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.15.2);
+        Tue, 27 Nov 2018 22:55:03 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Belong-Chief: 3c87684f0dac1aa8_1543359303126_722207386
+X-MC-Loop-Signature: 1543359303125:504231051
+X-MC-Ingress-Time: 1543359303125
+Received: from [88.98.246.21] (port=40458 helo=jx1y.mynet)
+        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <j@bitron.ch>)
+        id 1gRmFr-008hty-Je; Tue, 27 Nov 2018 23:54:55 +0100
+From:   =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
+Subject: [PATCH] prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
+Date:   Tue, 27 Nov 2018 22:54:08 +0000
+Message-Id: <20181127225408.7553-2-j@bitron.ch>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181127225408.7553-1-j@bitron.ch>
+References: <20181127225408.7553-1-j@bitron.ch>
 MIME-Version: 1.0
-In-Reply-To: <24d8585c-e1d8-b363-35e5-5343142c3355@cisco.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.155, [10.154.208.155]
-X-Outbound-Node: rcdn-core-3.cisco.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AuthUser: juerg@bitron.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Repost as a series, as suggested by Andrew Morton]
+This introduces a new thread group flag that can be set by calling
 
-Selftest for the pre-coredump signal notification
+    prctl(PR_SET_KILL_DESCENDANTS_ON_EXIT, 1, 0, 0, 0)
 
-Signed-off-by: Enke Chen <enkechen@cisco.com>
+When a thread group exits with this flag set, it will send SIGKILL to
+all descendant processes.  This can be used to prevent stray child
+processes.
+
+This flag is cleared on privilege gaining execve(2) to ensure an
+unprivileged process cannot get a privileged process to send SIGKILL.
+
+Descendants that are orphaned and reparented to an ancestor of the
+current process before the current process exits, will not be killed.
+PR_SET_CHILD_SUBREAPER can be used to contain orphaned processes.
+
+If a descendant gained privileges, the current process may not be
+allowed to kill it, and the descendant process will survive.
+PR_SET_NO_NEW_PRIVS can be used to prevent descendant processes from
+gaining privileges.
+
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Jürg Billeter <j@bitron.ch>
 ---
- tools/testing/selftests/prctl/Makefile           |   2 +-
- tools/testing/selftests/prctl/predump-sig-test.c | 160 +++++++++++++++++++++++
- 2 files changed, 161 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/prctl/predump-sig-test.c
+ fs/exec.c                    |  6 ++++++
+ include/linux/sched/signal.h |  3 +++
+ include/uapi/linux/prctl.h   |  4 ++++
+ kernel/exit.c                | 12 ++++++++++++
+ kernel/sys.c                 | 11 +++++++++++
+ security/apparmor/lsm.c      |  1 +
+ security/selinux/hooks.c     |  3 +++
+ 7 files changed, 40 insertions(+)
 
-diff --git a/tools/testing/selftests/prctl/Makefile b/tools/testing/selftests/prctl/Makefile
-index c7923b2..f8d60d5 100644
---- a/tools/testing/selftests/prctl/Makefile
-+++ b/tools/testing/selftests/prctl/Makefile
-@@ -5,7 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+diff --git a/fs/exec.c b/fs/exec.c
+index 1ebf6e5a521d..f48ff4333393 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1339,6 +1339,12 @@ void setup_new_exec(struct linux_binprm * bprm)
+ 		/* Make sure parent cannot signal privileged process. */
+ 		current->pdeath_signal = 0;
  
- ifeq ($(ARCH),x86)
- TEST_PROGS := disable-tsc-ctxt-sw-stress-test disable-tsc-on-off-stress-test \
--		disable-tsc-test
-+		disable-tsc-test predump-sig-test
- all: $(TEST_PROGS)
++		/*
++		 * Do not send SIGKILL from privileged process as it may
++		 * have been requested by an unprivileged process.
++		 */
++		current->signal->kill_descendants_on_exit = 0;
++
+ 		/*
+ 		 * For secureexec, reset the stack limit to sane default to
+ 		 * avoid bad behavior from the prior rlimits. This has to
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 1be35729c2c5..3bfb71701488 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -124,6 +124,9 @@ struct signal_struct {
+ 	unsigned int		is_child_subreaper:1;
+ 	unsigned int		has_child_subreaper:1;
  
- include ../lib.mk
-diff --git a/tools/testing/selftests/prctl/predump-sig-test.c b/tools/testing/selftests/prctl/predump-sig-test.c
-new file mode 100644
-index 0000000..15d62691
---- /dev/null
-+++ b/tools/testing/selftests/prctl/predump-sig-test.c
-@@ -0,0 +1,160 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018, Enke Chen, Cisco Systems, Inc.
-+ *
-+ * Tests for prctl(PR_SET_PREDUMP_SIG, ...) / prctl(PR_GET_PREDUMP_SIG, ...)
-+ *
-+ * When set with prctl(), the specified signal is sent to the parent process
-+ * prior to the coredump of a child process.
-+ *
-+ * Usage: ./predump-sig-test {SIGUSR1 | SIGRT2}
-+ */
++	/* Send SIGKILL to descendant processes on exit */
++	unsigned int		kill_descendants_on_exit:1;
 +
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
-+#include <sys/prctl.h>
-+#include <signal.h>
-+#include <errno.h>
+ #ifdef CONFIG_POSIX_TIMERS
+ 
+ 	/* POSIX.1b Interval Timers */
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0bf5b6..2ac4da1f282b 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -198,6 +198,10 @@ struct prctl_mm_map {
+ # define PR_CAP_AMBIENT_LOWER		3
+ # define PR_CAP_AMBIENT_CLEAR_ALL	4
+ 
++/* Send SIGKILL to descendant processes on exit */
++#define PR_SET_KILL_DESCENDANTS_ON_EXIT	48
++#define PR_GET_KILL_DESCENDANTS_ON_EXIT	49
 +
-+#ifndef PR_SET_PREDUMP_SIG
-+#define PR_SET_PREDUMP_SIG	54
-+#define PR_GET_PREDUMP_SIG	55
-+#endif
-+
-+#define SIGRT2    (SIGRTMIN + 1)
-+
-+#define handle_error(msg) \
-+	do { perror(msg); exit(EXIT_FAILURE); } while (0)
-+
-+static sig_idx;
-+static siginfo_t siginfo_rcv[2];
-+
-+static void sigaction_func(int sig, siginfo_t *siginfo, void *arg)
+ /* arm64 Scalable Vector Extension controls */
+ /* Flag values must be kept in sync with ptrace NT_ARM_SVE interface */
+ #define PR_SVE_SET_VL			50	/* set task vector length */
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 0e21e6d21f35..7fe0c694685a 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -694,6 +694,15 @@ static void forget_original_parent(struct task_struct *father,
+ 	list_splice_tail_init(&father->children, &reaper->children);
+ }
+ 
++static int kill_descendant_visitor(struct task_struct *p, void *data)
 +{
-+	memcpy(&siginfo_rcv[sig_idx], siginfo, sizeof(siginfo_t));
-+	sig_idx++;
++	/* This may fail, e.g., when a descendant process gained privileges. */
++	group_send_sig_info(SIGKILL, SEND_SIG_NOINFO, p, PIDTYPE_TGID);
++
++	/* Always continue walking the process tree. */
++	return 1;
 +}
 +
-+static int set_sigaction(int sig)
-+{
-+	struct sigaction new_action;
-+	int rc;
+ /*
+  * Send signals to all our closest relatives so that they know
+  * to properly mourn us..
+@@ -704,6 +713,9 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 	struct task_struct *p, *n;
+ 	LIST_HEAD(dead);
+ 
++	if (group_dead && tsk->signal->kill_descendants_on_exit)
++		walk_process_tree(tsk, kill_descendant_visitor, NULL);
 +
-+	memset(&new_action, 0, sizeof(struct sigaction));
-+	new_action.sa_sigaction = sigaction_func;
-+	new_action.sa_flags = SA_SIGINFO;
-+	sigemptyset(&new_action.sa_mask);
+ 	write_lock_irq(&tasklist_lock);
+ 	forget_original_parent(tsk, &dead);
+ 
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 123bd73046ec..8d9af81da093 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2476,6 +2476,17 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			return -EINVAL;
+ 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
++	case PR_SET_KILL_DESCENDANTS_ON_EXIT:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		me->signal->kill_descendants_on_exit = !!arg2;
++		break;
++	case PR_GET_KILL_DESCENDANTS_ON_EXIT:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = put_user(me->signal->kill_descendants_on_exit,
++				 (int __user *)arg2);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8b8b70620bbe..d0d8f88130fb 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -695,6 +695,7 @@ static void apparmor_bprm_committing_creds(struct linux_binprm *bprm)
+ 	aa_inherit_files(bprm->cred, current->files);
+ 
+ 	current->pdeath_signal = 0;
++	current->signal->kill_descendants_on_exit = 0;
+ 
+ 	/* reset soft limits and set hard limits for the new label */
+ 	__aa_transition_rlimits(label, new_label);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index ad9a9b8e9979..313a7be43a98 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2653,6 +2653,9 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
+ 	/* Always clear parent death signal on SID transitions. */
+ 	current->pdeath_signal = 0;
+ 
++	/* Disable SIGKILL requested from before the SID transition. */
++	current->signal->kill_descendants_on_exit = 0;
 +
-+	return sigaction(sig, &new_action, NULL);
-+}
-+
-+static int test_prctl(int sig)
-+{
-+	int sig2, rc;
-+
-+	rc = prctl(PR_SET_PREDUMP_SIG, sig, 0, 0, 0);
-+	if (rc < 0)
-+		handle_error("prctl: setting");
-+
-+	rc = prctl(PR_GET_PREDUMP_SIG, &sig2, 0, 0, 0);
-+	if (rc < 0)
-+		handle_error("prctl: getting");
-+
-+	if (sig2 != sig) {
-+		printf("prctl: sig %d, post %d\n", sig, sig2);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+static void child_fn(void)
-+{
-+	int rc, sig;
-+
-+	printf("\nChild pid: %ld\n", (long)getpid());
-+
-+	/* Test: Child should not inherit the predump_signal */
-+	rc = prctl(PR_GET_PREDUMP_SIG, &sig, 0, 0, 0);
-+	if (rc < 0)
-+		handle_error("prctl: child");
-+
-+	printf("child: predump_signal %d\n", sig);
-+
-+	/* Force coredump here */
-+	printf("child: calling abort()\n");
-+	fflush(stdout);
-+	abort();
-+}
-+
-+static int parent_fn(pid_t child_pid)
-+{
-+	int i, status, count;
-+	siginfo_t *si;
-+	pid_t w;
-+
-+	for (count = 0; count < 2; count++) {
-+		w = waitpid(child_pid, &status, 0);
-+		printf("\nwaitpid: %d\n", w);
-+		if (w < 0)
-+			perror("waitpid");
-+
-+		si = &siginfo_rcv[count];
-+		printf("signal: si_signo %d, si_pid %ld, si_uid %d\n",
-+		       si->si_signo, si->si_pid, si->si_uid);
-+		printf("siginfo: si_errno %d, si_code %d, si_status %d\n",
-+		       si->si_errno, si->si_code, si->si_status);
-+	}
-+	fflush(stdout);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	pid_t child_pid;
-+	int rc, signo;
-+
-+	if (argc != 2) {
-+		printf("invalid number of arguments\n");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	if (strcmp(argv[1], "SIGUSR1") == 0)
-+		signo = SIGUSR1;
-+	else if (strcmp(argv[1], "SIGRT2") == 0)
-+		signo = SIGRT2;
-+	else {
-+		printf("invalid argument for signal\n");
-+		fflush(stdout);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	rc = set_sigaction(SIGCHLD);
-+	if (rc < 0)
-+		handle_error("set_sigaction: SIGCHLD");
-+
-+	if (signo != SIGCHLD) {
-+		rc = set_sigaction(signo);
-+		if (rc < 0)
-+			handle_error("set_sigaction: SIGCHLD");
-+	}
-+
-+	/* Test: prctl() setting */
-+	rc = test_prctl(0);
-+	printf("prctl: sig %d %s\n", 0, (rc == 0) ? "PASS" : "FAIL");
-+
-+	rc = test_prctl(signo);
-+	printf("prctl: sig %d %s\n", signo, (rc == 0) ? "PASS" : "FAIL");
-+
-+	child_pid = fork();
-+	if (child_pid == -1)
-+		handle_error("fork");
-+
-+	if (child_pid == 0) {       /* Code executed by child */
-+		child_fn();
-+	} else {                    /* Code executed by parent */
-+		parent_fn(child_pid);
-+		exit(EXIT_SUCCESS);
-+	}
-+}
+ 	/* Check whether the new SID can inherit resource limits from the old
+ 	 * SID.  If not, reset all soft limits to the lower of the current
+ 	 * task's hard limit and the init task's soft limit.
 -- 
-1.8.3.1
+2.19.2
 
