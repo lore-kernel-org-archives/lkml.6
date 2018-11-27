@@ -2,98 +2,172 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDFAC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B82DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBD120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:12:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NhaPKM6D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBD120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CD84820645
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD84820645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbeK1HLn (ORCPT
+        id S1726584AbeK1HMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:11:43 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52972 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeK1HLn (ORCPT
+        Wed, 28 Nov 2018 02:12:45 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42000 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeK1HMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:11:43 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wARK9lxO101362;
-        Tue, 27 Nov 2018 20:12:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=0vbFHHFrV4d2joW/Jn/J/EMKdTZbWqTtv9izUoUwJrw=;
- b=NhaPKM6DOxBAyUZcFNCzPz4eciWJ3MT9VsbKoMRDjM67mPciKGd8TbXZfGN6a02QhbLZ
- /sKbKZeJNhaTx2A5kZ4Mc6J8yg+nGTa6b99En+aOclG4bfKzQy0y+gBSuy54pPZRZH6P
- kACLoWg2i9JTgpWlV3LirGiaV5zxXbFJTxFdLAhhPrBgZPDi+cHe93wfIFOZT+yxQp1h
- 0iPxF2UUREiJe3L7ZYp0E10pYETYbTDMnbrjfaiM3gkwB2S53w136mHz1LRQf06zmFV0
- uYOLbLGgS+lO/RITRTMCm52XVnQ3j8s9bz0VM4QgM/EDcXwEesBzzF3CfObPduM4lqr5 ig== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2nxx2u6bxh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 20:12:34 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wARKCWW9006492
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 20:12:33 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wARKCWR9027937;
-        Tue, 27 Nov 2018 20:12:32 GMT
-Received: from unbuntlaptop (/197.157.0.30)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Nov 2018 12:12:32 -0800
-Date:   Tue, 27 Nov 2018 23:12:23 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Cathy Avery <cavery@redhat.com>
-Cc:     martin.petersen@oracle.com, jejb@linux.vnet.ibm.com, hch@lst.de,
-        jgill@vmware.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org, emilne@redhat.com,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: vmw_pscsi: Rearrange code to avoid multiple calls
- to free_irq during unload
-Message-ID: <20181127201222.GA3095@unbuntlaptop>
-References: <1543346933-440-1-git-send-email-cavery@redhat.com>
+        Wed, 28 Nov 2018 02:12:44 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 33682809E5; Tue, 27 Nov 2018 21:13:36 +0100 (CET)
+Date:   Tue, 27 Nov 2018 21:13:38 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 22/22] x86/sgx: SGX documentation
+Message-ID: <20181127201338.GB20692@amd>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-23-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
 Content-Disposition: inline
-In-Reply-To: <1543346933-440-1-git-send-email-cavery@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270172
+In-Reply-To: <20181106134758.10572-23-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 02:28:53PM -0500, Cathy Avery wrote:
-> Currently pvscsi_remove calls free_irq more than once as
-> pvscsi_release_resources and __pvscsi_shutdown both call
-> pvscsi_shutdown_intr. This results in a 'Trying to free
-> already-free IRQ' warning and stack trace. To solve the problem
-> pvscsi_shutdown_intr has been moved out of pvscsi_release_resources.
-> 
-> Signed-off-by: Cathy Avery <cavery@redhat.com>
-> Reviewed-by: Ewan D. Milne <emilne@redhat.com>
 
-That bug has been there since the driver was introduced in 2009.  It's
-so amazing that no one has fixed it until now...
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi!
 
-regards,
-dan carpenter
+> Documentation of the features of the Software Guard eXtensions used
+> by the Linux kernel and basic design choices for the core and driver
+> and functionality.
+
+> --- /dev/null
+> +++ b/Documentation/x86/intel_sgx.rst
+> @@ -0,0 +1,201 @@
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Intel(R) SGX driver
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Intel(R) SGX is a set of CPU instructions that can be used by applicatio=
+ns to
+> +set aside private regions of code and data. The code outside the enclave=
+ is
+> +disallowed to access the memory inside the enclave by the CPU access con=
+trol.
+> +In a way you can think that SGX provides inverted sandbox. It protects t=
+he
+> +application from a malicious host.
+
+Spelling out "Software Guard eXtensions" somewhere around here would
+be nice.
+
+As would be notice that due to Spectre / Meltdown / L1TF / ... this
+sandboxing functionality does not really work on any CPU that is on
+the market today.
 
 
+> +Enclave can only execute code inside the ELRANGE. Instructions that may =
+cause
+> +VMEXIT, IO instructions and instructions that require a privilege change=
+ are
+> +prohibited inside the enclave. Interrupts and exceptions always cause en=
+clave
+> +to exit and jump to an address outside the enclave given when the enclav=
+e is
+> +entered by using the leaf instruction ENCLS(EENTER).
+
+
+> +Launch control
+> +--------------
+> +
+> +To launch an enclave, two structures must be provided for ENCLS(EINIT):
+> +
+> +1. **SIGSTRUCT:** signed measurement of the enclave binary.
+> +2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key c=
+alled
+> +   *launch key*, which is re-generated for each boot cycle.
+> +
+> +The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
+> +IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed wit=
+h this
+> +key do not require a valid EINITTOKEN and can be authorized with special
+> +privileges. One of those privileges is ability to acquire the launch key=
+ with
+> +ENCLS(EGETKEY).
+> +
+> +**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
+> +IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
+> +feature control register and handing over control to the operating syste=
+m.
+
+Would it be possible to explain what this means? Basically my BIOS
+decides what enclaves I can run? Who generates the EINITTOKENs and can
+my code get one?=20
+
+What other priviledges does signed SIGSTRUCT give to the enclave?
+
+> +Launching enclaves
+> +------------------
+> +
+> +The current kernel implementation supports only unlocked MSRs i.e.
+> +FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by settin=
+g the
+> +MSRs to the hash of the public key modulus of the enclave signer, which =
+is one
+> +of the fields in the SIGSTRUCT.
+
+Aha, so in current kernel implementation kernel decides what enclaves
+I can run?
+
+Anyway, all this is "interesting reading" but not really suitable for
+system administrator who is not expert in Intel CPUs. Do we need some
+kind of explanation for ARM kernel hackers, system administrators and
+other interested parties?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--yEPQxsgoJgBvi8ip
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlv9pXIACgkQMOfwapXb+vK7VQCcDuktVD3svHKCgW5RurdIi+2f
+0yEAn3aIi6SeyfMyF1hr4we7uTEG6c5J
+=XkFd
+-----END PGP SIGNATURE-----
+
+--yEPQxsgoJgBvi8ip--
