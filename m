@@ -2,194 +2,98 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24109C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46ACCC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7BE820665
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A2620851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:56:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O+P3S3jQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7BE820665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QemfJRMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A2620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbeK1Kxq (ORCPT
+        id S1726773AbeK1Kze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:53:46 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35947 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeK1Kxq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 05:53:46 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so9205704pfc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 15:54:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TO4sExyxv6acTTPZL3vzEWLckjCWVxWXgD9YGLjR0cE=;
-        b=O+P3S3jQTX49LUFvNhedEOyCBgVXTg7htYNET1JxN74PfUyzqIlaJUcGCzsHlJi346
-         4h8KfTKaSLyPQTYXIC7VmFjgik5qpAlxhgHVlLAbyZ4hbTq60AYnKpT1rRAJulmszkDn
-         0hfrIOAq3ho0hsWXJe6PSCLDSONBII7V+j1Yw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TO4sExyxv6acTTPZL3vzEWLckjCWVxWXgD9YGLjR0cE=;
-        b=M2VBc8J1co03JYOph3aA+kO/N7djgZjfvH+uL/6HgVQ4J1E7l38qyls+HrtTjFOEcR
-         fDXQA1IjLnyAyiDOQFK/1NCw06nZJIpmK1Cfr1fnYLP1wDk/579tjEF5f31Q8uQoISUG
-         iyrLtF6/tUrg9G950o+a0EaW1Xn6D/yusi+ewomQ5FN23/891MpEjsL7LaTSIYkqPMK/
-         K6JStMdXTGtKG4I5pFmvgg0VG49Vki5KD2EzgBRlIYHqDseiVyGSXPkSwZxQNFyonir3
-         6wQP6GHJTk5GGQ/Pxdr1mwM67RazllQ1hvGhlYodcpHfo/B1q06asaG/hKMSIcSifvr9
-         So9w==
-X-Gm-Message-State: AGRZ1gKra1V2gU5DFl7YCUHWbKW92IMFBlkuBWjGvhLXGZtwSsDyY1Zp
-        zev+d1MeA29fsPYt9QTecaTeLrgW3ZGDUPUeDaxvIA==
-X-Google-Smtp-Source: AJdET5cs+Hq7Cv7rFTZ33b0+huaAGZldfhHxbhUcVEJVPZd3m5zVfjqVC7qHBqKc88bbGVxwGaRpjPReqdxsN0Kh4ZI=
-X-Received: by 2002:a62:938f:: with SMTP id r15mr34967910pfk.27.1543362851560;
- Tue, 27 Nov 2018 15:54:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127034254.24721-1-weiyi.lu@mediatek.com> <20181127034254.24721-5-weiyi.lu@mediatek.com>
- <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-In-Reply-To: <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 28 Nov 2018 07:54:00 +0800
-Message-ID: <CANMq1KB4tt9jdmE+LJXfji=QXC9-6wuhXWjJPkpNfo6hEMXH=A@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] clk: mediatek: Disable tuner_en before change
- PLL rate
-To:     sean.wang@kernel.org
-Cc:     Weiyi Lu <weiyi.lu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        sboyd@codeaurora.org, Rob Herring <robh@kernel.org>,
-        jamesjj.liao@mediatek.com, srv_heupstream@mediatek.com,
-        lkml <linux-kernel@vger.kernel.org>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, owen.chen@mediatek.com,
-        linux-clk@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Nov 2018 05:55:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726354AbeK1Kze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 05:55:34 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3172206B6;
+        Tue, 27 Nov 2018 23:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543362959;
+        bh=NwmAfCvjrtIu027XRWGklT99k8OoEMCM0fPWNpvoAg0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QemfJRMV2NexJ1aagIkbv5ABn1RPDKSF5IcBHqwkQzIIQZfhArXbrpK8XuVzdL2aj
+         DzNmuUB2fKXreUqHKB6OA8TaxauVO1xmSiZt+rvK2ib3TWH05DEvYvshcCa8fE08SE
+         qMxT2c0A22c/GGWClHTC0yGWLiMbVacuUYc1Eg4Q=
+Date:   Wed, 28 Nov 2018 08:55:55 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH] arm64: ftrace: Fix to enable syscall events on arm64
+Message-Id: <20181128085555.a8987cbe18aa6d1d1f0a827e@kernel.org>
+In-Reply-To: <20181127131859.79ce7da9@gandalf.local.home>
+References: <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+        <154333618522.27355.8094935453351562295.stgit@devbox>
+        <20181127165848.GA19569@arm.com>
+        <20181127131859.79ce7da9@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 4:37 AM Sean Wang <sean.wang@kernel.org> wrote:
->
-> Weiyi Lu <weiyi.lu@mediatek.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8826=E6=
-=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=EF=BC=9A
-> >
-> > From: Owen Chen <owen.chen@mediatek.com>
-> >
-> > PLLs with tuner_en bit, such as APLL1, need to disable
-> > tuner_en before apply new frequency settings, or the new frequency
-> > settings (pcw) will not be applied.
-> > The tuner_en bit will be disabled during changing PLL rate
-> > and be restored after new settings applied.
->
-> It looks like a bug fix. If so, you should add a fixes tag and even cc
-> stable tree
->
-> >
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-=
-pll.c
-> > index 1db161aced31..81400601f107 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -27,7 +27,7 @@
-> >  #define CON0_BASE_EN           BIT(0)
-> >  #define CON0_PWR_ON            BIT(0)
-> >  #define CON0_ISO_EN            BIT(1)
-> > -#define CON0_PCW_CHG           BIT(31)
-> > +#define CON1_PCW_CHG           BIT(31)
->
-> it seems like an unnecessary change
+Hi Will,
 
-Below, you have:
-con1 |=3D CON1_PCW_CHG;
+On Tue, 27 Nov 2018 13:18:59 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Presumably PCW_CHG is on BIT(31) of CON1(?), so I think this is a good
-change. Maybe this needs to be a separate patch, though?
+> On Tue, 27 Nov 2018 16:58:49 +0000
+> Will Deacon <will.deacon@arm.com> wrote:
+> 
+> > This looks fine to me, but I'm curious about whether this is supposed to
+> > work with compat syscalls as well, where the prefix is "__arm64_compat_".
+> > 
+> > If we broadly follow the x86 lead, we'd have:
+> > 
+> > 	return (!strncmp(sym, "__arm64_", 8) && !strcmp(sym + 8, name)) ||
+> > 		(!strncmp(sym, "__arm64_compat_", 15) && !strcmp(sym + 15, name));
+> > 
+> > Do we need to handle compat (i.e. 32-bit) tasks here?
+> 
+> Only if you want to trace compat syscalls as well ;-)
 
-> >
-> >  #define AUDPLL_TUNER_EN                BIT(31)
-> >
-> > @@ -97,9 +97,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll=
- *pll, u32 pcw,
-> >  {
-> >         u32 con1, val;
-> >         int pll_en;
-> > +       u32 tuner_en =3D 0;
-> > +       u32 tuner_en_mask;
-> > +       void __iomem *tuner_en_addr =3D NULL;
-> >
-> >         pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> >
-> > +       /* disable tuner */
->
-> similar code pieces are ready on mtk_pll_[un]prepare. maybe we can add
-> common tuner operations for them to reuse.
->
-> > +       if (pll->tuner_en_addr) {
-> > +               tuner_en_addr =3D pll->tuner_en_addr;
-> > +               tuner_en_mask =3D BIT(pll->data->tuner_en_bit);
-> > +       } else if (pll->tuner_addr) {
-> > +               tuner_en_addr =3D pll->tuner_addr;
-> > +               tuner_en_mask =3D AUDPLL_TUNER_EN;
-> > +       }
-> > +
-> > +       if (tuner_en_addr) {
-> > +               val =3D readl(tuner_en_addr);
-> > +               tuner_en =3D val & tuner_en_mask;
-> > +
-> > +               if (tuner_en) {
-> > +                       val &=3D ~tuner_en_mask;
-> > +                       writel(val, tuner_en_addr);
-> > +               }
-> > +       }
-> > +
-> >         /* set postdiv */
-> >         val =3D readl(pll->pd_addr);
-> >         val &=3D ~(POSTDIV_MASK << pll->data->pd_shift);
-> > @@ -120,12 +142,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_=
-pll *pll, u32 pcw,
-> >         con1 =3D readl(pll->base_addr + REG_CON1);
-> >
-> >         if (pll_en)
-> > -               con1 |=3D CON0_PCW_CHG;
-> > +               con1 |=3D CON1_PCW_CHG;
-> >
-> >         writel(con1, pll->base_addr + REG_CON1);
-> >         if (pll->tuner_addr)
-> >                 writel(con1 + 1, pll->tuner_addr);
-> >
-> > +       /* restore tuner_en */
-> > +       if (tuner_en_addr && tuner_en) {
->
-> if (tuner_en) is sufficient
->
-> > +               val =3D readl(tuner_en_addr);
-> > +               val |=3D tuner_en_mask;
-> > +               writel(val, tuner_en_addr);
-> > +       }
-> > +
-> >         if (pll_en)
-> >                 udelay(20);
-> >  }
-> > --
-> > 2.18.0
-> >
-> >
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Actually I thought about that, but I found below comment in
+arch/arm64/include/asm/ftrace.h
+
+ * Because AArch32 mode does not share the same syscall table with AArch64,
+ * tracing compat syscalls may result in reporting bogus syscalls or even
+ * hang-up, so just do not trace them.
+
+That's why I dropped compat syscall support.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
