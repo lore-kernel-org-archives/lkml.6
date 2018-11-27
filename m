@@ -2,192 +2,184 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B96C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAF3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7272082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B31F208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="kygHpNXC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7272082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1Lx6LpZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B31F208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbeK0WzS (ORCPT
+        id S1730364AbeK0W5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 17:55:18 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:22949 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbeK0WzS (ORCPT
+        Tue, 27 Nov 2018 17:57:14 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41910 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbeK0W5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 17:55:18 -0500
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="21574175"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Nov 2018 04:57:36 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 27 Nov 2018 04:57:27 -0700
+        Tue, 27 Nov 2018 17:57:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so8244412pfi.8;
+        Tue, 27 Nov 2018 03:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hztodwJY33Vhcj/6CxFidSHHSax07SRB63F2qBSHeKI=;
- b=kygHpNXCD09QmLUNWlWna8n9nARFQDNG1wuaG/33JqRUywXE3SgmtHoW+w8p6HYaIQvBfRn7JTT9DqODBWV39SULhhkirVHabJoNexPfWaysvLVK7r7n/zDTk+dqpUHs04uS7BRLdJz/nVRSzGue2J1DI/99LFsUlV9kvIbV9OY=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0646.namprd11.prod.outlook.com (10.163.159.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.18; Tue, 27 Nov 2018 11:57:25 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 11:57:25 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <Claudiu.Beznea@microchip.com>
-Subject: [PATCH v2 5/5] regulator: add documentation for regulator modes and
- suspend states
-Thread-Topic: [PATCH v2 5/5] regulator: add documentation for regulator modes
- and suspend states
-Thread-Index: AQHUhkhcc/FQ+O4mvUqVP1+3dl3KuA==
-Date:   Tue, 27 Nov 2018 11:57:25 +0000
-Message-ID: <1543319801-19100-6-git-send-email-claudiu.beznea@microchip.com>
-References: <1543319801-19100-1-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1543319801-19100-1-git-send-email-claudiu.beznea@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0173.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::17) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0646;6:w5cdP2lljeLd1bdeTCT5pZaMz0ARos3/nHGE3zxkTpm6aruekciC4EiDPmELvdgRFiR5EgbLUBV39L2vwIpLSM7o2Iu0HGLH+EUHgO9G0hSFYGVPXrfDMxrjOuGBbzlFk0oloSpI2BVlwGLN+XFKOMHktiMt5NiG5M//531tkPvcMbfiLXM9HHI1Aie/OrHfmra6Xf09yWq6rREg546SwvLkn3autD0A2bDPasyyCMOfpr1uN/8ee4BPMSTr9i33d6pOduZ0pxGjyhOdjxvjl25uSQjpfyGatvO5RIn6R7QO8tp9AdOJStXI63qFOg/WEgonVlLKewxr8hxxgSzxu5NixZ2RhGGrHhG8+a6IfvYXu1ygPcV3OlkU3vQZ6WQrQqlt4WXegjlrlGoyAweIzs6pgjcsmuQ9HLw7/mio7AagPhNnoQbHv9fdmhoPBsuFkzUxGU2hByTn0b08cQ34uMueloK4yG9MZLDKdvo9CNo=;5:T3QO7weM74zWYQhnxvfrNFlJmJDb2ODLMlwOJctMLDnkElJ9EHM7GBJIlfY0FAeXK1pj2ViPxkH58iQPbH7QTaNvAkObUjZp1aiyD1LkKpVVQGx1sxAqhqGkJ3FHlpBNpdp/I/e2RDFt9G/84fNKNhAw46Vw9573xAavGJdJknE=;7:Sk33rRp+MTQ4M/xSfx4PS+0yup8UTiMf15ayghJeaErRj66joDicvZEwYfn6EEuWhMx+nv/+79itPjxd1JvcEBjLnDUSObKr+JA+8gN5Yvf+BsX6HGW+uI4PkQVQagvXeDpt/U2ccngSiAGQch5dgw==
-x-ms-office365-filtering-correlation-id: a19e6abc-d0c0-4864-472e-08d6545f7edd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0646;
-x-ms-traffictypediagnostic: BY2PR11MB0646:
-x-microsoft-antispam-prvs: <BY2PR11MB0646B6012BE9814275E1519887D00@BY2PR11MB0646.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231443)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0646;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0646;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(376002)(136003)(346002)(199004)(189003)(86362001)(6116002)(3846002)(72206003)(76176011)(305945005)(106356001)(6486002)(52116002)(6506007)(386003)(316002)(110136005)(54906003)(14454004)(478600001)(66066001)(6436002)(99286004)(2906002)(105586002)(15650500001)(68736007)(7736002)(6636002)(39060400002)(476003)(11346002)(107886003)(2616005)(256004)(4326008)(36756003)(5660300001)(14444005)(8936002)(53936002)(6512007)(486006)(102836004)(26005)(97736004)(81156014)(81166006)(25786009)(71200400001)(8676002)(71190400001)(186003)(446003)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0646;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: C+KFLAqd3x+AucLF6/woQl9SNUW3q6wdVzaPIdk54lYdG8hi9scsndKDleyGKy1D2psNdT+G/FtXE1pdZDkAiv0b7LBrhodTkv5SkRfwB0+TCLe2I4xQKTFH5O86Y9FhW+EVFdJfXjErqFjYtN14tQebaWbmIIx8MiyzvaSr/NXH2WD0G0cfssogX/wVK5zFgNVaIegbqfPozyoWjjXf+mrDftmbYYLuYc852QVHSQrChOnjPGXQWyw4A6i6DFcgwYZJPosEkF4CqLXrzZ0cR70sOBzUXcENYrj3LeBeT6eCP/CyAnZRCFY2u6GVNCxNmz/fIh920E6xnOOP8iP5qhv9pjZu1ByfJ/03Urxz3qE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/xqBmdV1KrJJv0B9iHP5cNl7CqHVS4upK6gVCSVI+ZI=;
+        b=c1Lx6LpZH/yPprmnEWs4u6NhdSCBPyeOH9118ZY2b6cZNC7Et21UYZwNvuUiVGDHP8
+         ZK9SFW99FI4EEcp0uzxdhilbI0lFXMGe5yuRoNHjRGPv/Yw/zl/X/dNAmeOo3gTTGV6F
+         W6HTPQq/yW5Sni31xbxbdqFkempvum3k/DkDmC3ExeyLM1Up0ciDLzbps9xWdXNsoUVk
+         IYWIUnUU51wMVhLH6udW0BH9GOLZlRsciXl5kh4/hGWWXEudx5q7fmVuBHxpgju6ylQa
+         Ny5wJF0N74JqddDerFDkrb0D2g3mQEXVDMYGaPa164oG7I70PpzK2QVHBjGJfM55Lp2R
+         wgmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/xqBmdV1KrJJv0B9iHP5cNl7CqHVS4upK6gVCSVI+ZI=;
+        b=q0M4hYHair8LYzTbbc4LE2NVhr6xQNGHn8SJlT34UfVWZ0A92XtTFHx/x6aqs2WooK
+         TQQyeNMEbOoCiCJWfpe5QVDKvpdJWpB9wUs5GgUfcieg543jEPRur7t3F9xxTk4+KdSD
+         cu+8Z7bkk4dkE+5pfMhsvxQxzaQuOmaO73sauFK906WbHbwTMu1dCdjLYG5crA5idIfa
+         aBeixZSpjy5gYBXQtf2L/gwHkphNt1XDjyZ6NcVAx2VCXghhdJbVRIW29j1UmTGKyi5y
+         Dp4K9RHWLBX0+lO0LFhgt7NZOhvLCbBbQrFc51DLGcu6JNvVLTxagbjjtukAnJyDh7fn
+         9tJg==
+X-Gm-Message-State: AA+aEWb1gmODd3AZ4kTXhMYTVUrZIHXdzAMd7NPOG2XSUUpfqlBAQoLA
+        8Q0RtT7M1hfKvfz1ApedgFiqECLQKn/9tQODfdc=
+X-Google-Smtp-Source: AFSGD/WXX5qNh8s3rNMBCSeQIP+Im5TmXgATCKNYCCr+FTckV7o7rA2WS8K1vpw/UmEr72IP4Br6t/JYkVBrDt5iQDw=
+X-Received: by 2002:a63:da14:: with SMTP id c20mr27916035pgh.233.1543319973618;
+ Tue, 27 Nov 2018 03:59:33 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a19e6abc-d0c0-4864-472e-08d6545f7edd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 11:57:25.3137
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0646
-X-OriginatorOrg: microchip.com
+References: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
+In-Reply-To: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
+From:   Tianyu Lan <lantianyu1986@gmail.com>
+Date:   Tue, 27 Nov 2018 19:59:22 +0800
+Message-ID: <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com>
+Subject: Re: [PATCH V5 00/10] x86/KVM/Hyper-v: Add HV ept tlb range flush
+ hypercall support in KVM
+To:     =?UTF-8?B?5aSp5a6HIOiTnQ==?= <lantianyu1986@gmail.com>
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        "H. Peter Anvin" <hpa@zytor.com>, jhogan@kernel.org,
+        kvmarm@lists.cs.columbia.edu, kvm-ppc@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        marc.zyngier@arm.com, Ingo Molnar <mingo@redhat.com>,
+        mpe@ellerman.id.au, paul.burton@mips.com, paulus@ozlabs.org,
+        Paolo Bonzini <pbonzini@redhat.com>, ralf@linux-mips.org,
+        Radim Krcmar <rkrcmar@redhat.com>, sthemmin@microsoft.com,
+        Thomas Gleixner <tglx@linutronix.de>, will.deacon@arm.com,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Gentile Ping...
 
-Add documentation for regulator modes and suspend states.
+On Thu, Nov 8, 2018 at 10:43 PM <lantianyu1986@gmail.com> wrote:
+>
+> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+>
+> Sorry. Some patches was blocked and I try to resend via another account.
+>
+> For nested memory virtualization, Hyper-v doesn't set write-protect
+> L1 hypervisor EPT page directory and page table node to track changes
+> while it relies on guest to tell it changes via HvFlushGuestAddressLlist
+> hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
+> EPT page table with ranges which are specified by L1 hypervisor.
+>
+> If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
+> flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
+> and sync L1's EPT table when next EPT page fault is triggered.
+> HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
+> page fault and synchronization of shadow page table.
+>
+> This patchset is rebased on the Linux 4.20-rc1 and Patch "KVM/VMX: Check
+> ept_pointer before flushing ept tlb".(https://www.mail-archive.com/linux
+> -kernel@vger.kernel.org/msg1798827.html).
+>
+> Change since v4:
+>        1) Split flush address and flush list patches. This patchset only contains
+>        flush address patches. Will post flush list patches later.
+>        2) Expose function hyperv_fill_flush_guest_mapping_list()
+>        out of hyperv file
+>        3) Adjust parameter of hyperv_flush_guest_mapping_range()
+>        4) Reorder patchset and move Hyper-V and VMX changes ahead.
+>
+> Change since v3:
+>         1) Remove code of updating "tlbs_dirty" in kvm_flush_remote_tlbs_with_range()
+>         2) Remove directly tlb flush in the kvm_handle_hva_range()
+>         3) Move tlb flush in kvm_set_pte_rmapp() to kvm_mmu_notifier_change_pte()
+>         4) Combine Vitaly's "don't pass EPT configuration info to
+> vmx_hv_remote_flush_tlb()" fix
+>
+> Change since v2:
+>        1) Fix comment in the kvm_flush_remote_tlbs_with_range()
+>        2) Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+>         hyperv-tlfs.h.
+>        3) Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+>        4) Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+>         struct hv_guest_mapping_flush_list.
+>
+> Change since v1:
+>        1) Convert "end_gfn" of struct kvm_tlb_range to "pages" in order
+>           to avoid confusion as to whether "end_gfn" is inclusive or exlusive.
+>        2) Add hyperv tlb range struct and replace kvm tlb range struct
+>           with new struct in order to avoid using kvm struct in the hyperv
+>           code directly.
+>
+>
+> Lan Tianyu (10):
+>   KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
+>   x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+>   x86/Hyper-v: Add trace in the
+>     hyperv_nested_flush_guest_mapping_range()
+>   KVM/VMX: Add hv tlb range flush support
+>   KVM/MMU: Add tlb flush with range helper function
+>   KVM: Replace old tlb flush function with new one to flush a specified
+>     range.
+>   KVM: Make kvm_set_spte_hva() return int
+>   KVM/MMU: Move tlb flush in kvm_set_pte_rmapp() to
+>     kvm_mmu_notifier_change_pte()
+>   KVM/MMU: Flush tlb directly in the kvm_set_pte_rmapp()
+>   KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+>
+>  arch/arm/include/asm/kvm_host.h     |  2 +-
+>  arch/arm64/include/asm/kvm_host.h   |  2 +-
+>  arch/mips/include/asm/kvm_host.h    |  2 +-
+>  arch/mips/kvm/mmu.c                 |  3 +-
+>  arch/powerpc/include/asm/kvm_host.h |  2 +-
+>  arch/powerpc/kvm/book3s.c           |  3 +-
+>  arch/powerpc/kvm/e500_mmu_host.c    |  3 +-
+>  arch/x86/hyperv/nested.c            | 80 +++++++++++++++++++++++++++++++
+>  arch/x86/include/asm/hyperv-tlfs.h  | 32 +++++++++++++
+>  arch/x86/include/asm/kvm_host.h     |  9 +++-
+>  arch/x86/include/asm/mshyperv.h     | 15 ++++++
+>  arch/x86/include/asm/trace/hyperv.h | 14 ++++++
+>  arch/x86/kvm/mmu.c                  | 96 +++++++++++++++++++++++++++++--------
+>  arch/x86/kvm/paging_tmpl.h          |  3 +-
+>  arch/x86/kvm/vmx.c                  | 69 ++++++++++++++++++--------
+>  virt/kvm/arm/mmu.c                  |  6 ++-
+>  virt/kvm/kvm_main.c                 |  5 +-
+>  17 files changed, 295 insertions(+), 51 deletions(-)
+>
+> --
+> 2.14.4
+>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- .../bindings/regulator/act8945a-regulator.txt      | 34 ++++++++++++++++++=
-++++
- 1 file changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/act8945a-regulator=
-.txt b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-index ac955dea00d1..4017527619ab 100644
---- a/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-@@ -15,11 +15,17 @@ Optional input supply properties:
-   - inl67-supply: The input supply for REG_LDO3 and REG_LDO4
-=20
- Any standard regulator properties can be used to configure the single regu=
-lator.
-+regulator-initial-mode, regulator-allowed-modes and regulator-mode could b=
-e
-+specified using mode values from dt-bindings/regulator/active-semi,8945a-r=
-egulator.h
-+file.
-=20
- The valid names for regulators are:
- 	REG_DCDC1, REG_DCDC2, REG_DCDC3, REG_LDO1, REG_LDO2, REG_LDO3, REG_LDO4.
-=20
- Example:
-+
-+#include <dt-bindings/regulator/active-semi,8945a-regulator.h>
-+
- 	pmic@5b {
- 		compatible =3D "active-semi,act8945a";
- 		reg =3D <0x5b>;
-@@ -32,6 +38,18 @@ Example:
- 				regulator-min-microvolt =3D <1350000>;
- 				regulator-max-microvolt =3D <1350000>;
- 				regulator-always-on;
-+
-+				regulator-allowed-modes =3D <ACT8945A_REGULATOR_MODE_FIXED>,
-+							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
-+				regulator-initial-mode =3D <ACT8945A_REGULATOR_MODE_FIXED>;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-min-microvolt=3D<1400000>;
-+					regulator-suspend-max-microvolt=3D<1400000>;
-+					regulator-changeable-in-suspend;
-+					regulator-mode=3D<ACT8945A_REGULATOR_MODE_LOWPOWER>;
-+				};
- 			};
-=20
- 			vdd_1v2_reg: REG_DCDC2 {
-@@ -39,6 +57,14 @@ Example:
- 				regulator-min-microvolt =3D <1100000>;
- 				regulator-max-microvolt =3D <1300000>;
- 				regulator-always-on;
-+
-+				regulator-allowed-modes =3D <ACT8945A_REGULATOR_MODE_FIXED>,
-+							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
-+				regulator-initial-mode =3D <ACT8945A_REGULATOR_MODE_FIXED>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
-=20
- 			vdd_3v3_reg: REG_DCDC3 {
-@@ -53,6 +79,14 @@ Example:
- 				regulator-min-microvolt =3D <2500000>;
- 				regulator-max-microvolt =3D <2500000>;
- 				regulator-always-on;
-+
-+				regulator-allowed-modes =3D <ACT8945A_REGULATOR_MODE_NORMAL>,
-+							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
-+				regulator-initial-mode =3D <ACT8945A_REGULATOR_MODE_NORMAL>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
-=20
- 			vdd_3v3_lp_reg: REG_LDO2 {
---=20
-2.7.4
-
+-- 
+Best regards
+Tianyu Lan
