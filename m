@@ -2,126 +2,163 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE81C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBB0C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3982120817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:43:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="oud5sjbV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3982120817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DF5F2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:43:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF5F2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731851AbeK1Elr (ORCPT
+        id S1731919AbeK1El5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:41:47 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35463 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbeK1Elq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:41:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v6so20062751oif.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:43:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W6kqbdoIdoOTcEMfh8M3eg7P++NjiSNDJAcPi/8vdBw=;
-        b=oud5sjbVeBFfvW6GQ6O0/nJR3O0tkTdfklfksZnfyr/QUkxVDR3j40K/AgpTNWsL3E
-         VEAtDP6g8fVx0om6CV+ZZkJE/XJg/7/bFkYPYW062bl/x1M5IO3r939LaM9zAQo89Bh0
-         wJ7YCN0tP58WUNEeYOzPgyqCgQ7IPXanDwXlFUMDTIk3wbyVSbJN2ir/1gXAoacEgL+H
-         tkbXJpAKsGnayckXmvuaz+8werplOfzjd4AyWpFL1TghbRLYprooBtQo//1ENrtQSXvM
-         sVvWydIvR/kR4ReMeVhhoOHY6cfNWDkvvVC7JWo3HcvV4wYB2Ku5JuwZnDzvg51bK3PA
-         5KpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W6kqbdoIdoOTcEMfh8M3eg7P++NjiSNDJAcPi/8vdBw=;
-        b=feM4XHIvI20YqZvR0JYY+zQuEh4y/Vd89Ud/uzxHTLUte1sR/WjarkR+qJXiuQt0l6
-         WoybdtpFMGYT3xfjnOOGW2wDkS/qguoqmB7m0YV00UwK7RsDWHJizugG9plDG+xSDumB
-         AVuS0PODHgxElTDzQ2nrV19aHg1QR8sW7H3GW3COPSN4kIPqMsBxFqg1FWL/CXRJrFNb
-         Sb+p2ZHQL6McqMTXcpokueLzRMid5Xf7QWquhSr18ukKDXkllBRGz3RJqZB1aNgHvgft
-         W2Pd/ytcZfCLN6qmTFF+lUqrpbSyWaKw0PBnL25vl2RjxGeg3HLICvRF58OYGXPyUSK1
-         27QQ==
-X-Gm-Message-State: AGRZ1gJBgKk+bt16vOZ2/9wbM/EKrV8Y3D7rSkNclwujz0EkzXYDlDsC
-        NMIXDmD4w2USFI0sfHU/dKl9cv/LC5NVqgey19If3g==
-X-Google-Smtp-Source: AJdET5doZLF+QT1lbW4hzzE3wzo/ph5iO0QBD1G9JAa2Icz3LbuwEk5QgQmYLiYwto7Hac1d4MswnO2zigQLq5nievI=
-X-Received: by 2002:aca:e691:: with SMTP id d139-v6mr17528580oih.232.1543340587265;
- Tue, 27 Nov 2018 09:43:07 -0800 (PST)
+        Tue, 27 Nov 2018 23:41:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34944 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726288AbeK1El5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 23:41:57 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 02EF7811D3;
+        Tue, 27 Nov 2018 17:43:18 +0000 (UTC)
+Received: from parsley.fieldses.org (ovpn-124-225.rdu2.redhat.com [10.10.124.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 900E219747;
+        Tue, 27 Nov 2018 17:43:17 +0000 (UTC)
+Received: by parsley.fieldses.org (Postfix, from userid 2815)
+        id 77FB1180365; Tue, 27 Nov 2018 12:43:16 -0500 (EST)
+Date:   Tue, 27 Nov 2018 12:43:16 -0500
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     NeilBrown <neilb@suse.com>, Jeff Layton <jlayton@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>, lkp@01.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [LKP] [fs/locks]  83b381078b:  will-it-scale.per_thread_ops
+ -62.5% regression
+Message-ID: <20181127174315.GA29963@parsley.fieldses.org>
+References: <20181127060102.GF6163@shao2-debian>
 MIME-Version: 1.0
-References: <20181114224921.12123-2-keith.busch@intel.com> <20181114224921.12123-3-keith.busch@intel.com>
- <CAPcyv4jNpgzpfG1awrxspTeQ1JOK-4-Wu6Kb6cd6NGY6Atj3cg@mail.gmail.com>
-In-Reply-To: <CAPcyv4jNpgzpfG1awrxspTeQ1JOK-4-Wu6Kb6cd6NGY6Atj3cg@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 27 Nov 2018 09:42:54 -0800
-Message-ID: <CAPcyv4hMFc7K=FjHWiMVAiOxVC-s0itPjVTs_-7KrFhg4h_SXQ@mail.gmail.com>
-Subject: Re: [PATCH 2/7] node: Add heterogenous memory performance
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127060102.GF6163@shao2-debian>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 27 Nov 2018 17:43:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:00 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Wed, Nov 14, 2018 at 2:53 PM Keith Busch <keith.busch@intel.com> wrote:
-> >
-> > Heterogeneous memory systems provide memory nodes with latency
-> > and bandwidth performance attributes that are different from other
-> > nodes. Create an interface for the kernel to register these attributes
-> > under the node that provides the memory. If the system provides this
-> > information, applications can query the node attributes when deciding
-> > which node to request memory.
-> >
-> > When multiple memory initiators exist, accessing the same memory target
-> > from each may not perform the same as the other. The highest performing
-> > initiator to a given target is considered to be a local initiator for
-> > that target. The kernel provides performance attributes only for the
-> > local initiators.
-> >
-> > The memory's compute node should be symlinked in sysfs as one of the
-> > node's initiators.
-> >
-> > The following example shows the new sysfs hierarchy for a node exporting
-> > performance attributes:
-> >
-> >   # tree /sys/devices/system/node/nodeY/initiator_access
-> >   /sys/devices/system/node/nodeY/initiator_access
-> >   |-- read_bandwidth
-> >   |-- read_latency
-> >   |-- write_bandwidth
-> >   `-- write_latency
->
-> With the expectation that there will be nodes that are initiator-only,
-> target-only, or both I think this interface should indicate that. The
-> 1:1 "local" designation of HMAT should not be directly encoded in the
-> interface, it's just a shortcut for finding at least one initiator in
-> the set that can realize the advertised performance. At least if the
-> interface can enumerate the set of initiators then it becomes clear
-> whether sysfs can answer a performance enumeration question or if the
-> application needs to consult an interface with specific knowledge of a
-> given initiator-target pairing.
+Thanks for the report!
 
-Sorry, I misread patch1, this series does allow publishing the
-multi-initiator case that shares the same performance profile to a
-given target.
+On Tue, Nov 27, 2018 at 02:01:02PM +0800, kernel test robot wrote:
+> FYI, we noticed a -62.5% regression of will-it-scale.per_thread_ops due to commit:
+> 
+> 
+> commit: 83b381078b5ecab098ebf6bc9548bb32af1dbf31 ("fs/locks: always delete_block after waiting.")
+> https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git locks-next
+> 
+> in testcase: will-it-scale
+> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
+> with following parameters:
+> 
+> 	nr_task: 16
+> 	mode: thread
+> 	test: lock1
 
-> It seems a precursor to these patches is arranges for offline node
-> devices to be created for the ACPI proximity domains that are
-> offline-by default for reserved memory ranges.
+So I guess it's doing this, uncontended file lock/unlock?:
 
-Likely still need this though because node devices don't tend to show
-up until they have a cpu or online memory.
+	https://github.com/antonblanchard/will-it-scale/blob/master/tests/lock1.c
+
+Each thread is repeatedly locking and unlocking a file that is only used
+by that thread.
+
+By the way, what's the X-axis on these graphs?  (Or the y-axis, for that
+matter?)
+
+--b.
+
+>                             will-it-scale.per_thread_ops                        
+>                                                                                 
+>   450000 +-+----------------------------------------------------------------+   
+>          |                                                                  |   
+>   400000 +-+   +..+..  .+..+..  .+..+..+...+..+..+..   +..        .+..    ..|   
+>   350000 +-+ ..      +.       +.                     ..         +.    +..+  |   
+>          |  +                                       +     +     :           |   
+>   300000 +-+                                              :    :            |   
+>   250000 +-+                                               :   :            |   
+>          |                                                 :   :            |   
+>   200000 +-+                                               :   :            |   
+>   150000 +-+                                                : :             |   
+>          O  O  O  O  O  O  O  O  O  O  O   O  O  O  O  O  O :O: O  O  O  O  O   
+>   100000 +-+                                                : :             |   
+>    50000 +-+                                                : :             |   
+>          |                                                   :              |   
+>        0 +-+----------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                                will-it-scale.workload                           
+>                                                                                 
+>   7e+06 +-+-----------------------------------------------------------------+   
+>         |              +...+..           .+..+..+     +            +..      |   
+>   6e+06 +-+   +..+.. ..         .+..+..+.        +   + +         ..       ..|   
+>         |   ..      +         +.                  + +   +       +     +..+  |   
+>   5e+06 +-++                                       +     +      :           |   
+>         |                                                :     :            |   
+>   4e+06 +-+                                               :    :            |   
+>         |                                                 :    :            |   
+>   3e+06 +-+                                                :   :            |   
+>         |                                       O     O    :  : O  O        |   
+>   2e+06 O-+O  O  O  O  O   O  O  O  O  O  O  O     O     O : O:       O  O  O   
+>         |                                                   : :             |   
+>   1e+06 +-+                                                 : :             |   
+>         |                                                    :              |   
+>       0 +-+-----------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                            will-it-scale.time.user_time                         
+>                                                                                 
+>   250 +-+-------------------------------------------------------------------+   
+>       |                 .+..               .+..                   +..       |   
+>       |..   +...+..  .+.      .+...+..+..+.    +..    +..       ..   .    ..|   
+>   200 +-+ ..       +.       +.                    . ..         +      +..+  |   
+>       |  +                                         +     +     :            |   
+>       |                                                  :    :             |   
+>   150 +-+                                                 :   :             |   
+>       |                                                   :   :             |   
+>   100 +-+                                                 :   :             |   
+>       |  O      O                                          : :              |   
+>       O     O      O  O  O  O  O   O  O  O  O  O   O  O  O :O: O  O   O  O  O   
+>    50 +-+                                                  : :              |   
+>       |                                                    : :              |   
+>       |                                                     :               |   
+>     0 +-+-------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                           will-it-scale.time.system_time                        
+>                                                                                 
+>   5000 +-+------------------------------------------------------------------+   
+>   4500 O-+O..O..O...O..O..O..O..O..O..O...O..O..O..O..O..O  O  O...O..O..O..O   
+>        |                                                 :     :            |   
+>   4000 +-+                                               :     :            |   
+>   3500 +-+                                                :   :             |   
+>        |                                                  :   :             |   
+>   3000 +-+                                                :   :             |   
+>   2500 +-+                                                :   :             |   
+>   2000 +-+                                                 : :              |   
+>        |                                                   : :              |   
+>   1500 +-+                                                 : :              |   
+>   1000 +-+                                                 : :              |   
+>        |                                                    :               |   
+>    500 +-+                                                  :               |   
+>      0 +-+------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                 
+> [*] bisect-good sample
+> [O] bisect-bad  sample
