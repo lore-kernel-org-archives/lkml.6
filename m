@@ -2,97 +2,118 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC3FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2E6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA742086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:17:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WEKlRrRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA742086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F098208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F098208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeK0NNp (ORCPT
+        id S1728239AbeK0NOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:13:45 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40440 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727741AbeK0NNp (ORCPT
+        Tue, 27 Nov 2018 08:14:43 -0500
+Received: from mail.parknet.co.jp ([210.171.160.6]:59724 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727741AbeK0NOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:13:45 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d3so17636959edx.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:17:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fKfX2QOlMx5VMoGw7J6PhvPcTQZgsXz/YbdHYaAMbko=;
-        b=WEKlRrRDUgb9pX5oOLalZDUjKhhU23zpeeOMRlrwdJQyNji10myDKQ1eoZ7UZWuQ/A
-         JGIyycL/FKiJBe5EYJaK/kMo/wH9vK9shVALFPCOwrW4nxZ8Y/WaEjloDAeTm3dZVIH+
-         XkQoaLw57QASaYbNm2vRnYjHA8I3OKEvDXJ4o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fKfX2QOlMx5VMoGw7J6PhvPcTQZgsXz/YbdHYaAMbko=;
-        b=ZqnhWGIPxDKUKmIexBRRGQk0Hhzq2kcmo+KdVVSMOBMlJXy4TPMP3p25gBKj7lU5vd
-         9ilXUglWoSeYutgUzY8wl0QHNEzwOBfPg0xfAb8WhIk+4bETteW/7Dy9flVM7i7dCqTx
-         hPtJOa5na0pmzRct5T1LMrm1T0wZcacULJgl5G/buJjemvZNwQcjXWTrR77ktsNV46n4
-         1dTLj/+tAtIUOujzynqL8hgbnPmXOf6T7+bfnjtLNpjr3IRYdXiyDRBRzFZ8I7g1JTSQ
-         pe7fNPN076UWXXBUcl6y5krV0hXlUJ6fvx8XvNpYe32cTqEmgCzulyJYcN2kMtb4mROa
-         6zLw==
-X-Gm-Message-State: AA+aEWYxd8netWlwFtG98CMOA0dhwdAx93i0shsOnUpbfrtDgSv/4LcJ
-        uifQJtcC8kDAbfwiR+Xhlxg4yoEWdBo=
-X-Google-Smtp-Source: AFSGD/VTZ70q/9GtGUFnFkqm0kgHhbKbhmTfXbTqZEoIKuDP++xA/ieP+vEjBQDhzRT3zwybmZFmdQ==
-X-Received: by 2002:a50:f284:: with SMTP id f4mr24875738edm.77.1543285049006;
-        Mon, 26 Nov 2018 18:17:29 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id b14sm572130edt.6.2018.11.26.18.17.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 18:17:27 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id r10so20977846wrs.10
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:17:27 -0800 (PST)
-X-Received: by 2002:adf:dc4e:: with SMTP id m14mr12602680wrj.107.1543285047147;
- Mon, 26 Nov 2018 18:17:27 -0800 (PST)
+        Tue, 27 Nov 2018 08:14:43 -0500
+X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Nov 2018 08:14:42 EST
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id AB70D130E18;
+        Tue, 27 Nov 2018 11:08:59 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wAR28wZD013065
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Tue, 27 Nov 2018 11:08:59 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wAR28wbD013297
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Tue, 27 Nov 2018 11:08:58 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id wAR28vG5013296;
+        Tue, 27 Nov 2018 11:08:57 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Carmeli Tamir <carmeli.tamir@gmail.com>, axboe@kernel.dk,
+        sergey.senozhatsky@gmail.com, jthumshirn@suse.de,
+        bvanassche@acm.org, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fat: Replaced 11 magic to MSDOS_NAME for volume label
+References: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+Date:   Tue, 27 Nov 2018 11:08:57 +0900
+In-Reply-To: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+        (Carmeli Tamir's message of "Sat, 24 Nov 2018 17:01:19 -0500")
+Message-ID: <87efb79squ.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-References: <20181122063409.15816-1-peter.hutterer@who-t.net>
- <20181122063409.15816-5-peter.hutterer@who-t.net> <20181122232839.GA10747@jelly>
-In-Reply-To: <20181122232839.GA10747@jelly>
-From:   Harry Cutts <hcutts@chromium.org>
-Date:   Mon, 26 Nov 2018 18:17:15 -0800
-X-Gmail-Original-Message-ID: <CA+jURcv+1xWUR=xabVr+70LthoQqNbLZ_a8zTXxEeLrG4=wohw@mail.gmail.com>
-Message-ID: <CA+jURcv+1xWUR=xabVr+70LthoQqNbLZ_a8zTXxEeLrG4=wohw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] HID: input: use the Resolution Multiplier for
- high-resolution scrolling
-To:     Peter Hutterer <peter.hutterer@who-t.net>
-Cc:     linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>, jikos@kernel.org,
-        torvalds@linux-foundation.org,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        linux-kernel@vger.kernel.org, benjamin.tissoires@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 at 15:28, Peter Hutterer <peter.hutterer@who-t.net> wrote:
-> The choices we have now are:
-> - use 1200 or 12000 internally and divide by 10 before sending the
->   final value
-> - just make the evdev API use 1200 or 12000 and let userspace deal with it.
->   much simpler.
+Carmeli Tamir <carmeli.tamir@gmail.com> writes:
+
+> The FAT file system volume label file stored in the root directory should
+> match the volume label field in the FAT boot sector. As consequence, the
+> max length of these fields ought to be the same. This patch replaces the
+> magic '11' usef in the struct fat_boot_sector with MSDOS_NAME,
+> which is used in struct msdos_dir_entry.
 >
-> Any suggestions/comments?
+> Please check the following references:
+> 1. Microsoft FAT specification 2005 
+> (http://read.pudn.com/downloads77/ebook/294884/FAT32%20Spec%20%28SDA%20Contribution%29.pdf).
+> Search for 'volume label'.
+> 2. Microsoft Extensible Firmware Initiative, FAT32 File System Specification
+> (https://staff.washington.edu/dittrich/misc/fatgen103.pdf). 
+> Search for 'volume label'.
+> 3. User space code that creates FAT filesystem 
+> sometimes uses MSDOS_NAME for the label, sometimes not.
+> Search for 'if (memcmp(label, NO_NAME, MSDOS_NAME))'. 
+> I consider to make the same patch there as well.
+> https://github.com/dosfstools/dosfstools/blob/master/src/mkfs.fat.c
+>
+> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
 
-The second option seems cleaner to me, as then we don't have multiple
-representations of the scroll amount to get mixed up.
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Harry Cutts
-Chrome OS Touch/Input team
+Looks good. Thanks.
+
+> ---
+>  include/uapi/linux/msdos_fs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/msdos_fs.h b/include/uapi/linux/msdos_fs.h
+> index fde7537..1216e6c 100644
+> --- a/include/uapi/linux/msdos_fs.h
+> +++ b/include/uapi/linux/msdos_fs.h
+> @@ -135,7 +135,7 @@ struct fat_boot_sector {
+>  						   for mount state. */
+>  			__u8	signature;  /* extended boot signature */
+>  			__u8	vol_id[4];	/* volume ID */
+> -			__u8	vol_label[11];	/* volume label */
+> +			__u8	vol_label[MSDOS_NAME];	/* volume label */
+>  			__u8	fs_type[8];		/* file system type */
+>  			/* other fields are not added here */
+>  		} fat16;
+> @@ -158,7 +158,7 @@ struct fat_boot_sector {
+>  						   for mount state. */
+>  			__u8	signature;  /* extended boot signature */
+>  			__u8	vol_id[4];	/* volume ID */
+> -			__u8	vol_label[11];	/* volume label */
+> +			__u8	vol_label[MSDOS_NAME];	/* volume label */
+>  			__u8	fs_type[8];		/* file system type */
+>  			/* other fields are not added here */
+>  		} fat32;
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
