@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59423C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A442C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F5421104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5687921104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Atit/QkJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0F5421104
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KqHH8yew"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5687921104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732161AbeK1F54 (ORCPT
+        id S1732186AbeK1F6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:57:56 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51799 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730777AbeK1F5z (ORCPT
+        Wed, 28 Nov 2018 00:58:08 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35608 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729446AbeK1F6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:57:55 -0500
-Received: by mail-wm1-f66.google.com with SMTP id j207so107634wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 10:59:03 -0800 (PST)
+        Wed, 28 Nov 2018 00:58:08 -0500
+Received: by mail-wm1-f68.google.com with SMTP id c126so114103wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 10:59:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=TiHowX/6opEVomUUxAlucxQj9QXEbata5d+lyfBl4Dk=;
-        b=Atit/QkJy7bkWv7+uglqWcQOKwSm+IVnAPj5GVz/Z8RobMBuPKxiTpriMakdTUsw6R
-         figm6uzZPbZ1HXDG1p+hwHLczYdYYpN0ivR92s1MdAKNYngM1y7THlC8B9bn/+i7vOpq
-         YMO7kppz2tL+0Ns9BmK1NopPg+r2aFNi7heF4=
+        bh=VPbmyas9NlZ6E8jNGd5atlSp+2kjXH4RHxf4hQaqr5E=;
+        b=KqHH8yewrjxLbKLIdYdPuJs7H9D4T2N8PrHGC49h2+HkPYIPgwUCujFbStV1okHUZY
+         soJY9SJRFbKUxw4fGsKwi4ad/KHRIB/ARXkloqfI/tJWbdoa3RF2fBBO67D4nvn8bJV5
+         4ELMmDzSBQrZxECdrXkLwa9Z2UaIcP8uzy5bw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=TiHowX/6opEVomUUxAlucxQj9QXEbata5d+lyfBl4Dk=;
-        b=e3zX9yekMi/alieb1eiKEJffSHQkbSHwMn8bAOGVsnmtwxFsXPNU/VwWoVqaWzl+GC
-         WDQOmD2jQOQNz6BzwcR9hoXBqO/6Wz9s0CJIfhj06zAJ0sColoRMslzcISoQhIEaGuQJ
-         FYCjg5/zPvQzeo3WZK/gCnsnDqqWjHg+x1AbwYhmBtvpqUDnRK1HivQV6WtSLJf6p2ur
-         5X/h3Z/73DSg6zCfiPVYRhw8Qf/lGJyYPns5SGnypkLYlIzLxS+K9+flvObo/H8vStsI
-         B54nWbI0fr/R48daVOKH44F3XHMF82LsBq1HiejbWjx9pcRf+G6ybGocB8ruxUJeXrjR
-         xyxw==
-X-Gm-Message-State: AA+aEWYw2ueylx/2YUEmfLqLh7yubgBahHOaytpRnvDtUx/CLkUKO0Z9
-        6tHs6yB+D3STssf823241sCZJGzslFk=
-X-Google-Smtp-Source: AFSGD/XFtpoLFAruuk0prrhk3AxkDE82cbm6v7f/xQLk6v/4SMLz+F6oaYmdHTDznvbizLD9qVLs6A==
-X-Received: by 2002:a1c:7619:: with SMTP id r25mr90959wmc.7.1543345142759;
-        Tue, 27 Nov 2018 10:59:02 -0800 (PST)
+        bh=VPbmyas9NlZ6E8jNGd5atlSp+2kjXH4RHxf4hQaqr5E=;
+        b=N5TDSyAgrGfuUv7GDCsFdNaJNUsImJIv8Ar6JsOY4OwSLB2/04PNYVPewek8gnu3Wn
+         IfeBISiKDmxY+Fq0DhKFcO++Ghu1yTMdg1tmRq+FCPMZ5DJ+EZhp2nQGCbtm3cVb7oOQ
+         /r2uhJz5te8aXpDOsCyZNvecetdlRcQL/xWFycF20okb3Kw62PJfPf7yghPn1GskjJOM
+         3eqSRZj1wdUfyrgt75M1IHaprreVdwytAzFpsFO9GH4TvnhZT5nT8eKSzYer2OsMBPdJ
+         bdBk3IxNcTlN3SprXtNhtlyJhWZKiOquTqtLVkVhsc/S1WKvlaOXmGPHK+SoHONYWPRR
+         DNGg==
+X-Gm-Message-State: AA+aEWYrz5nPcPTQTvur9fXakCcdAhXNcP/k5nnl/yvX6NbccER6PDq+
+        NhcyXRmfVM28OSbil9YoxI4Ao65N2t8=
+X-Google-Smtp-Source: AFSGD/WI4iWVv+aPWNwu/yi6N6cHBe1LZwcMADfpCV105p5kdKRT66hbRmde0M7wu90C/gNz33wNKw==
+X-Received: by 2002:a1c:400b:: with SMTP id n11mr73966wma.85.1543345155624;
+        Tue, 27 Nov 2018 10:59:15 -0800 (PST)
 Received: from localhost ([49.248.92.105])
-        by smtp.gmail.com with ESMTPSA id 5sm33844wmr.37.2018.11.27.10.59.00
+        by smtp.gmail.com with ESMTPSA id 129sm84582wmd.18.2018.11.27.10.59.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 10:59:02 -0800 (PST)
+        Tue, 27 Nov 2018 10:59:15 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rui.zhang@intel.com, edubezval@gmail.com, linux-pm@vger.kernel.org,
         Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v3 1/2] drivers: thermal: Move various drivers for intel platforms into a subdir
-Date:   Wed, 28 Nov 2018 00:28:40 +0530
-Message-Id: <8f96fc84d830411abbef139d4afb5663924b57da.1543343156.git.amit.kucheria@linaro.org>
+Subject: [PATCH v3 2/2] drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
+Date:   Wed, 28 Nov 2018 00:28:41 +0530
+Message-Id: <e526504923c569e575b8916f77b5c207679316e9.1543343156.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1543343156.git.amit.kucheria@linaro.org>
 References: <cover.1543343156.git.amit.kucheria@linaro.org>
@@ -73,360 +73,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cleans up the directory a bit, now that we have several other
-platforms using platform-specific sub-directories. Compile-tested with
-ARCH=x86 defconfig and the drivers explicitly enabled with menuconfig.
+This cleans up the directory a bit allowing just one place to look for
+thermal related drivers for QCOM platforms instead of being scattered in
+the root directory and the qcom/ subdirectory. Compile-tested with
+ARCH=arm64 defconfig and the driver explicitly enabled with menuconfig.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/thermal/Kconfig                       | 83 ++-----------------
- drivers/thermal/Makefile                      | 11 +--
- drivers/thermal/intel/Kconfig                 | 77 +++++++++++++++++
- drivers/thermal/intel/Makefile                | 12 +++
- .../{ => intel}/int340x_thermal/Kconfig       |  0
- .../{ => intel}/int340x_thermal/Makefile      |  0
- .../int340x_thermal/acpi_thermal_rel.c        |  0
- .../int340x_thermal/acpi_thermal_rel.h        |  0
- .../int340x_thermal/int3400_thermal.c         |  0
- .../int340x_thermal/int3402_thermal.c         |  0
- .../int340x_thermal/int3403_thermal.c         |  0
- .../int340x_thermal/int3406_thermal.c         |  0
- .../int340x_thermal/int340x_thermal_zone.c    |  0
- .../int340x_thermal/int340x_thermal_zone.h    |  0
- .../processor_thermal_device.c                |  0
- .../{ => intel}/intel_bxt_pmic_thermal.c      |  0
- .../thermal/{ => intel}/intel_pch_thermal.c   |  0
- .../thermal/{ => intel}/intel_powerclamp.c    |  0
- .../{ => intel}/intel_quark_dts_thermal.c     |  0
- .../thermal/{ => intel}/intel_soc_dts_iosf.c  |  0
- .../thermal/{ => intel}/intel_soc_dts_iosf.h  |  0
- .../{ => intel}/intel_soc_dts_thermal.c       |  0
- .../{ => intel}/x86_pkg_temp_thermal.c        |  0
- 23 files changed, 96 insertions(+), 87 deletions(-)
- create mode 100644 drivers/thermal/intel/Kconfig
- create mode 100644 drivers/thermal/intel/Makefile
- rename drivers/thermal/{ => intel}/int340x_thermal/Kconfig (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/Makefile (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.h (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int3400_thermal.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int3402_thermal.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int3403_thermal.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int3406_thermal.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.c (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.h (100%)
- rename drivers/thermal/{ => intel}/int340x_thermal/processor_thermal_device.c (100%)
- rename drivers/thermal/{ => intel}/intel_bxt_pmic_thermal.c (100%)
- rename drivers/thermal/{ => intel}/intel_pch_thermal.c (100%)
- rename drivers/thermal/{ => intel}/intel_powerclamp.c (100%)
- rename drivers/thermal/{ => intel}/intel_quark_dts_thermal.c (100%)
- rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.c (100%)
- rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.h (100%)
- rename drivers/thermal/{ => intel}/intel_soc_dts_thermal.c (100%)
- rename drivers/thermal/{ => intel}/x86_pkg_temp_thermal.c (100%)
+ drivers/thermal/Kconfig                           | 11 -----------
+ drivers/thermal/Makefile                          |  1 -
+ drivers/thermal/qcom/Kconfig                      | 11 +++++++++++
+ drivers/thermal/qcom/Makefile                     |  1 +
+ drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+ rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
 
 diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 5422523c03f8..772ab9dadda7 100644
+index 772ab9dadda7..344f6459862b 100644
 --- a/drivers/thermal/Kconfig
 +++ b/drivers/thermal/Kconfig
-@@ -326,84 +326,6 @@ config DA9062_THERMAL
- 	  zone.
- 	  Compatible with the DA9062 and DA9061 PMICs.
+@@ -374,17 +374,6 @@ config TANGO_THERMAL
  
--config INTEL_POWERCLAMP
--	tristate "Intel PowerClamp idle injection driver"
--	depends on THERMAL
--	depends on X86
--	depends on CPU_SUP_INTEL
--	help
--	  Enable this to enable Intel PowerClamp idle injection driver. This
--	  enforce idle time which results in more package C-state residency. The
--	  user interface is exposed via generic thermal framework.
--
--config X86_PKG_TEMP_THERMAL
--	tristate "X86 package temperature thermal driver"
--	depends on X86_THERMAL_VECTOR
--	select THERMAL_GOV_USER_SPACE
--	select THERMAL_WRITABLE_TRIPS
--	default m
--	help
--	  Enable this to register CPU digital sensor for package temperature as
--	  thermal zone. Each package will have its own thermal zone. There are
--	  two trip points which can be set by user to get notifications via thermal
--	  notification methods.
--
--config INTEL_SOC_DTS_IOSF_CORE
--	tristate
--	depends on X86 && PCI
--	select IOSF_MBI
--	help
--	  This is becoming a common feature for Intel SoCs to expose the additional
--	  digital temperature sensors (DTSs) using side band interface (IOSF). This
--	  implements the common set of helper functions to register, get temperature
--	  and get/set thresholds on DTSs.
--
--config INTEL_SOC_DTS_THERMAL
--	tristate "Intel SoCs DTS thermal driver"
--	depends on X86 && PCI && ACPI
--	select INTEL_SOC_DTS_IOSF_CORE
--	select THERMAL_WRITABLE_TRIPS
--	help
--	  Enable this to register Intel SoCs (e.g. Bay Trail) platform digital
--	  temperature sensor (DTS). These SoCs have two additional DTSs in
--	  addition to DTSs on CPU cores. Each DTS will be registered as a
--	  thermal zone. There are two trip points. One of the trip point can
--	  be set by user mode programs to get notifications via Linux thermal
--	  notification methods.The other trip is a critical trip point, which
--	  was set by the driver based on the TJ MAX temperature.
--
--config INTEL_QUARK_DTS_THERMAL
--	tristate "Intel Quark DTS thermal driver"
--	depends on X86_INTEL_QUARK
--	help
--	  Enable this to register Intel Quark SoC (e.g. X1000) platform digital
--	  temperature sensor (DTS). For X1000 SoC, it has one on-die DTS.
--	  The DTS will be registered as a thermal zone. There are two trip points:
--	  hot & critical. The critical trip point default value is set by
--	  underlying BIOS/Firmware.
--
--menu "ACPI INT340X thermal drivers"
--source drivers/thermal/int340x_thermal/Kconfig
--endmenu
--
--config INTEL_BXT_PMIC_THERMAL
--	tristate "Intel Broxton PMIC thermal driver"
--	depends on X86 && INTEL_SOC_PMIC_BXTWC && REGMAP
--	help
--	  Select this driver for Intel Broxton PMIC with ADC channels monitoring
--	  system temperature measurements and alerts.
--	  This driver is used for monitoring the ADC channels of PMIC and handles
--	  the alert trip point interrupts and notifies the thermal framework with
--	  the trip point and temperature details of the zone.
--
--config INTEL_PCH_THERMAL
--	tristate "Intel PCH Thermal Reporting Driver"
--	depends on X86 && PCI
--	help
--	  Enable this to support thermal reporting on certain intel PCHs.
--	  Thermal reporting device will provide temperature reading,
--	  programmable trip points and other information.
--
- config MTK_THERMAL
- 	tristate "Temperature sensor driver for mediatek SoCs"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-@@ -415,6 +337,11 @@ config MTK_THERMAL
- 	  Enable this option if you want to have support for thermal management
- 	  controller present in Mediatek SoCs
+ source "drivers/thermal/tegra/Kconfig"
  
-+menu "Intel thermal drivers"
-+depends on X86 || X86_INTEL_QUARK || COMPILE_TEST
-+source "drivers/thermal/intel/Kconfig"
-+endmenu
-+
- menu "Broadcom thermal drivers"
- depends on ARCH_BCM || ARCH_BRCMSTB || ARCH_BCM2835 || COMPILE_TEST
- source "drivers/thermal/broadcom/Kconfig"
+-config QCOM_SPMI_TEMP_ALARM
+-	tristate "Qualcomm SPMI PMIC Temperature Alarm"
+-	depends on OF && SPMI && IIO
+-	select REGMAP_SPMI
+-	help
+-	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
+-	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
+-	  trip points. The temperature reported by the thermal sensor reflects the
+-	  real time die temperature if an ADC is present or an estimate of the
+-	  temperature based upon the over temperature stage value.
+-
+ config GENERIC_ADC_THERMAL
+ 	tristate "Generic ADC based thermal sensor"
+ 	depends on IIO
 diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 82bb50dc6423..031f61e7dfe8 100644
+index 031f61e7dfe8..415361685480 100644
 --- a/drivers/thermal/Makefile
 +++ b/drivers/thermal/Makefile
-@@ -44,16 +44,9 @@ obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
- obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
- obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
- obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
--obj-$(CONFIG_INTEL_POWERCLAMP)	+= intel_powerclamp.o
--obj-$(CONFIG_X86_PKG_TEMP_THERMAL)	+= x86_pkg_temp_thermal.o
--obj-$(CONFIG_INTEL_SOC_DTS_IOSF_CORE)	+= intel_soc_dts_iosf.o
--obj-$(CONFIG_INTEL_SOC_DTS_THERMAL)	+= intel_soc_dts_thermal.o
--obj-$(CONFIG_INTEL_QUARK_DTS_THERMAL)	+= intel_quark_dts_thermal.o
-+obj-y				+= intel/
- obj-$(CONFIG_TI_SOC_THERMAL)	+= ti-soc-thermal/
--obj-$(CONFIG_INT340X_THERMAL)  += int340x_thermal/
--obj-$(CONFIG_INTEL_BXT_PMIC_THERMAL) += intel_bxt_pmic_thermal.o
--obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
--obj-y				+= st/
-+obj-$(CONFIG_ST_THERMAL)	+= st/
- obj-$(CONFIG_QCOM_TSENS)	+= qcom/
- obj-y				+= tegra/
- obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o
-diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
-new file mode 100644
-index 000000000000..9c06d4ad7c97
---- /dev/null
-+++ b/drivers/thermal/intel/Kconfig
-@@ -0,0 +1,77 @@
-+config INTEL_POWERCLAMP
-+	tristate "Intel PowerClamp idle injection driver"
-+	depends on THERMAL
-+	depends on X86
-+	depends on CPU_SUP_INTEL
+@@ -29,7 +29,6 @@ thermal_sys-$(CONFIG_DEVFREQ_THERMAL) += devfreq_cooling.o
+ 
+ # platform thermal drivers
+ obj-y				+= broadcom/
+-obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
+ obj-$(CONFIG_SPEAR_THERMAL)	+= spear_thermal.o
+ obj-$(CONFIG_ROCKCHIP_THERMAL)	+= rockchip_thermal.o
+ obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
+diff --git a/drivers/thermal/qcom/Kconfig b/drivers/thermal/qcom/Kconfig
+index be32e5abce3c..cdb455ffd575 100644
+--- a/drivers/thermal/qcom/Kconfig
++++ b/drivers/thermal/qcom/Kconfig
+@@ -9,3 +9,14 @@ config QCOM_TSENS
+ 	  thermal zone device via the mode file results in disabling the sensor.
+ 	  Also able to set threshold temperature for both hot and cold and update
+ 	  when a threshold is reached.
++
++config QCOM_SPMI_TEMP_ALARM
++	tristate "Qualcomm SPMI PMIC Temperature Alarm"
++	depends on OF && SPMI && IIO
++	select REGMAP_SPMI
 +	help
-+	  Enable this to enable Intel PowerClamp idle injection driver. This
-+	  enforce idle time which results in more package C-state residency. The
-+	  user interface is exposed via generic thermal framework.
-+
-+config X86_PKG_TEMP_THERMAL
-+	tristate "X86 package temperature thermal driver"
-+	depends on X86_THERMAL_VECTOR
-+	select THERMAL_GOV_USER_SPACE
-+	select THERMAL_WRITABLE_TRIPS
-+	default m
-+	help
-+	  Enable this to register CPU digital sensor for package temperature as
-+	  thermal zone. Each package will have its own thermal zone. There are
-+	  two trip points which can be set by user to get notifications via thermal
-+	  notification methods.
-+
-+config INTEL_SOC_DTS_IOSF_CORE
-+	tristate
-+	depends on X86 && PCI
-+	select IOSF_MBI
-+	help
-+	  This is becoming a common feature for Intel SoCs to expose the additional
-+	  digital temperature sensors (DTSs) using side band interface (IOSF). This
-+	  implements the common set of helper functions to register, get temperature
-+	  and get/set thresholds on DTSs.
-+
-+config INTEL_SOC_DTS_THERMAL
-+	tristate "Intel SoCs DTS thermal driver"
-+	depends on X86 && PCI && ACPI
-+	select INTEL_SOC_DTS_IOSF_CORE
-+	select THERMAL_WRITABLE_TRIPS
-+	help
-+	  Enable this to register Intel SoCs (e.g. Bay Trail) platform digital
-+	  temperature sensor (DTS). These SoCs have two additional DTSs in
-+	  addition to DTSs on CPU cores. Each DTS will be registered as a
-+	  thermal zone. There are two trip points. One of the trip point can
-+	  be set by user mode programs to get notifications via Linux thermal
-+	  notification methods.The other trip is a critical trip point, which
-+	  was set by the driver based on the TJ MAX temperature.
-+
-+config INTEL_QUARK_DTS_THERMAL
-+	tristate "Intel Quark DTS thermal driver"
-+	depends on X86_INTEL_QUARK
-+	help
-+	  Enable this to register Intel Quark SoC (e.g. X1000) platform digital
-+	  temperature sensor (DTS). For X1000 SoC, it has one on-die DTS.
-+	  The DTS will be registered as a thermal zone. There are two trip points:
-+	  hot & critical. The critical trip point default value is set by
-+	  underlying BIOS/Firmware.
-+
-+menu "ACPI INT340X thermal drivers"
-+source drivers/thermal/intel/int340x_thermal/Kconfig
-+endmenu
-+
-+config INTEL_BXT_PMIC_THERMAL
-+	tristate "Intel Broxton PMIC thermal driver"
-+	depends on X86 && INTEL_SOC_PMIC_BXTWC && REGMAP
-+	help
-+	  Select this driver for Intel Broxton PMIC with ADC channels monitoring
-+	  system temperature measurements and alerts.
-+	  This driver is used for monitoring the ADC channels of PMIC and handles
-+	  the alert trip point interrupts and notifies the thermal framework with
-+	  the trip point and temperature details of the zone.
-+
-+config INTEL_PCH_THERMAL
-+	tristate "Intel PCH Thermal Reporting Driver"
-+	depends on X86 && PCI
-+	help
-+	  Enable this to support thermal reporting on certain intel PCHs.
-+	  Thermal reporting device will provide temperature reading,
-+	  programmable trip points and other information.
-diff --git a/drivers/thermal/intel/Makefile b/drivers/thermal/intel/Makefile
-new file mode 100644
-index 000000000000..0d9736ced5d4
---- /dev/null
-+++ b/drivers/thermal/intel/Makefile
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for various Intel thermal drivers.
-+
-+obj-$(CONFIG_INTEL_POWERCLAMP)	+= intel_powerclamp.o
-+obj-$(CONFIG_X86_PKG_TEMP_THERMAL)	+= x86_pkg_temp_thermal.o
-+obj-$(CONFIG_INTEL_SOC_DTS_IOSF_CORE)	+= intel_soc_dts_iosf.o
-+obj-$(CONFIG_INTEL_SOC_DTS_THERMAL)	+= intel_soc_dts_thermal.o
-+obj-$(CONFIG_INTEL_QUARK_DTS_THERMAL)	+= intel_quark_dts_thermal.o
-+obj-$(CONFIG_INT340X_THERMAL)  += int340x_thermal/
-+obj-$(CONFIG_INTEL_BXT_PMIC_THERMAL) += intel_bxt_pmic_thermal.o
-+obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
-diff --git a/drivers/thermal/int340x_thermal/Kconfig b/drivers/thermal/intel/int340x_thermal/Kconfig
++	  This enables a thermal sysfs driver for Qualcomm plug-and-play (QPNP)
++	  PMIC devices. It shows up in sysfs as a thermal sensor with multiple
++	  trip points. The temperature reported by the thermal sensor reflects the
++	  real time die temperature if an ADC is present or an estimate of the
++	  temperature based upon the over temperature stage value.
+diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
+index a821929ede0b..717a08600bb5 100644
+--- a/drivers/thermal/qcom/Makefile
++++ b/drivers/thermal/qcom/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
+ qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
++obj-$(CONFIG_QCOM_SPMI_TEMP_ALARM)	+= qcom-spmi-temp-alarm.o
+diff --git a/drivers/thermal/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
 similarity index 100%
-rename from drivers/thermal/int340x_thermal/Kconfig
-rename to drivers/thermal/intel/int340x_thermal/Kconfig
-diff --git a/drivers/thermal/int340x_thermal/Makefile b/drivers/thermal/intel/int340x_thermal/Makefile
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/Makefile
-rename to drivers/thermal/intel/int340x_thermal/Makefile
-diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-rename to drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.c
-diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.h b/drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.h
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/acpi_thermal_rel.h
-rename to drivers/thermal/intel/int340x_thermal/acpi_thermal_rel.h
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int3400_thermal.c
-rename to drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-diff --git a/drivers/thermal/int340x_thermal/int3402_thermal.c b/drivers/thermal/intel/int340x_thermal/int3402_thermal.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int3402_thermal.c
-rename to drivers/thermal/intel/int340x_thermal/int3402_thermal.c
-diff --git a/drivers/thermal/int340x_thermal/int3403_thermal.c b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int3403_thermal.c
-rename to drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-diff --git a/drivers/thermal/int340x_thermal/int3406_thermal.c b/drivers/thermal/intel/int340x_thermal/int3406_thermal.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int3406_thermal.c
-rename to drivers/thermal/intel/int340x_thermal/int3406_thermal.c
-diff --git a/drivers/thermal/int340x_thermal/int340x_thermal_zone.c b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int340x_thermal_zone.c
-rename to drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
-diff --git a/drivers/thermal/int340x_thermal/int340x_thermal_zone.h b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.h
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/int340x_thermal_zone.h
-rename to drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.h
-diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-similarity index 100%
-rename from drivers/thermal/int340x_thermal/processor_thermal_device.c
-rename to drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c b/drivers/thermal/intel/intel_bxt_pmic_thermal.c
-similarity index 100%
-rename from drivers/thermal/intel_bxt_pmic_thermal.c
-rename to drivers/thermal/intel/intel_bxt_pmic_thermal.c
-diff --git a/drivers/thermal/intel_pch_thermal.c b/drivers/thermal/intel/intel_pch_thermal.c
-similarity index 100%
-rename from drivers/thermal/intel_pch_thermal.c
-rename to drivers/thermal/intel/intel_pch_thermal.c
-diff --git a/drivers/thermal/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
-similarity index 100%
-rename from drivers/thermal/intel_powerclamp.c
-rename to drivers/thermal/intel/intel_powerclamp.c
-diff --git a/drivers/thermal/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
-similarity index 100%
-rename from drivers/thermal/intel_quark_dts_thermal.c
-rename to drivers/thermal/intel/intel_quark_dts_thermal.c
-diff --git a/drivers/thermal/intel_soc_dts_iosf.c b/drivers/thermal/intel/intel_soc_dts_iosf.c
-similarity index 100%
-rename from drivers/thermal/intel_soc_dts_iosf.c
-rename to drivers/thermal/intel/intel_soc_dts_iosf.c
-diff --git a/drivers/thermal/intel_soc_dts_iosf.h b/drivers/thermal/intel/intel_soc_dts_iosf.h
-similarity index 100%
-rename from drivers/thermal/intel_soc_dts_iosf.h
-rename to drivers/thermal/intel/intel_soc_dts_iosf.h
-diff --git a/drivers/thermal/intel_soc_dts_thermal.c b/drivers/thermal/intel/intel_soc_dts_thermal.c
-similarity index 100%
-rename from drivers/thermal/intel_soc_dts_thermal.c
-rename to drivers/thermal/intel/intel_soc_dts_thermal.c
-diff --git a/drivers/thermal/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
-similarity index 100%
-rename from drivers/thermal/x86_pkg_temp_thermal.c
-rename to drivers/thermal/intel/x86_pkg_temp_thermal.c
+rename from drivers/thermal/qcom-spmi-temp-alarm.c
+rename to drivers/thermal/qcom/qcom-spmi-temp-alarm.c
 -- 
 2.17.1
 
