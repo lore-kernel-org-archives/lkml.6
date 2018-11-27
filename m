@@ -2,237 +2,556 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DF2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C0BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48163208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyATjVRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48163208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 148E42133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148E42133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeK1HhJ (ORCPT
+        id S1726668AbeK1Hhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:37:09 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44161 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeK1HhJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:37:09 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k19-v6so21296947lji.11;
-        Tue, 27 Nov 2018 12:38:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZwcpJra+WLSGwyVUNDL77BIBVOEDmS84RPuk+4OIRXM=;
-        b=hyATjVRychXG6CHDyoxzPkuXMJd89vlEASchCLb78X7lMmPEa0vpxWV3cRD2FNMeEM
-         7jgKmbu/HnDru7pTPQqgkh72W05XStmfQg+TNOiEF5KIse8zjc6GnhjdFIRJxSBYzXPs
-         bPc5zFCWL9GOKdgTzJnpAa0b1zc3UAPSYg+yiEmUSmyiYyXSiWo0Sez1o06n+XRgLTMN
-         tDKjEotj/L5dOJQy2cShxpqKpPI8Baj7Aqh9ABG0ND2giEvQ6Ig8T8czyX0VsUVdEiyM
-         dWZ3dOkUDGCNJe2wz1RwUccxjAsRPsrow35GBkpOVA0oE+jf0oNLuhXs0Uf/nj60Uoqc
-         Wr3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZwcpJra+WLSGwyVUNDL77BIBVOEDmS84RPuk+4OIRXM=;
-        b=JjKHbsKTJyecz/eNxtj2jhb73Jmn4ImcGPLonvGHuaOOKlSHaBpB+yag5Okum9SdZE
-         5+x8TbKpEY8NGNopD/WX6MqkfSTZIJEvpwXOYPXj58BbWL+SC1w33KsAtFFiMS2fLUiz
-         KuFzOUOvv7N5YEMlwL4wOaEUpxKYCg9gTjNI/jVCND9k2vc2GXwtAdCrzCq2G3ZEY3Cj
-         ZK3JnFQ47FPK+dzGE3/iGoC3mImJ5ivGERIe7KiwvWaT6dKugLA0G6Lnqij1ttg1nWqk
-         LWYEyRkMaXrNurqkKWfCHTBKJoPSJiBMYYgw+oZLxihmvIkARjYhYXKHItlcAWnzOMaD
-         mmuQ==
-X-Gm-Message-State: AA+aEWa4SVLqaV7+ns5K7xDjFupdsu4zW3ituLGWH+8DFS9JgGktxzWE
-        DWM/B6gd/4lolGkQchokqWo=
-X-Google-Smtp-Source: AFSGD/VkYsmdgAHQ5TFXIRa+eWvcU+oGP9Aw+kvmaX0PNiAgZljSrz0zBlkK3zAWdE2fUm5s+r3cJQ==
-X-Received: by 2002:a2e:4503:: with SMTP id s3-v6mr19289458lja.44.1543351080168;
-        Tue, 27 Nov 2018 12:38:00 -0800 (PST)
-Received: from [192.168.1.18] (ckc106.neoplus.adsl.tpnet.pl. [83.31.78.106])
-        by smtp.gmail.com with ESMTPSA id f8sm942940lfe.72.2018.11.27.12.37.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 12:37:59 -0800 (PST)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Rob Herring <robh@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pavel@ucw.cz,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
- <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
-Message-ID: <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
-Date:   Tue, 27 Nov 2018 21:37:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 28 Nov 2018 02:37:33 -0500
+Received: from anholt.net ([50.246.234.109]:45512 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeK1Hhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:37:33 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 9687610A0F9D;
+        Tue, 27 Nov 2018 12:38:26 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id OGGDH0RtzG46; Tue, 27 Nov 2018 12:38:22 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 0556810A0612;
+        Tue, 27 Nov 2018 12:38:22 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 87E9C2FE2D5B; Tue, 27 Nov 2018 12:38:21 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     dri-devel@lists.freedesktop.org,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH 2/2] drm/vkms: Add PRIME support by converting to Noralf's shmem helpers.
+Date:   Tue, 27 Nov 2018 12:38:21 -0800
+Message-Id: <20181127203821.12636-2-eric@anholt.net>
+X-Mailer: git-send-email 2.20.0.rc1
+In-Reply-To: <20181127203821.12636-1-eric@anholt.net>
+References: <20181127203821.12636-1-eric@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/2018 09:57 PM, Jacek Anaszewski wrote:
-> On 11/12/2018 07:27 PM, Rob Herring wrote:
->> On Tue, Nov 06, 2018 at 11:07:12PM +0100, Jacek Anaszewski wrote:
->>> Introduce dedicated properties for conveying information about
->>> LED function and color. Mark old "label" property as deprecated.
->>>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>> Cc: Daniel Mack <daniel@zonque.org>
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>> Cc: Simon Shields <simon@lineageos.org>
->>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>> ---
->>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
->>>  1 file changed, 44 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->>> index aa13998..3efc826 100644
->>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
->>>  have to be tightly coupled with the LED device binding. They are represented
->>>  by child nodes of the parent LED device binding.
->>>  
->>> +
->>>  Optional properties for child nodes:
->>>  - led-sources : List of device current outputs the LED is connected to. The
->>>  		outputs are identified by the numbers that must be defined
->>>  		in the LED device binding documentation.
->>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
->>> +	    from the header include/dt-bindings/leds/functions.h.
->>> +	    If there is no matching LED_FUNCTION available, add a new one.
->>> +- color : Color of the LED.
->>>  - label : The label for this LED. If omitted, the label is taken from the node
->>>  	  name (excluding the unit address). It has to uniquely identify
->>>  	  a device, i.e. no other LED class device can be assigned the same
->>> -	  label.
->>> +	  label. This property is deprecated - use 'function' and 'color'
->>> +	  properties instead.
->>
->> I don't know if I'd go as far a deprecating.
->>
->> One thing to consider is how we handle multiple of the same function? Do 
->> we allow an index on function names? What if an index isn't meaningful 
->> and we need "front" vs. "rear" for example? Maybe label is still needed 
->> there. 
-> 
-> I believe that 'label' property with its old semantics must be preserved
-> for backwards compatibility - it so far has been used inconsistently for
-> conveying variations of devicename:color:function sections. If provided,
-> then it's been taken as-is for LED class device name, or concatenated
-> with the devicename hard-coded in the driver.
-> 
-> Regarding the differentiation between the LEDs with functions of
-> same kind - OK, I agree, we will need another section.
-> 
-> What seems to fits the best is the reference to the device it is
-> logically associated with.
-> 
-> The question is whether the devicename should be provided in DT
-> literally, or by phandle, and then retrieved in runtime, basing on the
-> sysfs entry, like in case of input-leds bridge which for USB keyboard
-> creates LEDs named e.g.:
-> 
-> input5::capslock
-> input5::numlock
-> input5::scrolllock
-> 
-> Probably we will have to allow for some flexibility in this regard,
-> to allow for providing devicename literally like "rear", "front",
-> or like above input case.
+This cuts out a tremendous amount of boilerplate.  I've used the PRIME
+support now to test V3D rendering on a STB development board with no
+KMS driver.
 
-I must admit I have a dilemma  with this devicename part.
-Thinking more of it - the semantics of that section of LED
-class device name needs to be precise. Currently there seem
-to be two types of device names considered:
+v2: Use the DEFINE_DRM_GEM_SHMEM_FOPS for proper mmap setup.
 
-1) descriptive name like in case of flash -
-   front-camera::flash, rear-camera::flash, which would allow
-   for providing arbitrary devicenames, i.e. it would not improve
-   LED naming too much, which was the aim of this patch set
-2) name representing hardware relation or user-defined relation between
-   some device and the LED class device, like in above keyboard
-   LED case:
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1)
+---
+ drivers/gpu/drm/Kconfig           |   1 +
+ drivers/gpu/drm/vkms/vkms_crc.c   |  28 ++--
+ drivers/gpu/drm/vkms/vkms_drv.c   |  28 +---
+ drivers/gpu/drm/vkms/vkms_drv.h   |  22 ----
+ drivers/gpu/drm/vkms/vkms_gem.c   | 212 ++----------------------------
+ drivers/gpu/drm/vkms/vkms_plane.c |  17 ++-
+ 6 files changed, 43 insertions(+), 265 deletions(-)
 
-   - input5::numlock
-
-   or for hard disk:
-
-   - sda1::hdderr,
-
-   In the hdderr case Pavel mentioned the arrangement where the LED
-   is not a part of the hard disk, so the relation would have to be
-   defined in DT.
-   For the flash case the devicename part would be matching /dev/videoN
-   device.
-
-I'm in favour of the option 2) since it seems to be more precise.
-In this case we would need a mechanism for asynchronous LED class
-device registration which would register a LED only after the
-associated device has been probed and its name is known.
-The mechanism would be a simpler form of
-drivers/media/v4l2-core/v4l2-async.c.
-
-In the LED DT node we would need a property holding a phandle
-to the associated device. Then, in the runtime the related device
-would call led_register_associated_device(struct device_node*,
-struct device*) which would in turn match the device_node with
-the phandle assigned to the property in the LED DT node. Having
-the struct device of the associated device we could retrieve
-device node name from dev->kobj.
-
-We would also probably need different DT properties for different
-types of devices, since e.g. for network case the network interface
-name would fit better for the LED name, than the phy name,
-and we would need to know what type of device name we're going
-to look for.
-
-Pavel gave following examples:
-
-eth0:green:link
-adsl0:green:link
-adsl0:red:error
-
-So we would have e.g.:
-
-associated-vl42-device = <&camera1>;
-associated-network-device = <&phy1>;
-associated-block-device = <&phy1>;
-
-Currently I have no idea how to obtain related network interface
-name by struct device related to the network device phy, but
-I believe it is possible.
-
-I'm open to suggestions on what direction it should go.
-
-I only wonder if such a solution wouldn't be an over-engineering.
-
-Other ideas are welcome.
-
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index 0dedbc040c77..3bdd95f99feb 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -253,6 +253,7 @@ config DRM_VKMS
+ 	tristate "Virtual KMS (EXPERIMENTAL)"
+ 	depends on DRM
+ 	select DRM_KMS_HELPER
++	select DRM_GEM_SHMEM_HELPER
+ 	default n
+ 	help
+ 	  Virtual Kernel Mode-Setting (VKMS) is used for testing or for
+diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
+index 9d9e8146db90..72d6422fb1a5 100644
+--- a/drivers/gpu/drm/vkms/vkms_crc.c
++++ b/drivers/gpu/drm/vkms/vkms_crc.c
+@@ -4,6 +4,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_gem_shmem_helper.h>
+ 
+ /**
+  * compute_crc - Compute CRC value on output frame
+@@ -91,21 +92,19 @@ static void compose_cursor(struct vkms_crc_data *cursor_crc,
+ 			   struct vkms_crc_data *primary_crc, void *vaddr_out)
+ {
+ 	struct drm_gem_object *cursor_obj;
+-	struct vkms_gem_object *cursor_vkms_obj;
++	void *vaddr;
+ 
+ 	cursor_obj = drm_gem_fb_get_obj(&cursor_crc->fb, 0);
+-	cursor_vkms_obj = drm_gem_to_vkms_gem(cursor_obj);
++	vaddr = drm_gem_shmem_vmap(cursor_obj);
+ 
+-	mutex_lock(&cursor_vkms_obj->pages_lock);
+-	if (!cursor_vkms_obj->vaddr) {
++	if (IS_ERR(vaddr)) {
+ 		DRM_WARN("cursor plane vaddr is NULL");
+-		goto out;
++		return;
+ 	}
+ 
+-	blend(vaddr_out, cursor_vkms_obj->vaddr, primary_crc, cursor_crc);
++	blend(vaddr_out, vaddr, primary_crc, cursor_crc);
+ 
+-out:
+-	mutex_unlock(&cursor_vkms_obj->pages_lock);
++	drm_gem_shmem_vunmap(cursor_obj, vaddr);
+ }
+ 
+ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
+@@ -113,8 +112,8 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
+ {
+ 	struct drm_framebuffer *fb = &primary_crc->fb;
+ 	struct drm_gem_object *gem_obj = drm_gem_fb_get_obj(fb, 0);
+-	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(gem_obj);
+-	void *vaddr_out = kzalloc(vkms_obj->gem.size, GFP_KERNEL);
++	void *vaddr;
++	void *vaddr_out = kzalloc(gem_obj->size, GFP_KERNEL);
+ 	u32 crc = 0;
+ 
+ 	if (!vaddr_out) {
+@@ -122,21 +121,20 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
+ 		return 0;
+ 	}
+ 
+-	mutex_lock(&vkms_obj->pages_lock);
+-	if (WARN_ON(!vkms_obj->vaddr)) {
+-		mutex_unlock(&vkms_obj->pages_lock);
++	vaddr = drm_gem_shmem_vmap(gem_obj);
++	if (WARN_ON(IS_ERR(vaddr))) {
+ 		kfree(vaddr_out);
+ 		return crc;
+ 	}
+ 
+-	memcpy(vaddr_out, vkms_obj->vaddr, vkms_obj->gem.size);
+-	mutex_unlock(&vkms_obj->pages_lock);
++	memcpy(vaddr_out, vaddr, gem_obj->size);
+ 
+ 	if (cursor_crc)
+ 		compose_cursor(cursor_crc, primary_crc, vaddr_out);
+ 
+ 	crc = compute_crc(vaddr_out, primary_crc);
+ 
++	drm_gem_shmem_vunmap(gem_obj, vaddr);
+ 	kfree(vaddr_out);
+ 
+ 	return crc;
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 83087877565c..18f145f0f4db 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -19,6 +19,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_gem_shmem_helper.h>
+ #include <drm/drm_fb_helper.h>
+ #include "vkms_drv.h"
+ 
+@@ -34,23 +35,7 @@ bool enable_cursor;
+ module_param_named(enable_cursor, enable_cursor, bool, 0444);
+ MODULE_PARM_DESC(enable_cursor, "Enable/Disable cursor support");
+ 
+-static const struct file_operations vkms_driver_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= drm_open,
+-	.mmap		= drm_gem_mmap,
+-	.unlocked_ioctl	= drm_ioctl,
+-	.compat_ioctl	= drm_compat_ioctl,
+-	.poll		= drm_poll,
+-	.read		= drm_read,
+-	.llseek		= no_llseek,
+-	.release	= drm_release,
+-};
+-
+-static const struct vm_operations_struct vkms_gem_vm_ops = {
+-	.fault = vkms_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
++DEFINE_DRM_GEM_SHMEM_FOPS(vkms_driver_fops);
+ 
+ static void vkms_release(struct drm_device *dev)
+ {
+@@ -64,12 +49,13 @@ static void vkms_release(struct drm_device *dev)
+ }
+ 
+ static struct drm_driver vkms_driver = {
+-	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
++	.driver_features	= (DRIVER_MODESET |
++				   DRIVER_ATOMIC |
++				   DRIVER_GEM |
++				   DRIVER_PRIME),
+ 	.release		= vkms_release,
+ 	.fops			= &vkms_driver_fops,
+-	.dumb_create		= vkms_dumb_create,
+-	.gem_vm_ops		= &vkms_gem_vm_ops,
+-	.gem_free_object_unlocked = vkms_gem_free_object,
++	DRM_GEM_SHMEM_DRIVER_OPS,
+ 	.get_vblank_timestamp	= vkms_get_vblank_timestamp,
+ 
+ 	.name			= DRIVER_NAME,
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index e4469cd3d254..3faf49f43feb 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -80,23 +80,12 @@ struct vkms_device {
+ 	struct vkms_output output;
+ };
+ 
+-struct vkms_gem_object {
+-	struct drm_gem_object gem;
+-	struct mutex pages_lock; /* Page lock used in page fault handler */
+-	struct page **pages;
+-	unsigned int vmap_count;
+-	void *vaddr;
+-};
+-
+ #define drm_crtc_to_vkms_output(target) \
+ 	container_of(target, struct vkms_output, crtc)
+ 
+ #define drm_device_to_vkms_device(target) \
+ 	container_of(target, struct vkms_device, drm)
+ 
+-#define drm_gem_to_vkms_gem(target)\
+-	container_of(target, struct vkms_gem_object, gem)
+-
+ #define to_vkms_crtc_state(target)\
+ 	container_of(target, struct vkms_crtc_state, base)
+ 
+@@ -122,17 +111,6 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+ 				       u32 *handle,
+ 				       u64 size);
+ 
+-vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
+-
+-int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
+-		     struct drm_mode_create_dumb *args);
+-
+-void vkms_gem_free_object(struct drm_gem_object *obj);
+-
+-int vkms_gem_vmap(struct drm_gem_object *obj);
+-
+-void vkms_gem_vunmap(struct drm_gem_object *obj);
+-
+ /* CRC Support */
+ int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name);
+ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
+diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
+index 80311daed47a..11f52aa4e732 100644
+--- a/drivers/gpu/drm/vkms/vkms_gem.c
++++ b/drivers/gpu/drm/vkms/vkms_gem.c
+@@ -7,222 +7,34 @@
+  */
+ 
+ #include <linux/shmem_fs.h>
++#include <drm/drm_gem_shmem_helper.h>
+ 
+ #include "vkms_drv.h"
+ 
+-static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
+-						 u64 size)
+-{
+-	struct vkms_gem_object *obj;
+-	int ret;
+-
+-	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
+-	if (!obj)
+-		return ERR_PTR(-ENOMEM);
+-
+-	size = roundup(size, PAGE_SIZE);
+-	ret = drm_gem_object_init(dev, &obj->gem, size);
+-	if (ret) {
+-		kfree(obj);
+-		return ERR_PTR(ret);
+-	}
+-
+-	mutex_init(&obj->pages_lock);
+-
+-	return obj;
+-}
+-
+-void vkms_gem_free_object(struct drm_gem_object *obj)
+-{
+-	struct vkms_gem_object *gem = container_of(obj, struct vkms_gem_object,
+-						   gem);
+-
+-	WARN_ON(gem->pages);
+-	WARN_ON(gem->vaddr);
+-
+-	mutex_destroy(&gem->pages_lock);
+-	drm_gem_object_release(obj);
+-	kfree(gem);
+-}
+-
+-vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
+-{
+-	struct vm_area_struct *vma = vmf->vma;
+-	struct vkms_gem_object *obj = vma->vm_private_data;
+-	unsigned long vaddr = vmf->address;
+-	pgoff_t page_offset;
+-	loff_t num_pages;
+-	vm_fault_t ret = VM_FAULT_SIGBUS;
+-
+-	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+-	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
+-
+-	if (page_offset > num_pages)
+-		return VM_FAULT_SIGBUS;
+-
+-	mutex_lock(&obj->pages_lock);
+-	if (obj->pages) {
+-		get_page(obj->pages[page_offset]);
+-		vmf->page = obj->pages[page_offset];
+-		ret = 0;
+-	}
+-	mutex_unlock(&obj->pages_lock);
+-	if (ret) {
+-		struct page *page;
+-		struct address_space *mapping;
+-
+-		mapping = file_inode(obj->gem.filp)->i_mapping;
+-		page = shmem_read_mapping_page(mapping, page_offset);
+-
+-		if (!IS_ERR(page)) {
+-			vmf->page = page;
+-			ret = 0;
+-		} else {
+-			switch (PTR_ERR(page)) {
+-			case -ENOSPC:
+-			case -ENOMEM:
+-				ret = VM_FAULT_OOM;
+-				break;
+-			case -EBUSY:
+-				ret = VM_FAULT_RETRY;
+-				break;
+-			case -EFAULT:
+-			case -EINVAL:
+-				ret = VM_FAULT_SIGBUS;
+-				break;
+-			default:
+-				WARN_ON(PTR_ERR(page));
+-				ret = VM_FAULT_SIGBUS;
+-				break;
+-			}
+-		}
+-	}
+-	return ret;
+-}
+-
+ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+ 				       struct drm_file *file,
+ 				       u32 *handle,
+ 				       u64 size)
+ {
+-	struct vkms_gem_object *obj;
++	struct drm_gem_shmem_object *obj;
+ 	int ret;
+ 
+ 	if (!file || !dev || !handle)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	obj = __vkms_gem_create(dev, size);
++	obj = drm_gem_shmem_create(dev, size);
+ 	if (IS_ERR(obj))
+ 		return ERR_CAST(obj);
+ 
+-	ret = drm_gem_handle_create(file, &obj->gem, handle);
+-	drm_gem_object_put_unlocked(&obj->gem);
+-	if (ret) {
+-		drm_gem_object_release(&obj->gem);
+-		kfree(obj);
++	/*
++	 * Allocate an id of idr table where the obj is registered
++	 * and handle has the id what user can see.
++	 */
++	ret = drm_gem_handle_create(file, &obj->base, handle);
++	/* drop reference from allocate - handle holds it now. */
++	drm_gem_object_put_unlocked(&obj->base);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+-
+-	return &obj->gem;
+-}
+-
+-int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
+-		     struct drm_mode_create_dumb *args)
+-{
+-	struct drm_gem_object *gem_obj;
+-	u64 pitch, size;
+-
+-	if (!args || !dev || !file)
+-		return -EINVAL;
+-
+-	pitch = args->width * DIV_ROUND_UP(args->bpp, 8);
+-	size = pitch * args->height;
+-
+-	if (!size)
+-		return -EINVAL;
+-
+-	gem_obj = vkms_gem_create(dev, file, &args->handle, size);
+-	if (IS_ERR(gem_obj))
+-		return PTR_ERR(gem_obj);
+-
+-	args->size = gem_obj->size;
+-	args->pitch = pitch;
+-
+-	DRM_DEBUG_DRIVER("Created object of size %lld\n", size);
+-
+-	return 0;
+-}
+-
+-static struct page **_get_pages(struct vkms_gem_object *vkms_obj)
+-{
+-	struct drm_gem_object *gem_obj = &vkms_obj->gem;
+-
+-	if (!vkms_obj->pages) {
+-		struct page **pages = drm_gem_get_pages(gem_obj);
+-
+-		if (IS_ERR(pages))
+-			return pages;
+-
+-		if (cmpxchg(&vkms_obj->pages, NULL, pages))
+-			drm_gem_put_pages(gem_obj, pages, false, true);
+-	}
+-
+-	return vkms_obj->pages;
+-}
+-
+-void vkms_gem_vunmap(struct drm_gem_object *obj)
+-{
+-	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
+-
+-	mutex_lock(&vkms_obj->pages_lock);
+-	if (vkms_obj->vmap_count < 1) {
+-		WARN_ON(vkms_obj->vaddr);
+-		WARN_ON(vkms_obj->pages);
+-		mutex_unlock(&vkms_obj->pages_lock);
+-		return;
+-	}
+-
+-	vkms_obj->vmap_count--;
+-
+-	if (vkms_obj->vmap_count == 0) {
+-		vunmap(vkms_obj->vaddr);
+-		vkms_obj->vaddr = NULL;
+-		drm_gem_put_pages(obj, vkms_obj->pages, false, true);
+-		vkms_obj->pages = NULL;
+-	}
+-
+-	mutex_unlock(&vkms_obj->pages_lock);
+-}
+-
+-int vkms_gem_vmap(struct drm_gem_object *obj)
+-{
+-	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
+-	int ret = 0;
+-
+-	mutex_lock(&vkms_obj->pages_lock);
+-
+-	if (!vkms_obj->vaddr) {
+-		unsigned int n_pages = obj->size >> PAGE_SHIFT;
+-		struct page **pages = _get_pages(vkms_obj);
+-
+-		if (IS_ERR(pages)) {
+-			ret = PTR_ERR(pages);
+-			goto out;
+-		}
+-
+-		vkms_obj->vaddr = vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
+-		if (!vkms_obj->vaddr)
+-			goto err_vmap;
+-	}
+-
+-	vkms_obj->vmap_count++;
+-	goto out;
+ 
+-err_vmap:
+-	ret = -ENOMEM;
+-	drm_gem_put_pages(obj, vkms_obj->pages, false, true);
+-	vkms_obj->pages = NULL;
+-out:
+-	mutex_unlock(&vkms_obj->pages_lock);
+-	return ret;
++	return &obj->base;
+ }
+diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+index 7041007396ae..29e6e870d7ac 100644
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -11,6 +11,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_gem_shmem_helper.h>
+ 
+ static struct drm_plane_state *
+ vkms_plane_duplicate_state(struct drm_plane *plane)
+@@ -138,17 +139,17 @@ static int vkms_prepare_fb(struct drm_plane *plane,
+ 			   struct drm_plane_state *state)
+ {
+ 	struct drm_gem_object *gem_obj;
+-	struct vkms_gem_object *vkms_obj;
+-	int ret;
++	void *map;
+ 
+ 	if (!state->fb)
+ 		return 0;
+ 
+ 	gem_obj = drm_gem_fb_get_obj(state->fb, 0);
+-	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
+-	ret = vkms_gem_vmap(gem_obj);
+-	if (ret)
+-		DRM_ERROR("vmap failed: %d\n", ret);
++	map = drm_gem_shmem_vmap(gem_obj);
++	if (IS_ERR(map)) {
++		DRM_ERROR("vmap failed: %ld\n", PTR_ERR(map));
++		return PTR_ERR(map);
++	}
+ 
+ 	return drm_gem_fb_prepare_fb(plane, state);
+ }
+@@ -157,12 +158,14 @@ static void vkms_cleanup_fb(struct drm_plane *plane,
+ 			    struct drm_plane_state *old_state)
+ {
+ 	struct drm_gem_object *gem_obj;
++	struct drm_gem_shmem_object *shmem_obj;
+ 
+ 	if (!old_state->fb)
+ 		return;
+ 
+ 	gem_obj = drm_gem_fb_get_obj(old_state->fb, 0);
+-	vkms_gem_vunmap(gem_obj);
++	shmem_obj = to_drm_gem_shmem_obj(gem_obj);
++	drm_gem_shmem_vunmap(gem_obj, shmem_obj->vaddr);
+ }
+ 
+ static const struct drm_plane_helper_funcs vkms_primary_helper_funcs = {
 -- 
-Best regards,
-Jacek Anaszewski
+2.20.0.rc1
+
