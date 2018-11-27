@@ -2,103 +2,124 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F9EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544BBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8811F208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E7020663
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:58:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="YBasQV6X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8811F208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="hzNMbkAc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E7020663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbeK1G5T (ORCPT
+        id S1726567AbeK1G5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:57:19 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37728 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbeK1G5S (ORCPT
+        Wed, 28 Nov 2018 01:57:22 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45052 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeK1G5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:57:18 -0500
-Received: by mail-io1-f66.google.com with SMTP id a3so18004675ioc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 11:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FJpLmJ+NhtzfsWcoykkUmJgTZwUROJ/Eo8H3btKrpBI=;
-        b=YBasQV6XrLeAZaFzrkcyLvrZWluXnOFXF+N9BEpIkU+Am5l5LcqQJTNZAGNUrT9krJ
-         YO5TgJJ/bD8daXbtFmT4CoElQU+cqpLP1mMEFTTl2thQzDgKoWFlNJu98/nTPjf3m3hh
-         k47FfXmyrDpfnzcDhGHKfdQje/tPwfCR6Fptw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FJpLmJ+NhtzfsWcoykkUmJgTZwUROJ/Eo8H3btKrpBI=;
-        b=smYNRsI0HBCP0dkVHVBHa8esISB2wZc2wyiByI5hCi0ZyEV+ilU1J/1Ba6l1hGRnbV
-         f7cj/1V8Itfen5Zia1olc+iFc9WIlbyuJEm9fAHgNbGk0Mfmuf8QQwHe1uPc2ZeyFcG1
-         p7UQO0tPYmNWMHOZG3O1FbUH9axDDVv5Qd3k9elxXbu/uDug1FF+z2NXi3cz1kxdiU8F
-         w55KIcVYo48J7996j4T4AdXeV+p0byWVurLmpuy6Uleg9NXfne6Lo2t9tylrd5Ssf3CN
-         yQ645ypQ/nwfCI++u9qxgjdP0LwuqUyRm0KHPSPOaXbieJyBg2Nzy2SnRDSJwVYcXN0b
-         lK/A==
-X-Gm-Message-State: AA+aEWaBxSNrmhBZI6a7R0VRkq16gQgcf1VdAgYu3Wt7rFWwcd71ZphD
-        +BRx7ZqwdV3q7+xXFAYaRbE8EtR35LSiYDAE/d9M+w==
-X-Google-Smtp-Source: AFSGD/XlTDUo2b9NdzFa2APW3FzL3mdN2WjLmv15jDHIJLSQFjnzEx1a1aVnAbf6WLFJqlf5y2OAE+n08+R6nBSuROI=
-X-Received: by 2002:a6b:fe13:: with SMTP id x19mr24900548ioh.294.1543348698205;
- Tue, 27 Nov 2018 11:58:18 -0800 (PST)
+        Wed, 28 Nov 2018 01:57:20 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6F39D8365A
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 08:58:18 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1543348698;
+        bh=Od4A213TLQ3NhGU9HgRrDPyQ1IY8kxAUf1tTzfP3fmU=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=hzNMbkAc81lBAjmsuGpngun67cHNHPpsDuPAdDCDqOmVaap64j3I77j1ACcssAe0s
+         TyLSJPR5Oem5Vay/4ka2khrFKv3TSUhIkZpOTKFX5dTNpfjcd75fR5ZZzdYxQLBbgZ
+         w2s9L8l3sf5x9jkQHYGRiXaGiAXMpNgXkQUMqUgJO6TptLJWvRad50oo/9rwpyKokW
+         bDzWbRaf4u4UKXBcD0rpx1BUlu/YY2ug3kLWejBQJcW5BS+iRjNVjt8N59uAB9fCWQ
+         Srf9Ag6IGZUNkkR29B25zlshrct/FcF2BGtkehUkFepDuM19kz2mR4iV51JK2UhA1P
+         c5GqsOdDQSwcQ==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5bfda1d90001>; Wed, 28 Nov 2018 08:58:17 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 28 Nov 2018 08:58:18 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Wed, 28 Nov 2018 08:58:18 +1300
+From:   Mark Tomlinson <Mark.Tomlinson@alliedtelesis.co.nz>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] tty/sysrq: Do not call sync directly from
+ sysrq_do_reset()
+Thread-Topic: [PATCH RESEND] tty/sysrq: Do not call sync directly from
+ sysrq_do_reset()
+Thread-Index: AQHUhcqxsQOYM6dIbkaK+PjfzFnZzKVijaSAgACj7IA=
+Date:   Tue, 27 Nov 2018 19:58:17 +0000
+Message-ID: <6d069b48-da59-911b-19cc-cc24d3136c48@alliedtelesis.co.nz>
+References: <20181126205723.14478-1-mark.tomlinson@alliedtelesis.co.nz>
+ <20181127101135.GA15856@kroah.com>
+In-Reply-To: <20181127101135.GA15856@kroah.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.32.16.78]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <3E2C62F5D2440C419F1EED802E708020@atlnz.lc>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
-In-Reply-To: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 27 Nov 2018 20:58:06 +0100
-Message-ID: <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
-Subject: Re: overlayfs access checks on underlying layers
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[resending with fixed email address for Paul Moore]
 
-Moving discussion from github[1] to here.
+On 27/11/18 11:11 PM, Greg KH wrote:
+> On Tue, Nov 27, 2018 at 09:57:23AM +1300, Mark Tomlinson wrote:
+>> sysrq_do_reset() is called in softirq context, so it cannot call
+>> sync() directly. Instead, call orderly_reboot(), which creates a work
+>> item to run /sbin/reboot, or do emergency_sync and restart if the
+>> command fails.
+>>
+>> Signed-off-by: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+>> ---
+>>   drivers/tty/sysrq.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+>> index ad1ee5d01b53..f2ca32c1ad7c 100644
+>> --- a/drivers/tty/sysrq.c
+>> +++ b/drivers/tty/sysrq.c
+>> @@ -660,8 +660,7 @@ static void sysrq_do_reset(struct timer_list *t)
+>>  =20
+>>   	state->reset_requested =3D true;
+>>  =20
+>> -	ksys_sync();
+>> -	kernel_restart(NULL);
+>> +	orderly_reboot();
+>=20
+> Is this something new?  Why haven't we had reports of this failing in
+> the past?  Or has something changed recently to cause this to now be
+> needed?
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
 
-To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
-underlying layers") was added in 4.20-rc1 to make overlayfs access
-checks on underlying "real" filesystems more consistent.  The
-discussion leading up to this commit can be found at [2].  The commit
-broke some selinux-testsuite cases, possibly indicating a security
-hole opened by this commit.
+As far as I can tell, sysrq_do_reset() is only used when setting the=20
+"keyset" property in "/chosen/linux,sysrq-reset-seq" (which is what I=20
+want to do). No DTS file in the kernel tree sets this, so I don't know=20
+if anyone else is using this. I am wondering whether it ever worked. A=20
+reboot does occur after a kernel panic, so if the console is not=20
+available, it may appear to have worked.
 
-The model this patch tries to follow is that if "cp --preserve=all"
-was allowed to the mounter from underlying layer to the overlay layer,
-then operation is allowed.  That means even if mounter's creds doesn't
-provide permission to for example execute underying file X, if
-mounter's creds provide sufficient permission to perform "cp
---preserve=all X Y"  and original creds allow execute on Y, then the
-operation is allowed.  This provides consistency in the face of
-copy-ups.  Consistency is only provided in sane setups, where mounter
-has sufficient privileges to access both the lower and upper layers.
-
-The model may not have been perfectly followed, or possibly the model
-itself is flawed.  I'd like to better understand the issues here.
-
-Thanks,
-Miklos
-
-[1]  https://github.com/SELinuxProject/selinux-kernel/issues/43#issuecomment-442148920
-[2] https://marc.info/?t=152762608800002&r=1
+Pressing the standard 'sysrq' key followed by 'b'(reboot) instead calls=20
+sysrq_handle_reboot(), which does not call sync at all, but=20
+emergency_restart(). Also, the 's'(sync) key calls emergency_sync(),=20
+which performs the sync via a work queue.=
