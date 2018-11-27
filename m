@@ -2,146 +2,106 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEB8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B480C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5358221104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E525F20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:34:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bckujwls"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5358221104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CWovZUvS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E525F20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbeK0TaT (ORCPT
+        id S1729466AbeK0Tbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:30:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728882AbeK0TaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:30:19 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35B4D21104;
-        Tue, 27 Nov 2018 08:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543307591;
-        bh=WTn/PEg7Cobmk7UGEl8NGRz45ym8LTYqnKjotzR+tl8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bckujwls8zO91802Qpj1XPFIww+qeIIPps8SjI2NOyzkYdylYDR0As7v6e5WKlf3i
-         JhLALYi7id8hdwUmPVgGFo06s8YK5QC5E03kmCJtIgJNkQKmgtJOsYmlH+kSfIqzpz
-         1+Y2ZStA1+M9aoAI2lp9rmdnYQsMDiimiXrHGgH0=
-Received: by mail-wm1-f46.google.com with SMTP id c126so21132236wmh.0;
-        Tue, 27 Nov 2018 00:33:11 -0800 (PST)
-X-Gm-Message-State: AA+aEWb156iOR02ULtNDCXfEle7McfogNWUZzn50bDk61FR/lVfnPf3M
-        WzCzs5zdrKpvjo60ZhaEOo4UHebvLlaD/VqKFTg=
-X-Google-Smtp-Source: AFSGD/VEy8tfAwqPgbc4lO+9ipi4FMvlzyjfTlQ8v2LCFZiXHChRZGnd5/sezE3aEh9JXgTB+4tUl8MF9edwIzcum+s=
-X-Received: by 2002:a1c:2c56:: with SMTP id s83mr955660wms.48.1543307589639;
- Tue, 27 Nov 2018 00:33:09 -0800 (PST)
+        Tue, 27 Nov 2018 14:31:49 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37804 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728882AbeK0Tbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:31:48 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAR8YPdG080012;
+        Tue, 27 Nov 2018 08:34:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=/qhvZ6P80k4J32NnqQa+zIZzmPV0+W6yehl+ynJABKA=;
+ b=CWovZUvSfVKmoH2mqiQ0dNw/L90rCKerdPYU/eqb3TSqpVZyqayka2K4fGbfoWyv2IN9
+ xdRcFmSzvaiUxG6IKnsVY4TLLtmDJYtTHcGqgd1esWC+zbOU3+XkXEXNCY/VikiF8MFw
+ BRIBTcDmUdBxw7Uj+VqVYsEIbHm8v0AoTiIT2PCSqvS+YTL7TofNvlMdkPZc3qS5QsKJ
+ G9C1SoKyryy+d40NrSsYo8CRPjo7omNV5ZUXTvGTo57qCZafwc6NBA0eZMlIDjobnFqd
+ bFt4eg4a+Eq5Ulyoap4dHptYsY9izADQ4pqL6HYkKkp5Hy880jaewqzO+jtuB92lsq8V YQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nxx2u2dk6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 08:34:37 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAR8Yagq030390
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 08:34:36 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAR8YZwM012257;
+        Tue, 27 Nov 2018 08:34:35 GMT
+Received: from unbuntlaptop (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Nov 2018 00:34:34 -0800
+Date:   Tue, 27 Nov 2018 11:34:27 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Yang Xiao <YangX92@hotmail.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "r.weclawski@gmail.com" <r.weclawski@gmail.com>,
+        "straube.linux@gmail.com" <straube.linux@gmail.com>,
+        "santhameena13@gmail.com" <santhameena13@gmail.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "jananis37@gmail.com" <jananis37@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: rtl8188eu: Fix off-by-one in core/rtw_mlme_ext.c
+Message-ID: <20181127083427.GS2970@unbuntlaptop>
+References: <HK0PR01MB216364A68D785B7EBC8DD43EADD00@HK0PR01MB2163.apcprd01.prod.exchangelabs.com>
+ <20181127081542.GN3088@unbuntlaptop>
+ <HK0PR01MB2163A0287797ECA3CDA68AA2ADD00@HK0PR01MB2163.apcprd01.prod.exchangelabs.com>
 MIME-Version: 1.0
-References: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
- <1542823573-20228-2-git-send-email-hofrat@osadl.org> <CAGp9LzoT7ueXyyVSYQdWOU0JkQDWMVcwCuSE3gJnEn0fLLjCBA@mail.gmail.com>
- <20181127080113.GA2426@osadl.at>
-In-Reply-To: <20181127080113.GA2426@osadl.at>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 27 Nov 2018 00:32:59 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzoNKmJvTccQd7Syi_XMew4Mhf_tXsMAAZ+asE5btH9Dag@mail.gmail.com>
-Message-ID: <CAGp9LzoNKmJvTccQd7Syi_XMew4Mhf_tXsMAAZ+asE5btH9Dag@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: mt7621: pass mediatek_gpio_bank_probe() failure
- up the stack
-To:     der.herr@hofr.at
-Cc:     bgolaszewski@baylibre.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, sergio.paracuellos@gmail.com,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        hofrat@osadl.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <HK0PR01MB2163A0287797ECA3CDA68AA2ADD00@HK0PR01MB2163.apcprd01.prod.exchangelabs.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=751
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811270077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->
-> On Mon, Nov 26, 2018 at 11:49:26PM -0800, Sean Wang wrote:
-> > Nicholas Mc Guire <hofrat@osadl.org> ??? 2018???11???21??? ?????? ?????=
-?10:13?????????
-> > >
-> > > The error cases of mediatek_gpio_bank_probe() would go unnoticed (exc=
-ept
-> > > for the dev_err() messages). The probe function should return an erro=
-r
-> > > if one of the banks failed to initialize properly.
-> > >
-> > > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > > Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-> > > ---
-> > >
-> > > Patch was compile tested with: omega2p_defconfig, SOC_MT7621=3Dy,
-> > > GPIOLIB=3Dy, GPIO_MT7621=3Dy
-> > >
-> > > Patch is against 4.20-rc3 (localversion-next is next-20181121)
-> > >
-> > >  drivers/gpio/gpio-mt7621.c | 8 ++++++--
-> > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-> > > index 1ec95bc..68fca8b 100644
-> > > --- a/drivers/gpio/gpio-mt7621.c
-> > > +++ b/drivers/gpio/gpio-mt7621.c
-> > > @@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
-> > >         struct device_node *np =3D dev->of_node;
-> > >         struct mtk *mtk;
-> > >         int i;
-> > > +       int ret;
-> > >
-> > >         mtk =3D devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
-> > >         if (!mtk)
-> > > @@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev=
-)
-> > >         platform_set_drvdata(pdev, mtk);
-> > >         mediatek_gpio_irq_chip.name =3D dev_name(dev);
-> > >
-> > > -       for (i =3D 0; i < MTK_BANK_CNT; i++)
-> > > -               mediatek_gpio_bank_probe(dev, np, i);
-> > > +       for (i =3D 0; i < MTK_BANK_CNT; i++) {
-> > > +               ret =3D mediatek_gpio_bank_probe(dev, np, i);
-> > > +               if (!ret)
-> >
-> > it should be if (ret < 0) ?
->
-> I don=C2=B4t think so mediatek_gpio_bank_probe() returns 0 on success
-> and all other returns are error paths - while the current code
-> only returns negative values I do thik that any non 0 would be
-> an error indication so !ret should be fine here.
->
-!0 would be true
+On Tue, Nov 27, 2018 at 08:29:05AM +0000, Yang Xiao wrote:
+> Hi,
+> 
+> See commit ef9209b642f ("staging: rtl8723bs: Fix indenting errors and an 
+> off-by-one mistake in core/rtw_mlme_ext.c") for detail.
+> 
+> I don't know how can you make sure that line 3254 can be true in the for 
+> loop.  If the condition never satisfies, then there is an off-by-one 
+> access in line 3267.
+> 
+> If you can prove it, then the patch is unnecessary.
+> 
 
-> thx!
-> hofrat
->
-> >
-> > > +                       return ret;
-> > > +       }
-> > >
-> > >         return 0;
-> > >  }
-> > > --
-> > > 2.1.4
-> > >
-> > >
-> > > _______________________________________________
-> > > Linux-mediatek mailing list
-> > > Linux-mediatek@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Ugh...  Patch ef9209b642f isn't right.  :(
+
+Do you want to send a patch to change that back to the way it was.  If
+not then I can do it.
+
+regards,
+dan carpenter
+
+
