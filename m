@@ -2,120 +2,111 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152EBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89787C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D746A2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:56:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GkJejCkr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D746A2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C4BB2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:57:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4BB2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732168AbeK1EzY (ORCPT
+        id S1732070AbeK1E4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:55:24 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38977 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731749AbeK1EzX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:55:23 -0500
-Received: by mail-yb1-f196.google.com with SMTP id w17-v6so9428302ybl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+UdKTrr72ZMfamSGJHOfjJQJkKjC3HcwfZA9g1yZ9kM=;
-        b=GkJejCkrWIjAReJ2ehQtGHnWqpNiagLhQnePPH+yiumZEUZ/CU6SKc+747K4PC10p6
-         sXxALYpTxZjWjwzYqUEetIsByFR6Bbm98QLuCoW/jFHEnhzfQzQ7gzTOHLqWzdco3Eoz
-         77OXz6T3p/LAgAWgWiGlS2GY14SfP/INxM/I4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+UdKTrr72ZMfamSGJHOfjJQJkKjC3HcwfZA9g1yZ9kM=;
-        b=rp2LFVijG1fLma0UG89O4uzu3t6sRYXiEjefnZCfJ35adSS73bNage6gsXWIAvxhIE
-         aXL0Ltyx/lfkCxjGPpGP8zItuH30652KYg5wMMZohviBct6tlNjQeJYT9g/b1a5u62uU
-         l28789JKicLYqNx1WPlvGEzdrwMnoNAhb8qcGAK3rJSsgOBf3ELoGbheejgKMwq7jPaN
-         5e8ZvUyn9Ppl3hBdWZW0x7nWFFdkw3HxxCioE3WMxkztSk7cesxLWvZZgOjZRlIbfBYO
-         pYqQgJUrFaEsqFvXL3tKZfcKjmvVjrFcvG+EehBSDsARppid+PJN9fDeCmWeQ+54Bk1+
-         WTUg==
-X-Gm-Message-State: AA+aEWb4NbSDz00A/5qI5wQF8fc5Ywtot1JYt1qNWsKKCbPXNkPZglwJ
-        rfHFgvbdlBxMBBYeR55GGGrWHnqOxP0=
-X-Google-Smtp-Source: AFSGD/Ukrhh5Tle2XytsW96AwdgvAt+gwV6Hk4yM+iQdb9oOfj6Zy3PH9ukLkJ/ROsE7JMkxz+nWxw==
-X-Received: by 2002:a25:b081:: with SMTP id f1-v6mr35081061ybj.65.1543341401861;
-        Tue, 27 Nov 2018 09:56:41 -0800 (PST)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id f10sm4204163ywb.26.2018.11.27.09.56.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 09:56:40 -0800 (PST)
-Received: by mail-yw1-f43.google.com with SMTP id f65so9506195ywc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:56:40 -0800 (PST)
-X-Received: by 2002:a81:2890:: with SMTP id o138mr36415736ywo.168.1543341400228;
- Tue, 27 Nov 2018 09:56:40 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:56:39
- -0800 (PST)
-In-Reply-To: <20181127031218.24419-3-dan.rue@linaro.org>
-References: <20181127031218.24419-1-dan.rue@linaro.org> <20181127031218.24419-3-dan.rue@linaro.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 27 Nov 2018 09:56:39 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jK=oOHsM50iGDcp4PzOHv58r2-XfryAs0N=gfjD+rEaQg@mail.gmail.com>
-Message-ID: <CAGXu5jK=oOHsM50iGDcp4PzOHv58r2-XfryAs0N=gfjD+rEaQg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests: firmware: add CONFIG_FW_LOADER_USER_HELPER_FALLBACK
- to config
-To:     Dan Rue <dan.rue@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+        Tue, 27 Nov 2018 23:56:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:23033 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726288AbeK1E4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 23:56:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 09:57:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
+   d="scan'208";a="112403356"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 27 Nov 2018 09:57:56 -0800
+Message-ID: <785e7a944b60cd237680075064477efad1e9c39a.camel@linux.intel.com>
+Subject: Re: [driver-core PATCH v6 6/9] driver core: Probe devices
+ asynchronously instead of the driver
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        bvanassche@acm.org
+Date:   Tue, 27 Nov 2018 09:57:56 -0800
+In-Reply-To: <CAPcyv4g0LNJZ38NKMXsBY+GgmGbHR4VrTM1gkm3m4bg6fOrfsw@mail.gmail.com>
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+         <154170043123.12967.3591757325647337726.stgit@ahduyck-desk1.jf.intel.com>
+         <CAPcyv4g0LNJZ38NKMXsBY+GgmGbHR4VrTM1gkm3m4bg6fOrfsw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 7:12 PM, Dan Rue <dan.rue@linaro.org> wrote:
-> CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y is required for fw_fallback.sh.
-> Without it, fw_fallback.sh fails with 'usermode helper disabled so
-> ignoring test'. Enable the config in selftest so that it gets built by
-> default.
->
-> Signed-off-by: Dan Rue <dan.rue@linaro.org>
+On Mon, 2018-11-26 at 18:48 -0800, Dan Williams wrote:
+> On Thu, Nov 8, 2018 at 10:07 AM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+> > 
+> > Probe devices asynchronously instead of the driver. This results in us
+> > seeing the same behavior if the device is registered before the driver or
+> > after. This way we can avoid serializing the initialization should the
+> > driver not be loaded until after the devices have already been added.
+> > 
+> > The motivation behind this is that if we have a set of devices that
+> > take a significant amount of time to load we can greatly reduce the time to
+> > load by processing them in parallel instead of one at a time. In addition,
+> > each device can exist on a different node so placing a single thread on one
+> > CPU to initialize all of the devices for a given driver can result in poor
+> > performance on a system with multiple nodes.
+> 
+> Do you have numbers on effects of this change individually? Is this
+> change necessary for the libnvdimm init speedup, or is it independent?
 
-Acked-by: Kees Cook <keescook@chromium.org>
+It depends on the case. I was using X86_PMEM_LEGACY_DEVICE to spawn a
+couple of 32GB persistent memory devices. I had to use this patch and
+the async_probe option to get them loading in parallel versus serial as
+the driver load order is a bit different.
 
--Kees
+Basically as long as all the necessary drivers are loaded for libnvdimm
+you are good, however if the device can get probed before the driver is
+loaded you run into issues as the loading will be serialized without
+this patch.
 
-> ---
->  tools/testing/selftests/firmware/config | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
-> index bf634dda0720..913a25a4a32b 100644
-> --- a/tools/testing/selftests/firmware/config
-> +++ b/tools/testing/selftests/firmware/config
-> @@ -1,5 +1,6 @@
->  CONFIG_TEST_FIRMWARE=y
->  CONFIG_FW_LOADER=y
->  CONFIG_FW_LOADER_USER_HELPER=y
-> +CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
->  CONFIG_IKCONFIG=y
->  CONFIG_IKCONFIG_PROC=y
-> --
-> 2.19.1
->
+> > I am using the driver_data member of the device struct to store the driver
+> > pointer while we wait on the deferred probe call. This should be safe to do
+> > as the value will either be set to NULL on a failed probe or driver load
+> > followed by unload, or the driver value itself will be set on a successful
+> > driver load. In addition I have used the async_probe flag to add additional
+> > protection as it will be cleared if someone overwrites the driver_data
+> > member as a part of loading the driver.
+> 
+> I would not put it past a device-driver to call dev_get_drvdata()
+> before dev_set_drvdata(), to check "has this device already been
+> initialized". So I don't think it is safe to assume that the core can
+> stash this information in ->driver_data. Why not put this
+> infrastructure in struct device_private?
 
+The data should be cleared before we even get to the probe call so I am
+not sure that is something we would need to worry about.
 
+As far as why I didn't use device_private, it was mostly just for the
+sake of space savings. I only had to add one bit to an existing
+bitfield to make the async_probe approach work, and the drvdata just
+seemed like the obvious place to put the deferred driver.
 
--- 
-Kees Cook
