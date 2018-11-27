@@ -3,161 +3,176 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96C3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CA1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593D621104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12BF32145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 18:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="IpT0eEaA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593D621104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rd6WQ2XM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BF32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbeK1FuY (ORCPT
+        id S1730810AbeK1FwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 00:50:24 -0500
-Received: from mail-eopbgr150122.outbound.protection.outlook.com ([40.107.15.122]:12560
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726461AbeK1FuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 00:50:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H6i0erIJgtiqyeAOUgMuysQpRk2nzitSZfhAFBtivXk=;
- b=IpT0eEaApo3HaoU1xRPLMDQUgjKHqlaxKAG9RYhoXoMb7oQtJ4/8+Ea21bmfqw0qk/B//jUgVRBc+N0jvkhPtA9QGalT+xWk8pFAUQprIYPp/coN3ctM2Krw0T/ndYq5hIZRUtTln/My2jNywHB4iIe3Pxkeq4IKbg9lZtC6rtM=
-Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com (10.168.64.135) by
- VI1PR0201MB2318.eurprd02.prod.outlook.com (10.168.63.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Tue, 27 Nov 2018 18:51:13 +0000
-Received: from VI1PR0201MB2464.eurprd02.prod.outlook.com
- ([fe80::8de8:73c4:92c8:6c22]) by VI1PR0201MB2464.eurprd02.prod.outlook.com
- ([fe80::8de8:73c4:92c8:6c22%8]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 18:51:13 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Luca Ceresoli <lucaceresoli77@gmail.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v3] i2c: mux: remove duplicated i2c_algorithm
-Thread-Topic: [PATCH v3] i2c: mux: remove duplicated i2c_algorithm
-Thread-Index: AQHUWyyIYmlXSDP/EEi7krLfM400NKUWCzAAgAKfzACAPP48gIAOpMEA
-Date:   Tue, 27 Nov 2018 18:51:13 +0000
-Message-ID: <55ea59c5-ac9b-ab78-e3a1-edaed099ca15@axentia.se>
-References: <20181003151928.17713-1-lucaceresoli77@gmail.com>
- <99cfa6a2-9a60-6bdd-2542-9dd78af75758@axentia.se>
- <70c48ade-b2ac-dde8-4b3e-aa4b2f19940a@gmail.com>
- <205e1d73-2318-ecd4-c531-3ff18a0e0005@lucaceresoli.net>
-In-Reply-To: <205e1d73-2318-ecd4-c531-3ff18a0e0005@lucaceresoli.net>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1P190CA0013.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::23)
- To VI1PR0201MB2464.eurprd02.prod.outlook.com (2603:10a6:800:55::7)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0201MB2318;6:ibXRG6CRpvNyzfchR7tdqTReij93IvzPvNfRbmFYdpBtk5/W4tpUoklNNj/J18QswpOTuJ1j1UQYBsqbxBOf8t7vqbVw3OQRLMagXEaQpED42gpt5b1aCDCP810cgjmCtGvIeuiop49v+eE+DxIrB3kHSZXH3EVGEP4yFZ86Rgg44pTrBvbOi/0Qp/9MaP4bv5yZ5gdkrGLoherlMSixu1fqR1OOijVA4P1FCuQCFQ74d+M8vC80IWbycArQ5WXscmfoUCtGc41A+yCNGNSwmX7IJdrNFBTX9hDQWmyUYgHlxswaK9Y9FaI2aQ2k7Zn2PayRpJqxWLuM+JWEIqvqpdOrQ54MfS7K7ouvEMgt6SAgX2t2bRM4Ozu+V3VwWX66Bt03Urf2pJUteU2uu+MK+tihWdS+7iU6t+O5Voi/mYc7QB6+NK5p0VDYXIp1w+2OMOxcqIZ9gS2FR5ChBwQsiw==;5:4YsGq5jbEBv+VDsC83xmHmN8a5kdrNnAXb/reo46Vvs557J6cg5K7ZxU+dJb2IuAkKKcYUM1Zx/EUj1mdsVEb9TViivgq7WqcZV4hLSwbNeo2d6CSZv4bNVkwrFVceZfAlp9Iqkdh2tFssBZ9i/U5aYT4da9bzD5fC2dv6V+nQ0=;7:fcUbTRQQY8K/15Hec5UFBlVNZYRutW7NT3FZUKPNb36W6Ez8ISEGMRfFCOLbnnv0Pdixbls8lCcOhJxcqqN6gJ0iI6p2c/o5EXi8PZlhpmhqYqRaV+2dviBSWCrE7W/1hWJHITSe+FaZCjP+CCRpQQ==
-x-ms-office365-filtering-correlation-id: 1ae4a95d-0642-45c3-49ac-08d654994db6
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2318;
-x-ms-traffictypediagnostic: VI1PR0201MB2318:
-x-microsoft-antispam-prvs: <VI1PR0201MB231837465A32F17DEC2A25FEBCD00@VI1PR0201MB2318.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231443)(944501410)(52105112)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(2016111802025)(20161123558120)(20161123562045)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR0201MB2318;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2318;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(396003)(39830400003)(52314003)(199004)(189003)(6512007)(54906003)(6306002)(53936002)(39060400002)(966005)(316002)(58126008)(81156014)(5660300001)(186003)(6486002)(64126003)(8936002)(110136005)(229853002)(476003)(93886005)(6246003)(11346002)(86362001)(446003)(71200400001)(2616005)(8676002)(36756003)(508600001)(81166006)(14444005)(256004)(99286004)(486006)(71190400001)(4001150100001)(66066001)(52116002)(65826007)(4326008)(74482002)(76176011)(31696002)(97736004)(14454004)(305945005)(65806001)(65956001)(386003)(25786009)(102836004)(6506007)(53546011)(6436002)(105586002)(106356001)(68736007)(31686004)(2906002)(2501003)(3846002)(26005)(6116002)(7736002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2318;H:VI1PR0201MB2464.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9Ce0DPe6WhBxIPX3v9yWOo/lzYy/5ys0f+FGGoeRwO0+ZHSfzRay7tLNYqpjdMdVb1fUu61I8HWpEz/huEeFowlDjtEwi/sMYb2JDGlCOtIJWIky6A9zSf85icAEjWwvbbG4IwHMaxoCuSqvZfvg4XlpZ7r69/hb919FvSpm7ULFIouBBzS7nIEKuqUO9JleAW3n6zCF1x0+mUZ56lyrGYuq7//6W8vnggHOcnlOVckD0xPr297zM3qfuQU9mnTuLES3dCijxKkPzUCOKowQKSV4MSWaHF8oKIZ/o8MhBCdlYgsxKp/fGGGcMXhpNZrRmqvKD6LLJJ4CUtBnwbJkWHRmTk5K80eTmreTFHySI/k=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <36E1114BF01D164E8FA534BA060BAA39@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 28 Nov 2018 00:52:09 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:58948 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730513AbeK1FwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 00:52:09 -0500
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id CC0B643708;
+        Tue, 27 Nov 2018 19:53:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-type:content-type:mime-version:references:in-reply-to
+        :message-id:date:date:subject:subject:from:from:received; s=
+        mail20150812; t=1543344795; bh=WvlhHMYmWfrkXrQrwPOcGjpsl+TT/Dpha
+        P9gAbTDuP0=; b=rd6WQ2XMJ3WV2sovJwaczLKvebjetCyH9NVDaz6khAEFfV7vo
+        6NV9FG3KgD1eBKhwvcgFfb1/+lGduEEb5r+Pyo2zAafOuwh2GcL/8c1EEiwDcCNf
+        zzfHypn5SiWfXU4fn30ChYkOh8Og3xNytWFyeqsetmxV/WEDl5S1AO/fgE2Ex+rl
+        yehBsax5wr+5MWOYLjLb+m66Gnq4+dvnXLbdDY8WOfeJhZkTwbdKfEuy38VfxysT
+        QvsvLg/ZAQ7L/xjSfVmYAymjx8qtH259BV+RrDwn/L9UZDmoyEs0q/StLdE9/TNz
+        Dk8UsiwdDruo0KofOurIw0TD6EKIljMUXSk5g==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id XxFm2FUrXIOQ; Tue, 27 Nov 2018 19:53:15 +0100 (CET)
+From:   Rainer Fiebig <jrf@mailbox.org>
+To:     linux-kernel@vger.kernel.org, grendel@twistedcode.net
+Cc:     Guenter Roeck <linux@roeck-us.net>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+Date:   Tue, 27 Nov 2018 19:55:01 +0100
+Message-ID: <2157925.3ZPi3Rj3bs@siriux>
+In-Reply-To: <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net> <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net> <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae4a95d-0642-45c3-49ac-08d654994db6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 18:51:13.5329
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2318
+Content-Type: multipart/signed; boundary="nextPart2486729.86Eausdgvx"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMS0xOCAxMjoxMywgTHVjYSBDZXJlc29saSB3cm90ZToNCj4gSGkgUGV0ZXIsDQo+
-IA0KPiBPbiAxMC8xMC8xOCAxNzo0OCwgTHVjYSBDZXJlc29saSB3cm90ZToNCj4+IEhpIFBldGVy
-LA0KPj4NCj4+IE9uIDA4LzEwLzIwMTggMjM6NDMsIFBldGVyIFJvc2luIHdyb3RlOg0KPj4+IE9u
-IDIwMTgtMTAtMDMgMTc6MTksIEx1Y2EgQ2VyZXNvbGkgd3JvdGU6DQo+Pj4+IEZyb206IEx1Y2Eg
-Q2VyZXNvbGkgPGx1Y2FAbHVjYWNlcmVzb2xpLm5ldD4NCj4+Pj4NCj4+Pj4gaTJjLW11eCBpbnN0
-YW50aWF0ZXMgb25lIGkyY19hbGdvcml0aG0gZm9yIGVhY2ggZG93bnN0cmVhbSBhZGFwdGVyLg0K
-Pj4+PiBIb3dldmVyIHRoZXNlIGFsZ29yaXRobXMgYXJlIGFsbCBpZGVudGljYWwsIGRlcGVuZGlu
-ZyBvbmx5IG9uIHRoZQ0KPj4+PiBwYXJlbnQgYWRhcHRlci4NCj4+Pj4NCj4+Pj4gQXZvaWQgZHVw
-bGljYXRpb24gYnkgaG9pc3RpbmcgdGhlIGkyY19hbGdvcml0aG0gZnJvbSB0aGUgYWRhcHRlcnMg
-dG8NCj4+Pj4gdGhlIGkyY19tdXhfY29yZSBvYmplY3QsIGFuZCByZXVzZSBpdCBpbiBhbGwgdGhl
-IGFkYXB0ZXJzLg0KPj4+DQo+Pj4gT3VjaCwgd2hpbGUgSSBsaWtlIHRoZSBjb25jZXB0IG9mIGhh
-dmluZyBvbmUgaTJjX2FsZ29yaXRobSBwZXIgbXV4LA0KPj4+IHRoaXMgcGF0Y2ggaXMgbm90IHdv
-cmtpbmcuIFZhcmlvdXMgaTJjLW11eCBkcml2ZXJzIHNldCB0aGUNCj4+PiBtdXhjLT5tdXhfbG9j
-a2VkIHZhcmlhYmxlICphZnRlciogdGhlIGkyY19tdXhfYWxsb2MgY2FsbCwgYW5kIHRoaXMNCj4+
-PiBwYXRjaCBicmVha3Mgc3VjaCB1c2UuDQo+IA0KPiBJIGZpbmFsbHkgaGFkIGEgbG9vayBpbnRv
-IHRoaXMgaXNzdWUuIFRocmVlIGRyaXZlcnMgYXJlIHNldHRpbmcNCj4gbXV4X2xvY2tlZCBhZnRl
-ciBpMmNfbXV4X2FsbG9jOiBpMmMtbXV4LWdwbXV4LCBpMmMtbXV4LWdwaW8gYW5kDQo+IGkyYy1t
-dXgtcGluY3RybC4NCj4gDQo+IGkyYy1tdXgtZ3BtdXggaXMgdHJpdmlhbCB0byBmaXguDQo+IA0K
-PiBUaGUgb3RoZXIgdHdvIGFyZSBub3QgdHJpdmlhbCBiZWNhdXNlOg0KPiANCj4gIDEuIHRoZXkg
-Y29tcHV0ZSBtdXhfbG9ja2VkIGZyb20gb3RoZXIgdmFyaWFibGVzDQo+ICAyLiB0aG9zZSB2YXJp
-YWJsZXMgYXJlIHN0b3JlZCBpbiB0aGUgZHJpdmVycyAicHJpdmF0ZSIgZGF0YQ0KPiAgMy4gdGhl
-aXIgcHJpdmF0ZSBkYXRhIGlzIHN0b3JlZCBpbnNpZGUgc3RydWN0IGkyY19tdXhfY29yZQ0KPiAg
-ICAgKG11eGMtPnByaXYpIHdoaWNoIGV4aXN0cyBvbmx5IGFmdGVyIGkyY19tdXhfYWxsb2MoKQ0K
-PiANCj4gSW4gdGhvc2UgY2FzZXMgY29tcHV0aW5nIG11eF9sb2NrZWQgYmVmb3JlIGkyY19tdXhf
-YWxsb2MoKSBpbnZvbHZlcw0KPiBxdWl0ZSBpbnZhc2l2ZSBjaGFuZ2VzLiBJdCB0b29rIDMgbm9u
-LXRyaXZpYWwgY29tbWl0cyBqdXN0IGZvcg0KPiBpMmMtbXV4LWdwaW8sIGFuZCBJIHN0aWxsIGhh
-dmUgdG8gbG9vayBpbnRvIGkyYy1tdXgtcGluY3RybC4NCj4gDQo+IFNvIHRoZSBxdWVzdGlvbiBp
-czogZG8gd2UgcmVhbGx5IHdhbnQgdG8gZG8gdGhpcz8NCj4gDQo+IFVzaW5nIHRoZSBwcml2YXRl
-IHN0b3JhZ2UgcHJvdmlkZWQgYnkgaTJjX211eF9hbGxvYygpIGlzIGEgaGFuZHkNCj4gZmVhdHVy
-ZSwgYXQgbGVhc3QgZm9yIHNpbXBsZXIgZHJpdmVycyB3aGljaCBrbm93IGluIGFkdmFuY2UgdGhl
-IGZsYWdzDQo+IHRoZXkgbmVlZCB0byBzZXQuIE9UT0ggSSBkb24ndCBsaWtlIGluZGl2aWR1YWwg
-ZHJpdmVycyB0byBtYW5pcHVsYXRlDQo+IG11eF9jb3JlIGZsYWdzIHRoYXQgbG9vayB2ZXJ5IG11
-Y2ggbGlrZSBpbnRlcm5hbCBkYXRhLiBJdCBtYWtlcyBhbnkNCj4gY2hhbmdlIHRvIHRoZSBpMmMg
-bXV4IGNvcmUgaGFyZGVyLCBzaW5jZSBldmVyeSBjaGFuZ2VkIGxpbmUgY291bGQgaGF2ZQ0KPiBz
-aWRlIGVmZmVjdHMgaW4gc29tZSBkcml2ZXJzLCB3aGljaCBpcyB3aGF0J3MgaGFwcGVuaW5nIGhl
-cmUuDQo+IA0KPiBXaGF0J3MgeW91ciBvcGluaW9uIGFib3V0IHRoaXMgaXNzdWU/DQoNCkkgb2J2
-aW91c2x5IGRvbid0IGxpa2UgdGhhdCBkcml2ZXJzIGFyZSBwb2tpbmcgYXJvdW5kIGluIHN0cnVj
-dA0KaTJjX211eF9jb3JlLg0KDQpCdXQsIHlvdXIgZGVzY3JpcHRpb24gc291bmRzIHByZWNpc2Vs
-eSBob3cgSSByZW1lbWJlcmVkIGl0LiBUaGUNCnVuZGVybHlpbmcgcHJvYmxlbSBpcyBvZiBjb3Vy
-c2UgdGhhdCBpMmMtbXV4LWdwaW8gYW5kDQppMmMtbXV4LXBpbmN0cmwgZG8gcmVhbGx5IG5hc3R5
-IGRpZ3MgaW50byBpbnRlcm5hbCBwYXJ0cyBvZiB0aGUNCmdwaW8gYW5kIHRoZSBwaW5jdHJsIHN1
-YnN5c3RlbXMgYXMgdGhleSAqdHJ5KiB0byBmaWd1cmUgb3V0IGlmDQp0aGV5IHNob3VsZCBiZSBt
-dXgtbG9ja2VkIG9yIHBhcmVudC1sb2NrZWQuIFRoZSByZXN1bHQgb2YgdGhhdA0KZGlnZ2luZyBp
-cyBub3QgY29tcGxldGVseSByZWxpYWJsZSwgYnV0IGl0IHNvbHZlcyB0aGUgaXNzdWUNCndpdGhv
-dXQgaGVscCBmcm9tIGRldmljZS10cmVlIHByb3BlcnRpZXMgaW4gYXQgbGVhc3Qgb25lIGNhc2UN
-CnRoYXQgSSBrbm93IGFib3V0LiBIb3dldmVyLCBmb3IgdGhhdCBjYXNlIEkgYWxzbyBrbm93IHRo
-YXQgdGhlcmUNCmlzIG5vIHJpc2sgb2YgcmVncmVzc2lvbiBzaW5jZSBJIGNvbnRyb2wgdGhlIGRp
-c3RyaWJ1dGlvbiBvZg0KYm90aCBrZXJuZWwgYW5kIC5kdGIgZm9yIGFueSB1cGdyYWRlLiBBbnl3
-YXksIGl0IHdhcyBkb25lIGxpa2UNCml0IHdhcyBzaW5jZSBJIGF0IHRoZSB0aW1lIGRpZCBub3Qg
-ZGFyZSB0byBxdWVzdGlvbiB0aGUgZmVlZGJhY2sNCmZyb20gdGhlIGRldmljZS10cmVlIGNhbXAs
-IGFuZCBhY3R1YWxseSB0aG91Z2h0IGl0IHdhcyBhIGdvb2QNCnRoaW5nLCBhbmQgdGh1cyBkaWQg
-bm90IHB1c2ggZm9yIGEgZGV2aWNlLXRyZWUgcHJvcGVydHkgd2hlbg0KUm9iIGNvbXBsYWluZWQg
-YWJvdXQgdGhlIHByb3BlcnR5IG5vdCBkZXNjcmliaW5nIEhXIGFuZCBpbnN0ZWFkDQp3YXMganVz
-dCB3b3JraW5nIGFyb3VuZCBrZXJuZWwgaXNzdWVzIFsxXS4gVGhlIG11eC1sb2NrZWQgdnMuDQpw
-YXJlbnQtbG9ja2VkIHByb3BlcnR5IGhhcyBiZWVuIGFkZGVkIHNpbmNlLiBJbiByZXRyb3NwZWN0
-LCB0aGUNCndob2xlIGF0dGVtcHQgdG8gYXV0by1kZXRlY3QgbXV4LWxvY2tlZCBvciBwYXJlbnQt
-bG9ja2VkIHdhcyBhDQptaXN0YWtlLCBhbmQgZXZlcnl0aGluZyB3b3VsZCBoYXZlIGJlZW4gc28g
-bXVjaCBlYXNpZXIgaWYgdGhlDQpkZXZpY2UtdHJlZSBjb3VsZCBhbHdheXMganVzdCBzdGF0ZSB3
-aGF0IHRoZSByZXF1aXJlbWVudCBpcy4gQXQNCmxlYXN0IHRoYXQncyBteSBjdXJyZW50IHRob3Vn
-aHRzIG9uIHRoZSBtYXR0ZXIuIE1heWJlIHdlIHNob3VsZA0KYXR0ZW1wdCB0byByZW1vdmUgdGhl
-IHVnbHkgYXV0by1kZXRlY3QgY29kZSBhbmQgc2VlIGlmIGFueW9uZQ0KY29tcGxhaW5zPw0KDQpC
-dXQgb2YgY291cnNlLCBhbm90aGVyIGFzcGVjdCBpcyB0aGF0IG5vdCBldmVyeXRoaW5nIGlzIERU
-LCBzbw0KcGVyaGFwcyB0aGVyZSBpcyBubyBjbGVhbiBzb2x1dGlvbj8NCg0KQ2hlZXJzLA0KUGV0
-ZXINCg0KWzFdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE2LzEvNi80MzcNCg==
+--nextPart2486729.86Eausdgvx
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+
+Am Dienstag, 27. November 2018, 15:48:19 schrieb Marek Habersack:
+> On 27/11/2018 15:32, Guenter Roeck wrote:
+> Hi,
+>=20
+> You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=3Dyes in your=
+ kernel
+> config. Starting with 4.19.1 it somehow interferes with ext4 and caus=
+es
+> problems similar to the ones you list below. Ever since I disabled MQ=
+
+> (either recompile your kernel or add `scsi_mod.use_blk_mq=3D0` to the=
+ kernel
+> command line) none of those errors came back.
+>=20
+> hope it helps,
+>=20
+> marek
+
+Unfortunately, this doesn't seem to work in every case:=20
+https://bugzilla.kernel.org/show_bug.cgi?id=3D201685#c54
+
+And I'm using a defconfig-4.19.3 (meaning: CONFIG_SCSI_MQ_DEFAULT=3Dyes=
+) in a VM=20
+and I'm not seeing those errors there. OK, it's a VM - but anyway.
+
+The definite cause of this can only be found by bisecting, IMO. And it =
+needs=20
+to be pinned down because else some feeling of insecurity will remain.
+
+So long!
+
+Rainer Fiebig
+
+>=20
+> > [trying again, this time with correct kernel.org address]
+> >=20
+> > Hi,
+> >=20
+> > I have seen the following and similar problems several times,
+> > with both v4.19.3 and v4.19.4:
+> >=20
+> > Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device =
+sdb1):
+> > ext4_iget:4831: inode #12602889: comm git: bad extra_isize 33661 (i=
+node
+> > size 256)
+> > Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on de=
+vice
+> > sdb1-8. Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1)=
+:
+> > Remounting filesystem read-only Nov 23 04:32:25 mars kernel:
+> > [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode
+> > #12602881: comm rm: bad extra_isize 33685 (inode size 256)
+> > ...
+> >=20
+> > Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device=
+ sda1):
+> > ext4_lookup:1578: inode #238034131: comm updatedb.mlocat: deleted i=
+node
+> > referenced: 238160407
+> > Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on d=
+evice
+> > sda1-8. Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1=
+):
+> > Remounting filesystem read-only ...
+> >=20
+> > Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (devic=
+e
+> > sda1): ext4_lookup:1578: inode #52038457: comm nfsd: deleted inode
+> > referenced: 52043796
+> > Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on =
+device
+> > sda1-8. Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda=
+1):
+> > Remounting filesystem read-only
+> >=20
+> >=20
+> > The same systems running v4.18.6 never experienced a problem.
+> >=20
+> > Has anyone else seen similar problems ? Is there anything I can do
+> > to help tracking down the problem ?
+> >=20
+> > Thanks,
+> > Guenter
+
+=2D-=20
+The truth always turns out to be simpler than you thought.
+Richard Feynman
+--nextPart2486729.86Eausdgvx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE6yx5PjBNuGB2qJXG8OH3JiWK+PUFAlv9kwUACgkQ8OH3JiWK
++PU9Fw/+LCBuffACw269aBKuv9iwFOWPXILHphPtxQu9DGSd5A5Whv6Nl6zgQ1Zq
+NAzpziZm7zR7DlKCmyGckj1rToPyhHFNE5pjC+IxSqBkw17TaafREWF299ZZ+jo6
+RnrKcyuuw1roz8KLnkJtK/2XGj0QEH0ZwAINFryBEjYhkD6ysT9fqXnh0QdXB1lr
+kgHUwPdn9ToVecWFwReW9+9CzoCmwk96dm3Fh8DA27juG/A/sEsqk5VE+YLkBEsd
+c+Ce37EwO6+y2D0esWFPvsY0U5rNriQ1aVFb4nMKDslxQlM1nfbVUKKvzcD1ha08
+Tuffoey9G5XTVxqWGwm9eKfekJZTaWSXsWDr3RkF9uejKxge9HPr51bxJ/rl7cNh
+ZEIcE5Y+eIYOWpWYzOOpOaTDUHE+bKd6DVfv7zz+bmZenj23yFz8K1FxY2/NOKBp
+O8SSNy9ofFbhn/Wyd/7w0CWyulFXbx76eVJiQ9Oj4o9vd5mmx/h+e54zzsY6wfEG
+tgt0VAo6j3Qf+uUh7GpB0pmLXQaUllSFlZdw7jToWjM2xgckGEcJ9kWP1tgqs/Ly
+DzSrHeb6nc6doBjJo7sAL1AVjU9nWVdVC0kwD2XMJdmFz2VolGEkc1o3yrnMaTLw
+pZ9IYgLQnsGt6BbpjuI1zExzVGjX3o2bO9DJzXiH3hHCvl8JhXc=
+=21M3
+-----END PGP SIGNATURE-----
+
+--nextPart2486729.86Eausdgvx--
+
