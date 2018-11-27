@@ -2,146 +2,110 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F49C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DFFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 285282086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:07:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285282086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D0932086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0932086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeK0OEA (ORCPT
+        id S1728308AbeK0OGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 09:04:00 -0500
-Received: from air.basealt.ru ([194.107.17.39]:37236 "EHLO air.basealt.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeK0OEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 09:04:00 -0500
-Received: by air.basealt.ru (Postfix, from userid 490)
-        id 39D1D589AE9; Tue, 27 Nov 2018 03:07:35 +0000 (UTC)
-Received: from akathisia (broadband-46-188-15-144.2com.net [46.188.15.144])
-        by air.basealt.ru (Postfix) with ESMTPSA id 7F43F589AE7;
-        Tue, 27 Nov 2018 03:07:33 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 04:07:32 +0100
-From:   Elvira Khabirova <lineprinter@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     rostedt@goodmis.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
-        luto@kernel.org, strace-devel@lists.strace.io,
-        linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
- support to PTRACE_GET_SYSCALL_INFO
-Message-ID: <20181127040732.1c9f7965@akathisia>
-In-Reply-To: <20181126143524.GB1660@redhat.com>
-References: <20181125022150.46258a20@akathisia>
-        <20181125022340.5703400f@akathisia>
-        <20181126143524.GB1660@redhat.com>
+        Tue, 27 Nov 2018 09:06:25 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15164 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727784AbeK0OGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 09:06:25 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 67B5320065C8;
+        Tue, 27 Nov 2018 11:09:59 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
+ 11:09:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dvhart@infradead.org>, <andy@infradead.org>, <jkosina@suse.cz>
+CC:     <linux-kernel@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <andriy.shevchenko@linux.intel.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] platform/x86: intel-ips: remove unnecessary checks in ips_debugfs_init
+Date:   Tue, 27 Nov 2018 11:09:38 +0800
+Message-ID: <20181127030938.18160-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 15:35:24 +0100
-Oleg Nesterov <oleg@redhat.com> wrote:
+As Greg KH explained in:
+https://lkml.org/lkml/2015/8/15/114
 
-> On 11/25, Elvira Khabirova wrote:
-> >
-> > Extend PTRACE_GET_SYSCALL_INFO to support PTRACE_EVENT_SECCOMP stops.
-> > The information returned is the same as for syscall-enter-stops.  
-> 
-> Oh, this is not nice ;) there must be a better option, I hope... Plus
-> 
-> 
-> Can't ptrace_get_syscall() check
-> 
-> 	child->exit_code == (PTRACE_EVENT_SECCOMP << 8) | SIGTRAP;
-> 
-> to detect the PTRACE_EVENT_SECCOMP case?
+There no need to check the return value of debugfs_create_file/
+debugfs_create_dir.
 
-Nope; looks like exit_code is zeroed after wait().
+This also fix static code checker warnings:
 
-> Oleg.
-> 
-> > Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
-> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> > ---
-> >  include/linux/ptrace.h    | 1 +
-> >  include/linux/sched.h     | 1 +
-> >  include/linux/tracehook.h | 1 +
-> >  kernel/ptrace.c           | 7 +++++--
-> >  4 files changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-> > index 6c2ffed907f5..a993d0fde865 100644
-> > --- a/include/linux/ptrace.h
-> > +++ b/include/linux/ptrace.h
-> > @@ -166,6 +166,7 @@ static inline void ptrace_event(int event, unsigned long message)
-> >  {
-> >  	if (unlikely(ptrace_event_enabled(current, event))) {
-> >  		current->ptrace_message = message;
-> > +		current->ptrace_event = event;
-> >  		ptrace_notify((event << 8) | SIGTRAP);
-> >  	} else if (event == PTRACE_EVENT_EXEC) {
-> >  		/* legacy EXEC report via SIGTRAP */
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index a51c13c2b1a0..86215fb654d6 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -964,6 +964,7 @@ struct task_struct {
-> >  
-> >  	/* Ptrace state: */
-> >  	unsigned long			ptrace_message;
-> > +	int				ptrace_event;
-> >  	kernel_siginfo_t		*last_siginfo;
-> >  
-> >  	struct task_io_accounting	ioac;
-> > diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
-> > index 633a83fe7051..5d2e5aa07a5c 100644
-> > --- a/include/linux/tracehook.h
-> > +++ b/include/linux/tracehook.h
-> > @@ -66,6 +66,7 @@ static inline int ptrace_report_syscall(struct pt_regs *regs,
-> >  		return 0;
-> >  
-> >  	current->ptrace_message = message;
-> > +	current->ptrace_event = 0;
-> >  	ptrace_notify(SIGTRAP | ((ptrace & PT_TRACESYSGOOD) ? 0x80 : 0));
-> >  
-> >  	/*
-> > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> > index 92c47cd5ad84..74a37e74c7f1 100644
-> > --- a/kernel/ptrace.c
-> > +++ b/kernel/ptrace.c
-> > @@ -904,7 +904,9 @@ static int ptrace_get_syscall(struct task_struct *child,
-> >  	unsigned long actual_size;
-> >  	unsigned long write_size;
-> >  
-> > -	if (child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_ENTRY) {
-> > +	if ((child->ptrace_event == 0 &&
-> > +	     child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_ENTRY) ||
-> > +	    child->ptrace_event == PTRACE_EVENT_SECCOMP) {
-> >  		int i;
-> >  
-> >  		info.op = PTRACE_SYSCALL_INFO_ENTRY;
-> > @@ -917,7 +919,8 @@ static int ptrace_get_syscall(struct task_struct *child,
-> >  		for (i = 0; i < ARRAY_SIZE(args); i++)
-> >  			info.entry.args[i] = args[i];
-> >  		actual_size = offsetofend(struct ptrace_syscall_info, entry);
-> > -	} else if (child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_EXIT) {
-> > +	} else if (child->ptrace_event == 0 &&
-> > +		   child->ptrace_message == PTRACE_EVENTMSG_SYSCALL_EXIT) {
-> >  		info.op = PTRACE_SYSCALL_INFO_EXIT;
-> >  		info.arch = syscall_get_arch(child);
-> >  		info.exit.rval = syscall_get_error(child, regs);
-> > -- 
-> > 2.19.1
-> >   
-> 
+drivers/platform/x86/intel_ips.c:1314
+ ips_debugfs_init() warn: passing zero to 'PTR_ERR'
+drivers/platform/x86/intel_ips.c:1328
+ ips_debugfs_init() warn: passing zero to 'PTR_ERR'
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/platform/x86/intel_ips.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
+index 225638a..5c5dc82 100644
+--- a/drivers/platform/x86/intel_ips.c
++++ b/drivers/platform/x86/intel_ips.c
+@@ -1310,32 +1310,17 @@ static void ips_debugfs_init(struct ips_driver *ips)
+ 	int i;
+ 
+ 	ips->debug_root = debugfs_create_dir("ips", NULL);
+-	if (!ips->debug_root) {
+-		dev_err(ips->dev, "failed to create debugfs entries: %ld\n",
+-			PTR_ERR(ips->debug_root));
+-		return;
+-	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ips_debug_files); i++) {
+-		struct dentry *ent;
+ 		struct ips_debugfs_node *node = &ips_debug_files[i];
+ 
+ 		node->ips = ips;
+-		ent = debugfs_create_file(node->name, S_IFREG | S_IRUGO,
+-					  ips->debug_root, node,
+-					  &ips_debugfs_ops);
+-		if (!ent) {
+-			dev_err(ips->dev, "failed to create debug file: %ld\n",
+-				PTR_ERR(ent));
+-			goto err_cleanup;
+-		}
++		debugfs_create_file(node->name, S_IFREG | S_IRUGO,
++				    ips->debug_root, node,
++				    &ips_debugfs_ops);
+ 	}
+ 
+ 	return;
+-
+-err_cleanup:
+-	ips_debugfs_cleanup(ips);
+-	return;
+ }
+ #endif /* CONFIG_DEBUG_FS */
+ 
+-- 
+2.7.0
+
 
