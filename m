@@ -2,141 +2,117 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D752AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB79C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96514208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03E4F208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mJOpQA5Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96514208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEM26sqy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E4F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbeK1CyS (ORCPT
+        id S1730330AbeK1CyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:54:18 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:35662 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeK1CyS (ORCPT
+        Tue, 27 Nov 2018 21:54:22 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43032 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbeK1CyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:54:18 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wARFsfur073737;
-        Tue, 27 Nov 2018 15:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=wCl3OpK+JNMxgv3uFw+diZo+EoeUN/EKRtJ7Mf4YTxg=;
- b=mJOpQA5QqtOaeqGLJCJhQXP8Cx17Jh33Kld2WuavXBb9kVJb9Ag55gnXMNatfOICrd5X
- sTkwbqogY0bWKTDO8iUZAVn0mJUaeQm9eSHmoFxcywoe4X9/fPbS19yPZbdDnd+8JTMc
- tt6T6MBU1sLlYQ5CxGdhVIlHZxHnyPJZb+9vPG+L003qYcDhOi47JuJVEhAkfW4qcBWo
- O+yxLvDIhwY6Y69iHxn3aWohxABxaIhor9SIqrMvRKz7t5ohLu6XWiDlCUStfLhGsCiy
- acjUdz6HUOWE+Qd09ketF5dlKpHVK9XIisaSRO+pN4zeaAA5T6P1v1dGnQmtOVdnFVxO Fg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2nxx2u4w8c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 15:55:50 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wARFtnHc027557
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 15:55:49 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wARFtnFw020401;
-        Tue, 27 Nov 2018 15:55:49 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Nov 2018 07:55:49 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] mm: warn only once if page table misaccounting is
- detected
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20181127155213.GB27075@linux.intel.com>
-Date:   Tue, 27 Nov 2018 08:55:47 -0700
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-mm@kvack.org, "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0AD1CE43-3B5B-4D4B-963B-056D749F196E@oracle.com>
-References: <20181127083603.39041-1-heiko.carstens@de.ibm.com>
- <20181127155213.GB27075@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270137
+        Tue, 27 Nov 2018 21:54:21 -0500
+Received: by mail-qt1-f195.google.com with SMTP id i7so22250588qtj.10;
+        Tue, 27 Nov 2018 07:56:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JKCyZbrEKYXwHldI0WnOYTOElwRij8LUCoCfbS5+TGc=;
+        b=DEM26sqyroVfWml80N+dkKLx4YfqsO+h+BnyC2G3lJ9nStm13JXzcZfLeZG/jm+EXl
+         IjyB/5gSKALcVXbD+LqB/p5wWi/KO2ZT0PMsb6lGw+ya3wOmpALTvxi7Dtfmyrkq8GeR
+         kCk8ocLX/3WOMDL077YtYj8o8PiflGwofUkkC6wa3UmuzEtQa9qVO/jPQ9DbME7sLTGO
+         MLf4HxE3gZINqPRmqz4f+Cx3aznlpFT16qgv+ogAZOo1ejncFPR4kvNrWY85uV/svgMK
+         Znz87w/kgLOW8y+i3clkxEKmGFV9R9yihm5kf11OOjcUh8KKDwubUUGrm7FfMPJYGue+
+         yYow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JKCyZbrEKYXwHldI0WnOYTOElwRij8LUCoCfbS5+TGc=;
+        b=hIzWSLID1Gk4JSrhCf5cHN56LxeSXROrzEIu6pkp5MtYq+NdUcVuXazfNStayq4oKS
+         Aq5bgqEPum8KwOGqeTawRn3sOV+YbV5JGdlbXBaFbZq0dzeqabBxFXyEm1UOwroMe5XD
+         ecbzvxGT2zYNNHOocHKcdDcJXzFVPMwXwTtOJcz/mlIlLltIGerEnyGOizCeOPjyNkuD
+         3w8U5AxYLBIr0vE5YXggyoavHbQFhRgDw/mODbG6Cxa/gU9SNQ2lWpKxD75b6u3FKHoi
+         CIx+Jx2ZFlbJEiLkS00hoa1s2HuGzZICxbXD+FU6Eju668SXwT3LtWaI0g3I+aEh9eBU
+         N6eg==
+X-Gm-Message-State: AGRZ1gIxjrLdykNIXer7ENR9pUoQAnNsxSsOq2uJ4IQdROJTUeRBZ5/i
+        FlwgEyos/c0U9KaSCzFPU12dt/TtznQODTG5RmCuoNlZ
+X-Google-Smtp-Source: AFSGD/UaNzovc//Ja5PX9pWfQz+ugBvSVL1wudscN0agRRZS1+B1kioPoEZVZXyjFomTa4hrZgocQBWg1TSLNbreM6s=
+X-Received: by 2002:ac8:1909:: with SMTP id t9mr30346595qtj.327.1543334160430;
+ Tue, 27 Nov 2018 07:56:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20181114212843.16954-1-bp@alien8.de> <20181114212843.16954-4-bp@alien8.de>
+In-Reply-To: <20181114212843.16954-4-bp@alien8.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 27 Nov 2018 17:55:49 +0200
+Message-ID: <CAHp75Vca7Vn5To5GWb_EtZ1ZKyzWnL2Wv3M3wrKVX=X8qmxUfw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/cpuid: Make cpuinfo_x86.x86_model_id global
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 14, 2018 at 11:29 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> From: Borislav Petkov <bp@suse.de>
+>
+> ... and __ro_after_init. Since the brand string is being read earlier
+> now, in early_identify_cpu(), get_model_name() needs to read out the
+> extended CPUID level for the brand string. This is temporary only, until
+> the full CPUID read out has been added.
+
+>  drivers/platform/x86/intel_ips.c     |  6 +++---
+>  15 files changed, 35 insertions(+), 35 deletions(-)
 
 
-> On Nov 27, 2018, at 8:52 AM, Sean Christopherson =
-<sean.j.christopherson@intel.com> wrote:
->=20
-> On Tue, Nov 27, 2018 at 09:36:03AM +0100, Heiko Carstens wrote:
->> Use pr_alert_once() instead of pr_alert() if page table misaccounting
->> has been detected.
->>=20
->> If this happens once it is very likely that there will be numerous
->> other occurrence as well, which would flood dmesg and the console =
-with
->> hardly any added information. Therefore print the warning only once.
->>=20
->> Cc: Kirill A. Shutemov <kirill@shutemov.name>
->> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
->> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
->> ---
->> kernel/fork.c | 4 ++--
->> 1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/kernel/fork.c b/kernel/fork.c
->> index 07cddff89c7b..c887e9eba89f 100644
->> --- a/kernel/fork.c
->> +++ b/kernel/fork.c
->> @@ -647,8 +647,8 @@ static void check_mm(struct mm_struct *mm)
->> 	}
->>=20
->> 	if (mm_pgtables_bytes(mm))
->> -		pr_alert("BUG: non-zero pgtables_bytes on freeing mm: =
-%ld\n",
->> -				mm_pgtables_bytes(mm));
->> +		pr_alert_once("BUG: non-zero pgtables_bytes on freeing =
-mm: %ld\n",
->> +			      mm_pgtables_bytes(mm));
->=20
-> I found the print-always behavior to be useful when developing a =
-driver
-> that mucked with PTEs directly via vmf_insert_pfn() and had issues =
-with
-> racing against exit_mmap().  It was nice to be able to recompile only
-> the driver and rely on dmesg to let me know when I messed up yet =
-again.
->=20
-> Would pr_alert_ratelimited() suffice?
 
-Actually, I really like that idea.
+> diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
+> index 225638a1b09e..4309f198cbad 100644
+> --- a/drivers/platform/x86/intel_ips.c
+> +++ b/drivers/platform/x86/intel_ips.c
+> @@ -1367,11 +1367,11 @@ static struct ips_mcp_limits *ips_detect_cpu(struct ips_driver *ips)
+>         else
+>                 ips->turbo_toggle_allowed = false;
+>
+> -       if (strstr(boot_cpu_data.x86_model_id, "CPU       M"))
+> +       if (strstr(x86_model_id, "CPU       M"))
+>                 limits = &ips_sv_limits;
+> -       else if (strstr(boot_cpu_data.x86_model_id, "CPU       L"))
+> +       else if (strstr(x86_model_id, "CPU       L"))
+>                 limits = &ips_lv_limits;
+> -       else if (strstr(boot_cpu_data.x86_model_id, "CPU       U"))
+> +       else if (strstr(x86_model_id, "CPU       U"))
+>                 limits = &ips_ulv_limits;
+>         else {
+>                 dev_info(ips->dev, "No CPUID match found.\n");
 
-There are certainly times when it is useful to see a cascade of =
-messages, within reason;
-one there are so many they overflow the dmesg buffer they're of limited =
-usefulness.
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Something like a pr_alert() that could rate limit to a preset value, =
-perhaps a default of
-fifty or so, could prove quite useful indeed without being an all or =
-once choice.
+for PDx86 bits
 
-    William Kucharski=
+--
+With Best Regards,
+Andy Shevchenko
