@@ -2,697 +2,270 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30D4C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6331BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9832133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 112EE20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nXsSNTW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9832133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B5O6b80I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112EE20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbeK0XAa (ORCPT
+        id S1731161AbeK0XFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:00:30 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41205 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730348AbeK0XAa (ORCPT
+        Tue, 27 Nov 2018 18:05:34 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52387 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729261AbeK0XFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:00:30 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b7so8248800pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 04:02:48 -0800 (PST)
+        Tue, 27 Nov 2018 18:05:33 -0500
+Received: by mail-it1-f196.google.com with SMTP id i7so33810663iti.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 04:07:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SzI6Slssk+R41+UiBmud40g2uZZ5fGYUCKdQI99wiAg=;
-        b=nXsSNTW0LSoBUvwIVvCPh7bNPVjWW5TkrjEY215dZvqci3QnDjCkRz+mBwtf+aUI/Y
-         glxQvAZXgvMki9ZykOCx5ALstmBefjVwu0PE4WqinxYrdoOKLr76t8MrIsJlm4+Du3kD
-         QPPZuI98Ds4sDVC4GhnvKz4tN3I3nvsTvKJAc=
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vZMJ2YpXteFXyRWm0Bym8iUqvVbPnazSrvkxlKUt9GA=;
+        b=B5O6b80IiD/2MJFfMGmjnNhs0U7H/NIjdQdQcijLWZHlpqfx+HQZCMe98nKs67wEe0
+         rz/uB7I+cMUYW1L4SzNMHwkAzAEavEHyHrRl1dVExdXB+eNVvn1qjHXCcIN1wz1TFTM9
+         r/zOD2KmCj/tgMVaRJrb8j8iGSlowhtUFa2ZtcLTHA5Mfbnl9JrZGOjFxjjgmBm+2nxc
+         zFw3U6K920I/vZ0q67dusesIQcltQCIHLmOJ3tWtnhDoUsClbVPZQq/+gS2ZUEX2lVFk
+         +Nz6BliDx4xSXvRkpOM0blsAHbVrTGG3dNXC9t/IOFdtUqd0kRZrvviNdQyFobF3DQjy
+         fNqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SzI6Slssk+R41+UiBmud40g2uZZ5fGYUCKdQI99wiAg=;
-        b=aiRulN/TEY1Tab79iu8fTevUBolIzTQFG7H08mYic2SuoHekLx8CTPQ7Zx9TjTjAuZ
-         lVVUwsePLY7kFANNgFtZfGw35IfEcv01+nvGeBpkNNsNSmV2Yjdv0QsMsOHfDfjvrGIz
-         UFqGGWuoz7FV0S0/yB98Cc2OwgYpi9R0D59qsfaAJ87/J8GyQJSp6zEwChr5R9HjjTy3
-         qwY2Z4os7TOnZinYd0IH7ugKxIv8viFPTSiG23+Q2mNSdEikmDvn7BOewsfyX8lMBzvF
-         MRc5LvTS6P2BaDSsLfhprkWLDIjO7QIL3/MLfhVWQox+iYp2gLRdnzn6Vag3vzctvPpN
-         t5sA==
-X-Gm-Message-State: AA+aEWa1c3S/kDJQTdByFb6KfpN8tJQhVV1/C8D2VZrcx/rtftKAxV6R
-        RkKUmVCqJwoKjKTLGBRLhOc9J7SUqdw=
-X-Google-Smtp-Source: AFSGD/XOILnHqhRnGfTKs0hdrehh7am/In+Wq8IsOx5FJM0SXFy9xbU8/DD9EkScCGyQbNmFMtJWIA==
-X-Received: by 2002:a62:6d84:: with SMTP id i126mr619204pfc.109.1543320167384;
-        Tue, 27 Nov 2018 04:02:47 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id m85sm8312778pfj.171.2018.11.27.04.02.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 04:02:46 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH 3/3] ASoC: cros_ec_codec: Add codec driver for Cros EC
-Date:   Tue, 27 Nov 2018 20:00:41 +0800
-Message-Id: <20181127120041.90759-3-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-In-Reply-To: <20181127120041.90759-1-cychiang@chromium.org>
-References: <20181127120041.90759-1-cychiang@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vZMJ2YpXteFXyRWm0Bym8iUqvVbPnazSrvkxlKUt9GA=;
+        b=qkVqMn2k3pgJ2p4cyZSddJeECTj2BCY1eiCFK2/nimdvYRmLiDp9uqUdy6CpayDOs5
+         yE/eqaIMRw/1Tsp9i+bi+lhGYRPWC0lsZv2ZoNr4EsoL7MfQ+4Ipr1e8HewDDvWAhKYw
+         PJJha8ANn5PskS1GUx7sSak87xnHDtUhqpeRbOqKbxE2cmRyzLHib8EMLq+FNBZfm4T2
+         H/3WzLAod4lZeNdRDk1PQjG6JDwUwTTercvRf+5mEC3amfIBN2vvtBO9xEYU8zGKx39S
+         GbRQd8Qo365x4rTDJVNj4fnAZ8z0DyyCvhGvhJciPA6v78JXon9/6/RcqJCduGiNLo6C
+         hv6g==
+X-Gm-Message-State: AA+aEWYpOmyaS1REUAVlgg5QpvqGDhLCRWs19wmcTG96NVa85USsFcBI
+        VhYAAyZ6tbT+wwtqvHywvIk03qM3aOx/FDGzVk/G1w==
+X-Google-Smtp-Source: AJdET5cXKhOxGKoyV3fiXoudmr5Zt8I0aHNU9cvRuQDAFhsPm2gl+1tU2RXxqf253t66Ppx77juKY3/4i/safudsjkQ=
+X-Received: by 2002:a02:b19b:: with SMTP id t27mr26308223jah.72.1543320470785;
+ Tue, 27 Nov 2018 04:07:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 04:07:30
+ -0800 (PST)
+In-Reply-To: <CANRm+CykdB1-g0j0y+2AngDBkdeX=L4c6KxF_Yup4EN0QTJpEA@mail.gmail.com>
+References: <000000000000ce78d7057b9e2ee1@google.com> <CANRm+CykdB1-g0j0y+2AngDBkdeX=L4c6KxF_Yup4EN0QTJpEA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 27 Nov 2018 13:07:30 +0100
+Message-ID: <CACT4Y+ZicTdyJpmy6DKw2wu5uWtS4epWNVUT0Hox1JSpuu69dA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in kvm_write_guest_offset_cached
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com,
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a codec driver to control ChromeOS EC codec.
+On Tue, Nov 27, 2018 at 7:14 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>
+> On Tue, 27 Nov 2018 at 12:51, syzbot
+> <syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+>
+> Is there beauty C codes?
 
-Use EC Host command to enable/disable I2S recording and control other
-configurations.
+syzbot does not have code like:
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- MAINTAINERS                      |   1 +
- sound/soc/codecs/Kconfig         |   8 +
- sound/soc/codecs/Makefile        |   2 +
- sound/soc/codecs/cros_ec_codec.c | 499 +++++++++++++++++++++++++++++++
- sound/soc/codecs/cros_ec_codec.h |  33 ++
- 5 files changed, 543 insertions(+)
- create mode 100644 sound/soc/codecs/cros_ec_codec.c
- create mode 100644 sound/soc/codecs/cros_ec_codec.h
+if (rand() % 2)
+  send_C_repro();
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5cf8ab296cc61..f1999ef19d1cc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3556,6 +3556,7 @@ CHROME EC CODEC DRIVER
- M:	Cheng-Yi Chiang <cychiang@chromium.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-+F:	sound/soc/codecs/cros_ec_codec.*
- 
- CIRRUS LOGIC AUDIO CODEC DRIVERS
- M:	Brian Austin <brian.austin@cirrus.com>
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index efb095dbcd714..3e3e9294c0259 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -49,6 +49,7 @@ config SND_SOC_ALL_CODECS
- 	select SND_SOC_BT_SCO
- 	select SND_SOC_BD28623
- 	select SND_SOC_CQ0093VC
-+	select SND_SOC_CROS_EC_CODEC
- 	select SND_SOC_CS35L32 if I2C
- 	select SND_SOC_CS35L33 if I2C
- 	select SND_SOC_CS35L34 if I2C
-@@ -445,6 +446,13 @@ config SND_SOC_CPCAP
- config SND_SOC_CQ0093VC
- 	tristate
- 
-+config SND_SOC_CROS_EC_CODEC
-+	tristate "codec driver for Cros EC"
-+	depends on MFD_CROS_EC
-+	help
-+	  If you say yes here you will get support for the
-+	  Chrome OS Embedded Controller's Audio Codec.
-+
- config SND_SOC_CS35L32
- 	tristate "Cirrus Logic CS35L32 CODEC"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index 7ae7c85e8219f..ff05c260c5776 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -41,6 +41,7 @@ snd-soc-bd28623-objs := bd28623.o
- snd-soc-bt-sco-objs := bt-sco.o
- snd-soc-cpcap-objs := cpcap.o
- snd-soc-cq93vc-objs := cq93vc.o
-+snd-soc-cros-ec-codec-objs := cros_ec_codec.o
- snd-soc-cs35l32-objs := cs35l32.o
- snd-soc-cs35l33-objs := cs35l33.o
- snd-soc-cs35l34-objs := cs35l34.o
-@@ -301,6 +302,7 @@ obj-$(CONFIG_SND_SOC_BD28623)	+= snd-soc-bd28623.o
- obj-$(CONFIG_SND_SOC_BT_SCO)	+= snd-soc-bt-sco.o
- obj-$(CONFIG_SND_SOC_CQ0093VC) += snd-soc-cq93vc.o
- obj-$(CONFIG_SND_SOC_CPCAP)	+= snd-soc-cpcap.o
-+obj-$(CONFIG_SND_SOC_CROS_EC_CODEC)	+= snd-soc-cros-ec-codec.o
- obj-$(CONFIG_SND_SOC_CS35L32)	+= snd-soc-cs35l32.o
- obj-$(CONFIG_SND_SOC_CS35L33)	+= snd-soc-cs35l33.o
- obj-$(CONFIG_SND_SOC_CS35L34)	+= snd-soc-cs35l34.o
-diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
-new file mode 100644
-index 0000000000000..e24174c11a7de
---- /dev/null
-+++ b/sound/soc/codecs/cros_ec_codec.c
-@@ -0,0 +1,499 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * cros_ec_codec - Driver for Chrome OS Embedded Controller codec.
-+ *
-+ * Copyright 2018 Google, Inc
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * This driver uses the cros-ec interface to communicate with the Chrome OS
-+ * EC for audio function.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/cros_ec.h>
-+#include <linux/mfd/cros_ec_commands.h>
-+#include <linux/module.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <sound/tlv.h>
-+#include <linux/platform_device.h>
-+
-+#include "cros_ec_codec.h"
-+
-+#define MAX_GAIN 43
-+
-+#define DRV_NAME "cros-ec-codec"
-+
-+static const DECLARE_TLV_DB_SCALE(ec_mic_gain_tlv, 0, 100, 0);
-+/*
-+ * Wrapper for EC command.
-+ */
-+static int ec_command(struct snd_soc_component *component, int version,
-+		      int command, uint8_t *outdata, int outsize,
-+		      uint8_t *indata, int insize)
-+{
-+	struct cros_ec_codec_data *codec_data = snd_soc_component_get_drvdata(
-+			component);
-+	struct cros_ec_device *ec_device = codec_data->ec_device;
-+	struct cros_ec_command *msg;
-+	int ret;
-+
-+	msg = kzalloc(sizeof(*msg) + max(insize, outsize), GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	msg->version = version;
-+	msg->command = command;
-+	msg->outsize = outsize;
-+	msg->insize = insize;
-+
-+	if (outsize)
-+		memcpy(msg->data, outdata, outsize);
-+
-+	ret = cros_ec_cmd_xfer_status(ec_device, msg);
-+	if (ret > 0 && insize)
-+		memcpy(indata, msg->data, insize);
-+
-+	kfree(msg);
-+	return ret;
-+}
-+
-+static int set_i2s_config(struct snd_soc_component *component,
-+			  enum ec_i2s_config i2s_config)
-+{
-+	struct ec_param_codec_i2s param;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s set I2S format to %u\n", __func__,
-+		i2s_config);
-+
-+	param.cmd = EC_CODEC_I2S_SET_CONFIG;
-+	param.i2s_config = i2s_config;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(component->dev,
-+			"set I2S format to %u command returned 0x%x\n",
-+			i2s_config, ret);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int cros_ec_i2s_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	enum ec_i2s_config i2s_config;
-+
-+	dev_dbg(component->dev, "%s enter\n", __func__);
-+
-+	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-+	case SND_SOC_DAIFMT_CBS_CFS:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-+	case SND_SOC_DAIFMT_NB_NF:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+		i2s_config = EC_DAI_FMT_I2S;
-+		break;
-+
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		i2s_config = EC_DAI_FMT_RIGHT_J;
-+		break;
-+
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		i2s_config = EC_DAI_FMT_LEFT_J;
-+		break;
-+
-+	case SND_SOC_DAIFMT_DSP_A:
-+		i2s_config = EC_DAI_FMT_PCM_A;
-+		break;
-+
-+	case SND_SOC_DAIFMT_DSP_B:
-+		i2s_config = EC_DAI_FMT_PCM_B;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	set_i2s_config(component, i2s_config);
-+
-+	dev_dbg(component->dev, "%s set I2S DAI format\n", __func__);
-+
-+	return 0;
-+}
-+
-+static int set_i2s_sample_depth(struct snd_soc_component *component,
-+				enum ec_sample_depth_value depth)
-+{
-+	struct ec_param_codec_i2s param;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s set depth to %u\n", __func__, depth);
-+
-+	param.cmd = EC_CODEC_SET_SAMPLE_DEPTH;
-+	param.depth = depth;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(component->dev, "I2S sample depth %u returned 0x%x\n",
-+			depth, ret);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int set_bclk(struct snd_soc_component *component, uint32_t bclk)
-+{
-+	struct ec_param_codec_i2s param;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s set i2s bclk to %u\n", __func__, bclk);
-+
-+	param.cmd = EC_CODEC_I2S_SET_BCLK;
-+	param.bclk = bclk;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(component->dev, "I2S set bclk %u command returned 0x%x\n",
-+			bclk, ret);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int cros_ec_i2s_hw_params(struct snd_pcm_substream *substream,
-+	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	int frame_size;
-+	unsigned int rate, bclk;
-+	int ret;
-+
-+	frame_size = snd_soc_params_to_frame_size(params);
-+	if (frame_size < 0) {
-+		dev_err(component->dev, "Unsupported frame size: %d\n",
-+			frame_size);
-+		return -EINVAL;
-+	}
-+
-+	rate = params_rate(params);
-+	if (rate != 48000) {
-+		dev_err(component->dev, "Unsupported rate\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+		ret = set_i2s_sample_depth(component, EC_CODEC_SAMPLE_DEPTH_16);
-+		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		ret = set_i2s_sample_depth(component, EC_CODEC_SAMPLE_DEPTH_24);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	bclk = snd_soc_params_to_bclk(params);
-+	ret = set_bclk(component, bclk);
-+
-+	return ret;
-+}
-+
-+static const struct snd_soc_dai_ops cros_ec_i2s_dai_ops = {
-+	.hw_params = cros_ec_i2s_hw_params,
-+	.set_fmt = cros_ec_i2s_set_dai_fmt,
-+};
-+
-+struct snd_soc_dai_driver cros_ec_dai[] = {
-+	{
-+		.name = "cros_ec_codec I2S",
-+		.id = 0,
-+		.capture = {
-+			.stream_name = "I2S Capture",
-+			.channels_min = 2,
-+			.channels_max = 2,
-+			.rates = SNDRV_PCM_RATE_48000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+		},
-+		.ops = &cros_ec_i2s_dai_ops,
-+	}
-+};
-+
-+static int get_ec_mic_gain(struct snd_soc_component *component,
-+			   uint8_t *left, uint8_t *right)
-+{
-+	struct ec_param_codec_i2s param;
-+	struct ec_response_codec_gain resp;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s get mic gain\n", __func__);
-+
-+	param.cmd = EC_CODEC_GET_GAIN;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 (uint8_t *)&resp, sizeof(resp));
-+	if (ret < 0) {
-+		dev_err(component->dev, "I2S get gain command returned 0x%x\n",
-+			ret);
-+		return -EINVAL;
-+	}
-+
-+	*left = resp.left;
-+	*right = resp.right;
-+
-+	dev_dbg(component->dev, "%s get mic gain %u, %u\n", __func__,
-+		*left, *right);
-+
-+	return 0;
-+}
-+
-+static int mic_gain_get(struct snd_kcontrol *kcontrol,
-+			struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(
-+			kcontrol);
-+	uint8_t left, right;
-+	int ret;
-+
-+	ret = get_ec_mic_gain(component, &left, &right);
-+
-+	if (ret)
-+		return ret;
-+
-+	ucontrol->value.integer.value[0] = left;
-+	ucontrol->value.integer.value[1] = right;
-+
-+	return 0;
-+}
-+
-+static int set_ec_mic_gain(struct snd_soc_component *component,
-+			   uint8_t left, uint8_t right)
-+{
-+	struct ec_param_codec_i2s param;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s set mic gain to %u, %u\n",
-+		__func__, left, right);
-+
-+	param.cmd = EC_CODEC_SET_GAIN;
-+	param.gain.left = left;
-+	param.gain.right = right;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(component->dev, "I2S set gain command returned 0x%x\n",
-+			ret);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mic_gain_put(struct snd_kcontrol *kcontrol,
-+			struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(
-+			kcontrol);
-+	int left = ucontrol->value.integer.value[0];
-+	int right = ucontrol->value.integer.value[1];
-+	int ret;
-+
-+	if (left > MAX_GAIN || right > MAX_GAIN)
-+		return -EINVAL;
-+
-+	ret = set_ec_mic_gain(component, (uint8_t)left, (uint8_t)right);
-+
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new cros_ec_snd_controls[] = {
-+	SOC_DOUBLE_EXT_TLV("EC Mic Gain", SND_SOC_NOPM, SND_SOC_NOPM, 0, 43, 0,
-+			   mic_gain_get, mic_gain_put, ec_mic_gain_tlv)
-+};
-+
-+static int enable_i2s(struct snd_soc_component *component, int enable)
-+{
-+	struct ec_param_codec_i2s param;
-+	int ret;
-+
-+	dev_dbg(component->dev, "%s set i2s to %u\n", __func__, enable);
-+
-+	param.cmd = EC_CODEC_I2S_ENABLE;
-+	param.i2s_enable = enable;
-+
-+	ret = ec_command(component, 0, EC_CMD_CODEC_I2S,
-+			 (uint8_t *)&param, sizeof(param),
-+			 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(component->dev, "I2S enable %d command returned 0x%x\n",
-+			 enable, ret);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int cros_ec_i2s_enable_event(struct snd_soc_dapm_widget *w,
-+			     struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component = snd_soc_dapm_to_component(
-+			w->dapm);
-+
-+	dev_dbg(component->dev, "%s enter\n", __func__);
-+
-+	switch (event) {
-+
-+	case SND_SOC_DAPM_PRE_PMU:
-+		dev_dbg(component->dev,
-+			"%s got SND_SOC_DAPM_PRE_PMU event\n", __func__);
-+		return enable_i2s(component, 1);
-+
-+	case SND_SOC_DAPM_PRE_PMD:
-+		dev_dbg(component->dev,
-+			"%s got SND_SOC_DAPM_PRE_PMD event\n", __func__);
-+		return enable_i2s(component, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * The goal of this DAPM route is to turn on/off I2S using EC
-+ * host command when capture stream is started/stopped.
-+ */
-+static const struct snd_soc_dapm_widget cros_ec_dapm_widgets[] = {
-+	SND_SOC_DAPM_INPUT("DMIC"),
-+
-+	/*
-+	 * Control EC to enable/disable I2S.
-+	 */
-+	SND_SOC_DAPM_SUPPLY("I2S Enable", SND_SOC_NOPM,
-+			    0, 0, cros_ec_i2s_enable_event,
-+			    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD),
-+
-+	SND_SOC_DAPM_AIF_OUT("I2STX", "I2S Capture", 0, SND_SOC_NOPM, 0, 0),
-+};
-+
-+static const struct snd_soc_dapm_route cros_ec_dapm_routes[] = {
-+	{ "I2STX", NULL, "DMIC" },
-+	{ "I2STX", NULL, "I2S Enable" },
-+};
-+
-+
-+static const struct snd_soc_component_driver cros_ec_component_driver = {
-+	.controls		= cros_ec_snd_controls,
-+	.num_controls		= ARRAY_SIZE(cros_ec_snd_controls),
-+	.dapm_widgets		= cros_ec_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(cros_ec_dapm_widgets),
-+	.dapm_routes		= cros_ec_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(cros_ec_dapm_routes),
-+};
-+
-+/*
-+ * Platform device and platform driver fro cros-ec-codec.
-+ */
-+static int cros_ec_codec_platform_probe(struct platform_device *pd)
-+{
-+	struct device *dev = &pd->dev;
-+	struct cros_ec_device *ec_device = dev_get_drvdata(pd->dev.parent);
-+	struct cros_ec_codec_data *codec_data;
-+	int rc;
-+
-+	dev_dbg(dev, "%s start\n", __func__);
-+
-+	/*
-+	 * If the parent ec device has not been probed yet, defer the probe.
-+	 */
-+	if (ec_device == NULL) {
-+		dev_dbg(dev, "No EC device found yet.\n");
-+		return -EPROBE_DEFER;
-+	}
-+
-+	codec_data = devm_kzalloc(dev, sizeof(struct cros_ec_codec_data),
-+				  GFP_KERNEL);
-+	if (!codec_data)
-+		return -ENOMEM;
-+
-+	codec_data->dev = dev;
-+	codec_data->ec_device = ec_device;
-+
-+	platform_set_drvdata(pd, codec_data);
-+
-+	rc = snd_soc_register_component(dev, &cros_ec_component_driver,
-+					cros_ec_dai, ARRAY_SIZE(cros_ec_dai));
-+
-+	dev_dbg(dev, "%s done\n", __func__);
-+
-+	return 0;
-+}
-+
-+static int cros_ec_codec_platform_remove(struct platform_device *pd)
-+{
-+	struct device *dev = &pd->dev;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id cros_ec_codec_of_match[] = {
-+	{ .compatible = "google,cros-ec-codec" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, cros_ec_codec_of_match);
-+#endif
-+
-+static struct platform_driver cros_ec_codec_platform_driver = {
-+	.driver = {
-+		.name = DRV_NAME,
-+		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(cros_ec_codec_of_match),
-+	},
-+	.probe = cros_ec_codec_platform_probe,
-+	.remove = cros_ec_codec_platform_remove,
-+};
-+
-+module_platform_driver(cros_ec_codec_platform_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Chrome EC codec driver");
-+MODULE_AUTHOR("Cheng-Yi Chiang <cychiang@chromium.org>");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/codecs/cros_ec_codec.h b/sound/soc/codecs/cros_ec_codec.h
-new file mode 100644
-index 0000000000000..3a72e16a7ba65
---- /dev/null
-+++ b/sound/soc/codecs/cros_ec_codec.h
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * ChromeOS EC Codec
-+ *
-+ * Copyright 2018 Google, Inc
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __CROS_EC_CODEC_H
-+#define __CROS_EC_CODEC_H
-+
-+/*
-+ * struct cros_ec_codec_data - ChromeOS EC codec driver data.
-+ *
-+ * @dev: Device structure used in sysfs.
-+ * @ec_device: cros_ec_device structure to talk to the physical device.
-+ * @component: Pointer to the component.
-+ */
-+struct cros_ec_codec_data {
-+	struct device *dev;
-+	struct cros_ec_device *ec_device;
-+	struct snd_soc_component *component;
-+};
-+
-+#endif  /* __CROS_EC_CODEC_H */
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+:)
 
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=174d326d400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=ff40b9bc4835ea83211c
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f5df7b400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+ff40b9bc4835ea83211c@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KASAN: use-after-free in mark_page_dirty_in_slot
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:2056 [inline]
+> > BUG: KASAN: use-after-free in kvm_write_guest_offset_cached+0x693/0x6b0
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1988
+> > Read of size 8 at addr ffff8801b9363778 by task syz-executor1/30438
+> >
+> > CPU: 1 PID: 30438 Comm: syz-executor1 Not tainted 4.20.0-rc1-next-20181109+
+> > #110
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0x244/0x39d lib/dump_stack.c:113
+> >   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+> >   kasan_report_error mm/kasan/report.c:354 [inline]
+> >   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+> >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >   mark_page_dirty_in_slot arch/x86/kvm/../../../virt/kvm/kvm_main.c:2056
+> > [inline]
+> >   kvm_write_guest_offset_cached+0x693/0x6b0
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1988
+> >   kvm_steal_time_set_preempted arch/x86/kvm/x86.c:3241 [inline]
+> >   kvm_arch_vcpu_put+0x365/0x420 arch/x86/kvm/x86.c:3268
+> >   kvm_sched_out+0x91/0xb0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3993
+> >   __fire_sched_out_preempt_notifiers kernel/sched/core.c:2503 [inline]
+> >   fire_sched_out_preempt_notifiers kernel/sched/core.c:2511 [inline]
+> >   prepare_task_switch kernel/sched/core.c:2617 [inline]
+> >   context_switch kernel/sched/core.c:2796 [inline]
+> >   __schedule+0x11ca/0x21d0 kernel/sched/core.c:3472
+> >   preempt_schedule_irq+0xb9/0x140 kernel/sched/core.c:3699
+> >   retint_kernel+0x1b/0x2d
+> > RIP: 0010:search_memslots include/linux/kvm_host.h:955 [inline]
+> > RIP: 0010:__gfn_to_memslot include/linux/kvm_host.h:976 [inline]
+> > RIP: 0010:__kvm_gfn_to_hva_cache_init+0x2ed/0xd10
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1935
+> > Code: 3c 02 00 0f 85 0d 0a 00 00 4d 03 6c 24 08 48 89 df 4c 89 ee e8 04 16
+> > 78 00 4c 39 eb 0f 82 6e 01 00 00 45 31 ed e8 43 15 78 00 <44> 89 fe 44 89
+> > ef e8 c8 15 78 00 45 39 fd 0f 8d cf 00 00 00 e8 2a
+> > RSP: 0018:ffff8801cbfee970 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+> > RAX: ffff8801b9a4c280 RBX: 0000000000000000 RCX: ffffffff8107942f
+> > RDX: 0000000000000000 RSI: ffffffff8107936d RDI: 0000000000000006
+> > RBP: ffff8801cbfeeb60 R08: ffff8801b9a4c280 R09: ffffed00342bb209
+> > R10: ffffed00342bb209 R11: ffff8801a15d904b R12: 0000000000000017
+> > R13: 0000000000000017 R14: 0000000000000016 R15: 0000000000000017
+> >   kvm_gfn_to_hva_cache_init+0x15a/0x340
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1963
+> >   kvm_set_msr_common+0x1a0c/0x2670 arch/x86/kvm/x86.c:2549
+> >   vmx_set_msr+0x759/0x1f90 arch/x86/kvm/vmx.c:4360
+> >   kvm_set_msr+0x18a/0x370 arch/x86/kvm/x86.c:1324
+> >   do_set_msr+0x10d/0x1a0 arch/x86/kvm/x86.c:1353
+> >   __msr_io arch/x86/kvm/x86.c:2905 [inline]
+> >   msr_io+0x222/0x380 arch/x86/kvm/x86.c:2941
+> >   kvm_arch_vcpu_ioctl+0x961/0x3b00 arch/x86/kvm/x86.c:3956
+> >   kvm_vcpu_ioctl+0x278/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2748
+> >   vfs_ioctl fs/ioctl.c:46 [inline]
+> >   file_ioctl fs/ioctl.c:509 [inline]
+> >   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+> >   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+> >   __do_sys_ioctl fs/ioctl.c:720 [inline]
+> >   __se_sys_ioctl fs/ioctl.c:718 [inline]
+> >   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x457569
+> > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007fc292e62c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+> > RDX: 0000000020000280 RSI: 000000004008ae89 RDI: 0000000000000005
+> > RBP: 000000000072c040 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc292e636d4
+> > R13: 00000000004bff9d R14: 00000000004d0970 R15: 00000000ffffffff
+> >
+> > Allocated by task 30427:
+> >   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >   set_track mm/kasan/kasan.c:460 [inline]
+> >   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+> >   __do_kmalloc_node mm/slab.c:3684 [inline]
+> >   __kmalloc_node+0x50/0x70 mm/slab.c:3691
+> >   kmalloc_node include/linux/slab.h:589 [inline]
+> >   kvmalloc_node+0xb9/0xf0 mm/util.c:416
+> >   kvmalloc include/linux/mm.h:577 [inline]
+> >   kvzalloc include/linux/mm.h:585 [inline]
+> >   __kvm_set_memory_region+0x116e/0x2d50
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1023
+> >   kvm_set_memory_region+0x2e/0x50
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1085
+> >   kvm_vm_ioctl_set_memory_region
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1097 [inline]
+> >   kvm_vm_ioctl+0x652/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2995
+> >   vfs_ioctl fs/ioctl.c:46 [inline]
+> >   file_ioctl fs/ioctl.c:509 [inline]
+> >   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+> >   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+> >   __do_sys_ioctl fs/ioctl.c:720 [inline]
+> >   __se_sys_ioctl fs/ioctl.c:718 [inline]
+> >   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > Freed by task 30427:
+> >   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >   set_track mm/kasan/kasan.c:460 [inline]
+> >   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+> >   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+> >   __cache_free mm/slab.c:3498 [inline]
+> >   kfree+0xcf/0x230 mm/slab.c:3817
+> >   kvfree+0x61/0x70 mm/util.c:445
+> >   __kvm_set_memory_region+0x1cb3/0x2d50
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1067
+> >   kvm_set_memory_region+0x2e/0x50
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1085
+> >   kvm_vm_ioctl_set_memory_region
+> > arch/x86/kvm/../../../virt/kvm/kvm_main.c:1097 [inline]
+> >   kvm_vm_ioctl+0x652/0x1d60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2995
+> >   vfs_ioctl fs/ioctl.c:46 [inline]
+> >   file_ioctl fs/ioctl.c:509 [inline]
+> >   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+> >   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+> >   __do_sys_ioctl fs/ioctl.c:720 [inline]
+> >   __se_sys_ioctl fs/ioctl.c:718 [inline]
+> >   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > The buggy address belongs to the object at ffff8801b9363080
+> >   which belongs to the cache kmalloc-64k of size 65536
+> > The buggy address is located 1784 bytes inside of
+> >   65536-byte region [ffff8801b9363080, ffff8801b9373080)
+> > The buggy address belongs to the page:
+> > page:ffffea0006e4d800 count:1 mapcount:0 mapping:ffff8801da802500 index:0x0
+> > compound_mapcount: 0
+> > flags: 0x2fffc0000010200(slab|head)
+> > raw: 02fffc0000010200 ffffea0006906808 ffffea0007034808 ffff8801da802500
+> > raw: 0000000000000000 ffff8801b9363080 0000000100000001 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >   ffff8801b9363600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8801b9363680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > ffff8801b9363700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >                                                                  ^
+> >   ffff8801b9363780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8801b9363800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ==================================================================
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CANRm%2BCykdB1-g0j0y%2B2AngDBkdeX%3DL4c6KxF_Yup4EN0QTJpEA%40mail.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
