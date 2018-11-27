@@ -2,183 +2,170 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6651C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C76AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965822086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:22:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="o2s2WRbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965822086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B15E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 05:29:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B15E208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbeK0QTE (ORCPT
+        id S1728632AbeK0Q0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 11:19:04 -0500
-Received: from mail-eopbgr760113.outbound.protection.outlook.com ([40.107.76.113]:24439
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728591AbeK0QTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 11:19:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ybsZKVA1TYFEFcasAQHBsk8RlMOHLxT9J22RQmPDt3Q=;
- b=o2s2WRbB+atn37iHRLh0ntNNf673s/GyZIZNCeQim6UvycRTfwGFiYLB6r+zNetmOv1LwqwJQrTqzyatsXxCBB6OvgZP6mRUgTgndflK+uGCehjVPzWkJm0NEnptndhzawaL60FBOz8IsSvBYZ/nRJPlqoh+2+gs3N1qF3yDktQ=
-Received: from CY4PR2101MB0804.namprd21.prod.outlook.com (52.132.100.38) by
- CY4PR2101MB0866.namprd21.prod.outlook.com (52.132.101.161) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.4; Tue, 27 Nov 2018 05:22:20 +0000
-Received: from CY4PR2101MB0804.namprd21.prod.outlook.com
- ([fe80::b922:44e9:332d:aab5]) by CY4PR2101MB0804.namprd21.prod.outlook.com
- ([fe80::b922:44e9:332d:aab5%6]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 05:22:20 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH 2/2] Drivers: hv: vmbus: offload the handling of channels
- to two workqueues
-Thread-Topic: [PATCH 2/2] Drivers: hv: vmbus: offload the handling of channels
- to two workqueues
-Thread-Index: AQHUhTATSbMww4cHK0OqMUaDw9hpgaVic+CAgAB/4AA=
-Date:   Tue, 27 Nov 2018 05:22:20 +0000
-Message-ID: <CY4PR2101MB0804C7E84D48FCDFB61F7569A0D00@CY4PR2101MB0804.namprd21.prod.outlook.com>
-References: <20181126022821.11269-1-kys@linuxonhyperv.com>
- <20181126022958.11320-1-kys@linuxonhyperv.com>
- <20181126022958.11320-2-kys@linuxonhyperv.com>
- <20181126193503.GA25649@kroah.com>
-In-Reply-To: <20181126193503.GA25649@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:744e:9865:5066:c4c8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR2101MB0866;6:zvuLCx3Nry/ObBhn9NPG6A3N/yDsfvU8NMUOSfRcXwSRGhekFOld2rGOLP5iUZcOo9qYZEQXUSFGLZw6+r5Zz1mVEPnjJIT6O6LqBNTcyK1Q97dDqJNFOE5P9mQHChxfKEtEsyA+kPVvk+2wkSQHnQQhWNw3MS8itYpXdzd7gw0TGeVnWY5ZjqTkVNLoRvdXU61jxUWdmA/eKPwHIuXgr6y1eVpDskbcHMcxV5Tj4k7VzpI6ycOIIK4TJqK6CNyi+weDYh1c55kVlR/Gh5C7nwLNIo8aYwYZg17bdxBUmbTvwyZ3f4lJGyi1VZtA7vEG3SpiXwDcDrmVR3ZOW9sGkgNba6/tdIT8Yl3q+GpUPthBFpYfkyQ7r65oMjNQMKwxL8tvJHIdouwAbXmInD1xzV+zVBxuSDSezwxtFOcrYFKB2DVyGhULfqjBgnmG4tQL86t20igDvRYeCK8Nkkx2wA==;5:PZzmmN9KXPKx3cQayjq0AqrApkTxkkN7cowdS1JI1jzBqXi4YpAD1AA2P2v+hBauQyvBRtFlbEmCmjvNmHw30aYXhOQ8d2TrTLxbIP0vvt0/nNuYvwiQQxQOAgE/RFITmcuhfQVYUz89EuGgTlhyku7tXzBb1usZa00kPJu88n0=;7:fGMkYCjTelJygrAQikpUU4aL+/GIktxfEFYitFT//Dv9Bz1NHQCTVN6dZ0Tpyy+GdsyqgDYiZqaX3XZnVX6y0T+DLVIr6Hu9tIiPzDrSQp3urXRtFLMCxnyAPDlWjwB/GGfHquuRZ7HyL1x6xTj/7Q==
-x-ms-office365-filtering-correlation-id: 504504fc-c002-4b1e-d437-08d654284e23
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR2101MB0866;
-x-ms-traffictypediagnostic: CY4PR2101MB0866:
-x-ms-exchange-purlcount: -3
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <CY4PR2101MB0866895E02753F5BAD2CBBB3A0D00@CY4PR2101MB0866.namprd21.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231443)(944501430)(2018427008)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY4PR2101MB0866;BCL:0;PCL:0;RULEID:;SRVR:CY4PR2101MB0866;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(39860400002)(136003)(189003)(199004)(13464003)(2906002)(6436002)(6916009)(8990500004)(74316002)(316002)(6116002)(305945005)(33656002)(229853002)(22452003)(7736002)(93886005)(55016002)(10090500001)(53936002)(14454004)(9686003)(6246003)(86612001)(14444005)(86362001)(97736004)(4326008)(256004)(478600001)(25786009)(11346002)(102836004)(446003)(476003)(71190400001)(71200400001)(186003)(106356001)(5660300001)(105586002)(10290500003)(8936002)(76176011)(81156014)(8676002)(53546011)(486006)(6506007)(68736007)(54906003)(46003)(99286004)(81166006)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2101MB0866;H:CY4PR2101MB0804.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: h9RPAdoMcXmXvSTF+VY4SWeejXvNnesmtdG6J5PQ6QUCTspPvY6mNZSDhwfE8PLzgYM6PCAGEJTZgNUQtHRlIdYDOs2/gZRulcO+TjXB71hEJu6vrUJpMj/Jeo2OJZjeKFqoI9eBC7TPpUzpBm1aSgJQJCKspkBG2skmsdEg+Z5YJ5kE2Xq61Yxc+AC8HhJ9DF0AG6fyMq7s5dPgvxEhHWR4/q5ZJjuFAwo1Kqk6BmR8UqPZ41miYc/2DDg43YxLmWahvKZwqy0H/1WKdsH4oeZ7gS3B1MNrnuC08Pw+V74fnfKzdZrCffXAlkAeIS2ZKMuWOFoD5I3nJwFvfSbI41IOv42Suy2u8TOw2FB4vs0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Nov 2018 11:26:34 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:44128 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbeK0Q0e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 11:26:34 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gRVwV-0002jP-FP; Mon, 26 Nov 2018 22:29:51 -0700
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gRVwU-0007Ur-BN; Mon, 26 Nov 2018 22:29:51 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Radoslaw Burny <rburny@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jsperbeck@google.com
+References: <20181126172607.125782-1-rburny@google.com>
+        <20181127011627.GI4922@garbanzo.do-not-panic.com>
+Date:   Mon, 26 Nov 2018 23:29:40 -0600
+In-Reply-To: <20181127011627.GI4922@garbanzo.do-not-panic.com> (Luis
+        Chamberlain's message of "Mon, 26 Nov 2018 17:16:27 -0800")
+Message-ID: <87k1kzjdff.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 504504fc-c002-4b1e-d437-08d654284e23
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 05:22:20.4198
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2101MB0866
+Content-Type: text/plain
+X-XM-SPF: eid=1gRVwU-0007Ur-BN;;;mid=<87k1kzjdff.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19IASFW85NUONM8LRzzsmb7u45xUMr1yWk=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] fs: Make /proc/sys inodes be owned by global root.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
+> On Mon, Nov 26, 2018 at 06:26:07PM +0100, Radoslaw Burny wrote:
+>> Due to a recent commit (d151ddc00498 - fs: Update i_[ug]id_(read|write)
+>> to translate relative to s_user_ns),
+>
+> Recent? This is commit is from 2014 and present upstream since v4.8.
+> And the commit ID you mentioned in your commit log seems to be
+> incorrect. I get:
+>
+> 81754357770ebd900801231e7bc8d151ddc00498a fs: Update i_[ug]id_(read|write) to translate relative to s_user_ns
+>
+>> inodes under /proc/sys have -1
+>> written to their i_uid/i_gid members if a containing userns does not
+>> have entries for root in the uid/gid_map.
+>
+> Thanks for the description of how to run into the issue described but
+> is there also a practical use case today where this is happening? I ask
+> as it would be good to know the severity of the issue in the real world
+> today.
 
-> -----Original Message-----
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: Monday, November 26, 2018 11:35 AM
-> To: KY Srinivasan <kys@microsoft.com>
-> Cc: linux-kernel@vger.kernel.org; devel@linuxdriverproject.org;
-> olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com; Stephen
-> Hemminger <sthemmin@microsoft.com>; Michael Kelley
-> <mikelley@microsoft.com>; vkuznets <vkuznets@redhat.com>; Haiyang
-> Zhang <haiyangz@microsoft.com>; stable@vger.kernel.org
-> Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: offload the handling of chan=
-nels
-> to two workqueues
->=20
-> On Mon, Nov 26, 2018 at 02:29:57AM +0000, kys@linuxonhyperv.com wrote:
-> > From: Dexuan Cui <decui@microsoft.com>
-> >
-> > vmbus_process_offer() mustn't call channel->sc_creation_callback()
-> > directly for sub-channels, because sc_creation_callback() ->
-> > vmbus_open() may never get the host's response to the
-> > OPEN_CHANNEL message (the host may rescind a channel at any time,
-> > e.g. in the case of hot removing a NIC), and vmbus_onoffer_rescind()
-> > may not wake up the vmbus_open() as it's blocked due to a non-zero
-> > vmbus_connection.offer_in_progress, and finally we have a deadlock.
-> >
-> > The above is also true for primary channels, if the related device
-> > drivers use sync probing mode by default.
-> >
-> > And, usually the handling of primary channels and sub-channels can
-> > depend on each other, so we should offload them to different
-> > workqueues to avoid possible deadlock, e.g. in sync-probing mode,
-> > NIC1's netvsc_subchan_work() can race with NIC2's netvsc_probe() ->
-> > rtnl_lock(), and causes deadlock: the former gets the rtnl_lock
-> > and waits for all the sub-channels to appear, but the latter
-> > can't get the rtnl_lock and this blocks the handling of sub-channels.
-> >
-> > The patch can fix the multiple-NIC deadlock described above for
-> > v3.x kernels (e.g. RHEL 7.x) which don't support async-probing
-> > of devices, and v4.4, v4.9, v4.14 and v4.18 which support async-probing
-> > but don't enable async-probing for Hyper-V drivers (yet).
-> >
-> > The patch can also fix the hang issue in sub-channel's handling describ=
-ed
-> > above for all versions of kernels, including v4.19 and v4.20-rc3.
-> >
-> > So the patch should be applied to all the existing kernels.
-> >
-> > Fixes: 8195b1396ec8 ("hv_netvsc: fix deadlock on hotplug")
-> > Cc: stable@vger.kernel.org
-> > Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> > Cc: K. Y. Srinivasan <kys@microsoft.com>
-> > Cc: Haiyang Zhang <haiyangz@microsoft.com>
-> > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> > ---
-> >  drivers/hv/channel_mgmt.c | 188 +++++++++++++++++++++++++---------
-> ----
-> >  drivers/hv/connection.c   |  24 ++++-
-> >  drivers/hv/hyperv_vmbus.h |   7 ++
-> >  include/linux/hyperv.h    |   7 ++
-> >  4 files changed, 161 insertions(+), 65 deletions(-)
->=20
-> As Sasha pointed out, this patch does not even apply :(
+People trying to run containers without a root user in the container.
+It atypical but something doable.  
 
-Sorry about that. These patches applied cleanly on my tree (misc-next).
-This series is to be applied on top of
-patch 0001-Drivers-hv-vmbus-Remove-the-useless-API-vmbus_get_ou.patch
-While the patch 0001-Drivers-hv-vmbus-Remove-the-useless-API-vmbus_get_ou.p=
-atch
-has been committed to the char-misc-testing branch, it is not in the misc-l=
-inus  branch and
-that is the reason for this problem.
+>> This wouldn't normally matter, because these values are not used for
+>> access checks. However, a later change (0bd23d09b874 - Don't modify
+>> inodes with a uid or gid unknown to the vfs) changes the kernel to
+>> prevent opens for write if the i_uid/i_gid field in the inode is -1,
+>> even if the /proc/sys-specific access checks would otherwise pass.
+>> 
+>> This causes a problem: in a userns without root mapping, even the
+>> namespace creator cannot write to e.g. /proc/sys/kernel/shmmax.
+>> This change fixes the problem by overriding i_uid/i_gid back to
+>> GLOBAL_ROOT_UID/GID.
+>
+> We really need Seth and Eric to provide guidance here as they were
+> the ones devising this long ago, but to me your solution seems backward.
+> Why allow any namespace to muck with /proc/sys/ seettings?
 
-Regards,
+There are many per namespace sysctls.  Most of them are in the
+networking stack.
 
-K. Y
->=20
+> Let's recall that this case was a corner case, and writeback was the
+> biggest concern, and for that it was decided that you'd simply not get
+> write access, and so its read only. Its not clear to me if things like
+> proc were considered. For the regular file case the situation can be
+> addressed with  chown, however we can't chown proc files.
+>
+>> Tested: Used a repro program that creates a user namespace without any
+>> mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
+>> Before the change, it shows uid/gid of 65534,
+>
+> I thought you said it would be uid/gid -1 without your patch?
 
+It is INVALID_UID/INVALID_GID.  It is an over simplifcation to call
+them -1.   As they are not a valid value and are never mapped in any
+user namespace they are displayed as the overflow_uid or overflow_gid
+which is 65534 by default.
+
+>> with the change it's 0.
+>
+> Note that a good way to also test issues is with the lib/test_sysctl.c
+> module and the tools/testing/selftests/sysctl/sysctl.sh script, so if
+> you can device a test there, once we decide what to do that would be
+> appreciated.
+
+We spoke about this at LPC.  And this is the correct behavioral change.
+
+The problem is there is a default value for i_uid and i_gid that is
+correct in the general case.  That default value is not corect for
+sysctl, because proc is weird.  As the sysctl permission check in
+test_perm are all against GLOBAL_ROOT_UID and GLOBAL_ROOT_GID we did not
+notice that i_uid and i_gid were being set wrong.
+
+So all this patch does is fix the default values i_uid and i_gid.
+
+The commit comment seems worth cleaning up.  But for the
+content of the code.
+
+I expect when I have a few moments I will pick this change up.
+
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+Eric
+
+>> Signed-off-by: Radoslaw Burny <rburny@google.com>
+>> ---
+>>  fs/proc/proc_sysctl.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>> 
+>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>> index c5cbbdff3c3d..67379a389658 100644
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+>>  
+>>  	if (root->set_ownership)
+>>  		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
+>> +	else {
+>> +		inode->i_uid = GLOBAL_ROOT_UID;
+>> +		inode->i_gid = GLOBAL_ROOT_GID;
+>> +	}
+>>  
+>>  out:
+>>  	return inode;
+>> -- 
+>> 2.20.0.rc0.387.gc7a69e6b6c-goog
+>> 
