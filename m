@@ -2,124 +2,161 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07618C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA161C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81E62086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81E62086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 750EA2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:50:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750EA2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeK0OpV (ORCPT
+        id S1728241AbeK0OrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 09:45:21 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:57970 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727571AbeK0OpV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 09:45:21 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 395AC72CC59;
-        Tue, 27 Nov 2018 06:48:50 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 1DBBE7CD0D7; Tue, 27 Nov 2018 06:48:49 +0300 (MSK)
-Date:   Tue, 27 Nov 2018 06:48:49 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH RESEND v3 1/3] ptrace: pass type of a syscall-stop in
- ptrace_message
-Message-ID: <20181127034849.GA4319@altlinux.org>
-References: <20181125022150.46258a20@akathisia>
- <20181125022227.55e8caf7@akathisia>
- <20181126145643.GD1660@redhat.com>
- <20181127035357.0b381323@akathisia>
+        Tue, 27 Nov 2018 09:47:25 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47320 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727571AbeK0OrZ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 09:47:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 19:50:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,285,1539673200"; 
+   d="scan'208";a="253068544"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
+  by orsmga004.jf.intel.com with ESMTP; 26 Nov 2018 19:50:52 -0800
+Subject: Re: [PATCH 2/2] perf report: Display average IPC and IPC coverage per
+ symbol
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1543225254-5858-1-git-send-email-yao.jin@linux.intel.com>
+ <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
+ <20181126095203.GA18780@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <fa7b94e5-f1a9-f232-97d6-1d1aeb5f4b9b@linux.intel.com>
+Date:   Tue, 27 Nov 2018 11:50:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
-Content-Disposition: inline
-In-Reply-To: <20181127035357.0b381323@akathisia>
+In-Reply-To: <20181126095203.GA18780@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 27, 2018 at 03:53:57AM +0100, Elvira Khabirova wrote:
-> On Mon, 26 Nov 2018 15:56:43 +0100, Oleg Nesterov wrote:
-> > On 11/25, Elvira Khabirova wrote:
-> > >
-> > > + * These values are stored in task->ptrace_message by tracehook_repo=
-rt_syscall_*
-> > > + * to describe current syscall-stop.
-> > > + *
-> > > + * Values for these constants are chosen so that they do not appear
-> > > + * in task->ptrace_message by other means.
-> > > + */
-> > > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
-> > > +#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U =20
-> >=20
-> > Stupid question, why not
-> >=20
-> > 	#define PTRACE_EVENT_SYSCALL_ENTRY	8
-> > 	#define PTRACE_EVENT_SYSCALL_EXIT	9
-> >=20
-> > right after other PTRACE_EVENT_* constants?
->=20
-> I thought about adding new events for syscall {entry,exit}.
-> For tracers, using new events means setting new options and checking
-> for new values after waitpid(). They will also have to switch from using
-> PTRACE_SYSCALL to PTRACE_CONT.
-> Right now (with this version of the patch) tracers can use
-> PTRACE_GETEVENTMSG without doing any additional configuration.
-> More importantly, adding these events would require much more complex
-> modifications of kernel code than this patch does.
+On 11/26/2018 5:52 PM, Jiri Olsa wrote:
+> On Mon, Nov 26, 2018 at 05:40:54PM +0800, Jin Yao wrote:
+>> Support displaying the average IPC and IPC coverage for symbol
+>> in perf report TUI browser. We create a new sort-key 'ipc' for
+>> that.
+>>
+>> For example,
+>>
+>> $ perf record -g -b ...
+>> $ perf report -s symbol,ipc or
+>>    perf report -s ipc
+>>
+>> Overhead  Symbol                           IPC   [IPC Coverage]
+>>    39.60%  [.] __random                     2.30  [ 54.8%]
+>>    18.02%  [.] main                         0.43  [ 54.3%]
+>>    14.21%  [.] compute_flag                 2.29  [100.0%]
+>>    14.16%  [.] rand                         0.36  [100.0%]
+>>     7.06%  [.] __random_r                   2.57  [ 70.5%]
+>>     6.85%  [.] rand@plt                     0.00  [  0.0%]
+>>
+>> Note that, stdio mode doesn't support this feature.
+> 
+> the patch below allowed this for stdio
+> please merge it in, and feel free to change it as you see fit
+> 
+> jirka
+> 
+> 
 
-To be honest, we don't see any way of introducing PTRACE_EVENT_* support
-in PTRACE_GET_SYSCALL_INFO without adding new fields to struct task_struct.
+Thanks so much! I have merged following code in v2.
 
-> The only benefit I see from adding these events instead of letting
-> syscall-stops put a value in ptrace_message is an ability to subscribe
-> to syscall entries, but not to exits, and vice-versa, and I don't think
-> it is worth it.
+Thanks
+Jin Yao
 
-
---=20
-ldv
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb/L6hAAoJEAVFT+BVnCUIsHYQAO5hqEnDe+1q5233vA7ju+mg
-Om/u/FfJyARRNmujrPZU8B8RR3nYUj7SdVgdq/AJd22eyL8Vs9RRTw8QjxNDrVGF
-zCnPL+z63PokV+YK6ohoE/MdR0SWgfQZnP70tY9CdqQIYQh3OxQ0cu9e8ERe9KYS
-R+AifBUolcTQgftUatw085lCG6hv1+wlas2hAT4JE+Tgq/2wTPPsFChPhYn8SJ30
-S+KGWaVVDzLy5l3OJfgoWcV2DYaHEZmtSW18Xv2qeSZHlLzoAPWCUEiUfOhEFieE
-s+Fmn/ZTvwmnYyxsrPYKFb0YfSTNPrvpdTecyOok/kqo0l4uMqxJ/7RzByIbHWSv
-qBSBACnLozEUHupAK8XcrbGtoBjNl4Ae6uQ+1NRafUy1R06Bx7nqRhfMqkrrKae/
-5sQTL0P5lCNXiEGP3Hu/SJoUJS5ZgKth8J7XcAuM/YeBC9SMTuNU9ShWgXWetqXT
-55GYy/VKV4tM0a8sDFSGYN3As6Uuuj1ztGmElmkycCb1+/GiViarrc/ReTuxDT3H
-JOocZNybF2kdg0GyuIYFf5/B/Zhn0W/dW2ShFRIoBKC0Anmnz2lY4WbT6ktDweRl
-hSKSSVh5XEmTnJIlKrNHPZOyiBZRy8HPnGq9+VBEj8i7XT2Ee4sNcJ5S71MNzKUs
-hmM8TRMvLedvYoEwHSZ9
-=oNrp
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+> ---
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 9b75e118f609..a6756dc13285 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -85,6 +85,7 @@ struct report {
+>   	int			socket_filter;
+>   	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
+>   	struct branch_type_stat	brtype_stat;
+> +	bool			symbol_ipc;
+>   };
+>   
+>   static int report__config(const char *var, const char *value, void *cb)
+> @@ -129,7 +130,7 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+>   	struct mem_info *mi;
+>   	struct branch_info *bi;
+>   
+> -	if (!ui__has_annotation())
+> +	if (!ui__has_annotation() && !rep->symbol_ipc)
+>   		return 0;
+>   
+>   	hist__account_cycles(sample->branch_stack, al, sample,
+> @@ -174,7 +175,7 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+>   	struct perf_evsel *evsel = iter->evsel;
+>   	int err;
+>   
+> -	if (!ui__has_annotation())
+> +	if (!ui__has_annotation() && !rep->symbol_ipc)
+>   		return 0;
+>   
+>   	hist__account_cycles(sample->branch_stack, al, sample,
+> @@ -954,7 +955,6 @@ int cmd_report(int argc, const char **argv)
+>   	bool has_br_stack = false;
+>   	int branch_mode = -1;
+>   	bool branch_call_mode = false;
+> -	bool symbol_ipc = false;
+>   #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
+>   	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+>   					     CALLCHAIN_REPORT_HELP
+> @@ -1289,7 +1289,7 @@ int cmd_report(int argc, const char **argv)
+>   		strstr(sort_order, "ipc")) {
+>   		if (!strstr(sort_order, "symbol"))
+>   			sort_order = "symbol,ipc";
+> -		symbol_ipc = true;
+> +		report.symbol_ipc = true;
+>   	}
+>   
+>   	if (setup_sorting(session->evlist) < 0) {
+> @@ -1319,7 +1319,7 @@ int cmd_report(int argc, const char **argv)
+>   	 * so don't allocate extra space that won't be used in the stdio
+>   	 * implementation.
+>   	 */
+> -	if (ui__has_annotation()) {
+> +	if (ui__has_annotation() || report.symbol_ipc) {
+>   		ret = symbol__annotation_init();
+>   		if (ret < 0)
+>   			goto error;
+> @@ -1339,9 +1339,6 @@ int cmd_report(int argc, const char **argv)
+>   			symbol_conf.sort_by_name = true;
+>   		}
+>   		annotation_config__init();
+> -	} else if (symbol_ipc) {
+> -		pr_err("Only TUI mode supports sort-key ipc\n");
+> -		goto error;
+>   	}
+>   
+>   	if (symbol__init(&session->header.env) < 0)
+> 
