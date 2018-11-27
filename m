@@ -2,161 +2,110 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585D0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2F8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21367208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21367208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C669B20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:32:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ncllfg59"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C669B20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbeK1B33 convert rfc822-to-8bit (ORCPT
+        id S1727097AbeK1BaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:29:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51310 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726346AbeK1B32 (ORCPT
+        Tue, 27 Nov 2018 20:30:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44502 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbeK1BaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:29:28 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAREU5eL131760
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:31:21 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p15q15j0k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:31:21 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Tue, 27 Nov 2018 14:31:19 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 27 Nov 2018 14:31:16 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAREVFhX62980338
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Nov 2018 14:31:16 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4B1F42042;
-        Tue, 27 Nov 2018 14:31:15 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E0A74203F;
-        Tue, 27 Nov 2018 14:31:15 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.152.212.164])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Nov 2018 14:31:15 +0000 (GMT)
-Date:   Tue, 27 Nov 2018 15:31:14 +0100
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Li Wang <liwang@redhat.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Janosch Frank <frankja@linux.vnet.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 3/3] s390/mm: fix mis-accounting of pgtable_bytes
-In-Reply-To: <20181127073411.GA3625@osiris>
-References: <1539621759-5967-1-git-send-email-schwidefsky@de.ibm.com>
-        <1539621759-5967-4-git-send-email-schwidefsky@de.ibm.com>
-        <CAEemH2cHNFsiDqPF32K6TNn-XoXCRT0wP4ccAeah4bKHt=FKFA@mail.gmail.com>
-        <20181031073149.55ddc085@mschwideX1>
-        <20181031100944.GA3546@osiris>
-        <20181031103623.6ykzsjdenrpeth7x@kshutemo-mobl1>
-        <20181127073411.GA3625@osiris>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Tue, 27 Nov 2018 20:30:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id u6so8453121pfh.11;
+        Tue, 27 Nov 2018 06:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pyjXImLbd97+OASihcDoAxMhsoRxlpcwVXY0gHzFcK0=;
+        b=Ncllfg59VKkuzHWT2pej3vh+54K9XWPCtRrvkVLlTOLojsPftoIoIvCWLSq+CudVnt
+         c+B6DQLfbW3lt12gigN4GPx3Ylf6+sSPGabdMxCZ5GD60SvCtC0KVrSe8ThxvxI0teYY
+         CLjhDKqreM4K5NPP1Kl0A4BesXGG4JQrKYFjocfkMfyL+NNyH/Vd/CDpuuW6rNDTD5nD
+         AtsC+0UI6/qbIFnrKU1Ua0kOXNAEkwPuAO33KCVwqVrsdtcxyLwFHzq6eFZJliHQ0BW0
+         I9m9+Z3Wz2Fley8TQ+fOLDq7b1CVJXSvmEpAMsj7GvTdExgvQIeZViuXE0iFqqYLmfeP
+         FBxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:from:to:cc:references:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pyjXImLbd97+OASihcDoAxMhsoRxlpcwVXY0gHzFcK0=;
+        b=innToY2k91dRbWkpbqK/YyTUD4bvJJL0s51HQj/SMteDO96q4x3XaP630vJXSVbsFg
+         ufbM0TJHzJJluEgR29ZSWUQDc/eXGHPTZK+7kRrlodW1Lxrnmqrxbf8MmA21EjF2OTvV
+         VYS7Q1ctVGLZNq0aWHNK1FwDSdVg4RZAVWFBuZ5KlwwHwnHNnqfa0J/IVmd+Vv7DC96p
+         p6Z5XfKu5Oc+X7YAe4G2KoUxFNWCL8Y3Dl5rBu/+ZvsRBcXS4aTAGASJW8id3OaBq4N+
+         +0FWqeTU2roPXmccnpgo7BRIq+p1tJi9/Gd+MR3zy9jFUC4NUOJ9XynguCdykABVqWT0
+         ywog==
+X-Gm-Message-State: AA+aEWaMjOzojbMBtl+4wNFpb9fkIhE+PMJlyat6+RByYvGVC3W0/sGs
+        9AsDJ5gibOlYvb5GdcSdww8kNfIY
+X-Google-Smtp-Source: AFSGD/WAMMl/FXyHhKG22wppu6utxWKqhLQzjYKpA2n2mMhsEcM758vxhPFV+mwciIJJU8GyXrIFRA==
+X-Received: by 2002:a62:3811:: with SMTP id f17mr5074970pfa.206.1543329131254;
+        Tue, 27 Nov 2018 06:32:11 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b9sm4500659pfi.118.2018.11.27.06.32.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 06:32:09 -0800 (PST)
+Subject: ext4 file system corruption with v4.19.3 / v4.19.4
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+Message-ID: <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+Date:   Tue, 27 Nov 2018 06:32:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18112714-0028-0000-0000-000003223E25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112714-0029-0000-0000-000023DE470F
-Message-Id: <20181127153114.0a6193d3@mschwideX1>
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811270125
+In-Reply-To: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 08:34:12 +0100
-Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
+[trying again, this time with correct kernel.org address]
 
-> On Wed, Oct 31, 2018 at 01:36:23PM +0300, Kirill A. Shutemov wrote:
-> > On Wed, Oct 31, 2018 at 11:09:44AM +0100, Heiko Carstens wrote:  
-> > > On Wed, Oct 31, 2018 at 07:31:49AM +0100, Martin Schwidefsky wrote:  
-> > > > Thanks for testing. Unfortunately Heiko reported another issue yesterday
-> > > > with the patch applied. This time the other way around:
-> > > > 
-> > > > BUG: non-zero pgtables_bytes on freeing mm: -16384
-> > > > 
-> > > > I am trying to understand how this can happen. For now I would like to
-> > > > keep the patch on hold in case they need another change.  
-> > > 
-> > > FWIW, Kirill: is there a reason why this "BUG:" output is done with
-> > > pr_alert() and not with VM_BUG_ON() or one of the WARN*() variants?
-> > > 
-> > > That would to get more information with DEBUG_VM and / or
-> > > panic_on_warn=1 set. At least for automated testing it would be nice
-> > > to have such triggers.  
-> > 
-> > Stack trace is not helpful there. It will always show the exit path which
-> > is useless.  
-> 
-> So, even with the updated version of these patches I can flood dmesg
-> and the console with
-> 
-> BUG: non-zero pgtables_bytes on freeing mm: 16384
-> 
-> messages with this complex reproducer on s390:
-> 
-> echo "void main(void) {}" | gcc -m31 -xc -o compat - && ./compat
+Hi,
 
-Forgot a hunk in the fix.. I claim not enough coffee :-/
-Patch is queued and I will send a please pull by the end of the week.
---
-From c0499f2aa853939984ecaf0d393012486e56c7ce Mon Sep 17 00:00:00 2001
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Tue, 27 Nov 2018 14:04:04 +0100
-Subject: [PATCH] s390/mm: correct pgtable_bytes on page table downgrade
+I have seen the following and similar problems several times,
+with both v4.19.3 and v4.19.4:
 
-The downgrade of a page table from 3 levels to 2 levels for a 31-bit compat
-process removes a pmd table which has to be counted against pgtable_bytes.
+Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602889: comm git: bad extra_isize 33661 (inode size 256)
+Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on device sdb1-8.
+Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1): Remounting filesystem read-only
+Nov 23 04:32:25 mars kernel: [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602881: comm rm: bad extra_isize 33685 (inode size 256)
+...
 
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
----
- arch/s390/mm/pgalloc.c | 1 +
- 1 file changed, 1 insertion(+)
+Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device sda1): ext4_lookup:1578: inode #238034131: comm updatedb.mlocat: deleted inode referenced: 238160407
+Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on device sda1-8.
+Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1): Remounting filesystem read-only
+...
 
-diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
-index 814f26520aa2..6791562779ee 100644
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -131,6 +131,7 @@ void crst_table_downgrade(struct mm_struct *mm)
- 	}
- 
- 	pgd = mm->pgd;
-+	mm_dec_nr_pmds(mm);
- 	mm->pgd = (pgd_t *) (pgd_val(*pgd) & _REGION_ENTRY_ORIGIN);
- 	mm->context.asce_limit = _REGION3_SIZE;
- 	mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
--- 
-2.16.4
--- 
-blue skies,
-   Martin.
+Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device sda1): ext4_lookup:1578: inode #52038457: comm nfsd: deleted inode referenced: 52043796
+Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on device sda1-8.
+Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1): Remounting filesystem read-only
 
-"Reality continues to ruin my life." - Calvin.
 
+The same systems running v4.18.6 never experienced a problem.
+
+Has anyone else seen similar problems ? Is there anything I can do
+to help tracking down the problem ?
+
+Thanks,
+Guenter
