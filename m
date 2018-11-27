@@ -3,48 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32C7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD859C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24EA208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:09:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24EA208E4
+	by mail.kernel.org (Postfix) with ESMTP id A132A208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A132A208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeK0XHi (ORCPT
+        id S1731199AbeK0XIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:07:38 -0500
-Received: from sauhun.de ([88.99.104.3]:58322 "EHLO pokefinder.org"
+        Tue, 27 Nov 2018 18:08:18 -0500
+Received: from sauhun.de ([88.99.104.3]:58330 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727972AbeK0XHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:07:37 -0500
+        id S1727972AbeK0XIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:08:18 -0500
 Received: from localhost (p54B33299.dip0.t-ipconnect.de [84.179.50.153])
-        by pokefinder.org (Postfix) with ESMTPSA id 41B212E354A;
-        Tue, 27 Nov 2018 13:09:54 +0100 (CET)
-Date:   Tue, 27 Nov 2018 13:09:53 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id B8F3F2E3542;
+        Tue, 27 Nov 2018 13:10:34 +0100 (CET)
+Date:   Tue, 27 Nov 2018 13:10:34 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-i2c@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] i2c: i2c-stm32f7: SYSCFG Fast Mode Plus support
- for I2C STM32F7
-Message-ID: <20181127120953.GJ1107@kunai>
-References: <1542625412-4277-1-git-send-email-pierre-yves.mordret@st.com>
- <1542625412-4277-3-git-send-email-pierre-yves.mordret@st.com>
+Subject: Re: [PATCH v2] i2c: i2c-stm32f7: add PM Runtime support
+Message-ID: <20181127121034.GK1107@kunai>
+References: <1542625464-4704-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Xssso5lpTBgMxDfe"
+        protocol="application/pgp-signature"; boundary="mGCtrYeZ202LI9ZG"
 Content-Disposition: inline
-In-Reply-To: <1542625412-4277-3-git-send-email-pierre-yves.mordret@st.com>
+In-Reply-To: <1542625464-4704-1-git-send-email-pierre-yves.mordret@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,38 +48,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Xssso5lpTBgMxDfe
+--mGCtrYeZ202LI9ZG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 19, 2018 at 12:03:32PM +0100, Pierre-Yves MORDRET wrote:
-> Read SYSCFG bindings to set Fast Mode Plus bits if Fast Mode Plus
-> speed is selected.
+On Mon, Nov 19, 2018 at 12:04:24PM +0100, Pierre-Yves MORDRET wrote:
+> Use PM Runtime API to enable/disable clock
 >=20
 > Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 
-Applied to for-next, thanks!
+Looks good but doesn't apply on top of your other patches for me. Can
+you rebase?
 
 
---Xssso5lpTBgMxDfe
+--mGCtrYeZ202LI9ZG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv9NBEACgkQFA3kzBSg
-KbZiOw/+Jee9JoP7bjjU4zVwuoVhGhxaFggTJpIU8FDFAcWBj5Ulbkp/5WyzTyHM
-g45KbRjdB+/Swh0qqFCbzCWscjnbbCoYo039Tu+UlrihPlh7jlmFwkW8Vh1kqZfq
-BSKTYtZxXckJI4/qMNu0kEeFpZ9fCaWOeoMraEXj3ZF7GDY927KE1nXh+V8sjye4
-Exb/+ko+BkoyADqOF9d9Yoe5ye8uX911HLT5D0IED1kG0ubIp9s8wIg6/J7ZKesN
-2VT80R6w8PzKzxKBjqGfsV96jis3jRGGvJCFqv5WT8kEMKy0mkROI0ztbBBNwpUs
-gpng4WboKMKvrPNXTpj+6OyVYFu2GrAeMfX8JA9vhrvJiom/UK+6g5lB5GoVUWL5
-v6J5rBVBrLboD4rOAR7h2YIXFWx2JIyZR42Csi6vOS8igGJiaiKbu9xndqudks+w
-mcVG5d3QU4jWUxWH2WLSS2Q7Zf3mO8jZGTlS+hozdJnWeAun4Sa/T7T6Z6h5SFMt
-zLGWBgz9DF4SousaVfg4jxefcg+o6wAocYw5NJEf9ltxmu+nOd2cfwi6GcbEp2JE
-Ks7E01rFZ1fIHQFbjGtDDyLwO38XrYBt+PK9IE+4Qt70Oxn80CF/WJGztqjCeSlM
-2XDvGYx9k1Gtz+Kcmltqk434KhcwZAVWyiWQMaAshTqQELyQVr8=
-=e3Kh
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv9NDoACgkQFA3kzBSg
+KbbXKg/+PaHPpeBMe3trc612jj8iCfNxTvGRTOiNYdEvePpC7TW4mvtbe9OpJew6
+5qU4zxwNxu3dJPjn+jHQ88X1X0zn+xq6j2W8pJSpQgb0wf+yC5v9AkTMT5pWDnOy
+aCtmhkf/YxxHD0NceJ+02T0qrtA3ufby+W/HdPoME2BXuxgwyFdLD1+gG3OyHmAQ
+MADTBUYfOWd/0Z8yV6mlyB+0i8+ZOV3sU5A7kq/cNg7PCYguMwM7ypZxWgwcfrwL
+1BnRjF+4QZDAOkkj3iR/Tt1u89jt7FyqVDInSTn3HjeNyuvZCuQlKs9RoVrmjDJw
+f24WfeBKoApIQgHzjCDmVp6hFHBDTlB+cVQjxsT+lStZWmXDUYHpX8+VsPh52UGE
+s4LeVM4zHOEb9CLx4mvxn8ToxgS3/uIeWs7QZq4xQj7Rw21Qx4hsNYIHmdgoOnVF
+ebUAB4YaOzdHciUq8h6Im38flwem7NlGB8HUJ1Wy+9JfiB60CA4BVGo6Cag1bwS6
+3OGamIWz/czFMovY0uSlGAupvzV1kvIY5AHcdOXgCgsT3JurKDBE6Bo1q6eJceLp
+U/cdTQF3D0eFMYeE6U6zG2NHUNupy0EVtWbGpI0PnbnKY2AYTugIZCKWIiOaITP/
+7ORQhlSjTAFZW+4zqWdK+oEycWQGDQEoswY/vMPpx04VPFsjBJ0=
+=H8Ez
 -----END PGP SIGNATURE-----
 
---Xssso5lpTBgMxDfe--
+--mGCtrYeZ202LI9ZG--
