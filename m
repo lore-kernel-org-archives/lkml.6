@@ -2,100 +2,130 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5E1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65679C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D313208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D313208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 340F6208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:50:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340F6208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731433AbeK1Ds4 (ORCPT
+        id S1731446AbeK1DtE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:48:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34674 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726492AbeK1Ds4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:48:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A7013AF57;
-        Tue, 27 Nov 2018 16:50:24 +0000 (UTC)
-Subject: Re: [RFC PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
-To:     William Kucharski <william.kucharski@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-4-mhocko@kernel.org>
- <0ACDD94B-75AD-4DD0-B2E3-32C0EDFBAA5E@oracle.com>
- <20181127131707.GW12455@dhcp22.suse.cz>
- <04647F77-FE93-4A8E-90C1-4245709B88A5@oracle.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <283f38d9-1142-60b6-0b84-7129b7f9781e@suse.cz>
-Date:   Tue, 27 Nov 2018 17:50:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 27 Nov 2018 22:49:04 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:56154 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726492AbeK1DtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:49:03 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14674739-1500050 
+        for multiple; Tue, 27 Nov 2018 16:49:41 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <04647F77-FE93-4A8E-90C1-4245709B88A5@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20181127074918.GT4266@phenom.ffwll.local>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-4-daniel.vetter@ffwll.ch>
+ <20181127074918.GT4266@phenom.ffwll.local>
+Message-ID: <154333737908.11623.17864230889834398136@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [Intel-gfx] [PATCH 3/3] mm,
+ notifier: Add a lockdep map for invalidate_range_start
+Date:   Tue, 27 Nov 2018 16:49:39 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 3:50 PM, William Kucharski wrote:
+Quoting Daniel Vetter (2018-11-27 07:49:18)
+> On Thu, Nov 22, 2018 at 05:51:06PM +0100, Daniel Vetter wrote:
+> > This is a similar idea to the fs_reclaim fake lockdep lock. It's
+> > fairly easy to provoke a specific notifier to be run on a specific
+> > range: Just prep it, and then munmap() it.
+> > 
+> > A bit harder, but still doable, is to provoke the mmu notifiers for
+> > all the various callchains that might lead to them. But both at the
+> > same time is really hard to reliable hit, especially when you want to
+> > exercise paths like direct reclaim or compaction, where it's not
+> > easy to control what exactly will be unmapped.
+> > 
+> > By introducing a lockdep map to tie them all together we allow lockdep
+> > to see a lot more dependencies, without having to actually hit them
+> > in a single challchain while testing.
+> > 
+> > Aside: Since I typed this to test i915 mmu notifiers I've only rolled
+> > this out for the invaliate_range_start callback. If there's
+> > interest, we should probably roll this out to all of them. But my
+> > undestanding of core mm is seriously lacking, and I'm not clear on
+> > whether we need a lockdep map for each callback, or whether some can
+> > be shared.
+> > 
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: "Christian König" <christian.koenig@amd.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 > 
-> I was just double checking that this was meant to be more of a check done
-> before code elsewhere performs additional checks and does the actual THP
-> mapping, not an all-encompassing go/no go check for THP mapping.
+> Any comments on this one here? This is really the main ingredient for
+> catching deadlocks in mmu notifier callbacks. The other two patches are
+> more the icing on the cake.
+> 
+> Thanks, Daniel
+> 
+> > ---
+> >  include/linux/mmu_notifier.h | 7 +++++++
+> >  mm/mmu_notifier.c            | 7 +++++++
+> >  2 files changed, 14 insertions(+)
+> > 
+> > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+> > index 9893a6432adf..a39ba218dbbe 100644
+> > --- a/include/linux/mmu_notifier.h
+> > +++ b/include/linux/mmu_notifier.h
+> > @@ -12,6 +12,10 @@ struct mmu_notifier_ops;
+> >  
+> >  #ifdef CONFIG_MMU_NOTIFIER
+> >  
+> > +#ifdef CONFIG_LOCKDEP
+> > +extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
+> > +#endif
+> > +
+> >  /*
+> >   * The mmu notifier_mm structure is allocated and installed in
+> >   * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
+> > @@ -267,8 +271,11 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
+> >  static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+> >                                 unsigned long start, unsigned long end)
+> >  {
+> > +     mutex_acquire(&__mmu_notifier_invalidate_range_start_map, 0, 0,
+> > +                   _RET_IP_);
 
-Yes, the code doing the actual mapping is still checking also alignment etc.
+Would not lock_acquire_shared() be more appropriate, i.e. treat this as
+a rwsem_acquire_read()?
+-Chris
