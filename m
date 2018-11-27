@@ -2,112 +2,115 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407A2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 04:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD361C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 04:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A782146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 04:06:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A782146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
+	by mail.kernel.org (Postfix) with ESMTP id 926DB2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 04:18:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 926DB2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeK0PDW (ORCPT
+        id S1728444AbeK0POo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 10:03:22 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:58174 "EHLO
-        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeK0PDW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 10:03:22 -0500
-X-Virus-Scanned: amavisd-new at aussec.com
-Received: from sneezy.aussec.com (sneezy.aussec.com [172.16.0.4])
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTP id wAR46YAO023345;
-        Tue, 27 Nov 2018 15:06:39 +1100
-Received: from csm3.csm-office.com.au (csm3.csm-office.com.au
- [172.16.0.11]) by aussec.com (Horde Framework) with HTTP; Tue, 27 Nov 2018
- 15:06:29 +1100
-Message-ID: <20181127150629.10795h1esqtc53ut@aussec.com>
-Date:   Tue, 27 Nov 2018 15:06:29 +1100
-From:   tom burkart <tom@aussec.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, lukas@fridolin.com
-Subject: Re: [PATCH v9 3/4] dt-bindings: pps: pps-gpio PPS ECHO
- implementation
-References: <20181122094602.5156-1-tom@aussec.com>
- <20181122094602.5156-2-tom@aussec.com>
- <20181122094602.5156-3-tom@aussec.com>
- <20181122094602.5156-4-tom@aussec.com>
- <CAL_JsqJ6fM3+pcC3b-eXEex=j_ft6Z=vukhLK9wULfWJqOTN-A@mail.gmail.com>
-In-Reply-To:  <CAL_JsqJ6fM3+pcC3b-eXEex=j_ft6Z=vukhLK9wULfWJqOTN-A@mail.gmail.com>
+        Tue, 27 Nov 2018 10:14:44 -0500
+Received: from mga09.intel.com ([134.134.136.24]:5655 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727633AbeK0POo (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 10:14:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 20:18:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,285,1539673200"; 
+   d="scan'208";a="284574144"
+Received: from skl.sh.intel.com ([10.239.161.125])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Nov 2018 20:18:09 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v2 0/3] perf report/annotate: Support average IPC and IPC coverage for function
+Date:   Tue, 27 Nov 2018 20:09:45 +0800
+Message-Id: <1543320588-14863-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8;
- DelSp="Yes";
- format="flowed"
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
-User-Agent: Internet Messaging Program (IMP) H3 (4.3.9)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Add supporting of displaying the average IPC and IPC coverage
+percentage per function.
 
-Quoting Rob Herring <robh@kernel.org>:
+For example,
 
-> On Thu, Nov 22, 2018 at 3:49 AM Tom Burkart <tom@aussec.com> wrote:
->>
->> This patch implements the device tree changes required for the pps
->> echo functionality for pps-gpio, that sysfs claims is available
->> already.
->>
->> This patch was originally written by Lukas Senger as part of a masters
->> thesis project and modified for inclusion into the linux kernel by Tom
->> Burkart.
->>
->> Signed-off-by: Lukas Senger <lukas@fridolin.com>
->> Signed-off-by: Tom Burkart <tom@aussec.com>
->> ---
->>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt  
->> b/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> index 1155d49c2699..e09f6f2405c5 100644
->> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
->> @@ -7,10 +7,15 @@ Required properties:
->>  - compatible: should be "pps-gpio"
->>  - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
->>
->> +Additional required properties for the PPS ECHO functionality:
->> +- echo-gpios: one PPS ECHO GPIO in the format described by ../gpio/gpio.txt
->> +- echo-active-ms: duration in ms of the active portion of the echo pulse
->> +
->>  Optional properties:
->>  - assert-falling-edge: when present, assert is indicated by a falling edge
->>                         (instead of by a rising edge)
->>  - capture-clear: when present, also capture the PPS clear event
->> +- invert-pps-echo: when present, invert the PPS ECHO pulse
->
-> Why do you need this? Can't you just make the echo gpio GPIO_ACTIVE_LOW?
->
-> BTW, using the flag probably should have been done for
-> 'assert-falling-edge' as well.
+$ perf record -g -b ...
+$ perf report -s symbol,ipc or
+  perf report -s symbol,ipc --stdio
 
-The hardware I use expects a positive-going echo pulse, however, it  
-was really easy to give users the option to have it inverted in case  
-they use different hardware that expects a negative-going edge.
+Overhead  Symbol                           IPC   [IPC Coverage]
+  39.60%  [.] __random                     2.30  [ 54.8%]
+  18.02%  [.] main                         0.43  [ 54.3%]
+  14.21%  [.] compute_flag                 2.29  [100.0%]
+  14.16%  [.] rand                         0.36  [100.0%]
+   7.06%  [.] __random_r                   2.57  [ 70.5%]
+   6.85%  [.] rand@plt                     0.00  [  0.0%]
+  ...
 
-I may well be needing this option myself if I find that the GPS I am  
-using produces better results for negative-going edges than  
-positive-going edges.
+$ perf annotate --stdio2
 
-Tom
+Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
+
+                        Disassembly of section .text:
+
+                        000000000003aac0 <random@@GLIBC_2.2.5>:
+  8.32  3.28              sub    $0x18,%rsp
+        3.28              mov    $0x1,%esi
+        3.28              xor    %eax,%eax
+        3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
+ 11.57  3.28     1      ↓ je     20
+                          lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+                        ↓ jne    29
+                        ↓ jmp    43
+ 11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+ ...
+
+v2:
+---
+  1. Merge in Jiri's patch to support stdio mode
+
+  2. Add a new patch "perf annotate: Create a annotate2 flag
+     in struct symbol" which records if the symbol has been
+     annotated yet.
+
+  3. Minor update such as adding { } for multiline code in 'if'
+     condition.
+
+Jin Yao (3):
+  perf annotate: Compute average IPC and IPC coverage per symbol
+  perf annotate: Create a annotate2 flag in struct symbol
+  perf report: Display average IPC and IPC coverage per symbol
+
+ tools/perf/Documentation/perf-report.txt |  1 +
+ tools/perf/builtin-report.c              | 14 ++++++++---
+ tools/perf/util/annotate.c               | 42 +++++++++++++++++++++++++++++---
+ tools/perf/util/annotate.h               |  5 ++++
+ tools/perf/util/hist.h                   |  1 +
+ tools/perf/util/sort.c                   | 42 ++++++++++++++++++++++++++++++++
+ tools/perf/util/sort.h                   |  1 +
+ tools/perf/util/symbol.h                 |  1 +
+ 8 files changed, 101 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
 
