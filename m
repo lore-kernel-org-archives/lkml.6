@@ -2,96 +2,110 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D583C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563A3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E2FB20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2FB20851
+	by mail.kernel.org (Postfix) with ESMTP id 1DB8420851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:35:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="oo/IImU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB8420851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbeK1JeC (ORCPT
+        id S1727097AbeK1JeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:34:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:55125 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeK1JeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:34:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 14:34:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
-   d="scan'208";a="112538857"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.56])
-  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2018 14:34:39 -0800
-Subject: Re: [PATCH] selftests: add TPM 2.0 tests
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <0929dfe2-83aa-ff39-e37e-35bc499aaa0a@intel.com>
-Date:   Tue, 27 Nov 2018 14:34:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 28 Nov 2018 04:34:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38419 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbeK1JeV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 04:34:21 -0500
+Received: by mail-ot1-f67.google.com with SMTP id e12so17429264otl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zDb8IRomtYSFYvdALaPQaOUCHgFitoGW+sYJ7rxvUvY=;
+        b=oo/IImU5U8oawTROP8EtzxQko85lFJioG5iunSSiO9vO2Whi4VYSQd/du/09Z7sqs2
+         uySCINuO+MuO4Am7+uUvUiXPWVpksBtYq2acTbkZIghOJkeyNksVdvxHxF/Xu1UPjptY
+         7JOnyocSDviYocW/7MHVKHd3TLHsPd8PcW64FZ7yv3jhJ6KAcpKfcg8lRhumt6MkP12d
+         QbSUFy3kFSpy7xed3jQNtad4D/4G6dSzxeBcfRvpUnga9UL5WbBwkNy/WjBbn9emGBkD
+         yujGRrvho7ThUdCa24qKRRc0UWBtwnFeASmnCEtPaACfdbWnLE1bMk83e4SdzZPwVIG6
+         7Mgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zDb8IRomtYSFYvdALaPQaOUCHgFitoGW+sYJ7rxvUvY=;
+        b=UzEDzZmuQaliefyBSOQDHl8mmR2T3N6jpaRibO9aWVDsxJDOkyvVouuYRSyuiBEx97
+         eOpHsUEPtMD6oqMlKNQk+Zh/lP71Z0NGB4bA6HpR8NM3F/FPXll0J5m1Bp8ej3XJgUEC
+         omZh94LQSAmmoZGltRIO0urTkpl57l9THQde0R2V+bnWJn8XUNvgnwZK4CBglIRaNMcZ
+         VrJ6MLRQYpJeiAd8ENpfwhRqu0pq1Qm13Ze8P7jGfNDP3CCkwJTyxudhEN4qeVVTZC+K
+         HRfPxj1zJDJur3qTfwvfhDpYjgXL9lQ+mpyFBRmqG53YzYTLFKJMhIX26S+REd9uR529
+         Drqg==
+X-Gm-Message-State: AA+aEWZu4SQADgW5p0hgL4CZVUlCTmhdUrdriayqAhcuhg0yy/+H7TLI
+        lyornpqGVieqIj2NDIvCRAv5TUuxVntLfbkTZmQhFw==
+X-Google-Smtp-Source: AFSGD/VLRK+MrzkCAY0mW+Pe+iEy8qSSRHJeL+TQba6vProSGgnQAV7Gt/C5+rP8j7WCztyaZcLTr4BlWQLF/p6MnWg=
+X-Received: by 2002:a9d:f07:: with SMTP id 7mr18433017ott.353.1543358097406;
+ Tue, 27 Nov 2018 14:34:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+ <154170044652.12967.17419321472770956712.stgit@ahduyck-desk1.jf.intel.com>
+ <CAPcyv4jmTbHZbs2KHhH2_S6=mxxkwdiJCDL6widexMzePhNFBg@mail.gmail.com>
+ <2031cf4705d76dd4d0f722a600a6a106cce2ba41.camel@linux.intel.com>
+ <CAPcyv4gWwsYOeXVNDoDy4v=SU6bRyBG1fgSu84y64jGApaJ91g@mail.gmail.com>
+ <1543350780.185366.81.camel@acm.org> <CAPcyv4hya0ASfVue6GH3ZXKJOzytQXDqtEWxvrEdCTcb545tYg@mail.gmail.com>
+ <1543353746.185366.90.camel@acm.org>
+In-Reply-To: <1543353746.185366.90.camel@acm.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 27 Nov 2018 14:34:46 -0800
+Message-ID: <CAPcyv4jdqm5O11A4ieiLwhBYVAOGbWE7t_Orrdau3WMvLQAqKw@mail.gmail.com>
+Subject: Re: [driver-core PATCH v6 9/9] libnvdimm: Schedule device
+ registration on node local to the device
+To:     bvanassche@acm.org
+Cc:     alexander.h.duyck@linux.intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 2:10 PM, Jarkko Sakkinen wrote:
-> Added the tests that I've been using for testing TPM 2.0 functionality
-> for long time but have out-of-tree so far residing in
-> 
-> https://github.com/jsakkine-intel/tpm2-scripts
-> 
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> Tadeusz: does not include your test. Better that you send them after
-> this has been accepted to get proper SOB info.
+On Tue, Nov 27, 2018 at 1:22 PM Bart Van Assche <bvanassche@acm.org> wrote:
+>
+> On Tue, 2018-11-27 at 12:50 -0800, Dan Williams wrote:
+> > Thanks Bart, so tying this back to Alex's patches, does the ordering
+> > problem that Alex's patches solve impact the SCSI case? I'm looking
+> > for something like "SCSI depends on asynchronous probing and without
+> > 'driver core: Establish clear order of operations for deferred probe
+> > and remove' probing is often needlessly serialized". I.e. does it
+> > suffer from the same platform problem that libnvdimm ran into where
+> > it's local async probing implementation was hindered by the driver
+> > core?
+>
+> (+Martin)
+>
+> Hi Dan,
+>
+> Patch 6/9 reduces the time needed to scan SCSI LUNs significantly. The only
+> way to realize that speedup is by enabling more concurrency. That's why I
+> think that patch 6/9 is a significant driver core improvement.
 
-Sure I can follow up after this is merged.
-Thanks,
--- 
-Tadeusz
+Perfect, Alex, with that added to the 6/9 changelog and moving to
+device_private for the async state tracking you can add my
+Reviewed-by.
