@@ -1,118 +1,140 @@
 Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27331C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1269C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB0D2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC972086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="t/aCuOw3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB0D2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntfgGhmJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC972086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeK0NHp (ORCPT
+        id S1728174AbeK0NJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:07:45 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41899 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbeK0NHp (ORCPT
+        Tue, 27 Nov 2018 08:09:47 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40163 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeK0NJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:07:45 -0500
-Received: by mail-oi1-f194.google.com with SMTP id j21so17893416oii.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:11:31 -0800 (PST)
+        Tue, 27 Nov 2018 08:09:47 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i12so7548601pfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0AwtV56ql5JD04OQ+vZM5/s6pW7yTnPk+MazFuTHCfg=;
-        b=t/aCuOw3rmFLXYEJauHfygwqlGi7Q1CpVTROktXT3r5ekChnQYWwzeDkMIjy8LIRGe
-         qCTDLo3vyeUckWYUMPFBez+W9srqiAKdhyUPeviqdRBv1Xj6YRn+5n6UwjeSDG8lHn2m
-         9ilQYeY3xhwgDgcforb6/RTGrC/E/yvsYN7o2nHpuzH1FPZ6XWNRPnZxOuXqwHR667Kt
-         YqxJx1xMxNvvgiVRWmJMyHaoDi6zzo649vpJcJ7wjOM9SIKyw05V5ZnBMXs6h455BIho
-         tvzgQC1ndygmIi7FMOfBCFdCM3uBmo2ORkw8UG5wAfwyzYt+XcZdbJ+7iW5TPSzOP6l0
-         CbKA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C2Pt8xP9+WD8GP/Q4gOyb9TqFHid8wy+SDEEJjPCdmc=;
+        b=ntfgGhmJKQUqN/eOB3XK7rnFNWIbajNvWa7/tTeuwnZ6Y9fGAYLoanXg5P1zaur7Ch
+         +zOM3RlbRRWG4vhjfiuRI7kyUAGd+uxVkM9zxRRiiUdaORvEarGQG8hkxRYdtYoAqllt
+         BAHxM6ITDcoEFc1NNy1DLDuyaTKWdhpIXMU4kPGvdeTlBM1bUhenGQSe2XOqXLxcdbWf
+         ECngFcozsxttRYSAEtJjg5rtUqmaq6MbDXesvdIpOJaFRdgRSmAM0lYjq75/TlsLZyN3
+         DCw7/liULzPiww8MYQoxmNM08j+XzUrGHdY1Ns7IIKJfaDTstpnUqXd/Zcd4NvtsHDYG
+         c3Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0AwtV56ql5JD04OQ+vZM5/s6pW7yTnPk+MazFuTHCfg=;
-        b=oD4vZWe351Z7CHrdlh5b1OUuqfBJbZfvzb3341yvet/NwtZD6Y4grLiGV0QNSLDL/U
-         99tWEIdu7/OcvbdslNAwxxohgWna3gnXC6sOrS+Ybr16sDKSWHmCQpeXPFlNwhHoUlps
-         cd0/KhAMcHQOA3uNGg5AxjOZqllj/V3NSaSJRmmDY76Kefdnb8L6vaiYMcWT4XJmTiTd
-         Gn7i24HTSAYU0jwA8mWGQ4vn9NPibGU4UYSrvTvLh5d8vCJNISpv3NKd0IVpZ8O7jiNh
-         YyMnZqInarQAmW1rFzzsJzNWject+PSiVbK5OPTcIFn0Fp2s11Iud37pGYt187TLPSn8
-         ODXg==
-X-Gm-Message-State: AA+aEWZPWavzcZAYrEH+Ui/tfLeBQY1tBirWNNhYE++BPmgtFW/57I4S
-        wCBjbr7I6EpWAmqjlbK4SVr1XaaQvXSbTnV4B1SgAyIKZEA=
-X-Google-Smtp-Source: AFSGD/W4DsyH3qq8NsQbbWqMGAdk3Nu5zGXUP33pBjov7DzaIufW5UenpGvtBKoA5T8g973+NTqRJLk48ENVMIGMPV4=
-X-Received: by 2002:aca:5205:: with SMTP id g5mr1164218oib.149.1543284691070;
- Mon, 26 Nov 2018 18:11:31 -0800 (PST)
-MIME-Version: 1.0
-References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
- <154170042103.12967.5841784115552956171.stgit@ahduyck-desk1.jf.intel.com>
-In-Reply-To: <154170042103.12967.5841784115552956171.stgit@ahduyck-desk1.jf.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 18:11:19 -0800
-Message-ID: <CAPcyv4ibARHP1Gji2cZQ704BeiKL26Bh13G58eyB+PjQJSD58w@mail.gmail.com>
-Subject: Re: [driver-core PATCH v6 4/9] driver core: Move async_synchronize_full
- call
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
+        h=x-gm-message-state:sender:date:from:to:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C2Pt8xP9+WD8GP/Q4gOyb9TqFHid8wy+SDEEJjPCdmc=;
+        b=YvxpvPpg6NBv41aeqW0izB6/Mb4+ykfe+OU4eszuzOxh/at9CsCsCOpON6dFEz2zE9
+         vLZBhWQj7oIzWX+3aiiJCungIyXxIhkljwfCv46pP78TmlPNw1XPdFK9vFLlrkWri8zr
+         U0UrUwvDKx7mxeWNlRzVDtUv8ZclfKkIo/lRM5Muqua+u3DkX6iI1AUQYTrGJBLqzIlm
+         FI14sKraI4e+iRK6jYOANwRsc18drxm5ZHso9bUfT4tr4CWqw/r/4JO0Yrex0yP0J2eG
+         +JBShZL96ignb3DqlGfHMUG8BFu4E0QWaRJjyz6Qv3NLpdzYiaolF9FliQohrnLTStCT
+         ydhw==
+X-Gm-Message-State: AA+aEWZmIDEN7o1yZdlWPhswnlvd5MqUCdxMhMMZ4dKhbzStWYHC6OVD
+        rBOu6I7TiBr6blbYj5V4TSOanyfJ4Tk=
+X-Google-Smtp-Source: AFSGD/V6rg+hStr4skPlPI4irZpVpA1XKCQg42PGYVVU8cPoBoiO1rdoNS+NJoqvBh/INi2D3DfY7Q==
+X-Received: by 2002:a63:2141:: with SMTP id s1mr27597802pgm.148.1543284812357;
+        Mon, 26 Nov 2018 18:13:32 -0800 (PST)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id z62sm2980204pfi.4.2018.11.26.18.13.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 18:13:31 -0800 (PST)
+Date:   Tue, 27 Nov 2018 11:13:27 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v2 5/7] zram: support idle/huge page writeback
+Message-ID: <20181127021327.GD237537@google.com>
+References: <20181126082813.81977-1-minchan@kernel.org>
+ <20181126082813.81977-6-minchan@kernel.org>
+ <20181126094737.sfudpeoigra2vir7@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126094737.sfudpeoigra2vir7@gmail.com>
+User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 10:07 AM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> Move the async_synchronize_full call out of __device_release_driver and
-> into driver_detach.
->
-> The idea behind this is that the async_synchronize_full call will only
-> guarantee that any existing async operations are flushed. This doesn't do
-> anything to guarantee that a hotplug event that may occur while we are
-> doing the release of the driver will not be asynchronously scheduled.
->
-> By moving this into the driver_detach path we can avoid potential deadlocks
-> as we aren't holding the device lock at this point and we should not have
-> the driver we want to flush loaded so the flush will take care of any
-> asynchronous events the driver we are detaching might have scheduled.
->
+On Sun, Nov 25, 2018 at 11:47:37PM -1000, Joey Pabalinas wrote:
+> On Mon, Nov 26, 2018 at 05:28:11PM +0900, Minchan Kim wrote:
+> > +	strlcpy(mode_buf, buf, sizeof(mode_buf));
+> > +	/* ignore trailing newline */
+> > +	sz = strlen(mode_buf);
+> 
+> One possible idea would be to use strscpy() instead and directly assign
+> the return value to sz, avoiding an extra strlen() call (though you would
+> have to check if `sz == -E2BIG` and do `sz = sizeof(mode_buf) - 1` in that
+> case).
 
-What problem is this patch solving in practice, because if there were
-drivers issuing async work from probe they would need to be
-responsible for flushing it themselves. That said it seems broken that
-the async probing infrastructure takes the device_lock inside
-async_schedule and then holds the lock when calling
-async_syncrhonize_full. Is it just luck that this hasn't caused
-deadlocks in practice?
+Thanks for the suggstion.
+If I limit destination buffer smaller, I couldn't meet -E2BIG?
 
-Given that the device_lock is hidden from lockdep I think it would be
-helpful to have a custom lock_map_acquire() setup, similar to the
-workqueue core, to try to keep the locking rules enforced /
-documented.
+> 
+> > +	if (!strcmp(mode_buf, "idle"))
+> > +		mode = IDLE_WRITEBACK;
+> > +	if (!strcmp(mode_buf, "huge"))
+> > +		mode = HUGE_WRITEBACK;
+> 
+> Maybe using `else if (!strcmp(mode_buf, "huge"))` would be slightly
+> better here, avoiding a second strcmp() if mode_buf has already
+> matched "idle".
 
-The only documentation I can find for async-probe deadlock avoidance
-is the comment block in do_init_module() for async_probe_requested.
+I considered "huge|idle" as an option. Anyway, in that case, mode should
+"mode |= ". At this moment, yes, lets use "else if" since I don't have
+strong opinion to support "idle|huge".
 
-Stepping back a bit, does this patch have anything to do with the
-performance improvement, or is it a separate "by the way I also found
-this" kind of patch?
+> 
+> > +		if ((mode & IDLE_WRITEBACK &&
+> > +			  !zram_test_flag(zram, index, ZRAM_IDLE)) &&
+> > +		    (mode & HUGE_WRITEBACK &&
+> > +			  !zram_test_flag(zram, index, ZRAM_HUGE)))
+> > +			goto next;
+> 
+> Wouldn't writing this as `mode & (IDLE_WRITEBACK | HUGE_WRITEBACK)`
+> be a bit easier to read as well as slightly more compact?
+> 
+> > +	ret = len;
+> > +	 __free_page(page);
+> > +release_init_lock:
+> > +	up_read(&zram->init_lock);
+> > +	return ret;
+> 
+> Hm, I noticed that this function either returns an error or just the passed
+> in len on success, and I'm left wondering if there might be other useful
+> information which could be passed back to the caller instead. I can't
+> immediately think of any such information, though, so it's possible I'm
+> just daydreaming :)
+
+It is write syscall semantic of sysfs so not sure it's doable to pass
+other value to user.
+
+> 
+> -- 
+> Cheers,
+> Joey Pabalinas
+
+
