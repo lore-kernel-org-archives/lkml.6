@@ -2,257 +2,270 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BD7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7588BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A2CD21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:12:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A2CD21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 30B1F208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:17:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLMGhSOI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B1F208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeK0LI3 convert rfc822-to-8bit (ORCPT
+        id S1727707AbeK0LNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:08:29 -0500
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:1652 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeK0LI3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:08:29 -0500
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 27 Nov 2018 06:13:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbeK0LNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:13:10 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id B9A59708;
-        Tue, 27 Nov 2018 00:12:32 +0000 (UTC)
-Received: from G4W10204.americas.hpqcorp.net (g4w10204.houston.hpecorp.net [16.207.82.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id 8F7B5E3;
-        Tue, 27 Nov 2018 00:12:31 +0000 (UTC)
-Received: from G4W10204.americas.hpqcorp.net (2002:10cf:5210::10cf:5210) by
- G4W10204.americas.hpqcorp.net (2002:10cf:5210::10cf:5210) with Microsoft SMTP
- Server (TLS) id 15.0.1367.3; Tue, 27 Nov 2018 00:12:31 +0000
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (15.241.52.13) by
- G4W10204.americas.hpqcorp.net (16.207.82.16) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Tue, 27 Nov 2018 00:12:31 +0000
-Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.145) by
- AT5PR8401MB0788.NAMPRD84.PROD.OUTLOOK.COM (10.169.6.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.18; Tue, 27 Nov 2018 00:12:28 +0000
-Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::ac27:c64c:76db:414a]) by AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::ac27:c64c:76db:414a%7]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 00:12:28 +0000
-From:   "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-To:     'Daniel Jordan' <daniel.m.jordan@oracle.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "aaron.lu@intel.com" <aaron.lu@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "jgg@mellanox.com" <jgg@mellanox.com>,
-        "jwadams@google.com" <jwadams@google.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "prasad.singamsetty@oracle.com" <prasad.singamsetty@oracle.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>
-Subject: RE: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
- initialization within each node
-Thread-Topic: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
- initialization within each node
-Thread-Index: AQHUdSj7cDxnfAHYlE+9G8mzBVcDKqVIX+eQgAQGcwCAAFfMgIAKmdYAgAt4pHA=
-Date:   Tue, 27 Nov 2018 00:12:28 +0000
-Message-ID: <AT5PR8401MB1169AA00F542BA2E3204FC24ABD00@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-12-daniel.m.jordan@oracle.com>
- <AT5PR8401MB1169798EBEF1EE5EBA3ABFFFABC70@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <20181112165412.vizeiv6oimsuxkbk@ca-dmjordan1.us.oracle.com>
- <AT5PR8401MB1169B05F889BCF8EF113E053ABC10@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <20181119160137.72zha7dbsr3adkfs@ca-dmjordan1.us.oracle.com>
-In-Reply-To: <20181119160137.72zha7dbsr3adkfs@ca-dmjordan1.us.oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=elliott@hpe.com; 
-x-originating-ip: [15.211.195.7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0788;6:exXJpX+YK2QBsemD59ECcYGXwJWMsbQHBWwaoYU5bKOqIuN0znMT+3MZALs/pdGGHVEStxmzMfx/n5xh3ZjagdJ34KVHMNpnvOWBqfLIGwwLqa/qQ3B6m+CBTAouh0+bg+gIM4NjrWn0DlexNYCyPb6bQg5SrXM0O2678y2wJtBZ/OFkM/UdkGyeg8qPvORwPlGtk+pzEZfEsNIrPl5DEcLEUsc37s+2qT0jW8GvLR5yd9t2eng79vyLwvoeKU8pLTHJtG6Ny/sHnnAx+5ST8MtTC6WQTT/QA+BIDpWfu7JsLiA3zrETfBnK1mtlqbF8ZCW69SGHiiCAJjMBEGjDBTQGuwvCLvUDPorrvpBATSPZnAWnFnSzDV6Rgq+ZPnMBMwh324G6QpgMwfpyTOZPSjaG0LMlVziDdr6a8i/a8lfmUtyX4VDWG2D7tawBWdkfo4MAZPBvWPSRRkMlqfzKqw==;5:Z4DFhCaHNpTLnKCAINfQQ5d17u4RoQwvQn+dhL6R5mctiHlmJFEWFHVZRUkuSDXlWjr7Ugbf9MuEAbhGPbW2vkcCzaQJIsDfKmdHb3pwTjGlEg7W3b6qvG/tUcFPUQchPkIB0NR0FYve+cxjikAZ3x+DSpOzm76pU3SfG69ff3w=;7:10/fKhgAxC0sFPyFN2xlVA1EKH3S54wYbzpQBJRwJjQiHIIunXTXTRQHkQ2sRamnII7fCwHmPYUdHL05jOKCTVvtM0NjnkXwOCBv1GucfkunsEMrsuxUOUhPWiBLfS8jnUbl2lzTDb7xmgoKySkPdQ==
-x-ms-office365-filtering-correlation-id: 2a8c98d8-972e-471f-5c58-08d653fd046e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0788;
-x-ms-traffictypediagnostic: AT5PR8401MB0788:
-x-microsoft-antispam-prvs: <AT5PR8401MB0788BC2421058FEBCDBD3623ABD00@AT5PR8401MB0788.NAMPRD84.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231443)(944501410)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB0788;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0788;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(51444003)(13464003)(486006)(316002)(93886005)(97736004)(3846002)(6116002)(54906003)(71200400001)(71190400001)(86362001)(106356001)(76176011)(55016002)(186003)(26005)(7696005)(53546011)(102836004)(6506007)(11346002)(446003)(99286004)(256004)(9686003)(66066001)(478600001)(33656002)(68736007)(53936002)(5660300001)(14444005)(39060400002)(6916009)(7416002)(6246003)(8676002)(217873002)(305945005)(7736002)(74316002)(6436002)(4326008)(105586002)(25786009)(14454004)(229853002)(2906002)(476003)(81166006)(8936002)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0788;H:AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9PYvwuE9svhGi3Qjbj0CtEKE8rlA42da18NgEHXot8KPfrUTNiIMnSfR3xrP/2nfWrE1B9/dZVrZW5xWgXYwfctOZNZ70CoiL25qH1qrJBl3WSB418ePBSfjlb18wL559icOh96kvks1METBdRBb5ejXK+yMbF+rY0Cm/LuJDxlpvdSSLF//VxDpN/vGg3/AD4NvIQC0yHp7NbAvCtrR0GnmA5Vur6HFPoqUhPK0yS5hgGXAx2ji3bK+kmg6rSxCeNVpERK85iD/s8+PtU8Gl2BRL24fmjLg4oCNQxYZIgMbSjJBpMLdrz0MfMwEoiIKumXA5nCCO3E81RToWcSYHsuVpp3gfM+pSboLVzU3NCU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FB1D2082F;
+        Tue, 27 Nov 2018 00:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543277833;
+        bh=qUjGnhia/ScEkmW99Y36vDUldkas3w8K/KmuAwZl3+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SLMGhSOIQs8mylj9sKRKnB1giXbjVanFj4DpCbdGRlv3y23gdhh+O0zq59I+9MlXs
+         oBR1q93+6q6VOdhq838fQj7if88s+MKzQX1x7VMAYBLeASLxcpdw/ZQ9Lxx1MpUpld
+         MdvF3qtIZ+hd47za2f59/f5ddDLcx0zY9dMfgolw=
+Date:   Mon, 26 Nov 2018 18:17:11 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] PCI / ACPI: Identify untrusted PCI devices
+Message-ID: <20181127001711.GC212532@google.com>
+References: <20181126111526.56340-1-mika.westerberg@linux.intel.com>
+ <20181126111526.56340-2-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a8c98d8-972e-471f-5c58-08d653fd046e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 00:12:28.3176
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0788
-X-OriginatorOrg: hpe.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126111526.56340-2-mika.westerberg@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mika,
 
+On Mon, Nov 26, 2018 at 02:15:23PM +0300, Mika Westerberg wrote:
+> Recent systems with Thunderbolt ports may support IOMMU natively.
 
-> -----Original Message-----
-> From: Daniel Jordan [mailto:daniel.m.jordan@oracle.com]
-> Sent: Monday, November 19, 2018 10:02 AM
-> On Mon, Nov 12, 2018 at 10:15:46PM +0000, Elliott, Robert (Persistent Memory) wrote:
-> >
-> > > -----Original Message-----
-> > > From: Daniel Jordan <daniel.m.jordan@oracle.com>
-> > > Sent: Monday, November 12, 2018 11:54 AM
-> > >
-> > > On Sat, Nov 10, 2018 at 03:48:14AM +0000, Elliott, Robert (Persistent
-> > > Memory) wrote:
-> > > > > -----Original Message-----
-> > > > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > > > > owner@vger.kernel.org> On Behalf Of Daniel Jordan
-> > > > > Sent: Monday, November 05, 2018 10:56 AM
-> > > > > Subject: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
-> > > > > initialization within each node
-> > > > >
-> > ...
-> > > > > In testing, a reasonable value turned out to be about a quarter of the
-> > > > > CPUs on the node.
-> > > > ...
-> > > > > +	/*
-> > > > > +	 * We'd like to know the memory bandwidth of the chip to
-> > > > >         calculate the
-> > > > > +	 * most efficient number of threads to start, but we can't.
-> > > > > +	 * In testing, a good value for a variety of systems was a
-> > > > >         quarter of the CPUs on the node.
-> > > > > +	 */
-> > > > > +	nr_node_cpus = DIV_ROUND_UP(cpumask_weight(cpumask), 4);
-> > > >
-> > > >
-> > > > You might want to base that calculation on and limit the threads to
-> > > > physical cores, not hyperthreaded cores.
-> > >
-> > > Why?  Hyperthreads can be beneficial when waiting on memory.  That said, I
-> > > don't have data that shows that in this case.
-> >
-> > I think that's only if there are some register-based calculations to do while
-> > waiting. If both threads are just doing memory accesses, they'll both stall, and
-> > there doesn't seem to be any benefit in having two contexts generate the IOs
-> > rather than one (at least on the systems I've used). I think it takes longer
-> > to switch contexts than to just turnaround the next IO.
+This sentence doesn't make sense to me.  There's no logical connection
+between having an IOMMU and having a Thunderbolt port.
+
+> This means that the platform utilizes IOMMU to prevent DMA attacks
+> over externally exposed PCIe root ports (typically Thunderbolt
+> ports)
+
+Nor this one.  The platform only uses the IOMMU to prevent DMA attacks
+if the OS chooses to do that.
+
+> The system BIOS marks these PCIe root ports as being externally facing
+> ports by implementing following ACPI _DSD [1] under the root port in
+> question:
+
+There's no standard that requires this, so the best we can say is that
+a system BIOS *may* mark externally facing ports with this mechanism.
+
+I think it would make sense to say something like:
+
+  A malicious PCI device may use DMA to attack the system.  An
+  external Thunderbolt port is a convenient point to attach such a
+  device.  The OS may use an IOMMU to defend against DMA attacks.
+
+  Some BIOSes mark externally facing Root Ports with the this ACPI
+  _DSD:
+
+    ...
+
+  If we find such a Root Port, mark it and all its children as
+  "is_untrusted".  The rest of the OS may use this to prevent use of
+  the device unless we have an IOMMU to prevent malicious DMA [I don't
+  know your actual policy yet].
+
+>   Name (_DSD, Package () {
+>       ToUUID ("efcc06cc-73ac-4bc3-bff0-76143807c389"),
+>       Package () {
+>           Package () {"ExternalFacingPort", 1},
+> 	  Package () {"UID", 0 }
+>       }
+>   })
 > 
-> (Sorry for the delay, Plumbers is over now...)
+> To make it possible for IOMMU code to identify these devices, we look up
+> for this property and mark all children devices (including the root port
+> itself) with a new flag (->is_untrusted). This flag is meant to be used
+> with all PCIe devices (not just Thunderbolt) that cannot be trusted in
+> the same level than integrated devices and may need to put behind full
+> IOMMU protection.
 > 
-> I guess we're both just waving our hands without data.  I've only got x86, so
-> using a quarter of the CPUs rules out HT on my end.  Do you have a system that
-> you can test this on, where using a quarter of the CPUs will involve HT?
+> [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
+> 
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  drivers/acpi/property.c |  3 +++
+>  drivers/pci/pci-acpi.c  | 18 ++++++++++++++++++
+>  drivers/pci/probe.c     | 22 ++++++++++++++++++++++
+>  include/linux/pci.h     |  8 ++++++++
+>  4 files changed, 51 insertions(+)
+> 
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 8c7c4583b52d..4bdad32f62c8 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -31,6 +31,9 @@ static const guid_t prp_guids[] = {
+>  	/* Hotplug in D3 GUID: 6211e2c0-58a3-4af3-90e1-927a4e0c55a4 */
+>  	GUID_INIT(0x6211e2c0, 0x58a3, 0x4af3,
+>  		  0x90, 0xe1, 0x92, 0x7a, 0x4e, 0x0c, 0x55, 0xa4),
+> +	/* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
+> +	GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
+> +		  0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
+>  };
+>  
+>  static const guid_t ads_guid =
+> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> index 921db6f80340..84233cf46fc2 100644
+> --- a/drivers/pci/pci-acpi.c
+> +++ b/drivers/pci/pci-acpi.c
+> @@ -789,6 +789,23 @@ static void pci_acpi_optimize_delay(struct pci_dev *pdev,
+>  	ACPI_FREE(obj);
+>  }
+>  
+> +static void pci_acpi_set_untrusted(struct pci_dev *dev)
+> +{
+> +	u8 val;
+> +
+> +	if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
+> +		return;
+> +	if (device_property_read_u8(&dev->dev, "ExternalFacingPort", &val))
+> +		return;
+> +
+> +	/*
+> +	 * These root ports expose PCIe (including DMA) outside of the
+> +	 * system so make sure we treat them and everything behind as
+> +	 * untrusted.
+> +	 */
+> +	dev->is_untrusted = val == 1;
 
-I ran a short test with:
-* HPE ProLiant DL360 Gen9 system
-* Intel Xeon E5-2699 CPU with 18 physical cores (0-17) and 
-  18 hyperthreaded cores (36-53)
-* DDR4 NVDIMM-Ns (which run at regular DRAM DIMM speeds)
-* fio workload generator
-* cores on one CPU socket talking to a pmem device on the same CPU
-* large (1 MiB) random writes (to minimize the threads getting CPU cache
-  hits from each other)
+Simpler to parse:
 
-Results:
-* 31.7 GB/s    four threads, four physical cores (0,1,2,3)
-* 22.2 GB/s    four threads, two physical cores (0,1,36,37)
-* 21.4 GB/s    two threads, two physical cores (0,1)
-* 12.1 GB/s    two threads, one physical core (0,36)
-* 11.2 GB/s    one thread, one physical core (0)
+  if (val)
+    dev->is_untrusted = 1;
 
-So, I think it's important that the initialization threads run on
-separate physical cores.
+> +}
+> +
+>  static void pci_acpi_setup(struct device *dev)
+>  {
+>  	struct pci_dev *pci_dev = to_pci_dev(dev);
+> @@ -798,6 +815,7 @@ static void pci_acpi_setup(struct device *dev)
+>  		return;
+>  
+>  	pci_acpi_optimize_delay(pci_dev, adev->handle);
+> +	pci_acpi_set_untrusted(pci_dev);
+>  
+>  	pci_acpi_add_pm_notifier(adev, pci_dev);
+>  	if (!adev->wakeup.flags.valid)
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b1c05b5054a0..144623ae2e68 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1378,6 +1378,26 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+>  	}
+>  }
+>  
+> +static void set_pcie_untrusted(struct pci_dev *dev)
+> +{
+> +	struct pci_dev *parent;
+> +
+> +	/*
+> +	 * Walk up the device hierarchy and check for any upstream bridge
+> +	 * that has is_untrusted set to true. In that case treat this one
+> +	 * untrusted as well.
+> +	 */
+> +	parent = pci_upstream_bridge(dev);
+> +	while (parent) {
+> +		if (parent->is_untrusted) {
+> +			dev->is_untrusted = true;
+> +			break;
+> +		}
+> +
+> +		parent = pci_upstream_bridge(parent);
+> +	}
 
-For the number of cores to use, one approach is:
-    memory bandwidth (number of interleaved channels * speed)
-divided by 
-    CPU core max sustained write bandwidth
+In what circumstance is this loop needed?  I expected this would be
+sufficient:
 
-For example, this 2133 MT/s system is roughly:
-    68 GB/s    (4 * 17 GB/s nominal)
-divided by
-    11.2 GB/s  (one core's performance)
-which is 
-    6 cores
+  bridge = pci_upstream_bridge(dev);
+  if (bridge && bridge->is_untrusted)
+    dev->is_untrusted = true;
 
-ACPI HMAT will report that 68 GB/s number.  I'm not sure of
-a good way to discover the 11.2 GB/s number.
+> +}
+> +
+>  /**
+>   * pci_ext_cfg_is_aliased - Is ext config space just an alias of std config?
+>   * @dev: PCI device
+> @@ -1638,6 +1658,8 @@ int pci_setup_device(struct pci_dev *dev)
+>  	/* Need to have dev->cfg_size ready */
+>  	set_pcie_thunderbolt(dev);
+>  
+> +	set_pcie_untrusted(dev);
+> +
+>  	/* "Unknown power state" */
+>  	dev->current_state = PCI_UNKNOWN;
+>  
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 11c71c4ecf75..3fa73cc6cf68 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -396,6 +396,14 @@ struct pci_dev {
+>  	unsigned int	is_hotplug_bridge:1;
+>  	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
+>  	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
+> +	/*
+> +	 * Devices marked being untrusted are the ones that can potentially
+> +	 * execute DMA attacks and similar. They are typically connected
+> +	 * through external ports such as Thunderbolt but not limited to
+> +	 * that. When an IOMMU is enabled they should be getting full
+> +	 * mappings to make sure they cannot access arbitrary memory.
+> +	 */
+> +	unsigned int	is_untrusted:1;
 
+We have a mix of "is_X" and "X", but I think "untrusted" is sufficient
+since "untrusted" is a perfectly good predicate all by itself, i.e.,
 
-fio job file:
-[global]
-direct=1
-ioengine=sync
-norandommap
-randrepeat=0
-bs=1M
-runtime=20
-time_based=1
-group_reporting
-thread
-gtod_reduce=1
-zero_buffers
-cpus_allowed_policy=split
-# pick the desired number of threads
-numjobs=4
-numjobs=2
-numjobs=1
+  if (dev->untrusted)
 
-# CPU0: cores 0-17, hyperthreaded cores 36-53
-[pmem0]
-filename=/dev/pmem0
-# pick the desired cpus_allowed list
-cpus_allowed=0,1,2,3
-cpus_allowed=0,1,36,37
-cpus_allowed=0,36
-cpus_allowed=0,1
-cpus_allowed=0
-rw=randwrite
+reads easily and makes good sense.
 
-Although most CPU time is in movnti instructions (non-temporal stores),
-there is overhead in clearing the page cache and in the pmem block
-driver; those won't be present in your initialization function. 
-perf top shows:
-  82.00%  [kernel]                [k] memcpy_flushcache
-   5.23%  [kernel]                [k] gup_pgd_range
-   3.41%  [kernel]                [k] __blkdev_direct_IO_simple
-   2.38%  [kernel]                [k] pmem_make_request
-   1.46%  [kernel]                [k] write_pmem
-   1.29%  [kernel]                [k] pmem_do_bvec
-
-
----
-Robert Elliott, HPE Persistent Memory
-
-
-
+>  	unsigned int	__aer_firmware_first_valid:1;
+>  	unsigned int	__aer_firmware_first:1;
+>  	unsigned int	broken_intx_masking:1;	/* INTx masking can't be used */
+> -- 
+> 2.19.1
+> 
