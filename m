@@ -2,499 +2,171 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E9AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC2EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 169BA20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 169BA20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 054BF20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:53:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkHfYuET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054BF20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbeK0NrZ (ORCPT
+        id S1728253AbeK0Nt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:47:25 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15163 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727741AbeK0NrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:47:25 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7203A3B80E1EA;
-        Tue, 27 Nov 2018 10:51:00 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 27 Nov
- 2018 10:50:52 +0800
-Date:   Tue, 27 Nov 2018 10:52:30 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Leon Romanovsky <leon@kernel.org>
-CC:     Tim Sell <timothy.sell@unisys.com>, <linux-doc@vger.kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
-        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "David Kershner" <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "Cyrille Pitchen" <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181127025230.GM157308@Turing-Arch-b>
-References: <20181112075807.9291-2-nek.in.cn@gmail.com>
- <20181113002354.GO3695@mtr-leonro.mtl.com>
- <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181120023055.GG157308@Turing-Arch-b>
+        Tue, 27 Nov 2018 08:49:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35982 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727542AbeK0Ntz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 08:49:55 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so2379278plo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bSf78nB3aOegWkw1ToEmGbCEE7T2ioCy3PArTYbX0DY=;
+        b=SkHfYuET+wrX/1ju/+/G1SnWefsZs8m6WrKJTBNZMJZBzel8Wk5kCQoKHhFESViRAw
+         wxjqGwBtZTUv5czbM7xw2++JsrLDiR+S0izZg/WbWYOwyM6it16yAV05WNlCXoErrr3l
+         zoYQjuuVndF96xlc+EaK7VLM5CqnxsRGDxzBxkDFykTRUoauYJZaGOxqb8fIvcPpeOah
+         9QNAJC3+idKAZZzdN3xmo4SRmCqw4nsU4eEAbuzbVERPfRNJS+nlKS/5j+8VVvyII3If
+         LBmOAqhiq4kW159ckCe5UEq5pjIPGzOXvHs5gEYyDg8xwL5MZ3NSrUu2Q+iU4r06DFKD
+         334w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=bSf78nB3aOegWkw1ToEmGbCEE7T2ioCy3PArTYbX0DY=;
+        b=rIOUHI4QZhuymEKLc1TYWleiHzSgRdBryzrOaHe3T7TxiUc2Ac2K63xQzEAQWnoKVN
+         F3Pokspf7K68B3SD+FjNvhdzygx/VtTVyHZHlGlfEAK2INDmf+/CrEEaAIeh4L8czaB2
+         XgZ2bbNx0TBfiSLcEkx+3mVW2Es+zIU4V84j5cbcHuoF9r5TY4ELPGzs67wm7bF7vOMD
+         qG/3E9s6dwlTq1aOGocwxzt594g4vCE06WUtcNoko0hsMbJcQ40P/4AOzB/bqcFBWeIi
+         URBCsRVNMENw8xiUVzXDaWa5c1cBnOd2XpzV8AfpB08iYdx/Kl5O4FmNGCfowjMquAOz
+         jaoA==
+X-Gm-Message-State: AA+aEWZEckUA7PR8vhgc3mEC40N28mAoGNNqLgCmupnba8xm2bPQLtzk
+        5jFB+mlqghLWfih0pad/kLg=
+X-Google-Smtp-Source: AFSGD/VsHZhLpU/kPX9ZfYZZjwDiqTZS6JactuHqdr9indc6UK/mVsLGx5ICfRkfKJt6nVwPZ7Jy3g==
+X-Received: by 2002:a17:902:654a:: with SMTP id d10mr30010206pln.324.1543287215241;
+        Mon, 26 Nov 2018 18:53:35 -0800 (PST)
+Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
+        by smtp.gmail.com with ESMTPSA id z7sm3787393pga.6.2018.11.26.18.53.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 18:53:34 -0800 (PST)
+Date:   Mon, 26 Nov 2018 16:53:32 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v2 5/7] zram: support idle/huge page writeback
+Message-ID: <20181127025332.23wlp4zai6e7mrip@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+References: <20181126082813.81977-1-minchan@kernel.org>
+ <20181126082813.81977-6-minchan@kernel.org>
+ <20181126094737.sfudpeoigra2vir7@gmail.com>
+ <20181127021327.GD237537@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uww5br4pqkvqqwfq"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120023055.GG157308@Turing-Arch-b>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181127021327.GD237537@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:30:55AM +0800, Kenneth Lee wrote:
-> Date: Tue, 20 Nov 2018 10:30:55 +0800
-> From: Kenneth Lee <liguozhu@hisilicon.com>
-> To: Leon Romanovsky <leon@kernel.org>
-> CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
->  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
->  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
->  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
->  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
->  Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
->  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
->  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
->  Hovold <johan@kernel.org>, Jerome Glisse <jglisse@redhat.com>, Cyrille
->  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
->  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
->  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
->  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
->  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
->  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
->  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> User-Agent: Mutt/1.5.21 (2010-09-15)
-> Message-ID: <20181120023055.GG157308@Turing-Arch-b>
-> 
-> On Mon, Nov 19, 2018 at 12:48:01PM +0200, Leon Romanovsky wrote:
-> > Date: Mon, 19 Nov 2018 12:48:01 +0200
-> > From: Leon Romanovsky <leon@kernel.org>
-> > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-> >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> >  list <linux-rdma@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Jason
-> >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
-> >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
-> >  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
-> >  Hovold <johan@kernel.org>, Cyrille Pitchen
-> >  <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Zhou Wang
-> >  <wangzhou1@hisilicon.com>, linux-crypto@vger.kernel.org, Philippe
-> >  Ombredanne <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
-> >  "David S. Miller" <davem@davemloft.net>,
-> >  linux-accelerators@lists.ozlabs.org, Jerome Glisse <jglisse@redhat.com>
-> > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > User-Agent: Mutt/1.10.1 (2018-07-13)
-> > Message-ID: <20181119104801.GF8268@mtr-leonro.mtl.com>
-> > 
-> > On Mon, Nov 19, 2018 at 05:19:10PM +0800, Kenneth Lee wrote:
-> > > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
-> > > > Date: Mon, 19 Nov 2018 17:14:05 +0800
-> > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > To: Leon Romanovsky <leon@kernel.org>
-> > > > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-> > > >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> > > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> > > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> > > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> > > >  list <linux-rdma@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Jason
-> > > >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
-> > > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
-> > > >  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
-> > > >  Hovold <johan@kernel.org>, Cyrille Pitchen
-> > > >  <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Zhou Wang
-> > > >  <wangzhou1@hisilicon.com>, linux-crypto@vger.kernel.org, Philippe
-> > > >  Ombredanne <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
-> > > >  "David S. Miller" <davem@davemloft.net>,
-> > > >  linux-accelerators@lists.ozlabs.org
-> > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > > User-Agent: Mutt/1.5.21 (2010-09-15)
-> > > > Message-ID: <20181119091405.GE157308@Turing-Arch-b>
-> > > >
-> > > > On Thu, Nov 15, 2018 at 04:54:55PM +0200, Leon Romanovsky wrote:
-> > > > > Date: Thu, 15 Nov 2018 16:54:55 +0200
-> > > > > From: Leon Romanovsky <leon@kernel.org>
-> > > > > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > > CC: Kenneth Lee <nek.in.cn@gmail.com>, Tim Sell <timothy.sell@unisys.com>,
-> > > > >  linux-doc@vger.kernel.org, Alexander Shishkin
-> > > > >  <alexander.shishkin@linux.intel.com>, Zaibo Xu <xuzaibo@huawei.com>,
-> > > > >  zhangfei.gao@foxmail.com, linuxarm@huawei.com, haojian.zhuang@linaro.org,
-> > > > >  Christoph Lameter <cl@linux.com>, Hao Fang <fanghao11@huawei.com>, Gavin
-> > > > >  Schenk <g.schenk@eckelmann.de>, RDMA mailing list
-> > > > >  <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, Jason
-> > > > >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
-> > > > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
-> > > > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
-> > > > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
-> > > > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
-> > > > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
-> > > > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> > > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > > > User-Agent: Mutt/1.10.1 (2018-07-13)
-> > > > > Message-ID: <20181115145455.GN3759@mtr-leonro.mtl.com>
-> > > > >
-> > > > > On Thu, Nov 15, 2018 at 04:51:09PM +0800, Kenneth Lee wrote:
-> > > > > > On Wed, Nov 14, 2018 at 06:00:17PM +0200, Leon Romanovsky wrote:
-> > > > > > > Date: Wed, 14 Nov 2018 18:00:17 +0200
-> > > > > > > From: Leon Romanovsky <leon@kernel.org>
-> > > > > > > To: Kenneth Lee <nek.in.cn@gmail.com>
-> > > > > > > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-> > > > > > >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> > > > > > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> > > > > > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> > > > > > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> > > > > > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
-> > > > > > >  Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
-> > > > > > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
-> > > > > > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
-> > > > > > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > > > > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > > > > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > > > > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
-> > > > > > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
-> > > > > > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, Kenneth Lee
-> > > > > > >  <liguozhu@hisilicon.com>, "David S. Miller" <davem@davemloft.net>,
-> > > > > > >  linux-accelerators@lists.ozlabs.org
-> > > > > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > > > > > User-Agent: Mutt/1.10.1 (2018-07-13)
-> > > > > > > Message-ID: <20181114160017.GI3759@mtr-leonro.mtl.com>
-> > > > > > >
-> > > > > > > On Wed, Nov 14, 2018 at 10:58:09AM +0800, Kenneth Lee wrote:
-> > > > > > > >
-> > > > > > > > 在 2018/11/13 上午8:23, Leon Romanovsky 写道:
-> > > > > > > > > On Mon, Nov 12, 2018 at 03:58:02PM +0800, Kenneth Lee wrote:
-> > > > > > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > > > > > > >
-> > > > > > > > > > WarpDrive is a general accelerator framework for the user application to
-> > > > > > > > > > access the hardware without going through the kernel in data path.
-> > > > > > > > > >
-> > > > > > > > > > The kernel component to provide kernel facility to driver for expose the
-> > > > > > > > > > user interface is called uacce. It a short name for
-> > > > > > > > > > "Unified/User-space-access-intended Accelerator Framework".
-> > > > > > > > > >
-> > > > > > > > > > This patch add document to explain how it works.
-> > > > > > > > > + RDMA and netdev folks
-> > > > > > > > >
-> > > > > > > > > Sorry, to be late in the game, I don't see other patches, but from
-> > > > > > > > > the description below it seems like you are reinventing RDMA verbs
-> > > > > > > > > model. I have hard time to see the differences in the proposed
-> > > > > > > > > framework to already implemented in drivers/infiniband/* for the kernel
-> > > > > > > > > space and for the https://github.com/linux-rdma/rdma-core/ for the user
-> > > > > > > > > space parts.
-> > > > > > > >
-> > > > > > > > Thanks Leon,
-> > > > > > > >
-> > > > > > > > Yes, we tried to solve similar problem in RDMA. We also learned a lot from
-> > > > > > > > the exist code of RDMA. But we we have to make a new one because we cannot
-> > > > > > > > register accelerators such as AI operation, encryption or compression to the
-> > > > > > > > RDMA framework:)
-> > > > > > >
-> > > > > > > Assuming that you did everything right and still failed to use RDMA
-> > > > > > > framework, you was supposed to fix it and not to reinvent new exactly
-> > > > > > > same one. It is how we develop kernel, by reusing existing code.
-> > > > > >
-> > > > > > Yes, but we don't force other system such as NIC or GPU into RDMA, do we?
-> > > > >
-> > > > > You don't introduce new NIC or GPU, but proposing another interface to
-> > > > > directly access HW memory and bypass kernel for the data path. This is
-> > > > > whole idea of RDMA and this is why it is already present in the kernel.
-> > > > >
-> > > > > Various hardware devices are supported in our stack allow a ton of crazy
-> > > > > stuff, including GPUs interconnections and NIC functionalities.
-> > > >
-> > > > Yes. We don't want to invent new wheel. That is why we did it behind VFIO in RFC
-> > > > v1 and v2. But finally we were persuaded by Mr. Jerome Glisse that VFIO was not
-> > > > a good place to solve the problem.
-> > 
-> > I saw a couple of his responses, he constantly said to you that you are
-> > reinventing the wheel.
-> > https://lore.kernel.org/lkml/20180904150019.GA4024@redhat.com/
-> > 
-> 
-> No. I think he asked me did not create trouble in VFIO but just use common
-> interface from dma_buf and iommu itself. That is exactly what I am doing.
-> 
-> > > >
-> > > > And currently, as you see, IB is bound with devices doing RDMA. The register
-> > > > function, ib_register_device() hint that it is a netdev (get_netdev() callback), it know
-> > > > about gid, pkey, and Memory Window. IB is not simply a address space management
-> > > > framework. And verbs to IB are not transparent. If we start to add
-> > > > compression/decompression, AI (RNN, CNN stuff) operations, and encryption/decryption
-> > > > to the verbs set. It will become very complexity. Or maybe I misunderstand the
-> > > > IB idea? But I don't see compression hardware is integrated in the mainline
-> > > > Kernel. Could you directly point out which one I can used as a reference?
-> > > >
-> > 
-> > I strongly advise you to read the code, not all drivers are implementing
-> > gids, pkeys and get_netdev() callback.
-> > 
-> > Yes, you are misunderstanding drivers/infiniband subsystem. We have
-> > plenty options to expose APIs to the user space applications, starting
-> > from standard verbs API and ending with private objects which are
-> > understandable by specific device/driver.
-> > 
-> > IB stack provides secure FD to access device, by creating context,
-> > after that you can send direct commands to the FW (see mlx5 DEVX
-> > or hfi1) in sane way.
-> > 
-> > So actually, you will need to register your device, declare your own
-> > set of objects (similar to mlx5 include/uapi/rdma/mlx5_user_ioctl_*.h).
-> > 
-> > In regards to reference of compression hardware, I don't have.
-> > But there is an example of how T10-DIF can be implemented in verbs
-> > layer:
-> > https://www.openfabrics.org/images/2018workshop/presentations/307_TOved_T10-DIFOffload.pdf
-> > Or IPsec crypto:
-> > https://www.spinics.net/lists/linux-rdma/msg48906.html
-> > 
-> 
-> OK. I will spend some time on it first. But according to current discussion,
-> Don't you think I should avoid all these complexities but simply use SVM/SVA on
-> iommu or let the user application use the kernel-allocated VMA and page? It
-> does not create anything new. Just a new user of IOMMU and its SVM/SVA
-> capability.
-> 
 
-Hi, Leon,
+--uww5br4pqkvqqwfq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have done some architecture and code study to the IB solution these days. Now
-I understand why you said WarpDrive was another wheel of IB. At the very
-beginning when I understood the verbs concept, I had the same feeling.  But when
-I considered to merge them together, I finally found that it would be a disaster
-to both of them if we do so.
+On Tue, Nov 27, 2018 at 11:13:27AM +0900, Minchan Kim wrote:
+> On Sun, Nov 25, 2018 at 11:47:37PM -1000, Joey Pabalinas wrote:
+> > On Mon, Nov 26, 2018 at 05:28:11PM +0900, Minchan Kim wrote:
+> > > +	strlcpy(mode_buf, buf, sizeof(mode_buf));
+> > > +	/* ignore trailing newline */
+> > > +	sz =3D strlen(mode_buf);
+> >=20
+> > One possible idea would be to use strscpy() instead and directly assign
+> > the return value to sz, avoiding an extra strlen() call (though you wou=
+ld
+> > have to check if `sz =3D=3D -E2BIG` and do `sz =3D sizeof(mode_buf) - 1=
+` in that
+> > case).
+>=20
+> Thanks for the suggstion.
+> If I limit destination buffer smaller, I couldn't meet -E2BIG?
 
-As my understanding, the idea of IB is to manage share memory among "peers".
-Verbs are to help the peers to communicate to each other with these share
-memory, which is wrapped as MRs. The benefit of IB framework itself is to
-provide the communication channel in most efficiency way. To do so, it let the
-user process send the communicating data to the hardware directly.
+-E2BIG return from strscpy() just means the string was longer than would
+fit in the length passed as the third argument. This means only
+`sizeof(mode_buf) - 1` bytes were copied into the dest, with the last
+byte being the \0 terminator.
 
-While the idea of WD is simply to provide a channel between the process and the
-LOCAL devices and let them share "address space", rather than "memory region".
+You can find the function source in lib/string.c.
 
-We can take the device of WD accelerator as a "peer" in IB. But then most of the
-semantics in verbs will become worthless, e.g. IBV_WR_RDMA_READ/WRITE. As a
-local system, you just need to read or write to it, you don't need to "tell" you
-are writing to it:). The semantics of verbs hint MRs are remote.
+> > > +	ret =3D len;
+> > > +	 __free_page(page);
+> > > +release_init_lock:
+> > > +	up_read(&zram->init_lock);
+> > > +	return ret;
+> >=20
+> > Hm, I noticed that this function either returns an error or just the pa=
+ssed
+> > in len on success, and I'm left wondering if there might be other useful
+> > information which could be passed back to the caller instead. I can't
+> > immediately think of any such information, though, so it's possible I'm
+> > just daydreaming :)
+>=20
+> It is write syscall semantic of sysfs so not sure it's doable to pass
+> other value to user.
 
-We can also invent a new "local dma" semantics to the original MRs  semantic
-space. But it is worthless, because it has already provided.  Further, it bring
-no benefit to the current IB users.
+Well, with the write system call you can have partial writes, in which
+case it would return the (short) number of bytes written. But in this
+function, even if there was some sort of partial write possible, this
+function still only every returns len or error.
 
-In another way, WD get very few benefit by integrating into IB framework
-either. The verb interface provides a standard interface for memory operation.
-But WD only need a pure message channel between the process and the device, it
-dose not intercept between them. The ODP feature will be provided by IOMMU
-framework if Jean's patchset is upstreamed, we don't need to get it from IB.
-Moreover, ODP simply provides the "fault from device" feature. But WD can also be
-benefit from the "share page table" feature, but which does no good to IB.
+Neither of these are that important though, so Ack from me with or
+without these two suggestions.
 
-Please understand I have no any motivation to reinvent anything. As a software
-architect for 10+ years and coder for 20+ years. I fully understand how hard to
-make a module mature. It is not simply the problem of effort. But I also
-understand that what is going to happen if we merge improper requirement to a
-exist module. I don't think it is wise to merge WD into IB. It hurts both.
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-So would you change your previous conclusion?
+--=20
+Cheers,
+Joey Pabalinas
 
-Cheers
--Kenneth
+--uww5br4pqkvqqwfq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > > > >
-> > > > > >
-> > > > > > I assume you would not agree to register a zip accelerator to infiniband? :)
-> > > > >
-> > > > > "infiniband" name in the "drivers/infiniband/" is legacy one and the
-> > > > > current code supports IB, RoCE, iWARP and OmniPath as a transport layers.
-> > > > > For a lone time, we wanted to rename that folder to be "drivers/rdma",
-> > > > > but didn't find enough brave men/women to do it, due to backport mess
-> > > > > for such move.
-> > > > >
-> > > > > The addition of zip accelerator to RDMA is possible and depends on how
-> > > > > you will model such new functionality - new driver, or maybe new ULP.
-> > > > >
-> > > > > >
-> > > > > > Further, I don't think it is wise to break an exist system (RDMA) to fulfill a
-> > > > > > totally new scenario. The better choice is to let them run in parallel for some
-> > > > > > time and try to merge them accordingly.
-> > > > >
-> > > > > Awesome, so please run your code out-of-tree for now and once you are ready
-> > > > > for submission let's try to merge it.
-> > > >
-> > > > Yes, yes. We know trust need time to gain. But the fact is that there is no
-> > > > accelerator user driver can be added to mainline kernel. We should raise the
-> > > > topic time to time. So to help the communication to fix the gap, right?
-> > > >
-> > > > We are also opened to cooperate with IB to do it within the IB framework. But
-> > > > please let me know where to start. I feel it is quite wired to make a
-> > > > ib_register_device for a zip or RSA accelerator.
-> > 
-> > Most of ib_ prefixes in drivers/infinband/ are legacy names. You can
-> > rename them to be rdma_register_device() if it helps.
-> > 
-> > So from implementation point of view, as I wrote above.
-> > Create minimal driver to register, expose MR to user space, add your own
-> > objects and capabilities through our new KABI and implement user space part
-> > in github.com/linux-rdma/rdma-core.
-> 
-> I don't think it is just a name. But anyway, let me spend some time to try the
-> possibility.
-> 
-> > 
-> > > >
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > >
-> > > > > > > > Another problem we tried to address is the way to pin the memory for dma
-> > > > > > > > operation. The RDMA way to pin the memory cannot avoid the page lost due to
-> > > > > > > > copy-on-write operation during the memory is used by the device. This may
-> > > > > > > > not be important to RDMA library. But it is important to accelerator.
-> > > > > > >
-> > > > > > > Such support exists in drivers/infiniband/ from late 2014 and
-> > > > > > > it is called ODP (on demand paging).
-> > > > > >
-> > > > > > I reviewed ODP and I think it is a solution bound to infiniband. It is part of
-> > > > > > MR semantics and required a infiniband specific hook
-> > > > > > (ucontext->invalidate_range()). And the hook requires the device to be able to
-> > > > > > stop using the page for a while for the copying. It is ok for infiniband
-> > > > > > (actually, only mlx5 uses it). I don't think most accelerators can support
-> > > > > > this mode. But WarpDrive works fully on top of IOMMU interface, it has no this
-> > > > > > limitation.
-> > > > >
-> > > > > 1. It has nothing to do with infiniband.
-> > > >
-> > > > But it must be a ib_dev first.
-> > 
-> > It is just a name.
-> > 
-> > > >
-> > > > > 2. MR and uncontext are verbs semantics and needed to ensure that host
-> > > > > memory exposed to user is properly protected from security point of view.
-> > > > > 3. "stop using the page for a while for the copying" - I'm not fully
-> > > > > understand this claim, maybe this article will help you to better
-> > > > > describe : https://lwn.net/Articles/753027/
-> > > >
-> > > > This topic was being discussed in RFCv2. The key problem here is that:
-> > > >
-> > > > The device need to hold the memory for its own calculation, but the CPU/software
-> > > > want to stop it for a while for synchronizing with disk or COW.
-> > > >
-> > > > If the hardware support SVM/SVA (Shared Virtual Memory/Address), it is easy, the
-> > > > device share page table with CPU, the device will raise a page fault when the
-> > > > CPU downgrade the PTE to read-only.
-> > > >
-> > > > If the hardware cannot share page table with the CPU, we then need to have
-> > > > some way to change the device page table. This is what happen in ODP. It
-> > > > invalidates the page table in device upon mmu_notifier call back. But this cannot
-> > > > solve the COW problem: if the user process A share a page P with device, and A
-> > > > forks a new process B, and it continue to write to the page. By COW, the
-> > > > process B will keep the page P, while A will get a new page P'. But you have
-> > > > no way to let the device know it should use P' rather than P.
-> > 
-> > I didn't hear about such issue and we supported fork for a long time.
-> > 
-> > > >
-> > > > This may be OK for RDMA application. Because RDMA is a big thing and we can ask
-> > > > the programmer to avoid the situation. But for a accelerator, I don't think we
-> > > > can ask a programmer to care for this when use a zlib.
-> > > >
-> > > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
-> > > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
-> > > > to write any code for that. Because it has been done by IOMMU framework. If it
-> > > > dose not, you have to use the kernel allocated memory which has the same IOVA as
-> > > > the VA in user space. So we can still maintain a unify address space among the
-> > > > devices and the applicatin.
-> > > >
-> > > > > 4. mlx5 supports ODP not because of being partially IB device,
-> > > > > but because HW performance oriented implementation is not an easy task.
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > >
-> > > > > > > > Hope this can help the understanding.
-> > > > > > >
-> > > > > > > Yes, it helped me a lot.
-> > > > > > > Now, I'm more than before convinced that this whole patchset shouldn't
-> > > > > > > exist in the first place.
-> > > > > >
-> > > > > > Then maybe you can tell me how I can register my accelerator to the user space?
-> > > > >
-> > > > > Write kernel driver and write user space part of it.
-> > > > > https://github.com/linux-rdma/rdma-core/
-> > > > >
-> > > > > I have no doubts that your colleagues who wrote and maintain
-> > > > > drivers/infiniband/hw/hns driver know best how to do it.
-> > > > > They did it very successfully.
-> > > > >
-> > > > > Thanks
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > To be clear, NAK.
-> > > > > > >
-> > > > > > > Thanks
-> > > > > > >
-> > > > > > > >
-> > > > > > > > Cheers
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > Hard NAK from RDMA side.
-> > > > > > > > >
-> > > > > > > > > Thanks
-> > > > > > > > >
-[...]
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv8sasACgkQ2rGdfm9D
+tVKQwxAAl57Z+TFCh/x3f1sz0/UKSIYwTb3uqnyl7jv2FHK+ZVPeGwggSK2yeAFY
+uRIizMH23LKGMTeMSeJ1mE8F+GUvy0HeizzGR475phJH3qPgvzXk3qj3m1UK3aBS
+3uEZogQcg5vjKsbICEFhb30vvhpPplM/YIFvzzzW2oRxe5vz5/bHGZ20wA2uHSCS
+WXAu8SmMxjB/n3+tPHLdTeHCO7Y2rYCt+c8MSlAGo2j0iz/9OH0u4kX5WRqy0A6m
+qo8oI2WoyjauwJgqL+tnqs3Q15AQySd4FU8YQ1Ro9mldyUDydNYncCv1QNuqdv6u
+1jzyPSLyelOEl7eMMPiESI+1ZdptgH3wRitPmDHv9+CIs3srsmJH8NJlXkI8FO+y
+zZuuJeyF9k5YbNLt2FMSGG/v2OcuGSaNIr1NnL7H6p2X7+c5Bnwgl2rH4smvJmDK
+tB537x4GvDy3kEo3x7ZNXFMwFkbFhwXJcu6IViglHe14+u9oKpALF8n6Kwa9iW2s
+k5LkU0CzbvrghyL8BvZiiszxjHpGV8dBmHKOd6dtCju8O/aCNKX6jtDSdxSMwMoL
+k6pH1NcqpFHRjVl9HxpymdLhId+7QAlrPiFnyy7mHNoduzV7X/H97u5R01/YVVPU
+vwNlrrWNRzZAJsEA/7q8zAHGNlAG+Up2HWDHJQijRB4H1/a2M9g=
+=EgsN
+-----END PGP SIGNATURE-----
+
+--uww5br4pqkvqqwfq--
