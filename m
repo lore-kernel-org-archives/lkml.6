@@ -2,69 +2,86 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9B0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D96BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B10420989
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B10420989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0668E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0668E208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeK1Bar (ORCPT
+        id S1727239AbeK1Bce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:30:47 -0500
-Received: from mga03.intel.com ([134.134.136.65]:5822 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbeK1Bar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:30:47 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 06:32:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="114459683"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 27 Nov 2018 06:32:38 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 27 Nov 2018 16:32:37 +0200
-Date:   Tue, 27 Nov 2018 16:32:37 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] driver core: Add fwnode member to struct
- device_connection
-Message-ID: <20181127143237.GA22859@kuha.fi.intel.com>
-References: <20181127142855.73899-1-heikki.krogerus@linux.intel.com>
- <20181127142855.73899-5-heikki.krogerus@linux.intel.com>
+        Tue, 27 Nov 2018 20:32:34 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:50306 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726321AbeK1Bce (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:32:34 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAREUEZS003952;
+        Tue, 27 Nov 2018 15:34:08 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nxw02gvev-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 27 Nov 2018 15:34:07 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6561C357;
+        Tue, 27 Nov 2018 15:33:38 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1F1874EF1;
+        Tue, 27 Nov 2018 14:34:06 +0000 (GMT)
+Received: from [10.48.0.160] (10.75.127.45) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 27 Nov
+ 2018 15:34:05 +0100
+Subject: Re: [PATCH v2] i2c: i2c-stm32f7: add PM Runtime support
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542625464-4704-1-git-send-email-pierre-yves.mordret@st.com>
+ <20181127121034.GK1107@kunai>
+From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <bcaa7139-de5c-c578-10d3-4b01d53628b3@st.com>
+Date:   Tue, 27 Nov 2018 15:34:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127142855.73899-5-heikki.krogerus@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181127121034.GK1107@kunai>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_13:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 05:28:55PM +0300, Heikki Krogerus wrote:
-> This will prepare the device connection API for connections
-> described in firmware.
+Hi Wolfram,
 
-This one does not belong to this series, sorry. Please skip it, or if
-you prefer, I'll resend.
+Sorry for the inconvenience.
+I re-submit a v3 right now.
 
+Thanks
 
-thanks,
-
--- 
-heikki
+On 11/27/18 1:10 PM, Wolfram Sang wrote:
+> On Mon, Nov 19, 2018 at 12:04:24PM +0100, Pierre-Yves MORDRET wrote:
+>> Use PM Runtime API to enable/disable clock
+>>
+>> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> 
+> Looks good but doesn't apply on top of your other patches for me. Can
+> you rebase?
+> 
