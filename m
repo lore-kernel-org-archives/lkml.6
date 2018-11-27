@@ -2,101 +2,103 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662F3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67C2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307A8208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:13:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNgHNzlu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307A8208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 79D722133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D722133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbeK0OJY (ORCPT
+        id S1728259AbeK0ORg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 09:09:24 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54990 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728511AbeK0OJY (ORCPT
+        Tue, 27 Nov 2018 09:17:36 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:35470 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbeK0ORg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 09:09:24 -0500
-Received: by mail-it1-f194.google.com with SMTP id m123-v6so7784598ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 19:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UNR7WQBsg6SMTrLbOHn0u1gL1Kd8gB6JnhT0P9RIk0s=;
-        b=WNgHNzlu1vfMPm0OjpQTZzSHm8jb2ftPDjxJvmhhJzhhDOEqr+8o6gkRUMrsGp0WFZ
-         x47aB00bfNqoTjF4WBMBXnXqHiWnDwsnN/rTUQiFEoBAxv1c3WOxafqNMJDwFqKzRjfU
-         1h7AuRGZQVJW4tkfScQVfarboCg3f5uK5BZuk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UNR7WQBsg6SMTrLbOHn0u1gL1Kd8gB6JnhT0P9RIk0s=;
-        b=SssJs/VhpP90OtKXwgM6fICUUk1uU8k/Eke/ldiNHQhxJbOQ2i5nFOy+I3XmGKx8Tn
-         x9tbDmygdXpDLvCmbvk6Ah6d/mPTAEOHJmKQmfEFh1w5I/JRtUm5TrbZ16LarIm6MdhF
-         Df6aS6D7P8TkIRhZZG4EZejD3uWcQYJCob1+F1tcok4mSynon8OWNUUUf0hFbTdxnYIq
-         cfQ2/5tqCYfV/575cMek7z5PgFQYItyP97gdetymBmZhBA/a3jZHwq+/vkg4Oh9B9DzW
-         75Zd4YhFVB0+QNF2gNy7Qfn/k8bRgqoH4pyAZ4Qc7XPYNlTFlDFNXjcS60RbBmsNkZ5e
-         ONyw==
-X-Gm-Message-State: AA+aEWbPTk6nbSOUZ1j7MDleH1cqPd53HwWTuytpV9DK5ba8hTUP+c86
-        yklFdgPMhvUqAfh6uDKAAzQ668l4pZ0=
-X-Google-Smtp-Source: AFSGD/VXL+aSMH1u1OcEnwIrmxMibaXjSJ+Un++lK3iLSPGnrLODCRUiS7Lw7WDLuaA8DooKuW1Upg==
-X-Received: by 2002:a24:d60a:: with SMTP id o10mr23558527itg.162.1543288380352;
-        Mon, 26 Nov 2018 19:13:00 -0800 (PST)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id w16sm1775480ita.38.2018.11.26.19.12.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 19:12:59 -0800 (PST)
-From:   Dan Rue <dan.rue@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dan Rue <dan.rue@linaro.org>, Shuah Khan <shuah@kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] selftests: firmware: add CONFIG_FW_LOADER_USER_HELPER_FALLBACK to config
-Date:   Mon, 26 Nov 2018 21:12:16 -0600
-Message-Id: <20181127031218.24419-3-dan.rue@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181127031218.24419-1-dan.rue@linaro.org>
-References: <20181127031218.24419-1-dan.rue@linaro.org>
+        Tue, 27 Nov 2018 09:17:36 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1E84172CC59;
+        Tue, 27 Nov 2018 06:21:09 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 09D287CD0D7; Tue, 27 Nov 2018 06:21:09 +0300 (MSK)
+Date:   Tue, 27 Nov 2018 06:21:09 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
+ support to PTRACE_GET_SYSCALL_INFO
+Message-ID: <20181127032108.GA4154@altlinux.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+In-Reply-To: <20181127040732.1c9f7965@akathisia>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y is required for fw_fallback.sh.
-Without it, fw_fallback.sh fails with 'usermode helper disabled so
-ignoring test'. Enable the config in selftest so that it gets built by
-default.
 
-Signed-off-by: Dan Rue <dan.rue@linaro.org>
----
- tools/testing/selftests/firmware/config | 1 +
- 1 file changed, 1 insertion(+)
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
-index bf634dda0720..913a25a4a32b 100644
---- a/tools/testing/selftests/firmware/config
-+++ b/tools/testing/selftests/firmware/config
-@@ -1,5 +1,6 @@
- CONFIG_TEST_FIRMWARE=y
- CONFIG_FW_LOADER=y
- CONFIG_FW_LOADER_USER_HELPER=y
-+CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
--- 
-2.19.1
+On Tue, Nov 27, 2018 at 04:07:32AM +0100, Elvira Khabirova wrote:
+> On Mon, 26 Nov 2018 15:35:24 +0100, Oleg Nesterov wrote:
+> > On 11/25, Elvira Khabirova wrote:
+> > >
+> > > Extend PTRACE_GET_SYSCALL_INFO to support PTRACE_EVENT_SECCOMP stops.
+> > > The information returned is the same as for syscall-enter-stops. =20
+> >=20
+> > Oh, this is not nice ;) there must be a better option, I hope... Plus
+> >=20
+> > Can't ptrace_get_syscall() check
+> >=20
+> > 	child->exit_code =3D=3D (PTRACE_EVENT_SECCOMP << 8) | SIGTRAP;
+> >=20
+> > to detect the PTRACE_EVENT_SECCOMP case?
+>=20
+> Nope; looks like exit_code is zeroed after wait().
 
+It's explicitly reset to zero in wait_task_stopped() unless WNOWAIT wait
+option is set.  When strace requests PTRACE_GET_SYSCALL_INFO after
+wait4(), child->exit_code is already set to zero.
+
+
+--=20
+ldv
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJb/LgkAAoJEAVFT+BVnCUIKhoP/i5BX4tsokC30O4I3zGET2SV
+7GDu6jbhCAYRFoXe7xNoRPQvSh8gfAziWHb6IExqHxdrqf7kj8jjrQS/bNGN/X/h
+FBRNUJrRcXVKgQagnSIU1jJ30W8WtdDz5C21O7IF9MOSouqqLNvmsKxpPmLap472
+1xp7cYszGVKw0KBc8MVCazWc+YjdTP1ws9Gfc2MfOmlZ3RVq4eEkBTylmKc5fo+X
+UbZCp04VdN2QrdlpPNQZlyjz/Fyz1gC70Sr+hsQKh2P4ZQhBq4/p511J115l52+y
++/5bzT17NdTKRrt5R9UhXSyKiPT+24Sar5SyvCRXAdFbtcZHZk0AzbC9kExa1P+a
+I0kN2YPdOlUckpKV5LX63dgQfDtSGWit46dSqHJcG9dSI2lF3kTnbpDOS13tdlsd
+a+LobSdZUuVnAujQ+uouYF5+i6xtoj4AANEzhUk0w5xTwMG3gDzItiiVdjGukf4z
+UHcLgaRAK8TOpm5fXpB3zzqzaza12f10EHFCK+YZQNBUlzS2x6QcDnsbc/Mfhzbz
+/ph9RgedCKK2q1r1Ctz4Mr5lln5J4bQWIpf2tejraiPe/Nk3Vz6jEYUGpsTBcSWd
+CndSGYHcXxXwmR8Bi39mT6isn6NSWYUOkM6oTI4KN4n9cSbGWY3tLVtxkL/yUQcP
+hRzqjz5vbmXEbhytAi1V
+=dIFr
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
