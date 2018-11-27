@@ -2,161 +2,185 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E36AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C056C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236E72145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:09:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4q4YcWK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236E72145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D89920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D89920989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbeK1AHu (ORCPT
+        id S1726855AbeK1AIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:07:50 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39500 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbeK1AHt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:07:49 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so16365028lfh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 05:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FaAu+KofVcHKESvdpetmtg0jbNwlC+49NONox9Uu1Q8=;
-        b=U4q4YcWKyeMaxuB5gIH/zq/GQwJTV99xSRXAB7lajGy6W3C9RIGU/y2vafteM8nGWq
-         feIjBNLHrld5Hah+kWSFjxIkfar1nsTjCeK93y/A0V+MhSujT0XtMqSSZz8iZPpdzVhC
-         orf7rqAYUbSBg6Gsoc8l9kxdSN/EWwqQZ8mVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FaAu+KofVcHKESvdpetmtg0jbNwlC+49NONox9Uu1Q8=;
-        b=uBdNYIa6ZkyW7jondbK0RHeGFoHs9IDzlz9eFSCSQrcp08Wagqsk8W0oyg6mY7TbnA
-         XjaS//CW3zkJDQ4HiEx1bpVnzdOaCt8CULst/JwpV7TvDxAk7BWyMrKompouP/DvNhbP
-         DUDY0mTZ/MTq2j/IQewK81vDcgT4aJzTuPrSXvpB3lR6TH/ZIB74LsBgWSJgoDbS/4nG
-         S5cPMyHHBlRadTt0/jtiRlHXmJ+vITXEgmvHi98CKHXRg1N3vOPPb4gFQ/slWCssHQW9
-         RYTvZ0tKAYIFkd61rDUlkp7Qh6Nt14O2fCP+uA3BIWcaYhX8NcINkFLpYlJcXKVtoZK3
-         wThg==
-X-Gm-Message-State: AGRZ1gI34FWh6vXiqGuGChBDm/mGdmMi9ccM361b59MsiSiYZhUAE5y6
-        ng3UK61WDz8WswMvUNzjmY8gGjdv1KdcD6KEUfcCug==
-X-Google-Smtp-Source: AJdET5cauBeeE4b/bEQA/m1FFrGDOz7pTZfhAbws+BV7b52yIy2IrOc4OV3D8L+Ezr3M50PVxF/HMBfeQCfVU7Yvhlo=
-X-Received: by 2002:a19:750a:: with SMTP id y10mr18339918lfe.43.1543324194863;
- Tue, 27 Nov 2018 05:09:54 -0800 (PST)
+        Tue, 27 Nov 2018 19:08:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38948 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbeK1AIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:08:46 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1075030821F1;
+        Tue, 27 Nov 2018 13:10:53 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1022D5DA63;
+        Tue, 27 Nov 2018 13:10:50 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
+Cc:     "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v2 1/4] x86/hyper-v: move synic/stimer control structures definitions to hyperv-tlfs.h
+In-Reply-To: <20181126200413.GA7852@rkaganb.sw.ru>
+References: <20181126154732.23025-1-vkuznets@redhat.com> <20181126154732.23025-2-vkuznets@redhat.com> <20181126200413.GA7852@rkaganb.sw.ru>
+Date:   Tue, 27 Nov 2018 14:10:49 +0100
+Message-ID: <87wooyk6na.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20181126105046.722096341@linuxfoundation.org>
-In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 27 Nov 2018 18:39:43 +0530
-Message-ID: <CA+G9fYsxS1jvAdLz7g_FUKZrpiri+j9eDerYaVuYkBxCgUn8fA@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/70] 4.4.165-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 27 Nov 2018 13:10:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 at 16:23, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Roman Kagan <rkagan@virtuozzo.com> writes:
+
+> [ Sorry for having missed v1 ]
 >
-> This is the start of the stable review cycle for the 4.4.165 release.
-> There are 70 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Mon, Nov 26, 2018 at 04:47:29PM +0100, Vitaly Kuznetsov wrote:
+>> We implement Hyper-V SynIC and synthetic timers in KVM too so there's some
+>> room for code sharing.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/include/asm/hyperv-tlfs.h | 69 ++++++++++++++++++++++++++++++
+>>  drivers/hv/hv.c                    |  2 +-
+>>  drivers/hv/hyperv_vmbus.h          | 68 -----------------------------
+>>  3 files changed, 70 insertions(+), 69 deletions(-)
+>> 
+>> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+>> index 4139f7650fe5..b032c05cd3ee 100644
+>> --- a/arch/x86/include/asm/hyperv-tlfs.h
+>> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+>> @@ -731,6 +731,75 @@ struct hv_enlightened_vmcs {
+>>  #define HV_STIMER_AUTOENABLE		(1ULL << 3)
+>>  #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
+>>  
+>> +/* Define synthetic interrupt controller flag constants. */
+>> +#define HV_EVENT_FLAGS_COUNT		(256 * 8)
+>> +#define HV_EVENT_FLAGS_LONG_COUNT	(256 / sizeof(unsigned long))
+>> +
+>> +/*
+>> + * Synthetic timer configuration.
+>> + */
+>> +union hv_stimer_config {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 enable:1;
+>> +		u64 periodic:1;
+>> +		u64 lazy:1;
+>> +		u64 auto_enable:1;
+>> +		u64 apic_vector:8;
+>> +		u64 direct_mode:1;
+>> +		u64 reserved_z0:3;
+>> +		u64 sintx:4;
+>> +		u64 reserved_z1:44;
+>> +	};
+>> +};
+>> +
+>> +
+>> +/* Define the synthetic interrupt controller event flags format. */
+>> +union hv_synic_event_flags {
+>> +	unsigned long flags[HV_EVENT_FLAGS_LONG_COUNT];
+>> +};
+>> +
+>> +/* Define SynIC control register. */
+>> +union hv_synic_scontrol {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 enable:1;
+>> +		u64 reserved:63;
+>> +	};
+>> +};
+>> +
+>> +/* Define synthetic interrupt source. */
+>> +union hv_synic_sint {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 vector:8;
+>> +		u64 reserved1:8;
+>> +		u64 masked:1;
+>> +		u64 auto_eoi:1;
+>> +		u64 reserved2:46;
+>> +	};
+>> +};
+>> +
+>> +/* Define the format of the SIMP register */
+>> +union hv_synic_simp {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 simp_enabled:1;
+>> +		u64 preserved:11;
+>> +		u64 base_simp_gpa:52;
+>> +	};
+>> +};
+>> +
+>> +/* Define the format of the SIEFP register */
+>> +union hv_synic_siefp {
+>> +	u64 as_uint64;
+>> +	struct {
+>> +		u64 siefp_enabled:1;
+>> +		u64 preserved:11;
+>> +		u64 base_siefp_gpa:52;
+>> +	};
+>> +};
+>> +
+>>  struct hv_vpset {
+>>  	u64 format;
+>>  	u64 valid_bank_mask;
 >
-> Responses should be made by Wed Nov 28 10:50:16 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.165-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> I personally tend to prefer masks over bitfields, so I'd rather do the
+> consolidation in the opposite direction: use the definitions in
+> hyperv-tlfs.h and replace those unions/bitfields elsewhere.  (I vaguely
+> remember posting such a patchset a couple of years ago but I lacked the
+> motivation to complete it).
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Are there any known advantages of using masks over bitfields or the
+resulting binary code is the same? Assuming there are no I'd personally
+prefer bitfields - not sure why but to me e.g. 
+ (stimer->config.enabled && !stimer->config.direct_mode)
+ looks nicer than 
+ (stimer->config & HV_STIMER_ENABLED && !(stimer->config & HV_STIMER_DIRECT))
 
-Summary
-------------------------------------------------------------------------
-kernel: 4.4.165-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 4209bc7270f7d3a9daba39179d100aed0e025ef0
-git describe: v4.4.164-71-g4209bc7270f7
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.164-71-g4209bc7270f7
++ there's no need to do shifts, e.g.
 
-No regressions (compared to build v4.4.164-71-gb01da71bcd07)
+ vector = stimer->config.apic_vector
 
-No fixes (compared to build v4.4.164-71-gb01da71bcd07)
+ looks cleaner that 
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+ vector = (stimer->config & HV_STIMER_APICVECTOR_MASK) >> HV_STIMER_APICVECTOR_SHIFT
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+... and we already use a few in hyperv-tlfs.h. I'm, however, flexible :-)
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+K. Y., Michael, Haiyang, Stephen - would you prefer to get rid of all
+bitfields from hyperv-tlfs.h? If so I can work on a patchset. As to this
+series, my understanding is that Paolo already queued it so in any case
+this is going to be a separate effort (unless there are strong
+objections of course).
+
+Thanks!
+
+-- 
+Vitaly
