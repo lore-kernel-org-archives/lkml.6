@@ -2,143 +2,87 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E700EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF5BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA187208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:39:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA187208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B16B208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:39:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B16B208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeK0Mfp (ORCPT
+        id S1728118AbeK0MgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:35:45 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:15009 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726535AbeK0Mfp (ORCPT
+        Tue, 27 Nov 2018 07:36:04 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36247 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbeK0MgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 07:35:45 -0500
-X-UUID: 2ec0257fe35348d5bd44df66f1838ea3-20181127
-X-UUID: 2ec0257fe35348d5bd44df66f1838ea3-20181127
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 475931140; Tue, 27 Nov 2018 09:39:32 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 27 Nov
- 2018 09:39:30 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 27 Nov 2018 09:39:29 +0800
-Message-ID: <1543282769.24219.129.camel@mhfsdcap03>
-Subject: Re: [v5, PATCH 2/2] dt-binding: mediatek-dwmac: add binding
- document for MediaTek MT2712 DWMAC
-From:   biao huang <biao.huang@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Andrew Lunn <andrew@lunn.ch>, <davem@davemloft.net>,
-        <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
-        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>
-Date:   Tue, 27 Nov 2018 09:39:29 +0800
-In-Reply-To: <20181126214626.GA13830@bogus>
-References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com>
-         <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
-         <20181122151932.GD15403@lunn.ch> <1542936676.24219.66.camel@mhfsdcap03>
-         <20181126214626.GA13830@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Nov 2018 07:36:04 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k98so18648227otk.3;
+        Mon, 26 Nov 2018 17:39:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6b5jQyNRAyg+v44lZExl5NEOUQXdmPgBtwHEOu+E1Sk=;
+        b=oRPBisMrqbdTl5ZamB+qLpncYNJc2juCY2TqZ7LeqLW8fcACpjiOl5WVCCOJABy1Zo
+         3Zd9umMCS2LvjWOcPBVyTiES+R3zHWjFMU5x2tY3I74UkyWC6FiX0X6CeABtJRDUPmVG
+         dWLQr81s05Nboz0GFpJy6vNVCM+idi3UYcYgZjE1l3CuLShwNCtxP5iRzgx/DmQyBiht
+         oBS0SEnwNhSBV43izSycKLiO6voPNyWyRLl0C2n8J8+QqPH27NUj0yQYmTKzkXj4xFUg
+         Tga33Fk40+uXke61BFUCUiwQs+JTln1I+KI9EoO/NIbQZoeBAMU0coLSj0Bs+4hXBHCY
+         SO9w==
+X-Gm-Message-State: AA+aEWbovU0MGL9OoO9wzXJSM1v3816RwnVh+QLKHIZerOMpJbvQ0Jjj
+        7xHpuRAt/1+c/tymFN8OOA==
+X-Google-Smtp-Source: AFSGD/W4Pk46yWx5LQoe/b0QlA438ILAxzWk6n9bwbvqmLpsu2OS/Tyz9Ivp04SJe4XtKEV8xhMxDw==
+X-Received: by 2002:a9d:d6d:: with SMTP id 100mr11712909oti.69.1543282795664;
+        Mon, 26 Nov 2018 17:39:55 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l5sm599378oil.15.2018.11.26.17.39.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 17:39:55 -0800 (PST)
+Date:   Mon, 26 Nov 2018 19:39:54 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Mesih Kilinc <mesihkilinc@gmail.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v4 14/17] dt-bindings: sram: Add Allwinner suniv
+ F1C100s
+Message-ID: <20181127013954.GA25380@bogus>
+References: <cover.1543131714.git.mesihkilinc@gmail.com>
+ <f80ca2de497c44c9415b02ac9aba93721d723730.1543131714.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f80ca2de497c44c9415b02ac9aba93721d723730.1543131714.git.mesihkilinc@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Rob,
-	Thanks for your comments.
-On Mon, 2018-11-26 at 15:46 -0600, Rob Herring wrote:
-> On Fri, Nov 23, 2018 at 09:31:16AM +0800, biao huang wrote:
-> > Dear Andrew,
-> > 
-> > 	Thanks for you remind.
-> > 
-> > 	Sincerely, I respect any comment from any reviewer. If I didn't reply
-> > for any comment, really sorry for that.
-> > 
-> > 	As to this "tx-delay" issue, the following reply in v3 maybe ignored.
-> > 	https://lkml.org/lkml/2018/11/19/158
-> > 
-> > 	"the delay time in mediatek dwmac design is not so accurate,
-> > 	the current mt2712 and the following ICs will not use the
-> > 	same delay design, but will use stages to indicate different
-> > 	delay time.
-> > 	so maybe "mediatek.tx-delay" represent the delay stage is a
-> > 	good choice"
-> > 
-> > 	And to make it clearer here.
-> > 
-> > 	In mt2712, there are two delay macro circuit: named fine-tune and
-> > coarse-tune.
-> > 	a. fine-tune, 170+/-50ps per stage, total 32 stages
-> > 	b. coarse-tune, 0.55+/-0.2ns per stage, total 32 stages
-> > 	If we only consider mt2712, delay in fine-tune select a integer
-> > multiple of 170ps, delay in coarse-tune select a integer multiple of
-> > 550ps, for stage 0~31, the delay in fine-tune will not have the same
-> > value with that in coarse-tune.
-> > 	OK, It seems the property "fine-tune" can be eliminated .
-> > 
-> > 	But the following ic will not have the same accuracy as mt2712,
-> > and maybe will not have two delay macro circuit to be selected.
+On Sun, 25 Nov 2018 10:43:17 +0300, Mesih Kilinc wrote:
+> The suniv ARMv5 F1C100s chip has similar sram controller to sun4i A10.
+> Add compatible string for it.
 > 
-> New IC will have new compatible string then. If it is different, then 
-> likely these properties would have to change or have different meaning 
-> unless you use time.
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-OK, I'll use tx-delay-ps instead of tx-delay.
-> > 	1. assume two delay macro circuit in the following ic,
-> > 	fine-tune, 100ps per stage, coarse-tune, 0.55ns per stage,
-> > 	if we want delay 2.2ns, fine-tune will get a 22, and coarse-tune get a
-> > 4. We can't distinguish which delay macro we are choosing.
-> 
-> Why wouldn't you just choose fine-tune for anything less than the max 
-> range (3200ps in this example) and course for greater than 3100ps.
-> 
-The fine-tune circuit and coarse-tune circuit are parallel, and
-fine-tuen is a select switch.
-It depends on users to choose which circuit is take effect.
-I shouldn't assume users would choose fine-tune when delay < 3200ps, and
-coarse for > 3100ps.
 
-so, tx-delay-ps will be chosen, and "fine-tune" boolean property should
-be remained as a indicator.
-> > 	2. assume only one delay macro circuit is used, a similar case as 1
-> > will also increase the complexity of driver.
-> > 	Then, we need define more flag property to know which delay macro we
-> > are handling.
-> > 
-> > 	The common things for all delay macro circuit in MediaTek mac design is
-> > the stages, not the accuracy. so if we maintain stage info in "mediatek,
-> > tx-delay", we only need care which stage we should choose.
-> > And for each IC, we will recommend a best stage as a candidate.
-> 
-> What if you had a 3rd delay circuit?
-> 
-OK, tx-delay-ps will be a meaningful property.
-If more delay circuit is added, fine-tune property(boolean --> u32) can
-still be a indicator.
-> > 	Above is my personal opinion, may be my understanding is wrong,
-> > welcome for further discussion.
-> > 
-> > 	Thanks a lot.
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
