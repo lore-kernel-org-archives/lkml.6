@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0E1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD75C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504E920873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:51:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504E920873
+	by mail.kernel.org (Postfix) with ESMTP id 950B220873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950B220873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbeK0Ust (ORCPT
+        id S1730353AbeK0UxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:48:49 -0500
-Received: from mout01.posteo.de ([185.67.36.141]:44501 "EHLO mout01.posteo.de"
+        Tue, 27 Nov 2018 15:53:05 -0500
+Received: from mout02.posteo.de ([185.67.36.142]:36617 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730335AbeK0Ust (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:48:49 -0500
+        id S1728348AbeK0UxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:53:05 -0500
 Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id B821016006A
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 10:51:15 +0100 (CET)
+        by mout02.posteo.de (Postfix) with ESMTPS id 7F161240100
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 10:55:37 +0100 (CET)
 Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 433zZ93wXYz6tmL;
-        Tue, 27 Nov 2018 10:51:13 +0100 (CET)
+        by submission (posteo.de) with ESMTPSA id 433zgD0r1Sz9rxL;
+        Tue, 27 Nov 2018 10:55:36 +0100 (CET)
 From:   richard.genoud@gmail.com
 Subject: DMA: atmel_serial: Opening and closing the serial device repeatedly
  causes kmalloc-32 slab leak
 To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>, dmaengine@vger.kernel.org,
@@ -43,8 +43,8 @@ Cc:     "linux-arm-kernel@lists.infradead.org"
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Mario Forner <m.forner@be4energy.com>
 References: <22061488.b0eNpyQjWt@linux-7rm0>
-Message-ID: <83753d21-f3c8-c8dd-75d7-741cb597d1a3@sorico.fr>
-Date:   Tue, 27 Nov 2018 10:51:13 +0100
+Message-ID: <ea5aaffd-b248-6398-9d40-efe1589cedb1@sorico.fr>
+Date:   Tue, 27 Nov 2018 10:55:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
@@ -56,6 +56,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+[re-sending with Vinod's correct email address. Sorry for the noise. ]
 
 [re-sending the bug report to the lists]
 Le 16/11/2018 à 17:04, Mario Forner a écrit :
@@ -273,8 +275,7 @@ NB: the -dirty flag is there beacause I removed some log from atmel-serial:
  		goto chan_err;
 -	dev_info(port->dev, "using %s for tx DMA transfers\n",
 -		dma_chan_name(atmel_port->chan_tx));
- 
- 	spin_lock_init(&atmel_port->lock_tx);
+  	spin_lock_init(&atmel_port->lock_tx);
  	sg_init_table(&atmel_port->sg_tx, 1);
 @@ -1239,8 +1237,6 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
  	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
@@ -282,8 +283,7 @@ NB: the -dirty flag is there beacause I removed some log from atmel-serial:
  		goto chan_err;
 -	dev_info(port->dev, "using %s for rx DMA transfers\n",
 -		dma_chan_name(atmel_port->chan_rx));
- 
- 	spin_lock_init(&atmel_port->lock_rx);
+  	spin_lock_init(&atmel_port->lock_rx);
  	sg_init_table(&atmel_port->sg_rx, 1);
 
 
@@ -292,8 +292,7 @@ OOM-killer trace :
 [ 5220.560000] test_open invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
 [ 5220.580000] CPU: 0 PID: 1062 Comm: test_open Not tainted 4.20.0-rc3-dirty #31
 [ 5220.580000] Hardware name: Atmel AT91SAM9
-[ 5220.590000] Backtrace: 
-[ 5220.590000] [<c000e020>] (dump_backtrace) from [<c000e2b8>] (show_stack+0x20/0x24)
+[ 5220.590000] Backtrace: [ 5220.590000] [<c000e020>] (dump_backtrace) from [<c000e2b8>] (show_stack+0x20/0x24)
 [ 5220.600000]  r6:00000009 r5:c0649bb5 r4:c72a1e18 r3:02b88502
 [ 5220.600000] [<c000e298>] (show_stack) from [<c0521114>] (dump_stack+0x20/0x28)
 [ 5220.610000] [<c05210f4>] (dump_stack) from [<c0097280>] (dump_header+0x6c/0x1c4)
@@ -669,8 +668,7 @@ VmallocUsed:           0 kB
 VmallocChunk:          0 kB
 Percpu:               64 kB
 
-# cat /proc/slab_allocators 
-ubi_wl_entry_slab: 3 erase_aeb+0x34/0xe0
+# cat /proc/slab_allocators ubi_wl_entry_slab: 3 erase_aeb+0x34/0xe0
 ubi_wl_entry_slab: 805 ubi_wl_init+0x148/0x4e4
 ubi_wl_entry_slab: 1155 ubi_wl_init+0x218/0x4e4
 ubi_wl_entry_slab: 1 ubi_scan_fastmap+0x6f8/0x8fc
