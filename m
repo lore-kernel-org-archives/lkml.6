@@ -2,107 +2,106 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEDEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8382AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01AC22147D
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01AC22147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DD2720851
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 22:09:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="jtg4bmyL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD2720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbeK1JGi (ORCPT
+        id S1726907AbeK1JIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:06:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53530 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726299AbeK1JGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:06:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D0E6ACDE;
-        Tue, 27 Nov 2018 22:07:17 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 23:07:15 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
-In-Reply-To: <alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de>
-Message-ID: <nycvar.YFH.7.76.1811272302070.21108@cbobk.fhfr.pm>
-References: <20181121201430.559770965@linutronix.de> <20181121201724.227260385@linutronix.de> <f976eb35-5dcd-387e-eb29-f7c6636fd17b@linux.intel.com> <alpine.DEB.2.21.1811222352340.1665@nanos.tec.linutronix.de> <20181123073735.GA12959@gmail.com>
- <c51dd20a-2cea-1bd1-bee7-48ca25f9bdb9@linux.intel.com> <alpine.DEB.2.21.1811262244510.1682@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811270800090.21108@cbobk.fhfr.pm> <alpine.DEB.2.21.1811270809450.1682@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811270820050.21108@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1811271350590.21108@cbobk.fhfr.pm> <alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 28 Nov 2018 04:08:22 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45984 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeK1JIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 04:08:22 -0500
+Received: by mail-ua1-f68.google.com with SMTP id e16so8193021uam.12
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 14:09:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kylehuey.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n+25T8y4M7WNr1sxhtaIV30jNHrbI1F45DQh6UEMKJw=;
+        b=jtg4bmyLes4Chl9JZwAStE4mbSCxmdQCZShe5niGv1yIwuNPqhbho2borMhAzxj+BX
+         ISA7dcDZEiiVQ1fgA6VAALzDGWHDnGxS7chYxs9RsVx47kGvUhsdxeZNKXEYCZLmH4os
+         zTfBFBgfAWnIM5YprZ7uzc7tn1f6S9oW3nRRamybhB+wfY4Wrn//8lhu3AVW/H8N9zqF
+         pSR50yxFgZl3/yZ9uEHYqGyDuEjBfCDQQQUBd0OxcXFhyREBkY4ZMEuNZvqbuZpmQ7zS
+         EQNBhkLTnINWGGQJaXNYl9zOWTcDkLleOQblBoBTAUYHSos6UlQnkeTpKWSEL+2A5RhT
+         gQnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n+25T8y4M7WNr1sxhtaIV30jNHrbI1F45DQh6UEMKJw=;
+        b=J6R8lnSSkNrQbkxJCR0eJDWBSJ/tqasNK96AU53XhPCZtJvgJKbdmX1Oc2DGB5I0BH
+         YvjHJqRa+cuziv4fsWNpbRN9DHa++4jX1sRYIKYg+h6ld9kNZVmOigasXu22rTssZSzH
+         LRAqYb9FQkbrQ5xbil12V4oaL8dCN8SFPaaMbQMIj/32gE0jwuf24MuWrgdXgvvqP5MV
+         G7VdH4pbta1A7LIUYXdvLbC5O2HygG0VxsNYIPwa1Etm6CjoBIganu5s6EMcvgdfU4ke
+         o0ja4HzZ9LG3GF7a1z7F9FFaUst9LI6Lup6uQb/QpvxURU+i3tsWy1Ni45YTobPkmflh
+         cMCw==
+X-Gm-Message-State: AA+aEWYtgYxA153F4IL7X6AcVXjfUkRG/Mo9EgH0b2EHRPAn2juMaT/B
+        0U9FyreRJEAsIjjJJKv6cpBk3Jnsfx69eAsdGfBIDA==
+X-Google-Smtp-Source: AFSGD/U0vLFgklQUW7LfQ6/uZ3uSVeLHmxHNUyN07xPyWtcliMr0qFUKdcRYHMKONKA9T8SSSjiTYXQ2R1sYrWxj6FE=
+X-Received: by 2002:ab0:6151:: with SMTP id w17mr12028020uan.114.1543356541041;
+ Tue, 27 Nov 2018 14:09:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120194129.GC13936@tassilo.jf.intel.com> <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
+ <20181120201144.GD13936@tassilo.jf.intel.com> <20181120221642.GE2131@hirez.programming.kicks-ass.net>
+ <20181120222549.GA2149@hirez.programming.kicks-ass.net> <20181120223854.GH13936@tassilo.jf.intel.com>
+ <20181121081420.GF2131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181121081420.GF2131@hirez.programming.kicks-ass.net>
+From:   Kyle Huey <me@kylehuey.com>
+Date:   Tue, 27 Nov 2018 14:08:46 -0800
+Message-ID: <CAP045AqRs4+F5rNKXLYHeuvLCvzd9U=eZY0X0NnHXxz3qk9TUw@mail.gmail.com>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+To:     "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Robert O'Callahan" <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018, Thomas Gleixner wrote:
+On Wed, Nov 21, 2018 at 12:14 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Nov 20, 2018 at 02:38:54PM -0800, Andi Kleen wrote:
+> > > In fact, I'll argue FREEZE_ON_OVERFLOW is unfixably broken for
+> > > independent counters, because while one counter overflows, we'll stall
+> > > counting on all others until we've handled the PMI.
+> > >
+> > > Even though the PMI might not be for them and they very much want/need
+> > > to continue counting.
+> >
+> > We stop all counters in any case for the PMI. With freeze-on-PMI it just
+> > happens slightly earlier.
+>
+> Hiding the PMI is fine and good. The PMI is not the workload. Stopping
+> it earlier is _NOT_ good, it hides your actual workload.
 
-> >  static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-> > diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> > index 3f5e351bdd37..6c4fcef52b19 100644
-> > --- a/arch/x86/kernel/process.c
-> > +++ b/arch/x86/kernel/process.c
-> > @@ -474,6 +474,21 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
-> >  
-> >  	tifn = READ_ONCE(task_thread_info(next_p)->flags);
-> >  	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
-> > +
-> > +	/*
-> > +	 * SECCOMP tasks might have had their spec_ctrl flags updated during
-> > +	 * runtime from a different CPU.
-> > +	 *
-> > +	 * When switching to such a task, populate thread flags with the ones
-> > +	 * that have been temporarily saved in spec_flags by task_update_spec_tif()
-> > +	 * in order to make sure MSR value is always kept up to date.
-> > +	 *
-> > +	 * SECCOMP tasks never disable the mitigation for other threads, only enable.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_SECCOMP) &&
-> > +			test_and_clear_tsk_thread_flag(next_p, TIF_SPEC_UPDATE))
-> > +		tifp |= READ_ONCE(task_thread_info(next_p)->spec_flags);
-> 
-> And how does that get folded into task_thread_info(next_p)->flags for the
-> next context switch? 
+It does seem that FREEZE_PERFMON_ON_PMI (misnamed as it is) is of
+rather limited use (or even negative, in our case) to a counter that's
+already restricted to ring 3.
 
-Does it really have to? 
-
-We need this special handling only if the next task has TIF_SPEC_UPDATE 
-set, which is one-off event globally (when seccomp marks all its threads 
-so due to seccomp filter change), and once all the TIF_SPEC_UPDATE tasks 
-schedule at least once, we're in a consistent state again and don't need 
-this, as every running task will then have its TIF consistent with MSR 
-value.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+- Kyle
