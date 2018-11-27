@@ -2,114 +2,99 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7D4C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E66C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BAB208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:34:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qvGEXVy+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BAB208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3D4F208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D4F208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbeK0Xcl (ORCPT
+        id S1729217AbeK0Xd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:32:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34501 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbeK0Xck (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:32:40 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so8308892pfg.1;
-        Tue, 27 Nov 2018 04:34:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y45q130fS/TxDRFjsRk4GQsRQWsmPIxqlM2WlMei9JA=;
-        b=qvGEXVy+TmVHiDzQ6vk2+gkFO7+PC7KYLy04bPHCIgsk04EIEq+hVczwQdtICeROzA
-         9cd2Sxpwnain8o9Jksg+Mqh8QLPfeqCGNRnyV3VPMP+2Q1WrnDU++csAzusonO6v88LI
-         gJgS1gM4lHeRAzin0wfJNeKV2ypFRhjzNYf9ootqK0FR3Tdm+xPan2B8CB+aJ+VVyDfL
-         oTs9rSEYqAC0WO6kcPbjoULQJ3nTWi/ataYrDTthBLL3xcs01voiN7akKHzZzVSVxid3
-         amWd5lw3h+xL/B++R8lr45zczRycKQk+FX4AKpfs0BU9xxz+BW6Bq5R+EkBWvoy7kL69
-         xZgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y45q130fS/TxDRFjsRk4GQsRQWsmPIxqlM2WlMei9JA=;
-        b=EVnSRXywMAplaR7Wf92BqaYq8ijGiiRPWAl+puJSxjHzbdn27kHKrBWeR+Ndx51hCn
-         JXLwO7glwes2IauCc45H5ALA1et6snSuPh0KQhiIBHeZfBHopcJ10tcRsYKGPOuoDdnf
-         uffBnHfNrbRjIKmyajCLVrvhmkvJCfmICedyXFzO3ojlnp4uugmw9fUB/iyh2/OXFUhH
-         TNMu3CYJbvjdWu1difGNF7ad+21i+oP+aqLXqmrM6Sp4/WlreVz52R9pP8xxW9zvN9aS
-         fSE0aIiIwETBlO9MTGUQkSFipyi6YK6qJSuZURvypxQ8rsiBXTpmhWtnR5U2M3RQ3M6c
-         /Y8w==
-X-Gm-Message-State: AA+aEWZgp/ofoq+yU8NQny0mymNEsUiU2J9lsSGVqsRXVV2MpMgw/wKR
-        vprrNWCYXnEj8n2F9ZkSw/7CvaLJyKJpCWWg0vY=
-X-Google-Smtp-Source: AFSGD/WUOf5DakCu9tDqJpZdbiE2MnMSBasGV0QI7FaRvcuOE1sg3HAFCXNpaQ6FKxZxF8G6aCI9KoAqgXspnh9ke7c=
-X-Received: by 2002:a63:6506:: with SMTP id z6mr28940347pgb.334.1543322093121;
- Tue, 27 Nov 2018 04:34:53 -0800 (PST)
+        Tue, 27 Nov 2018 18:33:29 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:11974 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726407AbeK0Xd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:33:29 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 066CBB2F2355EC6B8623;
+        Tue, 27 Nov 2018 20:35:39 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wARCZOPk078759;
+        Tue, 27 Nov 2018 20:35:24 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018112720354038-13299299 ;
+          Tue, 27 Nov 2018 20:35:40 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     olivier.moysan@st.com, arnaud.pouliquen@st.com, broonie@kernel.org,
+        tiwai@suse.com, mcoquelin.stm32@gmail.com
+Cc:     linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Wen Yang <yellowriver2010@hotmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH] Fix invalid use of sizeof in stm32_sai_add_mclk_provider()
+Date:   Tue, 27 Nov 2018 20:35:20 +0800
+Message-Id: <20181127123520.44940-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
- <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com> <20181127121129.GR3088@unbuntlaptop>
-In-Reply-To: <20181127121129.GR3088@unbuntlaptop>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Tue, 27 Nov 2018 20:34:41 +0800
-Message-ID: <CAOLK0pzL6wKbGEH_EPQ9cO8NByx4URO09=XAuYo-vEgaYjtVBQ@mail.gmail.com>
-Subject: Re: [PATCH V5 00/10] x86/KVM/Hyper-v: Add HV ept tlb range flush
- hypercall support in KVM
-To:     dan.carpenter@oracle.com
-Cc:     linux-mips@linux-mips.org, kvm <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, benh@kernel.crashing.org,
-        will.deacon@arm.com, christoffer.dall@arm.com, paulus@ozlabs.org,
-        "H. Peter Anvin" <hpa@zytor.com>, kvmarm@lists.cs.columbia.edu,
-        sthemmin@microsoft.com, mpe@ellerman.id.au,
-        "the arch/x86 maintainers" <x86@kernel.org>, linux@armlinux.org.uk,
-        michael.h.kelley@microsoft.com, Ingo Molnar <mingo@redhat.com>,
-        catalin.marinas@arm.com, jhogan@kernel.org,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>, marc.zyngier@arm.com,
-        haiyangz@microsoft.com, kvm-ppc@vger.kernel.org, bp@alien8.de,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        ralf@linux-mips.org, paul.burton@mips.com,
-        devel@linuxdriverproject.org, vkuznets@redhat.com,
-        linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-27 20:35:40,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-27 20:35:19
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wARCZOPk078759
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 8:12 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Tue, Nov 27, 2018 at 07:59:22PM +0800, Tianyu Lan wrote:
-> > Gentile Ping...
-> >
-> > On Thu, Nov 8, 2018 at 10:43 PM <lantianyu1986@gmail.com> wrote:
-> > >
-> > > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> > >
-> > > Sorry. Some patches was blocked and I try to resend via another account.
->
-> The patches were still blocked?  They didn't show up on driver-devel.
->
-> regards,
-> dan carpenter
->
+sizeof(mclk) is 4 or 8 as it is the size of a pointer,
+but we want to reserve space for the pointed data.
+This issue was detected by using the Coccinelle software.
 
-Hi Dan:
-            Thanks for reminder. I double check kvm maillist archive
-and this series is available.
-https://marc.info/?l=kvm&m=154168821118117&w=2
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Olivier Moysan <olivier.moysan@st.com>
+CC: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+CC: Liam Girdwood <lgirdwood@gmail.com>
+CC: Jaroslav Kysela <perex@perex.cz>
+CC: Takashi Iwai <tiwai@suse.com>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: Alexandre Torgue <alexandre.torgue@st.com>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: Wen Yang <yellowriver2010@hotmail.com>
+CC: linux-stm32@st-md-mailman.stormreply.com
+CC: linux-kernel@vger.kernel.org
+---
+ sound/soc/stm/stm32=5Fsai=5Fsub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Best regards
-Tianyu Lan
+diff --git a/sound/soc/stm/stm32=5Fsai=5Fsub.c b/sound/soc/stm/stm32=5Fsai=
+=5Fsub.c
+index ea05cc91aa05..211589b0b2ef 100644
+--- a/sound/soc/stm/stm32=5Fsai=5Fsub.c
++++ b/sound/soc/stm/stm32=5Fsai=5Fsub.c
+@@ -390,7 +390,7 @@ static int stm32=5Fsai=5Fadd=5Fmclk=5Fprovider(struct s=
+tm32=5Fsai=5Fsub=5Fdata *sai)
+ 	char *mclk=5Fname, *p, *s =3D (char *)pname;
+ 	int ret, i =3D 0;
+=20
+-	mclk =3D devm=5Fkzalloc(dev, sizeof(mclk), GFP=5FKERNEL);
++	mclk =3D devm=5Fkzalloc(dev, sizeof(*mclk), GFP=5FKERNEL);
+ 	if (!mclk)
+ 		return -ENOMEM;
+=20
+--=20
+2.19.1
+
