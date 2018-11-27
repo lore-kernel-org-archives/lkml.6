@@ -2,304 +2,93 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5F9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBFEC04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FAC21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8FAC21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EEC52086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EEC52086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbeK1H5l (ORCPT
+        id S1726783AbeK1H56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:57:41 -0500
-Received: from smtp03.citrix.com ([162.221.156.55]:7009 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbeK1H5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:57:41 -0500
-X-IronPort-AV: E=Sophos;i="5.56,287,1539648000"; 
-   d="scan'208";a="71656809"
-From:   Igor Druzhinin <igor.druzhinin@citrix.com>
-To:     <boris.ostrovsky@oracle.com>, <xen-devel@lists.xenproject.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <jgross@suse.com>, <jbeulich@suse.com>,
-        Igor Druzhinin <igor.druzhinin@citrix.com>
-Subject: [PATCH] Revert "xen/balloon: Mark unallocated host memory as UNUSABLE"
-Date:   Tue, 27 Nov 2018 20:58:21 +0000
-Message-ID: <1543352301-29952-1-git-send-email-igor.druzhinin@citrix.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 28 Nov 2018 02:57:58 -0500
+Received: from fieldses.org ([173.255.197.46]:43432 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726286AbeK1H56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:57:58 -0500
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 8D4E01EF6; Tue, 27 Nov 2018 15:58:49 -0500 (EST)
+Date:   Tue, 27 Nov 2018 15:58:49 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: NFSd: NULL-dereference when writing to v4_end_grace when server
+ is not yet started
+Message-ID: <20181127205849.GB12810@fieldses.org>
+References: <CAE5jQCcNCcLX_UvhHFe7BmxE010ULbchd1WN7pDbE2enK-pDZg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE5jQCcNCcLX_UvhHFe7BmxE010ULbchd1WN7pDbE2enK-pDZg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit b3cf8528bb21febb650a7ecbf080d0647be40b9f.
+On Sun, Nov 25, 2018 at 09:17:10AM +0300, Anatoly Trosinenko wrote:
+> When manually exploring the kernel NFSd feature, I have stumbled upon
+> a NULL-dereference when writing to v4_end_grace when server is not yet
+> started.
 
-That commit unintentionally broke Xen balloon memory hotplug with
-"hotplug_unpopulated" set to 1. As long as "System RAM" resource
-got assigned under a new "Unusable memory" resource in IO/Mem tree
-any attempt to online this memory would fail due to general kernel
-restrictions on having "System RAM" resources as 1st level only.
+Thanks for the report!
 
-The original issue that commit has tried to workaround fa564ad96366
-("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
-60-7f)") also got amended by the following 03a551734 ("x86/PCI: Move
-and shrink AMD 64-bit window to avoid conflict") which made the
-original fix to Xen ballooning unnecessary.
+I think this is what we want--it's what a lot of the other nfsctl
+methods do.
 
-Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
----
-In mail thread [1] it was agreed to revert the change due to technical
-comlications of fixing it and the fact that there is no any strong reason
-to keep it.
+--b.
 
-[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg02834.html
----
- arch/x86/xen/enlighten.c | 78 ------------------------------------------------
- arch/x86/xen/setup.c     |  6 ++--
- drivers/xen/balloon.c    | 65 ++++++----------------------------------
- include/xen/balloon.h    |  5 ----
- 4 files changed, 13 insertions(+), 141 deletions(-)
+commit ad5fdf47b4e3
+Author: J. Bruce Fields <bfields@redhat.com>
+Date:   Tue Nov 27 15:54:17 2018 -0500
 
-diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
-index e996e8e..750f46a 100644
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -10,7 +10,6 @@
- #include <xen/xen.h>
- #include <xen/features.h>
- #include <xen/page.h>
--#include <xen/interface/memory.h>
- 
- #include <asm/xen/hypercall.h>
- #include <asm/xen/hypervisor.h>
-@@ -346,80 +345,3 @@ void xen_arch_unregister_cpu(int num)
- }
- EXPORT_SYMBOL(xen_arch_unregister_cpu);
- #endif
--
--#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
--void __init arch_xen_balloon_init(struct resource *hostmem_resource)
--{
--	struct xen_memory_map memmap;
--	int rc;
--	unsigned int i, last_guest_ram;
--	phys_addr_t max_addr = PFN_PHYS(max_pfn);
--	struct e820_table *xen_e820_table;
--	const struct e820_entry *entry;
--	struct resource *res;
--
--	if (!xen_initial_domain())
--		return;
--
--	xen_e820_table = kmalloc(sizeof(*xen_e820_table), GFP_KERNEL);
--	if (!xen_e820_table)
--		return;
--
--	memmap.nr_entries = ARRAY_SIZE(xen_e820_table->entries);
--	set_xen_guest_handle(memmap.buffer, xen_e820_table->entries);
--	rc = HYPERVISOR_memory_op(XENMEM_machine_memory_map, &memmap);
--	if (rc) {
--		pr_warn("%s: Can't read host e820 (%d)\n", __func__, rc);
--		goto out;
--	}
--
--	last_guest_ram = 0;
--	for (i = 0; i < memmap.nr_entries; i++) {
--		if (xen_e820_table->entries[i].addr >= max_addr)
--			break;
--		if (xen_e820_table->entries[i].type == E820_TYPE_RAM)
--			last_guest_ram = i;
--	}
--
--	entry = &xen_e820_table->entries[last_guest_ram];
--	if (max_addr >= entry->addr + entry->size)
--		goto out; /* No unallocated host RAM. */
--
--	hostmem_resource->start = max_addr;
--	hostmem_resource->end = entry->addr + entry->size;
--
--	/*
--	 * Mark non-RAM regions between the end of dom0 RAM and end of host RAM
--	 * as unavailable. The rest of that region can be used for hotplug-based
--	 * ballooning.
--	 */
--	for (; i < memmap.nr_entries; i++) {
--		entry = &xen_e820_table->entries[i];
--
--		if (entry->type == E820_TYPE_RAM)
--			continue;
--
--		if (entry->addr >= hostmem_resource->end)
--			break;
--
--		res = kzalloc(sizeof(*res), GFP_KERNEL);
--		if (!res)
--			goto out;
--
--		res->name = "Unavailable host RAM";
--		res->start = entry->addr;
--		res->end = (entry->addr + entry->size < hostmem_resource->end) ?
--			    entry->addr + entry->size : hostmem_resource->end;
--		rc = insert_resource(hostmem_resource, res);
--		if (rc) {
--			pr_warn("%s: Can't insert [%llx - %llx) (%d)\n",
--				__func__, res->start, res->end, rc);
--			kfree(res);
--			goto  out;
--		}
--	}
--
-- out:
--	kfree(xen_e820_table);
--}
--#endif /* CONFIG_XEN_BALLOON_MEMORY_HOTPLUG */
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index 1163e33..075ed47 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -808,6 +808,7 @@ char * __init xen_memory_setup(void)
- 	addr = xen_e820_table.entries[0].addr;
- 	size = xen_e820_table.entries[0].size;
- 	while (i < xen_e820_table.nr_entries) {
-+		bool discard = false;
- 
- 		chunk_size = size;
- 		type = xen_e820_table.entries[i].type;
-@@ -823,10 +824,11 @@ char * __init xen_memory_setup(void)
- 				xen_add_extra_mem(pfn_s, n_pfns);
- 				xen_max_p2m_pfn = pfn_s + n_pfns;
- 			} else
--				type = E820_TYPE_UNUSABLE;
-+				discard = true;
- 		}
- 
--		xen_align_and_add_e820_region(addr, chunk_size, type);
-+		if (!discard)
-+			xen_align_and_add_e820_region(addr, chunk_size, type);
- 
- 		addr += chunk_size;
- 		size -= chunk_size;
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index fdfc64f..221b733 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -251,25 +251,10 @@ static void release_memory_resource(struct resource *resource)
- 	kfree(resource);
- }
- 
--/*
-- * Host memory not allocated to dom0. We can use this range for hotplug-based
-- * ballooning.
-- *
-- * It's a type-less resource. Setting IORESOURCE_MEM will make resource
-- * management algorithms (arch_remove_reservations()) look into guest e820,
-- * which we don't want.
-- */
--static struct resource hostmem_resource = {
--	.name   = "Host RAM",
--};
--
--void __attribute__((weak)) __init arch_xen_balloon_init(struct resource *res)
--{}
--
- static struct resource *additional_memory_resource(phys_addr_t size)
- {
--	struct resource *res, *res_hostmem;
--	int ret = -ENOMEM;
-+	struct resource *res;
-+	int ret;
- 
- 	res = kzalloc(sizeof(*res), GFP_KERNEL);
- 	if (!res)
-@@ -278,42 +263,13 @@ static struct resource *additional_memory_resource(phys_addr_t size)
- 	res->name = "System RAM";
- 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 
--	res_hostmem = kzalloc(sizeof(*res), GFP_KERNEL);
--	if (res_hostmem) {
--		/* Try to grab a range from hostmem */
--		res_hostmem->name = "Host memory";
--		ret = allocate_resource(&hostmem_resource, res_hostmem,
--					size, 0, -1,
--					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
--	}
--
--	if (!ret) {
--		/*
--		 * Insert this resource into iomem. Because hostmem_resource
--		 * tracks portion of guest e820 marked as UNUSABLE noone else
--		 * should try to use it.
--		 */
--		res->start = res_hostmem->start;
--		res->end = res_hostmem->end;
--		ret = insert_resource(&iomem_resource, res);
--		if (ret < 0) {
--			pr_err("Can't insert iomem_resource [%llx - %llx]\n",
--				res->start, res->end);
--			release_memory_resource(res_hostmem);
--			res_hostmem = NULL;
--			res->start = res->end = 0;
--		}
--	}
--
--	if (ret) {
--		ret = allocate_resource(&iomem_resource, res,
--					size, 0, -1,
--					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
--		if (ret < 0) {
--			pr_err("Cannot allocate new System RAM resource\n");
--			kfree(res);
--			return NULL;
--		}
-+	ret = allocate_resource(&iomem_resource, res,
-+				size, 0, -1,
-+				PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
-+	if (ret < 0) {
-+		pr_err("Cannot allocate new System RAM resource\n");
-+		kfree(res);
-+		return NULL;
- 	}
- 
- #ifdef CONFIG_SPARSEMEM
-@@ -325,7 +281,6 @@ static struct resource *additional_memory_resource(phys_addr_t size)
- 			pr_err("New System RAM resource outside addressable RAM (%lu > %lu)\n",
- 			       pfn, limit);
- 			release_memory_resource(res);
--			release_memory_resource(res_hostmem);
- 			return NULL;
- 		}
- 	}
-@@ -750,8 +705,6 @@ static int __init balloon_init(void)
- 	set_online_page_callback(&xen_online_page);
- 	register_memory_notifier(&xen_memory_nb);
- 	register_sysctl_table(xen_root);
--
--	arch_xen_balloon_init(&hostmem_resource);
- #endif
- 
- #ifdef CONFIG_XEN_PV
-diff --git a/include/xen/balloon.h b/include/xen/balloon.h
-index 61f410f..4914b93 100644
---- a/include/xen/balloon.h
-+++ b/include/xen/balloon.h
-@@ -44,8 +44,3 @@ static inline void xen_balloon_init(void)
- {
- }
- #endif
--
--#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
--struct resource;
--void arch_xen_balloon_init(struct resource *hostmem_resource);
--#endif
--- 
-2.7.4
+    nfsd4: fix crash on writing v4_end_grace before nfsd startup
+    
+    Anatoly Trosinenko reports that this:
+    
+    1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
+    2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
+    3) From `kvm-xfstests shell`:
+    
+    results in NULL dereference in locks_end_grace.
+    
+    Check that nfsd has been started before trying to end the grace period.
+    
+    Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+    Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 6384c9b94898..38b223c1378e 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1126,7 +1126,13 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
+ 		case 'Y':
+ 		case 'y':
+ 		case '1':
++			mutex_lock(&nfsd_mutex);
++			if (nn->nfsd_serv) {
++				mutex_unlock(&nfsd_mutex);
++				return -EBUSY;
++			}
+ 			nfsd4_end_grace(nn);
++			mutex_unlock(&nfsd_mutex);
+ 			break;
+ 		default:
+ 			return -EINVAL;
