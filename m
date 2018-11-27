@@ -2,105 +2,89 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1EBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077E6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A1EB208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJ+QZOCT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1EB208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CE1AF20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1AF20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730090AbeK0ULN (ORCPT
+        id S1730106AbeK0ULR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:11:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35600 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 15:11:17 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59016 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbeK0ULN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:11:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B146320873;
-        Tue, 27 Nov 2018 09:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543310039;
-        bh=9KJKcfl8UzpdRgqf34l2QFTWk/Wiz1BdjMSd7Ce4bZk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CJ+QZOCTeWb7M4scRei/6cGVcLYDWs6H21XWovCutl9oC6peVN1yVxHt8Lrv3Je0H
-         2dBwb3aiJAs6i7QojtnrOFNOcEvkzErh2JIBrs7hZzvmyrrLQrByFLhysOrH3J09yN
-         QzvL7TPyJw4Sa/Ygw+DkVYLvorlXv5YMBeyyRYYY=
-Date:   Tue, 27 Nov 2018 10:13:57 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, eric@anholt.net,
-        dave.stevenson@raspberrypi.org, devel@driverdev.osuosl.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/16] staging: vchiq: dead code removal & misc fixes
-Message-ID: <20181127091357.GA14089@kroah.com>
-References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
- <2009845931.201432.1543260993249@email.ionos.de>
+        id S1729387AbeK0ULR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:11:17 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7C9D1207BC; Tue, 27 Nov 2018 10:14:01 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4BAE920736;
+        Tue, 27 Nov 2018 10:13:51 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:13:51 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 32/43] drm/sun4i: Pass modifier to backend and
+ frontend format support helpers
+Message-ID: <20181127091351.ho4fmn2miph3xph7@flea>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+ <20181123092515.2511-33-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="o2z3clxxp56bjh4n"
 Content-Disposition: inline
-In-Reply-To: <2009845931.201432.1543260993249@email.ionos.de>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181123092515.2511-33-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 08:36:33PM +0100, Stefan Wahren wrote:
-> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 20. November 2018 um 15:53 geschrieben:
-> > 
-> > 
-> > Hi All,
-> > 
-> > This series was written in parallel with reading and understanding the
-> > vchiq code. So excuse me for the lack of logic in the sequence of
-> > patches.
-> > 
-> > The main focus was to delete as much code as possible, I've counted
-> > around 550 lines, which is not bad. Apart from that there are some
-> > patches enforcing proper kernel APIs usage.
-> > 
-> > The only patch that really changes code is the
-> > vchiq_ioc_copy_element_data() rewrite.
-> > 
-> > The last commit updates the TODO list with some of my observations, I
-> > realise some of the might be a little opinionated. If anything it's
-> > going to force a discussion on the topic, which is nice.
-> > 
-> > It was developed on top of the latest linux-next, and was tested on a
-> > RPIv3B+ with audio, video and running vchiq_test.
-> > 
-> > Regards,
-> > Nicolas
-> > 
-> > RFC -> PATCH, as per Stefan's comments:
-> >   - Remove semaphore initialization from remove_event_create()
-> >     (commit 9)
-> >   - Join all three semaphore to completion patches (commit 11)
-> >   - Update probe/init commit message (commit 14)
-> >   - Update TODO commit message and clean up (commit 16)
-> >   - Fix spelling on some of the patches
-> > 
-> 
-> The whole series is
-> 
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-> 
-> Unfortunately patch 05 might not apply.
 
-I fixed it up.
+--o2z3clxxp56bjh4n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
+On Fri, Nov 23, 2018 at 10:25:04AM +0100, Paul Kocialkowski wrote:
+> To prepare the introduction of tiled mode support, pass the framebuffer
+> format modifier to the helpers dealing with format support.
+>=20
+> Since only linear mode is supported for now, add corresponding checks in
+> each helper.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-greg k-h
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--o2z3clxxp56bjh4n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0KzwAKCRDj7w1vZxhR
+xRSkAP435R8bFF8rbr0/IqwKN6aKg9/6+XHV/wA45fsIZLThYQD/UipFoPtbCcwj
+ue2dc/T8R7KkizKWTP8eE+sb5uMoBQg=
+=pDjq
+-----END PGP SIGNATURE-----
+
+--o2z3clxxp56bjh4n--
