@@ -2,191 +2,191 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C801C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD055C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B8220873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:03:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B8220873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 8820F20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8820F20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeK1CBq (ORCPT
+        id S1729041AbeK1CCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:01:46 -0500
-Received: from smtp03.citrix.com ([162.221.156.55]:30970 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728906AbeK1CBq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:01:46 -0500
-X-IronPort-AV: E=Sophos;i="5.56,287,1539648000"; 
-   d="scan'208";a="71602154"
-Subject: Re: [Xen-devel] [PATCH v3] xen/balloon: Mark unallocated host memory
- as UNUSABLE
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        <xen-devel@lists.xen.org>, <linux-kernel@vger.kernel.org>
-CC:     <jgross@suse.com>, <helgaas@kernel.org>,
-        <christian.koenig@amd.com>, <JBeulich@suse.com>
-References: <1513778746-6155-1-git-send-email-boris.ostrovsky@oracle.com>
- <7c833e3a-4a0b-e80c-91e2-4348d6959651@citrix.com>
- <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
- <f955576f-532d-d4de-e7eb-718dae4b14c1@citrix.com>
- <3dd5153d-0f17-0e3b-7ebb-5579a7200765@oracle.com>
- <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
- <bec58747-dd34-2f2a-135c-c32b39087a3d@oracle.com>
-From:   Igor Druzhinin <igor.druzhinin@citrix.com>
-Message-ID: <82039741-87dc-c9ab-5bea-4704fe1c55eb@citrix.com>
-Date:   Tue, 27 Nov 2018 15:03:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 27 Nov 2018 21:02:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46909 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726671AbeK1CCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:02:44 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9B3BD20711; Tue, 27 Nov 2018 16:04:30 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5832820711;
+        Tue, 27 Nov 2018 16:04:20 +0100 (CET)
+Date:   Tue, 27 Nov 2018 16:04:19 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: media: Add Allwinner A10 CSI binding
+Message-ID: <20181127150419.wmlqhhixb5pg7mkr@flea>
+References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
+ <60494dd4245ab01473d074dc5cd46198a2181614.1542097288.git-series.maxime.ripard@bootlin.com>
+ <20181113083855.s5jxrb32ru3myu3t@kekkonen.localdomain>
+ <20181115190424.gpuekifrjli5mu77@flea>
+ <20181121215650.urefxctd245os6t5@mara.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <bec58747-dd34-2f2a-135c-c32b39087a3d@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yv57llofassyfdse"
+Content-Disposition: inline
+In-Reply-To: <20181121215650.urefxctd245os6t5@mara.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/11/2018 03:28, Boris Ostrovsky wrote:
-> On 11/26/18 2:57 PM, Igor Druzhinin wrote:
->> On 26/11/2018 19:42, Boris Ostrovsky wrote:
->>> On 11/26/18 12:10 PM, Igor Druzhinin wrote:
->>>> On 26/11/2018 16:25, Boris Ostrovsky wrote:
->>>>> On 11/25/18 8:00 PM, Igor Druzhinin wrote:
->>>>>> On 20/12/2017 14:05, Boris Ostrovsky wrote:
->>>>>>> Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
->>>>>>> reservation") left host memory not assigned to dom0 as available for
->>>>>>> memory hotplug.
->>>>>>>
->>>>>>> Unfortunately this also meant that those regions could be used by
->>>>>>> others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
->>>>>>> on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
->>>>>>> addresses as MMIO.
->>>>>>>
->>>>>>> To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
->>>>>>> effectively reverting f5775e0b6116) and keep track of that region as
->>>>>>> a hostmem resource that can be used for the hotplug.
->>>>>>>
->>>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>>>> This commit breaks Xen balloon memory hotplug for us in Dom0 with
->>>>>> "hoplug_unpopulated" set to 1. The issue is that the common kernel
->>>>>> memory onlining procedures require "System RAM" resource to be 1-st
->>>>>> level. That means by inserting it under "Unusable memory" as the commit
->>>>>> above does (intentionally or not) we make it 2-nd level and break memory
->>>>>> onlining.
->>>>> What do you mean by 1st and 2nd level?
->>>>>
->>>> I mean the level of a resource in IOMEM tree (the one that's printed
->>>> from /proc/iomem). 1-st level means its parent is root and so on.
->>> Ah, OK. Doesn't
->>> additional_memory_resource()->insert_resource(iomem_resource) place the
->>> RAM at 1st level? And if not, can we make it so?
->>>
->> That'd mean splitting "Unusable memory" resource. Since it's allocated
->> from bootmem it has proven to be quite difficult but there are seem to
->> be special functions available particularly for memory resource
->> management operations that I've not yet experimented with. So the answer
->> is probably - maybe yes but not straightforward.
->>
->>>>>> There are multiple ways to fix it depending on what was the intention of
->>>>>> original commit and what exactly it tried to workaround. It seems it
->>>>>> does several things at once:
->>>>>> 1) Marks non-Dom0 host memory "Unusable memory" in resource tree.
->>>>>> 2) Keeps track of all the areas safe for hotplug in Dom0
->>>>>> 3) Changes allocation algorithms itself in balloon driver to use those areas
->>>>> Pretty much. (3) is true in the sense that memory is first allocated
->>>>> from hostmem_resource (which is non-dom0 RAM).
->>>>>
->>>>>> Are all the things above necessary to cover the issue in fa564ad96366
->>>>>> ("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
->>>>>> 60-7f)")?
->>>>> Not anymore, as far as that particular commit is concerned, but that's
->>>>> because of 03a551734 ("x86/PCI: Move and shrink AMD 64-bit window to
->>>>> avoid conflict") which was introduced after balloon patch. IIRC there
->>>>> were some issues with fa564ad96366 unrelated to balloon.
->>>>>
->>>> If it's not a problem anymore IIUC, can we revert the change as it still
->>>> breaks "hotplug_unpopulated=1" for the reasons I described above?
->>> Since this seems to have broken existing feature this would be an
->>> option. But before going that route I'd like to see if we can fix the patch.
->>>
->>> I have been unable to reproduce your problem. Can you describe what you did?
->>>
->> It doesn't happen on all configurations as sometimes the memory is
->> successfully hotplugged to a hole depending on the size of Dom0 memory.
->> But we reproduced it quite reliably with small Dom0 sizes like 752MB.
->>
->> XenServer is using this feature to hotplug additional memory for grant
->> table operations so we started a VM and observed a stable hang.
->>
->>>>>> Can we remove "Unusable memory" resources as soon as we finished
->>>>>> booting? Is removing on-demand is preferable over "shoot them all" in
->>>>>> that case?
->>>>> The concern is that in principle nothing prevents someone else to do
->>>>> exact same thing fa564ad96366 did, which is grab something from right
->>>>> above end of RAM as the kernel sees it. And that can be done at any point.
->>>>>
->>>> Nothing prevents - true, but that's plainly wrong from OS point of view
->>>> to grab physical ranges for something without knowing what's actually
->>>> behind on that platform. 
->>> I am not sure I agree that this is plainly wrong. If not for BIOS issues
->>> that 03a551734cf mentions I think what the original implementation of
->>> fa564ad963 did was perfectly reasonable. Which is why I would prefer to
->>> keep keep the hostmem resource *if possible*.
->>>
->> Exactly, those *are* BIOS issues and are not supposed to be workarounded
->> by the OS. And as the next commit showed even the workaround didn't
->> quite helped with it.
->>
->> I agree that having hotmem as a precaution is fine but only if there is
->> a non-cringy way to keep things working with it which I'm not sure does
->> exist.
-> 
-> We have most of the interfaces in the resource framework to do what we
-> want. I put together a semi-working prototype but the tricky part is
-> resource locking --- we need to remove a chunk from hostmem (which will
-> cause hostmem to be resized and possibly split), and insert this chunk
-> to iomem's top level as System RAM, all while holding resource_lock.
-> 
-> I haven't been able to come up with an acceptable interface for that.
-> 
-> Given that we are actually broken I guess I am OK with reverting the
-> patch, but please make sure this works on AMD boxes (I think family 15h
-> is what needs to be tested).
-> 
 
-After their last commit I don't see how this can be broken:
-1) They only claim addresses starting from 0xbd00000000
-*unconditionally* which means if there is some memory behind this range
-on the host (regardless if it's Dom0 or native Linux) they'll break
-their own systems.
+--yv57llofassyfdse
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2) So, theoretically, to trigger the original issue we'd need to have a
-system with RAM higher than 0xbd00000000 and that shouldn't be assigned
-to Dom0 but that contradicts (1).
+Hi,
 
-Igor
+On Wed, Nov 21, 2018 at 11:56:50PM +0200, Sakari Ailus wrote:
+> On Thu, Nov 15, 2018 at 08:04:24PM +0100, Maxime Ripard wrote:
+> > On Tue, Nov 13, 2018 at 10:38:55AM +0200, Sakari Ailus wrote:
+> > > > +  - allwinner,has-isp: Whether the CSI controller has an ISP
+> > > > +                       associated to it or not
+> > >=20
+> > > Is the ISP a part of the same device? It sounds like that this is act=
+ually
+> > > a different device if it contains an ISP as well, and that should be
+> > > apparent from the compatible string. What do you think?
+> >=20
+> > I guess we can see it as both. It seems to be the exact same register
+> > set, except for the fact that the first instance has that ISP in
+> > addition, and several channels, as you pointed out in your other mail.
+>=20
+> I'm simply referring to existing practices as far as I know them. If it's=
+ a
+> different device, it should have a different compatible string, not a
+> vendor-specific property to tell it's somehow different.
 
->>
->>> -boris
->>>
->>>
->>>> I think we shouldn't consider this as a valid
->>>> thing to do and don't try to workaround initially incorrect code.
->>>>
->>>>> -boris
->>>>>
->>>>>> Does it even make sense to remove the 1-st level only restriction in
->>>>>> kernel/resource.c ?
->>>>>
->> _______________________________________________
->> Xen-devel mailing list
->> Xen-devel@lists.xenproject.org
->> https://lists.xenproject.org/mailman/listinfo/xen-devel
-> 
+The line is blurrier than that. Different devices are indeed
+represented using different compatibles, but different features set
+can be represented using properties.
+
+> Many SoCs also separate the DMA and the CSI-2 receivers, and thus they ha=
+ve
+> separate drivers. I don't know about your case, but the ISP requiring a
+> different clock is a hint.
+
+In this particular case, the datasheet represents the ISP as part of
+the DMA, so it looks like a feature. And since we don't have any
+source code for this, we can only do guesswork.
+
+> > What these channels are is not exactly clear. It looks like it's
+> > related to the BT656 interface where you could interleave channel
+> > bytes over the bus. I haven't really looked into it, and it doesn't
+> > look like we have any code (or hardware) able to do that though.
+> >=20
+> > > > +
+> > > > +If allwinner,has-isp is set, an additional "isp" clock is needed,
+> > > > +being a phandle to the clock driving the ISP.
+> > > > +
+> > > > +The CSI node should contain one 'port' child node with one child
+> > > > +'endpoint' node, according to the bindings defined in
+> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > > > +endpoint's bus type must be parallel or BT656.
+> > > > +
+> > > > +Endpoint node properties for CSI
+> > > > +---------------------------------
+> > > > +
+> > > > +- remote-endpoint	: (required) a phandle to the bus receiver's end=
+point
+> > > > +			   node
+> > >=20
+> > > Rob's opinion has been (AFAIU) that this is not needed as it's alread=
+y a
+> > > part of the graph bindings. Unless you want to say that it's required=
+, that
+> > > is --- the graph bindings document it as optional.
+> >=20
+> > Ok, I'll remove it.
+> >=20
+> > > > +- bus-width:		: (required) must be 8
+> > >=20
+> > > If this is the only value the hardware supports, I don't see why you =
+should
+> > > specify it here.
+> >=20
+> > Ditto :)
+> >=20
+> > > > +- pclk-sample		: (optional) (default: sample on falling edge)
+> > > > +- hsync-active		: (only required for parallel)
+> > > > +- vsync-active		: (only required for parallel)
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +csi0: csi@1c09000 {
+> > > > +	compatible =3D "allwinner,sun7i-a20-csi",
+> > > > +		     "allwinner,sun4i-a10-csi";
+> > > > +	reg =3D <0x01c09000 0x1000>;
+> > > > +	interrupts =3D <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +	clocks =3D <&ccu CLK_AHB_CSI0>, <&ccu CLK_CSI0>,
+> > > > +		 <&ccu CLK_CSI_SCLK>, <&ccu CLK_DRAM_CSI0>;
+> > > > +	clock-names =3D "ahb", "mod", "isp", "ram";
+> > > > +	resets =3D <&ccu RST_CSI0>;
+> > > > +	allwinner,csi-channels =3D <4>;
+> > > > +	allwinner,has-isp;
+> > > > +=09
+> > > > +	port {
+> > > > +		csi_from_ov5640: endpoint {
+> > > > +                        remote-endpoint =3D <&ov5640_to_csi>;
+> > > > +                        bus-width =3D <8>;
+> > > > +                        data-shift =3D <2>;
+> > >=20
+> > > data-shift needs to be documented above if it's relevant for the devi=
+ce.
+> >=20
+> > It's not really related to the CSI device in that case but the sensor,
+> > so I'll just leave it out.
+>=20
+> Hmm. data-shift should only be relevant for the receiver, shoudn't it?
+
+Sorry, I mispoke. We're not using it anywhere in either drivers, so
+it's totally useless.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--yv57llofassyfdse
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/1c8wAKCRDj7w1vZxhR
+xeFUAQDoNrYNTYuKW2LxDjXbck0L8ZtFCpeDjUEIV1DD17iiBQEA/c54jPVLSpeF
+KfglcnCThL6gXzqesTYg5UoodftYNAs=
+=bisM
+-----END PGP SIGNATURE-----
+
+--yv57llofassyfdse--
