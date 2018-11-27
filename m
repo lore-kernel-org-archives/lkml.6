@@ -2,103 +2,110 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7875C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E3CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 883DD208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:25:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7KANS72"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883DD208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C06A520873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:27:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06A520873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbeK1HYV (ORCPT
+        id S1726389AbeK1H0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:24:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 02:26:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33778 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbeK1HYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:24:20 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725752AbeK1H0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:26:19 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7D420873;
-        Tue, 27 Nov 2018 20:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543350316;
-        bh=lhOOZSdDHB39hiHUJ1gc3PVNwldijxaEv1yJeDjOJbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s7KANS72ytXRKFgaBrsx5PAwmMrR/rUpEQ5DNEPfLZuRwUAe2UHrfB8dMoL1hIbx9
-         N+XjnphPOSs+nj5D8Injv0MvHOPTburaDA3v2gcPEZK3cwGLFbnOjK2kXeDMf8ZuVe
-         Pna4FXPyQKObIFI4Utb3wGK7wjut/eZ/2oTK9Ubs=
-Date:   Tue, 27 Nov 2018 14:25:14 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Patrick Talbert <ptalbert@redhat.com>
-Subject: Re: [Bug] SD card reader in Acer Aspire S5 broken in 4.20-rc
-Message-ID: <20181127202514.GB112381@google.com>
-References: <2960808.4YCFhzuD0k@aspire.rjw.lan>
- <1675729.7aZxPkvRd8@aspire.rjw.lan>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FDAE7F6B0;
+        Tue, 27 Nov 2018 20:27:15 +0000 (UTC)
+Received: from jlaw-desktop.bos.csb (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0725260C45;
+        Tue, 27 Nov 2018 20:27:14 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/1] support ftrace and -ffunction-sections
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <1542745158-25392-1-git-send-email-joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <a6c4b12d-389e-8919-d37b-50ba73319b8f@redhat.com>
+Date:   Tue, 27 Nov 2018 15:27:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1675729.7aZxPkvRd8@aspire.rjw.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542745158-25392-1-git-send-email-joe.lawrence@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 27 Nov 2018 20:27:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:37:20PM +0100, Rafael J. Wysocki wrote:
-> On Monday, November 26, 2018 7:03:58 PM CET Rafael J. Wysocki wrote:
-> > Hi Bjorn,
-> > 
-> > The SD card reader in my Acer Aspire S5 doesn't work with 4.20-rc.
-> > 
-> > Here's what lspci -v says about it (in a bad kernel):
-> > 
-> > 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS5209 PCI Express Card Reader 
-> > (rev 01)
-> >         Subsystem: Acer Incorporated [ALI] Device 0704
-> >         Flags: bus master, fast devsel, latency 0, IRQ 35
-> >         Memory at d9001000 (32-bit, non-prefetchable) [size=4K]
-> >         Capabilities: [40] Power Management version 3
-> >         Capabilities: [50] MSI: Enable+ Count=1/1 Maskable- 64bit+
-> >         Capabilities: [70] Express Endpoint, MSI 00
-> >         Capabilities: [100] Advanced Error Reporting
-> >         Capabilities: [140] Device Serial Number 00-00-00-01-00-4c-e0-00
-> >         Kernel driver in use: rtsx_pci
-> >         Kernel modules: rtsx_pci
-
-Thanks a lot for bisecting this!
-
-With a good kernel (v4.19 or v4.20-rc with 17c91487364f reverted),
-would you mind collecting "lspci -vv" output, the dmesg log with
-"pci=earlydump", and the FADT dump?
-
-I'm interested in the initial state of the device at handoff from
-BIOS, and what Linux changes even when aspm_disabled is set.
-
-If we can't figure out a way to fix both this issue and the one fixed
-by 17c91487364f, I guess the fallback will be to revert 17c91487364f
-since it's better to allow a system that was previously broken to
-remain broken than it is to break a system that previously worked.
-
-But obviously I hope we can figure out a solution that fixes both
-cases.
-
-> > When it doesn't work, it doesn't generate any interrupts on device insertion
-> > and removal and this seems to be reproducible 100% of the time.
+On 11/20/2018 03:19 PM, Joe Lawrence wrote:
+> Hi Steve,
 > 
-> So reverting 17c91487364f (PCI/ASPM: Do not initialize link state when
-> aspm_disabled is set) on top of 4.20-rc4 makes the problem go away.
+> I noticed that ftrace does not currently support functions built with
+> the -ffunction-sections option as they end up in .text.<function_name>
+> ELF sections, never making into the __mcount_loc section.
 > 
-> I guess that the device in question needs pcie_aspm_cap_init() to be
-> called for it even though the FADT says "NO_ASPM".
+> I modified the recordmcount scripts to handle such .text. section
+> prefixes and this appears to work on x86_64, ppc64le, and s390x -- at
+> least for simple modules, including the "Test trace_printk from module"
+> ftrace self-test. 
+> 
+> That said, I did notice 90ad4052e85c ("kbuild: avoid conflict between
+> -ffunction-sections and -pg on gcc-4.7") which indicates that the kernel
+> still supports versions of gcc which may not play well with ftrace and
+> -ffunction-sections.
+> 
+> With that limitation in mind, can we support ftracing of functions in
+> such sections for compiler versions that do support it? (fwiw, gcc
+> v4.8.5 seems happy)  And then if so, what additional testing or coding
+> would need to be done to be confident that it is safe?  Is matching on
+> ".text.*" too inclusive?
+> 
+
+Gentle ping...  I took a dive through the rhkl-archives and found a few
+older discussions:
+
+  [PATCH] scripts/recordmcount.pl: Support build with -ffunction-sections.
+  https://lore.kernel.org/lkml/CAFbHwiRtBaHkpZqTm6VZ=fCJcyu+dsdpo_kxMHy1egce=rTuyA@mail.gmail.com/
+
+and related LWN article:
+
+  The source of the e1000e corruption bug
+  https://lwn.net/Articles/304105/
+
+Catching up with those, I assume that this has never been implemented in
+the past due to fear of ftrace modifying a potentially freed section
+(and bricking NICs in the process :(
+
+Looking through the kernel sources (like Will in 2008) I don't see any
+code jumping out at me that frees code other than .init.  However a
+quick code inspection is no guarantee.
+
+Assuming the same use-after-free reservation holds true today:
+
+  1: Is there any reasonable way to mark code sections (pages?) as
+     in-use to avoid memory freeing mechanisms from releasing them?  The
+     logic for .init is mostly arch-specific, so there could be many 
+     different ways random arches may try to pull this off.
+
+  2: Would/could it be safer to restrict __mcount_loc detection of
+     ".text.*" sections to modules?  The recordmcount.pl script already
+     knows about is_module... that information could be provided to
+     recordmcount.c as well for consideration.
+
+-- Joe
