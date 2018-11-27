@@ -2,362 +2,148 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BD1C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEC6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D24CE20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:50:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cn89HzmN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24CE20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8842220873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 06:55:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8842220873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbeK0Rro (ORCPT
+        id S1728608AbeK0Rwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 12:47:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41360 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 12:52:34 -0500
+Received: from mga14.intel.com ([192.55.52.115]:16241 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbeK0Rro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 12:47:44 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC5A720873;
-        Tue, 27 Nov 2018 06:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543301452;
-        bh=VtOtSY7bZLEn1TABMVBxv8ngRENN25VwFk8pfsORqnI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Cn89HzmN9nEPzX0AXsfct0kqIy3S65GmU/25Ho+juHU+R7L9d2QeziYGuwwNfTcye
-         AXBXYYHr1NaSM8Y6o6UlWEWCz5SAHK1J9duCPaOchIbrEsado1das0sCJhwkuqS+1W
-         PdFZP6braQZIyZUXlbYrK8To32S+R2yIdn0bjxnE=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2] clk: qcom: Move to menuconfig and reduce lines
-Date:   Mon, 26 Nov 2018 22:50:51 -0800
-Message-Id: <20181127065051.54389-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+        id S1727796AbeK0Rwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 12:52:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 22:55:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,285,1539673200"; 
+   d="scan'208";a="90176551"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 26 Nov 2018 22:55:41 -0800
+Received: from [10.125.251.223] (abudanko-mobl.ccr.corp.intel.com [10.125.251.223])
+        by linux.intel.com (Postfix) with ESMTP id 9B3035802E4;
+        Mon, 26 Nov 2018 22:55:37 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] Documentation/admin-guide: introduce
+ perf-security.rst file
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <259a9cd2-5c56-4f8d-57c4-cabaeaa774bc@linux.intel.com>
+ <4d95341d-d1f4-fc48-f173-a6fedfc70d33@linux.intel.com>
+ <20181125124732.6c1807de@lwn.net>
+ <02dbd6dc-86b5-2307-4122-b716c51b9eaa@linux.intel.com>
+ <20181126132833.5302688b@lwn.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3a07906e-83c0-e7ae-7249-84deafdd52e0@linux.intel.com>
+Date:   Tue, 27 Nov 2018 09:55:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181126132833.5302688b@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We duplicate the 'depends on' in almost every Kconfig here, and it's
-getting out of hand now that we have tens of options for various SoC
-drivers here. Let's clean it up a little by making a menuconfig for a
-submenu and adding an if wrapper around the driver section.
+On 26.11.2018 23:28, Jonathan Corbet wrote:
+> On Mon, 26 Nov 2018 11:57:21 +0300
+> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+> 
+>>>> +For the purpose of performing security checks Linux implementation splits
+>>>> +processes into two categories [6]_ : a) privileged processes (whose effective
+>>>> +user ID is 0, referred to as superuser or root), and b) unprivileged processes
+>>>> +(whose effective UID is nonzero).  
+>>>
+>>> Is that really what's going on here?  If I understand things correctly,
+>>> it's looking for CAP_SYS_PTRACE rather than a specific UID; am I missing
+>>> something here?  
+>>
+>> You are right regarding CAP_SYS_PTRACE but this capability is not the only 
+>> one which is used by perf_events for security checks, so the capabilities 
+>> clarification is kept aside of these patches, because patches initial intention 
+>> is to clarify security specifics of sysctl_perf_even_paranoid settings.
+>>
+>> I agree that the document can be extended with details clarifying capabilities 
+>> used by perf_events for security checks.
+> 
+> I don't really like the idea of adding a document that we know doesn't
+> really describe how the security decision is made.  Even a one-line
+> parenthetical saying that things are more complicated and giving a pointer
+> to a place to look for details would help, IMO.
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+Well, makes sense. It is possible to have something similar to this:
 
-Changes from v1:
- * Don't remove full depends on lines when they have something else
+...
 
- drivers/clk/qcom/Kconfig | 43 +++++++++-------------------------------
- 1 file changed, 9 insertions(+), 34 deletions(-)
+For the purpose of performing security checks the Linux implementation splits
+processes into two categories [6]_ : a) privileged processes (whose effective
+user ID is 0, referred to as superuser or root), and b) unprivileged processes
+(whose effective UID is nonzero).
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a611531df115..cf1dec367192 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -9,16 +9,17 @@ config QCOM_GDSC
- config QCOM_RPMCC
- 	bool
- 
--config COMMON_CLK_QCOM
-+menuconfig COMMON_CLK_QCOM
- 	tristate "Support for Qualcomm's clock controllers"
- 	depends on OF
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
- 
-+if COMMON_CLK_QCOM
-+
- config QCOM_A53PLL
- 	tristate "MSM8916 A53 PLL"
--	depends on COMMON_CLK_QCOM
- 	default ARCH_QCOM
- 	help
- 	  Support for the A53 PLL on MSM8916 devices. It provides
-@@ -28,7 +29,6 @@ config QCOM_A53PLL
- 
- config QCOM_CLK_APCS_MSM8916
- 	tristate "MSM8916 APCS Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
- 	default ARCH_QCOM
- 	help
-@@ -39,7 +39,7 @@ config QCOM_CLK_APCS_MSM8916
- 
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
--	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-+	depends on MFD_QCOM_RPM
- 	select QCOM_RPMCC
- 	help
- 	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-@@ -52,7 +52,7 @@ config QCOM_CLK_RPM
- 
- config QCOM_CLK_SMD_RPM
- 	tristate "RPM over SMD based Clock Controller"
--	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
-+	depends on QCOM_SMD_RPM
- 	select QCOM_RPMCC
- 	help
- 	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-@@ -65,7 +65,7 @@ config QCOM_CLK_SMD_RPM
- 
- config QCOM_CLK_RPMH
- 	tristate "RPMh Clock Driver"
--	depends on COMMON_CLK_QCOM && QCOM_RPMH
-+	depends on QCOM_RPMH
- 	help
- 	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
- 	 SoCs. It accepts requests from other hardware subsystems via RSC.
-@@ -75,7 +75,6 @@ config QCOM_CLK_RPMH
- config APQ_GCC_8084
- 	tristate "APQ8084 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on apq8084 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -85,7 +84,6 @@ config APQ_MMCC_8084
- 	tristate "APQ8084 Multimedia Clock Controller"
- 	select APQ_GCC_8084
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the multimedia clock controller on apq8084 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -93,7 +91,6 @@ config APQ_MMCC_8084
- 
- config IPQ_GCC_4019
- 	tristate "IPQ4019 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on ipq4019 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -101,7 +98,6 @@ config IPQ_GCC_4019
- 
- config IPQ_GCC_806X
- 	tristate "IPQ806x Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on ipq806x devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -110,7 +106,6 @@ config IPQ_GCC_806X
- config IPQ_LCC_806X
- 	tristate "IPQ806x LPASS Clock Controller"
- 	select IPQ_GCC_806X
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the LPASS clock controller on ipq806x devices.
- 	  Say Y if you want to use audio devices such as i2s, pcm,
-@@ -118,7 +113,6 @@ config IPQ_LCC_806X
- 
- config IPQ_GCC_8074
- 	tristate "IPQ8074 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for global clock controller on ipq8074 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -127,7 +121,6 @@ config IPQ_GCC_8074
- 
- config MSM_GCC_8660
- 	tristate "MSM8660 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8660 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -136,7 +129,6 @@ config MSM_GCC_8660
- config MSM_GCC_8916
- 	tristate "MSM8916 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8916 devices.
- 	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-@@ -144,7 +136,6 @@ config MSM_GCC_8916
- 
- config MSM_GCC_8960
- 	tristate "APQ8064/MSM8960 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on apq8064/msm8960 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -153,7 +144,6 @@ config MSM_GCC_8960
- config MSM_LCC_8960
- 	tristate "APQ8064/MSM8960 LPASS Clock Controller"
- 	select MSM_GCC_8960
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the LPASS clock controller on apq8064/msm8960 devices.
- 	  Say Y if you want to use audio devices such as i2s, pcm,
-@@ -161,7 +151,6 @@ config MSM_LCC_8960
- 
- config MDM_GCC_9615
- 	tristate "MDM9615 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on mdm9615 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -170,7 +159,6 @@ config MDM_GCC_9615
- config MDM_LCC_9615
- 	tristate "MDM9615 LPASS Clock Controller"
- 	select MDM_GCC_9615
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the LPASS clock controller on mdm9615 devices.
- 	  Say Y if you want to use audio devices such as i2s, pcm,
-@@ -179,7 +167,6 @@ config MDM_LCC_9615
- config MSM_MMCC_8960
- 	tristate "MSM8960 Multimedia Clock Controller"
- 	select MSM_GCC_8960
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the multimedia clock controller on msm8960 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -188,7 +175,6 @@ config MSM_MMCC_8960
- config MSM_GCC_8974
- 	tristate "MSM8974 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8974 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -198,7 +184,6 @@ config MSM_MMCC_8974
- 	tristate "MSM8974 Multimedia Clock Controller"
- 	select MSM_GCC_8974
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the multimedia clock controller on msm8974 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -206,7 +191,6 @@ config MSM_MMCC_8974
- 
- config MSM_GCC_8994
- 	tristate "MSM8994 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8994 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -215,7 +199,6 @@ config MSM_GCC_8994
- config MSM_GCC_8996
- 	tristate "MSM8996 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8996 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -225,7 +208,6 @@ config MSM_MMCC_8996
- 	tristate "MSM8996 Multimedia Clock Controller"
- 	select MSM_GCC_8996
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -233,7 +215,6 @@ config MSM_MMCC_8996
- 
- config MSM_GCC_8998
- 	tristate "MSM8998 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8998 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -241,7 +222,6 @@ config MSM_GCC_8998
- 
- config QCS_GCC_404
- 	tristate "QCS404 Global Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on QCS404 devices.
- 	  Say Y if you want to use multimedia devices or peripheral
-@@ -249,7 +229,6 @@ config QCS_GCC_404
- 
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	select SDM_GCC_845
- 	help
- 	  Support for the camera clock controller on SDM845 devices.
-@@ -258,7 +237,6 @@ config SDM_CAMCC_845
- config SDM_GCC_660
- 	tristate "SDM660 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on SDM660 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -267,7 +245,6 @@ config SDM_GCC_660
- config SDM_GCC_845
- 	tristate "SDM845 Global Clock Controller"
- 	select QCOM_GDSC
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on SDM845 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -275,7 +252,6 @@ config SDM_GCC_845
- 
- config SDM_VIDEOCC_845
- 	tristate "SDM845 Video Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	select SDM_GCC_845
- 	select QCOM_GDSC
- 	help
-@@ -286,7 +262,6 @@ config SDM_VIDEOCC_845
- config SDM_DISPCC_845
- 	tristate "SDM845 Display Clock Controller"
- 	select SDM_GCC_845
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SDM845 devices.
-@@ -304,7 +279,6 @@ config SPMI_PMIC_CLKDIV
- 
- config QCOM_HFPLL
- 	tristate "High-Frequency PLL (HFPLL) Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the high-frequency PLLs present on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling on devices
-@@ -312,7 +286,6 @@ config QCOM_HFPLL
- 
- config KPSS_XCC
- 	tristate "KPSS Clock Controller"
--	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the Krait ACC and GCC clock controllers. Say Y
- 	  if you want to support CPU frequency scaling on devices such
-@@ -320,8 +293,10 @@ config KPSS_XCC
- 
- config KRAITCC
- 	tristate "Krait Clock Controller"
--	depends on COMMON_CLK_QCOM && ARM
-+	depends on ARM
- 	select KRAIT_CLOCKS
- 	help
- 	  Support for the Krait CPU clocks on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling.
-+
-+endif
--- 
-Sent by a computer through tubes
+Privileged processes bypass all kernel security permission checks so perf_events
+performance monitoring is fully available to privileged processes without
+access, scope and resource restrictions.
 
+Unprivileged processes are subject to full security permission check based on 
+the process's credentials [5]_ (usually: effective UID, effective GID, and 
+supplementary group list).
+
+Linux divides the privileges traditionally associated with superuser into
+distinct units, known as capabilities [6]_, which can be independently enabled
+and disabled on per-thread basis for processes and files of unprivileged users.
+
+Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as 
+privileged processes with respect to perf_events performance monitoring and
+bypass *scope* permissions checks in the kernel.
+
+Unprivileged processes using perf_events system call API is also subject for
+PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome determines
+whether monitoring is permitted. So unprivileged process provided with
+CAP_SYS_PTRACE capability are effectively permitted to pass the check.
+
+Other capabilities being granted to unprivileged processes can effectively
+enable capturing of additional data required for later performance analysis of
+monitored processes or system. For example CAP_SYSLOG capability permits
+reading kernel space memory addresses from /proc/kallsyms file.
+
+...
+
+Thanks,
+Alexey
+
+> 
+> Either way, I can merge this, but I'd like to have an ack from the perf
+> folks first.
+> 
+> Thanks,
+> 
+> jon
+> 
