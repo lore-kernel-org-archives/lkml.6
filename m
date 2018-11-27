@@ -2,193 +2,260 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402ABC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D22C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F139C208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F139C208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eclipso.eu
+	by mail.kernel.org (Postfix) with ESMTP id 7AD01208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:59:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD01208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbeK1C5Z convert rfc822-to-8bit (ORCPT
+        id S1730387AbeK1C5i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:57:25 -0500
-Received: from mail.eclipso.de ([217.69.254.104]:48236 "EHLO mail.eclipso.de"
+        Tue, 27 Nov 2018 21:57:38 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:58394 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeK1C5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:57:25 -0500
-Received: from roadrunner.suse (p5B31873F.dip0.t-ipconnect.de [91.49.135.63])
-        by mail.eclipso.de with ESMTPS id 28748F84
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 16:59:01 +0100 (CET)
-X-ESMTP-Authenticated-User: 0001F234
-From:   stakanov <stakanov@eclipso.eu>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Ira Krufky <mkrufky@linuxtv.org>,
-        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
-        Malcolm Priestley <tvboxspy@gmail.com>
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Date:   Tue, 27 Nov 2018 16:58:58 +0100
-Message-ID: <45396912.h74atscUxZ@roadrunner.suse>
-In-Reply-To: <20181127104946.195487ec@coco.lan>
-References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de> <1673172.qrKGPYx0fj@roadrunner.suse> <20181127104946.195487ec@coco.lan>
+        id S1726444AbeK1C5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:57:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4347kp25Ptz9v0bq;
+        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id HZqsiMQnoPpC; Tue, 27 Nov 2018 16:59:14 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4347kp1Pytz9v0bb;
+        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9483C8B832;
+        Tue, 27 Nov 2018 16:59:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id aJ5j15rPczHl; Tue, 27 Nov 2018 16:59:15 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F3CDE8B827;
+        Tue, 27 Nov 2018 16:59:14 +0100 (CET)
+Subject: Re: [PATCH] lkdtm: do not depend on CONFIG_BLOCK
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <ca27a073c872e243be1d17a89afb4b4aeb9a298b.1541714054.git.christophe.leroy@c-s.fr>
+ <20181127074316.GC13965@kroah.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <8daf27d0-0f58-2dd6-c1bb-7b634494212a@c-s.fr>
+Date:   Tue, 27 Nov 2018 15:59:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20181127074316.GC13965@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In data martedì 27 novembre 2018 13:49:46 CET, Mauro Carvalho Chehab ha 
-scritto:
-> Hi Stakanov,
-> 
-> Em Tue, 27 Nov 2018 11:02:57 +0100
-> 
-> stakanov <stakanov@eclipso.eu> escreveu:
-> > In data lunedì 26 novembre 2018 14:31:09 CET, Takashi Iwai ha scritto:
-> > > On Fri, 23 Nov 2018 18:26:25 +0100,
-> > > 
-> > > Mauro Carvalho Chehab wrote:
-> > > > Takashi,
-> > > > 
-> > > > Could you please produce a Kernel for Stakanov to test
-> > > > with the following patches:
-> > > > 
-> > > > https://patchwork.linuxtv.org/patch/53044/
-> > > > https://patchwork.linuxtv.org/patch/53045/
-> > > > https://patchwork.linuxtv.org/patch/53046/
-> > > > https://patchwork.linuxtv.org/patch/53128/
-> > > 
-> > > Sorry for the late reaction.  Now it's queued to OBS
-> > > home:tiwai:bsc1116374-2 repo.  It'll be ready in an hour or so.
-> > > It's based on 4.20-rc4.
-> > > 
-> > > Stakanov, please give it a try later.
-> > > 
-> > > 
-> > > thanks,
-> > > 
-> > > Takashi
-> > 
-> > O.K. this unbricks partially the card.
-> 
-> From the logs, the Kernel is now working as expected.
-> 
-> > Now hotbird does search and does sync
-> > on all channels. Quality is very good. Astra still does interrupt the
-> > search immediately and does not receive a thing. So it is a 50% brick
-> > still, but it is a huge progress compared to before.
-> 
-> As I said before, you need to tell Kaffeine what's the LNBf that you're
-> using. The LNBf is a physical device[1] that it is installed on your
-> satellite dish. There's no way to auto-detect the model you actually have,
-> so you need to provide this information to the digital TV software you're
-> using.
-> 
-> [1] It looks like this:
-> 	https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Astra_lnb.jpg/
-240
-> px-Astra_lnb.jpg
-> 
-> The "Universal" one is for an old universal model sold in Europe about
-> 15 years ago. It doesn't support all transponders found on an Astra
-> satellite.
-> 
-> For those, you need to use the LNBf that it is known as "Astra 1E"[2].
-> 
-> [2] The name is there just for historical reasons. The actual Astra 1E
-> satellite was retired, but another satellite occupies the same orbital
-> position (19.2°E), and they keep adding/retiring satellites there as
-> needed (https://en.wikipedia.org/wiki/Astra_19.2%C2%B0E).
-> 
-> As I pointed you on a past e-mail, when you set the DVB-S board on
-> Kaffeine, you should have explicitly set it.
-> 
-> If you start Kaffeine in English:
-> 
-> 	$ LANG=C kaffeine
-> 
-> You'll see it at the following menu:
-> 
-> 	Television -> Configure Television -> Device 0
-> 
-> (assuming that your device is device 0)
-> 
-> There, you need to tell that you'll be using a DiSEqC swith. It
-> will then allow you to select up to 4 satellite sources. Once you
-> set a source, it will allow you to edit the LNB <n> Settings
-> (where <n> will be 1 to 4). Clicking there, it will present you
-> a menu with all known LNBf models. Astra 1E is the third option[3].
-> 
-> [3] yeah, on a separate discussion, we should likely rename "Astra 1E"
-> to just "Astra", and place it as the first option. I'll do such change,
-> but it will be at v4l-utils package (libdvbv5) and it will probably
-> take some time until distros start packaging the new version, even
-> if we add it to the stable branch.
-> 
-> > I paste the output of the directory below, unfortunately the opensuse
-> > paste
-> > does not work currently so I try here, sorry if this is long.
-> > 
-> > Content of the directory 99-media.conf created following the indications
-> > (please bear in mind that I have also another card installed (Hauppauge
-> > 5525) although it was not branched to the sat cable and i did change the
-> > settings in Kaffeine to use only the technisat. But my understanding is
-> > limited if this may give "noise" in the output, so I thought to underline
-> > it, just FYI.
-> > Output:
-> Looks ok to me.
-> 
-> > [  649.009548] cx23885 0000:03:00.0: invalid short VPD tag 01 at offset 1
-> > [  649.011439] r8169 0000:06:00.0: invalid short VPD tag 00 at offset 1
-> 
-> Those two above are weird... It seems to be related to some issue that
-> the PCI core detected:
-> 
-> drivers/pci/vpd.c:                      pci_warn(dev, "invalid %s VPD tag
-> %02x at offset %zu",
-> 
-> I've no idea what they mean, nor if you'll face any issues related to it.
-> 
-> Thanks,
-> Mauro
-The two are known annoyances especially the cx23885 complaining in the logs 
-about a "wrong revision". But as they AFAIK do not cause major issues or 
-havoc, it is not a problem, at least for me. 
-Now, the card suddenly works. The only thing you have to do (limited to this 
-technisat PCI card, not applicable to the Hauppauge PCI-e mounted on the same 
-machine) is to set the "square" to high voltage, limited for Astra. Hotbird 
-scans better without this, with "no setting send" as I do for the Hauppauge as 
-well. 
-This must be something weird related to our sat dish.
-
-But the GOOD news is: yes now you made it! The card works. And yes, you should 
-really rename ASTRA E setting. Maybe also be more clear or give some hint in 
-kaffeine when hovering over it, about how to set it, for some reason it came 
-straightforward to me to click on the right radio button to select the type of 
-satellite,  but I did not understand, nor did suspect, I would be able to set, 
-or that I would have to set the left button (must be a cultural deformation, 
-or whatever). Once you told me about I did find it, but in my very limited 
-experience, I think that could be enhanced.
-
-So congratulations. It works and now I am officially even more impressed about 
-Linux and the spirit behind it. Compliments and thank you all for your work 
-and time!
-
-Regards. 
 
 
+On 11/27/2018 07:43 AM, Greg Kroah-Hartman wrote:
+> On Fri, Nov 09, 2018 at 07:05:51AM +0000, Christophe Leroy wrote:
+>> Most parts of lkdtm don't require CONFIG_BLOCK.
+>>
+>> This patch limits dependency to CONFIG_BLOCK in order to give embedded
+>> platforms which don't select CONFIG_BLOCK the opportunity to use LKDTM.
+>>
+>> Fixes: fddd9cf82c9f ("make LKDTM depend on BLOCK")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   drivers/misc/lkdtm/core.c | 7 ++++++-
+>>   lib/Kconfig.debug         | 1 -
+>>   2 files changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+>> index 2837dc77478e..bc76756b7eda 100644
+>> --- a/drivers/misc/lkdtm/core.c
+>> +++ b/drivers/misc/lkdtm/core.c
+>> @@ -40,9 +40,12 @@
+>>   #include <linux/interrupt.h>
+>>   #include <linux/hrtimer.h>
+>>   #include <linux/slab.h>
+>> -#include <scsi/scsi_cmnd.h>
+>>   #include <linux/debugfs.h>
+>>   
+>> +#ifdef CONFIG_BLOCK
+>> +#include <scsi/scsi_cmnd.h>
+>> +#endif
+> 
+> Why would this config option be needed to be checked just to be able to
+> include a .h file?
 
-_________________________________________________________________
-________________________________________________________
-Ihre E-Mail-Postfächer sicher & zentral an einem Ort. Jetzt wechseln und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
+Because if including that file regardless of the config option, you get:
+
+   CALL    scripts/checksyscalls.sh
+   CC      drivers/misc/lkdtm/core.o
+In file included from ./include/scsi/scsi_cmnd.h:7:0,
+                  from drivers/misc/lkdtm/core.c:45:
+./include/linux/t10-pi.h:40:41: warning: 'struct request' declared 
+inside parameter list
+  static inline u32 t10_pi_ref_tag(struct request *rq)
+                                          ^
+./include/linux/t10-pi.h:40:41: warning: its scope is only this 
+definition or declaration, which is probably not what you want
+./include/linux/t10-pi.h:61:8: warning: 'struct request' declared inside 
+parameter list
+         unsigned int intervals)
+         ^
+./include/linux/t10-pi.h:64:42: warning: 'struct request' declared 
+inside parameter list
+  static inline void t10_pi_prepare(struct request *rq, u8 protection_type)
+                                           ^
+In file included from ./include/scsi/scsi_cmnd.h:12:0,
+                  from drivers/misc/lkdtm/core.c:45:
+./include/scsi/scsi_device.h:435:4: error: unknown type name 'req_flags_t'
+     req_flags_t rq_flags, int *resid);
+     ^
+./include/scsi/scsi_device.h: In function 'scsi_execute_req':
+./include/scsi/scsi_device.h:442:2: error: implicit declaration of 
+function '__scsi_execute' [-Werror=implicit-function-declaration]
+   __scsi_execute(sdev, cmd, data_direction, buffer, bufflen, \
+   ^
+./include/scsi/scsi_device.h:451:9: note: in expansion of macro 
+'scsi_execute'
+   return scsi_execute(sdev, cmd, data_direction, buffer,
+          ^
+In file included from ./include/scsi/scsi_request.h:5:0,
+                  from ./include/scsi/scsi_cmnd.h:13,
+                  from drivers/misc/lkdtm/core.c:45:
+./include/linux/blk-mq.h: At top level:
+./include/linux/blk-mq.h:100:9: error: type defaults to 'int' in 
+declaration of 'blk_status_t' [-Werror=implicit-int]
+  typedef blk_status_t (queue_rq_fn)(struct blk_mq_hw_ctx *,
+          ^
+./include/linux/blk-mq.h:100:9: error: 'blk_status_t' declared as 
+function returning a function
+./include/linux/blk-mq.h:101:16: warning: parameter names (without 
+types) in function declaration
+    const struct blk_mq_queue_data *);
+                 ^
+./include/linux/blk-mq.h:123:2: error: unknown type name 'queue_rq_fn'
+   queue_rq_fn  *queue_rq;
+   ^
+./include/linux/blk-mq.h:144:2: error: unknown type name 'softirq_done_fn'
+   softirq_done_fn  *complete;
+   ^
+./include/linux/blk-mq.h:223:31: error: 'blk_mq_req_flags_t' undeclared 
+here (not in a function)
+   BLK_MQ_REQ_NOWAIT = (__force blk_mq_req_flags_t)(1 << 0),
+                                ^
+./include/linux/blk-mq.h:233:3: error: expected declaration specifiers 
+or '...' before 'blk_mq_req_flags_t'
+    blk_mq_req_flags_t flags);
+    ^
+./include/linux/blk-mq.h:235:20: error: expected declaration specifiers 
+or '...' before 'blk_mq_req_flags_t'
+    unsigned int op, blk_mq_req_flags_t flags,
+                     ^
+In file included from ./arch/powerpc/include/asm/atomic.h:11:0,
+                  from ./include/linux/atomic.h:7,
+                  from ./include/linux/spinlock.h:436,
+                  from ./include/linux/wait.h:9,
+                  from ./include/linux/wait_bit.h:8,
+                  from ./include/linux/fs.h:6,
+                  from drivers/misc/lkdtm/core.c:34:
+./include/linux/blk-mq.h: In function 'blk_mq_mark_complete':
+./include/linux/blk-mq.h:306:20: error: dereferencing pointer to 
+incomplete type 'struct request'
+   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
+                     ^
+./arch/powerpc/include/asm/cmpxchg.h:483:19: note: in definition of 
+macro 'cmpxchg'
+       __typeof__(*(ptr)) _o_ = (o);      \
+                    ^
+./include/linux/blk-mq.h:306:29: error: 'MQ_RQ_IN_FLIGHT' undeclared 
+(first use in this function)
+   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
+                              ^
+./arch/powerpc/include/asm/cmpxchg.h:483:32: note: in definition of 
+macro 'cmpxchg'
+       __typeof__(*(ptr)) _o_ = (o);      \
+                                 ^
+./include/linux/blk-mq.h:306:29: note: each undeclared identifier is 
+reported only once for each function it appears in
+   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
+                              ^
+./arch/powerpc/include/asm/cmpxchg.h:483:32: note: in definition of 
+macro 'cmpxchg'
+       __typeof__(*(ptr)) _o_ = (o);      \
+                                 ^
+./include/linux/blk-mq.h:306:46: error: 'MQ_RQ_COMPLETE' undeclared 
+(first use in this function)
+   return cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
+                                               ^
+./arch/powerpc/include/asm/cmpxchg.h:484:32: note: in definition of 
+macro 'cmpxchg'
+       __typeof__(*(ptr)) _n_ = (n);      \
+                                 ^
+In file included from ./include/scsi/scsi_request.h:5:0,
+                  from ./include/scsi/scsi_cmnd.h:13,
+                  from drivers/misc/lkdtm/core.c:45:
+./include/linux/blk-mq.h: In function 'blk_mq_rq_from_pdu':
+./include/linux/blk-mq.h:316:22: error: invalid application of 'sizeof' 
+to incomplete type 'struct request'
+   return pdu - sizeof(struct request);
+                       ^
+./include/linux/blk-mq.h: In function 'blk_mq_rq_to_pdu':
+./include/linux/blk-mq.h:320:2: error: invalid use of undefined type 
+'struct request'
+   return rq + 1;
+   ^
+In file included from drivers/misc/lkdtm/core.c:45:0:
+./include/scsi/scsi_cmnd.h: In function 'scsi_bidi_cmnd':
+./include/scsi/scsi_cmnd.h:214:9: error: implicit declaration of 
+function 'blk_bidi_rq' [-Werror=implicit-function-declaration]
+   return blk_bidi_rq(cmd->request) &&
+          ^
+./include/scsi/scsi_cmnd.h: In function 'scsi_get_lba':
+./include/scsi/scsi_cmnd.h:307:9: error: implicit declaration of 
+function 'blk_rq_pos' [-Werror=implicit-function-declaration]
+   return blk_rq_pos(scmd->request);
+          ^
+cc1: some warnings being treated as errors
+make[1]: *** [drivers/misc/lkdtm/core.o] Error 1
+make: *** [drivers/misc/lkdtm/core.o] Error 2
 
 
+> 
+> And shouldn't you be depending on SCSI instead?
+
+Yes maybe. I did make it depend on CONFIG_BLOCK because it was what it 
+was depending on in the Kconfig. I'll send a v2
+
+Christophe
+
+> 
+>> +
+>>   #ifdef CONFIG_IDE
+>>   #include <linux/ide.h>
+>>   #endif
+>> @@ -101,7 +104,9 @@ static struct crashpoint crashpoints[] = {
+>>   	CRASHPOINT("FS_DEVRW",		 "ll_rw_block"),
+>>   	CRASHPOINT("MEM_SWAPOUT",	 "shrink_inactive_list"),
+>>   	CRASHPOINT("TIMERADD",		 "hrtimer_start"),
+>> +# ifdef CONFIG_BLOCK
+>>   	CRASHPOINT("SCSI_DISPATCH_CMD",	 "scsi_dispatch_cmd"),
+>> +# endif
+> 
+> Again, scsi?
+> 
+> thanks,
+> 
+> greg k-h
+> 
