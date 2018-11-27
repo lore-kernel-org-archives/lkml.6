@@ -2,73 +2,75 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4955CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DA1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDB02133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:06:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDB02133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id AEE31213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:07:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T//K40lQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE31213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732225AbeK1GFO (ORCPT
+        id S1732236AbeK1GF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:05:14 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44807 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbeK1GFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:05:14 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com ([192.55.54.45])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wARJ5eMH1980947
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 27 Nov 2018 11:05:41 -0800
-Subject: Re: Sleeping in user_access section
-To:     Julien Thierry <julien.thierry@arm.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>
-References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
- <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
- <20181123105034.GQ30658@n2100.armlinux.org.uk>
- <44297716-74aa-1f14-67be-3594b5244b74@arm.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <691acc7f-6ce1-69da-d56d-4d3c0fdad9ab@zytor.com>
-Date:   Tue, 27 Nov 2018 11:05:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 28 Nov 2018 01:05:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729566AbeK1GF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:05:59 -0500
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EA46208E4;
+        Tue, 27 Nov 2018 19:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543345627;
+        bh=EFbUX/+QbKlmImNyhvR4virVWpme3C9XerBHJvkUqxc=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=T//K40lQ0unSDia43k0tL33STeLit2UU8xWYe+z57CEggQ5BkHIe2lCjX6rbOjVFM
+         ZywjIfV8tJBlQxqWZ2HxY2DrMtom0sG+4CffVLy+MUY3DQ/DKe1B50y07CjDTyhXMd
+         UnSWT8qe/FHS/ho7Q80Ibux+5sb/8NVA4U9CUPI8=
+Date:   Tue, 27 Nov 2018 11:07:04 -0800 (PST)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+cc:     Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>, m.szyprowski@samsung.com,
+        john.stultz@linaro.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sstabellini@kernel.org
+Subject: Re: [PATCH 0/2] SWIOTLB fixes for 4.20
+In-Reply-To: <20181121151133.GC26925@char.us.oracle.com>
+Message-ID: <alpine.DEB.2.10.1811271106460.4577@sstabellini-ThinkPad-X260>
+References: <cover.1542722463.git.robin.murphy@arm.com> <20181120160818.GC2492@lst.de> <20181120163441.GD31199@char.us.oracle.com> <20181121130331.GA1373@lst.de> <20181121151133.GC26925@char.us.oracle.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <44297716-74aa-1f14-67be-3594b5244b74@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/18 3:57 AM, Julien Thierry wrote:
+On Wed, 21 Nov 2018, Konrad Rzeszutek Wilk wrote:
+> On Wed, Nov 21, 2018 at 02:03:31PM +0100, Christoph Hellwig wrote:
+> > On Tue, Nov 20, 2018 at 11:34:41AM -0500, Konrad Rzeszutek Wilk wrote:
+> > > > Konrad, are you ok with me picking up both through the dma-mapping
+> > > > tree?
+> > > 
+> > > Yes, albeit I would want Stefano to take a peek at patch #2 just in case.
+> > 
+> > Stefano, can you take a look asap?  This is a pretty trivial fix for
+> > a nasty bug that breaks boot on real life systems.  I'd like to merge
+> > it by tomorrow so that I can send it off to Linus for the next rc
+> > (I will be offline for about two days after Friday morning)
 > 
-> On x86, the EFLAGS.AC bit is also saved upon exception and I think it is
-> cleared upon exception entry so there is implicit exit from the
-> user_access mode when taking exception/interrupt.
-> 
+> It is Turkey Day in US so he may be busy catching those pesky turkeys.
+> How about Tuesday? And in can also send the GIT PULL.
 
-No, it is restored, not cleared.
-
-In summary: on exceptions, user_access regions are suspended, and on
-return the user_access status is resumed.
-
-However, explicitly calling sleeping functions is not supported.
-
-	-hpa
-
+I have just come back to the office. I'll give it a look today.
