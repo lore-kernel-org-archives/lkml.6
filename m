@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CC5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4B3C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50301213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50301213A2
+	by mail.kernel.org (Postfix) with ESMTP id 50DA12133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:19:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50DA12133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbeK0XQq (ORCPT
+        id S1731338AbeK0XQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:16:46 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46902 "EHLO
+        Tue, 27 Nov 2018 18:16:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46880 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730908AbeK0XQq (ORCPT
+        with ESMTP id S1731304AbeK0XQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Nov 2018 18:16:46 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 8827127EC67
+        with ESMTPSA id 477142605EE
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     lee.jones@linaro.org
 Cc:     gwendal@chromium.org, drinkcat@chromium.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v3 7/8] platform/chrome: cros_ec_lightbar: instantiate only if the EC has a lightbar.
-Date:   Tue, 27 Nov 2018 13:18:48 +0100
-Message-Id: <20181127121849.23975-8-enric.balletbo@collabora.com>
+        kernel@collabora.com, bleung@chromium.org
+Subject: [PATCH v3 8/8] mfd: cros_ec: add a dev_release empty method.
+Date:   Tue, 27 Nov 2018 13:18:49 +0100
+Message-Id: <20181127121849.23975-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181127121849.23975-1-enric.balletbo@collabora.com>
 References: <20181127121849.23975-1-enric.balletbo@collabora.com>
@@ -45,129 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to the way attribute groups visibility work, the function
-cros_ec_lightbar_attrs_are_visible is called multiple times, once per
-attribute, and each of these calls makes an EC transaction. For what is
-worth the EC log reports multiple errors on boot when the lightbar is
-not available. Instead, check if the EC has a lightbar in the probe
-function and only instantiate the device.
+Devices are required to provide a release method. This patch fixes the
+following WARN():
 
-Ideally we should have instantiate the driver only if the
-EC_FEATURE_LIGHTBAR is defined, but that's not possible because that flag
-is not in the very first Pixel Chromebook (Link), only on Samus. So, the
-driver is instantiated by his parent always.
-
-This patch changes a bit the actual behaviour. Before the patch if an EC
-doesn't have a lightbar an empty lightbar folder is created in
-/sys/class/chromeos/<ec device>, after the patch the empty folder is not
-created, so, the folder is only created if the lightbar exists.
+[   47.218707] ------------[ cut here ]------------
+[   47.223901] Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
+[   47.234430] WARNING: CPU: 0 PID: 3585 at drivers/base/core.c:895 device_release+0x80/0x90
+[   47.243560] Modules linked in: btusb btrtl btintel btbcm bluetooth ecdh_generic [...]
+[   47.323851] CPU: 0 PID: 3585 Comm: rmmod Not tainted 4.20.0-rc2+ #29
+[   47.330947] Hardware name: Google Kevin (DT)
+[   47.335714] pstate: 40000005 (nZcv daif -PAN -UAO)
+[   47.341063] pc : device_release+0x80/0x90
+[   47.345537] lr : device_release+0x80/0x90
+[   47.350001] sp : ffff00000b17bc70
+[   47.353698] x29: ffff00000b17bc70 x28: ffff8000e48e9a80
+[   47.359629] x27: 0000000000000000 x26: 0000000000000000
+[   47.365561] x25: 0000000056000000 x24: 0000000000000015
+[   47.371492] x23: ffff8000f0248060 x22: ffff000000b700a0
+[   47.377414] x21: ffff8000edf56100 x20: ffff8000edd13028
+[   47.383346] x19: ffff8000edd13018 x18: 0000000000000095
+[   47.389278] x17: 0000000000000000 x16: 0000000000000000
+[   47.395209] x15: 0000000000000400 x14: 0000000000000400
+[   47.401131] x13: 00000000000001a7 x12: 0000000000000000
+[   47.407053] x11: 0000000000000001 x10: 0000000000000960
+[   47.412976] x9 : ffff00000b17b9b0 x8 : ffff8000e48ea440
+[   47.418898] x7 : ffff8000ee9090c0 x6 : ffff8000f7d0b0b8
+[   47.424830] x5 : ffff8000f7d0b0b8 x4 : 0000000000000000
+[   47.430752] x3 : ffff8000f7d11e68 x2 : ffff8000e48e9a80
+[   47.436674] x1 : 37d859939c964800 x0 : 0000000000000000
+[   47.442597] Call trace:
+[   47.445324]  device_release+0x80/0x90
+[   47.449414]  kobject_put+0x74/0xe8
+[   47.453210]  device_unregister+0x20/0x30
+[   47.457592]  ec_device_remove+0x34/0x48 [cros_ec_dev]
+[   47.463233]  platform_drv_remove+0x28/0x48
+[   47.467805]  device_release_driver_internal+0x1a8/0x240
+[   47.473630]  driver_detach+0x40/0x80
+[   47.477609]  bus_remove_driver+0x54/0xa8
+[   47.481986]  driver_unregister+0x2c/0x58
+[   47.486355]  platform_driver_unregister+0x10/0x18
+[   47.491599]  cros_ec_dev_exit+0x1c/0x258 [cros_ec_dev]
+[   47.497338]  __arm64_sys_delete_module+0x16c/0x1f8
+[   47.502689]  el0_svc_common+0x84/0xd8
+[   47.506776]  el0_svc_handler+0x2c/0x80
+[   47.510960]  el0_svc+0x8/0xc
+[   47.514171] ---[ end trace 9087279fc8c03450 ]---
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
 Changes in v3: None
 Changes in v2:
-- Removed ec_with_lightbar variable.
+- Fix WARN when unloading. This is new in these series.
 
- drivers/platform/chrome/cros_ec_lightbar.c | 37 ++++++++--------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
+ drivers/mfd/cros_ec_dev.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 80eed6317570..6f6a4cbfc3fc 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -43,7 +43,6 @@ static unsigned long lb_interval_jiffies = 50 * HZ / 1000;
-  * If this is true, we won't do anything during suspend/resume.
-  */
- static bool userspace_control;
--static struct cros_ec_dev *ec_with_lightbar;
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 1ba98a32715e..cdb941c6db98 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -35,9 +35,14 @@
+ #define CROS_MAX_DEV 128
+ static int ec_major;
  
- static ssize_t interval_msec_show(struct device *dev,
- 				  struct device_attribute *attr, char *buf)
-@@ -381,9 +380,6 @@ static int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
- 	struct cros_ec_command *msg;
- 	int ret;
- 
--	if (ec != ec_with_lightbar)
--		return 0;
--
- 	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
-@@ -567,37 +563,26 @@ static struct attribute *__lb_cmds_attrs[] = {
- 	NULL,
++static void cros_ec_dev_release(struct device *dev)
++{
++}
++
+ static struct class cros_class = {
+ 	.owner          = THIS_MODULE,
+ 	.name           = "chromeos",
++	.dev_release	= cros_ec_dev_release,
  };
  
--static bool ec_has_lightbar(struct cros_ec_dev *ec)
-+static bool cros_ec_has_lightbar(struct cros_ec_dev *ec_dev)
- {
--	return !!get_lightbar_version(ec, NULL, NULL);
--}
--
--static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
--						  struct attribute *a, int n)
--{
--	struct device *dev = container_of(kobj, struct device, kobj);
--	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
--	struct platform_device *pdev = to_platform_device(ec->dev);
-+	struct platform_device *pdev = to_platform_device(ec_dev->dev);
- 	struct cros_ec_platform *pdata = pdev->dev.platform_data;
- 	int is_cros_ec;
- 
- 	is_cros_ec = strcmp(pdata->ec_name, CROS_EC_DEV_NAME);
- 
- 	if (is_cros_ec != 0)
--		return 0;
-+		return false;
- 
--	/* Only instantiate this stuff if the EC has a lightbar */
--	if (ec_has_lightbar(ec)) {
--		ec_with_lightbar = ec;
--		return a->mode;
--	}
--	return 0;
-+	if (!!get_lightbar_version(ec_dev, NULL, NULL))
-+		return true;
-+
-+	return false;
- }
- 
- struct attribute_group cros_ec_lightbar_attr_group = {
- 	.name = "lightbar",
- 	.attrs = __lb_cmds_attrs,
--	.is_visible = cros_ec_lightbar_attrs_are_visible,
- };
- 
- static int cros_ec_lightbar_probe(struct platform_device *pd)
-@@ -606,6 +591,10 @@ static int cros_ec_lightbar_probe(struct platform_device *pd)
- 	struct device *dev = &pd->dev;
- 	int ret;
- 
-+	/* Only instantiate this stuff if the EC has a lightbar */
-+	if (!cros_ec_has_lightbar(ec_dev))
-+		return -ENODEV;
-+
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec_dev, 1);
- 
-@@ -635,7 +624,7 @@ static int __maybe_unused cros_ec_lightbar_resume(struct device *dev)
- {
- 	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
- 
--	if (userspace_control || ec_dev != ec_with_lightbar)
-+	if (userspace_control)
- 		return 0;
- 
- 	return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_RESUME);
-@@ -645,7 +634,7 @@ static int __maybe_unused cros_ec_lightbar_suspend(struct device *dev)
- {
- 	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
- 
--	if (userspace_control || ec_dev != ec_with_lightbar)
-+	if (userspace_control)
- 		return 0;
- 
- 	return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_SUSPEND);
+ /* Basic communication */
 -- 
 2.19.1
 
