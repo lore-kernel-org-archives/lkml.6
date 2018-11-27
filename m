@@ -2,152 +2,119 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13799C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EA4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B18208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:00:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B18208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 22F29208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:01:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4OWCfft"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F29208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbeK0T5w (ORCPT
+        id S1729907AbeK0T6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:57:52 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58252 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbeK0T5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:57:51 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A73AA207BC; Tue, 27 Nov 2018 10:00:37 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 72C2520DC6;
-        Tue, 27 Nov 2018 10:00:27 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:00:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 27/43] drm/sun4i: frontend: Add support for
- semi-planar YUV input formats
-Message-ID: <20181127090027.mezxdx4s77ylj762@flea>
-References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
- <20181123092515.2511-28-paul.kocialkowski@bootlin.com>
+        Tue, 27 Nov 2018 14:58:49 -0500
+Received: from mail-io1-f46.google.com ([209.85.166.46]:42055 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729387AbeK0T6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:58:49 -0500
+Received: by mail-io1-f46.google.com with SMTP id x6so16357443ioa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:01:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=17OMeXdA+cn8HDvQagvMUiDn7pfkIoSy4U5d6D8C3Nw=;
+        b=C4OWCfftDFbmkfQ8BcCdth7LFlC4eQ629TA5KpmSfJmm8024F4wI/AB+2OUGjUvkKF
+         1apaZAGyaMVF9MMAA+q+IRyfjs9EqIW1KPzs6Amvwd2CfKlADy0xclNn2Na99GYdU4js
+         3zIn0kEMPrUsEZ/PfpkXEXgtU69vxeKtEEpTw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=17OMeXdA+cn8HDvQagvMUiDn7pfkIoSy4U5d6D8C3Nw=;
+        b=cWZ/PGqMBaK4120Jii682v2ST5J4+R2einaQRmLx7fuLNO9npvegxUybNVOIxZFL+d
+         1ctkVwzzgkd3+/KQszNrW9nS6jXsIPoJGOGHT9lAM/DIHG21HKXHxbVPt+RUsZOUr+y8
+         5Iz8TEpjqdFv7wKHxvY0M6tkizqA94WxbWsKxuAYt4IuCbiTXvJly1ovrgoYkusL8Vti
+         c1emX6kUq/fHezeV4akchbsXfiRhPRo9Tyh8uggm9gxfN0JRBFvVgNbQckmH0VSSdW0X
+         C7O/8Le/04AYq7i/334K17kIksgmCKphPFnt9gYIBscq0EtRyV6bkReW4GAejQhpc0AY
+         /lrg==
+X-Gm-Message-State: AA+aEWbC4uVqVUA45JgVtTYdwm50GypzjtkUfpWjA9EoYb141QJGB8uR
+        pQDyxIIq9PosbRXgAPoYEje+V3ubvb0H9KoJ/4hE/g==
+X-Google-Smtp-Source: AFSGD/VKS+9L2vn+M9FcyUC2DmJGZkDa5RyvlNSPavwBiht8nSxMlo7qQ9lxpkrj2BbIVUrCAFiamjx4nJkTRmRoUS4=
+X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr22690561iof.183.1543309295825;
+ Tue, 27 Nov 2018 01:01:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vxfwkkzihqxp66re"
-Content-Disposition: inline
-In-Reply-To: <20181123092515.2511-28-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+References: <20181121223453.GA4016@andrea> <20181126093051.GV2131@hirez.programming.kicks-ass.net>
+ <CAKfTPtDm49JS7thuUn0--ocqpn2Du4qi8qsUeeHzGrAG_F2epw@mail.gmail.com> <20181126204414.GA4643@andrea>
+In-Reply-To: <20181126204414.GA4643@andrea>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 27 Nov 2018 10:01:24 +0100
+Message-ID: <CAKfTPtBjA-oCBRkO6__npQwL3+HLjzk7riCcPU1R7YdO-EpuZg@mail.gmail.com>
+Subject: Re: [Question] atomic_fetch_andnot() in nohz_idle_balance()
+To:     andrea.parri@amarulasolutions.com
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 26 Nov 2018 at 21:44, Andrea Parri
+<andrea.parri@amarulasolutions.com> wrote:
+>
+> On Mon, Nov 26, 2018 at 12:37:00PM +0100, Vincent Guittot wrote:
+> > On Mon, 26 Nov 2018 at 10:30, Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Wed, Nov 21, 2018 at 11:34:53PM +0100, Andrea Parri wrote:
+> > > > Hi,
+> > > >
+> > > > The comment for the atomic_fetch_andnot() in nohz_idle_balance() says:
+> > > >
+> > > >   "barrier, pairs with nohz_balance_enter_idle(), ensures ..."
+> > > >
+> > > > which, well, does sound a note of warning... ;-)
+> > > >
+> > > > I see that nohz_balance_enter_idle() has an smp_mb__after_atomic() but
+> > > > the comment for the latter suggests that this barrier is pairing with
+> > > > the smp_mb() in _nohz_idle_balance().
+> > > >
+> > > > So, what is the intended pairing barrier for the atomic_fetch_andnot()?
+> > > > what (which memory accesses) do you want "to order" here?
+> > >
+> > > I can't seem to make sense of that comment either; the best I can come
+> > > up with is that it would order the prior NOHZ_KICK_MASK load vs us then
+> > > changing it.
+> > >
+> > > But that would order against kick_ilb(), not enter_idle.
+> > >
+> > > Vincent?
+> >
+> > I can't come with a good explanation.
+> > After looking into my email archive, the only explanation that i have
+> > is that the comments remains from a previous iteration of the feature
+> > that was based on a nohz.stats_state mechanism
+>
+> I'm afraid I still can't help your comment...  put in other terms, would
+> you feel "unconfortable" with _relax()ing the andnot()?  (and if so ...)
 
---vxfwkkzihqxp66re
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+so I think that the comment is useless and can be removed because it
+was referring to a line code above the comment that was present in a
+previous iteration of the patchset. This line disappeared in final
+version but the comment has stayed.
 
-On Fri, Nov 23, 2018 at 10:24:59AM +0100, Paul Kocialkowski wrote:
-> Semi-planar YUV formats use two distinct planes, one for luminance and
-> one for chrominance. To add support for them, we need to configure the
-> second line stride and buffer address registers to setup the second YUV
-> plane.
->=20
-> New definitions are introduced to configure the input format register
-> for the YUV420 and YUV422 semi-planar formats.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_frontend.c | 52 +++++++++++++++++++++++---
->  drivers/gpu/drm/sun4i/sun4i_frontend.h |  6 +++
->  drivers/gpu/drm/sun4i/sun4i_layer.c    |  4 ++
->  3 files changed, 57 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun=
-4i/sun4i_frontend.c
-> index f443e8e1d8ec..e31438e5cabd 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> @@ -118,11 +118,23 @@ void sun4i_frontend_update_buffer(struct sun4i_fron=
-tend *frontend,
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
->  		     fb->pitches[0]);
-> =20
-> +	if (fb->format->num_planes > 1)
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
-> +			     fb->pitches[1]);
-> +
->  	/* Set the physical address of the buffer in memory */
->  	paddr =3D drm_fb_cma_get_gem_addr(fb, state, 0);
->  	paddr -=3D PHYS_OFFSET;
-> -	DRM_DEBUG_DRIVER("Setting buffer address to %pad\n", &paddr);
-> +	DRM_DEBUG_DRIVER("Setting buffer #0 address to %pad\n", &paddr);
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR0_REG, paddr);
-> +
-> +	if (fb->format->num_planes > 1) {
-> +		paddr =3D drm_fb_cma_get_gem_addr(fb, state, 1);
-> +		paddr -=3D PHYS_OFFSET;
-> +		DRM_DEBUG_DRIVER("Setting buffer #1 address to %pad\n", &paddr);
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR1_REG,
-> +			     paddr);
-> +	}
->  }
->  EXPORT_SYMBOL(sun4i_frontend_update_buffer);
-> =20
-> @@ -130,6 +142,8 @@ static int sun4i_frontend_drm_format_to_input_fmt(uin=
-t32_t fmt, u32 *val)
->  {
->  	if (!drm_format_is_yuv(fmt))
->  		*val =3D SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
-> +	else if (drm_format_is_yuv_sampling_420(fmt))
-> +		*val =3D SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420;
->  	else if (drm_format_is_yuv_sampling_422(fmt))
->  		*val =3D SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
->  	else
-> @@ -140,12 +154,20 @@ static int sun4i_frontend_drm_format_to_input_fmt(u=
-int32_t fmt, u32 *val)
-> =20
->  static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *va=
-l)
->  {
-> -	if (drm_format_num_planes(fmt) =3D=3D 1)
-> +	int num_planes =3D drm_format_num_planes(fmt);
-> +
-> +	switch (num_planes) {
-> +	case 1:
+If your question is: can we use atomic_fetch_andnot_relaxed() instead
+of atomic_fetch_andnot() in nohz_idle_balance() ?
+I think that it's possible
 
-You seem to use either the helper or retrieve the structure field
-directly to access the number of planes. I'm fine either way, but this
-should be consistent.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---vxfwkkzihqxp66re
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0HqwAKCRDj7w1vZxhR
-xbL+AP0YNFEOwKION6NLQar+VdHTyGaMgjc7CSU4sydadCOxpgEAhnJA3+6VKTWP
-QarWr/1yP6h2jgabeVhxvLTLu0qykwg=
-=BeQR
------END PGP SIGNATURE-----
-
---vxfwkkzihqxp66re--
+>
+>   Andrea
