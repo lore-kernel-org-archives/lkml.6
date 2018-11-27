@@ -2,80 +2,108 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2044C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCC8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA96208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA96208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5686F208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:13:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PDgTZ4VV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5686F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731223AbeK0XKK (ORCPT
+        id S1731237AbeK0XKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:10:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:34876 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726407AbeK0XKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:10:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D83E35FA;
-        Tue, 27 Nov 2018 04:12:27 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DDF63F575;
-        Tue, 27 Nov 2018 04:12:27 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id CB5AE1AE0A0D; Tue, 27 Nov 2018 12:12:44 +0000 (GMT)
-Date:   Tue, 27 Nov 2018 12:12:44 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
-        mhocko@suse.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v4 4/5] lib/ioremap: Ensure phys_addr actually
- corresponds to a physical address
-Message-ID: <20181127121244.GB4181@arm.com>
-References: <1543252067-30831-1-git-send-email-will.deacon@arm.com>
- <1543252067-30831-5-git-send-email-will.deacon@arm.com>
- <20181126190009.GG25719@linux.intel.com>
+        Tue, 27 Nov 2018 18:10:46 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48376 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeK0XKq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:10:46 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wARC8sZU029296;
+        Tue, 27 Nov 2018 12:11:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=hgrV39oEh7Cv76Dlzsu3JLz3cLBFrs4YhFM49TEj/VU=;
+ b=PDgTZ4VV51HYLmNy7nFAGBjE1YOQN54c9c/vIohDWAY0XPTFD/HU7p1GSRUqjtviGFlV
+ PHtG2hBP/i62UW2Czr5J2w3hpx5bJemMNFqW9yInvyFFgTS15Xazv3ntp12OrIQ1l1He
+ xPX8ndsZL7U0tSxE3oNN0/rvCpEOu4uioMJEXr4TEjGfLus68msIW9Z5N8Y/uFMieyZc
+ 15xZ8KXHdUjv76atf5ikDU6a+x3ysFpIRBLO+PvTCiz4pFxrffQv4tivjL863kOZCxK+
+ W5U7LrXT9o+xYcnaOy1PBMVnhCEyNbixYnJ1iP5GoSqXkl1WYwJ2rhFWYoTffnNud9w6 Nw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nxy9r3h4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 12:11:53 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wARCBrBs018761
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Nov 2018 12:11:53 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wARCBlAJ029153;
+        Tue, 27 Nov 2018 12:11:49 GMT
+Received: from unbuntlaptop (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Nov 2018 04:11:47 -0800
+Date:   Tue, 27 Nov 2018 15:11:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Tianyu Lan <lantianyu1986@gmail.com>
+Cc:     linux-mips@linux-mips.org, kvm <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, benh@kernel.crashing.org,
+        will.deacon@arm.com, christoffer.dall@arm.com, paulus@ozlabs.org,
+        "H. Peter Anvin" <hpa@zytor.com>, kvmarm@lists.cs.columbia.edu,
+        sthemmin@microsoft.com, mpe@ellerman.id.au,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux@armlinux.org.uk, michael.h.kelley@microsoft.com,
+        Ingo Molnar <mingo@redhat.com>, catalin.marinas@arm.com,
+        jhogan@kernel.org, Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        marc.zyngier@arm.com, haiyangz@microsoft.com,
+        kvm-ppc@vger.kernel.org, bp@alien8.de,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
+        ralf@linux-mips.org, paul.burton@mips.com,
+        devel@linuxdriverproject.org, vkuznets@redhat.com,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH V5 00/10] x86/KVM/Hyper-v: Add HV ept tlb range flush
+ hypercall support in KVM
+Message-ID: <20181127121129.GR3088@unbuntlaptop>
+References: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
+ <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181126190009.GG25719@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811270106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:00:10AM -0800, Sean Christopherson wrote:
-> On Mon, Nov 26, 2018 at 05:07:46PM +0000, Will Deacon wrote:
-> > The current ioremap() code uses a phys_addr variable at each level of
-> > page table, which is confusingly offset by subtracting the base virtual
-> > address being mapped so that adding the current virtual address back on
-> > when iterating through the page table entries gives back the corresponding
-> > physical address.
-> > 
-> > This is fairly confusing and results in all users of phys_addr having to
-> > add the current virtual address back on. Instead, this patch just updates
-> > phys_addr when iterating over the page table entries, ensuring that it's
-> > always up-to-date and doesn't require explicit offsetting.
-> > 
-> > Cc: Chintan Pandya <cpandya@codeaurora.org>
-> > Cc: Toshi Kani <toshi.kani@hpe.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> > Signed-off-by: Will Deacon <will.deacon@arm.com>
+On Tue, Nov 27, 2018 at 07:59:22PM +0800, Tianyu Lan wrote:
+> Gentile Ping...
 > 
-> Tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> On Thu, Nov 8, 2018 at 10:43 PM <lantianyu1986@gmail.com> wrote:
+> >
+> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> >
+> > Sorry. Some patches was blocked and I try to resend via another account.
 
-Thanks, Sean. I think Andrew can queue these now.
+The patches were still blocked?  They didn't show up on driver-devel.
 
-Will
+regards,
+dan carpenter
+
