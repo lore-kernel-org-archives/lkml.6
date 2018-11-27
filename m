@@ -2,167 +2,134 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25774C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CBFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA35620659
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A2DC20659
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:32:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iBoQfA2I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA35620659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p/5wjr/3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2DC20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731714AbeK1E21 (ORCPT
+        id S1731729AbeK1Eaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:28:27 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33207 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731689AbeK1E21 (ORCPT
+        Tue, 27 Nov 2018 23:30:35 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44323 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbeK1Eaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:28:27 -0500
-Received: by mail-yw1-f66.google.com with SMTP id q11so9491347ywa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:29:50 -0800 (PST)
+        Tue, 27 Nov 2018 23:30:35 -0500
+Received: by mail-pg1-f195.google.com with SMTP id t13so8167173pgr.11;
+        Tue, 27 Nov 2018 09:31:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bz7xMDhS+tfgS3VbdkfNRXb7f1L4LZSOAuI7RlEkDPI=;
-        b=iBoQfA2IQDDmhxgU+UxVsRctRo0YXjU/yf+/ZU/4dJt8EEisNcxWStifjBmhJ3Prei
-         93xDxvtOytr9J29xBvwLtjmpDH2hsFQaQV1KAn66aG+IZlUvxt29hRqQq3fHEq6Ho1eg
-         JUljH/+y5nru/tjmzC5SZ8oc4BIP4fiZDN1ZT2cCJmYYJ2e3yvu4D71zvE82JYJOBbIN
-         qrJczZP/amQ52dz97VVuPD9CEf9hogJXVoXMFXq+G8ENhnnm+qrCSbalUl9S7xAaBNdI
-         8xC0pjRVjd+OEjtQGvqL7+LeHxAoNrasrJCagmOUjZU1oCcRQcq5i1BsbnkZjjlc9l/k
-         jtMQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4KbMhYn/V8t0IeagEe6fAI5kRBQVT4RVnVQITtUUNhU=;
+        b=p/5wjr/3vXnbYpxX6DKLv6Tc7i1s068AmQPMbqErZwdp2EznAmhxHLDV0zvv7UteyH
+         mjQDSH98haR3lSGNlUwAPYMLPedevjFe1zkAlf+aTcHDpqLIzpnrYUngY+aY+m5nHaG2
+         VOQ/3vuQcqYfwk6gB3AzEj6ErKLIhio7ZQh1WOyZZemtMPAVVOrMqBQmDSZGix0UD5Vn
+         eoTdJkJCpvUHgpP0IhU0EiKXFhHzorKK6Q45+SN1ebx022GBftGVUVRMYbFfu8MLJwJu
+         YhrbU+Z+ozVl49HJmDyU12n3+Uc+puTj6WrdawFb871RjQP1x/i8zsOKoslnisLRbXAC
+         efWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bz7xMDhS+tfgS3VbdkfNRXb7f1L4LZSOAuI7RlEkDPI=;
-        b=PGHCqFAomfu70E0cbvMTFfdickpqC2BPtY5add8I6p/lEMMorfIC+rwhryoO3zTnVZ
-         LcfWRziWiAEBAlDdW4E/rZY0Oo8Eai3HWg9FsmEyMg6w8gyKa+MU3LUH/dj5fSpV3Iu8
-         3xch/M2hgUA7TwgolEzhcHz4PgwU+4XYu4OF1Fgiwb0ZLgL7h68V8gunJf2wLTxDne4M
-         WMsXSBLGC0XTq7Rt7aROkZuXP/+hLeSt5kBGjSfEZvgX2fLubwTiALyZiPCFhslcxNrM
-         mt5QIWbY4K37PAoL7w1IJ6sOeAk8Khb/ASdQuwxAbkXiq60cco+uddp+uYc5SukjfAYh
-         huSw==
-X-Gm-Message-State: AA+aEWZue5/juGlc5l5ORfVdQQ3T8KOQPsEH6T5S+Sv2JuS//WD+UMB8
-        zgJxGOYiATR/9Gz8oVZyffxhcZiEGFbMTekINqjmyg==
-X-Google-Smtp-Source: AFSGD/XNlDZZlke33y9S4l9muQ8SeO6xbo0VNsZ4CiFFgkfUjGTTCHY5oudeT2eZ1BH8S990G51DUNPIkOtyCUDO2AY=
-X-Received: by 2002:a0d:eb06:: with SMTP id u6mr20498538ywe.443.1543339789967;
- Tue, 27 Nov 2018 09:29:49 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4KbMhYn/V8t0IeagEe6fAI5kRBQVT4RVnVQITtUUNhU=;
+        b=I/uHR5n4gMQPNcne48SlSfKpw2Ji1F6PXYFILvhK8M4pyHdxQTpqx4z5YYgR4a18Tl
+         VhbJa7RrK5m9PrtWh5WFvNq8h+ldQh0UHvLv/gi0sk0kZctJ2OTL7fTDunH3eAi9cUoY
+         x9nlLFnErSlIqGW7akUU6kM41mtXQRAJWYyJUNboxXmW7o1EPmCzsg2PMTJh4d1BB4go
+         kX6AjN9PMxVG9uYBf9zaTZRw46CCCZIQB5YyZ9RcZnXrb0J7Cg9d7A8/fW5G2kiOcSwX
+         jf1TBdDYTnXobj0ss93Pgeo5hfbvHQ2F0Jdx6yl3HbULzjsp7/weVQuk1cSKa80dT3hQ
+         RqDQ==
+X-Gm-Message-State: AA+aEWa8XfsBfrs8RYkvnFILcfqAfGXaSgpJSflWKkROoLRjZ5YxfUbC
+        cQcU3BAbj1+reFu/rGb8bn8D0i1f
+X-Google-Smtp-Source: AJdET5fuJB2Dx7hkd2I4xwdiZg9zO2ajeh4mmj5G/kWRhhUkDykRorMBybEfx6GRCl0PyAzBfvlAfQ==
+X-Received: by 2002:a63:dd15:: with SMTP id t21mr29013983pgg.347.1543339918231;
+        Tue, 27 Nov 2018 09:31:58 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b27sm5516447pfh.113.2018.11.27.09.31.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 09:31:56 -0800 (PST)
+Date:   Tue, 27 Nov 2018 09:31:55 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Marek Habersack <grendel@twistedcode.net>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+Message-ID: <20181127173155.GA12015@roeck-us.net>
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+ <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
 MIME-Version: 1.0
-References: <20181127121849.23975-1-enric.balletbo@collabora.com> <20181127121849.23975-9-enric.balletbo@collabora.com>
-In-Reply-To: <20181127121849.23975-9-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Tue, 27 Nov 2018 09:29:38 -0800
-Message-ID: <CABXOdTeL6ZC4mfGdU52bkz3-5g-EUL7wMvd-nDjmeBHWM2XSuA@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] mfd: cros_ec: add a dev_release empty method.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On Tue, Nov 27, 2018 at 03:48:19PM +0100, Marek Habersack wrote:
+> On 27/11/2018 15:32, Guenter Roeck wrote:
+> Hi,
+> 
+> You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=yes in your kernel config. Starting with 4.19.1 it somehow
 
-On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Devices are required to provide a release method. This patch fixes the
-> following WARN():
->
-> [   47.218707] ------------[ cut here ]------------
-> [   47.223901] Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
-> [   47.234430] WARNING: CPU: 0 PID: 3585 at drivers/base/core.c:895 device_release+0x80/0x90
-> [   47.243560] Modules linked in: btusb btrtl btintel btbcm bluetooth ecdh_generic [...]
-> [   47.323851] CPU: 0 PID: 3585 Comm: rmmod Not tainted 4.20.0-rc2+ #29
-> [   47.330947] Hardware name: Google Kevin (DT)
-> [   47.335714] pstate: 40000005 (nZcv daif -PAN -UAO)
-> [   47.341063] pc : device_release+0x80/0x90
-> [   47.345537] lr : device_release+0x80/0x90
-> [   47.350001] sp : ffff00000b17bc70
-> [   47.353698] x29: ffff00000b17bc70 x28: ffff8000e48e9a80
-> [   47.359629] x27: 0000000000000000 x26: 0000000000000000
-> [   47.365561] x25: 0000000056000000 x24: 0000000000000015
-> [   47.371492] x23: ffff8000f0248060 x22: ffff000000b700a0
-> [   47.377414] x21: ffff8000edf56100 x20: ffff8000edd13028
-> [   47.383346] x19: ffff8000edd13018 x18: 0000000000000095
-> [   47.389278] x17: 0000000000000000 x16: 0000000000000000
-> [   47.395209] x15: 0000000000000400 x14: 0000000000000400
-> [   47.401131] x13: 00000000000001a7 x12: 0000000000000000
-> [   47.407053] x11: 0000000000000001 x10: 0000000000000960
-> [   47.412976] x9 : ffff00000b17b9b0 x8 : ffff8000e48ea440
-> [   47.418898] x7 : ffff8000ee9090c0 x6 : ffff8000f7d0b0b8
-> [   47.424830] x5 : ffff8000f7d0b0b8 x4 : 0000000000000000
-> [   47.430752] x3 : ffff8000f7d11e68 x2 : ffff8000e48e9a80
-> [   47.436674] x1 : 37d859939c964800 x0 : 0000000000000000
-> [   47.442597] Call trace:
-> [   47.445324]  device_release+0x80/0x90
-> [   47.449414]  kobject_put+0x74/0xe8
-> [   47.453210]  device_unregister+0x20/0x30
-> [   47.457592]  ec_device_remove+0x34/0x48 [cros_ec_dev]
-> [   47.463233]  platform_drv_remove+0x28/0x48
-> [   47.467805]  device_release_driver_internal+0x1a8/0x240
-> [   47.473630]  driver_detach+0x40/0x80
-> [   47.477609]  bus_remove_driver+0x54/0xa8
-> [   47.481986]  driver_unregister+0x2c/0x58
-> [   47.486355]  platform_driver_unregister+0x10/0x18
-> [   47.491599]  cros_ec_dev_exit+0x1c/0x258 [cros_ec_dev]
-> [   47.497338]  __arm64_sys_delete_module+0x16c/0x1f8
-> [   47.502689]  el0_svc_common+0x84/0xd8
-> [   47.506776]  el0_svc_handler+0x2c/0x80
-> [   47.510960]  el0_svc+0x8/0xc
-> [   47.514171] ---[ end trace 9087279fc8c03450 ]---
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->
-> Changes in v3: None
-> Changes in v2:
-> - Fix WARN when unloading. This is new in these series.
->
->  drivers/mfd/cros_ec_dev.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 1ba98a32715e..cdb941c6db98 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -35,9 +35,14 @@
->  #define CROS_MAX_DEV 128
->  static int ec_major;
->
-> +static void cros_ec_dev_release(struct device *dev)
-> +{
-> +}
-> +
+Yes, it is enabled in my configuration.
 
-This tends to be a wrong solution. Problem is that object lifetime is
-not necessarily tied to device lifetime. Greg KH (copied) has a much
-better understanding of the problem than I do.
+> interferes with ext4 and causes problems similar to the ones you list below. Ever since I disabled MQ (either recompile
+> your kernel or add `scsi_mod.use_blk_mq=0` to the kernel command line) none of those errors came back.
+> 
+I'll try that. Thanks a lot for the hint!
 
 Guenter
 
->  static struct class cros_class = {
->         .owner          = THIS_MODULE,
->         .name           = "chromeos",
-> +       .dev_release    = cros_ec_dev_release,
->  };
->
->  /* Basic communication */
-> --
-> 2.19.1
->
+> hope it helps,
+> 
+> marek
+> > [trying again, this time with correct kernel.org address]
+> > 
+> > Hi,
+> > 
+> > I have seen the following and similar problems several times,
+> > with both v4.19.3 and v4.19.4:
+> > 
+> > Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602889: comm git: bad
+> > extra_isize 33661 (inode size 256)
+> > Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on device sdb1-8.
+> > Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1): Remounting filesystem read-only
+> > Nov 23 04:32:25 mars kernel: [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode #12602881: comm rm: bad
+> > extra_isize 33685 (inode size 256)
+> > ...
+> > 
+> > Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device sda1): ext4_lookup:1578: inode #238034131: comm
+> > updatedb.mlocat: deleted inode referenced: 238160407
+> > Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on device sda1-8.
+> > Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1): Remounting filesystem read-only
+> > ...
+> > 
+> > Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device sda1): ext4_lookup:1578: inode #52038457: comm
+> > nfsd: deleted inode referenced: 52043796
+> > Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on device sda1-8.
+> > Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1): Remounting filesystem read-only
+> > 
+> > 
+> > The same systems running v4.18.6 never experienced a problem.
+> > 
+> > Has anyone else seen similar problems ? Is there anything I can do
+> > to help tracking down the problem ?
+> > 
+> > Thanks,
+> > Guenter
+> > 
+> 
