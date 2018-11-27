@@ -2,127 +2,350 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBFEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C60C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618BC20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A776C20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:20:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jA6D8baU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618BC20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZqUmHFw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A776C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeK1HSF (ORCPT
+        id S1726557AbeK1HTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:18:05 -0500
-Received: from sonic315-20.consmr.mail.bf2.yahoo.com ([74.6.134.194]:39887
-        "EHLO sonic315-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725764AbeK1HSF (ORCPT
+        Wed, 28 Nov 2018 02:19:05 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34185 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeK1HTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:18:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543349941; bh=ZeW4A0WRiIY0RljImsQz7rtv1MTO/NfkEhixbHKV51s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jA6D8baUSaDQgSg2WDCNpeA8ZHqBstt5G/tNScEfNMkNI5G3Es58r1ua2dH1sc4e+B14tP1AX4kyriQfloyiUifdV/mZENhaK6aswgiHAfajGULG+MwIqYaTzk/Xof1mHBoiQJ3dP1uq+08SOKUIRzQGd2dJ4oVfo887aybnxkyEBy8K/hY3VBg0ByO4UlihuDbMoYuLFWniuic3/G2ZBoCcY3tOPtJYNHvehs4WUdP8FAdLu8o5UM2N68dwAp5hqQxO2nk/ybWZjjmVLiq1n+Wkkxcs6VsNvZn69bw7Pdec9xE7z3NFUq4z0l92u7rV4HG3Cobc8qiHZPLYAv52KQ==
-X-YMail-OSG: LEpw7t8VM1l3_mG.iV_Ry6rq9fapMvdUn8YajkcHmqEXqJNLfX6KvSln7W5PGSk
- Ga1vTFjC8gJpHA6GKZHK7mE_qHox.f1NA4oWKBdtQCNO0laXDgfekb4CVOkOqEFOs1OXBYJ1aCm1
- fhgXWVj9vBORw7MnAph1zYBZEE86YvzxUQ2X4OsrDcLygT721PhXnnVZzYdEAEzp65KV9x8MDMXg
- WK7tUUrJgBlX_dPX0s6j3rsA0_0Nk1WcDqDKzs4MwljXrYl9uz3wp4q4aEwkXJjvb87AV0O84bqm
- ud4yUDZhbjjm1I_EZtSnsyRFz4cQojKra9THz_eoA17pjU6_Pm3TTnjSgVZ55Ek0Tnel3GXNmxt8
- U2fJoWjMHMIp8DS5Nc6VsGzG28LdFn0SMrW6fyCBLMkkIXM3bBg_p.QQ90EY6OdVt8Qml3th.ZxR
- sG0Ex3aBrF4vMYfusvpcHNV7CRRHkK0EuO_jMlENSHo42OP5BGYIPrvtk3p6ey1Sah3CBFqWY70L
- 8l0uRNvfviSLL8N5aQdQXhHWpyKZBcMjKemCZvzPeD1.LXY5mLq9TZfSk_M_nqhNJkkDuDW2s5ad
- GLIk3QtR1z6H83hHsLK9ERbEXQbI212suoUw5hKRpVrnCqsrOC6cOIvXIzQ8aWOeyEKhTmAkDe7s
- pJ2zSd5dIM7.UI8BVBeW7RUEhGAf0w1VbAcWOCTkSAJ2pFvWbmU3Da9atbKq3K772gaWw58PhOEf
- Tcr8N95GD8s480obIFjHciE8pabnQB.widHe5on1XTHMxHC_.P0SlSLy87.9WM9ZbL0ZI9GiQ.Lc
- RZ1t2oVKV4FZxpiGIdqg.mkajqE4DGoZkmVinhbB8fSMqsvR0Y2d8AvZEQqDN3JSdvCHNiFi51Yo
- HlGkAsHGdD6IBOqyJS.9_F1gLvvd655Gw2.3Xho5kfWJ74Lm4.9IA1oAoeIkrZAao.u8Kz1c5Iby
- V4Kr892EwpGzfa6kovURIJHUzc9SEkzVVGj5VZDyh6h_kX7x7a.._rGZuZMMqGT9yteq8Nsungig
- rK8ZKtxh6H9JKxUNBLe_MWn5kZJNOZ7.jxCIOAGGi4oj5kTx7lW9_nZs_D69PWgWK08G6QGgLWs8
- NIZ5U9QE4hD6XQoPQbPWO
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Tue, 27 Nov 2018 20:19:01 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp401.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a85d5e5c7da857e3277d6788a8ed893e;
-          Tue, 27 Nov 2018 20:18:58 +0000 (UTC)
-Subject: Re: [RFC PATCH] smack: fix access permissions for keyring
-To:     Zoran Markovic <zmarkovic@sierrawireless.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <1539818744-30912-1-git-send-email-zmarkovic@sierrawireless.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <922bb08b-60e5-d43a-d48e-5b54575efa8b@schaufler-ca.com>
-Date:   Tue, 27 Nov 2018 12:18:54 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 28 Nov 2018 02:19:05 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so2388497wmd.1;
+        Tue, 27 Nov 2018 12:20:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=N+aDJc8gdYJAnLvR/LYspGZSm4mTTFl+kJdR/aARmXI=;
+        b=oZqUmHFwFjL3/GpdS4l3v6ylkS+a455JugI7lVohKeFLHFLAoHe+QIoIjHHlpIHvwr
+         LBmJQoEda6FShAn2ZoFTePwqiAQVkVvaUSiQ27RtHsj/Y6/OUK+59PIWifmKEs1+7NT/
+         08Ru62cUpUfDyOPLq/lGKyUCr9VyrTWV8YFtJSEYz6R/Xa3RHddjlRLFvKGTtXRgNwA9
+         ElJm4MznMF/7f1+ftH+OjtPil29+kSatt9hN/mpLD/tLZN5FEmECfFQdrZ/9dSKEDiPy
+         UTo6A8c/83t006LGn4IPsWFyDVaPe6QoV1JU0xRRO54D3eIbOJtyLh2FlFkkOQuZD6uj
+         PRcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=N+aDJc8gdYJAnLvR/LYspGZSm4mTTFl+kJdR/aARmXI=;
+        b=KzLVh82dgmNykPusdXjnzNi4jta9gvTE9qRj0xEDUDwzmlxeEsbvh/KYl9hcMSpZdl
+         fp4ddsov6LVjGYCeEcA/J8cjQz2m0zaPCJyFD3MiB+fR26IqrDwfxjJwyZ7VS7p4cofI
+         0FhxpBCDgytKahlobuqX/dBtnJM4IqqWqKVFo6IL8LgOr3kqKrHN3/tjyqnJZOFDO69X
+         QAXWNLfFQw02rXjQwDtHOQD13qTrdaZwqChNU1Z3E1lK55zr/QYbx3GgjGXDyY5oVb+F
+         DqgcA/JAYaX2bW/Q6Mh4FO+vMhZ8Z1aNe0Xi29UydcTkaY8PRaB3JglLg9Uh+u69HHpK
+         C/6w==
+X-Gm-Message-State: AA+aEWYvR5up/tqG5ic5mqUIEOMyH3M5C+vKwjoYcJ1eaar/QrSBd+nE
+        dkT68vipj+fWU2Z4CPR4ERPROEVADUw=
+X-Google-Smtp-Source: AFSGD/UE1ZuBNcazjgP0V5RzUEBPL0o/xDK+ftffkF3GVLzgwq/dgeva8SLpVBmzvDkkQwn0SbGnjA==
+X-Received: by 2002:a1c:8fc2:: with SMTP id r185mr317707wmd.54.1543349999429;
+        Tue, 27 Nov 2018 12:19:59 -0800 (PST)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net. [213.161.8.82])
+        by smtp.gmail.com with ESMTPSA id a17sm7044616wrs.58.2018.11.27.12.19.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 12:19:58 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     linux-sunxi@googlegroups.com
+Cc:     maxime.ripard@bootlin.com, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH v2 2/2] media: cedrus: Add H264 decoding support
+Date:   Tue, 27 Nov 2018 21:19:56 +0100
+Message-ID: <2974403.Zdfj58HmI4@jernej-laptop>
+In-Reply-To: <6005903.5qHflpuMbl@jernej-laptop>
+References: <20181115145650.9827-1-maxime.ripard@bootlin.com> <20181127155028.5ukw3g6zjbnvarbp@flea> <6005903.5qHflpuMbl@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1539818744-30912-1-git-send-email-zmarkovic@sierrawireless.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 4:25 PM, Zoran Markovic wrote:
-> Function smack_key_permission() only issues smack requests for the
-> following operations:
->  - KEY_NEED_READ (issues MAY_READ)
->  - KEY_NEED_WRITE (issues MAY_WRITE)
->  - KEY_NEED_LINK (issues MAY_WRITE)
->  - KEY_NEED_SETATTR (issues MAY_WRITE)
-> A blank smack request is issued in all other cases, resulting in
-> smack access being granted if there is any rule defined between
-> subject and object, or denied with -EACCES otherwise.
->
-> Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
-> Fix the logic in the unlikely case when both MAY_READ and
-> MAY_WRITE are needed. Validate access permission field for valid
-> contents.
+Dne torek, 27. november 2018 ob 17:30:00 CET je Jernej =C5=A0krabec napisal=
+(a):
+> Dne torek, 27. november 2018 ob 16:50:28 CET je Maxime Ripard napisal(a):
+> > Hi Jernej,
+> >=20
+> > Thanks for your review!
+> >=20
+> > On Sat, Nov 24, 2018 at 09:43:43PM +0100, Jernej =C5=A0krabec wrote:
+> > > > +enum cedrus_h264_sram_off {
+> > > > +	CEDRUS_SRAM_H264_PRED_WEIGHT_TABLE	=3D 0x000,
+> > > > +	CEDRUS_SRAM_H264_FRAMEBUFFER_LIST	=3D 0x100,
+> > > > +	CEDRUS_SRAM_H264_REF_LIST_0		=3D 0x190,
+> > > > +	CEDRUS_SRAM_H264_REF_LIST_1		=3D 0x199,
+> > > > +	CEDRUS_SRAM_H264_SCALING_LIST_8x8	=3D 0x200,
+> > > > +	CEDRUS_SRAM_H264_SCALING_LIST_4x4	=3D 0x218,
+> > >=20
+> > > I triple checked above address and it should be 0x220. For easier
+> > > implementation later, you might want to add second scaling list addre=
+ss
+> > > for
+> > > 8x8 at 0x210. Then you can do something like:
+> > >=20
+> > > cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_8x8_0,
+> > >=20
+> > > 			       scaling->scaling_list_8x8[0],
+> > > 			       sizeof(scaling->scaling_list_8x8[0]));
+> > >=20
+> > > cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_8x8_1,
+> > >=20
+> > > 			       scaling->scaling_list_8x8[3],
+> > > 			       sizeof(scaling->scaling_list_8x8[0]));
+> > >=20
+> > > cedrus_h264_write_sram(dev, CEDRUS_SRAM_H264_SCALING_LIST_4x4,
+> > >=20
+> > > 			       scaling->scaling_list_4x4,
+> > > 			       sizeof(scaling->scaling_list_4x4));
+> > >=20
+> > > I know that it's not implemented here, just FYI.
+> >=20
+> > Ack. I guess I can just leave it out entirely for now, since it's not
+> > implemented.
+> >=20
+> > > > +static void cedrus_fill_ref_pic(struct cedrus_ctx *ctx,
+> > > > +				struct cedrus_buffer *buf,
+> > > > +				unsigned int top_field_order_cnt,
+> > > > +				unsigned int bottom_field_order_cnt,
+> > > > +				struct cedrus_h264_sram_ref_pic *pic)
+> > > > +{
+> > > > +	struct vb2_buffer *vbuf =3D &buf->m2m_buf.vb.vb2_buf;
+> > > > +	unsigned int position =3D buf->codec.h264.position;
+> > > > +
+> > > > +	pic->top_field_order_cnt =3D top_field_order_cnt;
+> > > > +	pic->bottom_field_order_cnt =3D bottom_field_order_cnt;
+> > > > +	pic->frame_info =3D buf->codec.h264.pic_type << 8;
+> > > > +
+> > > > +	pic->luma_ptr =3D cedrus_buf_addr(vbuf, &ctx->dst_fmt, 0) -
+> > > > PHYS_OFFSET;
+> > > > +	pic->chroma_ptr =3D cedrus_buf_addr(vbuf, &ctx->dst_fmt, 1) -
+> > > > PHYS_OFFSET;
+> > >=20
+> > > I think subtracting PHYS_OFFSET breaks driver on H3 boards with 2 GiB=
+ of
+> > > RAM. Isn't that unnecessary anyway due to
+> > >=20
+> > > dev->dev->dma_pfn_offset =3D PHYS_PFN_OFFSET;
+> > >=20
+> > > in cedrus_hw.c?
+> > >=20
+> > > This comment is meant for all PHYS_OFFSET subtracting in this patch.
+> >=20
+> > PHYS_OFFSET was needed on some older SoCs, and the dma_pfn_offset
+> > trick wasn't working, I hacked it and forgot about it. I'll try to
+> > figure it out for the next version.
+> >=20
+> > > > +static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
+> > > > +				   struct cedrus_run *run,
+> > > > +				   const u8 *ref_list, u8 num_ref,
+> > > > +				   enum cedrus_h264_sram_off sram)
+> > > > +{
+> > > > +	const struct v4l2_ctrl_h264_decode_param *decode =3D
+> > > > run->h264.decode_param; +	struct vb2_queue *cap_q =3D
+> > > > &ctx->fh.m2m_ctx->cap_q_ctx.q;
+> > > > +	struct cedrus_dev *dev =3D ctx->dev;
+> > > > +	u32 sram_array[CEDRUS_MAX_REF_IDX / sizeof(u32)];
+> > > > +	unsigned int size, i;
+> > > > +
+> > > > +	memset(sram_array, 0, sizeof(sram_array));
+> > > > +
+> > > > +	for (i =3D 0; i < num_ref; i +=3D 4) {
+> > > > +		unsigned int j;
+> > > > +
+> > > > +		for (j =3D 0; j < 4; j++) {
+> > >=20
+> > > I don't think you have to complicate with two loops here.
+> > > cedrus_h264_write_sram() takes void* and it aligns to 4 anyway. So as
+> > > long
+> > > input buffer is multiple of 4 (u8[CEDRUS_MAX_REF_IDX] qualifies for
+> > > that),
+> > > you can use single for loop with "u8 sram_array[CEDRUS_MAX_REF_IDX]".
+> > > This should make code much more readable.
+> >=20
+> > This wasn't really about the alignment, but in order to get the
+> > offsets in the u32 and the array more easily.
+> >=20
+> > Breaking out the loop will make that computation less easy on the eye,
+> > so I guess it's very subjective.
+>=20
+> For some strange reason, code below fixes decoding issue from one of my t=
+est
+> samples. This is what I actually meant with 1 loop approach:
+>=20
+> static void _cedrus_write_ref_list(struct cedrus_ctx *ctx,
+> 				   struct cedrus_run *run,
+> 				   const u8 *ref_list, u8 num_ref,
+> 				   enum cedrus_h264_sram_off sram)
+> {
+> 	const struct v4l2_ctrl_h264_decode_param *decode =3D run->h264.decode_pa=
+ram;
+> 	struct vb2_queue *cap_q =3D &ctx->fh.m2m_ctx->cap_q_ctx.q;
+> 	struct cedrus_dev *dev =3D ctx->dev;
+> 	u8 sram_array[CEDRUS_MAX_REF_IDX];
+> 	unsigned int i;
+>=20
+> 	memset(sram_array, 0, sizeof(sram_array));
+> 	num_ref =3D min(num_ref, (u8)CEDRUS_MAX_REF_IDX);
+>=20
+> 	for (i =3D 0; i < num_ref; i++) {
+> 		const struct v4l2_h264_dpb_entry *dpb;
+> 		const struct cedrus_buffer *cedrus_buf;
+> 		const struct vb2_v4l2_buffer *ref_buf;
+> 		unsigned int position;
+> 		int buf_idx;
+> 		u8 dpb_idx;
+>=20
+> 		dpb_idx =3D ref_list[i];
+> 		dpb =3D &decode->dpb[dpb_idx];
+>=20
+> 		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> 			continue;
+>=20
+> 		buf_idx =3D vb2_find_tag(cap_q, dpb->tag, 0);
+> 		if (buf_idx < 0)
+> 			continue;
+>=20
+> 		ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
+> 		cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
+> 		position =3D cedrus_buf->codec.h264.position;
+>=20
+> 		sram_array[i] |=3D position << 1;
+> 		if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
+> 			sram_array[i] |=3D BIT(0);
+> 	}
+>=20
+> 	cedrus_h264_write_sram(dev, sram, &sram_array, num_ref);
+> }
+>=20
+> IMO this code is easier to read.
+>=20
+> > > > +			const struct v4l2_h264_dpb_entry *dpb;
+> > > > +			const struct cedrus_buffer *cedrus_buf;
+> > > > +			const struct vb2_v4l2_buffer *ref_buf;
+> > > > +			unsigned int position;
+> > > > +			int buf_idx;
+> > > > +			u8 ref_idx =3D i + j;
+> > > > +			u8 dpb_idx;
+> > > > +
+> > > > +			if (ref_idx >=3D num_ref)
+> > > > +				break;
+> > > > +
+> > > > +			dpb_idx =3D ref_list[ref_idx];
+> > > > +			dpb =3D &decode->dpb[dpb_idx];
+> > > > +
+> > > > +			if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
+> > > > +				continue;
+> > > > +
+> > > > +			buf_idx =3D vb2_find_tag(cap_q, dpb->tag, 0);
+> > > > +			if (buf_idx < 0)
+> > > > +				continue;
+> > > > +
+> > > > +			ref_buf =3D to_vb2_v4l2_buffer(ctx->dst_bufs[buf_idx]);
+> > > > +			cedrus_buf =3D vb2_v4l2_to_cedrus_buffer(ref_buf);
+> > > > +			position =3D cedrus_buf->codec.h264.position;
+> > > > +
+> > > > +			sram_array[i] |=3D position << (j * 8 + 1);
+> > > > +			if (ref_buf->field =3D=3D V4L2_FIELD_BOTTOM)
+> > >=20
+> > > You newer set above flag to buffer so this will be always false.
+> >=20
+> > As far as I know, the field is supposed to be set by the userspace.
+>=20
+> How? I thought that only flags at queueing buffers can be set and there is
+> no bottom/top flag.
+>=20
+> > > > +	// sequence parameters
+> > > > +	reg =3D BIT(19);
+> > >=20
+> > > This one can be inferred from sps->chroma_format_idc.
+> >=20
+> > I'll look into this
+>=20
+> I'm using this:
+> reg |=3D (sps->chroma_format_idc & 0x7) << 19;
+>=20
+> Although I can't tell if I tested anything else than 1 there (same as it =
+was
+> before).
+>=20
+> > > > +	reg |=3D (sps->pic_width_in_mbs_minus1 & 0xff) << 8;
+> > > > +	reg |=3D sps->pic_height_in_map_units_minus1 & 0xff;
+> > > > +	if (sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY)
+> > > > +		reg |=3D BIT(18);
+> > > > +	if (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD)
+> > > > +		reg |=3D BIT(17);
+> > > > +	if (sps->flags & V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE)
+> > > > +		reg |=3D BIT(16);
+> > > > +	cedrus_write(dev, VE_H264_FRAME_SIZE, reg);
+> > > > +
+> > > > +	// slice parameters
+> > > > +	reg =3D 0;
+> > > > +	/*
+> > > > +	 * FIXME: This bit marks all the frames as references. This
+> > > > +	 * should probably be set based on nal_ref_idc, but the libva
+> > > > +	 * doesn't pass that information along, so this is not always
+> > > > +	 * available. We should find something else, maybe change the
+> > > > +	 * kernel UAPI somehow?
+> > > > +	 */
+> > > > +	reg |=3D BIT(12);
+> > >=20
+> > > I really think you should use nal_ref_idc here as it is in
+> > > specification.
+> > > You can still fake the data from libva backend. I don't think that any
+> > > driver needs this for anything else than check if it is 0 or not.
+> >=20
+> > Yeah, Tomasz suggested the same thing as a reply to the cover letter,
+> > I'll change that in the next version.
+> >=20
+> > > > +	reg |=3D (slice->slice_type & 0xf) << 8;
+> > > > +	reg |=3D slice->cabac_init_idc & 0x3;
+> > > > +	reg |=3D BIT(5);
+> > > > +	if (slice->flags & V4L2_H264_SLICE_FLAG_FIELD_PIC)
+> > > > +		reg |=3D BIT(4);
+> > > > +	if (slice->flags & V4L2_H264_SLICE_FLAG_BOTTOM_FIELD)
+> > > > +		reg |=3D BIT(3);
+> > > > +	if (slice->flags & V4L2_H264_SLICE_FLAG_DIRECT_SPATIAL_MV_PRED)
+> > > > +		reg |=3D BIT(2);
+> > > > +	cedrus_write(dev, VE_H264_SLICE_HDR, reg);
+> > > > +
+> > > > +	reg =3D 0;
+> > >=20
+> > > You might want to set bit 12 here, which enables active reference
+> > > picture
+> > > override. However, I'm not completely sure about that.
+> >=20
+> > Did you find some videos that were broken because of this?
+>=20
+> No, not really. That's why I don't really know if it is needed or not.
 
-Do you have any test cases for this?
+I found a flag in specs: num_ref_idx_active_override_flag
+I guess VAAPI always give correct value, so this doesn't need to be set.
 
-> Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> ---
->  security/smack/smack_lsm.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 340fc30..77e405f 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4326,6 +4326,12 @@ static int smack_key_permission(key_ref_t key_ref,
->  	int request = 0;
->  	int rc;
->  
-> +	/*
-> +	 * Validate requested permissions
-> +	 */
-> +	if (perm & ~KEY_NEED_ALL)
-> +		return -EINVAL;
-> +
->  	keyp = key_ref_to_ptr(key_ref);
->  	if (keyp == NULL)
->  		return -EINVAL;
-> @@ -4349,10 +4355,10 @@ static int smack_key_permission(key_ref_t key_ref,
->  	ad.a.u.key_struct.key = keyp->serial;
->  	ad.a.u.key_struct.key_desc = keyp->description;
->  #endif
-> -	if (perm & KEY_NEED_READ)
-> -		request = MAY_READ;
-> +	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
-> +		request |= MAY_READ;
->  	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
-> -		request = MAY_WRITE;
-> +		request |= MAY_WRITE;
->  	rc = smk_access(tkp, keyp->security, request, &ad);
->  	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
->  	return rc;
+Best regards,
+Jernej
+
+
+
 
