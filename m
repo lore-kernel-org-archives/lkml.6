@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C0BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE52C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148E42133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148E42133F
+	by mail.kernel.org (Postfix) with ESMTP id ECCCF2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 20:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCCF2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeK1Hhd (ORCPT
+        id S1726710AbeK1Hhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:37:33 -0500
-Received: from anholt.net ([50.246.234.109]:45512 "EHLO anholt.net"
+        Wed, 28 Nov 2018 02:37:36 -0500
+Received: from anholt.net ([50.246.234.109]:45518 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbeK1Hhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:37:33 -0500
+        id S1726068AbeK1Hhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 02:37:34 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 9687610A0F9D;
-        Tue, 27 Nov 2018 12:38:26 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id F3F4910A0612;
+        Tue, 27 Nov 2018 12:38:27 -0800 (PST)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id OGGDH0RtzG46; Tue, 27 Nov 2018 12:38:22 -0800 (PST)
+        with LMTP id OHk_c4nHdu4h; Tue, 27 Nov 2018 12:38:22 -0800 (PST)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 0556810A0612;
+        by anholt.net (Postfix) with ESMTP id 12D0410A0E8E;
         Tue, 27 Nov 2018 12:38:22 -0800 (PST)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 87E9C2FE2D5B; Tue, 27 Nov 2018 12:38:21 -0800 (PST)
+        id 82E172FE2D5E; Tue, 27 Nov 2018 12:38:21 -0800 (PST)
 From:   Eric Anholt <eric@anholt.net>
 To:     dri-devel@lists.freedesktop.org,
         Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
@@ -41,517 +41,832 @@ To:     dri-devel@lists.freedesktop.org,
         =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/2] drm/vkms: Add PRIME support by converting to Noralf's shmem helpers.
-Date:   Tue, 27 Nov 2018 12:38:21 -0800
-Message-Id: <20181127203821.12636-2-eric@anholt.net>
+Subject: [PATCH 1/2] drm: Add library for shmem backed GEM objects
+Date:   Tue, 27 Nov 2018 12:38:20 -0800
+Message-Id: <20181127203821.12636-1-eric@anholt.net>
 X-Mailer: git-send-email 2.20.0.rc1
-In-Reply-To: <20181127203821.12636-1-eric@anholt.net>
-References: <20181127203821.12636-1-eric@anholt.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cuts out a tremendous amount of boilerplate.  I've used the PRIME
-support now to test V3D rendering on a STB development board with no
-KMS driver.
+From: Noralf Trønnes <noralf@tronnes.org>
 
-v2: Use the DEFINE_DRM_GEM_SHMEM_FOPS for proper mmap setup.
+This adds a library for shmem backed GEM objects.
 
+v6:
+- Fix uninitialized variable issue in an error path (anholt).
+- Add a drm_gem_shmem_vm_open() to the fops to get proper refcounting
+  of the pages (anholt).
+
+v5:
+- Drop drm_gem_shmem_prime_mmap() (Daniel Vetter)
+- drm_gem_shmem_mmap(): Subtract drm_vma_node_start() to get the real
+  vma->vm_pgoff
+- drm_gem_shmem_fault(): Use vmf->pgoff now that vma->vm_pgoff is correct
+
+v4:
+- Drop cache modes (Thomas Hellstrom)
+- Add a GEM attached vtable
+
+v3:
+- Grammar (Sam Ravnborg)
+- s/drm_gem_shmem_put_pages_unlocked/drm_gem_shmem_put_pages_locked/
+  (Sam Ravnborg)
+- Add debug output in error path (Sam Ravnborg)
+
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
 Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1)
 ---
- drivers/gpu/drm/Kconfig           |   1 +
- drivers/gpu/drm/vkms/vkms_crc.c   |  28 ++--
- drivers/gpu/drm/vkms/vkms_drv.c   |  28 +---
- drivers/gpu/drm/vkms/vkms_drv.h   |  22 ----
- drivers/gpu/drm/vkms/vkms_gem.c   | 212 ++----------------------------
- drivers/gpu/drm/vkms/vkms_plane.c |  17 ++-
- 6 files changed, 43 insertions(+), 265 deletions(-)
+ Documentation/gpu/drm-kms-helpers.rst  |  12 +
+ drivers/gpu/drm/Kconfig                |   6 +
+ drivers/gpu/drm/Makefile               |   1 +
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 563 +++++++++++++++++++++++++
+ include/drm/drm_gem_shmem_helper.h     | 153 +++++++
+ 5 files changed, 735 insertions(+)
+ create mode 100644 drivers/gpu/drm/drm_gem_shmem_helper.c
+ create mode 100644 include/drm/drm_gem_shmem_helper.h
 
+diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/drm-kms-helpers.rst
+index 4b4dc236ef6f..8305d3566928 100644
+--- a/Documentation/gpu/drm-kms-helpers.rst
++++ b/Documentation/gpu/drm-kms-helpers.rst
+@@ -335,3 +335,15 @@ Legacy CRTC/Modeset Helper Functions Reference
+ 
+ .. kernel-doc:: drivers/gpu/drm/drm_crtc_helper.c
+    :export:
++
++SHMEM GEM Helper Reference
++==========================
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_shmem_helper.c
++   :doc: overview
++
++.. kernel-doc:: include/drm/drm_gem_shmem_helper.h
++   :internal:
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_shmem_helper.c
++   :export:
 diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 0dedbc040c77..3bdd95f99feb 100644
+index 4385f00e1d05..0dedbc040c77 100644
 --- a/drivers/gpu/drm/Kconfig
 +++ b/drivers/gpu/drm/Kconfig
-@@ -253,6 +253,7 @@ config DRM_VKMS
- 	tristate "Virtual KMS (EXPERIMENTAL)"
- 	depends on DRM
- 	select DRM_KMS_HELPER
-+	select DRM_GEM_SHMEM_HELPER
- 	default n
+@@ -177,6 +177,12 @@ config DRM_KMS_CMA_HELPER
  	help
- 	  Virtual Kernel Mode-Setting (VKMS) is used for testing or for
-diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
-index 9d9e8146db90..72d6422fb1a5 100644
---- a/drivers/gpu/drm/vkms/vkms_crc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crc.c
-@@ -4,6 +4,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
+ 	  Choose this if you need the KMS CMA helper functions
+ 
++config DRM_GEM_SHMEM_HELPER
++	bool
++	depends on DRM
++	help
++	  Choose this if you need the GEM shmem helper functions
++
+ config DRM_VM
+ 	bool
+ 	depends on DRM && MMU
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 7c88f12096c5..e5559fbf23af 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -25,6 +25,7 @@ drm-$(CONFIG_DRM_LIB_RANDOM) += lib/drm_random.o
+ drm-$(CONFIG_DRM_VM) += drm_vm.o
+ drm-$(CONFIG_COMPAT) += drm_ioc32.o
+ drm-$(CONFIG_DRM_GEM_CMA_HELPER) += drm_gem_cma_helper.o
++drm-$(CONFIG_DRM_GEM_SHMEM_HELPER) += drm_gem_shmem_helper.o
+ drm-$(CONFIG_PCI) += ati_pcigart.o
+ drm-$(CONFIG_DRM_PANEL) += drm_panel.o
+ drm-$(CONFIG_OF) += drm_of.o
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+new file mode 100644
+index 000000000000..527b0b27de22
+--- /dev/null
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -0,0 +1,563 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 Noralf Trønnes
++ */
++
++#include <linux/dma-buf.h>
++#include <linux/export.h>
++#include <linux/mutex.h>
++#include <linux/shmem_fs.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
++
++#include <drm/drm_device.h>
++#include <drm/drm_drv.h>
 +#include <drm/drm_gem_shmem_helper.h>
- 
- /**
-  * compute_crc - Compute CRC value on output frame
-@@ -91,21 +92,19 @@ static void compose_cursor(struct vkms_crc_data *cursor_crc,
- 			   struct vkms_crc_data *primary_crc, void *vaddr_out)
- {
- 	struct drm_gem_object *cursor_obj;
--	struct vkms_gem_object *cursor_vkms_obj;
-+	void *vaddr;
- 
- 	cursor_obj = drm_gem_fb_get_obj(&cursor_crc->fb, 0);
--	cursor_vkms_obj = drm_gem_to_vkms_gem(cursor_obj);
-+	vaddr = drm_gem_shmem_vmap(cursor_obj);
- 
--	mutex_lock(&cursor_vkms_obj->pages_lock);
--	if (!cursor_vkms_obj->vaddr) {
-+	if (IS_ERR(vaddr)) {
- 		DRM_WARN("cursor plane vaddr is NULL");
--		goto out;
++#include <drm/drm_prime.h>
++#include <drm/drm_print.h>
++
++/**
++ * DOC: overview
++ *
++ * This library provides helpers for GEM objects backed by shmem buffers
++ * allocated using anonymous pageable memory.
++ */
++
++static const struct drm_gem_object_funcs drm_gem_shmem_funcs = {
++	.free = drm_gem_shmem_free_object,
++	.print_info = drm_gem_shmem_print_info,
++	.pin = drm_gem_shmem_pin,
++	.unpin = drm_gem_shmem_unpin,
++	.get_sg_table = drm_gem_shmem_get_sg_table,
++	.vmap = drm_gem_shmem_vmap,
++	.vunmap = drm_gem_shmem_vunmap,
++	.vm_ops = &drm_gem_shmem_vm_ops,
++};
++
++/**
++ * drm_gem_shmem_create - Allocate an object with the given size
++ * @dev: DRM device
++ * @size: Size of the object to allocate
++ *
++ * This function creates a shmem GEM object.
++ *
++ * Returns:
++ * A struct drm_gem_shmem_object * on success or an ERR_PTR()-encoded negative
++ * error code on failure.
++ */
++struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t size)
++{
++	struct drm_gem_shmem_object *shmem;
++	struct drm_gem_object *obj;
++	int ret;
++
++	size = PAGE_ALIGN(size);
++
++	if (dev->driver->gem_create_object)
++		obj = dev->driver->gem_create_object(dev, size);
++	else
++		obj = kzalloc(sizeof(*shmem), GFP_KERNEL);
++	if (!obj)
++		return ERR_PTR(-ENOMEM);
++
++	if (!obj->funcs)
++		obj->funcs = &drm_gem_shmem_funcs;
++
++	ret = drm_gem_object_init(dev, obj, size);
++	if (ret)
++		goto err_free;
++
++	ret = drm_gem_create_mmap_offset(obj);
++	if (ret)
++		goto err_release;
++
++	shmem = to_drm_gem_shmem_obj(obj);
++	mutex_init(&shmem->pages_lock);
++	mutex_init(&shmem->vmap_lock);
++
++	return shmem;
++
++err_release:
++	drm_gem_object_release(obj);
++err_free:
++	kfree(obj);
++
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_create);
++
++/**
++ * drm_gem_shmem_free_object - Free resources associated with a shmem GEM object
++ * @obj: GEM object to free
++ *
++ * This function cleans up the GEM object state and frees the memory used to
++ * store the object itself.
++ */
++void drm_gem_shmem_free_object(struct drm_gem_object *obj)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	WARN_ON(shmem->vmap_use_count);
++
++	if (obj->import_attach) {
++		shmem->pages_use_count--;
++		drm_prime_gem_destroy(obj, shmem->sgt);
++		kvfree(shmem->pages);
++	}
++
++	WARN_ON(shmem->pages_use_count);
++
++	drm_gem_object_release(obj);
++	mutex_destroy(&shmem->pages_lock);
++	mutex_destroy(&shmem->vmap_lock);
++	kfree(shmem);
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_free_object);
++
++static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
++{
++	struct drm_gem_object *obj = &shmem->base;
++	struct page **pages;
++
++	if (shmem->pages_use_count++ > 0)
++		return 0;
++
++	pages = drm_gem_get_pages(obj);
++	if (IS_ERR(pages)) {
++		DRM_DEBUG_KMS("Failed to get pages (%ld)\n", PTR_ERR(pages));
++		shmem->pages_use_count = 0;
++		return PTR_ERR(pages);
++	}
++
++	shmem->pages = pages;
++
++	return 0;
++}
++
++/*
++ * drm_gem_shmem_get_pages - Allocate backing pages for a shmem GEM object
++ * @shmem: shmem GEM object
++ *
++ * This function makes sure that backing pages exists for the shmem GEM object
++ * and increases the use count.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
++{
++	int ret;
++
++	ret = mutex_lock_interruptible(&shmem->pages_lock);
++	if (ret)
++		return ret;
++	ret = drm_gem_shmem_get_pages_locked(shmem);
++	mutex_unlock(&shmem->pages_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL(drm_gem_shmem_get_pages);
++
++static void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
++{
++	struct drm_gem_object *obj = &shmem->base;
++
++	if (WARN_ON_ONCE(!shmem->pages_use_count))
 +		return;
- 	}
- 
--	blend(vaddr_out, cursor_vkms_obj->vaddr, primary_crc, cursor_crc);
-+	blend(vaddr_out, vaddr, primary_crc, cursor_crc);
- 
--out:
--	mutex_unlock(&cursor_vkms_obj->pages_lock);
-+	drm_gem_shmem_vunmap(cursor_obj, vaddr);
- }
- 
- static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
-@@ -113,8 +112,8 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
- {
- 	struct drm_framebuffer *fb = &primary_crc->fb;
- 	struct drm_gem_object *gem_obj = drm_gem_fb_get_obj(fb, 0);
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(gem_obj);
--	void *vaddr_out = kzalloc(vkms_obj->gem.size, GFP_KERNEL);
++
++	if (--shmem->pages_use_count > 0)
++		return;
++
++	drm_gem_put_pages(obj, shmem->pages,
++			  shmem->pages_mark_dirty_on_put,
++			  shmem->pages_mark_accessed_on_put);
++	shmem->pages = NULL;
++}
++
++/*
++ * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
++ * @shmem: shmem GEM object
++ *
++ * This function decreases the use count and puts the backing pages when use drops to zero.
++ */
++void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
++{
++	mutex_lock(&shmem->pages_lock);
++	drm_gem_shmem_put_pages_locked(shmem);
++	mutex_unlock(&shmem->pages_lock);
++}
++EXPORT_SYMBOL(drm_gem_shmem_put_pages);
++
++/**
++ * drm_gem_shmem_pin - Pin backing pages for a shmem GEM object
++ * @obj: GEM object
++ *
++ * This function makes sure the backing pages are pinned in memory while the
++ * buffer is exported.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++int drm_gem_shmem_pin(struct drm_gem_object *obj)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	return drm_gem_shmem_get_pages(shmem);
++}
++EXPORT_SYMBOL(drm_gem_shmem_pin);
++
++/**
++ * drm_gem_shmem_unpin - Unpin backing pages for a shmem GEM object
++ * @obj: GEM object
++ *
++ * This function removes the requirement that the backing pages are pinned in
++ * memory.
++ */
++void drm_gem_shmem_unpin(struct drm_gem_object *obj)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	drm_gem_shmem_put_pages(shmem);
++}
++EXPORT_SYMBOL(drm_gem_shmem_unpin);
++
++static void *drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem)
++{
++	struct drm_gem_object *obj = &shmem->base;
++	int ret;
++
++	if (shmem->vmap_use_count++ > 0)
++		return shmem->vaddr;
++
++	ret = drm_gem_shmem_get_pages(shmem);
++	if (ret)
++		goto err_zero_use;
++
++	if (obj->import_attach)
++		shmem->vaddr = dma_buf_vmap(obj->import_attach->dmabuf);
++	else
++		shmem->vaddr = vmap(shmem->pages, obj->size >> PAGE_SHIFT, VM_MAP, PAGE_KERNEL);
++
++	if (!shmem->vaddr) {
++		DRM_DEBUG_KMS("Failed to vmap pages\n");
++		ret = -ENOMEM;
++		goto err_put_pages;
++	}
++
++	return shmem->vaddr;
++
++err_put_pages:
++	drm_gem_shmem_put_pages(shmem);
++err_zero_use:
++	shmem->vmap_use_count = 0;
++
++	return ERR_PTR(ret);
++}
++
++/*
++ * drm_gem_shmem_vmap - Create a virtual mapping for a shmem GEM object
++ * @shmem: shmem GEM object
++ *
++ * This function makes sure that a virtual address exists for the buffer backing
++ * the shmem GEM object.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++void *drm_gem_shmem_vmap(struct drm_gem_object *obj)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
 +	void *vaddr;
-+	void *vaddr_out = kzalloc(gem_obj->size, GFP_KERNEL);
- 	u32 crc = 0;
- 
- 	if (!vaddr_out) {
-@@ -122,21 +121,20 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
- 		return 0;
- 	}
- 
--	mutex_lock(&vkms_obj->pages_lock);
--	if (WARN_ON(!vkms_obj->vaddr)) {
--		mutex_unlock(&vkms_obj->pages_lock);
-+	vaddr = drm_gem_shmem_vmap(gem_obj);
-+	if (WARN_ON(IS_ERR(vaddr))) {
- 		kfree(vaddr_out);
- 		return crc;
- 	}
- 
--	memcpy(vaddr_out, vkms_obj->vaddr, vkms_obj->gem.size);
--	mutex_unlock(&vkms_obj->pages_lock);
-+	memcpy(vaddr_out, vaddr, gem_obj->size);
- 
- 	if (cursor_crc)
- 		compose_cursor(cursor_crc, primary_crc, vaddr_out);
- 
- 	crc = compute_crc(vaddr_out, primary_crc);
- 
-+	drm_gem_shmem_vunmap(gem_obj, vaddr);
- 	kfree(vaddr_out);
- 
- 	return crc;
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 83087877565c..18f145f0f4db 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_fb_helper.h>
- #include "vkms_drv.h"
- 
-@@ -34,23 +35,7 @@ bool enable_cursor;
- module_param_named(enable_cursor, enable_cursor, bool, 0444);
- MODULE_PARM_DESC(enable_cursor, "Enable/Disable cursor support");
- 
--static const struct file_operations vkms_driver_fops = {
--	.owner		= THIS_MODULE,
--	.open		= drm_open,
--	.mmap		= drm_gem_mmap,
--	.unlocked_ioctl	= drm_ioctl,
--	.compat_ioctl	= drm_compat_ioctl,
--	.poll		= drm_poll,
--	.read		= drm_read,
--	.llseek		= no_llseek,
--	.release	= drm_release,
--};
--
--static const struct vm_operations_struct vkms_gem_vm_ops = {
--	.fault = vkms_gem_fault,
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
-+DEFINE_DRM_GEM_SHMEM_FOPS(vkms_driver_fops);
- 
- static void vkms_release(struct drm_device *dev)
- {
-@@ -64,12 +49,13 @@ static void vkms_release(struct drm_device *dev)
- }
- 
- static struct drm_driver vkms_driver = {
--	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
-+	.driver_features	= (DRIVER_MODESET |
-+				   DRIVER_ATOMIC |
-+				   DRIVER_GEM |
-+				   DRIVER_PRIME),
- 	.release		= vkms_release,
- 	.fops			= &vkms_driver_fops,
--	.dumb_create		= vkms_dumb_create,
--	.gem_vm_ops		= &vkms_gem_vm_ops,
--	.gem_free_object_unlocked = vkms_gem_free_object,
-+	DRM_GEM_SHMEM_DRIVER_OPS,
- 	.get_vblank_timestamp	= vkms_get_vblank_timestamp,
- 
- 	.name			= DRIVER_NAME,
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index e4469cd3d254..3faf49f43feb 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -80,23 +80,12 @@ struct vkms_device {
- 	struct vkms_output output;
- };
- 
--struct vkms_gem_object {
--	struct drm_gem_object gem;
--	struct mutex pages_lock; /* Page lock used in page fault handler */
--	struct page **pages;
--	unsigned int vmap_count;
--	void *vaddr;
--};
--
- #define drm_crtc_to_vkms_output(target) \
- 	container_of(target, struct vkms_output, crtc)
- 
- #define drm_device_to_vkms_device(target) \
- 	container_of(target, struct vkms_device, drm)
- 
--#define drm_gem_to_vkms_gem(target)\
--	container_of(target, struct vkms_gem_object, gem)
--
- #define to_vkms_crtc_state(target)\
- 	container_of(target, struct vkms_crtc_state, base)
- 
-@@ -122,17 +111,6 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
- 				       u32 *handle,
- 				       u64 size);
- 
--vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
--
--int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
--		     struct drm_mode_create_dumb *args);
--
--void vkms_gem_free_object(struct drm_gem_object *obj);
--
--int vkms_gem_vmap(struct drm_gem_object *obj);
--
--void vkms_gem_vunmap(struct drm_gem_object *obj);
--
- /* CRC Support */
- int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name);
- int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
-diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-index 80311daed47a..11f52aa4e732 100644
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -7,222 +7,34 @@
-  */
- 
- #include <linux/shmem_fs.h>
-+#include <drm/drm_gem_shmem_helper.h>
- 
- #include "vkms_drv.h"
- 
--static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
--						 u64 size)
--{
--	struct vkms_gem_object *obj;
--	int ret;
--
--	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
--	if (!obj)
--		return ERR_PTR(-ENOMEM);
--
--	size = roundup(size, PAGE_SIZE);
--	ret = drm_gem_object_init(dev, &obj->gem, size);
--	if (ret) {
--		kfree(obj);
--		return ERR_PTR(ret);
--	}
--
--	mutex_init(&obj->pages_lock);
--
--	return obj;
--}
--
--void vkms_gem_free_object(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *gem = container_of(obj, struct vkms_gem_object,
--						   gem);
--
--	WARN_ON(gem->pages);
--	WARN_ON(gem->vaddr);
--
--	mutex_destroy(&gem->pages_lock);
--	drm_gem_object_release(obj);
--	kfree(gem);
--}
--
--vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
--{
--	struct vm_area_struct *vma = vmf->vma;
--	struct vkms_gem_object *obj = vma->vm_private_data;
--	unsigned long vaddr = vmf->address;
--	pgoff_t page_offset;
--	loff_t num_pages;
--	vm_fault_t ret = VM_FAULT_SIGBUS;
--
--	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
--	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
--
--	if (page_offset > num_pages)
--		return VM_FAULT_SIGBUS;
--
--	mutex_lock(&obj->pages_lock);
--	if (obj->pages) {
--		get_page(obj->pages[page_offset]);
--		vmf->page = obj->pages[page_offset];
--		ret = 0;
--	}
--	mutex_unlock(&obj->pages_lock);
--	if (ret) {
--		struct page *page;
--		struct address_space *mapping;
--
--		mapping = file_inode(obj->gem.filp)->i_mapping;
--		page = shmem_read_mapping_page(mapping, page_offset);
--
--		if (!IS_ERR(page)) {
--			vmf->page = page;
--			ret = 0;
--		} else {
--			switch (PTR_ERR(page)) {
--			case -ENOSPC:
--			case -ENOMEM:
--				ret = VM_FAULT_OOM;
--				break;
--			case -EBUSY:
--				ret = VM_FAULT_RETRY;
--				break;
--			case -EFAULT:
--			case -EINVAL:
--				ret = VM_FAULT_SIGBUS;
--				break;
--			default:
--				WARN_ON(PTR_ERR(page));
--				ret = VM_FAULT_SIGBUS;
--				break;
--			}
--		}
--	}
--	return ret;
--}
--
- struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
- 				       struct drm_file *file,
- 				       u32 *handle,
- 				       u64 size)
- {
--	struct vkms_gem_object *obj;
-+	struct drm_gem_shmem_object *obj;
- 	int ret;
- 
- 	if (!file || !dev || !handle)
- 		return ERR_PTR(-EINVAL);
- 
--	obj = __vkms_gem_create(dev, size);
-+	obj = drm_gem_shmem_create(dev, size);
- 	if (IS_ERR(obj))
- 		return ERR_CAST(obj);
- 
--	ret = drm_gem_handle_create(file, &obj->gem, handle);
--	drm_gem_object_put_unlocked(&obj->gem);
--	if (ret) {
--		drm_gem_object_release(&obj->gem);
--		kfree(obj);
++	int ret;
++
++	ret = mutex_lock_interruptible(&shmem->vmap_lock);
++	if (ret)
++		return ERR_PTR(ret);
++	vaddr = drm_gem_shmem_vmap_locked(shmem);
++	mutex_unlock(&shmem->vmap_lock);
++
++	return vaddr;
++}
++EXPORT_SYMBOL(drm_gem_shmem_vmap);
++
++static void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem)
++{
++	struct drm_gem_object *obj = &shmem->base;
++
++	if (WARN_ON_ONCE(!shmem->vmap_use_count))
++		return;
++
++	if (--shmem->vmap_use_count > 0)
++		return;
++
++	if (obj->import_attach)
++		dma_buf_vunmap(obj->import_attach->dmabuf, shmem->vaddr);
++	else
++		vunmap(shmem->vaddr);
++
++	shmem->vaddr = NULL;
++	drm_gem_shmem_put_pages(shmem);
++}
++
++/*
++ * drm_gem_shmem_vunmap - Unmap a virtual mapping fo a shmem GEM object
++ * @shmem: shmem GEM object
++ *
++ * This function removes the virtual address when use count drops to zero.
++ */
++void drm_gem_shmem_vunmap(struct drm_gem_object *obj, void *vaddr)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	mutex_lock(&shmem->vmap_lock);
++	drm_gem_shmem_vunmap_locked(shmem);
++	mutex_unlock(&shmem->vmap_lock);
++}
++EXPORT_SYMBOL(drm_gem_shmem_vunmap);
++
++static struct drm_gem_shmem_object *
++drm_gem_shmem_create_with_handle(struct drm_file *file_priv,
++				 struct drm_device *dev, size_t size,
++				 uint32_t *handle)
++{
++	struct drm_gem_shmem_object *shmem;
++	int ret;
++
++	shmem = drm_gem_shmem_create(dev, size);
++	if (IS_ERR(shmem))
++		return shmem;
++
 +	/*
 +	 * Allocate an id of idr table where the obj is registered
 +	 * and handle has the id what user can see.
 +	 */
-+	ret = drm_gem_handle_create(file, &obj->base, handle);
++	ret = drm_gem_handle_create(file_priv, &shmem->base, handle);
 +	/* drop reference from allocate - handle holds it now. */
-+	drm_gem_object_put_unlocked(&obj->base);
++	drm_gem_object_put_unlocked(&shmem->base);
 +	if (ret)
- 		return ERR_PTR(ret);
--	}
--
--	return &obj->gem;
--}
--
--int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
--		     struct drm_mode_create_dumb *args)
--{
--	struct drm_gem_object *gem_obj;
--	u64 pitch, size;
--
--	if (!args || !dev || !file)
--		return -EINVAL;
--
--	pitch = args->width * DIV_ROUND_UP(args->bpp, 8);
--	size = pitch * args->height;
--
--	if (!size)
--		return -EINVAL;
--
--	gem_obj = vkms_gem_create(dev, file, &args->handle, size);
--	if (IS_ERR(gem_obj))
--		return PTR_ERR(gem_obj);
--
--	args->size = gem_obj->size;
--	args->pitch = pitch;
--
--	DRM_DEBUG_DRIVER("Created object of size %lld\n", size);
--
--	return 0;
--}
--
--static struct page **_get_pages(struct vkms_gem_object *vkms_obj)
--{
--	struct drm_gem_object *gem_obj = &vkms_obj->gem;
--
--	if (!vkms_obj->pages) {
--		struct page **pages = drm_gem_get_pages(gem_obj);
--
--		if (IS_ERR(pages))
--			return pages;
--
--		if (cmpxchg(&vkms_obj->pages, NULL, pages))
--			drm_gem_put_pages(gem_obj, pages, false, true);
--	}
--
--	return vkms_obj->pages;
--}
--
--void vkms_gem_vunmap(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
--
--	mutex_lock(&vkms_obj->pages_lock);
--	if (vkms_obj->vmap_count < 1) {
--		WARN_ON(vkms_obj->vaddr);
--		WARN_ON(vkms_obj->pages);
--		mutex_unlock(&vkms_obj->pages_lock);
--		return;
--	}
--
--	vkms_obj->vmap_count--;
--
--	if (vkms_obj->vmap_count == 0) {
--		vunmap(vkms_obj->vaddr);
--		vkms_obj->vaddr = NULL;
--		drm_gem_put_pages(obj, vkms_obj->pages, false, true);
--		vkms_obj->pages = NULL;
--	}
--
--	mutex_unlock(&vkms_obj->pages_lock);
--}
--
--int vkms_gem_vmap(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
--	int ret = 0;
--
--	mutex_lock(&vkms_obj->pages_lock);
--
--	if (!vkms_obj->vaddr) {
--		unsigned int n_pages = obj->size >> PAGE_SHIFT;
--		struct page **pages = _get_pages(vkms_obj);
--
--		if (IS_ERR(pages)) {
--			ret = PTR_ERR(pages);
--			goto out;
--		}
--
--		vkms_obj->vaddr = vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
--		if (!vkms_obj->vaddr)
--			goto err_vmap;
--	}
--
--	vkms_obj->vmap_count++;
--	goto out;
- 
--err_vmap:
--	ret = -ENOMEM;
--	drm_gem_put_pages(obj, vkms_obj->pages, false, true);
--	vkms_obj->pages = NULL;
--out:
--	mutex_unlock(&vkms_obj->pages_lock);
--	return ret;
-+	return &obj->base;
- }
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 7041007396ae..29e6e870d7ac 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -11,6 +11,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
- 
- static struct drm_plane_state *
- vkms_plane_duplicate_state(struct drm_plane *plane)
-@@ -138,17 +139,17 @@ static int vkms_prepare_fb(struct drm_plane *plane,
- 			   struct drm_plane_state *state)
- {
- 	struct drm_gem_object *gem_obj;
--	struct vkms_gem_object *vkms_obj;
--	int ret;
-+	void *map;
- 
- 	if (!state->fb)
- 		return 0;
- 
- 	gem_obj = drm_gem_fb_get_obj(state->fb, 0);
--	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
--	ret = vkms_gem_vmap(gem_obj);
--	if (ret)
--		DRM_ERROR("vmap failed: %d\n", ret);
-+	map = drm_gem_shmem_vmap(gem_obj);
-+	if (IS_ERR(map)) {
-+		DRM_ERROR("vmap failed: %ld\n", PTR_ERR(map));
-+		return PTR_ERR(map);
++		return ERR_PTR(ret);
++
++	return shmem;
++}
++
++/**
++ * drm_gem_shmem_dumb_create - Create a dumb shmem buffer object
++ * @file: DRM file structure to create the dumb buffer for
++ * @dev: DRM device
++ * @args: IOCTL data
++ *
++ * This function computes the pitch of the dumb buffer and rounds it up to an
++ * integer number of bytes per pixel. Drivers for hardware that doesn't have
++ * any additional restrictions on the pitch can directly use this function as
++ * their &drm_driver.dumb_create callback.
++ *
++ * For hardware with additional restrictions, drivers can adjust the fields
++ * set up by userspace before calling into this function.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
++			      struct drm_mode_create_dumb *args)
++{
++	u32 min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
++	struct drm_gem_shmem_object *shmem;
++
++	if (!args->pitch || !args->size) {
++		args->pitch = min_pitch;
++		args->size = args->pitch * args->height;
++	} else {
++		/* ensure sane minimum values */
++		if (args->pitch < min_pitch)
++			args->pitch = min_pitch;
++		if (args->size < args->pitch * args->height)
++			args->size = args->pitch * args->height;
 +	}
- 
- 	return drm_gem_fb_prepare_fb(plane, state);
- }
-@@ -157,12 +158,14 @@ static void vkms_cleanup_fb(struct drm_plane *plane,
- 			    struct drm_plane_state *old_state)
- {
- 	struct drm_gem_object *gem_obj;
-+	struct drm_gem_shmem_object *shmem_obj;
- 
- 	if (!old_state->fb)
- 		return;
- 
- 	gem_obj = drm_gem_fb_get_obj(old_state->fb, 0);
--	vkms_gem_vunmap(gem_obj);
-+	shmem_obj = to_drm_gem_shmem_obj(gem_obj);
-+	drm_gem_shmem_vunmap(gem_obj, shmem_obj->vaddr);
- }
- 
- static const struct drm_plane_helper_funcs vkms_primary_helper_funcs = {
++
++	shmem = drm_gem_shmem_create_with_handle(file, dev, args->size, &args->handle);
++
++	return PTR_ERR_OR_ZERO(shmem);
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_dumb_create);
++
++static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct drm_gem_object *obj = vma->vm_private_data;
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++	loff_t num_pages = obj->size >> PAGE_SHIFT;
++	struct page *page;
++
++	if (vmf->pgoff > num_pages || WARN_ON_ONCE(!shmem->pages))
++		return VM_FAULT_SIGBUS;
++
++	page = shmem->pages[vmf->pgoff];
++
++	return vmf_insert_page(vma, vmf->address, page);
++}
++
++static void drm_gem_shmem_vm_open(struct vm_area_struct *vma)
++{
++	struct drm_gem_object *obj = vma->vm_private_data;
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++	int ret;
++
++	ret = drm_gem_shmem_get_pages(shmem);
++	WARN_ON_ONCE(ret != 0);
++
++	drm_gem_vm_open(vma);
++}
++
++static void drm_gem_shmem_vm_close(struct vm_area_struct *vma)
++{
++	struct drm_gem_object *obj = vma->vm_private_data;
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	drm_gem_shmem_put_pages(shmem);
++	drm_gem_vm_close(vma);
++}
++
++const struct vm_operations_struct drm_gem_shmem_vm_ops = {
++	.fault = drm_gem_shmem_fault,
++	.open = drm_gem_shmem_vm_open,
++	.close = drm_gem_shmem_vm_close,
++};
++EXPORT_SYMBOL_GPL(drm_gem_shmem_vm_ops);
++
++/**
++ * drm_gem_shmem_mmap - Memory-map a shmem GEM object
++ * @filp: File object
++ * @vma: VMA for the area to be mapped
++ *
++ * This function implements an augmented version of the GEM DRM file mmap
++ * operation for shmem objects. Drivers which employ the shmem helpers should
++ * use this function as their &file_operations.mmap handler in the DRM device file's
++ * file_operations structure.
++ *
++ * Instead of directly referencing this function, drivers should use the
++ * DEFINE_DRM_GEM_SHMEM_FOPS() macro.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++int drm_gem_shmem_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	struct drm_gem_shmem_object *shmem;
++	int ret;
++
++	ret = drm_gem_mmap(filp, vma);
++	if (ret)
++		return ret;
++
++	shmem = to_drm_gem_shmem_obj(vma->vm_private_data);
++
++	ret = drm_gem_shmem_get_pages(shmem);
++	if (ret) {
++		drm_gem_vm_close(vma);
++		return ret;
++	}
++
++	/* VM_PFNMAP was set by drm_gem_mmap() */
++	vma->vm_flags &= ~VM_PFNMAP;
++	vma->vm_flags |= VM_MIXEDMAP;
++	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
++
++	fput(vma->vm_file);
++	vma->vm_file = get_file(shmem->base.filp);
++	/* Remove the fake offset */
++	vma->vm_pgoff -= drm_vma_node_start(&shmem->base.vma_node);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_mmap);
++
++/**
++ * drm_gem_shmem_print_info() - Print &drm_gem_shmem_object info for debugfs
++ * @p: DRM printer
++ * @indent: Tab indentation level
++ * @obj: GEM object
++ */
++void drm_gem_shmem_print_info(struct drm_printer *p, unsigned int indent,
++			      const struct drm_gem_object *obj)
++{
++	const struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	drm_printf_indent(p, indent, "pages_use_count=%u\n", shmem->pages_use_count);
++	drm_printf_indent(p, indent, "vmap_use_count=%u\n", shmem->vmap_use_count);
++	drm_printf_indent(p, indent, "vaddr=%p\n", shmem->vaddr);
++}
++EXPORT_SYMBOL(drm_gem_shmem_print_info);
++
++/**
++ * drm_gem_shmem_get_sg_table - Provide a scatter/gather table of pinned
++ *                              pages for a shmem GEM object
++ * @obj: GEM object
++ *
++ * This function exports a scatter/gather table suitable for PRIME usage by
++ * calling the standard DMA mapping API.
++ *
++ * Returns:
++ * A pointer to the scatter/gather table of pinned pages or NULL on failure.
++ */
++struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_object *obj)
++{
++	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
++
++	return drm_prime_pages_to_sg(shmem->pages, obj->size >> PAGE_SHIFT);
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sg_table);
++
++/**
++ * drm_gem_shmem_prime_import_sg_table - Produce a shmem GEM object from
++ *                 another driver's scatter/gather table of pinned pages
++ * @dev: Device to import into
++ * @attach: DMA-BUF attachment
++ * @sgt: Scatter/gather table of pinned pages
++ *
++ * This function imports a scatter/gather table exported via DMA-BUF by
++ * another driver. Drivers that use the shmem helpers should set this as their
++ * &drm_driver.gem_prime_import_sg_table callback.
++ *
++ * Returns:
++ * A pointer to a newly created GEM object or an ERR_PTR-encoded negative
++ * error code on failure.
++ */
++struct drm_gem_object *
++drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
++				    struct dma_buf_attachment *attach,
++				    struct sg_table *sgt)
++{
++	size_t size = PAGE_ALIGN(attach->dmabuf->size);
++	size_t npages = size >> PAGE_SHIFT;
++	struct drm_gem_shmem_object *shmem;
++	int ret;
++
++	shmem = drm_gem_shmem_create(dev, size);
++	if (IS_ERR(shmem))
++		return ERR_CAST(shmem);
++
++	shmem->pages = kvmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
++	if (!shmem->pages) {
++		ret = -ENOMEM;
++		goto err_free_gem;
++	}
++
++	ret = drm_prime_sg_to_page_addr_arrays(sgt, shmem->pages, NULL, npages);
++	if (ret < 0)
++		goto err_free_array;
++
++	shmem->sgt = sgt;
++	shmem->pages_use_count = 1; /* Permanently pinned from our point of view */
++
++	DRM_DEBUG_PRIME("size = %zu\n", size);
++
++	return &shmem->base;
++
++err_free_array:
++	kvfree(shmem->pages);
++err_free_gem:
++	drm_gem_object_put_unlocked(&shmem->base);
++
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
+diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+new file mode 100644
+index 000000000000..26b05e06407d
+--- /dev/null
++++ b/include/drm/drm_gem_shmem_helper.h
+@@ -0,0 +1,153 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __DRM_GEM_SHMEM_HELPER_H__
++#define __DRM_GEM_SHMEM_HELPER_H__
++
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/mutex.h>
++
++#include <drm/drm_file.h>
++#include <drm/drm_gem.h>
++#include <drm/drm_ioctl.h>
++#include <drm/drm_prime.h>
++
++struct dma_buf_attachment;
++struct drm_mode_create_dumb;
++struct drm_printer;
++struct sg_table;
++
++/**
++ * struct drm_gem_shmem_object - GEM object backed by shmem
++ */
++struct drm_gem_shmem_object {
++	/**
++	 * @base: Base GEM object
++	 */
++	struct drm_gem_object base;
++
++	/**
++	 * @pages_lock: Protects the page table and use count
++	 */
++	struct mutex pages_lock;
++
++	/**
++	 * @pages: Page table
++	 */
++	struct page **pages;
++
++	/**
++	 * @pages_use_count:
++	 *
++	 * Reference count on the pages table.
++	 * The pages are put when the count reaches zero.
++	 */
++	unsigned int pages_use_count;
++
++	/**
++	 * @pages_mark_dirty_on_put:
++	 *
++	 * Mark pages as dirty when they are put.
++	 */
++	unsigned int pages_mark_dirty_on_put    : 1;
++
++	/**
++	 * @pages_mark_accessed_on_put:
++	 *
++	 * Mark pages as accessed when they are put.
++	 */
++	unsigned int pages_mark_accessed_on_put : 1;
++
++	/**
++	 * @sgt: Scatter/gather table for imported PRIME buffers
++	 */
++	struct sg_table *sgt;
++
++	/**
++	 * @vmap_lock: Protects the vmap address and use count
++	 */
++	struct mutex vmap_lock;
++
++	/**
++	 * @vaddr: Kernel virtual address of the backing memory
++	 */
++	void *vaddr;
++
++	/**
++	 * @vmap_use_count:
++	 *
++	 * Reference count on the virtual address.
++	 * The address are un-mapped when the count reaches zero.
++	 */
++	unsigned int vmap_use_count;
++};
++
++#define to_drm_gem_shmem_obj(obj) \
++	container_of(obj, struct drm_gem_shmem_object, base)
++
++/**
++ * DEFINE_DRM_GEM_SHMEM_FOPS() - Macro to generate file operations for shmem drivers
++ * @name: name for the generated structure
++ *
++ * This macro autogenerates a suitable &struct file_operations for shmem based
++ * drivers, which can be assigned to &drm_driver.fops. Note that this structure
++ * cannot be shared between drivers, because it contains a reference to the
++ * current module using THIS_MODULE.
++ *
++ * Note that the declaration is already marked as static - if you need a
++ * non-static version of this you're probably doing it wrong and will break the
++ * THIS_MODULE reference by accident.
++ */
++#define DEFINE_DRM_GEM_SHMEM_FOPS(name) \
++	static const struct file_operations name = {\
++		.owner		= THIS_MODULE,\
++		.open		= drm_open,\
++		.release	= drm_release,\
++		.unlocked_ioctl	= drm_ioctl,\
++		.compat_ioctl	= drm_compat_ioctl,\
++		.poll		= drm_poll,\
++		.read		= drm_read,\
++		.llseek		= noop_llseek,\
++		.mmap		= drm_gem_shmem_mmap, \
++	}
++
++struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t size);
++void drm_gem_shmem_free_object(struct drm_gem_object *obj);
++
++int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem);
++void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem);
++int drm_gem_shmem_pin(struct drm_gem_object *obj);
++void drm_gem_shmem_unpin(struct drm_gem_object *obj);
++void *drm_gem_shmem_vmap(struct drm_gem_object *obj);
++void drm_gem_shmem_vunmap(struct drm_gem_object *obj, void *vaddr);
++
++int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
++			      struct drm_mode_create_dumb *args);
++
++int drm_gem_shmem_mmap(struct file *filp, struct vm_area_struct *vma);
++
++extern const struct vm_operations_struct drm_gem_shmem_vm_ops;
++
++void drm_gem_shmem_print_info(struct drm_printer *p, unsigned int indent,
++			      const struct drm_gem_object *obj);
++
++struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_object *obj);
++struct drm_gem_object *
++drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
++				    struct dma_buf_attachment *attach,
++				    struct sg_table *sgt);
++
++/**
++ * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
++ *
++ * This macro provides a shortcut for setting the shmem GEM operations in
++ * the &drm_driver structure.
++ */
++#define DRM_GEM_SHMEM_DRIVER_OPS \
++	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd, \
++	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle, \
++	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
++	.gem_prime_mmap		= drm_gem_prime_mmap, \
++	.dumb_create		= drm_gem_shmem_dumb_create
++
++#endif /* __DRM_GEM_SHMEM_HELPER_H__ */
 -- 
 2.20.0.rc1
 
