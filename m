@@ -2,124 +2,81 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975C3C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0613AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D403204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:55:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s++pL8e3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D403204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C8F88204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 01:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F88204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbeK0Mv7 (ORCPT
+        id S1728161AbeK0MxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 07:51:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35412 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbeK0Mv7 (ORCPT
+        Tue, 27 Nov 2018 07:53:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35786 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeK0MxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 07:51:59 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so4498885plo.2;
-        Mon, 26 Nov 2018 17:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1WTwvgoCZRsGXJrsy5qBbc33rFwaI9Gq0zhdjYK2sLE=;
-        b=s++pL8e3E840PqO8FX2ewoyVHJKBMxi2UtL2Saf87F7wybYP44uXjv2K7MK/9YMZwP
-         L2cQHTG8ajHCoIT1FeYO+T00x2cwqbguK48YZvnqhzOXzF2QknxnHfwCTsgNDFccYxOr
-         xAO7xqmIkKIjiDmlMbseJlLDYnOjLT1pMJNveITmBvwVP7GF9bMorPckQ06imKcL0OJ6
-         KG/u6v0N/nSAwyGq8hcm1kBi6WULEXe79QjA6a+Tt0tjKuCfmSgnTKO5a+l3ue9b/M70
-         tHBV1k7qgvTq6RlK5lPZURIc+VwG3zCFtq0z+x94mKAH2reEXnvEgFIlgJKIOLh9pQ6U
-         ukzw==
+        Tue, 27 Nov 2018 07:53:19 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 81so18700711otj.2;
+        Mon, 26 Nov 2018 17:57:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1WTwvgoCZRsGXJrsy5qBbc33rFwaI9Gq0zhdjYK2sLE=;
-        b=tY4AoM3OAnPyhe4U3dkYmJnSLgr9e/Getls07es3MbKfUpT6pBOB1cqBXOHIKiITQD
-         lWLqkaGOYHAML2OLlZOb8knbH6tBAhCtp9nCyUEXA8mpmnT9pMgtihRYvMmvb86DkJ0U
-         vBGI1BnRyoMoY+iGoSpYdcxNxN+6h3I5aosnSTtLNmMG8tCRBr+5EtqVz+LuRggJNXbh
-         osKHbcQulggUIzdejmy2zRehxQSvXFmm+at1CtbUFFkSnJC+dTvvSPRqB6Nl6kj2Tw/3
-         ZKje6JaXzz9FMilDGdbFIjUrd1Lx3bw3J7I/XugNdcFLLBISvx9ESUIThhicvnbICy1j
-         +kiA==
-X-Gm-Message-State: AA+aEWYTJMpjH6SoDu5e99NZuLYbh2Z9mZ9NR5kjpeopuLOZqipBLjxv
-        025hMrz2wRSfVgZ6mYep2k4=
-X-Google-Smtp-Source: AFSGD/UqJktlt0i3CTFZk/tWBydoA7lPfOpEPGhXvTQbhtcWtEKB8XHu7vMWQ3Qvv6iUSN/cGAEhLA==
-X-Received: by 2002:a17:902:33c2:: with SMTP id b60mr30175676plc.211.1543283748013;
-        Mon, 26 Nov 2018 17:55:48 -0800 (PST)
-Received: from localhost.localdomain ([119.40.32.42])
-        by smtp.gmail.com with ESMTPSA id a16-v6sm2157182pfh.107.2018.11.26.17.55.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 17:55:47 -0800 (PST)
-From:   Hua Su <suhua.tanke@gmail.com>
-To:     mb@lightnvm.io
-Cc:     javier@cnexlabs.com, axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, suhua.tanke@gmail.com
-Subject: [PATCH] lightnvm: pblk: adjust the position of the lock
-Date:   Tue, 27 Nov 2018 09:53:09 +0800
-Message-Id: <20181127015309.2374-1-suhua.tanke@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sho3N2s/7HZvdw++PnCrNgGdDuYCSgichEjbpvFo56c=;
+        b=KaOnSTOVrsm5fy5LBjqcu3XT9886Yfvzt1rPnEg8uuEWoYWF2/ysBPurhEU7XSG3yE
+         iexXpmB50a1oi1Au9wIug36MbVvc36x2vasnqYQ+PhlmmT+htKjm2HQQtqNy+hTiQdNZ
+         x3/GiCpexStJumD35Ypp5HQAOa2A9yCjofCIPrHEJb5xi8mS4IprvFA7miCdIUJl73Dj
+         tUxdgEeHhlEJFxK0CLrDre0sv8fjkgyO2LOJ1vNpbBNxhJaEO1n5JCPm/7beHx2dUhP+
+         E1yYOrDU4WnKz0Oy+R8O+Y1q66KqLrlwIhmlc5nllsP6vX1+mNLzm7ypeFVD0YDL1GXG
+         oprQ==
+X-Gm-Message-State: AA+aEWYbcBHUcMm4H+YMBg3RjjMut5SxkrON+Z5gZpjkl9E4WgCBIIpx
+        3lpMs5xb5wvt2H4MHdszFg==
+X-Google-Smtp-Source: AFSGD/VezLNjTDzjspwdAbCmxfhmf+NfZjakxJNy0F2vnI8N/EkRowTzVYHuwrkIS394xqg9p5sYkA==
+X-Received: by 2002:a9d:715d:: with SMTP id y29mr17371660otj.148.1543283827339;
+        Mon, 26 Nov 2018 17:57:07 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t8sm2493738otp.69.2018.11.26.17.57.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 17:57:06 -0800 (PST)
+Date:   Mon, 26 Nov 2018 19:57:05 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
+        sboyd@kernel.org, thierry.reding@gmail.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        hao5781286@gmail.com
+Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner
+ sun8i.
+Message-ID: <20181127015705.GA17836@bogus>
+References: <20181125161859.GA5277@arx-s1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181125161859.GA5277@arx-s1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add lock protection for list operations.
+On Mon, 26 Nov 2018 00:18:59 +0800, Hao Zhang wrote:
+> This patch adds Allwinner sun8i pwm binding document.
+> 
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+> ---
+>  .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> 
 
-Signed-off-by: Hua Su <suhua.tanke@gmail.com>
----
- drivers/lightnvm/pblk-core.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 6944aac43b01..e490df217dac 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1286,24 +1286,27 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 	list_del(&line->list);
- 
- 	ret = pblk_line_prepare(pblk, line);
--	if (ret) {
--		list_add(&line->list, &l_mg->free_list);
--		spin_unlock(&l_mg->free_lock);
--		return ret;
--	}
--	spin_unlock(&l_mg->free_lock);
-+	if (ret)
-+		goto out;
- 
- 	ret = pblk_line_alloc_bitmaps(pblk, line);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	if (!pblk_line_init_bb(pblk, line, 0)) {
- 		list_add(&line->list, &l_mg->free_list);
-+		spin_unlock(&l_mg->free_lock);
- 		return -EINTR;
- 	}
-+	spin_unlock(&l_mg->free_lock);
- 
- 	pblk_rl_free_lines_dec(&pblk->rl, line, true);
- 	return 0;
-+
-+out:
-+	list_add(&line->list, &l_mg->free_list);
-+	spin_unlock(&l_mg->free_lock);
-+	return ret;
- }
- 
- void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
--- 
-2.19.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
