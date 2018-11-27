@@ -2,232 +2,312 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACA2C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74425C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B71120817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 157A720817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:36:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Jk7esfJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B71120817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="IzneEVU7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157A720817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730812AbeK0Vcg (ORCPT
+        id S1730696AbeK0Vda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:32:36 -0500
-Received: from mail-oln040092005048.outbound.protection.outlook.com ([40.92.5.48]:22680
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Tue, 27 Nov 2018 16:33:30 -0500
+Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:16883
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729318AbeK0Vcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:32:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+        id S1728862AbeK0Vda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:33:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YRJTAq5ejnp0iahKhBOZSYclUGnUmKdF3A4539VZeGI=;
- b=Jk7esfJOx96d7Z+hz9D1NjO1NXh7TG3k/AXbijcdK/pv5jsDpUX/uPn3EDXkFTf9KFSzzzSFb/nu1bOB5iKSx7Is9JK3L5umPEZFIWeU3qPD/jxkLMQwTUPfiMP2B4O5lNbME3l9gpSU6hdeZPiNs0fevtYgkmZISOBjb/2cKxpuA5SUeY8R/hTJ64d34eotnRP69fLQW1OYfF1kNpwRGmQdmxxJEOX7vvscTUUYhHMxbfuAKgN4K+JYhvjubsWvffP17G+rDZVEWdC5KTsr7JMzNMqwyBrUwlc5lymwAI8DljAREQwBL/0i26OHxwJofUfeqYlNe4xHsOHiqQEETg==
-Received: from BL2NAM02FT015.eop-nam02.prod.protection.outlook.com
- (10.152.76.58) by BL2NAM02HT134.eop-nam02.prod.protection.outlook.com
- (10.152.77.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.15; Tue, 27 Nov
- 2018 10:34:26 +0000
-Received: from BLUPR13MB0289.namprd13.prod.outlook.com (10.152.76.60) by
- BL2NAM02FT015.mail.protection.outlook.com (10.152.77.167) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.15 via Frontend Transport; Tue, 27 Nov 2018 10:34:26 +0000
-Received: from BLUPR13MB0289.namprd13.prod.outlook.com
- ([fe80::eccf:c550:ed97:f1e7]) by BLUPR13MB0289.namprd13.prod.outlook.com
- ([fe80::eccf:c550:ed97:f1e7%7]) with mapi id 15.20.1382.012; Tue, 27 Nov 2018
- 10:34:26 +0000
-From:   Yueyi Li <liyueyi@live.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "w@1wt.eu" <w@1wt.eu>
-CC:     "donb@securitymouse.com" <donb@securitymouse.com>,
+ bh=JPjM6YEtIYXxcAokB9g9tC6KXYipnqttwuXYZU7k+7A=;
+ b=IzneEVU7ztqnGdgEOYgG5AdhLSVCuWIKTsAn/lJn8PSxbKLSAxiM88N4y3A2q47TTahSBeDFs09Fz+ltXnsUWnKaZAtL7cfeJrskbEKgYeM7Dz8Wk38fItp+8bPfKRfibgMx/a/y8NjXmHmkzqwwsXmKY1mwnOZq2Oxf+ZlJEdk=
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
+ AM0PR08MB3842.eurprd08.prod.outlook.com (20.178.23.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Tue, 27 Nov 2018 10:35:53 +0000
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::e84e:50fd:edd6:66e4]) by AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::e84e:50fd:edd6:66e4%3]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
+ 10:35:53 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     Liam Mark <lmark@codeaurora.org>
+CC:     nd <nd@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yueyi Li <liyueyi@live.com>
-Subject: [PATCH] lzo: fix ip overrun during compress.
-Thread-Topic: [PATCH] lzo: fix ip overrun during compress.
-Thread-Index: AQHUhjzFV7dxiksDcEGXoSZcs8ZKew==
-Date:   Tue, 27 Nov 2018 10:34:26 +0000
-Message-ID: <BLUPR13MB0289FB16D885625827E8DD27DFD00@BLUPR13MB0289.namprd13.prod.outlook.com>
-Accept-Language: en-US, zh-CN
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Martijn Coenen <maco@android.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@android.com>,
+        Arve Hjonnevag <arve@android.com>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: [RFC PATCH v2] android: ion: How to properly clean caches for
+ uncached allocations
+Thread-Topic: [RFC PATCH v2] android: ion: How to properly clean caches for
+ uncached allocations
+Thread-Index: AQHUcjBnSvenHVoYw0amObMa8s0GR6VY/NIAgAo60wCAAF3pgA==
+Date:   Tue, 27 Nov 2018 10:35:52 +0000
+Message-ID: <20181127103551.3phyldvtjbdsxetf@DESKTOP-E1NTVVP.localdomain>
+References: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com>
+ <b1479541-13bd-85ea-f9c7-25264c91f9b9@redhat.com>
+ <alpine.DEB.2.02.1803081635170.20592@lmark-linux.qualcomm.com>
+ <alpine.DEB.2.10.1811011454430.23412@lmark-linux.qualcomm.com>
+ <20181120164636.jcw7li2uaa3cmwc3@DESKTOP-E1NTVVP.localdomain>
+ <alpine.DEB.2.10.1811262051310.9248@lmark-linux.qualcomm.com>
+In-Reply-To: <alpine.DEB.2.10.1811262051310.9248@lmark-linux.qualcomm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR02CA0183.apcprd02.prod.outlook.com
- (2603:1096:201:21::19) To BLUPR13MB0289.namprd13.prod.outlook.com
- (2a01:111:e400:5951::22)
-x-incomingtopheadermarker: OriginalChecksum:6281897975358AEA616560EEDD9901F8069DDC8BEE81BC78841A979A13398698;UpperCasedChecksum:E737C4767AF0CB68283EA3B91CD3A9D31BD5A8ACD6E56EEEB634C3A6B998E29D;SizeAsReceived:7443;Count:48
+user-agent: NeoMutt/20180716-849-147d51
+x-originating-ip: [217.140.106.51]
+x-clientproxiedby: LO2P265CA0071.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::35) To AM0PR08MB3025.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [JcM/11DwsaztynpSN12N64EkHJwFsWW2]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL2NAM02HT134;6:I0n2/3ZpDyQPeDN5LEBE9Seqav9soYsTyCbo9PVhDpLjuGXCZzGpD/4WzjSjtjV8VWWE+AoM8YXKChSbhfqZhLsCJa307wqHTB/s+GcaeEGMI59QJ3G5IKNRm5viK2+swNft9zO8ltKc/WM/8q63ZgpjuJWXURkfdHEhJ3OqioqTovhVd4SC0XSP93RQtw/KVuCIQe+24ktuBiVyDgVURnTWYRQzU/a7XNZ/KSoQxWdwR9J+pKPuSP5twAa3uwHrFpo+ZeBim4w0uUpdFR2Mmx0xlPNJhBw1l8G+bZUkPS2Lvxqv22uF96pzxwbfKD+CWIhC3S4he05kxggPDRTT/PfX0AoStqacBVHJ+M0h3qBXS9jcvMMhSffFV6it3SrJz2M4CZzmBxqf9jv7yTsbNKiMYzNbU1oiGs3ZpxvXAzlFlRw7h12KoDyJxEB3+kQA6NHHUTT1lnkumCRvVxBndA==;5:qJv/Wto98NLYOLF+ZDKDIKBwlNUUUNEgXV/25kwckHjxr0PRFQBRt5vERwc5iueMWkTblvHWYaKH9e6sbI+iEtqFYNiT6gvq35dy2ta9Na3woNgbwB7BbX2ToPFCLlD5dLHWbI2J4g9kZzqb/RGkmFHoeB+mar9nGhtumXx1jac=;7:vzy7GWAvwQVy/e7FqPHHZ/ErG6kxXpF+Uhf93Ab87DmN8fimOfBsO4UBHIlpJsaAecQm2C+O//9FHlj98E8W1/L2PrBgiVVBdQwHF4FvxpTOUICtk09Hyj/iafsWEPML5VVY6nZt4jvBfzAALwfo7w==
-x-incomingheadercount: 48
-x-eopattributedmessage: 0
-x-ms-exchange-slblob-mailprops: mBRmoEB1kyJBHxbiyk7Ffs2iIzsZwIFnzAFwxaCBTyWR3IbAu57r4xUZ7uzPcRfy3b3xe3S8f8Rj0wYXclBsGFg1ExDQ/U5GZxu8OfyBK/TUkq9gBGUXnkozXWTXy0hCuoaRiUItkSZ9zxAfOq+UDqtEFhp0m2m/BrCtFJ6BofpgxwuKpDJ1RtSCwy83sCip/bvF5uAc7GCEkIZ+QbRlmG1xNfW+dth7vaHTHxSy7ryg2AiAdjl3AR6lG7YnxssAMnM86sd5LGRm/n92cgyqwTBWLhVCBVyZDDCUSibIqGZOGrTpRp1MwoechO/cgEJDk57ze346Tj0oihGZZPEiEu4q2EEdbzD9dEMzhrtpRRm/xEadRErnOsMEbt+r/+DOQM4Vpi0pevBYXDmpRRtb9ptq6Lau2m6yVBPdSNDzPo3Uz/loTNl6JS9P76oyB13yRQIAAxbbXkVfGawU2g1InFT0AHkqOv7rWl/X9n07kamWbPRYBNg2QZPocIaq+i0PL55TwUDR7YPBliFqhDvBk6TQ6MHdf893XLggBoTc0mH8pG2vCsqLIu5iFuz+nszqwbqwwzQ1bcvyVDmXHsEy/qukuVJVi5ddrxrDJAGQDdTk93SmQEnZDGRo/WiIXSSH4ZAhZo5qh5prTHRv9enNlRnu9NgwsOpH0prEbQDAK3huXNisyF4odZtvTZBPszkfz5S3q0pujYaWuaAPtDOvawziI1cWKxv5jSuFAH/DWWEnP71+9zGKbwWaU9MRIp5vSXGs+haTVb8=
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(201702181274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:BL2NAM02HT134;
-x-ms-traffictypediagnostic: BL2NAM02HT134:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BL2NAM02HT134;BCL:0;PCL:0;RULEID:;SRVR:BL2NAM02HT134;
-x-microsoft-antispam-message-info: Fb2YewWFcKlZNFOQZRvWvA47Zcz+M+T2lGRQ0L+JAcWtQFvjj0zLL/R+i7V1xjgJ
-Content-Type: text/plain; charset="iso-8859-1"
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3842;6:edNL9QSRpZ85zaoG866dotC0BlFs9q2Hw9tCOB26ANx/tgPobSMEw/ckX9JY8Om31coryiQ5IFAElx4mHog2x9rOo90b35kmwX16dA2/68A53Rg2qOnTYvBTRfTzBJuX95zvTpwMGD2JmQ0BO7opPYTtWEludFzNVcILC5fGdo4QjElx+HC+bSg5hC+QAywoU117R/z+CSPCRNSbxY7v6Yr+9VZ3LRc5jxWHR76+7wUX/5MhlNId6q/TWlW+609hSBe0Gt39MkMQ0dNXwbbvR1aW9/KUM2VOdRKQ/gGs3QoJOykptSlDZtMBmc0TZk16oByCnp8uDdnizWElm9qr399qh6BbIV+0HSQtHaL/2due8LQCcK6TIAH2liU1UCHdmLRdhAMRG3cQtPVJUd0QzpCeb9EkxrxI3odAxMrjcC5c4MD3brMqY48gg8+w/YvxXoipehRpezJm9t4F7TB1Mw==;5:KMWovoKpYef+TY5oYKT8JkfuMQnmHDn+OG27mUDyLmfcmgi6rf+S5TCXBs9u4pWkuEBTICMj5ElMvk723o0mElo3f8yR4PNo7agdp4knUXdjUZiZQpg83GdH5X8RM+SRnnCuQLEROqpoZNSwi8mSDpzluDuAXiiFhrYwSGmV168=;7:G+bgLW6E2M0KhdV/eyls9YAwLXGLIcIE6tPH9IDegfhEZ9sh4EeOOkKAthcVw/3kZBhkkMX1B/YQYoTU1AWKT2IrqVjHVJJtAkqCTOnVZgn47D99GAbFiYhcGDd1jjsigtg1uYPs8wCxG3pHkwl3JA==
+x-ms-office365-filtering-correlation-id: 7ebddd8c-3537-4f2d-7bab-08d654541afc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3842;
+x-ms-traffictypediagnostic: AM0PR08MB3842:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB3842CB5A8A259A89C570B88FF0D00@AM0PR08MB3842.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231443)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3842;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3842;
+x-forefront-prvs: 086943A159
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(376002)(39860400002)(366004)(199004)(189003)(54094003)(66066001)(3846002)(6116002)(93886005)(1076002)(6246003)(6512007)(316002)(14454004)(54906003)(9686003)(105586002)(72206003)(25786009)(53936002)(478600001)(2906002)(4326008)(58126008)(106356001)(86362001)(97736004)(575784001)(81166006)(8936002)(99286004)(6916009)(76176011)(81156014)(229853002)(446003)(14444005)(256004)(11346002)(68736007)(5024004)(6486002)(6436002)(44832011)(7416002)(217873002)(5660300001)(476003)(486006)(26005)(71200400001)(71190400001)(186003)(305945005)(52116002)(33896004)(7736002)(8676002)(102836004)(6506007)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3842;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: yBH6OueBCsSSa3BqJJiKqYopqnoFCWsKOZML6RT6sxdSJ5YJPhEGnA8iuR32viQ2TM1T+TFkekHqabLo2VRdqBBdPq20OaT9oogkV6O5QkUa/Qoj8JSoeilMzCcrhQrYdgZlqDWPpF/FalPE/veq/LBqYEY7aD2uxT11H5tkmFhw4xbpIzjsKwVD5fpQTrQmirDdE4ghTf3YLVBPEFMe64x6DEx9/Olx2lAEKtu1Yt6F2BIN2WpQBdag67iUiU8JP2Vkqfob4IKqMA+tmvQy14mLQRtszMkoC2A5XzgkV9+MsxbNVJNyrasCPaPReasYVeRk9JbF0Omn8jnM5Tb40KB+sxA35E7CYia+vTA90do=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8F5BF6E662E2D4469BC60B4C9850307F@eurprd08.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: live.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: f12efbb0-867f-4c93-8261-502eceebfafa
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00a68ce6-c8e3-4672-1741-08d65453e771
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: f12efbb0-867f-4c93-8261-502eceebfafa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 10:34:26.4603
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ebddd8c-3537-4f2d-7bab-08d654541afc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 10:35:52.8986
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM02HT134
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3842
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It`s possible ip overrun in lzo1x_1_do_compress() when compressed page is
-point to the end of memory and which virtual address is 0xfffffffffffff000.
-Leading to a NULL pointer access during the get_unaligned_le32(ip).
+Hi Liam,
 
-Fix this panic:
-[ 2738.034508] Unable to handle kernel NULL pointer dereference at virtual =
-address 00000009
-[ 2738.034515] Mem abort info:
-[ 2738.034518]   Exception class =3D DABT (current EL), IL =3D 32 bits
-[ 2738.034520]   SET =3D 0, FnV =3D 0
-[ 2738.034523]   EA =3D 0, S1PTW =3D 0
-[ 2738.034524]   FSC =3D 5
-[ 2738.034526] Data abort info:
-[ 2738.034528]   ISV =3D 0, ISS =3D 0x00000005
-[ 2738.034530]   CM =3D 0, WnR =3D 0
-[ 2738.034533] user pgtable: 4k pages, 39-bit VAs, pgd =3D ffffffff94cee000
-[ 2738.034535] [0000000000000009] *pgd=3D0000000000000000, *pud=3D000000000=
-0000000
-...
-[ 2738.034592] pc : lzo1x_1_do_compress+0x198/0x610
-[ 2738.034595] lr : lzo1x_1_compress+0x98/0x3d8
-[ 2738.034597] sp : ffffff801caa3470 pstate : 00c00145
-[ 2738.034598] x29: ffffff801caa3500 x28: 0000000000001000
-[ 2738.034601] x27: 0000000000001000 x26: fffffffffffff000
-[ 2738.034604] x25: ffffffff4ebc0000 x24: 0000000000000000
-[ 2738.034607] x23: 000000000000004c x22: fffffffffffff7b8
-[ 2738.034610] x21: ffffffff2e2ee0b3 x20: ffffffff2e2ee0bb
-[ 2738.034612] x19: 0000000000000fcc x18: fffffffffffff84a
-[ 2738.034615] x17: 00000000801b03d6 x16: 0000000000000782
-[ 2738.034618] x15: ffffffff2e2ee0bf x14: fffffffffffffff0
-[ 2738.034620] x13: 000000000000000f x12: 0000000000000020
-[ 2738.034623] x11: 000000001824429d x10: ffffffffffffffec
-[ 2738.034626] x9 : 0000000000000009 x8 : 0000000000000000
-[ 2738.034628] x7 : 0000000000000868 x6 : 0000000000000434
-[ 2738.034631] x5 : ffffffff4ebc0000 x4 : 0000000000000000
-[ 2738.034633] x3 : ffffff801caa3510 x2 : ffffffff2e2ee000
-[ 2738.034636] x1 : 0000000000000000 x0 : fffffffffffff000
-...
-[ 2738.034717] Process kworker/u16:1 (pid: 8705, stack limit =3D 0xffffff80=
-1caa0000)
-[ 2738.034720] Call trace:
-[ 2738.034722]  lzo1x_1_do_compress+0x198/0x610
-[ 2738.034725]  lzo_compress+0x48/0x88
-[ 2738.034729]  crypto_compress+0x14/0x20
-[ 2738.034733]  zcomp_compress+0x2c/0x38
-[ 2738.034736]  zram_bvec_rw+0x3d0/0x860
-[ 2738.034738]  zram_rw_page+0x88/0xe0
-[ 2738.034742]  bdev_write_page+0x70/0xc0
-[ 2738.034745]  __swap_writepage+0x58/0x3f8
-[ 2738.034747]  swap_writepage+0x40/0x50
-[ 2738.034750]  shrink_page_list+0x4fc/0xe58
-[ 2738.034753]  reclaim_pages_from_list+0xa0/0x150
-[ 2738.034756]  reclaim_pte_range+0x18c/0x1f8
-[ 2738.034759]  __walk_page_range+0xf8/0x1e0
-[ 2738.034762]  walk_page_range+0xf8/0x130
-[ 2738.034765]  reclaim_task_anon+0xcc/0x168
-[ 2738.034767]  swap_fn+0x438/0x668
-[ 2738.034771]  process_one_work+0x1fc/0x460
-[ 2738.034773]  worker_thread+0x2d0/0x478
-[ 2738.034775]  kthread+0x110/0x120
-[ 2738.034778]  ret_from_fork+0x10/0x18
-[ 2738.034781] Code: 3800167f 54ffffa8 d100066f 14000031 (b9400131)
-[ 2738.034784] ---[ end trace 9b5cca106f0e54d1 ]---
-[ 2738.035473] Kernel panic - not syncing: Fatal exception
-
-crash> dis lzo1x_1_do_compress+100 3 -l
-../kernel/msm-4.14/lib/lzo/lzo1x_compress.c: 44
-0xffffff8dec8c6af4 <lzo1x_1_do_compress+100>:   cmp     x9, x10
-0xffffff8dec8c6af8 <lzo1x_1_do_compress+104>:   b.cc    0xffffff8dec8c6c28
-0xffffff8dec8c6afc <lzo1x_1_do_compress+108>:   b       0xffffff8dec8c7094
-
-crash> dis lzo1x_1_do_compress+0x198
-0xffffff8dec8c6c28 <lzo1x_1_do_compress+408>:   ldr     w17, [x9]
-
-ip =3D x9 =3D 0x0000000000000009 is overflow.
-
-Signed-off-by: liyueyi <liyueyi@live.com>
----
- lib/lzo/lzo1x_compress.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-index 236eb21..a0265a6 100644
---- a/lib/lzo/lzo1x_compress.c
-+++ b/lib/lzo/lzo1x_compress.c
-@@ -17,6 +17,9 @@
- #include <linux/lzo.h>
- #include "lzodefs.h"
+On Mon, Nov 26, 2018 at 08:59:44PM -0800, Liam Mark wrote:
+> On Tue, 20 Nov 2018, Brian Starkey wrote:
+>=20
+> > Hi Liam,
+> >=20
+> > I'm missing a bit of context here, but I did read the v1 thread.
+> > Please accept my apologies if I'm re-treading trodden ground.
+> >=20
+> > I do know we're chasing nebulous ion "problems" on our end, which
+> > certainly seem to be related to what you're trying to fix here.
+> >=20
+> > On Thu, Nov 01, 2018 at 03:15:06PM -0700, Liam Mark wrote:
+> > >Based on the suggestions from Laura I created a first draft for a chan=
+ge
+> > >which will attempt to ensure that uncached mappings are only applied t=
+o
+> > >ION memory who's cache lines have been cleaned.
+> > >It does this by providing cached mappings (for uncached ION allocation=
+s)
+> > >until the ION buffer is dma mapped and successfully cleaned, then it
+> > drops
+> > >the userspace mappings and when pages are accessed they are faulted ba=
+ck
+> > >in and uncached mappings are created.
+> >=20
+> > If I understand right, there's no way to portably clean the cache of
+> > the kernel mapping before we map the pages into userspace. Is that
+> > right?
+> >=20
+>=20
+> Yes, it isn't always possible to clean the caches for an uncached mapping=
 =20
-+#define OVERFLOW_ADD_CHECK(a, b)  \
-+	((size_t)~0 - (size_t)(a) < (size_t)(b) ? true : false)
-+
- static noinline size_t
- lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
- 		    unsigned char *out, size_t *out_len,
-@@ -39,6 +42,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_le=
-n,
- 		size_t t, m_len, m_off;
- 		u32 dv;
- literal:
-+		if (unlikely(OVERFLOW_ADD_CHECK(ip, 1 + ((ip - ii) >> 5))))
-+			break;
- 		ip +=3D 1 + ((ip - ii) >> 5);
- next:
- 		if (unlikely(ip >=3D ip_end))
-@@ -99,7 +104,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_l=
-en,
- 				m_len +=3D 8;
- 				v =3D get_unaligned((const u64 *) (ip + m_len)) ^
- 				    get_unaligned((const u64 *) (m_pos + m_len));
--				if (unlikely(ip + m_len >=3D ip_end))
-+				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
-+						|| (ip + m_len >=3D ip_end)))
- 					goto m_len_done;
- 			} while (v =3D=3D 0);
- 		}
-@@ -124,7 +130,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_=
-len,
- 				m_len +=3D 4;
- 				v =3D get_unaligned((const u32 *) (ip + m_len)) ^
- 				    get_unaligned((const u32 *) (m_pos + m_len));
--				if (unlikely(ip + m_len >=3D ip_end))
-+				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
-+						|| (ip + m_len >=3D ip_end)))
- 					goto m_len_done;
- 			} while (v =3D=3D 0);
- 		}
-@@ -160,7 +167,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_=
-len,
- 				if (ip[m_len] !=3D m_pos[m_len])
- 					break;
- 				m_len +=3D 1;
--				if (unlikely(ip + m_len >=3D ip_end))
-+				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
-+						|| (ip + m_len >=3D ip_end)))
- 					goto m_len_done;
- 			} while (ip[m_len] =3D=3D m_pos[m_len]);
- 		}
---=20
-2.7.4
+> because a device is required by the DMA APIs to do cache maintenance and=
+=20
+> there isn't necessarily a device available (dma_buf_attach may not yet=20
+> have been called).
+>=20
+> > Alternatively, can we just make ion refuse to give userspace a
+> > non-cached mapping for pages which are mapped in the kernel as cached?
+>=20
+> These pages will all be mapped as cached in the kernel for 64 bit (kernel=
+=20
+> logical addresses) so you would always be refusing to create a non-cached=
+ mapping.
 
+And that might be the sane thing to do, no?
+
+AFAIK there are still pages which aren't ever mapped as cached (e.g.
+dma_declare_coherent_memory(), anything under /reserved-memory marked
+as no-map). If those are exposed as an ion heap, then non-cached
+mappings would be fine, and permitted.
+
+>=20
+> > Would userspace using the dma-buf sync ioctl around its accesses do
+> > the "right thing" in that case?
+> >=20
+>=20
+> I don't think so, the dma-buf sync ioctl require a device to peform cache=
+=20
+> maintenance, but as mentioned above a device may not be available.
+>=20
+
+If a device didn't attach yet, then no cache maintenance is
+necessary. The only thing accessing the memory is the CPU, via a
+cached mapping, which should work just fine. So far so good.
+
+If there are already attachments, then ion_dma_buf_begin_cpu_access()
+will sync for CPU access against all of the attached devices, and
+again the CPU should see the right thing.
+
+In the other direction, ion_dma_buf_end_cpu_access() will sync for
+device access for all currently attached devices. If there's no
+attached devices yet, then there's nothing to do until there is (only
+thing accessing is CPU via a CPU-cached mapping).
+
+When the first (or another) device attaches, then when it maps the
+buffer, the map_dma_buf callback should do whatever sync-ing is needed
+for that device.
+
+I might be way off with my understanding of the various DMA APIs, but
+this is how I think they're meant to work.
+
+> > Given that as you pointed out, the kernel does still have a cached
+> > mapping to these pages, trying to give the CPU a non-cached mapping of
+> > those same pages while preserving consistency seems fraught. Wouldn't
+> > it be better to make sure all CPU mappings are cached, and have CPU
+> > clients use the dma_buf_{begin,end}_cpu_access() hooks to get
+> > consistency where needed?
+> >=20
+>=20
+> It is fraught, but unfortunately you can't rely on=20
+> dma_buf_{begin,end}_cpu_access() to do cache maintenance as these calls=20
+> require a device, and a device is not always available.
+
+As above, if there's really no device, then no syncing is needed
+because only the CPU is accessing the buffer, and only ever via cached
+mappings.
+
+>=20
+> > >
+> > >This change has the following potential disadvantages:
+> > >- It assumes that userpace clients won't attempt to access the buffer
+> > >while it is being mapped as we are removing the userpspace mappings at
+> > >this point (though it is okay for them to have it mapped)
+> > >- It assumes that kernel clients won't hold a kernel mapping to the
+> > buffer
+> > >(ie dma_buf_kmap) while it is being dma-mapped. What should we do if
+> > there
+> > >is a kernel mapping at the time of dma mapping, fail the mapping, warn=
+?
+> > >- There may be a performance penalty as a result of having to fault in
+> > the
+> > >pages after removing the userspace mappings.
+> >=20
+> > I wonder if the dma-buf sync ioctl might provide a way for userspace
+> > to opt-in to when the zap/fault happens. Zap on (DMA_BUF_SYNC_WRITE |
+> > DMA_BUF_SYNC_WRITE_END) and fault on (DMA_BUF_SYNC_READ |
+> > DMA_BUF_SYNC_START)
+> >=20
+>=20
+> Not sure I understand, can you elaborate.=20
+> Are you also adding a requirment that ION pages can't be mmaped during a
+> call to dma_buf_map_attachment?
+
+I was only suggesting that zapping the mappings "at random" (from
+userspace's perspective), and then faulting them back in (also "at
+random"), might cause unexpected and not-controllable stalls in the
+app. We could use the ioctl hooks as an explicit indication from the
+app that now is a good time to zap the mapping and/or fault back in
+the whole buffer. begin_cpu_access is allowed to be a "slow"
+operation, so apps should already be expecting to get stalled on the
+sync ioctl.
+
+Cheers,
+-Brian
+
+>=20
+> > >
+> > >It passes basic testing involving reading writing and reading from
+> > >uncached system heap allocations before and after dma mapping.
+> > >
+> > >Please let me know if this is heading in the right direction and if th=
+ere
+> > >are any concerns.
+> > >
+> > >Signed-off-by: Liam Mark <lmark at codeaurora.org>
+> > >---
+> > > drivers/staging/android/ion/ion.c | 146
+> > +++++++++++++++++++++++++++++++++++++-
+> > > drivers/staging/android/ion/ion.h |   9 +++
+> > > 2 files changed, 152 insertions(+), 3 deletions(-)
+> > >
+> > >diff --git a/drivers/staging/android/ion/ion.c
+> > b/drivers/staging/android/ion/ion.c
+> > >index 99073325b0c0..3dc0f5a265bf 100644
+> > >--- a/drivers/staging/android/ion/ion.c
+> > >+++ b/drivers/staging/android/ion/ion.c
+> > >@@ -96,6 +96,7 @@ static struct ion_buffer *ion_buffer_create(struct
+> > ion_heap *heap,
+> > > 	}
+> > >
+> > > 	INIT_LIST_HEAD(&buffer->attachments);
+> > >+	INIT_LIST_HEAD(&buffer->vmas);
+> > > 	mutex_init(&buffer->lock);
+> > > 	mutex_lock(&dev->buffer_lock);
+> > > 	ion_buffer_add(dev, buffer);
+> > >@@ -117,6 +118,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
+> > > 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
+> > > 	}
+> > > 	buffer->heap->ops->free(buffer);
+> > >+	vfree(buffer->pages);
+> > > 	kfree(buffer);
+> > > }
+> > >
+> > >@@ -245,11 +247,29 @@ static void ion_dma_buf_detatch(struct dma_buf
+> > *dmabuf,
+> > > 	kfree(a);
+> > > }
+> > >
+> > >+static bool ion_buffer_uncached_clean(struct ion_buffer *buffer)
+> > >+{
+> > >+	return buffer->uncached_clean;
+> > >+}
+> >=20
+> > nit: The function name sounds like a verb to me - as in "calling this
+> > will clean the buffer". I feel ion_buffer_is_uncached_clean() would
+> > read better.
+> >=20
+>=20
+> Yes, that would be cleaner.
+>=20
+> Liam
+>=20
+>=20
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
