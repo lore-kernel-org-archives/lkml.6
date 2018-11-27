@@ -2,135 +2,112 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78457C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F80C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E63B21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66E94208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:56:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bzWbqT6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E63B21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqtMKBtY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E94208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbeK0VyN (ORCPT
+        id S1730965AbeK0VyS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:54:13 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57750 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730932AbeK0VyN (ORCPT
+        Tue, 27 Nov 2018 16:54:18 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41557 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730948AbeK0VyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:54:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MxYiCzVt/FhorUWOmxeQ2pTQEgyDcHOGa+63bpz66Q0=; b=bzWbqT6JYd1DjysobM6mucFgh
-        ZKISozLGdqCWM/pzH/B6IimOWBQ1E4iUuDnrGk2Juwmm43Jt8jbsVYGy8yvJsMONlE1Y71fV0XSxw
-        vyYh8iQWh3vycpAH/MJBv/k23xk5pPtLH97E3CyVPZeFP8QtpJcyao3nx1xYOED0CCCIw=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:34242)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gRb2X-0006T5-Bv; Tue, 27 Nov 2018 10:56:25 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gRb2U-0002XP-AV; Tue, 27 Nov 2018 10:56:22 +0000
-Date:   Tue, 27 Nov 2018 10:56:20 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Timothy E Baldwin <T.E.Baldwin99@members.leeds.ac.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm: always update thread_info->syscall
-Message-ID: <20181127105620.GD30658@n2100.armlinux.org.uk>
-References: <20181126225335.10477-1-rafael.tinoco@linaro.org>
- <20181126233303.GZ30658@n2100.armlinux.org.uk>
- <20181126234111.GA30658@n2100.armlinux.org.uk>
- <20181126234456.GB30658@n2100.armlinux.org.uk>
- <ad23e3dc-eee0-f9af-2f12-bfd7a14cd546@linaro.org>
+        Tue, 27 Nov 2018 16:54:18 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x10so22184477wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 02:56:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lgN5iq/QCKYXZG2ugqx/LbDXFr7vzoH2nxJHO0iQbZ0=;
+        b=CqtMKBtY92lrMKDtVpqyH/inDmT9PkF99pfI6KeDkXwfFbgS6ZnpuXOa0t27qBWyVG
+         TXzQWwOOXVurGIRIpybAbwUwxfg4cH2GEtXqy/FRtGNiBV673BigNMI4D83+n3HucyLQ
+         UYXljPQ70dPiS+74BHXDKDaKi6pkhrSSietfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lgN5iq/QCKYXZG2ugqx/LbDXFr7vzoH2nxJHO0iQbZ0=;
+        b=GFvNXmjna4S/scEAgr3O/CxQkHeiOxaBiJIijTedKDJg5TaY8EjjQ0vEqtPnvKTEOj
+         R2IHbJV6ItsXKnIKBDx3inuScctbHLqZ77aAeDP9PT9ygFRiaE9Nrc2JCl/020sSVZtz
+         gHlVYxNS//dnh3ZYJ7OUlBxoJCcgZ786OaHhV+HwwwzNZKXQwneuqIbU3eHUsFv6hjsx
+         yglLcZQiVjmR63XHA7U3mb61s64+mPgWEn200LJuYjW67+f0grK6bzkEo6w1hU9VmxXU
+         7tPdXepcim5h8skPFsc/vW3aJxy8Y9tYIZccTJGwi5w7wdwvb2OsZYdeeXA8dfGe0jAV
+         0OLw==
+X-Gm-Message-State: AA+aEWY62nRGzuX3sQPC3EAKZueVMMdjJX5NWhqv3nUN+xRCQdMGmCnL
+        ynHlnUn8Jj6Ah9jOQ0tiJYU3jA==
+X-Google-Smtp-Source: AFSGD/UYl1LAqiFF4eFBuaUUMHcn0RKAAQdBAk+By4SEp/R4YYiVQysnlg1qBl5CE8r8eXxMAyb24A==
+X-Received: by 2002:a05:6000:108d:: with SMTP id y13mr24675922wrw.135.1543316206175;
+        Tue, 27 Nov 2018 02:56:46 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id y13sm2621103wrw.85.2018.11.27.02.56.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 02:56:45 -0800 (PST)
+Date:   Tue, 27 Nov 2018 10:56:42 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     lee.jones@linaro.org, jingoohan1@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jonathan@marek.ca, ctatlor97@gmail.com
+Subject: Re: [PATCH 1/2] dt-bindings: trivial: add ti,lm3630a binding
+Message-ID: <20181127105642.uu56phxjfl7bjl2p@holly.lan>
+References: <20181124141703.29232-1-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ad23e3dc-eee0-f9af-2f12-bfd7a14cd546@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181124141703.29232-1-masneyb@onstation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 08:30:32AM -0200, Rafael David Tinoco wrote:
-> On 11/26/18 9:44 PM, Russell King - ARM Linux wrote:
-> >On Mon, Nov 26, 2018 at 11:41:11PM +0000, Russell King - ARM Linux wrote:
-> >>On Mon, Nov 26, 2018 at 11:33:03PM +0000, Russell King - ARM Linux wrote:
-> >>>On Mon, Nov 26, 2018 at 08:53:35PM -0200, Rafael David Tinoco wrote:
-> >>>>Right now, only way for task->thread_info->syscall to be updated is if
-> >>>>if _TIF_SYSCALL_WORK is set in current's task thread_info->flags
-> >>>>(similar to what has_syscall_work() checks for arm64).
-> >>>>
-> >>>>This means that "->syscall" will only be updated if we are tracing the
-> >>>>syscalls through ptrace, for example. This is NOT the same behavior as
-> >>>>arm64, when pt_regs->syscallno is updated in the beginning of svc0
-> >>>>handler for *every* syscall entry.
-> >>>
-> >>>So when was it decided that the syscall number will always be required
-> >>>(we need it to know how far back this has to be backported).
-> >>
-> >>PS, I rather object to the fact that the required behaviour seems to
-> >>change, arch maintainers aren't told about it until... some test is
-> >>created at some random point in the future which then fails.
-> >>
-> >>Surely there's a better way to communicate changes in requirements
-> >>than discovery-by-random-bug-report ?
-> >
-> >Final comment for tonight - the commit introducing /proc/*/syscall says:
-> >
-> >     This adds /proc/PID/syscall and /proc/PID/task/TID/syscall magic files.
-> >     These use task_current_syscall() to show the task's current system call
-> >     number and argument registers, stack pointer and PC.  For a task blocked
-> >     but not in a syscall, the file shows "-1" in place of the syscall number,
-> >     followed by only the SP and PC.  For a task that's not blocked, it shows
-> >     "running".
-> >
-> >Please validate that a blocked task does indeed show -1 with your patch
-> >applied.
-> 
-> Will do. This is done in an upper level (collect_syscall <-
-> task_current_syscall <- proc_pid_syscall):
-> 
-> 	if (!try_get_task_stack(target)) {
-> 		/* Task has no stack, so the task isn't in a syscall. */
-> 		*sp = *pc = 0;
-> 		*callno = -1;
-> 		return 0;
-> 	}
-> 
-> I think only missing part for arm was that one, but will confirm, after
-> fixing usage of "r7" for obtaining "scno". Will send a v2 in this thread.
+On Sat, Nov 24, 2018 at 09:17:02AM -0500, Brian Masney wrote:
+> Add a trivial binding for the Texas Instruments LM3630A Backlight Chip.
 
-There's another question - what's the expected behaviour when we
-restart a syscall using the restartblock mechanism?  Is the syscall
-number expected to be __NR_restart_syscall or the original syscall
-number?
+It's quite unusual for a backlight device to have a trivial binding.
 
-I can't find anywhere that this detail is specified (damn the lack
-of API documentation - I'm tempted to say that we won't implement
-this until it gets documented properly, and that test can continue
-failing until such time that happens.)
+The driver supports fairly extensive parametrization via struct
+lm3530a_platform_data. It is really the case that none of these
+properties should ever be set via DT?
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+
+Daniel.
+
+
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
+> index 6ab001fa1ed4..86486368dc35 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.txt
+> +++ b/Documentation/devicetree/bindings/trivial-devices.txt
+> @@ -182,6 +182,7 @@ taos,tsl2550		Ambient Light Sensor with SMBUS/Two Wire Serial Interface
+>  ti,ads7828		8-Channels, 12-bit ADC
+>  ti,ads7830		8-Channels, 8-bit ADC
+>  ti,amc6821		Temperature Monitoring and Fan Control
+> +ti,lm3630a		Texas Instruments LM3630A Backlight Chip
+>  ti,tsc2003		I2C Touch-Screen Controller
+>  ti,tmp102		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
+>  ti,tmp103		Low Power Digital Temperature Sensor with SMBUS/Two Wire Serial Interface
+> -- 
+> 2.17.2
+> 
