@@ -2,327 +2,96 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F82CC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF4FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA92B20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:20:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA92B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E16BE20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 23:21:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="c26QDWUk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16BE20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeK1KUM (ORCPT
+        id S1726671AbeK1KVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:20:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35994 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726068AbeK1KUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 05:20:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E13E4B05E;
-        Tue, 27 Nov 2018 23:20:40 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     "J. Bruce Fields" <bfields@redhat.com>,
-        kernel test robot <rong.a.chen@intel.com>
-Date:   Wed, 28 Nov 2018 10:20:34 +1100
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>, lkp@01.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [LKP] [fs/locks]  83b381078b:  will-it-scale.per_thread_ops -62.5% regression
-In-Reply-To: <20181127174315.GA29963@parsley.fieldses.org>
-References: <20181127060102.GF6163@shao2-debian> <20181127174315.GA29963@parsley.fieldses.org>
-Message-ID: <87mupup0ot.fsf@notabene.neil.brown.name>
+        Wed, 28 Nov 2018 05:21:00 -0500
+Received: from mail-pf1-f178.google.com ([209.85.210.178]:41207 "EHLO
+        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeK1KVA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 05:21:00 -0500
+Received: by mail-pf1-f178.google.com with SMTP id b7so9157923pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 15:21:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BACgqBVl9I9JRF7hJttp/J2Db4y0yD/xPeT1Fy8Zd8M=;
+        b=c26QDWUkFDetmH5aoU0xh0Wj8Hue5nLDOMbukaYdB9KcBVSNqmzwKy9bMKLS2amWhT
+         wbuIwq9va+7VNNW6lG4rnPICcQZmtR488V+6Wlp2bdUxq2iWFRPvj0vnrhxSbcdeFksy
+         ekeeZksbKaeekJ5d4OOk8Nj27JPi8/iYMXTn1xIz/Vx1tAew8lAd1F4eNmm5DTL/Jyob
+         Te4eC5BiSF8zuTJjr/FF97aMFKC4+PsbUtAHU4lralLO/QOesPJCJtDJiv/pQ2keBTDr
+         4XGPALDi2N14uTtSJXChI/Qi366LH2X8Dy/HvnTsAEzs8HnFNPoMDins0HVfswzdrRYe
+         mTbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BACgqBVl9I9JRF7hJttp/J2Db4y0yD/xPeT1Fy8Zd8M=;
+        b=i3kP6EdFevzxzomaQg368AwYaKgA0OiPlUfp00h/m03Q+D9xWs7CIrqSF7BEJ4GjWy
+         5pJwRbhTlS20alS0z07nuIdZyL1017HVNUmUqZKgtLCzEkR2HqAG2Q3PMFa7jLaKTfjj
+         MuWF7SMqsmxLyaxL8PU3bH++HRd9nc8dGt463W8xJ6hX1oOec9rJwj4OMZFeGQ3SVMxN
+         bYp4ETvTr/IkuMzjsiS2IgK3tJQxt1lbPQ/1OMAGlMT6Why0lFI7IFrJz5GGboNQDW2c
+         8ZYNNDfceIVn2hsymydvhVSc9DuVVVVjbvLjHUqX06yGHR9Im6IWwolIfXzFcI0e3XBP
+         CWCA==
+X-Gm-Message-State: AA+aEWZyxVJTDFuSZgm5afqUtTvFINM1dYShKkZn+Ci3n/ys9y82lvhU
+        bnqfiGp+UietiMR/ZAObDrZkDkHudXU=
+X-Google-Smtp-Source: AFSGD/XhVOSPIfOW7cl/8J0AVQMwXaT33NjC3GirskZT+yy3oXzoG4chgUfysCKWMBPpdOo2ev53+A==
+X-Received: by 2002:a65:63d3:: with SMTP id n19mr31538106pgv.179.1543360890047;
+        Tue, 27 Nov 2018 15:21:30 -0800 (PST)
+Received: from cisco ([128.107.241.185])
+        by smtp.gmail.com with ESMTPSA id 8sm7027795pfr.55.2018.11.27.15.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 15:21:29 -0800 (PST)
+Date:   Tue, 27 Nov 2018 16:21:26 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: siginfo pid not populated from ptrace?
+Message-ID: <20181127232126.GA23658@cisco>
+References: <20181112171144.GI3645@cisco>
+ <87efbqi1xa.fsf@xmission.com>
+ <20181112185538.GK3645@cisco>
+ <20181112192443.GL3645@cisco>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112192443.GL3645@cisco>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 12, 2018 at 12:24:43PM -0700, Tycho Andersen wrote:
+> On Mon, Nov 12, 2018 at 11:55:38AM -0700, Tycho Andersen wrote:
+> > I haven't manage to reproduce it on stock v4.20-rc2, unfortunately.
+> 
+> Ok, now I have,
+> 
+> seccomp_bpf.c:2736:global.syscall_restart:Expected getpid() (1493) == info._sifields._kill.si_pid (0)
+> global.syscall_restart: Test failed at step #22
 
-On Tue, Nov 27 2018, J. Bruce Fields wrote:
+Seems like this is still happening on v4.20-rc4,
 
-> Thanks for the report!
+[ RUN      ] global.syscall_restart
+seccomp_bpf.c:2736:global.syscall_restart:Expected getpid() (1901) == info._sifields._kill.si_pid (0)
+global.syscall_restart: Test failed at step #22
 
-Yes, thanks.  I thought I had replied to the previous report of a similar
-problem, but I didn't actually send that email - oops.
-Though the test is the same and the regression similar, this is a
-different patch.  The previous report identified=20
- fs/locks: allow a lock request to block other requests
-this one identifies
-  fs/locks: always delete_block after waiting.
-
-Both cause blocked_lock_lock to be taken more often.
-
-In one case is it due to locks_move_blocks().  That can probably be
-optimised to skip the lock if list_empty(&fl->fl_blocked_requests).
-I'd need to double-check, but I think that is safe to check without
-locking.
-
-This one causes locks_delete_blocks() to be called more often.  We now
-call it even if no waiting happened at all.  I suspect we can test for
-that and avoid it.  I'll have a look.
-
->
-> On Tue, Nov 27, 2018 at 02:01:02PM +0800, kernel test robot wrote:
->> FYI, we noticed a -62.5% regression of will-it-scale.per_thread_ops due =
-to commit:
->>=20
->>=20
->> commit: 83b381078b5ecab098ebf6bc9548bb32af1dbf31 ("fs/locks: always dele=
-te_block after waiting.")
->> https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git locks-next
->>=20
->> in testcase: will-it-scale
->> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz wi=
-th 64G memory
->> with following parameters:
->>=20
->> 	nr_task: 16
->> 	mode: thread
->> 	test: lock1
->
-> So I guess it's doing this, uncontended file lock/unlock?:
->
-> 	https://github.com/antonblanchard/will-it-scale/blob/master/tests/lock1.c
->
-> Each thread is repeatedly locking and unlocking a file that is only used
-> by that thread.
-
-Thanks for identifying that Bruce.
-This would certainly be a case where locks_delete_block() is now being
-called when it wasn't before.
-
-
->
-> By the way, what's the X-axis on these graphs?  (Or the y-axis, for that
-> matter?)
-
-A key would help.  I think the X-axis is number-of-threads.  y-axis
-might be ops-per-second ??.
-
-Thanks,
-NeilBrown
-
-
->
-> --b.
->
->>                             will-it-scale.per_thread_ops=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>   450000 +-+------------------------------------------------------------=
-----+=20=20=20
->>          |                                                              =
-    |=20=20=20
->>   400000 +-+   +..+..  .+..+..  .+..+..+...+..+..+..   +..        .+..  =
-  ..|=20=20=20
->>   350000 +-+ ..      +.       +.                     ..         +.    +.=
-.+  |=20=20=20
->>          |  +                                       +     +     :       =
-    |=20=20=20
->>   300000 +-+                                              :    :        =
-    |=20=20=20
->>   250000 +-+                                               :   :        =
-    |=20=20=20
->>          |                                                 :   :        =
-    |=20=20=20
->>   200000 +-+                                               :   :        =
-    |=20=20=20
->>   150000 +-+                                                : :         =
-    |=20=20=20
->>          O  O  O  O  O  O  O  O  O  O  O   O  O  O  O  O  O :O: O  O  O =
- O  O=20=20=20
->>   100000 +-+                                                : :         =
-    |=20=20=20
->>    50000 +-+                                                : :         =
-    |=20=20=20
->>          |                                                   :          =
-    |=20=20=20
->>        0 +-+------------------------------------------------------------=
-----+=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20
->>                                will-it-scale.workload=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>   7e+06 +-+-------------------------------------------------------------=
-----+=20=20=20
->>         |              +...+..           .+..+..+     +            +..  =
-    |=20=20=20
->>   6e+06 +-+   +..+.. ..         .+..+..+.        +   + +         ..     =
-  ..|=20=20=20
->>         |   ..      +         +.                  + +   +       +     +.=
-.+  |=20=20=20
->>   5e+06 +-++                                       +     +      :       =
-    |=20=20=20
->>         |                                                :     :        =
-    |=20=20=20
->>   4e+06 +-+                                               :    :        =
-    |=20=20=20
->>         |                                                 :    :        =
-    |=20=20=20
->>   3e+06 +-+                                                :   :        =
-    |=20=20=20
->>         |                                       O     O    :  : O  O    =
-    |=20=20=20
->>   2e+06 O-+O  O  O  O  O   O  O  O  O  O  O  O     O     O : O:       O =
- O  O=20=20=20
->>         |                                                   : :         =
-    |=20=20=20
->>   1e+06 +-+                                                 : :         =
-    |=20=20=20
->>         |                                                    :          =
-    |=20=20=20
->>       0 +-+-------------------------------------------------------------=
-----+=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20
->>                            will-it-scale.time.user_time=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>   250 +-+---------------------------------------------------------------=
-----+=20=20=20
->>       |                 .+..               .+..                   +..   =
-    |=20=20=20
->>       |..   +...+..  .+.      .+...+..+..+.    +..    +..       ..   .  =
-  ..|=20=20=20
->>   200 +-+ ..       +.       +.                    . ..         +      +.=
-.+  |=20=20=20
->>       |  +                                         +     +     :        =
-    |=20=20=20
->>       |                                                  :    :         =
-    |=20=20=20
->>   150 +-+                                                 :   :         =
-    |=20=20=20
->>       |                                                   :   :         =
-    |=20=20=20
->>   100 +-+                                                 :   :         =
-    |=20=20=20
->>       |  O      O                                          : :          =
-    |=20=20=20
->>       O     O      O  O  O  O  O   O  O  O  O  O   O  O  O :O: O  O   O =
- O  O=20=20=20
->>    50 +-+                                                  : :          =
-    |=20=20=20
->>       |                                                    : :          =
-    |=20=20=20
->>       |                                                     :           =
-    |=20=20=20
->>     0 +-+---------------------------------------------------------------=
-----+=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20
->>                           will-it-scale.time.system_time=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>   5000 +-+--------------------------------------------------------------=
-----+=20=20=20
->>   4500 O-+O..O..O...O..O..O..O..O..O..O...O..O..O..O..O..O  O  O...O..O.=
-.O..O=20=20=20
->>        |                                                 :     :        =
-    |=20=20=20
->>   4000 +-+                                               :     :        =
-    |=20=20=20
->>   3500 +-+                                                :   :         =
-    |=20=20=20
->>        |                                                  :   :         =
-    |=20=20=20
->>   3000 +-+                                                :   :         =
-    |=20=20=20
->>   2500 +-+                                                :   :         =
-    |=20=20=20
->>   2000 +-+                                                 : :          =
-    |=20=20=20
->>        |                                                   : :          =
-    |=20=20=20
->>   1500 +-+                                                 : :          =
-    |=20=20=20
->>   1000 +-+                                                 : :          =
-    |=20=20=20
->>        |                                                    :           =
-    |=20=20=20
->>    500 +-+                                                  :           =
-    |=20=20=20
->>      0 +-+--------------------------------------------------------------=
-----+=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20
->> [*] bisect-good sample
->> [O] bisect-bad  sample
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlv90UIACgkQOeye3VZi
-gbnQiw//dlZQTtoolVqtfDTeStauX3I/+zJGPFjBd80aha39eeFhrDrYnPK0FEXA
-HihxxOMWFfDbGccXXmeDKcuGu4+TZbfXquGOVwKFz9cF9OKbUbQj/6vdk7MMBtEK
-q7/SBJ+CvEittcOXaC5GWbszTnO9PH01/9ebIkNOOyo/Lx0lALqmgmGCRUTLmoyS
-/pHqsVULokqfBycpY4qvEuH8vsfNHxEYAm4nHEkDfBzawsNWGXWGwc/wsdyzd/QD
-FLIA9M9aqq6grzJE/4FThu89kCe1jNiVce/m3FLo9MjvK2xnqFQ8Y7auslMpzz9U
-m827k+EhQOF1erkz9LCOeIT4LPOTUxF/JwiazEWts4UlnB3yacPnnji2ZSe+qi2r
-11+NRCzQLPLym3rErox0BKBDYIfFCyASMM8xY/DTYAt/x1IVwaloImhyHTRTCrTO
-8FqcXbU8Q0HTCmJxVoe98/IRIdQgDZm/u6VxAmLU5P6mq78NtVBRMtSi2Mt1RqXB
-WHyv4mmfiZUCbnjFk1+wNbqL2XQndBGrk/R29PAEF7zA7xvabvFiTmUTyH3SFtDB
-5xUiZCRbbHPPDOgUC7NUzJmVaHCuYeRKiVXL5ruqXkNvyFjcgLUqwDWm2QwIc4ex
-IPX3eI3sR5IKIRgvGkPiJ7x/GJop5BtxRTuA6haLHqXBtFL/ph8=
-=jf//
------END PGP SIGNATURE-----
---=-=-=--
+Tycho
