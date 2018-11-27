@@ -2,108 +2,112 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCC8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B72CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5686F208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:13:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 212EF21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:14:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PDgTZ4VV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5686F208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c9qXp5lW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212EF21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731237AbeK0XKq (ORCPT
+        id S1730901AbeK0XMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:10:46 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48376 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbeK0XKq (ORCPT
+        Tue, 27 Nov 2018 18:12:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33328 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729515AbeK0XMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:10:46 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wARC8sZU029296;
-        Tue, 27 Nov 2018 12:11:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=hgrV39oEh7Cv76Dlzsu3JLz3cLBFrs4YhFM49TEj/VU=;
- b=PDgTZ4VV51HYLmNy7nFAGBjE1YOQN54c9c/vIohDWAY0XPTFD/HU7p1GSRUqjtviGFlV
- PHtG2hBP/i62UW2Czr5J2w3hpx5bJemMNFqW9yInvyFFgTS15Xazv3ntp12OrIQ1l1He
- xPX8ndsZL7U0tSxE3oNN0/rvCpEOu4uioMJEXr4TEjGfLus68msIW9Z5N8Y/uFMieyZc
- 15xZ8KXHdUjv76atf5ikDU6a+x3ysFpIRBLO+PvTCiz4pFxrffQv4tivjL863kOZCxK+
- W5U7LrXT9o+xYcnaOy1PBMVnhCEyNbixYnJ1iP5GoSqXkl1WYwJ2rhFWYoTffnNud9w6 Nw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2nxy9r3h4s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 12:11:53 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wARCBrBs018761
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 12:11:53 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wARCBlAJ029153;
-        Tue, 27 Nov 2018 12:11:49 GMT
-Received: from unbuntlaptop (/197.157.0.30)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Nov 2018 04:11:47 -0800
-Date:   Tue, 27 Nov 2018 15:11:29 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Tianyu Lan <lantianyu1986@gmail.com>
-Cc:     linux-mips@linux-mips.org, kvm <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, benh@kernel.crashing.org,
-        will.deacon@arm.com, christoffer.dall@arm.com, paulus@ozlabs.org,
-        "H. Peter Anvin" <hpa@zytor.com>, kvmarm@lists.cs.columbia.edu,
-        sthemmin@microsoft.com, mpe@ellerman.id.au,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux@armlinux.org.uk, michael.h.kelley@microsoft.com,
-        Ingo Molnar <mingo@redhat.com>, catalin.marinas@arm.com,
-        jhogan@kernel.org, Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        marc.zyngier@arm.com, haiyangz@microsoft.com,
-        kvm-ppc@vger.kernel.org, bp@alien8.de,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        ralf@linux-mips.org, paul.burton@mips.com,
-        devel@linuxdriverproject.org, vkuznets@redhat.com,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH V5 00/10] x86/KVM/Hyper-v: Add HV ept tlb range flush
- hypercall support in KVM
-Message-ID: <20181127121129.GR3088@unbuntlaptop>
-References: <20181108144259.10817-1-Tianyu.Lan@microsoft.com>
- <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com>
+        Tue, 27 Nov 2018 18:12:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id 79so1454236wmo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 04:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VABBGL7pT1AAKaWTjEI4KTBSlYJ4GR9Nug9f4H0FIOc=;
+        b=c9qXp5lWYpua5jrcgcGK0ZSOpMO+Eh0qk4I1lMS5OVKwc6/5rz5FvrF9eTzYo7/33A
+         AUFrPqdj9gXCXQE30h4xvGCqEd9UsaBWgmuQOsTf7B5PdGKtEFZ+C3H/j8uNOWiJT/7k
+         zhHU5MkSPv+Qxg7OHqwEqV45UWbKTynwWkURo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VABBGL7pT1AAKaWTjEI4KTBSlYJ4GR9Nug9f4H0FIOc=;
+        b=skwG5uXgJrqI1Onqx9c+m0uW3bFGvYT9oB6xrSzv58Sd9gQZizqMaLnWFJiB9ScjWZ
+         udwYKHIuPpW6x8ZKyyk9uG6lJAmj1XEECdRhrhM1aqvDbyt/IESmrZRIFY48YWxM4aaG
+         CQr5BwjAkUc8Zkw23+k077m7dmayjVEyEzBfOTAXJkhlObZTSbsv8fA/JzhMWsvl+8f2
+         BB2po2tJTvOp3O+XVMP17dycHcRxOgvUML41GRvQJo4hfGPTbV5zvm3bVtriWbgV8PZY
+         c58NmuwsTAVu7IAPQypn6i69veQuUkBQQyZvfY6X9pE4FtBCw8BXHL8x3u8dl3aNTq59
+         n2cQ==
+X-Gm-Message-State: AGRZ1gLhUvjJAU+y1VQ5AFCfh/tRYATQnfFppez7gipEziDQS1tgFtGU
+        A8ueyeozK23SkuBr5uUYAk8w8w==
+X-Google-Smtp-Source: AFSGD/Vk7NVXqXACBbwjDcjgy0dGDqTjEA7pYXZTWqi/IcVlU33ynuIxeHcTYgxEYiTZFfy/UKBqeQ==
+X-Received: by 2002:a1c:4b14:: with SMTP id y20mr27593101wma.82.1543320886052;
+        Tue, 27 Nov 2018 04:14:46 -0800 (PST)
+Received: from dell ([2.27.35.241])
+        by smtp.gmail.com with ESMTPSA id z17sm3661561wrv.2.2018.11.27.04.14.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 04:14:45 -0800 (PST)
+Date:   Tue, 27 Nov 2018 12:14:30 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] mfd: stmpe: Move ADC related defines to header of
+ mfd
+Message-ID: <20181127121430.GJ4272@dell>
+References: <20181119102528.2830-1-dev@pschenker.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOLK0pyvtfhoGM+D7h=gXwNpNjXGZiDJKpuVi9HOwb++4asCXw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119102528.2830-1-dev@pschenker.ch>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 07:59:22PM +0800, Tianyu Lan wrote:
-> Gentile Ping...
+On Mon, 19 Nov 2018, Philippe Schenker wrote:
+
+> Move defines that are ADC related to the header of the overlying mfd,
+> so they can be used from multiple sub-devices.
 > 
-> On Thu, Nov 8, 2018 at 10:43 PM <lantianyu1986@gmail.com> wrote:
-> >
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > Sorry. Some patches was blocked and I try to resend via another account.
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> ---
+> 
+> Changes in v2:
+>  - This is a new added commit. Separate commit for moving the defines out of
+>    drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device drivers/mfd/stmpe.c
+>  - Pre-fix defines with STMPE_
+> 
+>  drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
+>  include/linux/mfd/stmpe.h            | 11 +++++++++
+>  2 files changed, 24 insertions(+), 21 deletions(-)
 
-The patches were still blocked?  They didn't show up on driver-devel.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-regards,
-dan carpenter
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
