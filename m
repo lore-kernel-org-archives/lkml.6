@@ -2,579 +2,351 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E2AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DA0C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490B820660
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490B820660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 849E420660
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:53:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="YecWw6vn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849E420660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731574AbeK1Dvx convert rfc822-to-8bit (ORCPT
+        id S1731601AbeK1DwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:51:53 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:5649 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729727AbeK1DvP (ORCPT
+        Tue, 27 Nov 2018 22:52:04 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41231 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731584AbeK1DwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:51:15 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wARGmkVY014002;
-        Tue, 27 Nov 2018 17:52:16 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nxw9x1dkc-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 27 Nov 2018 17:52:16 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A2DE2383;
-        Tue, 27 Nov 2018 17:51:47 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 56B3B533F;
-        Tue, 27 Nov 2018 16:52:15 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 27 Nov
- 2018 17:52:15 +0100
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Tue, 27 Nov 2018 17:52:15 +0100
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH v6 2/8] mfd: stpmic1: add stpmic1 driver
-Thread-Topic: [PATCH v6 2/8] mfd: stpmic1: add stpmic1 driver
-Thread-Index: AQHUhnGMe+GJA41hxEW0/vURul2iAQ==
-Date:   Tue, 27 Nov 2018 16:52:14 +0000
-Message-ID: <1543337529-22301-3-git-send-email-p.paillet@st.com>
-References: <1543337529-22301-1-git-send-email-p.paillet@st.com>
-In-Reply-To: <1543337529-22301-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Tue, 27 Nov 2018 22:52:03 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so9411092ywc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:53:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DOFhC4xf3dILnVmSMTvFksDMfcI8cd5oCAq/Eq05nFI=;
+        b=YecWw6vn6Ajh8o4B5VNfhEgUnqSTAHFG+Que8uj6MvQHogsBqANxjHCKq+46kNWHln
+         Su/AU13hjOXPMPu2tfTQcYwwOI7MfFWG2nd6TLrMIzXaXLKk5RPJQBJQnGA9RdmA3HQK
+         B2QXzlvELBywWttLJ+oKu3a1SjKDj/fqU0rA61tT1vxDBOFvv8ys21AUCTkYa8j0UPAz
+         2Rc9YY7rg2J6abZXB9Q2UfgjpCMdcqiORkRAkjZ2YOdbEasP1iGFt39weFH+jpw8Z/+u
+         MTz1Sa2TvdUnhuhUdnyPD78bPxm77rucuvdF7MJQXKtmZSXeewrXU4TNLDYxSUkqM3P/
+         paLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DOFhC4xf3dILnVmSMTvFksDMfcI8cd5oCAq/Eq05nFI=;
+        b=ohnUhMDOvgvjcp2X+Y+f8NIhu6k8CWyi5YRIdvfHQ3qwJxsYKAosSuSs3z+6Qgq5R/
+         3z8G7CcK81tsQGEe15IR4KP4CBVZOPBtafiQ3+CZggr37tFuHDIRYPdADaxyfv3xKzkz
+         VyLSXHBdOjMgKfaLHyRJPygVC6MTH2LBGAI6zr71dh1MCvrv/EZo7YTSw6EiwYZCtc7G
+         5qAAt6xXceESd665G9WVus/GpplRV3PWNYu/iR2VV2kEyNrOj0gtcktx5wiTQKA/ED58
+         q1NUcaiXtaXvLePtbLwxg+3qzvvxHCm8HYN7sc2ZEq6dNECVlHPvmvpF1nMnahKRSv6v
+         +N8Q==
+X-Gm-Message-State: AA+aEWbpzS3yG0hCOyrkGinEo7bv8xCFUsrh5VnUCNZg0aCUxcNYei5r
+        pZNKHmC/zQeMuETXf35eifAKwA==
+X-Google-Smtp-Source: AFSGD/UgEalWMP8NXnN4DL8Sal9q697yEFirakIbvkf2cypW/823CXUs5b1jiN3Zrc6TVgvzndxNRQ==
+X-Received: by 2002:a81:7a0e:: with SMTP id v14mr14883516ywc.115.1543337611759;
+        Tue, 27 Nov 2018 08:53:31 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:9b77])
+        by smtp.gmail.com with ESMTPSA id w1sm1608087ywd.49.2018.11.27.08.53.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 08:53:30 -0800 (PST)
+Date:   Tue, 27 Nov 2018 11:53:29 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: Hackbench pipes regression bisected to PSI
+Message-ID: <20181127165329.GA29728@cmpxchg.org>
+References: <20181126133420.GN23260@techsingularity.net>
+ <20181126160724.GA21268@cmpxchg.org>
+ <20181126165446.GQ23260@techsingularity.net>
+ <20181126173218.GA22640@cmpxchg.org>
+ <20181126232926.GS23260@techsingularity.net>
+ <20181127164617.GA29488@cmpxchg.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_14:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127164617.GA29488@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STPMIC1 is a PMIC from STMicroelectronics. The STPMIC1 integrates 10
-regulators, 3 power switches, a watchdog and an input for a power on key.
+On Tue, Nov 27, 2018 at 11:46:17AM -0500, Johannes Weiner wrote:
+> From 347b69a52d1ec7e71df1108cbc5703d6dd0616ba Mon Sep 17 00:00:00 2001
+> From: Johannes Weiner <hannes@cmpxchg.org>
+> Date: Mon, 26 Nov 2018 09:39:23 -0500
+> Subject: [PATCH] psi: make disabling/enabling easier for vendor kernels
+> 
+> Mel Gorman reports a hackbench regression with psi that would prohibit
+> shipping the suse kernel with it default-enabled, but he'd still like
+> users to be able to opt in at little to no cost to others.
+> 
+> With the current combination of CONFIG_PSI and the psi_disabled bool
+> set from the commandline, this is a challenge. Do the following things
+> to make it easier:
+> 
+> 1. Add a config option CONFIG_PSI_DEFAULT_ENABLED that allows distros
 
-Signed-off-by: Pascal Paillet <p.paillet@st.com>
+This should be:          CONFIG_PSI_DEFAULT_DISABLED
+
+Refreshed the patch.
+
 ---
-changes in v6:
-* replace i2c_device_id by of_device_id
-* fix commit message and Kconfig description
 
- drivers/mfd/Kconfig         |  16 ++++
- drivers/mfd/Makefile        |   1 +
- drivers/mfd/stpmic1.c       | 213 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/stpmic1.h | 212 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 442 insertions(+)
- create mode 100644 drivers/mfd/stpmic1.c
- create mode 100644 include/linux/mfd/stpmic1.h
+From dc1511101b4c6aa3f7cfb91d8634a682fe7c147e Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Mon, 26 Nov 2018 09:39:23 -0500
+Subject: [PATCH] psi: make disabling/enabling easier for vendor kernels
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 11841f4..0677bac 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1855,6 +1855,22 @@ config MFD_STM32_TIMERS
- 	  for PWM and IIO Timer. This driver allow to share the
- 	  registers between the others drivers.
+Mel Gorman reports a hackbench regression with psi that would prohibit
+shipping the suse kernel with it default-enabled, but he'd still like
+users to be able to opt in at little to no cost to others.
+
+With the current combination of CONFIG_PSI and the psi_disabled bool
+set from the commandline, this is a challenge. Do the following things
+to make it easier:
+
+1. Add a config option CONFIG_PSI_DEFAULT_DISABLED that allows distros
+   to enable CONFIG_PSI in their kernel but leave the feature disabled
+   unless a user requests it at boot-time.
+
+   To avoid double negatives, rename psi_disabled= to psi=.
+
+2. Make psi_disabled a static branch to eliminate any branch costs
+   when the feature is disabled.
+
+In terms of numbers before and after this patch, Mel says:
+
+: The following is a comparision using CONFIG_PSI=n as a baseline against
+: your patch and a vanilla kernel
+:
+:                          4.20.0-rc4             4.20.0-rc4             4.20.0-rc4
+:                 kconfigdisable-v1r1                vanilla        psidisable-v1r1
+: Amean     1       1.3100 (   0.00%)      1.3923 (  -6.28%)      1.3427 (  -2.49%)
+: Amean     3       3.8860 (   0.00%)      4.1230 *  -6.10%*      3.8860 (  -0.00%)
+: Amean     5       6.8847 (   0.00%)      8.0390 * -16.77%*      6.7727 (   1.63%)
+: Amean     7       9.9310 (   0.00%)     10.8367 *  -9.12%*      9.9910 (  -0.60%)
+: Amean     12     16.6577 (   0.00%)     18.2363 *  -9.48%*     17.1083 (  -2.71%)
+: Amean     18     26.5133 (   0.00%)     27.8833 *  -5.17%*     25.7663 (   2.82%)
+: Amean     24     34.3003 (   0.00%)     34.6830 (  -1.12%)     32.0450 (   6.58%)
+: Amean     30     40.0063 (   0.00%)     40.5800 (  -1.43%)     41.5087 (  -3.76%)
+: Amean     32     40.1407 (   0.00%)     41.2273 (  -2.71%)     39.9417 (   0.50%)
+:
+: It's showing that the vanilla kernel takes a hit (as the bisection
+: indicated it would) and that disabling PSI by default is reasonably
+: close in terms of performance for this particular workload on this
+: particular machine so;
+
+Tested-by: Mel Gorman <mgorman@techsingularity.net>
+Reported-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ .../admin-guide/kernel-parameters.txt         |  4 +++
+ include/linux/psi.h                           |  3 +-
+ init/Kconfig                                  |  9 ++++++
+ kernel/sched/psi.c                            | 30 +++++++++++++------
+ kernel/sched/stats.h                          |  8 ++---
+ 5 files changed, 40 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 19f4423e70d9..8760a343c6d8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3504,6 +3504,10 @@
+ 			before loading.
+ 			See Documentation/blockdev/ramdisk.txt.
  
-+config MFD_STPMIC1
-+	tristate "Support for STPMIC1 PMIC"
-+	depends on (I2C=y && OF)
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	select MFD_CORE
++	psi=		[KNL] Enable or disable pressure stall information
++			tracking.
++			Format: <bool>
++
+ 	psmouse.proto=	[HW,MOUSE] Highest PS2 mouse protocol extension to
+ 			probe for; one of (bare|imps|exps|lifebook|any).
+ 	psmouse.rate=	[HW,MOUSE] Set desired mouse report rate, in reports
+diff --git a/include/linux/psi.h b/include/linux/psi.h
+index 8e0725aac0aa..7006008d5b72 100644
+--- a/include/linux/psi.h
++++ b/include/linux/psi.h
+@@ -1,6 +1,7 @@
+ #ifndef _LINUX_PSI_H
+ #define _LINUX_PSI_H
+ 
++#include <linux/jump_label.h>
+ #include <linux/psi_types.h>
+ #include <linux/sched.h>
+ 
+@@ -9,7 +10,7 @@ struct css_set;
+ 
+ #ifdef CONFIG_PSI
+ 
+-extern bool psi_disabled;
++extern struct static_key_false psi_disabled;
+ 
+ void psi_init(void);
+ 
+diff --git a/init/Kconfig b/init/Kconfig
+index a4112e95724a..cf5b5a0dcbc2 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -509,6 +509,15 @@ config PSI
+ 
+ 	  Say N if unsure.
+ 
++config PSI_DEFAULT_DISABLED
++	bool "Require boot parameter to enable pressure stall information tracking"
++	default n
++	depends on PSI
 +	help
-+	  Support for ST Microelectronics STPMIC1 PMIC. STPMIC1 has power on
-+	  key, watchdog and regulator functionalities which are supported via
-+	  the relevant subsystems. This driver provides core support for the
-+	  STPMIC1. In order to use the actual functionaltiy of the device other
-+	  drivers must be enabled.
++	  If set, pressure stall information tracking will be disabled
++	  per default but can be enabled through passing psi_enable=1
++	  on the kernel commandline during boot.
 +
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called stpmic1.
-+
- menu "Multimedia Capabilities Port drivers"
- 	depends on ARCH_SA1100
+ endmenu # "CPU/Task time and stats accounting"
  
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 5856a94..76fff14 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -232,6 +232,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
- obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
+ config CPU_ISOLATION
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 3d7355d7c3e3..fe24de3fbc93 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -136,8 +136,18 @@
  
- obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
-+obj-$(CONFIG_MFD_STPMIC1)	+= stpmic1.o
- obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
+ static int psi_bug __read_mostly;
  
- obj-$(CONFIG_MFD_STM32_LPTIMER)	+= stm32-lptimer.o
-diff --git a/drivers/mfd/stpmic1.c b/drivers/mfd/stpmic1.c
-new file mode 100644
-index 0000000..7dfbe89
---- /dev/null
-+++ b/drivers/mfd/stpmic1.c
-@@ -0,0 +1,213 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) STMicroelectronics 2018
-+// Author: Pascal Paillet <p.paillet@st.com>
+-bool psi_disabled __read_mostly;
+-core_param(psi_disabled, psi_disabled, bool, 0644);
++DEFINE_STATIC_KEY_FALSE(psi_disabled);
 +
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/stpmic1.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_platform.h>
-+#include <linux/pm_wakeirq.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/mfd/st,stpmic1.h>
-+
-+#define STPMIC1_MAIN_IRQ 0
-+
-+static const struct regmap_range stpmic1_readable_ranges[] = {
-+	regmap_reg_range(TURN_ON_SR, VERSION_SR),
-+	regmap_reg_range(SWOFF_PWRCTRL_CR, LDO6_STDBY_CR),
-+	regmap_reg_range(BST_SW_CR, BST_SW_CR),
-+	regmap_reg_range(INT_PENDING_R1, INT_PENDING_R4),
-+	regmap_reg_range(INT_CLEAR_R1, INT_CLEAR_R4),
-+	regmap_reg_range(INT_MASK_R1, INT_MASK_R4),
-+	regmap_reg_range(INT_SET_MASK_R1, INT_SET_MASK_R4),
-+	regmap_reg_range(INT_CLEAR_MASK_R1, INT_CLEAR_MASK_R4),
-+	regmap_reg_range(INT_SRC_R1, INT_SRC_R1),
-+};
-+
-+static const struct regmap_range stpmic1_writeable_ranges[] = {
-+	regmap_reg_range(SWOFF_PWRCTRL_CR, LDO6_STDBY_CR),
-+	regmap_reg_range(BST_SW_CR, BST_SW_CR),
-+	regmap_reg_range(INT_CLEAR_R1, INT_CLEAR_R4),
-+	regmap_reg_range(INT_SET_MASK_R1, INT_SET_MASK_R4),
-+	regmap_reg_range(INT_CLEAR_MASK_R1, INT_CLEAR_MASK_R4),
-+};
-+
-+static const struct regmap_range stpmic1_volatile_ranges[] = {
-+	regmap_reg_range(TURN_ON_SR, VERSION_SR),
-+	regmap_reg_range(WCHDG_CR, WCHDG_CR),
-+	regmap_reg_range(INT_PENDING_R1, INT_PENDING_R4),
-+	regmap_reg_range(INT_SRC_R1, INT_SRC_R4),
-+};
-+
-+static const struct regmap_access_table stpmic1_readable_table = {
-+	.yes_ranges = stpmic1_readable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(stpmic1_readable_ranges),
-+};
-+
-+static const struct regmap_access_table stpmic1_writeable_table = {
-+	.yes_ranges = stpmic1_writeable_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(stpmic1_writeable_ranges),
-+};
-+
-+static const struct regmap_access_table stpmic1_volatile_table = {
-+	.yes_ranges = stpmic1_volatile_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(stpmic1_volatile_ranges),
-+};
-+
-+const struct regmap_config stpmic1_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = PMIC_MAX_REGISTER_ADDRESS,
-+	.rd_table = &stpmic1_readable_table,
-+	.wr_table = &stpmic1_writeable_table,
-+	.volatile_table = &stpmic1_volatile_table,
-+};
-+
-+static const struct regmap_irq stpmic1_irqs[] = {
-+	REGMAP_IRQ_REG(IT_PONKEY_F, 0, 0x01),
-+	REGMAP_IRQ_REG(IT_PONKEY_R, 0, 0x02),
-+	REGMAP_IRQ_REG(IT_WAKEUP_F, 0, 0x04),
-+	REGMAP_IRQ_REG(IT_WAKEUP_R, 0, 0x08),
-+	REGMAP_IRQ_REG(IT_VBUS_OTG_F, 0, 0x10),
-+	REGMAP_IRQ_REG(IT_VBUS_OTG_R, 0, 0x20),
-+	REGMAP_IRQ_REG(IT_SWOUT_F, 0, 0x40),
-+	REGMAP_IRQ_REG(IT_SWOUT_R, 0, 0x80),
-+
-+	REGMAP_IRQ_REG(IT_CURLIM_BUCK1, 1, 0x01),
-+	REGMAP_IRQ_REG(IT_CURLIM_BUCK2, 1, 0x02),
-+	REGMAP_IRQ_REG(IT_CURLIM_BUCK3, 1, 0x04),
-+	REGMAP_IRQ_REG(IT_CURLIM_BUCK4, 1, 0x08),
-+	REGMAP_IRQ_REG(IT_OCP_OTG, 1, 0x10),
-+	REGMAP_IRQ_REG(IT_OCP_SWOUT, 1, 0x20),
-+	REGMAP_IRQ_REG(IT_OCP_BOOST, 1, 0x40),
-+	REGMAP_IRQ_REG(IT_OVP_BOOST, 1, 0x80),
-+
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO1, 2, 0x01),
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO2, 2, 0x02),
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO3, 2, 0x04),
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO4, 2, 0x08),
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO5, 2, 0x10),
-+	REGMAP_IRQ_REG(IT_CURLIM_LDO6, 2, 0x20),
-+	REGMAP_IRQ_REG(IT_SHORT_SWOTG, 2, 0x40),
-+	REGMAP_IRQ_REG(IT_SHORT_SWOUT, 2, 0x80),
-+
-+	REGMAP_IRQ_REG(IT_TWARN_F, 3, 0x01),
-+	REGMAP_IRQ_REG(IT_TWARN_R, 3, 0x02),
-+	REGMAP_IRQ_REG(IT_VINLOW_F, 3, 0x04),
-+	REGMAP_IRQ_REG(IT_VINLOW_R, 3, 0x08),
-+	REGMAP_IRQ_REG(IT_SWIN_F, 3, 0x40),
-+	REGMAP_IRQ_REG(IT_SWIN_R, 3, 0x80),
-+};
-+
-+static const struct regmap_irq_chip stpmic1_regmap_irq_chip = {
-+	.name = "pmic_irq",
-+	.status_base = INT_PENDING_R1,
-+	.mask_base = INT_CLEAR_MASK_R1,
-+	.unmask_base = INT_SET_MASK_R1,
-+	.ack_base = INT_CLEAR_R1,
-+	.num_regs = STPMIC1_PMIC_NUM_IRQ_REGS,
-+	.irqs = stpmic1_irqs,
-+	.num_irqs = ARRAY_SIZE(stpmic1_irqs),
-+};
-+
-+static int stpmic1_probe(struct i2c_client *i2c,
-+			 const struct i2c_device_id *id)
-+{
-+	struct stpmic1 *ddata;
-+	struct device *dev = &i2c->dev;
-+	int ret;
-+	struct device_node *np = dev->of_node;
-+	u32 reg;
-+
-+	ddata = devm_kzalloc(dev, sizeof(struct stpmic1), GFP_KERNEL);
-+	if (!ddata)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(i2c, ddata);
-+	ddata->dev = dev;
-+
-+	ddata->regmap = devm_regmap_init_i2c(i2c, &stpmic1_regmap_config);
-+	if (IS_ERR(ddata->regmap))
-+		return PTR_ERR(ddata->regmap);
-+
-+	ddata->irq = of_irq_get(np, STPMIC1_MAIN_IRQ);
-+	if (ddata->irq < 0) {
-+		dev_err(dev, "Failed to get main IRQ: %d\n", ddata->irq);
-+		return ddata->irq;
-+	}
-+
-+	ret = regmap_read(ddata->regmap, VERSION_SR, &reg);
-+	if (ret) {
-+		dev_err(dev, "Unable to read PMIC version\n");
-+		return ret;
-+	}
-+	dev_info(dev, "PMIC Chip Version: 0x%x\n", reg);
-+
-+	/* Initialize PMIC IRQ Chip & associated IRQ domains */
-+	ret = devm_regmap_add_irq_chip(dev, ddata->regmap, ddata->irq,
-+				       IRQF_ONESHOT | IRQF_SHARED,
-+				       0, &stpmic1_regmap_irq_chip,
-+				       &ddata->irq_data);
-+	if (ret) {
-+		dev_err(dev, "IRQ Chip registration failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return devm_of_platform_populate(dev);
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int stpmic1_suspend(struct device *dev)
-+{
-+	struct i2c_client *i2c = to_i2c_client(dev);
-+	struct stpmic1 *pmic_dev = i2c_get_clientdata(i2c);
-+
-+	disable_irq(pmic_dev->irq);
-+
-+	return 0;
-+}
-+
-+static int stpmic1_resume(struct device *dev)
-+{
-+	struct i2c_client *i2c = to_i2c_client(dev);
-+	struct stpmic1 *pmic_dev = i2c_get_clientdata(i2c);
-+	int ret;
-+
-+	ret = regcache_sync(pmic_dev->regmap);
-+	if (ret)
-+		return ret;
-+
-+	enable_irq(pmic_dev->irq);
-+
-+	return 0;
-+}
++#ifdef CONFIG_PSI_DEFAULT_DISABLED
++bool psi_enable;
++#else
++bool psi_enable = true;
 +#endif
-+
-+static SIMPLE_DEV_PM_OPS(stpmic1_pm, stpmic1_suspend, stpmic1_resume);
-+
-+static const struct of_device_id stpmic1_of_match[] = {
-+	{ .compatible = "st,stpmic1", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, stpmic1_of_match);
-+
-+static struct i2c_driver stpmic1_driver = {
-+	.driver = {
-+		.name = "stpmic1",
-+		.of_match_table = of_match_ptr(stpmic1_of_match),
-+		.pm = &stpmic1_pm,
-+	},
-+	.probe = stpmic1_probe,
-+};
-+
-+module_i2c_driver(stpmic1_driver);
-+
-+MODULE_DESCRIPTION("STPMIC1 PMIC Driver");
-+MODULE_AUTHOR("Pascal Paillet <p.paillet@st.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/stpmic1.h b/include/linux/mfd/stpmic1.h
-new file mode 100644
-index 0000000..fa3f99f
---- /dev/null
-+++ b/include/linux/mfd/stpmic1.h
-@@ -0,0 +1,212 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
-+ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
-+ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-+ */
-+
-+#ifndef __LINUX_MFD_STPMIC1_H
-+#define __LINUX_MFD_STPMIC1_H
-+
-+#define TURN_ON_SR		0x1
-+#define TURN_OFF_SR		0x2
-+#define ICC_LDO_TURN_OFF_SR	0x3
-+#define ICC_BUCK_TURN_OFF_SR	0x4
-+#define RREQ_STATE_SR		0x5
-+#define VERSION_SR		0x6
-+
-+#define SWOFF_PWRCTRL_CR	0x10
-+#define PADS_PULL_CR		0x11
-+#define BUCKS_PD_CR		0x12
-+#define LDO14_PD_CR		0x13
-+#define LDO56_VREF_PD_CR	0x14
-+#define VBUS_DET_VIN_CR		0x15
-+#define PKEY_TURNOFF_CR		0x16
-+#define BUCKS_MASK_RANK_CR	0x17
-+#define BUCKS_MASK_RESET_CR	0x18
-+#define LDOS_MASK_RANK_CR	0x19
-+#define LDOS_MASK_RESET_CR	0x1A
-+#define WCHDG_CR		0x1B
-+#define WCHDG_TIMER_CR		0x1C
-+#define BUCKS_ICCTO_CR		0x1D
-+#define LDOS_ICCTO_CR		0x1E
-+
-+#define BUCK1_ACTIVE_CR		0x20
-+#define BUCK2_ACTIVE_CR		0x21
-+#define BUCK3_ACTIVE_CR		0x22
-+#define BUCK4_ACTIVE_CR		0x23
-+#define VREF_DDR_ACTIVE_CR	0x24
-+#define LDO1_ACTIVE_CR		0x25
-+#define LDO2_ACTIVE_CR		0x26
-+#define LDO3_ACTIVE_CR		0x27
-+#define LDO4_ACTIVE_CR		0x28
-+#define LDO5_ACTIVE_CR		0x29
-+#define LDO6_ACTIVE_CR		0x2A
-+
-+#define BUCK1_STDBY_CR		0x30
-+#define BUCK2_STDBY_CR		0x31
-+#define BUCK3_STDBY_CR		0x32
-+#define BUCK4_STDBY_CR		0x33
-+#define VREF_DDR_STDBY_CR	0x34
-+#define LDO1_STDBY_CR		0x35
-+#define LDO2_STDBY_CR		0x36
-+#define LDO3_STDBY_CR		0x37
-+#define LDO4_STDBY_CR		0x38
-+#define LDO5_STDBY_CR		0x39
-+#define LDO6_STDBY_CR		0x3A
-+
-+#define BST_SW_CR		0x40
-+
-+#define INT_PENDING_R1		0x50
-+#define INT_PENDING_R2		0x51
-+#define INT_PENDING_R3		0x52
-+#define INT_PENDING_R4		0x53
-+
-+#define INT_DBG_LATCH_R1	0x60
-+#define INT_DBG_LATCH_R2	0x61
-+#define INT_DBG_LATCH_R3	0x62
-+#define INT_DBG_LATCH_R4	0x63
-+
-+#define INT_CLEAR_R1		0x70
-+#define INT_CLEAR_R2		0x71
-+#define INT_CLEAR_R3		0x72
-+#define INT_CLEAR_R4		0x73
-+
-+#define INT_MASK_R1		0x80
-+#define INT_MASK_R2		0x81
-+#define INT_MASK_R3		0x82
-+#define INT_MASK_R4		0x83
-+
-+#define INT_SET_MASK_R1		0x90
-+#define INT_SET_MASK_R2		0x91
-+#define INT_SET_MASK_R3		0x92
-+#define INT_SET_MASK_R4		0x93
-+
-+#define INT_CLEAR_MASK_R1	0xA0
-+#define INT_CLEAR_MASK_R2	0xA1
-+#define INT_CLEAR_MASK_R3	0xA2
-+#define INT_CLEAR_MASK_R4	0xA3
-+
-+#define INT_SRC_R1		0xB0
-+#define INT_SRC_R2		0xB1
-+#define INT_SRC_R3		0xB2
-+#define INT_SRC_R4		0xB3
-+
-+#define PMIC_MAX_REGISTER_ADDRESS INT_SRC_R4
-+
-+#define STPMIC1_PMIC_NUM_IRQ_REGS 4
-+
-+#define TURN_OFF_SR_ICC_EVENT	0x08
-+
-+#define LDO_VOLTAGE_MASK		GENMASK(6, 2)
-+#define BUCK_VOLTAGE_MASK		GENMASK(7, 2)
-+#define LDO_BUCK_VOLTAGE_SHIFT		2
-+
-+#define LDO_ENABLE_MASK			BIT(0)
-+#define BUCK_ENABLE_MASK		BIT(0)
-+
-+#define BUCK_HPLP_ENABLE_MASK		BIT(1)
-+#define BUCK_HPLP_SHIFT			1
-+
-+#define STDBY_ENABLE_MASK  BIT(0)
-+
-+#define BUCKS_PD_CR_REG_MASK	GENMASK(7, 0)
-+#define BUCK_MASK_RANK_REGISTER_MASK	GENMASK(3, 0)
-+#define BUCK_MASK_RESET_REGISTER_MASK	GENMASK(3, 0)
-+#define LDO1234_PULL_DOWN_REGISTER_MASK	GENMASK(7, 0)
-+#define LDO56_VREF_PD_CR_REG_MASK	GENMASK(5, 0)
-+#define LDO_MASK_RANK_REGISTER_MASK	GENMASK(5, 0)
-+#define LDO_MASK_RESET_REGISTER_MASK	GENMASK(5, 0)
-+
-+#define BUCK1_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK1_PULL_DOWN_MASK		BIT(0)
-+#define BUCK2_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK2_PULL_DOWN_MASK		BIT(2)
-+#define BUCK3_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK3_PULL_DOWN_MASK		BIT(4)
-+#define BUCK4_PULL_DOWN_REG		BUCKS_PD_CR
-+#define BUCK4_PULL_DOWN_MASK		BIT(6)
-+
-+#define LDO1_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO1_PULL_DOWN_MASK		BIT(0)
-+#define LDO2_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO2_PULL_DOWN_MASK		BIT(2)
-+#define LDO3_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO3_PULL_DOWN_MASK		BIT(4)
-+#define LDO4_PULL_DOWN_REG		LDO14_PD_CR
-+#define LDO4_PULL_DOWN_MASK		BIT(6)
-+#define LDO5_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define LDO5_PULL_DOWN_MASK		BIT(0)
-+#define LDO6_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define LDO6_PULL_DOWN_MASK		BIT(2)
-+#define VREF_DDR_PULL_DOWN_REG		LDO56_VREF_PD_CR
-+#define VREF_DDR_PULL_DOWN_MASK		BIT(4)
-+
-+#define BUCKS_ICCTO_CR_REG_MASK	GENMASK(6, 0)
-+#define LDOS_ICCTO_CR_REG_MASK	GENMASK(5, 0)
-+
-+#define LDO_BYPASS_MASK			BIT(7)
-+
-+/* Main PMIC Control Register
-+ * SWOFF_PWRCTRL_CR
-+ * Address : 0x10
-+ */
-+#define ICC_EVENT_ENABLED		BIT(4)
-+#define PWRCTRL_POLARITY_HIGH		BIT(3)
-+#define PWRCTRL_PIN_VALID		BIT(2)
-+#define RESTART_REQUEST_ENABLED		BIT(1)
-+#define SOFTWARE_SWITCH_OFF_ENABLED	BIT(0)
-+
-+/* Main PMIC PADS Control Register
-+ * PADS_PULL_CR
-+ * Address : 0x11
-+ */
-+#define WAKEUP_DETECTOR_DISABLED	BIT(4)
-+#define PWRCTRL_PD_ACTIVE		BIT(3)
-+#define PWRCTRL_PU_ACTIVE		BIT(2)
-+#define WAKEUP_PD_ACTIVE		BIT(1)
-+#define PONKEY_PU_INACTIVE		BIT(0)
-+
-+/* Main PMIC VINLOW Control Register
-+ * VBUS_DET_VIN_CRC DMSC
-+ * Address : 0x15
-+ */
-+#define SWIN_DETECTOR_ENABLED		BIT(7)
-+#define SWOUT_DETECTOR_ENABLED		BIT(6)
-+#define VINLOW_ENABLED			BIT(0)
-+#define VINLOW_CTRL_REG_MASK		GENMASK(7, 0)
-+
-+/* USB Control Register
-+ * Address : 0x40
-+ */
-+#define BOOST_OVP_DISABLED		BIT(7)
-+#define VBUS_OTG_DETECTION_DISABLED	BIT(6)
-+#define SW_OUT_DISCHARGE		BIT(5)
-+#define VBUS_OTG_DISCHARGE		BIT(4)
-+#define OCP_LIMIT_HIGH			BIT(3)
-+#define SWIN_SWOUT_ENABLED		BIT(2)
-+#define USBSW_OTG_SWITCH_ENABLED	BIT(1)
-+#define BOOST_ENABLED			BIT(0)
-+
-+/* PKEY_TURNOFF_CR
-+ * Address : 0x16
-+ */
-+#define PONKEY_PWR_OFF			BIT(7)
-+#define PONKEY_CC_FLAG_CLEAR		BIT(6)
-+#define PONKEY_TURNOFF_TIMER_MASK	GENMASK(3, 0)
-+#define PONKEY_TURNOFF_MASK		GENMASK(7, 0)
-+
-+/*
-+ * struct stpmic1 - stpmic1 master device for sub-drivers
-+ * @dev: master device of the chip (can be used to access platform data)
-+ * @irq: main IRQ number
-+ * @regmap_irq_chip_data: irq chip data
-+ */
-+struct stpmic1 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	int irq;
-+	struct regmap_irq_chip_data *irq_data;
-+};
-+
-+#endif /*  __LINUX_MFD_STPMIC1_H */
++static int __init setup_psi(char *str)
++{
++	return kstrtobool(str, &psi_enable) == 0;
++}
++__setup("psi=", setup_psi);
+ 
+ /* Running averages - we need to be higher-res than loadavg */
+ #define PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
+@@ -169,8 +179,10 @@ static void group_init(struct psi_group *group)
+ 
+ void __init psi_init(void)
+ {
+-	if (psi_disabled)
++	if (!psi_enable) {
++		static_branch_enable(&psi_disabled);
+ 		return;
++	}
+ 
+ 	psi_period = jiffies_to_nsecs(PSI_FREQ);
+ 	group_init(&psi_system);
+@@ -549,7 +561,7 @@ void psi_memstall_enter(unsigned long *flags)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	*flags = current->flags & PF_MEMSTALL;
+@@ -579,7 +591,7 @@ void psi_memstall_leave(unsigned long *flags)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (*flags)
+@@ -600,7 +612,7 @@ void psi_memstall_leave(unsigned long *flags)
+ #ifdef CONFIG_CGROUPS
+ int psi_cgroup_alloc(struct cgroup *cgroup)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return 0;
+ 
+ 	cgroup->psi.pcpu = alloc_percpu(struct psi_group_cpu);
+@@ -612,7 +624,7 @@ int psi_cgroup_alloc(struct cgroup *cgroup)
+ 
+ void psi_cgroup_free(struct cgroup *cgroup)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	cancel_delayed_work_sync(&cgroup->psi.clock_work);
+@@ -637,7 +649,7 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	if (psi_disabled) {
++	if (static_branch_likely(&psi_disabled)) {
+ 		/*
+ 		 * Lame to do this here, but the scheduler cannot be locked
+ 		 * from the outside, so we move cgroups from inside sched/.
+@@ -673,7 +685,7 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+ {
+ 	int full;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return -EOPNOTSUPP;
+ 
+ 	update_stats(group);
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 4904c4677000..aa0de240fb41 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -66,7 +66,7 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
+ {
+ 	int clear = 0, set = TSK_RUNNING;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (!wakeup || p->sched_psi_wake_requeue) {
+@@ -86,7 +86,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ {
+ 	int clear = TSK_RUNNING, set = 0;
+ 
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (!sleep) {
+@@ -102,7 +102,7 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ 
+ static inline void psi_ttwu_dequeue(struct task_struct *p)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 	/*
+ 	 * Is the task being migrated during a wakeup? Make sure to
+@@ -128,7 +128,7 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
+ 
+ static inline void psi_task_tick(struct rq *rq)
+ {
+-	if (psi_disabled)
++	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+ 	if (unlikely(rq->curr->flags & PF_MEMSTALL))
 -- 
-1.9.1
+2.19.1
+
