@@ -2,115 +2,92 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC5AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3740AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D9620873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0074020873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MvcgEyoC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MvcgEyoC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D9620873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gdc67awt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0074020873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbeK0VsN (ORCPT
+        id S1730892AbeK0Vsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:48:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41372 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeK0VsN (ORCPT
+        Tue, 27 Nov 2018 16:48:39 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43572 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeK0Vsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:48:13 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E307A60B26; Tue, 27 Nov 2018 10:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543315842;
-        bh=JHXmpc9pZZWjpQrjJVns+Bmv0GHdc/G3EcsSaxBXjZc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MvcgEyoCbIQrJXnSTdONzS859vBVdVNk7VuWOCPk8+fXVxUA24TOK2R7K264jIsGn
-         ioMlsqseue1lJg1eKirCbbx1cOECMbBteFKGR84bAG86wJYXczfYt89lrA1BSQ13xm
-         y518jHsvd7pSGJbiHa2Pjf2lZl6f56QtHt0qEVMM=
-Received: from [10.79.128.28] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 959AC6079C;
-        Tue, 27 Nov 2018 10:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543315842;
-        bh=JHXmpc9pZZWjpQrjJVns+Bmv0GHdc/G3EcsSaxBXjZc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MvcgEyoCbIQrJXnSTdONzS859vBVdVNk7VuWOCPk8+fXVxUA24TOK2R7K264jIsGn
-         ioMlsqseue1lJg1eKirCbbx1cOECMbBteFKGR84bAG86wJYXczfYt89lrA1BSQ13xm
-         y518jHsvd7pSGJbiHa2Pjf2lZl6f56QtHt0qEVMM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 959AC6079C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 3/3] soc: qcom: Add AOSS QMP genpd provider
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <20181112080557.22698-1-bjorn.andersson@linaro.org>
- <20181112080557.22698-4-bjorn.andersson@linaro.org>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <e8b74746-23a4-67fe-9b6d-060f77a0a043@codeaurora.org>
-Date:   Tue, 27 Nov 2018 16:20:37 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 27 Nov 2018 16:48:39 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 83-v6so19595223ljf.10
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 02:51:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1BCbWUpsxHePFLT02LVLlMQFhl4fVbW9t4TnotjDdbA=;
+        b=gdc67awtQ9dC3ocimxMbVgMJv14dp84xjn0TLUsJ+L38wIOWpJ7VHqUs365QxIbctc
+         X2IrCXWo7VziVRqCI/kI0VFz8X8JLOZg2Gkg/al/kX9ShW8v3+yvo9uj08NINUMlfXx3
+         5bLQp60zmiMZCkjbsNigQUZZzMX0Z12e5Gnfg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1BCbWUpsxHePFLT02LVLlMQFhl4fVbW9t4TnotjDdbA=;
+        b=FTGYO2sRuBygnZrIdLsJhjaRq1+6IBRTgvzUIMrvSwIbYD3OLBV5o0KVZINfbXU2iN
+         VAmJY766QrYfeXCWzf+5xKXYW5Z6ujAS03a5p1Pcr0z5jjxHFM42dP0EycSOFRYP8HgL
+         XRxlWieNqkCrZLqP5jnwKxDDOWy94ZgS7Z7jJWawMdt0MpQM/ry+vZvDrZCJvN76j1Ls
+         +Yb8hzUGRIUSszZyOfEmHkgPk2BE72GC3+MAkgENk08LK0ZYUEaIvmdp0+T82YzO5xLp
+         YCI7OKKuUTF8mjOKsQXVW+EZGma8FllKlUifK1d4hiugPC8/cN9hxR62mXJnuEFVYIM6
+         vgvQ==
+X-Gm-Message-State: AA+aEWZKPauRrMPgakI5zIlKd5YZZiPEEDd89dPU5eLacDPy8yG8TCQ7
+        9ewYzXjv4rvzK+FL+yPfTlOAHyIMa73E0VQpQX03uA==
+X-Google-Smtp-Source: AFSGD/UdFfPjmvD7WdN/FZjIw3+CLEpbmrHke5B1WxlvFlHQIrEJsqIWWiOIFgfF9SdKW/si6XCWArz9k0SNesGwk6c=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr19371561ljk.4.1543315867237;
+ Tue, 27 Nov 2018 02:51:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181112080557.22698-4-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
+ <20181122173015.23905-3-ckeepax@opensource.cirrus.com> <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
+ <20181123105729.GM16508@imbe.wolfsonmicro.main> <20181123132522.GE2089@sirena.org.uk>
+ <CACRpkdZKJGFmYFKBHdiayRsA2ona2zWfJ+xckJxD1UBsj39=sA@mail.gmail.com>
+In-Reply-To: <CACRpkdZKJGFmYFKBHdiayRsA2ona2zWfJ+xckJxD1UBsj39=sA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 27 Nov 2018 11:50:54 +0100
+Message-ID: <CACRpkdZoX0pTqWwvhj__kVtnHqrYD4bJ0JaXzxBo8jOZEtd70Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Mon, Nov 26, 2018 at 10:53 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On 11/12/2018 1:35 PM, Bjorn Andersson wrote:
-> The AOSS QMP genpd provider implements control over power-related
-> resources related to low-power state associated with the remoteprocs in
-> the system as well as control over a set of clocks related to debug
-> hardware in the SoC.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> I suspect maybe the lesser evil is to bite the bullet, invent
+> gpiod_get_from_of_node() which is the missing API (we currently
+> only have devm_gpiod_get_from_of_node()) and simply
+> fix up the converted regulator drivers to avoid devm_*
+> retrieveal in the same manner as wm8994 (the already
+> queued patch). This will make the regulator core own the
+> refcounting as it does today.
+>
+> It's a bit unelegant but it's very straight forward and I know
+> I can fix it up qucikly.
 
-One more issue is that amba bus probe fails and coresight(qdss) does not
-work with these because of clocks being modeled as power-domain.
+I cooked a series like this, just taking it for a ride on the
+0day build server before sending it out.
 
-Below is the log snippet:
-
-[    4.580715] coresight-etm4x: probe of 7040000.etm failed with error -2
-[    4.588087] coresight-etm4x: probe of 7140000.etm failed with error -2
-[    4.595407] coresight-etm4x: probe of 7240000.etm failed with error -2
-[    4.602796] coresight-etm4x: probe of 7340000.etm failed with error -2
-[    4.610108] coresight-etm4x: probe of 7440000.etm failed with error -2
-[    4.617453] coresight-etm4x: probe of 7540000.etm failed with error -2
-[    4.624831] coresight-etm4x: probe of 7640000.etm failed with error -2
-[    4.632190] coresight-etm4x: probe of 7740000.etm failed with error -2
-
-This is because Amba bus probe has amba_get_enable_pclk() which gets
-apb_pclk and returns error if it can't get that clk.
-
-Just for testing, I ignored amba_get_enable_pclk() in probe and
-coresight seems to work fine.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Yours,
+Linus Walleij
