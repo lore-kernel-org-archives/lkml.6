@@ -2,112 +2,206 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FE6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33312C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C15A21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C15A21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E99552086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:20:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DfAAuWGl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99552086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731480AbeK1ESn (ORCPT
+        id S1731501AbeK1ETS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:18:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726288AbeK1ESn (ORCPT
+        Tue, 27 Nov 2018 23:19:18 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33445 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeK1ETR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:18:43 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARHK5hx134127
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:20:07 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p18y33rja-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:20:06 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 27 Nov 2018 17:20:01 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 27 Nov 2018 17:19:55 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARHJsAe12255292
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Nov 2018 17:19:54 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6E2FB206A;
-        Tue, 27 Nov 2018 17:19:54 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A67F6B2066;
-        Tue, 27 Nov 2018 17:19:54 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Nov 2018 17:19:54 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A1E4816C33D9; Tue, 27 Nov 2018 09:19:54 -0800 (PST)
-Date:   Tue, 27 Nov 2018 09:19:54 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        steffen.klassert@secunet.com, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH tip/core/rcu 09/41] crypto/pcrypt: Replace
- synchronize_rcu_bh() with synchronize_rcu()
-Reply-To: paulmck@linux.ibm.com
-References: <20181111194410.6368-9-paulmck@linux.ibm.com>
- <20181116055640.72omc5p5bu6nfyuc@gondor.apana.org.au>
+        Tue, 27 Nov 2018 23:19:17 -0500
+Received: by mail-yw1-f66.google.com with SMTP id q11so9477666ywa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:20:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Z8QCA2FlD2t/8UHBFSqwBXDWKh9MjFMS4HzOPvOTODo=;
+        b=DfAAuWGlx1XP14s2TMBi8/LKWYSXIuiW0IoALUb49KqwD6hwSc4LtmBJr8RtwRzCuv
+         FmDnXFguRsA6DNd4LXeoj2mSTHp1uFjVpP6xMBzbLcbSHLT2vblWES03s3vrDhES1pmW
+         j6x7nOqTofGepCuC/XTvnd/KWH9PFX1xG73Vg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Z8QCA2FlD2t/8UHBFSqwBXDWKh9MjFMS4HzOPvOTODo=;
+        b=htht9SV/wf5iQlkAqGQ09qAtWEM+BrCyGGJ48ORSj0rBjKJ6HFlTTjVifwBEFAwzhp
+         7aU8naqkDJXpXKYcSWg2iH736a7IrqYXvOxA/BNy0Fv4fm2RhGwrzawcgY6qpIRAp4L7
+         rtThtpPQ1MLe3jXGICburjzZfgpZadFUBq9ONBU3QGqLB1Gii0bR4Q/YHRJtRHmS6r1K
+         B70chQ7BSEkOZNsKAURDUIJskoGzUXAQk3AZgEfOHdXjTdGYJcf0jEPnczBPU8Db/dYZ
+         xA9KSxtd7ceR/RoiCbUc8lFo//CBijgCM7IHlUWF4OciN+dwaH/e7RYAHtPqRXLf5MY3
+         AQNg==
+X-Gm-Message-State: AGRZ1gL+OvvS007ExPsKfMZZvMehscWYQasyNGMz+PWUN/N4IvUxLfXj
+        /Yexy1IikrYBo9BS+ejIRFvb5vdyYdk=
+X-Google-Smtp-Source: AJdET5e4ZtZCQi7AFI+Ae+cNI3Q6qZh9Qs+NS8mFxmYHPf5S0wgyq321cy0FxBUALmgqzgBq2EVa/w==
+X-Received: by 2002:a0d:ca84:: with SMTP id m126mr35351836ywd.59.1543339241159;
+        Tue, 27 Nov 2018 09:20:41 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id e189sm1859652ywc.101.2018.11.27.09.20.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 09:20:40 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id i78-v6so9388038ybg.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:20:39 -0800 (PST)
+X-Received: by 2002:a25:a22a:: with SMTP id b39-v6mr20717722ybi.209.1543339239060;
+ Tue, 27 Nov 2018 09:20:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116055640.72omc5p5bu6nfyuc@gondor.apana.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18112717-0064-0000-0000-0000037C1767
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010131; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01123583; UDB=6.00583291; IPR=6.00903713;
- MB=3.00024356; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 17:19:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112717-0065-0000-0000-00003B7A21CC
-Message-Id: <20181127171954.GQ4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811270148
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:20:38
+ -0800 (PST)
+In-Reply-To: <1543302920-13044-1-git-send-email-feng.tang@intel.com>
+References: <1543302920-13044-1-git-send-email-feng.tang@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 27 Nov 2018 09:20:38 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJh2Sqny2-S4H02M1w3fmL_NaJoCu=tEafQJCQ1q1Vrvg@mail.gmail.com>
+Message-ID: <CAGXu5jJh2Sqny2-S4H02M1w3fmL_NaJoCu=tEafQJCQ1q1Vrvg@mail.gmail.com>
+Subject: Re: [PATCH v2] panic: Add options to print system info when panic happens
+To:     Feng Tang <feng.tang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 01:56:40PM +0800, Herbert Xu wrote:
-> Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > Now that synchronize_rcu() waits for bh-disable regions of code as
-> > well as RCU read-side critical sections, the synchronize_rcu_bh() in
-> > pcrypt_cpumask_change_notify() can be replaced by synchronize_rcu().
-> > This commit therefore makes this change.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Cc: Steffen Klassert <steffen.klassert@secunet.com>
-> > Cc: <linux-crypto@vger.kernel.org>
-> 
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+On Mon, Nov 26, 2018 at 11:15 PM, Feng Tang <feng.tang@intel.com> wrote:
+> Kernel panic issues are always painful to debug, partially
+> because it's not easy to get enough information of the
+> context when panic happens.
+>
+> And we have ramoops and kdump for that, while this commit
+> tries to provide a easier way to show the system info by adding
+> a cmdline parameter, referring some idea from sysrq handler.
+>
+> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
 
-Applied, thank you!
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-							Thanx, Paul
+-Kees
 
+
+> ---
+> Changelog:
+>  v2:
+>     - change text "dump/DUMP" to "print/PRINT" which
+>       is more accurate, suggested by Andrew Morton
+>     - add code to print ftrace buffer
+>
+>  Documentation/admin-guide/kernel-parameters.txt |  8 +++++++
+>  kernel/panic.c                                  | 28 +++++++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 19f4423..80c819a 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3081,6 +3081,14 @@
+>                         timeout < 0: reboot immediately
+>                         Format: <timeout>
+>
+> +       panic_print=    Bitmask for printing system info when panic happens.
+> +                       User can chose combination of the following bits:
+> +                       bit 0: print all tasks info
+> +                       bit 1: print system memory info
+> +                       bit 2: print timer info
+> +                       bit 3: print locks info if CONFIG_LOCKDEP is on
+> +                       bit 4: print ftrace buffer
+> +
+>         panic_on_warn   panic() instead of WARN().  Useful to cause kdump
+>                         on a WARN().
+>
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index f6d549a..fb6ccd1 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -45,6 +45,13 @@ int panic_on_warn __read_mostly;
+>  int panic_timeout = CONFIG_PANIC_TIMEOUT;
+>  EXPORT_SYMBOL_GPL(panic_timeout);
+>
+> +#define PANIC_PRINT_TASK_INFO          0x00000001
+> +#define PANIC_PRINT_MEM_INFO           0x00000002
+> +#define PANIC_PRINT_TIMER_INFO         0x00000004
+> +#define PANIC_PRINT_LOCK_INFO          0x00000008
+> +#define PANIC_PRINT_FTRACE_INFO                0x00000010
+> +static unsigned long panic_print;
+> +
+>  ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+>
+>  EXPORT_SYMBOL(panic_notifier_list);
+> @@ -124,6 +131,24 @@ void nmi_panic(struct pt_regs *regs, const char *msg)
+>  }
+>  EXPORT_SYMBOL(nmi_panic);
+>
+> +static void panic_print_sys_info(void)
+> +{
+> +       if (panic_print & PANIC_PRINT_TASK_INFO)
+> +               show_state();
+> +
+> +       if (panic_print & PANIC_PRINT_MEM_INFO)
+> +               show_mem(0, NULL);
+> +
+> +       if (panic_print & PANIC_PRINT_TIMER_INFO)
+> +               sysrq_timer_list_show();
+> +
+> +       if (panic_print & PANIC_PRINT_LOCK_INFO)
+> +               debug_show_all_locks();
+> +
+> +       if (panic_print & PANIC_PRINT_FTRACE_INFO)
+> +               ftrace_dump(DUMP_ALL);
+> +}
+> +
+>  /**
+>   *     panic - halt the system
+>   *     @fmt: The text string to print
+> @@ -250,6 +275,8 @@ void panic(const char *fmt, ...)
+>         debug_locks_off();
+>         console_flush_on_panic();
+>
+> +       panic_print_sys_info();
+> +
+>         if (!panic_blink)
+>                 panic_blink = no_blink;
+>
+> @@ -654,6 +681,7 @@ void refcount_error_report(struct pt_regs *regs, const char *err)
+>  #endif
+>
+>  core_param(panic, panic_timeout, int, 0644);
+> +core_param(panic_print, panic_print, ulong, 0644);
+>  core_param(pause_on_oops, pause_on_oops, int, 0644);
+>  core_param(panic_on_warn, panic_on_warn, int, 0644);
+>  core_param(crash_kexec_post_notifiers, crash_kexec_post_notifiers, bool, 0644);
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Kees Cook
