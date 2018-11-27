@@ -2,186 +2,137 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF1BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12EDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A79CB21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:21:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A79CB21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id AFA1820873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 08:21:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="O26g7cyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA1820873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeK0TS3 (ORCPT
+        id S1729331AbeK0TSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 14:18:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35850 "EHLO mx1.suse.de"
+        Tue, 27 Nov 2018 14:18:36 -0500
+Received: from mail-db3eur04hn0212.outbound.protection.outlook.com ([104.47.12.212]:7241
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727574AbeK0TS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 14:18:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20A2AADF2;
-        Tue, 27 Nov 2018 08:21:22 +0000 (UTC)
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
- migrated
-To:     Hugh Dickins <hughd@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
- <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
- <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
- <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <e35e9354-a4be-ebcc-064d-c9e5b42a14c3@suse.cz>
-Date:   Tue, 27 Nov 2018 09:21:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
-Content-Type: text/plain; charset=utf-8
+        id S1727574AbeK0TSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 14:18:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mKPFqddIgEXG1ifwbnTg+NJzKSoV5Pyp4+lCjoF8k5I=;
+ b=O26g7cyGQahPElcLA8K+KuxaJ8vA26/OuQOS8aqJN/Vjd27XSIf5WvU6QjXVUZIJK9rEuJWlkzyAg9aIf0HuN7llSnRM2CIlTQ4Y/IVOO4lloN/dlQsz2aQkErwF10zTEzUIfJCxRVkEBzZ2yx/U+fwgjEt4paiQlIT+HsnpgPA=
+Received: from VI1PR08MB3599.eurprd08.prod.outlook.com (20.177.61.74) by
+ VI1PR08MB1086.eurprd08.prod.outlook.com (10.166.45.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Tue, 27 Nov 2018 08:21:21 +0000
+Received: from VI1PR08MB3599.eurprd08.prod.outlook.com
+ ([fe80::5d2c:980a:d77e:34e2]) by VI1PR08MB3599.eurprd08.prod.outlook.com
+ ([fe80::5d2c:980a:d77e:34e2%3]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
+ 08:21:21 +0000
+From:   Roman Kagan <rkagan@virtuozzo.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
+Thread-Topic: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
+Thread-Index: AQHUhZ9mV1oam64KnkyNE5PKjfame6VjSReA
+Date:   Tue, 27 Nov 2018 08:21:20 +0000
+Message-ID: <20181127082116.GA16047@rkaganb.sw.ru>
+References: <20181126154732.23025-1-vkuznets@redhat.com>
+ <20181126154732.23025-4-vkuznets@redhat.com>
+In-Reply-To: <20181126154732.23025-4-vkuznets@redhat.com>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
+ =?iso-8859-2?Q?uznets@redhat.com>,_kvm@vger.kernel.org,=09Paolo_Bonzini_<?=
+ =?iso-8859-2?Q?pbonzini@redhat.com>,=09Radim_Kr=E8m=E1=F8_<rkrcmar@redhat?=
+ =?iso-8859-2?Q?.com>,=09linux-kernel@vger.kernel.org,=09"K._Y._Srinivasan?=
+ =?iso-8859-2?Q?"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsoft?=
+ =?iso-8859-2?Q?.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,_x86@k?=
+ =?iso-8859-2?Q?ernel.org,=09"Michael_Kelley_(EOSG)"_<Michael.H.Kelley@mic?=
+ =?iso-8859-2?Q?rosoft.com>?=
+x-originating-ip: [185.231.240.5]
+x-clientproxiedby: HE1PR05CA0185.eurprd05.prod.outlook.com
+ (2603:10a6:3:f8::33) To VI1PR08MB3599.eurprd08.prod.outlook.com
+ (2603:10a6:803:85::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=rkagan@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR08MB1086;7:NGSDNTZ3fBOA9bTn3Vt+fHDzbaZfhNfWIwF5UAXybEtzh8RXUO0wcEmhVb803wkfxa5RvCBfNfMpLmzS10XZ+MMPDXnpvNkLPVShoIzrmNjTdmCp//S9fqmXClCPbpBGXuNkZH62WRUWpeFvwmuZCQ==;20:2+yRUpOTlLipIIiyA5bZSip/MRu8Dt9HrQnvrgJh1Jlx3xWRnGRXJJfdhKCnQzac33j2CgDNp5bB6ZlRI/4U5hCjHBI+MqxT/CDXYk9f8UmVUGtJK0lUWnV+PD8R6F5f6ES4/sa4McE6xvg6EPxOwLMmkScaSC903S9AJw7dhLs=
+x-ms-office365-filtering-correlation-id: 8551ab19-0e68-457a-5233-08d654414fa2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB1086;
+x-ms-traffictypediagnostic: VI1PR08MB1086:|VI1PR08MB1086:
+x-microsoft-antispam-prvs: <VI1PR08MB1086DCB8125CFE7F2F775093C9D00@VI1PR08MB1086.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231443)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR08MB1086;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB1086;
+x-forefront-prvs: 086943A159
+x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(39850400004)(396003)(136003)(376002)(366004)(346002)(189003)(199004)(53936002)(6512007)(5660300001)(86362001)(68736007)(6436002)(229853002)(6486002)(305945005)(4326008)(7416002)(6246003)(58126008)(9686003)(7736002)(14454004)(66066001)(316002)(6116002)(3846002)(1076002)(54906003)(2906002)(6916009)(478600001)(8676002)(81166006)(71190400001)(476003)(446003)(106356001)(11346002)(105586002)(33656002)(8936002)(81156014)(26005)(25786009)(52116002)(486006)(186003)(36756003)(97736004)(71200400001)(386003)(102836004)(6506007)(33896004)(14444005)(99286004)(256004)(76176011)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR08MB1086;H:VI1PR08MB3599.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HDKWJUodlP5ppEnIX45J5gjNt2qHr0aWoacyPE5t7Ywbv7OVcvaU2Ma7jefdWa9F4y8fu8ddMqYNu9fALDUcntzU0g2pKa25r95csqNuqkiPMm6UZZIXrSwRDEctD4G3X2jAtSM5RHm6m07DN6lrvIdYCpRSraBpJD9C3wSNW15FQbhuUweQTAKpy5UBdgiZfaAEdc3iMNrj8RG8eHNfuqkfVUtmDf48G2eWvGkJH0BXyQnaXacJLF/uJkq/7isAAsFi3/kntGGDLMUKMuDP+pR0C3Bas62BWujn89oenv6f451wq4nUds8ZM3J8x0ZqhSIfXUywb96CernOh9caJ/ptfcUC4p4zQaYWk0K4ZMakQ1zHRVFPU10KpJeZ+WqvdZv/E4CM207sU6qNeXnrtgQXOlNHmZWkF8uUmqR1OGdrqSh5JiloRC48n08e4nzNvS8u2Vl8ISndXBJCBPhWMZ2ZxUfxmoVs0yr3zc4uBKElEUR7884nKawksbw8oQMacMYiYAYXifCwl9bmhpl/N+o93pX+oGtI3NhqM3MvPCg=
+spamdiagnosticoutput: 1:22
+Content-Type: text/plain; charset="iso-8859-2"
+Content-ID: <0F710EE9AE91B9439A4B78DF2EA37207@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8551ab19-0e68-457a-5233-08d654414fa2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 08:21:20.9812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB1086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/18 8:27 PM, Hugh Dickins wrote:
-> Waiting on a page migration entry has used wait_on_page_locked() all
-> along since 2006: but you cannot safely wait_on_page_locked() without
-> holding a reference to the page, and that extra reference is enough to
-> make migrate_page_move_mapping() fail with -EAGAIN, when a racing task
-> faults on the entry before migrate_page_move_mapping() gets there.
-> 
-> And that failure is retried nine times, amplifying the pain when
-> trying to migrate a popular page.  With a single persistent faulter,
-> migration sometimes succeeds; with two or three concurrent faulters,
-> success becomes much less likely (and the more the page was mapped,
-> the worse the overhead of unmapping and remapping it on each try).
-> 
-> This is especially a problem for memory offlining, where the outer
-> level retries forever (or until terminated from userspace), because
-> a heavy refault workload can trigger an endless loop of migration
-> failures.  wait_on_page_locked() is the wrong tool for the job.
-> 
-> David Herrmann (but was he the first?) noticed this issue in 2014:
-> https://marc.info/?l=linux-mm&m=140110465608116&w=2
-> 
-> Tim Chen started a thread in August 2017 which appears relevant:
-> https://marc.info/?l=linux-mm&m=150275941014915&w=2
-> where Kan Liang went on to implicate __migration_entry_wait():
-> https://marc.info/?l=linux-mm&m=150300268411980&w=2
-> and the thread ended up with the v4.14 commits:
-> 2554db916586 ("sched/wait: Break up long wake list walk")
-> 11a19c7b099f ("sched/wait: Introduce wakeup boomark in wake_up_page_bit")
-> 
-> Baoquan He reported "Memory hotplug softlock issue" 14 November 2018:
-> https://marc.info/?l=linux-mm&m=154217936431300&w=2
-> 
-> We have all assumed that it is essential to hold a page reference while
-> waiting on a page lock: partly to guarantee that there is still a struct
-> page when MEMORY_HOTREMOVE is configured, but also to protect against
-> reuse of the struct page going to someone who then holds the page locked
-> indefinitely, when the waiter can reasonably expect timely unlocking.
-> 
-> But in fact, so long as wait_on_page_bit_common() does the put_page(),
-> and is careful not to rely on struct page contents thereafter, there is
-> no need to hold a reference to the page while waiting on it.  That does
-> mean that this case cannot go back through the loop: but that's fine for
-> the page migration case, and even if used more widely, is limited by the
-> "Stop walking if it's locked" optimization in wake_page_function().
-> 
-> Add interface put_and_wait_on_page_locked() to do this, using "behavior"
-> enum in place of "lock" arg to wait_on_page_bit_common() to implement it.
-> No interruptible or killable variant needed yet, but they might follow:
-> I have a vague notion that reporting -EINTR should take precedence over
-> return from wait_on_page_bit_common() without knowing the page state,
-> so arrange it accordingly - but that may be nothing but pedantic.
-> 
-> __migration_entry_wait() still has to take a brief reference to the
-> page, prior to calling put_and_wait_on_page_locked(): but now that it
-> is dropped before waiting, the chance of impeding page migration is
-> very much reduced.  Should we perhaps disable preemption across this?
-> 
-> shrink_page_list()'s __ClearPageLocked(): that was a surprise!  This
-> survived a lot of testing before that showed up.  PageWaiters may have
-> been set by wait_on_page_bit_common(), and the reference dropped, just
-> before shrink_page_list() succeeds in freezing its last page reference:
-> in such a case, unlock_page() must be used.  Follow the suggestion from
-> Michal Hocko, just revert a978d6f52106 ("mm: unlockless reclaim") now:
-> that optimization predates PageWaiters, and won't buy much these days;
-> but we can reinstate it for the !PageWaiters case if anyone notices.
-> 
-> It does raise the question: should vmscan.c's is_page_cache_freeable()
-> and __remove_mapping() now treat a PageWaiters page as if an extra
-> reference were held?  Perhaps, but I don't think it matters much, since
-> shrink_page_list() already had to win its trylock_page(), so waiters are
-> not very common there: I noticed no difference when trying the bigger
-> change, and it's surely not needed while put_and_wait_on_page_locked()
-> is only used for page migration.
-> 
-> Reported-and-tested-by: Baoquan He <bhe@redhat.com>
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+On Mon, Nov 26, 2018 at 04:47:31PM +0100, Vitaly Kuznetsov wrote:
+> Turns out Hyper-V on KVM (as of 2016) will only use synthetic timers
+> if direct mode is available. With direct mode we notify the guest by
+> asserting APIC irq instead of sending a SynIC message.
+>=20
+> The implementation uses existing vec_bitmap for letting lapic code
+> know that we're interested in the particular IRQ's EOI request. We assume
+> that the same APIC irq won't be used by the guest for both direct mode
+> stimer and as sint source (especially with AutoEOI semantics). It is
+> unclear how things should be handled if that's not true.
+>=20
+> Direct mode is also somewhat less expensive; in my testing
+> stimer_send_msg() takes not less than 1500 cpu cycles and
+> stimer_notify_direct() can usually be done in 300-400. WS2016 without
+> Hyper-V, however, always sticks to non-direct version.
+>=20
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> - Changes since v1: avoid open-coding stimer_mark_pending() in
+>   kvm_hv_synic_send_eoi() [Paolo Bonzini]
+> ---
+>  arch/x86/kvm/hyperv.c    | 67 +++++++++++++++++++++++++++++++++++-----
+>  arch/x86/kvm/trace.h     | 10 +++---
+>  arch/x86/kvm/x86.c       |  1 +
+>  include/uapi/linux/kvm.h |  1 +
+>  4 files changed, 67 insertions(+), 12 deletions(-)
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Thanks!
+Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
