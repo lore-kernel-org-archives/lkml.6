@@ -2,109 +2,120 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1027AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78995C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE12620873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Kpyk88uI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE12620873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A3B3208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:14:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3B3208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbeK0ULj (ORCPT
+        id S1730135AbeK0ULn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:11:39 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2169 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729387AbeK0ULj (ORCPT
+        Tue, 27 Nov 2018 15:11:43 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34330 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbeK0ULm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:11:39 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bfd0af20001>; Tue, 27 Nov 2018 01:14:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 27 Nov 2018 01:14:24 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 27 Nov 2018 01:14:24 -0800
-Received: from [10.26.11.97] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 27 Nov
- 2018 09:14:21 +0000
-Subject: Re: [PATCH 4.14 00/62] 4.14.84-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20181126105050.592727680@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <652adb77-bb9e-f4d4-7975-b61f9ac20947@nvidia.com>
-Date:   Tue, 27 Nov 2018 09:14:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 27 Nov 2018 15:11:42 -0500
+Received: by mail-oi1-f196.google.com with SMTP id h25so18677081oig.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 01:14:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8VeYNIEhl6I0P815TUv2St4I1yjEEHZt1/hiJSlXg7A=;
+        b=KxQpMLA2SIClrYUYP6kYtUdJoPO0exi+rpjO5vy2QgZzGbPlZ8ECLlm2qIMEEN9RyQ
+         oV3VdMb914tJffM0+kO9RfUaMUWPS1hmZe6RvHJiBiDP3Kte25rlLUpcnvOA1d0yiWyR
+         OPWlXmiLQT2QnULchz9IbcBDn3aWXA+Y8SfsE9akn6Eg1aqTlJ3HCVdczwbnJI4FPS7L
+         aFtfXlR3uKRm/7LVlg20x/yw2Xx3HCkG5ln12AZ5ztSv5qw11sSA4GN2IP9YwgUnS3QS
+         JaGR0X8xWObDVIM1uzqjdJXHzJtk0EHqJKQyac9xdXq9jaNgb21QHUvQ++aKQhQd5/ex
+         Ptxg==
+X-Gm-Message-State: AGRZ1gJgeTPuXHF+IgQHxU7D7Og/qEFlsnZlpWV7KS9uPrUZNd8rxlVU
+        9T/eG4d+FJmUJVGyEc1K0iO6fhlO8sb1HARTSBELp2PoVOSwJA==
+X-Google-Smtp-Source: AJdET5fRctI/moiaQ2GrAOfxzAysxckeQVwW7ze1F2DCXt/kdNAEc016UedbNS/rMJUj5UlgS1H1vDppNrwe2b0u7m0=
+X-Received: by 2002:aca:50cf:: with SMTP id e198mr18396498oib.343.1543310067736;
+ Tue, 27 Nov 2018 01:14:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543310066; bh=kt27ZvOsSUj5Po5gjtO2LyfCFPpPRXfvH8R3eRUAl7c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Kpyk88uIVbc7EEl/2awEgEfDLOTDIYSDyzUdqnVV7rihEb6sc6oLz6agi7PjauwuL
-         2HxYcx3SJR4+2pQ1eZKV3YyKRBzqI7w0/CCZ2QNBU+G/nJTYbdRuzBOx2uBMMgHw/I
-         dG9ALoNF4YTQIKMnBgWR+zF6jvBcKht86afCczamHM7kTwVaA/t5OH1lXIqpLNvlRq
-         dpIdaNp6nRivrSF9dJSTNmTvdJorP75nNdOJLy72dwergrM6aivlM222BXLRANN7us
-         /p3oCYR+RflQjEC1Eh5sbTfuMbCjgg16IQuwqZf2eDjakNiz/f6vXl4FMCM/Hhts2A
-         47CfXswry4RJA==
+References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+In-Reply-To: <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 27 Nov 2018 10:14:16 +0100
+Message-ID: <CAFqZXNvUg9wNV4DBsFa+_Kkr5AMrdSGOkGuJmmF17MC59ASCig@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 27, 2018 at 9:53 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Tue, Nov 27, 2018 at 1:52 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Paul,
+> >
+> > Today's linux-next merge of the selinux tree got a conflict in:
+> >
+> >   security/selinux/hooks.c
+> >
+> > between commit:
+> >
+> >   0472421f47a9 ("vfs: Remove unused code after filesystem context changes")
+> >
+> > from the vfs tree and commit:
+> >
+> >   2cbdcb882f97 ("selinux: always allow mounting submounts")
+> >
+> > from the selinux tree.
+> >
+> > I fixed it up (the former removed the function updated by the latter -
+> > I am not sure if there are further changes necessary) and can carry the
+> > fix as necessary. This is now fixed as far as linux-next is concerned,
+> > but any non trivial conflicts should be mentioned to your upstream
+> > maintainer when your tree is submitted for merging.  You may also want
+> > to consider cooperating with the maintainer of the conflicting tree to
+> > minimise any particularly complex conflicts.
+>
+> Hm... seems that there was some massive overhaul in the VFS code right
+> at the wrong moment... There are new hooks for mounting now and the
+> code that our commit changes is now here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
 
-On 26/11/2018 10:50, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.84 release.
-> There are 62 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Nov 28 10:50:20 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.84-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+For convenience, here are direct links to the most important -next VFS
+commits that are related:
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=c87c47c34750e9ee1ff0345593f3cbf6726b9d4e
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=4786c3427b2517ee9c685f95bf5b3185e332e64d
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=37744f3d21f8dbf6bb65e1ecef38c2cf9503d202
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0472421f47a97be4b741d55ffd18f68ed9ba7cea
 
-Linux version:	4.14.84-rc1-gc203efd
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
+>
+> It seems that the logic is still the same, just now our patch (or the
+> VFS one) needs to be updated to change the above line as such
+> (untested pseudo-patch):
+>
+> - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
+> + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
+>
+> Thanks for the heads up, Stephen!
+>
+> --
+> Ondrej Mosnacek <omosnace at redhat dot com>
+> Associate Software Engineer, Security Technologies
+> Red Hat, Inc.
 
 -- 
-nvpublic
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
