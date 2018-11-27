@@ -2,179 +2,178 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D67FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EE4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABEF2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20C1C2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DJEZtaaA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABEF2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcHUfHlV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C1C2133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbeK0Nbf (ORCPT
+        id S1728341AbeK0Nfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:31:35 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40480 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbeK0Nbe (ORCPT
+        Tue, 27 Nov 2018 08:35:47 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37716 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbeK0Nfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:31:34 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s5so18726782oth.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:35:16 -0800 (PST)
+        Tue, 27 Nov 2018 08:35:46 -0500
+Received: by mail-ed1-f65.google.com with SMTP id h15so17690347edb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:39:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1b1NHktt1/h4wTdlHusrlwjuKRh9FmZI2kwzuIPtQls=;
-        b=DJEZtaaAm1DwQqQxQs9xWD6ganKM1y3uuADwIorBiy3pJ7acAZjYIzf0zN+beQ0ykz
-         rOGnaljTs0A74six8OYfLxhPNRcyVt8bEtscBB4xLCm5XJ4TQmlQ7RPsanrAYj7kCs1G
-         Au+lXp1RiuR8JYHNNbF8CbVjq2iP2zDzhc63wqwTNkP9gsON13lxLKP7usp0QeWoRGWD
-         aEMa/aC1bU4lKtnNROBatsl2e4VrxfqxsuVEcUtPIS87bNhMdWAVS/jdyxGoYTw90vw3
-         WFNskGiRCd1K7hGMpJ2V0hiOGppaEd1jivFUxj4P+eevCXOhIbg5gxabSc/j7aIJUlhl
-         VmXQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e3DnUS0xGl1BdP8iCaJnj8b8YZZ49GG1NKDzme1M4zk=;
+        b=OcHUfHlVixSwdJVIScNNUWjvETbJCfTrK9oHeAYx/PTIF+g0l5/ZVA+6eDIrYNFhN6
+         iX48X6cLKvpTjpKpQnKXvKeULK9cWfI8srVJy4MBdl/IQned5vJIuM2qqMlrK3B2D8qn
+         tmkFm0ibCh/D+DxsoALiBVWhpyNb23ZPs/Vp5nhltB58nrwEF8dewWatEjjFtf5GpXrG
+         hOHQpid+E235ijnx0SvpTYCwFOXREgX/ZWQH9B8XaBceZwBqZiZkKIC401h/Y86wBelT
+         QGjPo2oIoGHrdsxAkvCoxJ+7M4l8/Gt63U8uZCoSco4CnxVALJJiJlGLydKkaBuXwUfA
+         RVpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1b1NHktt1/h4wTdlHusrlwjuKRh9FmZI2kwzuIPtQls=;
-        b=qdx0NYTlTEWcN1mCYPiQE5jQ2WZZx9aLF/4rS4Fl2doLoukN8GcudTLtCIRaZgbWZM
-         CM6PPNt2+AVIRoWlH2XcVHVL15vKPTF4Xho9WMJnGxvRN/1S0ckd06d5B6zefeMGsQO6
-         2d+IPD7OGgKDHZGmiUGcujTXWOh3M0nhu+F9bNPGz4jgELU0Be0Is/uEpX3Ns5TpwZtM
-         4YkrXoqCwD8P6JjeWtkr6n2fzatgAPbLYgR4fIqW18IWPHyjFxhztx1fQ54BAFM1zokx
-         hxGgnOBXDyDjBRm3KgHKp5GbWJ3PxJsFs1zas9PHJaCz8MaSS1yeLyqHZGel4L13OxyR
-         YWhw==
-X-Gm-Message-State: AA+aEWbn95VbsFOFfrCVy+tWz94AA7yzj+HUoefVr9Iqr8bcxKCMC8J3
-        hjpfiRacKXwXROs39+QxFmOIWkPelX6GTRRFCnRxeA==
-X-Google-Smtp-Source: AFSGD/V8n1FqhNMu/9zXJmEoUWIlt3SX7GqlfBNmuB3N4Vgm4XcSC0Y9j5VY8YOAeVEYmSUB6X9Er8g9KgOlI0qq6Qk=
-X-Received: by 2002:a9d:3ac:: with SMTP id f41mr12991186otf.98.1543286116603;
- Mon, 26 Nov 2018 18:35:16 -0800 (PST)
-MIME-Version: 1.0
-References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
- <154145232484.29224.1635232599636954462.stgit@ahduyck-desk1.jf.intel.com>
-In-Reply-To: <154145232484.29224.1635232599636954462.stgit@ahduyck-desk1.jf.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 18:35:05 -0800
-Message-ID: <CAPcyv4ieNzbx5iN74ZCAKDesgYt_67iM_DC-A35M=Z9jfR+YAQ@mail.gmail.com>
-Subject: Re: [driver-core PATCH v5 5/9] driver core: Establish clear order of
- operations for deferred probe and remove
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tejun Heo <tj@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e3DnUS0xGl1BdP8iCaJnj8b8YZZ49GG1NKDzme1M4zk=;
+        b=D4hVexg0TvtQd6ylgxqbcd57IzeRFN8lUDnb+SKV/GtZ3NOVRy7T2esH3DdTId3fj2
+         sS+MNuduUVhX127GfbrEJBtp1vqLzKf1I5jam2rbWrkXwTNlRvoF8LBfMFeztSd2u+ME
+         /tELuwthTXV6OY7BZP2d/VcQGf5wwdqF9q5AJbP3dKq7F2E/r4MGZIbQPTUD1qeftWdS
+         FE4eaczGJ6EUxVenEpOxX1C8webjHVMbkn0lQKopR50WTuIp+BQSrL/+JTmucjA27czK
+         X7pEOrIpkrq9XeYzwj9ooIUKIBE20MDnYT91xmqGyTEfwNhFt66k9xc7SZ+R1Isit+Ov
+         iJ7g==
+X-Gm-Message-State: AA+aEWYlzhEdEV4ZNNrRGCNwtLadxYSv5YdHLFH0twGTvaf5YvYXJbxY
+        B3ES90JPjb6iZTtt1E0dPF8=
+X-Google-Smtp-Source: AFSGD/XRsAd7K2F3z731+DcxKqCj/mSOOOfOZq3kq265ZfNFX5eKhUh0foiW9XAi94s1aEM7B3G5IA==
+X-Received: by 2002:a50:93c5:: with SMTP id o63mr24637767eda.20.1543286366565;
+        Mon, 26 Nov 2018 18:39:26 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id w13sm632899edl.54.2018.11.26.18.39.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 18:39:25 -0800 (PST)
+Date:   Tue, 27 Nov 2018 02:39:25 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Wengang Wang <wen.gang.wang@oracle.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        zhong jiang <zhongjiang@huawei.com>,
+        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
+        David Rientjes <rientjes@google.com>, iamjoonsoo.kim@lge.com,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        bvanassche@acm.org
-Content-Type: text/plain; charset="UTF-8"
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
+Message-ID: <20181127023925.xdramcjenpsawfw6@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
+ <5BF36EE9.9090808@huawei.com>
+ <CADZGycb=kxdqSdbdXNWwmgyWp2CtC3-UFmy1-PqtdgS2BrmyjA@mail.gmail.com>
+ <476b5d35-1894-680c-2bd9-b399a3f4d9ed@oracle.com>
+ <20181127003638.2oyudcyene6hb6sb@master>
+ <6e9efd77-b6af-40f4-56b0-c0572930b3e0@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e9efd77-b6af-40f4-56b0-c0572930b3e0@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 1:12 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
+On Mon, Nov 26, 2018 at 05:42:28PM -0800, Wengang Wang wrote:
 >
-> This patch adds an additional bit to the device struct named async_probe.
-> This additional bit allows us to guarantee ordering between probe and
-> remove operations.
 >
-> This allows us to guarantee that if we execute a remove operation or a
-> driver load attempt on a given interface it will not attempt to update the
-> driver member asynchronously following the earlier operation. Previously
-> this guarantee was not present and could result in us attempting to remove
-> a driver from an interface only to have it show up later when it is
-> asynchronously loaded.
+>On 2018/11/26 16:36, Wei Yang wrote:
+>> On Mon, Nov 26, 2018 at 08:57:54AM -0800, Wengang Wang wrote:
+>> > 
+>> > On 2018/11/25 17:59, Wei Yang wrote:
+>> > > On Tue, Nov 20, 2018 at 10:58 AM zhong jiang <zhongjiang@huawei.com> wrote:
+>> > > > On 2018/11/17 9:33, Wengang Wang wrote:
+>> > > > > The this_cpu_cmpxchg makes the do-while loop pass as long as the
+>> > > > > s->cpu_slab->partial as the same value. It doesn't care what happened to
+>> > > > > that slab. Interrupt is not disabled, and new alloc/free can happen in the
+>> > > > > interrupt handlers. Theoretically, after we have a reference to the it,
+>> > > > > stored in _oldpage_, the first slab on the partial list on this CPU can be
+>> > > > > moved to kmem_cache_node and then moved to different kmem_cache_cpu and
+>> > > > > then somehow can be added back as head to partial list of current
+>> > > > > kmem_cache_cpu, though that is a very rare case. If that rare case really
+>> > > > > happened, the reading of oldpage->pobjects may get a 0xdead0000
+>> > > > > unexpectedly, stored in _pobjects_, if the reading happens just after
+>> > > > > another CPU removed the slab from kmem_cache_node, setting lru.prev to
+>> > > > > LIST_POISON2 (0xdead000000000200). The wrong _pobjects_(negative) then
+>> > > > > prevents slabs from being moved to kmem_cache_node and being finally freed.
+>> > > > > 
+>> > > > > We see in a vmcore, there are 375210 slabs kept in the partial list of one
+>> > > > > kmem_cache_cpu, but only 305 in-use objects in the same list for
+>> > > > > kmalloc-2048 cache. We see negative values for page.pobjects, the last page
+>> > > > > with negative _pobjects_ has the value of 0xdead0004, the next page looks
+>> > > > > good (_pobjects is 1).
+>> > > > > 
+>> > > > > For the fix, I wanted to call this_cpu_cmpxchg_double with
+>> > > > > oldpage->pobjects, but failed due to size difference between
+>> > > > > oldpage->pobjects and cpu_slab->partial. So I changed to call
+>> > > > > this_cpu_cmpxchg_double with _tid_. I don't really want no alloc/free
+>> > > > > happen in between, but just want to make sure the first slab did expereince
+>> > > > > a remove and re-add. This patch is more to call for ideas.
+>> > > > Have you hit the really issue or just review the code ?
+>> > > > 
+>> > > > I did hit the issue and fixed in the upstream patch unpredictably by the following patch.
+>> > > > e5d9998f3e09 ("slub: make ->cpu_partial unsigned int")
+>> > > > 
+>> > > Zhong,
+>> > > 
+>> > > I took a look into your upstream patch, while I am confused how your patch
+>> > > fix this issue?
+>> > > 
+>> > > In put_cpu_partial(), the cmpxchg compare cpu_slab->partial (a page struct)
+>> > > instead of the cpu_partial (an unsigned integer). I didn't get the
+>> > > point of this fix.
+>> > I think the patch can't prevent pobjects from being set as 0xdead0000 (the
+>> > primary 4 bytes of LIST_POISON2).
+>> > But if pobjects is treated as unsigned integer,
+>> > 
+>> > 2266???????????????????????????????????????????????? pobjects = oldpage->pobjects;
+>> > 2267???????????????????????????????????????????????? pages = oldpage->pages;
+>> > 2268???????????????????????????????????????????????? if (drain && pobjects > s->cpu_partial) {
+>> > 2269???????????????????????????????????????????????????????????????? unsigned long flags;
+>> > 
+>> Ehh..., you mean (0xdead0000 > 0x02) ?
+>Yes.
 >
-> One change I made in addition is I replaced the use of "bool X:1" to define
-> the bitfield to a "u8 X:1" setup in order to resolve some checkpatch
-> warnings.
+>> This is really a bad thing, if it wordarounds the problem like this.
+>It does.
+>> I strongly don't agree this is a *fix*. This is too tricky.
+>It's tricky. I don't know for what purpose the patch went in. The commit
+>message was just saying _pobjects_ should be "unsigned"...
 
-The usage of "us" in the changelog through me off, please reword this
-to explicitly state the subject like: "The additional bit allows the
-driver core to guarantee ordering between probe and remove
-operations."
+Well, upstream accepts that commit is reasonable, since pobjects is not
+possible to be negative. This is two different things.
 
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  drivers/base/dd.c      |  104 +++++++++++++++++++++++++++---------------------
->  include/linux/device.h |    9 ++--
->  2 files changed, 64 insertions(+), 49 deletions(-)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index e74cefeb5b69..ed19cf0d6f9a 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -472,6 +472,8 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->                  drv->bus->name, __func__, drv->name, dev_name(dev));
->         WARN_ON(!list_empty(&dev->devres_head));
->
-> +       /* clear async_probe flag as we are no longer deferring driver load */
-> +       dev->async_probe = false;
->  re_probe:
->         dev->driver = drv;
->
-> @@ -771,6 +773,10 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
->
->         device_lock(dev);
->
-> +       /* nothing to do if async_probe has been cleared */
-> +       if (!dev->async_probe)
-> +               goto out_unlock;
-> +
->         if (dev->parent)
->                 pm_runtime_get_sync(dev->parent);
->
-> @@ -781,7 +787,7 @@ static void __device_attach_async_helper(void *_dev, async_cookie_t cookie)
->
->         if (dev->parent)
->                 pm_runtime_put(dev->parent);
-> -
-> +out_unlock:
->         device_unlock(dev);
->
->         put_device(dev);
-> @@ -826,6 +832,7 @@ static int __device_attach(struct device *dev, bool allow_async)
->                          */
->                         dev_dbg(dev, "scheduling asynchronous probe\n");
->                         get_device(dev);
-> +                       dev->async_probe = true;
->                         async_schedule(__device_attach_async_helper, dev);
->                 } else {
->                         pm_request_idle(dev);
-> @@ -971,62 +978,69 @@ EXPORT_SYMBOL_GPL(driver_attach);
->   */
->  static void __device_release_driver(struct device *dev, struct device *parent)
->  {
-> -       struct device_driver *drv;
-> +       struct device_driver *drv = dev->driver;
->
-> -       drv = dev->driver;
-> -       if (drv) {
-> -               while (device_links_busy(dev)) {
-> -                       __device_driver_unlock(dev, parent);
-> +       /*
-> +        * In the event that we are asked to release the driver on an
-> +        * interface that is still waiting on a probe we can just terminate
-> +        * the probe by setting async_probe to false. When the async call
-> +        * is finally completed it will see this state and just exit.
-> +        */
-> +       dev->async_probe = false;
-> +       if (!drv)
-> +               return;
+But relates that commit with the  problem here is not proper.
 
-Patch 4 deleted the async_synchronize_full() that would have flushed
-in-flight ->probe() relative to the current ->remove(). If remove runs
-before probe then would seem to be deadlock condition, but if
-->remove() runs before probe then dev->driver is NULL and we abort. So
-I'm struggling to see what value dev->async_probe provides over
-dev->driver?
+>
+>thanks,
+>wengang
+>
+>> > line 2268 will be true in put_cpu_partial(), thus code goes to
+>> > unfreeze_partials(). This way the slabs in the cpu partial list can be moved
+>> > to kmem_cache_nod and then freed. So it fixes (or say workarounds) the
+>> > problem I see here (huge number of empty slabs stay in cpu partial list).
+>> > 
+>> > thanks
+>> > wengang
+>> > 
+>> > > > Thanks,
+>> > > > zhong jiang
+
+-- 
+Wei Yang
+Help you, Help me
