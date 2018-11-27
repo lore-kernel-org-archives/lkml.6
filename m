@@ -2,259 +2,137 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B61C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CE0C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B5C520817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5C520817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5824221104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:34:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUQmMh/g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5824221104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeK1Cau (ORCPT
+        id S1729787AbeK1CcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:30:50 -0500
-Received: from mga14.intel.com ([192.55.52.115]:2503 "EHLO mga14.intel.com"
+        Tue, 27 Nov 2018 21:32:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbeK1Cau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:30:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 07:32:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="114623107"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Nov 2018 07:32:03 -0800
-Date:   Tue, 27 Nov 2018 07:32:03 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 6/5] x86/fault: Clean up the page fault oops decoder a bit
-Message-ID: <20181127153202.GA27075@linux.intel.com>
-References: <cover.1542841400.git.luto@kernel.org>
- <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
- <20181122084119.GA44720@gmail.com>
+        id S1729309AbeK1CcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:32:15 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D0020817;
+        Tue, 27 Nov 2018 15:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543332838;
+        bh=BYOy+4knfpODYIdWjSTvvSHRhY0PnDameul8lIism8E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pUQmMh/g1400+U65+Wm0vcFYSlV0UXbGwtZIq+h7AjBWOUoFct2AKErS8CfEJ1NoU
+         L1y88QbAogInSCi+h6uLZPdhiJzrZbaY9OnWIsLE02tv+D7DXezaS4lVGOyTdeAsUM
+         ncm0tNwWrYbUnDkSNTPHNmjDYKYtTH2TaH+4TLJE=
+Date:   Tue, 27 Nov 2018 09:33:56 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bharat Bhushan <bharat.bhushan@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
+        David Daney <david.daney@cavium.com>,
+        Jan Glauber <jglauber@cavium.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Maik Broemme <mbroemme@libmpq.org>,
+        Chris Blake <chrisrblake93@gmail.com>
+Subject: Re: [PATCH] PCI: Mark NXP LS1088 to avoid bus reset bus
+Message-ID: <20181127153356.GA112381@google.com>
+References: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122084119.GA44720@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181127083454.26560-1-Bharat.Bhushan@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 09:41:19AM +0100, Ingo Molnar wrote:
-> 
-> * Andy Lutomirski <luto@kernel.org> wrote:
-> 
-> > One of Linus' favorite hobbies seems to be looking at OOPSes and
-> > decoding the error code in his head.  This is not one of my favorite
-> > hobbies :)
-> > 
-> > Teach the page fault OOPS hander to decode the error code.  If it's
-> > a !USER fault from user mode, print an explicit note to that effect
-> > and print out the addresses of various tables that might cause such
-> > an error.
-> > 
-> > With this patch applied, if I intentionally point the LDT at 0x0 and
-> > run the x86 selftests, I get:
-> > 
-> > BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> > HW error: normal kernel read fault
-> > This was a system access from user code
-> > IDT: 0xfffffe0000000000 (limit=0xfff) GDT: 0xfffffe0000001000 (limit=0x7f)
-> > LDTR: 0x50 -- base=0x0 limit=0xfff7
-> > TR: 0x40 -- base=0xfffffe0000003000 limit=0x206f
-> > PGD 800000000456e067 P4D 800000000456e067 PUD 4623067 PMD 0
-> > SMP PTI
-> > CPU: 0 PID: 153 Comm: ldt_gdt_64 Not tainted 4.19.0+ #1317
-> > Hardware name: ...
-> > RIP: 0033:0x401454
-> 
-> I've applied your series, with one small edit, the following message:
-> 
->   > HW error: normal kernel read fault
-> 
-> will IMHO confuse the heck out of users, thinking that their hardware is 
-> broken...
-> 
-> Yes, the message is accurate, in MM pagefault language it's indeed the HW 
-> error code, but it's a language very few people speak.
-> 
-> So I edited it over to say '#PF error code'. I also applied a few other 
-> minor cleanups - see the changelog below.
+[+cc David, Jan, Alex, Maik, Chris]
 
-I responded to the original thread a hair too late...
+On Tue, Nov 27, 2018 at 08:46:33AM +0000, Bharat Bhushan wrote:
+> NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
+> bus reset with e1000e. Link state of device does not comes UP and so
+> config space never accessible again.
 
-What about something like this instead of manually handling the case
-where error_code==0 so that we get e.g. "[KERNEL] [READ]" instead of
-"normal kernel read fault"?  Getting "[PROT] [KERNEL] [READ]" seems
-useful.
+Previous similar commits:
 
-IMO "[normal kernel read fault]" followed by "This was a system access
-from user code" is still confusing.
+  822155100e58 ("PCI: Mark Cavium CN8xxx to avoid bus reset")
+  8e2e03179923 ("PCI: Mark Atheros AR9580 to avoid bus reset")
+  9ac0108c2bac ("PCI: Mark Atheros AR9485 and QCA9882 to avoid bus reset")
+  c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
 
----
-8b29ee4351d5c625aa9ca2765f8da5e Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 27 Nov 2018 07:09:57 -0800
-Subject: [PATCH] x86/fault: Print "KERNEL" and "READ" for #PF error codes
+1) Please make your subject match (remove the spurious "bus" at the
+end)
 
-...and explicitly state that it's a "code" that's being printed.
+2) This should probably be marked for stable (v3.14 and later, since
+the quirk itself appeared in v3.19 and marked for v3.14 and later
+stable kernels).  Maybe even mark it as "Fixes: c3e59ee4e766..." to
+connect it.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/mm/fault.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+3) The 1957:80c0 PCI ID doesn't appear in https://pci-ids.ucw.cz/; can
+you add it?
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..510e263c256b 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -660,8 +660,10 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
- 	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
- 	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
- 	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
--
--	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-+	err_str_append(~error_code, err_txt, X86_PF_USER, "[KERNEL]");
-+	err_str_append(~error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR,
-+							  "[READ]");
-+	pr_alert("#PF error code: %s\n", err_txt);
- 
- 	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
- 		struct desc_ptr idt, gdt;
--- 
-2.19.2
+4) Is there a hardware erratum for this?  If so, please include the
+URL here.
 
-> 
-> Let me know if you have any objections.
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-> ===============>
-> From a2aa52ab16efbee40ad118ebac4a5e438f5b43ee Mon Sep 17 00:00:00 2001
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Thu, 22 Nov 2018 09:34:03 +0100
-> Subject: [PATCH] x86/fault: Clean up the page fault oops decoder a bit
-> 
->  - Make the oops messages a bit less scary (don't mention 'HW errors')
-> 
->  - Turn 'PROT USER' (which is visually easily confused with PROT_USER)
->    into individual bit descriptors: "[PROT] [USER]".
->    This also makes "[normal kernel read fault]" more apparent.
-> 
->  - De-abbreviate variables to make the code easier to read
-> 
->  - Use vertical alignment where appropriate.
-> 
->  - Add comment about string size limits and the helper function.
-> 
->  - Remove unnecessary line breaks.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+5) Can you reproduce the problem using the same endpoint (e1000e) on a
+different system with a different bridge?
+
+6) Have you looked at this with a PCIe analyzer?  It would be very
+interesting to compare the boot-time or system reboot path with the
+individual bus reset path you're fixing.
+
+Since there are several similar reports and they sometimes involve the
+same devices (both your patch and 822155100e58 mention e1000e), I'm a
+little suspicious that we're doing something wrong in the bus reset
+path.
+
+I think bus reset uses Secondary Bus Reset in the Bridge Control
+register.  That's a generic mechanism that I would expect to be pretty
+well-tested.  I suspect the BIOS probably uses it in the reboot path,
+and the device probably works after that.
+
+So I wonder if the Linux delay isn't quite long enough, or our first
+access to the device isn't quite right, e.g., maybe there's some issue
+with the bus/device number capture (PCIe r4.0, sec 2.2.6.2).
+
+> Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
 > ---
->  arch/x86/mm/fault.c | 38 +++++++++++++++++++++++---------------
->  1 file changed, 23 insertions(+), 15 deletions(-)
+>  drivers/pci/quirks.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index f5efbdba2b6d..2ff25ad33233 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -603,10 +603,13 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
->  		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
->  }
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 4700d24e5d55..b9ae4e9f101a 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -3391,6 +3391,13 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
+>   */
+>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CAVIUM, 0xa100, quirk_no_bus_reset);
 >  
-> -static void errstr(unsigned long ec, char *buf, unsigned long mask,
-> -		   const char *txt)
 > +/*
-> + * This helper function transforms the #PF error_code bits into
-> + * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
+> + * NXP (Freescale Vendor ID) LS1088 chips do not behave correctly after
+> + * bus reset. Link state of device does not comes UP and so config space
+> + * never accessible again.
 > + */
-> +static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x80c0, quirk_no_bus_reset);
+> +
+>  static void quirk_no_pm_reset(struct pci_dev *dev)
 >  {
-> -	if (ec & mask) {
-> +	if (error_code & mask) {
->  		if (buf[0])
->  			strcat(buf, " ");
->  		strcat(buf, txt);
-> @@ -614,10 +617,9 @@ static void errstr(unsigned long ec, char *buf, unsigned long mask,
->  }
->  
->  static void
-> -show_fault_oops(struct pt_regs *regs, unsigned long error_code,
-> -		unsigned long address)
-> +show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long address)
->  {
-> -	char errtxt[64];
-> +	char err_txt[64];
->  
->  	if (!oops_may_print())
->  		return;
-> @@ -646,15 +648,21 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
->  		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
->  		 (void *)address);
->  
-> -	errtxt[0] = 0;
-> -	errstr(error_code, errtxt, X86_PF_PROT, "PROT");
-> -	errstr(error_code, errtxt, X86_PF_WRITE, "WRITE");
-> -	errstr(error_code, errtxt, X86_PF_USER, "USER");
-> -	errstr(error_code, errtxt, X86_PF_RSVD, "RSVD");
-> -	errstr(error_code, errtxt, X86_PF_INSTR, "INSTR");
-> -	errstr(error_code, errtxt, X86_PF_PK, "PK");
-> -	pr_alert("HW error: %s\n", error_code ? errtxt :
-> -		 "normal kernel read fault");
-> +	err_txt[0] = 0;
-> +
-> +	/*
-> +	 * Note: length of these appended strings including the separation space and the
-> +	 * zero delimiter must fit into err_txt[].
-> +	 */
-> +	err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
-> +	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
-> +	err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
-> +	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
-> +	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
-> +	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
-> +
-> +	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-> +
->  	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
->  		struct desc_ptr idt, gdt;
->  		u16 ldtr, tr;
+>  	/*
+> -- 
+> 2.19.1
+> 
