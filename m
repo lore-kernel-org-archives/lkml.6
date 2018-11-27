@@ -2,210 +2,266 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD8FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F8FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9A520873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:44:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9A520873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 275A020873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 07:44:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0vJrjW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275A020873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbeK0Slg convert rfc822-to-8bit (ORCPT
+        id S1729270AbeK0Sll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 13:41:36 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35217 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728920AbeK0Slf (ORCPT
+        Tue, 27 Nov 2018 13:41:41 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:43785 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729085AbeK0Slj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 13:41:35 -0500
-Received: from mail-pl1-f199.google.com ([209.85.214.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gRY2r-0005P5-RS
-        for linux-kernel@vger.kernel.org; Tue, 27 Nov 2018 07:44:33 +0000
-Received: by mail-pl1-f199.google.com with SMTP id m1-v6so23174129plb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 23:44:33 -0800 (PST)
+        Tue, 27 Nov 2018 13:41:39 -0500
+Received: by mail-yw1-f65.google.com with SMTP id l200so8739851ywe.10;
+        Mon, 26 Nov 2018 23:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xTNFVmf/GK9WgmG8z8/OlZGjWxBh9pgBayeCDJvYMCQ=;
+        b=W0vJrjW99sZnk3RPfD/Gx7T+CY5/9Hi/E7JdDBeH9FWgyU1aCuVShDc5ul2eJUO0RY
+         w0OghBIWO/XZYz7zgED1k+ZwfQgrGJIpMxXeoQ1/TLqRA96NFbdZ48Fw9/vN7RF0Grcl
+         TR9e/RzqwdjkQ+3m9Uy8sFLNpz/TMfxqtrlOAi6pEY8r/e6Sx9oACrkVj3NE+ANVGzEF
+         h49MGSe12J3gZk1tZVT1EkFYvmDdkXDcB2A9PFusCNfBeupXT9BE3XNPZe7qUrUDWJVt
+         NPTQhp9jsVQnz1ch6sMYUGxvY3D71IDPYK4kNLGMy24ap8teHvXkzStWCkOnOwztJwCo
+         cpHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=DX+wn/AKky27OOXrtotGQIIxJZybkzeoDLAK/8RhLjY=;
-        b=rn6UzHCRA1rHAktIBF4L+6hNx1D7OZn8Z9gaeJuHvW8BqcQV6Tcabl7vwq06iFP8ZE
-         OK+uKHSMu5tpu87M1XdONuL31joa08sJSV01OzoSdAN7EBGTGLIJKT/d78n99mfoXG5Z
-         /XMIQHJnEcr/IXourdgWOaOQJ+34cxMV62iBDyplna7sQlaLc8UfBCF1RiQvaFozFfc3
-         b2UQzjnaqM942jSiZKkG+xXIc3lXveZgHQ3ooE6vrK3cRO06gVj+nZd8hMPl/WNqHCHp
-         i86n4HLMqYRKaXeLcDOd4JzEP27GFQTKfDm2/gTQYqtNASLNe6OXyU/uFoXZS+cZFSjN
-         Z5Og==
-X-Gm-Message-State: AA+aEWZrPhGYyLm4sNElYFAIMZxSMiW7JiXvcZO8mEetetLJYnz2aA0k
-        AETVC/pCZjuzvtkboiHhYHgk5V0goWo/HtZAJuLg0ywQB94j/25vmJQoB4vYNERx+z7VdtS94ie
-        dO/MnM5vfqKYwTqJzt/I9EYJmttgaWvCSE9m1US++0g==
-X-Received: by 2002:a62:e90a:: with SMTP id j10-v6mr12589766pfh.228.1543304672273;
-        Mon, 26 Nov 2018 23:44:32 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/XeJQDwGo75ZXRjdPj7p30Rs2zG4ICq5v4lCRpF2QTIkS5AJcHXVhU+mMC7fk3+HWUWNrP4Ww==
-X-Received: by 2002:a62:e90a:: with SMTP id j10-v6mr12589752pfh.228.1543304671889;
-        Mon, 26 Nov 2018 23:44:31 -0800 (PST)
-Received: from 2001-b011-380f-1339-7cc8-c5c9-88cf-1fae.dynamic-ip6.hinet.net (2001-b011-380f-1339-7cc8-c5c9-88cf-1fae.dynamic-ip6.hinet.net. [2001:b011:380f:1339:7cc8:c5c9:88cf:1fae])
-        by smtp.gmail.com with ESMTPSA id f6sm3486626pfg.188.2018.11.26.23.44.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 23:44:30 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH v3] xhci: workaround CSS timeout on AMD SNPS 3.0 xHC
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <1542990218-30495-1-git-send-email-Sandeep.Singh@amd.com>
-Date:   Tue, 27 Nov 2018 15:44:28 +0800
-Cc:     "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4B40F321-BE33-4D36-BE1A-59139D9AA711@canonical.com>
-References: <1542990218-30495-1-git-send-email-Sandeep.Singh@amd.com>
-To:     "Singh, Sandeep" <sandeep.singh@amd.com>
-X-Mailer: Apple Mail (2.3445.101.1)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xTNFVmf/GK9WgmG8z8/OlZGjWxBh9pgBayeCDJvYMCQ=;
+        b=dwIwVmA/9fh5p2hvL0IzihzatZyBo63JtTLhVBZ9oaLjTX3aQeMAKmuve/GAgl67py
+         7ya3q9INaWfJjWoeERR4nu5zDCAcYg0l6DO92TioICDQGPwHzgFidoQEFOFO1NZsdXaz
+         lW9i4ly95VYuYrJ3Bgi2gxRC1DWDy7KWmegb7SyhIGHa/S72ZrSpiY1NIYhsSWuV33+3
+         NzupyLZmW9wtwreA4gQMHKXuG6KYIc7Iz2mjR9kvXB0HJnzFWj9F2G1NH+qDPQxWfsQy
+         B8SRiZgf5yPWbIqUZl+keuqxqlq8RmIuMXTz59rHIMyGGbFjReWCWlAGhoCcMiV/ltd7
+         Ctrg==
+X-Gm-Message-State: AGRZ1gIIEAVuvp+C6zcTEDsaT3/slYVYJkW3oD0HH8NV+0KkQxYrUyo/
+        Lqyy+i4asnYzErOeNPT67GNaagZN7f75U/eANkU=
+X-Google-Smtp-Source: AJdET5fkxaINmyDAFf1sjbx7bLts5PeYxCHSPYyTi/qVXQmjQAHEVwlSNPjNfP9xiaU04A06JnIjecLI/PorJfHC7ns=
+X-Received: by 2002:a81:34d3:: with SMTP id b202mr32824920ywa.241.1543304679367;
+ Mon, 26 Nov 2018 23:44:39 -0800 (PST)
+MIME-Version: 1.0
+References: <00000000000074e10d0576cc48f1@google.com> <0000000000001ec857057ba01589@google.com>
+In-Reply-To: <0000000000001ec857057ba01589@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Nov 2018 09:44:27 +0200
+Message-ID: <CAOQ4uxiUr6g0PYBh5wRc2ct8zyVV+o70Sc9LRBMa=Bfgry3eOA@mail.gmail.com>
+Subject: Re: possible deadlock in ovl_write_iter
+To:     syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 27, 2018 at 9:06 AM syzbot
+<syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    6f8b52ba442c Merge tag 'hwmon-for-v4.20-rc5' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=120f3905400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=695726bc473f9c36a4b6
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cad225400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13813093400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com
+>
+> overlayfs: filesystem on './file0' not supported as upperdir
+>
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.20.0-rc4+ #351 Not tainted
+> ------------------------------------------------------
+> syz-executor338/5996 is trying to acquire lock:
+> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock
+> include/linux/fs.h:757 [inline]
+> 00000000b59bb66d (&ovl_i_mutex_key[depth]){+.+.}, at:
+> ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>
+> but task is already holding lock:
+> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested fs/pipe.c:62
+> [inline]
+> 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+> fs/pipe.c:70
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #2 (&pipe->mutex/1){+.+.}:
+>         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>         __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+>         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+>         pipe_lock_nested fs/pipe.c:62 [inline]
+>         pipe_lock+0x6e/0x80 fs/pipe.c:70
+>         iter_file_splice_write+0x27d/0x1050 fs/splice.c:700
+>         do_splice_from fs/splice.c:851 [inline]
+>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>         __do_sys_splice fs/splice.c:1414 [inline]
+>         __se_sys_splice fs/splice.c:1394 [inline]
+>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (sb_writers#3){.+.+}:
+>         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
+> [inline]
+>         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+>         __sb_start_write+0x214/0x370 fs/super.c:1387
+>         sb_start_write include/linux/fs.h:1597 [inline]
+>         mnt_want_write+0x3f/0xc0 fs/namespace.c:360
+>         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+>         ovl_setattr+0x10b/0xaf0 fs/overlayfs/inode.c:30
+>         notify_change+0xbde/0x1110 fs/attr.c:334
+>         do_truncate+0x1bd/0x2d0 fs/open.c:63
+>         handle_truncate fs/namei.c:3008 [inline]
+>         do_last fs/namei.c:3424 [inline]
+>         path_openat+0x375f/0x5150 fs/namei.c:3534
+>         do_filp_open+0x255/0x380 fs/namei.c:3564
+>         do_sys_open+0x568/0x700 fs/open.c:1063
+>         __do_sys_openat fs/open.c:1090 [inline]
+>         __se_sys_openat fs/open.c:1084 [inline]
+>         __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&ovl_i_mutex_key[depth]){+.+.}:
+>         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>         inode_lock include/linux/fs.h:757 [inline]
+>         ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>         call_write_iter include/linux/fs.h:1857 [inline]
+>         new_sync_write fs/read_write.c:474 [inline]
+>         __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>         __kernel_write+0x10c/0x370 fs/read_write.c:506
+>         write_pipe_buf+0x180/0x240 fs/splice.c:797
+>         splice_from_pipe_feed fs/splice.c:503 [inline]
+>         __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>         splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>         default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>         do_splice_from fs/splice.c:851 [inline]
+>         do_splice+0x64a/0x1430 fs/splice.c:1147
+>         __do_sys_splice fs/splice.c:1414 [inline]
+>         __se_sys_splice fs/splice.c:1394 [inline]
+>         __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>    &ovl_i_mutex_key[depth] --> sb_writers#3 --> &pipe->mutex/1
+>
+>   Possible unsafe locking scenario:
+>
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&pipe->mutex/1);
+>                                 lock(sb_writers#3);
+>                                 lock(&pipe->mutex/1);
+>    lock(&ovl_i_mutex_key[depth]);
+>
+>   *** DEADLOCK ***
+>
+> 2 locks held by syz-executor338/5996:
+>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: file_start_write
+> include/linux/fs.h:2810 [inline]
+>   #0: 00000000024e7b73 (sb_writers#8){.+.+}, at: do_splice+0xd2e/0x1430
+> fs/splice.c:1146
+>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock_nested
+> fs/pipe.c:62 [inline]
+>   #1: 00000000e0274330 (&pipe->mutex/1){+.+.}, at: pipe_lock+0x6e/0x80
+> fs/pipe.c:70
+>
+> stack backtrace:
+> CPU: 0 PID: 5996 Comm: syz-executor338 Not tainted 4.20.0-rc4+ #351
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x244/0x39d lib/dump_stack.c:113
+>   print_circular_bug.isra.35.cold.54+0x1bd/0x27d
+> kernel/locking/lockdep.c:1221
+>   check_prev_add kernel/locking/lockdep.c:1863 [inline]
+>   check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+>   validate_chain kernel/locking/lockdep.c:2347 [inline]
+>   __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+>   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+>   down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+>   inode_lock include/linux/fs.h:757 [inline]
+>   ovl_write_iter+0x151/0xd10 fs/overlayfs/file.c:231
+>   call_write_iter include/linux/fs.h:1857 [inline]
+>   new_sync_write fs/read_write.c:474 [inline]
+>   __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+>   __kernel_write+0x10c/0x370 fs/read_write.c:506
+>   write_pipe_buf+0x180/0x240 fs/splice.c:797
+>   splice_from_pipe_feed fs/splice.c:503 [inline]
+>   __splice_from_pipe+0x38b/0x7c0 fs/splice.c:627
+>   splice_from_pipe+0x1ec/0x340 fs/splice.c:662
+>   default_file_splice_write+0x3c/0x90 fs/splice.c:809
+>   do_splice_from fs/splice.c:851 [inline]
+>   do_splice+0x64a/0x1430 fs/splice.c:1147
+>   __do_sys_splice fs/splice.c:1414 [inline]
+>   __se_sys_splice fs/splice.c:1394 [inline]
+>   __x64_sys_splice+0x2c1/0x330 fs/splice.c:1394
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x445ad9
+> Code: e8 5c b7 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f18e3f71cd8 EFLAGS: 00000216 ORIG_RAX: 0000000000000113
+> RAX: ffffffffffffffda RBX: 00000000006dac78 RCX: 0000000000445ad9
+> RDX: 000000000000000a RSI: 0000000000000000 RDI: 0000000000000007
+> RBP: 00000000006dac70 R08: 000100000000000a R09: 0000000000000007
+> R10: 0000000000000000 R11: 0000000000000216 R12: 00000000006dac7c
+> R13: 00007ffde0706e9f R14: 00007f18e3f729c0 R15: 00000000006dad4c
+>
 
+Dmitry,
 
-> On Nov 24, 2018, at 00:24, Singh, Sandeep <sandeep.singh@amd.com> wrote:
-> 
-> From: Sandeep Singh <sandeep.singh@amd.com>
-> 
-> Occasionally AMD SNPS 3.0 xHC does not respond to
-> CSS when set, also it does not flag anything on SRE and HCE
-> to point the internal xHC errors on USBSTS register. This stalls
-> the entire system wide suspend and there is no point in stalling
-> just because of xHC CSS is not responding.
-> 
-> To work around this problem, if the xHC does not flag
-> anything on SRE and HCE, we can skip the CSS
-> timeout and allow the system to continue the suspend. Once the
-> system resume happens we can internally reset the controller
-> using XHCI_RESET_ON_RESUME quirk
-> 
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> Signed-off-by: Sandeep Singh <Sandeep.Singh@amd.com>
-> cc: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
+FYI, this is not the same root cause as this report with the same syzbot id:
+https://syzkaller.appspot.com/text?tag=CrashReport&x=16a074a1400000
 
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+The former report (which syzbot has no repro for) is fixed by:
+"knernel/acct.c: fix locking order when switching acct files"
+It is available on: https://github.com/amir73il/linux ovl-fixes
+but Miklos did not get around to properly reviewing the patch yet
+and neither did Al...
 
-> ---
-> Changes since v1:
-> 
-> -> New Variable based decision making when SNPS issue happens hence 
-> -> quirk interdependency removed.
-> -> Removed STS conditional check in suspend function.
-> 
-> Changes since v2:
-> -> Updated quirk bit as per Kai-heng comment.
-> 
-> drivers/usb/host/xhci-pci.c |  4 ++++
-> drivers/usb/host/xhci.c     | 26 ++++++++++++++++++++++----
-> drivers/usb/host/xhci.h     |  3 +++
-> 3 files changed, 29 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index a951526..a9ec705 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -139,6 +139,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
-> 		 pdev->device == 0x43bb))
-> 		xhci->quirks |= XHCI_SUSPEND_DELAY;
-> 
-> +	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
-> +	    (pdev->device == 0x15e0 || pdev->device == 0x15e1))
-> +		xhci->quirks |= XHCI_SNPS_BROKEN_SUSPEND;
-> +
-> 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
-> 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
-> 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index c928dbb..c20b85e 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -968,6 +968,7 @@ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
-> 	unsigned int		delay = XHCI_MAX_HALT_USEC;
-> 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
-> 	u32			command;
-> +	u32			res;
-> 
-> 	if (!hcd->state)
-> 		return 0;
-> @@ -1021,11 +1022,28 @@ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
-> 	command = readl(&xhci->op_regs->command);
-> 	command |= CMD_CSS;
-> 	writel(command, &xhci->op_regs->command);
-> +	xhci->broken_suspend = 0;
-> 	if (xhci_handshake(&xhci->op_regs->status,
-> 				STS_SAVE, 0, 10 * 1000)) {
-> -		xhci_warn(xhci, "WARN: xHC save state timeout\n");
-> -		spin_unlock_irq(&xhci->lock);
-> -		return -ETIMEDOUT;
-> +	/*
-> +	 * AMD SNPS xHC 3.0 occasionally does not clear the
-> +	 * SSS bit of USBSTS and when driver tries to poll
-> +	 * to see if the xHC clears BIT(8) which never happens
-> +	 * and driver assumes that controller is not responding
-> +	 * and times out. To workaround this, its good to check
-> +	 * if SRE and HCE bits are not set (as per xhci
-> +	 * Section 5.4.2) and bypass the timeout.
-> +	 */
-> +		res = readl(&xhci->op_regs->status);
-> +		if ((xhci->quirks & XHCI_SNPS_BROKEN_SUSPEND) &&
-> +		    (((res & STS_SRE) == 0) &&
-> +				((res & STS_HCE) == 0))) {
-> +			xhci->broken_suspend = 1;
-> +		} else {
-> +			xhci_warn(xhci, "WARN: xHC save state timeout\n");
-> +			spin_unlock_irq(&xhci->lock);
-> +			return -ETIMEDOUT;
-> +		}
-> 	}
-> 	spin_unlock_irq(&xhci->lock);
-> 
-> @@ -1078,7 +1096,7 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
-> 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
-> 
-> 	spin_lock_irq(&xhci->lock);
-> -	if (xhci->quirks & XHCI_RESET_ON_RESUME)
-> +	if ((xhci->quirks & XHCI_RESET_ON_RESUME) || xhci->broken_suspend)
-> 		hibernated = true;
-> 
-> 	if (!hibernated) {
-> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> index 260b259..c3515ba 100644
-> --- a/drivers/usb/host/xhci.h
-> +++ b/drivers/usb/host/xhci.h
-> @@ -1850,6 +1850,7 @@ struct xhci_hcd {
-> #define XHCI_ZERO_64B_REGS	BIT_ULL(32)
-> #define XHCI_DEFAULT_PM_RUNTIME_ALLOW	BIT_ULL(33)
-> #define XHCI_RESET_PLL_ON_DISCONNECT	BIT_ULL(34)
-> +#define XHCI_SNPS_BROKEN_SUSPEND    BIT_ULL(35)
-> 
-> 	unsigned int		num_active_eps;
-> 	unsigned int		limit_active_eps;
-> @@ -1879,6 +1880,8 @@ struct xhci_hcd {
-> 	void			*dbc;
-> 	/* platform-specific data -- must come last */
-> 	unsigned long		priv[0] __aligned(sizeof(s64));
-> +	/* Broken Suspend flag for SNPS Suspend resume issue */
-> +	u8			broken_suspend;
-> };
-> 
-> /* Platform specific overrides to generic XHCI hc_driver ops */
-> -- 
-> 2.7.4
-> 
+The commit message of my also includes a very simple reproducer.
+Perhaps you want to split those two reports into two different syzbot
+report ids?
 
+Can you do that?
+If yes, let me know, so will change the reported by tag on my fix.
+
+Thanks,
+Amir.
