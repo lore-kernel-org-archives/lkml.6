@@ -2,89 +2,108 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4FDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E32C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 554FA208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79CB208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:58:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=appneta.com header.i=@appneta.com header.b="o5N/oFWK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 554FA208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=appneta.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bV71GiCI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79CB208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeK0LuP (ORCPT
+        id S1727688AbeK0Lyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:50:15 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34921 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbeK0LuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:50:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so7459257pfi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GiUkHUVQ1U2xSif8m+lRoLX8p7RLwhqi5H1knmE9KYo=;
-        b=o5N/oFWKx58nqYMeeMnVtNYnDcPCxp1ceGUy8IMRV8zglmdHM+8mrvmJc4Art3DtH0
-         x/K3g0NnjlEnTQQhLCcM8s96M/YioWhnq9CGPJkN0r2XzFKMP0ifjuNNz92L3U1WIenX
-         A5ByZtkqhOdBFPUXikmGBMbmNxrrwzIx2F6ik=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GiUkHUVQ1U2xSif8m+lRoLX8p7RLwhqi5H1knmE9KYo=;
-        b=ri0ua3AnylXyXD3pX7FbvlepWstXcVw/4gKgpSnv1PheKCv8pOSt/56u+AWqgIUDwd
-         gOSLL2VVc1pGVfZfhMWUblX9HE+XbvNSLHaeH/zDFTfGSCg/GhqGj2lN2Z1yNffMwU5s
-         cvRrgMuATw3vPH9aIKH5N/KAFGMQJkZEBE6pLSFoZ2p+B6DQZfj/SoZHIfmj8167ttn8
-         pMEUwgaBBvakH+WjGrEIhH5NVsdz8OZZkJKtLH9wThXX36a5wqRbdfJBad+Sodz77Rzr
-         jIU3YjevNDvaDvPWhBD7+etRrcZB7rb5PizZZQuMhqtrn0p3Cyb4tMqa1vte5NlgMalV
-         7wlQ==
-X-Gm-Message-State: AA+aEWYjc8phYe2aWN6NIaNxRmfL8Dx7gnHlJPlbBI0/ofYMxMwGpvIs
-        M4RUpIja3pFWtnphu63c/unj
-X-Google-Smtp-Source: AFSGD/WlxNs4FzAvCQQjQe/H0vJC9R3v65+1UI6Rf5eZPfuFb5z2/6i+Zf8rheEZEu6q1ZoMAYnwqA==
-X-Received: by 2002:a62:4181:: with SMTP id g1mr7158981pfd.45.1543280052790;
-        Mon, 26 Nov 2018 16:54:12 -0800 (PST)
-Received: from ?IPv6:2001:4958:15a0:24:6935:96c7:a649:f2b6? ([2001:4958:15a0:24:6935:96c7:a649:f2b6])
-        by smtp.gmail.com with ESMTPSA id i189-v6sm2058931pfc.16.2018.11.26.16.54.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 16:54:12 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [Intel-wired-lan] [PATCH net] ixgbe: recognize 1000BaseLX SFP
- modules as 1Gbps
-From:   Josh Elsasser <jelsasser@appneta.com>
-In-Reply-To: <937675447ad1ec2665d0b6f70390d498a01255d0.camel@intel.com>
-Date:   Mon, 26 Nov 2018 16:54:11 -0800
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F6168EB4-8C74-456F-B571-6492162CFA0F@appneta.com>
-References: <20181124205801.67828-1-jelsasser@appneta.com>
- <87efb92z5w.fsf@miraculix.mork.no>
- <40FD0CE5-973C-4A7F-91BD-66C1A1699223@appneta.com>
- <937675447ad1ec2665d0b6f70390d498a01255d0.camel@intel.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org
-X-Mailer: Apple Mail (2.3445.101.1)
+        Tue, 27 Nov 2018 06:54:41 -0500
+Received: from m12-13.163.com ([220.181.12.13]:51077 "EHLO m12-13.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727456AbeK0Lyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:54:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=yNuIu
+        RMSYL/aoMcojHqluyNNc4n3j+uR47c8cisLZmE=; b=bV71GiCIwlrW/qUeRT8XO
+        TeXCqf5dTgIdeALB9lecvl4SJUepncKSmMcf+lqPdJzq256J2NLAoceqUSlie0YT
+        ToPzn8aycz4vBWgtXvvGB1kKKacbRVQM5m7hQ2Nscivn7f07P/OfCKrLQ+YjL6oe
+        VXnW8zGbp0/GuzAFsNnj9I=
+Received: from bp (unknown [106.120.213.96])
+        by smtp9 (Coremail) with SMTP id DcCowADHIsWulvxbHu37Bw--.23962S2;
+        Tue, 27 Nov 2018 08:58:22 +0800 (CST)
+Date:   Tue, 27 Nov 2018 08:58:23 +0800
+From:   PanBian <bianpan2016@163.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [Xen-devel] [PATCH] pvcalls-front: fixes incorrect error handling
+Message-ID: <20181127005823.GB125510@bp>
+Reply-To: PanBian <bianpan2016@163.com>
+References: <1542852432-30019-1-git-send-email-bianpan2016@163.com>
+ <1f765e81-ed89-d110-74b1-cc8029a4555f@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f765e81-ed89-d110-74b1-cc8029a4555f@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CM-TRANSID: DcCowADHIsWulvxbHu37Bw--.23962S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WrW3ur1DXw45tFy3GF1UGFg_yoW8XrWrpF
+        s7JF1jyF48tasayrZFqa1Yvry5Za1Iq348Wry2kan0kr13CFy8tFyFk34v9w4v9r4rGF1f
+        Zw4jqFy7CFsxA37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j_hL8UUUUU=
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiDg8MclXlpnQALgAAsz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jeff Kirsher <jeffrey.t.kirsher@intel.com> wrote:
+On Mon, Nov 26, 2018 at 03:31:39PM -0500, Boris Ostrovsky wrote:
+> On 11/21/18 9:07 PM, Pan Bian wrote:
+> > kfree() is incorrectly used to release the pages allocated by
+> > __get_free_page() and __get_free_pages(). Use the matching deallocators
+> > i.e., free_page() and free_pages(), respectively.
+> >
+> > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> > ---
+> >  drivers/xen/pvcalls-front.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> > index 2f11ca7..77224d8 100644
+> > --- a/drivers/xen/pvcalls-front.c
+> > +++ b/drivers/xen/pvcalls-front.c
+> > @@ -385,8 +385,8 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+> >  out_error:
+> >  	if (*evtchn >= 0)
+> >  		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+> > -	kfree(map->active.data.in);
+> > -	kfree(map->active.ring);
+> > +	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
+> 
+> Is map->active.data.in guaranteed to be NULL when entering this routine?
 
-> No need to re-spin the patch, just reply with the additional "Fixes"
-> tag and if patchwork does not pick it up, I will add it to the patch I
-> have in my tree for validation and review.
+I am not sure yet. Sorry for that. I observed the mismatches between
+__get_free_page and kfree, and submitted the patch.
 
-Thanks, let=E2=80=99s try that.
+But I think your consideration is reasonable. A better solution is to
+directly free bytes, a local variable that holds __get_free_pages return
+value. If you agree, I will rewrite the patch.
 
-Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x =
-SFP+=E2=80=9D)=
+Thanks,
+Pan
+
+> 
+> -boris
+> 
+> > +	free_page((unsigned long)map->active.ring);
+> >  	return ret;
+> >  }
+> >  
+> 
+
