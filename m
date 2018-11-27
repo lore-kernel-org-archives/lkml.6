@@ -2,173 +2,141 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936A2C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4045C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65234208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65234208E4
+	by mail.kernel.org (Postfix) with ESMTP id 8480C2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:54:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8480C2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeK1Atm (ORCPT
+        id S1727667AbeK1Awh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:49:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41792 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbeK1Atm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:49:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id u16so20128813otk.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 05:51:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hi9iX299DQInLmJAtW0O641VhL4ev2inw/6dRwxQFJs=;
-        b=AWSZPcZyaHBaNGwILCBSWAV6yYNPc2udlvGdHIWJEyeaKSXJE2nJtll5bgBi7NGrrN
-         j7f0kYQ9UnWyqd1EkLkSZ2YNsP6kNa2RuZ0FiyJQco94smCqdOgAkUjrY110UbVyid+n
-         trqCePPpW9UuUAgHu2TJeEcE1EljFakrLyDsIUVpfSq3bKaOF3/IacSThv4NoyDg4IQM
-         Z7VceINl8GTeHOsPR0KUWN259PbI+nVOij3VLC2ytvBS+oloIWe3E1+trpTkL9YJJdDU
-         tLTX0pTQBg0/MZCcX4hLq/J9/E36XMFqs1m/QX8Ob4Kize5XgCRZEtVOEJ99FHkBUhZ2
-         0+Jg==
-X-Gm-Message-State: AA+aEWawIiGwoqKowOKVj5QNl9UH+x4O4/g/U7DZLKKiXnGTts5GTvJt
-        F46jorbCvrh6H74WOqGLpjUtQhlAB/uhvoOnQUkjDw==
-X-Google-Smtp-Source: AFSGD/UDcoixmjnUyxh5EzfsBxtQ71PdZ8mHdE7/ClPe90U6fIFnE6upOU7KnluvdE5WW5BhrW/bDS1IUOKpe3OgPdM=
-X-Received: by 2002:a9d:32c7:: with SMTP id u65mr17415964otb.236.1543326702007;
- Tue, 27 Nov 2018 05:51:42 -0800 (PST)
+        Tue, 27 Nov 2018 19:52:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48256 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727119AbeK1Awg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:52:36 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A22B93086272;
+        Tue, 27 Nov 2018 13:54:36 +0000 (UTC)
+Received: from [10.36.112.42] (ovpn-112-42.ams2.redhat.com [10.36.112.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 240886019C;
+        Tue, 27 Nov 2018 13:54:22 +0000 (UTC)
+Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
+To:     Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+References: <20181126154732.23025-1-vkuznets@redhat.com>
+ <20181126154732.23025-4-vkuznets@redhat.com>
+ <e565638e-d6cc-bbd9-f99e-c835ef1be5b7@redhat.com>
+ <20181127083706.GB16047@rkaganb.sw.ru>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9d0e9796-b71e-9437-8cd4-a898fd503871@redhat.com>
+Date:   Tue, 27 Nov 2018 14:54:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com> <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 27 Nov 2018 14:51:30 +0100
-Message-ID: <CAFqZXNvcYWNh2fmgY7wF8QOmRBfhaqqYAKG1kYFDcn496ah26Q@mail.gmail.com>
-Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-To:     keescook@chromium.org
-Cc:     casey@schaufler-ca.com, s.mesoraca16@gmail.com,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        mic@digikod.net,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        adobriyan@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127083706.GB16047@rkaganb.sw.ru>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 27 Nov 2018 13:54:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 2:27 PM Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> Hmmm... the "From: Kees..." in the body is missing. Are you using "git
-> send-email"?
+On 27/11/18 09:37, Roman Kagan wrote:
+> On Mon, Nov 26, 2018 at 05:44:24PM +0100, Paolo Bonzini wrote:
+>> On 26/11/18 16:47, Vitaly Kuznetsov wrote:
+>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>> index 5cd5647120f2..b21b5ceb8d26 100644
+>>> --- a/arch/x86/kvm/x86.c
+>>> +++ b/arch/x86/kvm/x86.c
+>>> @@ -2997,6 +2997,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>>>  	case KVM_CAP_HYPERV_TLBFLUSH:
+>>>  	case KVM_CAP_HYPERV_SEND_IPI:
+>>>  	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
+>>> +	case KVM_CAP_HYPERV_STIMER_DIRECT:
+>>>  	case KVM_CAP_PCI_SEGMENT:
+>>>  	case KVM_CAP_DEBUGREGS:
+>>>  	case KVM_CAP_X86_ROBUST_SINGLESTEP:
+>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>>> index 2b7a652c9fa4..b8da14cee8e5 100644
+>>> --- a/include/uapi/linux/kvm.h
+>>> +++ b/include/uapi/linux/kvm.h
+>>> @@ -975,6 +975,7 @@ struct kvm_ppc_resize_hpt {
+>>>  #define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
+>>>  #define KVM_CAP_EXCEPTION_PAYLOAD 164
+>>>  #define KVM_CAP_ARM_VM_IPA_SIZE 165
+>>> +#define KVM_CAP_HYPERV_STIMER_DIRECT 166
+>>
+>> I wonder if all these capabilities shouldn't be replaced by a single
+>> KVM_GET_HYPERV_SUPPORTED_CPUID ioctl, or something like that.
+> 
+> Hmm, why?  Are we running short of cap numbers?
+> 
+> Capabilities are a well-established and unambiguous negotiation
+> mechanism, why invent another one?  Besides, not all features map
+> conveniently onto cpuid bits, e.g. currently we have two versions of
+> SynIC support, which differ in the way the userspace deals with it, but
+> not in the cpuid bits we expose in the guest.  IMO such an ioctl would
+> bring more complexity rather than less.
 
-Not to mention that you are sending (only) to the old SELinux mailing
-list. The new list is at selinux@vger.kernel.org, see:
+Yes, in that case (for bugfixes basically) you'd have to use
+capabilities.  But if the feature is completely hidden to userspace
+except for the CPUID bit, it seems like a ioctl would be more consistent
+with the rest of the KVM API.
 
-https://lore.kernel.org/selinux/8263f9fa-16f1-1d0a-e391-61d609e50d7d@tycho.nsa.gov/
-
->
-> >
-> > This adds a flag for the current "major" LSMs to distinguish them when
-> > we have a universal method for ordering all LSMs. It's called "legacy"
-> > since the distinction of "major" will go away in the blob-sharing world.
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > ---
-> >  include/linux/lsm_hooks.h  | 3 +++
-> >  security/apparmor/lsm.c    | 1 +
-> >  security/selinux/hooks.c   | 1 +
-> >  security/smack/smack_lsm.c | 1 +
-> >  security/tomoyo/tomoyo.c   | 1 +
-> >  5 files changed, 7 insertions(+)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index aaeb7fa24dc4..63c0e102de20 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -2039,8 +2039,11 @@ extern char *lsm_names;
-> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >                                 char *lsm);
-> >
-> > +#define LSM_FLAG_LEGACY_MAJOR  BIT(0)
-> > +
-> >  struct lsm_info {
-> >         const char *name;       /* Required. */
-> > +       unsigned long flags;    /* Optional: flags describing LSM */
-> >         int (*init)(void);      /* Required. */
-> >  };
-> >
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index 42446a216f3b..2edd35ca5044 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
-> >
-> >  DEFINE_LSM(apparmor) = {
-> >         .name = "apparmor",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = apparmor_init,
-> >  };
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 7ce683259357..56c6f1849c80 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
-> >     all processes and objects when they are created. */
-> >  DEFINE_LSM(selinux) = {
-> >         .name = "selinux",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = selinux_init,
-> >  };
-> >
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index 81fb4c1631e9..3639e55b1f4b 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -4891,5 +4891,6 @@ static __init int smack_init(void)
-> >   */
-> >  DEFINE_LSM(smack) = {
-> >         .name = "smack",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = smack_init,
-> >  };
-> > diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> > index 1b5b5097efd7..09f7af130d3a 100644
-> > --- a/security/tomoyo/tomoyo.c
-> > +++ b/security/tomoyo/tomoyo.c
-> > @@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
-> >
-> >  DEFINE_LSM(tomoyo) = {
-> >         .name = "tomoyo",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = tomoyo_init,
-> >  };
-> > --
-> > 2.14.5
-> >
-> >
->
->
-> --
-> Kees Cook
-> _______________________________________________
-> Selinux mailing list
-> Selinux@tycho.nsa.gov
-> To unsubscribe, send email to Selinux-leave@tycho.nsa.gov.
-> To get help, send an email containing "help" to Selinux-request@tycho.nsa.gov.
-
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+Paolo
