@@ -2,145 +2,157 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152C5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DB6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C81208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C81208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 13F2021104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 13:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F2021104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeK1A3Y (ORCPT
+        id S1727323AbeK1A3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:29:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeK1A3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:29:24 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8953820262;
-        Tue, 27 Nov 2018 13:31:27 +0000 (UTC)
-Received: from [10.36.117.202] (ovpn-117-202.ams2.redhat.com [10.36.117.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3176E5D6A9;
-        Tue, 27 Nov 2018 13:31:24 +0000 (UTC)
-Subject: Re: [PATCH v2 3/3] kvm: remove redundant PageReserved() check
-To:     Barret Rhoden <brho@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com
-References: <20181109203921.178363-1-brho@google.com>
- <20181114215155.259978-1-brho@google.com>
- <20181114215155.259978-4-brho@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <06d80c13-c0d1-8343-034f-328952b7c44f@redhat.com>
-Date:   Tue, 27 Nov 2018 14:31:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 27 Nov 2018 19:29:46 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54377 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbeK1A3q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 19:29:46 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wARDUsdm1884439
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 27 Nov 2018 05:30:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wARDUsGJ1884436;
+        Tue, 27 Nov 2018 05:30:54 -0800
+Date:   Tue, 27 Nov 2018 05:30:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
+Message-ID: <tip-976b489120cdab2b1b3a41ffa14661db43d58190@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        tglx@linutronix.de, jglauber@cavium.com, peterz@infradead.org,
+        john.garry@huawei.com, marc.zyngier@arm.com, hpa@zytor.com,
+        mingo@kernel.org, torvalds@linux-foundation.org
+Reply-To: marc.zyngier@arm.com, jglauber@cavium.com, john.garry@huawei.com,
+          peterz@infradead.org, tglx@linutronix.de,
+          ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <20181123215132.7951-2-ard.biesheuvel@linaro.org>
+References: <20181123215132.7951-2-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/urgent] efi: Prevent GICv3 WARN() by mapping the
+ memreserve table before first use
+Git-Commit-ID: 976b489120cdab2b1b3a41ffa14661db43d58190
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20181114215155.259978-4-brho@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 27 Nov 2018 13:31:27 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.11.18 22:51, Barret Rhoden wrote:
-> kvm_is_reserved_pfn() already checks PageReserved().
-> 
-> Signed-off-by: Barret Rhoden <brho@google.com>
-> ---
->  virt/kvm/kvm_main.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 2679e476b6c3..e0ea6d7dac14 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1700,12 +1700,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
->  
->  void kvm_set_pfn_dirty(kvm_pfn_t pfn)
->  {
-> -	if (!kvm_is_reserved_pfn(pfn)) {
-> -		struct page *page = pfn_to_page(pfn);
-> -
-> -		if (!PageReserved(page))
-> -			SetPageDirty(page);
-> -	}
-> +	if (!kvm_is_reserved_pfn(pfn))
-> +		SetPageDirty(pfn_to_page(pfn));
->  }
->  EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
->  
-> 
+Commit-ID:  976b489120cdab2b1b3a41ffa14661db43d58190
+Gitweb:     https://git.kernel.org/tip/976b489120cdab2b1b3a41ffa14661db43d58190
+Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+AuthorDate: Fri, 23 Nov 2018 22:51:32 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 27 Nov 2018 13:50:20 +0100
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+efi: Prevent GICv3 WARN() by mapping the memreserve table before first use
 
--- 
+Mapping the MEMRESERVE EFI configuration table from an early initcall
+is too late: the GICv3 ITS code that creates persistent reservations
+for the boot CPU's LPI tables is invoked from init_IRQ(), which runs
+much earlier than the handling of the initcalls. This results in a
+WARN() splat because the LPI tables cannot be reserved persistently,
+which will result in silent memory corruption after a kexec reboot.
 
-Thanks,
+So instead, invoke the initialization performed by the initcall from
+efi_mem_reserve_persistent() itself as well, but keep the initcall so
+that the init is guaranteed to have been called before SMP boot.
 
-David / dhildenb
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+Tested-by: Jan Glauber <jglauber@cavium.com>
+Tested-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Fixes: 63eb322d89c8 ("efi: Permit calling efi_mem_reserve_persistent() ...")
+Link: http://lkml.kernel.org/r/20181123215132.7951-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/firmware/efi/efi.c | 36 ++++++++++++++++++++++++++----------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index fad7c62cfc0e..415849bab233 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -969,13 +969,33 @@ bool efi_is_table_address(unsigned long phys_addr)
+ static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
+ static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
+ 
+-int efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
++static int __init efi_memreserve_map_root(void)
++{
++	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
++		return -ENODEV;
++
++	efi_memreserve_root = memremap(efi.mem_reserve,
++				       sizeof(*efi_memreserve_root),
++				       MEMREMAP_WB);
++	if (WARN_ON_ONCE(!efi_memreserve_root))
++		return -ENOMEM;
++	return 0;
++}
++
++int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ {
+ 	struct linux_efi_memreserve *rsv;
++	int rc;
+ 
+-	if (!efi_memreserve_root)
++	if (efi_memreserve_root == (void *)ULONG_MAX)
+ 		return -ENODEV;
+ 
++	if (!efi_memreserve_root) {
++		rc = efi_memreserve_map_root();
++		if (rc)
++			return rc;
++	}
++
+ 	rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
+ 	if (!rsv)
+ 		return -ENOMEM;
+@@ -993,14 +1013,10 @@ int efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ 
+ static int __init efi_memreserve_root_init(void)
+ {
+-	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
+-		return -ENODEV;
+-
+-	efi_memreserve_root = memremap(efi.mem_reserve,
+-				       sizeof(*efi_memreserve_root),
+-				       MEMREMAP_WB);
+-	if (!efi_memreserve_root)
+-		return -ENOMEM;
++	if (efi_memreserve_root)
++		return 0;
++	if (efi_memreserve_map_root())
++		efi_memreserve_root = (void *)ULONG_MAX;
+ 	return 0;
+ }
+ early_initcall(efi_memreserve_root_init);
