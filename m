@@ -2,227 +2,194 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C2DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DEBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C292086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C292086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1929920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:09:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=essensium-com.20150623.gappssmtp.com header.i=@essensium-com.20150623.gappssmtp.com header.b="TXCFJnDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1929920989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=essensium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeK1BDh (ORCPT
+        id S1727546AbeK1BH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:03:37 -0500
-Received: from foss.arm.com ([217.140.101.70]:38284 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726345AbeK1BDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:03:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B79E35FA;
-        Tue, 27 Nov 2018 06:05:35 -0800 (PST)
-Received: from [10.1.196.73] (unknown [10.1.196.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EE153F5AF;
-        Tue, 27 Nov 2018 06:05:34 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20181114224902.12082-1-keith.busch@intel.com>
- <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
- <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
- <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
- <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com>
- <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
- <CAPcyv4hj61o+TDTSGxYSMMXMn7YiOGP0fj6R-cquPodN4VeT9A@mail.gmail.com>
- <0194f47c-d1d8-108e-a57f-0316adb9112b@arm.com>
- <CAPcyv4iP_+BhVD9NqYG_m8thXARbOfPMDpvg4hfxRATWom_MRQ@mail.gmail.com>
-Message-ID: <4c0a6dac-989b-c03b-3696-35cb20b31b22@arm.com>
-Date:   Tue, 27 Nov 2018 19:35:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iP_+BhVD9NqYG_m8thXARbOfPMDpvg4hfxRATWom_MRQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Nov 2018 20:07:57 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46290 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbeK1BH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 20:07:57 -0500
+Received: by mail-ed1-f65.google.com with SMTP id o10so19053437edt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 06:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=essensium-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=7VSz57nUqDMmDPEyDsdeLB0RSfnPmbsNu7//avC1qTg=;
+        b=TXCFJnDyoyCPnMF/PR4JElzZte+nXzwieLTl3GuW0OonU/LKRk8WXq2o04W0V4IWn+
+         u9pZ0TS030IVPB+lmhobAEACAQQP04uskh5EzNMNaS7AuPLZ7tWD96jYDTpxTIyZHfAj
+         nqo/gR4RNj/Dg+52WY6lmleXsqpiR0FMkNdHpvjcjqf0hkwH6YzQT111rY/kY5MeBcqO
+         n16D1ni0wBjt2MWVeO39FOXeE4H4nwbmBF6Moth2JSdsAo2FKzC8+mjoEHfIBtT8vjdx
+         ar/QYHu3nRFiUKevU0cm+ENoUpuB25Ww9GBEJ70GWcjcD3Ow+0o5xiv0uukxvj0WRfe8
+         9I6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7VSz57nUqDMmDPEyDsdeLB0RSfnPmbsNu7//avC1qTg=;
+        b=Qwjcsl9/4hW047xZ01q2Z8xSo+rvX9i3jtYKYDU5O3qTIZ6y7EOuIyB6NyeirJ/WVz
+         W5pazQZuVX9aEAstrh67NwxqzeAL7tsBcaEI68I9I+grzBJQUjOWgj0i+ve2cbLtnlvu
+         ou3hBuSxitUNvVlwSKVC+zNQmT/J4CSfJ2udmmzLOJGrLMVPiLeo4VxvvPjo+/Qgcha2
+         9MFqeWqszediII/FrQ5bQt70oClxFxLaq9sCNvoUkhUusixO0ukkYYwF8iXXFv+o3sMP
+         h7ISj5FXprYefz1YCxG/rd6/mVBm/3Vd6gEASGggbyVnGZ2wDFfDzAWYczKUAkdzdWWq
+         UPiQ==
+X-Gm-Message-State: AGRZ1gKUAMencWZ/QO7vxEctfV446LAbv/KWuSkBqU3Ir/dbHyO+b5mj
+        BYWzbCD/mfEICuaLyy7P+7wVDg==
+X-Google-Smtp-Source: AJdET5dEbxJiNBVm6qvd3W8X2V8CVV/xuv7JHMktmN922Vkb6x9F7nqWh68WewCAw/3PH3AL4x9ffg==
+X-Received: by 2002:a17:906:22ca:: with SMTP id q10-v6mr23715876eja.66.1543327793808;
+        Tue, 27 Nov 2018 06:09:53 -0800 (PST)
+Received: from ph-ThinkPad-E560.local.ess-mail.com (ip-188-118-3-185.reverse.destiny.be. [188.118.3.185])
+        by smtp.gmail.com with ESMTPSA id z2sm1021147edd.4.2018.11.27.06.09.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 06:09:53 -0800 (PST)
+From:   Patrick Havelange <patrick.havelange@essensium.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+Cc:     matthew.weber@rockwellcollins.com,
+        Patrick Havelange <patrick.havelange@essensium.com>
+Subject: [PATCH 1/1] ARM: dts: ls1021a: add nodes for PWMs
+Date:   Tue, 27 Nov 2018 15:09:44 +0100
+Message-Id: <20181127140944.31018-1-patrick.havelange@essensium.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The LS1021A has 8 possible PWMs, so adding them (disabled by default)
 
+Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
+---
+ arch/arm/boot/dts/ls1021a.dtsi | 96 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-On 11/23/2018 10:45 PM, Dan Williams wrote:
-> On Thu, Nov 22, 2018 at 11:11 PM Anshuman Khandual
-> <anshuman.khandual@arm.com> wrote:
->>
->>
->>
->> On 11/22/2018 11:38 PM, Dan Williams wrote:
->>> On Thu, Nov 22, 2018 at 3:52 AM Anshuman Khandual
->>> <anshuman.khandual@arm.com> wrote:
->>>>
->>>>
->>>>
->>>> On 11/19/2018 11:07 PM, Dave Hansen wrote:
->>>>> On 11/18/18 9:44 PM, Anshuman Khandual wrote:
->>>>>> IIUC NUMA re-work in principle involves these functional changes
->>>>>>
->>>>>> 1. Enumerating compute and memory nodes in heterogeneous environment (short/medium term)
->>>>>
->>>>> This patch set _does_ that, though.
->>>>>
->>>>>> 2. Enumerating memory node attributes as seen from the compute nodes (short/medium term)
->>>>>
->>>>> It does that as well (a subset at least).
->>>>>
->>>>> It sounds like the subset that's being exposed is insufficient for yo
->>>>> We did that because we think doing anything but a subset in sysfs will
->>>>> just blow up sysfs:  MAX_NUMNODES is as high as 1024, so if we have 4
->>>>> attributes, that's at _least_ 1024*1024*4 files if we expose *all*
->>>>> combinations.
->>>> Each permutation need not be a separate file inside all possible NODE X
->>>> (/sys/devices/system/node/nodeX) directories. It can be a top level file
->>>> enumerating various attribute values for a given (X, Y) node pair based
->>>> on an offset something like /proc/pid/pagemap.
->>>>
->>>>>
->>>>> Do we agree that sysfs is unsuitable for exposing attributes in this manner?
->>>>>
->>>>
->>>> Yes, for individual files. But this can be worked around with an offset
->>>> based access from a top level global attributes file as mentioned above.
->>>> Is there any particular advantage of using individual files for each
->>>> given attribute ? I was wondering that a single unsigned long (u64) will
->>>> be able to pack 8 different attributes where each individual attribute
->>>> values can be abstracted out in 8 bits.
->>>
->>> sysfs has a 4K limit, and in general I don't think there is much
->>> incremental value to go describe the entirety of the system from sysfs
->>> or anywhere else in the kernel for that matter. It's simply too much> information to reasonably consume. Instead the kernel can describe the
->>
->> I agree that it may be some amount of information to parse but is crucial
->> for any task on a heterogeneous system to evaluate (probably re-evaluate
->> if the task moves around) its memory and CPU binding at runtime to make
->> sure it has got the right one.
-> 
-> Can you provide some more evidence for this statement? It seems that
-
-That a moving application can really benefit from a complete set of effective
-N1 ----> N2 memory attributes ? Now mbind() binds the memory locally and
-sched_setaffinity() binds the task locally. Even if the task gets to required
-memory through mbind() a complete set of memory attributes as seen from
-various nodes will help it create appropriate cpumask_t for sched_setaffinity().
-Only local node effective attributes (as proposed by this series) wont be able
-to give enough information to create required cpu mask.
-
-> not many applications even care about basic numa let alone specific
-> memory targeting, at least according to libnumactl users.
-
-But we hope that will change going forward as more and more heterogeneous
-systems comes in. We should not be locking down an ABI without considering
-for future system possibilities and task's requirements.
-
-> 
->      dnf repoquery --whatrequires numactl-libs
-> 
-> The kernel is the arbiter of memory, something is broken if
-> applications *need* to take on this responsibility. Yes, there will be
-> applications that want to tune and override the default kernel
-> behavior, but this is the exception, not the rule. The applications
-> that tend to care about specific memories also tend to be purpose
-> built for a given platform, and that lessens their reliance on the
-> kernel to enumerate all properties.
-
-I would agree with you completely if we just want to move ahead in the
-direction of preserving existing status quo. But this series does propose
-an application interface (rightly so IMHO) for memory attributes and hence
-we are just trying to figure out if that is the correct direction or not.
-
-> 
->>> coarse boundaries and some semblance of "best" access initiator for a
->>> given target. That should cover the "80%" case of what applications
->>
->> The current proposal just assumes that the best one is the nearest one.
->> This may be true for bandwidth and latency but may not be true for some
->> other properties. This assumptions should not be there while defining
->> new ABI.
-> 
-> In fact, I tend to agree with you, but in my opinion that's an
-> argument to expose even less, not more. If we start with something
-> minimal that can be extended over time we lessen the risk of over
-> exposing details that don't matter in practice.
-
-As we have been discussing on the other thread what has to be exported
-should be derived from what all is needed. Cherry picking minimal set
-of attributes and exposing them through sysfs in the short term does
-not seem to be the right way either.
-
-> 
-> We're in the middle of a bit of a disaster with the VmFlags export in
-> /proc/$pid/smaps precisely because the implementation was too
-> comprehensive and applications started depending on details that the
-> kernel does not want to guarantee going forward. So there is a real
-> risk of being too descriptive in an interface design.
-
-There is also a risk with a insufficient and in-extensible sysfs interface
-which is going to be there for ever.
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index bdd6e66a79ad..d3014da9a66b 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -525,6 +525,102 @@
+ 			status = "disabled";
+ 		};
  
-> 
->>> want to discover, for the other "20%" we likely need some userspace
->>> library that can go parse these platform specific information sources
->>> and supplement the kernel view. I also think a simpler kernel starting
->>> point gives us room to go pull in more commonly used attributes if it
->>> turns out they are useful, and avoid going down the path of exporting
->>> attributes that have questionable value in practice.
->>>
->>
->> Applications can just query platform information right now and just use
->> them for mbind() without requiring this new interface.
-> 
-> No, they can't today, at least not for the topology details that HMAT
-> is describing. The platform-firmware to numa-node translation is
-> currently not complete. At a minimum we need a listing of initiator
-> ids and target ids. For an ACPI platform that is the proximity-domain
++		pwm0: pwm@29d0000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x29d0000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm1: pwm@29e0000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x29e0000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm2: pwm@29f0000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x29f0000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm3: pwm@2a00000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x2a00000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm4: pwm@2a10000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x2a10000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm5: pwm@2a20000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x2a20000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm6: pwm@2a30000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x2a30000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
++		pwm7: pwm@2a40000 {
++			compatible = "fsl,vf610-ftm-pwm";
++			#pwm-cells = <3>;
++			reg = <0x0 0x2a40000 0x0 0x10000>;
++			clock-names = "ftm_sys", "ftm_ext",
++				"ftm_fix", "ftm_cnt_clk_en";
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				<&clockgen 4 1>, <&clockgen 4 1>;
++			big-endian;
++			status = "disabled";
++		};
++
+ 		wdog0: watchdog@2ad0000 {
+ 			compatible = "fsl,imx21-wdt";
+ 			reg = <0x0 0x2ad0000 0x0 0x10000>;
+-- 
+2.17.1
 
-All of the memory visible in kernel is accessible from each individual CPU
-on the system irrespective which node they belong. Unless there is another
-type of memory accessors like GPU cores or something each node with CPU
-should be an initiator for each node with memory.
-
-> to numa-node-id translation information. Once that translation is in
-> place then a userspace library can consult the platform-specific
-> information sources to translate the platform-firmware view to the
-> Linux handles for those memories. Am I missing the library that does
-> this today?
-
-Once coherency enumeration (through initiator <---> memory target) is out
-of the way would not the following simple new interface be sufficient to
-query platform about it's properties ?
-
-/sys/devices/system/node/nodeX/platform_id
-
-> 
->> We are not even
->> changing any core MM yet. So if it's just about identifying the node's
->> memory properties it can be scanned from platform itself. But I agree
->> we would like the kernel to start adding interfaces for multi attribute
->> memory but all I am saying is that it has to be comprehensive. Some of
->> the attributes have more usefulness now and some have less but the new
->> ABI interface has to accommodate exporting all of these.
-> 
-> I get the sense we are talking past each other, can you give the next
-> level of detail on that "has to be comprehensive" statement?
-
-The discussion on the other thread has some new details from last week.
