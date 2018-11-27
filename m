@@ -2,213 +2,97 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0A3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15666C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F20C20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F20C20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 978CD20663
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:55:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LRI2gEwB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978CD20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbeK1Gux (ORCPT
+        id S1726549AbeK1GyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:50:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37211 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbeK1Gux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:50:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:51:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="91395942"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Nov 2018 11:51:54 -0800
-Date:   Tue, 27 Nov 2018 11:51:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Jan Beulich' <JBeulich@suse.com>, "mingo@elte.hu" <mingo@elte.hu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH v2] x86: modernize sync_bitops.h
-Message-ID: <20181127195153.GE27075@linux.intel.com>
-References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
- <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
- <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
- <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
- <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
- <5BF5577202000078001FE7AC@prv1-mh.provo.novell.com>
- <47f7dfd9b32f4425ac8466c8b0065c6e@AcuMS.aculab.com>
- <5BF56EA502000078001FE90E@prv1-mh.provo.novell.com>
- <9dc88b57164e481184dfbb4b2079086e@AcuMS.aculab.com>
+        Wed, 28 Nov 2018 01:54:11 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51108 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeK1GyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:54:11 -0500
+Received: by mail-it1-f196.google.com with SMTP id z7so536727iti.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 11:55:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=0oIAC8F8kBg9jIilXePaO8JdfRRo7IpVuEvD0Pwhc1A=;
+        b=LRI2gEwBC1D4XgKRNdOsvuLeoNSD1qVop5PF+b7CV/6uPJQlOeHHnqpukjiICp6t3F
+         iNCWHRLqpDha4dQyL4lvfJiKRjsyX7p5P4PrZyJM6Q5hVbxfMbbr6nfARPBa4uiJeDzq
+         7qTGGmgEQjZ+KcczICT13gSw0TwDzGJzEK/GY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=0oIAC8F8kBg9jIilXePaO8JdfRRo7IpVuEvD0Pwhc1A=;
+        b=FAEuVXvRyZW1CFWNod0ML9rOjCD2GAT5zrAKbdsPrO+ZSzZv1vcYLARJWFZCxEcgMH
+         fB0QPmxwNBklMneb4+BzsyAK6aeYSzlHYJU4nEA0O7h9388ryDssiZi80JDJGwSFOGip
+         aNyHePA+mm2W79+tnChI47c0lsqmwLE8nC6Tl64dmXN6knPZl92zho3mE2aFDBttWUQR
+         Ar9jV9rsljRpYJWvE1Tks+5xtgB6rGOI/PtvzjVCvnZu7WmAWfAGtJbKQ19rQgevrnPe
+         mIbWaYfdVNdA0dcMmVTNtXWCJzooP6hszd1sHc2Uhqe2VBf8kLq5gyY3h56T2n0oO5GB
+         qKew==
+X-Gm-Message-State: AA+aEWYMT7uP8s7wl9bKuXSSX1a0kWm8upzzCG5eFRrk2/pZ1AnrrSqg
+        9EfmfwdaWWjcNSx234QKY+2o25DW7KaMtUFvzm4gwg==
+X-Google-Smtp-Source: AFSGD/WVe4SzrWPqCaC8vwbZS8ZTH3/mBylqQXLM876noXjH+dSY3yh+IaRb+1AqadKat+wbh5ASv2YDZq1SJhL3Jq0=
+X-Received: by 2002:a24:e38f:: with SMTP id d137mr246508ith.69.1543348511547;
+ Tue, 27 Nov 2018 11:55:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9dc88b57164e481184dfbb4b2079086e@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 27 Nov 2018 20:55:00 +0100
+Message-ID: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+Subject: overlayfs access checks on underlying layers
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <pmoore@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 03:53:05PM +0000, David Laight wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Jan Beulich [mailto:JBeulich@suse.com]
-> > Sent: 21 November 2018 14:42
-> > To: David Laight
-> > Cc: mingo@elte.hu; tglx@linutronix.de; Boris Ostrovsky; Juergen Gross; linux-kernel@vger.kernel.org;
-> > hpa@zytor.com
-> > Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
-> > 
-> > >>> On 21.11.18 at 14:49, <David.Laight@ACULAB.COM> wrote:
-> > > From: Jan Beulich
-> > >> Sent: 21 November 2018 13:03
-> > >>
-> > >> >>> On 21.11.18 at 12:55, <David.Laight@ACULAB.COM> wrote:
-> > >> > From: Jan Beulich
-> > >> >> Sent: 21 November 2018 10:11
-> > >> >>
-> > >> >> Add missing insn suffixes and use rmwcc.h just like was (more or less)
-> > >> >> recently done for bitops.h as well.
-> > >> >
-> > >> > Why? bts (etc) on memory don't really have an 'operand size'.
-> > >>
-> > >> Of course they do - depending on operand size they operate on
-> > >> 2-, 4-, or 8-byte quantities. When the second operand is a
-> > >> register, the suffix is redundant (but doesn't hurt), but when
-> > >> the second operand is an immediate, the assembler (in AT&T
-> > >> syntax) has no way of knowing what operand size you mean.
-> > >
-> > > You need to RTFM.
-> > 
-> > Excuse me? How about you look at this table from the SDM
-> > (format of course comes out better in the .pdf):
-> > 
-> > 0F AB /r BTS r/m16, r16 MR Valid Valid Store selected bit in CF flag and set.
-> > 0F AB /r BTS r/m32, r32 MR Valid Valid Store selected bit in CF flag and set.
-> > REX.W + 0F AB /r BTS r/m64, r64 MR Valid N.E. Store selected bit in CF flag and set.
-> > 0F BA /5 ib BTS r/m16, imm8 MI Valid Valid Store selected bit in CF flag and set.
-> > 0F BA /5 ib BTS r/m32, imm8 MI Valid Valid Store selected bit in CF flag and set.
-> > REX.W + 0F BA /5 ib BTS r/m64, imm8 MI Valid N.E. Store selected bit in CF flag and set.
-> > 
-> > Please read manuals yourself before making such statements.
-> > 
-> > > Regardless of the 'operand size' the 'bit' instructions do a 32 bit aligned
-> > > 32 bit wide read/modify/write cycle.
-> > >
-> > > The 'operand size' does affect whether the bit number (which is signed)
-> > > comes from %cl (8 bits), %cx (16 bits), %rcx (32 bits) or (%ecx) 64 bits.
-> > > But that is implicit in the register name used.
-> > 
-> > There is no form with %cl as operand. Instead there are forms with
-> > an immediate operand.
-> 
-> See also section 3.1.1.9 (in the copy of 325462.pdf I have):
-> (edited out references to the figures)
-> 
-> Bit(BitBase, BitOffset) — Returns the value of a bit within a bit string.
->    The bit string is a sequence of bits in memory or a register. Bits are
->    numbered from low-order to high-order within registers and within memory
->    bytes. If the BitBase is a register, the BitOffset can be in the range 0
->    to [15, 31, 63] depending on the mode and register size.
-> 
->    If BitBase is a memory address, the BitOffset can range has different ranges
->    depending on the operand size (see Table 3-2).
-> 
->    The addressed bit is numbered (Offset MOD 8) within the byte at address
->    (BitBase + (BitOffset DIV 8)) where DIV is signed division with rounding
->    towards negative infinity and MOD returns a positive number.
-> 
-> Table 3-2. Range of Bit Positions Specified by Bit Offset Operands
-> Operand Size Immediate BitOffset   Register BitOffset
->     16             0 to 15         2**15 to 2**15 − 1
->     32             0 to 31         2**31 to 2**31 − 1
->     64             0 to 63         2**63 to 2**63 − 1
-> 
-> For Bit test it says:
-> 
-> When accessing a bit in memory, the processor may access 4 bytes starting from
-> the memory address for a 32-bit operand size, using by the following relationship:
->     Effective Address + (4 ∗ (BitOffset DIV 32))
-> Or, it may access 2 bytes starting from the memory address for a 16-bit operand, using this relationship:
->     Effective Address + (2 ∗ (BitOffset DIV 16))
-> It may do so even when only a single byte needs to be accessed to reach the given bit.
+Moving discussion from github[1] to here.
 
-This agrees with what Jan is saying, e.g. "4 bytes ... for a 32-bit op size"
-and "2 bytes ... for a 16-bit op size".  For whatever reason the 64-bit op
-size is omitted, but the normal behavior applies.
+To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
+underlying layers") was added in 4.20-rc1 to make overlayfs access
+checks on underlying "real" filesystems more consistent.  The
+discussion leading up to this commit can be found at [2].  The commit
+broke some selinux-testsuite cases, possibly indicating a security
+hole opened by this commit.
 
-> 
-> (That is the text I remember being in the old docs, but I don't think it
-> used to refer to the address being aligned.
-> My 8086, 286 and 386 books are all at home.)
-> 
-> The other instructions (eg btc) say:
-> 
-> If the bit base operand specifies a memory location, the operand represents the
-> address of the byte in memory that contains the bit base (bit 0 of the specified byte)
-> of the bit string. The range of the bit position that can be
-> referenced by the offset operand depends on the operand size.
-> 
-> So the 'operand size' gives the size of the bit offset, not the size of
-> the memory cycle.
+The model this patch tries to follow is that if "cp --preserve=all"
+was allowed to the mounter from underlying layer to the overlay layer,
+then operation is allowed.  That means even if mounter's creds doesn't
+provide permission to for example execute underying file X, if
+mounter's creds provide sufficient permission to perform "cp
+--preserve=all X Y"  and original creds allow execute on Y, then the
+operation is allowed.  This provides consistency in the face of
+copy-ups.  Consistency is only provided in sane setups, where mounter
+has sufficient privileges to access both the lower and upper layers.
 
-No, it determines both.  Here's rough pseudocode for how the op size
-affects what memory is read.  Note that there isn't alignment per se,
-but rather the memory accessed is offset by a modulo calculation of
-the bit number, i.e. by the bits "above" the op_size.  This doesn't
-apply to the imm8 encoding because bits above the op_size are ignored.
+The model may not have been perfectly followed, or possibly the model
+itself is flawed.  I'd like to better understand the issues here.
 
-	mem = decode_mem(op1);
+Thanks,
+Miklos
 
-	if (is_reg(op2)) {
-		bit = read_reg(op2);
-
-		/* sign-extend and align the offset */
-		offset = sign_extend(bit, op_size);
-		if (op_size == 2)
-			offset &= ~0x1;
-		else if (op_size == 4)
-			offset &= ~0x3;
-		else if (op_size == 8)
-			offset &= ~0x7;
-
-		/* memory displacement adjusted by offset */
-		mem.displacement += offset;
-	} else {
-		bit = decode_imm(op2);
-	}
-
-	/* imm8 ignores bits above op_size, reg adjusts offset (above) */
-	if (op_size == 2)
-		bit &= 0xf;
-	else if (op_size == 4)
-		bit &= 0x1f;
-	else if (op_size == 8)
-		bit &= 0x3f;
-
-	tmp = read_mem(mem, op_size);
-	tmp = bit_op(tmp, bit);
-	write_mem(mem, op_size);
-
-> Maybe I'll run some instructions against a PCIe slave and monitor the TLPs.
-> 
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
+[1]  https://github.com/SELinuxProject/selinux-kernel/issues/43#issuecomment-442148920
+[2] https://marc.info/?t=152762608800002&r=1
