@@ -2,138 +2,103 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 491DCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD3AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F0B208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:37:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F0B208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 80D782082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:37:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vjoGONHI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D782082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbeK0Xer (ORCPT
+        id S1729019AbeK0Xfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:34:47 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15166 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726641AbeK0Xer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:34:47 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 962E8941D2A09;
-        Tue, 27 Nov 2018 20:36:54 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 27 Nov 2018 20:36:47 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] fsck.f2fs: introduce preen mode 2
-Date:   Tue, 27 Nov 2018 20:36:35 +0800
-Message-ID: <20181127123635.123303-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Tue, 27 Nov 2018 18:35:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726544AbeK0Xfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:35:32 -0500
+Received: from quaco.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2026A208E4;
+        Tue, 27 Nov 2018 12:37:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543322264;
+        bh=1xcnuaSSDOL89XKWstZVl6ixiUj/nF89Rm+ukEgNoqY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vjoGONHIOWPlwkj1GtGQaYfKnH9swRobMhA4UFeS/tO/o0nMWuL/kt8zzsO24/KGT
+         JXcgHV9HNcCSAlzloc4FsYnOTdlDE0Ul/G38iY7x8OTJNHS15Gowy9X0ctNqA3kdGW
+         4UNMNBeEig0lcyz6Ts6/18QMuaRvGrOGZvBf1E8E=
+Received: by quaco.infradead.org (Postfix, from userid 1000)
+        id F3C9E41114; Tue, 27 Nov 2018 09:37:41 -0300 (-03)
+Date:   Tue, 27 Nov 2018 09:37:41 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com,
+        tmricht@linux.vnet.ibm.com, anton@samba.org
+Subject: Re: [PATCH] perf stat: Fix shadow stats for clock events
+Message-ID: <20181127123741.GA15747@kernel.org>
+References: <20181115141745.GJ9600@krava>
+ <20181116042843.24067-1-ravi.bangoria@linux.ibm.com>
+ <20181116133555.GA30465@krava>
+ <2f319b94-8d6c-581b-19f3-43a1ab5774ef@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f319b94-8d6c-581b-19f3-43a1ab5774ef@linux.ibm.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Michael reported:
+Em Tue, Nov 27, 2018 at 01:50:44PM +0530, Ravi Bangoria escreveu:
+> 
+> 
+> On 11/16/18 7:05 PM, Jiri Olsa wrote:
+> > On Fri, Nov 16, 2018 at 09:58:43AM +0530, Ravi Bangoria wrote:
+> >> Commit 0aa802a79469 ("perf stat: Get rid of extra clock display
+> >> function") introduced scale and unit for clock events. Thus,
+> >> perf_stat__update_shadow_stats() now saves scaled values of
+> >> clock events in msecs, instead of original nsecs. But while
+> >> calculating values of shadow stats we still consider clock
+> >> event values in nsecs. This results in a wrong shadow stat
+> >> values. Ex,
+> >>
+> >>   # ./perf stat -e task-clock,cycles ls
+> >>     <SNIP>
+> >>               2.60 msec task-clock:u    #    0.877 CPUs utilized
+> >>          2,430,564      cycles:u        # 1215282.000 GHz
+> >>
+> >> Fix this by saving original nsec values for clock events in
+> >> perf_stat__update_shadow_stats(). After patch:
+> >>
+> >>   # ./perf stat -e task-clock,cycles ls
+> >>     <SNIP>
+> >>               3.14 msec task-clock:u    #    0.839 CPUs utilized
+> >>          3,094,528      cycles:u        #    0.985 GHz
+> >>
+> >> Reported-by: Anton Blanchard <anton@samba.org>
+> >> Suggested-by: Jiri Olsa <jolsa@redhat.com>
+> >> Fixes: 0aa802a79469 ("perf stat: Get rid of extra clock display function")
+> >> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> > 
+> > Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Hi Arnaldo, Please pull this.
 
-after updating to f2fs-tools 1.12.0, a routine fsck of my file systems
-took quite a while and output ten-thousands instances of the following
-line:
+I did it yesterday, its just that I installed a new notebook and the
+MTA was down :-\ All should be fixed by now and the patch should go
+Ingo's way soon.
 
-> [FIX] (fsck_chk_inode_blk: 954)  --> Regular: 0xXYZ reset i_gc_failures from 0x1 to 0x00
-
-The reason is that:
-
-We start to support reseting .i_gc_failures's value to zero in fsck since
-91bb7b21f740 ("f2fs-tools: fix to reset i_gc_failures offline"), this is
-because if .i_gc_failures continues increasing and exceed threshold, it
-can make f2fs break atomic_write semantics during GC, so I added that
-patch to avoid such condition.
-
-But the problem here is even .i_gc_failures's value is one which was
-initialized duing inode creation by old kernel, and it never be increased
-by GC flow, we will still trigger such fix in fsck. I think it's not
-necessary.
-
-As Jaegeuk suggested, we introduce a new preen mode 2 to handle such
-condition:
-  - 2: same as 0, but skip some checks for old kernel
-
-Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Reported-by: Michael Laß <bevan@bi-co.net>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/fsck.c | 8 +++++++-
- fsck/fsck.h | 1 +
- fsck/main.c | 5 ++++-
- 3 files changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 970d150df5e8..bcda78142471 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -941,7 +941,13 @@ skip_blkcnt_fix:
- 	}
- 
- 	i_gc_failures = le16_to_cpu(node_blk->i.i_gc_failures);
--	if (ftype == F2FS_FT_REG_FILE && i_gc_failures) {
-+
-+	/*
-+	 * old kernel initialized i_gc_failures as 0x01, in preen mode 2,
-+	 * let's skip repairing.
-+	 */
-+	if (ftype == F2FS_FT_REG_FILE && i_gc_failures &&
-+		(c.preen_mode != PREEN_MODE_2 || i_gc_failures != 0x01)) {
- 
- 		DBG(1, "Regular Inode: 0x%x [%s] depth: %d\n\n",
- 				le32_to_cpu(node_blk->footer.ino), en,
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index b2227d2746d1..cbd6e9332d7c 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -21,6 +21,7 @@ struct quota_ctx;
- enum {
- 	PREEN_MODE_0,
- 	PREEN_MODE_1,
-+	PREEN_MODE_2,
- 	PREEN_MODE_MAX
- };
- 
-diff --git a/fsck/main.c b/fsck/main.c
-index bb79f6e9fc89..65bdb5d5a401 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -216,6 +216,8 @@ void f2fs_parse_options(int argc, char *argv[])
- 				/* preen mode has different levels:
- 				 *  0: default level, the same as -a
- 				 *  1: check meta
-+				 *  2: same as 0, but will skip some
-+				 *     check for old kernel
- 				 */
- 				if (optarg[0] == '-' || !is_digits(optarg) ||
- 							optind == argc) {
-@@ -230,7 +232,8 @@ void f2fs_parse_options(int argc, char *argv[])
- 					c.preen_mode = PREEN_MODE_0;
- 				else if (c.preen_mode >= PREEN_MODE_MAX)
- 					c.preen_mode = PREEN_MODE_MAX - 1;
--				if (c.preen_mode == PREEN_MODE_0)
-+				if (c.preen_mode == PREEN_MODE_0 ||
-+					c.preen_mode == PREEN_MODE_2)
- 					c.auto_fix = 1;
- 				MSG(0, "Info: Fix the reported corruption in "
- 					"preen mode %d\n", c.preen_mode);
--- 
-2.18.0.rc1
-
+- Arnaldo
