@@ -6,129 +6,69 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE84C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4955CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3295D21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:05:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3295D21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1BDB02133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BDB02133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732219AbeK1GE2 (ORCPT
+        id S1732225AbeK1GFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:04:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57368 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729277AbeK1GE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:04:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 950B0ACD7;
-        Tue, 27 Nov 2018 19:05:34 +0000 (UTC)
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>, s.priebe@profihost.ag,
-        alex.williamson@redhat.com, mgorman@techsingularity.net,
-        zi.yan@cs.rutgers.edu, rientjes@google.com, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-References: <20181127062503.GH6163@shao2-debian>
- <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <e4994820-ad41-a510-f579-7b0fc97d8d6f@suse.cz>
-Date:   Tue, 27 Nov 2018 20:05:33 +0100
+        Wed, 28 Nov 2018 01:05:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44807 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726354AbeK1GFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:05:14 -0500
+Received: from hanvin-mobl2.amr.corp.intel.com ([192.55.54.45])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wARJ5eMH1980947
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Tue, 27 Nov 2018 11:05:41 -0800
+Subject: Re: Sleeping in user_access section
+To:     Julien Thierry <julien.thierry@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>
+References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
+ <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
+ <20181123105034.GQ30658@n2100.armlinux.org.uk>
+ <44297716-74aa-1f14-67be-3594b5244b74@arm.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <691acc7f-6ce1-69da-d56d-4d3c0fdad9ab@zytor.com>
+Date:   Tue, 27 Nov 2018 11:05:40 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
+In-Reply-To: <44297716-74aa-1f14-67be-3594b5244b74@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 6:08 PM, Linus Torvalds wrote:
-> On Mon, Nov 26, 2018 at 10:24 PM kernel test robot
-> <rong.a.chen@intel.com> wrote:
->>
->> FYI, we noticed a -61.3% regression of vm-scalability.throughput due
->> to commit ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
->> MADV_HUGEPAGE mappings")
+On 11/23/18 3:57 AM, Julien Thierry wrote:
 > 
-> Well, that's certainly noticeable and not good.
+> On x86, the EFLAGS.AC bit is also saved upon exception and I think it is
+> cleared upon exception entry so there is implicit exit from the
+> user_access mode when taking exception/interrupt.
 > 
-> Andrea, I suspect it might be causing fights with auto numa migration..
-> 
-> Lots more system time, but also look at this:
-> 
->>    1122389 ±  9%     +17.2%    1315380 ±  4%  proc-vmstat.numa_hit
->>     214722 ±  5%     +21.6%     261076 ±  3%  proc-vmstat.numa_huge_pte_updates
->>    1108142 ±  9%     +17.4%    1300857 ±  4%  proc-vmstat.numa_local
->>     145368 ± 48%     +63.1%     237050 ± 17%  proc-vmstat.numa_miss
->>     159615 ± 44%     +57.6%     251573 ± 16%  proc-vmstat.numa_other
->>     185.50 ± 81%   +8278.6%      15542 ± 40%  proc-vmstat.numa_pages_migrated
-> 
-> Should the commit be reverted? Or perhaps at least modified?
 
-This part of the test's config is important:
+No, it is restored, not cleared.
 
-thp_defrag: always
+In summary: on exceptions, user_access regions are suspended, and on
+return the user_access status is resumed.
 
-While the commit targets MADV_HUGEPAGE mappings (such as Andrea's
-kvm-qemu usecase), with defrag=always, all mappings behave almost as a
-MADV_HUGEPAGE mapping. That's no longer a default for some years now and
-I think nobody recommends it. In the default configuration nothing
-changes for non-madvise mappings.
+However, explicitly calling sleeping functions is not supported.
 
-Vlastimil
-
->                      Linus
-> 
+	-hpa
 
