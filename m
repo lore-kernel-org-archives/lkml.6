@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42986C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0D4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18557208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:10:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18557208E4
+	by mail.kernel.org (Postfix) with ESMTP id CA4AC208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 15:10:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4AC208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emtrion.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbeK1CIQ (ORCPT
+        id S1729403AbeK1CIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 21:08:16 -0500
-Received: from mail3.emtrion.de ([80.150.99.69]:59537 "EHLO mail3.emtrion.de"
+        Tue, 27 Nov 2018 21:08:19 -0500
+Received: from mail3.emtrion.de ([80.150.99.69]:59539 "EHLO mail3.emtrion.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729274AbeK1CIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 21:08:15 -0500
+        id S1729274AbeK1CIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 21:08:19 -0500
 Received: from tuelinux-v3.emtrion.local (2003:5a:a012:1:20c:29ff:fecb:7426)
  by bmk019s01.emtrion.local (2003:5a:a012:1:d9c:d045:28a7:5f84) with Microsoft
- SMTP Server (TLS) id 8.3.485.1; Tue, 27 Nov 2018 16:04:33 +0100
+ SMTP Server (TLS) id 8.3.485.1; Tue, 27 Nov 2018 16:04:41 +0100
 From:   Jan Tuerk <jan.tuerk@emtrion.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,9 +37,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         "GitAuthor: Jan Tuerk" <jan.tuerk@emtrion.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v8 2/4] dt-bindings: arm: Document emtrion emCON-MX6 bindings
-Date:   Tue, 27 Nov 2018 16:04:02 +0100
-Message-ID: <20181127150407.15098-2-jan.tuerk@emtrion.com>
+Subject: [PATCH v8 4/4] ARM: imx_v6_v7_defconfig: Enable DA9063 PMIC support.
+Date:   Tue, 27 Nov 2018 16:04:04 +0100
+Message-ID: <20181127150407.15098-4-jan.tuerk@emtrion.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181127150407.15098-1-jan.tuerk@emtrion.com>
 References: <20180829100811.55836-1-jan.tuerk@emtrion.com>
@@ -48,10 +48,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-Product-Ver: SMEX-11.0.0.4283-8.100.1062-24250.000
-X-TM-AS-Result: No--2.256100-8.000000-31
-X-TM-AS-MatchedID: 705441-843086-701475-703523-704410-703529-704425-188019-7
-        00324-702762-711664-701274-139703-780058-850095-851079-148004-148133-42000-
-        42003-55
+X-TM-AS-Result: No-2.342300-8.000000-31
+X-TM-AS-MatchedID: 701762-702358-704171-702898-703523-703720-701016-188019-7
+        00624-701274-139703-780058-850095-851079-148004-148133-42000-42003-55
 X-TM-AS-User-Approved-Sender: No
 X-TM-AS-User-Blocked-Sender: No
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,35 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the compatible strings for emtrion emCON-MX6 SoM's.
+All recent emtrion modules based on i.mx6 make use of the DA9063.
+Therefore enable it with the following defaults:
+	- CONFIG_MFD_DA9063=y
+	- CONFIG_REGULATOR_DA9063=y
+	- CONFIG_DA9063_WATCHDOG=m
+MFD and REGULATOR are built-in to have it at Kernel boot-time.
+The WATCHDOG is optional and could be loaded from userspace.
 
 Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/emtrion.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/emtrion.txt
+ arch/arm/configs/imx_v6_v7_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
 Unchanged since v6 (rebased)
 
-diff --git a/Documentation/devicetree/bindings/arm/emtrion.txt b/Documentation/devicetree/bindings/arm/emtrion.txt
-new file mode 100644
-index 000000000000..83329aefc483
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/emtrion.txt
-@@ -0,0 +1,12 @@
-+Emtrion Devicetree Bindings
-+===========================
-+
-+emCON Series:
-+-------------
-+
-+Required root node properties
-+	- compatible:
-+	- "emtrion,emcon-mx6", "fsl,imx6q"; 		: emCON-MX6D or emCON-MX6Q SoM
-+	- "emtrion,emcon-mx6-avari", "fsl,imx6q";	: emCON-MX6D or emCON-MX6Q SoM on Avari Base
-+	- "emtrion,emcon-mx6", "fsl,imx6dl"; 		: emCON-MX6S or emCON-MX6DL SoM
-+	- "emtrion,emcon-mx6-avari", "fsl,imx6dl";	: emCON-MX6S or emCON-MX6DL SoM on Avari Base
+diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+index 1ad5736c8fa6..d3365c0fd4ad 100644
+--- a/arch/arm/configs/imx_v6_v7_defconfig
++++ b/arch/arm/configs/imx_v6_v7_defconfig
+@@ -225,10 +225,12 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_IMX_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_DA9062_WATCHDOG=y
++CONFIG_DA9063_WATCHDOG=m
+ CONFIG_RN5T618_WATCHDOG=y
+ CONFIG_IMX2_WDT=y
+ CONFIG_MFD_DA9052_I2C=y
+ CONFIG_MFD_DA9062=y
++CONFIG_MFD_DA9063=y
+ CONFIG_MFD_MC13XXX_SPI=y
+ CONFIG_MFD_MC13XXX_I2C=y
+ CONFIG_MFD_RN5T618=y
+@@ -238,6 +240,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_ANATOP=y
+ CONFIG_REGULATOR_DA9052=y
+ CONFIG_REGULATOR_DA9062=y
++CONFIG_REGULATOR_DA9063=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_MC13783=y
+ CONFIG_REGULATOR_MC13892=y
 -- 
 emtrion GmbH
 Alter Schlachthof 45
