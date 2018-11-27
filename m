@@ -2,236 +2,213 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFBEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0A3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B993208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B993208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F20C20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F20C20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbeK1Gul (ORCPT
+        id S1726525AbeK1Gux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:50:41 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37190 "EHLO mga01.intel.com"
+        Wed, 28 Nov 2018 01:50:53 -0500
+Received: from mga01.intel.com ([192.55.52.88]:37211 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbeK1Guk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:50:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1725872AbeK1Gux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:50:53 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:51:42 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:51:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
-   d="scan'208";a="94866875"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga006.jf.intel.com with ESMTP; 27 Nov 2018 11:51:41 -0800
-Subject: Re: [patch V2 18/28] x86/speculation: Prepare for per task indirect
- branch speculation control
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185005.176917199@linutronix.de>
- <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b2442439-a3ea-00f6-955f-f0c5d99ec401@linux.intel.com>
-Date:   Tue, 27 Nov 2018 11:51:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+   d="scan'208";a="91395942"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Nov 2018 11:51:54 -0800
+Date:   Tue, 27 Nov 2018 11:51:53 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Jan Beulich' <JBeulich@suse.com>, "mingo@elte.hu" <mingo@elte.hu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: Re: [PATCH v2] x86: modernize sync_bitops.h
+Message-ID: <20181127195153.GE27075@linux.intel.com>
+References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
+ <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
+ <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
+ <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
+ <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
+ <5BF5577202000078001FE7AC@prv1-mh.provo.novell.com>
+ <47f7dfd9b32f4425ac8466c8b0065c6e@AcuMS.aculab.com>
+ <5BF56EA502000078001FE90E@prv1-mh.provo.novell.com>
+ <9dc88b57164e481184dfbb4b2079086e@AcuMS.aculab.com>
 MIME-Version: 1.0
-In-Reply-To: <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9dc88b57164e481184dfbb4b2079086e@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2018 09:25 AM, Lendacky, Thomas wrote:
->> --- a/arch/x86/kernel/cpu/bugs.c
->> +++ b/arch/x86/kernel/cpu/bugs.c
->> @@ -148,6 +148,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
->>  		    static_cpu_has(X86_FEATURE_AMD_SSBD))
->>  			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
->>  
->> +		/* Conditional STIBP enabled? */
->> +		if (static_branch_unlikely(&switch_to_cond_stibp))
->> +			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
->> +
->>  		if (hostval != guestval) {
->>  			msrval = setguest ? guestval : hostval;
->>  			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
->> --- a/arch/x86/kernel/process.c
->> +++ b/arch/x86/kernel/process.c
->> @@ -406,6 +406,11 @@ static __always_inline void spec_ctrl_up
->>  	if (static_cpu_has(X86_FEATURE_SSBD))
->>  		msr |= ssbd_tif_to_spec_ctrl(tifn);
+On Wed, Nov 21, 2018 at 03:53:05PM +0000, David Laight wrote:
 > 
-> I did some quick testing and found my original logic was flawed. Since
-> spec_ctrl_update_msr() can now be called for STIBP, an additional check
-> is needed to set the SSBD MSR bit.
 > 
-> Both X86_FEATURE_VIRT_SSBD and X86_FEATURE_LS_CFG_SSBD cause
-> X86_FEATURE_SSBD to be set. Before this patch, spec_ctrl_update_msr() was
-> only called if X86_FEATURE_SSBD was set and one of the other SSBD features
-> wasn't set. But now, STIBP can cause spec_ctrl_update_msr() to get called
-> and cause the SSBD MSR bit to be set when it shouldn't (could result in
-> a GP fault).
+> > -----Original Message-----
+> > From: Jan Beulich [mailto:JBeulich@suse.com]
+> > Sent: 21 November 2018 14:42
+> > To: David Laight
+> > Cc: mingo@elte.hu; tglx@linutronix.de; Boris Ostrovsky; Juergen Gross; linux-kernel@vger.kernel.org;
+> > hpa@zytor.com
+> > Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
+> > 
+> > >>> On 21.11.18 at 14:49, <David.Laight@ACULAB.COM> wrote:
+> > > From: Jan Beulich
+> > >> Sent: 21 November 2018 13:03
+> > >>
+> > >> >>> On 21.11.18 at 12:55, <David.Laight@ACULAB.COM> wrote:
+> > >> > From: Jan Beulich
+> > >> >> Sent: 21 November 2018 10:11
+> > >> >>
+> > >> >> Add missing insn suffixes and use rmwcc.h just like was (more or less)
+> > >> >> recently done for bitops.h as well.
+> > >> >
+> > >> > Why? bts (etc) on memory don't really have an 'operand size'.
+> > >>
+> > >> Of course they do - depending on operand size they operate on
+> > >> 2-, 4-, or 8-byte quantities. When the second operand is a
+> > >> register, the suffix is redundant (but doesn't hurt), but when
+> > >> the second operand is an immediate, the assembler (in AT&T
+> > >> syntax) has no way of knowing what operand size you mean.
+> > >
+> > > You need to RTFM.
+> > 
+> > Excuse me? How about you look at this table from the SDM
+> > (format of course comes out better in the .pdf):
+> > 
+> > 0F AB /r BTS r/m16, r16 MR Valid Valid Store selected bit in CF flag and set.
+> > 0F AB /r BTS r/m32, r32 MR Valid Valid Store selected bit in CF flag and set.
+> > REX.W + 0F AB /r BTS r/m64, r64 MR Valid N.E. Store selected bit in CF flag and set.
+> > 0F BA /5 ib BTS r/m16, imm8 MI Valid Valid Store selected bit in CF flag and set.
+> > 0F BA /5 ib BTS r/m32, imm8 MI Valid Valid Store selected bit in CF flag and set.
+> > REX.W + 0F BA /5 ib BTS r/m64, imm8 MI Valid N.E. Store selected bit in CF flag and set.
+> > 
+> > Please read manuals yourself before making such statements.
+> > 
+> > > Regardless of the 'operand size' the 'bit' instructions do a 32 bit aligned
+> > > 32 bit wide read/modify/write cycle.
+> > >
+> > > The 'operand size' does affect whether the bit number (which is signed)
+> > > comes from %cl (8 bits), %cx (16 bits), %rcx (32 bits) or (%ecx) 64 bits.
+> > > But that is implicit in the register name used.
+> > 
+> > There is no form with %cl as operand. Instead there are forms with
+> > an immediate operand.
 > 
+> See also section 3.1.1.9 (in the copy of 325462.pdf I have):
+> (edited out references to the figures)
+> 
+> Bit(BitBase, BitOffset) — Returns the value of a bit within a bit string.
+>    The bit string is a sequence of bits in memory or a register. Bits are
+>    numbered from low-order to high-order within registers and within memory
+>    bytes. If the BitBase is a register, the BitOffset can be in the range 0
+>    to [15, 31, 63] depending on the mode and register size.
+> 
+>    If BitBase is a memory address, the BitOffset can range has different ranges
+>    depending on the operand size (see Table 3-2).
+> 
+>    The addressed bit is numbered (Offset MOD 8) within the byte at address
+>    (BitBase + (BitOffset DIV 8)) where DIV is signed division with rounding
+>    towards negative infinity and MOD returns a positive number.
+> 
+> Table 3-2. Range of Bit Positions Specified by Bit Offset Operands
+> Operand Size Immediate BitOffset   Register BitOffset
+>     16             0 to 15         2**15 to 2**15 − 1
+>     32             0 to 31         2**31 to 2**31 − 1
+>     64             0 to 63         2**63 to 2**63 − 1
+> 
+> For Bit test it says:
+> 
+> When accessing a bit in memory, the processor may access 4 bytes starting from
+> the memory address for a 32-bit operand size, using by the following relationship:
+>     Effective Address + (4 ∗ (BitOffset DIV 32))
+> Or, it may access 2 bytes starting from the memory address for a 16-bit operand, using this relationship:
+>     Effective Address + (2 ∗ (BitOffset DIV 16))
+> It may do so even when only a single byte needs to be accessed to reach the given bit.
 
-I think it will be cleaner just to fold the msr update into
-__speculation_ctrl_update to fix this issue.
+This agrees with what Jan is saying, e.g. "4 bytes ... for a 32-bit op size"
+and "2 bytes ... for a 16-bit op size".  For whatever reason the 64-bit op
+size is omitted, but the normal behavior applies.
 
-Something like this perhaps.
+> 
+> (That is the text I remember being in the old docs, but I don't think it
+> used to refer to the address being aligned.
+> My 8086, 286 and 386 books are all at home.)
+> 
+> The other instructions (eg btc) say:
+> 
+> If the bit base operand specifies a memory location, the operand represents the
+> address of the byte in memory that contains the bit base (bit 0 of the specified byte)
+> of the bit string. The range of the bit position that can be
+> referenced by the offset operand depends on the operand size.
+> 
+> So the 'operand size' gives the size of the bit offset, not the size of
+> the memory cycle.
 
-Thanks.
+No, it determines both.  Here's rough pseudocode for how the op size
+affects what memory is read.  Note that there isn't alignment per se,
+but rather the memory accessed is offset by a modulo calculation of
+the bit number, i.e. by the bits "above" the op_size.  This doesn't
+apply to the imm8 encoding because bits above the op_size are ignored.
 
-Tim
+	mem = decode_mem(op1);
 
----
+	if (is_reg(op2)) {
+		bit = read_reg(op2);
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 3f5e351..614ec51 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -398,25 +398,6 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
- 
--static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
--{
--	u64 msr = x86_spec_ctrl_base;
--
--	/*
--	 * If X86_FEATURE_SSBD is not set, the SSBD bit is not to be
--	 * touched.
--	 */
--	if (static_cpu_has(X86_FEATURE_SSBD))
--		msr |= ssbd_tif_to_spec_ctrl(tifn);
--
--	/* Only evaluate if conditional STIBP is enabled */
--	if (IS_ENABLED(CONFIG_SMP) &&
--	    static_branch_unlikely(&switch_to_cond_stibp))
--		msr |= stibp_tif_to_spec_ctrl(tifn);
--
--	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
--}
--
- /*
-  * Update the MSRs managing speculation control, during context switch.
-  *
-@@ -428,6 +409,7 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
- {
- 	unsigned long tif_diff = tifp ^ tifn;
- 	bool updmsr = false;
-+	u64 msr = x86_spec_ctrl_base;
- 
- 	/*
- 	 * If TIF_SSBD is different, select the proper mitigation
-@@ -440,8 +422,10 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
- 			amd_set_ssb_virt_state(tifn);
- 		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 			amd_set_core_ssb_state(tifn);
--		else if (static_cpu_has(X86_FEATURE_SSBD))
-+		else if (static_cpu_has(X86_FEATURE_SSBD)) {
- 			updmsr  = true;
-+			msr |= ssbd_tif_to_spec_ctrl(tifn);
-+		}
- 	}
- 
- 	/*
-@@ -449,11 +433,13 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
- 	 * otherwise avoid the MSR write.
- 	 */
- 	if (IS_ENABLED(CONFIG_SMP) &&
--	    static_branch_unlikely(&switch_to_cond_stibp))
-+	    static_branch_unlikely(&switch_to_cond_stibp)) {
- 		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
-+		msr |= stibp_tif_to_spec_ctrl(tifn);
-+	}
- 
- 	if (updmsr)
--		spec_ctrl_update_msr(tifn);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
- void speculation_ctrl_update(unsigned long tif)
+		/* sign-extend and align the offset */
+		offset = sign_extend(bit, op_size);
+		if (op_size == 2)
+			offset &= ~0x1;
+		else if (op_size == 4)
+			offset &= ~0x3;
+		else if (op_size == 8)
+			offset &= ~0x7;
+
+		/* memory displacement adjusted by offset */
+		mem.displacement += offset;
+	} else {
+		bit = decode_imm(op2);
+	}
+
+	/* imm8 ignores bits above op_size, reg adjusts offset (above) */
+	if (op_size == 2)
+		bit &= 0xf;
+	else if (op_size == 4)
+		bit &= 0x1f;
+	else if (op_size == 8)
+		bit &= 0x3f;
+
+	tmp = read_mem(mem, op_size);
+	tmp = bit_op(tmp, bit);
+	write_mem(mem, op_size);
+
+> Maybe I'll run some instructions against a PCIe slave and monitor the TLPs.
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
