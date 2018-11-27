@@ -2,227 +2,108 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91E1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4181FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAAB208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:49:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056B3208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:49:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpsWjEtp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EAAB208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="FypbHQHE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 056B3208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeK0Lpe (ORCPT
+        id S1727800AbeK0Lpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:45:34 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35939 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727516AbeK0Lpd (ORCPT
+        Tue, 27 Nov 2018 06:45:38 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36308 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbeK0Lph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:45:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s11so20493984wmh.1;
-        Mon, 26 Nov 2018 16:49:31 -0800 (PST)
+        Tue, 27 Nov 2018 06:45:37 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x23so17774102oix.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:49:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GwF79H+zVKBhtp+7hLQKsVpwJ7/oFe/Vc3sBuCRXKg0=;
-        b=BpsWjEtpPsEjm7hF7RVLtCptXqY6Z8EkVN6Pspo6BhFSTaTKrGOOG2/c6/8vqz0rol
-         UObqIOf8Jqtqkh86AU55xBC/I43iqtC+RAUaRGdapGEd/Z68mkOtQl1IN0zieBYNPB1y
-         4+PoVqr+EtENLaaNxubm7sFVtjnVDAp/glvwH3unJV4Eyk8QOcB3b0lSlgJabz+aqxfk
-         0A4R4aTbQywhnr6Q2HwaZH1AdGQYGR/oRdTMo+6vXAeihSv7NmZXKue5jzeNtACpWOwx
-         kr8OADl+FfO9bFVbEFxJM3qiKAJ8yKQfPWMMl9ytC23EkwpJJ6W7K3QS9RjnJyr4SLXU
-         ZJ/Q==
+        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
+        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
+         :cc;
+        bh=ZOP2fhf8zqwgTql8cY3u5e7NUjaixFNXZgGZ5//fBqs=;
+        b=FypbHQHEpfmrrPa3c7bd+KNdN1edJmggXC113Mm0JEzK0+m8IFyq2kQFbG6XElisDG
+         L8KLrHr6Pa3MtLpfGK6KM2HzMrp99Qu9pTqbmTHdCTNx1B5YZ4uOhlWVdC8NhVS6X8JK
+         G+psyfW0ZYjPHxP9ziIQINkZQN1YbHjmpT1MrgClMy5hiDLS01gU6HELx4jsr6KHM/9c
+         x8jN4En4aSnwWkW/vdKB/MRVqS7FBccQJT8gpoBJ/huXeDccjiDVShwFBDj1wT7LGT0b
+         FW7UJrQsh/fA2INrgf4SEJo+ahZzXng1u53VD2sYS+PACodJXRflfV3+R/wT2Xc2SSVS
+         HC9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GwF79H+zVKBhtp+7hLQKsVpwJ7/oFe/Vc3sBuCRXKg0=;
-        b=XXSHAfng4fS0BWdUGzjJKe4DLPAwodQ8Rq0LxpGftdncDBfG6V4z3cv+8o22wm3B4x
-         mY3DP5DsfKDhZwiTuGhLQjtDNlfNqeHEBjH+RG7Eg4MIsQITSmhvdaGvJIxOhqJJrz0A
-         UVZbgTp/gfvnwUr8DAAV72+zLO/Hf7lNvprYSAV3q2gWaiOgJ8KEVRcPLTFGVtam1qHg
-         qSs2UYFxmw7HOKjBq38ezfWdv0MatBWOH3/ZTlrFjY7CUwyEIWFDXaA8TGOz5/LzNTy0
-         9LGWdVV6zASlgXAvk4gHPCrfMxITjeGzMajn4AUKRqyYKnum+Ua8cm3G4Qz3BYs/TqPT
-         HvAQ==
-X-Gm-Message-State: AGRZ1gIJPiIVm1CdzC2PhaeWX4Qh+tl/UhPUQuHApp+MyrMG6f+mFgkJ
-        Hgjga6Y8BG1d5Z1hzhtLAo0Il+EjZsAqk+Rk2m7d48euUZs=
-X-Google-Smtp-Source: AJdET5ddsPRILCmFZa0YpB+WN2UuUTeg0ZCdAHlSUFpruCLOJJ4RQldY/nvPyvxOi9i0NF4CENdN75FCaadTAB5+Gb8=
-X-Received: by 2002:a1c:6508:: with SMTP id z8mr25862197wmb.28.1543279769930;
- Mon, 26 Nov 2018 16:49:29 -0800 (PST)
+        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
+         :message-id:subject:to:cc;
+        bh=ZOP2fhf8zqwgTql8cY3u5e7NUjaixFNXZgGZ5//fBqs=;
+        b=J9zT3kiF+Xjh+5j4nO0Pia40dAq6bcYGjsaJHe2krN3u1v6PHLSurlMBU3Pv2kZPGf
+         yb/TlAbwd7WbCNPMUXpaHWsq+e31JduOUgtwKfdkQWDFxpadFW95fxqf3MYxHYDGCKoT
+         Q87FDsVdGYttsELuwevJRyBsVsMZAXrCg0McD2VE7FdKDblNjeA85WQr7SzBRU3RFxbH
+         ClscbSpKe3u8oAxE07ib457Gpk5MAthjOMSW8bx3FiZtSwmJV79Cm+9+bkR6mBWfnFev
+         tKSBc4DJzY4bZmFjshSkJRr0Tyga/fpJ1+KzV25gOyNrNDLl53nbBqEXFfVSLEeN6w+f
+         r5GQ==
+X-Gm-Message-State: AGRZ1gKslrjh/N+GuEPpPLEqcSXHsxqETzLwGaflrrImSDF6ZNbinKb+
+        np/g5W9WA+ojvYvQdsrS4eiy/A==
+X-Google-Smtp-Source: AJdET5eMhKWTIg++S194au4VL4gDAjkcm6iGO/8es6POAyqBP/0tgEa6C3LZrQ9Cp87uAXI2N51M1w==
+X-Received: by 2002:a54:418a:: with SMTP id 10mr17738220oiy.128.1543279775983;
+        Mon, 26 Nov 2018 16:49:35 -0800 (PST)
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com. [209.85.167.172])
+        by smtp.gmail.com with ESMTPSA id v3sm2345268oib.57.2018.11.26.16.49.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 16:49:34 -0800 (PST)
+From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
+X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
+Received: by mail-oi1-f172.google.com with SMTP id w13so17726885oiw.9;
+        Mon, 26 Nov 2018 16:49:34 -0800 (PST)
+X-Received: by 2002:aca:5906:: with SMTP id n6-v6mr16029038oib.268.1543279773994;
+ Mon, 26 Nov 2018 16:49:33 -0800 (PST)
 MIME-Version: 1.0
-References: <CACE8ZKbUhFyWg5oK1B8+aWAa0tdqKf5Kokj80+8x1X2EUaA_DQ@mail.gmail.com>
- <CACE8ZKZEpQjOW6CSvUuM9xhjtkSCF0bYxcfQ3htSabC=rVJcTA@mail.gmail.com>
- <86f391e5-9e38-c8b0-4753-4646c322c9bc@hauke-m.de> <CACE8ZKb5CxEBAdCdGAhwaQHC9_nHBjTTVwxdDOXRayqgz0FK5g@mail.gmail.com>
-In-Reply-To: <CACE8ZKb5CxEBAdCdGAhwaQHC9_nHBjTTVwxdDOXRayqgz0FK5g@mail.gmail.com>
-From:   =?UTF-8?Q?Ren=C3=A9_Kjellerup?= <rk.katana.steel@gmail.com>
-Date:   Mon, 26 Nov 2018 16:49:18 -0800
-Message-ID: <CACE8ZKYCyDx_E+3sLpjQSV6xrFxGyrYwEfhEO=QZPGpm3jsBrQ@mail.gmail.com>
-Subject: Re: Adding a Basic DT for the Linksys ea6500 v2 wireless home router
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <20181126173506.24068-1-otavio@ossystems.com.br>
+ <20181126173506.24068-4-otavio@ossystems.com.br> <2433008.lBIgasatsU@phil>
+In-Reply-To: <2433008.lBIgasatsU@phil>
+Date:   Mon, 26 Nov 2018 22:49:18 -0200
+X-Gmail-Original-Message-ID: <CAP9ODKp9B4pu_PdAxjmO2Z3G2eqHp4WsNpTmWnZdiMXy8jHTdg@mail.gmail.com>
+Message-ID: <CAP9ODKp9B4pu_PdAxjmO2Z3G2eqHp4WsNpTmWnZdiMXy8jHTdg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] ARM: dts: rockchip: Add internal timer support for rv1108
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
         Mark Rutland <mark.rutland@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        devicetree@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To the broadcom kernel maintainers, (for BCM4708 CPUs)
+Hello Heiko,
 
-I just want to add a little attention to this patch again...
-let me know if there's any concerns and I will try to address highlighted i=
-ssues
-as soon as possible.
+On Mon, Nov 26, 2018 at 10:29 PM Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Montag, 26. November 2018, 18:35:06 CET schrieb Otavio Salvador:
+> > Add support for the internal timer peripheral on RV1108.
+> >
+> > Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+> > ---
+>
+> looks good, but due to the newly added compatible
+> I'll let this sit a bit longer to give Rob a chance to add a
+> Review-tag or so.
 
-I've been running the development builds of OpenWrt kernels, where
-this patch has
-been included, on my Linksys EA6500v2 router for the past months,
-updating as new
-builds are available. With only the on board BCM4360 chip (5GHz WiFi) is be=
-ing
-disabled, has so far been stable for my use case.
+Sure, it is fine. Thanks for your support.
 
-thank you for the consideration
-Rene (aka Katana_Steel)
-
-On Mon, Oct 8, 2018 at 9:34 AM Ren=C3=A9 Kjellerup <rk.katana.steel@gmail.c=
-om> wrote:
->
-> Hi Hauke,
->
-> Updated the file header per your suggestion.
->
-> From e97c15ef78d2535c23f32ebbec43bced72b5eaf7 Mon Sep 17 00:00:00 2001
-> From: Rene Kjellerup <rk.katana.steel@gmail.com>
-> Date: Mon, 1 Oct 2018 14:11:56 -0700
-> Subject: [PATCH] ARM: dts: BCM5301X: Add basic DT for Linksys EA6500 V2
->
-> It's wireless home router based on BCM4708A0 with BCM4360 + BCM4331
-> wireless chipsets. The 5GHz chip currently isn't supported only due
-> to missing compatible firmware.
->
-> the DTS here was based on the Linksys EA6300 V1 DTS, only changing
-> the model strings
->
-> Signed-off-by: Rene Kjellerup <rk.katana.steel@gmail.com>
-> ---
->  arch/arm/boot/dts/Makefile                      |  1 +
->  arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts | 47 +++++++++++++++++++=
-++++++
->  2 files changed, 48 insertions(+)
->  create mode 100644 arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index b5bd3de87c33..adf8f28f5e44 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -88,6 +88,7 @@ dtb-$(CONFIG_ARCH_BCM_5301X) +=3D \
->      bcm4708-asus-rt-ac68u.dtb \
->      bcm4708-buffalo-wzr-1750dhp.dtb \
->      bcm4708-linksys-ea6300-v1.dtb \
-> +    bcm4708-linksys-ea6500-v2.dtb \
->      bcm4708-luxul-xap-1510.dtb \
->      bcm4708-luxul-xwc-1000.dtb \
->      bcm4708-netgear-r6250.dtb \
-> diff --git a/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-> b/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-> new file mode 100644
-> index 000000000000..8a434d2a4b72
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/bcm4708-linksys-ea6500-v2.dts
-> @@ -0,0 +1,47 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/*
-> + * Copyright (C) 2017 Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> + * Copyright (C) 2018 Rene Kjellerup <rk.katana.steel@gmail.com>
-> + *
-> + * this DTS was originally based on bcm4708-linksys-ea6300-v1.dts
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "bcm4708.dtsi"
-> +#include "bcm5301x-nand-cs0-bch8.dtsi"
-> +
-> +/ {
-> +    compatible =3D "linksys,ea6500-v2", "brcm,bcm4708";
-> +    model =3D "Linksys EA6500 V2";
-> +
-> +    chosen {
-> +        bootargs =3D "console=3DttyS0,115200";
-> +    };
-> +
-> +    memory {
-> +        reg =3D <0x00000000 0x08000000>;
-> +    };
-> +
-> +    gpio-keys {
-> +        compatible =3D "gpio-keys";
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        wps {
-> +            label =3D "WPS";
-> +            linux,code =3D <KEY_WPS_BUTTON>;
-> +            gpios =3D <&chipcommon 7 GPIO_ACTIVE_LOW>;
-> +        };
-> +
-> +        restart {
-> +            label =3D "Reset";
-> +            linux,code =3D <KEY_RESTART>;
-> +            gpios =3D <&chipcommon 11 GPIO_ACTIVE_LOW>;
-> +        };
-> +    };
-> +};
-> +
-> +&usb3_phy {
-> +    status =3D "okay";
-> +};
-> --
-> 2.16.4
->
-> On Sun, Oct 7, 2018 at 2:08 PM Hauke Mehrtens <hauke@hauke-m.de> wrote:
-> >
-> > On 10/04/2018 11:08 PM, Ren=C3=A9 Kjellerup wrote:
-> > > Hi Hauke,
-> > >
-> > > thank you for suggesting adding the dts patch to mainline kernel,
-> > > so here it is.
-> > > I feel Rafal technically still have the copyrights, this is pretty
-> > > much just a few string updates for the ea6500v2. However with this
-> > > dts in latest OpenWrt 18.06 loads and installs on my device.
-> > >
-> > > I will be available to do more testing should it be required.
-> > >
-> > > Regrads
-> > > Rene Kjellerup
-> > > --
-> > > -- as life grows older, I gain experience.
-> > > -- http://www.alchemiestick.net/
-> > >
-> >
-> > Hi Rene,
-> >
-> > Please send you patch inline in the mail and not as an attachment, I
-> > would suggest to use "git send-email" for sending the patch.
-> >
-> > Adding Rafal as copyright owner is ok, like you did it now. You could
-> > mention in the file header on which dts file this is based.
-> >
-> > Hauke
-> >
->
->
-> --
-> -- as life grows older, I gain experience.
-> -- http://www.alchemiestick.net/apps/
+-- 
+Otavio Salvador                             O.S. Systems
+http://www.ossystems.com.br        http://code.ossystems.com.br
+Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
