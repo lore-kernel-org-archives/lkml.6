@@ -2,87 +2,83 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175A3C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A624C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF11C2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF11C2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 43B3A2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B3A2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbeK1D0S (ORCPT
+        id S1731044AbeK1D1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:26:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49533 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730444AbeK1D0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:26:18 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F3A3A20747; Tue, 27 Nov 2018 17:27:50 +0100 (CET)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C37042037D;
-        Tue, 27 Nov 2018 17:27:40 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 3/6] clk: mvebu: add CPU clock driver for Armada 7K/8K
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
-        <20180922181709.13007-4-gregory.clement@bootlin.com>
-        <153980089252.5275.819540708953283855@swboyd.mtv.corp.google.com>
-        <87y39tufwe.fsf@bootlin.com>
-Date:   Tue, 27 Nov 2018 17:27:40 +0100
-In-Reply-To: <87y39tufwe.fsf@bootlin.com> (Gregory CLEMENT's message of "Fri,
-        16 Nov 2018 00:22:59 +0100")
-Message-ID: <87wooymqo3.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 27 Nov 2018 22:27:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59276 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726768AbeK1D1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 22:27:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8BB4AAB6D;
+        Tue, 27 Nov 2018 16:29:17 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 17:29:16 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-mm@kvack.org, "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [PATCH] mm: warn only once if page table misaccounting is
+ detected
+Message-ID: <20181127162916.GB6923@dhcp22.suse.cz>
+References: <20181127083603.39041-1-heiko.carstens@de.ibm.com>
+ <20181127131916.GX12455@dhcp22.suse.cz>
+ <20181127143638.GE3625@osiris>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127143638.GE3625@osiris>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Tue 27-11-18 15:36:38, Heiko Carstens wrote:
+> On Tue, Nov 27, 2018 at 02:19:16PM +0100, Michal Hocko wrote:
+> > On Tue 27-11-18 09:36:03, Heiko Carstens wrote:
+> > > Use pr_alert_once() instead of pr_alert() if page table misaccounting
+> > > has been detected.
+> > > 
+> > > If this happens once it is very likely that there will be numerous
+> > > other occurrence as well, which would flood dmesg and the console with
+> > > hardly any added information. Therefore print the warning only once.
+> > 
+> > Have you actually experience a flood of these messages? Is one per mm
+> > message really that much?
+> 
+> Yes, I did. Since in this case all compat processes caused the message
+> to appear, I saw thousands of these messages.
+
+This means something went colossally wrong and seeing an avalanche of
+messages might be actually helpful because you can at least see the
+pattern. I wonder whether the underlying issue would be obvious from a
+single instance.
+
+Maybe we want ratelimit instead?
  
- On ven., nov. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+> > If yes why rss counters do not exhibit the same problem?
+> 
+> No rss counter messages appeared. Or do you suggest that the other
+> pr_alert() within check_mm() should also be changed?
 
->>> +static int ap_cpu_clock_probe(struct platform_device *pdev)
->>> +{
->>> +       int ret, nclusters = 0, cluster_index = 0;
->>> +       struct device *dev = &pdev->dev;
->>> +       struct device_node *dn, *np = dev->of_node;
->>> +       struct ap_cpu_clk *ap_cpu_clk;
->>> +       struct regmap *regmap;
->>> +
->>> +       regmap = syscon_node_to_regmap(np->parent);
->>
->> Can we just call dev_get_remap() on pdev->dev.parent?
->
-> we could do regmap = dev_get_regmap(pdev->dev.parent, NULL); instead of
-> this line. But is it really better?
-
-Actually we can't, because we really depend on a syscon and at this
-moment there is no regmap. It is the syscon_node_to_regmap function which
-creates this regmap when needed.
-
-Gregory
+Whatever we go with (and I do not have a strong opinion here) we should
+be consistent I believe.
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Michal Hocko
+SUSE Labs
