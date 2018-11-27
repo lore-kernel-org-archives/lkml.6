@@ -2,242 +2,232 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BF0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACA2C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CFC20817
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CFC20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4B71120817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:35:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Jk7esfJO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B71120817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbeK0Vbd (ORCPT
+        id S1730812AbeK0Vcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:31:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41997 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbeK0Vbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:31:32 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gRagn-0008Kv-D5; Tue, 27 Nov 2018 11:33:57 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gRagk-00070b-W1; Tue, 27 Nov 2018 11:33:54 +0100
-Date:   Tue, 27 Nov 2018 11:33:54 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Hao Zhang <hao5781286@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, thierry.reding@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 6/6] ARM: PWM: add allwinner sun8i R40/T3/V40 PWM
- support.
-Message-ID: <20181127103354.mdisx2qy42faep3s@pengutronix.de>
-References: <20181125162319.GA5422@arx-s1>
- <20181126213158.q5m5bbwnmewud2gb@pengutronix.de>
+        Tue, 27 Nov 2018 16:32:36 -0500
+Received: from mail-oln040092005048.outbound.protection.outlook.com ([40.92.5.48]:22680
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729318AbeK0Vcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:32:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YRJTAq5ejnp0iahKhBOZSYclUGnUmKdF3A4539VZeGI=;
+ b=Jk7esfJOx96d7Z+hz9D1NjO1NXh7TG3k/AXbijcdK/pv5jsDpUX/uPn3EDXkFTf9KFSzzzSFb/nu1bOB5iKSx7Is9JK3L5umPEZFIWeU3qPD/jxkLMQwTUPfiMP2B4O5lNbME3l9gpSU6hdeZPiNs0fevtYgkmZISOBjb/2cKxpuA5SUeY8R/hTJ64d34eotnRP69fLQW1OYfF1kNpwRGmQdmxxJEOX7vvscTUUYhHMxbfuAKgN4K+JYhvjubsWvffP17G+rDZVEWdC5KTsr7JMzNMqwyBrUwlc5lymwAI8DljAREQwBL/0i26OHxwJofUfeqYlNe4xHsOHiqQEETg==
+Received: from BL2NAM02FT015.eop-nam02.prod.protection.outlook.com
+ (10.152.76.58) by BL2NAM02HT134.eop-nam02.prod.protection.outlook.com
+ (10.152.77.76) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.15; Tue, 27 Nov
+ 2018 10:34:26 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com (10.152.76.60) by
+ BL2NAM02FT015.mail.protection.outlook.com (10.152.77.167) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.15 via Frontend Transport; Tue, 27 Nov 2018 10:34:26 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::eccf:c550:ed97:f1e7]) by BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::eccf:c550:ed97:f1e7%7]) with mapi id 15.20.1382.012; Tue, 27 Nov 2018
+ 10:34:26 +0000
+From:   Yueyi Li <liyueyi@live.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "w@1wt.eu" <w@1wt.eu>
+CC:     "donb@securitymouse.com" <donb@securitymouse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yueyi Li <liyueyi@live.com>
+Subject: [PATCH] lzo: fix ip overrun during compress.
+Thread-Topic: [PATCH] lzo: fix ip overrun during compress.
+Thread-Index: AQHUhjzFV7dxiksDcEGXoSZcs8ZKew==
+Date:   Tue, 27 Nov 2018 10:34:26 +0000
+Message-ID: <BLUPR13MB0289FB16D885625827E8DD27DFD00@BLUPR13MB0289.namprd13.prod.outlook.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR02CA0183.apcprd02.prod.outlook.com
+ (2603:1096:201:21::19) To BLUPR13MB0289.namprd13.prod.outlook.com
+ (2a01:111:e400:5951::22)
+x-incomingtopheadermarker: OriginalChecksum:6281897975358AEA616560EEDD9901F8069DDC8BEE81BC78841A979A13398698;UpperCasedChecksum:E737C4767AF0CB68283EA3B91CD3A9D31BD5A8ACD6E56EEEB634C3A6B998E29D;SizeAsReceived:7443;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [JcM/11DwsaztynpSN12N64EkHJwFsWW2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL2NAM02HT134;6:I0n2/3ZpDyQPeDN5LEBE9Seqav9soYsTyCbo9PVhDpLjuGXCZzGpD/4WzjSjtjV8VWWE+AoM8YXKChSbhfqZhLsCJa307wqHTB/s+GcaeEGMI59QJ3G5IKNRm5viK2+swNft9zO8ltKc/WM/8q63ZgpjuJWXURkfdHEhJ3OqioqTovhVd4SC0XSP93RQtw/KVuCIQe+24ktuBiVyDgVURnTWYRQzU/a7XNZ/KSoQxWdwR9J+pKPuSP5twAa3uwHrFpo+ZeBim4w0uUpdFR2Mmx0xlPNJhBw1l8G+bZUkPS2Lvxqv22uF96pzxwbfKD+CWIhC3S4he05kxggPDRTT/PfX0AoStqacBVHJ+M0h3qBXS9jcvMMhSffFV6it3SrJz2M4CZzmBxqf9jv7yTsbNKiMYzNbU1oiGs3ZpxvXAzlFlRw7h12KoDyJxEB3+kQA6NHHUTT1lnkumCRvVxBndA==;5:qJv/Wto98NLYOLF+ZDKDIKBwlNUUUNEgXV/25kwckHjxr0PRFQBRt5vERwc5iueMWkTblvHWYaKH9e6sbI+iEtqFYNiT6gvq35dy2ta9Na3woNgbwB7BbX2ToPFCLlD5dLHWbI2J4g9kZzqb/RGkmFHoeB+mar9nGhtumXx1jac=;7:vzy7GWAvwQVy/e7FqPHHZ/ErG6kxXpF+Uhf93Ab87DmN8fimOfBsO4UBHIlpJsaAecQm2C+O//9FHlj98E8W1/L2PrBgiVVBdQwHF4FvxpTOUICtk09Hyj/iafsWEPML5VVY6nZt4jvBfzAALwfo7w==
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-ms-exchange-slblob-mailprops: mBRmoEB1kyJBHxbiyk7Ffs2iIzsZwIFnzAFwxaCBTyWR3IbAu57r4xUZ7uzPcRfy3b3xe3S8f8Rj0wYXclBsGFg1ExDQ/U5GZxu8OfyBK/TUkq9gBGUXnkozXWTXy0hCuoaRiUItkSZ9zxAfOq+UDqtEFhp0m2m/BrCtFJ6BofpgxwuKpDJ1RtSCwy83sCip/bvF5uAc7GCEkIZ+QbRlmG1xNfW+dth7vaHTHxSy7ryg2AiAdjl3AR6lG7YnxssAMnM86sd5LGRm/n92cgyqwTBWLhVCBVyZDDCUSibIqGZOGrTpRp1MwoechO/cgEJDk57ze346Tj0oihGZZPEiEu4q2EEdbzD9dEMzhrtpRRm/xEadRErnOsMEbt+r/+DOQM4Vpi0pevBYXDmpRRtb9ptq6Lau2m6yVBPdSNDzPo3Uz/loTNl6JS9P76oyB13yRQIAAxbbXkVfGawU2g1InFT0AHkqOv7rWl/X9n07kamWbPRYBNg2QZPocIaq+i0PL55TwUDR7YPBliFqhDvBk6TQ6MHdf893XLggBoTc0mH8pG2vCsqLIu5iFuz+nszqwbqwwzQ1bcvyVDmXHsEy/qukuVJVi5ddrxrDJAGQDdTk93SmQEnZDGRo/WiIXSSH4ZAhZo5qh5prTHRv9enNlRnu9NgwsOpH0prEbQDAK3huXNisyF4odZtvTZBPszkfz5S3q0pujYaWuaAPtDOvawziI1cWKxv5jSuFAH/DWWEnP71+9zGKbwWaU9MRIp5vSXGs+haTVb8=
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(201702181274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:BL2NAM02HT134;
+x-ms-traffictypediagnostic: BL2NAM02HT134:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BL2NAM02HT134;BCL:0;PCL:0;RULEID:;SRVR:BL2NAM02HT134;
+x-microsoft-antispam-message-info: Fb2YewWFcKlZNFOQZRvWvA47Zcz+M+T2lGRQ0L+JAcWtQFvjj0zLL/R+i7V1xjgJ
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181126213158.q5m5bbwnmewud2gb@pengutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00a68ce6-c8e3-4672-1741-08d65453e771
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 10:34:26.4603
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM02HT134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+It`s possible ip overrun in lzo1x_1_do_compress() when compressed page is
+point to the end of memory and which virtual address is 0xfffffffffffff000.
+Leading to a NULL pointer access during the get_unaligned_le32(ip).
 
-On Mon, Nov 26, 2018 at 10:31:58PM +0100, Uwe Kleine-König wrote:
-> On Mon, Nov 26, 2018 at 12:23:19AM +0800, Hao Zhang wrote:
-> > The sun8i R40/T3/V40 PWM has 8 PWM channals and divides to 4 PWM pairs,
-> > each PWM pair built-in 1 clock module, 2 timer logic module and 1
-> > programmable dead-time generator, it also support waveform capture.
-> > It has 2 clock sources OSC24M and APB1, it is different with the
-> > sun4i-pwm driver, Therefore add a new driver for it.
-> > 
-> > Signed-off-by: Hao Zhang <hao5781286@gmail.com>
-> > ---
-> >  drivers/pwm/Kconfig     |  12 +-
-> >  drivers/pwm/Makefile    |   1 +
-> >  drivers/pwm/pwm-sun8i.c | 418 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 430 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/pwm/pwm-sun8i.c
-> > 
-> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > index 504d252..6105ac8 100644
-> > --- a/drivers/pwm/Kconfig
-> > +++ b/drivers/pwm/Kconfig
-> > @@ -426,7 +426,7 @@ config PWM_STMPE
-> >  	  expanders.
-> >  
-> >  config PWM_SUN4I
-> > -	tristate "Allwinner PWM support"
-> > +	tristate "Allwinner SUN4I PWM support"
-> >  	depends on ARCH_SUNXI || COMPILE_TEST
-> >  	depends on HAS_IOMEM && COMMON_CLK
-> >  	help
-> > @@ -435,6 +435,16 @@ config PWM_SUN4I
-> >  	  To compile this driver as a module, choose M here: the module
-> >  	  will be called pwm-sun4i.
-> >  
-> > +config PWM_SUN8I
-> > +	tristate "Allwinner SUN8I (R40/V40/T3) PWM support"
-> > +	depends on ARCH_SUNXI || COMPILE_TEST
-> > +	depends on HAS_IOMEM && COMMON_CLK
-> > +	help
-> > +	  Generic PWM framework driver for Allwinner R40/V40/T3 SoCs.
-> > +
-> > +	  To compile this driver as a module, choose M here: the module
-> > +	  will be called pwm-sun8i.
-> > +
-> >  config PWM_TEGRA
-> >  	tristate "NVIDIA Tegra PWM support"
-> >  	depends on ARCH_TEGRA
-> > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> > index 9c676a0..32c8d2d 100644
-> > --- a/drivers/pwm/Makefile
-> > +++ b/drivers/pwm/Makefile
-> > @@ -43,6 +43,7 @@ obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
-> >  obj-$(CONFIG_PWM_STM32_LP)	+= pwm-stm32-lp.o
-> >  obj-$(CONFIG_PWM_STMPE)		+= pwm-stmpe.o
-> >  obj-$(CONFIG_PWM_SUN4I)		+= pwm-sun4i.o
-> > +obj-$(CONFIG_PWM_SUN8I)		+= pwm-sun8i.o
-> >  obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
-> >  obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
-> >  obj-$(CONFIG_PWM_TIEHRPWM)	+= pwm-tiehrpwm.o
-> > diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
-> > new file mode 100644
-> > index 0000000..d8597e4
-> > --- /dev/null
-> > +++ b/drivers/pwm/pwm-sun8i.c
-> > @@ -0,0 +1,418 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
+Fix this panic:
+[ 2738.034508] Unable to handle kernel NULL pointer dereference at virtual =
+address 00000009
+[ 2738.034515] Mem abort info:
+[ 2738.034518]   Exception class =3D DABT (current EL), IL =3D 32 bits
+[ 2738.034520]   SET =3D 0, FnV =3D 0
+[ 2738.034523]   EA =3D 0, S1PTW =3D 0
+[ 2738.034524]   FSC =3D 5
+[ 2738.034526] Data abort info:
+[ 2738.034528]   ISV =3D 0, ISS =3D 0x00000005
+[ 2738.034530]   CM =3D 0, WnR =3D 0
+[ 2738.034533] user pgtable: 4k pages, 39-bit VAs, pgd =3D ffffffff94cee000
+[ 2738.034535] [0000000000000009] *pgd=3D0000000000000000, *pud=3D000000000=
+0000000
+...
+[ 2738.034592] pc : lzo1x_1_do_compress+0x198/0x610
+[ 2738.034595] lr : lzo1x_1_compress+0x98/0x3d8
+[ 2738.034597] sp : ffffff801caa3470 pstate : 00c00145
+[ 2738.034598] x29: ffffff801caa3500 x28: 0000000000001000
+[ 2738.034601] x27: 0000000000001000 x26: fffffffffffff000
+[ 2738.034604] x25: ffffffff4ebc0000 x24: 0000000000000000
+[ 2738.034607] x23: 000000000000004c x22: fffffffffffff7b8
+[ 2738.034610] x21: ffffffff2e2ee0b3 x20: ffffffff2e2ee0bb
+[ 2738.034612] x19: 0000000000000fcc x18: fffffffffffff84a
+[ 2738.034615] x17: 00000000801b03d6 x16: 0000000000000782
+[ 2738.034618] x15: ffffffff2e2ee0bf x14: fffffffffffffff0
+[ 2738.034620] x13: 000000000000000f x12: 0000000000000020
+[ 2738.034623] x11: 000000001824429d x10: ffffffffffffffec
+[ 2738.034626] x9 : 0000000000000009 x8 : 0000000000000000
+[ 2738.034628] x7 : 0000000000000868 x6 : 0000000000000434
+[ 2738.034631] x5 : ffffffff4ebc0000 x4 : 0000000000000000
+[ 2738.034633] x3 : ffffff801caa3510 x2 : ffffffff2e2ee000
+[ 2738.034636] x1 : 0000000000000000 x0 : fffffffffffff000
+...
+[ 2738.034717] Process kworker/u16:1 (pid: 8705, stack limit =3D 0xffffff80=
+1caa0000)
+[ 2738.034720] Call trace:
+[ 2738.034722]  lzo1x_1_do_compress+0x198/0x610
+[ 2738.034725]  lzo_compress+0x48/0x88
+[ 2738.034729]  crypto_compress+0x14/0x20
+[ 2738.034733]  zcomp_compress+0x2c/0x38
+[ 2738.034736]  zram_bvec_rw+0x3d0/0x860
+[ 2738.034738]  zram_rw_page+0x88/0xe0
+[ 2738.034742]  bdev_write_page+0x70/0xc0
+[ 2738.034745]  __swap_writepage+0x58/0x3f8
+[ 2738.034747]  swap_writepage+0x40/0x50
+[ 2738.034750]  shrink_page_list+0x4fc/0xe58
+[ 2738.034753]  reclaim_pages_from_list+0xa0/0x150
+[ 2738.034756]  reclaim_pte_range+0x18c/0x1f8
+[ 2738.034759]  __walk_page_range+0xf8/0x1e0
+[ 2738.034762]  walk_page_range+0xf8/0x130
+[ 2738.034765]  reclaim_task_anon+0xcc/0x168
+[ 2738.034767]  swap_fn+0x438/0x668
+[ 2738.034771]  process_one_work+0x1fc/0x460
+[ 2738.034773]  worker_thread+0x2d0/0x478
+[ 2738.034775]  kthread+0x110/0x120
+[ 2738.034778]  ret_from_fork+0x10/0x18
+[ 2738.034781] Code: 3800167f 54ffffa8 d100066f 14000031 (b9400131)
+[ 2738.034784] ---[ end trace 9b5cca106f0e54d1 ]---
+[ 2738.035473] Kernel panic - not syncing: Fatal exception
 
-Given that the documentation is publically available, I suggest to add a
-link to it in a comment here.
-(http://linux-sunxi.org/File:Allwinner_R40_User_Manual_V1.0.pdf)
+crash> dis lzo1x_1_do_compress+100 3 -l
+../kernel/msm-4.14/lib/lzo/lzo1x_compress.c: 44
+0xffffff8dec8c6af4 <lzo1x_1_do_compress+100>:   cmp     x9, x10
+0xffffff8dec8c6af8 <lzo1x_1_do_compress+104>:   b.cc    0xffffff8dec8c6c28
+0xffffff8dec8c6afc <lzo1x_1_do_compress+108>:   b       0xffffff8dec8c7094
 
-> > +	/* calculate and set prescaler, div table, PWM entire cycle */
-> > +	clk_div = val;
-> > +	while (clk_div > 65535) {
-> > +		prescaler++;
-> > +		clk_div = val;
-> > +		do_div(clk_div, 1U << div_id);
-> > +		do_div(clk_div, prescaler + 1);
-> > +
-> > +		if (prescaler == 255) {
-> > +			prescaler = 0;
-> > +			div_id++;
-> > +			if (div_id == 9) {
-> > +				dev_err(sun8i_pwm->chip.dev,
-> > +					"unsupport period value\n");
-> > +				return -EINVAL;
-> > +			}
-> > +		}
-> > +	}
-> 
-> Noting the underlying formula for the calculation and the bitwidth for
-> the related register fields above would be good.
-> 
-> > +
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> > +			    PWM_ENTIRE_CYCLE, clk_div << 16);
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_CTR_REG(ch),
-> > +			    PWM_PRESCAL_K, prescaler << 0);
-> > +	sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> > +			    CLK_DIV_M, div_id << 0);
-> > +
-> > +	/* set duty cycle */
-> > +	val = state->period;
-> > +	do_div(val, clk_div);
-> > +	clk_div = state->duty_cycle;
-> > +	do_div(clk_div, val);
-> > +	if (clk_div > 65535)
-> > +		clk_div = 65535;
-> > +
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> > +			    PWM_ACT_CYCLE, clk_div << 0);
-> 
-> Why "<< 0"?
-> 
-> > +	return 0;
-> > +}
-> > +
-> > +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> > +			   struct pwm_state *state)
-> > +{
-> > +	int ret;
-> > +	struct sun8i_pwm_chip *sun8i_pwm = to_sun8i_pwm_chip(chip);
-> > +	struct pwm_state cstate;
-> > +
-> > +	pwm_get_state(pwm, &cstate);
-> > +	if (!cstate.enabled) {
-> > +		ret = clk_prepare_enable(sun8i_pwm->clk);
-> > +		if (ret) {
-> > +			dev_err(chip->dev, "Failed to enable PWM clock\n");
-> > +			return ret;
-> > +		}
-> > +	}
-> > +
-> > +	if ((cstate.period != state->period) ||
-> > +	    (cstate.duty_cycle != state->duty_cycle)) {
-> > +		ret = sun8i_pwm_config(sun8i_pwm, pwm->hwpwm, state);
-> > +		if (ret) {
-> > +			dev_err(chip->dev, "Failed to config PWM\n");
-> > +			return ret;
-> > +		}
-> > +	}
-> 
-> sun8i_pwm_config writes the registers that are relevant for period and
-> duty_cycle. When do these values take effect? If it's already here,
-> switching the polarity below might introduce a glitch.
+crash> dis lzo1x_1_do_compress+0x198
+0xffffff8dec8c6c28 <lzo1x_1_do_compress+408>:   ldr     w17, [x9]
 
-I think this is the case after taking a look into the reference manual.
+ip =3D x9 =3D 0x0000000000000009 is overflow.
 
-There are two 16 bit fields in the PWM_PERIOD_REG. One specifies the
-number of clock ticks defining the period ("PWM_ENTIRE_CYCLE") and the
-other the duty cycle ("PWM_ACT_CYCLE").
+Signed-off-by: liyueyi <liyueyi@live.com>
+---
+ lib/lzo/lzo1x_compress.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-So if you go from duty_cycle=5 + period=10 + POLARITY_NORMAL to
-duty_cycle=3 + period=10 + POLARITY_INVERTED this might generate:
+diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+index 236eb21..a0265a6 100644
+--- a/lib/lzo/lzo1x_compress.c
++++ b/lib/lzo/lzo1x_compress.c
+@@ -17,6 +17,9 @@
+ #include <linux/lzo.h>
+ #include "lzodefs.h"
+=20
++#define OVERFLOW_ADD_CHECK(a, b)  \
++	((size_t)~0 - (size_t)(a) < (size_t)(b) ? true : false)
++
+ static noinline size_t
+ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		    unsigned char *out, size_t *out_len,
+@@ -39,6 +42,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_le=
+n,
+ 		size_t t, m_len, m_off;
+ 		u32 dv;
+ literal:
++		if (unlikely(OVERFLOW_ADD_CHECK(ip, 1 + ((ip - ii) >> 5))))
++			break;
+ 		ip +=3D 1 + ((ip - ii) >> 5);
+ next:
+ 		if (unlikely(ip >=3D ip_end))
+@@ -99,7 +104,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_l=
+en,
+ 				m_len +=3D 8;
+ 				v =3D get_unaligned((const u64 *) (ip + m_len)) ^
+ 				    get_unaligned((const u64 *) (m_pos + m_len));
+-				if (unlikely(ip + m_len >=3D ip_end))
++				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
++						|| (ip + m_len >=3D ip_end)))
+ 					goto m_len_done;
+ 			} while (v =3D=3D 0);
+ 		}
+@@ -124,7 +130,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_=
+len,
+ 				m_len +=3D 4;
+ 				v =3D get_unaligned((const u32 *) (ip + m_len)) ^
+ 				    get_unaligned((const u32 *) (m_pos + m_len));
+-				if (unlikely(ip + m_len >=3D ip_end))
++				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
++						|| (ip + m_len >=3D ip_end)))
+ 					goto m_len_done;
+ 			} while (v =3D=3D 0);
+ 		}
+@@ -160,7 +167,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_=
+len,
+ 				if (ip[m_len] !=3D m_pos[m_len])
+ 					break;
+ 				m_len +=3D 1;
+-				if (unlikely(ip + m_len >=3D ip_end))
++				if (unlikely(OVERFLOW_ADD_CHECK(ip, m_len)
++						|| (ip + m_len >=3D ip_end)))
+ 					goto m_len_done;
+ 			} while (ip[m_len] =3D=3D m_pos[m_len]);
+ 		}
+--=20
+2.7.4
 
- ____      __           ______
-/    \____/  \_________/      \__/
-^         ^         ^         ^
-
-Also there is a PWM_PERIOD_RDY bit field that probably has to be
-consulted before writing to the PWM_PERIOD_REG register.
-
-It's not entirely clear to me if the PWM_ACT_STA bit that is used for
-inversion is shadowed until the next period, too. That's what I assumed
-above. If it's not the wave might look as follows:
-
- ____      __  _____    ______
-/    \____/  \/     \__/      \__/
-^         ^   *     ^         ^
-
-Where * marks the point where the inversion starts to take effect.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
