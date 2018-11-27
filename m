@@ -2,121 +2,236 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95CCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFBEC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9603C2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9603C2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B993208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 19:51:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B993208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbeK1Gtq (ORCPT
+        id S1726484AbeK1Gul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:49:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52220 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 01:50:41 -0500
+Received: from mga01.intel.com ([192.55.52.88]:37190 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbeK1Gtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:49:46 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D58B220873;
-        Tue, 27 Nov 2018 19:50:45 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 14:50:44 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1725883AbeK1Guk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 01:50:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 11:51:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,287,1539673200"; 
+   d="scan'208";a="94866875"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga006.jf.intel.com with ESMTP; 27 Nov 2018 11:51:41 -0800
+Subject: Re: [patch V2 18/28] x86/speculation: Prepare for per task indirect
+ branch speculation control
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     "x86@kernel.org" <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC][PATCH 03/14] arm64: function_graph: Remove use of
- FTRACE_NOTRACE_DEPTH
-Message-ID: <20181127145044.53ddb58a@gandalf.local.home>
-In-Reply-To: <20181127193149.GJ5641@arm.com>
-References: <20181122012708.491151844@goodmis.org>
-        <20181122012803.040221352@goodmis.org>
-        <20181127193149.GJ5641@arm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185005.176917199@linutronix.de>
+ <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b2442439-a3ea-00f6-955f-f0c5d99ec401@linux.intel.com>
+Date:   Tue, 27 Nov 2018 11:51:41 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <7ec59a1a-4caf-24f6-3466-ee1d01594861@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Nov 2018 19:31:50 +0000
-Will Deacon <will.deacon@arm.com> wrote:
-
-> Hi Steve,
+On 11/27/2018 09:25 AM, Lendacky, Thomas wrote:
+>> --- a/arch/x86/kernel/cpu/bugs.c
+>> +++ b/arch/x86/kernel/cpu/bugs.c
+>> @@ -148,6 +148,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+>>  		    static_cpu_has(X86_FEATURE_AMD_SSBD))
+>>  			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
+>>  
+>> +		/* Conditional STIBP enabled? */
+>> +		if (static_branch_unlikely(&switch_to_cond_stibp))
+>> +			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
+>> +
+>>  		if (hostval != guestval) {
+>>  			msrval = setguest ? guestval : hostval;
+>>  			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+>> --- a/arch/x86/kernel/process.c
+>> +++ b/arch/x86/kernel/process.c
+>> @@ -406,6 +406,11 @@ static __always_inline void spec_ctrl_up
+>>  	if (static_cpu_has(X86_FEATURE_SSBD))
+>>  		msr |= ssbd_tif_to_spec_ctrl(tifn);
 > 
-> On Wed, Nov 21, 2018 at 08:27:11PM -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > The curr_ret_stack is no longer set to -1 when not tracing a function. It is
-> > now done differently, and the FTRACE_NOTRACE_DEPTH value is no longer used.
-> > Remove the reference to it.  
+> I did some quick testing and found my original logic was flawed. Since
+> spec_ctrl_update_msr() can now be called for STIBP, an additional check
+> is needed to set the SSBD MSR bit.
 > 
-> Do you have a pointer to the commit that changed that behaviour? I just want
-> to make sure we're not missing something in our unwind_frame() code.
-
-The commit log is slightly wrong. The -1 goes away in patch 11 of this
-series (and this is patch 3). But the FTRACE_NOTRACE_DEPTH is going
-away, which is why we need this patch.
-
+> Both X86_FEATURE_VIRT_SSBD and X86_FEATURE_LS_CFG_SSBD cause
+> X86_FEATURE_SSBD to be set. Before this patch, spec_ctrl_update_msr() was
+> only called if X86_FEATURE_SSBD was set and one of the other SSBD features
+> wasn't set. But now, STIBP can cause spec_ctrl_update_msr() to get called
+> and cause the SSBD MSR bit to be set when it shouldn't (could result in
+> a GP fault).
 > 
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  arch/arm64/kernel/stacktrace.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
-> > index 4989f7ea1e59..7723dadf25be 100644
-> > --- a/arch/arm64/kernel/stacktrace.c
-> > +++ b/arch/arm64/kernel/stacktrace.c
-> > @@ -61,9 +61,6 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
-> >  			(frame->pc == (unsigned long)return_to_handler)) {
-> >  		if (WARN_ON_ONCE(frame->graph == -1))
-> >  			return -EINVAL;  
-> 
-> Hmm, so is this code redundant too ^^ ?
 
-Actually, it is fine before patch 11 (which I'm only going to take the
-first 10 patches for the next merge window, after they are cleaned up).
+I think it will be cleaner just to fold the msr update into
+__speculation_ctrl_update to fix this issue.
 
+Something like this perhaps.
 
-> 
-> > -		if (frame->graph < -1)
-> > -			frame->graph += FTRACE_NOTRACE_DEPTH;
-> > -  
-> 
-> Do we still need to initialise frame->graph in __save_stack_trace()?
+Thanks.
 
-You are fine till patch 11, which will probably break all this (another
-reason why I'm not going to push that in the next merge window).
+Tim
 
-Ideally, we need to get rid of all users of curr_ret_stack outside of
-the function graph logic. As it's going to change drastically. We need
-this in order to combine function graph and kretprobes.
+---
 
-I'm working on a v2 that's going to be aimed at the next merge window,
-that will only contain patches 1-10 of this series (and some other
-updates). I'll Cc you on that entire set.
-
--- Steve
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 3f5e351..614ec51 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -398,25 +398,6 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+ 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
+ }
+ 
+-static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+-{
+-	u64 msr = x86_spec_ctrl_base;
+-
+-	/*
+-	 * If X86_FEATURE_SSBD is not set, the SSBD bit is not to be
+-	 * touched.
+-	 */
+-	if (static_cpu_has(X86_FEATURE_SSBD))
+-		msr |= ssbd_tif_to_spec_ctrl(tifn);
+-
+-	/* Only evaluate if conditional STIBP is enabled */
+-	if (IS_ENABLED(CONFIG_SMP) &&
+-	    static_branch_unlikely(&switch_to_cond_stibp))
+-		msr |= stibp_tif_to_spec_ctrl(tifn);
+-
+-	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+-}
+-
+ /*
+  * Update the MSRs managing speculation control, during context switch.
+  *
+@@ -428,6 +409,7 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ {
+ 	unsigned long tif_diff = tifp ^ tifn;
+ 	bool updmsr = false;
++	u64 msr = x86_spec_ctrl_base;
+ 
+ 	/*
+ 	 * If TIF_SSBD is different, select the proper mitigation
+@@ -440,8 +422,10 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 			amd_set_ssb_virt_state(tifn);
+ 		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 			amd_set_core_ssb_state(tifn);
+-		else if (static_cpu_has(X86_FEATURE_SSBD))
++		else if (static_cpu_has(X86_FEATURE_SSBD)) {
+ 			updmsr  = true;
++			msr |= ssbd_tif_to_spec_ctrl(tifn);
++		}
+ 	}
+ 
+ 	/*
+@@ -449,11 +433,13 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 	 * otherwise avoid the MSR write.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_SMP) &&
+-	    static_branch_unlikely(&switch_to_cond_stibp))
++	    static_branch_unlikely(&switch_to_cond_stibp)) {
+ 		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
++		msr |= stibp_tif_to_spec_ctrl(tifn);
++	}
+ 
+ 	if (updmsr)
+-		spec_ctrl_update_msr(tifn);
++		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
+ 
+ void speculation_ctrl_update(unsigned long tif)
