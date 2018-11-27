@@ -2,148 +2,233 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857C8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E604C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33ABE208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="W2ju6RXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33ABE208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 05B4020817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 10:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B4020817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbeK0V3a (ORCPT
+        id S1730699AbeK0V3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:29:30 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:52035 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbeK0V33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:29:29 -0500
-X-IronPort-AV: E=Sophos;i="5.56,286,1539673200"; 
-   d="scan'208";a="23255130"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Nov 2018 03:32:01 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 27 Nov 2018 03:32:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bg6mBMtKeTwmLSn7/IANoEQHkR+95Z9XFYKZtGY03PI=;
- b=W2ju6RXbP+5ffX+OSQBh2mKzuZ2m5lw+TvYqIKW1J1E3/Lpdnwk4RIOJ2DJPBO1dirsck7os85k1umKynRGEZvxaFlTWGC9O+YrbJbyG1SAoVRqKedNvgehSOareuEGMLcQcnIwvPy9jq4Ier5p/8nRRca4iRRzd3g84Y6n7GYI=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0823.namprd11.prod.outlook.com (10.163.112.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Tue, 27 Nov 2018 10:31:57 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1361.019; Tue, 27 Nov 2018
- 10:31:57 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <harinik@xilinx.com>
-CC:     <harini.katakam@xilinx.com>, <Nicolas.Ferre@microchip.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <michal.simek@xilinx.com>,
-        <appanad@xilinx.com>
-Subject: Re: [PATCH v2 4/4] net: macb: Add support for suspend/resume with
- full power down
-Thread-Topic: [PATCH v2 4/4] net: macb: Add support for suspend/resume with
- full power down
-Thread-Index: AQHUhZbYf5CxbcHOcUyrEaW+6kS1XqVjKOOAgABEu4A=
-Date:   Tue, 27 Nov 2018 10:31:57 +0000
-Message-ID: <b2bd8eb0-9cc2-2fcb-4b90-17d3cc5212d9@microchip.com>
-References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
- <1543216072-9623-5-git-send-email-harini.katakam@xilinx.com>
- <c844298e-d997-940f-be85-fd3442d01be5@microchip.com>
- <CAFcVEC+yyvQckJaj9HrkUtsJSsAKs0F5akRkgBceMqbOAcdx3g@mail.gmail.com>
-In-Reply-To: <CAFcVEC+yyvQckJaj9HrkUtsJSsAKs0F5akRkgBceMqbOAcdx3g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P194CA0021.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:800:be::31) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0823;6:FU5bIZADmuzOLkB+Api12GlgBUHmwxjMZsojZ4TeUNqU07BoIdGzdlj6CDb1Qf028vzhyEsWNKLpAxccO/VzOak+ff/a8nJIW6jGyFNAOUzBDGL0sgYKeZv1+wJrB4hpCY/OXkhZICiKc+Afxp++wHXoj7uTCSuXP8+ons+4jWzk8nqXvQpWL5zWxB0F8rHjNAV6DP9WqqEgWD2TYW2hnKDfRo9qKI8uv6rLuPhRvD+2YJfYkdsQZoUPb93nDfIMc+tpujjZ2MdiWzhjoKMnRa+DNkzeha4DMYtdwvGmFZT9yaDa+Q/xgYB9aWkH1q29mDrB1f1BjRhgLsM3azIjLBbovo09c/DkshTlQf4lbBu1LPF7BOQsA00TrqMflhr3d2maqL+Kf/IY67X0za+u5rjsrIgI64Oa1lFGLD53rrV1LbTVKok4diGdi8M4PUHn8BDhUqGzgXLV2lR6NAq1db6egjDHzMNW96bEcnf3QWc=;5:2MP6X/aPuIUxGOaTOqtWqM7jZAzphxwgXroX1PF/zon11xYR++cWSZQp695PzDD93uirLOELKfzHbBogtifR2TimJmUAzyMi4A2k836TNef73MGNSwkB8E7Jrw4wZyGHft7/Gif9IWqYDHdTube+2gHTqFOsByuORRZdfjdpr6A=;7:HT5btGtSFybtLarWp8sLRovGnQcrgeNTo0gOtgvJfpgWfbOtPgHgpXSzq3q4XGwiJwjZ3pbjXPgFuwIBSWEDw7pE3n4+HqTaIDvHoQDqNuWqy10n8slMcZ3QkB8C3hoOukEYNknhP4gEPrSoymGOvw==
-x-ms-office365-filtering-correlation-id: 46428a72-15ea-4143-e53b-08d654538e25
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0823;
-x-ms-traffictypediagnostic: BY2PR11MB0823:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-microsoft-antispam-prvs: <BY2PR11MB08231C6ACC2047927B7A4E8087D00@BY2PR11MB0823.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231443)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0823;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0823;
-x-forefront-prvs: 086943A159
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(376002)(136003)(52314003)(189003)(199004)(81166006)(81156014)(53936002)(8936002)(6916009)(54906003)(14444005)(8676002)(305945005)(105586002)(6116002)(7736002)(6246003)(31686004)(106356001)(186003)(575784001)(31696002)(316002)(86362001)(26005)(72206003)(102836004)(256004)(14454004)(68736007)(4326008)(53546011)(386003)(6506007)(36756003)(345774005)(478600001)(486006)(76176011)(52116002)(6436002)(71190400001)(71200400001)(3846002)(15650500001)(93886005)(66066001)(2616005)(476003)(99286004)(11346002)(229853002)(97736004)(6512007)(446003)(5660300001)(6486002)(25786009)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0823;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pHO77f91jtwU4a0bGXlF97SjLzW53eMRFGT7iekRF30CYmpVqYTS58r2WIWOb31hKg9QfzSaEvCoMjh9e1blbdrmA133HHSXIV0lG9GVv12V1OMxl7ewjALJHi1djek6QqVeKbaRjwFqKhq82W7DaiKztxabMk8TsJjYQV4y2Rg+VBDvkdnzmaNK5dG4DJd/o3SGCVyzzn1yOot8pVKuJ6rz2pBl7Lfs3CLA0t0x/G7dt+wo9a0YVy2oCU6xUpFF0u48u03evNxyrw93Pwj6mZtD1WdYh17s2dzQXZ7bux4TWsN6L8nOcBd3nWWlwvZPpPrSVcTFWGpwja5CbgMwsNg0qRGsYZPOAEDL/bCKeuM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <79B7A40F45C14542B96AA1DC14D94639@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 27 Nov 2018 16:29:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35544 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbeK0V3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:29:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D4AA6207A8; Tue, 27 Nov 2018 11:31:58 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 37B0720DD6;
+        Tue, 27 Nov 2018 11:31:06 +0100 (CET)
+Date:   Tue, 27 Nov 2018 11:31:06 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        laurent.pinchart@ideasonboard.com,
+        linux-media <linux-media@vger.kernel.org>, a.hajda@samsung.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, frowand.list@gmail.com
+Subject: Re: [PATCH 5/5] DO NOT MERGE: ARM: dts: bananapi: Add Camera support
+Message-ID: <20181127103106.vykudp36vkyy5vme@flea>
+References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
+ <12093630fdd7d8b43ebcb0340691e0f2200e26c6.1542097288.git-series.maxime.ripard@bootlin.com>
+ <CAMty3ZBO6B=vgduv5u28zC8P1DOm1TYGFAVjDtJOpU8dozrk=A@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46428a72-15ea-4143-e53b-08d654538e25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2018 10:31:57.2390
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0823
-X-OriginatorOrg: microchip.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mwaf2j32zrljcsge"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBO6B=vgduv5u28zC8P1DOm1TYGFAVjDtJOpU8dozrk=A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSGFyaW5pLA0KDQpPbiAyNy4xMS4yMDE4IDA4OjI1LCBIYXJpbmkgS2F0YWthbSB3cm90ZToN
-Cj4gSGkgQ2xhdWRpdSwNCj4gDQo+IE9uIE1vbiwgTm92IDI2LCAyMDE4IGF0IDg6MTYgUE0gPENs
-YXVkaXUuQmV6bmVhQG1pY3JvY2hpcC5jb20+IHdyb3RlOg0KPj4NCj4+DQo+Pg0KPj4gT24gMjYu
-MTEuMjAxOCAwOTowNywgSGFyaW5pIEthdGFrYW0gd3JvdGU6DQo+IDxzbmlwPg0KPj4NCj4+IElu
-IHRoZSBwcmV2aW91cyB2ZXJzaW9uIHlvdSBzYWlkIHlvdSBlbmNvdW50ZXJlZCBzb21lIGNyYXNo
-ZXMgd2hpbGUNCj4+IHN0cmVzc2luZyB0aGlzIHBhcnQgaWYgbWFjYl9vcGVuKCkvbWFjYl9jbG9z
-ZSgpIHdhcyB1c2VkIGluIGhlcmUuIENvdWxkIHlvdQ0KPj4gc2hhcmUgdGhlIHRlc3RzIHNvIHRo
-YXQgSSBjYW4gZGVidWcgaXQgb24gbXkgc2lkZT8NCj4gDQo+IFN1cmUsIG15IHRlc3RzIGluY2x1
-ZGUgZG9pbmcgYSBzZXJpZXMgb2Ygc3VzcGVuZC9yZXN1bWUgLS0gaXQgaXMgZG9uZQ0KPiBhcyBw
-YXJ0IG9mIGENCj4gcmFuZG9tIHJlZ3Jlc3Npb24gc2NyaXB0LiBPbiBaeW5xTVAsIGl0IGluY2x1
-ZGVzIHRoZSBmb2xsb3dpbmcgdG8gZG8gYW4NCj4gRlBEIG9mZiBzdXNwZW5kIGFuZCB0aGVuIHVz
-ZSBlaXRoZXIgVUFSVCBvciBXT0wgYXMgYSB3YWtlIHNvdXJjZSBhbmQNCj4gcmVwZWF0IHRoZSBz
-YW1lLCBzb21ldGltZXMgcGluZ2luZyBpbiBiZXR3ZWVuOg0KPiANCj4gZWNobyBwbV9yZXF1ZXN0
-X3dha2V1cCA4IDEgMCAxID4gL3N5cy9rZXJuZWwvZGVidWcvenlucW1wLWZpcm13YXJlL3BtDQo+
-IGVjaG8gcG1fZm9yY2VfcG93ZXJkb3duIDYgPiAvc3lzL2tlcm5lbC9kZWJ1Zy96eW5xbXAtZmly
-bXdhcmUvcG0NCj4gZWNobyBlbmFibGVkID4gL3N5cy9kZXZpY2VzL3BsYXRmb3JtL2FtYmEvZmYw
-MDAwMDAuc2VyaWFsL3R0eS90dHlQUzAvcG93ZXIvd2FrZXVwDQo+IGVjaG8gZW5hYmxlZCA+IC9z
-eXMvZGV2aWNlcy9wbGF0Zm9ybS9hbWJhL2ZmMGUwMDAwLmV0aGVybmV0L25ldC9ldGgwL3Bvd2Vy
-L3dha2V1cA0KPiBlY2hvIG1lbSA+IC9zeXMvcG93ZXIvc3RhdGUNCj4gDQo+IHBpbmcgZG9lcyBu
-b3Qgd29yayBzb21ldGltZXMgYW5kIGFmdGVyIGEgZmV3IGl0ZXJhdGlvbnMgKHNvbWV0aW1lcw0K
-PiAyMCksIGEgY3Jhc2ggY2FuIGJlDQo+IG9ic2VydmVkIHRyYWNpbmcgZnJvbSAia2ZyZWVfc2ti
-X2xpc3QiIHRvICJtYWNiX2ZyZWVfY29uc2lzdGVudCIuIEZyb20NCj4gdGhlIGZsb3csIHRoZQ0K
-PiBvbmx5IGV4cGxhbmF0aW9uIEkgY291bGQgY29tZSB1cCB3aXRoIHdhcyB0aGF0IHRoZXJlIHdh
-cyBhbiBhdHRlbXB0IHRvDQo+IGZyZWUgYnVmZmVycyB0aGF0DQo+IG1heSBub3QgaGF2ZSBiZWVu
-IGFsbG9jYXRlZC4gQWxzbywgdGhpcyB3YXMgdGltZSBjb25zdW1pbmcgaW4gdGhlDQo+IHN1c3Bl
-bmQvcmVzdW1lIHBhdGguDQoNClRoYW5rIHlvdSBmb3IgYWxsIHRoZXNlLiBJIHdpbGwgdHJ5IGl0
-IG9uIG15IHNpZGUgdG8gc2VlIGlmIEkgY2FuIHJlcHJvZHVjZSBpdC4NCg0KPiANCj4gPHNuaXA+
-DQo+Pj4gKyAgICAgfSBlbHNlIHsNCj4+PiArICAgICAgICAgICAgIG1hY2Jfd3JpdGVsKGJwLCBO
-Q1IsIE1BQ0JfQklUKE1QRSkpOw0KPj4NCj4+IEp1c3QgYXNraW5nLi4uIHNob3VsZG4ndCBvdGhl
-ciByZWdpc3RlcnMgYmUgcmVzdG9yZWQgaGVyZSBhZnRlciBTb0MgcG93ZXINCj4+IGlzIGN1dCBv
-ZmY/DQo+IElkZWFsbHkgeWVzLiBCdXQgaW4gdGhpcyBzZXJpZXMsIEknbSBqdXN0IGF0dGVtcHRp
-bmcgdG8gcmUtaW5pdGlhbGl6ZQ0KPiB0byBhIHdvcmtpbmcNCj4gc3RhdGUuIEkgY2FuIHRyeSBj
-b250ZXh0IHNhdmUvcmVzdG9yZSBsYXRlci4NCg0KSSBzZWUuIEkgaGF2ZSB0cmllZCBpdCBvbiBt
-eSBvd24gd2l0aCBTQU1BNUQyIGJhY2t1cCBhbmQgc2VsZi1yZWZyZXNoIG1vZGUNCndoZXJlIHRo
-ZSBjb3JlIGlzIHNodXQgZG93biBhbmQgaXQgZG9lc24ndCByZXN1bWUgT0suIEFueXdheSwgbm8g
-aXNzdWUsIEkNCmNhbiBhZGQgbXkgY29udGV4dCBzYXZlL3Jlc3RvcmUgYWZ0ZXIgdGhpcyBpcyBh
-Y2NlcHRlZC4NCg0KVGhlIGlkZWEgd2l0aCBtYWNiX29wZW4oKS9tYWNiX2Nsb3NlKCkgd2FzIHRo
-YXQgaXQgaXMgZG9pbmcgZXZlcnl0aGluZyBmb3INCnlvdSBhbmQgZXZlcnkgdGltZSBuZXcgdGhp
-bmdzIGFyZSBpbXBsZW1lbnRlZCB5b3Ugd291bGRuJ3QgaGF2ZSB0byBhZGQgdGhlbQ0KYWxzbyBp
-biBzdXNwZW5kL3Jlc3VtZSBmdW5jdGlvbnMuDQoNClRoYW5rIHlvdSwNCkNsYXVkaXUgQmV6bmVh
-DQoNCj4gUmVnYXJkcywNCj4gSGFyaW5pDQo+IA0K
+
+--mwaf2j32zrljcsge
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 27, 2018 at 12:26:09PM +0530, Jagan Teki wrote:
+> On Tue, Nov 13, 2018 at 1:54 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > ---
+> >  arch/arm/boot/dts/sun7i-a20-bananapi.dts | 98 ++++++++++++++++++++++++=
++-
+> >  1 file changed, 98 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/sun7i-a20-bananapi.dts b/arch/arm/boot/d=
+ts/sun7i-a20-bananapi.dts
+> > index 70dfc4ac0bb5..18dbff9f1ce9 100644
+> > --- a/arch/arm/boot/dts/sun7i-a20-bananapi.dts
+> > +++ b/arch/arm/boot/dts/sun7i-a20-bananapi.dts
+> > @@ -54,6 +54,9 @@
+> >         compatible =3D "lemaker,bananapi", "allwinner,sun7i-a20";
+> >
+> >         aliases {
+> > +               i2c0 =3D &i2c0;
+> > +               i2c1 =3D &i2c1;
+> > +               i2c2 =3D &i2c2;
+> >                 serial0 =3D &uart0;
+> >                 serial1 =3D &uart3;
+> >                 serial2 =3D &uart7;
+> > @@ -63,6 +66,41 @@
+> >                 stdout-path =3D "serial0:115200n8";
+> >         };
+> >
+> > +       reg_cam: cam {
+> > +               compatible =3D "regulator-fixed";
+> > +               regulator-name =3D "cam";
+> > +               regulator-min-microvolt =3D <5000000>;
+> > +               regulator-max-microvolt =3D <5000000>;
+> > +               vin-supply =3D <&reg_vcc5v0>;
+> > +               gpio =3D <&pio 7 16 GPIO_ACTIVE_HIGH>;
+> > +               enable-active-high;
+> > +               regulator-always-on;
+> > +       };
+> > +
+> > +        reg_cam_avdd: cam-avdd {
+> > +                compatible =3D "regulator-fixed";
+> > +                regulator-name =3D "cam500b-avdd";
+> > +                regulator-min-microvolt =3D <2800000>;
+> > +                regulator-max-microvolt =3D <2800000>;
+> > +                vin-supply =3D <&reg_cam>;
+> > +        };
+> > +
+> > +        reg_cam_dovdd: cam-dovdd {
+> > +                compatible =3D "regulator-fixed";
+> > +                regulator-name =3D "cam500b-dovdd";
+> > +                regulator-min-microvolt =3D <1800000>;
+> > +                regulator-max-microvolt =3D <1800000>;
+> > +                vin-supply =3D <&reg_cam>;
+> > +        };
+> > +
+> > +        reg_cam_dvdd: cam-dvdd {
+> > +                compatible =3D "regulator-fixed";
+> > +                regulator-name =3D "cam500b-dvdd";
+> > +                regulator-min-microvolt =3D <1500000>;
+> > +                regulator-max-microvolt =3D <1500000>;
+> > +                vin-supply =3D <&reg_cam>;
+> > +        };
+> > +
+> >         hdmi-connector {
+> >                 compatible =3D "hdmi-connector";
+> >                 type =3D "a";
+> > @@ -120,6 +158,27 @@
+> >                 >;
+> >  };
+> >
+> > +&csi0 {
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&csi0_pins_a>;
+> > +       status =3D "okay";
+> > +
+> > +       port {
+> > +               #address-cells =3D <1>;
+> > +               #size-cells =3D <0>;
+> > +
+> > +               csi_from_ov5640: endpoint {
+> > +                        remote-endpoint =3D <&ov5640_to_csi>;
+> > +                        bus-width =3D <8>;
+> > +                        data-shift =3D <2>;
+> > +                        hsync-active =3D <1>; /* Active high */
+> > +                        vsync-active =3D <0>; /* Active low */
+> > +                        data-active =3D <1>;  /* Active high */
+> > +                        pclk-sample =3D <1>;  /* Rising */
+> > +                };
+> > +       };
+> > +};
+> > +
+> >  &de {
+> >         status =3D "okay";
+> >  };
+> > @@ -167,6 +226,39 @@
+> >         };
+> >  };
+> >
+> > +&i2c1 {
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&i2c1_pins_a>;
+> > +       status =3D "okay";
+> > +
+> > +       camera: camera@21 {
+> > +               compatible =3D "ovti,ov5640";
+> > +               reg =3D <0x21>;
+> > +                clocks =3D <&ccu CLK_CSI0>;
+> > +                clock-names =3D "xclk";
+> > +               assigned-clocks =3D <&ccu CLK_CSI0>;
+> > +               assigned-clock-rates =3D <24000000>;
+> > +
+> > +                reset-gpios =3D <&pio 7 14 GPIO_ACTIVE_LOW>;
+> > +                powerdown-gpios =3D <&pio 7 19 GPIO_ACTIVE_HIGH>;
+> > +                AVDD-supply =3D <&reg_cam_avdd>;
+> > +                DOVDD-supply =3D <&reg_cam_dovdd>;
+> > +                DVDD-supply =3D <&reg_cam_dvdd>;
+> > +
+> > +                port {
+> > +                        ov5640_to_csi: endpoint {
+> > +                                remote-endpoint =3D <&csi_from_ov5640>;
+> > +                                bus-width =3D <8>;
+> > +                                data-shift =3D <2>;
+> > +                                hsync-active =3D <1>; /* Active high */
+> > +                                vsync-active =3D <0>; /* Active low */
+> > +                                data-active =3D <1>;  /* Active high */
+> > +                                pclk-sample =3D <1>;  /* Rising */
+> > +                        };
+> > +                };
+> > +       };
+>=20
+> Does ov5640 need any further patches, wrt linux-next? I'm trying to
+> test this on top of linux-next but the slave id seems not detecting.
+>=20
+> [    2.304711] ov5640 1-0021: Linked as a consumer to regulator.5
+> [    2.310639] ov5640 1-0021: Linked as a consumer to regulator.6
+> [    2.316592] ov5640 1-0021: Linked as a consumer to regulator.4
+> [    2.351540] ov5640 1-0021: ov5640_init_slave_id: failed with -6
+> [    2.357543] ov5640 1-0021: Dropping the link to regulator.5
+> [    2.363224] ov5640 1-0021: Dropping the link to regulator.6
+> [    2.368829] ov5640 1-0021: Dropping the link to regulator.4
+>=20
+> Here is the full log [1], please let me know if I miss anything, I
+> even tried to remove MCLK pin
+
+You seem to have made local modifications to your tree, what are they?
+This indicates that the communication over i2c doesn't work, what is
+your setup?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--mwaf2j32zrljcsge
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0c6gAKCRDj7w1vZxhR
+xdPkAP47Cz7G1Yps9F1YMfXGn1UocnEmP7KZe3329Fq28MwkbAD+NiXMTD4QZhCx
+WPSXMTCFC6XcTEEPINbZJkVed+M1sgU=
+=G4H5
+-----END PGP SIGNATURE-----
+
+--mwaf2j32zrljcsge--
