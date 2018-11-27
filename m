@@ -2,32 +2,32 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0E2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174B8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED35204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED35204FD
+	by mail.kernel.org (Postfix) with ESMTP id D9D5A20817
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 09:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D5A20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeK0UfG (ORCPT
+        id S1730316AbeK0UgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:35:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60245 "EHLO mail.bootlin.com"
+        Tue, 27 Nov 2018 15:36:23 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60410 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbeK0UfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 15:35:05 -0500
+        id S1729387AbeK0UgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:36:22 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 34025207AD; Tue, 27 Nov 2018 10:37:45 +0100 (CET)
+        id 4207520DC1; Tue, 27 Nov 2018 10:39:02 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1CB0207AD;
-        Tue, 27 Nov 2018 10:37:34 +0100 (CET)
-Date:   Tue, 27 Nov 2018 10:37:35 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0B249207BC;
+        Tue, 27 Nov 2018 10:38:52 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:38:52 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Priit Laes <plaes@plaes.org>
 Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -39,16 +39,16 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org, Olliver Schinagl <oliver@schinagl.nl>
-Subject: Re: [PATCH 10/14] regulator: dts: set proper lradc vref on OLinuXino
- Lime2
-Message-ID: <20181127093735.amfqfcsxzreajte4@flea>
+Subject: Re: [PATCH 09/14] regulator: dts: add full voltage range to LDO4 on
+ the Lime2
+Message-ID: <20181127093852.2iavgo4xipjnu25l@flea>
 References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
- <b27515a1cfe3512253a3fbcda04a3367818520b9.1543245984.git-series.plaes@plaes.org>
+ <0b1aa5b28cb5efe17c04150a181ef1fa4027bc55.1543245984.git-series.plaes@plaes.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gxurvkzd35bhwvqz"
+        protocol="application/pgp-signature"; boundary="s266jt4lvjzpsbth"
 Content-Disposition: inline
-In-Reply-To: <b27515a1cfe3512253a3fbcda04a3367818520b9.1543245984.git-series.plaes@plaes.org>
+In-Reply-To: <0b1aa5b28cb5efe17c04150a181ef1fa4027bc55.1543245984.git-series.plaes@plaes.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -56,23 +56,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gxurvkzd35bhwvqz
+--s266jt4lvjzpsbth
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 26, 2018 at 05:27:51PM +0200, Priit Laes wrote:
+On Mon, Nov 26, 2018 at 05:27:50PM +0200, Priit Laes wrote:
 > From: Olliver Schinagl <oliver@schinagl.nl>
 >=20
-> The lradc's analog reference voltage is set to 3.0 volt in the
-> hardware. This is more or less set in copper for at least lradc0. Set the
-> property in the dts to ensure the lradc is referenced properly.
+> With commit b43776d65a33b46092 ("ARM: dts: sunxi: Use axp209.dtsi for
+> Olinuxino Lime2") we force them an arbitrary 2.8 volts. Granted, for
+> LDO3 this may be less arbitrary, but for LDO4 this is just wrong.
+>=20
+> In the defense of LDO3, LDO3 is the regulator that feeds port bank E,
+> which has no other purpose then a CSI/TS interface, however the case
+> may still be, that the connected IO may be just as well be 3.3 volts.
+> The big misnomer is however, that the schematic names GPIO-2 pin4
+> LDO3_2.8V, rather then VDD-CSI0 or similar.
+>=20
+> This is much worse for LDO4 however, which is not referenced on any
+> pin, is now set to 2.8 volts, but port bank G can also support various
+> other peripherals such as UARTS etc.
+>=20
+> By having 2.8 volts however for LDO4, we thus now have peripherals that
+> no longer function properly all of the time.
+>=20
+> Ideally, we want to set a supply voltage for each port bank, but the
+> monolithic nature of the sunxi pinctroller currently prevents this and
+> as such, the board should at least configure the LDO4 with the proper
+> ranges.
+>=20
+> Until we can set the consumer at the port bank level, a child
+> device-tree has to do something like:
+>=20
+> &reg_ldo4 {
+>     regulator-min-microvolt =3D <3300000>;
+>     regulator-max-microvolt =3D <3300000>;
+> };
+>=20
+> While doing this the same way results in the same solution currently,
+> we force the hack into the final devicetree rather then having it wrong
+> at the board level.
 >=20
 > Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 > Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/b=
+oot/dts/sun7i-a20-olinuxino-lime2.dts
+> index ffafe97..1b9867f 100644
+> --- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+> +++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+> @@ -250,9 +250,10 @@
+>  };
+> =20
+>  &reg_ldo4 {
+> -	regulator-min-microvolt =3D <2800000>;
+> -	regulator-max-microvolt =3D <2800000>;
+> -	regulator-name =3D "vddio-csi1";
+> +	regulator-always-on;
+> +	regulator-min-microvolt =3D <1250000>;
+> +	regulator-max-microvolt =3D <3300000>;
+> +	regulator-name =3D "vdd-io-pg";
 
-I'm not sure why that patch is part of this series, but I applied
-it. Thanks!
+As we discussed on the U-Boot ML already, this shouldn't be made
+always-on but tied to the consumer device (the pinctrl one) instead.
 
 Maxime
 
@@ -81,15 +131,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---gxurvkzd35bhwvqz
+--s266jt4lvjzpsbth
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0QXgAKCRDj7w1vZxhR
-xU51AQCL4HIM87ezLgid7C4FmtPyydSlRECZ5jFdr6azvBmRGQEAyD2o7X+6vCvJ
-LE5MPQQX3u8QI3ZZEmk3PhI/BCHJowg=
-=njvD
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0QrAAKCRDj7w1vZxhR
+xZZnAPwIkVhLkkgCn/HCrcBTkkjwKsYRgF/IguR7rOKWCTFwbwEAxJShw5bv1q7y
+rGkR9lCewrTvrbD4r/hWHDcD0z0CZwQ=
+=gn1w
 -----END PGP SIGNATURE-----
 
---gxurvkzd35bhwvqz--
+--s266jt4lvjzpsbth--
