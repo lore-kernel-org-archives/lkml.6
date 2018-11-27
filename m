@@ -2,171 +2,115 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90E8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A81C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8852086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:17:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8852086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 004592086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:18:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M9ibnA6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004592086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731404AbeK1EQ2 (ORCPT
+        id S1731477AbeK1ERD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:16:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50090 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726338AbeK1EQ2 (ORCPT
+        Tue, 27 Nov 2018 23:17:03 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:42666 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeK1ERD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:16:28 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wARHDk9A002799
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:17:52 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p18h6n0ea-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 12:17:52 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 27 Nov 2018 17:17:51 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 27 Nov 2018 17:17:47 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wARHHl1d19071230
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Nov 2018 17:17:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00E7CB2067;
-        Tue, 27 Nov 2018 17:17:47 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D63AEB2066;
-        Tue, 27 Nov 2018 17:17:46 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Nov 2018 17:17:46 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A315F16C33D9; Tue, 27 Nov 2018 09:17:46 -0800 (PST)
-Date:   Tue, 27 Nov 2018 09:17:46 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] tools/memory-model: Add SRCU support
-Reply-To: paulmck@linux.ibm.com
-References: <Pine.LNX.4.44L0.1811151101310.1308-100000@iolanthe.rowland.org>
- <20181119120120.GA5092@andrea>
- <20181126223509.GM4170@linux.ibm.com>
- <20181127002642.GA4087@andrea>
+        Tue, 27 Nov 2018 23:17:03 -0500
+Received: by mail-yb1-f196.google.com with SMTP id o204-v6so9366307yba.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:18:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=iLwNo5aAgJoO8A/cQoo9064ETdaZXAxtr4dUxtDa69w=;
+        b=M9ibnA6ASmSTYjR5IFCm+HNSGKOaPDY9bmLWq6LFNPOe87RR5IjNj+xpniycTh2GpY
+         kvICKSBm9rYWrtM+lf9Fv6e7q1L/iGwDpCrIsjcle4F6ZVWwAYnVfD/yNkyr6OH7W6Pz
+         WknVUVsobihyDH/46Eh1Myye6NYd9V2k234u4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=iLwNo5aAgJoO8A/cQoo9064ETdaZXAxtr4dUxtDa69w=;
+        b=eJORuf7xeFX0qKGFt1RosxZcQuA78k0Xoy4E9gMwcYOEaXw46lpJ5Tcc6Tmd0FeiE1
+         e+gmVQhGGj2OZQkRald7VNWWUTgOuCBuBAXPwQyHdUixYSADK+LOnXXoKqALVr9fymUW
+         1mf9FcmgQ5sYLovpuD9GJRjJQEjCGRmdIA3pj2kZ8JPydV8GF1rxbKSeSEayxMurOG+p
+         ochV2BpLh4+9bk6UxmaYs1MHpVCBYZ1XBaYH6kRzpLDEoHxLk+w46Cu1YyZmArleq2cg
+         Iy5cRwfWw68JWOv99+zw/yw+finudMbv3qGCr9MW2tOrZyPubGCpp5SPW7hgtM7Qabhr
+         8e/Q==
+X-Gm-Message-State: AA+aEWbC8agJm7Df2XolzRm0m+y3/oGnNiKFT65wUkxXqJPJjQ4TCBzB
+        PP/xTYkyFETBjtFU3My2avmWsQvN8/o=
+X-Google-Smtp-Source: AFSGD/WcA0fNVEEb0Yt6SFw2mg8bHdFiUa7DG17LQ2V2ARyh3CDZaZIBvHsCg8aNtkb/63r+L2L/Lw==
+X-Received: by 2002:a25:728b:: with SMTP id n133-v6mr33761973ybc.160.1543339107750;
+        Tue, 27 Nov 2018 09:18:27 -0800 (PST)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id i128sm1381203ywb.82.2018.11.27.09.18.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 09:18:26 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id o204-v6so9366263yba.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:18:26 -0800 (PST)
+X-Received: by 2002:a25:1cc1:: with SMTP id c184-v6mr34646520ybc.421.1543339106062;
+ Tue, 27 Nov 2018 09:18:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127002642.GA4087@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18112717-2213-0000-0000-0000032040A9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010131; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01123582; UDB=6.00583290; IPR=6.00903712;
- MB=3.00024356; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-27 17:17:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112717-2214-0000-0000-00005C675643
-Message-Id: <20181127171746.GP4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-27_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811270147
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 27 Nov 2018 09:18:25
+ -0800 (PST)
+In-Reply-To: <20181127074327.GD13965@kroah.com>
+References: <edfe11c6d1f9bb0a7c2cee655895dfeedc1dda5e.1541613057.git.christophe.leroy@c-s.fr>
+ <20181127074327.GD13965@kroah.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 27 Nov 2018 09:18:25 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK3GMAjaHgZ-iDwBogXSt1OQpo_+Bav6OMqz5fRiRf5EA@mail.gmail.com>
+Message-ID: <CAGXu5jK3GMAjaHgZ-iDwBogXSt1OQpo_+Bav6OMqz5fRiRf5EA@mail.gmail.com>
+Subject: Re: [PATCH] lkdtm: print real addresses
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 01:26:42AM +0100, Andrea Parri wrote:
-> > commit 72f61917f12236514a70017d1ebafb9b8d34a9b6
-> > Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Date:   Mon Nov 26 14:26:43 2018 -0800
-> > 
-> >     tools/memory-model: Update README for addition of SRCU
-> >     
-> >     This commit updates the section on LKMM limitations to no longer say
-> >     that SRCU is not modeled, but instead describe how LKMM's modeling of
-> >     SRCU departs from the Linux-kernel implementation.
-> >     
-> >     TL;DR:  There is no known valid use case that cares about the Linux
-> >     kernel's ability to have partially overlapping SRCU read-side critical
-> >     sections.
-> >     
-> >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> 
-> Indeed!,
-> 
-> Acked-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+On Mon, Nov 26, 2018 at 11:43 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Wed, Nov 07, 2018 at 08:14:10PM +0000, Christophe Leroy wrote:
+>> Today, when doing a lkdtm test before the readiness of the
+>> random generator, (ptrval) is printed instead of the address
+>> at which it perform the fault:
+>>
+>> [ 1597.337030] lkdtm: Performing direct entry EXEC_USERSPACE
+>> [ 1597.337142] lkdtm: attempting ok execution at (ptrval)
+>> [ 1597.337398] lkdtm: attempting bad execution at (ptrval)
+>> [ 1597.337460] kernel tried to execute user page (77858000) -exploit attempt? (uid: 0)
+>> [ 1597.344769] Unable to handle kernel paging request for instruction fetch
+>> [ 1597.351392] Faulting instruction address: 0x77858000
+>> [ 1597.356312] Oops: Kernel access of bad area, sig: 11 [#1]
+>>
+>> If the lkdtm test is done later on, it prints an hashed address.
+>>
+>> In both cases this is pointless. The purpose of the test is to
+>> ensure the kernel generates an Oops at the expected address,
+>> so real addresses needs to be printed. This patch fixes that.
+>
+> I am pretty sure this is intentional.  Kees?
 
-Thank you, applied!
+I've gone back and forth on this and in the end I decided I'd wait and
+see if anyone was bothered by it besides just me. :) But, yes, for
+lkdtm do really do want a "real" view of the pointer because we're
+comparing it against page tables and/or kernel section layout, etc.
 
-I moved this commit and Alan's three SRCU commits to the branch destined
-for the upcoming merge window.
+I've applied this to my lkdtm -next tree. Thanks!
 
-							Thanx, Paul
-
->   Andrea
-> 
-> 
-> > 
-> > diff --git a/tools/memory-model/README b/tools/memory-model/README
-> > index 0f2c366518c6..9d7d4f23503f 100644
-> > --- a/tools/memory-model/README
-> > +++ b/tools/memory-model/README
-> > @@ -221,8 +221,29 @@ The Linux-kernel memory model has the following limitations:
-> >  		additional call_rcu() process to the site of the
-> >  		emulated rcu-barrier().
-> >  
-> > -	e.	Sleepable RCU (SRCU) is not modeled.  It can be
-> > -		emulated, but perhaps not simply.
-> > +	e.	Although sleepable RCU (SRCU) is now modeled, there
-> > +		are some subtle differences between its semantics and
-> > +		those in the Linux kernel.  For example, the kernel
-> > +		might interpret the following sequence as two partially
-> > +		overlapping SRCU read-side critical sections:
-> > +
-> > +			 1  r1 = srcu_read_lock(&my_srcu);
-> > +			 2  do_something_1();
-> > +			 3  r2 = srcu_read_lock(&my_srcu);
-> > +			 4  do_something_2();
-> > +			 5  srcu_read_unlock(&my_srcu, r1);
-> > +			 6  do_something_3();
-> > +			 7  srcu_read_unlock(&my_srcu, r2);
-> > +
-> > +		In contrast, LKMM will interpret this as a nested pair of
-> > +		SRCU read-side critical sections, with the outer critical
-> > +		section spanning lines 1-7 and the inner critical section
-> > +		spanning lines 3-5.
-> > +
-> > +		This difference would be more of a concern had anyone
-> > +		identified a reasonable use case for partially overlapping
-> > +		SRCU read-side critical sections.  For more information,
-> > +		please see: https://paulmck.livejournal.com/40593.html
-> >  
-> >  	f.	Reader-writer locking is not modeled.  It can be
-> >  		emulated in litmus tests using atomic read-modify-write
-> > 
-> 
-
+-- 
+Kees Cook
