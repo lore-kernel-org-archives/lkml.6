@@ -2,82 +2,101 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49045C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FB0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7B420664
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7B420664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id EEE0F2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:55:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u89ca9Ms"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE0F2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbeK0NuX (ORCPT
+        id S1728343AbeK0Nvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:50:23 -0500
-Received: from air.basealt.ru ([194.107.17.39]:54672 "EHLO air.basealt.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbeK0NuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:50:23 -0500
-Received: by air.basealt.ru (Postfix, from userid 490)
-        id 030A6589AE9; Tue, 27 Nov 2018 02:53:59 +0000 (UTC)
-Received: from akathisia (broadband-46-188-15-144.2com.net [46.188.15.144])
-        by air.basealt.ru (Postfix) with ESMTPSA id 4C771589AE7;
-        Tue, 27 Nov 2018 02:53:58 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 03:53:57 +0100
-From:   Elvira Khabirova <lineprinter@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     rostedt@goodmis.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
-        luto@kernel.org, strace-devel@lists.strace.io,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH RESEND v3 1/3] ptrace: pass type of a syscall-stop in
- ptrace_message
-Message-ID: <20181127035357.0b381323@akathisia>
-In-Reply-To: <20181126145643.GD1660@redhat.com>
-References: <20181125022150.46258a20@akathisia>
-        <20181125022227.55e8caf7@akathisia>
-        <20181126145643.GD1660@redhat.com>
+        Tue, 27 Nov 2018 08:51:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50697 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727542AbeK0Nvy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 08:51:54 -0500
+Received: by mail-wm1-f65.google.com with SMTP id 125so20315394wmh.0;
+        Mon, 26 Nov 2018 18:55:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fCmD6Tz7iCxWyreyZhP9ACxtmOf5xsbNROFEMLo+/ao=;
+        b=u89ca9MsOdRjjCC04lcQ2BpRhU97tkZh1o7lMQFpBUj1jLk05XN/aLHRIdvvbnNx/L
+         NqXKRiXYoEhc6c73D2/QJJwgwbzygSWeuQ+hPxCdUnOGHmD1wJxQzEOdUSbJZd06o0U6
+         1Z5maSC0b78DAOdtfuo9psamMhHxHK1J+dH93bQ042YMub8wggVqk/w2ykKev7WuF3u7
+         VgddTkGhOfUDkT6S5hh09ISqnUwGqFPnFtdYUVkRS1MBPeBlimAlrDVV/itk7j2gRl/Y
+         FO4m65Vtgg2dGUI1TJHecXEdXGgdlihKKHTIHGArbuRC+LLuo/xKO5LWmESPLAjNI0FU
+         6jQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fCmD6Tz7iCxWyreyZhP9ACxtmOf5xsbNROFEMLo+/ao=;
+        b=VnxffwyDS3Peiv3US7aIJrcnRUbeJ24Z3a1T4tzoJjR2GomJZri/2uHEJnR7zf7doy
+         qzri+Gc2axIJ8wOzo5Om2Ih6DlZbBXvErESyQev/XoFqkjZySlqwvV3QeZ3qzATqutkO
+         nbvHOYrjRXZla5+ySWNMBOE+04+1N7QnXl2qfCYXmAZe1iexQh+w/UJD/gyQeahKuags
+         cuRuwLhviHPTCEXMkKleQaZTO4CUVk4GLrMaAt0ha1O3SWHvO2PLRITli6E0RxJPteAF
+         y2P+amWKjXA4QwrFyjbD7NKP1sr4q6uR4p/NjhbAgPNbCggKRj09hGWIbzkuxog74paQ
+         zPAA==
+X-Gm-Message-State: AA+aEWYj7XqJVEs5HmGUxtKQo5fbijZ61OGp+8+p7w+Ngh+BHGBFE/PY
+        ECfBesGt0knKz9kt9A4FCovUspg7gedl6cmARhk=
+X-Google-Smtp-Source: AFSGD/W9TnnxT6RIwMKxAhpncHJ6xVO6zb/Bh5A6DLzfiUpUAjnOlA3TT0bgynUdh/250lad0q4sjFRSu1IVzKnR9Hc=
+X-Received: by 2002:a1c:9d10:: with SMTP id g16mr24971739wme.43.1543287332780;
+ Mon, 26 Nov 2018 18:55:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181030230624.61834-1-evgreen@chromium.org> <20181030230624.61834-3-evgreen@chromium.org>
+ <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
+In-Reply-To: <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Tue, 27 Nov 2018 10:55:20 +0800
+Message-ID: <CACVXFVN63UDefvBnYTQ==tWwYqGJbCS_HK==-1jVa5sVc=-Upw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
+To:     evgreen@chromium.org
+Cc:     Jens Axboe <axboe@kernel.dk>, gwendal@chromium.org,
+        asavery@chromium.org, linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 15:56:43 +0100
-Oleg Nesterov <oleg@redhat.com> wrote:
-
-> On 11/25, Elvira Khabirova wrote:
+On Tue, Nov 27, 2018 at 2:55 AM Evan Green <evgreen@chromium.org> wrote:
+>
+> On Tue, Oct 30, 2018 at 4:06 PM Evan Green <evgreen@chromium.org> wrote:
 > >
-> > + * These values are stored in task->ptrace_message by tracehook_report_syscall_*
-> > + * to describe current syscall-stop.
-> > + *
-> > + * Values for these constants are chosen so that they do not appear
-> > + * in task->ptrace_message by other means.
-> > + */
-> > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
-> > +#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U  
-> 
-> Stupid question, why not
-> 
-> 	#define PTRACE_EVENT_SYSCALL_ENTRY	8
-> 	#define PTRACE_EVENT_SYSCALL_EXIT	9
-> 
-> right after other PTRACE_EVENT_* constants?
+> > If the backing device for a loop device is a block device,
 
-I thought about adding new events for syscall {entry,exit}.
-For tracers, using new events means setting new options and checking
-for new values after waitpid(). They will also have to switch from using
-PTRACE_SYSCALL to PTRACE_CONT.
-Right now (with this version of the patch) tracers can use
-PTRACE_GETEVENTMSG without doing any additional configuration.
-More importantly, adding these events would require much more complex
-modifications of kernel code than this patch does.
-The only benefit I see from adding these events instead of letting
-syscall-stops put a value in ptrace_message is an ability to subscribe
-to syscall entries, but not to exits, and vice-versa, and I don't think
-it is worth it.
+This shouldn't be a very common use case wrt. loop.
+
+> > then mirror the discard properties of the underlying block
+> > device into the loop device. While in there, differentiate
+> > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
+> > different for block devices, but which the loop device had
+> > just been lumping together.
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+>
+> Any thoughts on this patch? This fixes issues for us when using a loop
+> device backed by a block device, where we see many logs like:
+>
+> [  372.767286] print_req_error: I/O error, dev loop5, sector 88125696
+
+Seems not see any explanation about this IO error and the fix in your patch.
+Could you describe it a bit more?
+
+
+thanks,
+Ming Lei
