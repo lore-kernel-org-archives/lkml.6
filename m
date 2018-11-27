@@ -2,258 +2,195 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5745C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975F1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F5F620664
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57AD820664
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 03:31:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iD44wv+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F5F620664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C6RRNQzi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ABTNcz6h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AD820664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbeK0OZC (ORCPT
+        id S1728422AbeK0O2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 09:25:02 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38228 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbeK0OZB (ORCPT
+        Tue, 27 Nov 2018 09:28:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38434 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727571AbeK0O2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 09:25:01 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAR3OGDv023064;
-        Tue, 27 Nov 2018 03:28:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=RFfRhE9xgMtQpr+uaQ0hn/y5rMjhmrtTotR0iMKd88A=;
- b=iD44wv+d1w8VbQMQNkVvK/npb4OenpdnhAMyNISi1JMBbK8RotpSYn60++bGSApG7oQN
- zYOxD0imNxZ5ZfVDZj1f4M1+557jOVv1jtmGSs97ENIKwz5Tv3nnAVpt6R1mShxjMq5u
- JrCqvqRpcgb9wT5Q0q7VwcFZlexAvNucMaItxia1WQcI4ha4smV7TwH1Q96AaX3p8Mjt
- 0OjVsagJFC3Wqq2C17rAYZ8BKEPC/McYSLRuO2CfQVGLpSjU9m+lqBDM67L3TeYqcKXl
- V0e0qm+iqu7GjgMFEOXShDQ7LcfuEv/6YPTS88mYI0fe/XWLQHnIN4+2bGeSRoWHcg+0 1Q== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2nxxkq9ddn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 03:28:26 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAR3SP2v016092
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Nov 2018 03:28:26 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAR3SORf023886;
-        Tue, 27 Nov 2018 03:28:24 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 19:28:24 -0800
-Subject: Re: [Xen-devel] [PATCH v3] xen/balloon: Mark unallocated host memory
- as UNUSABLE
-To:     Igor Druzhinin <igor.druzhinin@citrix.com>,
-        xen-devel@lists.xen.org, linux-kernel@vger.kernel.org
-Cc:     jgross@suse.com, helgaas@kernel.org, christian.koenig@amd.com,
-        JBeulich@suse.com
-References: <1513778746-6155-1-git-send-email-boris.ostrovsky@oracle.com>
- <7c833e3a-4a0b-e80c-91e2-4348d6959651@citrix.com>
- <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
- <f955576f-532d-d4de-e7eb-718dae4b14c1@citrix.com>
- <3dd5153d-0f17-0e3b-7ebb-5579a7200765@oracle.com>
- <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <bec58747-dd34-2f2a-135c-c32b39087a3d@oracle.com>
-Date:   Mon, 26 Nov 2018 22:28:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 27 Nov 2018 09:28:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1AAAF607EB; Tue, 27 Nov 2018 03:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543289506;
+        bh=Ub8P+rpiORyQVGCVvQAmPrRzvcRXqXv/cD+tc2JWCVs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=C6RRNQzirzOtSHSMLA+iiZWBg2UX8l8Or7odxesv/MO7T+v4GFrgAqjC0bavAnOiX
+         rTx1H/Pc9S2qRCJ2aOejtJmwS8KKhP9Q7Dkq96ViW5Nkqwqze0VlV96Uusb3zKJrjC
+         1sC+8gCuTtq+At8JpNNAkWsk4GatRyj10LhvKA2Y=
+Received: from [10.79.128.28] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7B0F60351;
+        Tue, 27 Nov 2018 03:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543289505;
+        bh=Ub8P+rpiORyQVGCVvQAmPrRzvcRXqXv/cD+tc2JWCVs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ABTNcz6hergajbd59Pr7Nwps/U+A8wTR5KDBsN1GcWMez+EuHuw255Y5OguNAOeUy
+         QSX5y6W2Zo/VEfCJ3PqTHPVWraXyjwGk0PSynpiAfIAv8Po0gOeJ0ChSxomF5ZWEDB
+         1zif4gPxzlLF7zQwEsuOI/MwiozS9ITzkqG1yt9A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7B0F60351
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 3/3] soc: qcom: Add AOSS QMP genpd provider
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181112080557.22698-1-bjorn.andersson@linaro.org>
+ <20181112080557.22698-4-bjorn.andersson@linaro.org>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <dfd0096c-d1f1-da0e-7c4c-3da916d521dc@codeaurora.org>
+Date:   Tue, 27 Nov 2018 09:01:40 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181112080557.22698-4-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811270026
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/18 2:57 PM, Igor Druzhinin wrote:
-> On 26/11/2018 19:42, Boris Ostrovsky wrote:
->> On 11/26/18 12:10 PM, Igor Druzhinin wrote:
->>> On 26/11/2018 16:25, Boris Ostrovsky wrote:
->>>> On 11/25/18 8:00 PM, Igor Druzhinin wrote:
->>>>> On 20/12/2017 14:05, Boris Ostrovsky wrote:
->>>>>> Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
->>>>>> reservation") left host memory not assigned to dom0 as available for
->>>>>> memory hotplug.
->>>>>>
->>>>>> Unfortunately this also meant that those regions could be used by
->>>>>> others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
->>>>>> on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
->>>>>> addresses as MMIO.
->>>>>>
->>>>>> To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
->>>>>> effectively reverting f5775e0b6116) and keep track of that region as
->>>>>> a hostmem resource that can be used for the hotplug.
->>>>>>
->>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>>> This commit breaks Xen balloon memory hotplug for us in Dom0 with
->>>>> "hoplug_unpopulated" set to 1. The issue is that the common kernel
->>>>> memory onlining procedures require "System RAM" resource to be 1-st
->>>>> level. That means by inserting it under "Unusable memory" as the commit
->>>>> above does (intentionally or not) we make it 2-nd level and break memory
->>>>> onlining.
->>>> What do you mean by 1st and 2nd level?
->>>>
->>> I mean the level of a resource in IOMEM tree (the one that's printed
->>> from /proc/iomem). 1-st level means its parent is root and so on.
->> Ah, OK. Doesn't
->> additional_memory_resource()->insert_resource(iomem_resource) place the
->> RAM at 1st level? And if not, can we make it so?
->>
-> That'd mean splitting "Unusable memory" resource. Since it's allocated
-> from bootmem it has proven to be quite difficult but there are seem to
-> be special functions available particularly for memory resource
-> management operations that I've not yet experimented with. So the answer
-> is probably - maybe yes but not straightforward.
->
->>>>> There are multiple ways to fix it depending on what was the intention of
->>>>> original commit and what exactly it tried to workaround. It seems it
->>>>> does several things at once:
->>>>> 1) Marks non-Dom0 host memory "Unusable memory" in resource tree.
->>>>> 2) Keeps track of all the areas safe for hotplug in Dom0
->>>>> 3) Changes allocation algorithms itself in balloon driver to use those areas
->>>> Pretty much. (3) is true in the sense that memory is first allocated
->>>> from hostmem_resource (which is non-dom0 RAM).
->>>>
->>>>> Are all the things above necessary to cover the issue in fa564ad96366
->>>>> ("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
->>>>> 60-7f)")?
->>>> Not anymore, as far as that particular commit is concerned, but that's
->>>> because of 03a551734 ("x86/PCI: Move and shrink AMD 64-bit window to
->>>> avoid conflict") which was introduced after balloon patch. IIRC there
->>>> were some issues with fa564ad96366 unrelated to balloon.
->>>>
->>> If it's not a problem anymore IIUC, can we revert the change as it still
->>> breaks "hotplug_unpopulated=1" for the reasons I described above?
->> Since this seems to have broken existing feature this would be an
->> option. But before going that route I'd like to see if we can fix the patch.
->>
->> I have been unable to reproduce your problem. Can you describe what you did?
->>
-> It doesn't happen on all configurations as sometimes the memory is
-> successfully hotplugged to a hole depending on the size of Dom0 memory.
-> But we reproduced it quite reliably with small Dom0 sizes like 752MB.
->
-> XenServer is using this feature to hotplug additional memory for grant
-> table operations so we started a VM and observed a stable hang.
->
->>>>> Can we remove "Unusable memory" resources as soon as we finished
->>>>> booting? Is removing on-demand is preferable over "shoot them all" in
->>>>> that case?
->>>> The concern is that in principle nothing prevents someone else to do
->>>> exact same thing fa564ad96366 did, which is grab something from right
->>>> above end of RAM as the kernel sees it. And that can be done at any point.
->>>>
->>> Nothing prevents - true, but that's plainly wrong from OS point of view
->>> to grab physical ranges for something without knowing what's actually
->>> behind on that platform. 
->> I am not sure I agree that this is plainly wrong. If not for BIOS issues
->> that 03a551734cf mentions I think what the original implementation of
->> fa564ad963 did was perfectly reasonable. Which is why I would prefer to
->> keep keep the hostmem resource *if possible*.
->>
-> Exactly, those *are* BIOS issues and are not supposed to be workarounded
-> by the OS. And as the next commit showed even the workaround didn't
-> quite helped with it.
->
-> I agree that having hotmem as a precaution is fine but only if there is
-> a non-cringy way to keep things working with it which I'm not sure does
-> exist.
+Hi Bjorn,
 
-We have most of the interfaces in the resource framework to do what we
-want. I put together a semi-working prototype but the tricky part is
-resource locking --- we need to remove a chunk from hostmem (which will
-cause hostmem to be resized and possibly split), and insert this chunk
-to iomem's top level as System RAM, all while holding resource_lock.
+On 11/12/2018 1:35 PM, Bjorn Andersson wrote:
+> The AOSS QMP genpd provider implements control over power-related
+> resources related to low-power state associated with the remoteprocs in
+> the system as well as control over a set of clocks related to debug
+> hardware in the SoC.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>   drivers/soc/qcom/Kconfig       |   8 ++
+>   drivers/soc/qcom/Makefile      |   1 +
+>   drivers/soc/qcom/aoss-qmp-pd.c | 135 +++++++++++++++++++++++++++++++++
+>   3 files changed, 144 insertions(+)
+>   create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
+> 
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index ba08fc00d7f5..e1eda3d59748 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -10,6 +10,14 @@ config QCOM_AOSS_QMP
+>   	  micro-controller in the AOSS, using QMP, to control certain resource
+>   	  that are not exposed through RPMh.
+>   
+> +config QCOM_AOSS_QMP_PD
+> +	tristate "Qualcomm AOSS Messaging Power Domain driver"
+> +	depends on QCOM_AOSS_QMP
+> +	help
+> +	  This driver provides the means of controlling the AOSSs handling of
+> +	  low-power state for resources related to the remoteproc subsystems as
+> +	  well as controlling the debug clocks.
+> +
+>   config QCOM_COMMAND_DB
+>   	bool "Qualcomm Command DB"
+>   	depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index d0d7fdc94d9a..ebfa414a5b77 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   CFLAGS_rpmh-rsc.o := -I$(src)
+>   obj-$(CONFIG_QCOM_AOSS_QMP) +=	aoss-qmp.o
+> +obj-$(CONFIG_QCOM_AOSS_QMP_PD) += aoss-qmp-pd.o
+>   obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+>   obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+>   obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+> diff --git a/drivers/soc/qcom/aoss-qmp-pd.c b/drivers/soc/qcom/aoss-qmp-pd.c
+> new file mode 100644
+> index 000000000000..467d0db4abfa
+> --- /dev/null
+> +++ b/drivers/soc/qcom/aoss-qmp-pd.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd
+> + */
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/soc/qcom/aoss-qmp.h>
+> +
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+> +
+> +struct qmp_pd {
+> +	struct qmp *qmp;
+> +
+> +	struct generic_pm_domain pd;
+> +
+> +	const char *name;
+> +};
+> +
+> +#define to_qmp_pd_resource(res) container_of(res, struct qmp_pd, pd)
+> +
+> +struct qmp_pd_resource {
+> +	const char *name;
+> +	int (*on)(struct generic_pm_domain *domain);
+> +	int (*off)(struct generic_pm_domain *domain);
+> +};
+> +
+> +static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
+> +{
+> +	char buf[96];
+> +	size_t n;
+> +
+> +	n = snprintf(buf, sizeof(buf), "{class: clock, res: %s, val: %d}",
+> +		     res->name, !!enable);
+> +	return qmp_send(res->qmp, buf, n);
+> +}
+> +
 
-I haven't been able to come up with an acceptable interface for that.
+I was trying to get QDSS working with these patches and found one issue
+in qmp_send of qmp_pd_clock_toggle.
 
-Given that we are actually broken I guess I am OK with reverting the
-patch, but please make sure this works on AMD boxes (I think family 15h
-is what needs to be tested).
+The third return value should be sizeof(buf) instead of n because n just
+returns len as 33 and the below check in qmp send will always fail and
+trigger WARN_ON's.
 
--boris
+          if (WARN_ON(len % sizeof(u32))) {
+                  dev_err(qmp->dev, "message not 32-bit aligned\n");
+                  return -EINVAL;
+          }
 
+Also I observed that multiple "ucore will not ack channel" messages with
+len being returned n instead of buf size.
 
+One more thing is do we really require *WARN_ON and dev_err* both 
+because it just spams the kernel logs, I think dev_err message is clear
+enough to be able to understand the error condition.
 
->
-> Igor
->
->> -boris
->>
->>
->>> I think we shouldn't consider this as a valid
->>> thing to do and don't try to workaround initially incorrect code.
->>>
->>>> -boris
->>>>
->>>>> Does it even make sense to remove the 1-st level only restriction in
->>>>> kernel/resource.c ?
->>>>
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
+Thanks,
+Sai
 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
