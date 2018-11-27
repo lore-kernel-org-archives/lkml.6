@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA35C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BF9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A942121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD2BE21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:30:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GN32gwz6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A942121104
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhHZYN0O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD2BE21104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731124AbeK1D2Q (ORCPT
+        id S1731138AbeK1D20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:28:16 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39244 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730444AbeK1D2P (ORCPT
+        Tue, 27 Nov 2018 22:28:26 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44078 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730874AbeK1D20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:28:15 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t27so15392044wra.6
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:29:48 -0800 (PST)
+        Tue, 27 Nov 2018 22:28:26 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z5so19043244wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:29:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=ySS9ak8736GKuz1GUi70Wz4dUI9Ax/bqLZ13e7Wb3I8=;
-        b=GN32gwz6a40w4VNUMQAm1giD/L8kZ0ljSCYaGM8U0EDH+IVi+geVy5+tuQgmwZJOB8
-         CWvstXEIiz5PbxNq3qrCiy/0lcx5jhfrC8mZRSdnPgEYSzydQUIdH9Jap12PpR/vFLw2
-         GITimkipCpZmMumNmuqSgpMV6aIp77E4GALTM=
+        bh=4rjnRaV+6g5gOHVzVhs9FARzKLyeED1GNhZcm14IHcQ=;
+        b=jhHZYN0OjAgFm7nzGlRp1OrMujFZRMpZgk632/l4MgD4u9A3RiATpkOaj8AeDQIAaC
+         cXYMvBBUpOPaFhpsPBJzy7GQNWS+ISQMmszHj7wxoYu0pfHbCWqYoiJmPQAcca6pWh4V
+         kcve0NR1wPcbD+BWZUgsRg2QhU6H3sQXa3hs4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=ySS9ak8736GKuz1GUi70Wz4dUI9Ax/bqLZ13e7Wb3I8=;
-        b=lfgKkrarqudkPRCTjpV1Y9dRW8oKm25Jy+4TkD7IwhVH7IWlE9dlvD2TYPcS0oQg8E
-         tSRxLHzjXaLUjb4BQkm511quwOoLWz3nRIhI/TpPXIWqaPGdMzSY2Di194eXQT2BODm5
-         wVChjepzKMs0283Aky9Bir2u4ZBNryqAa3O+sulJrrXtSXRhQbSDXyYdnUQqadFVSDig
-         CoJk43+WL+lXsbPt6vB7EOGPuCNAlyuqWfEPIQXE0ZhaIltbUGB5ujhcgAGIYDCVuNFC
-         j1+RGSMa+6C2Ni2pT8duXHe78fp05rdmvpP/8MAJffjl4SiT+2LmPDIhHXNpWOOLNFKv
-         N2wA==
-X-Gm-Message-State: AA+aEWb5/AyX9jIbDfG150wPH1AniCDpMiBY4Sdc9juc6TDtXB9a61t/
-        72yRx6AFiLSsv8LfZtL3XpOHQyXlgRI=
-X-Google-Smtp-Source: AFSGD/V9gqNFYO1fniDSmj4w6mL+P00CPB28gzA8NoZagPdfwnqqrRmFr7CP4/MJO7eggq4WmI1xMg==
-X-Received: by 2002:adf:de91:: with SMTP id w17mr12831912wrl.320.1543336187565;
-        Tue, 27 Nov 2018 08:29:47 -0800 (PST)
+        bh=4rjnRaV+6g5gOHVzVhs9FARzKLyeED1GNhZcm14IHcQ=;
+        b=NkEZuchr5bmId04fwDv4uFhvuC7KtKpcnR2T8DWezBuec3KFix2xBJV8soaNys6Pr3
+         PRF8LEqleYe3ScsRB53QMmf7M+moOmAg0d3n9XPEdORG23nF76frjyBj+JWnQYgubLiE
+         7GAgRIH9CozNBMpBJB0R/u638maP9kd231IsPXGNWD5uVTJJpqvdPwdtdL8CzmuI+meD
+         7/tNV0gCcHy1WZTcBZpXWWB5M7HxEW0RmepDAndVTK+QSqIO7pLFafpQiudGHuOSCwiV
+         U7gVIlCWcVQzWqHJ8GlsePA+vHrmmA4G2zD5+TYTc613EgH+3fGEOJD5nc8OOWEzObhh
+         J4gA==
+X-Gm-Message-State: AA+aEWb9MSqvHt5H/y3pApADrpsuhCaxJyW4VTQRSQED35be4RxlnQak
+        RiUMmaKoDtYDZUBD66Bnoi/ZhNxIebY=
+X-Google-Smtp-Source: AFSGD/U5Ngz7/Y7WTcdz3CkvILhIL6dVY0WmyUNdJdDV4/3HklzziyiGBNyF1beUOTXhThfCbXV2uA==
+X-Received: by 2002:adf:a50c:: with SMTP id i12mr26876754wrb.220.1543336197845;
+        Tue, 27 Nov 2018 08:29:57 -0800 (PST)
 Received: from localhost ([49.248.92.105])
-        by smtp.gmail.com with ESMTPSA id a1sm5158091wrw.76.2018.11.27.08.29.45
+        by smtp.gmail.com with ESMTPSA id v5sm2416870wrr.11.2018.11.27.08.29.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 08:29:46 -0800 (PST)
+        Tue, 27 Nov 2018 08:29:57 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
@@ -63,9 +63,9 @@ Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         khasim.mohammed@linaro.org, David Brown <david.brown@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 3/4] arm64: dts: qcom: qcs404: Add tsens controller
-Date:   Tue, 27 Nov 2018 21:59:06 +0530
-Message-Id: <3491110ccf708efed795bfc756b2d108f8dbb710.1543335819.git.amit.kucheria@linaro.org>
+Subject: [PATCH v3 4/4] arm64: dts: qcom: qcs404: Add thermal zones for each sensor
+Date:   Tue, 27 Nov 2018 21:59:07 +0530
+Message-Id: <f89944deceba4c16c1863f1b303e2d970f3c8456.1543335819.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1543335819.git.amit.kucheria@linaro.org>
 References: <cover.1543335819.git.amit.kucheria@linaro.org>
@@ -76,56 +76,259 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcs404 has a single TSENS IP block with 10 sensors. The calibration data
-is stored in an eeprom (qfprom) that is accessed through the nvmem
-framework. We add the qfprom node to allow the tsens sensors to be
-calibrated correctly.
+qcs404 has 10 sensors connected to the single TSENS IP. Define a thermal
+zone for each of those sensors to expose the temperature of each zone.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 Tested-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 206 +++++++++++++++++++++++++++
+ 1 file changed, 206 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 9b5c16562bbe..57d14d8f0c90 100644
+index 57d14d8f0c90..cbc3fd378893 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -253,6 +253,16 @@
- 			reg = <0x00060000 0x6000>;
+@@ -30,6 +30,7 @@
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			#cooling-cells= <2>;
  		};
  
-+		qfprom: qfprom@a4000 {
-+			compatible = "qcom,qfprom";
-+			reg = <0x000a4000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			tsens_caldata: caldata@d0 {
-+				reg = <0x1f8 0x14>;
+ 		CPU1: cpu@101 {
+@@ -38,6 +39,7 @@
+ 			reg = <0x101>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			#cooling-cells= <2>;
+ 		};
+ 
+ 		CPU2: cpu@102 {
+@@ -46,6 +48,7 @@
+ 			reg = <0x102>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			#cooling-cells= <2>;
+ 		};
+ 
+ 		CPU3: cpu@103 {
+@@ -54,6 +57,7 @@
+ 			reg = <0x103>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			#cooling-cells= <2>;
+ 		};
+ 
+ 		L2_0: l2-cache {
+@@ -507,4 +511,206 @@
+ 			#interrupt-cells = <2>;
+ 		};
+ 	};
++
++	thermal-zones {
++		aoss-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 0>;
++
++			trips {
++				aoss_alert: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				aoss_crit: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
 +			};
 +		};
 +
- 		rng: rng@e3000 {
- 			compatible = "qcom,prng-ee";
- 			reg = <0x000e3000 0x1000>;
-@@ -260,6 +270,16 @@
- 			clock-names = "core";
- 		};
- 
-+		tsens: thermal-sensor@4a9000 {
-+			compatible = "qcom,qcs404-tsens", "qcom,tsens-v1";
-+			reg = <0x004a9000 0x1000>, /* TM */
-+			      <0x004a8000 0x1000>; /* SROT */
-+			nvmem-cells = <&tsens_caldata>;
-+			nvmem-cell-names = "calib";
-+			#qcom,sensors = <10>;
-+			#thermal-sensor-cells = <1>;
++		dsp-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 1>;
++
++			trips {
++				dsp_alert: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				dsp_crit: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
 +		};
 +
- 		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,qcs404-pinctrl";
- 			reg = <0x01000000 0x200000>,
++		lpass-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 2>;
++
++			trips {
++				lpass_alert: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				lpass_crit: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		wlan-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 3>;
++
++			trips {
++				wlan_alert: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				wlan_crit: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		cluster-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 4>;
++
++			trips {
++				cluster_alert: cluster_alert {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				cluster_crit: cluster_crit {
++					temperature = <110000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		cpu-thermal0 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 5>;
++
++			trips {
++				cpu_alert0: cpu_alert0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				cpu_crit0: cpu_crit0 {
++					temperature = <110000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		cpu-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 6>;
++
++			trips {
++				cpu_alert1: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				cpu_crit1: trip1 {
++					temperature = <110000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		cpu-thermal2 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 7>;
++
++			trips {
++				cpu_alert2: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				cpu_crit2: trip1 {
++					temperature = <110000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		cpu-thermal3 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 8>;
++
++			trips {
++				cpu_alert3: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				cpu_crit3: trip1 {
++					temperature = <110000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++
++		gpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&tsens 9>;
++
++			trips {
++				gpu_alert: trip0 {
++					temperature = <75000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				gpu_crit: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++	};
+ };
 -- 
 2.17.1
 
