@@ -2,39 +2,39 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A5CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3093FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF06D208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:30:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF06D208E4
+	by mail.kernel.org (Postfix) with ESMTP id 05EBE208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 02:30:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05EBE208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbeK0N0Q (ORCPT
+        id S1728320AbeK0N0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:26:16 -0500
+        Tue, 27 Nov 2018 08:26:19 -0500
 Received: from mailgw01.mediatek.com ([210.61.82.183]:2074 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727977AbeK0N0Q (ORCPT
+        with ESMTP id S1727977AbeK0N0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 08:26:16 -0500
-X-UUID: 93624b97c8b7458a98a172b674bbf123-20181127
-X-UUID: 93624b97c8b7458a98a172b674bbf123-20181127
+        Tue, 27 Nov 2018 08:26:18 -0500
+X-UUID: 1196d9e742c74cdc8af7fcff7c4e1de9-20181127
+X-UUID: 1196d9e742c74cdc8af7fcff7c4e1de9-20181127
 Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <leilk.liu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 460505502; Tue, 27 Nov 2018 10:29:54 +0800
+        with ESMTP id 1539555134; Tue, 27 Nov 2018 10:29:55 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 27 Nov 2018 10:29:53 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 27 Nov 2018 10:29:52 +0800
+ Transport; Tue, 27 Nov 2018 10:29:53 +0800
 From:   Leilk Liu <leilk.liu@mediatek.com>
 To:     Mark Brown <broonie@kernel.org>
 CC:     Mark Rutland <mark.rutland@arm.com>,
@@ -42,37 +42,41 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <ryder.lee@mediatek.com>
-Subject: [PATCH v2 0/1] add SPI driver support for mt7629 
-Date:   Tue, 27 Nov 2018 10:29:49 +0800
-Message-ID: <1543285790-11379-1-git-send-email-leilk.liu@mediatek.com>
+        <ryder.lee@mediatek.com>, Leilk Liu <leilk.liu@mediatek.com>
+Subject: [PATCH v2 1/1] spi: mediatek: Add bindings for mediatek MT7629 soc platform
+Date:   Tue, 27 Nov 2018 10:29:50 +0800
+Message-ID: <1543285790-11379-2-git-send-email-leilk.liu@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1543285790-11379-1-git-send-email-leilk.liu@mediatek.com>
+References: <1543285790-11379-1-git-send-email-leilk.liu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 100D50FBFEC34BEA667B18DE78D3BD781E9CDAAB547BB48034974A15381BFEF82000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From cf719ac350c36cb58e2013b58f73ad04f6981384 Mon Sep 17 00:00:00 2001
-From: Leilk Liu <leilk.liu@mediatek.com>
-Date: Tue, 27 Nov 2018 10:18:30 +0800
-Subject: [PATCH v2 0/1] add SPI driver support for mt7629
+This patch adds a DT binding documentation for the MT7629 soc.
 
-v2:
-remove "mediatek,mt7629-spi" compatible according Matthias's advice.
-
-v1:
-This series are based on 4.20-rc1 and provide two patches to support mt7629 IC.
-
-Leilk Liu (1):
-  spi: mediatek: Add bindings for mediatek MT7629 soc platform
-
- Documentation/devicetree/bindings/spi/spi-mt65xx.txt | 1 +
+Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
+---
+ .../devicetree/bindings/spi/spi-mt65xx.txt         |    1 +
  1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+index 7940940..69c3567 100644
+--- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
++++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+@@ -6,6 +6,7 @@ Required properties:
+     - mediatek,mt2712-spi: for mt2712 platforms
+     - mediatek,mt6589-spi: for mt6589 platforms
+     - mediatek,mt7622-spi: for mt7622 platforms
++    - "mediatek,mt7629-spi", "mediatek,mt7622-spi": for mt7629 platforms
+     - mediatek,mt8135-spi: for mt8135 platforms
+     - mediatek,mt8173-spi: for mt8173 platforms
+     - mediatek,mt8183-spi: for mt8183 platforms
 -- 
-1.9.1
-
+1.7.9.5
 
