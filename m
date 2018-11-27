@@ -2,115 +2,156 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DB2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50004C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0973F2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0973F2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AD362082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 17:55:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="hW0i1vwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD362082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbeK1EyX (ORCPT
+        id S1732154AbeK1Eyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:54:23 -0500
-Received: from muru.com ([72.249.23.125]:55348 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732019AbeK1EyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 23:54:22 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id EDD398030;
-        Tue, 27 Nov 2018 17:55:42 +0000 (UTC)
-Date:   Tue, 27 Nov 2018 09:55:38 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-Message-ID: <20181127175538.GS53235@atomide.com>
-References: <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
- <20181119161906.GP53235@atomide.com>
- <20181119171406.GQ53235@atomide.com>
- <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
- <20181123164827.GE53235@atomide.com>
- <20181126093625.GA10878@ulmo>
- <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com>
- <20181126102541.GC10878@ulmo>
- <20181126193212.GN53235@atomide.com>
- <149b3b6b-e52e-4942-151b-6df4358f5a7a@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <149b3b6b-e52e-4942-151b-6df4358f5a7a@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 27 Nov 2018 23:54:31 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36863 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732125AbeK1Eyb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 23:54:31 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so8211314pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 09:55:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=FjEPeuDTsdYAOiyxauMSBTAn10p+ceWBu+lwCNn0SIM=;
+        b=hW0i1vwUNt77K8T7jvjWIZMICrvFScql4kNtD32rMfygjfU/IJOimXFdveRqcEt5sl
+         6N3rukKFtHprjpMr657n2HzokbZr8QaDMcdH+Npk6dMFHucIQsrKmnIw4UdfGH9LP6o2
+         zX5OGraIBeEE/TNkL1Vw5bMVKS3d8og5qn5HQqbAL83vPwhNYSDSVIJZ1IIcoTASMw8R
+         9sbnnV0bghCOr6HrY5xchAXaIQMazjQdQHkKRXWe9sSN25nEKRPEvgF8ahf3rzmGZAPG
+         aQbS/UA24eHW70RvkemSb+1rFiaS51uWGHPYKOb+gNgFxLm53Ov2zLUBtlcfQ+iVTnX1
+         K3uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=FjEPeuDTsdYAOiyxauMSBTAn10p+ceWBu+lwCNn0SIM=;
+        b=Cm+iyBhlLUCv2qU2H27G2xSaHQzUl3XK2oDyp6yGemDJAd7d8KL5m//Cbt7QoVwvjz
+         /tUVg4tCFNpb+G9hnzL7FeYNTP8uyLUF3/LydqyjW7/n2ybt8nJxF2xjw216fZ7RfB/Z
+         hSm6AyYapFb6t0AX1n4Wq3PU0UDnWfeBE8358Dg+qnpdA6LdTY4Gl9J6HeqgSZHOXLJZ
+         5RjmUYbk5tgO085Neg/iV3Yu3v8VaSyvtF4xzWPM7Al5Psdl6pMf7GLlRH2HuHNSKV8A
+         W10+lu59DkrJi725hft4YapRCkqemlRir9GhbPHGLVVCFXJcUYsI/bhOTzO9stq13dO9
+         5kZA==
+X-Gm-Message-State: AGRZ1gIgFopez3ZMuI8UWNM3SzeFBN9apvZEUPGFNG99x0wPDuerEsg0
+        Kz9SHh9bMU3K9EDBwNIluJqWMQ==
+X-Google-Smtp-Source: AFSGD/WH1fQ8xZDJ5jkh14AEbgr5S74X3K+41t97ya22qpdI+/NmcUVX2HD0tiwiprjBbu0uYjJxwQ==
+X-Received: by 2002:a63:a112:: with SMTP id b18mr30258592pgf.440.1543341349908;
+        Tue, 27 Nov 2018 09:55:49 -0800 (PST)
+Received: from ?IPv6:2600:1010:b02c:1f41:9d9b:cc3f:d42b:6cdd? ([2600:1010:b02c:1f41:9d9b:cc3f:d42b:6cdd])
+        by smtp.gmail.com with ESMTPSA id z14sm4913525pgv.47.2018.11.27.09.55.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 09:55:47 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <20181127164129.GB4170@linux.intel.com>
+Date:   Tue, 27 Nov 2018 09:55:45 -0800
+Cc:     "Dr. Greg" <greg@enjellic.com>, Andy Lutomirski <luto@kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+References: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com> <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181126215145.GC868@linux.intel.com> <20181126230436.GA6737@linux.intel.com> <20181127085533.GA12247@wind.enjellic.com> <20181127164129.GB4170@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Jon Hunter <jonathanh@nvidia.com> [181126 20:17]:
-> 
-> On 26/11/2018 19:32, Tony Lindgren wrote:
-> > * Thierry Reding <treding@nvidia.com> [181126 10:25]:
-> >> On Mon, Nov 26, 2018 at 11:49:54AM +0200, Peter Ujfalusi wrote:
-> >>> The register map documentation I have states the following:
-> >>> bit7 INT_POLARITY Select the polarity of the INT output line
-> >>> 0: Interrupt line (INT) is low when interrupt is pending (default) RW
-> >>> 1: Interrupt line (INT) is high when interrupt is pending
-> >>>
-> >>> By default the Palmas irq is active low.
-> >>
-> >> That would confirm that the driver code is correct. My understanding is
-> >> that the PMC on Tegra expects a low-active IRQ from the PMIC, so we need
-> >> to invert the interrupt again in the PMC.
-> > 
-> > But then why Tegra need to set PALMAS_POLARITY_CTRL_INT_POLARITY
-> > if dts has IRQ_TYPE_LEVEL_HIGH? Shouldn't the Palmas default low
-> > setting be correct for Tegra if PMC expects active-low interrupt
-> > and then inverts it for GIC?
-> 
-> So I think what is going on here is ...
-> 
-> 1. For Tegra, the interrupt parent the palmas interrupt in DT is the GIC
->    not the PMC. The PMC does not register an interrupt controller
->    (although to be correct probably should have. I think it had been
->     discussed in the past and Stephen W may know the history here). So
->    the interrupt polarity has to be HIGH otherwise setting the trigger
->    type in the GIC will fail (as it only supports rising edge or level
->    high IIRC).
-> 2. However, as Thierry mentioned the Tegra PMC wants an active low
->    interrupt and so the PMC inverts it on entering the PMC. However,
->    given that the GIC interrupts must be active high, the PMC must
->    invert again between the PMC and GIC.
-> 
-> So looking back my description in the change 7e9d474954f4 was not quite
-> accurate because the interrupt from palmas is active high but the PMC
-> inverts it. I think that this is quite confusing because we don't have a
-> good way to describe this in the DT. If we made the PMC an interrupt
-> controller then it would probably be a lot clearer. However, for
-> historical reasons this was not done.
 
-OK if Tegra PMC inverts the PMIC interrupt coming in from palmas as
-active-high to active-low for PMC, and then PMC again inverts it
-from active-low to active-high for GIC then it makes sense.
 
-The only option that works for omap5 at palmas end is if
-PALMAS_POLARITY_CTRL_INT_POLARITY is cleared. Setting the SoC internal
-pulls does not make a difference, so I suspect there is either some
-unknown pull-up/pull-down configuration register in palmas, or there
-is an external pull resistor.
+> On Nov 27, 2018, at 8:41 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.=
+com> wrote:
+>=20
+>> On Tue, Nov 27, 2018 at 02:55:33AM -0600, Dr. Greg wrote:
+>> Since the thread has become a bit divergent I wanted to note that we
+>> have offered a proposal for a general policy management framework
+>> based on MRSIGNER values.  This framework is consistent with the SGX
+>> security model, ie. cryptographic rather then DAC based policy
+>> controls.  This framework also allows a much more flexible policy
+>> implementation that doesn't result in combinatoric issues.
+>>=20
+>> Our framework also allows the preservation of the current ABI which
+>> allows an EINITTOKEN to be passed in from userspace.  The framework
+>> also supports the ability to specify that only a kernel based launch
+>> enclave (LE) should be available if the platform owner or distribution
+>> should desire to implement such a model.
+>>=20
+>> The policy management framework is straight forward.  Three linked
+>> lists or their equivalent which are populated through /sysfs
+>> pseudo-files or equivalent plumbing.  Each list is populated with
+>> MRSIGNER values for signing keys that are allowed to initialize
+>> enclaves under three separate conditions.
+>>=20
+>> 1.) General enclaves without special attribute bits.
+>>=20
+>> 2.) Enclaves with the SGX_FLAGS_PROVISION_KEY attribute set. - i.e.,
+>> 'Provisioning Enclaves'.
+>>=20
+>> 3.) Enclaves with the SGX_FLAGS_LICENSE_KEY attribute set - i.e., 'Launch=
 
-But as dra7 is using a gpio interrupt, I'll just change omap5 to use
-gpio_wk16 instead of sys_nirq1 too. Will send out a patch shortly.
+>> Enclaves'.
+>>=20
+>> An all-null MRSIGNER value serves as a 'sealing' value that locks a
+>> list from any further modifications.
+>>=20
+>> This architecture allows platform policies to be specified and then
+>> sealed at early boot by the root user.  At that point cryptographic
+>> policy controls are in place rather then DAC based controls, the
+>> latter of which have perpetual security liabilities in addition to the
+>> useability constraints inherent in a DAC or device node model.
+>>=20
+>> We have developed an independent implementation of the PSW and
+>> arguably have as much experience with issues surrounding how to
+>> interact with the device driver as anyone.  We have spent a lot of
+>> time thinking about these issues and the above framework provides the
+>> most flexible architecture available.
+>=20
+> Sounds like a lot bloat and policy added to the kernel whereas with
+> Andy's proposal you can implement logic to a daemon and provide only
+> mechanism to do it.
+>=20
+>=20
 
-Regards,
+Well, almost. We=E2=80=99d need SGX_IOC_FREEZE_MR{ENCLAVE,SIGNER} or similar=
+.  Or maybe the daemon could handle the entire loading process.  But this ca=
+n wait until after the main driver is upstream.
 
-Tony
+This does lead to a question: enclaves are kind-of-sort-of mapped into a giv=
+en address space. What happens if you issue the various ioctls in the contex=
+t of a different mm?  For that matter, can two processes mmap the same encla=
+ve?=
