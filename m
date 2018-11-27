@@ -2,116 +2,97 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2019BC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39623C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB404208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEB32086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:50:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QhARiQG4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB404208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hxjXg+BO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEB32086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbeK0WsM (ORCPT
+        id S1731029AbeK0WsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 17:48:12 -0500
-Received: from ozlabs.org ([203.11.71.1]:48601 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726494AbeK0WsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 17:48:12 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4342Cn3JRlz9s55;
-        Tue, 27 Nov 2018 22:50:29 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543319431;
-        bh=koxy2zQ4IY8nyV80M/AILnecurgvhzmjOAmOhPM6BrA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QhARiQG4yB3pQqa5bNEUiuY/CJJLbhVLpR6AJ/4BohFlyBZwJlDD4gIl9qnFVBUoM
-         zuk24ZMtxEaeXi/Q/yNoIBnrBJKoScGTjMLt6SQP1/dTLzwc2SdHPXuBgL40e9sB9a
-         zziUFJbZjNtVC+EZD5KzfKyB+PS/3A8b1DjEU4MWEi7JOA5CxknlgxUxyp+PDOremO
-         2vUw+9+Ix+Ewp7Ca6F2KNUE7moqR2fmE2uRVoMZlwcauJJv+cfjzhtr698A7fRLYyB
-         ckTGiMr7dbNb6xl6i1gO0V3l06E5xVUQRBQbVNylakmAB7PPVpCEbTajtqIwWdDxu3
-         MCb01PUHoeTag==
-Date:   Tue, 27 Nov 2018 22:50:13 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Message-ID: <20181127225013.133adc7d@canb.auug.org.au>
-In-Reply-To: <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
-References: <20181127115246.00967523@canb.auug.org.au>
-        <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+        Tue, 27 Nov 2018 17:48:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46286 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeK0WsX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 17:48:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eXiFuGEYL063RlTNRT8iWSBcS71jHHw57uP7Nz7aM7Y=; b=hxjXg+BOawFwbRG2lWLovBhOx
+        cIAa0I1+FdkQABM44HnsXNhnfU9MNj39+hrvGUBqE5rO1i7VitYo5PHZC5rtruqvw94+DjZiFvNQ5
+        9mQQAPXa4PboR5sEWIEePISubuWrZEwImRuH44Upk4OJt3WP8UW/HTAczC0Plm0Mv5vxg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gRbsx-0008Ts-Lp; Tue, 27 Nov 2018 11:50:35 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 4D1041125056; Tue, 27 Nov 2018 11:50:35 +0000 (GMT)
+Date:   Tue, 27 Nov 2018 11:50:35 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Ryan Lee <RyanS.Lee@maximintegrated.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Grant Grundler <grundler@chromium.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Benson Leung <bleung@chromium.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: max98373: Added max98373_reset for stable amp reset
+Message-ID: <20181127115035.GB3206@sirena.org.uk>
+References: <20181126183942.2631-1-ryans.lee@maximintegrated.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YkvK3WE_k3dKyW++C4mhphL"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mojUlQ0s9EVzWg2t"
+Content-Disposition: inline
+In-Reply-To: <20181126183942.2631-1-ryans.lee@maximintegrated.com>
+X-Cookie: This end up.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YkvK3WE_k3dKyW++C4mhphL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ondrej,
+--mojUlQ0s9EVzWg2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wr=
-ote:
->
-> Hm... seems that there was some massive overhaul in the VFS code right
-> at the wrong moment... There are new hooks for mounting now and the
+On Mon, Nov 26, 2018 at 06:46:05PM +0000, Ryan Lee wrote:
+> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+> ---
 
-The mount changes have been in linux-next since before the last
-release ...
+This really needs a changelog to explain what is going on here, and we
+need some more documentation in the code.  It is *extremely* unusual to
+have to poll for reset like this, and if the failure mode is I/O errors
+that's going to be pretty painful.
 
-> code that our commit changes is now here:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/securit=
-y/selinux/hooks.c?h=3Dfor-next#n3131
->=20
-> It seems that the logic is still the same, just now our patch (or the
-> VFS one) needs to be updated to change the above line as such
-> (untested pseudo-patch):
->=20
-> - if (fc->purpose =3D=3D FS_CONTEXT_FOR_KERNEL_MOUNT)
-> + if (fc->purpose =3D=3D (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBM=
-OUNT))
-
-OK, so from tomorrow I will use that merge resolution.  Someone needs
-to remember to tell Linus about this when the latter of the vfs and
-selinux trees reach him.
-
-Thanks for the better resolution.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YkvK3WE_k3dKyW++C4mhphL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--mojUlQ0s9EVzWg2t
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv9L3UACgkQAVBC80lX
-0Gy73Af+MA5I4pLotm7nRlo1YtazY/j8g8wiiIn/ewKfi/HgHZEXAsLK7omb0d1O
-H5t/0RchuJyjKwS9jaSWUBOXINtRA6jxuGWcn8pEDtuczu4nRMeZIai2T3a7Vq4F
-woTD1xt96C93n9cAn1KsJFouVWN/gUjl4MeW082bo56dPNx1t5E5pFSlGHb9v0Fh
-WnG2AHugu1gcODBR7cUbpj80pEnPYjHK2Mqar9G7EV16kV0HY2h9uVFb/hunQFfn
-5re+JPAMBLYJOZEvDFnfErCzshMkcAQpGkc/LICbfYczD3hxGJhMmp5VzbfpQ1lt
-DfLrTCSMY8SApGzyP1ZCs0jdqS72cA==
-=HX9m
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv9L4oACgkQJNaLcl1U
+h9A9dAf/YNgemguFt+88Dci5UTRiy8trzQVPKNreg51M7R/0pOnk/fyAC76I3xUj
+F545w42n+Crp2QiRzn8ONI3Vn4ycdTS9LaUI4jNmubYLQ3cYODGHPREvciFEmpqH
+cPoCmhPytfuIwf22bUdMgL2BI13WQDSpJJwskYjz66wcu1HRlZyGLUq7Lk2p+nrR
+gr1Rq+2yCCZiUzTs5eEvEwNP07ePngofy7gMNVeuSWzdiT9fBRPEio0rs8+VXvwr
+rm+btK3IOGcB6Yc/weV1djHZbxDo6fUhiDS90gSb99sE0J+RX/vhXsjHL+LtYxqJ
+wWkk7OOlNy9WknhGx6wmXEnhStRK/A==
+=5YXq
 -----END PGP SIGNATURE-----
 
---Sig_/YkvK3WE_k3dKyW++C4mhphL--
+--mojUlQ0s9EVzWg2t--
