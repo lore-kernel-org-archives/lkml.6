@@ -2,93 +2,138 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C5C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9485FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E2121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:35:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5771F20828
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 00:36:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Kwhz7LTV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E2121104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L7oOyrgU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5771F20828
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeK0LbV (ORCPT
+        id S1728090AbeK0LcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 06:31:21 -0500
-Received: from m12-15.163.com ([220.181.12.15]:56401 "EHLO m12-15.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbeK0LbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 06:31:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=pILGacqwFxE2s3edWv
-        IJ1QuH9Lszzm0YDswJvUE2GJU=; b=Kwhz7LTVZBqCUr45+aj3qq9mjc/tBjGMxG
-        moZ2GCHsAhfFrsUNuB3BhPV4/M1tGJdqpK74q0yysfOKOUvTZoc19rJCvYRrorh2
-        krpravBR604mLwQ9GKjgP8tTMdKqPH9Q8vR6XW0VJhagssYRdg5jxVg/74OmXdTj
-        8LbWMfV+I=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp11 (Coremail) with SMTP id D8CowADX6DHikPxbqYR1AA--.4456S3;
-        Tue, 27 Nov 2018 08:33:40 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-xfs@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
-Subject: [PATCH V2] xfs: libxfs: move xfs_perag_put late
-Date:   Tue, 27 Nov 2018 08:33:38 +0800
-Message-Id: <1543278818-117362-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: D8CowADX6DHikPxbqYR1AA--.4456S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFy7JF1rKw4kZF1UXF1UZFb_yoWDXrb_Ka
-        1xtFs7A34ktrW7J3W5Xws5t3WUtF4fG393uayfJFW3K34UGFn3ZwsrXrn0qFy3urWaqFZ8
-        W3yDGFW3Krya9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8RuWJUUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZBwMclQHCrrVeAAAsI
+        Tue, 27 Nov 2018 06:32:06 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:41888 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727662AbeK0LcG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 06:32:06 -0500
+Received: by mail-vk1-f196.google.com with SMTP id t127so4644361vke.8
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:36:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uocru8YNlXjDg4tMK+cyR2KXVJ22a1eJncYGvv17luA=;
+        b=L7oOyrgUu4+JFDVrcMxgHSy19UbDynexrue5PUZUp+gd4j/uC4z6uqIXd9A39OZF3v
+         Hw5wur4CT5qxUb4Np/n4w7sEOH2pFGDxvOuNwegEU7iexPjfIuVM3kJ7BLecIZ5+dzGZ
+         llXp3t7Dlq3P+vLvmtngGNfxZvBu4nrelN2dE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uocru8YNlXjDg4tMK+cyR2KXVJ22a1eJncYGvv17luA=;
+        b=qUyShK+aklV6iDRjnHLsU8XxSuXOWWl6MI8JWLJ/2uAzk/FMY9vGouD+4irvruJ4ff
+         KS94Xv3E+YCk4Ok1BwWDosq/aEdoKHekA29eEBad/mVbW2v2X1kBN6zyUdMwMTmtaH8G
+         4mZR595qHHFW5FLYP8J63oJ0tQ/7QblIfe90nyK/jgxrCkiHTruqQecC8Hm16E4iO0oH
+         wDqzRuRNtOvYn8DU3XeDFtZ2X1Pu2GN9YwwQwsPm5DkvcT+IKTAn+/RlRMTqWMK5QJuK
+         yvXCWJzS9v1mH6/WgCKruLbz3FNlDs6ujDjO+nOEBmc+qFzI1vV7ZESjx/QzVsfjO6uT
+         Kyeg==
+X-Gm-Message-State: AA+aEWZ23Vktkw6Q6CcxKQ9aIJqR/a/6ygtqKwyLcV7A2qyPp5D8wveq
+        RGWuZmlRFG9m9sVrWtoRIr7yYNDI804=
+X-Google-Smtp-Source: AFSGD/U2C2YL4Jq6+Rwg7DSf+TRJKu8L/onqQwgp0Igm3nlcQ795sMC4t+AwfPYLjFqwxF2UZ/GawA==
+X-Received: by 2002:a1f:5941:: with SMTP id n62mr12505319vkb.14.1543278965490;
+        Mon, 26 Nov 2018 16:36:05 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id g195sm921571vka.5.2018.11.26.16.36.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 16:36:04 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id g68so12638351vsd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 16:36:04 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr11492552vsv.20.1543278963545;
+ Mon, 26 Nov 2018 16:36:03 -0800 (PST)
+MIME-Version: 1.0
+References: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 26 Nov 2018 16:35:50 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=X3C=oKep1kPWjasLDZdFKfhCs0JMWTOensgYDj=apvuQ@mail.gmail.com>
+Message-ID: <CAD=FV=X3C=oKep1kPWjasLDZdFKfhCs0JMWTOensgYDj=apvuQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: sdm845: Add videocc node
+To:     Taniya Das <tdas@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function xfs_alloc_get_freelist calls xfs_perag_put to drop the
-reference. However, pag->pagf_btreeblks is read and write after the 
-put operation. This patch moves the put operation late.
+Hi,
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
-V2: correct the commit log
----
- fs/xfs/libxfs/xfs_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Nov 5, 2018 at 2:35 AM Taniya Das <tdas@codeaurora.org> wrote:
+>
+> This adds the video clock controller node to sdm845 based on the examples
+> in the bindings.
+>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index b72bdb0..91a281b 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -8,6 +8,7 @@
+>  #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
+>  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+> +#include <dt-bindings/clock/qcom,videocc-sdm845.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/phy/phy-qcom-qusb2.h>
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> @@ -1256,6 +1257,13 @@
+>                         #power-domain-cells = <1>;
+>                 };
+>
+> +               videocc: clock-controller@ab00000 {
+> +                       compatible = "qcom,sdm845-videocc";
+> +                       reg = <0xab00000 0x10000>;
+> +                       #clock-cells = <1>;
+> +                       #power-domain-cells = <1>;
 
-diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-index e1c0c0d..4be387d 100644
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -2435,7 +2435,6 @@ xfs_alloc_get_freelist(
- 	be32_add_cpu(&agf->agf_flcount, -1);
- 	xfs_trans_agflist_delta(tp, -1);
- 	pag->pagf_flcount--;
--	xfs_perag_put(pag);
- 
- 	logflags = XFS_AGF_FLFIRST | XFS_AGF_FLCOUNT;
- 	if (btreeblk) {
-@@ -2443,6 +2442,7 @@ xfs_alloc_get_freelist(
- 		pag->pagf_btreeblks++;
- 		logflags |= XFS_AGF_BTREEBLKS;
- 	}
-+	xfs_perag_put(pag);
- 
- 	xfs_alloc_log_agf(tp, agbp, logflags);
- 	*bnop = bno;
--- 
-2.7.4
+Any reason not to include "#reset-cells = <1>;" here?  The bindings
+list it as optional but I see no reason why we should leave it off.
+The file "include/dt-bindings/clock/qcom,videocc-sdm845.h" seems to
+include some #defines for resets.  Even though the driver doesn't seem
+like it supports it yet, it still should be fine to list it here.
 
 
+> +               };
+> +
+>                 tsens0: thermal-sensor@c263000 {
+
+Please sort your new node by unit address.  Specifically "ab00000"
+comes before "af00000", thus I would expect you to have your node
+right before the dispcc.
+
+
+-Doug
