@@ -2,81 +2,106 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E068C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499AA20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499AA20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id C979C21104
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 16:11:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S8rQS03l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C979C21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbeK1DIT (ORCPT
+        id S1730646AbeK1DJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 22:08:19 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:36519 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbeK1DIT (ORCPT
+        Tue, 27 Nov 2018 22:09:57 -0500
+Received: from mail-yw1-f45.google.com ([209.85.161.45]:34251 "EHLO
+        mail-yw1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729960AbeK1DJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 22:08:19 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gRfvu-0002uu-OT; Tue, 27 Nov 2018 09:09:54 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gRfu8-0004Jo-Cb; Tue, 27 Nov 2018 09:09:54 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     syzbot <syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, arnd@arndb.de, dave@stgolabs.net,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        manfred@colorfullife.com, syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: corrupted list in freeary
-References: <0000000000004eade9057ba76eae@google.com>
-Date:   Tue, 27 Nov 2018 10:07:53 -0600
-In-Reply-To: <0000000000004eade9057ba76eae@google.com> (syzbot's message of
-        "Tue, 27 Nov 2018 07:52:03 -0800")
-Message-ID: <87d0qqjyg6.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 27 Nov 2018 22:09:57 -0500
+Received: by mail-yw1-f45.google.com with SMTP id g75so9365679ywb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 08:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qJJbUaLODuI75MvctT19W6ZB+Xpak+0bNYOGaJUIcGU=;
+        b=S8rQS03lI6hJSMw3RdOU/3n+9w1URyXuuTkBOx8c0NJxLVu5ElrnpDsVDgC/iJn4M8
+         A9r+1iGRs2BKWtrjzOLeASCwbMCJoYa4NzL7+GslCK52Kf7Yl6rCkHzjmd8KR9+sd8Qp
+         4BOLnjKy4gBJNY8UBaeVuLEAiLd57Mtsg4MGU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qJJbUaLODuI75MvctT19W6ZB+Xpak+0bNYOGaJUIcGU=;
+        b=MfxrQrP0DOGv6qWTIs3apcqlnHGP2uSzkWb578GuAnrkKFvBrwOSrvANokmH/HwLI5
+         /nzyyTuVDedBtCSfrUYoq6lfKwzHXj7dCVpFNa3EedfWgbgdyYL/QxZN6ElwfzFTJhRB
+         h0Y2704WwVH1ZszwB73YoAg30TyYucBKyBfAQnjtQpKtHfISgkRs/Z2ezA/YmQeNpPnH
+         7fVBn1GkrCa1tiIEpBpla3A34sJ/ZbGGw5E27pfCml8+EmqcGTr6YnS8Ei9ugxX4K6Nh
+         GS5sjPBlPbEydFqNsCTulesDZHO7kBkIoeYnNw/MFU6wexcJrJ0tqR4N85T52gZmQWJz
+         MDLw==
+X-Gm-Message-State: AGRZ1gK3FCuAJoq/gGklTmgfDW/h95hoisPEZEVXzUEgpoi0bgjFQc9l
+        tIpqpIiYXDz+VpT9KDKo+taZgm1VdSVVVaFrd+yBAA==
+X-Google-Smtp-Source: AJdET5ffXjVp8T/HVuNdibb6BcnBSOCihBxwvi6wYVJ86ZOgsIK7Thzs8Akb7VfCpbxvffCEOnjYuNgeVFjqA/tgk8c=
+X-Received: by 2002:a0d:e24b:: with SMTP id l72mr35201562ywe.25.1543335093860;
+ Tue, 27 Nov 2018 08:11:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gRfu8-0004Jo-Cb;;;mid=<87d0qqjyg6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/cXWga0qtpWa3KJpTXZM7Dd/T+3kN+bgk=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on in02.mta.xmission.com); SA Timed out after 110 secs
+References: <CA+G9fYvgDP2+D2mgqxJJJYm1DTgxbByxjKuVGBFOa-m_fT7Q-Q@mail.gmail.com>
+In-Reply-To: <CA+G9fYvgDP2+D2mgqxJJJYm1DTgxbByxjKuVGBFOa-m_fT7Q-Q@mail.gmail.com>
+From:   Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Date:   Wed, 28 Nov 2018 01:11:22 +0900
+Message-ID: <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+Subject: Re: File not found: /sys/kernel/debug/tracing/events/syscalls
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+I found that the commit 4378a7d4be30 ("arm64: implement syscall
+wrappers") changed
+the syscall wrapper function names by adding __arm64_ prefix. So arm64
+kernel should
+have its own arch_syscall_match_sym_name().
 
-syzbot <syzbot+c92d3646e35bc5d1a909@syzkaller.appspotmail.com> writes:
+Thank you,
 
-> Hello,
+2018=E5=B9=B411=E6=9C=8828=E6=97=A5(=E6=B0=B4) 0:22 Naresh Kamboju <naresh.=
+kamboju@linaro.org>:
 >
-> syzbot found the following crash on:
+> While debugging the selftests/bpf: get_cgroup_id_user test failure on arm=
+64
+> where the test is expecting trace file
+> /sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id
+> but this path not enabled after enabling required kernel configuration al=
+so.
+> CONFIG_FTRACE_SYSCALLS=3Dy
 >
-> HEAD commit:    e195ca6cb6f2 Merge branch 'for-linus' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10d3e6a3400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c92d3646e35bc5d1a909
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-I don't have this commit.  I don't have a clue where it find this
-commit.  I can't possibly look into this let alone debug this.
-
-That is not a useful but report.  Please fix your bot.
-
-Eric
+> strace output:
+> open(\"/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id\"=
+,
+> O_RDONLY) =3D -1 ENOENT (No such file or directory)
+>
+> This problem noticed on Linux mainline kernel version 4.20.0-rc3.
+>
+> Best regards
+> Naresh Kamboju
 
 
+
+--=20
+Masami Hiramatsu
