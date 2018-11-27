@@ -3,41 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC18C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD9CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7D120873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:54:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7D120873
+	by mail.kernel.org (Postfix) with ESMTP id 822FA20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 14:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822FA20873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeK1Bw7 (ORCPT
+        id S1728750AbeK1Bzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 20:52:59 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:40380 "EHLO
+        Tue, 27 Nov 2018 20:55:38 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:25212 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726304AbeK1Bw7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726435AbeK1Bzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 20:52:59 -0500
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Nov 2018 23:54:47 +0900
+        Tue, 27 Nov 2018 20:55:37 -0500
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 27 Nov 2018 23:57:26 +0900
 Received: from vbox.ree.adwin.renesas.com (unknown [10.226.37.67])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 477B24022B3F;
-        Tue, 27 Nov 2018 23:54:45 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 846A6411E704;
+        Tue, 27 Nov 2018 23:57:24 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
+To:     Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-oxnas@groups.io,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] ARM: dts: OX820: Correct the GIC DT node name
-Date:   Tue, 27 Nov 2018 14:54:42 +0000
-Message-Id: <20181127145442.7169-1-phil.edworthy@renesas.com>
+Subject: [PATCH] ARM: dts: alpine: Correct the GIC DT node name
+Date:   Tue, 27 Nov 2018 14:57:21 +0000
+Message-Id: <20181127145721.7237-1-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,22 +55,22 @@ interrupt-controller"
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- arch/arm/boot/dts/ox820.dtsi | 2 +-
+ arch/arm/boot/dts/alpine.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ox820.dtsi b/arch/arm/boot/dts/ox820.dtsi
-index 085bbd33eadc..3a17ab4e7c2f 100644
---- a/arch/arm/boot/dts/ox820.dtsi
-+++ b/arch/arm/boot/dts/ox820.dtsi
-@@ -286,7 +286,7 @@
- 				clocks = <&armclk>;
- 			};
+diff --git a/arch/arm/boot/dts/alpine.dtsi b/arch/arm/boot/dts/alpine.dtsi
+index 731df7a8c4e6..533c876497ff 100644
+--- a/arch/arm/boot/dts/alpine.dtsi
++++ b/arch/arm/boot/dts/alpine.dtsi
+@@ -85,7 +85,7 @@
+ 		};
  
--			gic: gic@1000 {
-+			gic: interrupt-controller@1000 {
- 				compatible = "arm,arm11mp-gic";
- 				interrupt-controller;
- 				#interrupt-cells = <3>;
+ 		/* Interrupt Controller */
+-		gic: gic@fb001000 {
++		gic: interrupt-controller@fb001000 {
+ 			compatible = "arm,cortex-a15-gic";
+ 			#interrupt-cells = <3>;
+ 			#size-cells = <0>;
 -- 
 2.17.1
 
