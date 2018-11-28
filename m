@@ -2,201 +2,314 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5B5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A83E4205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22411205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="QyBGaT/C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83E4205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fv7Sy98Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22411205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeK2Glg (ORCPT
+        id S1729263AbeK2Gkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:41:36 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43405 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbeK2Glg (ORCPT
+        Thu, 29 Nov 2018 01:40:37 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:38640 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbeK2Gkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:41:36 -0500
-Received: by mail-pl1-f195.google.com with SMTP id gn14so17885867plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 11:38:51 -0800 (PST)
+        Thu, 29 Nov 2018 01:40:36 -0500
+Received: by mail-it1-f202.google.com with SMTP id m128so1715465itd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 11:37:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=8bQFWKBjiGrYiU8FacAN+YIRavoiuZsYEdpz9LRoF0U=;
-        b=QyBGaT/C4HEetrqDyESuU9yPgennW/eIcdW/G6XY0bnLZquyFMTcRDR70V/AqDFXBs
-         qUh/goUGSySK5DcE0qrYo8a0SVT+MbHcvRRLeZdLtdJ1UKO0rhXgZ7Cep5rO06S28XVG
-         SOrlh8GyE7ql5DOP+6ecv83IM+PbduDX6h2L2OZdle5532eCWE35Afj1pIXGQ8QbeoGb
-         PmaLwPXFtX8Ku+4fTGY8xHonJjLpsR6vVyd6LbbJoF0dwj+cLC5mUfVZgSCmh477MCRz
-         xW/sxAtVFn14aV3sIVH9OIVuwOFUlzx9JRl3M/rnnepF3r8g3cmqUIN/4ebYw9g2Ao3k
-         XUGQ==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=Xfxjf+CSXWbmb3vEodnCAywAKpdNOSt3qX2Z15+pCtI=;
+        b=Fv7Sy98Q8RFjZMHxwG7JynC7AcGNeOGek9vQeCpHnDobT29qNccUYR96dj0+VIllkk
+         ZQhjsll+dUALguLu/laCF6LE969tx0gKGzf0JAFf4CI40FwXWZ+HjwBSXCqSfKqwGppQ
+         6Lj3d5gDH309ilY5/hgd4ovu9kebLsNg+VP/a9Vrt6dwJ9KNR/sK86w/X0hWI1iZS2AV
+         YqSnyKsoKRBpm3zqxVFfxo5fRlpKZsOIiTiMdho1WJdiZ9ZJ5/G7qTzuHeiFRFuh2vuI
+         hYJ5xjiLZ6wW+JzvdMDA28X22ehvu140pEPenelrp0nE0iWgmPdcNAktu/Ze3B2ewb71
+         oQyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=8bQFWKBjiGrYiU8FacAN+YIRavoiuZsYEdpz9LRoF0U=;
-        b=GdjVrKvOFgfjSk3uDJouJMGh+UwVCu3TxzaVPLI7nlRmqrNbe3kmXn6UYmzk5pEH0s
-         Ag8o/nWsm5eAXO3HNLhtf844eQJEDgcQKs4wKLPOlcQh47a8h4AOWug4l6R9s5JnvAeB
-         m1Tb//RgqBKjBM8Q1aWVrU8FYV9OCakZrvareuW9obk67Ghoq1fzqyb5BS/Ifn7w8179
-         B34B/RzJpouO+2RM0BZQt0QdVLsiLJVm3G2CW+5a34szFgBiDNUzpkh3MUQihc9yunvz
-         jZJrbODC+Zq466hs/rvSCEUfvPQrqtaXnRz8s4muMXk/xZ8jAMTocsFCwpgllVwbOU5N
-         Mn8Q==
-X-Gm-Message-State: AA+aEWbEnNv9USLAW3ZSmJQhPDJ1XjFPlwGtPWIDCENL/bohxUrRWb2I
-        cr4vlPuHC3fai/GVv7F4n0OM9w==
-X-Google-Smtp-Source: AFSGD/XHJFk9Bnq0etBnECrMVC9ECjIwCFlC5kJ5hw6WXpSCV8xsJWLGxEfyaKnsSWmNANYtiD4gAw==
-X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr38088486plb.238.1543433930933;
-        Wed, 28 Nov 2018 11:38:50 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id g2sm10028732pfi.95.2018.11.28.11.38.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 11:38:50 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <4C297F47-C508-4DC9-8360-5E0873873833@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
- retry
-Date:   Wed, 28 Nov 2018 12:38:47 -0700
-In-Reply-To: <20181128054923.GF8125@magnolia>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Martin Petersen <martin.petersen@oracle.com>,
-        shirley.ma@oracle.com, bob.liu@oracle.com
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <20181128053303.GL6311@dastard> <20181128054923.GF8125@magnolia>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=Xfxjf+CSXWbmb3vEodnCAywAKpdNOSt3qX2Z15+pCtI=;
+        b=Zzqt/kNik865000/0tmj0lJMa2GwoRWYqvkVbbIXJpGsg+MVcVzD5GjNajX1ha6nSm
+         odUW+zh+LnS216zcKJwQAf3a2/1FINk1EcryqDHZ7ypGWrNQy6/6ZyvvKQjkn0NkOM21
+         R4bNDLouodcYbOzwEqN7d5cIyqPdznge8BXNeuZqCsvgtonGPSWFSYNjAYpo+fkHIh3i
+         jq12J7u5s6UMTDUWoG0zXO4HSz0NJw9sPvKfsCkyRHr1j74MegbJ/U6Gycfs4ZwJ0NOx
+         DiZZbZqQPPT1U/vvN4H6TOxdLkrsTOfimbp4i6zpeLxpMav0tLnpdxAKOJ2e/3uMn3oU
+         mqBQ==
+X-Gm-Message-State: AA+aEWZsAnACQxWf0Ck3aD4cUIVxephNhLGKt5exs36u9u61vDw8ZZG/
+        2J5YCHr8idc4i9JPy4Z/bNfRmW4t81xDqdh1Isdw4A==
+X-Google-Smtp-Source: AFSGD/WXZbOijT965825ZIr9pOufHnotkvLuF1R50wIHqrUjKPJrZ6JJcjxQfQjkhabysTq8H+f5AJfYosxEeUhlF5Vbxw==
+X-Received: by 2002:a24:4ac4:: with SMTP id k187mr3369102itb.8.1543433871194;
+ Wed, 28 Nov 2018 11:37:51 -0800 (PST)
+Date:   Wed, 28 Nov 2018 11:36:20 -0800
+In-Reply-To: <20181128193636.254378-1-brendanhiggins@google.com>
+Message-Id: <20181128193636.254378-4-brendanhiggins@google.com>
+Mime-Version: 1.0
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+Subject: [RFC v3 03/19] kunit: test: add string_stream a std::stream like
+ string builder
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
+        shuah@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com, frowand.list@gmail.com,
+        knut.omang@oracle.com, Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+A number of test features need to do pretty complicated string printing
+where it may not be possible to rely on a single preallocated string
+with parameters.
 
---Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+So provide a library for constructing the string as you go similar to
+C++'s std::string.
 
-On Nov 27, 2018, at 10:49 PM, Darrick J. Wong <darrick.wong@oracle.com> =
-wrote:
-> On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
->> On Tue, Nov 27, 2018 at 08:49:44PM -0700, Allison Henderson wrote:
->>> Motivation:
->>> When fs data/metadata checksum mismatch, lower block devices may =
-have other
->>> correct copies. e.g. If XFS successfully reads a metadata buffer off =
-a raid1
->>> but decides that the metadata is garbage, today it will shut down =
-the entire
->>> filesystem without trying any of the other mirrors.  This is a =
-severe
->>> loss of service, and we propose these patches to have XFS try harder =
-to
->>> avoid failure.
->>>=20
->>> This patch prototype this mirror retry idea by:
->>> * Adding @nr_mirrors to struct request_queue which is similar as
->>>  blk_queue_nonrot(), filesystem can grab device request queue and =
-check max
->>>  mirrors this block device has.
->>>  Helper functions were also added to get/set the nr_mirrors.
->>>=20
->>> * Expanding bi_write_hint to bi_rw_hint, now @bi_rw_hint has three =
-meanings.
->>> 1.Original write_hint.
->>> 2.end_io() will update @bi_rw_hint to reflect which mirror this i/o =
-really happened.
->>> 3.Fs set @bi_rw_hint to force driver e.g raid1 read from a specific =
-mirror.
->>>=20
->>> * Modify md/raid1 to support this retry feature.
->>>=20
->>> * Add b_rw_hint to xfs_buf
->>>  This patch adds a new field b_rw_hint to xfs_buf.  We will use this =
-to set the
->>>  new bio->bi_rw_hint when submitting the read request, and also to =
-store the
->>>  returned mirror when the read completes
->=20
->> the retry iterations. That allows us to let he block layer ot pick
->> whatever leg it wants for the initial read, but if we get a failure
->> we directly control the mirror we retry from and all bios in the
->> buffer go to that same mirror.
->> 	- is it generic/abstract enough to be able to work with
->> 	  RAID5/6 to trigger verification/recovery from the parity
->> 	  information in the stripe?
->=20
-> In theory we could supply a raid5 implementation, wherein rw_hint =3D=3D=
- 0
-> lets the raid do as it pleases; rw_hint =3D=3D 1 reads from the =
-stripe; and
-> rw_hint =3D=3D 2 forces stripe recovery for the given block.
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+---
+ include/kunit/string-stream.h |  44 ++++++++++
+ kunit/Makefile                |   3 +-
+ kunit/string-stream.c         | 149 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 195 insertions(+), 1 deletion(-)
+ create mode 100644 include/kunit/string-stream.h
+ create mode 100644 kunit/string-stream.c
 
-Definitely this API needs to be useful for RAID-5/6 storage as well, and
-I don't think that needs too complex an interface to achieve.
+diff --git a/include/kunit/string-stream.h b/include/kunit/string-stream.h
+new file mode 100644
+index 0000000000000..933ed5740cf07
+--- /dev/null
++++ b/include/kunit/string-stream.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * C++ stream style string builder used in KUnit for building messages.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#ifndef _KUNIT_STRING_STREAM_H
++#define _KUNIT_STRING_STREAM_H
++
++#include <linux/types.h>
++#include <linux/spinlock.h>
++#include <linux/kref.h>
++#include <stdarg.h>
++
++struct string_stream_fragment {
++	struct list_head node;
++	char *fragment;
++};
++
++struct string_stream {
++	size_t length;
++	struct list_head fragments;
++
++	/* length and fragments are protected by this lock */
++	spinlock_t lock;
++	struct kref refcount;
++	int (*add)(struct string_stream *this, const char *fmt, ...);
++	int (*vadd)(struct string_stream *this, const char *fmt, va_list args);
++	char *(*get_string)(struct string_stream *this);
++	void (*clear)(struct string_stream *this);
++	bool (*is_empty)(struct string_stream *this);
++};
++
++struct string_stream *new_string_stream(void);
++
++void destroy_string_stream(struct string_stream *stream);
++
++void string_stream_get(struct string_stream *stream);
++
++int string_stream_put(struct string_stream *stream);
++
++#endif /* _KUNIT_STRING_STREAM_H */
+diff --git a/kunit/Makefile b/kunit/Makefile
+index 5efdc4dea2c08..275b565a0e81f 100644
+--- a/kunit/Makefile
++++ b/kunit/Makefile
+@@ -1 +1,2 @@
+-obj-$(CONFIG_KUNIT) +=			test.o
++obj-$(CONFIG_KUNIT) +=			test.o \
++					string-stream.o
+diff --git a/kunit/string-stream.c b/kunit/string-stream.c
+new file mode 100644
+index 0000000000000..1e7efa630cc35
+--- /dev/null
++++ b/kunit/string-stream.c
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * C++ stream style string builder used in KUnit for building messages.
++ *
++ * Copyright (C) 2018, Google LLC.
++ * Author: Brendan Higgins <brendanhiggins@google.com>
++ */
++
++#include <linux/list.h>
++#include <linux/slab.h>
++#include <kunit/string-stream.h>
++
++static int string_stream_vadd(struct string_stream *this,
++			       const char *fmt,
++			       va_list args)
++{
++	struct string_stream_fragment *fragment;
++	int len;
++	va_list args_for_counting;
++	unsigned long flags;
++
++	/* Make a copy because `vsnprintf` could change it */
++	va_copy(args_for_counting, args);
++
++	/* Need space for null byte. */
++	len = vsnprintf(NULL, 0, fmt, args_for_counting) + 1;
++
++	va_end(args_for_counting);
++
++	fragment = kmalloc(sizeof(*fragment), GFP_KERNEL);
++	if (!fragment)
++		return -ENOMEM;
++
++	fragment->fragment = kmalloc(len, GFP_KERNEL);
++	if (!fragment->fragment) {
++		kfree(fragment);
++		return -ENOMEM;
++	}
++
++	len = vsnprintf(fragment->fragment, len, fmt, args);
++	spin_lock_irqsave(&this->lock, flags);
++	this->length += len;
++	list_add_tail(&fragment->node, &this->fragments);
++	spin_unlock_irqrestore(&this->lock, flags);
++	return 0;
++}
++
++static int string_stream_add(struct string_stream *this, const char *fmt, ...)
++{
++	va_list args;
++	int result;
++
++	va_start(args, fmt);
++	result = string_stream_vadd(this, fmt, args);
++	va_end(args);
++	return result;
++}
++
++static void string_stream_clear(struct string_stream *this)
++{
++	struct string_stream_fragment *fragment, *fragment_safe;
++	unsigned long flags;
++
++	spin_lock_irqsave(&this->lock, flags);
++	list_for_each_entry_safe(fragment,
++				 fragment_safe,
++				 &this->fragments,
++				 node) {
++		list_del(&fragment->node);
++		kfree(fragment->fragment);
++		kfree(fragment);
++	}
++	this->length = 0;
++	spin_unlock_irqrestore(&this->lock, flags);
++}
++
++static char *string_stream_get_string(struct string_stream *this)
++{
++	struct string_stream_fragment *fragment;
++	size_t buf_len = this->length + 1; /* +1 for null byte. */
++	char *buf;
++	unsigned long flags;
++
++	buf = kzalloc(buf_len, GFP_KERNEL);
++	if (!buf)
++		return NULL;
++
++	spin_lock_irqsave(&this->lock, flags);
++	list_for_each_entry(fragment, &this->fragments, node)
++		strlcat(buf, fragment->fragment, buf_len);
++	spin_unlock_irqrestore(&this->lock, flags);
++
++	return buf;
++}
++
++static bool string_stream_is_empty(struct string_stream *this)
++{
++	bool is_empty;
++	unsigned long flags;
++
++	spin_lock_irqsave(&this->lock, flags);
++	is_empty = list_empty(&this->fragments);
++	spin_unlock_irqrestore(&this->lock, flags);
++
++	return is_empty;
++}
++
++void destroy_string_stream(struct string_stream *stream)
++{
++	stream->clear(stream);
++	kfree(stream);
++}
++
++static void string_stream_destroy(struct kref *kref)
++{
++	struct string_stream *stream = container_of(kref,
++						    struct string_stream,
++						    refcount);
++	destroy_string_stream(stream);
++}
++
++struct string_stream *new_string_stream(void)
++{
++	struct string_stream *stream = kzalloc(sizeof(*stream), GFP_KERNEL);
++
++	if (!stream)
++		return NULL;
++
++	INIT_LIST_HEAD(&stream->fragments);
++	spin_lock_init(&stream->lock);
++	kref_init(&stream->refcount);
++	stream->add = string_stream_add;
++	stream->vadd = string_stream_vadd;
++	stream->get_string = string_stream_get_string;
++	stream->clear = string_stream_clear;
++	stream->is_empty = string_stream_is_empty;
++	return stream;
++}
++
++void string_stream_get(struct string_stream *stream)
++{
++	kref_get(&stream->refcount);
++}
++
++int string_stream_put(struct string_stream *stream)
++{
++	return kref_put(&stream->refcount, &string_stream_destroy);
++}
++
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
-Basically, the "nr_mirrors" parameter would instead be "nr_retries" or
-similar, so that the caller knows how many possible data combinations
-there are to try and validate.  For mirrors this is easy, and as it is
-currently implemented.  For RAID-5/6 this would essentially be the
-number of data rebuild combinations in the RAID group (e.g. 8 in a
-RAID-5 8+1 setup, and 16 in a RAID-6 8+2).
-
-For each call with nr_retries !=3D 0, the MD RAID-5/6 driver would skip
-one of the data drives, and rebuild that part of the data from parity.
-This wouldn't take too long, since the blocks are already in memory,
-they just need the parity to be recomputed in a few different ways to
-try and find a combination that returns valid data (e.g. if a drive
-failed and the parity also has a latent corrupt sector, not uncommon).
-
-The next step is to have an API that says "retry=3DN returned the =
-correct
-data, rebuild the parity/drive with that combination of devices" so
-that the corrupt parity sector isn't used during the rebuild.
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlv+7sgACgkQcqXauRfM
-H+BeOw//Uxw6p/zGQaKjPUSXqnxgyftkyceAkIzeVS82sSgLCxntgcAitmsam3+H
-r6aNJglW47gAn0SufpWkidA1pJGiV5zxSU4frApyGbGaVOl9AqzgfV1JGoWxVggw
-O0cr/MSECJmQD/Za/9hIEY5ENF5PMhIOyaXe8vP0sEH45yKzlL02Fafyy3vR2Fxj
-CRijCgOj7AYv+0BZayjmHT0yPK1psbchWxR7eezXNK1ggebJ3EaMFCSmalRNTUV6
-k2XvUHl+SyiRn6zr+CORoZXPnu+mmOpvdERxcjmeAF0fDRtyER3kbEJc0unqL7Tm
-5JiXWD/SlCLRMEMNsv0XdexNdzjD4fvnScJZ/GG92EktfgkjD/6IpStEmwmTflTQ
-u98S8Fws/hOrvJSW1pDdobmxrSmI4UviVj98BDzZQbkPLvUHW8fJy+us7a7iwBS4
-euECiA4J0XAREwtROnfpvJSyYQ1W758669H7bylydI8Pu29gt4XISWgIJA18ZaIo
-YXTO8YAJCTpF/okwBgEfJ6i6ad05bYjQjAXjKNZf/Y7fV9f4rkoUNhnBTkETZsvR
-SZlZkwljw9nAqPtjqbuyoQ2hZAK8o6IlyNwhHHhqw3POKIYdmsnqNtZplKauVw98
-HZSChSjU156Xc+axJ4YpYdMTAI5aQf61uvUWtr9hdnHJF8DRaIQ=
-=DyFV
------END PGP SIGNATURE-----
-
---Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F--
