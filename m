@@ -2,137 +2,113 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5796BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5DFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 167712081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D35B2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rnimLh55"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167712081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lYpiKIbd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D35B2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbeK2D7N (ORCPT
+        id S1729112AbeK2EB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:59:13 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53438 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbeK2D7M (ORCPT
+        Wed, 28 Nov 2018 23:01:26 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40550 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728833AbeK2EBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:59:12 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASGpf3X040017;
-        Wed, 28 Nov 2018 16:56:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cCwH1ANq6v21ntWMcjVa+jDJ+YT4fzjShf+rUxh5u44=;
- b=rnimLh55mkOXfK+OaD7t08NMQelBoTU+5xfaC9LHUvxribnGrheflx+WL9WH1+A11Nnn
- ERS3+cXH0iMX6s9afW/+QSxc2b6i8b3+VAsnMG1nPwOUpvNjVbhFx0uxUPvkbH6Izgai
- jOG0qbIKDiSdJ69D+7+eEtWlT77XrX40onjgchkDxkbSMEQTlKEKtbFf/vomFyKiI0Xo
- DZJSjbFodZsSFnf/cTwXqhEN1LPhH/NePWd8wt8xVDRly61MQRxj6AG1t2t7uLN0vmOn
- mgTbl/mLz1FUy8uURM3hir6R7ode7GiUFNnRMNNBLDv2C96YxOm6CzPBm4gnAUVq8npC 4Q== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2nxxkqke62-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 16:56:17 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wASGuBxf017704
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 16:56:12 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wASGu8Gf025097;
-        Wed, 28 Nov 2018 16:56:08 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Nov 2018 08:56:08 -0800
-Date:   Wed, 28 Nov 2018 08:56:18 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
-        alex.williamson@redhat.com, bsd@redhat.com,
-        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
-        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
-        mhocko@kernel.org, mike.kravetz@oracle.com,
-        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
-        rdunlap@infradead.org, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, tj@kernel.org, vbabka@suse.cz,
-        peterz@infradead.org, dhaval.giani@oracle.com
-Subject: Re: [RFC PATCH v4 01/13] ktask: add documentation
-Message-ID: <20181128165618.7ttzgzh2axl62ajd@ca-dmjordan1.us.oracle.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-2-daniel.m.jordan@oracle.com>
- <20181127195008.GA20692@amd>
+        Wed, 28 Nov 2018 23:01:25 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wASGx0Lx025271;
+        Wed, 28 Nov 2018 10:59:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543424340;
+        bh=eOkKijLLhi/0RTiv42MS8Cw42Cdt10FccWGUM7O3kr8=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=lYpiKIbdYKhXL3peGNMa/YIjLJUUOyC3W++xom/GeiDYoA5nV2qCu2hWUKivFJ3dq
+         Ph7+tpdyVRk0Xv/23IDsMMtNz+TyYT1WZMYwQkhSzVQbRTJEcUEvHhXw51Tl2NKSL/
+         Ofksci+MsWT+tk6JKv24j/YRT0dKJmZ8hBHANluA=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wASGx0ni066446
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 10:59:00 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 28
+ Nov 2018 10:59:00 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 28 Nov 2018 10:59:00 -0600
+Received: from [172.22.97.99] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wASGwsjV026257;
+        Wed, 28 Nov 2018 10:58:55 -0600
+Subject: Re: [PATCH v2 0/3] Add support for using external dma in SDHCI
+From:   "Rizvi, Mohammad Faiz Abbas" <faiz_abbas@ti.com>
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>, <broonie@kernel.org>
+References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
+ <fb8a9eb6-82a1-1299-489f-9fed4ee48a02@ti.com>
+Message-ID: <5a45f520-03b0-3679-2175-a19681062bf6@ti.com>
+Date:   Wed, 28 Nov 2018 22:28:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127195008.GA20692@amd>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811280147
+In-Reply-To: <fb8a9eb6-82a1-1299-489f-9fed4ee48a02@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 08:50:08PM +0100, Pavel Machek wrote:
-> Hi!
++ Mark Brown
 
-Hi, Pavel.
+Chunyan,
 
-> > +============================================
-> > +ktask: parallelize CPU-intensive kernel work
-> > +============================================
-> > +
-> > +:Date: November, 2018
-> > +:Author: Daniel Jordan <daniel.m.jordan@oracle.com>
+On 11/21/2018 5:17 PM, Faiz Abbas wrote:
+> Hi Chunyan,
 > 
+> On 12/11/18 12:56 PM, Chunyan Zhang wrote:
+>> Currently the generic SDHCI code in the Linux kernel supports the SD
+>> standard DMA integrated into the host controller but does not have any
+>> support for external DMA controllers implemented using dmaengine meaning
+>> that custom code is needed for any systems that use a generic DMA
+>> controller with SDHCI which in practice means any SDHCI controller that
+>> doesn't have an integrated DMA controller so we should have this as a
+>> generic feature.
+>>
+>> There are already a number of controller specific drivers that have dmaengine
+>> code, and some could use sdhci.c actually, but needed to implement mmc_ops->request()
+>> in their specific driver for sending command with external dma using dmaengine
+>> framework, with this patchset, them will take advantage of the generic support.
+>> TI's omap controller is the case as an example.
+>>
+>> Any comments are very appreciated.
+>>
 > 
-> > +For example, consider the task of clearing a gigantic page.  This used to be
-> > +done in a single thread with a for loop that calls a page clearing function for
-> > +each constituent base page.  To parallelize with ktask, the client first moves
-> > +the for loop to the thread function, adapting it to operate on the range passed
-> > +to the function.  In this simple case, the thread function's start and end
-> > +arguments are just addresses delimiting the portion of the gigantic page to
-> > +clear.  Then, where the for loop used to be, the client calls into ktask with
-> > +the start address of the gigantic page, the total size of the gigantic page,
-> > +and the thread function.  Internally, ktask will divide the address range into
-> > +an appropriate number of chunks and start an appropriate number of threads to
-> > +complete these chunks.
+> This is great. It helps us move am335x and am43xx platforms to
+> sdhci-omap. What platforms have you tested this on?
 > 
-> Great, so my little task is bound to CPUs 1-4 and uses gigantic
-> pages. Kernel clears them for me.
-> 
-> a) Do all the CPUs work for me, or just CPUs I was assigned to?
 
-In ktask's current form, all the CPUs.  This is an existing limitation of
-workqueues, which ktask is built on: unbound workqueue workers don't honor the
-cpumask of the queueing task (...absent a wq user applying a cpumask wq attr
-beforehand, which nobody in-tree does...).
+Gentle ping on this. I tried testing these with an am335x-evm board. In 
+their current condition, the card fails to enumerate altogether. The 
+changes suggested by Adrian should fix this. Let me know when you post a v3.
 
-But good point, the helper threads should only run on the CPUs the task is
-bound to.  I'm working on cgroup-aware workqueues but hadn't considered a
-task's cpumask outside of cgroup/cpuset, so I'll try adding support for this
-too.
-
-> b) Will my time my_little_task show the system time including the
-> worker threads?
-
-No, system time of kworkers isn't accounted to the user tasks they're working
-on behalf of.  This time is already visible to userland in kworkers, and it
-would be confusing to account it to a userland task instead.
-
-Thanks for the questions.
-
-Daniel
+Thanks,
+Faiz
