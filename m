@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A26C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7858EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5402086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5402086B
+	by mail.kernel.org (Postfix) with ESMTP id 49D622086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:31:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D622086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbeK1Uca (ORCPT
+        id S1728425AbeK1Uch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:32:30 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49292 "EHLO
+        Wed, 28 Nov 2018 15:32:37 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49296 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbeK1Ubf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728168AbeK1Ubf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 15:31:35 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 600EF600DC; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
+        id 686A26018C; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -36,9 +36,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 06/15] rtc: sun6i: Add support for different variants
-Date:   Wed, 28 Nov 2018 17:30:03 +0800
-Message-Id: <20181128093013.24442-7-wens@csie.org>
+Subject: [PATCH 07/15] rtc: sun6i: Add support for all known pre-H6 variants
+Date:   Wed, 28 Nov 2018 17:30:04 +0800
+Message-Id: <20181128093013.24442-8-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128093013.24442-1-wens@csie.org>
 References: <20181128093013.24442-1-wens@csie.org>
@@ -49,152 +49,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amongst the Allwinner SoCs that have seen some kind of coverage by the
-linux-sunxi community, whether it be mainline Linux or U-boot support,
-or just available datasheets, most newer chips use the RTC design first
-seen in the A31 (sun6i).
+There are different variants to the RTC hardware first seen on sun6i
+(A31). The differences we care about in this driver are the clock rate
+for the internal oscillator, prescalers, and the presence of an external
+clock output.
 
-Overall there have been some minor differences. This patch covers the
-following:
-
-  - average clock rate of the internal RC oscillator
-    + presence of fixed and adjustable prescaler for this clock
-  - availability of an external (to the SoC) clock output
-
-One major difference regarding the H6 is the 24 MHz crystal is now
-routed through the RTC, as a digitally compensated oscillator (DCXO).
-This is not covered in this patch and will be supported later.
-
-Other differences are either unrelated to RTC or clock functionality,
-such as boot or crypto related registers, or the driver simply doesn't
-use the feature in question. One example of the latter is the
-calibration function for the RC oscillator. We consider this clock to
-be very bad and avoid using it.
+This patch adds support for all the known pre-H6 base compatibles using
+the variants data structure previously introduced.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/rtc/rtc-sun6i.c | 58 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 51 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-sun6i.c | 48 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 8edd9e1ec007..d1866d90b9ef 100644
+index d1866d90b9ef..62ed9ce53d8c 100644
 --- a/drivers/rtc/rtc-sun6i.c
 +++ b/drivers/rtc/rtc-sun6i.c
-@@ -118,9 +118,30 @@
- #define SUN6I_YEAR_MAX				2033
- #define SUN6I_YEAR_OFF				(SUN6I_YEAR_MIN - 1900)
+@@ -312,6 +312,50 @@ static void __init sun6i_a31_rtc_clk_init(struct device_node *node)
+ CLK_OF_DECLARE_DRIVER(sun6i_a31_rtc_clk, "allwinner,sun6i-a31-rtc",
+ 		      sun6i_a31_rtc_clk_init);
  
-+/*
-+ * There are other differences between models, including:
-+ *
-+ *   - number of GPIO pins that can be configured to hold a certain level
-+ *   - crypto-key related registers (H5, H6)
-+ *   - boot process related (super standby, secondary processor entry address)
-+ *     registers (R40, H6)
-+ *   - SYS power domain controls (R40)
-+ *   - DCXO controls (H6)
-+ *   - RC oscillator calibration (H6)
-+ *
-+ * These functions are not covered by this driver.
-+ */
-+struct sun6i_rtc_clk_data {
-+	unsigned long rc_osc_rate;
-+	unsigned int fixed_prescaler : 16;
-+	unsigned int has_prescaler : 1;
-+	unsigned int has_out_clk : 1;
-+};
-+
- struct sun6i_rtc_dev {
- 	struct rtc_device *rtc;
- 	struct device *dev;
-+	const struct sun6i_rtc_clk_data *data;
- 	void __iomem *base;
- 	int irq;
- 	unsigned long alarm;
-@@ -139,14 +160,19 @@ static unsigned long sun6i_rtc_osc_recalc_rate(struct clk_hw *hw,
- 					       unsigned long parent_rate)
- {
- 	struct sun6i_rtc_dev *rtc = container_of(hw, struct sun6i_rtc_dev, hw);
--	u32 val;
-+	u32 val = 0;
- 
- 	val = readl(rtc->base + SUN6I_LOSC_CTRL);
- 	if (val & SUN6I_LOSC_CTRL_EXT_OSC)
- 		return parent_rate;
- 
--	val = readl(rtc->base + SUN6I_LOSC_CLK_PRESCAL);
--	val &= GENMASK(4, 0);
-+	if (rtc->data->fixed_prescaler)
-+		parent_rate /= rtc->data->fixed_prescaler;
-+
-+	if (rtc->data->has_prescaler) {
-+		val = readl(rtc->base + SUN6I_LOSC_CLK_PRESCAL);
-+		val &= GENMASK(4, 0);
-+	}
- 
- 	return parent_rate / (val + 1);
- }
-@@ -185,7 +211,8 @@ static const struct clk_ops sun6i_rtc_osc_ops = {
- 	.set_parent	= sun6i_rtc_osc_set_parent,
- };
- 
--static void __init sun6i_rtc_clk_init(struct device_node *node)
-+static void __init sun6i_rtc_clk_init(struct device_node *node,
-+				      const struct sun6i_rtc_clk_data *data)
- {
- 	struct clk_hw_onecell_data *clk_data;
- 	struct sun6i_rtc_dev *rtc;
-@@ -200,6 +227,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
- 	if (!rtc)
- 		return;
- 
-+	rtc->data = data;
- 	clk_data = kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
- 	if (!clk_data) {
- 		kfree(rtc);
-@@ -228,7 +256,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
- 	rtc->int_osc = clk_hw_register_fixed_rate_with_accuracy(NULL,
- 								"rtc-int-osc",
- 								NULL, 0,
--								667000,
-+								rtc->data->rc_osc_rate,
- 								300000000);
- 	if (IS_ERR(rtc->int_osc)) {
- 		pr_crit("Couldn't register the internal oscillator\n");
-@@ -271,8 +299,18 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
- err:
- 	kfree(clk_data);
- }
--CLK_OF_DECLARE_DRIVER(sun6i_rtc_clk, "allwinner,sun6i-a31-rtc",
--		      sun6i_rtc_clk_init);
-+
-+static const struct sun6i_rtc_clk_data sun6i_a31_rtc_data = {
++static const struct sun6i_rtc_clk_data sun8i_a23_rtc_data = {
 +	.rc_osc_rate = 667000, /* datasheet says 600 ~ 700 KHz */
 +	.has_prescaler = 1,
++	.has_out_clk = 1,
 +};
 +
-+static void __init sun6i_a31_rtc_clk_init(struct device_node *node)
++static void __init sun8i_a23_rtc_clk_init(struct device_node *node)
 +{
-+	sun6i_rtc_clk_init(node, &sun6i_a31_rtc_data);
++	sun6i_rtc_clk_init(node, &sun8i_a23_rtc_data);
 +}
-+CLK_OF_DECLARE_DRIVER(sun6i_a31_rtc_clk, "allwinner,sun6i-a31-rtc",
-+		      sun6i_a31_rtc_clk_init);
- 
++CLK_OF_DECLARE_DRIVER(sun8i_a23_rtc_clk, "allwinner,sun8i-a23-rtc",
++		      sun8i_a23_rtc_clk_init);
++
++static const struct sun6i_rtc_clk_data sun8i_h3_rtc_data = {
++	.rc_osc_rate = 16000000,
++	.fixed_prescaler = 32,
++	.has_prescaler = 1,
++	.has_out_clk = 1,
++};
++
++static void __init sun8i_h3_rtc_clk_init(struct device_node *node)
++{
++	sun6i_rtc_clk_init(node, &sun8i_h3_rtc_data);
++}
++CLK_OF_DECLARE_DRIVER(sun8i_h3_rtc_clk, "allwinner,sun8i-h3-rtc",
++		      sun8i_h3_rtc_clk_init);
++/* As far as we are concerned, clocks for H5 and H6 are the same as H3 */
++CLK_OF_DECLARE_DRIVER(sun50i_h5_rtc_clk, "allwinner,sun50i-h5-rtc",
++		      sun8i_h3_rtc_clk_init);
++CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_clk, "allwinner,sun50i-h6-rtc",
++		      sun8i_h3_rtc_clk_init);
++
++static const struct sun6i_rtc_clk_data sun8i_v3_rtc_data = {
++	.rc_osc_rate = 32000,
++	.has_out_clk = 1,
++};
++
++static void __init sun8i_v3_rtc_clk_init(struct device_node *node)
++{
++	sun6i_rtc_clk_init(node, &sun8i_v3_rtc_data);
++}
++CLK_OF_DECLARE_DRIVER(sun8i_v3_rtc_clk, "allwinner,sun8i-v3-rtc",
++		      sun8i_v3_rtc_clk_init);
++
  static irqreturn_t sun6i_rtc_alarmirq(int irq, void *id)
  {
-@@ -579,6 +617,12 @@ static int sun6i_rtc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+/*
-+ * As far as RTC functionality goes, all models are the same. The
-+ * datasheets claim that different models have different number of
-+ * registers available for non-volatile storage, but experiments show
-+ * that all SoCs have 16 registers available for this purpose.
-+ */
+ 	struct sun6i_rtc_dev *chip = (struct sun6i_rtc_dev *) id;
+@@ -625,6 +669,10 @@ static int sun6i_rtc_probe(struct platform_device *pdev)
+  */
  static const struct of_device_id sun6i_rtc_dt_ids[] = {
  	{ .compatible = "allwinner,sun6i-a31-rtc" },
++	{ .compatible = "allwinner,sun8i-a23-rtc" },
++	{ .compatible = "allwinner,sun8i-h3-rtc" },
++	{ .compatible = "allwinner,sun8i-v3-rtc" },
++	{ .compatible = "allwinner,sun50i-h5-rtc" },
  	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, sun6i_rtc_dt_ids);
 -- 
 2.20.0.rc1
 
