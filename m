@@ -2,132 +2,119 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC42C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7634C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA728206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:32:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="mBwYLseG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA728206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 93F0D206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F0D206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeK2Hew (ORCPT
+        id S1726355AbeK2Hgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 02:34:52 -0500
-Received: from mail-eopbgr730042.outbound.protection.outlook.com ([40.107.73.42]:57264
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        Thu, 29 Nov 2018 02:36:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60242 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbeK2Hew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 02:34:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t33WyYLFWZWG0ShvljEW0K4f0ShCLKhUSXDhMrRpB4g=;
- b=mBwYLseGB7fXc3L9VaB5UimiTJHQqW+osRaLlkMYWmmIjlfOqmdbsE/ymgv7OwecPmsgbzQLmp+LwugB73ntUKvGaXjZDEA0JJAEgDx7fzpKgSFNgMsQgZ5OCGtEB/XiFVL+QoNAMEQaDzp2hRXm1WZJ95+PwRxdiN7/aswV23k=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1500.namprd12.prod.outlook.com (10.172.39.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Wed, 28 Nov 2018 20:31:57 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::7def:eb99:298c:2952]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::7def:eb99:298c:2952%2]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 20:31:57 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>
-CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "Moger, Babu" <Babu.Moger@amd.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] x86/resctrl: fix the uninitialized variable warning
-Thread-Topic: [PATCH v2] x86/resctrl: fix the uninitialized variable warning
-Thread-Index: AQHUh1lofSlJzle4uUK6QP9a/A5tRA==
-Date:   Wed, 28 Nov 2018 20:31:56 +0000
-Message-ID: <20181128203143.32007-1-babu.moger@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0030.namprd02.prod.outlook.com
- (2603:10b6:803:2e::16) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1500;20:GmkSM789iMDeoeHWd+VzVt0pPhzlPBJ3Mdb7VHUpp4mfpi0iQBDneeCz6Qe9tv6bQSAJ6hIV2wwB0Xi7BlIIuY136d+XLLi8zXxIrF+UkOP/PM3WlypS0zgHr+ChO2WduACPbORbcux2e/6ocbX3DdsRBzHmdkX+xFDiTaA+iIs0ngbyA3BahNb1zqe5eEkJ5/59ARB9vtWehekMRO+ul646pU3NoXlu8qI1Bcvz+48l6PrrM1ujC2ZfSg5+s9zG
-x-ms-office365-filtering-correlation-id: ac376cfa-fa47-46a1-d7f6-08d655708a65
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1500;
-x-ms-traffictypediagnostic: DM5PR12MB1500:
-x-microsoft-antispam-prvs: <DM5PR12MB150027A209314D7B0FCC56BA95D10@DM5PR12MB1500.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(93006095)(93001095)(3002001)(3231443)(999002)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1500;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1500;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(99286004)(71190400001)(71200400001)(6486002)(4326008)(36756003)(14454004)(52116002)(256004)(72206003)(110136005)(54906003)(14444005)(6116002)(3846002)(102836004)(105586002)(478600001)(6506007)(386003)(106356001)(6436002)(25786009)(26005)(1076002)(6512007)(186003)(2616005)(486006)(476003)(2906002)(5660300001)(68736007)(81156014)(66066001)(86362001)(81166006)(7736002)(305945005)(97736004)(8676002)(2501003)(53936002)(8936002)(2201001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1500;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: DIClKG8kxJe5+uHeZe1c3T8Ec6+IosGKE2VR/fLX+OOJhBa84WuABasTkTUgjV2BCYkcWnA1WROHR2w7WEhkVB8V+04VJvCirAKV9Q8Ch3i3QOmeFKZTCrbabiihWcnn/aHYArUbs9H57y/NLuuqC8c49XIhgoDb0qDxrHg2+7Cf00IyUapLTgyV1tWT/2puhxkC6XStaQYW7DoZLKXfNrLvmW+L9y5CVF/BohjBhbHAVUax0HdD20VqRZgn5uVD3Gx5k6dnQxBgfRV76XdB23p6sIV4MpCNzokY0su25XhU0OhLnmi2tLvca5SJ2KI2jdu0+X8tMxA09A9dQvXPq3hDitnrCaldpXyOTAmCS9w=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725799AbeK2Hgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 02:36:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 999C3AD2C;
+        Wed, 28 Nov 2018 20:18:32 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     David Howells <dhowells@redhat.com>
+Date:   Thu, 29 Nov 2018 07:18:23 +1100
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fscache: fix race between enablement and dropping of object
+In-Reply-To: <10285.1543417950@warthog.procyon.org.uk>
+References: <87r2gd44hu.fsf@notabene.neil.brown.name> <10285.1543417950@warthog.procyon.org.uk>
+Message-ID: <878t1dot0w.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac376cfa-fa47-46a1-d7f6-08d655708a65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 20:31:56.9824
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1500
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following compiler warning caused by recent change.
+--=-=-=
+Content-Type: text/plain
 
-arch/x86/kernel/cpu/resctrl/ctrlmondata.c:227 parse_cbm()
-error: uninitialized symbol 'cbm_val'
+On Wed, Nov 28 2018, David Howells wrote:
 
-Fixes: a36c5ff560fb ("x86/resctrl: Bring cbm_validate() into the resource s=
-tructure")
+> NeilBrown <neilb@suse.com> wrote:
+>
+>> It was observed that a process blocked indefintely in
+>> __fscache_read_or_alloc_page(), waiting for FSCACHE_COOKIE_LOOKING_UP
+>> to be cleared via fscache_wait_for_deferred_lookup().
+>
+> Was there a backtrace for that?
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
- v1->v2
- Added the actual warning.
+Yes.
+PID: 29360  TASK: ffff881ff2ac0f80  CPU: 3   COMMAND: "zsh"
+ #0 [ffff881ff43efbf8] schedule at ffffffff815e56f1
+ #1 [ffff881ff43efc58] bit_wait at ffffffff815e64ed
+ #2 [ffff881ff43efc68] __wait_on_bit at ffffffff815e61b8
+ #3 [ffff881ff43efca0] out_of_line_wait_on_bit at ffffffff815e625e
+ #4 [ffff881ff43efd08] fscache_wait_for_deferred_lookup at ffffffffa04f2e8f
+[fscache]
+ #5 [ffff881ff43efd18] __fscache_read_or_alloc_page at ffffffffa04f2ffe
+[fscache]
+ #6 [ffff881ff43efd58] __nfs_readpage_from_fscache at ffffffffa0679668 [nfs]
+ #7 [ffff881ff43efd78] nfs_readpage at ffffffffa067092b [nfs]
+ #8 [ffff881ff43efda0] generic_file_read_iter at ffffffff81187a73
+ #9 [ffff881ff43efe50] nfs_file_read at ffffffffa066544b [nfs]
+#10 [ffff881ff43efe70] __vfs_read at ffffffff811fc756
+#11 [ffff881ff43efee8] vfs_read at ffffffff811fccfa
+#12 [ffff881ff43eff18] sys_read at ffffffff811fda62
+#13 [ffff881ff43eff50] entry_SYSCALL_64_fastpath at ffffffff815e986e
 
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is in SLES12-SP2 which is based on Linux-4.4
 
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cp=
-u/resctrl/ctrlmondata.c
-index 03ee13235a45..2477cb196735 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -202,7 +202,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_r=
-esource *r,
- 	      struct rdt_domain *d)
- {
- 	struct rdtgroup *rdtgrp =3D data->rdtgrp;
--	u32 cbm_val;
-+	u32 cbm_val =3D 0;
-=20
- 	if (d->have_new_ctrl) {
- 		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
---=20
-2.17.1
+>
+>> This leaves a window where something else can set FSCACHE_COOKIE_LOOKING_UP
+>
+> Attempting to enable the cookie again would have that effect.
+>
+>> There is some uncertainty in this analysis, but it seems to be fit the
+>> observations.  Adding the wake in this patch will be handled correctly
+>> by __fscache_read_or_alloc_page(), as it checks if ->backing_objects
+>> is empty again, after waiting.
+>
+> That should work.  The read op should just then fail with -ENOBUFS, causing
+> the netfs to issue the read over the network instead.
+>
+> I think there's a more elegant solution to be had, but it'll take some thought
+> as to how to achieve it.
 
+Please let me know when you come up with something.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlv++BEACgkQOeye3VZi
+gbllvg/8ClneaZb2Z6t91/2nsysmvPrjyQf9sRFHDeP5YegsBVMuw7OfLgolii6W
+y8Ty3IU5baQ00APyHGHGYeOpGio/bK9q9lNi9FjS0vAvVy6RMFfxYAuP9030oURH
+J9RVnjR687w1S7MiA4S3zF3avfes1xwOK1ZF8XCvVW1hnTNXanYUVo8fOj2Y8rOC
+j3B1Ol2L2aEOUKtInfnCZkiJz6nZyNOH23S8KE2BgP+Wjan+OkzPDHlR4Qtph33k
+OE0NZdTzhzmlI2KCb9AqDHtCgKC/xBxLL0JOMXRVMdbXQKxFA4Y1YAmBjarBpkz6
+FLkKHEseTYzJ4FYW/8WPtlbZxDVAAXmTdvXGh/jcCzpsboxHtMnc6tP8V0Y4VJFs
++4/TR+hrLiP2ixs013e8KIJXV56h1dL4ovMmhjgMk/dI4KohSh7fus3360s66lt0
+q1pzO9dO1wpAr/asT2C65lp0u99Va3k/6+uxOcfXCiiFtBwiwzG1HyzXWpW30Vvn
+nv6wSlELv+lY0pcCYZlpbsIjjjujrf01mLVg9mHOIK0lBAyZFAfqBjw9gS4YMmV5
+vWLSJFKmKczDxTCElM1nrWWEGnpqkEWVLhxKR0BNims8u4L7jSj3xIM2pPs3770x
+Q3dcZEYiyORVEH4l2ks+1XSwvxf/gsiUOEiMuYzo/4NB8j2l0oI=
+=G0SK
+-----END PGP SIGNATURE-----
+--=-=-=--
