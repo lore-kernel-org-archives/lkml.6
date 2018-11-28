@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8AFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5356E20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A200420989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:57:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FJyqYHb5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5356E20832
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="G+XbJc7O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A200420989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeK1X7D (ORCPT
+        id S1728411AbeK1X7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:59:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60774 "EHLO
+        Wed, 28 Nov 2018 18:59:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60868 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbeK1X7D (ORCPT
+        with ESMTP id S1727823AbeK1X7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:59:03 -0500
+        Wed, 28 Nov 2018 18:59:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=tlR5O0+EUrQ0tG3awhsa1rRlV6CkcZu8pwJ+AnuzZdc=; b=FJyqYHb5IhHo
-        bUzex7h79/fEIrtFEQsFIw6mVCXoIf1rYQ1LcM1kZvLFm6Y+UMB8wBim4zoFmMwTDEujTRoT/WVhy
-        uge4AeZDeyuuCaOxoHjVn7tnZeO1AH3et57OI9ocZe2Ys2+6UyatWmYEhvzaAksXC6V1DmDfgEiUi
-        MQkpI=;
+        List-Archive; bh=2HLg8dipmPclwYlwliL5RnAWnxGaksPDkNBLAJj7vZI=; b=G+XbJc7OgZGn
+        v58Y0XnTNkll4VpYtHOrTuIc7FuVv7fQ93kxn1J2POCGwn58K5G4elW0+7tA5xKBl9zmwge080XBJ
+        /TsNVEgoD4wojVC5+3pynPpmA/XstL0p0T3ecBI2dZvKQWnYkw/XVCbGpPCQ8EN+2sDVpXeLWsZmF
+        YXPKU=;
 Received: from 92.40.248.202.threembb.co.uk ([92.40.248.202] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gRzPA-0005Gc-Kn; Wed, 28 Nov 2018 12:57:24 +0000
+        id 1gRzPE-0005Gn-L9; Wed, 28 Nov 2018 12:57:28 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id C26FE440078; Wed, 28 Nov 2018 12:57:23 +0000 (GMT)
+        id B3238440078; Wed, 28 Nov 2018 12:57:27 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
@@ -49,10 +49,10 @@ Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, jsarha@ti.com, robh+dt@kernel.org,
         misael.lopez@ti.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: davinci-mcasp: Implement configurable dismod handling" to the asoc tree
-In-Reply-To:  <20181116134141.17396-5-peter.ujfalusi@ti.com>
-Message-Id: <20181128125723.C26FE440078@finisterre.ee.mobilebroadband>
-Date:   Wed, 28 Nov 2018 12:57:23 +0000 (GMT)
+Subject: Applied "ASoC: davinci-mcasp: Document dismod optional property" to the asoc tree
+In-Reply-To:  <20181116134141.17396-4-peter.ujfalusi@ti.com>
+Message-Id: <20181128125727.B3238440078@finisterre.ee.mobilebroadband>
+Date:   Wed, 28 Nov 2018 12:57:27 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: davinci-mcasp: Implement configurable dismod handling
+   ASoC: davinci-mcasp: Document dismod optional property
 
 has been applied to the asoc tree at
 
@@ -85,114 +85,36 @@ to this mail.
 Thanks,
 Mark
 
-From bc184549853133303cf08d1f19477f9c87ef39fb Mon Sep 17 00:00:00 2001
+From a3641b30c19b93b1298028a7210b55145e70056c Mon Sep 17 00:00:00 2001
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date: Fri, 16 Nov 2018 15:41:41 +0200
-Subject: [PATCH] ASoC: davinci-mcasp: Implement configurable dismod handling
+Date: Fri, 16 Nov 2018 15:41:40 +0200
+Subject: [PATCH] ASoC: davinci-mcasp: Document dismod optional property
 
-If the dismod is specified in the DT node, use the specified custom value
-to configure the drive on state of the inactive TX slots.
-
-If the dismod is not present or booted in legacy mode, the dismod is set
-to low as it was the original behavior.
+The dismod property can be used to specify the drive on level of inactive
+TX slots.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/linux/platform_data/davinci_asp.h |  1 +
- sound/soc/davinci/davinci-mcasp.c         | 19 ++++++++++++++++++-
- sound/soc/davinci/davinci-mcasp.h         |  1 +
- 3 files changed, 20 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/sound/davinci-mcasp-audio.txt        | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/platform_data/davinci_asp.h b/include/linux/platform_data/davinci_asp.h
-index 85ad68f9206a..7fe80f1c7e08 100644
---- a/include/linux/platform_data/davinci_asp.h
-+++ b/include/linux/platform_data/davinci_asp.h
-@@ -79,6 +79,7 @@ struct davinci_mcasp_pdata {
- 	/* McASP specific fields */
- 	int tdm_slots;
- 	u8 op_mode;
-+	u8 dismod;
- 	u8 num_serializer;
- 	u8 *serial_dir;
- 	u8 version;
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index 0f3911be1c8e..40d3a916fb74 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -85,6 +85,7 @@ struct davinci_mcasp {
- 	u32	tdm_mask[2];
- 	int	slot_width;
- 	u8	op_mode;
-+	u8	dismod;
- 	u8	num_serializer;
- 	u8	*serial_dir;
- 	u8	version;
-@@ -834,7 +835,7 @@ static int mcasp_common_hw_param(struct davinci_mcasp *mcasp, int stream,
- 		if (mcasp->serial_dir[i] == TX_MODE &&
- 					tx_ser < max_active_serializers) {
- 			mcasp_mod_bits(mcasp, DAVINCI_MCASP_XRSRCTL_REG(i),
--				       DISMOD_LOW, DISMOD_MASK);
-+				       mcasp->dismod, DISMOD_MASK);
- 			set_bit(PIN_BIT_AXR(i), &mcasp->pdir);
- 			tx_ser++;
- 		} else if (mcasp->serial_dir[i] == RX_MODE &&
-@@ -847,6 +848,8 @@ static int mcasp_common_hw_param(struct davinci_mcasp *mcasp, int stream,
- 			clear_bit(PIN_BIT_AXR(i), &mcasp->pdir);
- 		} else if (mcasp->serial_dir[i] == TX_MODE) {
- 			/* Unused TX pins, clear PDIR  */
-+			mcasp_mod_bits(mcasp, DAVINCI_MCASP_XRSRCTL_REG(i),
-+				       mcasp->dismod, DISMOD_MASK);
- 			clear_bit(PIN_BIT_AXR(i), &mcasp->pdir);
- 		}
- 	}
-@@ -1709,6 +1712,7 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
- 
- 	if (pdev->dev.platform_data) {
- 		pdata = pdev->dev.platform_data;
-+		pdata->dismod = DISMOD_LOW;
- 		return pdata;
- 	} else if (match) {
- 		pdata = devm_kmemdup(&pdev->dev, match->data, sizeof(*pdata),
-@@ -1798,6 +1802,18 @@ static struct davinci_mcasp_pdata *davinci_mcasp_set_pdata_from_of(
- 	if (ret >= 0)
- 		pdata->sram_size_capture = val;
- 
-+	ret = of_property_read_u32(np, "dismod", &val);
-+	if (ret >= 0) {
-+		if (val == 0 || val == 2 || val == 3) {
-+			pdata->dismod = DISMOD_VAL(val);
-+		} else {
-+			dev_warn(&pdev->dev, "Invalid dismod value: %u\n", val);
-+			pdata->dismod = DISMOD_LOW;
-+		}
-+	} else {
-+		pdata->dismod = DISMOD_LOW;
-+	}
-+
- 	return  pdata;
- 
- nodata:
-@@ -1973,6 +1989,7 @@ static int davinci_mcasp_probe(struct platform_device *pdev)
- 	mcasp->version = pdata->version;
- 	mcasp->txnumevt = pdata->txnumevt;
- 	mcasp->rxnumevt = pdata->rxnumevt;
-+	mcasp->dismod = pdata->dismod;
- 
- 	mcasp->dev = &pdev->dev;
- 
-diff --git a/sound/soc/davinci/davinci-mcasp.h b/sound/soc/davinci/davinci-mcasp.h
-index acb024ab6a9d..5e4060d8fe56 100644
---- a/sound/soc/davinci/davinci-mcasp.h
-+++ b/sound/soc/davinci/davinci-mcasp.h
-@@ -209,6 +209,7 @@
- #define DISMOD_3STATE	(0x0)
- #define DISMOD_LOW	(0x2 << 2)
- #define DISMOD_HIGH	(0x3 << 2)
-+#define DISMOD_VAL(x)	((x) << 2)
- #define DISMOD_MASK	DISMOD_HIGH
- #define TXSTATE		BIT(4)
- #define RXSTATE		BIT(5)
+diff --git a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
+index 46bc9829c71a..b279b6072bd5 100644
+--- a/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
++++ b/Documentation/devicetree/bindings/sound/davinci-mcasp-audio.txt
+@@ -30,6 +30,11 @@ Optional properties:
+ - ti,hwmods : Must be "mcasp<n>", n is controller instance starting 0
+ - tx-num-evt : FIFO levels.
+ - rx-num-evt : FIFO levels.
++- dismod : Specify the drive on TX pin during inactive slots
++	0 : 3-state
++	2 : logic low
++	3 : logic high
++	Defaults to 'logic low' when the property is not present
+ - sram-size-playback : size of sram to be allocated during playback
+ - sram-size-capture  : size of sram to be allocated during capture
+ - interrupts : Interrupt numbers for McASP
 -- 
 2.19.1
 
