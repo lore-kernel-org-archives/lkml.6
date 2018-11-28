@@ -2,305 +2,105 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6FDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A988AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC89320989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:10:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC89320989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 796582081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796582081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbeK2CMX (ORCPT
+        id S1728731AbeK2CNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:12:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbeK2CMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:12:22 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F055D3974;
-        Wed, 28 Nov 2018 15:10:23 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7B7B1948E;
-        Wed, 28 Nov 2018 15:10:22 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 14BD95E4E6; Wed, 28 Nov 2018 16:10:22 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     robert.foss@collabora.com, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/2] drm/virtio: fence: pass plain pointer
-Date:   Wed, 28 Nov 2018 16:10:20 +0100
-Message-Id: <20181128151021.29565-2-kraxel@redhat.com>
-In-Reply-To: <20181128151021.29565-1-kraxel@redhat.com>
-References: <20181128151021.29565-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 28 Nov 2018 15:10:24 +0000 (UTC)
+        Wed, 28 Nov 2018 21:13:10 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:2290 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727726AbeK2CNJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:13:09 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wASF5Ig8007301;
+        Wed, 28 Nov 2018 09:11:06 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x6704m-1;
+        Wed, 28 Nov 2018 09:11:06 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id D1F17611E12A;
+        Wed, 28 Nov 2018 09:11:05 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
+ 15:11:05 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wASFB5BG023330; Wed,
+ 28 Nov 2018 15:11:05 GMT
+Date:   Wed, 28 Nov 2018 15:11:05 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 07/10] regulator: da9211: Let core handle GPIO descriptors
+Message-ID: <20181128151105.GS16508@imbe.wolfsonmicro.main>
+References: <20181128104350.31902-1-linus.walleij@linaro.org>
+ <20181128104350.31902-8-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181128104350.31902-8-linus.walleij@linaro.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=979 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811280133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit "9fdd90c0f4 drm/virtio: add virtio_gpu_alloc_fence()"
-fences are not allocated any more by virtio_gpu_fence_emit().  So there
-is no need to pass down a reference to the fence pointer, a plain
-pointer is enough now.
+On Wed, Nov 28, 2018 at 11:43:47AM +0100, Linus Walleij wrote:
+> Use the gpiod_get_from_of_node() rather than the devm_*
+> version so that the regulator core can handle the lifecycle
+> of these descriptors.
+> 
+> This patch requires "gpio: Export gpiod_get_from_of_node()"
+> to be applied first.
+> 
+> Fixes: 11da04af0d3b ("regulator: da9211: Pass descriptors instead of GPIO numbers")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/regulator/da9211-regulator.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+> index 8f68c7a05d27..bfdead356526 100644
+> --- a/drivers/regulator/da9211-regulator.c
+> +++ b/drivers/regulator/da9211-regulator.c
+> @@ -293,8 +293,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+>  
+>  		pdata->init_data[n] = da9211_matches[i].init_data;
+>  		pdata->reg_node[n] = da9211_matches[i].of_node;
+> -		pdata->gpiod_ren[n] = devm_gpiod_get_from_of_node(dev,
+> -				  da9211_matches[i].of_node,
+> +		pdata->gpiod_ren[n] =
+> +			gpiod_get_from_of_node(da9211_matches[i].of_node,
 
-Convert virtio_gpu_fence_emit() and callers.
+This driver has a lot of error paths that will leak the GPIO with
+this change.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h   | 14 +++++++-------
- drivers/gpu/drm/virtio/virtgpu_fence.c | 10 +++++-----
- drivers/gpu/drm/virtio/virtgpu_ioctl.c |  8 ++++----
- drivers/gpu/drm/virtio/virtgpu_plane.c |  2 +-
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 20 ++++++++++----------
- 5 files changed, 27 insertions(+), 27 deletions(-)
+Thanks,
+Charles
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 7bec6e3688..d6cc1a92ca 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -273,7 +273,7 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 					uint64_t offset,
- 					__le32 width, __le32 height,
- 					__le32 x, __le32 y,
--					struct virtio_gpu_fence **fence);
-+					struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
- 				   uint32_t resource_id,
- 				   uint32_t x, uint32_t y,
-@@ -284,7 +284,7 @@ void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
- 				uint32_t x, uint32_t y);
- int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
- 			     struct virtio_gpu_object *obj,
--			     struct virtio_gpu_fence **fence);
-+			     struct virtio_gpu_fence *fence);
- void virtio_gpu_object_detach(struct virtio_gpu_device *vgdev,
- 			      struct virtio_gpu_object *obj);
- int virtio_gpu_attach_status_page(struct virtio_gpu_device *vgdev);
-@@ -309,23 +309,23 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
- 					    uint32_t resource_id);
- void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
- 			   void *data, uint32_t data_size,
--			   uint32_t ctx_id, struct virtio_gpu_fence **fence);
-+			   uint32_t ctx_id, struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
- 					  uint32_t resource_id, uint32_t ctx_id,
- 					  uint64_t offset, uint32_t level,
- 					  struct virtio_gpu_box *box,
--					  struct virtio_gpu_fence **fence);
-+					  struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
- 					struct virtio_gpu_object *bo,
- 					uint32_t ctx_id,
- 					uint64_t offset, uint32_t level,
- 					struct virtio_gpu_box *box,
--					struct virtio_gpu_fence **fence);
-+					struct virtio_gpu_fence *fence);
- void
- virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
- 				  struct virtio_gpu_object *bo,
- 				  struct virtio_gpu_resource_create_3d *rc_3d,
--				  struct virtio_gpu_fence **fence);
-+				  struct virtio_gpu_fence *fence);
- void virtio_gpu_ctrl_ack(struct virtqueue *vq);
- void virtio_gpu_cursor_ack(struct virtqueue *vq);
- void virtio_gpu_fence_ack(struct virtqueue *vq);
-@@ -358,7 +358,7 @@ struct virtio_gpu_fence *virtio_gpu_fence_alloc(
- void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence);
- int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
--			  struct virtio_gpu_fence **fence);
-+			  struct virtio_gpu_fence *fence);
- void virtio_gpu_fence_event_process(struct virtio_gpu_device *vdev,
- 				    u64 last_seq);
- 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fence.c b/drivers/gpu/drm/virtio/virtgpu_fence.c
-index 6b5d92215c..4d6826b278 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fence.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fence.c
-@@ -91,19 +91,19 @@ void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence)
- 
- int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
- 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
--			  struct virtio_gpu_fence **fence)
-+			  struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_fence_driver *drv = &vgdev->fence_drv;
- 	unsigned long irq_flags;
- 
- 	spin_lock_irqsave(&drv->lock, irq_flags);
--	(*fence)->seq = ++drv->sync_seq;
--	dma_fence_get(&(*fence)->f);
--	list_add_tail(&(*fence)->node, &drv->fences);
-+	fence->seq = ++drv->sync_seq;
-+	dma_fence_get(&fence->f);
-+	list_add_tail(&fence->node, &drv->fences);
- 	spin_unlock_irqrestore(&drv->lock, irq_flags);
- 
- 	cmd_hdr->flags |= cpu_to_le32(VIRTIO_GPU_FLAG_FENCE);
--	cmd_hdr->fence_id = cpu_to_le64((*fence)->seq);
-+	cmd_hdr->fence_id = cpu_to_le64(fence->seq);
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 340f2513d8..e9cdb4c7f6 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -221,7 +221,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
- 	}
- 
- 	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
--			      vfpriv->ctx_id, &out_fence);
-+			      vfpriv->ctx_id, out_fence);
- 
- 	ttm_eu_fence_buffer_objects(&ticket, &validate_list, &out_fence->f);
- 
-@@ -349,7 +349,7 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
- 		}
- 
- 		virtio_gpu_cmd_resource_create_3d(vgdev, qobj, &rc_3d, NULL);
--		ret = virtio_gpu_object_attach(vgdev, qobj, &fence);
-+		ret = virtio_gpu_object_attach(vgdev, qobj, fence);
- 		if (ret) {
- 			virtio_gpu_fence_cleanup(fence);
- 			goto fail_backoff;
-@@ -450,7 +450,7 @@ static int virtio_gpu_transfer_from_host_ioctl(struct drm_device *dev,
- 	virtio_gpu_cmd_transfer_from_host_3d
- 		(vgdev, qobj->hw_res_handle,
- 		 vfpriv->ctx_id, offset, args->level,
--		 &box, &fence);
-+		 &box, fence);
- 	reservation_object_add_excl_fence(qobj->tbo.resv,
- 					  &fence->f);
- 
-@@ -504,7 +504,7 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm_device *dev, void *data,
- 		virtio_gpu_cmd_transfer_to_host_3d
- 			(vgdev, qobj,
- 			 vfpriv ? vfpriv->ctx_id : 0, offset,
--			 args->level, &box, &fence);
-+			 args->level, &box, fence);
- 		reservation_object_add_excl_fence(qobj->tbo.resv,
- 						  &fence->f);
- 		dma_fence_put(&fence->f);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index b84ac8c258..ead5c53d4e 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -204,7 +204,7 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 			(vgdev, bo, 0,
- 			 cpu_to_le32(plane->state->crtc_w),
- 			 cpu_to_le32(plane->state->crtc_h),
--			 0, 0, &vgfb->fence);
-+			 0, 0, vgfb->fence);
- 		ret = virtio_gpu_object_reserve(bo, false);
- 		if (!ret) {
- 			reservation_object_add_excl_fence(bo->tbo.resv,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 2c6764f08f..97038662b9 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -298,7 +298,7 @@ static int virtio_gpu_queue_ctrl_buffer(struct virtio_gpu_device *vgdev,
- static int virtio_gpu_queue_fenced_ctrl_buffer(struct virtio_gpu_device *vgdev,
- 					       struct virtio_gpu_vbuffer *vbuf,
- 					       struct virtio_gpu_ctrl_hdr *hdr,
--					       struct virtio_gpu_fence **fence)
-+					       struct virtio_gpu_fence *fence)
- {
- 	struct virtqueue *vq = vgdev->ctrlq.vq;
- 	int rc;
-@@ -405,7 +405,7 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
- 
- static void virtio_gpu_cmd_resource_inval_backing(struct virtio_gpu_device *vgdev,
- 						  uint32_t resource_id,
--						  struct virtio_gpu_fence **fence)
-+						  struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_resource_detach_backing *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -467,7 +467,7 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 					uint64_t offset,
- 					__le32 width, __le32 height,
- 					__le32 x, __le32 y,
--					struct virtio_gpu_fence **fence)
-+					struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_transfer_to_host_2d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -497,7 +497,7 @@ virtio_gpu_cmd_resource_attach_backing(struct virtio_gpu_device *vgdev,
- 				       uint32_t resource_id,
- 				       struct virtio_gpu_mem_entry *ents,
- 				       uint32_t nents,
--				       struct virtio_gpu_fence **fence)
-+				       struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_resource_attach_backing *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -821,7 +821,7 @@ void
- virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
- 				  struct virtio_gpu_object *bo,
- 				  struct virtio_gpu_resource_create_3d *rc_3d,
--				  struct virtio_gpu_fence **fence)
-+				  struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_resource_create_3d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -842,7 +842,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
- 					uint32_t ctx_id,
- 					uint64_t offset, uint32_t level,
- 					struct virtio_gpu_box *box,
--					struct virtio_gpu_fence **fence)
-+					struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_transfer_host_3d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -870,7 +870,7 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
- 					  uint32_t resource_id, uint32_t ctx_id,
- 					  uint64_t offset, uint32_t level,
- 					  struct virtio_gpu_box *box,
--					  struct virtio_gpu_fence **fence)
-+					  struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_transfer_host_3d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -890,7 +890,7 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
- 
- void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
- 			   void *data, uint32_t data_size,
--			   uint32_t ctx_id, struct virtio_gpu_fence **fence)
-+			   uint32_t ctx_id, struct virtio_gpu_fence *fence)
- {
- 	struct virtio_gpu_cmd_submit *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
-@@ -910,7 +910,7 @@ void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
- 
- int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
- 			     struct virtio_gpu_object *obj,
--			     struct virtio_gpu_fence **fence)
-+			     struct virtio_gpu_fence *fence)
- {
- 	bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
- 	struct virtio_gpu_mem_entry *ents;
-@@ -967,7 +967,7 @@ void virtio_gpu_object_detach(struct virtio_gpu_device *vgdev,
- 	if (use_dma_api && obj->mapped) {
- 		struct virtio_gpu_fence *fence = virtio_gpu_fence_alloc(vgdev);
- 		/* detach backing and wait for the host process it ... */
--		virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle, &fence);
-+		virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle, fence);
- 		dma_fence_wait(&fence->f, true);
- 		dma_fence_put(&fence->f);
- 
--- 
-2.9.3
-
+>  				  "enable",
+>  				  0,
+>  				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+> -- 
+> 2.19.1
