@@ -2,214 +2,129 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A39C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D415C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64EED2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:23:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EED2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B353020832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:23:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B353020832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbeK2BZn (ORCPT
+        id S1728763AbeK2BZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:25:43 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49009 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbeK2BZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:25:43 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASENBIW2320981
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:23:11 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASENBrH2320978;
-        Wed, 28 Nov 2018 06:23:11 -0800
-Date:   Wed, 28 Nov 2018 06:23:11 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-26c4d75b234040c11728a8acb796b3a85ba7507c@git.kernel.org>
-Cc:     hpa@zytor.com, casey.schaufler@intel.com, arjan@linux.intel.com,
-        longman9394@gmail.com, thomas.lendacky@amd.com,
-        dave.hansen@intel.com, gregkh@linuxfoundation.org, jkosina@suse.cz,
-        david.c.stewart@intel.com, tim.c.chen@linux.intel.com,
-        keescook@chromium.org, jpoimboe@redhat.com, jcm@redhat.com,
-        asit.k.mallick@intel.com, linux-kernel@vger.kernel.org,
-        aarcange@redhat.com, luto@kernel.org, dwmw@amazon.co.uk,
-        torvalds@linux-foundation.org, ak@linux.intel.com,
-        tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org
-Reply-To: hpa@zytor.com, arjan@linux.intel.com, casey.schaufler@intel.com,
-          longman9394@gmail.com, thomas.lendacky@amd.com,
-          dave.hansen@intel.com, gregkh@linuxfoundation.org,
-          david.c.stewart@intel.com, jkosina@suse.cz,
-          keescook@chromium.org, tim.c.chen@linux.intel.com,
-          jpoimboe@redhat.com, jcm@redhat.com, asit.k.mallick@intel.com,
-          linux-kernel@vger.kernel.org, aarcange@redhat.com,
-          luto@kernel.org, dwmw@amazon.co.uk,
-          torvalds@linux-foundation.org, ak@linux.intel.com,
-          tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <20181125185004.058866968@linutronix.de>
-References: <20181125185004.058866968@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Rename SSBD update functions
-Git-Commit-ID: 26c4d75b234040c11728a8acb796b3a85ba7507c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Nov 2018 20:25:47 -0500
+Received: from mail-eopbgr800085.outbound.protection.outlook.com ([40.107.80.85]:37184
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727832AbeK2BZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:25:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x+LfO1P/fvYf9ucn0WLYmy5h55nqFc8TLpqjnJxzaWk=;
+ b=iasqj1dAYD0BiMvsEXk0krEq7/uWGvi7LEhyQzPMNfdSzbtZiqGTc2Eljhj8od+vonf1JrAI8WKeQ51LNZ7K9253h2UmsJhRI7a7DbkdD88AMOUlae03PvDDnKQ+KWJ/+UCkJYeuElR/BImIJ1f7ZlbwCLPXG2eksuQEo+xniv8=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB2557.namprd12.prod.outlook.com (52.132.197.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.18; Wed, 28 Nov 2018 14:23:49 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
+ 14:23:49 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Pan Bian <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] amd-xgbe: set skb to NULL after freeing it
+Thread-Topic: [PATCH V2] amd-xgbe: set skb to NULL after freeing it
+Thread-Index: AQHUhvmj7eiN0hl8Y0Wq5w2VcYNNK6VlPf+A
+Date:   Wed, 28 Nov 2018 14:23:48 +0000
+Message-ID: <49bcee7c-9c8e-33af-4cea-6f76c6f00349@amd.com>
+References: <1543395975-25339-1-git-send-email-bianpan2016@163.com>
+In-Reply-To: <1543395975-25339-1-git-send-email-bianpan2016@163.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR0102CA0018.prod.exchangelabs.com (2603:10b6:805:1::31)
+ To SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB2557;20:HD9cp+REpqFTAt3io1vY8GlBu/R3LBkaDHfPsvTRWjR0Qez8ETn+fK+jsm54nKEYEOoZx5okA26aq/YtlYsJPGF1K7w+8siUoj0khYYd/4vITtlogFRJpKyp0IYx1Szr8iMlOSTBZSvVVU879r/6CAkAxwj8PX5wjFe0MXViC9/hO4ZojWalM6ZIZ1IGt+ZLfJ3nWMGzQjd9aFNBD9+gyX8Ij27R3281sqBnhh8Z4JW2SSE0Yuo85GuyUtQipXXX
+x-ms-office365-filtering-correlation-id: b3e9419e-fb64-42fa-a510-08d6553d1cd1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2557;
+x-ms-traffictypediagnostic: SN1PR12MB2557:
+x-microsoft-antispam-prvs: <SN1PR12MB255762D53CAD11D0385EA5D1ECD10@SN1PR12MB2557.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231443)(999002)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2557;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2557;
+x-forefront-prvs: 0870212862
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(6116002)(3846002)(2906002)(81156014)(81166006)(31686004)(68736007)(256004)(305945005)(229853002)(8936002)(36756003)(8676002)(25786009)(478600001)(86362001)(72206003)(105586002)(71200400001)(71190400001)(106356001)(6436002)(14454004)(186003)(26005)(5660300001)(31696002)(6486002)(486006)(99286004)(2616005)(476003)(54906003)(11346002)(446003)(110136005)(6512007)(4326008)(66066001)(102836004)(386003)(6506007)(53546011)(76176011)(7736002)(52116002)(53936002)(316002)(97736004)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2557;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fFBzSnbXpcbjjQ0sjmRumJCnhMjHg7j5VYpQNP1akQkzMYtK5C2w73GFAidznC4z2HzUekKExi+3v0wNADcv7eWRbnSkkctD51IPK4M1kxg05mghxKYnWAEmfdksezJfYBzJO4Gq5wFEIhh5D1RZTX0Z/dMzNC/4UXjc/3HADmK1diFI+xCpmgQMjtgpp/MMMvn6G/ooQDPpAJ41WE2/oPcfzzNn4egBopE2sAjCUCoZxbydBIFxIOU1w+9ikno1eOKSKHu9YFHESVIs1bwY+bzn2lQ3aZyTIXKzKcV2epZa+l8yterLzDsbngjjgLyS102vYMWaca5dUif/KH8fUF0Qd3lrWYmqyk7UzRfCSHE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8550D3FD1783FB40A7AF3C38113A9ABC@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3e9419e-fb64-42fa-a510-08d6553d1cd1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:23:49.0621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2557
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  26c4d75b234040c11728a8acb796b3a85ba7507c
-Gitweb:     https://git.kernel.org/tip/26c4d75b234040c11728a8acb796b3a85ba7507c
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:34 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:06 +0100
-
-x86/speculation: Rename SSBD update functions
-
-During context switch, the SSBD bit in SPEC_CTRL MSR is updated according
-to changes of the TIF_SSBD flag in the current and next running task.
-
-Currently, only the bit controlling speculative store bypass disable in
-SPEC_CTRL MSR is updated and the related update functions all have
-"speculative_store" or "ssb" in their names.
-
-For enhanced mitigation control other bits in SPEC_CTRL MSR need to be
-updated as well, which makes the SSB names inadequate.
-
-Rename the "speculative_store*" functions to a more generic name. No
-functional change.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.058866968@linutronix.de
-
-
-
----
- arch/x86/include/asm/spec-ctrl.h |  6 +++---
- arch/x86/kernel/cpu/bugs.c       |  4 ++--
- arch/x86/kernel/process.c        | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-ctrl.h
-index ae7c2c5cd7f0..8e2f8411c7a7 100644
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -70,11 +70,11 @@ extern void speculative_store_bypass_ht_init(void);
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
- 
--extern void speculative_store_bypass_update(unsigned long tif);
-+extern void speculation_ctrl_update(unsigned long tif);
- 
--static inline void speculative_store_bypass_update_current(void)
-+static inline void speculation_ctrl_update_current(void)
- {
--	speculative_store_bypass_update(current_thread_info()->flags);
-+	speculation_ctrl_update(current_thread_info()->flags);
- }
- 
- #endif
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 924cd06dd43b..a723af0c4400 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -200,7 +200,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
- 				 ssbd_spec_ctrl_to_tif(hostval);
- 
--		speculative_store_bypass_update(tif);
-+		speculation_ctrl_update(tif);
- 	}
- }
- EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
-@@ -632,7 +632,7 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 	 * mitigation until it is next scheduled.
- 	 */
- 	if (task == current && update)
--		speculative_store_bypass_update_current();
-+		speculation_ctrl_update_current();
- 
- 	return 0;
- }
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c93fcfdf1673..8aa49604f9ae 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -395,27 +395,27 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
- 
--static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
- {
- 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
- 
- 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+static __always_inline void __speculation_ctrl_update(unsigned long tifn)
- {
- 	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
- 		amd_set_ssb_virt_state(tifn);
- 	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		amd_set_core_ssb_state(tifn);
- 	else
--		intel_set_ssb_state(tifn);
-+		spec_ctrl_update_msr(tifn);
- }
- 
--void speculative_store_bypass_update(unsigned long tif)
-+void speculation_ctrl_update(unsigned long tif)
- {
- 	preempt_disable();
--	__speculative_store_bypass_update(tif);
-+	__speculation_ctrl_update(tif);
- 	preempt_enable();
- }
- 
-@@ -452,7 +452,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
- 	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculative_store_bypass_update(tifn);
-+		__speculation_ctrl_update(tifn);
- }
- 
- /*
+T24gMTEvMjgvMjAxOCAwMzowNiBBTSwgUGFuIEJpYW4gd3JvdGU6DQo+IFRoZSBidWZmZXIgc2ti
+IGlzIGZyZWVkIHZpYSBkZXZfa2ZyZWVfc2tiIGluIGEgbG9vcC4gQWZ0ZXIgZnJlZWluZyBza2Is
+IA0KPiB0aGUgdmFsdWUgb2YgcGFja2V0X2NvdW50IGlzIHVwZGF0ZWQgdmlhIHBhY2tldF9jb3Vu
+dCsrLiBJZiBwYWNrZXRfY291bnQNCj4gaGFwcGVucyB0byBlcXVhbCB0aGUgdXBwZXIgYm91bmQg
+YnVkZ2V0LCB0aGUgbG9vcCB3aWxsIGJlIGJyb2tlbiBhbmQgc2tiIA0KPiBtYXkgYmUgYXNzaWdu
+ZWQgdG8gcmRhdGEtPnN0YXRlLnNrYi4gUmVzdWx0aW5nIHRoYXQgcmRhdGEtPnN0YXRlLnNrYiBt
+YXkNCg0KRXhjZXB0IHRoYXQgcmRhdGEtPnN0YXRlLnNrYiBpcyBvbmx5IGFzc2lnbmVkIGlmIHdl
+IGhhdmUgcmVjZWl2ZWQNCnNvbWV0aGluZyBhbmQgaXQgaXMgKCFsYXN0IHx8IGNvbnRleHRfbmV4
+dCkuICBJZiBlcnJvciBpcyBldmVyIHNldCwNCnRoZW4gd2UgcmVhZCBkZXNjcmlwdG9ycyBhcyBs
+b25nIGFzICghbGFzdCB8fCBjb250ZXh0X25leHQpLiAgQWxzbywNCnBhY2tldC0+ZXJyb3JzIGNh
+biBvbmx5IGJlIHNldCBmb3IgdGhlIGxhc3QgcGFja2V0IHdoaWNoIGltcGxpZXMgbm8NCmZvbGxv
+d2luZyBjb250ZXh0IGRlc2NyaXB0b3JzLiAgU28gcmRhdGEtPnN0YXRlLnNrYiBjYW4gbmV2ZXIg
+YmUgc2V0DQp3aXRoIHRoZSAiYmFkIiBza2IgdmFsdWUuDQoNClRoZSBvbmx5IHdheSBJIGNhbiBz
+ZWUgdGhpcyBvY2N1cnJpbmcgaXMgaWYgYSBjb250ZXh0IGRlc2NyaXB0b3IgaXMNCmluZGljYXRl
+ZCAoY29udGV4dF9uZXh0KSBhbG9uZyB3aXRoIHBhY2tldC0+ZXJyb3JzLiBBcmUgeW91IGFjdHVh
+bGx5DQpzZWVpbmcgYW4gZXJyb3IvY3Jhc2ggd2hlcmUgdGhpcyBpcyBvY2N1cnJpbmc/ICBJZiBz
+bywgdGhlbiB0aGUgZml4DQpzaG91bGQgYmUgdG8gZ290byByZWFkX2FnYWluIGlmIGNvbnRleHRf
+bmV4dCBpcyBzZXQgYmVjYXVzZSB3ZSB3YW50DQp0byByZW1vdmUgdGhlIGNvbnRleHQgZGVzY3Jp
+cHRvciBpbiB0aGlzIGNhc2UgYW5kIG5vdCBzYXZlIHRoZSBzdGF0ZS4NCg0KVGhhbmtzLA0KVG9t
+DQoNCj4gcG9pbnQgdG8gYSBmcmVlZCBtZW1vcnkgY2h1bmsuIFRvIGZpeCB0aGlzLCB0aGUgcGF0
+Y2ggc2V0cyBza2IgdG8gTlVMTCANCj4gYWZ0ZXIgZGV2X2tmcmVlX3NrYihza2IpLg0KPiANCj4g
+U2lnbmVkLW9mZi1ieTogUGFuIEJpYW4gPGJpYW5wYW4yMDE2QDE2My5jb20+DQo+IC0tLQ0KPiBW
+MjogY29ycmVjdCB0aGUgY29tbWl0IGxvZw0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0
+L2FtZC94Z2JlL3hnYmUtZHJ2LmMgfCAyICsrDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRp
+b25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvYW1kL3hnYmUv
+eGdiZS1kcnYuYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2FtZC94Z2JlL3hnYmUtZHJ2LmMNCj4g
+aW5kZXggMGNjOTExZi4uYWM2YjgyZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvYW1kL3hnYmUveGdiZS1kcnYuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9hbWQv
+eGdiZS94Z2JlLWRydi5jDQo+IEBAIC0yNzU0LDYgKzI3NTQsNyBAQCBzdGF0aWMgaW50IHhnYmVf
+cnhfcG9sbChzdHJ1Y3QgeGdiZV9jaGFubmVsICpjaGFubmVsLCBpbnQgYnVkZ2V0KQ0KPiAgCQkJ
+CW5ldGlmX2VycihwZGF0YSwgcnhfZXJyLCBuZXRkZXYsDQo+ICAJCQkJCSAgImVycm9yIGluIHJl
+Y2VpdmVkIHBhY2tldFxuIik7DQo+ICAJCQlkZXZfa2ZyZWVfc2tiKHNrYik7DQo+ICsJCQlza2Ig
+PSBOVUxMOw0KPiAgCQkJZ290byBuZXh0X3BhY2tldDsNCj4gIAkJfQ0KPiAgDQo+IEBAIC0yODA2
+LDYgKzI4MDcsNyBAQCBzdGF0aWMgaW50IHhnYmVfcnhfcG9sbChzdHJ1Y3QgeGdiZV9jaGFubmVs
+ICpjaGFubmVsLCBpbnQgYnVkZ2V0KQ0KPiAgCQkJbmV0aWZfZXJyKHBkYXRhLCByeF9lcnIsIG5l
+dGRldiwNCj4gIAkJCQkgICJwYWNrZXQgbGVuZ3RoIGV4Y2VlZHMgY29uZmlndXJlZCBNVFVcbiIp
+Ow0KPiAgCQkJZGV2X2tmcmVlX3NrYihza2IpOw0KPiArCQkJc2tiID0gTlVMTDsNCj4gIAkJCWdv
+dG8gbmV4dF9wYWNrZXQ7DQo+ICAJCX0NCj4gIA0KPiANCg==
