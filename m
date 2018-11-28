@@ -2,87 +2,89 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DAAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58277C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 874CB20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874CB20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 18B8E20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B8E20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbeK2CYE (ORCPT
+        id S1728787AbeK2CYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:24:04 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:60181 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeK2CYE (ORCPT
+        Wed, 28 Nov 2018 21:24:47 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47653 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727726AbeK2CYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:24:04 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gS1ez-0008QK-Bl; Wed, 28 Nov 2018 16:21:53 +0100
-Date:   Wed, 28 Nov 2018 16:21:52 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Zhivich, Michael" <mzhivich@akamai.com>
-cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "frederic@kernel.org" <frederic@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        "kreview@akamai.com" <kreview@akamai.com>
-Subject: Re: [PATCH] softirq: don't push timer softirq handling to
- ksoftirqd
-In-Reply-To: <6DB365C6-98F6-4C27-B0BE-0833E5D4962E@akamai.com>
-Message-ID: <alpine.DEB.2.21.1811281616570.1532@nanos.tec.linutronix.de>
-References: <20181115170701.4696-1-mzhivich@akamai.com> <CALAqxLV0sQaWx837Vrz3hfGdUNSBa+cJWaaL_RpPsgRTMQknuA@mail.gmail.com> <6DB365C6-98F6-4C27-B0BE-0833E5D4962E@akamai.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Nov 2018 21:24:46 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wASFJLxn002041;
+        Wed, 28 Nov 2018 09:22:39 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2ny3xu6pgp-1;
+        Wed, 28 Nov 2018 09:22:39 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 36200611E127;
+        Wed, 28 Nov 2018 09:22:39 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
+ 15:22:38 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wASFMcWg027697; Wed,
+ 28 Nov 2018 15:22:38 GMT
+Date:   Wed, 28 Nov 2018 15:22:38 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 00/10] Regulator ena_gpiod fixups
+Message-ID: <20181128152238.GV16508@imbe.wolfsonmicro.main>
+References: <20181128104350.31902-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181128104350.31902-1-linus.walleij@linaro.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=722 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811280135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael,
+On Wed, Nov 28, 2018 at 11:43:40AM +0100, Linus Walleij wrote:
+>  drivers/gpio/gpiolib.h                 |  6 -----
+>  drivers/regulator/da9211-regulator.c   |  4 +--
+>  drivers/regulator/fixed.c              |  4 ++-
+>  drivers/regulator/lm363x-regulator.c   |  8 ++++--
+>  drivers/regulator/lp8788-ldo.c         |  4 ++-
+>  drivers/regulator/max77686-regulator.c |  3 +--
+>  drivers/regulator/max8952.c            |  8 +++---
+>  drivers/regulator/max8973-regulator.c  | 12 ++++++---
+>  drivers/regulator/s5m8767.c            | 37 ++++++++++++++++++--------
+>  drivers/regulator/tps65090-regulator.c | 10 +++----
+>  include/linux/gpio/consumer.h          | 13 +++++++++
+>  11 files changed, 72 insertions(+), 37 deletions(-)
 
-On Fri, 16 Nov 2018, Zhivich, Michael wrote:
-> On 11/15/18, 12:17 PM, "John Stultz" <john.stultz@linaro.org> wrote:
->     Would a more focused fix be to move the clocksource watchdog from a
->     normal timer to a hrtimer?
->     
-> That's an interesting idea - it would get clocksource watchdog out of
-> ksoftirqd.  However, clocksource watchdog iterates over available CPUs to
-> check the TSC on each core (see add_timer_on() call in
-> clocksource_watchdog()).  I'm not seeing an API to start an hrtimer on a
-> specific CPU - is this possible and I'm missing it?  Or would something
-> like this have to be added to hrtimer?
-
-It's surely an interesting idea, but it's not trivial.
-
-There is no way to reliably queue hrtimers remote when high resolution mode
-is enabled. It only works when the to be queued timer is not the first to
-expire one. If it ends up being the first to expire timer, then there is
-currently no way to rearm the remote per cpu clockevent device because it's
-not remotely accesible.
-
-It would need an SMP function call, but that needs to be asynchronous due
-to locking/interrupt disabled constraints. Maybe ...
+It looks like the patches are assuming the regulator core,
+doesn't free the GPIO on an error, however that is not true in
+all cases. If only a single regulator has requested the GPIO then
+all the error paths after the call to regulator_ena_gpio_request
+in regulator_register will free the GPIO. Although this is not the
+case if more than one regulator has requested the GPIO.
 
 Thanks,
-
-	tglx
+charles
