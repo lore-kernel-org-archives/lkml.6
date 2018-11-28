@@ -2,81 +2,87 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84592C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DAAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5428C2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5428C2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 874CB20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:22:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874CB20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbeK2CYB (ORCPT
+        id S1728854AbeK2CYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:24:01 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:45110 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbeK2CYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:24:00 -0500
-Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gS1eE-0005mw-Ab; Wed, 28 Nov 2018 16:21:06 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
-        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
-        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
-        hjc@rock-chips.com, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
-Date:   Wed, 28 Nov 2018 16:21:05 +0100
-Message-ID: <3555131.qyOKUBSTPx@diego>
-In-Reply-To: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
-References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+        Wed, 28 Nov 2018 21:24:04 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:60181 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeK2CYE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:24:04 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gS1ez-0008QK-Bl; Wed, 28 Nov 2018 16:21:53 +0100
+Date:   Wed, 28 Nov 2018 16:21:52 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Zhivich, Michael" <mzhivich@akamai.com>
+cc:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "frederic@kernel.org" <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        "kreview@akamai.com" <kreview@akamai.com>
+Subject: Re: [PATCH] softirq: don't push timer softirq handling to
+ ksoftirqd
+In-Reply-To: <6DB365C6-98F6-4C27-B0BE-0833E5D4962E@akamai.com>
+Message-ID: <alpine.DEB.2.21.1811281616570.1532@nanos.tec.linutronix.de>
+References: <20181115170701.4696-1-mzhivich@akamai.com> <CALAqxLV0sQaWx837Vrz3hfGdUNSBa+cJWaaL_RpPsgRTMQknuA@mail.gmail.com> <6DB365C6-98F6-4C27-B0BE-0833E5D4962E@akamai.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 15. November 2018, 16:45:30 CET schrieb Souptick Joarder:
-> Previouly drivers have their own way of mapping range of
-> kernel pages/memory into user vma and this was done by
-> invoking vm_insert_page() within a loop.
-> 
-> As this pattern is common across different drivers, it can
-> be generalized by creating a new function and use it across
-> the drivers.
-> 
-> vm_insert_range is the new API which will be used to map a
-> range of kernel memory/pages to user vma.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Michael,
 
-Except the missing EXPORT_SYMBOL for module builds this new
-API is supposed to run also within the Rockchip drm driver, so
-on rk3188, rk3288, rk3328 and rk3399 with graphics
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+On Fri, 16 Nov 2018, Zhivich, Michael wrote:
+> On 11/15/18, 12:17 PM, "John Stultz" <john.stultz@linaro.org> wrote:
+>     Would a more focused fix be to move the clocksource watchdog from a
+>     normal timer to a hrtimer?
+>     
+> That's an interesting idea - it would get clocksource watchdog out of
+> ksoftirqd.  However, clocksource watchdog iterates over available CPUs to
+> check the TSC on each core (see add_timer_on() call in
+> clocksource_watchdog()).  I'm not seeing an API to start an hrtimer on a
+> specific CPU - is this possible and I'm missing it?  Or would something
+> like this have to be added to hrtimer?
 
+It's surely an interesting idea, but it's not trivial.
 
+There is no way to reliably queue hrtimers remote when high resolution mode
+is enabled. It only works when the to be queued timer is not the first to
+expire one. If it ends up being the first to expire timer, then there is
+currently no way to rearm the remote per cpu clockevent device because it's
+not remotely accesible.
 
+It would need an SMP function call, but that needs to be asynchronous due
+to locking/interrupt disabled constraints. Maybe ...
+
+Thanks,
+
+	tglx
