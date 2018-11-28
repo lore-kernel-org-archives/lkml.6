@@ -2,80 +2,123 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEB3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C9AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1052086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 678D620864
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EUgmkMLR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1052086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/mdPKJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678D620864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbeK2Hc4 (ORCPT
+        id S1726382AbeK2He0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 02:32:56 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:57880 "EHLO mail.skyhub.de"
+        Thu, 29 Nov 2018 02:34:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbeK2Hc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 02:32:56 -0500
-Received: from zn.tnic (p200300EC2BC0240021C853CE8979B2E0.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:2400:21c8:53ce:8979:b2e0])
+        id S1725799AbeK2He0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 02:34:26 -0500
+Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA7A11EC08EA;
-        Wed, 28 Nov 2018 21:30:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543437003;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=y5DyzCM6orE2ZnnYElw2jqXMBpOpTPw5BNYwRt1Vrgo=;
-        b=EUgmkMLRydEE3HiEQoeH0pVwk4gEYEH2CQMwqnML7Q/9TJtXEnqlsjleGAb7C+ofqk2jyn
-        h6tQnt2FeYcY2CQH/HuKb6OM9G/WRZ5ZSA3SYo9ochLYeTKeW/dGYUeQDr45/Tm4ERVV9N
-        W35Dm55Ne1cr5vpTM6728vvLB9+bWHk=
-Date:   Wed, 28 Nov 2018 21:29:52 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/resctrl: fix the uninitialized variable warning
-Message-ID: <20181128202952.GA29570@zn.tnic>
-References: <20181128201450.31820-1-babu.moger@amd.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 78482206B6;
+        Wed, 28 Nov 2018 20:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543437092;
+        bh=Ux9i1AmHLCZTd0JFoLEbAyBVU76ZExrYv2HMhOdVoLc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g/mdPKJmr/Es2asQedRI+sOK5ezxyEq62bRHM3ORcUeSzsykVquDQ6+NwIZONX4Mt
+         XMYTofvVJbo0cnfK7OUXeVC+DIrpq+SkB4xg74gp6NA0o4p8Gp+VhKLzhGgUMhOQxO
+         XsxQ2yIuTwxSamhy71Wonp4xj+Pk8624U7LgR0Zs=
+Date:   Wed, 28 Nov 2018 14:31:28 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] PCI / ACPI: Identify untrusted PCI devices
+Message-ID: <20181128203128.GA178809@google.com>
+References: <20181126111526.56340-1-mika.westerberg@linux.intel.com>
+ <20181126111526.56340-2-mika.westerberg@linux.intel.com>
+ <20181127001711.GC212532@google.com>
+ <20181127085426.GI2296@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181128201450.31820-1-babu.moger@amd.com>
+In-Reply-To: <20181127085426.GI2296@lahna.fi.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 08:15:02PM +0000, Moger, Babu wrote:
-> Fix the compiler warning caused by a recent change.
+On Tue, Nov 27, 2018 at 10:54:26AM +0200, Mika Westerberg wrote:
+> On Mon, Nov 26, 2018 at 06:17:11PM -0600, Bjorn Helgaas wrote:
+> > Hi Mika,
+> 
+> Hi,
+> 
+> > On Mon, Nov 26, 2018 at 02:15:23PM +0300, Mika Westerberg wrote:
+> > > Recent systems with Thunderbolt ports may support IOMMU natively.
+> > 
+> > This sentence doesn't make sense to me.  There's no logical connection
+> > between having an IOMMU and having a Thunderbolt port.
+> > 
+> > > This means that the platform utilizes IOMMU to prevent DMA attacks
+> > > over externally exposed PCIe root ports (typically Thunderbolt
+> > > ports)
+> > 
+> > Nor this one.  The platform only uses the IOMMU to prevent DMA attacks
+> > if the OS chooses to do that.
 
-Now take your time machine, send yourself 6 months into the future, look
-at that commit message and try to remember what it was fixing. Can you?
+I think by "platform" you're referring to the system firmware; I was
+only thinking of the hardware, so the IOMMU wouldn't be used unless
+someone (the OS) enabled it.  But your cover letter talks about the
+BIOS enabling some IOMMU functionality.
 
-I can't.
+> I guess I'm trying to say here that the recent changes add such support
+> to the platform BIOS that allows the OS to enable IOMMU without being
+> compromised by a malicious device that is already connected. The BIOS
+> sets the new ACPI DMAR bit in that case.
 
-IOW, please summarize what smatch - the static checker not the compiler
-- was complaining about and why this is a good fix.
+Ah, there's useful info to this effect in your [0/4] cover letter.
+That info and the URL should be in the changelog of one of the patches so
+it doesn't get lost.
 
-Thx.
+> > > The system BIOS marks these PCIe root ports as being externally facing
+> > > ports by implementing following ACPI _DSD [1] under the root port in
+> > > question:
+> > 
+> > There's no standard that requires this, so the best we can say is that
+> > a system BIOS *may* mark externally facing ports with this mechanism.
+> 
+> There is no standard but I'm quite sure this is something that will be
+> required to be implemented properly by the OEM by Microsoft hardware
+> compatibility suite.
 
--- 
-Regards/Gruss,
-    Boris.
+Sure.  Your statement suggests that all external ports will be marked
+with the _DSD.  I'm just pointing out that the OS can't assume that
+because there are probably systems in the field that predate the _DSD.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Bjorn
