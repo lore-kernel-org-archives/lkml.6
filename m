@@ -2,281 +2,171 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C832DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F08C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDFA208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:41:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DDFA208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id B0BF9205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:43:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NphKfWPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BF9205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbeK1Vm3 (ORCPT
+        id S1727975AbeK1Vot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:42:29 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:47104 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbeK1Vm3 (ORCPT
+        Wed, 28 Nov 2018 16:44:49 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53106 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbeK1Vot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:42:29 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 919AC67A7B0;
-        Wed, 28 Nov 2018 11:41:12 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 28 Nov
- 2018 11:41:12 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Wed, 28 Nov 2018 11:41:12 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        =?utf-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH] mtd: nand: spi: Add initial support for Toshiba
- TC58CVG2S0H
-Thread-Topic: [PATCH] mtd: nand: spi: Add initial support for Toshiba
- TC58CVG2S0H
-Thread-Index: AQHUdz2L3HigzaAOUUKXPQ4ku2nhHqVjxsKAgAAC1ACAABdiAIAABbCAgAEn2oA=
-Date:   Wed, 28 Nov 2018 10:41:12 +0000
-Message-ID: <233c55f8-f12e-daf9-ee94-2d9dbb434dd1@kontron.de>
-References: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
- <0fc1f198-0e87-01af-5a0e-3d21613c39f3@kontron.de>
- <CAJiuCceD=qyasCUPqjyGQso3JGoxz4g_yg3uj18wP-2CKY9wyg@mail.gmail.com>
- <1655b66f-37e2-427f-a047-8305f86fc22c@kontron.de>
- <CAJiuCcdnqeJO4MQh8Ru010amQkvG1Wc3=N3o1_X4QAhF-_M7tA@mail.gmail.com>
-In-Reply-To: <CAJiuCcdnqeJO4MQh8Ru010amQkvG1Wc3=N3o1_X4QAhF-_M7tA@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <74791FA4F37EF849AAFDF9C91183B769@snt-world.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 919AC67A7B0.A0440
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com,
-        peron.clem@gmail.com, richard@nod.at
+        Wed, 28 Nov 2018 16:44:49 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASAdb97110122;
+        Wed, 28 Nov 2018 10:43:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=JMFQMXzSIZjHqboz3NrICNq/xNAz1lgO+DAw1lScLtg=;
+ b=NphKfWPjfYOT+4Q7ewzeLTZgFoJuz9aZyC8s1KeCxi4Tw4JsZ0KWRPp1DsAiLw930My7
+ XLKz6j6JOy+wCHrTDk++nwaH3JM1UFSltx/RrsAX8ZrDD81ofaPaxJm7kYZ9FmwA3HLp
+ U3n/huz4v6i5WtBHEjTiOaeLWHSJv1INumJ+mE5dzFpOJGhBpEfVlifApggEs4XC9LSV
+ IXKffCfcfQHpyYIeesYtQXCKsHPYGICKefafZ2sjT3ThIsP0HgyxvNTsMV+TR5KYQrPu
+ 6JMr7yb5kmqMFCePUuPNiIvcsbGbFIE3XRTdKPZfIcsoAb3dBmp8wUsatpF+K4iRH3A1 tA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2nxy9r9deb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 10:43:11 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wASAh6WH032407
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 10:43:06 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wASAh4m2011351;
+        Wed, 28 Nov 2018 10:43:04 GMT
+Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 02:43:04 -0800
+From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.co>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: [PATCH v2] perf symbols: Cannot disassemble some routines when debuginfo present
+Date:   Wed, 28 Nov 2018 03:08:32 -0800
+Message-Id: <1543403312-26687-1-git-send-email-eric.saint.etienne@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2zDqW1lbnQsDQoNCk9uIDI3LjExLjE4IDE4OjAyLCBDbMOpbWVudCBQw6lyb24gd3JvdGU6
-DQo+IEhpIEZyaWVkZXIsDQo+IA0KPiBPbiBUdWUsIDI3IE5vdiAyMDE4IGF0IDE3OjQyLCBTY2hy
-ZW1wZiBGcmllZGVyDQo+IDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPj4N
-Cj4+IEhpIENsw6ltZW50LA0KPj4NCj4+IE9uIDI3LjExLjE4IDE2OjE4LCBDbMOpbWVudCBQw6ly
-b24gd3JvdGU6DQo+Pj4gSGkgRnJpZWRlciwNCj4+Pg0KPj4+IE9uIFR1ZSwgMjcgTm92IDIwMTgg
-YXQgMTY6MDgsIFNjaHJlbXBmIEZyaWVkZXINCj4+PiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9u
-LmRlPiB3cm90ZToNCj4+Pj4NCj4+Pj4gK0Nsw6ltZW50IFDDqXJvbg0KPj4+Pg0KPj4+PiBIaSBD
-bMOpbWVudCwNCj4+Pj4NCj4+Pj4gRllJLCB0aGlzIGhhcyBhbHJlYWR5IGJlZW4gbWVyZ2VkIHRv
-IG5hbmQvbmV4dC4NCj4+PiBKdXN0IHdhbnQgdG8gcG9pbnQgdGhlIGRpZmZlcmVuY2UgdGhhdCBJ
-IG1hZGUgd2hlbiBJIHRyeSB0byBpbnRyb2R1Y2UgbXkgZHJpdmVyLg0KPj4+IFRoZSBkYXRhc2hl
-ZXQgSSB1c2VkIGlzIHRoaXMgb25lIDoNCj4+PiBodHRwczovL21lZGlhLmRpZ2lrZXkuY29tL3Bk
-Zi9EYXRhJTIwU2hlZXRzL1Rvc2hpYmElMjBQREZzL1RDNThDVkcyUzBIeEFJeF9SZXYxLjFfMjAx
-Ni0xMS0wOC5wZGYNCj4+Pg0KPj4+Pg0KPj4+PiBSZWdhcmRzLA0KPj4+PiBGcmllZGVyDQo+Pj4+
-DQo+Pj4+IE9uIDA4LjExLjE4IDA5OjI5LCBGcmllZGVyIFNjaHJlbXBmIHdyb3RlOg0KPj4+Pj4g
-QWRkIG1pbmltYWwgc3VwcG9ydCBmb3IgdGhlIFRvc2hpYmEgVEM1OENWRzJTMEggU1BJIE5BTkQg
-Y2hpcC4NCj4+Pj4+DQo+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmll
-ZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+Pj4+PiAtLS0NCj4+Pj4+ICAgICBkcml2ZXJzL210
-ZC9uYW5kL3NwaS9NYWtlZmlsZSAgfCAgIDIgKy0NCj4+Pj4+ICAgICBkcml2ZXJzL210ZC9uYW5k
-L3NwaS9jb3JlLmMgICAgfCAgIDEgKw0KPj4+Pj4gICAgIGRyaXZlcnMvbXRkL25hbmQvc3BpL3Rv
-c2hpYmEuYyB8IDEzNiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+Pj4+
-ICAgICBpbmNsdWRlL2xpbnV4L210ZC9zcGluYW5kLmggICAgfCAgIDEgKw0KPj4+Pj4gICAgIDQg
-ZmlsZXMgY2hhbmdlZCwgMTM5IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+Pj4+DQo+
-Pj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvbmFuZC9zcGkvTWFrZWZpbGUgYi9kcml2ZXJz
-L210ZC9uYW5kL3NwaS9NYWtlZmlsZQ0KPj4+Pj4gaW5kZXggYjc0ZTA3NC4uYmU1ZjczNSAxMDA2
-NDQNCj4+Pj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQvc3BpL01ha2VmaWxlDQo+Pj4+PiArKysg
-Yi9kcml2ZXJzL210ZC9uYW5kL3NwaS9NYWtlZmlsZQ0KPj4+Pj4gQEAgLTEsMyArMSwzIEBADQo+
-Pj4+PiAgICAgIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPj4+Pj4gLXNwaW5h
-bmQtb2JqcyA6PSBjb3JlLm8gbWFjcm9uaXgubyBtaWNyb24ubyB3aW5ib25kLm8NCj4+Pj4+ICtz
-cGluYW5kLW9ianMgOj0gY29yZS5vIG1hY3Jvbml4Lm8gbWljcm9uLm8gdG9zaGliYS5vIHdpbmJv
-bmQubw0KPj4+Pj4gICAgIG9iai0kKENPTkZJR19NVERfU1BJX05BTkQpICs9IHNwaW5hbmQubw0K
-Pj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL25hbmQvc3BpL2NvcmUuYyBiL2RyaXZlcnMv
-bXRkL25hbmQvc3BpL2NvcmUuYw0KPj4+Pj4gaW5kZXggMzBmODM2NC4uODdiZGYyYSAxMDA2NDQN
-Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvbXRkL25hbmQvc3BpL2NvcmUuYw0KPj4+Pj4gKysrIGIvZHJp
-dmVycy9tdGQvbmFuZC9zcGkvY29yZS5jDQo+Pj4+PiBAQCAtNzY2LDYgKzc2Niw3IEBAIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgbmFuZF9vcHMgc3BpbmFuZF9vcHMgPSB7DQo+Pj4+PiAgICAgc3RhdGlj
-IGNvbnN0IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciAqc3BpbmFuZF9tYW51ZmFjdHVyZXJz
-W109IHsNCj4+Pj4+ICAgICAgICAgJm1hY3Jvbml4X3NwaW5hbmRfbWFudWZhY3R1cmVyLA0KPj4+
-Pj4gICAgICAgICAmbWljcm9uX3NwaW5hbmRfbWFudWZhY3R1cmVyLA0KPj4+Pj4gKyAgICAgJnRv
-c2hpYmFfc3BpbmFuZF9tYW51ZmFjdHVyZXIsDQo+Pj4+PiAgICAgICAgICZ3aW5ib25kX3NwaW5h
-bmRfbWFudWZhY3R1cmVyLA0KPj4+Pj4gICAgIH07DQo+Pj4+Pg0KPj4+Pj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvbXRkL25hbmQvc3BpL3Rvc2hpYmEuYyBiL2RyaXZlcnMvbXRkL25hbmQvc3BpL3Rv
-c2hpYmEuYw0KPj4+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+Pj4+IGluZGV4IDAwMDAwMDAu
-LjI5NGJjZjYNCj4+Pj4+IC0tLSAvZGV2L251bGwNCj4+Pj4+ICsrKyBiL2RyaXZlcnMvbXRkL25h
-bmQvc3BpL3Rvc2hpYmEuYw0KPj4+Pj4gQEAgLTAsMCArMSwxMzYgQEANCj4+Pj4+ICsvLyBTUERY
-LUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPj4+Pj4gKy8qDQo+Pj4+PiArICogQ29weXJp
-Z2h0IChjKSAyMDE4IGV4Y2VldCBlbGVjdHJvbmljcyBHbWJIDQo+Pj4+PiArICogQ29weXJpZ2h0
-IChjKSAyMDE4IEtvbnRyb24gRWxlY3Ryb25pY3MgR21iSA0KPj4+Pj4gKyAqDQo+Pj4+PiArICog
-QXV0aG9yOiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+
-Pj4+PiArICovDQo+Pj4+PiArDQo+Pj4+PiArI2luY2x1ZGUgPGxpbnV4L2RldmljZS5oPg0KPj4+
-Pj4gKyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCj4+Pj4+ICsjaW5jbHVkZSA8bGludXgvbXRk
-L3NwaW5hbmQuaD4NCj4+Pj4+ICsNCj4+Pj4+ICsjZGVmaW5lIFNQSU5BTkRfTUZSX1RPU0hJQkEg
-ICAgICAgICAgMHg5OA0KPj4+Pj4gKw0KPj4+Pj4gK3N0YXRpYyBTUElOQU5EX09QX1ZBUklBTlRT
-KHJlYWRfY2FjaGVfdmFyaWFudHMsDQo+Pj4+PiArICAgICAgICAgICAgIFNQSU5BTkRfUEFHRV9S
-RUFEX0ZST01fQ0FDSEVfWDRfT1AoMCwgMSwgTlVMTCwgMCksDQo+Pj4+PiArICAgICAgICAgICAg
-IFNQSU5BTkRfUEFHRV9SRUFEX0ZST01fQ0FDSEVfWDJfT1AoMCwgMSwgTlVMTCwgMCksDQo+Pj4+
-PiArICAgICAgICAgICAgIFNQSU5BTkRfUEFHRV9SRUFEX0ZST01fQ0FDSEVfT1AodHJ1ZSwgMCwg
-MSwgTlVMTCwgMCksDQo+Pj4+PiArICAgICAgICAgICAgIFNQSU5BTkRfUEFHRV9SRUFEX0ZST01f
-Q0FDSEVfT1AoZmFsc2UsIDAsIDEsIE5VTEwsIDApKTsNCj4+Pj4+ICsNCj4+Pj4+ICtzdGF0aWMg
-U1BJTkFORF9PUF9WQVJJQU5UUyh3cml0ZV9jYWNoZV92YXJpYW50cywNCj4+Pj4+ICsgICAgICAg
-ICAgICAgU1BJTkFORF9QUk9HX0xPQUQodHJ1ZSwgMCwgTlVMTCwgMCkpOw0KPj4+Pj4gKw0KPj4+
-Pj4gK3N0YXRpYyBTUElOQU5EX09QX1ZBUklBTlRTKHVwZGF0ZV9jYWNoZV92YXJpYW50cywNCj4+
-Pj4+ICsgICAgICAgICAgICAgU1BJTkFORF9QUk9HX0xPQUQoZmFsc2UsIDAsIE5VTEwsIDApKTsN
-Cj4+Pj4+ICsNCj4+Pj4+ICtzdGF0aWMgaW50IHRjNThjdmcyczBoX29vYmxheW91dF9lY2Moc3Ry
-dWN0IG10ZF9pbmZvICptdGQsIGludCBzZWN0aW9uLA0KPj4+Pj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBzdHJ1Y3QgbXRkX29vYl9yZWdpb24gKnJlZ2lvbikNCj4+Pj4+ICt7
-DQo+Pj4+PiArICAgICBpZiAoc2VjdGlvbiA+IDcpDQo+Pj4+PiArICAgICAgICAgICAgIHJldHVy
-biAtRVJBTkdFOw0KPj4+Pj4gKw0KPj4+Pj4gKyAgICAgcmVnaW9uLT5vZmZzZXQgPSAxMjggKyAx
-NiAqIHNlY3Rpb247DQo+Pj4+PiArICAgICByZWdpb24tPmxlbmd0aCA9IDE2Ow0KPj4+DQo+Pj4g
-SGVyZSB5b3UgZXhwb3NlIHRoZSBFQ0MgYml0cyBoYXMgOCBzZWN0aW9ucyBvZiAxNiBieXRlcy4N
-Cj4+PiBCdXQgcmVnYXJkaW5nIHRoZSBkYXRhc2hlZXQgdGhpcyBzaG91bGQgbm90IGJlIGFjY2Vz
-c2VkIHBhZ2UgMzIuDQo+Pj4gIlRoZSBFQ0MgcGFyaXR5IGNvZGUgZ2VuZXJhdGVkIGJ5IGludGVy
-bmFsIEVDQyBpcyBzdG9yZWQgaW4gY29sdW1uDQo+Pj4gYWRkcmVzc2VzIDQyMjQtNDM1MSBhbmQg
-dGhlIHVzZXJzIGNhbm5vdCBhY2Nlc3MgdG8gdGhlc2Ugc3BlY2lmaWMNCj4+PiBhZGRyZXNzZXMg
-d2hlbiBpbnRlcm5hbCBFQ0MgaXMgZW5hYmxlZC4iDQo+Pg0KPj4gVGhpcyBpcyBqdXN0IHRvIGxl
-dCB0aGUgb3RoZXIgbGF5ZXJzIGtub3csIHdoZXJlIHRoZSBieXRlcyB1c2VkIGZvciBFQ0MNCj4+
-IGFyZS4gQXMgbG9uZyBhcyB0aGUgZHJpdmVyIHVzZXMgdGhlIG9uLWNoaXAgRUNDIGl0IHdvbid0
-IHdyaXRlIHRvIHRoaXMNCj4+IGFyZWEuIFNvIHRoaXMgaXMgY29ycmVjdCB1bmxlc3MgSSBtaXN1
-bmRlcnN0b29kIHRoaXMgY29uY2VwdC4gQWxsIHRoZQ0KPj4gb3RoZXIgc3VwcG9ydGVkIFNQSSBO
-QU5EIGNoaXBzIHVzZSB0aGUgc2FtZSBhcHByb2FjaC4NCj4gDQo+IE9rIGZvciBub3Qgd3JpdGUs
-IGJ1dCBhcmUgeW91IHN1cmUgdGhhdCBpZiB3ZSB0cnkgdG8gcmVhZCB0aGVtIHRoZSBTUEkNCj4g
-d2lsbCByZXNwb25kIHNvbWV0aGluZyBsb2dpYyBhbmQgbm90IHNvbWUgZ2FyYmFnZSA/DQo+IFdo
-ZW4gSSByZWFkIHRoZSBkYXRhc2hlZXQgaXQgbG9va3MgbGlrZSB0aGF0IHRoZSByZWFkIGNtZCB3
-aWxsIHN0b3Agb3INCj4gc2VuZCBzb21lIHJhbmRvbSB2YWx1ZSB3aGVuIHRyeWluZyB0byByZWFk
-IHRoZXNlIGNvbHVtbnMuDQoNCk1heWJlIHlvdSBhcmUgcmlnaHQuIFRoZSBkYXRhc2hlZXQgc2F5
-cyB3ZSBzaG91bGRuJ3QgKmFjY2VzcyogRUNDIGJ5dGVzLCANCndoaWNoIGluY2x1ZGVzIHJlYWQg
-YW5kIHdyaXRlLg0KSSBndWVzcyBpdCB3b24ndCBodXJ0IHRvIGJsb2NrIGFjY2VzcyB0byB0aGUg
-RUNDIGJ5dGVzIGFzIHRoZXkgYXJlIA0KY3VycmVudGx5IG9mIG5vIHVzZSBhbnl3YXkgYW5kIEkg
-anVzdCBzYXcgdGhhdCB0aGUgTWFjcm9uaXggZHJpdmVyIGlzIA0KZG9pbmcgdGhlIHNhbWUuDQoN
-Cj4+Pj4+ICsNCj4+Pj4+ICsNCj4+Pj4+ICsgICAgIHJldHVybiAwOw0KPj4+Pj4gK30NCj4+Pj4+
-ICsNCj4+Pj4+ICtzdGF0aWMgaW50IHRjNThjdmcyczBoX29vYmxheW91dF9mcmVlKHN0cnVjdCBt
-dGRfaW5mbyAqbXRkLCBpbnQgc2VjdGlvbiwNCj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIHN0cnVjdCBtdGRfb29iX3JlZ2lvbiAqcmVnaW9uKQ0KPj4+Pj4gK3sNCj4+
-Pj4+ICsgICAgIGlmIChzZWN0aW9uID4gNykNCj4+Pj4+ICsgICAgICAgICAgICAgcmV0dXJuIC1F
-UkFOR0U7DQo+Pj4+PiArDQo+Pj4+PiArICAgICByZWdpb24tPm9mZnNldCA9IDIgKyAxNiAqIHNl
-Y3Rpb247DQo+Pj4+PiArICAgICByZWdpb24tPmxlbmd0aCA9IDE0Ow0KPj4+DQo+Pj4gVGhpcyBy
-ZXNlcnZlZCAyIGJ5dGVzIGZvciBCQk0gZm9yIGVhY2ggc2VjdGlvbi4NCj4+PiBCdXQgbWF5YmUg
-d2UgY291bGQgZGVjbGFyZSB0aGlzIGFzIDEgc2VjdGlvbiBvZiAxMjhieXRlczoNCj4+Pg0KPj4+
-IGlmIChzZWN0aW9uKQ0KPj4+ICAgICAgICAgICAgcmV0dXJuIC1FUkFOR0U7DQo+Pj4NCj4+PiBy
-ZWdpb24tPm9mZnNldCA9IDI7DQo+Pj4gcmVnaW9uLT5sZW5ndGggPSAxMjY7DQo+Pg0KPj4gVGhl
-IGRhdGFzaGVldCAocC4gMzIpIGRlc2NyaWJlcyB0aGF0IHRoZSBPT0IgZGF0YSBvZiBhIHBhZ2Ug
-aXMgZGl2aWRlZA0KPj4gaW50byA4IHNlY3Rpb25zLiBTbyB3aHkgc2hvdWxkIHdlIG5vdCByZWZs
-ZWN0IHRoaXMgaW4gdGhlIHNvZnR3YXJlPw0KPj4gUHJvYmFibHkgaXQgd291bGQgYmUgc3VmZmlj
-aWVudCB0byByZXNlcnZlIHR3byBieXRlcyBmb3IgdGhlIGJhZCBibG9jaw0KPj4gbWFya2VyIGF0
-IHRoZSBiZWdpbm5pbmcsIGluc3RlYWQgb2YgdHdvIGJ5dGVzIGluIGVhY2ggc2VjdGlvbi4gQnV0
-IEknbQ0KPj4gbm90IHN1cmUgYWJvdXQgdGhpcyBhbmQgaXQgZG9lc24ndCByZWFsbHkgaHVydC4N
-Cj4gDQo+IElmIHRoZSBPT0IgYXJlIHVzZWQgb25lIGRheSAoSSB0aGluayBpdCdzIG5vdCB0aGUg
-Y2FzZSBhY3R1YWxseSksIEl0DQo+IHdpbGwgYmUgbW9yZSBlZmZpY2llbnQgdG8gZG8gb25seSBv
-bmUgcmVxdWVzdC4NCg0KT2ssIGFuZCBldmVuIG1vcmUgc28gd2UgYWxyZWFkeSBoYXZlIGEgZGVm
-YXVsdCBPT0IgbGF5b3V0IGluIHRoZSBjb3JlIA0KZHJpdmVyLCB0aGF0IGNvdWxkIGJlIHJldXNl
-ZCBmb3IgdGhpcyBjYXNlIGFuZCBhbHNvIGluIG90aGVyIFNQSSBOQU5EIA0KZHJpdmVycy4gU28g
-d2UgY291bGQgYWN0dWFsbHkgZ2V0IHJpZCBvZiBhIGZldyBsaW5lcyBvZiBjb2RlLg0KDQpUaGFu
-a3MsDQpGcmllZGVyDQoNCj4+Pj4+ICsNCj4+Pj4+DQo+Pj4+PiArICAgICByZXR1cm4gMDsNCj4+
-Pj4+ICt9DQo+Pj4+PiArDQo+Pj4+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBtdGRfb29ibGF5b3V0
-X29wcyB0YzU4Y3ZnMnMwaF9vb2JsYXlvdXQgPSB7DQo+Pj4+PiArICAgICAuZWNjID0gdGM1OGN2
-ZzJzMGhfb29ibGF5b3V0X2VjYywNCj4+Pj4+ICsgICAgIC5mcmVlID0gdGM1OGN2ZzJzMGhfb29i
-bGF5b3V0X2ZyZWUsDQo+Pj4+PiArfTsNCj4+Pj4+ICsNCj4+Pj4+ICtzdGF0aWMgaW50IHRjNThj
-dmcyczBoX2VjY19nZXRfc3RhdHVzKHN0cnVjdCBzcGluYW5kX2RldmljZSAqc3BpbmFuZCwNCj4+
-Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHU4IHN0YXR1cykNCj4+Pj4+
-ICt7DQo+Pj4+PiArICAgICBzdHJ1Y3QgbmFuZF9kZXZpY2UgKm5hbmQgPSBzcGluYW5kX3RvX25h
-bmQoc3BpbmFuZCk7DQo+Pj4+PiArICAgICB1OCBtYmYgPSAwOw0KPj4+Pj4gKyAgICAgc3RydWN0
-IHNwaV9tZW1fb3Agb3AgPSBTUElOQU5EX0dFVF9GRUFUVVJFX09QKDB4MzAsICZtYmYpOw0KPj4+
-Pj4gKw0KPj4+Pj4gKyAgICAgc3dpdGNoIChzdGF0dXMgJiBTVEFUVVNfRUNDX01BU0spIHsNCj4+
-Pj4+ICsgICAgIGNhc2UgU1RBVFVTX0VDQ19OT19CSVRGTElQUzoNCj4+Pj4+ICsgICAgICAgICAg
-ICAgcmV0dXJuIDA7DQo+Pj4+PiArDQo+Pj4+PiArICAgICBjYXNlIFNUQVRVU19FQ0NfVU5DT1Jf
-RVJST1I6DQo+Pj4+PiArICAgICAgICAgICAgIHJldHVybiAtRUJBRE1TRzsNCj4+Pj4+ICsNCj4+
-Pj4+ICsgICAgIGNhc2UgU1RBVFVTX0VDQ19IQVNfQklURkxJUFM6DQo+Pj4+PiArICAgICAgICAg
-ICAgIC8qDQo+Pj4+PiArICAgICAgICAgICAgICAqIExldCdzIHRyeSB0byByZXRyaWV2ZSB0aGUg
-cmVhbCBtYXhpbXVtIG51bWJlciBvZiBiaXRmbGlwcw0KPj4+Pj4gKyAgICAgICAgICAgICAgKiBp
-biBvcmRlciB0byBhdm9pZCBmb3JjaW5nIHRoZSB3ZWFyLWxldmVsaW5nIGxheWVyIHRvbW92ZQ0K
-Pj4+Pj4gKyAgICAgICAgICAgICAgKiBkYXRhIGFyb3VuZCBpZiBpdCdzIG5vdCBuZWNlc3Nhcnku
-DQo+Pj4+PiArICAgICAgICAgICAgICAqLw0KPj4+Pj4gKyAgICAgICAgICAgICBpZiAoc3BpX21l
-bV9leGVjX29wKHNwaW5hbmQtPnNwaW1lbSwgJm9wKSkNCj4+Pj4+ICsgICAgICAgICAgICAgICAg
-ICAgICByZXR1cm4gbmFuZC0+ZWNjcmVxLnN0cmVuZ3RoOw0KPj4+Pj4gKw0KPj4+Pj4gKyAgICAg
-ICAgICAgICBtYmYgPj49IDQ7DQo+Pj4+PiArDQo+Pj4+PiArICAgICAgICAgICAgIGlmIChXQVJO
-X09OKG1iZiA+IG5hbmQtPmVjY3JlcS5zdHJlbmd0aCB8fCAhbWJmKSkNCj4+Pj4+ICsgICAgICAg
-ICAgICAgICAgICAgICByZXR1cm4gbmFuZC0+ZWNjcmVxLnN0cmVuZ3RoOw0KPj4+Pj4gKw0KPj4+
-Pj4gKyAgICAgICAgICAgICByZXR1cm4gbWJmOw0KPj4+Pj4gKw0KPj4+DQo+Pj4gVGhlc2UgdGFr
-ZSB0YWtlIGNhcmUgb2YgMCwgMHgxIGFuZCAweDIgYnV0IG5vdCAweDMgd2hpY2ggaXMgdmFsaWQN
-Cj4+DQo+PiBIbSwgeW91J3JlIHJpZ2h0LiBXZSBkb24ndCBjYXJlIGlmIGl0IGlzIDB4MSBvciAw
-eDMgKGJvdGggbWVhbiB0aGF0DQo+PiBiaXRmbGlwcyB3ZXJlIGNvcnJlY3RlZCksIGJ1dCB3ZSBj
-dXJyZW50bHkgb25seSBjaGVjayBmb3IgMHgxLg0KPj4NCj4+IEkgd2lsbCBzZW5kIGEgZml4IGZv
-ciB0aGlzIHRvbW9ycm93Lg0KPj4NCj4+IFRoYW5rcywNCj4+IEZyaWVkZXINCj4+DQo+Pj4gcGFn
-ZSAyNiBvZiB0aGUgZGF0YXNoZWV0IDoNCj4+Pg0KPj4+IEVDQyBzdGF0dXMgYml0cyBpbmRpY2F0
-ZSB0aGUgc3RhdHVzIG9mIGludGVybmFsIEVDQyBvcGVyYXRpb24NCj4+PiAwMGI6IE5vIGJpdCBm
-bGlwcyB3ZXJlIGRldGVjdGVkIGluIHByZXZpb3VzIHBhZ2UgcmVhZC4NCj4+PiAwMWI6IEJpdCBm
-bGlwcyB3ZXJlIGRldGVjdGVkIGFuZCBjb3JyZWN0ZWQuIEJpdCBmbGlwIGNvdW50IGRpZCBub3QN
-Cj4+PiBleGNlZWQgdGhlIGJpdCBmbGlwIGRldGVjdGlvbiB0aHJlc2hvbGQuIFRoZSB0aHJlc2hv
-bGQgaXMgc2V0IGJ5IGJpdHMNCj4+PiBbNzo0XSBpbiBhZGRyZXNzIDEwaCBpbiB0aGUgZmVhdHVy
-ZSB0YWJsZS4NCj4+PiAxMGI6IE11bHRpcGxlIGJpdCBmbGlwcyB3ZXJlIGRldGVjdGVkIGFuZCBu
-b3QgY29ycmVjdGVkLg0KPj4+IDExYjogQml0IGZsaXBzIHdlcmUgZGV0ZWN0ZWQgYW5kIGNvcnJl
-Y3RlZC4gQml0IGZsaXAgY291bnQgZXhjZWVkZWQNCj4+PiB0aGUgYml0IGZsaXAgZGV0ZWN0aW9u
-IHRocmVzaG9sZC4gVGhlIHRocmVzaG9sZCBpcyBzZXQgYnkgYml0cyBbNzo0XQ0KPj4+IGluIGFk
-ZHJlc3MgMTBoIGluIHRoZSBmZWF0dXJlIHRhYmxlDQo+Pj4NCj4+PiBSZWdhcmRzLA0KPj4+IENs
-ZW1lbnQNCj4+Pg0KPj4+Pj4gKyAgICAgZGVmYXVsdDoNCj4+Pj4+ICsgICAgICAgICAgICAgYnJl
-YWs7DQo+Pj4+PiArICAgICB9DQo+Pj4+PiArDQo+Pj4+PiArICAgICByZXR1cm4gLUVJTlZBTDsN
-Cj4+Pj4+ICt9DQo+Pj4+PiArDQo+Pj4+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzcGluYW5kX2lu
-Zm8gdG9zaGliYV9zcGluYW5kX3RhYmxlW10gPSB7DQo+Pj4+PiArICAgICBTUElOQU5EX0lORk8o
-IlRDNThDVkcyUzBIIiwgMHhDRCwNCj4+Pj4+ICsgICAgICAgICAgICAgICAgICBOQU5EX01FTU9S
-RygxLCA0MDk2LCAyNTYsIDY0LCAyMDQ4LCAxLCAxLCAxKSwNCj4+Pj4+ICsgICAgICAgICAgICAg
-ICAgICBOQU5EX0VDQ1JFUSg4LCA1MTIpLA0KPj4+Pj4gKyAgICAgICAgICAgICAgICAgIFNQSU5B
-TkRfSU5GT19PUF9WQVJJQU5UUygmcmVhZF9jYWNoZV92YXJpYW50cywNCj4+Pj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJndyaXRlX2NhY2hlX3ZhcmlhbnRz
-LA0KPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmdXBk
-YXRlX2NhY2hlX3ZhcmlhbnRzKSwNCj4+Pj4+ICsgICAgICAgICAgICAgICAgICBTUElOQU5EX0hB
-U19RRV9CSVQsDQo+Pj4+PiArICAgICAgICAgICAgICAgICAgU1BJTkFORF9FQ0NJTkZPKCZ0YzU4
-Y3ZnMnMwaF9vb2JsYXlvdXQsDQo+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHRjNThjdmcyczBoX2VjY19nZXRfc3RhdHVzKSksDQo+Pj4+PiArfTsNCj4+Pj4+ICsNCj4+
-Pj4+ICtzdGF0aWMgaW50IHRvc2hpYmFfc3BpbmFuZF9kZXRlY3Qoc3RydWN0IHNwaW5hbmRfZGV2
-aWNlICpzcGluYW5kKQ0KPj4+Pj4gK3sNCj4+Pj4+ICsgICAgIHU4ICppZCA9IHNwaW5hbmQtPmlk
-LmRhdGE7DQo+Pj4+PiArICAgICBpbnQgcmV0Ow0KPj4+Pj4gKw0KPj4+Pj4gKyAgICAgLyoNCj4+
-Pj4+ICsgICAgICAqIFRvc2hpYmEgU1BJIE5BTkQgcmVhZCBJRCBuZWVkcyBhIGR1bW15IGJ5dGUs
-DQo+Pj4+PiArICAgICAgKiBzbyB0aGUgZmlyc3QgYnl0ZSBpbiBpZCBpcyBnYXJiYWdlLg0KPj4+
-Pj4gKyAgICAgICovDQo+Pj4+PiArICAgICBpZiAoaWRbMV0gIT0gU1BJTkFORF9NRlJfVE9TSElC
-QSkNCj4+Pj4+ICsgICAgICAgICAgICAgcmV0dXJuIDA7DQo+Pj4+PiArDQo+Pj4+PiArICAgICBy
-ZXQgPSBzcGluYW5kX21hdGNoX2FuZF9pbml0KHNwaW5hbmQsIHRvc2hpYmFfc3BpbmFuZF90YWJs
-ZSwNCj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgQVJSQVlfU0laRSh0
-b3NoaWJhX3NwaW5hbmRfdGFibGUpLA0KPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBpZFsyXSk7DQo+Pj4+PiArICAgICBpZiAocmV0KQ0KPj4+Pj4gKyAgICAgICAgICAg
-ICByZXR1cm4gcmV0Ow0KPj4+Pj4gKw0KPj4+Pj4gKyAgICAgcmV0dXJuIDE7DQo+Pj4+PiArfQ0K
-Pj4+Pj4gKw0KPj4+Pj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc3BpbmFuZF9tYW51ZmFjdHVyZXJf
-b3BzIHRvc2hpYmFfc3BpbmFuZF9tYW51Zl9vcHMgPSB7DQo+Pj4+PiArICAgICAuZGV0ZWN0ID0g
-dG9zaGliYV9zcGluYW5kX2RldGVjdCwNCj4+Pj4+ICt9Ow0KPj4+Pj4gKw0KPj4+Pj4gK2NvbnN0
-IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciB0b3NoaWJhX3NwaW5hbmRfbWFudWZhY3R1cmVy
-ID0gew0KPj4+Pj4gKyAgICAgLmlkID0gU1BJTkFORF9NRlJfVE9TSElCQSwNCj4+Pj4+ICsgICAg
-IC5uYW1lID0gIlRvc2hpYmEiLA0KPj4+Pj4gKyAgICAgLm9wcyA9ICZ0b3NoaWJhX3NwaW5hbmRf
-bWFudWZfb3BzLA0KPj4+Pj4gK307DQo+Pj4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9t
-dGQvc3BpbmFuZC5oIGIvaW5jbHVkZS9saW51eC9tdGQvc3BpbmFuZC5oDQo+Pj4+PiBpbmRleCAw
-ODhmZjk2Li44MTZjNGIwIDEwMDY0NA0KPj4+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9tdGQvc3Bp
-bmFuZC5oDQo+Pj4+PiArKysgYi9pbmNsdWRlL2xpbnV4L210ZC9zcGluYW5kLmgNCj4+Pj4+IEBA
-IC0xOTYsNiArMTk2LDcgQEAgc3RydWN0IHNwaW5hbmRfbWFudWZhY3R1cmVyIHsNCj4+Pj4+ICAg
-ICAvKiBTUEkgTkFORCBtYW51ZmFjdHVyZXJzICovDQo+Pj4+PiAgICAgZXh0ZXJuIGNvbnN0IHN0
-cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciBtYWNyb25peF9zcGluYW5kX21hbnVmYWN0dXJlcjsN
-Cj4+Pj4+ICAgICBleHRlcm4gY29uc3Qgc3RydWN0IHNwaW5hbmRfbWFudWZhY3R1cmVyIG1pY3Jv
-bl9zcGluYW5kX21hbnVmYWN0dXJlcjsNCj4+Pj4+ICtleHRlcm4gY29uc3Qgc3RydWN0IHNwaW5h
-bmRfbWFudWZhY3R1cmVyIHRvc2hpYmFfc3BpbmFuZF9tYW51ZmFjdHVyZXI7DQo+Pj4+PiAgICAg
-ZXh0ZXJuIGNvbnN0IHN0cnVjdCBzcGluYW5kX21hbnVmYWN0dXJlciB3aW5ib25kX3NwaW5hbmRf
-bWFudWZhY3R1cmVyOw0KPj4+Pj4NCj4+Pj4+ICAgICAvKioNCj4+Pj4+
+When the kernel is compiled with -ffunction-sections and perf uses the
+kernel debuginfo, perf fails the very first symbol lookup and ends up with
+an hex offset inside [kernel.vmlinux]. It's due to how perf loads the maps.
+
+Indeed only .text gets loaded by map_groups__find() into al->map.
+Consequently al->map address range encompass the whole kernel image.
+But then map__load() loads many function maps by splitting al->map,
+which reduces al->map range drastically. Very likely the target address is
+then in one of those newly created function maps, so we need to lookup the
+map again to find that new map.
+
+I'm not sure if this issue is only specific to the kernel but at least it
+occurs withe the kernel dso, and when we're not using the kernel debuginfo,
+perf will fallback to using kallsyms and then the first lookup will work.
+
+The split of .text section happens in dso_process_kernel_symbol() where we
+call map_groups__find_by_name() to find an existing map, but with
+-ffunction-sections and a symbol belonging to a new (function) map, such
+map doesn't exist yet so we end up creating one and adjusting existing maps
+accordingly because adjust_kernel_syms is set there.
+
+This patch makes sure that the event address we're looking-up is indeed
+within the map we've found, otherwise we lookup another map again.
+Only one extra lookup at most is required for the proper map to be found,
+if it exists.
+
+Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+---
+ tools/perf/util/event.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 47 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index e9c108a..be333a9 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1569,9 +1569,54 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
+ 		 * Kernel maps might be changed when loading symbols so loading
+ 		 * must be done prior to using kernel maps.
+ 		 */
+-		if (load_map)
++		if (load_map) {
++			/*
++			 * Note when using -ffunction-sections on the kernel:
++			 *
++			 * Only .text got loaded into al->map at this point.
++			 * Consequently al->map address range encompass the
++			 * whole image.
++			 *
++			 * map__load() will split this map into many function
++			 * maps by shrinking al->map accordingly.
++			 *
++			 * The split happens in dso_process_kernel_symbol()
++			 * where we call map_groups__find_by_name() to find an
++			 * existing map, but with -ffunction-sections and a
++			 * symbol belonging to a new (function) map, such map
++			 * doesn't exist yet so we end up creating one and
++			 * adjusting existing maps accordingly because
++			 * adjust_kernel_syms is set there.
++			 */
++
+ 			map__load(al->map);
+-		al->addr = al->map->map_ip(al->map, al->addr);
++
++			/*
++			 * Note when using -ffunction-sections on the kernel:
++			 *
++			 * Very likely the target address will now be in one of
++			 * the newly created function maps but al->map still
++			 * points to .text which has been drastically shrank by
++			 * the split done in map__load()
++			 */
++			if (al->addr < al->map->start ||
++			    al->addr >= al->map->end)
++				al->map = map_groups__find(mg, al->addr);
++
++			/*
++			 * map_groups__find() should always find a map because
++			 * the target address was initially found in .text which
++			 * got split *without introducing gaps* by map__load()
++			 */
++		}
++
++		/*
++		 * In case the later call to map_groups__find() didn't find a
++		 * suitable map (it should always, but better be safe) we make
++		 * sure that al->map is still valid before deferencing it.
++		 */
++		if (al->map != NULL)
++			al->addr = al->map->map_ip(al->map, al->addr);
+ 	}
+ 
+ 	return al->map;
+-- 
+1.8.3.1
+
