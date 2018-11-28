@@ -2,136 +2,142 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA78C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87335C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2AF22082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zny1c7BP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2AF22082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A7AB2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7AB2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbeK1Lte (ORCPT
+        id S1726783AbeK1Lxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 06:49:34 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43784 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeK1Ltd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 06:49:33 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x1so14990658vsc.10;
-        Tue, 27 Nov 2018 16:49:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=9Fj4VPKXTz+zDbfOg3vokqFUCnPRrhHLLywuO5TdcIA=;
-        b=Zny1c7BPYRV+GhI4U2Apop64DxXVGgI2xWDaRfObOjzknn8rbTZsvmlzZOp8qXbsXV
-         3tC/0rKzRWMmCjtWf76dTgxt+J+8t0RGMt9xsZkdTsLZ/bDVgXoM+Af+7H+2qlpr//Oe
-         +tvkENdilPBabvy11Mgj8NlHlfPt/lM1yfPJ2lJhuatCjQhpv4JDnpIdOyEi1U81yCam
-         rMabm75cJZHQdVgAzqhdgtm/+3ZuukKYGZLfKQKb6CBoCz+cOkb8XbRrMnPcn9UBcq9/
-         Oxt6/4ArKzWsL9QqF0ey1saq2h1FJ2rfzNdMSOrj6L+Dh8Bep2/oh0AdNNAOF7W/5xCo
-         oP2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=9Fj4VPKXTz+zDbfOg3vokqFUCnPRrhHLLywuO5TdcIA=;
-        b=lJ9bzGFQQb7Tx0Gks3+c86hjR3Ba1JJxfwBx5VXjYTs24EtoN3R6/96hsbBJffu4oj
-         KLtvbIUbEgPkIBtobfFTHVq0ow087vuHUgTk+g9SVdUe/8gS+yVbEpj8XmFDsuywlm9B
-         B59lW6qc0445+seN7eoGMGQQt8eTgDcDVqW0AacrxBo5SSPXyIXy/Hls1s/85VAZwLSl
-         MdA7EW51M72uRGtMPkizVruOFLNqAZenIsOVpbXrArKsLjzNGa6y1TqzVmOMffhpExRz
-         1rAG0i991tYb6XPUxaG5pAIDCCpvRPESxntN1aek0a4e1XzjOJNS6lm4D2efh7fj9vVQ
-         /ulQ==
-X-Gm-Message-State: AA+aEWZNEh2imW2Ij2JJ+alSIIhK1BP6J4cbv5cB4fZpIhQiE6jqpQiU
-        68n3uSLg7aR3zmswkMNYCA==
-X-Google-Smtp-Source: AFSGD/UDxelITMZxAijic3t+UF4VOKCzxB+nVtIK9btI7xpB4ea98hK5Pt4Jg9gF21wfihHACXfyIw==
-X-Received: by 2002:a67:da93:: with SMTP id w19mr12390322vsj.144.1543366190693;
-        Tue, 27 Nov 2018 16:49:50 -0800 (PST)
-Received: from 960 (c-98-244-175-192.hsd1.ga.comcast.net. [98.244.175.192])
-        by smtp.gmail.com with ESMTPSA id l123sm1658175vsd.26.2018.11.27.16.49.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 16:49:49 -0800 (PST)
-Message-ID: <789965489e73fd543f0552090063fdff69363497.camel@gmail.com>
-Subject: Re: [PATCH v7 2/3] x86: add support for Huawei WMI hotkeys.
-From:   ayman.bagabas@gmail.com
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Cc:     ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Date:   Tue, 27 Nov 2018 19:49:48 -0500
-In-Reply-To: <CAHp75Vd_k3Gu93hOUOLXD90O_eM3wy2K3QfMN0789PQEOixS=w@mail.gmail.com>
-References: <20181127025752.6459-1-ayman.bagabas@gmail.com>
-         <20181127025752.6459-3-ayman.bagabas@gmail.com>
-         <s5hwooyye9c.wl-tiwai@suse.de>
-         <CAHp75Vd_k3Gu93hOUOLXD90O_eM3wy2K3QfMN0789PQEOixS=w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 06:53:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48402 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbeK1Lxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:53:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E143AAC38;
+        Wed, 28 Nov 2018 00:53:56 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     "J. Bruce Fields" <bfields@redhat.com>,
+        kernel test robot <rong.a.chen@intel.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Date:   Wed, 28 Nov 2018 11:53:48 +1100
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>, lkp@01.org,
+        linux-nfs@vger.kernel.org
+Subject: [PATCH] locks: fix performance regressions.
+In-Reply-To: <87mupup0ot.fsf@notabene.neil.brown.name>
+References: <20181127060102.GF6163@shao2-debian> <20181127174315.GA29963@parsley.fieldses.org> <87mupup0ot.fsf@notabene.neil.brown.name>
+Message-ID: <87k1kyowdf.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-27 at 17:52 +0200, Andy Shevchenko wrote:
-> On Tue, Nov 27, 2018 at 1:02 PM Takashi Iwai <tiwai@suse.de> wrote:
-> > On Tue, 27 Nov 2018 03:57:48 +0100,
-> > Ayman Bagabas wrote:
-> > > +     handle = ACPI_HANDLE(&inputdev->dev);
-> > > +     args[0].type = args[1].type = args[2].type =
-> > > ACPI_TYPE_INTEGER;
-> > > +     args[1].integer.value = 0x04;
-> > > +
-> > > +     if (acpi_has_method(handle, method =
-> > > "\\_SB.PCI0.LPCB.EC0.SPIN")) {
-> > 
-> > This looks ugly...  And checkpatch also complains.
-> 
-> Good point.
-> Actually another question is what handle do we get here? Can we check
-> method name by relative path, i.e. "SPIN" / "WPIN" instead?
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The handle is a NULL handle at "\". Should I use acpi_get_handle(NULL,
-"\\_SB.PCI0.LPCB.EC0", &handle)?  EC0 is a acpi device HID:PNP0C09.
 
-> 
-> > > +             args[0].integer.value = 0;
-> > > +             args[2].integer.value = on ? 1 : 0;
-> > > +     } else if (acpi_has_method(handle, method =
-> > > "\\_SB.PCI0.LPCB.EC0.WPIN")) {
-> > > +             args[0].integer.value = 1;
-> > > +             args[2].integer.value = on ? 0 : 1;
-> > > +     } else {
-> > > +             dev_err(&inputdev->dev, "Unable to find ACPI
-> > > method\n");
-> > > +             return -ENOSYS;
-> > > +     }
-> > 
-> > Can these checks be done at initialization phase?  It doesn't seem
-> > needed to be executed at each call.
-> 
-> Agree.
-> 
+The kernel test robot reported two performance regressions
+caused by recent patches.
+Both appear to related to the global spinlock blocked_lock_lock
+being taken more often.
 
-Even if it was done in init phase, we still need to check what acpi
-method should be used and based on that and micmute status we set the
-arguments args[0] and args[2], args[1] is the pin value. We could check
-these using event_guid, but that would assume the methods exist for
-each guid.
-For example, if event_guid == MBX_EVENT_GUID, then method SPIN should
-be used.
+This patch avoids taking that lock in the cases tested.
 
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+
+Hi Jeff,
+ you might like to merge these back into the patches that introduced
+ the problem.
+ Or you might like me to re-send the series with these merged in,
+ in which case, please ask.
+
+ And a BIG thank-you to the kernel-test-robot team!!
+
+Thanks,
+NeilBrown
+
+ fs/locks.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index f456cd3d9d50..67519a43e27a 100644
+=2D-- a/fs/locks.c
++++ b/fs/locks.c
+@@ -444,6 +444,13 @@ static void locks_move_blocks(struct file_lock *new, s=
+truct file_lock *fl)
+ {
+ 	struct file_lock *f;
+=20
++	/*
++	 * As ctx->flc_lock is held, new requests cannot be added to
++	 * ->fl_blocked_requests, so we don't need a lock to check if it
++	 * is empty.
++	 */
++	if (list_empty(&fl->fl_blocked_requests))
++		return;
+ 	spin_lock(&blocked_lock_lock);
+ 	list_splice_init(&fl->fl_blocked_requests, &new->fl_blocked_requests);
+ 	list_for_each_entry(f, &fl->fl_blocked_requests, fl_blocked_member)
+@@ -749,6 +756,20 @@ int locks_delete_block(struct file_lock *waiter)
+ {
+ 	int status =3D -ENOENT;
+=20
++	/*
++	 * If fl_blocker is NULL, it won't be set again as this thread
++	 * "owns" the lock and is the only one that might try to claim
++	 * the lock.  So it is safe to test fl_blocker locklessly.
++	 * Also if fl_blocker is NULL, this waiter is not listed on
++	 * fl_blocked_requests for some lock, so no other request can
++	 * be added to the list of fl_blocked_requests for this
++	 * request.  So if fl_blocker is NULL, it is safe to
++	 * locklessly check if fl_blocked_requests is empty.  If both
++	 * of these checks succeed, there is no need to take the lock.
++	 */
++	if (waiter->fl_blocker =3D=3D NULL &&
++	    list_empty(&waiter->fl_blocked_requests))
++		return status;
+ 	spin_lock(&blocked_lock_lock);
+ 	if (waiter->fl_blocker)
+ 		status =3D 0;
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlv95xwACgkQOeye3VZi
+gbk0jBAAjDCBtfHca0W64cD2SH8WRTmbw4F0oGVbrS63g96xW8ap6IkKDQYIV2d2
+D2yHOyySmAhmQqKhG2sfcz5W3Mtib5FiauzVES7iz+o5cAvBErCzALfq3B76mBlY
+Q3MnSGLge46xOpENsfUxkuboH/v3fYBIBdB/c7lK45XU32c8CJ6fRZzrBhn9lVI4
+Ege1P1rpJiXMALuN/Csc0Lr9uX9PO7fQd9mvX/79noV2L02hzu7VytZ8XEoXnzFM
+o/2gdSLmlSeCijH/t2loq8A6DPvuAhKTOHfkO4QNZFLQ9N6n9EizdpRhDbQtXlfZ
+d3Hp3p3mf9/BtrNcYiNW85LEbffLhPH8mWTzt6aT5owd3Xx0KExQXQjakr7Rj2fp
+EDXCpnilzSuh5Ia55nWGmBAA/hMeJYtKqp6mpErVkElFf/1qh3LbH7ixhlDJu+sp
+AmOQm+E26V8nbTUWst4j8wIEq/ux4uzkRGlLqLGHbA0T9TZlyslGBrIl4/edJbZz
++ucFrjlzy1RSm7P86UvzV1s0cAgh9VS8Yto5/Ou26ZXrHIf+IjnAKPtF1q7lb+co
+sGDxbLvHABmkTmaNs0NS6DFM3P2nIOgEb4pGCcYI8hJtu+KcuTZlKRwMP4PlALzc
+frcFONJYdcwl5Ad1ZY32hi2v8q/LfnEX6OA38n/XJxR5KtFz7YY=
+=R6to
+-----END PGP SIGNATURE-----
+--=-=-=--
