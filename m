@@ -2,265 +2,166 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2BAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945EFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C642E206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C642E206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E542206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ymxyDDzM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E542206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbeK2DiF (ORCPT
+        id S1729027AbeK2Diw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:38:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:45178 "EHLO foss.arm.com"
+        Wed, 28 Nov 2018 22:38:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728413AbeK2DiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:38:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9E783644;
-        Wed, 28 Nov 2018 08:35:50 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8336C3F5AF;
-        Wed, 28 Nov 2018 08:35:48 -0800 (PST)
-Date:   Wed, 28 Nov 2018 16:35:46 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-Message-ID: <20181128163545.GE23094@e110439-lin>
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
- <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
- <20181128100241.GA2131@hirez.programming.kicks-ass.net>
- <20181128115336.GB23094@e110439-lin>
- <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
- <20181128144039.GC23094@e110439-lin>
- <CAKfTPtAR7otTTwKYbg5OWbgrUYNKBNsUnOcMS9CfQtbYspvO5A@mail.gmail.com>
- <20181128152133.GD23094@e110439-lin>
- <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
+        id S1728851AbeK2Div (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 22:38:51 -0500
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52E3B214DA;
+        Wed, 28 Nov 2018 16:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543422996;
+        bh=K6dvJOWnWwclndwiLaXgPxED1CnjOMJJUnJllxffuXM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ymxyDDzMznsJRNiKocnZ5Xh3VeHnn1FzAJ/+6Kf/W7i3L9vSUn031+mmEbri7EPps
+         2GdIcy/a5gqZD+9v9M+vDAUQ0x2/NR+n4vzYEk7GvaSHjyRHp1o49mCpQybQVpg7ys
+         2k8F+ga6Reobx8Uz1lGEdFXQHq5IxbYzPZsi7naw=
+Received: by mail-qk1-f177.google.com with SMTP id y78so6394326qka.12;
+        Wed, 28 Nov 2018 08:36:36 -0800 (PST)
+X-Gm-Message-State: AA+aEWZZYK6DP/4Hp+V3AxHskoDgy6gl9D6WWeVxZP4ZSZGZXdmBIwbt
+        mTY8lERjAPRnlyRC6S8aFhOidvUDFyAPW408Zg==
+X-Google-Smtp-Source: AFSGD/V+0/aKIdHPZe/wskc7jnwZGcWO8gd65Yvwt+cvVsSOlvP4yYlo/ddN01GIzHr8onJO7dQa7GsodvHdhR8Zr/4=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr34872725qkg.147.1543422995313;
+ Wed, 28 Nov 2018 08:36:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181121150709.6030-1-TheSven73@googlemail.com>
+ <20181121150709.6030-7-TheSven73@googlemail.com> <20181126220804.GA23069@bogus>
+ <CAGngYiWBBe7P80ASQJnS8woe6SKLgNUmqKxOHMeyV1fGSCpY_w@mail.gmail.com>
+In-Reply-To: <CAGngYiWBBe7P80ASQJnS8woe6SKLgNUmqKxOHMeyV1fGSCpY_w@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 28 Nov 2018 10:36:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
+Message-ID: <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
+Subject: Re: [PATCH anybus v4 6/7] dt-bindings: anybuss-host: document
+ devicetree binding
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Garry <john.garry@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-Nov 16:42, Vincent Guittot wrote:
-> On Wed, 28 Nov 2018 at 16:21, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+On Wed, Nov 28, 2018 at 9:38 AM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+>
+> Rob, thank you so much for the review !
+>
+> On Mon, Nov 26, 2018 at 5:08 PM Rob Herring <robh@kernel.org> wrote:
+>
+> > Unit-addresses are based on 'reg'. So this should either be '89' or
+> > based on a definition for the bus (e.g. PCI uses dev and func).
 > >
-> > On 28-Nov 15:55, Vincent Guittot wrote:
-> > > On Wed, 28 Nov 2018 at 15:40, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > > >
-> > > > On 28-Nov 14:33, Vincent Guittot wrote:
-> > > > > On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > > > > >
-> > > > > > On 28-Nov 11:02, Peter Zijlstra wrote:
-> > > > > > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
-> > > > > > >
-> > > > > > > > Is there anything else that I should do for these patches ?
-> > > > > > >
-> > > > > > > IIRC, Morten mention they break util_est; Patrick was going to explain.
-> > > > > >
-> > > > > > I guess the problem is that, once we cross the current capacity,
-> > > > > > strictly speaking util_avg does not represent anymore a utilization.
-> > > > > >
-> > > > > > With the new signal this could happen and we end up storing estimated
-> > > > > > utilization samples which will overestimate the task requirements.
-> > > > > >
-> > > > > > We will have a spike in estimated utilization at next wakeup, since we
-> > > > > > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
-> > > > > > case we collect multiple samples above the current capacity.
-> > > > >
-> > > > > TBH I don't see how it's different from current implementation with a
-> > > > > task that was scheduled on big core and now wakes up on little core.
-> > > > > The util_est is overestimated as well.
-> > > >
-> > > > While running below the capacity of a CPU, either big or LITTLE, we
-> > > > can still measure the actual used bandwidth as long as we have idle
-> > > > time. If the task is then moved into a lower capacity core, I think
-> > > > it's still safe to assume that, likely, it would need more capacity.
-> > > >
-> > > > Why do you say it's the same ?
-> > >
-> > > In the example of a task that runs 39ms in period of 80ms that we used
-> > > during previous version,
-> > > the utilization on the big core will reach 709 so will util_est too
-> > > When the task migrates on little core (512), util_est is higher than
-> > > current cpu capacity
+> >> +                     reg = <0x0089>;
 > >
-> > Right, and what's the problem ?
-> 
-> you worry about an util_est being higher than capacity which is the case there
+> > Is fieldbus type how one addresses a device on the bus?
+>
+> I'm afraid not. Anybus cards don't have an address, because only a single card
+> can be connected to an anybus at a time.
 
-I worry about util_est being higher then the capacity the task WAS
-running... not the capacity the task IS running... if that value does
-not correspond to what the task really need... (more on that at the
-end).
+Then you don't need reg as you should only have 1 child node.
 
-> > 1) We know that PELT is calibrated to 32ms period task and in your
-> >    example, since the runtime is higher then the half-life, it's
-> >    correct to estimate a utilization higher then 50%.
-> >
-> >    PELT utilization is defined _based on the half-life_: thus
-> >    your task having a 50% duty cycle does not mean we are not correct
-> >    if report a utilization != 50%.
-> >    It would be as broken as reporting 10% utilization for a task
-> >    running 100ms every 1s.
-> >
-> > 2) If it was a 70% task on a previous activation, once it's moved into
-> >    a lower capacity CPU it's still correct to assume that it's likely
-> >    going to require the same bandwidth and thus will be
-> >    under-provisioned.
-> >
-> > I still don't see where we are wrong in this case :/
-> >
-> > To me it looks different then the problem I described.
-> >
-> > > > With your new signal instead, once we cross the current capacity,
-> > > > utilization is just not anymore utilization. Thus, IMHO it make sense
-> > > > avoid to accumulate a sample for what we call "estimated utilization".
-> 
-> This is not true. With the example above, the util_est will be exactly the same
->  on big and little cores with the new signal
+> Fieldbus type defines the type/functionality of the connected card. Like pci
+> device ids.
 
-... AFAIU only if we have idle time...
+Which for PCI can be overridden in DT, but is part of reg.
 
-> > > > I would also say that, with the current implementation which caps
-> > > > utilization to the current capacity, we get better estimation in
-> > > > general. At least we can say with absolute precision:
-> > > >
-> > > >    "the task needs _at least_ that amount of capacity".
-> > > >
-> > > > Potentially we can also flag the task as being under-provisioned, in
-> > > > case there was not idle time, and _let a policy_ decide what to do
-> > > > with it and the granted information we have.
-> > > >
-> > > > While, with your new signal, once we are over the current capacity,
-> > > > the "utilization" is just a sort of "random" number at best useful to
-> > > > drive some conclusions about how long the task has been delayed.
-> 
-> see my comment above
-> 
-> > > >
-> > > > IOW, I fear that we are embedding a policy within a signal which is
-> > > > currently representing something very well defined: how much cpu
-> > > > bandwidth a task used. While, latency/under-provisioning policies
-> > > > perhaps should be better placed somewhere else.
-> > > >
-> > > > Perhaps I've missed it in some of the previous discussions:
-> > > > have we have considered/discussed this signal-vs-policy aspect ?
-> >
-> > What's your opinion on the above instead ?
-> 
-> It's not a policy but it gives better knowledge about the amount a work done
-> I have put below discussion on the  subject on previous version
+> The current patchset allows devicetree nodes to be provided depending on
+> the type of card connected to the bus. It identifies the card by type,
+> not location.
+>
+> Is this not desired / allowed ?
 
-Thanks, I think I've skimmed through it, but it's sill useful...
+No, 'reg' is how you address a device. You could use 'type' in the
+compatible string if type implies some sort of standard class
+interface.
 
-> > > With contribution scaling the PELT utilization of a task is a _minimum_
-> > > utilization. Regardless of where the task is currently/was running (and
-> > > provided that it doesn't change behaviour) its PELT utilization will
-> > > approximate its _minimum_ utilization on an idle 1024 capacity CPU.
-> >
-> > The main drawback is that the _minimum_ utilization depends on the CPU
-> > capacity on which the task runs. The two 25% tasks on a 256 capacity
-> > CPU will have an utilization of 128 as an example
-> >
-> > >
-> > > With time scaling the PELT utilization doesn't really have a meaning on
-> > > its own. It has to be compared to the capacity of the CPU where it
-> > > is/was running to know what the its current PELT utilization means. When
-> >
-> > I would have said the opposite. The utilization of the task will
-> > always reflect the same amount of work that has been already done
-> > whatever the CPU capacity.
-> > In fact, the new scaling mechanism uses the real amount of work that
-> > has been already done to compute the utilization signal which is not
-> > the case currently. This gives more information about the real amount
-> > of worked that has been computed in the over utilization case.
-> >
-> > > the utilization over-shoots the capacity its value is no longer
-> > > represents utilization, it just means that it has a higher compute
-> > > demand than is offered on its current CPU and a high value means that it
-> > > has been suffering longer. It can't be used to predict the actual
-> > > utilization on an idle 1024 capacity any better than contribution scaled
-> > > PELT utilization.
-> >
-> > I think that it provides earlier detection of over utilization and
-> > more accurate signal for a longer time duration which can help the
-> > load balance
-> > Coming back to 50% task example . I will use a 50ms running time
-> > during a 100ms period for the example below to make it easier
-> >
-> > Starting from 0, the evolution of the utilization is:
-> >
-> > With contribution scaling:
-> >          time  0ms  50ms  100ms  150ms  200ms
-> > capacity
-> > 1024           0    666
-> > 512            0    333   453
-> > When the CPU start to be over utilized (@100ms), the utilization is
-> > already too low (453 instead of 666) and scheduler doesn't detect yet
-> > that we are over utilized
-> > 256            0    169   226    246    252
-> > That's even worse with this lower capacity
-> >
-> > With time scaling,
-> >          time  0ms  50ms  100ms  150ms  200ms
-> > capacity
-> > 1024           0    666
-> > 512            0    428   677
-> > We know that the current capacity is not enough and the utilization
-> > reflect the correct utilization level compare to 1024 capacity (the
-> > 666 vs 677 difference comes from the 1024us window so the last window
-> > is not full in the case of max capacity)
-> > 256            0    234   468    564    677
-> > At 100ms, we know that there is not enough capacity. (In fact we know
-> > that at 56ms). And even at time 200ms, the amount of work is exactly
-> > what would have been executed on a CPU 4x faster
-> >
-> > >
-> > > This change might not be a showstopper, but it is something to be aware
-> > > off and take into account wherever PELT utilization is used.
-> >
-> > The point above is clearly a big difference between the 2 approaches
-> > of the no spare cycle case but I think it will help by giving more
-> > information in the over utilization case
+> > I'm still not clear what a bridge vs. host is. Both examples are on WEIM
+> > bus CS0?
+>
+> I agree that the terminology is too confusing. I'm looking to change it.
+>
+> Let's compare current anybus with a well-established bus architecture like pci:
+>
+>                                 pci                     anybus
+> --------------------------------------------------------------------------------
+> Common bus code (spec),         pci/pci_driver.c        fieldbus/anybuss-host.c
+>   calls bus_register()                                  must be parallel bus
+>                                                         subnode
+>                                 no of compatible        has of compatible
+> --------------------------------------------------------------------------------
+> Device on bus, calls
+>   XXX_client_driver_register()  hwmon/k8temp.c          fieldbus/hms-profinet.c
+> --------------------------------------------------------------------------------
+> Controller, silicon driver      pci/pcie-tango.c        fieldbus/anybus-bridge.c
+>                                 platform_driver calls   platform_driver does not
+>                                 pci_host_probe()        register with anybus
+>
+> I should probably rework this so it conforms more closely to the way it's done
+> on pci. Would the following look any better?
 
-I like the idea that we ramp up faster and always get to the same
-value. I like also the idea that we always reach the same value on
-both LITTLE and big.
+Yes, this looks better.
 
-As long as there is idle time this is working fine, in these cases we
-should probably also collect util_est samples.
+>                                 pci                     anybus
+> --------------------------------------------------------------------------------
+> Common bus code (spec),         pci/pci_driver.c        anybus/anybus_driver.c
 
-But what happens when we don't have idle time ?
+Maybe just anybus/core.c or anybus/bus.c. I'm guessing your
+implementation will be *much* more simple than PCI.
 
-Let say we have 2 15% tasks, co-scheduled on a cpu with <300 capacity.
+>   calls bus_register()          no of compatible        no of compatible
+> --------------------------------------------------------------------------------
+> Device on bus, calls
+>   XXX_client_driver_register()  hwmon/k8temp.c          fieldbus/hms-profinet.c
+> --------------------------------------------------------------------------------
+> Controller, silicon driver      pci/pcie-tango.c        anybus/arcx-controller.c
+>                                 platform_driver calls   platform_driver calls
+>                                 pci_host_probe()        anybus_host_probe()
+>
+> Of course, the analogy is not perfect, as there can only be a single card
+> (device) connected to an anybus at a time.
 
-Are not these two tasks being reported as 50% tasks (after a while) ?
+Right, that should simplify the bus code a lot.
 
-If that's the case, these are samples we should not store...
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Rob
