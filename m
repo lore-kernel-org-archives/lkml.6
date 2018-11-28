@@ -2,117 +2,108 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4198C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC26C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE8C2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:14:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1172081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak7jraNj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE8C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hn5lQ0Um"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1172081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeK1UO4 (ORCPT
+        id S1728000AbeK1UPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:14:56 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35624 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbeK1UO4 (ORCPT
+        Wed, 28 Nov 2018 15:15:32 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40676 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbeK1UPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:14:56 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s198so9227375pgs.2;
-        Wed, 28 Nov 2018 01:14:00 -0800 (PST)
+        Wed, 28 Nov 2018 15:15:32 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q26so1731392wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mIhn5b88nPfB++aksqoU4m1MmmzgRXI4vZXrrvgBSv4=;
-        b=Ak7jraNjXOavSitdp6vUUqqRNeGDsVXlt77DO+uX6yPqkg1LMG4ZASStfQi3xmG1lx
-         mn4QbYe7DBSY8uY45gvXL5FhnTinvbajnFpQ8SYYLvbWdZgnWmoZm4VkXBEBy5F858/q
-         rRL9F1LnmH54oiSuxSOhO3yyt8EkfSqXCzHrdhOITh8jKphY7mTY6PGL1g3unaJ8RoKm
-         AScy/h5HSzTPVCgj2ZRLZoAZA4GnLfUgRv+wiCJosxZYuXI03WOwYrwLH6BrvV8DXOaG
-         DAEhiCs7X3RLxtRiYlpm6LbWZA1tJ1hBj35rizBxkmxyRGv85r5zEKBVyBjonPJxEj57
-         Qtgw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=vASiJ29iDdzzZSAwTyxtgFXmVhCZkejxpsR6NY1/uSs=;
+        b=Hn5lQ0Um5ALaPhmxbPI8ksD54bvqp6FTk2GoW5xlD/aXnwS9qQQxKOlxmFd+yb69nf
+         kfuX9vQS5kv63g0j0YbbwhRCaVfkU0cpabilu3TfBBrInkcfzvAzOR66SYRMFEJZecjN
+         z9UbbWD2jY1tgGSQhbiqpyXEotFFSugOdMlus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mIhn5b88nPfB++aksqoU4m1MmmzgRXI4vZXrrvgBSv4=;
-        b=bdupwz77OMYRBOXDPWVzG+amzTz1xNKFQteMlxOxeVFsMTxmFz5G1BGnNu6+DeRGj0
-         Q8AyJgc5hqGNuj7Mig1GLKE9bDHSEYtLJn9Wn47gCJmmO2m1puvjtL4UEZ6HeMq462iS
-         YLE01qxtg6F8Lr6/ecweypneLJzmLWIapzFMNx6safI0pq1BOeRxFQ9IQROFvBn4fVrB
-         +Gn5L/GMBnce4k1FSDmQ7krS3NUD98TczDqmIfS0q1/WusJfH3tW374fYjgV/HdwqDe8
-         QIqx6Q/WNk8dYJNUtwV2YTerhRcKRuJkY5vGjuR2VzPGJhMGQYieyO4LOQvmTHTtNuxW
-         M6qA==
-X-Gm-Message-State: AA+aEWZJ426sOio1OupPWT4dU+pL7UWyoBZVd4oW+fjH9jjBwYLR2GFS
-        kRsE4VbY5PfRP+VTVOd5ECE=
-X-Google-Smtp-Source: AFSGD/X7QqYwUd3BkcCRTaH+WWxOTzk2zaavKU9FYoXl7B0UZcjCDMbCFF65vJpc38D9YO7CM8HXjQ==
-X-Received: by 2002:a63:d846:: with SMTP id k6mr33075630pgj.251.1543396440268;
-        Wed, 28 Nov 2018 01:14:00 -0800 (PST)
-Received: from localhost.localdomain ([119.40.32.42])
-        by smtp.gmail.com with ESMTPSA id l19sm11719259pfi.71.2018.11.28.01.13.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 01:13:59 -0800 (PST)
-From:   Hua Su <suhua.tanke@gmail.com>
-To:     mb@lightnvm.io
-Cc:     javier@cnexlabs.com, axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, suhua.tanke@gmail.com
-Subject: [PATCH] lightnvm: pblk: add lock protection to list operations
-Date:   Wed, 28 Nov 2018 17:13:52 +0800
-Message-Id: <20181128091352.5088-1-suhua.tanke@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=vASiJ29iDdzzZSAwTyxtgFXmVhCZkejxpsR6NY1/uSs=;
+        b=FHx9qVBORFzV5zIfnB9VPI6eoskVxGsqaP2b4cKTYO0KK1njc1j90XUXtTTMuCHDek
+         7u2KVl2zvXcy77EhqvCSkQuw8CzAeaxwXAqMm7PBaIq0lhSQXiAZYoY5decSvwjAZ9QQ
+         dUwFv+jl+5S3nsA0hD5RUK33aBi3S6TsbJchtGKYkkKoPBqIq6LI3pENdoNkWsJE2tw9
+         0vQC8uOpOTTtVS9ipC8FLUQoOLv6hZffH0CUVjzVIi7NTg/PFGJ0vtvcEHwZj3B9rfTG
+         CTOSu8QNc9fVaxC095Q5GttYAXF/BeMAuVMXCzMub897MmjMoOOZdBrPj7wjXvoisf/D
+         QgEw==
+X-Gm-Message-State: AA+aEWbYhgtJE0auUd3TOEyZlvev7ft7XKYF1jD6eYGnT/OIykrj9tEd
+        aKa9kdPNQ+7jVmN5rDtaLJsu+Q==
+X-Google-Smtp-Source: AFSGD/UGI7RWZc1Ynx640s9OrKJNLB4rkk7/o1y7hOQD6JUWRltSMqrbscJzWtz5gAfsfwRVF4tWpw==
+X-Received: by 2002:a1c:83c8:: with SMTP id f191mr1938054wmd.134.1543396475259;
+        Wed, 28 Nov 2018 01:14:35 -0800 (PST)
+Received: from dell ([2.31.167.233])
+        by smtp.gmail.com with ESMTPSA id n8sm6445513wrw.59.2018.11.28.01.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 01:14:34 -0800 (PST)
+Date:   Wed, 28 Nov 2018 09:14:32 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: adc: ti_am335x_tscadc: Improve accuracy of
+ measurement
+Message-ID: <20181128091432.GT4272@dell>
+References: <20181119064236.28902-1-vigneshr@ti.com>
+ <20181119064236.28902-3-vigneshr@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119064236.28902-3-vigneshr@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Protect the list_add on the pblk_line_init_bb() error
-path in case this code is used for some other purpose
-in the future.
+On Mon, 19 Nov 2018, Vignesh R wrote:
 
-Signed-off-by: Hua Su <suhua.tanke@gmail.com>
----
- drivers/lightnvm/pblk-core.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+> When performing single ended measurements with TSCADC, its recommended
+> to set negative input (SEL_INM_SWC_3_0) of ADC step to ADC's VREFN in the
+> corresponding STEP_CONFIGx register.
+> Also, the positive(SEL_RFP_SWC_2_0) and negative(SEL_RFM_SWC_1_0)
+> reference voltage for ADC step needs to be set to VREFP and VREFN
+> respectively in STEP_CONFIGx register.
+> Without these changes, there may be variation of as much as ~2% in the
+> ADC's digital output which is bad for precise measurement.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  drivers/iio/adc/ti_am335x_adc.c      | 5 ++++-
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 6944aac43b01..247112e1db94 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1295,15 +1295,22 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 
- 	ret = pblk_line_alloc_bitmaps(pblk, line);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	if (!pblk_line_init_bb(pblk, line, 0)) {
--		list_add(&line->list, &l_mg->free_list);
--		return -EINTR;
-+		ret = -EINTR;
-+		goto fail;
- 	}
- 
- 	pblk_rl_free_lines_dec(&pblk->rl, line, true);
- 	return 0;
-+
-+fail:
-+	spin_lock(&l_mg->free_lock);
-+	list_add(&line->list, &l_mg->free_list);
-+	spin_unlock(&l_mg->free_lock);
-+
-+	return ret;
- }
- 
- void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
+>  include/linux/mfd/ti_am335x_tscadc.h | 4 ++++
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-2.19.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
