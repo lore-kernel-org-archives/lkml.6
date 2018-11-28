@@ -4,103 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9215AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B206BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62C7320832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:58:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62C7320832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 840AC20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 840AC20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeK1P6o (ORCPT
+        id S1727339AbeK1QDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:58:44 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.87]:11174 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727008AbeK1P6n (ORCPT
+        Wed, 28 Nov 2018 11:03:46 -0500
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:41355 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727008AbeK1QDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:58:43 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 7F4DF2A127
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:34:06 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id RrY6gzQu8aSeyRrY6gC3qf; Tue, 27 Nov 2018 22:34:06 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.78.127] (port=58390 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gRrY5-001qWc-Sl; Tue, 27 Nov 2018 22:34:05 -0600
-Date:   Tue, 27 Nov 2018 22:34:04 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 38/41] scsi: sym53c8xx_2: sym_hipd: mark expected switch
- fall-throughs
-Message-ID: <81f959a632339d224fd0dd894746d1081bf249f3.1543374820.git.gustavo@embeddedor.com>
-References: <cover.1543374820.git.gustavo@embeddedor.com>
+        Wed, 28 Nov 2018 11:03:46 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 28 Nov 2018 15:33:24 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gRs0R-00047K-NM; Wed, 28 Nov 2018 16:03:23 +1100
+Date:   Wed, 28 Nov 2018 16:03:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Allison Henderson <allison.henderson@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        martin.petersen@oracle.com, shirley.ma@oracle.com,
+        bob.liu@oracle.com
+Subject: Re: [PATCH v1 4/7] xfs: Add b_rw_hint to xfs_buf
+Message-ID: <20181128050323.GI6311@dastard>
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <1543376991-5764-5-git-send-email-allison.henderson@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1543374820.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.78.127
-X-Source-L: No
-X-Exim-ID: 1gRrY5-001qWc-Sl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.78.127]:58390
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 260
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1543376991-5764-5-git-send-email-allison.henderson@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Tue, Nov 27, 2018 at 08:49:48PM -0700, Allison Henderson wrote:
+> This patch adds a new field b_rw_hint to xfs_buf.  We will
+> need this to properly initialize the new bio->bi_rw_hint when
+> submitting the read request.  When the read completes, we
+> then store the returned mirror in the b_rw_hint.
+> 
+> Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
+> ---
+>  fs/xfs/xfs_buf.c | 5 ++++-
+>  fs/xfs/xfs_buf.h | 7 +++++++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index b21ea2b..dd8ba59 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -1322,8 +1322,10 @@ xfs_buf_bio_end_io(
+>  	if (!bp->b_error && xfs_buf_is_vmapped(bp) && (bp->b_flags & XBF_READ))
+>  		invalidate_kernel_vmap_range(bp->b_addr, xfs_buf_vmap_len(bp));
+>  
+> -	if (atomic_dec_and_test(&bp->b_io_remaining) == 1)
+> +	if (atomic_dec_and_test(&bp->b_io_remaining) == 1) {
+> +		bp->b_rw_hint = bio->bi_rw_hint;
+>  		xfs_buf_ioend_async(bp);
+> +	}
+>  	bio_put(bio);
+>  }
+>  
 
-Addresses-Coverity-ID: 114996 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/sym53c8xx_2/sym_hipd.c | 2 ++
- 1 file changed, 2 insertions(+)
+This will miss setting bp->b_rw_hint for IO that completes before
+submission returns to __xfs_buf_submit() (i.e. b_io_remaining is 2
+at IO completion).
 
-diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-index 0a2a54517b15..054fb0599263 100644
---- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-@@ -3072,6 +3072,7 @@ static void sym_sir_bad_scsi_status(struct sym_hcb *np, int num, struct sym_ccb
- 			sym_print_addr(cp->cmd, "%s\n",
- 			        s_status == S_BUSY ? "BUSY" : "QUEUE FULL\n");
- 		}
-+		/* fall through */
- 	default:	/* S_INT, S_INT_COND_MET, S_CONFLICT */
- 		sym_complete_error (np, cp);
- 		break;
-@@ -4632,6 +4633,7 @@ static void sym_int_sir(struct sym_hcb *np)
- 	 *  Negotiation failed.
- 	 *  Target does not want answer message.
- 	 */
-+	/* fall through */
- 	case SIR_NEGO_PROTO:
- 		sym_nego_default(np, tp, cp);
- 		goto out;
+So I suspect it won't do the right thing on fast or synchronous
+block devices like pmem. You should be able to tst this with a RAID1
+made from two ramdisks...
+
+Cheers,
+
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
