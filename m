@@ -2,123 +2,125 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D87C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE377C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A896020989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="h2qeV0o6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A896020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 77F5B20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F5B20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbeK2Csg (ORCPT
+        id S1728873AbeK2Cs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:48:36 -0500
-Received: from vern.gendns.com ([98.142.107.122]:57402 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728240AbeK2Csf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:48:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=v3BZ8eaPDm65dVhGJtsCUly7WdWzUe2LOR4BBYB8E+8=; b=h2qeV0o6fH5DhI4dGyH8YCWYq9
-        DyOSYANaTq+R1Ju4MvbzUyLgErzdDqmj/sNWxK9R1NG1Yx0q3/74OMcuaOZ8b7Gzyz8v7nsjmYCBe
-        Sc2P5F/ANp6h17+AE3l7l7D51t75RIXZ90tmLe0nKWKMMbd8UzPj0iQmbe1sSCo6o+usQ2yYIGjPW
-        1J1neHsPAWk04xM1RuKhva2JQaTDOlQT4kxzZdNoXD5HdKPTGHQEdVo23jMZjmKLBLkmffCdMI3cr
-        u7qfPk4dvKvmSmu9bzCeXrX4ySlVpm2me6jt0FG488wiOYP5qFG3PxEcH0kIqtY0zpeTgUGOtuu+K
-        OEvDuXOA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48980 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gS21r-0000y8-Ow; Wed, 28 Nov 2018 10:45:31 -0500
-Subject: Re: [PATCH 08/17] soc: ti: pruss: Add a PRUSS irqchip driver for
- PRUSS interrupts
-To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
-Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
-        ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
-        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
-        m-karicheri2@ti.com, woods.technical@gmail.com,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-9-git-send-email-rogerq@ti.com>
- <af2f8ce3-923b-aa27-59b2-2ebb848c28c9@lechnology.com>
- <5BFD651C.7020903@ti.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <421ca9ad-1816-021e-76af-b719f80a5531@lechnology.com>
-Date:   Wed, 28 Nov 2018 09:46:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <5BFD651C.7020903@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 28 Nov 2018 21:48:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56086 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728821AbeK2Cs4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:48:56 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFilhf008695
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:46:50 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1vrg41ue-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:46:49 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Nov 2018 15:46:46 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Nov 2018 15:46:41 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFkeQK29294720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 15:46:40 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7250AE04D;
+        Wed, 28 Nov 2018 15:46:40 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20D1EAE051;
+        Wed, 28 Nov 2018 15:46:39 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.103.235])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 15:46:38 +0000 (GMT)
+Subject: Re: [PATCH 5/7] efi: Import certificates from UEFI Secure Boot
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, seth.forshee@canonical.com,
+        kexec@lists.infradead.org, keyrings@vger.kernel.org,
+        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
+Date:   Wed, 28 Nov 2018 10:46:28 -0500
+In-Reply-To: <20181125151500.8298-6-nayna@linux.ibm.com>
+References: <20181125151500.8298-1-nayna@linux.ibm.com>
+         <20181125151500.8298-6-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-TM-AS-GCONF: 00
+x-cbid: 18112815-0020-0000-0000-000002EF1678
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112815-0021-0000-0000-0000213E712A
+Message-Id: <1543419988.3902.216.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811280138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 9:39 AM, Roger Quadros wrote:
+On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
+> From: Josh Boyer <jwboyer@fedoraproject.org>
 > 
-> On 26/11/18 23:17, David Lechner wrote:
->> On 11/22/18 5:39 AM, Roger Quadros wrote:
->>> From: Suman Anna <s-anna@ti.com>
->>>
->>> The Programmable Real-Time Unit Subsystem (PRUSS) contains an
->>> interrupt controller (INTC) that can handle various system input
->>> events and post interrupts back to the device-level initiators.
->>> The INTC can support upto 64 input events with individual control
->>> configuration and hardware prioritization. These events are mapped
->>> onto 10 interrupt signals through two levels of many-to-one mapping
->>> support. Different interrupt signals are routed to the individual
->>> PRU cores or to the host CPU.
->>>
->>> The PRUSS INTC platform driver manages this PRUSS interrupt
->>> controller and implements an irqchip driver to provide a Linux
->>> standard way for the PRU client users to enable/disable/ack/
->>> re-trigger a PRUSS system event. The system events to interrupt
->>> channels and host interrupts relies on the mapping configuration
->>> provided through a firmware resource table for now. This will be
->>> revisited and enhanced in the future for a better interface. The
->>> mappings will currently be programmed during the boot/shutdown
->>> of the PRU.
->>
->> Does this mapping table take up space in the PRU IRAM or DRAM? If
->> so, that can be a problem on the AM18xx because it has such limited
->> resources - every byte counts.
+> New Patch Description:
+> ======================
 > 
-> Currently the entire resource table is being placed in DRAM.
-> But that is only because the current rpmsg vdev implementation depends on the
-> rpmsg channel information and vring buffers to be in DRAM.
+> Secure Boot stores a list of allowed certificates in the 'db' variable.
+> This patch imports those certificates into the platform keyring. The shim
+> UEFI bootloader has a similar certificate list stored in the 'MokListRT'
+> variable. We import those as well.
 > 
-> I think the right way is to split up the 2 things.
-> i.e. separate out rpmgs channel DRAM allocation from resource table
-> and don't copy the resource table to DRAM.
+> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
+> variable. We load those certificates into the system blacklist keyring
+> and forbid any kernel signed with those from loading.
 > 
-> This way if there is no rpmsg channel in the resource table we won't eat
-> any DRAM.
+> Original Patch Description:
+> ============================
 > 
-> I'm not sure if there are any bottlenecks. I will only know when I work on it.
+> Secure Boot stores a list of allowed certificates in the 'db' variable.
+> This imports those certificates into the system trusted keyring.  This
+> allows for a third party signing certificate to be used in conjunction
+> with signed modules. By importing the public certificate into the 'db'
+> variable, a user can allow a module signed with that certificate to
+> load. The shim UEFI bootloader has a similar certificate list stored
+> in the 'MokListRT' variable. We import those as well.
+> 
+> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
+> variable. We load those certificates into the newly introduced system
+> blacklist keyring and forbid any module signed with those from loading and
+> forbid the use within the kernel of any key with a matching hash.
+> 
+> This facility is enabled by setting CONFIG_LOAD_UEFI_KEYS.
 
-Sounds good to me.
+There are quite a few checkpatch.pl warnings that need to be
+addressed, including the missing SPDX license.
+
+Mimi
+
