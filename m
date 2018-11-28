@@ -2,278 +2,186 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBF8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2B4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADA22133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ADA22133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 992EE2133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992EE2133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbeK2Cyi (ORCPT
+        id S1728851AbeK2Cyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:54:38 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44988 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728300AbeK2Cyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:54:38 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFn2mb092653
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:52:31 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1x03r6nt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:52:30 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 28 Nov 2018 15:52:27 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Nov 2018 15:52:23 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFqM0328639398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 15:52:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FCC04C044;
-        Wed, 28 Nov 2018 15:52:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B75E74C058;
-        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.103.235])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
-Subject: Re: [PATCH 4/7] efi: Add an EFI signature blob parser
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au
-Date:   Wed, 28 Nov 2018 10:52:10 -0500
-In-Reply-To: <20181125151500.8298-5-nayna@linux.ibm.com>
-References: <20181125151500.8298-1-nayna@linux.ibm.com>
-         <20181125151500.8298-5-nayna@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112815-0016-0000-0000-0000022E0CB4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112815-0017-0000-0000-000032866B27
-Message-Id: <1543420330.3902.220.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811280138
+        Wed, 28 Nov 2018 21:54:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37982 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728217AbeK2Cyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:54:55 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 72F1920757; Wed, 28 Nov 2018 16:52:47 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 404EC20726;
+        Wed, 28 Nov 2018 16:52:37 +0100 (CET)
+Date:   Wed, 28 Nov 2018 16:52:37 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc:     linux-sunxi@googlegroups.com, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        tfiga@chromium.org, posciak@chromium.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: uapi: Add H264 low-level
+ decoder API compound controls.
+Message-ID: <20181128155237.5sb7sgik67pcndsw@flea>
+References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
+ <20181115145650.9827-2-maxime.ripard@bootlin.com>
+ <2123591.3TCVFQjlgd@jernej-laptop>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ora72zak626rtt66"
+Content-Disposition: inline
+In-Reply-To: <2123591.3TCVFQjlgd@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
-> From: Dave Howells <dhowells@redhat.com>
-> 
-> Add a function to parse an EFI signature blob looking for elements of
-> interest. A list is made up of a series of sublists, where all the
-> elements in a sublist are of the same type, but sublists can be of
-> different types.
-> 
-> For each sublist encountered, the function pointed to by the
-> get_handler_for_guid argument is called with the type specifier GUID and
-> returns either a pointer to a function to handle elements of that type or
-> NULL if the type is not of interest.
-> 
-> If the sublist is of interest, each element is passed to the handler
-> function in turn.
 
-There are a few checkpatch.pl warnings that need to be
-addressed, including the missing SPDX license.
+--ora72zak626rtt66
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mimi
+Hi Jernej,
 
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> ---
-> Changelog:
-> 
-> v0:
-> - removed the CONFIG EFI_SIGNATURE_LIST_PARSER
-> - moved efi_parser.c from certs to security/integrity/platform_certs
->   directory
-> 
->  include/linux/efi.h                            |   9 ++
->  security/integrity/Makefile                    |   3 +-
->  security/integrity/platform_certs/efi_parser.c | 112 +++++++++++++++++++++++++
->  3 files changed, 123 insertions(+), 1 deletion(-)
->  create mode 100644 security/integrity/platform_certs/efi_parser.c
-> 
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 99cba6fe1234..2016145e2d6d 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1138,6 +1138,15 @@ extern int efi_memattr_apply_permissions(struct mm_struct *mm,
->  char * __init efi_md_typeattr_format(char *buf, size_t size,
->  				     const efi_memory_desc_t *md);
->  
-> +
-> +typedef void (*efi_element_handler_t)(const char *source,
-> +				      const void *element_data,
-> +				      size_t element_size);
-> +extern int __init parse_efi_signature_list(
-> +	const char *source,
-> +	const void *data, size_t size,
-> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *));
-> +
->  /**
->   * efi_range_is_wc - check the WC bit on an address range
->   * @start: starting kvirt address
-> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-> index 046ffc1bb42d..6ee9058866cd 100644
-> --- a/security/integrity/Makefile
-> +++ b/security/integrity/Makefile
-> @@ -9,7 +9,8 @@ integrity-y := iint.o
->  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
->  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
->  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
-> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
-> +						  platform_certs/efi_parser.o
->  
->  subdir-$(CONFIG_IMA)			+= ima
->  obj-$(CONFIG_IMA)			+= ima/
-> diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
-> new file mode 100644
-> index 000000000000..4e396f98f5c7
-> --- /dev/null
-> +++ b/security/integrity/platform_certs/efi_parser.c
-> @@ -0,0 +1,112 @@
-> +/* EFI signature/key/certificate list parser
-> + *
-> + * Copyright (C) 2012, 2016 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#define pr_fmt(fmt) "EFI: "fmt
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/err.h>
-> +#include <linux/efi.h>
-> +
-> +/**
-> + * parse_efi_signature_list - Parse an EFI signature list for certificates
-> + * @source: The source of the key
-> + * @data: The data blob to parse
-> + * @size: The size of the data blob
-> + * @get_handler_for_guid: Get the handler func for the sig type (or NULL)
-> + *
-> + * Parse an EFI signature list looking for elements of interest.  A list is
-> + * made up of a series of sublists, where all the elements in a sublist are of
-> + * the same type, but sublists can be of different types.
-> + *
-> + * For each sublist encountered, the @get_handler_for_guid function is called
-> + * with the type specifier GUID and returns either a pointer to a function to
-> + * handle elements of that type or NULL if the type is not of interest.
-> + *
-> + * If the sublist is of interest, each element is passed to the handler
-> + * function in turn.
-> + *
-> + * Error EBADMSG is returned if the list doesn't parse correctly and 0 is
-> + * returned if the list was parsed correctly.  No error can be returned from
-> + * the @get_handler_for_guid function or the element handler function it
-> + * returns.
-> + */
-> +int __init parse_efi_signature_list(
-> +	const char *source,
-> +	const void *data, size_t size,
-> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *))
-> +{
-> +	efi_element_handler_t handler;
-> +	unsigned offs = 0;
-> +
-> +	pr_devel("-->%s(,%zu)\n", __func__, size);
-> +
-> +	while (size > 0) {
-> +		const efi_signature_data_t *elem;
-> +		efi_signature_list_t list;
-> +		size_t lsize, esize, hsize, elsize;
-> +
-> +		if (size < sizeof(list))
-> +			return -EBADMSG;
-> +
-> +		memcpy(&list, data, sizeof(list));
-> +		pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
-> +			 offs,
-> +			 list.signature_type.b, list.signature_list_size,
-> +			 list.signature_header_size, list.signature_size);
-> +
-> +		lsize = list.signature_list_size;
-> +		hsize = list.signature_header_size;
-> +		esize = list.signature_size;
-> +		elsize = lsize - sizeof(list) - hsize;
-> +
-> +		if (lsize > size) {
-> +			pr_devel("<--%s() = -EBADMSG [overrun @%x]\n",
-> +				 __func__, offs);
-> +			return -EBADMSG;
-> +		}
-> +
-> +		if (lsize < sizeof(list) ||
-> +		    lsize - sizeof(list) < hsize ||
-> +		    esize < sizeof(*elem) ||
-> +		    elsize < esize ||
-> +		    elsize % esize != 0) {
-> +			pr_devel("- bad size combo @%x\n", offs);
-> +			return -EBADMSG;
-> +		}
-> +
-> +		handler = get_handler_for_guid(&list.signature_type);
-> +		if (!handler) {
-> +			data += lsize;
-> +			size -= lsize;
-> +			offs += lsize;
-> +			continue;
-> +		}
-> +
-> +		data += sizeof(list) + hsize;
-> +		size -= sizeof(list) + hsize;
-> +		offs += sizeof(list) + hsize;
-> +
-> +		for (; elsize > 0; elsize -= esize) {
-> +			elem = data;
-> +
-> +			pr_devel("ELEM[%04x]\n", offs);
-> +			handler(source,
-> +				&elem->signature_data,
-> +				esize - sizeof(*elem));
-> +
-> +			data += esize;
-> +			size -= esize;
-> +			offs += esize;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
+On Tue, Nov 27, 2018 at 06:23:10PM +0100, Jernej =C5=A0krabec wrote:
+> > @@ -1156,4 +1164,162 @@ struct v4l2_ctrl_mpeg2_quantization {
+> >  	__u8	chroma_non_intra_quantiser_matrix[64];
+> >  };
+> >=20
+> > +/* Compounds controls */
+> > +
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET0_FLAG			0x01
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET1_FLAG			0x02
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET2_FLAG			0x04
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET3_FLAG			0x08
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET4_FLAG			0x10
+> > +#define V4L2_H264_SPS_CONSTRAINT_SET5_FLAG			0x20
+>=20
+> How are these constraint flags meant to be used?
 
+They are supposed to be used as bit fields in the constraint_set_flags
+variable part of the v4l2_ctrl_h264_sps structure.
+
+> > +
+> > +#define V4L2_H264_SPS_FLAG_SEPARATE_COLOUR_PLANE		0x01
+> > +#define V4L2_H264_SPS_FLAG_QPPRIME_Y_ZERO_TRANSFORM_BYPASS	0x02
+> > +#define V4L2_H264_SPS_FLAG_DELTA_PIC_ORDER_ALWAYS_ZERO		0x04
+> > +#define V4L2_H264_SPS_FLAG_GAPS_IN_FRAME_NUM_VALUE_ALLOWED	0x08
+> > +#define V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY			0x10
+> > +#define V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD		0x20
+> > +#define V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE			0x40
+> > +
+> > +struct v4l2_ctrl_h264_sps {
+> > +	__u8 profile_idc;
+> > +	__u8 constraint_set_flags;
+> > +	__u8 level_idc;
+> > +	__u8 seq_parameter_set_id;
+> > +	__u8 chroma_format_idc;
+> > +	__u8 bit_depth_luma_minus8;
+> > +	__u8 bit_depth_chroma_minus8;
+> > +	__u8 log2_max_frame_num_minus4;
+> > +	__u8 pic_order_cnt_type;
+> > +	__u8 log2_max_pic_order_cnt_lsb_minus4;
+> > +	__u8 max_num_ref_frames;
+> > +	__u8 num_ref_frames_in_pic_order_cnt_cycle;
+> > +	__s32 offset_for_ref_frame[255];
+> > +	__s32 offset_for_non_ref_pic;
+> > +	__s32 offset_for_top_to_bottom_field;
+> > +	__u16 pic_width_in_mbs_minus1;
+> > +	__u16 pic_height_in_map_units_minus1;
+> > +	__u8 flags;
+> > +};
+> > +
+> > +#define V4L2_H264_PPS_FLAG_ENTROPY_CODING_MODE				0x0001
+> > +#define V4L2_H264_PPS_FLAG_BOTTOM_FIELD_PIC_ORDER_IN_FRAME_PRESENT	0x0=
+002
+> > +#define V4L2_H264_PPS_FLAG_WEIGHTED_PRED				0x0004
+> > +#define V4L2_H264_PPS_FLAG_DEBLOCKING_FILTER_CONTROL_PRESENT		0x0008
+> > +#define V4L2_H264_PPS_FLAG_CONSTRAINED_INTRA_PRED			0x0010
+> > +#define V4L2_H264_PPS_FLAG_REDUNDANT_PIC_CNT_PRESENT			0x0020
+> > +#define V4L2_H264_PPS_FLAG_TRANSFORM_8X8_MODE				0x0040
+> > +#define V4L2_H264_PPS_FLAG_PIC_SCALING_MATRIX_PRESENT			0x0080
+> > +
+> > +struct v4l2_ctrl_h264_pps {
+> > +	__u8 pic_parameter_set_id;
+> > +	__u8 seq_parameter_set_id;
+> > +	__u8 num_slice_groups_minus1;
+> > +	__u8 num_ref_idx_l0_default_active_minus1;
+> > +	__u8 num_ref_idx_l1_default_active_minus1;
+> > +	__u8 weighted_bipred_idc;
+> > +	__s8 pic_init_qp_minus26;
+> > +	__s8 pic_init_qs_minus26;
+> > +	__s8 chroma_qp_index_offset;
+> > +	__s8 second_chroma_qp_index_offset;
+> > +	__u8 flags;
+> > +};
+> > +
+> > +struct v4l2_ctrl_h264_scaling_matrix {
+> > +	__u8 scaling_list_4x4[6][16];
+> > +	__u8 scaling_list_8x8[6][64];
+> > +};
+> > +
+> > +struct v4l2_h264_weight_factors {
+> > +	__s8 luma_weight[32];
+> > +	__s8 luma_offset[32];
+> > +	__s8 chroma_weight[32][2];
+> > +	__s8 chroma_offset[32][2];
+> > +};
+>=20
+> Regarding weight type __s8 - isn't too small just a bit?
+>=20
+> ITU-T Rec. H264 (05/2003) says that this field has value between -128 to =
+127 if=20
+> weight flag is set. That fits perfectly. However, when weight flag is 0, =
+default=20
+> value is 2^luma_log2_weight_denom (for example). luma_log2_weight_denom c=
+an=20
+> have values between 0 and 7, which means that weight will have values fro=
+m 1=20
+> to 128. That is just slightly over the max value for __s8.
+
+luma_log2_weight_denom is in the v4l2_h264_pred_weight_table
+structure, so you wouldn't use the weights if the weight flag isn't
+set.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ora72zak626rtt66
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/65xQAKCRDj7w1vZxhR
+xfVgAPwPyBxI7cDvrAYJyRbFuUI9l7ivW0+o26mnXxH20xwC2wEAh9mWwtu+y2M3
+Lua5L8Pkady5dgTg0pZlPrHnP0qwKww=
+=E6X7
+-----END PGP SIGNATURE-----
+
+--ora72zak626rtt66--
