@@ -2,87 +2,106 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9B9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E156C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA0320863
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:12:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRJtzBpm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA0320863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F18982081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18982081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbeK2JP6 (ORCPT
+        id S1726617AbeK2JQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:15:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56624 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 04:16:10 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59700 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbeK2JP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:15:58 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8692081B;
-        Wed, 28 Nov 2018 22:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543443171;
-        bh=Ob/DPWxZd1w5vD9jytaAxFaCAlCL6bRTZa7PztH0qys=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=NRJtzBpmSIebDT7BT6gpK2MzRcUguYpcUAfYmq9Bdsu2AlXrprtX5njxjxCsDefEn
-         0dTZvbF8Dg8rVWQiG8/DtTFDPWEvt7JXVNxFrGztwiFaXC+B9j+qc0Ofu4qgBt0OTU
-         nlhNyZwN9+0gHHenfhmcXS+vKJhJEnCSCKzwholc=
-Content-Type: text/plain; charset="utf-8"
+        id S1726335AbeK2JQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 04:16:10 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wASMAmIv018560
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 28 Nov 2018 14:11:40 -0800
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 28 Nov 2018 14:10:55 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 55B4A2E130B; Wed, 28 Nov 2018 17:10:55 -0500 (EST)
+Date:   Wed, 28 Nov 2018 17:10:55 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular
+Message-ID: <20181128221054.GJ14659@windriver.com>
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
+ <cdded4c3-4bc5-39b3-ebc9-64fa145c9242@arm.com>
+ <20181128153204.GI14659@windriver.com>
+ <7671106.x9S16LaZuq@avalon>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Yangtao Li <tiny.windzz@gmail.com>, linus.walleij@linaro.org,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <154344291239.88331.14159206270303255502@swboyd.mtv.corp.google.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-References: <20181123150600.27445-1-tiny.windzz@gmail.com>
- <154344291239.88331.14159206270303255502@swboyd.mtv.corp.google.com>
-Message-ID: <154344317086.88331.8296424241716107824@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: nomadik: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Wed, 28 Nov 2018 14:12:50 -0800
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7671106.x9S16LaZuq@avalon>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2018-11-28 14:08:32)
-> Quoting Yangtao Li (2018-11-23 07:06:00)
-> > Use macro to simplify the code.
-> > =
+[Re: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular] On 28/11/2018 (Wed 19:22) Laurent Pinchart wrote:
 
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> =
+> Hi Paul,
+> 
+> On Wednesday, 28 November 2018 17:32:05 EET Paul Gortmaker wrote:
+> > [Re: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular] On 
+> 28/11/2018 (Wed 12:50) Robin Murphy wrote:
+> > > On 26/11/2018 22:31, Paul Gortmaker wrote:
+> > [...]
+> > 
+> > >> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> > >> index 9e2655f1c1bf..de39ef992d8a 100644
+> > >> --- a/drivers/iommu/ipmmu-vmsa.c
+> > >> +++ b/drivers/iommu/ipmmu-vmsa.c
+> > >> @@ -1,6 +1,8 @@
+> > >>
+> > >>  // SPDX-License-Identifier: GPL-2.0
+> > >>  /*
+> > >>   * IPMMU VMSA
+> > > 
+> > > Nit: this line doesn't convey any information that the module description
+> > > below doesn't also say far more clearly, so you may as well just replace
+> > > it entirely.
+> > 
+> > No problem. Will do in v2.
+> 
+> With that change, the blank line after MODULE_DEVICE_TABLE() removed, and 
+> <linux/init.h> moved to keep alphabetical order sorting of the includes, 
+> please add
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> Applied to clk-next
-> =
+Updated and review tag added for v2.
 
+Paul.
+--
 
-Except this doesn't compile. I fixed it, but please actually compile
-your patches before sending next time.
-
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index e331634d34df..a95aa96f4a68 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -455,7 +455,7 @@ static const char * const src_clk_names[] =3D {
- 	"RNGCCLK   ",
- };
- =
-
--static int nomadik_src_clk_show(struct seq_file *s, void *what)
-+static int nomadik_src_clk_debugfs_show(struct seq_file *s, void *what)
- {
- 	int i;
- 	u32 src_pcksr0 =3D readl(src_base + SRC_PCKSR0);
+> 
+> to v2. Thank you for the patch.
+> 
+> > > >+ * IOMMU API for Renesas VMSA-compatible IPMMU
+> > > >+ * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > [...]
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+> 
+> 
