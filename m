@@ -2,70 +2,136 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A561C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00E6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E0D20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:42:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZA3TapgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E0D20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 74F6A20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:43:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F6A20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbeK1TnC (ORCPT
+        id S1727951AbeK1Toc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:43:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38768 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 14:44:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55124 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbeK1TnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:43:02 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1727519AbeK1Toc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:44:32 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C79C320832;
-        Wed, 28 Nov 2018 08:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543394532;
-        bh=Qt5jw7wSn4B8ItHZFh2i1jDsWL9cCwH7QGA1WUTWMtM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZA3TapgZQMVeK8pYWfKyb7Otg2+1GUI4ywfQzOql+lBBcTqa4fMvT613FNrcOwwOv
-         n0Q/B14dndJOX/D9nv5D4XsmbnvgbE8gYvefmyZoWgN/KEOn0O71feGi9eer3tYuu7
-         gFHPFiPgM8seAx+bEcbfyYx3feaCKcrgAwYe8etk=
-Date:   Wed, 28 Nov 2018 16:41:44 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Otavio Salvador <otavio@ossystems.com.br>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 1/3] ARM: imx_v6_v7_defconfig: Remove explicit
- ARM_UNWIND disable
-Message-ID: <20181128084142.GN20643@dragon>
-References: <20181125222027.22071-1-otavio@ossystems.com.br>
+        by mx1.redhat.com (Postfix) with ESMTPS id EC70230820F2;
+        Wed, 28 Nov 2018 08:43:41 +0000 (UTC)
+Received: from [10.36.112.58] (ovpn-112-58.ams2.redhat.com [10.36.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2AEB6BF73;
+        Wed, 28 Nov 2018 08:43:36 +0000 (UTC)
+Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
+To:     Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+References: <20181126154732.23025-1-vkuznets@redhat.com>
+ <20181126154732.23025-4-vkuznets@redhat.com>
+ <e565638e-d6cc-bbd9-f99e-c835ef1be5b7@redhat.com>
+ <20181127083706.GB16047@rkaganb.sw.ru>
+ <9d0e9796-b71e-9437-8cd4-a898fd503871@redhat.com>
+ <20181127190506.GB5147@rkaganip.lan>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9fb3bbf4-f921-ba1e-399f-4769fe774f3e@redhat.com>
+Date:   Wed, 28 Nov 2018 09:43:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181125222027.22071-1-otavio@ossystems.com.br>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181127190506.GB5147@rkaganip.lan>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 28 Nov 2018 08:43:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 08:20:25PM -0200, Otavio Salvador wrote:
-> CONFIG_ARM_UNWIND is removed when running 'savedefconfig', but
-> selected by ARM EABI (AEBI) support.  This is done in preparation to making
-> further changes to this defconfig cleaner.
+On 27/11/18 20:05, Roman Kagan wrote:
+>>> Capabilities are a well-established and unambiguous negotiation
+>>> mechanism, why invent another one?  Besides, not all features map
+>>> conveniently onto cpuid bits, e.g. currently we have two versions of
+>>> SynIC support, which differ in the way the userspace deals with it, but
+>>> not in the cpuid bits we expose in the guest.  IMO such an ioctl would
+>>> bring more complexity rather than less.
+>>
+>> Yes, in that case (for bugfixes basically) you'd have to use
+>> capabilities.  But if the feature is completely hidden to userspace
+>> except for the CPUID bit, it seems like a ioctl would be more consistent
+>> with the rest of the KVM API.
 > 
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+> So there will be some features that are more equal than others?
 
-Applied all, thanks.
+Well, it's already like that.  Some features have to be explicitly
+KVM_ENABLE_CAP'd because userspace has to be aware of them.  But in many
+cases they can be enabled blindly, and in that case a CPUID-based API
+can help.
+
+The CPUID-based API already works well for processor features, MSRs, KVM
+paravirt features, etc.  Unfortunately we cannot just reuse
+KVM_GET_SUPPORTED_CPUID because userspace expects KVM features to be at
+0x40000000 rather than Hyper-V ones.
+
+> I think that it's the current scheme which is more consistent: there are
+> features that are implemented in KVM, and there are caps for negotiating
+> them with userspace, and then -- separately -- there's a mix of bits to
+> show to the guest in response to CPUID, which only the userspace has to
+> bother with.
+
+The only issue is how to present the "features that are implemented in
+KVM".  Since they _are_ expressed as CPUID bits, it makes sense if
+userspace only has to know about those instead of having both
+capabilities and CPUID bits.
+
+Paolo
