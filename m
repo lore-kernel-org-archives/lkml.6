@@ -2,115 +2,101 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C745C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6897C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42DE32081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:18:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Im1m/+df"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DE32081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 77D7D2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D7D2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbeK1UTo (ORCPT
+        id S1727982AbeK1UUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:19:44 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38693 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbeK1UTn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:19:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v13so22025156wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fbXR8KePKS/cptrasl/TEP0Y21ycc5UmMC0HPKaMDwI=;
-        b=Im1m/+dfgPxcMWXAvcQMoiF6IA325AUqhEUYZ6NbOWN2MqrTYk7djY/1WDSv6QlGeK
-         H0zEI59NRdT4Ii7h0kZmI2YLWAd7AqrfdOkMqY6TJR0/vBBNie35XnwpyEd7s5TLbkZb
-         y17vvEhU6atHosyMo/uGZwg99jb8RgECMUS20=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=fbXR8KePKS/cptrasl/TEP0Y21ycc5UmMC0HPKaMDwI=;
-        b=TTTcuwmn7YeMtBTT/O9t2yGkFg1zTRmoeUOaPGDHcVLLyyg6p9iDv849mHuON29LyM
-         iVp3MIGncE3+6erAUGYuWu72JqFGmx1TfxZOyjhSO7qPxRQ13xxHA1EQLSX1fhEADxxB
-         R20H6FL//Ha/V3YfN92GXZLhTHZljgmRWDV7YLBex2ofzTg/Twf5D7z+i0WdKsFVbtvH
-         5qUf1DBycGQ4ihsRo14W0uo79zCdab7yw1R7XgojLaooUmyVq0w5+ecxQ4AnZfejeWZb
-         rwRw+K0ur7m4TRmf4Rs3RXCDNDQpjXZ0qRfYkgTCFvY73mUZYNfem8cpS2Ll65fD9bkL
-         NKdg==
-X-Gm-Message-State: AA+aEWZvbF7nE/Skcy8N8n7u/JFjrdfN0EirCRoBIUIgsRuJnMP4XepD
-        VVle7Ch9uJWJ8/RubOlznUxF2w==
-X-Google-Smtp-Source: AFSGD/VZj4j90Qba1d4awPiSsJRV65kjQ4rtR+M786zfiFoS3WMGW8rCt2obw75yzaVMxdenCrDNwg==
-X-Received: by 2002:a5d:4e82:: with SMTP id e2mr29707651wru.291.1543396725630;
-        Wed, 28 Nov 2018 01:18:45 -0800 (PST)
-Received: from dell ([2.31.167.233])
-        by smtp.gmail.com with ESMTPSA id a17sm9763731wrs.58.2018.11.28.01.18.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 01:18:44 -0800 (PST)
-Date:   Wed, 28 Nov 2018 09:18:43 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 2/8] mfd: lochnagar: Add initial binding documentation
-Message-ID: <20181128091843.GV4272@dell>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-2-ckeepax@opensource.cirrus.com>
+        Wed, 28 Nov 2018 15:20:52 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42770 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727413AbeK1UUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:20:52 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6F16B207AD; Wed, 28 Nov 2018 10:19:53 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 474542039F;
+        Wed, 28 Nov 2018 10:19:43 +0100 (CET)
+Date:   Wed, 28 Nov 2018 10:19:43 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 4/4] ARM64: dts: imx: add i.MX8QXP system controller RTC
+ support
+Message-ID: <20181128091943.GB8952@piout.net>
+References: <1543311334-8807-1-git-send-email-Anson.Huang@nxp.com>
+ <1543311334-8807-5-git-send-email-Anson.Huang@nxp.com>
+ <20181128100420.0c9a721a@karo-electronics.de>
+ <DB3PR0402MB3916FFD700313BF684CF32AAF5D10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120141631.18949-2-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <DB3PR0402MB3916FFD700313BF684CF32AAF5D10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Charles Keepax wrote:
+On 28/11/2018 09:06:27+0000, Anson Huang wrote:
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> > b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> > > index 9155d45..ef57db6 100644
+> > > --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> > > +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> > > @@ -433,4 +433,8 @@
+> > >  		#size-cells = <1>;
+> > >  		ranges = <0x5f000000 0x0 0x5f000000 0x1000000>;
+> > >  	};
+> > > +
+> > > +	rtc: rtc {
+> > > +		compatible = "nxp,imx8qxp-sc-rtc";
+> > > +	};
+> > >  };
+> > IMO this should be disabled by default.
+> 
+> This module is NOT depending on any board design, should it be enabled by default in soc dtsi?
+> Like wdog etc..
+> 
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
-> 
-> Changes since v4:
->  - Move sub-bindings into separate documents
-> 
-> Again incase Rob missed v4 I have dropped his ack due to the large
-> changes introduced in v4, see:
-> 
->  https://patchwork.kernel.org/patch/10673891/
-> 
-> Thanks,
-> Charles
-> 
->  .../devicetree/bindings/mfd/cirrus,lochnagar.txt   |  71 +++++++++++
+I guess the point is that you may not want it enabled, even if it should
+always be working. enabling it by default would affect the RTC ordering
+for example.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
