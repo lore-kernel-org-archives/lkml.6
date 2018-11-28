@@ -2,199 +2,114 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BD9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78842C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDB42081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDB42081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 45E5F2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E5F2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbeK1VG6 (ORCPT
+        id S1728172AbeK1VIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:06:58 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:8005 "EHLO pegase1.c-s.fr"
+        Wed, 28 Nov 2018 16:08:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48928 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbeK1VG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:06:58 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 434brY6qn5z9vBmd;
-        Wed, 28 Nov 2018 11:05:49 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id UkynWoASO0ac; Wed, 28 Nov 2018 11:05:49 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 434brY6HPBz9vBmJ;
-        Wed, 28 Nov 2018 11:05:49 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BC33D8B860;
-        Wed, 28 Nov 2018 11:05:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id rgC6UKgVgWgZ; Wed, 28 Nov 2018 11:05:50 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 85A078B853;
-        Wed, 28 Nov 2018 11:05:50 +0100 (CET)
-Subject: Re: [RFC PATCH v1 5/6] powerpc/mm: Add a framework for Kernel
- Userspace Access Protection
-To:     Russell Currey <ruscur@russell.cc>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <ab8fcb458e1a6ad86382767b3ce7f7cc0d5b7121.1541568127.git.christophe.leroy@c-s.fr>
- <a8df3cd2be841ff5dd7b8d3fd357f40f9935f5a4.1541568128.git.christophe.leroy@c-s.fr>
- <d5aa6ff391c0438371cae507e0b82a96eec4e979.camel@russell.cc>
- <f579dd05-975c-5e3f-1dd2-0702f1cf3fea@c-s.fr>
- <0d599e228d336c532b4d4bcde31be5f5565dce1b.camel@russell.cc>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <4c7590ee-e701-8322-2e02-7f25a95e6520@c-s.fr>
-Date:   Wed, 28 Nov 2018 11:05:50 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <0d599e228d336c532b4d4bcde31be5f5565dce1b.camel@russell.cc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1727413AbeK1VIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:08:18 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20308316468F;
+        Wed, 28 Nov 2018 10:07:12 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.32.181.230])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8B0770121;
+        Wed, 28 Nov 2018 10:07:10 +0000 (UTC)
+Message-ID: <35b45d85f2c5072d921b555df43bcc4e5a9feb64.camel@redhat.com>
+Subject: Re: net/sched/act_police.c:232 tcf_police_init() warn: possible
+ memory leak of 'new'
+From:   Davide Caratti <dcaratti@redhat.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@01.org
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Eric Dumazet <edumazet@google.com>
+In-Reply-To: <20181128092822.GK3073@unbuntlaptop>
+References: <20181128092822.GK3073@unbuntlaptop>
+Organization: red hat
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 28 Nov 2018 11:07:10 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 28 Nov 2018 10:07:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-11-28 at 12:28 +0300, Dan Carpenter wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   ef78e5ec9214376c5cb989f5da70b02d0c117b66
+> commit: f2cbd485282014132851bf37cb2ca624a456275d net/sched: act_police: fix race condition on state variables
 
+hello,
 
-Le 22/11/2018 à 02:25, Russell Currey a écrit :
-> On Wed, 2018-11-21 at 09:32 +0100, Christophe LEROY wrote:
->>
->> Le 21/11/2018 à 03:26, Russell Currey a écrit :
->>> On Wed, 2018-11-07 at 16:56 +0000, Christophe Leroy wrote:
->>>> This patch implements a framework for Kernel Userspace Access
->>>> Protection.
->>>>
->>>> Then subarches will have to possibility to provide their own
->>>> implementation
->>>> by providing setup_kuap(), and lock/unlock_user_rd/wr_access
->>>>
->>>> We separate read and write accesses because some subarches like
->>>> book3s32 might only support write access protection.
->>>>
->>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>
->>> Separating read and writes does have a performance impact, I'm
->>> doing
->>> some benchmarking to find out exactly how much - but at least for
->>> radix
->>> it means we have to do a RMW instead of just a write.  It does add
->>> some
->>> amount of security, though.
->>>
->>> The other issue I have is that you're just locking everything here
->>> (like I was), and not doing anything different for just reads or
->>> writes.  In theory, wouldn't someone assume that they could (for
->>> example) unlock reads, lock writes, then attempt to read?  At which
->>> point the read would fail, because the lock actually locks both.
->>>
->>> I would think we either need to bundle read/write locking/unlocking
->>> together, or only implement this on platforms that can do one at a
->>> time, unless there's a cleaner way to handle this.  Glancing at the
->>> values you use for 8xx, this doesn't seem possible there, and it's
->>> a
->>> definite performance hit for radix.
->>>
->>> At the same time, as you say, it would suck for book3s32 that can
->>> only
->>> do writes, but maybe just doing both at the same time and if
->>> implemented for that platform it could just have a warning that it
->>> only
->>> applies to writes on init?
->>
->> Well, I see your points. My idea was not to separate read and write
->> on platform that can lock both. I think it is no problem to also
->> unlocking writes when we are doing a read, so on platforms that can
->> do
->> both I think both should do the same..
->>
->> The idea was to avoid spending time unlocking writes for doing a read
->> on
->> platforms on which reads are not locked. And for platforms able to
->> independently unlock/lock reads and writes, if only unlocking reads
->> can
->> improve performance it can be interesting as well.
->>
->> For book3s/32, locking/unlocking will be done through Kp/Ks bits in
->> segment registers, the function won't be trivial as it may involve
->> more
->> than one segment at a time. So I just wanted to avoid spending time
->> doing that for reads as reads won't be protected. And may also be
->> the
->> case on older book3s/64, may not it ?
->> On Book3s/32, the page protection bits are as follows:
->>
->>     Key	0	1
->> PP
->> 00	RW	NA
->> 01	RW	RO
->> 10	RW	RW
->> 11	RO	RO
->>
->> So the idea is to encode user RW with PP01 (instead of PP10 today)
->> and
->> user RO with PP11 (as done today), giving Key0 to user and Key1 to
->> kernel (today both user and kernel have Key1). Then when kernel needs
->> to
->> write, we change Ks to Key0 in segment register for the involved
->> segments.
->>
->> I'm not sure there is any risk that someone nests unlocks/locks for
->> reads and unlocks/locks for writes, because the unlocks/locks are
->> done
->> in very limited places.
+> smatch warnings:
+> net/sched/act_police.c:232 tcf_police_init() warn: possible memory leak of 'new'
 > 
-> Yeah I don't think it's a risk since the scope is so limited, it just
-> needs to be clearly documented that locking/unlocking reads/writes
-> could have the side effect of covering the other.  My concern is less
-> about a problem in practice as much as functions that only don't
-> exactly do what the function name says.
-> 
-> Another option is to again have a single lock/unlock function that
-> takes a bitmask (so read/write/both), which due to being a singular
-> function might be a bit more obvious that it could lock/unlock
-> everything, but at this point I'm just bikeshedding.
+> # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f2cbd485282014132851bf37cb2ca624a456275d
+> git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> git remote update linus
+> git checkout f2cbd485282014132851bf37cb2ca624a456275d
+> vim +/new +232 net/sched/act_police.c
 
-In order to support book3s/32, I needed to add arguments to the 
-unlock/lock functions, as the address is needed to identify the affected 
-segments.
+<...>
 
-Therefore, I changed it to single functions as you suggested. These 
-functions have 'to', 'from' and 'size' arguments. When it is a read, 
-'to' is NULL. When it is a write, 'from' is NULL. When it is a copy, 
-none is NULL.
+> a883bf564 net/sched/act_police.c Jarek Poplawski   2009-03-04  155  	} else if (tb[TCA_POLICE_AVRATE] &&
+> a883bf564 net/sched/act_police.c Jarek Poplawski   2009-03-04  156  		   (ret == ACT_P_CREATED ||
+> 1c0d32fde net/sched/act_police.c Eric Dumazet      2016-12-04  157  		    !gen_estimator_active(&police->tcf_rate_est))) {
+> a883bf564 net/sched/act_police.c Jarek Poplawski   2009-03-04  158  		err = -EINVAL;
+> 74030603d net/sched/act_police.c WANG Cong         2017-06-13  159  		goto failure;
+> ^1da177e4 net/sched/police.c     Linus Torvalds    2005-04-16  160  	}
+> 71bcb09a5 net/sched/act_police.c Stephen Hemminger 2008-11-25  161  
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  162  	new = kzalloc(sizeof(*new), GFP_KERNEL);
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  163  	if (unlikely(!new)) {
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  164  		err = -ENOMEM;
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  165  		goto failure;
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  166  	}
+> 2d550dbad net/sched/act_police.c Davide Caratti    2018-09-13  167  
+> ^1da177e4 net/sched/police.c     Linus Torvalds    2005-04-16  168  	/* No failure allowed after this point */
 
-See RFC v2 for the details.
+in commit c08f5ed5d ("net/sched: act_police: disallow 'goto chain' on
+fallback control action"), I didn't notice the above comment,
 
-Christophe
+<...>
 
-> 
-> Doing it this way should be fine, I'm just cautious that some future
-> developer might be caught off guard.
-> 
-> Planning on sending my series based on top of yours for radix today.
-> 
-> - Russell
-> 
->>
->> Christophe
->>
->>
->>> Curious for people's thoughts on this.
->>>
->>> - Russell
->>>
+> ^1da177e4 net/sched/police.c     Linus Torvalds    2005-04-16  197  
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  198  	if (tb[TCA_POLICE_RESULT]) {
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  199  		new->tcfp_result = nla_get_u32(tb[TCA_POLICE_RESULT]);
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  200  		if (TC_ACT_EXT_CMP(new->tcfp_result, TC_ACT_GOTO_CHAIN)) {
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  201  			NL_SET_ERR_MSG(extack,
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  202  				       "goto chain not allowed on fallback");
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  203  			err = -EINVAL;
+> c08f5ed5d net/sched/act_police.c Davide Caratti    2018-10-20  204  			goto failure;
+>                                                                                         ^^^^^^^^^^^^
+> kfree_rcu(new, rcu); ?
+
+... and I introduced a 'goto failure', to avoid the NULL pointer
+dereference in the traffic path. I think it's correct to call
+kfree_rcu(new, rcu), or (maybe better) reject invalid values of
+TCA_POLICE_RESULT before allocating 'new', so we avoid kzalloc() +
+kfree_rcu() if we already know that the control action is not valid.
+
+I will send a patch in the next hours.
+thanks!
+-- 
+davide
+
+
