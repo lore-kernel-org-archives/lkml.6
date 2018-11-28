@@ -2,116 +2,127 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B48C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86E6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D76F20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C0B20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W98GuLgA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D76F20832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sDdBJYUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C0B20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeK1T46 (ORCPT
+        id S1727839AbeK1T5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:56:58 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42879 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbeK1T46 (ORCPT
+        Wed, 28 Nov 2018 14:57:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57240 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeK1T5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:56:58 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so9189886pga.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 00:56:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j2joXtoL181T0Q+21ODaRSamdDlvS5I215c8Di1fWVs=;
-        b=W98GuLgAcg0nB6qqCE3sDvPMTo73UFUgvoi7Y0+0FCPdnSGSRNoJ68DULJZyImO+Uk
-         X3Ywz2WANNZrLW/ebqlF7Uiu9Ea3QddUHMsO78IZ4pBpfIyGloASm/iB4voVCSi+Q3aW
-         AcYQN0ZqLef8yMV3oxXsNYKQDKRFSiDmUpMBg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j2joXtoL181T0Q+21ODaRSamdDlvS5I215c8Di1fWVs=;
-        b=D/Sou1ci5D9jurO5OqMrWmtpaiXiZseLIQ0bShyZqv9BIIufEvntofhE06nSFM4kWi
-         yf/AsU7p+dP24XM+CK6SVID0+/m7lWy09XGkoWBA5sk86wv3Mu5mQDnies+Z0gOrSZJL
-         lZ8sV1FZ4uUGczJBhqv0btFzyEKmLrdXxI9+d5xLlEl3s7VAuI28O4nGgLluJpjhhDKC
-         NaGTXN06mOanIBLa0FQKuJ196wIDLmACAXJvxl2eElg4G9NyKhnq98tgffz5bNgfH0Lr
-         T/I1qlPxmlbPDbhK8heVz8LzIMS2skkaQ/OT/v2JHBGM96mcirwY2xnaFj2VQsoUWLpS
-         CYEg==
-X-Gm-Message-State: AGRZ1gIUGyotsI33S4OCXqSLuPS4G5fo3Ex+7xRPfM+454t2+HPUvWu5
-        vZAx0or/gCKkxrZCcGhVew0PyD2M1qOtlAxKGOQztw==
-X-Google-Smtp-Source: AJdET5cxONVrz01SwOMvHbLkxB35vXTRz12KRwMc2vhsNl/ZTPs/NNfq06/M+CpRCuOZ129zxxQXkjrnz2DsB7+iGyY=
-X-Received: by 2002:a62:d0c1:: with SMTP id p184mr36225520pfg.245.1543395365831;
- Wed, 28 Nov 2018 00:56:05 -0800 (PST)
+        Wed, 28 Nov 2018 14:57:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=df0vEj1EBWN/IFALh7y7DF0WCXc8rjpJGy3ZN5kbDG0=; b=sDdBJYUybGR1TpUsfiO6mza7x
+        Xj7KNHM08mgRucnw0oxGZkVjLB3BlD/IrsDkNHk13GA8w9TO79YHaeIJB2uNQ2IOcqo5LTAeKDmeV
+        kRA3Y09ejrF36Eu/kKy8B1CMXcm9hXkFbY2eu9lDLbWU+TM0AG7Q/EyYl+0oa4ZU54bnWsH/TsjXI
+        h50cWWu5U3CdiL3ahWsbazAyBZFX0alsPFKlAoBOH9A4Z8b5yDuD5moXKpDg8b7hMCyoxsO7H5G/X
+        0XM1l2zKMZ3u6DFk9WtsXQr/AxLmFIG9X6L1LobhLQugQ4O7NXKWzXTk6tRWJDI+TY/xQ+xbxl1it
+        4ODTjJsow==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRveF-0001Dp-AX; Wed, 28 Nov 2018 08:56:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6B7382029FD58; Wed, 28 Nov 2018 09:56:40 +0100 (CET)
+Date:   Wed, 28 Nov 2018 09:56:40 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, catalin.marinas@arm.com, rml@tech9.net,
+        tglx@linutronix.de, schwidefsky@de.ibm.com
+Subject: Re: [PATCH 0/2] arm64: Only call into preempt_schedule() if
+ need_resched()
+Message-ID: <20181128085640.GX2131@hirez.programming.kicks-ass.net>
+References: <1543347902-21170-1-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
- <20181121213853.GL3065@bombadil.infradead.org> <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
- <20181122082336.GA2049@infradead.org> <555dd63a-0634-6a39-7abc-121e02273cb2@suse.cz>
- <20181126080213.GA17809@infradead.org>
-In-Reply-To: <20181126080213.GA17809@infradead.org>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 28 Nov 2018 16:55:54 +0800
-Message-ID: <CANMq1KBYAgoPh37e+BPz7xK4z3jJ4Gm30Gs662+_gTdM8v0QDA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     hch@infradead.org
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Robin Murphy <robin.murphy@arm.com>, willy@infradead.org,
-        Christoph Lameter <cl@linux.com>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        iommu@lists.linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        yingjoe.chen@mediatek.com, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543347902-21170-1-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 4:02 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Fri, Nov 23, 2018 at 01:23:41PM +0100, Vlastimil Babka wrote:
-> > Is this also true for caches created by kmem_cache_create(), that
-> > debugging options can result in not respecting the alignment passed to
-> > kmem_cache_create()? That would be rather bad, IMHO.
->
-> That's what I understood in the discussion.  If not it would make
-> our live simpler, but would need to be well document.
+On Tue, Nov 27, 2018 at 07:45:00PM +0000, Will Deacon wrote:
+> Hi all,
+> 
+> This pair of patches improves our preempt_enable() implementation slightly
+> on arm64 by making the resulting call to preempt_schedule() conditional
+> on need_resched(), which is tracked in bit 32 of the preempt count. The
+> logic is inverted so that we can detect the preempt count going to zero
+> and need_resched being set with a single CBZ instruction.
 
-From my experiment, adding `slub_debug` to command line does _not_
-break the alignment of kmem_cache_alloc'ed objects.
+>   40:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
+>   44:   910003fd        mov     x29, sp
+>   48:   d5384101        mrs     x1, sp_el0
+>   4c:   f9400820        ldr     x0, [x1, #16]
 
-We do see an increase in slab_size
-(/sys/kernel/slab/io-pgtable_armv7s_l2/slab_size), from 1024 to 3072
-(probably because slub needs to allocate space on each side for the
-red zone/padding, while keeping the alignment?)
+We load x0 which is a u64, right?
 
-> Christoph can probably explain the alignment choices in slub.
->
-> >
-> > > But I do agree with the sentiment of not wanting to spread GFP_DMA32
-> > > futher into the slab allocator.
-> >
-> > I don't see a problem with GFP_DMA32 for custom caches. Generic
-> > kmalloc() would be worse, since it would have to create a new array of
-> > kmalloc caches. But that's already ruled out due to the alignment.
->
-> True, purely slab probably isn't too bad.
+>   50:   d1000400        sub     x0, x0, #0x1
+>   54:   b9001020        str     w0, [x1, #16]
+
+But we store w0, which is the low u32, such as to not touch the high
+word which contains the preempt bit.
+
+>   58:   b4000060        cbz     x0, 64 <will+0x24>
+>   5c:   a8c17bfd        ldp     x29, x30, [sp], #16
+>   60:   d65f03c0        ret
+>   64:   94000000        bl      0 <preempt_schedule>
+>   68:   a8c17bfd        ldp     x29, x30, [sp], #16
+>   6c:   d65f03c0        ret
+
+Why not?
+
+   58:   b4000060        cbnz    x0, 60 <will+0x24>
+   5c:   94000000        bl      0 <preempt_schedule>
+   60:   a8c17bfd        ldp     x29, x30, [sp], #16
+   64:   d65f03c0        ret
+
+which seems shorter.
+
+
+So it's still early, and I haven't finished (or really even started) my
+pot 'o tea, but what about:
+
+
+	ldr x0, [x1, #16]	// seees the high bit set -- no preempt needed
+	sub x0, x0, #1
+
+	<interrupt>
+	  ...
+	  resched_curr()
+	    set_tsk_need_resched();
+	    set_preempt_need_resched();
+	</interrupt> // sees preempt_count != 0, does not preempt
+
+	str w0, [x1, #16] // stores preempt_count == 0
+	cbnz x0, 1f // taken, we still observe the high word from before
+
+1:	ret
+
+
+Which then ends with preempt_count==0, need_resched==0 and no actual
+preemption afaict.
+
+Can you use mis-matched ll x0 / sc w0 to do this same thing and detector
+the intermediate write on the high word?
