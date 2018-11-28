@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11893C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09878C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C79622133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9BDA2133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkTIDWlz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C79622133F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga3BkypM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BDA2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeK2Jhv (ORCPT
+        id S1727345AbeK2Jhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:37:51 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44947 "EHLO
+        Thu, 29 Nov 2018 04:37:54 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46722 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbeK2Jhu (ORCPT
+        with ESMTP id S1727166AbeK2Jhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:37:50 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so23620463wrt.11;
-        Wed, 28 Nov 2018 14:34:38 -0800 (PST)
+        Thu, 29 Nov 2018 04:37:52 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so27906140wrt.13;
+        Wed, 28 Nov 2018 14:34:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iD1UyqjCCFF08dz9kmj5kIY680LVUEWD9EKoGw4tLF8=;
-        b=YkTIDWlzx24v+AgPh/a3On6EpHc9K1wUWo6aoPuBFiNT0XuywM5zMfJJUSugVsCjmh
-         MwEWaIwkKC6oigyYldkjfoxtvlRpDDaUYiU8ZJv8BVooGJP88JOfOg56imf6lOK5ljq5
-         Pbpl1S0M0Qx2zyjwbXyu16qrY1Iyhc02lLTrLPmWGIDB2TOE13L98z+E4mksPe/HwMl5
-         WvH2h4z3vVIpj1y26ppmH5koyzO6AksFuwZhEfEZYsKU0Bs3ydg3HCbUkryxaeB0oGEr
-         EgL6uBkJ+SnaAgrO1ntSNrB1auVR7AscVy5Y1idrpARbpff0unwSVwUoqavjX2DUqX6z
-         P/sA==
+        bh=9WG2eU/ejG4wAWToKoueA27/6ygzN1rLZLWAo8LIhNE=;
+        b=ga3BkypMafnIrlIbTkOz7SkxXzmYMDMUlEcgr2JTXWZhpvI+aG8kd83AUIFgVSjeXA
+         ellD4QPs7Ssv/URymLaizJqg+caslTJ8a7wDtWL5pbC75wv49SytulWzkmWTD2JN6BwS
+         Jj1ZIz/up5rwjkXLQnfxtSUcqRruoFS0VJDBbd3RclYdNySiPSjQsQ24TBrLo5AQQspg
+         4hE4CH7vvSeL0aIgcqY1OpEczZaIg/jffchAUGeVnMVHq5mcgrE7IQcYtPfXG1ktPKZ8
+         YBgLeM902M7dW1KzzXL5V5doK9FibPz49T/TAQ+idiMBnnoQNx73yUv7vT2uSt8+GQyP
+         x4gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iD1UyqjCCFF08dz9kmj5kIY680LVUEWD9EKoGw4tLF8=;
-        b=QTNQfmJCNcv3B9Zl+pht+I1xke6gxkD/vl2fuakxGakQzWWJ5/IRYEbfPefJMrKiPL
-         PJ/0Fc9WpTgTYeBOzMIyG2eqNWM1KB/tHvgvIThXGocAIrxaWwasvt19xQTPT9p3mw0/
-         K+LfFPjZMUxhXeYPnEO954c+y+8j0dIH9lBRblqia/2XZhtdkVyVjqy0T9gYwuyUtDOk
-         dSkrPhIH7MmNU6lK4NncvaIA1C20zwI9DNARqbKLWJu90Ud/K+2gO2cQj2bshHfGu+Dw
-         sg0Cnknfbd3dKKUl8PUIdh3ueOn1kt6FTzqd7FHLgBf7wDzk5Tt4E1BsWb49yz0NtTbw
-         A7DQ==
-X-Gm-Message-State: AA+aEWYu9wfKPVj0e+18AqERcQiRmRVtSnv6RbzukgYiO7n/5e/Mn3Io
-        5sW4Y64uUk50edSPEBkCvhJYb+KkpFQ=
-X-Google-Smtp-Source: AFSGD/UTwavepNCd8VE3zbmOd99XZJPcRLzaSr6sCe+S9Oe9Rh8WG1yTypZMcQKHqIQOPB6qWhnPEA==
-X-Received: by 2002:a5d:454f:: with SMTP id p15mr35080066wrr.39.1543444477405;
-        Wed, 28 Nov 2018 14:34:37 -0800 (PST)
+        bh=9WG2eU/ejG4wAWToKoueA27/6ygzN1rLZLWAo8LIhNE=;
+        b=VyAAX6BYvr2ya9czUV3OmXXAfce32XbbMGQqsypV8++qXt0M/e2LCSDp6mFMDKA3k2
+         KRyvi8QyowfeQWiMkrmjNVH9rMwHYti0+ZKPQQiPtjlIj1p6Vm9GWNtxUR3zJ5+zCpei
+         i+wE0agKQRfXeehrEcTowoB9z/lqUkr2Kt3kae4YjXbMe9w5LmX1UYJ2sTIUJEinqfwC
+         GXhCFUV+4dhb0T4XWJ5BwyOgGlqB/C3fk3JZ6SScRPSrbXb9Kd8HieZhveiFmX/P7ZiK
+         d4AfFTT1Dx//ur96HY4w/1asT1Vh1paJKp7Jj8NdtqLdc6P23AsQGjsh7Kskx0ZKA7Up
+         EweQ==
+X-Gm-Message-State: AA+aEWbIrDDwOeX9u/TTeJyhxIe/1Xw1LLJMdmg8rdeO5jr5xcTr7l7e
+        UPPyxfL4IoHFrB9QVdzSzjkVVjt+0u8=
+X-Google-Smtp-Source: AFSGD/U/J4HMWDVg4+d+ZUM3QbF6zHFGbTdN0nSG8bSWCDEn/WhRA4iJDCl8HzEe0AbLc1HMjELSyg==
+X-Received: by 2002:adf:f1c2:: with SMTP id z2mr34191114wro.218.1543444479105;
+        Wed, 28 Nov 2018 14:34:39 -0800 (PST)
 Received: from ThinkPad.home ([185.219.177.239])
-        by smtp.gmail.com with ESMTPSA id g198sm180244wmd.23.2018.11.28.14.34.35
+        by smtp.gmail.com with ESMTPSA id g198sm180244wmd.23.2018.11.28.14.34.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Nov 2018 14:34:36 -0800 (PST)
+        Wed, 28 Nov 2018 14:34:38 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [PATCH v5 15/17] dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
-Date:   Thu, 29 Nov 2018 01:33:25 +0300
-Message-Id: <cbe3ad4ce1d0fb565a525c98165b0c0b8f50a4d7.1543443475.git.mesihkilinc@gmail.com>
+Subject: [PATCH v5 16/17] ARM: dts: suniv: add initial DTSI file for F1C100s
+Date:   Thu, 29 Nov 2018 01:33:26 +0300
+Message-Id: <ad582610c3df538ad192fbec4231a634c6aab583.1543443475.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543443475.git.mesihkilinc@gmail.com>
 References: <cover.1543443475.git.mesihkilinc@gmail.com>
@@ -83,27 +83,169 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner ARMv5 F1C100s has similar watchdog timer to sun6i A31.
-Add definition for it.
+F1C100s is one product with the suniv die, which has a 32MiB co-packaged
+DDR1 DRAM chip. As we have the support for suniv pin controller and CCU now, add a
+initial DTSI for it.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/suniv-f1c100s.dtsi | 147 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
 
-diff --git a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-index ed11ce0..4605525 100644
---- a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-@@ -6,6 +6,7 @@ Required properties:
- 	"allwinner,sun4i-a10-wdt"
- 	"allwinner,sun6i-a31-wdt"
- 	"allwinner,sun50i-a64-wdt","allwinner,sun6i-a31-wdt"
-+	"allwinner,suniv-f1c100s-wdt", "allwinner,sun4i-a10-wdt"
- - reg : Specifies base physical address and size of the registers.
- 
- Optional properties:
+diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+new file mode 100644
+index 0000000..aff5f90
+--- /dev/null
++++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR X11)
++/*
++ * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
++ * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
++ */
++
++#include <dt-bindings/clock/suniv-ccu-f1c100s.h>
++#include <dt-bindings/reset/suniv-ccu-f1c100s.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	interrupt-parent = <&intc>;
++
++	clocks {
++		osc24M: clk-24M {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <24000000>;
++			clock-output-names = "osc24M";
++		};
++
++		osc32k: clk-32k {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <32768>;
++			clock-output-names = "osc32k";
++		};
++	};
++
++	cpus {
++		cpu {
++			compatible = "arm,arm926ej-s";
++			device_type = "cpu";
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		sram-controller@1c00000 {
++			compatible = "allwinner,suniv-f1c100s-system-control",
++				     "allwinner,sun4i-a10-system-control";
++			reg = <0x01c00000 0x30>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			sram_d: sram@10000 {
++				compatible = "mmio-sram";
++				reg = <0x00010000 0x1000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x00010000 0x1000>;
++
++				otg_sram: sram-section@0 {
++					compatible = "allwinner,suniv-f1c100s-sram-d",
++						     "allwinner,sun4i-a10-sram-d";
++					reg = <0x0000 0x1000>;
++					status = "disabled";
++				};
++			};
++		};
++
++		ccu: clock@1c20000 {
++			compatible = "allwinner,suniv-f1c100s-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc32k>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		intc: interrupt-controller@1c20400 {
++			compatible = "allwinner,suniv-f1c100s-ic";
++			reg = <0x01c20400 0x400>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++		};
++
++		pio: pinctrl@1c20800 {
++			compatible = "allwinner,suniv-f1c100s-pinctrl";
++			reg = <0x01c20800 0x400>;
++			interrupts = <38>, <39>, <40>;
++			clocks = <&ccu 37>, <&osc24M>, <&osc32k>;
++			clock-names = "apb", "hosc", "losc";
++			gpio-controller;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			#gpio-cells = <3>;
++
++			uart0_pe_pins: uart0-pe-pins {
++				pins = "PE0", "PE1";
++				function = "uart0";
++			};
++		};
++
++		timer@1c20c00 {
++			compatible = "allwinner,suniv-f1c100s-timer";
++			reg = <0x01c20c00 0x90>;
++			interrupts = <13>;
++			clocks = <&osc24M>;
++		};
++
++		wdt: watchdog@1c20ca0 {
++			compatible = "allwinner,suniv-f1c100s-wdt",
++				     "allwinner,sun4i-a10-wdt";
++			reg = <0x01c20ca0 0x20>;
++		};
++
++		uart0: serial@1c25000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c25000 0x400>;
++			interrupts = <1>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu 38>;
++			resets = <&ccu 24>;
++			status = "disabled";
++		};
++
++		uart1: serial@1c25400 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c25400 0x400>;
++			interrupts = <2>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu 39>;
++			resets = <&ccu 25>;
++			status = "disabled";
++		};
++
++		uart2: serial@1c25800 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c25800 0x400>;
++			interrupts = <3>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu 40>;
++			resets = <&ccu 26>;
++			status = "disabled";
++		};
++	};
++};
 -- 
 2.7.4
 
