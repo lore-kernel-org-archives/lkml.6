@@ -2,68 +2,95 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8F7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6387CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB1220665
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB1220665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 1C6D020665
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:16:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6D020665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbeK2GNH (ORCPT
+        id S1727389AbeK2GSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:13:07 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:36628 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeK2GNH (ORCPT
+        Thu, 29 Nov 2018 01:18:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50727 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbeK2GSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:13:07 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ACB6114E0F727;
-        Wed, 28 Nov 2018 11:10:26 -0800 (PST)
-Date:   Wed, 28 Nov 2018 11:10:26 -0800 (PST)
-Message-Id: <20181128.111026.490482201236586536.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     subashab@codeaurora.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: qualcomm: rmnet: remove set but not used
- variables 'ip_family, fc_seq, qos_id'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181128123142.25348-1-yuehaibing@huawei.com>
-References: <20181128123142.25348-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 28 Nov 2018 11:10:26 -0800 (PST)
+        Thu, 29 Nov 2018 01:18:53 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASJFvP02433464
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 28 Nov 2018 11:15:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASJFsde2433461;
+        Wed, 28 Nov 2018 11:15:54 -0800
+Date:   Wed, 28 Nov 2018 11:15:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mattias Jacobsson <tipbot@zytor.com>
+Message-ID: <tip-69be4efeb959147ff86f22e35aea9526f9b86715@git.kernel.org>
+Cc:     bp@suse.de, mingo@kernel.org, 2pi@mok.nu,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        hpa@zytor.com
+Reply-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, 2pi@mok.nu,
+          linux-kernel@vger.kernel.org, bp@suse.de, mingo@kernel.org
+In-Reply-To: <20181128161607.10973-1-2pi@mok.nu>
+References: <20181128161607.10973-1-2pi@mok.nu>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Add missing va_end() to die()
+Git-Commit-ID: 69be4efeb959147ff86f22e35aea9526f9b86715
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Wed, 28 Nov 2018 20:31:42 +0800
+Commit-ID:  69be4efeb959147ff86f22e35aea9526f9b86715
+Gitweb:     https://git.kernel.org/tip/69be4efeb959147ff86f22e35aea9526f9b86715
+Author:     Mattias Jacobsson <2pi@mok.nu>
+AuthorDate: Wed, 28 Nov 2018 17:16:07 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 28 Nov 2018 20:06:07 +0100
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:26:6:
->  warning: variable 'ip_family' set but not used [-Wunused-but-set-variable]
-> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:27:6:
->  warning: variable 'fc_seq' set but not used [-Wunused-but-set-variable]
-> drivers/net/ethernet/qualcomm/rmnet/rmnet_map_command.c:28:6:
->  warning: variable 'qos_id' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in commit
-> ceed73a2cf4a ("drivers: net: ethernet: qualcomm: rmnet: Initial implementation")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+x86/boot: Add missing va_end() to die()
 
-Applied.
+Each call to va_start() must have a corresponding call to va_end()
+before the end of the function. Add the missing va_end().
+
+Found with Coccinelle.
+
+Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20181128161607.10973-1-2pi@mok.nu
+---
+ arch/x86/boot/tools/build.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
+index bf0e82400358..a93d44e58f9c 100644
+--- a/arch/x86/boot/tools/build.c
++++ b/arch/x86/boot/tools/build.c
+@@ -132,6 +132,7 @@ static void die(const char * str, ...)
+ 	va_list args;
+ 	va_start(args, str);
+ 	vfprintf(stderr, str, args);
++	va_end(args);
+ 	fputc('\n', stderr);
+ 	exit(1);
+ }
