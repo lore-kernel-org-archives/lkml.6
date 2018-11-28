@@ -2,63 +2,88 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586BCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9219C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B562082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B562082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 5AF5120873
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF5120873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeK1SmB (ORCPT
+        id S1727662AbeK1Soi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:42:01 -0500
-Received: from verein.lst.de ([213.95.11.211]:35246 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727230AbeK1SmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:42:01 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id CAEDA68B02; Wed, 28 Nov 2018 08:41:17 +0100 (CET)
-Date:   Wed, 28 Nov 2018 08:41:17 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux@armlinux.org.uk,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        xen-devel@lists.xenproject.org, robin.murphy@arm.com,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-Message-ID: <20181128074117.GA21126@lst.de>
-References: <20181122140320.24080-1-hch@lst.de> <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com> <20181122170715.GI30658@n2100.armlinux.org.uk> <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com> <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com> <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com> <20181123065511.GA17856@lst.de>
+        Wed, 28 Nov 2018 13:44:38 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17779 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727247AbeK1Soh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 13:44:37 -0500
+X-UUID: f2a9d06b0fc4449f8441d39386385ffb-20181128
+X-UUID: f2a9d06b0fc4449f8441d39386385ffb-20181128
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <leilk.liu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1732245233; Wed, 28 Nov 2018 15:43:50 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 28 Nov 2018 15:43:48 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 28 Nov 2018 15:43:46 +0800
+From:   Leilk Liu <leilk.liu@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <ryder.lee@mediatek.com>, Leilk Liu <leilk.liu@mediatek.com>
+Subject: [PATCH v3] spi: mediatek: Add bindings for mediatek MT7629 soc platform
+Date:   Wed, 28 Nov 2018 15:43:30 +0800
+Message-ID: <1543391010-23554-1-git-send-email-leilk.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123065511.GA17856@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: EB018FB4ABCC1FD44570ABFE306832FABC4CF16901F58B258EBB0FFB2196E9642000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 07:55:11AM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 22, 2018 at 09:55:25AM -0800, Linus Torvalds wrote:
-> > No, the big immediate benefit of allowing "return -EINVAL" etc is
-> > simply legibility and error avoidance.
-> 
-> Well, I can tweak the last patch to return -EINVAL from dma_mapping_error
-> instead of the old 1 is as bool true.  The callers should all be fine,
-> although I'd have to audit them.  Still wouldn't help with being able to
-> return different errors.
+This patch adds a DT binding documentation for the MT7629 soc.
 
-Any opinions?  I'd really like to make some forward progress on this
-series.
+Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
+---
+v3:
+remove cover-letter.
+
+v2:
+remove "mediatek,mt7629-spi" compatible according Matthias's advice.
+
+v1:
+This series are based on 4.20-rc1 and provide two patches to support mt7629 IC.
+---
+ .../devicetree/bindings/spi/spi-mt65xx.txt         |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+index 7940940..69c3567 100644
+--- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
++++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
+@@ -6,6 +6,7 @@ Required properties:
+     - mediatek,mt2712-spi: for mt2712 platforms
+     - mediatek,mt6589-spi: for mt6589 platforms
+     - mediatek,mt7622-spi: for mt7622 platforms
++    - "mediatek,mt7629-spi", "mediatek,mt7622-spi": for mt7629 platforms
+     - mediatek,mt8135-spi: for mt8135 platforms
+     - mediatek,mt8173-spi: for mt8173 platforms
+     - mediatek,mt8183-spi: for mt8183 platforms
+-- 
+1.7.9.5
+
