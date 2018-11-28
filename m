@@ -2,110 +2,193 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D16AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21D7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F41620832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:40:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F41620832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aquantia.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DC5A20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:41:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNu1MaAP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC5A20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeK1Ulf (ORCPT
+        id S1728123AbeK1UmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:41:35 -0500
-Received: from mail-eopbgr770050.outbound.protection.outlook.com ([40.107.77.50]:22496
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727413AbeK1Ule (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:41:34 -0500
+        Wed, 28 Nov 2018 15:42:24 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38923 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727541AbeK1UmY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:42:24 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b14so21491857edt.6;
+        Wed, 28 Nov 2018 01:41:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=AQUANTIA1COM.onmicrosoft.com; s=selector1-aquantia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wFhRMAO2LLIKJkC2gZLrSBrD63lPvxV8yUHtI0AzRNw=;
- b=bY962SQ+H6ptttEd+AQkLZ8t3Y8++Nlb2+wa/KNYGCqMoALkOYtuGOjnjsbf1gYo6BMlm4tQnzK4gOixLyMZKtiIpna0zJ2yu9tvU8L1pbJTBhkiJg3TiZeJZGnqj5WgizkMwnQolmRI8EtLumKtIFLyGe+g5Dl1rOaBYZ0bbH4=
-Received: from BY1PR0701MB1660.namprd07.prod.outlook.com (10.162.110.22) by
- BY1PR0701MB1675.namprd07.prod.outlook.com (10.162.110.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Wed, 28 Nov 2018 09:40:29 +0000
-Received: from BY1PR0701MB1660.namprd07.prod.outlook.com
- ([fe80::f8ee:2260:e410:fffd]) by BY1PR0701MB1660.namprd07.prod.outlook.com
- ([fe80::f8ee:2260:e410:fffd%3]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 09:40:28 +0000
-From:   Igor Russkikh <Igor.Russkikh@aquantia.com>
-To:     David Miller <davem@davemloft.net>,
-        "yuehaibing@huawei.com" <yuehaibing@huawei.com>
-CC:     Nikita Danilov <Nikita.Danilov@aquantia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: aquantia: return 'err' if set MPI_DEINIT
- state fails
-Thread-Topic: [PATCH net-next] net: aquantia: return 'err' if set MPI_DEINIT
- state fails
-Thread-Index: AQHUhv5lHuqhJjToJE+xC4y6DWMl+Q==
-Date:   Wed, 28 Nov 2018 09:40:28 +0000
-Message-ID: <403a5d75-cb7f-bacf-17b3-b03a55abd571@aquantia.com>
-References: <20181124101641.7072-1-yuehaibing@huawei.com>
- <20181127.152539.1127313634090592618.davem@davemloft.net>
-In-Reply-To: <20181127.152539.1127313634090592618.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P193CA0009.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:209:3e::22) To BY1PR0701MB1660.namprd07.prod.outlook.com
- (2a01:111:e400:522a::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Igor.Russkikh@aquantia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [95.79.108.179]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR0701MB1675;6:0tNL0Qdhhpg8OJHFi3vXyWj9/4d/VgAqeZlAHpLRBE455B9G5lMJu/Nf7034prBCvHnppjQjw96Zv7DGS8v68P1DZqlc3MaVCvyBU+vePIlpfgbEqmGIKdke1Lqnum0wWdFoJ54D/hkhZXs7I0zR+qDu7EK1SxBx15Z7myZbw/PPFAcR/iH6uHaCORwuLB9fo8db73Nv5BFhhxk2h0lPqXK04EJhYB2DUCN1yFnW4vq5rJUg9JtMmIMe14uHksz/OO0HYamu3KBJDuBGj/2JbGmbdMG+NUTlf6OMQ46/kbJ/GhInzVUKJEQmf1xBN0X6wIJhc4R9bFwLTGlwYZBEseeIRFrNjpwytlf0wKqJpOq43U8nC9FkmdqPvYFot6dRW5MQAqO+RVTXXfkNNdlCsn2xzT0mPE3PgmV8Pb90edcUIynI5BTh9CvJtjBCuKImwFYZ2Sqvaa6PKo5FfmWQ7w==;5:9xAh/fraii1Q9YDG9FEz3MiQViLRn9xy3dSBxxO5Csac0fL48maMOP1f1OEINU/ajqTfNVsOOWI/5wMBYcF/qKIk+Hxf/1Q2jmHiUhIJZgLJs5enSw6S+/V8y/WNIH27Brvimm4kLUrkEfUOAhs7ADoxqyFwbf2INqYaaMFo54I=;7:oU+bVlm2az9Yx0VvmZ1H8YM9PgZsF+7J8zMgwm2JRK7HXhEgi/bl/RaoSRh3n2H518ArYi0t26Gr1HET9Nyqxt9fVGSYwgyUplKvZ5el38Uzimw81toeLJDn1bKnSH+VQnBs/MNlLIPCjNviOo3VgQ==
-x-ms-office365-filtering-correlation-id: c6af12a9-355c-4b7e-bbdb-08d6551587fb
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY1PR0701MB1675;
-x-ms-traffictypediagnostic: BY1PR0701MB1675:
-x-microsoft-antispam-prvs: <BY1PR0701MB16753F51BECAC20EEA06371098D10@BY1PR0701MB1675.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231443)(999002)(944501410)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BY1PR0701MB1675;BCL:0;PCL:0;RULEID:;SRVR:BY1PR0701MB1675;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(396003)(136003)(39850400004)(199004)(189003)(478600001)(76176011)(476003)(446003)(2616005)(11346002)(54906003)(105586002)(25786009)(110136005)(72206003)(5660300001)(14454004)(316002)(36756003)(256004)(31686004)(106356001)(99286004)(4326008)(14444005)(386003)(6436002)(8936002)(229853002)(305945005)(7736002)(68736007)(6486002)(81156014)(2906002)(6506007)(26005)(81166006)(102836004)(6512007)(8676002)(3846002)(6116002)(97736004)(71200400001)(53936002)(71190400001)(44832011)(86362001)(486006)(2501003)(66066001)(52116002)(6246003)(186003)(31696002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR0701MB1675;H:BY1PR0701MB1660.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: aquantia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xCXfQQLCEME5qNsRAMGkSuNtljFSuGDgq4K1Ak4LiX7RVHgbSDhoZS9tBAPCt4yWir/9HhqAPD+HlIlyCNVpnzKxMkLTwm/WLhRs2q82c/07D3UonAnsz+m6J5pJCiiarTXkoxa1b8sb/PVUTOY3m1FO9DBvG07krrrxHWXrGzdgChV6uUWwQQ7Uf6AcxM6JMWkMgXdmzUGTWRxajGmOArwY5MlIywLbXhXoT0tFSs8btrCZrAMSlhUp/jK7uFZ7HxVkZmNq3NzLsETpWEF98sfC4QK0MfG2ZPXEuonoSCLVW8s5k5NFQD7pw5ticf3+J9J2l28p7IOnNf3zGiISYjT7AsRP4AfVR9EaWJ7Hp6k=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <59A1D1D246B24D4AB24340A6F6A2FC71@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nqlhVcXmosPRLqlalZDILQDWgIJdYGESrxfszeHCkvk=;
+        b=eNu1MaAPab5wkVsfzICkuKS/OwrWVuydaNwQ9VFoYXkX+WD3QzY7wly+J0F3MZ6u0+
+         kFqiooYvQpda0C6qmH2okWn/LERzaMAV9imuJj0X8gWtuojS7bQFs9uwgj3gDUGmemsL
+         EUINMMRZ+kwlobGMoqYkg+Kreao+6EUn1vNXSL0sYhF9sPCHm4+ZoRQhluGyyIl6TSEs
+         tnLVpdzEWhDW1k6BPTVb/anRoSBjR9eQSXKPBN2x57a+OkvJQbgAM887ZpqEITbcxAsx
+         E5HRdkMkPc1fHwyDhx0FudntLsS4hyPUlxNUaVeSNGjyoiNWBvraZzPcrG3BaXrEwnpv
+         H3Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nqlhVcXmosPRLqlalZDILQDWgIJdYGESrxfszeHCkvk=;
+        b=kOralqJgptZVyJL4QvkMR9aTLEg6atdVck0ioO1qFbJuGhvHdPydF33mJx3Sv1JOOs
+         EDC67gKdbSI2BQ8zteo34p57kddNDlr1UFt0GDQ9FN3fpL6EF4DKI0Z8akEYf5ruiYaB
+         yvdY5TIhTzCghWYjlGXETG90qCzrq9vdXlnWQi03zHKc9i4I3Yve+y0KwMeFfrPzWjsR
+         jGs1fsKvzdQaKmmWRwHiIbA2h+haw2d91k3JfNNF0wruIrQpXPAubSAufMu+aYDjTaO3
+         hUBDUshmmBGbOMA9p94pF1sruNqe6RWERf54xghvd8+S73wcIZBBU9Jak0f2qTg6rwZS
+         lV+g==
+X-Gm-Message-State: AA+aEWYMezenCNnM1P2p8UZG3LHQWUpbF9cuHrDkSlhCqK5K0i1I8JzV
+        KzusNhgaGjwrP9IYtojNihNTbXX0
+X-Google-Smtp-Source: AFSGD/Xl1Xc3PmF8U4rP/3aiabppfdYqUsvuxbR8i3fZETVXm8rLj/3cXrmabRSHnnDUgpZ1CInpOg==
+X-Received: by 2002:a50:b7d6:: with SMTP id i22mr10504043ede.27.1543398080622;
+        Wed, 28 Nov 2018 01:41:20 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm966426ejo.49.2018.11.28.01.41.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 01:41:19 -0800 (PST)
+Date:   Wed, 28 Nov 2018 10:41:19 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jose Abreu <jose.abreu@synopsys.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+Message-ID: <20181128094119.GH17419@ulmo>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+ <20181127132143.10473-1-thierry.reding@gmail.com>
+ <316d6a25-cb61-32d8-9792-8ffcc2122d8a@synopsys.com>
 MIME-Version: 1.0
-X-OriginatorOrg: aquantia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6af12a9-355c-4b7e-bbdb-08d6551587fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 09:40:28.5631
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 83e2e134-991c-4ede-8ced-34d47e38e6b1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR0701MB1675
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/9ZOS6odDaRI+0hI"
+Content-Disposition: inline
+In-Reply-To: <316d6a25-cb61-32d8-9792-8ffcc2122d8a@synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+PiBkcml2ZXJzL25ldC9ldGhlcm5ldC9hcXVhbnRpYS9hdGxhbnRpYy9od19hdGwvaHdfYXRs
-X3V0aWxzLmM6MjYwOjc6DQo+PiAgd2FybmluZzogdmFyaWFibGUgJ2Vycicgc2V0IGJ1dCBub3Qg
-dXNlZCBbLVd1bnVzZWQtYnV0LXNldC12YXJpYWJsZV0NCj4+DQo+PiAnZXJyJyBzaG91bGQgYmUg
-cmV0dXJuZWQgd2hpbGUgc2V0IE1QSV9ERUlOSVQgc3RhdGUgZmFpbHMNCj4+IGluIGh3X2F0bF91
-dGlsc19zb2Z0X3Jlc2V0Lg0KPj4NCj4+IEZpeGVzOiBjY2U5NmQxODgzZGEgKCJuZXQ6IGFxdWFu
-dGlhOiBSZWdyZXNzaW9uIG9uIHJlc2V0IHdpdGggMS54IGZpcm13YXJlIikNCj4+IFNpZ25lZC1v
-ZmYtYnk6IFl1ZUhhaWJpbmcgPHl1ZWhhaWJpbmdAaHVhd2VpLmNvbT4NCj4gDQo+IEFwcGxpZWQu
-DQo+IA0KPiBCdXQgdGhpcyBBUV9IV19TVEFURV9GT1IgbWFjcm8gX01VU1RfIGJlIGZpeGVkLg0K
-PiANCj4gTm8gbWFjcm8gc2hvdWxkIGhhdmUgaW52aXNpYmxlIHJlZmVyZW5jZXMgdG8gdmFyaWFi
-bGVzIGxpa2UgdGhpcywgYW5kDQo+IHRoYXQgaXMgZXhhY3RseSB3aGF0IGxlYWRzIHRvIGJ1Z3Mg
-bGlrZSB0aGlzLiAgQ1BQIG1hY3JvcyB3cml0dGVuIHRoaXMNCj4gd2F5IG1ha2UgaXQgaW1wb3Nz
-aWJsZSB0byBwcm9wZXJseSBhdWRpdCBjb2RlLg0KPiANCj4gJ2Vycicgc2hvdWxkIGJlIGFuIGV4
-cGxpY2l0IGFyZ3VtZW50IGdpdmVuIHRvIHRoaXMgZnVuY3Rpb24gaW5zdGVhZCBvZg0KPiBob3cg
-aXQgd29ya3Mgbm93Lg0KDQpIaSBEYXZpZCwNCg0KQWdyZWVkLCBJJ2xsIGNsZWFuIHRoaXMgdXAu
-DQoNClJlZ2FyZHMsDQogIElnb3INCg==
+
+--/9ZOS6odDaRI+0hI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 28, 2018 at 09:38:32AM +0000, Jose Abreu wrote:
+> On 27-11-2018 13:21, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Setting up and tearing down debugfs is current unbalanced, as seen by
+> > this error during resume from suspend:
+> >
+> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
+ create debugfs directory
+> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
+: failed debugFS registration
+> >
+> > The imbalance happens because the driver creates the debugfs hierarchy
+> > when the device is opened and tears it down when the device is closed.
+> > There's little gain in that, and it could be argued that it is even
+> > surprising because it's not usually done for other devices. Fix the
+> > imbalance by moving the debugfs creation and teardown to the driver's
+> > ->probe() and ->remove() implementations instead.
+> >
+> > Note that the ring descriptors cannot be read while the interface is
+> > down, so make sure to return an empty file when the descriptors_status
+> > debugfs file is read.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> > This applies on top of net-next.
+> >
+> > Changes in v2:
+> > - avoid access to ring descriptors when interface is down
+> >
+> >  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
+> >  1 file changed, 13 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/driver=
+s/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index 076a8be18d67..5551fead8f66 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -2550,12 +2550,6 @@ static int stmmac_hw_setup(struct net_device *de=
+v, bool init_ptp)
+> >  			netdev_warn(priv->dev, "PTP init failed\n");
+> >  	}
+> > =20
+> > -#ifdef CONFIG_DEBUG_FS
+> > -	ret =3D stmmac_init_fs(dev);
+> > -	if (ret < 0)
+> > -		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
+> > -			    __func__);
+> > -#endif
+> >  	priv->tx_lpi_timer =3D STMMAC_DEFAULT_TWT_LS;
+> > =20
+> >  	if (priv->use_riwt) {
+> > @@ -2756,10 +2750,6 @@ static int stmmac_release(struct net_device *dev)
+> > =20
+> >  	netif_carrier_off(dev);
+> > =20
+> > -#ifdef CONFIG_DEBUG_FS
+> > -	stmmac_exit_fs(dev);
+> > -#endif
+> > -
+> >  	stmmac_release_ptp(priv);
+> > =20
+> >  	return 0;
+> > @@ -3899,6 +3889,9 @@ static int stmmac_sysfs_ring_read(struct seq_file=
+ *seq, void *v)
+> >  	u32 tx_count =3D priv->plat->tx_queues_to_use;
+> >  	u32 queue;
+> > =20
+> > +	if ((dev->flags & IFF_UP) =3D=3D 0)
+>=20
+> I tried looking for an helper to check if interface is open but
+> couldn't find one so I guess this is the right thing to do.
+
+Yeah, I had done the same thing and came up empty-handed.
+
+> Acked-by: Jose Abreu <joabreu@synopsys.com>
+
+Thanks!
+Thierry
+
+--/9ZOS6odDaRI+0hI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+Yr4ACgkQ3SOs138+
+s6GLpw/9Gm1I3bb+4A/cCUEPmPMW7CsfwJXDoVKUD44P7C+S4T0j+RjGRpGWQzgN
+gIHV5HEBgFWJWNSLUZnWXBTObeGU5qrhkT6hfSxrVw0+V+4aOKM7qUTgydD3V1Du
+7JVd9iAUj6lMPUdpKyDIEgw7GEE7Cb2ja54RX5Z7lPRFqiW26VGz1keNaE9EKctk
+qQgX6aXvmifRj9DxJQWSOaZr0T8uZwjm6HxwKrvZa7KoIrWE78pnI380IMAWinUs
+aaLd/pxSDIuhpbK+O+jPKA0ixbiLHYxNliyGABKk8QekcXuxvlxF5rgTN6BvvWAw
+zf4ePjCveawRNPhb80oxE5YIdNnwvZQ//ba6J77P16eGOM2YgxL65BwIaYPEe1Tf
+w/t7u6P4fAyRRaQL3k2ECPdfLvKPgoiUcd3/Xmo5PHZT3CFNtpvdl+CCFCawPt/A
+HTNGHP14NZtfoNtqXOVO1omZ15+3TxG8JWKXjitJ0wQbACxb2aBKfcXLBoY7XFhh
+yJB5TXY9e+aL3GoDoFTAxgj8avHqBmYZ4LYU2SbQtqjENC9Oh+DUyXU2AEjXqMoV
+D21ZdMIvooLxFcyRQCdK8rXq4fQ+GHfX3YUv6z3xk09GbEa4qZIOJNqXpA8O1Z1T
+d8dSyLkLWQQmdYe1LTIBRJgpPsvG0CJWaXnGLEgYCCeVZwKhlW8=
+=8+GH
+-----END PGP SIGNATURE-----
+
+--/9ZOS6odDaRI+0hI--
