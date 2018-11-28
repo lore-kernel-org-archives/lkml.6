@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C976C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304A12133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C9D72133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MfAxF1a0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304A12133F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hJ0g1vPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C9D72133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeK2Jh6 (ORCPT
+        id S1727406AbeK2JiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:37:58 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45412 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeK2Jh5 (ORCPT
+        Thu, 29 Nov 2018 04:38:02 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34461 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeK2JiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:37:57 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so18064290plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 14:34:46 -0800 (PST)
+        Thu, 29 Nov 2018 04:38:01 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 17so10144800pgg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 14:34:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h81bvo1jaeL7v1YBgR+oC0YJdYTsfdkfWXE2JJry8l8=;
-        b=MfAxF1a0EDLGMbIXsL0AsypmHJkVF1shXrcZ+pBfivaOrj6CZZaHET7NyAUfOnriMe
-         TS6NuEevAOKVMWX7+ClZ5K/1HRrLzXDOythEz1Unq8eCihMetjaG/J9MPPk2uAKuVOrS
-         +zxaje4zoLUf4xmnpnaxQ7fqz3CzmoHKKJYNU=
+        bh=3rIAJU2JmCgKJB3gRbw/LLuNiP36MPTv3n4dNfB1CJE=;
+        b=hJ0g1vPx8ecbBHOwJqQkbaQ6HUkjJ7UO4AQviHyNB5Ta8HxChOXS4vnK/qwGd9QoZN
+         OMxPpFT1ISTWqhgrS4yiqNA31mubLck8leDQVc6W+laA6hCAKmNPrPRFVx1exSi0up09
+         6sGyM1aZDRt+W23VxbSuPKnRjX/F35lsK48Pc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=h81bvo1jaeL7v1YBgR+oC0YJdYTsfdkfWXE2JJry8l8=;
-        b=Si/g/rm28FXu/6pMt945ApsDhLzR2YafedlougfU4xNeBSlVwyXaYV8DgOVefSO3Qf
-         kVhMBjvbc3//r9lgXTKRMVtjX4khLJomw+UMB6LgsThFNNr2bvFjBz1rAlcQBaH8SlL+
-         NAiK4aT0cIUGFA4agmFerviovM04yPtfTvKmzCszihBx0MWRZVrAR3HFTsbPwZ0RcpHq
-         bwfZv/WdQZ7v38E8kSa9KRRLtN9GBY6kr86NSFQGIfuVyIk4njxhMpERjYRZSA3IOHn5
-         MT23dybM0JUft/5Nkl3r8VGmrVCr84IzSkfm2iNKWkZeMIkrTocjTFjIsFuUYQB3BcnY
-         B58w==
-X-Gm-Message-State: AA+aEWa/OfSQwFsvpOhaLjeZDIHM8b5kGJUkwFm3AdeJLEWEPPm8Owr/
-        g4a94+8s2eKP9jGYwC5eu3rCzw==
-X-Google-Smtp-Source: AFSGD/UcncJ+iK5GAhklX88ri/Ff6f58N4PohzMwPxvB4xmGOjfo1bVgmtasmXLgXyPpufZ5skS21g==
-X-Received: by 2002:a17:902:e08b:: with SMTP id cb11mr39145198plb.263.1543444486477;
-        Wed, 28 Nov 2018 14:34:46 -0800 (PST)
+        bh=3rIAJU2JmCgKJB3gRbw/LLuNiP36MPTv3n4dNfB1CJE=;
+        b=rSAO44Vg3BgrwWCEHQ+sepC5eqgIC51nHz1yXEhGWsFe7k8T78KhK/VLaMctDn1hbT
+         +F/J8SyL+1EZm2J2zXExscGhPlkesZcfUP8KF+PgZIngR68IAPwUG5i2eBDxWwPeEhrp
+         nPduO4OSb45Db2n0cCO2sdDyLlsUVBunRMcKIQ1O3UC0oSQpbztgl92zndMPFe0QfTnO
+         +0f69/SILyguG87z84tWX2VVQhPc+zkQKRSbx8cRlUHIRPguKRxcTyx5p5ihsIhSxk1E
+         tpCRRtgNiCcAV1wUgCZ16z0LIDybWBtl8YrcnpPkj7xacKkkhKkF0L8i96khtWEkKRll
+         nGqA==
+X-Gm-Message-State: AA+aEWawkMrwmBzxu1soSrOmB2/dirOcgHTP6ldac1Sb1i/JLVKnleFk
+        U7vWWB+aI2qdtxAgB8ut2WfVMA==
+X-Google-Smtp-Source: AFSGD/V87NUC7iVsSkre8+8q5WZzCWAkGZQkcybbUh82zfBlFiB+H2DpclgNlp/Gry+uqrW4hUARXw==
+X-Received: by 2002:a63:cc43:: with SMTP id q3mr34350431pgi.291.1543444490716;
+        Wed, 28 Nov 2018 14:34:50 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id y26-v6sm12364813pfi.123.2018.11.28.14.34.45
+        by smtp.gmail.com with ESMTPSA id y26-v6sm12364813pfi.123.2018.11.28.14.34.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Nov 2018 14:34:45 -0800 (PST)
+        Wed, 28 Nov 2018 14:34:50 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v1 1/3] dt-bindings: mmc: sdhci-msm: Clarify register requirements
-Date:   Wed, 28 Nov 2018 14:34:26 -0800
-Message-Id: <20181128223428.177313-2-evgreen@chromium.org>
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Subject: [PATCH v1 2/3] arm64: dts: qcom: sdm845: Add SD nodes
+Date:   Wed, 28 Nov 2018 14:34:27 -0800
+Message-Id: <20181128223428.177313-3-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181128223428.177313-1-evgreen@chromium.org>
 References: <20181128223428.177313-1-evgreen@chromium.org>
@@ -75,28 +75,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sdhci-msm-v5 and beyond, the MCI registers are removed, so there is only
-one register region required.
+Add the SD controller to SDM845.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
 ---
 
- Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-index b72871ac90cb2..da4edb146a983 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-@@ -25,7 +25,7 @@ Required properties:
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 1419b0098cb38..bb8eacdf40910 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1078,6 +1078,21 @@
+ 			};
+ 		};
  
- - reg: Base address and length of the register in the following order:
- 	- Host controller register map (required)
--	- SD Core register map (required)
-+	- SD Core register map (required for msm-v4 and below)
- - interrupts: Should contain an interrupt-specifiers for the interrupts:
- 	- Host controller interrupt (required)
- - pinctrl-names: Should contain only one value - "default".
++		sdhc_2: sdhci@8804000 {
++			compatible = "qcom,sdm845-sdhci", "qcom,sdhci-msm-v5";
++			reg = <0x8804000 0x1000>;
++
++			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "hc_irq", "pwr_irq";
++
++			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
++				 <&gcc GCC_SDCC2_APPS_CLK>;
++			clock-names = "iface", "core";
++
++			status = "disabled";
++		};
++
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+ 			reg = <0x88e2000 0x400>;
 -- 
 2.18.1
 
