@@ -2,92 +2,107 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC17C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1592DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E2C2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E2C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCC92208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:22:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UDw5tku/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC92208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbeK2DVf (ORCPT
+        id S1728835AbeK2DYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:21:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:3559 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728413AbeK2DVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:21:35 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 029E37F6B2;
-        Wed, 28 Nov 2018 16:19:24 +0000 (UTC)
-Received: from krava (unknown [10.40.205.15])
-        by smtp.corp.redhat.com (Postfix) with SMTP id ADE096838D;
-        Wed, 28 Nov 2018 16:19:21 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 17:19:20 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Eric Saint-Etienne <eric.saintetienne@gmail.com>
-Subject: Re: [PATCH v3] perf symbols: Cannot disassemble some routines when
- debuginfo present
-Message-ID: <20181128161920.GD13589@krava>
-References: <1543422934-1228-1-git-send-email-eric.saint.etienne@oracle.com>
+        Wed, 28 Nov 2018 22:24:36 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37580 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728141AbeK2DYf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 22:24:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+37/QIRXjv4NIee5gBXGDuXrFmx92seresqS5VI3v1U=; b=UDw5tku/3fQmzG7XN26uSlVQ4
+        x82EvWy7+wom0ChfHpEtOyXEGY6q9NyZeob9tQlu+23FOZOUjvyc3bn5nAtTP8XixjHmuxqLrRBhJ
+        zzW/WGpNlh/yilfaAZmZZK9Q1LOYZjGUWoIG2VTdpnreIoMLQzx5C4FbP2Txanwax5FRA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gS2bL-000616-M8; Wed, 28 Nov 2018 16:22:11 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1FF1C112521B; Wed, 28 Nov 2018 16:22:11 +0000 (GMT)
+Date:   Wed, 28 Nov 2018 16:22:11 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     jiada_wang@mentor.com
+Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ASoC: pcm3168a: Don't disable pcm3168a when
+ CONFIG_PM defined
+Message-ID: <20181128162211.GL6828@sirena.org.uk>
+References: <20181128122612.17820-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wA9WyeW1yVBM2Q32"
 Content-Disposition: inline
-In-Reply-To: <1543422934-1228-1-git-send-email-eric.saint.etienne@oracle.com>
+In-Reply-To: <20181128122612.17820-1-jiada_wang@mentor.com>
+X-Cookie: I had pancake makeup for brunch!
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 28 Nov 2018 16:19:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 08:35:34AM -0800, Eric Saint-Etienne wrote:
-> When the kernel is compiled with -ffunction-sections and perf uses the
-> kernel debuginfo, perf fails the very first symbol lookup and ends up with
-> an hex offset inside [kernel.vmlinux]. It's due to how perf loads the maps.
-> 
-> Indeed only .text gets loaded by map_groups__find() into al->map.
-> Consequently al->map address range encompass the whole kernel image.
-> But then map__load() loads many function maps by splitting al->map,
-> which reduces al->map range drastically. Very likely the target address is
-> then in one of those newly created function maps, so we need to lookup the
-> map again to find that new map.
-> 
-> I'm not sure if this issue is only specific to the kernel but at least it
-> occurs withe the kernel dso, and when we're not using the kernel debuginfo,
-> perf will fallback to using kallsyms and then the first lookup will work.
-> 
-> The split of .text section happens in dso_process_kernel_symbol() where we
-> call map_groups__find_by_name() to find an existing map, but with
-> -ffunction-sections and a symbol belonging to a new (function) map, such
-> map doesn't exist yet so we end up creating one and adjusting existing maps
-> accordingly because adjust_kernel_syms is set there.
-> 
-> This patch makes sure that the event address we're looking-up is indeed
-> within the map we've found, otherwise we lookup another map again.
-> Only one extra lookup at most is required for the proper map to be found,
-> if it exists.
-> 
-> Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-> Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+--wA9WyeW1yVBM2Q32
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
-jirka
+On Wed, Nov 28, 2018 at 09:26:12PM +0900, jiada_wang@mentor.com wrote:
+> From: Jiada Wang <jiada_wang@mentor.com>
+>=20
+> pcm3168 codec support runtime_[resume|suspend], whenever it
+> is not active, it enters suspend mode, and it's clock and regulators
+> will be disabled. so there is no need to disable them again in
+> remove callback.  Otherwise we got following kernel warnings,
+> when unload pcm3168a driver
+>=20
+> [  222.257514] unbalanced disables for amp-en-regulator
+> [  222.262526] ------------[ cut here ]------------
+> [  222.267158] WARNING: CPU: 0 PID: 2423 at drivers/regulator/core.c:2264=
+ _regulator_disable+0x28/0x108
+> [  222.276291] Modules linked in:
+> [  222.279343]  snd_soc_pcm3168a_i2c(-)
+
+Please think hard before including complete backtraces in upstream
+reports, they are very large and contain almost no useful information
+relative to their size so often obscure the relevant content in your
+message. If part of the backtrace is usefully illustrative then it's
+usually better to pull out the relevant sections.
+
+--wA9WyeW1yVBM2Q32
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv+wLIACgkQJNaLcl1U
+h9AE6wf/fUj43xe+OXVuc4QSIiRt0payrWXBKKvyj+KhVPvnLZF1dKaQdhV9bejr
+TMx+Kdxj3ZpkL/UBmJHgL5XeveqVz9qHKVfYSe2bYqYUKWznEcyMGyRcSAuoTeAr
++dhvGr0OUuEaQX0zUr2N1H4az3tUmsXBSR+qVZGfOREe58NFFAflD/Q14ODAa7tp
+9NxsbhmubVVPAMuv2vO6ez4nUOj14lh4Dml6xDKOCohTjTTYxl6BcrGV9E7SZNa0
+IyU1fMkAzDIzRXcjzcGYN4hdi+q5vdPDYaTn7mzt3ZGcndiLMb5Rla4l/SuUAngm
+xO8COaqgn8H8ZLJCniula7hdxCQiUQ==
+=gA+C
+-----END PGP SIGNATURE-----
+
+--wA9WyeW1yVBM2Q32--
