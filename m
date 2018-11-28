@@ -2,135 +2,103 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78011C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6270F20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:19:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWgGAp3C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6270F20832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A17B206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A17B206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeK2FVt (ORCPT
+        id S1727876AbeK2FXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:21:49 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43710 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbeK2FVt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:21:49 -0500
-Received: by mail-oi1-f195.google.com with SMTP id u18so23408431oie.10;
-        Wed, 28 Nov 2018 10:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7azP4mzGGa40kV9pnnK9b5t6fg6ERrxjmQmDJ1jYadI=;
-        b=EWgGAp3C8xk+ydqV3gYA0nugTXz3KaG/3JfiyKEST4Z9B6XxTONVfAvI6x0mC4how8
-         fvRia74cCkNZz6fj40jm8u0XUuBtFw+2t3/gw2N1aOhL5qVcvtE5Tp6V08U/ImAARYJ4
-         TlZlN/hWSPInipMh4loCUW7L2Ynf7l593n2aFCFRoISEnZH5w8q+ld/DgJyJeqxTllYr
-         qXHkkssZnI83I2WVjUEud7Wz0hDbq0FSvzZAmt/HOAVw2jpXeQq0ksmyYR0Q0PU+gTRo
-         szJ0dqRDgETZsCZU1rynXc9gdjwUhxQSVr/9MS1ZYYUMccT6KIpxylt95HaZE5bd4WYD
-         HNZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7azP4mzGGa40kV9pnnK9b5t6fg6ERrxjmQmDJ1jYadI=;
-        b=tuH57oap5QbiUxp7a2GYUJ17fb6PVPV6PNlghN/19/xdHzUhojytHNPzNhB5i6E5di
-         oAVqeXoX+HzHo5tlPQh1tMeOh+9u1Mr/nuyH9pT2L237AhSJlqY/dBwl+iFLfMdlKUZM
-         TWh4eDHCGYy5fTQWHxCY6WGrAYvX7adGQUWjhWp8s46TNerR5EPQz1dPRkusiSkkSBrm
-         1WH+0jNGTykfc/VnwvRVakb+QsedyJGJ6KtiLsk9Xei63il9roVlBPURtiwJOZykil3K
-         3WBqt2Tyn5dyjkKOeOnajAJfKNyKwn0MqSNteF2btO8WH/h4JFitvrIa7jtopN/elHKL
-         2h/A==
-X-Gm-Message-State: AGRZ1gLgpDnW3fTcCxmQwctGD4+Z+x0QhiSgOTYuDE6EWvIiQlnoXHRY
-        OjOHrJgkyUV49Mc6bsyuOTlld/PKHrhf4w/n33M=
-X-Google-Smtp-Source: AJdET5fti2OFqtg6lVizXZsfg+ft2sggDAKCHjClO2OaAokI6qtvDX+rKgz+JZFtJymygB/5iS3ocgUkKRt6mQHytEo=
-X-Received: by 2002:aca:cdd0:: with SMTP id d199mr22464729oig.266.1543429156645;
- Wed, 28 Nov 2018 10:19:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20181121150709.6030-1-TheSven73@googlemail.com>
- <20181121150709.6030-2-TheSven73@googlemail.com> <20181127075431.GG13965@kroah.com>
- <CAGngYiUL7bZVEehj4LGC2H+kv+Z4v_s=tG4uosOp1-Rc4_pGWw@mail.gmail.com> <20181128174238.GA4367@kroah.com>
-In-Reply-To: <20181128174238.GA4367@kroah.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Wed, 28 Nov 2018 13:19:05 -0500
-Message-ID: <CAGngYiXqscqVtSUkwwKGGweOgMm=E=W8nbxOXAbpeyYsk=5B0g@mail.gmail.com>
-Subject: Re: [PATCH anybus v4 1/7] fieldbus_dev: add Fieldbus Device subsystem.
-To:     gregkh@linuxfoundation.org
-Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Nov 2018 00:23:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:21138 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725266AbeK2FXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 00:23:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 10:21:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,291,1539673200"; 
+   d="scan'208";a="113175070"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by orsmga001.jf.intel.com with ESMTP; 28 Nov 2018 10:21:15 -0800
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
+        tony.luck@intel.com
+Cc:     jithu.joseph@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH] x86/resctrl: Fix rdt_find_domain() return value checks
+Date:   Wed, 28 Nov 2018 10:20:27 -0800
+Message-Id: <d932648504b745cb51c4a440710c7a1ca9830eca.1543427858.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 12:42 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+rdt_find_domain() may return an ERR_PTR(), NULL, or a pointer to struct
+rdt_domain. It is thus required that the return value be checked for the
+possibility of an ERR_PTR as well as NULL.
 
-> It depends on what you want to do with this device node.  You can use a
-> static one in your structure if you use it to "cast back" to your real
-> structure in the open() call, do you do that?
+In a few instances the return value of rdt_find_domain() is just checked
+for NULL - fix these to include a check of ERR_PTR.
 
-I do...
+Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
+Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+Dear Maintainers,
 
-static int fieldbus_open(struct inode *inode, struct file *filp)
-{
-        struct fieldbus_dev *fbdev = container_of(inode->i_cdev,
-                                                struct fieldbus_dev,
-                                                cdev);
+Two original commits are fixed here. d89b7379015f can be found in v4.14 and
+521348b011d6 starting in v4.20. I am unsure whether this is appropriate for
+stable since it is not fixing an issue reported by users. This issue was
+discovered during code inspection.
 
-> Or use a misc device?  How many of these do you need?
+Thank you
 
-Just one per fieldbus device.
-But my main concern is naming in sysfs. A misc device will always show up as
-/sys/class/misc/..., right? Given that this is a userspace fieldbus API,
-we'd prefer /sys/class/fieldbus_dev/..., and cdev is the only way?
+Reinette
 
-> For an online/offline attribute, no need to poll on it, just do a
-> 'kobject change' event for online/offline and all should be fine.  This
-> is not a high-frequency event, right?
 
-Grepping... you mean kobject_uevent(KOBJ_CHANGE) ?
-THAT mechanism seems to fit much better, thanks !!
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 2 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> Hey, if no one wants to use it, either no need to write any code at all,
-> or you get to decide everything.  Either way, you're in charge!  :)
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 6f7adb3be01e..3b5de7d54307 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -538,7 +538,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 
+ 	r = &rdt_resources_all[resid];
+ 	d = rdt_find_domain(r, domid, NULL);
+-	if (!d) {
++	if (IS_ERR_OR_NULL(d)) {
+ 		ret = -ENOENT;
+ 		goto out;
+ 	}
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 1c7827d142e7..715c6697b07d 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1029,7 +1029,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
+ 	 * peer RDT CDP resource. Hence the WARN.
+ 	 */
+ 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
+-	if (WARN_ON(!_d_cdp)) {
++	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
+ 		_r_cdp = NULL;
+ 		ret = -EINVAL;
+ 	}
+-- 
+2.17.0
 
-I did get the impression that people are reluctant to take my patch partly
-because of an unproven userspace API. Maybe they are (rightly) worried that,
-once in, we will have to support this userspace API for evermore.
-
-I'd love to get others involved in Fieldbus on Linux, but I'm not sure
-how.
-
-> But you do need to document the thing, in Documentation/ABI/ to get it
-> correct and able to be reviewed.
-
-The documentation is already included in this patch? Should I indicate this
-in some standardized fashion?
-
- create mode 100644 Documentation/ABI/testing/fieldbus-dev-cdev
- create mode 100644 Documentation/ABI/testing/sysfs-class-fieldbus-dev
-
-Thanks :)
-Sven
