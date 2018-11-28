@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFD0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FBDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B59420660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:22:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B59420660
+	by mail.kernel.org (Postfix) with ESMTP id 4C72020660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C72020660
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeK1VXe (ORCPT
+        id S1728338AbeK1V0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:23:34 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47393 "EHLO mail.bootlin.com"
+        Wed, 28 Nov 2018 16:26:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47488 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727616AbeK1VXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:23:34 -0500
+        id S1727616AbeK1V0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:26:06 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C9F1320701; Wed, 28 Nov 2018 11:22:22 +0100 (CET)
+        id 7F2FD20701; Wed, 28 Nov 2018 11:24:54 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 966F22039F;
-        Wed, 28 Nov 2018 11:22:12 +0100 (CET)
-Date:   Wed, 28 Nov 2018 11:22:12 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4F4982039F;
+        Wed, 28 Nov 2018 11:24:44 +0100 (CET)
+Date:   Wed, 28 Nov 2018 11:24:44 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Chen-Yu Tsai <wens@csie.org>
 Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -39,15 +39,16 @@ Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/15] rtc: sun6i: Add support for different variants
-Message-ID: <20181128102212.4sodbbk6uu52nug3@flea>
+Subject: Re: [PATCH 07/15] rtc: sun6i: Add support for all known pre-H6
+ variants
+Message-ID: <20181128102444.3wxqa6wfv67jqh7k@flea>
 References: <20181128093013.24442-1-wens@csie.org>
- <20181128093013.24442-7-wens@csie.org>
+ <20181128093013.24442-8-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="abq6ote33gmac3x6"
+        protocol="application/pgp-signature"; boundary="opxicchly2sdprbf"
 Content-Disposition: inline
-In-Reply-To: <20181128093013.24442-7-wens@csie.org>
+In-Reply-To: <20181128093013.24442-8-wens@csie.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,33 +56,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---abq6ote33gmac3x6
+--opxicchly2sdprbf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 28, 2018 at 05:30:03PM +0800, Chen-Yu Tsai wrote:
-> Amongst the Allwinner SoCs that have seen some kind of coverage by the
-> linux-sunxi community, whether it be mainline Linux or U-boot support,
-> or just available datasheets, most newer chips use the RTC design first
-> seen in the A31 (sun6i).
+On Wed, Nov 28, 2018 at 05:30:04PM +0800, Chen-Yu Tsai wrote:
+> There are different variants to the RTC hardware first seen on sun6i
+> (A31). The differences we care about in this driver are the clock rate
+> for the internal oscillator, prescalers, and the presence of an external
+> clock output.
 >=20
-> Overall there have been some minor differences. This patch covers the
-> following:
->=20
->   - average clock rate of the internal RC oscillator
->     + presence of fixed and adjustable prescaler for this clock
->   - availability of an external (to the SoC) clock output
->=20
-> One major difference regarding the H6 is the 24 MHz crystal is now
-> routed through the RTC, as a digitally compensated oscillator (DCXO).
-> This is not covered in this patch and will be supported later.
->=20
-> Other differences are either unrelated to RTC or clock functionality,
-> such as boot or crypto related registers, or the driver simply doesn't
-> use the feature in question. One example of the latter is the
-> calibration function for the RC oscillator. We consider this clock to
-> be very bad and avoid using it.
+> This patch adds support for all the known pre-H6 base compatibles using
+> the variants data structure previously introduced.
 >=20
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
@@ -94,15 +81,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---abq6ote33gmac3x6
+--opxicchly2sdprbf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/5sVAAKCRDj7w1vZxhR
-xbgfAQCrRuACC6/4VYLiVFJ1VyJVIUwm58P/hcdy/38wZQh33wEAqiPnqEPr16zt
-jth0aWCyPpcIr2U7MelKvSuTvoFJAgI=
-=O851
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/5s7AAKCRDj7w1vZxhR
+xSc/AQDFRhEcLNxXxSJqlEizLx79e6D0n42Isefnv6EVEund/wEAhNlzS19omzpM
+5SC8tlSjiWe+Vnq5TX+mHAYkTESdmgo=
+=ksnI
 -----END PGP SIGNATURE-----
 
---abq6ote33gmac3x6--
+--opxicchly2sdprbf--
