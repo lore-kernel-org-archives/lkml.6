@@ -2,139 +2,200 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E063C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C15C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDD6920832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B0CE2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="lMIE9FHv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD6920832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=temperror (0-bit key) header.d=twistedcode.net header.i=@twistedcode.net header.b="PiTLrvoB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C5GJtDZ8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0CE2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=twistedcode.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeK1S7b (ORCPT
+        id S1727736AbeK1TCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:59:31 -0500
-Received: from mail-eopbgr690046.outbound.protection.outlook.com ([40.107.69.46]:50573
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727501AbeK1S7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:59:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uo8mhzlr0odKgltjJe/EvwQ10Wca2kYZPfYnZ6wmOes=;
- b=lMIE9FHvA938RP94yF5UDvuzkoYFhPEuGLLLDcMagkM5kbNWRI4WgbfVfhv2lHjO8KQHwknqoRNfIwHi6oLAc/jcEswgFH+jql+qOflDcVM+9oH8AacA2ElSShCJVGqlTEHs8xexCd8i5kPj7lJXzMGNGWWcgphDcksM1ZfR/Ro=
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com (20.178.25.19) by
- DM6PR06MB3961.namprd06.prod.outlook.com (20.176.67.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Wed, 28 Nov 2018 07:58:42 +0000
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7]) by DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7%4]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 07:58:42 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     HUA SU <suhua.tanke@gmail.com>
-CC:     =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lightnvm: pblk: adjust the position of the lock
-Thread-Topic: [PATCH] lightnvm: pblk: adjust the position of the lock
-Thread-Index: AQHUhfRSbN5Xcbn6ZEKx/nEy0nBdB6VjlbWAgAAXgoCAAACRVIAA64xrgAA7HYA=
-Date:   Wed, 28 Nov 2018 07:58:42 +0000
-Message-ID: <CC448D4A-0372-419E-8742-6BC2CBE6A539@cnexlabs.com>
-References: <20181127015309.2374-1-suhua.tanke@gmail.com>
- <F75BC3C7-FACE-4C04-A9BE-5A3AA25D3466@cnexlabs.com>
- <a53eb78d-90d3-f84e-a0bf-9acbc32671f4@lightnvm.io>
- <ACAA275B-AC2C-4147-AF88-E250771CA1DD@cnexlabs.com>
- <633950CD-FBB6-4228-BB8C-8FD946FB3286@gmail.com>
-In-Reply-To: <633950CD-FBB6-4228-BB8C-8FD946FB3286@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR06MB3961;6:Um7qI/tjkT0pRxIL9mbuHztHHYIgnXQQPzPVdO5Gns8EGswZgrCGGXYDo7h7XVr4+f5a/tSKsKfZ/JkufK+EWEplVDc5d9kLhROUHEWw6p0LKWZcKJTL9+eUrqc+QGpTMvcdRpjSt7XznOW68dLV6wmsCjFyt5W6BmWkZPhQ3RUUKxzJ8X79LEDqeVi0TF9Q3Xu6cG8tyqvDGzoUW2X0p16D9TzbEiv5J0GyrW0ktZ2fb+R98ogcihB7/18o79KYwuXSWE8i3YpB0K9eB3jN8UdjY79Fzwiqveos883rr0ok0biFtE5aaq9aL0BeRm3NGlizHvizppm6o5eaSydTefA3akIhTAOii2Y/FH4eDsVHEy7A0glkD1kBDluZOMIK+Hcwi5P0B4sh/9rDLeQUsdXSWNjbp46KptrMAQXcdXoVbTUEsgUly4Odq9PNBFc37umvZa5hQaFKHY84lHJ2wg==;5:26/kKAZVmHPe25LpTT1TNHmKQ676czXp+w2lQefocTypQ02Dc+M3MIUZ0VQ3QJX1I5mOTXS00niJnQJSIzJ3+eZRCDEGEqNhulfZsGknNZdmXzv1eew9AfJRJWJwkGfEyfWzdkmKT+DkpiH8ELQfdWJZdVM9+8VgrjUSyrwkZEs=;7:SMLtRZBRVTF8ykzna1VjKl6q/DunauUkHJdAG12b7OMUDdBP9l4omhXRIKLfluIB7efPGmsv4Zn8Nc23ZKcX7SbEbr6DQzufjfNgn7GxdvFzC0F7fB9J7/ssGiXGkVpbSqWKdlVnIdY8JWmQrLFdvQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3adbe26d-f44c-4d0e-a845-08d6550750b8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:DM6PR06MB3961;
-x-ms-traffictypediagnostic: DM6PR06MB3961:
-x-microsoft-antispam-prvs: <DM6PR06MB39619621B5FB22952B0E2835BAD10@DM6PR06MB3961.namprd06.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231443)(999002)(944501410)(4983020)(52105112)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM6PR06MB3961;BCL:0;PCL:0;RULEID:;SRVR:DM6PR06MB3961;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(396003)(39840400004)(199004)(189003)(6512007)(6506007)(26005)(106356001)(102836004)(33656002)(53936002)(186003)(99286004)(81156014)(81166006)(8936002)(478600001)(76176011)(105586002)(345774005)(83716004)(71200400001)(71190400001)(256004)(68736007)(6246003)(25786009)(36756003)(99936001)(4326008)(14454004)(6116002)(3846002)(229853002)(82746002)(97736004)(446003)(39060400002)(486006)(54906003)(316002)(86362001)(5660300001)(11346002)(6486002)(6436002)(2616005)(66066001)(305945005)(8676002)(6916009)(2906002)(476003)(7736002)(93886005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR06MB3961;H:DM6PR06MB5178.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9ft6HplYs3Og2esWdqELi20LgxYye5pfFXKH1sxlUNJRLCsi+7Y/WOmu9lW7K8V2EDcOWKn0Mrqh0WG4RFTLpcSw0wycOfErszo7c0XFyZiU0dCKZCxoXAYSzgxMTgua821EXnTYHL3jWgttKoaHWHmTJzDHdpoFQ43Hb2Q1Odmsyxg90ftTUYsBpt21iVl7OMC+X5sOqQFffOtgdkM5XMBJ/kmfIZspqouux8uqF98aHg/FDSSmpikPtgLxY+1CHcj7E2Ve8onh0hMtKs576ESnkrwxHNeg8PlfbAHaPYEymGG+D08OyB6q4sDPE7p2p1tPQF++SUkojtYVxF9EqGK0qzkTVDYaMFbhp3anAmU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_C83D3F9B-6561-44DD-B0B4-7231E93B1703";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+        Wed, 28 Nov 2018 14:02:54 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58553 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727341AbeK1TCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:02:54 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id A992921A02;
+        Wed, 28 Nov 2018 03:02:08 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 28 Nov 2018 03:02:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=twistedcode.net;
+         h=reply-to:subject:to:references:from:message-id:date
+        :mime-version:in-reply-to:content-type
+        :content-transfer-encoding; s=mesmtp; bh=Gl4ADWUL5olzHLYi+jskIYn
+        CrCkd4qT3kyWFHYt/rtg=; b=PiTLrvoBKSY1XFm7HaI1UhFMWdBTYlxna7IMIkG
+        ILtIjYbe888bERPDePgHox0hiEj9c9Gmrvq4LRBwuoEnNGNVyAmJeaw/3cKHcg64
+        qdYJldI2726BzmbUKcFx3B1NABH55FiQ0yp5Uaxu2SopHqTaI66dkDYVkU+U/gxU
+        4R80=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :reply-to:subject:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm1; bh=Gl4ADWUL5olzHLYi+jskIYnCrCkd4
+        qT3kyWFHYt/rtg=; b=C5GJtDZ8Pgf+hUqYc8gWgL4CuI2IxB/tyayzvZKhcqLUf
+        8jLM9Nb8z6hsrLhvtCovwOFbqTVibsm7WCRob9TK4r2/9nThinLbpZMHIdFXusbE
+        5yDI/x0q+mRCmAO00y+kG9jPhRS7IcyzKmGfPKWoEaEDdsYieSI2D+a2UrmrHZxe
+        Fe9T0epEpVBsxG0a6XHKvitLqb+3StM/bLaYrLdg1Ajc7/OTFCT3zbf0fWHcVsDL
+        oD7WfTZKwPyMwfE2VJAPWHMNvPHlfCs4TGFbMBk6vRXON4pYFlnJITukhHxO/80I
+        2+84Tq+4RTUxbPqR2bEHzS6jI+S5KNJCG0X5VG6rw==
+X-ME-Sender: <xms:gEv-WxfFrLIgEjqoKxjVsoP2AdcuwpO3QY2vNAEgc1_q5nLh_lsxig>
+X-ME-Proxy: <xmx:gEv-W9ESRAA9IMIa8yhYIWWqpT2LKgB6GRibKGNLoOzkG_Hk0SiEXw>
+    <xmx:gEv-WxcEG6VvKOlByvV9ga4GgQ4s8c2td5eBsgQKQKDE3-2EUM4V3g>
+    <xmx:gEv-W0J630MHsF7erRsQBDaXp2KKE1BCley7byZ_Gj6j-aXTifl92w>
+    <xmx:gEv-Wypt2jiDlEaTKIuWQxwNLXSlySEbhOus8PA2-CL4eVzEA_mm4w>
+    <xmx:gEv-W7ashcsZ3E3PLhipc7VPlAf_us2p2ycrSHkSkN4D1rnW2olYGQ>
+    <xmx:gEv-Wwd6Sk-vZIOiYF3jWUSMaU_MXbXzz4uYp0Geirruw0RDr7yGsg>
+Received: from [192.168.1.2] (d220-122.icpnet.pl [109.173.220.122])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8A6B0E4898;
+        Wed, 28 Nov 2018 03:02:07 -0500 (EST)
+Reply-To: grendel@twistedcode.net
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Andrey Jr. Melnikov" <temnota.am@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+ <vb31df-25g.ln1@banana.localnet> <20181128041555.GE31885@thunk.org>
+From:   Marek Habersack <grendel@twistedcode.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=grendel@twistedcode.net; prefer-encrypt=mutual;
+ keydata= mQENBFgwme8BCADRWSU1flzcSvn4tbICUsngC0OASSxPtdHn+YNsQ2ZBHvVF9igXsJF6XSdp
+ 00L1gk/wkC8srSHRK3W5IZ0Tzu2MoS8rdRn43ZBBRCyldTCzm8UNZXoxGZ8xAOWC0pG0gvMO
+ 3ISGw7bGLYE2fYh6PaWCufoCi3AOEdxbtk5+X8kyIxh9fpV2OvDprSkDtQKhRWBlW2n1ewFd
+ 926clmHlTrkZkH+t5lMhkfrc90JAsC0tdyTIDzesKWHvRN4zOPPzSD4PJCdi0BKi8NCXbj7E
+ Yh7kiPDzVIq/AdXmH6ey9pRrcK+ou1QlAnaPlAqZfK1ZfBqPz0J+Jl81/ehXoE9D+V8FABEB
+ AAG0KU1hcmVrIEhhYmVyc2FjayA8Z3JlbmRlbEB0d2lzdGVkY29kZS5uZXQ+iQE9BBMBCAAn
+ BQJYMJnvAhsDBQkaUNEABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJELoCYAamuUjG6P8I
+ AJw5Xv7QpWZa2+8+yjwG+T4lyZtbTo7yxC0TBh9CsjMMvquvMPChKklxLh19q7kvWenqL+0I
+ oJQ50A9oA77o0Rn6gG6wtn/NgX5P3naaVANCx5bcx8pKFFSAqPP0mDoXT2yAvoT473kG0dJ/
+ DfiRwhN4+Dh5C6257i8rKIJypCWuxVcvwGtyb1g7m7ZUh1AYqMONKLHKvlNxh0WPcdhlGZT6
+ Eoomh3OZ5xcAYwRRYTUu9C+0nOqScy5AF6UbkPTlUARCiH0fWpdtu1+MiFH3xJ206xTYz0kc
+ Ip405ISxIo5y9TsGnTRQs6ocUGXl/dBUUU0YmVS9h04OhlJIBGsjP0S5AQ0EWDCZ7wEIAO+n
+ q7HKmSfSEN0ZrRvYTe7BsMQsxM9Ea914Ma78GYnV2boz4aM3SljLddZUxrkIK6kuGCqobPW5
+ 61k6evTxXSVT+ctG1FUcP4VF850/hDBHS1gBsfX9maAT++BcSyTMNAQOyLC0+AtkTo8vGVgh
+ m/klrmfWK1xUwi49nagbAzpvaPD4VdvBzwSz3Xh2jlXQxLMcQP0GyaSgTR+x7jD+yceteXCg
+ mvfQQ1qk9GcyEWRPBhc7h4JbZatiMrNcfZjG1m8UqlXElQ7ivgOsUxXYOg339XUun/PslCXh
+ x05qCBoskdPn+4ii3M0QSqDJM5w4muSaFc2T/dztHNfW5enw9bcAEQEAAYkBJQQYAQgADwUC
+ WDCZ7wIbDAUJGlDRAAAKCRC6AmAGprlIxr6WB/90lUSAhh6eAKc2I6BTsn3YGH8OGcxH6N29
+ eH9w1rD7nT14A6g4kdEs2tYbTO9GlSwscZN+NW3XoAB3A/P3a9KV67lMQQ3RvSq/B7cbAen0
+ A7Zh3lnwSOHk7EO2z2X/RnMLg5h7MrIPoRjyv67CemKrIKcY/B6RNsPXCdPKSi+jKcHzsmZ9
+ 3Jc3ZohWA22bG8nkWYXbPeI7ehFA/nU4uG4pLqK/GwTzLEsKSiViMdofkKzxcTU4P0s7VABH
+ EOwwCIn9QBeadoete5GUmUL97tHzmQChM/lliAVLKKOkOz8d8xl5+llhqcH1w9hjDTFCZsHi
+ yYwnGO1zRQMVop5jmzLRuQINBFnVLGQBEACxypXgAyBcgJWbfc2/UUyyKvrzsBFCF/0OIucZ
+ BV6ZA+V89oYuBNtedAt28qdGbimBd/v/IpESpy0sYRsE4PmUmXC1ygk3Nm3oH3VzJwxJRduO
+ c9vZNA4tf3k2XDUSZE0Jb35Fr+QJz0aB5DiXzSg/4Z++eJLGjIUHtZgKalQpddajUcguwoqk
+ OUQVJ47A18WvcZ0fgd9+INxG0xHksIR1Rysr+vETQe+7RmuBlawef/kq6dbMSGvvexL9y/P1
+ H2W/aA9mkRl1tHHVSLd+p4JcRJw23snRaUQXkoNGrXZudUhQLsim8+oY0/3BxOJtxUAVLhYO
+ 2xAcvYGIWVz3SiXm6KZgRy+zvWHL/v6T3f2ESc8RwVl1/GQnHRA7kHpl6zu1HtWIovSBwWQb
+ p5b2maC6+PyCJ/LG3g/F+t+h8Z8OpfypH6fuF7YTPd+vCWoa6ViNtoaDbbnkQ7XcoF2GgZdn
+ 2wOM4fUZU5jfZhtyM1FL8EWNm2rvgxy7kO2hM2djsi3UxxUfKq0cWTAqnhDFaXGQk/5NAc+H
+ q+AiqpQBE+M9wZK9hpnUFi7oV4EZH68SCubYRlkY5sL03uVzVRM+Ly6CXD3OtkR9kf2LHVBK
+ vUeEFOtASYVXUXU1lJYPecrgGIA1Xh6DtAdKBjCpcWJMNCQmuoI1yPu+SN9on4OfZCT3pQAR
+ AQABiQM+BBgBCAAJBQJZ1SxkAhsCAikJELoCYAamuUjGwV0gBBkBCAAGBQJZ1SxkAAoJEM4B
+ zwS0Y0HG6EsP/0yq6vzaZQzrsZwbEdJeJluDFukynqtY313Dp+Ie8Wf1K2TljqIHkcfekYzw
+ XaMpdbDiKYogXOovk2R1o2FLzfgGZQ7OsO7hxTmiRz+vX0LNupip15x9jDyVRvdaiCHQLAaD
+ AUJx2TRSSY2oyzX/wKw2N8SV/HbPVuFcTTvB30OtTN06SXcyKxXiXVEJUvfkL3/wmG01Kbi5
+ 1KHkvfNnpWy2TaJcG0PNzuog/LDWQgqdLBdqgZ0gARkIYg59J8VCY2yodUJvBnBPhGLL1r3a
+ etIp/HCL8aWusdT4vfOdDzrUi7q2kmG/7ApbXngoazDK0TRgv4mYwlYmIgs+b1aqt0NMqKf7
+ gE5C02HUls+nj9h0EKeUR6p/zuKoL/KaT/y/TnUG3VcelHzLbzF9Xz+xit4a99hCFlor/nDo
+ DNCsy9Wj7T8/qXTPNEWcYxU6P6O+G+Sb9aevEd6ME0x8yRU4jYvyi8FVtC6nVrT+H7CNuYj/
+ F/N7DesFD9TE6BRPrk7oemEMYlKz6irRw/nbI6cTM7UmM6sgYuTrzl/saShp7lpQa1SXF+o+
+ NSr4knBPBZwiZn6z8zkzNcTyuNj+jyxha/1AeopmOFNbdyxe+ybx+r2fGSyA9gv01gB8myIA
+ NZDMoZscxls5+SEN0sQY+DJDegWvwRpDN5YIC1GyGZ0Frm1L3TAH/ibAw7+cYUzYLVl/vToI
+ h0NzYV3olaKXL38hsyi0M6pUQIehK5NROpTuKyaHwAzROVfI/6mXLReO+r7qGNe9HqkK17Qg
+ kjizrBABgY/qckUbtvkooWReIz+vK4Mwn23s42SvhJ2zpx51SmFZfIvu/yZ8DQHOii6fMjv0
+ RqGab/E7uaqdAxqM6a1tIYq9pINGvy/L7LOY6RXHb/2jU5f2D0PVRl0i9lHYL1F4o64EfjUi
+ SOKzTw90n3jMEnjNty2X36W8+t5zb59XhnM2yJ7xeS0gJ4ro2E/gSKs4KvEWUR7AZ2zS5Fce
+ VQ6OX3YN0eUH7HiK/fje+YRSzSk2/8j6xfe5Ag0EWdUtKQEQALBnK55vn+1LqUlfWDaF0mAt
+ fQj0N/KpOwry/Fu7cDwHmCk6Q12kxIUqDHSUTarUgkpliZQKxD+Wa8/iMWt+TaUUsZC0rbsI
+ VZkxCUW68lbPIsnXjPHdfY240+aUaQmqTxS0tjlsnt+xgIvgN1G22ZpSBopFFcIdNRYixsW5
+ 78lw0J5uP8nzGX4QY16qUWRr9RLP459AN5JSfDAG/Bil6wc8VhpGjkYgn2AsMBO84t8MWYCs
+ WaDQY6/guxoFbg7Uj3EGhU+CgLwIZmGJRouZ2tm2uSGGy42/gOl6beZwvVZa4VU870zD8FsR
+ xMkKIuXkYIO63IhUK2+TGsuFnKaFAWoNIqA9u01mswWzzf21Z3o1i1AKZEOaYKgw/QF/HWAx
+ 3C3ksC9x20f1jW4npV+ZUc997/oxaevO7Eg6xhsgA7KD3lXlQ8Z/1OYE1UNwcVD879k+YkIU
+ kovrntS66XcyJTSEjmzWdqM0tQsengusnpFiU7BB1d+mJ80wiH4eSoeDtoPI6PcsT6wqLVVv
+ cecKgr1c9G3aq2UvSAACfjzofElOlJ5F2TtveYJB41vYcOjDVtHMrrBVfvj1VA+a5JIivdJe
+ dG+LaCYuH6oegdnkR8SxIKeIllLl6EpLYTts392n9p2rzj5DAv6E928SopPAUm0KJVtdcsLU
+ VRfASOe1X0jVABEBAAGJAR8EGAEIAAkFAlnVLSkCGwwACgkQugJgBqa5SMaaJQf/eB04mexj
+ nbI1N2OgiLMIYiImRW7mUsSmEGiKOcbthd7YkozWas9OI4O+FKzRDlRSF2/h5nN1PxHavCK8
+ 1X555ojSpk4/Z+qmq9DTEbKhjomoqQSlcoY2mPb5Pj+hjrCVQw1MIoTri4VssyUkcFoE0+Vq
+ /VyiP71rMw+h/yNMIwWX/qlGRhnzCYYXJ36pho74aRy+ALW6VgGHpwS11PWP6FhifYak1UTA
+ u0CgWT2Gayo1Z8KIECXwyawrNyBbMWaXTKEwA9ddb+6JI5E4aWrTCBpOQFzIeJIFjdhk9BLG
+ kipR4VulL3y9RLQFvjeRPuaPXm+1MEO58DJWF8yXbPmrUw==
+Organization: I just...
+Message-ID: <5d21196e-15d5-3351-e431-576d3640387f@twistedcode.net>
+Date:   Wed, 28 Nov 2018 09:02:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3adbe26d-f44c-4d0e-a845-08d6550750b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 07:58:42.5934
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR06MB3961
+In-Reply-To: <20181128041555.GE31885@thunk.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_C83D3F9B-6561-44DD-B0B4-7231E93B1703
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+On 28/11/2018 05:15, Theodore Y. Ts'o wrote:
+> On Wed, Nov 28, 2018 at 03:16:33AM +0300, Andrey Jr. Melnikov wrote:
+>> Corrupted inodes - always directory, not touched at least year or
+>> more for writing. Something wrong when updating atime?
+I've just seen the errors come back despite having MQ off :( However, this time it took 5 days for them to come back, so
+MQ must play a role here. Also, indeed, they happened after fstrim ran and this time *only* on the SSD disks reported
+below, another clue? This time the errors were "just" orphaned inodes + invalid free inode counts, all repaired without
+issues by fsck.
 
-> On 28 Nov 2018, at 05.26, HUA SU <suhua.tanke@gmail.com> wrote:
->=20
-> Thank you for your kind correction, I ignored some of the content, it =
-will be perfected by Javier.
->=20
+> 
+> We're not sure.  The frustrating thing is that it's not reproducing
+> for me.  I run extensive regression tests, and I'm using 4.19 on my
+> development laptop without notcing any problems.  If I could reproduce
+> it, I could debug it, but since I can't, I need to rely on those who
+> are seeing the problem to help pinpoint the problem.
+> 
+> I'm trying to figure out common factors from those people who are
+> reporting problems.
+> 
+> (a) What distribution are you running (it appears that many people
+> reporting problems are running Ubuntu, but this may be a sampling
+> issue; lots of people run Ubuntu)?  (For the record, I'm using Debian
+> Testing.)
+Ubuntu 18.10 here
 
-You are welcome to re-send the patch with the code I proposed. I'll move
-a couple of things around to better comment the single-threaded recovery
-path afterwards.
+> 
+> (b) What hardware are you using?  (SSD?  SATA-attached?
+> NVMe-attached?)
+The errors occured on both SSD:
+  - Samsung SSD 850 EVO 1TB, firmware rev EMT03B6Q
+  - OCZ-AGILITY3, firmware rev 2.25
 
-Javier
+and spinning rust:
+  - Seagate ST2000DX001-1CM164, firmware revision CC43
 
---Apple-Mail=_C83D3F9B-6561-44DD-B0B4-7231E93B1703
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+> 
+> (c) Are you using LVM?  LUKS (e.g., disk encrypted)?
+LUKS. Both the Samsung and the Seagate use DM for encryption.
 
------BEGIN PGP SIGNATURE-----
+> (d) are you using discard?  One theory is a recent discard change may
+> be in play.   How do you use discard?   (mount option, fstrim, etc.)
+fstrim runs weekly and the Samsung SSD is mounted with
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlv+SrEACgkQIX4xUKFR
-nnTkPA//UTBT7VcEgiArXh6l1X6GkkCxMpO/OSx/ZjB+wrS+NnPVkXtTXG2sTLXP
-mBFfGozuydEDczM88zDXqv6ghVGhz4dQsNxoWk6Ow1CM69ut0vWEHXxx1Wpnal+y
-NvyO8zzCGD71v73RADlEYBCZ5jC+2rf+YZfrd1FhfywtUC7YDs/ldf1GtDSlplU9
-c6IAUyFngkS14W8LW/5hbbLkQJXNXXbtQtgQJnfHIRJCFSn79d/agckFaP+Gryav
-8hERDXg0iYdvQ92Xl02Rpx718+tXxOBbZH91/b3AKQfQSZ14JIBinsyMgTuiPLGW
-GNs/vuaEGxzgxiQ90nWL9kRO1V2Z96E/toa4FDL9K430xKremJ4SMoQXdSqEwS/I
-8i6wLhNVIeYc9uM/Z8vrXhmOvd/4knrMapqaZv79adh6H11hWDmOUGwiUbqYyM3C
-NSkMoL2U0qihmgHEquUyaIRPQenMjUy2tDKexG/HKfJzuq2swGLdEyt/EZZ79c7r
-rGV2nORtcc8i291PRKHw1UR7rwX8qPG3cGfSh2U/Q2uTJ64PPBLjbsNVdD/kNOgB
-5wfyuqfDzIaxK5U//L5kampZuCS1NgZzhzWcV4o+CsLh8WtdIYK/Ecsv9HKBGvTt
-V1Kj7S1iL96mZi6e8wclaLgY3mmrkHgrA73yWsZv1cFL9dftVvA=
-=WWZ3
------END PGP SIGNATURE-----
+   rw,nosuid,nodev,noatime,discard,helper=crypt
 
---Apple-Mail=_C83D3F9B-6561-44DD-B0B4-7231E93B1703--
+marek
+> 
+>       	      	     	     		- Ted
+> 
+
