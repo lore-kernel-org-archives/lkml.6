@@ -2,213 +2,185 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E65DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2B1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73672081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="DiqWDpHu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73672081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D6FB21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6FB21019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbeK2Ghp (ORCPT
+        id S1729143AbeK2GiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:37:45 -0500
-Received: from mail-eopbgr760070.outbound.protection.outlook.com ([40.107.76.70]:3232
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725870AbeK2Gho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:37:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CkaycE3bW8CEXbPxIKabXmF3mfe7PyETci7AwgkJ7LY=;
- b=DiqWDpHuI+K8UpruyrgZvFbqLz2RoVry9Mu7c8JVgLll00dvb9cD5+cuROojY4giVgSFwA5Yym89cGHPo78t5v0W2W2AQTmg4ED5i5IMFLpNEdZEdQz+UVP1xCYo87RGNCiutExUM59go1ULNOI/zBjLlVDZMhte7v5kLng/Bz8=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4950.namprd05.prod.outlook.com (20.177.228.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.14; Wed, 28 Nov 2018 19:34:53 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1404.008; Wed, 28 Nov 2018
- 19:34:53 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
-Thread-Topic: [RFC PATCH 0/5] x86: dynamic indirect call promotion
-Thread-Index: AQHUZn1la/DbvW2wT0Gh22Ko/9s6YqVlnFCAgAA5kgA=
-Date:   Wed, 28 Nov 2018 19:34:52 +0000
-Message-ID: <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com>
-References: <20181018005420.82993-1-namit@vmware.com>
- <20181128160849.epmoto4o5jaxxxol@treble>
-In-Reply-To: <20181128160849.epmoto4o5jaxxxol@treble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4950;20:C1Sn/fBZvUkxA2vdyb7vyw14MuCzh7aMnBpA1aMxt0OgBwWWrfq8fl1UWrX8x7HdBx3BHb2GJlCIS7qFVgmdpsEXSGmgW6XhBewJKMMTywhAjKBzMIBnR4Z0c36wP85No6dTPgWAgEnr1l4/GEteKdhRp51ODLE6b5qygNAJKzE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: bccdf7da-639e-4f1a-caa0-08d6556891de
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4950;
-x-ms-traffictypediagnostic: BYAPR05MB4950:
-x-microsoft-antispam-prvs: <BYAPR05MB4950ED7E74A5939B8043FE20D0D10@BYAPR05MB4950.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231443)(999002)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4950;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4950;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(346002)(376002)(366004)(199004)(189003)(478684002)(53546011)(5660300001)(316002)(66066001)(8936002)(54906003)(6486002)(8676002)(81156014)(6246003)(14454004)(7416002)(81166006)(305945005)(7736002)(33656002)(68736007)(6916009)(229853002)(105586002)(97736004)(478600001)(4326008)(256004)(26005)(2906002)(476003)(11346002)(106356001)(446003)(83716004)(2616005)(486006)(186003)(6116002)(14444005)(82746002)(217873002)(71190400001)(71200400001)(36756003)(76176011)(102836004)(86362001)(53936002)(25786009)(6512007)(6506007)(6436002)(3846002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4950;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: f95y/b5wbh2orfWKcHQTuMu6rC3QSMu0M8u190+CNvgh9gSL9Wj1VzS5WIn7lV/cWRiaDA3YZ+JxIQwpMXyqXwIIZwogZ19SsEu+HcJZgdQsYApTsnbQ4o61vtD9L+/GbufZqCYkzgc0Ucl6tYB5qSGt+J5Yw7H7i+i/TpMUC0JmV40T41limez2Jfv6Tv6xq/5ufiC1M8cDHKGQPdB9NB/xsf8b8Qx0KjOKuvLICJZ8DEXSAmLjSO12TQz8cpIdhVu5LaSI9ymMQNpIxitiXbnFAZiYwyEwcqQx2nYY1YURU/VliEWlx9bY+oeQdBmmSCEoJzeHFxugInBQUF6yCf0EowMCxQwU+mvfUCyI2eU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CF2C0143934B6A429B933147A9EFDB7B@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 29 Nov 2018 01:38:17 -0500
+Received: from foss.arm.com ([217.140.101.70]:49286 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbeK2GiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 01:38:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 512E9A78;
+        Wed, 28 Nov 2018 11:35:33 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DED93F59C;
+        Wed, 28 Nov 2018 11:35:31 -0800 (PST)
+Subject: Re: [PATCH] pci: imx6: support kernels built in Thumb-2 mode
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     hongxing.zhu@nxp.com, l.stach@pengutronix.de,
+        lorenzo.pieralisi@arm.com, andrew.smirnov@gmail.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, leonard.crestez@nxp.com, festevam@gmail.com,
+        linux-arm-kernel@lists.infradead.org, tpiepho@impinj.com
+References: <20181128132554.28139-1-stefan@agner.ch>
+ <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
+ <074f80db0eceb76672bca283c5de37b9@agner.ch>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9861493a-6139-ca3e-41a8-e6fe41c2f3a3@arm.com>
+Date:   Wed, 28 Nov 2018 19:35:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bccdf7da-639e-4f1a-caa0-08d6556891de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 19:34:52.9999
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4950
+In-Reply-To: <074f80db0eceb76672bca283c5de37b9@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBOb3YgMjgsIDIwMTgsIGF0IDg6MDggQU0sIEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJvZUBy
-ZWRoYXQuY29tPiB3cm90ZToNCj4gDQo+IE9uIFdlZCwgT2N0IDE3LCAyMDE4IGF0IDA1OjU0OjE1
-UE0gLTA3MDAsIE5hZGF2IEFtaXQgd3JvdGU6DQo+PiBUaGlzIFJGQyBpbnRyb2R1Y2VzIGluZGly
-ZWN0IGNhbGwgcHJvbW90aW9uIGluIHJ1bnRpbWUsIHdoaWNoIGZvciB0aGUNCj4+IG1hdHRlciBv
-ZiBzaW1wbGlmaWNhdGlvbiAoYW5kIGJyYW5kaW5nKSB3aWxsIGJlIGNhbGxlZCBoZXJlICJyZWxw
-b2xpbmVzIg0KPj4gKHJlbGF0aXZlIGNhbGwgKyB0cmFtcG9saW5lKS4gUmVscG9saW5lcyBhcmUg
-bWFpbmx5IGludGVuZGVkIGFzIGEgd2F5DQo+PiBvZiByZWR1Y2luZyByZXRwb2xpbmUgb3Zlcmhl
-YWRzIGR1ZSB0byBTcGVjdHJlIHYyLg0KPj4gDQo+PiBVbmxpa2UgaW5kaXJlY3QgY2FsbCBwcm9t
-b3Rpb24gdGhyb3VnaCBwcm9maWxlIGd1aWRlZCBvcHRpbWl6YXRpb24sIHRoZQ0KPj4gcHJvcG9z
-ZWQgYXBwcm9hY2ggZG9lcyBub3QgcmVxdWlyZSBhIHByb2ZpbGluZyBzdGFnZSwgd29ya3Mgd2Vs
-bCB3aXRoDQo+PiBtb2R1bGVzIHdob3NlIGFkZHJlc3MgaXMgdW5rbm93biBhbmQgY2FuIGFkYXB0
-IHRvIGNoYW5naW5nIHdvcmtsb2Fkcy4NCj4+IA0KPj4gVGhlIG1haW4gaWRlYSBpcyBzaW1wbGU6
-IGZvciBldmVyeSBpbmRpcmVjdCBjYWxsLCB3ZSBpbmplY3QgYSBwaWVjZSBvZg0KPj4gY29kZSB3
-aXRoIGZhc3QtIGFuZCBzbG93LXBhdGggY2FsbHMuIFRoZSBmYXN0IHBhdGggaXMgdXNlZCBpZiB0
-aGUgdGFyZ2V0DQo+PiBtYXRjaGVzIHRoZSBleHBlY3RlZCAoaG90KSB0YXJnZXQuIFRoZSBzbG93
-LXBhdGggdXNlcyBhIHJldHBvbGluZS4NCj4+IER1cmluZyB0cmFpbmluZywgdGhlIHNsb3ctcGF0
-aCBpcyBzZXQgdG8gY2FsbCBhIGZ1bmN0aW9uIHRoYXQgc2F2ZXMgdGhlDQo+PiBjYWxsIHNvdXJj
-ZSBhbmQgdGFyZ2V0IGluIGEgaGFzaC10YWJsZSBhbmQga2VlcCBjb3VudCBmb3IgY2FsbA0KPj4g
-ZnJlcXVlbmN5LiBUaGUgbW9zdCBjb21tb24gdGFyZ2V0IGlzIHRoZW4gcGF0Y2hlZCBpbnRvIHRo
-ZSBob3QgcGF0aC4NCj4+IA0KPj4gVGhlIHBhdGNoaW5nIGlzIGRvbmUgb24tdGhlLWZseSBieSBw
-YXRjaGluZyB0aGUgY29uZGl0aW9uYWwgYnJhbmNoDQo+PiAob3Bjb2RlIGFuZCBvZmZzZXQpIHRo
-YXQgaXMgdXNlZCB0byBjb21wYXJlIHRoZSB0YXJnZXQgdG8gdGhlIGhvdA0KPj4gdGFyZ2V0LiBU
-aGlzIGFsbG93cyB0byBkaXJlY3QgYWxsIGNvcmVzIHRvIHRoZSBmYXN0LXBhdGgsIHdoaWxlIHBh
-dGNoaW5nDQo+PiB0aGUgc2xvdy1wYXRoIGFuZCB2aWNlLXZlcnNhLiBQYXRjaGluZyBmb2xsb3dz
-IDIgbW9yZSBydWxlczogKDEpIE9ubHkNCj4+IHBhdGNoIGEgc2luZ2xlIGJ5dGUgd2hlbiB0aGUg
-Y29kZSBtaWdodCBiZSBleGVjdXRlZCBieSBhbnkgY29yZS4gKDIpDQo+PiBXaGVuIHBhdGNoaW5n
-IG1vcmUgdGhhbiBvbmUgYnl0ZSwgZW5zdXJlIHRoYXQgYWxsIGNvcmVzIGRvIG5vdCBydW4gdGhl
-DQo+PiB0by1iZS1wYXRjaGVkLWNvZGUgYnkgcHJldmVudGluZyB0aGlzIGNvZGUgZnJvbSBiZWlu
-ZyBwcmVlbXB0ZWQsIGFuZA0KPj4gdXNpbmcgc3luY2hyb25pemVfc2NoZWQoKSBhZnRlciBwYXRj
-aGluZyB0aGUgYnJhbmNoIHRoYXQganVtcHMgb3ZlciB0aGlzDQo+PiBjb2RlLg0KPj4gDQo+PiBD
-aGFuZ2luZyBhbGwgdGhlIGluZGlyZWN0IGNhbGxzIHRvIHVzZSByZWxwb2xpbmVzIGlzIGRvbmUg
-dXNpbmcgYXNzZW1ibHkNCj4+IG1hY3JvIG1hZ2ljLiBUaGVyZSBhcmUgYWx0ZXJuYXRpdmUgc29s
-dXRpb25zLCBidXQgdGhpcyBvbmUgaXMNCj4+IHJlbGF0aXZlbHkgc2ltcGxlIGFuZCB0cmFuc3Bh
-cmVudC4gVGhlcmUgaXMgYWxzbyBsb2dpYyB0byByZXRyYWluIHRoZQ0KPj4gc29mdHdhcmUgcHJl
-ZGljdG9yLCBidXQgdGhlIHBvbGljeSBpdCB1c2VzIG1heSBuZWVkIHRvIGJlIHJlZmluZWQuDQo+
-PiANCj4+IEV2ZW50dWFsbHkgdGhlIHJlc3VsdHMgYXJlIG5vdCBiYWQgKDIgVkNQVSBWTSwgdGhy
-b3VnaHB1dCByZXBvcnRlZCk6DQo+PiANCj4+IAkJYmFzZQkJcmVscG9saW5lDQo+PiAJCS0tLS0J
-CS0tLS0tLS0tLQ0KPj4gbmdpbnggCTIyODk4IAkJMjUxNzggKCsxMCUpDQo+PiByZWRpcy15Y3Ni
-CTI0NTIzCQkyNTQ4NiAoKzQlKQ0KPj4gZGJlbmNoCTIxNDQJCTIxMDMgKCsyJSkNCj4+IA0KPj4g
-V2hlbiByZXRwb2xpbmVzIGFyZSBkaXNhYmxlZCwgYW5kIGlmIHJldHJhaW5pbmcgaXMgb2ZmLCBw
-ZXJmb3JtYW5jZQ0KPj4gYmVuZWZpdHMgYXJlIHVwIHRvIDIlIChuZ2lueCksIGJ1dCBhcmUgbXVj
-aCBsZXNzIGltcHJlc3NpdmUuDQo+IA0KPiBIaSBOYWRhdiwNCj4gDQo+IFBldGVyIHBvaW50ZWQg
-bWUgdG8gdGhlc2UgcGF0Y2hlcyBkdXJpbmcgYSBkaXNjdXNzaW9uIGFib3V0IHJldHBvbGluZQ0K
-PiBwcm9maWxpbmcuICBQZXJzb25hbGx5LCBJIHRoaW5rIHRoaXMgaXMgYnJpbGxpYW50LiAgVGhp
-cyBjb3VsZCBoZWxwDQo+IG5ldHdvcmtpbmcgYW5kIGZpbGVzeXN0ZW0gaW50ZW5zaXZlIHdvcmts
-b2FkcyBhIGxvdC4NCg0KVGhhbmtzISBJIHdhcyBhIGJpdCBoZWxkLWJhY2sgYnkgdGhlIHJlbGF0
-aXZlbHkgbGltaXRlZCBudW1iZXIgb2YgcmVzcG9uc2VzLg0KSSBmaW5pc2hlZCBhbm90aGVyIHZl
-cnNpb24gdHdvIHdlZWtzIGFnbywgYW5kIGV2ZXJ5IGRheSBJIHRoaW5rOiAic2hvdWxkIGl0DQpi
-ZSBSRkN2MiBvciB2MeKAnSwgZW5kaW5nIHVwIG5vdCBzZW5kaW5nIGl04oCmDQoNClRoZXJlIGlz
-IG9uZSBpc3N1ZSB0aGF0IEkgcmVhbGl6ZWQgd2hpbGUgd29ya2luZyBvbiB0aGUgbmV3IHZlcnNp
-b246IEnigJltIG5vdA0Kc3VyZSBpdCBpcyB3ZWxsLWRlZmluZWQgd2hhdCBhbiBvdXRsaW5lIHJl
-dHBvbGluZSBpcyBhbGxvd2VkIHRvIGRvLiBUaGUNCmluZGlyZWN0IGJyYW5jaCBwcm9tb3Rpb24g
-Y29kZSBjYW4gY2hhbmdlIHJmbGFncywgd2hpY2ggbWlnaHQgY2F1c2UNCmNvcnJlY3Rpb24gaXNz
-dWVzLiBJbiBwcmFjdGljZSwgdXNpbmcgZ2NjLCBpdCBpcyBub3QgYSBwcm9ibGVtLg0KDQo+IFNv
-bWUgaGlnaC1sZXZlbCBjb21tZW50czoNCj4gDQo+IC0gIlJlbHBvbGluZSIgbG9va3MgY29uZnVz
-aW5nbHkgYSBsb3QgbGlrZSAicmV0cG9saW5lIi4gIEhvdyBhYm91dA0KPiAgIm9wdHBvbGluZSI/
-ICBUbyBhdm9pZCBjb25mdXNpbmcgbXlzZWxmIEkgd2lsbCBoZXJlYWZ0ZXIgcmVmZXIgdG8gaXQN
-Cj4gIGFzIHN1Y2ggOi0pDQoNClN1cmUuIEZvciB0aGUgYWNhZGVtaWMgcGFwZXIgd2Ugc3VibWl0
-dGVkLCB3ZSB1c2VkIGEgbXVjaCB3b3JzZSBuYW1lIHRoYXQgbXkNCmNvbGxlYWd1ZSBjYW1lIHVw
-IHdpdGguIEnigJltIG9rIHdpdGggYW55dGhpbmcgb3RoZXIgdGhhbiB0aGF0IG5hbWUgKG5vdA0K
-bWVudGlvbmVkIHRvIHByZXZlbnQgZG91YmxlLWJsaW5kaW5nIHZpb2xhdGlvbnMpLiBJ4oCZbGwg
-Z28gd2l0aCB5b3VyIG5hbWUuDQoNCj4gLSBJbnN0ZWFkIG9mIHBhdGNoaW5nIG9uZSBieXRlIGF0
-IGEgdGltZSwgaXMgdGhlcmUgYSByZWFzb24gd2h5DQo+ICB0ZXh0X3Bva2VfYnAoKSBjYW4ndCBi
-ZSB1c2VkPyAgVGhhdCB3b3VsZCBncmVhdGx5IHNpbXBsaWZ5IHRoZQ0KPiAgcGF0Y2hpbmcgcHJv
-Y2VzcywgYXMgZXZlcnl0aGluZyBjb3VsZCBiZSBwYXRjaGVkIGluIGEgc2luZ2xlIHN0ZXAuDQoN
-CkkgdGhvdWdodCBvZiBpdCBhbmQgbWF5YmUgaXQgaXMgc29tZWhvdyBwb3NzaWJsZSwgYnV0IHRo
-ZXJlIGFyZSBzZXZlcmFsDQpwcm9ibGVtcywgZm9yIHdoaWNoIEkgZGlkbuKAmXQgZmluZCBhIHNp
-bXBsZSBzb2x1dGlvbjoNCg0KMS4gQW4gaW5kaXJlY3QgYnJhbmNoIGluc2lkZSB0aGUgQlAgaGFu
-ZGxlciBtaWdodCBiZSB0aGUgb25lIHdlIHBhdGNoDQoNCjIuIEFuIGluZGlyZWN0IGJyYW5jaCBp
-bnNpZGUgYW4gaW50ZXJydXB0IG9yIE5NSSBoYW5kbGVyIG1pZ2h0IGJlIHRoZQ0KICAgb25lIHdl
-IHBhdGNoDQoNCjMuIE92ZXJhbGwsIHdlIG5lZWQgdG8gcGF0Y2ggbW9yZSB0aGFuIGEgc2luZ2xl
-IGluc3RydWN0aW9uLCBhbmQNCiAgIHRleHRfcG9rZV9icCgpIGlzIG5vdCBzdWl0YWJsZQ0KDQo+
-IC0gSW4gbWFueSBjYXNlcywgYSBzaW5nbGUgZGlyZWN0IGNhbGwgbWF5IG5vdCBiZSBzdWZmaWNp
-ZW50LCBhcyB0aGVyZQ0KPiAgY291bGQgYmUgZm9yIGV4YW1wbGUgbXVsdGlwbGUgdGFza3MgdXNp
-bmcgZGlmZmVyZW50IG5ldHdvcmsgcHJvdG9jb2xzDQo+ICB3aGljaCBuZWVkIGRpZmZlcmVudCBj
-YWxsYmFja3MgZm9yIHRoZSBzYW1lIGNhbGwgc2l0ZS4NCg0KV2Ugd2FudCB0byBrbm93IGR1cmlu
-ZyBjb21waWxhdGlvbiBob3cgbWFueSB0YXJnZXRzIHRvIHVzZS4gSXQgaXMgbm90DQpzdXBlci1z
-aW1wbGUgdG8gc3VwcG9ydCBtdWx0aXBsZSBpbmxpbmVkIHRhcmdldHMsIGJ1dCBpdCBpcyBmZWFz
-aWJsZSBpZiB5b3UNCmFyZSB3aWxsaW5nIHRvIGFubm90YXRlIHdoZW4gbXVsdGlwbGUgdGFyZ2V0
-cyBhcmUgbmVlZGVkLiBXZSBoYXZlIGEgdmVyc2lvbg0Kd2hpY2ggdXNlcyBvdXRsaW5lZCBpbmRp
-cmVjdCBicmFuY2ggcHJvbW90aW9uIHdoZW4gdGhlcmUgYXJlIG11bHRpcGxlDQp0YXJnZXRzLCBi
-dXQgaXTigJlzIG5vdCByZWFkeSBmb3IgcHJpbWUgdGltZSwgYW5kIHRoZSBjb2RlLWNhY2hlIG1p
-c3NlcyBjYW4NCmluZHVjZSBzb21lIG92ZXJoZWFkcy4NCg0KPiAtIEknbSBub3Qgc3VyZSBhYm91
-dCB0aGUgcGVyaW9kaWMgcmV0cmFpbmluZyBsb2dpYywgaXQgc2VlbXMgYSBiaXQNCj4gIG5vbmRl
-dGVybWluaXN0aWMgYW5kIGJ1cnN0eS4NCg0KSSBhZ3JlZS4gSXQgY2FuIGJlIGxpbWl0ZWQgdG8g
-Y2FzZXMgaW4gd2hpY2ggbW9kdWxlcyBhcmUgbG9hZGVkL3JlbW92ZWQsDQpvciB3aGVuIHRoZSB1
-c2VyIGV4cGxpY2l0bHkgYXNrcyBmb3IgaXQgdG8gdGFrZSBwbGFjZS4NCg0KPiANCj4gU28gSSdk
-IHByb3Bvc2UgdGhlIGZvbGxvd2luZyBjaGFuZ2VzOg0KPiANCj4gLSBJbiB0aGUgb3B0cG9saW5l
-LCByZXNlcnZlIHNwYWNlIGZvciBtdWx0aXBsZSAoNSBvciBzbykgY29tcGFyaXNvbnMgYW5kDQo+
-ICBkaXJlY3QgY2FsbHMuICBNYXliZSB0aGUgbnVtYmVyIG9mIHJlc2VydmVkIGNtcC9qbmUvY2Fs
-bCBzbG90cyBjYW4gYmUNCj4gIHR3ZWFrZWQgYnkgdGhlIGNhbGxlciBzb21laG93LiAgT3IgbWF5
-YmUgaXQgY291bGQgZ3JvdyBhcyBuZWVkZWQuDQo+ICBTdGFydGluZyBvdXQsIHRoZXkgd291bGQg
-anVzdCBiZSBOT1BzLg0KPiANCj4gLSBJbnN0ZWFkIG9mIHRoZSB0ZW1wb3JhcnkgbGVhcm5pbmcg
-bW9kZSwgYWRkIHBlcm1hbmVudCB0cmFja2luZyB0bw0KPiAgZGV0ZWN0IGEgZGlyZWN0IGNhbGwg
-Im1pc3MiIC0tIGkuZS4sIHdoZW4gbm9uZSBvZiB0aGUgZXhpc3RpbmcgZGlyZWN0DQo+ICBjYWxs
-cyBhcmUgYXBwbGljYWJsZSBhbmQgdGhlIHJldHBvbGluZSB3aWxsIGJlIHVzZWQuDQo+IA0KPiAt
-IEluIHRoZSBjYXNlIG9mIGEgbWlzcyAob3IgTiBtaXNzZXMpLCBpdCBjb3VsZCB0cmlnZ2VyIGEg
-ZGlyZWN0IGNhbGwNCj4gIHBhdGNoaW5nIG9wZXJhdGlvbiB0byBiZSBydW4gbGF0ZXIgKHdvcmtx
-dWV1ZSBvciBzeXNjYWxsIGV4aXQpLiAgSWYNCj4gIGFsbCB0aGUgZGlyZWN0IGNhbGwgc2xvdHMg
-YXJlIGZ1bGwsIGl0IGNvdWxkIHBhdGNoIHRoZSBsZWFzdCByZWNlbnRseQ0KPiAgbW9kaWZpZWQg
-b25lLiAgSWYgdGhpcyBjYXVzZXMgdGhyYXNoaW5nICg+eCBjaGFuZ2VzIG92ZXIgeSB0aW1lKSwg
-aXQNCj4gIGNvdWxkIGluY3JlYXNlIHRoZSBudW1iZXIgb2YgZGlyZWN0IGNhbGwgc2xvdHMgdXNp
-bmcgYSB0cmFtcG9saW5lLg0KPiAgRXZlbiBpZiB0aGVyZSB3ZXJlIHNldmVyYWwgc2xvdHMsIENQ
-VSBicmFuY2ggcHJlZGljdGlvbiB3b3VsZA0KPiAgcHJlc3VtYWJseSBoZWxwIG1ha2UgaXQgbXVj
-aCBmYXN0ZXIgdGhhbiBhIGJhc2ljIHJldHBvbGluZS4NCj4gDQo+IFRob3VnaHRzPw0KDQpJ4oCZ
-bSBvayB3aXRoIHRoZXNlIGNoYW5nZXMgaW4gZ2VuZXJhbCwgYWx0aG91Z2ggaGF2aW5nIG11bHRp
-cGxlIGlubGluZQ0KdGFyZ2V0cyBpcyBub3Qgc3VwZXItc2ltcGxlLiBIb3dldmVyLCB0aGVyZSBh
-cmUgYSBmZXcgaXNzdWVzOg0KDQotIFRoZXJlIGlzIHBvdGVudGlhbGx5IGEgbmVnYXRpdmUgaW1w
-YWN0IGR1ZSB0byBjb2RlLXNpemUgaW5jcmVhc2Ugd2hpY2gNCiAgSSB3YXMgd29ycmllZCBhYm91
-dC4NCg0KLSBJIHNlZSBubyByZWFzb24gbm90IHRvIHVzZSBhbGwgdGhlIGF2YWlsYWJsZSBzbG90
-cyBpbW1lZGlhdGVseSB3aGVuDQogIHdlIGVuY291bnRlciBhIG1pc3MuDQoNCi0gVGhlIG9yZGVy
-IG9mIHRoZSBicmFuY2hlcyBtaWdodCBiZSDigJx3cm9uZ+KAnSAodW5vcHRpbWl6ZWQpIGlmIHdl
-IGRvIG5vdA0KICBkbyBhbnkgcmVsZWFybmluZy4NCg0KLSBUaGUgbWFpbiBxdWVzdGlvbiBpcyB3
-aGF0IHRvIGRvIGlmIHdlIHJ1biBvdXQgb2Ygc2xvdHMgYW5kIHN0aWxsIGdldA0KICAobWFueT8p
-IG1pc3Nlcy4gSSBwcmVzdW1lIHRoZSByaWdodCB0aGluZyBpcyB0byBkaXNhYmxlIHRoZSBvcHRw
-b2xpbmUNCiAgYW5kIGp1bXAgb3ZlciBpdCB0byB0aGUgcmV0cG9saW5lLg0KDQpUaGFua3MgYWdh
-aW4gZm9yIHRoZSBmZWVkYmFjaywgYW5kIHBsZWFzZSBsZXQgbWUga25vdyB3aGF0IHlvdSB0aGlu
-ayBhYm91dA0KbXkgY29uY2VybnMu
+On 28/11/2018 17:53, Stefan Agner wrote:
+> On 28.11.2018 17:16, Robin Murphy wrote:
+>> Hi Stefan,
+>>
+>> On 28/11/2018 13:25, Stefan Agner wrote:
+>>> Add a fault handler which handles reads in Thumb-2 mode. Install
+>>> the appropriate handler depending on which mode the kernel has
+>>> been built. This avoids an "Unhandled fault: external abort on
+>>> non-linefetch (0x1008) at 0xf0a80000" during boot on a device
+>>> with a PCIe switch connected.
+>>>
+>>> Link: https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
+>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>> ---
+>>> FWIW, I found this manual helpful to write the code below:
+>>> http://hermes.wings.cs.wisc.edu/files/Thumb-2SupplementReferenceManual.pdf#page=43&zoom=100,0,66
+>>
+>> This one's rather less ancient and even more authoritative ;)
+>>
+>> https://static.docs.arm.com/ddi0406/cd/DDI0406C_d_armv7ar_arm.pdf
+>>
+>> (ARMv7 had a few new encodings over and above ARMv6T2, although in
+>> fairness I don't think any should be relevant to this specific case)
+>>
+> 
+> Thanks, I tried to find the right document on arm.com, but I timed out
+> after 5 minutes or so :-)
+> 
+>>> --
+>>> Stefan
+>>>
+>>>    drivers/pci/controller/dwc/pci-imx6.c | 37 ++++++++++++++++++++++++++-
+>>>    1 file changed, 36 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+>>> index 69f86234f7c0..683deb74d69f 100644
+>>> --- a/drivers/pci/controller/dwc/pci-imx6.c
+>>> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+>>> @@ -29,6 +29,7 @@
+>>>    #include <linux/reset.h>
+>>>    #include <linux/pm_domain.h>
+>>>    #include <linux/pm_runtime.h>
+>>> +#include <asm/opcodes.h>
+>>>      #include "pcie-designware.h"
+>>>    @@ -299,6 +300,37 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
+>>>    	return 1;
+>>>    }
+>>>    +static int imx6q_pcie_abort_handler_thumb2(unsigned long addr,
+>>> +		unsigned int fsr, struct pt_regs *regs)
+>>> +{
+>>> +	unsigned long pc = instruction_pointer(regs);
+>>> +	unsigned long instr = *(unsigned long *)pc;
+>>> +	unsigned long thumb2_instr = __mem_to_opcode_thumb16(instr);
+>>> +	int reg = thumb2_instr & 7;
+>>> +
+>>> +	if (!__opcode_is_thumb16(instr & 0x0000ffffUL))
+>>> +		return 1;
+>>
+>> There are plenty of 32-bit Thumb encodings of various LDR/STR
+>> variants, and I doubt we can guarantee that the offset, target
+>> register, and/or addressing mode for a config space access will
+>> *always* suit the (relatively limited) 16-bit ones.
+> 
+> Hm, I guess they should be handled too?
+> 
+> I looked at the code where I had the abort at hand triggered
+> (dw_pcie_read).
+
+For the sake of robustness, I think it makes sense to at least handle 
+all LDR/LDRH/LDRB encodings which might possibly fall out of a 
+read[lwb]() call. Given that we seem to have various versions of this 
+decoding in differing states of completeness, perhaps it's even worth 
+factoring out into some kind of common "Arm PCI synchronous abort handler".
+
+>>> +
+>>> +	/* Load word/byte and halfword immediate offset */
+>>> +	if (((thumb2_instr & 0xe800) == 0x6800) ||
+>>> +	    ((thumb2_instr & 0xf800) == 0x8800)) {
+>>> +		unsigned long val;
+>>> +
+>>> +		if (thumb2_instr & 0x1000)
+>>> +			val = 0xff;
+>>> +		else if (thumb2_instr & 0x8000)
+>>> +			val = 0xffff;
+>>> +		else
+>>> +			val = 0xffffffffUL;
+>>> +
+>>> +		regs->uregs[reg] = val;
+>>> +		regs->ARM_pc += 2;
+>>> +		return 0;
+>>> +	}
+>>
+>> What about stores? The existing implementation handles them, so either
+>> that's dead code which could perhaps be cleaned up, or they need to be
+>> handled here too.
+>>
+> 
+> I think the current handler (imx6q_pcie_abort_handler) checks bit 20,
+> which means it must be a load not?
+
+Oops, that's just me being dumb - I managed to overlook the pt_regs 
+assignment in the second if() block and thought it was just advancing 
+the PC, so assumed (because I also didn't bother to actually look up the 
+relevant encoding bits) it must be handling stores. Never mind that part 
+then.
+
+>>> +
+>>> +	return 1;
+>>> +}
+>>> +
+>>>    static int imx6_pcie_attach_pd(struct device *dev)
+>>>    {
+>>>    	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>>> @@ -1069,6 +1101,8 @@ static struct platform_driver imx6_pcie_driver = {
+>>>      static int __init imx6_pcie_init(void)
+>>>    {
+>>> +	bool thumb2 = IS_ENABLED(CONFIG_THUMB2_KERNEL);
+>>
+>> Can these aborts definitely *only* be triggered by kernel accesses,
+>> and never, say, via an mmap() of anything exposed to userspace?
+> 
+> Honestly, I am not very familiar with PCIe, I don't know...
+
+Yeah, hopefully the linux-pci audience can clear up that one.
+
+I was thinking in terms of whether we might need a combined handler with 
+a runtime "thumb_mode(regs)" check rather than a compile-time decision, 
+but Russell has a good point that just reading the instruction at all is 
+its own can of worms in that case.
+
+Robin.
