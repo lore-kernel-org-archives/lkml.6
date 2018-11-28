@@ -2,98 +2,119 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE43C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6D9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B42220832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B42220832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E85DD20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qQily++P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85DD20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeK2BSx (ORCPT
+        id S1728387AbeK2BTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:18:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33325 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbeK2BSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:18:53 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6972120729; Wed, 28 Nov 2018 15:17:03 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 197D02039F;
-        Wed, 28 Nov 2018 15:17:03 +0100 (CET)
-Date:   Wed, 28 Nov 2018 15:17:02 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-Cc:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: spi-nor: fix erase_type array to indicate
- current map conf
-Message-ID: <20181128151702.5f8b1bf2@bbrezillon>
-In-Reply-To: <2ae2459e-f5e7-f621-fd63-0982a1e59e86@nokia.com>
-References: <20181126124531.17548-1-tudor.ambarus@microchip.com>
-        <2ae2459e-f5e7-f621-fd63-0982a1e59e86@nokia.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 28 Nov 2018 20:19:04 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:63334 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeK2BTE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:19:04 -0500
+X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
+   d="scan'208";a="23306973"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Nov 2018 07:17:15 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 28 Nov 2018 07:17:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tLCWU75+HdW190iKRin21v6SvNpZorURPQQRLDF2W4o=;
+ b=qQily++P11EjkatB7e+sb0aI3HK/WVDJYjqyL51xAsjKBKhV8FrFA/3arzta28OiyVaQkP+GZFL+GZblfWWrB+l9ri1hfqgwAf8+J/a7hkiihG3HVZd/zHheFiDdw8OMPAylkjJrwPgXGsBcFUYgnCYpXJ+BjW9ADFr86G0v660=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB2020.namprd11.prod.outlook.com (10.173.26.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Wed, 28 Nov 2018 14:17:12 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
+ 14:17:12 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <boris.brezillon@bootlin.com>
+CC:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <richard@nod.at>,
+        <Cyrille.Pitchen@microchip.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
+Thread-Topic: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction
+ Table
+Thread-Index: AQHUgMfp7padVqHddU2ujFJxxustT6Vk3oeAgABp/4A=
+Date:   Wed, 28 Nov 2018 14:17:12 +0000
+Message-ID: <b1052dff-e1a9-2d3f-b921-661c72e0e137@microchip.com>
+References: <20181120115512.15958-1-tudor.ambarus@microchip.com>
+ <20181128085745.1ef607b3@bbrezillon>
+In-Reply-To: <20181128085745.1ef607b3@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P193CA0003.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:800:bd::13) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB2020;6:tqArwqXrGjuyUefvK93ddfmkwvUkT/UjgDDVpmg6s/JQeWEvLMP3HtpQ3mZT/TayJHcc+ez8muhbOBiv3VSU0/GRBxx/AElsdruXjWFgG5FBs463fIwxaHom1ITS3P+STVBIm0b1ukhWWwj2lyGRSbtHzok2n/pcxuwWJdFDAmo8tNxjlIo8R4KKXPZPdg2SN8DytgNfPVxk1B1EUxAxeoqNcgFPf/gSuIxXejtW0B8avO20AEzVQu4X2K7NgfB2ZsyR5CU7/6mc02vZbBUXZ8D6/2YPC59QfRyKi1DfIRHZvOzGJcRKG/BGrTt/dQAEQlNeFnu22XZWHJdYxlIbMXvPiIJAVWFNkPRX2RpMCc3GX6F/louegZtnifORrMpAe7gHpmPlQzITDn5t1lZRfPLm9O+OtfhCQyzOSPYrB2gM+60ft9UAUPD/ic3nGpdXZ0ExUpDT9WuBaQH+mjljWw==;5:v/3c/1PjRUqE1gADIRh3jHEVpMP6Y33VzXr9pzrV+aGA+5kwhlEYrNG9BYmH2oLC/j4cDjftyvoAZIKtuOlcx4el4BMA6VmFhIV/uh5kv3ADTDRn+wPTZIKOh5UkIwn9Snz4++BYgzPiUdigXh62OnjYYOMVLPleV+AfvmpWxLA=;7:1aH6BW3oa4drWpefbaZVdasoczJtQMKVVUe/9iD0v7BCaXFnAzW7cPEgWDm06qPAXQ/+EsFkog14it92TfGV7aNkZa/MywFB/siGaPF1z8bEoveNddOO5tFtdVm4y1dMUGofeNKFGoKSDe7Oc6tyng==
+x-ms-office365-filtering-correlation-id: a3a63e86-827f-48eb-0200-08d6553c305b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB2020;
+x-ms-traffictypediagnostic: BN6PR11MB2020:
+x-microsoft-antispam-prvs: <BN6PR11MB20209ABB12655EBAEB1CB97DF0D10@BN6PR11MB2020.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231443)(999002)(944501410)(4982022)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB2020;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB2020;
+x-forefront-prvs: 0870212862
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(39860400002)(396003)(189003)(199004)(72206003)(3846002)(6116002)(36756003)(71200400001)(71190400001)(97736004)(11346002)(4326008)(68736007)(105586002)(186003)(99286004)(7736002)(8676002)(5660300001)(106356001)(6306002)(81156014)(14454004)(446003)(81166006)(305945005)(478600001)(52116002)(256004)(86362001)(53936002)(76176011)(31696002)(476003)(2616005)(6486002)(6436002)(316002)(6506007)(39060400002)(386003)(31686004)(486006)(6512007)(102836004)(25786009)(6916009)(26005)(6246003)(8936002)(2906002)(66066001)(229853002)(54906003)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB2020;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: da5jzvJhXBtzf9SyWbPmiuzfy9/ECWJQPD0cCJZJn8Om0aFvNgdNgYedwH3hYBMG4UhN5l8/EDbDVnO6K126f1PGOnOl+szfe3jQJwcDGrlkbTUqcDmxi8j4NqWdjk8dZFfUPhSivjIL7+lbD4yhkeQP1rnJiyGplCj+jPwVkc0YRlWFN6zQ3n/yGKf03PMWdq0kzgDxSnbxwF3AkDydKcBjILwfwe6WMFwsyUwb3IbrFUPiLWNNTzdS4J++HCdhnjJeFcKRaws5OkCrit1RRHHESf/YustMNfOe5L+DU+sxcbJMznMJScDG+bFSb5MuxGuR//df6ow1BeqLfhPKMm82qQ4U3B8W/PTNoth2f5k=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DE881623AAD4EB44BC8FDC3DBF3466F7@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3a63e86-827f-48eb-0200-08d6553c305b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:17:12.1066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB2020
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexander,
-
-On Mon, 26 Nov 2018 13:04:45 +0000
-"Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-wrote:
-
-> Hello Tudor and all,
-> 
-> On 26/11/2018 13:45, Tudor.Ambarus@microchip.com wrote:
-> > From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> > 
-> > BFPT advertises all the erase types supported by all the possible
-> > map configurations. Mask out the erase types that are not supported
-> > by the current map configuration.
-> > 
-> > Backward compatibility test done on sst26vf064b.
-> > 
-> > Fixes: b038e8e3be72 ("mtd: spi-nor: parse SFDP Sector Map Parameter Table")
-> > Reported-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>  
-> 
-> I've verified the erasesize, partitioning and erase function of the S25FS128S
-> and all the above is at least back to pre-SFDP state.
-> 
-> So the patch works as intended and it's
-> Tested-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-> 
-> There is still a regression with write when S25FS128S is used with SFDP
-> because SFDP of the S25FS128S is just broken. It advertises 512 bytes
-> of write page size but factory delivery configuration wraps the address
-> on 256 bytes boundary. I found no way to fetch this configuration in a
-> vendor-neutral way (or JEDEC-conform way). Which means, S25FS128S
-> could be the first user of SPI_NOR_SKIP_SFDP flag :\.
-
-You might be interested in my work around SPI NOR fixups[1]. I added a
-few fixup hooks that can be implemented by manufacturer drivers (a new
-concept) or on a per-chip basis. Looks like you'd need to implement a
-->post_bfpt() fixup hook for this particular chip (see what's been done
-for this Macronix chip [2]).
-
-Regards,
-
-Boris
-
-[1]https://github.com/bbrezillon/linux-0day/commits/spi-nor/manuf-drv
-[2]https://github.com/bbrezillon/linux-0day/commit/b29625fdc55fa8ccfd4299904d727b44f8382c18
+DQoNCk9uIDExLzI4LzIwMTggMDk6NTcgQU0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
+VHVlLCAyMCBOb3YgMjAxOCAxMTo1NToyMSArMDAwMA0KPiA8VHVkb3IuQW1iYXJ1c0BtaWNyb2No
+aXAuY29tPiB3cm90ZToNCj4gDQo+PiArDQo+PiArCS8qDQo+PiArCSAqIFdlIHNldCBub3ItPmFk
+ZHJfd2lkdGggaGVyZSB0byBza2lwIHNwaV9ub3Jfc2V0XzRieXRlX29wY29kZXMoKQ0KPj4gKwkg
+KiBsYXRlciBiZWNhdXNlIHRoaXMgbGF0ZXN0IGZ1bmN0aW9uIGltcGxlbWVudHMgYSBsZWdhY3kg
+cXVpcmsgZm9yDQo+PiArCSAqIHRoZSBlcmFzZSBzaXplIG9mIFNwYW5zaW9uIG1lbW9yeS4gSG93
+ZXZlciB0aGlzIHF1aXJrIGlzIG5vIGxvbmdlcg0KPj4gKwkgKiBuZWVkZWQgd2l0aCBuZXcgU0ZE
+UCBjb21wbGlhbnQgbWVtb3JpZXMuDQo+PiArCSAqLw0KPj4gKwlub3ItPmFkZHJfd2lkdGggPSA0
+Ow0KPj4gKwlub3ItPmZsYWdzIHw9IFNQSV9OT1JfNEJfT1BDT0RFUzsNCj4gDQo+IFlvdSBtZWFu
+IFNOT1JfRl80Ql9PUENPREVTICh0aGUgb25lIGludHJvZHVjZWQgaGVyZSBbMV0pLCBiZWNhdXNl
+DQo+IFNQSV9OT1JfNEJfT1BDT0RFUyBzaG91bGQgb25seSBiZSB1c2VkIGZvciBmbGFzaF9pbmZv
+LT5mbGFncyBhbmQgbWlnaHQNCj4gc29vbiBjb25mbGljdCB3aXRoIGFub3RoZXIgU05PUl9GXyBm
+bGFnPw0KPiANCg0KeWVzLCB5b3UncmUgcmlnaHQuDQoNCj4gWzFdaHR0cDovL3BhdGNod29yay5v
+emxhYnMub3JnL3BhdGNoLzk5MTQ3Ni8NCj4gDQoNCkNhbiB5b3UgYXBwbHkgeW91ciBwYXRjaD8g
+V2lsbCBzdWJtaXQgYSBuZXcgdmVyc2lvbiBhZnRlcndhcmRzLg0KDQpUaGFua3MsDQp0YQ0K
