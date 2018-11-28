@@ -2,106 +2,98 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7368CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91F9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3668A206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3668A206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 78503206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:29:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IF9etCmL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jj/YAShB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78503206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeK2FZc (ORCPT
+        id S1727197AbeK2FcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:25:32 -0500
-Received: from mga18.intel.com ([134.134.136.126]:30896 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725266AbeK2FZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:25:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 10:22:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,291,1539673200"; 
-   d="scan'208";a="278352141"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga005.jf.intel.com with ESMTP; 28 Nov 2018 10:22:59 -0800
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
-        tony.luck@intel.com
-Cc:     jithu.joseph@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] x86/resctrl: Ensure usage of CPUs are locked while needed
-Date:   Wed, 28 Nov 2018 10:22:07 -0800
-Message-Id: <725073a1f4448e3c45ed7102229e6946ca2526d8.1543428144.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 29 Nov 2018 00:32:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52928 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725761AbeK2FcI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 00:32:08 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 21DB4601C4; Wed, 28 Nov 2018 18:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543429775;
+        bh=ei81HWo7Dpp6+q3denXZpXf2opNyFdYdoexeLRrE4IU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IF9etCmLvOqeJsIBHTg7xxItRauqVdW77d5R4wJWnsi6JeHbsn5qZ3xwyTIxsqZP8
+         EUkAbNJEy+oItg+tPNIHrMlDocKmgRqaz2BZ1YpWmyFX+0d7ZvVL/TNpDufI8vyLAc
+         ckcwteSd4wt5VAoAa3WXyZKo5iOEGZkXxkPd2+L8=
+Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1D8CD601C4;
+        Wed, 28 Nov 2018 18:29:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543429774;
+        bh=ei81HWo7Dpp6+q3denXZpXf2opNyFdYdoexeLRrE4IU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Jj/YAShBDC7Xx+HA6B/ortStT7Cu0Q/A+kWOwJqJFmOJBInW7AoA/6+QBxYLsnPeX
+         NGDpzKexgyzvvhNlK8cdpTlBcgDs/KKAKPaoL33nLuHACpOZqr+6hZ5TZre0rl/BZj
+         a8NFCbL8Z4ueVmWbKmimcGt4N1N/+IP01SVj50kU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1D8CD601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     georgi.djakov@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+Subject: [PATCH 0/1] drm/msm/a6xx: Add interconnect support
+Date:   Wed, 28 Nov 2018 11:29:28 -0700
+Message-Id: <20181128182929.19925-1-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The user triggers the creation of a pseudo-locked region when writing
-the requested schemata to the schemata resctrl file. The pseudo-locking
-of a region is required to be done on a CPU that is associated with the
-cache on which the pseudo-locked region will reside. In order to run the
-locking code on a specific CPU the needed CPU has to be selected and
-ensured to remain online during the entire locking sequence.
+I heard at LPC that there was some confusion that the OPP bindings [1]
+were needed to land interconnect support. They aren't.
 
-At this time the cpu_hotplug_lock is not taken during the pseudo-lock
-region creation and it is thus possible for a CPU to be selected to run
-the pseudo-locking code and then that CPU to go offline before the
-thread is able to run on it.
+There is a two step process for the SDM845 GPU. First we need a vote (any vote)
+because the default bus settings are way too bad for any reasonable
+performance.
 
-Fix this by ensuring that the cpu_hotplug_lock is taken while the CPU on
-which code has to run needs to be controlled. Since the cpu_hotplug_lock
-is always taken before rdtgroup_mutex the lock order is maintained.
+The next step after that would be to scale the bus request based on the
+frequency in order to save power. For that we *do* need a solution but that
+can be calmly discussed separately.
 
-Fixes: e0bdfe8e36f3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This patch accommodates the first step. It cranks the bus to max for GPU
+activity and turns it off when the GPU goes to sleep. Hopefully this can
+alleviate the confusion and help interconnect land that much quicker.
+After that, we can calmly re-introduce the OPP discussion.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 03ee13235a45..6f7adb3be01e 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -23,6 +23,7 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cpu.h>
- #include <linux/kernfs.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-@@ -381,9 +382,11 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 		return -EINVAL;
- 	buf[nbytes - 1] = '\0';
- 
-+	cpus_read_lock();
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 	if (!rdtgrp) {
- 		rdtgroup_kn_unlock(of->kn);
-+		cpus_read_unlock();
- 		return -ENOENT;
- 	}
- 	rdt_last_cmd_clear();
-@@ -438,6 +441,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 
- out:
- 	rdtgroup_kn_unlock(of->kn);
-+	cpus_read_unlock();
- 	return ret ?: nbytes;
- }
- 
+This patch depends on interconnect support [2].
+
+[1] https://patchwork.kernel.org/patch/10577303/
+[2] https://patchwork.kernel.org/patch/10701287/
+
+Jordan Crouse (1):
+  drm/msm/a6xx: Add support for an interconnect path
+
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
+ drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
+ 3 files changed, 32 insertions(+)
+
 -- 
-2.17.0
+2.18.0
 
