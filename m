@@ -2,135 +2,136 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BA5C4161D
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C035C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86FD02081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="OApl3T4C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86FD02081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id BA364206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA364206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbeK2Kts (ORCPT
+        id S1727022AbeK2Kvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:49:48 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:34711 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeK2Kr1 (ORCPT
+        Thu, 29 Nov 2018 05:51:45 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:40692 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726382AbeK2Kvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=0wXC4P8tv/necGliK5aRNomolWx+JN4mjPoOhe5DvHQ=; b=OApl3T4Ci75M
-        0vsfk1PMLITZxFmezbPbI7K6vVLWmb+e+/vs9xTo/uxkCj39JRAKlOzk9lnvXNMBaPPh1nC+0iAHw
-        dtTD/udwsgCgqmm5g+D/FwejdbqL9YcmhmSCjrfhUj9dSgdiaWYOF5eaf/iFUFb2GWc1T9QW5jDqa
-        73wMZh7B+dgNJ13E9uoFFOOOuv31eCaazXM+G7+IrQiXlGPHKSZsNfVjOPBLq7ju8XYlGBI8jgHg0
-        2mxuPvdW6trqSvsSPpNmHv74B6LO8TQEtdZdBg4d1vPF07NytAPWDJMvu6Hefr+cBvqa5wPCnNIYr
-        8FM1FPeXa+BJ+qqtx9uo5g==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1gS9Un-000Fij-64; Thu, 29 Nov 2018 00:43:54 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id AFE5DC13FF;
-        Thu, 29 Nov 2018 00:43:36 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 01/27] lockdep tests: Display compiler warning and error messages
-Date:   Wed, 28 Nov 2018 15:42:59 -0800
-Message-Id: <20181128234325.110011-2-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
-References: <20181128234325.110011-1-bvanassche@acm.org>
+        Thu, 29 Nov 2018 05:51:44 -0500
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.52 with ESMTP; 29 Nov 2018 08:48:21 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO WMRRD11NA101CK) (10.178.32.163)
+        by 156.147.1.126 with ESMTP; 29 Nov 2018 08:48:20 +0900
+X-Original-SENDERIP: 10.178.32.163
+X-Original-MAILFROM: chanho.min@lge.com
+From:   "Chanho Min" <chanho.min@lge.com>
+To:     "'Takashi Iwai'" <tiwai@suse.de>
+Cc:     "'Jaroslav Kysela'" <perex@perex.cz>,
+        "'Takashi Iwai'" <tiwai@kernel.org>,
+        "'Vinod Koul'" <vkoul@kernel.org>,
+        "'Daniel Mentz'" <danielmentz@google.com>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        "'Seungho Park'" <seungho1.park@lge.com>,
+        "'Jongsung Kim'" <neidhard.kim@lge.com>,
+        "'Wonmin Jung'" <wonmin.jung@lge.com>,
+        "'Jaehyun Kim'" <jehn.kim@lge.com>,
+        "'Hyonwoo Park'" <hyonwoo.park@lge.com>
+References: <1543210597-6717-1-git-send-email-chanho.min@lge.com>       <s5hin0k6xqy.wl-tiwai@suse.de>  <1aaf01d486ab$8017a5b0$8046f110$@lge.com> <s5hwoox61ic.wl-tiwai@suse.de>
+In-Reply-To: <s5hwoox61ic.wl-tiwai@suse.de>
+Subject: RE: [PATCH] ALSA: pcm: Fix starvation on down_write_nonblock()
+Date:   Thu, 29 Nov 2018 08:48:20 +0900
+Message-ID: <046401d48774$d7d1e440$8775acc0$@lge.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00545984033607)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5quHOoLPq4ee9dIJp0uCCER602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyB41b1wEpWO6ik9HITpMsqebHcXK5F5szpMR3
- ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aV1ojZY
- pEeohpKvNehO5/ZZq2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi33Iz6Zvpm8cPQnANwk
- DQ5BNCNwpGn8jfSb3NCl2WUq09dCYgcgr835yVjKQZA6hJL1LiMHCxRezvZaFOrUVh8zaVyj66M1
- yz85ZZhpUrhTRbASVYnBhdKUnGmBdHG7BUn2dK6UtSEdwn3yFtfkzf2g6K04cY809V1JdCwiLdDQ
- Dow7RSjhmGOVelXQaHGaUkBvyMjbyNpr4xR6RL2C9+qlIny++hg9dJLqN5zmWqF/oNe6FVV7drXD
- mtOldfpWzeUCaRHvx+uLGHS3n3Y0pMd0ZyCgxZHINA6A5+7T9o6by6wCf9/ixXi9QE6xc2MJdJIs
- WkULIn/2FBvF31UHbsndehIqUczFWeS6sE8e1b5/UlaX0Ao5X99TlizdjWjXhcukjPvPb2ztUwUU
- F4ekbSpuNzlrea/7iuldgAMiBvdjMcnm029Ym0efSWNMWddmEHoHmFDqewO9xyOqCYO8P1aHcsG0
- kWCiESR44kXyAcFBnvq0JaXhRWKyqy0OhbkmMxu2AdrcZPAiQvyjIZ4LQqnqqLEDUnB02oJPHAlf
- IubJYzA0XAoGECHs14pjPDDBgamvNiA5kjk+kUt44s0jst5ftQCYMxFrGd5PntJYzFtIXwiZYu7W
- 2Svn1fA8kAfXby1uhWzfuvHd4y0L/HyfN5U858I8R2vIYlYbA7G/CY3eeSCFRiwDn8j3yWGHtM7w
- dRonBy/PpUxgSFRPcWxJF+/beJHmCfSNEcGdfFKs5M18F1x96tlonSt5Ig9mwLw4vXsdf68W0InH
- /+bTMKNm38MHV+diwrlXuxzeO2WnJyd7g8lLLKZgdBo3YHaSgbLEg7M4I+zZPnIX6k9TnzH5sZcr
- MS+4ayUpOtEhdxekWDmK9g==
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQMaVnIxoQzG0mth21qziKuhS7dD/AHddrpxAUNqWssDIGjXzqKoJSuQ
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If compilation of liblockdep fails, display an error message and exit
-immediately. Display compiler warning and error messages that are
-generated while building a test. Only run a test if compilation
-succeeded.
+> > > On Mon, 26 Nov 2018 06:36:37 +0100,
+> > > Chanho Min wrote:
+> > > >
+> > > > Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic
+> > > > PCM
+> > > > stream") fixes deadlock for non-atomic PCM stream. But, This patch
+> > > causes antother stuck.
+> > > > If writer is RT thread and reader is a normal thread, the reader
+> > > > thread will be difficult to get scheduled. It may not give chance
+> > > > to release readlocks and writer gets stuck for a long time if they
+> > > > are
+> > > pinned to single cpu.
+> > > >
+> > > > The deadlock described in the previous commit is because the linux
+> > > > rwsem queues like a FIFO. So, we might need non-FIFO writelock,
+> > > > not non-
+> > > block one.
+> > > >
+> > > > My suggestion is that the writer gives reader a chance to be
+> > > > scheduled by using the minimum msleep() instaed of spinning
+> > > > without blocking by writer. Also, The *_nonblock may be changed to
+> > > > *_nonfifo appropriately
+> > > to this concept.
+> > > > In terms of performance, when trylock is failed, this minimum
+> > > > periodic msleep will have the same performance as the tick-based
+> > > schedule()/wake_up_q().
+> > > >
+> > > > Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
+> > > > Signed-off-by: Chanho Min <chanho.min@lge.com>
+> > >
+> > > Hrm, converting unconditionally with msleep() looks too drastic.
+> >
+> > Yes, it looks drastic. But, IMHO, I can't say busy-spin is not non-
+> drastic.
+> > To fix the root cause, We may need another rwsem that does not work as
+> > a FIFO.
+> 
+> Right, but applying msleep(1) unconditionally is really bad.
+> 
+> > > I guess you've hit this while not explicitly using the linked PCM
+> > > streams, i.e. in the call of snd_pcm_unlink() at close, right?
+> > >
+> > > Then this can be worked around by checking the link before calling it.
+> > > Could you check the patch below?
+> >
+> > More testing is needed, but it seems to be fixed by your patch.
+> > We may not use the linked PCM.
+> 
+> Then I'm sure that my patch papers over.
+Thanks, Plz let me know when the patch is merged.
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- tools/lib/lockdep/run_tests.sh | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> > But, If the linked PCM is enabled,  Can snd_pcm_unlink() be called?
+> > This also seems to be a workaround.
+> 
+> Yes, for the linked streams, something else is needed *in addition*.
+> 
+> The original fix with busy loop also assumed that this code path (via
+> snd_pcm_link() and snd_pcm_unlink()) is the rare occasion, and it didn't
+> consider that it were called for regular use cases.  So the fix to make
+> things just works for regular use cases without any artifact must be
+> implemented in the first place.  The fix for the linked streams comes at
+> next.  It might be like your msleep() change as a workaround, but in
+> anyway it's far less urgency.
 
-diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
-index 2e570a188f16..eef3fe4a24fe 100755
---- a/tools/lib/lockdep/run_tests.sh
-+++ b/tools/lib/lockdep/run_tests.sh
-@@ -1,13 +1,16 @@
- #! /bin/bash
- # SPDX-License-Identifier: GPL-2.0
- 
--make &> /dev/null
-+if ! make >/dev/null; then
-+    echo "Building liblockdep failed."
-+    echo "FAILED!"
-+fi
- 
- for i in `ls tests/*.c`; do
- 	testname=$(basename "$i" .c)
--	gcc -o tests/$testname -pthread $i liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &> /dev/null
- 	echo -ne "$testname... "
--	if [ $(timeout 1 ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
-+	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
-+		[ "$(timeout 1 "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
- 		echo "PASSED!"
- 	else
- 		echo "FAILED!"
-@@ -19,9 +22,9 @@ done
- 
- for i in `ls tests/*.c`; do
- 	testname=$(basename "$i" .c)
--	gcc -o tests/$testname -pthread -Iinclude $i &> /dev/null
- 	echo -ne "(PRELOAD) $testname... "
--	if [ $(timeout 1 ./lockdep ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
-+	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
-+		[ "$(timeout 1 ./lockdep "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
- 		echo "PASSED!"
- 	else
- 		echo "FAILED!"
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+msleep is worst, but If it is harmless, can I apply my patch to the private
+tree
+temporarily until your next fix comes?
+We may use the linked streams in the near future. It makes our product
+unstable.
+It's urgency for us. How is your opinion?
+
+Thanks
+Chanho
 
