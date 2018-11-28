@@ -2,147 +2,251 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AA7C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7899C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AEF2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:00:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="K9A1m8BG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AEF2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 5222E2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5222E2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeK1VB2 (ORCPT
+        id S1728206AbeK1VCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:01:28 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51876 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbeK1VB1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:01:27 -0500
-Received: by mail-it1-f195.google.com with SMTP id x19so3428095itl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 02:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nn31Rtr1vCmaeg2yOoBYMs142T7jvS7kmETnau6u9co=;
-        b=K9A1m8BGbpFwgZc+TRxVMrmacwwJWpOv6euT6GlmlxqOQRaM80Wn597qagLxYeH/1h
-         pWlso5H3YSqAuYG1lZ5sgoGXwb/Ztg6bw5+PLoY/n7zFYn1cjnRu+yxVPGDvobNhXIbZ
-         87LOZShDNXYerDtPiEnOMfJaa2lrlUxR4yWJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nn31Rtr1vCmaeg2yOoBYMs142T7jvS7kmETnau6u9co=;
-        b=R3JGtsHEHWCX2XNa3xSuzv1FYkUXqL+m6AhAtdJTh7iGGTgcmRcEB7yOy2cYEM4Cub
-         SEF0srcL4nO0GASnDuvx/phHrH8gWlSPQX909BlqOa3as9AHB5rzuUx9R51NI5atkGFg
-         ayeKONCK53obdF+R9ATLKdtyzW6A5se3Wmp/intcpeR8FTNRoG9mQU/S4W+k0JDdhyFk
-         VnX3LcvTJMN6FOyKAaZKVV/DajdVu8OJZ1tjvxdXhTl3AZlX31lYyLEjWJ6MEy8lM1lK
-         VCLwYQHvmTfN+5ozfUfVvX0TS7G4AdKtugqEtUHKvdOvnn/e/m3MLoZShi1HK0hrLSLp
-         BkLg==
-X-Gm-Message-State: AA+aEWYuvoq3eEoQJc2tLIhpGo424FBupF5CpfLnguHKpjIlJ4PJRWV0
-        3lDSrKD2v4l3vRNd9YUOaYuCKx3j5aorrGUromO9JA==
-X-Google-Smtp-Source: AFSGD/UdYgo9CXb7jMDeWDKUDa8yZvzBf/jaRbmE/PwegZrAQo3TAmvD+zfkJwnfq3tuyqWKZHRCgkroJYU3CG7Hk0g=
-X-Received: by 2002:a24:710:: with SMTP id f16mr2019643itf.121.1543399221572;
- Wed, 28 Nov 2018 02:00:21 -0800 (PST)
+        Wed, 28 Nov 2018 16:02:25 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:39540 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbeK1VCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:02:25 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 2D9875E093AE6A5E750A;
+        Wed, 28 Nov 2018 18:01:14 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wASA10iM072826;
+        Wed, 28 Nov 2018 18:01:00 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018112818012357-13502531 ;
+          Wed, 28 Nov 2018 18:01:23 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] scsi: Fix semicolon.cocci warnings
+Date:   Wed, 28 Nov 2018 18:00:55 +0800
+Message-Id: <20181128100055.25118-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com> <20181127210542.GA2599@redhat.com>
-In-Reply-To: <20181127210542.GA2599@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 28 Nov 2018 11:00:09 +0100
-Message-ID: <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
-Subject: Re: overlayfs access checks on underlying layers
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-28 18:01:23,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-28 18:00:52
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wASA10iM072826
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 10:05 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Tue, Nov 27, 2018 at 08:58:06PM +0100, Miklos Szeredi wrote:
-> > [resending with fixed email address for Paul Moore]
-> >
-> > Moving discussion from github[1] to here.
-> >
-> > To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
-> > underlying layers") was added in 4.20-rc1 to make overlayfs access
-> > checks on underlying "real" filesystems more consistent.  The
-> > discussion leading up to this commit can be found at [2].  The commit
-> > broke some selinux-testsuite cases, possibly indicating a security
-> > hole opened by this commit.
-> >
-> > The model this patch tries to follow is that if "cp --preserve=all"
-> > was allowed to the mounter from underlying layer to the overlay layer,
-> > then operation is allowed.  That means even if mounter's creds doesn't
-> > provide permission to for example execute underying file X, if
-> > mounter's creds provide sufficient permission to perform "cp
-> > --preserve=all X Y"  and original creds allow execute on Y, then the
-> > operation is allowed.  This provides consistency in the face of
-> > copy-ups.  Consistency is only provided in sane setups, where mounter
-> > has sufficient privileges to access both the lower and upper layers.
->
-> [cc daniel walsh]
->
-> I think current selinux testsuite tests are written keeping these
-> rules in mind.
->
-> 1. Check overlay inode creds in the context of task and underlying
->    inode creds (lower/upper), in the context of mounter.
->
-> 2. For a lower inode, if said file is being copied up, then only
->    check MAY_READ on lower. This is equivalent to mounter creating
->    a copy of file and providing caller access to it (context mount).
->
-> For the case of special devices, we do not copy up these. So should
-> we continue to do check on lower inode in the context of mounter
-> (instead of not doing any check on lower at all).
+Remove unneeded semicolon.
+drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c:947:4-5: Unneeded semicolon
+drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c:967:4-5: Unneeded semicolon
+drivers/scsi/sgiwd93.c:190:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:521:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:548:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:571:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:264:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:304:3-4: Unneeded semicolon
+drivers/scsi/aha1542.c:367:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:604:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:622:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:640:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:464:3-4: Unneeded semicolon
+drivers/scsi/aha1542.c:476:2-3: Unneeded semicolon
+drivers/scsi/aha1542.c:506:2-3: Unneeded semicolon
 
-Hmm, I'm trying to understand the logic... If we follow the "cp
---preserve=all" thing, than mounter needs to have CREATE permission
-for the special file, not READ or WRITE.  Does that make sense?  Would
-that help with the context= mount use case?
+Generated by: scripts/coccinelle/misc/semicolon.cocci
 
->
-> For being able to execute a file, should we atleast check MAY_READ
-> on lower.
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+CC: "Martin K. Petersen" <martin.petersen@oracle.com>
+CC: linux-scsi@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/scsi/aha1542.c            | 24 ++++++++++++------------
+ drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c |  4 ++--
+ drivers/scsi/sgiwd93.c            |  2 +-
+ 3 files changed, 15 insertions(+), 15 deletions(-)
 
-Yep, that looks like a bug present from day one: MAY_EXEC doesn't
-always imply MAY_READ, but to be able to execute a file, the kernel
-must read it first, and if mounter doesn't have privilege to read the
-file, then user should not be allowed to execute it.
+diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
+index 41add33e3f1f..b5685a7315b3 100644
+--- a/drivers/scsi/aha1542.c
++++ b/drivers/scsi/aha1542.c
+@@ -261,7 +261,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
+*dev=5Fid)
+ 		if (flag & SCRD)
+ 			printk("SCRD ");
+ 		printk("status %02x\n", inb(STATUS(sh->io=5Fport)));
+-	};
++	}
+ #endif
+ 	number=5Fserviced =3D 0;
+=20
+@@ -301,7 +301,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
+*dev=5Fid)
+ 			if (!number=5Fserviced)
+ 				shost=5Fprintk(KERN=5FWARNING, sh, "interrupt received, but no mail.\n=
+");
+ 			return IRQ=5FHANDLED;
+-		};
++		}
+=20
+ 		mbo =3D (scsi2int(mb[mbi].ccbptr) - (isa=5Fvirt=5Fto=5Fbus(&ccb[0]))) / =
+sizeof(struct ccb);
+ 		mbistatus =3D mb[mbi].status;
+@@ -364,7 +364,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
+*dev=5Fid)
+ 						   far as queuecommand is concerned */
+ 		my=5Fdone(tmp=5Fcmd);
+ 		number=5Fserviced++;
+-	};
++	}
+ }
+=20
+ static int aha1542=5Fqueuecommand(struct Scsi=5FHost *sh, struct scsi=5Fcm=
+nd *cmd)
+@@ -461,7 +461,7 @@ static int aha1542=5Fqueuecommand(struct Scsi=5FHost *s=
+h, struct scsi=5Fcmnd *cmd)
+ 			any2scsi(cptr[i].dataptr, isa=5Fpage=5Fto=5Fbus(sg=5Fpage(sg))
+ 								+ sg->offset);
+ 			any2scsi(cptr[i].datalen, sg->length);
+-		};
++		}
+ 		any2scsi(ccb[mbo].datalen, sg=5Fcount * sizeof(struct chain));
+ 		any2scsi(ccb[mbo].dataptr, isa=5Fvirt=5Fto=5Fbus(cptr));
+ #ifdef DEBUG
+@@ -473,7 +473,7 @@ static int aha1542=5Fqueuecommand(struct Scsi=5FHost *s=
+h, struct scsi=5Fcmnd *cmd)
+ 		cmd->host=5Fscribble =3D NULL;
+ 		any2scsi(ccb[mbo].datalen, 0);
+ 		any2scsi(ccb[mbo].dataptr, 0);
+-	};
++	}
+ 	ccb[mbo].idlun =3D (target & 7) << 5 | direction | (lun & 7);	/*SCSI Targ=
+et Id */
+ 	ccb[mbo].rsalen =3D 16;
+ 	ccb[mbo].linkptr[0] =3D ccb[mbo].linkptr[1] =3D ccb[mbo].linkptr[2] =3D 0;
+@@ -503,7 +503,7 @@ static void setup=5Fmailboxes(struct Scsi=5FHost *sh)
+ 	for (i =3D 0; i < AHA1542=5FMAILBOXES; i++) {
+ 		mb[i].status =3D mb[AHA1542=5FMAILBOXES + i].status =3D 0;
+ 		any2scsi(mb[i].ccbptr, isa=5Fvirt=5Fto=5Fbus(&ccb[i]));
+-	};
++	}
+ 	aha1542=5Fintr=5Freset(sh->io=5Fport);	/* reset interrupts, so they don't=
+ block */
+ 	any2scsi((mb=5Fcmd + 2), isa=5Fvirt=5Fto=5Fbus(mb));
+ 	if (aha1542=5Fout(sh->io=5Fport, mb=5Fcmd, 5))
+@@ -518,7 +518,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
+ 	i =3D inb(STATUS(sh->io=5Fport));
+ 	if (i & DF) {
+ 		i =3D inb(DATA(sh->io=5Fport));
+-	};
++	}
+ 	aha1542=5Foutb(sh->io=5Fport, CMD=5FRETCONF);
+ 	aha1542=5Fin(sh->io=5Fport, inquiry=5Fresult, 3, 0);
+ 	if (!wait=5Fmask(INTRFLAGS(sh->io=5Fport), INTRMASK, HACC, 0, 0))
+@@ -545,7 +545,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
+ 	default:
+ 		shost=5Fprintk(KERN=5FERR, sh, "Unable to determine DMA channel.\n");
+ 		return -1;
+-	};
++	}
+ 	switch (inquiry=5Fresult[1]) {
+ 	case 0x40:
+ 		sh->irq =3D 15;
+@@ -568,7 +568,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
+ 	default:
+ 		shost=5Fprintk(KERN=5FERR, sh, "Unable to determine IRQ level.\n");
+ 		return -1;
+-	};
++	}
+ 	sh->this=5Fid =3D inquiry=5Fresult[2] & 7;
+ 	return 0;
+ }
+@@ -601,7 +601,7 @@ static int aha1542=5Fmbenable(struct Scsi=5FHost *sh)
+=20
+ 		if (aha1542=5Fout(sh->io=5Fport, mbenable=5Fcmd, 3))
+ 			goto fail;
+-	};
++	}
+ 	while (0) {
+ fail:
+ 		shost=5Fprintk(KERN=5FERR, sh, "Mailbox init failed\n");
+@@ -619,7 +619,7 @@ static int aha1542=5Fquery(struct Scsi=5FHost *sh)
+ 	i =3D inb(STATUS(sh->io=5Fport));
+ 	if (i & DF) {
+ 		i =3D inb(DATA(sh->io=5Fport));
+-	};
++	}
+ 	aha1542=5Foutb(sh->io=5Fport, CMD=5FINQUIRY);
+ 	aha1542=5Fin(sh->io=5Fport, inquiry=5Fresult, 4, 0);
+ 	if (!wait=5Fmask(INTRFLAGS(sh->io=5Fport), INTRMASK, HACC, 0, 0))
+@@ -637,7 +637,7 @@ static int aha1542=5Fquery(struct Scsi=5FHost *sh)
+ 	if (inquiry=5Fresult[0] =3D=3D 0x43) {
+ 		shost=5Fprintk(KERN=5FINFO, sh, "Emulation mode not supported for AHA-17=
+40 hardware, use aha1740 driver instead.\n");
+ 		return 1;
+-	};
++	}
+=20
+ 	/* Always call this - boards that do not support extended bios translation
+ 	   will ignore the command, and we will set the proper default */
+diff --git a/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c b/drivers/scsi/bnx2fc/bnx2=
+fc=5Ffcoe.c
+index cd160f2ec75d..d12405e85fd5 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c
+@@ -944,7 +944,7 @@ static void bnx2fc=5Findicate=5Fnetevent(void *context,=
+ unsigned long event,
+ 				 */
+ 				if (interface->enabled)
+ 					fcoe=5Fctlr=5Flink=5Fup(ctlr);
+-			};
++			}
+ 		} else if (fcoe=5Fctlr=5Flink=5Fdown(ctlr)) {
+ 			switch (cdev->enabled) {
+ 			case FCOE=5FCTLR=5FDISABLED:
+@@ -964,7 +964,7 @@ static void bnx2fc=5Findicate=5Fnetevent(void *context,=
+ unsigned long event,
+ 				put=5Fcpu();
+ 				fcoe=5Fclean=5Fpending=5Fqueue(lport);
+ 				wait=5Ffor=5Fupload =3D 1;
+-			};
++			}
+ 		}
+ 	}
+ 	mutex=5Funlock(&bnx2fc=5Fdev=5Flock);
+diff --git a/drivers/scsi/sgiwd93.c b/drivers/scsi/sgiwd93.c
+index 5ed696dc9bbd..cd959b951854 100644
+--- a/drivers/scsi/sgiwd93.c
++++ b/drivers/scsi/sgiwd93.c
+@@ -187,7 +187,7 @@ static inline void init=5Fhpc=5Fchain(struct ip22=5Fhos=
+tdata *hdata)
+ 		hcp++;
+ 		dma +=3D sizeof(struct hpc=5Fchunk);
+ 		start +=3D sizeof(struct hpc=5Fchunk);
+-	};
++	}
+ 	hcp--;
+ 	hcp->desc.pnext =3D hdata->dma;
+ }
+--=20
+2.19.1
 
-> I am not sure why did we have to drop current checks on special file
-> and execute. I will read through the thread you pointed out.
-
-TL;DR: NFS access model is that creds are checked by server (and
-cached in client), and server could be denying write access to a
-device file to mounter (root) independently of DAC. In that case write
-access by user to device file would be inconsistent (denied before
-copy-up, allowed after copy-up).  Same goes for execute.
-
-And same goes for MAC:  if it's denying READ/WRITE on device or
-denying EXECUTE on readable file to mounter, and mounter can just copy
-that device/file to a temporry location not controlled by that MAC,
-than it can work around that restriction.  IOW, this is just a
-generalization of the rule that we ignore WRITE access on lower layer,
-because a write will never reach the lower layer.
-
-Thanks,
-Miklos
