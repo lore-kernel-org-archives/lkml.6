@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2806C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659E7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74533223CB
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74533223CB
+	by mail.kernel.org (Postfix) with ESMTP id 33D2322504
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D2322504
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeK2JY2 (ORCPT
+        id S1727136AbeK2JYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:28 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33162 "EHLO
+        Thu, 29 Nov 2018 04:24:30 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33178 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbeK2JY1 (ORCPT
+        with ESMTP id S1726870AbeK2JY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:27 -0500
+        Thu, 29 Nov 2018 04:24:29 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8Ck-0001GX-O2; Wed, 28 Nov 2018 23:21:11 +0100
+        id 1gS8Co-0001GX-CB; Wed, 28 Nov 2018 23:21:14 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 17/29] x86/fpu: Make __raw_xsave_addr() use feature number instead of mask
-Date:   Wed, 28 Nov 2018 23:20:23 +0100
-Message-Id: <20181128222035.2996-18-bigeasy@linutronix.de>
+Subject: [PATCH 19/29] x86/fpu: Only write PKRU if it is different from current
+Date:   Wed, 28 Nov 2018 23:20:25 +0100
+Message-Id: <20181128222035.2996-20-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,99 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most users of __raw_xsave_addr() use a feature number, shift it to a
-mask and then __raw_xsave_addr() shifts it back to the feature number.
+Dave Hansen says that the `wrpkru' is more expensive than `rdpkru'. It
+has a higher cycle cost and it's also practically a (light) speculation
+barrier.
 
-Make __raw_xsave_addr() use the feature number as an argument.
+As an optimisation read the current PKRU value and only write the new
+one if it is different.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/xstate.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/special_insns.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index a85f4139f663d..0e759a032c1c7 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -805,20 +805,18 @@ void fpu__resume_cpu(void)
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 43c029cdc3fe8..c2ccf71b22dd6 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -107,7 +107,7 @@ static inline u32 __read_pkru(void)
+ 	return pkru;
  }
  
- /*
-- * Given an xstate feature mask, calculate where in the xsave
-+ * Given an xstate feature nr, calculate where in the xsave
-  * buffer the state is.  Callers should ensure that the buffer
-  * is valid.
-  */
--void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-+static void *__raw_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+-static inline void __write_pkru(u32 pkru)
++static inline void __write_pkru_insn(u32 pkru)
  {
--	int feature_nr = fls64(xstate_feature_mask) - 1;
--
--	if (!xfeature_enabled(feature_nr)) {
-+	if (!xfeature_enabled(xfeature_nr)) {
- 		WARN_ON_FPU(1);
- 		return NULL;
- 	}
+ 	u32 ecx = 0, edx = 0;
  
--	return (void *)xsave + xstate_comp_offsets[feature_nr];
-+	return (void *)xsave + xstate_comp_offsets[xfeature_nr];
+@@ -118,6 +118,17 @@ static inline void __write_pkru(u32 pkru)
+ 	asm volatile(".byte 0x0f,0x01,0xef\n\t"
+ 		     : : "a" (pkru), "c"(ecx), "d"(edx));
  }
- /*
-  * Given the xsave area and a state inside, this function returns the
-@@ -840,6 +838,7 @@ void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-  */
- void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
++
++static inline void __write_pkru(u32 pkru)
++{
++	/*
++	 * Writting PKRU is expensive. Only write the PKRU value if it is
++	 * different from the current one.
++	 */
++	if (pkru == __read_pkru())
++		return;
++	__write_pkru_insn(pkru);
++}
+ #else
+ static inline u32 __read_pkru(void)
  {
-+	int xfeature_nr;
- 	/*
- 	 * Do we even *have* xsave state?
- 	 */
-@@ -867,7 +866,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
- 	if (!(xsave->header.xfeatures & xstate_feature))
- 		return NULL;
- 
--	return __raw_xsave_addr(xsave, xstate_feature);
-+	xfeature_nr = fls64(xstate_feature) - 1;
-+	return __raw_xsave_addr(xsave, xfeature_nr);
- }
- EXPORT_SYMBOL_GPL(get_xsave_addr);
- 
-@@ -1014,7 +1014,7 @@ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int of
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1100,7 +1100,7 @@ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned i
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1157,7 +1157,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1211,7 +1211,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
 -- 
 2.20.0.rc1
 
