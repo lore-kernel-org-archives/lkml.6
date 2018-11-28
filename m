@@ -2,95 +2,86 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C81C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FD5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E375720832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:47:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E375720832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id D93D02081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93D02081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbeK2Asz (ORCPT
+        id S1728436AbeK2AvE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:48:55 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.228]:31574 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727872AbeK2Asz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:48:55 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 4237319017
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:47:12 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id S0BMgK96QSjJAS0BMghX6H; Wed, 28 Nov 2018 07:47:12 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.78.127] (port=44566 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gS0BL-004HQw-8Z; Wed, 28 Nov 2018 07:47:11 -0600
-Subject: Re: [PATCH 02/41] scsi: NCR5380: Mark expected switch fall-through
-To:     Michael Schmitz <schmitzmic@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <8b4ef418aa7803199954100fd89717f38d61ae06.1543374820.git.gustavo@embeddedor.com>
- <0caad885-94ad-9226-fbf1-996b5d465473@gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <304bd094-7079-3a90-4901-9c86833d49e2@embeddedor.com>
-Date:   Wed, 28 Nov 2018 07:47:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 28 Nov 2018 19:51:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727979AbeK2AvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:51:04 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3CBC93138B83;
+        Wed, 28 Nov 2018 13:49:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D377360606;
+        Wed, 28 Nov 2018 13:49:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 28 Nov 2018 14:49:20 +0100 (CET)
+Date:   Wed, 28 Nov 2018 14:49:14 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        strace-devel@lists.strace.io
+Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
+ ptrace_message
+Message-ID: <20181128134913.GC30395@redhat.com>
+References: <20181128130439.GB28206@altlinux.org>
+ <20181128130601.GC28206@altlinux.org>
 MIME-Version: 1.0
-In-Reply-To: <0caad885-94ad-9226-fbf1-996b5d465473@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.78.127
-X-Source-L: No
-X-Exim-ID: 1gS0BL-004HQw-8Z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.78.127]:44566
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128130601.GC28206@altlinux.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 28 Nov 2018 13:49:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+On 11/28, Dmitry V. Levin wrote:
+>
+> +/*
+> + * These values are stored in task->ptrace_message by tracehook_report_syscall_*
+> + * to describe current syscall-stop.
+> + *
+> + * Values for these constants are chosen so that they do not appear
+> + * in task->ptrace_message by other means.
+> + */
+> +#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
+> +#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U
 
-On 11/28/18 2:22 AM, Michael Schmitz wrote:
+Again, I do not really understand the comment... Why should we care about
+"do not appear in task->ptrace_message by other means" ?
 
-> I believe the 'if we get something weird' comment block relates to the
-> default branch of the switch, _not_ the fall through from the case above
-> (extended message received that we end up rejecting). Ordering the
-> comments like you did just for GCC's sake is misleading.
-> 
-> The comment block should perhaps be moved after the default label. And
-> it would be nice if the reason for the fall through could be retained in
-> the comment.
-> 
+2/2 should detect ptrace_report_syscall() case correctly, so we can use any
+numbers, say, 1 and 2?
 
-Oh Okay. I'll do that.
+If debugger does PTRACE_GETEVENTMSG it should know how to interpet the value
+anyway after wait(status).
 
-Thanks for the feedback.
---
-Gustavo
+Oleg.
+
