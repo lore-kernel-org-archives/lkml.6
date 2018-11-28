@@ -2,53 +2,86 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E1BC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDFCC04EB8
 	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D623D2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:49:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D623D2081C
+	by mail.kernel.org (Postfix) with ESMTP id 8D3F82081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:49:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3F82081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeK1PuG (ORCPT
+        id S1727552AbeK1PuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:50:06 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.122]:12804 "EHLO
+        Wed, 28 Nov 2018 10:50:07 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.122]:48914 "EHLO
         gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727394AbeK1PuG (ORCPT
+        by vger.kernel.org with ESMTP id S1727484AbeK1PuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 10:50:06 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 7E0605F29
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:27:36 -0600 (CST)
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 12BA9D2B3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:18:10 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id RrRogD8ALPvAdRrRogswRz; Tue, 27 Nov 2018 22:27:36 -0600
+        id RrIggvrnbRPojRrIgg4Vxp; Tue, 27 Nov 2018 22:18:10 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.78.127] (port=58268 helo=embeddedor)
+Received: from [189.250.78.127] (port=58116 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gRrRm-001kgE-Re; Tue, 27 Nov 2018 22:27:35 -0600
-Date:   Tue, 27 Nov 2018 22:27:32 -0600
+        id 1gRrId-001dB0-I6; Tue, 27 Nov 2018 22:18:08 -0600
+Date:   Tue, 27 Nov 2018 22:18:05 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
+To:     Khalid Aziz <khalid@gonehiking.org>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Subbu Seetharaman <subbu.seetharaman@broadcom.com>,
+        Ketan Mukadam <ketan.mukadam@broadcom.com>,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Willem Riede <osst@riede.org>,
+        QLogic-Storage-Upstream@qlogic.com,
+        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        esc.storagedev@microsemi.com, megaraidlinux.pdl@broadcom.com,
+        MPT-FusionLinux.pdl@broadcom.com, osst-users@lists.sourceforge.net,
+        xen-devel@lists.xenproject.org
 Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 12/41] scsi: bfa: bfa_ioc: Mark expected switch fall-throughs
-Message-ID: <520fb16cd3630d612c5768989e2ffa90f1a73f97.1543374820.git.gustavo@embeddedor.com>
-References: <cover.1543374820.git.gustavo@embeddedor.com>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 00/41] scsi: Mark expected switch fall-throughs
+Message-ID: <cover.1543374820.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1543374820.git.gustavo@embeddedor.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
@@ -58,13 +91,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.78.127
 X-Source-L: No
-X-Exim-ID: 1gRrRm-001kgE-Re
+X-Exim-ID: 1gRrId-001dB0-I6
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.78.127]:58268
+X-Source-Sender: (embeddedor) [189.250.78.127]:58116
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 111
+X-Email-Count: 41
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,53 +105,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+In preparation to enabling -Wimplicit-fallthrough, this patchset aims
+to mark switch cases where we are expecting to fall through.
 
-Notice that, in this particular case, I replaced "!!! fall through !!!"
-comment with "fall through" annotations, which is what GCC is expecting
-to find.
+I reviewed case by case and concluded that each of them is an
+intentional fall-through. However, it doesn't hurt that the
+maintainers and supporters of each driver take a look. :)
 
-Addresses-Coverity-ID: 146155 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/bfa/bfa_ioc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Each commit log contains the particular details for the changes in the
+corresponding file.
 
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index 16d3aeb0e572..32b24e51cce6 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -978,9 +978,7 @@ bfa_iocpf_sm_enabling(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
- 
- 	case IOCPF_E_INITFAIL:
- 		bfa_iocpf_timer_stop(ioc);
--		/*
--		 * !!! fall through !!!
--		 */
-+		/* fall through */
- 
- 	case IOCPF_E_TIMEOUT:
- 		writel(1, ioc->ioc_regs.ioc_sem_reg);
-@@ -1056,9 +1054,7 @@ bfa_iocpf_sm_disabling(struct bfa_iocpf_s *iocpf, enum iocpf_event event)
- 
- 	case IOCPF_E_FAIL:
- 		bfa_iocpf_timer_stop(ioc);
--		/*
--		 * !!! fall through !!!
--		 */
-+		/* fall through */
- 
- 	case IOCPF_E_TIMEOUT:
- 		bfa_ioc_set_cur_ioc_fwstate(ioc, BFI_IOC_FAIL);
-@@ -6007,6 +6003,7 @@ bfa_dconf_sm_final_sync(struct bfa_dconf_mod_s *dconf,
- 	case BFA_DCONF_SM_IOCDISABLE:
- 	case BFA_DCONF_SM_FLASH_COMP:
- 		bfa_timer_stop(&dconf->timer);
-+		/* fall through */
- 	case BFA_DCONF_SM_TIMEOUT:
- 		bfa_sm_set_state(dconf, bfa_dconf_sm_uninit);
- 		bfa_fsm_send_event(&dconf->bfa->iocfc, IOCFC_E_DCONF_DONE);
+This series fix a total of 110 of the following type of warnings in
+drivers/scsi:
+
+drivers/scsi/aic7xxx/aic7xxx_core.c:4921:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   ahc_dma_tag_destroy(ahc, scb_data->sg_dmat);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/aic7xxx/aic7xxx_core.c:4923:2: note: here
+  case 6:
+  ^~~~
+
+Thanks!
+
+Gustavo A. R. Silva (41):
+  scsi: BusLogic: mark expected switch fall-through
+  scsi: NCR5380: Mark expected switch fall-through
+  scsi: aacraid: aachba: Mark expected switch fall-throughs
+  scsi: aacraid: linit: Mark expected switch fall-through
+  scsi: aic7xxx: aic79xx: mark expected switch fall-through
+  scsi: aic7xxx: mark expected switch fall-throughs
+  scsi: be2iscsi: be_iscsi: Mark expected switch fall-through
+  scsi: be2iscsi: be_main: Mark expected switch fall-through
+  scsi: bfa: bfa_fcpim: Mark expected switch fall-throughs
+  scsi: bfa: bfa_fcs_lport: Mark expected switch fall-throughs
+  scsi: bfa: bfa_fcs_rport: Mark expected switch fall-throughs
+  scsi: bfa: bfa_ioc: Mark expected switch fall-throughs
+  scsi: csiostor: csio_wr: mark expected switch fall-through
+  scsi: esas2r: esas2r_init: mark expected switch fall-throughs
+  scsi: hpsa: mark expected switch fall-throughs
+  scsi: imm: mark expected switch fall-throughs
+  scsi: isci: phy: Mark expected switch fall-through
+  scsi: isci: remote_device: Mark expected switch fall-throughs
+  scsi: isci: remote_node_context: mark expected switch fall-throughs
+  scsi: isci: request: mark expected switch fall-through
+  scsi: libfc: fc_rport: Mark expected switch fall-through
+  scsi: lpfc: lpfc_ct: Mark expected switch fall-throughs
+  scsi: lpfc: lpfc_els: Mark expected switch fall-throughs
+  scsi: lpfc: lpfc_hbadisc: Mark expected switch fall-throughs
+  scsi: lpfc: lpfc_nportdisc: Mark expected switch fall-through
+  scsi: lpfc: lpfc_nvme: Mark expected switch fall-through
+  scsi: lpfc: lpfc_scsi: Mark expected switch fall-throughs
+  scsi: lpfc: lpfc_sli: Mark expected switch fall-throughs
+  scsi: megaraid: megaraid_sas_base: Mark expected switch fall-through
+  scsi: megaraid_sas_fusion: Mark expected switch fall-through
+  scsi: mpt3sas: mpt3sas_scsih: Mark expected switch fall-through
+  scsi: myrb: Mark expected switch fall-throughs
+  scsi: osd: osd_initiator: mark expected switch fall-throughs
+  scsi: osst: mark expected switch fall-throughs
+  scsi: ppa: mark expected switch fall-through
+  scsi: qla4xxx: ql4_os: mark expected switch fall-through
+  scsi: st: mark expected switch fall-throughs
+  scsi: sym53c8xx_2: sym_hipd: mark expected switch fall-throughs
+  scsi: sym53c8xx_2: sym_nvram: Mark expected switch fall-through
+  scsi: ufs: ufshcd: mark expected switch fall-throughs
+  scsi: xen-scsifront: mark expected switch fall-through
+
+ drivers/scsi/BusLogic.c                     |  1 +
+ drivers/scsi/NCR5380.c                      |  3 +-
+ drivers/scsi/aacraid/aachba.c               |  5 +++-
+ drivers/scsi/aacraid/linit.c                |  1 +
+ drivers/scsi/aic7xxx/aic79xx_core.c         | 14 +++++----
+ drivers/scsi/aic7xxx/aic7xxx_core.c         | 12 ++++++--
+ drivers/scsi/be2iscsi/be_iscsi.c            |  1 +
+ drivers/scsi/be2iscsi/be_main.c             |  1 +
+ drivers/scsi/bfa/bfa_fcpim.c                |  6 ++--
+ drivers/scsi/bfa/bfa_fcs_lport.c            |  8 ++---
+ drivers/scsi/bfa/bfa_fcs_rport.c            | 19 +++++-------
+ drivers/scsi/bfa/bfa_ioc.c                  |  9 ++----
+ drivers/scsi/csiostor/csio_wr.c             |  1 +
+ drivers/scsi/esas2r/esas2r_init.c           |  3 +-
+ drivers/scsi/hpsa.c                         |  5 ++++
+ drivers/scsi/imm.c                          | 33 +++++++++++----------
+ drivers/scsi/isci/phy.c                     |  1 +
+ drivers/scsi/isci/remote_device.c           |  4 +--
+ drivers/scsi/isci/remote_node_context.c     |  4 +--
+ drivers/scsi/isci/request.c                 |  2 +-
+ drivers/scsi/libfc/fc_rport.c               |  1 +
+ drivers/scsi/lpfc/lpfc_ct.c                 |  2 ++
+ drivers/scsi/lpfc/lpfc_els.c                |  1 +
+ drivers/scsi/lpfc/lpfc_hbadisc.c            |  4 ++-
+ drivers/scsi/lpfc/lpfc_nportdisc.c          |  1 +
+ drivers/scsi/lpfc/lpfc_nvme.c               |  1 +
+ drivers/scsi/lpfc/lpfc_scsi.c               |  8 ++---
+ drivers/scsi/lpfc/lpfc_sli.c                | 20 +++++++------
+ drivers/scsi/megaraid/megaraid_sas_base.c   |  1 +
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |  2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c        |  1 +
+ drivers/scsi/myrb.c                         |  3 ++
+ drivers/scsi/osd/osd_initiator.c            |  3 +-
+ drivers/scsi/osst.c                         |  6 ++++
+ drivers/scsi/ppa.c                          |  1 +
+ drivers/scsi/qla4xxx/ql4_os.c               |  2 +-
+ drivers/scsi/st.c                           |  4 +++
+ drivers/scsi/sym53c8xx_2/sym_hipd.c         |  2 ++
+ drivers/scsi/sym53c8xx_2/sym_nvram.c        |  1 +
+ drivers/scsi/ufs/ufshcd.c                   |  3 ++
+ drivers/scsi/xen-scsifront.c                |  2 +-
+ 41 files changed, 124 insertions(+), 78 deletions(-)
+
 -- 
 2.17.1
 
