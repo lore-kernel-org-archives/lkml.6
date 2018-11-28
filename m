@@ -2,104 +2,193 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B1BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E8CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5537520665
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5537520665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C3D0205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:53:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="kX9fTbt5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3D0205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbeK2Eza (ORCPT
+        id S1729276AbeK2Ez5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:55:30 -0500
-Received: from 36-231-37-231.dynamic-ip.hinet.net ([36.231.37.231]:60030 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727867AbeK2Eza (ORCPT
+        Wed, 28 Nov 2018 23:55:57 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:45138 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729018AbeK2Ez5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:55:30 -0500
-X-Greylist: delayed 4324 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 23:55:30 EST
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 2617DC04B8;
-        Thu, 29 Nov 2018 00:40:45 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     gs0622@gmail.com, chiranjeevi.rapolu@intel.com,
-        freddy.paul@intel.com, utkarsh.h.patel@intel.com,
-        Harry Pan <harry.pan@intel.com>, gregkh@linuxfoundation.org,
-        kai.heng.feng@canonical.com, stern@rowland.harvard.edu,
-        danilokrummrich@dk-develop.de, kamilx.lulko@intel.com,
-        oneukum@suse.com, xpros64@hotmail.fr, linux-usb@vger.kernel.org
-Subject: [PATCH] usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
-Date:   Thu, 29 Nov 2018 00:40:41 +0800
-Message-Id: <20181128164041.896-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.18.1
+        Wed, 28 Nov 2018 23:55:57 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id CB9AB5C0D8F;
+        Wed, 28 Nov 2018 18:53:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1543427607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tM1NfCTpmphNJigx4fPTAD6FxbrUBI91FzMFuSgPT8k=;
+        b=kX9fTbt5vdfwHDN82Rsqfv8inCu4TXnhJ4rZs9PaAn+1cnC0CH36mcbqJ6diCBeX4U7f3U
+        16kRY8TRpvGc9vfqST5cd5c6wTvyGElXwXTI1nklYLkccjpgNNGqrCV5szKq4QdD7qRt/p
+        vXCX3mpuPZWdpfo8V24vwuQAMC0KJ28=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 28 Nov 2018 18:53:27 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     hongxing.zhu@nxp.com, l.stach@pengutronix.de,
+        lorenzo.pieralisi@arm.com, andrew.smirnov@gmail.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, leonard.crestez@nxp.com, festevam@gmail.com,
+        linux-arm-kernel@lists.infradead.org, tpiepho@impinj.com
+Subject: Re: [PATCH] pci: imx6: support kernels built in Thumb-2 mode
+In-Reply-To: <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
+References: <20181128132554.28139-1-stefan@agner.ch>
+ <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
+Message-ID: <074f80db0eceb76672bca283c5de37b9@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
-in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
-when using this thumb drive as the OS installation key we found the
-device will generate failure during U1 exit path making it dropped
-from the USB bus, this causes a corrupted installation in system at
-the end.
+On 28.11.2018 17:16, Robin Murphy wrote:
+> Hi Stefan,
+> 
+> On 28/11/2018 13:25, Stefan Agner wrote:
+>> Add a fault handler which handles reads in Thumb-2 mode. Install
+>> the appropriate handler depending on which mode the kernel has
+>> been built. This avoids an "Unhandled fault: external abort on
+>> non-linefetch (0x1008) at 0xf0a80000" during boot on a device
+>> with a PCIe switch connected.
+>>
+>> Link: https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>> FWIW, I found this manual helpful to write the code below:
+>> http://hermes.wings.cs.wisc.edu/files/Thumb-2SupplementReferenceManual.pdf#page=43&zoom=100,0,66
+> 
+> This one's rather less ancient and even more authoritative ;)
+> 
+> https://static.docs.arm.com/ddi0406/cd/DDI0406C_d_armv7ar_arm.pdf
+> 
+> (ARMv7 had a few new encodings over and above ARMv6T2, although in
+> fairness I don't think any should be relevant to this specific case)
+> 
 
-i.e.,
-[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
-[  166.918327] usb usb2-port2: link state change
-[  166.918337] usb usb2-port2: do warm reset
-[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
-[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
-[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
-[  167.276050] usb 2-2: USB disconnect, device number 2
-[  167.276058] usb 2-2: unregistering device
-[  167.276060] usb 2-2: unregistering interface 2-2:1.0
-[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
-[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
-...
+Thanks, I tried to find the right document on arm.com, but I timed out
+after 5 minutes or so :-)
 
-Analyzed the USB trace in the link layer we realized it is because
-of the 6-ms timer of tRecoveryConfigurationTimeout which documented
-on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
-Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
--> Recovery.Configuration, then the host timer timeout makes the link
-transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+>> --
+>> Stefan
+>>
+>>   drivers/pci/controller/dwc/pci-imx6.c | 37 ++++++++++++++++++++++++++-
+>>   1 file changed, 36 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+>> index 69f86234f7c0..683deb74d69f 100644
+>> --- a/drivers/pci/controller/dwc/pci-imx6.c
+>> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+>> @@ -29,6 +29,7 @@
+>>   #include <linux/reset.h>
+>>   #include <linux/pm_domain.h>
+>>   #include <linux/pm_runtime.h>
+>> +#include <asm/opcodes.h>
+>>     #include "pcie-designware.h"
+>>   @@ -299,6 +300,37 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
+>>   	return 1;
+>>   }
+>>   +static int imx6q_pcie_abort_handler_thumb2(unsigned long addr,
+>> +		unsigned int fsr, struct pt_regs *regs)
+>> +{
+>> +	unsigned long pc = instruction_pointer(regs);
+>> +	unsigned long instr = *(unsigned long *)pc;
+>> +	unsigned long thumb2_instr = __mem_to_opcode_thumb16(instr);
+>> +	int reg = thumb2_instr & 7;
+>> +
+>> +	if (!__opcode_is_thumb16(instr & 0x0000ffffUL))
+>> +		return 1;
+> 
+> There are plenty of 32-bit Thumb encodings of various LDR/STR
+> variants, and I doubt we can guarantee that the offset, target
+> register, and/or addressing mode for a config space access will
+> *always* suit the (relatively limited) 16-bit ones.
 
-Interestingly, the other higher volume of SanDisk Ultra Flair sharing
-the same VID:PID, such as 64GB, would not request LPM during runtime,
-it sticks at U0 always, thus disabling LPM does not affect those thumb
-drives at all.
+Hm, I guess they should be handled too?
 
-The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
-
-Signed-off-by: Harry Pan <harry.pan@intel.com>
----
- drivers/usb/core/quirks.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index f9ff03e6af93..b62f47c15ccf 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -330,6 +330,10 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* Midiman M-Audio Keystation 88es */
- 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
+I looked at the code where I had the abort at hand triggered
+(dw_pcie_read).
  
-+	/* SanDisk Ultra Fit and Ultra Flair */
-+	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
-+	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* M-Systems Flash Disk Pioneers */
- 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
- 
--- 
-2.18.1
+>> +
+>> +	/* Load word/byte and halfword immediate offset */
+>> +	if (((thumb2_instr & 0xe800) == 0x6800) ||
+>> +	    ((thumb2_instr & 0xf800) == 0x8800)) {
+>> +		unsigned long val;
+>> +
+>> +		if (thumb2_instr & 0x1000)
+>> +			val = 0xff;
+>> +		else if (thumb2_instr & 0x8000)
+>> +			val = 0xffff;
+>> +		else
+>> +			val = 0xffffffffUL;
+>> +
+>> +		regs->uregs[reg] = val;
+>> +		regs->ARM_pc += 2;
+>> +		return 0;
+>> +	}
+> 
+> What about stores? The existing implementation handles them, so either
+> that's dead code which could perhaps be cleaned up, or they need to be
+> handled here too.
+> 
 
+I think the current handler (imx6q_pcie_abort_handler) checks bit 20,
+which means it must be a load not?
+
+>> +
+>> +	return 1;
+>> +}
+>> +
+>>   static int imx6_pcie_attach_pd(struct device *dev)
+>>   {
+>>   	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>> @@ -1069,6 +1101,8 @@ static struct platform_driver imx6_pcie_driver = {
+>>     static int __init imx6_pcie_init(void)
+>>   {
+>> +	bool thumb2 = IS_ENABLED(CONFIG_THUMB2_KERNEL);
+> 
+> Can these aborts definitely *only* be triggered by kernel accesses,
+> and never, say, via an mmap() of anything exposed to userspace?
+
+Honestly, I am not very familiar with PCIe, I don't know...
+
+--
+Stefan
+
+> 
+> Robin.
+> 
+>> +
+>>   	/*
+>>   	 * Since probe() can be deferred we need to make sure that
+>>   	 * hook_fault_code is not called after __init memory is freed
+>> @@ -1076,7 +1110,8 @@ static int __init imx6_pcie_init(void)
+>>   	 * we can install the handler here without risking it
+>>   	 * accessing some uninitialized driver state.
+>>   	 */
+>> -	hook_fault_code(8, imx6q_pcie_abort_handler, SIGBUS, 0,
+>> +	hook_fault_code(8, thumb2 ? imx6q_pcie_abort_handler_thumb2 :
+>> +			imx6q_pcie_abort_handler, SIGBUS, 0,
+>>   			"external abort on non-linefetch");
+>>     	return platform_driver_register(&imx6_pcie_driver);
+>>
