@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB41C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136F4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C982081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:50:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C982081B
+	by mail.kernel.org (Postfix) with ESMTP id DABF52081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:50:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABF52081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeK1PvI (ORCPT
+        id S1727658AbeK1PvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:51:08 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.250]:26668 "EHLO
+        Wed, 28 Nov 2018 10:51:09 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.250]:21891 "EHLO
         gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727261AbeK1PvI (ORCPT
+        by vger.kernel.org with ESMTP id S1727312AbeK1PvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 10:51:08 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 03D2140112A66
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:30:07 -0600 (CST)
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id B0DA7400D0B08
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:26:33 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id RrUEgJJvJ957pRrUFg2duN; Tue, 27 Nov 2018 22:30:07 -0600
+        id RrQngD7VlPvAdRrQngsvnr; Tue, 27 Nov 2018 22:26:33 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.78.127] (port=58306 helo=embeddedor)
+Received: from [189.250.78.127] (port=58250 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gRrUD-001mdp-4f; Tue, 27 Nov 2018 22:30:06 -0600
-Date:   Tue, 27 Nov 2018 22:30:01 -0600
+        id 1gRrQm-001jpB-8F; Tue, 27 Nov 2018 22:26:33 -0600
+Date:   Tue, 27 Nov 2018 22:26:29 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+To:     Hannes Reinecke <hare@suse.com>
 Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 18/41] scsi: isci: remote_device: Mark expected switch
- fall-throughs
-Message-ID: <de14fd0d7246aa4ac19dcc48491641890c2c289d.1543374820.git.gustavo@embeddedor.com>
+Subject: [PATCH 06/41] scsi: aic7xxx: mark expected switch fall-throughs
+Message-ID: <b55c3f902d88871053983314cfa837e641db5db6.1543374820.git.gustavo@embeddedor.com>
 References: <cover.1543374820.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.78.127
 X-Source-L: No
-X-Exim-ID: 1gRrUD-001mdp-4f
+X-Exim-ID: 1gRrQm-001jpB-8F
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.78.127]:58306
+X-Source-Sender: (embeddedor) [189.250.78.127]:58250
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 142
+X-Email-Count: 73
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,37 +74,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Notice that, in this particular case, a dash is added as a token in
-order to separate the "fall through" annotations from the rest of
-the comment on the same line, which is what GCC is expecting to find.
+Notice that, in some cases, I replaced "FALLTHROUGH" with a "fall through"
+annotation and then placed it at the bottom of the corresponding switch
+case, which is what GCC is expecting to find.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/scsi/isci/remote_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/aic7xxx/aic7xxx_core.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/isci/remote_device.c b/drivers/scsi/isci/remote_device.c
-index cc51f38b116d..9d29edb9f590 100644
---- a/drivers/scsi/isci/remote_device.c
-+++ b/drivers/scsi/isci/remote_device.c
-@@ -310,7 +310,7 @@ static void isci_remote_device_not_ready(struct isci_host *ihost,
- 		/* Kill all outstanding requests for the device. */
- 		sci_remote_device_terminate_requests(idev);
- 
--		/* Fall through into the default case... */
-+		/* Fall through - into the default case... */
- 	default:
- 		clear_bit(IDEV_IO_READY, &idev->flags);
- 		break;
-@@ -593,7 +593,7 @@ enum sci_status sci_remote_device_event_handler(struct isci_remote_device *idev,
- 
- 			break;
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index f3362f4ab16e..d4a7263e4b8f 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -4920,24 +4920,30 @@ ahc_fini_scbdata(struct ahc_softc *ahc)
  		}
--	/* Else, fall through and treat as unhandled... */
-+		/* fall through - and treat as unhandled... */
- 	default:
- 		dev_dbg(scirdev_to_dev(idev),
- 			"%s: device: %p event code: %x: %s\n",
+ 		ahc_dma_tag_destroy(ahc, scb_data->sg_dmat);
+ 	}
++		/* fall through */
+ 	case 6:
+ 		ahc_dmamap_unload(ahc, scb_data->sense_dmat,
+ 				  scb_data->sense_dmamap);
++		/* fall through */
+ 	case 5:
+ 		ahc_dmamem_free(ahc, scb_data->sense_dmat, scb_data->sense,
+ 				scb_data->sense_dmamap);
+ 		ahc_dmamap_destroy(ahc, scb_data->sense_dmat,
+ 				   scb_data->sense_dmamap);
++		/* fall through */
+ 	case 4:
+ 		ahc_dma_tag_destroy(ahc, scb_data->sense_dmat);
++		/* fall through */
+ 	case 3:
+ 		ahc_dmamap_unload(ahc, scb_data->hscb_dmat,
+ 				  scb_data->hscb_dmamap);
++		/* fall through */
+ 	case 2:
+ 		ahc_dmamem_free(ahc, scb_data->hscb_dmat, scb_data->hscbs,
+ 				scb_data->hscb_dmamap);
+ 		ahc_dmamap_destroy(ahc, scb_data->hscb_dmat,
+ 				   scb_data->hscb_dmamap);
++		/* fall through */
+ 	case 1:
+ 		ahc_dma_tag_destroy(ahc, scb_data->hscb_dmat);
+ 		break;
+@@ -6002,8 +6008,8 @@ ahc_search_qinfifo(struct ahc_softc *ahc, int target, char channel,
+ 				if ((scb->flags & SCB_ACTIVE) == 0)
+ 					printk("Inactive SCB in Waiting List\n");
+ 				ahc_done(ahc, scb);
+-				/* FALLTHROUGH */
+ 			}
++				/* fall through */
+ 			case SEARCH_REMOVE:
+ 				next = ahc_rem_wscb(ahc, next, prev);
+ 				break;
+@@ -7008,8 +7014,8 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
+ 		}
+ 		address -= address_offset;
+ 		fmt3_ins->address = address;
+-		/* FALLTHROUGH */
+ 	}
++		/* fall through */
+ 	case AIC_OP_OR:
+ 	case AIC_OP_AND:
+ 	case AIC_OP_XOR:
+@@ -7035,7 +7041,7 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
+ 			fmt1_ins->opcode = AIC_OP_AND;
+ 			fmt1_ins->immediate = 0xff;
+ 		}
+-		/* FALLTHROUGH */
++		/* fall through */
+ 	case AIC_OP_ROL:
+ 		if ((ahc->features & AHC_ULTRA2) != 0) {
+ 			int i, count;
 -- 
 2.17.1
 
