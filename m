@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5374AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431F0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106EE206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F32C72081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="WT+bIeaw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106EE206B2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="MWQ7vKlk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F32C72081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbeK2Krg (ORCPT
+        id S1727534AbeK2Krk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:47:36 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:33893 "EHLO
+        Thu, 29 Nov 2018 05:47:40 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:56655 "EHLO
         com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbeK2Krf (ORCPT
+        with ESMTP id S1727500AbeK2Krh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:35 -0500
+        Thu, 29 Nov 2018 05:47:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=bJPQl75THwP+plF092JKX7FJQgp+WSHICzgGaSS3YWw=; b=WT+bIeawbxml
-        4WgeHhPmn9erRflVcL+j09OQzQjdNRGh2Pe/avQvG4orz6iK26IuqTDrs8VK5xfoFEPgM1PjkSgBT
-        aJMmKprfT4cCRJKmUkfMHjvEXVToj2hcII5qZG/N/utzXTEllt2PVdq2SgBGhEaQZpHSQzKHtW5MT
-        aZS2cdYSecpxA6SbAqP0ZLVXlDexDrK6smjnwZsvflC8FYsAyC88UQiUlXUvfxrlk7HxXKIpGI5h5
-        hbuRnro+LDlSx+ULW4DvxzuUbqnSAmxEZLtiUVdcdO6UGDOJz3lKC7GwuLR1qhDiep4tcJiMIojnQ
-        2pKuyuiwqBBm6X4jR1lL7A==;
+        content-type; bh=MbN6whuVcS6SWA4yiLk9YcOMhNynN/T72qxsZs0qFi0=; b=MWQ7vKlk17Lv
+        Av97YkeJxSlWtUdyWJhx5eDvQ42oRn+1pCrEXUXYB0zSeCWQKHXUoiUWVwLTSwdvlNjjTM5Djt/zM
+        D1fJM3554Dxe7nEalfC90P0WaKpewJn4lpkrtWkdNrFwLpCb6PhWjNhVNl2mNG2xirhd7n6eUrRMV
+        zD9PgIShBOgUtSULCFx7b5RFdxVVhsM2Z2cBBHlb+dORYeiyC8Wm4GiuitztvXXMJFekoQ7Gikmdf
+        vOOi9ox0eA0hPeK/h+0+16Z7/juzo4tmpIE0IxVdyAMdEx0UfoVEoBqMsSCzyLH0vpamjPetJguxw
+        QVCQdCH69LoWfF4+wkhRNQ==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
         by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gS9V0-000241-AB; Thu, 29 Nov 2018 00:44:06 +0100
+        id 1gS9V3-000241-AM; Thu, 29 Nov 2018 00:44:09 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 285A8C11D1;
-        Thu, 29 Nov 2018 00:44:04 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 2FF2AC11D1;
+        Thu, 29 Nov 2018 00:44:07 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
         linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 15/27] locking/lockdep: Make concurrent lockdep_reset_lock() calls safe
-Date:   Wed, 28 Nov 2018 15:43:13 -0800
-Message-Id: <20181128234325.110011-16-bvanassche@acm.org>
+Subject: [PATCH 17/27] locking/lockdep: Make zap_class() remove all matching lock order entries
+Date:   Wed, 28 Nov 2018 15:43:15 -0800
+Message-Id: <20181128234325.110011-18-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
 References: <20181128234325.110011-1-bvanassche@acm.org>
@@ -61,21 +61,21 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.27)
+X-SpamExperts-Outgoing-Evidence: Combined (0.07)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5rvHLZnzQwBHg4+TkeuQ4kN602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5q0ketDKHPpWrzsJJYdJASN602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyB41b1wEpWO6ik9HITpMsqebHcXK5F5szpMR3
- ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aUpz7eg
- BTefan/WV2MDAbh0q2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi2wFVccsCAZ2dyI5DAR
+ ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aU1a2Vw
+ rhk/M88YeS7fblpdq2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi2wFVccsCAZ2dyI5DAR
  qfkZNCNwpGn8jfSb3NCl2WUq09dCYgcgr835yVjKQZA6hJL1LiMHCxRezvZaFOrUVh8zaVyj66M1
  yz85ZZhpUrhTRbASVYnBhdKUnGmBdHG7BUn2dK6UtSEdwn3yFtfkzf2g6K04cY809V1JdCwiLdDQ
  Dow7RSjhmGOVelXQaHGaUkCLb5mum9xAXSaS3KKPtTZXWZip9+GhedmPokL8D3vhvY6dhwYzYMxd
  D9vfHZcjDv9O+eyolGM4l8rlxuGfhU+3NYPzMyldJaF5xZTjcWEFHpu0VYQwuqxmozzkDLIpUMoG
  SJj2/VGV7PqOahGXkaU4twU/8XGrHu5QsNBEHc0tEDNi5zR1WYi0E09NG6GB18n4mJSlGpCLjjP2
- TVCcvwpq38dv63XJg5n5uMesEkfWOZPtRVkPryfKs6DA7QYq3G1BRp7ylSZxUEGgJw4nFzgd7yt3
+ TVCcvwpqdwsOoOSHozvtmzhyoaMCnpPtRVkPryfKs6DA7QYq3G1BRp7ylSZxUEGgJw4nFzgd7yt3
  7BfpyvvZ6l+boZNfkk++GRKi3fJfRTPr/PuJHE36okpX82/BtXToloueSaXs0TK8OQ3cB9QF11y7
- 2DRSHKQElPJyNJdgFsJFEs/93MWqBnqq/AO7Ra1HkjUMXx675AnI+wExEi2ZXZcwFmj/G9G9XUMB
+ 2DRSHKQElPJyNJdgFsJFEs/93MUoOhbCKps/LI3znTQUt+hZ5AnI+wExEi2ZXZcwFmj/G9G9XUMB
  gNDO+NkNGowFW+REN2PQUubU67h4IQuWPMZ4HKssSJVidkER7VZq4yeVz8oBMMMFnt8VzQUPDSXZ
  uD7+tXK85NWt4CYBo2l7vp9TheM8Ply7UNk9s+JR29DmIqQBJ7TPMihJUfmPOEFZaWOoGwSHnDFQ
  4P4YDtlBXByrTecUvjKvjZONtLXg4KjauZafx+OvKcOyQvUosS9CO/I=
@@ -85,34 +85,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since zap_class() removes items from the all_lock_classes list and the
-classhash_table, protect all zap_class() calls with the graph lock.
+Make sure that all entries that refer to a class are removed from the
+list_entries[] array when a kernel module is unloaded.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/lockdep.h  |  1 +
+ kernel/locking/lockdep.c | 17 +++++++++++------
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 1fd82ff99c65..6d0f8d1c2bee 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -180,6 +180,7 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
+ struct lock_list {
+ 	struct list_head		entry;
+ 	struct lock_class		*class;
++	struct lock_class		*links_to;
+ 	struct stack_trace		trace;
+ 	int				distance;
+ 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 83ffcc7f1ced..ab6abe52e974 100644
+index 96fc8e92c2a6..fc10302d34fd 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -4227,6 +4227,7 @@ void lockdep_reset_lock(struct lockdep_map *lock)
- 	int j, locked;
+@@ -857,7 +857,8 @@ static struct lock_list *alloc_list_entry(void)
+ /*
+  * Add a new dependency to the head of the list:
+  */
+-static int add_lock_to_list(struct lock_class *this, struct list_head *head,
++static int add_lock_to_list(struct lock_class *this,
++			    struct lock_class *links_to, struct list_head *head,
+ 			    unsigned long ip, int distance,
+ 			    struct stack_trace *trace)
+ {
+@@ -870,7 +871,9 @@ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
+ 	if (!entry)
+ 		return 0;
  
- 	raw_local_irq_save(flags);
-+	locked = graph_lock();
++	WARN_ON_ONCE(this == links_to);
+ 	entry->class = this;
++	entry->links_to = links_to;
+ 	entry->distance = distance;
+ 	entry->trace = *trace;
+ 	/*
+@@ -1916,14 +1919,14 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
+ 	 * Ok, all validations passed, add the new lock
+ 	 * to the previous lock's dependency list:
+ 	 */
+-	ret = add_lock_to_list(hlock_class(next),
++	ret = add_lock_to_list(hlock_class(next), hlock_class(prev),
+ 			       &hlock_class(prev)->locks_after,
+ 			       next->acquire_ip, distance, trace);
+ 
+ 	if (!ret)
+ 		return 0;
+ 
+-	ret = add_lock_to_list(hlock_class(prev),
++	ret = add_lock_to_list(hlock_class(prev), hlock_class(next),
+ 			       &hlock_class(next)->locks_before,
+ 			       next->acquire_ip, distance, trace);
+ 	if (!ret)
+@@ -4126,15 +4129,17 @@ void lockdep_reset(void)
+  */
+ static void zap_class(struct lock_class *class)
+ {
++	struct lock_list *entry;
+ 	int i;
  
  	/*
- 	 * Remove all classes this lock might have:
-@@ -4243,7 +4244,6 @@ void lockdep_reset_lock(struct lockdep_map *lock)
- 	 * Debug check: in the end all mapped classes should
- 	 * be gone.
+ 	 * Remove all dependencies this lock is
+ 	 * involved in:
  	 */
--	locked = graph_lock();
- 	if (unlikely(lock_class_cache_is_registered(lock))) {
- 		if (debug_locks_off_graph_unlock()) {
- 			/*
+-	for (i = 0; i < nr_list_entries; i++) {
+-		if (list_entries[i].class == class)
+-			list_del_rcu(&list_entries[i].entry);
++	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
++		if (entry->class != class && entry->links_to != class)
++			continue;
++		list_del_rcu(&entry->entry);
+ 	}
+ 	/*
+ 	 * Unhash the class and remove it from the all_lock_classes list:
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
