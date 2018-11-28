@@ -2,179 +2,88 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F4FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099BCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94BFE20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94BFE20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CB5782081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:02:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB5782081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeK1O6F (ORCPT
+        id S1727237AbeK1PC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 09:58:05 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51642 "EHLO mga06.intel.com"
+        Wed, 28 Nov 2018 10:02:59 -0500
+Received: from mga12.intel.com ([192.55.52.136]:60592 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbeK1O6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 09:58:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726847AbeK1PC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 10:02:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 19:57:56 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 20:02:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,289,1539673200"; 
-   d="scan'208";a="113554353"
-Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Nov 2018 19:57:54 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, peterx@redhat.com,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v5 03/12] iommu/vt-d: Move page table helpers into header
-Date:   Wed, 28 Nov 2018 11:54:40 +0800
-Message-Id: <20181128035449.10226-4-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181128035449.10226-1-baolu.lu@linux.intel.com>
-References: <20181128035449.10226-1-baolu.lu@linux.intel.com>
+   d="scan'208";a="113094663"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Nov 2018 20:02:47 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gRr3n-0002Li-9p; Wed, 28 Nov 2018 12:02:47 +0800
+Date:   Wed, 28 Nov 2018 12:02:13 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Andrei.Stefanescu@microchip.com
+Cc:     kbuild-all@01.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        Nicolas.Ferre@microchip.com, Cristian.Birsan@microchip.com,
+        Claudiu.Beznea@microchip.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Andrei.Stefanescu@microchip.com
+Subject: [PATCH] regulator: mcp16502: fix platform_no_drv_owner.cocci warnings
+Message-ID: <20181128040213.GA30252@lkp-ne04>
+References: <1543335937-12689-4-git-send-email-andrei.stefanescu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543335937-12689-4-git-send-email-andrei.stefanescu@microchip.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So that they could also be used in other source files.
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Cc: Sanjay Kumar <sanjay.k.kumar@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+drivers/regulator/mcp16502.c:530:3-8: No need to set .owner here. The core will do it.
+
+ Remove .owner field if calls are used which set it automatically
+
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
+
+Fixes: 9199c277faeb ("regulator: mcp16502: add regulator driver for MCP16502")
+CC: Andrei.Stefanescu@microchip.com <Andrei.Stefanescu@microchip.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 43 -------------------------------------
- include/linux/intel-iommu.h | 43 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 656ef01dfda0..4866bdeb932d 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -290,49 +290,6 @@ static inline void context_clear_entry(struct context_entry *context)
- 	context->hi = 0;
- }
- 
--/*
-- * 0: readable
-- * 1: writable
-- * 2-6: reserved
-- * 7: super page
-- * 8-10: available
-- * 11: snoop behavior
-- * 12-63: Host physcial address
-- */
--struct dma_pte {
--	u64 val;
--};
--
--static inline void dma_clear_pte(struct dma_pte *pte)
--{
--	pte->val = 0;
--}
--
--static inline u64 dma_pte_addr(struct dma_pte *pte)
--{
--#ifdef CONFIG_64BIT
--	return pte->val & VTD_PAGE_MASK;
--#else
--	/* Must have a full atomic 64-bit read */
--	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
--#endif
--}
--
--static inline bool dma_pte_present(struct dma_pte *pte)
--{
--	return (pte->val & 3) != 0;
--}
--
--static inline bool dma_pte_superpage(struct dma_pte *pte)
--{
--	return (pte->val & DMA_PTE_LARGE_PAGE);
--}
--
--static inline int first_pte_in_page(struct dma_pte *pte)
--{
--	return !((unsigned long)pte & ~VTD_PAGE_MASK);
--}
--
- /*
-  * This domain is a statically identity mapping domain.
-  *	1. This domain creats a static 1:1 mapping to all usable memory.
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 8c9b6063d275..b4da61385ebf 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -590,6 +590,49 @@ static inline void __iommu_flush_cache(
- 		clflush_cache_range(addr, size);
- }
- 
-+/*
-+ * 0: readable
-+ * 1: writable
-+ * 2-6: reserved
-+ * 7: super page
-+ * 8-10: available
-+ * 11: snoop behavior
-+ * 12-63: Host physcial address
-+ */
-+struct dma_pte {
-+	u64 val;
-+};
-+
-+static inline void dma_clear_pte(struct dma_pte *pte)
-+{
-+	pte->val = 0;
-+}
-+
-+static inline u64 dma_pte_addr(struct dma_pte *pte)
-+{
-+#ifdef CONFIG_64BIT
-+	return pte->val & VTD_PAGE_MASK;
-+#else
-+	/* Must have a full atomic 64-bit read */
-+	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
-+#endif
-+}
-+
-+static inline bool dma_pte_present(struct dma_pte *pte)
-+{
-+	return (pte->val & 3) != 0;
-+}
-+
-+static inline bool dma_pte_superpage(struct dma_pte *pte)
-+{
-+	return (pte->val & DMA_PTE_LARGE_PAGE);
-+}
-+
-+static inline int first_pte_in_page(struct dma_pte *pte)
-+{
-+	return !((unsigned long)pte & ~VTD_PAGE_MASK);
-+}
-+
- extern struct dmar_drhd_unit * dmar_find_matched_drhd_unit(struct pci_dev *dev);
- extern int dmar_find_matched_atsr_unit(struct pci_dev *dev);
- 
--- 
-2.17.1
+url:    https://github.com/0day-ci/linux/commits/Andrei-Stefanescu-microchip-com/add-support-for-MCP16502-PMIC/20181128-041809
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+ mcp16502.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -527,7 +527,6 @@ static struct i2c_driver mcp16502_drv =
+ 	.probe		= mcp16502_probe,
+ 	.driver		= {
+ 		.name	= "mcp16502-regulator",
+-		.owner		= THIS_MODULE,
+ 		.of_match_table	= of_match_ptr(mcp16502_ids),
+ 		.pm = &mcp16502_pm_ops,
+ 	},
