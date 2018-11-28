@@ -2,121 +2,87 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AFAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA95C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FB42086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FB42086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 45864206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45864206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbeK2Bmi (ORCPT
+        id S1728675AbeK2BnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:42:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:42050 "EHLO foss.arm.com"
+        Wed, 28 Nov 2018 20:43:17 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34139 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728443AbeK2Bmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:42:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2109B2D97;
-        Wed, 28 Nov 2018 06:40:44 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDD543F5AF;
-        Wed, 28 Nov 2018 06:40:41 -0800 (PST)
-Date:   Wed, 28 Nov 2018 14:40:39 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-Message-ID: <20181128144039.GC23094@e110439-lin>
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
- <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
- <20181128100241.GA2131@hirez.programming.kicks-ass.net>
- <20181128115336.GB23094@e110439-lin>
- <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
+        id S1727979AbeK2BnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:43:16 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BD351209A7; Wed, 28 Nov 2018 15:41:21 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9A36E20791;
+        Wed, 28 Nov 2018 15:41:04 +0100 (CET)
+Date:   Wed, 28 Nov 2018 15:41:04 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
+Message-ID: <20181128154104.577d5923@bbrezillon>
+In-Reply-To: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
+References: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-Nov 14:33, Vincent Guittot wrote:
-> On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> >
-> > On 28-Nov 11:02, Peter Zijlstra wrote:
-> > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
-> > >
-> > > > Is there anything else that I should do for these patches ?
-> > >
-> > > IIRC, Morten mention they break util_est; Patrick was going to explain.
-> >
-> > I guess the problem is that, once we cross the current capacity,
-> > strictly speaking util_avg does not represent anymore a utilization.
-> >
-> > With the new signal this could happen and we end up storing estimated
-> > utilization samples which will overestimate the task requirements.
-> >
-> > We will have a spike in estimated utilization at next wakeup, since we
-> > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
-> > case we collect multiple samples above the current capacity.
+On Tue, 27 Nov 2018 07:44:52 +0000
+Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
+
+> Fix the size of the buffer allocated to store the in-memory BBT.
+> This bug was previously hidden by a different bug, that was fixed in
+> d098093ba06e.
 > 
-> TBH I don't see how it's different from current implementation with a
-> task that was scheduled on big core and now wakes up on little core.
-> The util_est is overestimated as well.
+> Fixes: 9c3736a3de21 ("mtd: nand: Add core infrastructure to deal with NAND devices")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-While running below the capacity of a CPU, either big or LITTLE, we
-can still measure the actual used bandwidth as long as we have idle
-time. If the task is then moved into a lower capacity core, I think
-it's still safe to assume that, likely, it would need more capacity.
+Looks like your From header does not match the SoB tag
+('Frieder Schrempf' vs 'Schrempf Frieder') and checkpatch does not like
+that. I'll fix it when applying, but maybe you should fix
+your .gitconfig to make them match.
 
-Why do you say it's the same ?
+> ---
+>  drivers/mtd/nand/bbt.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/bbt.c b/drivers/mtd/nand/bbt.c
+> index 56cde38..c12497f 100644
+> --- a/drivers/mtd/nand/bbt.c
+> +++ b/drivers/mtd/nand/bbt.c
+> @@ -27,7 +27,8 @@ int nanddev_bbt_init(struct nand_device *nand)
+>  	unsigned int nwords = DIV_ROUND_UP(nblocks * bits_per_block,
+>  					   BITS_PER_LONG);
+>  
+> -	nand->bbt.cache = kzalloc(nwords, GFP_KERNEL);
+> +	nand->bbt.cache = kzalloc(nwords * (BITS_PER_LONG / BITS_PER_BYTE),
+> +				  GFP_KERNEL);
+>  	if (!nand->bbt.cache)
+>  		return -ENOMEM;
+>  
 
-With your new signal instead, once we cross the current capacity,
-utilization is just not anymore utilization. Thus, IMHO it make sense
-avoid to accumulate a sample for what we call "estimated utilization".
-
-I would also say that, with the current implementation which caps
-utilization to the current capacity, we get better estimation in
-general. At least we can say with absolute precision:
-
-   "the task needs _at least_ that amount of capacity".
-
-Potentially we can also flag the task as being under-provisioned, in
-case there was not idle time, and _let a policy_ decide what to do
-with it and the granted information we have.
-
-While, with your new signal, once we are over the current capacity,
-the "utilization" is just a sort of "random" number at best useful to
-drive some conclusions about how long the task has been delayed.
-
-IOW, I fear that we are embedding a policy within a signal which is
-currently representing something very well defined: how much cpu
-bandwidth a task used. While, latency/under-provisioning policies
-perhaps should be better placed somewhere else.
-
-Perhaps I've missed it in some of the previous discussions:
-have we have considered/discussed this signal-vs-policy aspect ?
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
