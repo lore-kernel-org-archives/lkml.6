@@ -2,94 +2,134 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E687C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F723C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7148208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD842086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:48:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NcfNGhye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7148208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt1cgnh4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD842086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbeK2GuO (ORCPT
+        id S1729153AbeK2GvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:50:14 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:54056 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbeK2GuO (ORCPT
+        Thu, 29 Nov 2018 01:51:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34728 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbeK2GvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:50:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KBvtpmJNoUWUAhsCVnKaCKgB3XrFxh+KAh2HMOdDpKo=; b=NcfNGhyeiRIIeK0HlIIEVX68A
-        GSYhCWehsmBrLW4QAdMBuVwRPmpbIDwdLWCuI3thggvt0abSSzOtNsZFZ47SSHKxFKU9BCP7wreeU
-        WoagLP32OQ5Eo8fjeJqPRxOfBz7jyH1PLujRGudwsxZsMeuQ73eJRhrupkNI0P69DYtjE=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:42491)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gS5nr-0006eo-Q6; Wed, 28 Nov 2018 19:47:19 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gS5nm-00074y-5C; Wed, 28 Nov 2018 19:47:14 +0000
-Date:   Wed, 28 Nov 2018 19:47:09 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, hch@lst.de,
-        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org, robin.murphy@arm.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-alpha@vger.kernel.org, xen-devel@lists.xenproject.org,
-        dwmw2@infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-Message-ID: <20181128194708.GP30658@n2100.armlinux.org.uk>
-References: <CAHk-=wg5+rXK8dpjkSmK7tuz29VfxVWNEwmTVYB409mmyLkeew@mail.gmail.com>
- <20181128174545.GJ30658@n2100.armlinux.org.uk>
- <CAHk-=whnz4Kty6cas11bc2Gh=9zTzeeRS2k=dV9Hfc4B=xnHkQ@mail.gmail.com>
- <20181128.112717.149234960284639699.davem@davemloft.net>
+        Thu, 29 Nov 2018 01:51:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so27583893wrw.1;
+        Wed, 28 Nov 2018 11:48:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Rm+3IFMRZZUjNCit1zkPfdGXuetxBmlWPZQyJ1wRWHk=;
+        b=Qt1cgnh4OR97x39+ajm5+RuQyODgllRU18xuQc2dhZi3O9n2RQPhxYN1hf9j4+ppKJ
+         llysWR8ccAFQycOQaqcV/ytaTVwxgq5eYcNxgt6ioIcUSitwRx7idACSDXslM87zzA7T
+         fM02fQR+e1GO+Sji5Qxdf9MXOPVo1DCp0SWwi6p4DJQu5lD0x7xlymemdyo/HyrNhqNd
+         ffhCweTpOkP0PAUhzwQF7yqA54ACP18Q4VwcL7qvWrHnlH6p5GJuN3jYXLQR4IYZZsVC
+         NGmErfu1vKi04rzPLoIjRihtcrFrAFENxxHNMiIWVMt3SAKlWllq0AbW4Hdg+P8ZdR8A
+         4XmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Rm+3IFMRZZUjNCit1zkPfdGXuetxBmlWPZQyJ1wRWHk=;
+        b=YCePOqlnHjjJwTqyT24ban/l6EODdCDtEtrUknUFoLz+kKQGuYJRJzPYiN1O63Gskj
+         tHUuHAOk/0Icyz/oQE8/uDJgZNKAMUbKzDysFOpdfZtazU+gJACm2HQwXaATUjuoarRQ
+         sPa7rM8AsFoqMhtqKe+X8CzKKm1EIv2UE7Tug2An+5jV/wrZL4nsBPaL4TAVXHhIOFKf
+         ba0qWwZbs2mbDbnAeir0eU9gnGuXQdu7NUNxeHEeWNP6cqg/iIhHWfpBTP3i+TShQCxk
+         WLs4ULCWx83GLV/bzYRew+dp4/7v5HxhyS5raF1sAEzUsg9qCLibkIGZ7M9QMgV2dwgz
+         jmbw==
+X-Gm-Message-State: AA+aEWZGAL3zao73yPRqethQbsb1deiNY0if7UV/dL7+vgeFfsp93FJB
+        lN5P/yhQ/zFKKnrrr2felj4=
+X-Google-Smtp-Source: AFSGD/UkCUiUlMj89XMEIAdOCsfIzCvCoT0snDcdG9zlSLETYLxK7yZbH2UjX1nbbNagc8klFC/6oQ==
+X-Received: by 2002:a5d:5208:: with SMTP id j8mr7415172wrv.188.1543434498134;
+        Wed, 28 Nov 2018 11:48:18 -0800 (PST)
+Received: from localhost (p200300E41F128C00021F3CFFFE37B91B.dip0.t-ipconnect.de. [2003:e4:1f12:8c00:21f:3cff:fe37:b91b])
+        by smtp.gmail.com with ESMTPSA id m80sm3996503wmd.35.2018.11.28.11.48.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 11:48:17 -0800 (PST)
+Date:   Wed, 28 Nov 2018 20:48:27 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Joe Perches <joe@perches.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v4 18/21] rtc: tegra: Switch to use %ptR
+Message-ID: <20181128194825.GA23039@mithrandir>
+References: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
+ <20181128190537.14074-19-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Content-Disposition: inline
-In-Reply-To: <20181128.112717.149234960284639699.davem@davemloft.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181128190537.14074-19-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 11:27:17AM -0800, David Miller wrote:
-> From: Linus Torvalds <torvalds@linux-foundation.org>
-> Date: Wed, 28 Nov 2018 10:00:06 -0800
-> 
-> > Not all memory is accessible even to the kernel. If you have memory
-> > that shows up in the last page of phys_addr_t, you just mark it
-> > reserved at boot-time.
-> 
-> It's not the physical memory at the end that needs to be reserved.
-> 
-> It's the IOMMU mapping arena.
 
-True, if and only if you have an IOMMU.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Where there isn't an IOMMU, then we'd have to reserve every page that
-that translates to a bus address in the top 4K of dma_addr_t on any
-bus in the system - that means knowing early in the kernel
-initialisation about all buses in the system so we can detect and
-reserve these pages.
+On Wed, Nov 28, 2018 at 09:05:34PM +0200, Andy Shevchenko wrote:
+> Use %ptR instead of open coded variant to print content of
+> struct rtc_time in human readable format.
+>=20
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/rtc/rtc-tegra.c | 30 +++---------------------------
+>  1 file changed, 3 insertions(+), 27 deletions(-)
 
-I don't think that's trivial to do.
+This changes the format of the date and time, but I think it's better to
+have the standard format than the existing one. Also, the time is only
+printed in debug messages, so nobody should be relying on that specific
+format anyway.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+8P4ACgkQ3SOs138+
+s6HFqBAAuEVQizdaCbOGmTPoYqQEpRPkzsPDyjvKzfCMKI3voJHl6JhT+6IlN8kq
+Q5m/9IoxRSPmmaDa5LSDeWczgZttUe9nHNkMlgDYJmETEy2ydp5N8faX6XuL73b6
+CivJfiRIfmRWt0n79stFvTqyZYJllIyIzonj0WjflH0QVXww1mk0XoNiXxOszcsP
+D64f2RpdWnTSoULJ+EJlRWuNP8k8K/opFrDGTVsE0vUcsHoklJ0rz230+1FjPzQI
+ZwqJKMWYBeh3R0oPbIdq6GXQsMQDNvI414FDuu1gfYhXSIwAmn7G3csk8TpY4K1Z
+/Lhi37dz/uOVRhqlYchwhQasbjoioNR4pm9tEAswmAqCuOnBmVz/+sFtJ1Kp3Y0E
+1F429hjJNIV96V6Z30a1cb82m3g3RndDqvYEN7J/TQvT1eXEsISsOMecU0PGgYAS
+RDIYRxjNQfYAAmqYTAmH/Yabpl8/uGb4hX/hl9JoO05TMf1rM5pvzqXBeiu7wwvc
+aRtZCbyaoO5eyIze+AJaI6f4Uzxfvemd2eWABtaZTPfJIvTn8wMujnIWu/f6JQIT
+Sgx5RSGoSUqNQbieqmxHTWngNhEjJ24btSZ08LGQjoYYLHFY/yxyT3cjwmM7hJfA
+eUoSD+YQj2QDM/zUSjT1VxCOQKiROkU4gMqWYJ1Osbe+zn27PrU=
+=KJfS
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
