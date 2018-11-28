@@ -2,87 +2,145 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D9DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D127C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0FE20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:07:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Dqsn1Zay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0FE20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id E9FC82081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:09:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9FC82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbeK2DKC (ORCPT
+        id S1728977AbeK2DLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:10:02 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:36615 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbeK2DKB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:10:01 -0500
-X-Greylist: delayed 708 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 22:10:00 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1543421271;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=7xS2QcB97L9QI4n5R/5DRuYEud3Vh5VKc9tcNvItCtM=;
-        b=Dqsn1ZayszGY5k4h967SS8hxLLStPdjSSGDinTl6xh2V2f0oq/Y7mx6oVvFBonPPy4
-        IEZcjaS0HhXx3wmGlKOBajMDhbiU58dujubG+dvRvmq4hYEwndqt+40smnpfcHxvWD2+
-        p98dLzfFnoU65rOqPwtP17wR6+HpmfWONwzO+mPlcLycbJmKqlJkqG+4IS2sqWeAQNPq
-        8UYQwliwf1exS8zXYKMK2r3YH47mRmDbTlt/5cBYOhBxE+EbyEL4POCYpsicxVtZPdV3
-        bpqSd7qOQFYeIM9STuzMxoq8xXIk+cVX20gwIU/dWstEmYzOsa0FATW4OaP3Lgd6SJJz
-        3vhQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkIise/x75IsWntOVj9qPtpgydF"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:74d7:2770:613:8ba4]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uASFtU7KR
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 28 Nov 2018 16:55:30 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de>
- <87zhttfonk.fsf@concordia.ellerman.id.au>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <535776df-dea3-eb26-6bf3-83f225e977df@xenosoft.de>
-Date:   Wed, 28 Nov 2018 16:55:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 28 Nov 2018 22:11:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54184 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727979AbeK2DLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 22:11:08 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EFCD4308123E;
+        Wed, 28 Nov 2018 16:08:58 +0000 (UTC)
+Received: from treble (ovpn-121-105.rdu2.redhat.com [10.10.121.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BEE991948E;
+        Wed, 28 Nov 2018 16:08:56 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 10:08:49 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin " <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+Message-ID: <20181128160849.epmoto4o5jaxxxol@treble>
+References: <20181018005420.82993-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <87zhttfonk.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181018005420.82993-1-namit@vmware.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 28 Nov 2018 16:08:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 November 2018 at 12:05PM, Michael Ellerman wrote:
-> Nothing specific yet.
->
-> I'm a bit worried it might break one of the many old obscure platforms
-> we have that aren't well tested.
->
-Please don't apply the new DMA mapping code if you don't be sure if it 
-works on all supported PowerPC machines. Is the new DMA mapping code 
-really necessary? It's not really nice, to rewrote code if the old code 
-works perfect. We must not forget, that we work for the end users. Does 
-the end user have advantages with this new code? Is it faster? The old 
-code works without any problems. I am also worried about this code. How 
-can I test this new DMA mapping code?
+On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
+> This RFC introduces indirect call promotion in runtime, which for the
+> matter of simplification (and branding) will be called here "relpolines"
+> (relative call + trampoline). Relpolines are mainly intended as a way
+> of reducing retpoline overheads due to Spectre v2.
+> 
+> Unlike indirect call promotion through profile guided optimization, the
+> proposed approach does not require a profiling stage, works well with
+> modules whose address is unknown and can adapt to changing workloads.
+> 
+> The main idea is simple: for every indirect call, we inject a piece of
+> code with fast- and slow-path calls. The fast path is used if the target
+> matches the expected (hot) target. The slow-path uses a retpoline.
+> During training, the slow-path is set to call a function that saves the
+> call source and target in a hash-table and keep count for call
+> frequency. The most common target is then patched into the hot path.
+> 
+> The patching is done on-the-fly by patching the conditional branch
+> (opcode and offset) that is used to compare the target to the hot
+> target. This allows to direct all cores to the fast-path, while patching
+> the slow-path and vice-versa. Patching follows 2 more rules: (1) Only
+> patch a single byte when the code might be executed by any core. (2)
+> When patching more than one byte, ensure that all cores do not run the
+> to-be-patched-code by preventing this code from being preempted, and
+> using synchronize_sched() after patching the branch that jumps over this
+> code.
+> 
+> Changing all the indirect calls to use relpolines is done using assembly
+> macro magic. There are alternative solutions, but this one is
+> relatively simple and transparent. There is also logic to retrain the
+> software predictor, but the policy it uses may need to be refined.
+> 
+> Eventually the results are not bad (2 VCPU VM, throughput reported):
+> 
+> 		base		relpoline
+> 		----		---------
+> nginx 	22898 		25178 (+10%)
+> redis-ycsb	24523		25486 (+4%)
+> dbench	2144		2103 (+2%)
+> 
+> When retpolines are disabled, and if retraining is off, performance
+> benefits are up to 2% (nginx), but are much less impressive.
 
-Thanks
+Hi Nadav,
 
+Peter pointed me to these patches during a discussion about retpoline
+profiling.  Personally, I think this is brilliant.  This could help
+networking and filesystem intensive workloads a lot.
+
+Some high-level comments:
+
+- "Relpoline" looks confusingly a lot like "retpoline".  How about
+  "optpoline"?  To avoid confusing myself I will hereafter refer to it
+  as such :-)
+
+- Instead of patching one byte at a time, is there a reason why
+  text_poke_bp() can't be used?  That would greatly simplify the
+  patching process, as everything could be patched in a single step.
+
+- In many cases, a single direct call may not be sufficient, as there
+  could be for example multiple tasks using different network protocols
+  which need different callbacks for the same call site.
+
+- I'm not sure about the periodic retraining logic, it seems a bit
+  nondeterministic and bursty.
+  
+So I'd propose the following changes:
+
+- In the optpoline, reserve space for multiple (5 or so) comparisons and
+  direct calls.  Maybe the number of reserved cmp/jne/call slots can be
+  tweaked by the caller somehow.  Or maybe it could grow as needed.
+  Starting out, they would just be NOPs.
+
+- Instead of the temporary learning mode, add permanent tracking to
+  detect a direct call "miss" -- i.e., when none of the existing direct
+  calls are applicable and the retpoline will be used.
+
+- In the case of a miss (or N misses), it could trigger a direct call
+  patching operation to be run later (workqueue or syscall exit).  If
+  all the direct call slots are full, it could patch the least recently
+  modified one.  If this causes thrashing (>x changes over y time), it
+  could increase the number of direct call slots using a trampoline.
+  Even if there were several slots, CPU branch prediction would
+  presumably help make it much faster than a basic retpoline.
+
+Thoughts?
+
+-- 
+Josh
