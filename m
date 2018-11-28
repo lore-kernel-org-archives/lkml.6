@@ -2,112 +2,98 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCC1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7982086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FA32081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:39:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnPev4MJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7982086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="WZMCDSO2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FA32081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeK1Xk2 (ORCPT
+        id S1728332AbeK1Xku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:40:28 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52899 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeK1Xk2 (ORCPT
+        Wed, 28 Nov 2018 18:40:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58550 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbeK1Xku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:40:28 -0500
-Received: by mail-it1-f194.google.com with SMTP id i7so4074962iti.2;
-        Wed, 28 Nov 2018 04:38:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2LkPlolDCNEbJcPcn0tERISjVQncXnltlFvA9jTLqKA=;
-        b=dnPev4MJaiM8UOwrDEHufF5KcCpaxs2nqlUXoW9/xKoj4yKU27txDFT68kOXigHdvg
-         0X+zpk//kxpTpAOPpwb7bBTEZ0ntGQboBBtmlV1ctAkTFMkElxyZuOD3AB9WogaYwHxC
-         gfnKGCINFC6CkiWS9VI/Eyr8ceEOaRw3/ecnWriLVmldimRgoAzcbhOFCAKWI1+j6Thn
-         h2Wuxe/ONFwqWvenQGu+OZrU7DLoGmzbZFIYIfxr6OmIJVBfAZ23yKi4nh5jgTEchI53
-         CeIVwyVnlpRMuTRm60oJWiy+MrMlwLOB1KOX7BzGRYZHEfed+Xt06fnrmc05fCUi37d7
-         M3WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2LkPlolDCNEbJcPcn0tERISjVQncXnltlFvA9jTLqKA=;
-        b=g2thbr3+Bsez+UN3IkvQhqyCzXRYSpT9+YJD8HWqywh+8PhBp1wwtEBUzhUPTaCPqz
-         kWX+ve9z30yD+9pNWtLdI8EV+ax2WY8wammRdpX+prckdGYgh+/aWnHBt7OLNbuR+SFB
-         6gcbVkbzrDGR7alqu0bO15BBK8EJK5ibPJ9S+rD/LE1RirvgF1+SFZNG2VzJxPoTsaKb
-         Gzr18Vgvyzwv5H3769KThham2OurOBmkoyrI1tt7UHxjkuId5odvlxfKhMG7i7mKKsw2
-         dgy+CoBAmT+aanSwmeZsiZzxitv+SxpsH+c6P/vVZMSFf7j+yH1B9/Myp4K3WllPaIcR
-         tYmQ==
-X-Gm-Message-State: AA+aEWYBq2xfS/OwsFR3wZBHC9dOYGHz0yep8W1f5uL6BHnV95llcGCM
-        tv8EkNLMUtmEeRRjQlLaQP2gxreXd0O6TJc3oWE=
-X-Google-Smtp-Source: AFSGD/Wn+ER2VUTvBRSj1i5ym5gWRe4vJsNAXuYmpCCsOjBKHBp3zylxbWKzXsuLOD7qYHfBgPPHXdUxLQqtH2b7tgo=
-X-Received: by 2002:a02:242b:: with SMTP id f43mr11004385jaa.144.1543408735977;
- Wed, 28 Nov 2018 04:38:55 -0800 (PST)
+        Wed, 28 Nov 2018 18:40:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UrIxGUJQB6g6Rb5Lz4OeRCrjfxTsI/LtRbM1jsTcZ1I=; b=WZMCDSO2oHGB7XovduuYqy0xN
+        n29MyiR9H+rTSj/T4vvGPiaGRw6pgmLbqes284o5cB1g4xFW7Dnp2BroMgxO248PAecukZ3/AV6u1
+        I3V6X/FzjiZrVbjiu4J/sKMRFAxR97VOnZBeBUHJuUW/iDtXYL5+6XFdqQdQILgw7V9bk=;
+Received: from 92.40.248.202.threembb.co.uk ([92.40.248.202] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gRz6u-0005CR-8L; Wed, 28 Nov 2018 12:38:32 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 48898440078; Wed, 28 Nov 2018 12:38:28 +0000 (GMT)
+Date:   Wed, 28 Nov 2018 12:38:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     olivier.moysan@st.com, arnaud.pouliquen@st.com, tiwai@suse.com,
+        mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Wen Yang <yellowriver2010@hotmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] Fix invalid use of sizeof in
+ stm32_sai_add_mclk_provider()
+Message-ID: <20181128123828.GJ2089@sirena.org.uk>
+References: <20181127123520.44940-1-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
-References: <20181126213710.3084-1-vivek.gautam@codeaurora.org> <20181128073940.GA13072@infradead.org>
-In-Reply-To: <20181128073940.GA13072@infradead.org>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Wed, 28 Nov 2018 07:38:44 -0500
-Message-ID: <CAF6AEGuM-R0=KRSmT+bt6SBaZg_ea3A_YFE+xfR_oCH9d9uORA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-To:     hch@infradead.org
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        David Airlie <airlied@linux.ie>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ndbNBr9ZfQRJt18g"
+Content-Disposition: inline
+In-Reply-To: <20181127123520.44940-1-wen.yang99@zte.com.cn>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 2:39 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> > +             /*
-> > +              * dma_sync_sg_*() flush the physical pages, so point
-> > +              * sg->dma_address to the physical ones for the right behavior.
-> > +              */
-> > +             for_each_sg(msm_obj->sgt->sgl, s, msm_obj->sgt->nents, i)
-> > +                     sg_dma_address(s) = sg_phys(s);
-> > +
->
-> I'm sorry, but this is completely bogus and not acceptable.
->
-> The only place that is allowed to initialize sg_dma_address is
-> dma_map_sg.  If the default dma ops don't work for your setup we have
-> major a problem and need to fix the dma api / iommu integration instead
-> of hacking around it.
 
-I agree that the dma/iommu integration is very problematic for drm (in
-particular, gpu drivers that use the iommu as an gpu mmu)..  Really we
-need a way that a driver can opt-out of this, and access the cpu cache
-APIs directly, skipping the dma API entirely.  But as it is, we've had
-to hack around the dma API.  I'm not really sure this hack is any
-worse than abusing dma_(un)map_sg() for doing cache operations.
+--ndbNBr9ZfQRJt18g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I probably should have paid more attention and nak'd the dma/iommu
-integration before it landed.  But given that now we are stuck in this
-situation, while I'm certainly interested if anyone has some ideas
-about how to let drivers opt out of the dma/iommu integration and
-bypass the dma API layer, I'm ok with replacing a hack with a less-bad
-hack.
+On Tue, Nov 27, 2018 at 08:35:20PM +0800, Wen Yang wrote:
+> sizeof(mclk) is 4 or 8 as it is the size of a pointer,
+> but we want to reserve space for the pointed data.
+> This issue was detected by using the Coccinelle software.
 
-BR,
--R
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
+
+--ndbNBr9ZfQRJt18g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv+jEMACgkQJNaLcl1U
+h9C4CAf+N+daz0ORT0zdZ4t36wXYLbz8q2NQUeQKrw5FHqc9Tx1kqq6Uxz3xt+Jo
+r/CiC7sqvhHZJDOkGtd8NhXQe5Ua8fzVUjzHHmC+F0oiI2nGTzUpd3BH2yqsNsBV
+g4Eqptjo75kQryzob9e5sNYlSb29ejCTr1V/myuzbzzHS+MzDwB5oysnoZ9XWWYV
+JJdjOJPJkPffIFLCx0HnXC2OUdE4chbFf0N95l+4ZaqpAELCIkUDuLn2qhjF15v0
+yuoR4NvxkLfGcubeCi0vFCBYF3ysfbgakOpyCUnCRMbqXD/w2Vt2IqabRCEFCjDT
+JzETbBwEr8qwiUEIqMV3LbUWrwpUjw==
+=WB9+
+-----END PGP SIGNATURE-----
+
+--ndbNBr9ZfQRJt18g--
