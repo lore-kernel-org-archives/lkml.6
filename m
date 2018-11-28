@@ -2,136 +2,121 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7189BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B5CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3062520832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923B820832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tRjeQb1d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3062520832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DhZWraYj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923B820832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeK1Qlz (ORCPT
+        id S1727603AbeK1QmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 11:41:55 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36050 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726894AbeK1Qly (ORCPT
+        Wed, 28 Nov 2018 11:42:21 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46726 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbeK1QmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 11:41:54 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 49DED8EE1F7;
-        Tue, 27 Nov 2018 21:41:30 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id UibN9_b1TQ5T; Tue, 27 Nov 2018 21:41:30 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B81028EE0C8;
-        Tue, 27 Nov 2018 21:41:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1543383690;
-        bh=6a261lD2WwsRHMP5wgIib1i/7WBJPZHLxw3C51Gb9G8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tRjeQb1dOQZOtvaJyq5lhabCUCIo3UKLjN2w3EFAkbTS1FXlXgGY8gN0dQwsInVl2
-         z115gNPsp/YFW2gamuZm6fNTmStuYyqx7bBDFyEJU1fFN1Oib6HBAFioivD54o5gWK
-         IBUzbVrfL9qfvkD8P7ekurrbVNEe1ZcPclmbO8LM=
-Message-ID: <1543383684.3518.2.camel@HansenPartnership.com>
-Subject: Re: linux-next: Tree for Nov 27 (scsi/aha1542)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Date:   Tue, 27 Nov 2018 21:41:24 -0800
-In-Reply-To: <20181128153847.08ead1c9@canb.auug.org.au>
-References: <20181127152539.55426063@canb.auug.org.au>
-         <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
-         <20181128153847.08ead1c9@canb.auug.org.au>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-INqxb6r8LVHJxEOwNF5S"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Wed, 28 Nov 2018 11:42:21 -0500
+Received: by mail-vs1-f66.google.com with SMTP id r14so15298871vsc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 21:41:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i2b4V0NYgh0a9cR7D62GI5pYAgqupLM7mCCU32Tyv14=;
+        b=DhZWraYj+9epeDosLbEU0LHcUWtCvVeXrLiDJq6XaZ1yZShX3wI3rCIWyVcknQ3YKo
+         lR7cJo5bOeZiyq7UVXnN5E7lxCIOMnJuxG/hJJ7PGb9E5odiH3ap7vV0g073wZnnATbG
+         Ik2c9wLo5bTp/UityEPETZjhyhzUmh2v12X8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i2b4V0NYgh0a9cR7D62GI5pYAgqupLM7mCCU32Tyv14=;
+        b=sviFoPOsMnnGYgbuYjT1R65yFZlP4CZy00svV7VpAERMfoSlpEPFM/n3up2SsNXA1T
+         Z6h4Rf347YwDAt+yRaFjrg2nhV4fb0FyFNgKAyiaR3WsR+O++tgCBHf2VUS9SIsq6rst
+         2U4zVchrY3D5zUhHtRaQZcZzpW5w3e5B6KtBUTwOn2FBspovZ0YyGCACyYpz+byUbqRe
+         4j78wVlkvUHmbYLpNzu5ofOOLSqF2An5A/JHRRCKblEcuD51gW5PSYMhXKCejXgoHrlR
+         w5wZiZI3nG5/AlXwgDXkvEalaBxXpkk4eT2P4WhCb7+FJgNkhvmWY/QyTm8ufVU4YcJz
+         qXiA==
+X-Gm-Message-State: AGRZ1gIzpG6t/IWbnc3LEY1DEugRCttoT9xAugiYiagaDkJ0S5dzRxZD
+        Lm07ggAgw9/o0mS/F8aiVOwd9pq4exU=
+X-Google-Smtp-Source: AJdET5eLDSerkQM5vXyHFmZR8MrYMENKc8JdbuEQ7IVH3x4zzaSv9M4NvQEnzOsVQnCOEn/MqnGw0A==
+X-Received: by 2002:a67:7b0a:: with SMTP id w10mr15231618vsc.5.1543383715871;
+        Tue, 27 Nov 2018 21:41:55 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id x132sm1953090vsc.34.2018.11.27.21.41.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 21:41:53 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id t132so4883718vkc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 21:41:53 -0800 (PST)
+X-Received: by 2002:a1f:1881:: with SMTP id 123mr4108288vky.40.1543383713013;
+ Tue, 27 Nov 2018 21:41:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20181126231159.122298-1-mka@chromium.org> <20181126231159.122298-2-mka@chromium.org>
+In-Reply-To: <20181126231159.122298-2-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 27 Nov 2018 21:41:39 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WvXFpZDJGbdvvY=HL_=tDWyhKpTg7zu8s=gUuJgK1ebg@mail.gmail.com>
+Message-ID: <CAD=FV=WvXFpZDJGbdvvY=HL_=tDWyhKpTg7zu8s=gUuJgK1ebg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: msm/dsi: Add ref clock for PHYs
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---=-INqxb6r8LVHJxEOwNF5S
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Allow the PHY drivers to get the ref clock from the DT.
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v2:
+> - add the ref clock for all PHYs, not only the 10nm one
+> - updated commit message
+> ---
+>  Documentation/devicetree/bindings/display/msm/dsi.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> index dfc743219bd88..b0485559a719c 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
+> +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> @@ -106,6 +106,7 @@ Required properties:
+>  - clocks: Phandles to device clocks. See [1] for details on clock bindings.
+>  - clock-names: the following clocks are required:
+>    * "iface"
+> +  * "ref"
 
-On Wed, 2018-11-28 at 15:38 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Tue, 27 Nov 2018 20:14:58 -0800 Randy Dunlap <rdunlap@infradead.or
-> g> wrote:
-> >=20
-> > On 11/26/18 8:25 PM, Stephen Rothwell wrote:
-> > > Hi all,
-> > >=20
-> > > Changes since 20181126:
-> > >  =20
-> >=20
-> > on i386:
-> >=20
-> > ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
-> >=20
-> > somewhere in aha1542_interrupt() according to objdump.
->=20
-> Presumably caused by commit
->=20
->   1794ef2b150d ("scsi: aha1542: convert to DMA mapping API")
-
-Yes, it's because dma_addr_t can be u64 on pae systems but
-isa_virt_to_bus only ever returns unsigned long (because an ISA
-physical address can only be 24 bits).
-
-I think this is the fix; there doesn't seem to be much point converting
-to do_div given all the limitations.
-
-James
-
----
-
-diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
-index a9c29757172f..afb693d7b44f 100644
---- a/drivers/scsi/aha1542.c
-+++ b/drivers/scsi/aha1542.c
-@@ -325,7 +325,7 @@ static irqreturn_t aha1542_interrupt(int irq, void *dev=
-_id)
- 			return IRQ_HANDLED;
- 		};
-=20
--		mbo =3D (scsi2int(mb[mbi].ccbptr) - aha1542->ccb_handle) / sizeof(struct=
- ccb);
-+		mbo =3D (scsi2int(mb[mbi].ccbptr) - (unsigned long)aha1542->ccb_handle) =
-/ sizeof(struct ccb);
- 		mbistatus =3D mb[mbi].status;
- 		mb[mbi].status =3D 0;
- 		aha1542->aha1542_last_mbi_used =3D mbi;
---=-INqxb6r8LVHJxEOwNF5S
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW/4qhAAKCRDnQslM7pis
-hfOxAQDz5qxC4lFi29t44zMABjdsUIB0s3NkLl3XIr3Okx6nMwD6AhqqSMLVAMOc
-ltgP1Qm/FVEspHfkd4yMFj/ygWexeFY=
-=X0+P
------END PGP SIGNATURE-----
-
---=-INqxb6r8LVHJxEOwNF5S--
-
+We can't quite make ref "required" because there are some old device
+tree files dating back to 2016 that would be broken.  It could be
+listed as optional, but I _think_ Rob is OK with it being listed as
+"required" for all new device tree files with the footnote that if
+it's not present then the code will still work.
