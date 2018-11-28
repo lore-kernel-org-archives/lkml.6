@@ -2,127 +2,201 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA96CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85169C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9659820873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUk6DR9O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9659820873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 48F3220645
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F3220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeK1PiO (ORCPT
+        id S1727471AbeK1Pi4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:38:14 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37256 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbeK1PiN (ORCPT
+        Wed, 28 Nov 2018 10:38:56 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:39092 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727413AbeK1Pi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:38:13 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so16754187plr.4;
-        Tue, 27 Nov 2018 20:37:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6lmll1IWsxEUtw2cYFC//V9pRv5fGesI1eg7SA2Km1o=;
-        b=HUk6DR9OhEtM6ZYht4H+OhpxGZXv5T553IsVuUUBTcVc7s/QW4SQiAz0ystv/mL+Mu
-         UvKMULbARcrDYi+27o4VcFF/CS7MZtscBq8hyPbPMSg/9LBfo/VHsyAkvAhZaPy9hCdK
-         QMhAHO9uw/fqZ+hrWf4weDs+B4CWEe3E3m6PnE+X+CCfBqyHQFd6Llhdo97EKX+iMpP8
-         Oc90SZRUPbZiJAgtu10H7QpqhhVKI1i4Z9gekzs37fddDRLYzCkelBDhEukX5li/uWxp
-         A0aIg9eenRWfus4U1uU7ECprg82lCMPIoPQ2q8oyN5aBMkyGLcyw9NX2SDLePD/LM6Q3
-         4jjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6lmll1IWsxEUtw2cYFC//V9pRv5fGesI1eg7SA2Km1o=;
-        b=lXfPKo85gzMhkj+fWE6/57wC9ycVfUOCteXU3o+3yDWFT1l4hiiUlHOijfQglmwTj1
-         2JNWJRB/OYMIxiuZceWaFAYduvoemjDzWyE2Zmy5YGEiyNnp0TDol1mi8wHTXR2EnJ63
-         r2Wuox4pCkExneb5V10sv8xvmrBUNYXc4vuAemsjFewEAuuRSY/DzKq7E7mQKLwcechM
-         Ba0GE1lNh8g0lm9hKzDio+suFQu51mmqqNe4m+DUm5EQIH9PF3rPCd6fHienM4DMdpr8
-         ESoxaM9O28GiCsODdQ/SQMCdx2phCR0VK09eGzXEUKZAOk4h7SBQXtNS26ljoyO0zjwI
-         DGcg==
-X-Gm-Message-State: AA+aEWYfr7C9IbgkLPDoZieVYKMOBaEq6QI7hN/7mYNGCD3jnjManRQ1
-        3gtNTzNifDJ3ZwiPxbCh0sYc3w3lEfs=
-X-Google-Smtp-Source: AFSGD/USX+60GnLheEVRPzbphISKnvxIRprGi7XFICLWy6E+1E/MsdeZEMGa7navk57mp8s4es4b1Q==
-X-Received: by 2002:a17:902:7044:: with SMTP id h4mr15269725plt.35.1543379877208;
-        Tue, 27 Nov 2018 20:37:57 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id v2sm6387369pgs.0.2018.11.27.20.37.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 20:37:56 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>, p.zabel@pengutronix.de,
-        Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
-        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] dt-bindings: reset: imx7: Document usage on i.MX8MQ SoCs
-Date:   Tue, 27 Nov 2018 20:37:38 -0800
-Message-Id: <20181128043738.12714-4-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181128043738.12714-1-andrew.smirnov@gmail.com>
-References: <20181128043738.12714-1-andrew.smirnov@gmail.com>
+        Wed, 28 Nov 2018 10:38:56 -0500
+X-ASG-Debug-ID: 1543379900-093b7e197b1ceb0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 2RwIQFazNHIELgjN (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 28 Nov 2018 12:38:20 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 28 Nov 2018 12:37:35 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Wed, 28 Nov 2018 12:37:35 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
+ overwritten by STACK_END_MAGIC
+X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
+Date:   Wed, 28 Nov 2018 04:37:35 +0000
+Message-ID: <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
+ <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.159]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1543379900
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4999 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.62582
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver now supports i.MX8MQ, so update bindings accordingly.
+Hello Kees,
 
-Cc: p.zabel@pengutronix.de
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: cphealy@gmail.com
-Cc: l.stach@pengutronix.de
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- Documentation/devicetree/bindings/reset/fsl,imx7-src.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+On 2018/11/28 6:38, Kees Cook wrote:
+> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
+> <dongsheng.wang@hxt-semitech.com> wrote:
+>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
+>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
+>> is not a real task on stack, it's only init_task on init_stack.
+>>
+>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
+>> rather than by union") added this macro and put task_strcut into
+>> thread_union. This brings us the following possibilities:
+>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
+>>                                             ----- <-- thread_info & stack
+>>         N                    N             |     |     --- <-- task
+>>                                            |     |    |   |
+>>                                             -----      ---
+>>
+>>                                             ----- <-- stack
+>>         N                    Y             |     |     --- <-- task(Including thread_info)
+>>                                            |     |    |   |
+>>                                             -----      ---
+>>
+>>                                             ----- <-- stack & task & thread_info
+>>         Y                    N             |     |
+>>                                            |     |
+>>                                             -----
+>>
+>>                                             ----- <-- stack & task(Including thread_info)
+>>         Y                    Y             |     |
+>>                                            |     |
+>>                                             -----
+>> The kernel has handled the first two cases correctly.
+>>
+>> For the third case:
+>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
+>> should never happen, because the task and thread_info will overlap. So
+>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
+>>
+>> For the fourth case:
+>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
+>>
+>> This patch handled with the third and fourth case.
+>>
+>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
+>>
+>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>> ---
+>>  arch/Kconfig                     | 1 +
+>>  include/linux/sched/task_stack.h | 5 ++++-
+>>  2 files changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/Kconfig b/arch/Kconfig
+>> index e1e540ffa979..0a2c73e73195 100644
+>> --- a/arch/Kconfig
+>> +++ b/arch/Kconfig
+>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
+>>  # Select if arch init_task must go in the __init_task_data section
+>>  config ARCH_TASK_STRUCT_ON_STACK
+>>         bool
+>> +       depends on THREAD_INFO_IN_TASK || IA64
+> The "IA64" part shouldn't be needed since IA64 already selects it.
+>
+> Since it's selected, it also can't have a depends, IIUC.
 
-diff --git a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-index 1ab1d109318e..2ecf33815d18 100644
---- a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-+++ b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
-@@ -5,7 +5,9 @@ Please also refer to reset.txt in this directory for common reset
- controller binding usage.
- 
- Required properties:
--- compatible: Should be "fsl,imx7d-src", "syscon"
-+- compatible:
-+	- For i.MX7 SoCs should be "fsl,imx7d-src", "syscon"
-+	- For i.MX8MQ SoCs should be "fsl,imx8mq-src", "syscon"
- - reg: should be register base and length as documented in the
-   datasheet
- - interrupts: Should contain SRC interrupt
-@@ -44,4 +46,5 @@ Example:
- 
- 
- For list of all valid reset indicies see
--<dt-bindings/reset/imx7-reset.h>
-+<dt-bindings/reset/imx7-reset.h> for i.MX7 and
-+<dt-bindings/reset/imx8mq-reset.h> for i.MX8MQ
--- 
-2.19.1
+Since the IA64 thread_info including task_struct, it doesn't need to
+select THREAD_INFO_IN_TASK.
+So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
+THREAD_INFO.
+
+>>  # Select if arch has its private alloc_task_struct() function
+>>  config ARCH_TASK_STRUCT_ALLOCATOR
+>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+>> index 6a841929073f..624c48defb9e 100644
+>> --- a/include/linux/sched/task_stack.h
+>> +++ b/include/linux/sched/task_stack.h
+>> @@ -7,6 +7,7 @@
+>>   */
+>>
+>>  #include <linux/sched.h>
+>> +#include <linux/sched/task.h>
+>>  #include <linux/magic.h>
+>>
+>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
+>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
+>>
+>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
+>>  {
+>> -       return task->stack;
+>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
+>> +               return task->stack;
+>> +       return (unsigned long *)(task + 1);
+>>  }
+> This seems like a strange place for the change. It feels more like
+> init_task has been defined incorrectly.
+
+The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
+selected.
+include/asm-generic/vmlinux.lds.h:
+#define INIT_TASK_DATA(align)                        \
+    . = ALIGN(align);                        \
+    __start_init_task = .;                        \
+    init_thread_union = .;                        \
+    init_stack = .;                            \
+    KEEP(*(.data..init_task))                    \
+    KEEP(*(.data..init_thread_info))                \
+    . = __start_init_task + THREAD_SIZE;                \
+    __end_init_task = .;
+
+So we need end_of_stack to offset sizeof(task_struct).
+
+Cheers,
+Dongsheng
 
