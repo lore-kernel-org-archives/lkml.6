@@ -2,70 +2,105 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA65DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE1CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F962081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:15:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F962081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id ADEDE20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADEDE20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeK2CRw (ORCPT
+        id S1728675AbeK2CTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:17:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:60164 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeK2CRw (ORCPT
+        Wed, 28 Nov 2018 21:19:19 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:33008 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727726AbeK2CTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:17:52 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gS1Z8-0008KJ-EV; Wed, 28 Nov 2018 16:15:50 +0100
-Date:   Wed, 28 Nov 2018 16:15:50 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Muchun Song <smuchun@gmail.com>
-cc:     John Stultz <john.stultz@linaro.org>, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] timers: Make the lower-level timer function first call
- than higher-level
-In-Reply-To: <alpine.DEB.2.21.1811212143030.1665@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1811281614220.1532@nanos.tec.linutronix.de>
-References: <20181119141003.6470-1-smuchun@gmail.com> <CALAqxLUUpGfDzOoDyPA4LFyzFyVmiT4wKLUWa5Tin8eypJBCDQ@mail.gmail.com> <CAPSr9jFVDaXUZw0LKEX81TrCmeQ+tw1bt0g_tK7J1s9qtOdEwg@mail.gmail.com> <alpine.DEB.2.21.1811212143030.1665@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Nov 2018 21:19:19 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wASFBreL011746;
+        Wed, 28 Nov 2018 09:17:16 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x670q6-1;
+        Wed, 28 Nov 2018 09:17:16 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 874BC611C8AF;
+        Wed, 28 Nov 2018 09:20:06 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
+ 15:17:15 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wASFHFLg023567; Wed,
+ 28 Nov 2018 15:17:15 GMT
+Date:   Wed, 28 Nov 2018 15:17:15 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 09/10] regulator: s5m8767: Let core handle GPIO
+ descriptors
+Message-ID: <20181128151715.GT16508@imbe.wolfsonmicro.main>
+References: <20181128104350.31902-1-linus.walleij@linaro.org>
+ <20181128104350.31902-10-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181128104350.31902-10-linus.walleij@linaro.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=846 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811280134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Song,
-
-On Wed, 21 Nov 2018, Thomas Gleixner wrote:
-> On Tue, 20 Nov 2018, Muchun Song wrote:
-> > Follow the current code logic, the timer0 function is called until the
-> > function call of timer1-5 is completed. So the delay of timer0 is the time
-> > spent by other timer function calls. If we can call the timer function in
-> > the following order, this should be more friendly to lower-level timers.
-> > 
-> >         timer0->timer1->->timer2->->timer3->->timer4->->timer5
-> > 
-> > Although not friendly to higher-level timers, higher-level has larger
-> > granularity. Therefore the delay has less impact on higher-level.
+On Wed, Nov 28, 2018 at 11:43:49AM +0100, Linus Walleij wrote:
+> Use the gpiod_get_from_of_node() rather than the devm_*
+> version so that the regulator core can handle the lifecycle
+> of these descriptors.
 > 
-> Well yes, that's clear. But is it a problem in practice and if so, what is
-> the measurable benefit.
+> Introduce an errorpath so we free any retrieved descriptors
+> properly.
+> 
+> This patch requires "gpio: Export gpiod_get_from_of_node()"
+> to be applied first.
+> 
+> Fixes: 9ae5cc75ceaa ("regulator: s5m8767: Pass descriptor instead of GPIO number")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/regulator/s5m8767.c | 37 ++++++++++++++++++++++++++-----------
+>  1 file changed, 26 insertions(+), 11 deletions(-)
+> @@ -674,6 +681,14 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+>  	}
+>  
+>  	return 0;
+> +
+> +err_gpiod_put:
+> +	while (j) {
+> +		gpiod_put(rdata->ext_control_gpiod);
+> +		rdata--;
+> +		j--;
+> +	}
+> +	return ret;
+>  }
 
-Polite reminder. Can you please describe what the practical relevance is of
-that and what real world problem you are solving? Ideally with numbers
-backing it up.
+These looks like it handles the error paths in
+s5m8767_pmic_dt_parse_pdata, however there are still all the
+error paths between the call to that function and the call to
+regulator_register that need to be handled as well.
 
 Thanks,
-
-	tglx
+Charles
