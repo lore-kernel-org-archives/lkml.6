@@ -2,126 +2,163 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37F4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBF9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EE8E2146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:49:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CI6Xek/A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE8E2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 500442086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:50:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500442086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeK1MtY (ORCPT
+        id S1727132AbeK1Muk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 07:49:24 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:35373 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeK1MtY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 07:49:24 -0500
-Received: by mail-yw1-f65.google.com with SMTP id h32so10062560ywk.2;
-        Tue, 27 Nov 2018 17:49:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=/WnK4iS4uKrhGPb9eE+OEABPEtDB3y6wOcJ7r6VE3is=;
-        b=CI6Xek/AM5+wfbFuW/5TNB2KKQghBXl4qgm4eI8EyxzmFwc1bZkGvHDNRfpxBskO0D
-         3R/3uvdT8pwbYHPWfQTqpj7EA/WhaclAXeLC0lmHs3ZQ0+rg0UBqvMQ8CLQyAHY7cuAe
-         DW9fGG4AChwCFQ1422WdBREuNNPl6u+WsJnKGbjOHQwM4ArOeVSEOtQMercFZhAIaKlk
-         BKsdgpcfQvAP2WY6vfq+88kqKd7uWFqF44d+8hgfWyypfBmfW3G7eizhbNXcLOwmaFMO
-         GjLKR7/IMVBWsTVh5UxtNjpKbzmENrEnRoavXCPmUMk9GU3MgA0Sg9p4wDcxoOwo3+Nb
-         846A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=/WnK4iS4uKrhGPb9eE+OEABPEtDB3y6wOcJ7r6VE3is=;
-        b=VAO7Me4Sn96vJjBHxlterJM3aBMovDn58AppdsErRJifGozJTWN8IpSUi74d6i49sg
-         39yc9CgKKceIGWW2kixGDWSGmJCZ3PfSqAtGHrPmvtajfLsQoUxelWzk14dW7RwAoakN
-         YgO/CTOX7z76+nQ4xKEEPtVM4Q5jfo3e5VLo63JXgV/u3k+DIF2XkH9ld4+uao+q1aI3
-         EegAmOGdT3JbmgXSWhIwVJdmIKYg79RG+7wvEZcP8NY5NuERR4v8RU0utJxJ++jyLbJp
-         8IsaloTTx2bj+CPLEMhCLA2uNBpUYuJdV6qyWyGFoRQX/AfkezZFeoSVKoXl0P5la+oI
-         9JUg==
-X-Gm-Message-State: AGRZ1gIVIgQbCig4Gt7ue0uyA2/PweRtRu6qLB4ocyNpOPzj59bFquVm
-        iGTrnmzTqyGYdNTS6ZjVRL4RkCqx2MM=
-X-Google-Smtp-Source: AJdET5fef24t+SutTUA7dOCECmLJPyQr1Li4IzpefFH3e4+NXE0B7WWDE6LYT15a83BPEttiumYSsQ==
-X-Received: by 2002:a81:1492:: with SMTP id 140mr36171255ywu.333.1543369772582;
-        Tue, 27 Nov 2018 17:49:32 -0800 (PST)
-Received: from [10.33.114.204] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id e124sm1364619ywf.17.2018.11.27.17.49.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 17:49:31 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH v2 1/4] x86/hyper-v: move synic/stimer control structures
- definitions to hyperv-tlfs.h
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181127184835.GA5147@rkaganip.lan>
-Date:   Tue, 27 Nov 2018 17:49:29 -0800
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A215F49-BB8F-4E93-AC62-EC33B4734F24@gmail.com>
-References: <20181126154732.23025-1-vkuznets@redhat.com>
- <20181126154732.23025-2-vkuznets@redhat.com>
- <20181126200413.GA7852@rkaganb.sw.ru> <87wooyk6na.fsf@vitty.brq.redhat.com>
- <20181127184835.GA5147@rkaganip.lan>
-To:     Roman Kagan <rkagan@virtuozzo.com>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Wed, 28 Nov 2018 07:50:40 -0500
+Received: from mga01.intel.com ([192.55.52.88]:9252 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbeK1Muj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 07:50:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 17:50:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
+   d="scan'208";a="95000284"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga006.jf.intel.com with ESMTP; 27 Nov 2018 17:50:48 -0800
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jikos@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201724.227260385@linutronix.de>
+ <f976eb35-5dcd-387e-eb29-f7c6636fd17b@linux.intel.com>
+ <alpine.DEB.2.21.1811222352340.1665@nanos.tec.linutronix.de>
+ <20181123073735.GA12959@gmail.com>
+ <c51dd20a-2cea-1bd1-bee7-48ca25f9bdb9@linux.intel.com>
+ <alpine.DEB.2.21.1811262244510.1682@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811270800090.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811270809450.1682@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811270820050.21108@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1811271350590.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811272302070.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811272331240.1875@nanos.tec.linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
+Message-ID: <1086cc39-ba33-d6ea-e3d8-b30f694472e7@linux.intel.com>
+Date:   Tue, 27 Nov 2018 17:50:48 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1811272331240.1875@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Nov 27, 2018, at 10:48 AM, Roman Kagan <rkagan@virtuozzo.com> =
-wrote:
->=20
-> On Tue, Nov 27, 2018 at 02:10:49PM +0100, Vitaly Kuznetsov wrote:
->> Roman Kagan <rkagan@virtuozzo.com> writes:
->>> On Mon, Nov 26, 2018 at 04:47:29PM +0100, Vitaly Kuznetsov wrote:
->>> I personally tend to prefer masks over bitfields, so I'd rather do =
-the
->>> consolidation in the opposite direction: use the definitions in
->>> hyperv-tlfs.h and replace those unions/bitfields elsewhere.  (I =
-vaguely
->>> remember posting such a patchset a couple of years ago but I lacked =
-the
->>> motivation to complete it).
->>=20
->> Are there any known advantages of using masks over bitfields or the
->> resulting binary code is the same?
->=20
-> Strictly speaking bitwise ops are portable while bitfields are not, =
-but
-> I guess this is not much of an issue with gcc which is dependable to
-> produce the right thing.
->=20
-> I came to dislike the bitfields for the false feeling of atomicity of
-> assignment while most of the time they are read-modify-write =
-operations.
->=20
-> And no, I don't feel strong about it, so if nobody backs me on this I
-> give up :)
+On 11/27/2018 02:36 PM, Thomas Gleixner wrote:
 
-Last time I tried to push a change from bitmasks to bitfields I failed:
-https://lkml.org/lkml/2014/9/16/245
+>>
+>> We need this special handling only if the next task has TIF_SPEC_UPDATE 
+>> set, which is one-off event globally (when seccomp marks all its threads 
+>> so due to seccomp filter change), and once all the TIF_SPEC_UPDATE tasks 
+>> schedule at least once, we're in a consistent state again and don't need 
+>> this, as every running task will then have its TIF consistent with MSR 
+>> value.
+> 
+> And how so? You set the bits is spec_flags. And then you set the TIF_UPDATE
+> bit which is evaluated once.
+> 
+> Then you OR the bits into tifp which is a local variable and has nothing to
+> do with the TIF flags of the next task. So on the next context switch this
+> will evaluate the previous state of the TIF bits and you could have spared
+> the whole exercise :)
+> 
 
-On a different note: how come all of the hyper-v structs are not marked
-with the =E2=80=9Cpacked" attribute?=
+This is better than my original implementation which was racy.
+Using task_spec_ssb_disable and task_spec_ib_disable to update TIF_* flags
+at context switch time makes the update logic very clear
+and extensible.
+
+Thanks.
+
+Tim
