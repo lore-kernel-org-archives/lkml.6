@@ -2,240 +2,121 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA39C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AFAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F9A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F9A2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 51FB42086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:40:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FB42086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbeK2BkL (ORCPT
+        id S1728642AbeK2Bmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:40:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36443 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeK2BkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:40:11 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEaXGt2324758
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:36:33 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEaXHv2324755;
-        Wed, 28 Nov 2018 06:36:33 -0800
-Date:   Wed, 28 Nov 2018 06:36:33 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-55a974021ec952ee460dc31ca08722158639de72@git.kernel.org>
-Cc:     jpoimboe@redhat.com, david.c.stewart@intel.com,
-        aarcange@redhat.com, peterz@infradead.org,
-        tim.c.chen@linux.intel.com, dwmw@amazon.co.uk,
-        casey.schaufler@intel.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        keescook@chromium.org, arjan@linux.intel.com,
-        longman9394@gmail.com, thomas.lendacky@amd.com, tglx@linutronix.de,
-        luto@kernel.org, hpa@zytor.com, jcm@redhat.com,
-        asit.k.mallick@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        ak@linux.intel.com, jkosina@suse.cz
-Reply-To: david.c.stewart@intel.com, jpoimboe@redhat.com,
-          aarcange@redhat.com, peterz@infradead.org,
-          tim.c.chen@linux.intel.com, dwmw@amazon.co.uk,
-          casey.schaufler@intel.com, gregkh@linuxfoundation.org,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          keescook@chromium.org, thomas.lendacky@amd.com,
-          arjan@linux.intel.com, longman9394@gmail.com, tglx@linutronix.de,
-          luto@kernel.org, hpa@zytor.com, jcm@redhat.com, mingo@kernel.org,
-          dave.hansen@intel.com, asit.k.mallick@intel.com, jkosina@suse.cz,
-          ak@linux.intel.com
-In-Reply-To: <20181125185006.144047038@linutronix.de>
-References: <20181125185006.144047038@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Provide IBPB always command line
- options
-Git-Commit-ID: 55a974021ec952ee460dc31ca08722158639de72
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Nov 2018 20:42:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:42050 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728443AbeK2Bmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:42:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2109B2D97;
+        Wed, 28 Nov 2018 06:40:44 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDD543F5AF;
+        Wed, 28 Nov 2018 06:40:41 -0800 (PST)
+Date:   Wed, 28 Nov 2018 14:40:39 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20181128144039.GC23094@e110439-lin>
+References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+ <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net>
+ <20181128115336.GB23094@e110439-lin>
+ <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  55a974021ec952ee460dc31ca08722158639de72
-Gitweb:     https://git.kernel.org/tip/55a974021ec952ee460dc31ca08722158639de72
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:56 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:14 +0100
+On 28-Nov 14:33, Vincent Guittot wrote:
+> On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> >
+> > On 28-Nov 11:02, Peter Zijlstra wrote:
+> > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
+> > >
+> > > > Is there anything else that I should do for these patches ?
+> > >
+> > > IIRC, Morten mention they break util_est; Patrick was going to explain.
+> >
+> > I guess the problem is that, once we cross the current capacity,
+> > strictly speaking util_avg does not represent anymore a utilization.
+> >
+> > With the new signal this could happen and we end up storing estimated
+> > utilization samples which will overestimate the task requirements.
+> >
+> > We will have a spike in estimated utilization at next wakeup, since we
+> > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
+> > case we collect multiple samples above the current capacity.
+> 
+> TBH I don't see how it's different from current implementation with a
+> task that was scheduled on big core and now wakes up on little core.
+> The util_est is overestimated as well.
 
-x86/speculation: Provide IBPB always command line options
+While running below the capacity of a CPU, either big or LITTLE, we
+can still measure the actual used bandwidth as long as we have idle
+time. If the task is then moved into a lower capacity core, I think
+it's still safe to assume that, likely, it would need more capacity.
 
-Provide the possibility to enable IBPB always in combination with 'prctl'
-and 'seccomp'.
+Why do you say it's the same ?
 
-Add the extra command line options and rework the IBPB selection to
-evaluate the command instead of the mode selected by the STIPB switch case.
+With your new signal instead, once we cross the current capacity,
+utilization is just not anymore utilization. Thus, IMHO it make sense
+avoid to accumulate a sample for what we call "estimated utilization".
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185006.144047038@linutronix.de
+I would also say that, with the current implementation which caps
+utilization to the current capacity, we get better estimation in
+general. At least we can say with absolute precision:
 
----
- Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++
- arch/x86/kernel/cpu/bugs.c                      | 34 +++++++++++++++++--------
- 2 files changed, 35 insertions(+), 11 deletions(-)
+   "the task needs _at least_ that amount of capacity".
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f405281bb202..05a252e5178d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4241,11 +4241,23 @@
- 				  per thread.  The mitigation control state
- 				  is inherited on fork.
- 
-+			prctl,ibpb
-+				- Like "prctl" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different user
-+				  space processes.
-+
- 			seccomp
- 				- Same as "prctl" above, but all seccomp
- 				  threads will enable the mitigation unless
- 				  they explicitly opt out.
- 
-+			seccomp,ibpb
-+				- Like "seccomp" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different
-+				  user space processes.
-+
- 			auto    - Kernel selects the mitigation depending on
- 				  the available CPU features and vulnerability.
- 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c9e304960534..500278f5308e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -256,7 +256,9 @@ enum spectre_v2_user_cmd {
- 	SPECTRE_V2_USER_CMD_AUTO,
- 	SPECTRE_V2_USER_CMD_FORCE,
- 	SPECTRE_V2_USER_CMD_PRCTL,
-+	SPECTRE_V2_USER_CMD_PRCTL_IBPB,
- 	SPECTRE_V2_USER_CMD_SECCOMP,
-+	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
- };
- 
- static const char * const spectre_v2_user_strings[] = {
-@@ -271,11 +273,13 @@ static const struct {
- 	enum spectre_v2_user_cmd	cmd;
- 	bool				secure;
- } v2_user_options[] __initdata = {
--	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
--	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
--	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
--	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
--	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
-+	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
-+	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
-+	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
-+	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
-+	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
-+	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
-+	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
- };
- 
- static void __init spec_v2_user_print_cond(const char *reason, bool secure)
-@@ -321,6 +325,7 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- {
- 	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
- 	bool smt_possible = IS_ENABLED(CONFIG_SMP);
-+	enum spectre_v2_user_cmd cmd;
- 
- 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
- 		return;
-@@ -329,17 +334,20 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
- 		smt_possible = false;
- 
--	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
-+	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
-+	switch (cmd) {
- 	case SPECTRE_V2_USER_CMD_NONE:
- 		goto set_mode;
- 	case SPECTRE_V2_USER_CMD_FORCE:
- 		mode = SPECTRE_V2_USER_STRICT;
- 		break;
- 	case SPECTRE_V2_USER_CMD_PRCTL:
-+	case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
- 		mode = SPECTRE_V2_USER_PRCTL;
- 		break;
- 	case SPECTRE_V2_USER_CMD_AUTO:
- 	case SPECTRE_V2_USER_CMD_SECCOMP:
-+	case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 		if (IS_ENABLED(CONFIG_SECCOMP))
- 			mode = SPECTRE_V2_USER_SECCOMP;
- 		else
-@@ -351,12 +359,15 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 
--		switch (mode) {
--		case SPECTRE_V2_USER_STRICT:
-+		switch (cmd) {
-+		case SPECTRE_V2_USER_CMD_FORCE:
-+		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
-+		case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 			static_branch_enable(&switch_mm_always_ibpb);
- 			break;
--		case SPECTRE_V2_USER_PRCTL:
--		case SPECTRE_V2_USER_SECCOMP:
-+		case SPECTRE_V2_USER_CMD_PRCTL:
-+		case SPECTRE_V2_USER_CMD_AUTO:
-+		case SPECTRE_V2_USER_CMD_SECCOMP:
- 			static_branch_enable(&switch_mm_cond_ibpb);
- 			break;
- 		default:
-@@ -364,7 +375,8 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 		}
- 
- 		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
--			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
-+			static_key_enabled(&switch_mm_always_ibpb) ?
-+			"always-on" : "conditional");
- 	}
- 
- 	/* If enhanced IBRS is enabled no STIPB required */
+Potentially we can also flag the task as being under-provisioned, in
+case there was not idle time, and _let a policy_ decide what to do
+with it and the granted information we have.
+
+While, with your new signal, once we are over the current capacity,
+the "utilization" is just a sort of "random" number at best useful to
+drive some conclusions about how long the task has been delayed.
+
+IOW, I fear that we are embedding a policy within a signal which is
+currently representing something very well defined: how much cpu
+bandwidth a task used. While, latency/under-provisioning policies
+perhaps should be better placed somewhere else.
+
+Perhaps I've missed it in some of the previous discussions:
+have we have considered/discussed this signal-vs-policy aspect ?
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
