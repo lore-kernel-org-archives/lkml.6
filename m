@@ -2,251 +2,111 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7899C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C1AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5222E2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5222E2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 412132081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:01:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412132081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbeK1VCZ (ORCPT
+        id S1728268AbeK1VCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:02:25 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:39540 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbeK1VCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:02:25 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2D9875E093AE6A5E750A;
-        Wed, 28 Nov 2018 18:01:14 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wASA10iM072826;
-        Wed, 28 Nov 2018 18:01:00 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018112818012357-13502531 ;
-          Wed, 28 Nov 2018 18:01:23 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] scsi: Fix semicolon.cocci warnings
-Date:   Wed, 28 Nov 2018 18:00:55 +0800
-Message-Id: <20181128100055.25118-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Wed, 28 Nov 2018 16:02:39 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36083 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbeK1VCj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:02:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x23so22055075oix.3;
+        Wed, 28 Nov 2018 02:01:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7z4lz5FKsGxdutW1NvyE9528FnmlLwU2jJcxSsKMJZA=;
+        b=TdSQmw82DAWvH+HlFUOpaqmUV+ly9NqvY5erp8LAk2gdEgnn0yxKDnhprGEJ4kdSU+
+         7cT/IQQmHtuJvh04UQv7wawCpiaMY7A9QK37hdXZE5s8wt2ctde1lVcLaYEHst65mB+3
+         7BHvdJpQ0zzRlxXAVZKAmEfddUqY7RHsgCoilFmSqYSLFpqW9OLO30RD4PZDFOeGMEyq
+         AmDO6FgycWimtS8uVt754vWiaWCeAfh12GS5a2HK6iZ3WaoIC7PGCNuUXhCkgtzYwRxm
+         oPb7sIZflaIAqq3OgunygGtXO5qHeD3CJgLRE3dANcr48vduvqGWTHPxZU6GDakEgHOH
+         K0/Q==
+X-Gm-Message-State: AGRZ1gLiKL9LX3tBNzpUUSwcSvSBDzq0x08fLGBDpD01N0wBov1uhZ7p
+        rU69RsF+tcsf9LZ+w0CaSlfFeqO1UMtISFPVRm0=
+X-Google-Smtp-Source: AJdET5es4DhPCmstc+NtR/iVyavuZC1uiEuUvHumFiscoY4r6hrP50aam3tHgSz719N88P3WSAk6Qtc+W6cbOrynoOE=
+X-Received: by 2002:aca:195:: with SMTP id 143mr18738085oib.322.1543399292249;
+ Wed, 28 Nov 2018 02:01:32 -0800 (PST)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-28 18:01:23,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-28 18:00:52
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wASA10iM072826
+References: <4064391.AYvOMBeiDo@aspire.rjw.lan> <20181128054835.gnhistcfxy25rmwf@vireshk-i7>
+ <CAJZ5v0hnX512AheTwhpj09+eyiyv6txsgGQcT2afWiB2JjjCzw@mail.gmail.com> <20181128093137.a5d4kwgfdthlsolw@vireshk-i7>
+In-Reply-To: <20181128093137.a5d4kwgfdthlsolw@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 28 Nov 2018 11:01:20 +0100
+Message-ID: <CAJZ5v0j4B6ODKzJ+XWvMS_dc6BpQcYkK6=L-zg8wcWXQxMcFhQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: admin-guide: PM: Add cpuidle document
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded semicolon.
-drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c:947:4-5: Unneeded semicolon
-drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c:967:4-5: Unneeded semicolon
-drivers/scsi/sgiwd93.c:190:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:521:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:548:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:571:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:264:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:304:3-4: Unneeded semicolon
-drivers/scsi/aha1542.c:367:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:604:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:622:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:640:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:464:3-4: Unneeded semicolon
-drivers/scsi/aha1542.c:476:2-3: Unneeded semicolon
-drivers/scsi/aha1542.c:506:2-3: Unneeded semicolon
+On Wed, Nov 28, 2018 at 10:31 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 28-11-18, 10:11, Rafael J. Wysocki wrote:
+> > On Wed, Nov 28, 2018 at 6:48 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 26-11-18, 14:11, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > Important information is missing from user/admin cpuidle documentation
+> > > > available today, so add a new user/admin document for cpuidle containing
+> > > > current and comprehensive information to admin-guide and drop the old
+> > > > .txt documents it is replacing.
+> > > >
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  Documentation/admin-guide/pm/cpuidle.rst       |  603 +++++++++++++++++++++++++
+> > > >  Documentation/admin-guide/pm/working-state.rst |    1
+> > > >  Documentation/cpuidle/core.txt                 |   23
+> > > >  Documentation/cpuidle/sysfs.txt                |   98 ----
+> > > >  4 files changed, 604 insertions(+), 121 deletions(-)
+> > >
+> > > Nice work Rafael. Minor nits below..
+> >
+> > Thanks for the typo fixes.  The spellchecker I have here evidently doesn't work.
+>
+> I have this in my .vimrc and I am shown these spelling mistakes somewhat
+> forcefully :)
+>
+> set spell spelllang=en_us
 
-Generated by: scripts/coccinelle/misc/semicolon.cocci
+Interestingly enough, it appears to work when I turn the automatic
+spellchecking, which I don't do for code as a rule, because it
+distracts me.  I will need to do that for docs going forward it seems,
+though.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-CC: "Martin K. Petersen" <martin.petersen@oracle.com>
-CC: linux-scsi@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/scsi/aha1542.c            | 24 ++++++++++++------------
- drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c |  4 ++--
- drivers/scsi/sgiwd93.c            |  2 +-
- 3 files changed, 15 insertions(+), 15 deletions(-)
+BTW, I didn't respond to the remark about the ladder governor.  I have
+no plans to describe it at this time and that can be done at any time
+later easily enough if anyone wants to do it.
 
-diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
-index 41add33e3f1f..b5685a7315b3 100644
---- a/drivers/scsi/aha1542.c
-+++ b/drivers/scsi/aha1542.c
-@@ -261,7 +261,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
-*dev=5Fid)
- 		if (flag & SCRD)
- 			printk("SCRD ");
- 		printk("status %02x\n", inb(STATUS(sh->io=5Fport)));
--	};
-+	}
- #endif
- 	number=5Fserviced =3D 0;
-=20
-@@ -301,7 +301,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
-*dev=5Fid)
- 			if (!number=5Fserviced)
- 				shost=5Fprintk(KERN=5FWARNING, sh, "interrupt received, but no mail.\n=
-");
- 			return IRQ=5FHANDLED;
--		};
-+		}
-=20
- 		mbo =3D (scsi2int(mb[mbi].ccbptr) - (isa=5Fvirt=5Fto=5Fbus(&ccb[0]))) / =
-sizeof(struct ccb);
- 		mbistatus =3D mb[mbi].status;
-@@ -364,7 +364,7 @@ static irqreturn=5Ft aha1542=5Finterrupt(int irq, void =
-*dev=5Fid)
- 						   far as queuecommand is concerned */
- 		my=5Fdone(tmp=5Fcmd);
- 		number=5Fserviced++;
--	};
-+	}
- }
-=20
- static int aha1542=5Fqueuecommand(struct Scsi=5FHost *sh, struct scsi=5Fcm=
-nd *cmd)
-@@ -461,7 +461,7 @@ static int aha1542=5Fqueuecommand(struct Scsi=5FHost *s=
-h, struct scsi=5Fcmnd *cmd)
- 			any2scsi(cptr[i].dataptr, isa=5Fpage=5Fto=5Fbus(sg=5Fpage(sg))
- 								+ sg->offset);
- 			any2scsi(cptr[i].datalen, sg->length);
--		};
-+		}
- 		any2scsi(ccb[mbo].datalen, sg=5Fcount * sizeof(struct chain));
- 		any2scsi(ccb[mbo].dataptr, isa=5Fvirt=5Fto=5Fbus(cptr));
- #ifdef DEBUG
-@@ -473,7 +473,7 @@ static int aha1542=5Fqueuecommand(struct Scsi=5FHost *s=
-h, struct scsi=5Fcmnd *cmd)
- 		cmd->host=5Fscribble =3D NULL;
- 		any2scsi(ccb[mbo].datalen, 0);
- 		any2scsi(ccb[mbo].dataptr, 0);
--	};
-+	}
- 	ccb[mbo].idlun =3D (target & 7) << 5 | direction | (lun & 7);	/*SCSI Targ=
-et Id */
- 	ccb[mbo].rsalen =3D 16;
- 	ccb[mbo].linkptr[0] =3D ccb[mbo].linkptr[1] =3D ccb[mbo].linkptr[2] =3D 0;
-@@ -503,7 +503,7 @@ static void setup=5Fmailboxes(struct Scsi=5FHost *sh)
- 	for (i =3D 0; i < AHA1542=5FMAILBOXES; i++) {
- 		mb[i].status =3D mb[AHA1542=5FMAILBOXES + i].status =3D 0;
- 		any2scsi(mb[i].ccbptr, isa=5Fvirt=5Fto=5Fbus(&ccb[i]));
--	};
-+	}
- 	aha1542=5Fintr=5Freset(sh->io=5Fport);	/* reset interrupts, so they don't=
- block */
- 	any2scsi((mb=5Fcmd + 2), isa=5Fvirt=5Fto=5Fbus(mb));
- 	if (aha1542=5Fout(sh->io=5Fport, mb=5Fcmd, 5))
-@@ -518,7 +518,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
- 	i =3D inb(STATUS(sh->io=5Fport));
- 	if (i & DF) {
- 		i =3D inb(DATA(sh->io=5Fport));
--	};
-+	}
- 	aha1542=5Foutb(sh->io=5Fport, CMD=5FRETCONF);
- 	aha1542=5Fin(sh->io=5Fport, inquiry=5Fresult, 3, 0);
- 	if (!wait=5Fmask(INTRFLAGS(sh->io=5Fport), INTRMASK, HACC, 0, 0))
-@@ -545,7 +545,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
- 	default:
- 		shost=5Fprintk(KERN=5FERR, sh, "Unable to determine DMA channel.\n");
- 		return -1;
--	};
-+	}
- 	switch (inquiry=5Fresult[1]) {
- 	case 0x40:
- 		sh->irq =3D 15;
-@@ -568,7 +568,7 @@ static int aha1542=5Fgetconfig(struct Scsi=5FHost *sh)
- 	default:
- 		shost=5Fprintk(KERN=5FERR, sh, "Unable to determine IRQ level.\n");
- 		return -1;
--	};
-+	}
- 	sh->this=5Fid =3D inquiry=5Fresult[2] & 7;
- 	return 0;
- }
-@@ -601,7 +601,7 @@ static int aha1542=5Fmbenable(struct Scsi=5FHost *sh)
-=20
- 		if (aha1542=5Fout(sh->io=5Fport, mbenable=5Fcmd, 3))
- 			goto fail;
--	};
-+	}
- 	while (0) {
- fail:
- 		shost=5Fprintk(KERN=5FERR, sh, "Mailbox init failed\n");
-@@ -619,7 +619,7 @@ static int aha1542=5Fquery(struct Scsi=5FHost *sh)
- 	i =3D inb(STATUS(sh->io=5Fport));
- 	if (i & DF) {
- 		i =3D inb(DATA(sh->io=5Fport));
--	};
-+	}
- 	aha1542=5Foutb(sh->io=5Fport, CMD=5FINQUIRY);
- 	aha1542=5Fin(sh->io=5Fport, inquiry=5Fresult, 4, 0);
- 	if (!wait=5Fmask(INTRFLAGS(sh->io=5Fport), INTRMASK, HACC, 0, 0))
-@@ -637,7 +637,7 @@ static int aha1542=5Fquery(struct Scsi=5FHost *sh)
- 	if (inquiry=5Fresult[0] =3D=3D 0x43) {
- 		shost=5Fprintk(KERN=5FINFO, sh, "Emulation mode not supported for AHA-17=
-40 hardware, use aha1740 driver instead.\n");
- 		return 1;
--	};
-+	}
-=20
- 	/* Always call this - boards that do not support extended bios translation
- 	   will ignore the command, and we will set the proper default */
-diff --git a/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c b/drivers/scsi/bnx2fc/bnx2=
-fc=5Ffcoe.c
-index cd160f2ec75d..d12405e85fd5 100644
---- a/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc=5Ffcoe.c
-@@ -944,7 +944,7 @@ static void bnx2fc=5Findicate=5Fnetevent(void *context,=
- unsigned long event,
- 				 */
- 				if (interface->enabled)
- 					fcoe=5Fctlr=5Flink=5Fup(ctlr);
--			};
-+			}
- 		} else if (fcoe=5Fctlr=5Flink=5Fdown(ctlr)) {
- 			switch (cdev->enabled) {
- 			case FCOE=5FCTLR=5FDISABLED:
-@@ -964,7 +964,7 @@ static void bnx2fc=5Findicate=5Fnetevent(void *context,=
- unsigned long event,
- 				put=5Fcpu();
- 				fcoe=5Fclean=5Fpending=5Fqueue(lport);
- 				wait=5Ffor=5Fupload =3D 1;
--			};
-+			}
- 		}
- 	}
- 	mutex=5Funlock(&bnx2fc=5Fdev=5Flock);
-diff --git a/drivers/scsi/sgiwd93.c b/drivers/scsi/sgiwd93.c
-index 5ed696dc9bbd..cd959b951854 100644
---- a/drivers/scsi/sgiwd93.c
-+++ b/drivers/scsi/sgiwd93.c
-@@ -187,7 +187,7 @@ static inline void init=5Fhpc=5Fchain(struct ip22=5Fhos=
-tdata *hdata)
- 		hcp++;
- 		dma +=3D sizeof(struct hpc=5Fchunk);
- 		start +=3D sizeof(struct hpc=5Fchunk);
--	};
-+	}
- 	hcp--;
- 	hcp->desc.pnext =3D hdata->dma;
- }
---=20
-2.19.1
-
+Thanks,
+Rafael
