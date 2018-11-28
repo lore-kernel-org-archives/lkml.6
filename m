@@ -2,113 +2,148 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F16C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338B8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5BF52081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:57:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5BF52081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CCC182081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:57:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RTBeT98G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC182081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeK1U6W (ORCPT
+        id S1728187AbeK1U6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:58:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33266 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbeK1U6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:58:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84B393610;
-        Wed, 28 Nov 2018 01:57:17 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 527303F5A0;
-        Wed, 28 Nov 2018 01:57:17 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 699C61AE0B6A; Wed, 28 Nov 2018 09:57:35 +0000 (GMT)
-Date:   Wed, 28 Nov 2018 09:57:35 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-        David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>, rostedt@goodmis.org,
-        mingo@redhat.com, ast@kernel.org, daniel@iogearbox.net,
-        jeyu@kernel.org, netdev@vger.kernel.org, ard.biesheuvel@linaro.org,
-        jannh@google.com, kristen@linux.intel.com, dave.hansen@intel.com,
-        deneen.t.dock@intel.com
-Subject: Re: [PATCH 0/2] =?utf-8?B?RG9u4oCZ?= =?utf-8?Q?t?= leave executable
- TLB entries to freed pages
-Message-ID: <20181128095734.GA23467@arm.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <CDB8B7C1-FD55-44AD-9B71-B3A750BF5489@gmail.com>
- <449E6648-5599-476D-8136-EE570101F930@gmail.com>
+        Wed, 28 Nov 2018 15:58:25 -0500
+Received: from mail-eopbgr50053.outbound.protection.outlook.com ([40.107.5.53]:34804
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727382AbeK1U6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:58:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oKjfdlfTufn/6WM5DbBbvEtt1I5sJDVpyJNBXPNoL+w=;
+ b=RTBeT98GL7AnJdmYt2GBbUEmw/FJVEfumuxb9+eaeMTqof2cqq5eVhlBuIhfHxzE2oZl2d6WVgOOiHT/CojXTtt0SN7W5UhG96viI2GNAiNeimlMGqh7DQysqdNgV8RPjzN4yl3WbhRepcS5VEwfXrX9opHq3F7TJrW6Q3GhUXk=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3690.eurprd04.prod.outlook.com (52.134.70.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Wed, 28 Nov 2018 09:57:15 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd%2]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
+ 09:57:15 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "LW@KARO-electronics.de" <LW@KARO-electronics.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V3 0/4] Add i.MX system controller RTC driver
+Thread-Topic: [PATCH V3 0/4] Add i.MX system controller RTC driver
+Thread-Index: AQHUhwC9cP4MHtZB/0i2IZa9G9jAdg==
+Date:   Wed, 28 Nov 2018 09:57:15 +0000
+Message-ID: <1543398696-3140-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR04CA0024.apcprd04.prod.outlook.com
+ (2603:1096:203:36::36) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3690;6:zEBAbJHh5fuD3WMXBqe+Ml+EzAJya2EaHG88bd/GrQiHGcoJR/loQvODF0XHFZWwNiLjZb26GAsGMWpPRmeDcIGxNG4P8g3hk6aWgAYE2+caex6BP6+zexVh9/jOAkygQ/2OJfaKTtknljUSXnSBbwgUbHbmCh6uXYcIexnial+dTA8BZEoLPhDN9IbTlSQM3nYCCXN0OyVQ7GD0wd1P6tNvQkMvvJ6ZvafA9j+O57P8bAEGrkuSor8Zr3AP4q9Bvtdacjj2FV2AQ0PVXY8Hkhr8bFRwj+LGlfm8lapSYalR2jHP/kUjaTRz5CC3Mr/57MbmbyGRjd500wg6BjuL+bEhsiDfDBUJZJp3HXO7gp1/cgk8HWo14SJ+vZ4VNYY46J/Wj/Ub2kBl7D2EIqOcYToHU/AF3h4Sby98m3nkjrT6WDf+/2G7B8TWbVXt3csMRPu8peLMe46rFVKf29WAug==;5:H0aJhSyhKFRE8YtlA7Rh+wuLtZ6EG4RUiXV7oPOJdq0Ruuf+SO03fryAtBo3ab1IIqTer7F4skglNgkFOmy9eunxhRiNH3lrtl3E7GPm/GRcoP/JAKzfGZfWw0PPitZkL7KYaxLXm4qt2v5jeOs4pDV8FN3Dj4eN+/u3WlZTlPU=;7:xV2drh76jXbJTDcGYCdG8kGaAtDJR4QkbCHbTSmwIoUrXyrhoAQgfWFGLCJuazbOrryYaW9pVaJ7H4C3uhXjOdmI0E2Oa7LOse9ATXceIcxf5+7QZZpzrT9oO09dKL4s4TybWbeIdph53HSnKmVAjg==
+x-ms-office365-filtering-correlation-id: cb102ab9-894c-437a-972e-08d65517dfbd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3690;
+x-ms-traffictypediagnostic: DB3PR0402MB3690:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <DB3PR0402MB3690BCEDB74DB07BF89FF70FF5D10@DB3PR0402MB3690.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231443)(999002)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3690;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3690;
+x-forefront-prvs: 0870212862
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(8936002)(50226002)(106356001)(256004)(8676002)(105586002)(305945005)(6306002)(81156014)(7416002)(81166006)(71200400001)(53936002)(6512007)(25786009)(6116002)(3846002)(71190400001)(486006)(476003)(2616005)(6486002)(2906002)(86362001)(2201001)(36756003)(186003)(110136005)(97736004)(99286004)(52116002)(7736002)(2501003)(14454004)(66066001)(68736007)(26005)(6436002)(386003)(478600001)(966005)(6506007)(316002)(5660300001)(4326008)(102836004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3690;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: d9a5liRfTOwZGVAUVPeK50v+02/Thpys5wZ+enPJ1VJw5mUyYsULCT/YEK6uSPkjsUQRjy6lyfdISb9VDGt2V6EKsOx7JZOCIxpQukFv9oZn7HEQyfL1dkMKuvUj94bMSKeAjflyBuTFFLeNGE8Rr2nOnJmVhXZruw1tZQgGfBORtVAIrXE/+lg63Ua9QG2LLFSluO6epDROBW+lUU0wxRN38WtgbEP9OALvnn07grArGaGxzgi7K8aJwlsYWiGskuGDk7/9yg72tqc0hfVhKHmX8Mg9AxWR3JYJWGADiVTun2UJgHPRLDsGfwvetLbnNKoLyVv2phkbL8CtHdjmiX0ckHBFtH2Jvz3zp2q2Wts=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <449E6648-5599-476D-8136-EE570101F930@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb102ab9-894c-437a-972e-08d65517dfbd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 09:57:15.1013
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3690
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 05:21:08PM -0800, Nadav Amit wrote:
-> > On Nov 27, 2018, at 5:06 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
-> > 
-> >> On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> >> 
-> >> Sometimes when memory is freed via the module subsystem, an executable
-> >> permissioned TLB entry can remain to a freed page. If the page is re-used to
-> >> back an address that will receive data from userspace, it can result in user
-> >> data being mapped as executable in the kernel. The root of this behavior is
-> >> vfree lazily flushing the TLB, but not lazily freeing the underlying pages. 
-> >> 
-> >> There are sort of three categories of this which show up across modules, bpf,
-> >> kprobes and ftrace:
-> >> 
-> >> 1. When executable memory is touched and then immediatly freed
-> >> 
-> >>  This shows up in a couple error conditions in the module loader and BPF JIT
-> >>  compiler.
-> > 
-> > Interesting!
-> > 
-> > Note that this may cause conflict with "x86: avoid W^X being broken during
-> > modules loading”, which I recently submitted.
-> 
-> I actually have not looked on the vmalloc() code too much recent, but it
-> seems … strange:
-> 
->   void vm_unmap_aliases(void)
->   {       
-> 
->   ...
->   	mutex_lock(&vmap_purge_lock);
->   	purge_fragmented_blocks_allcpus();
->   	if (!__purge_vmap_area_lazy(start, end) && flush)
->   		flush_tlb_kernel_range(start, end);
->   	mutex_unlock(&vmap_purge_lock);
->   }
-> 
-> Since __purge_vmap_area_lazy() releases the memory, it seems there is a time
-> window between the release of the region and the TLB flush, in which the
-> area can be allocated for another purpose. This can result in a
-> (theoretical) correctness issue. No?
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and secure RTC etc. management, Linux kernel
+has to communicate with system controller via MU (message unit)
+IPC to do RTC operation.
 
-If __purge_vmap_area_lazy() returns false, then it hasn't freed the memory,
-so we only invalidate the TLB if 'flush' is true in that case. If
-__purge_vmap_area_lazy() returns true instead, then it takes care of the TLB
-invalidation before the freeing.
+Since the RTC set time MUST to be done in secure EL3 mode (required
+by system controller firmware) and ALARM functions needs to be done
+with general MU IRQ handle, these are NOT ready NOW, so this patch
+ONLY supports RTC read time for now.
 
-Will
+Note that this patch set is based on [V4,5/5] defconfig: arm64: add imx8qxp=
+ support,
+https://patchwork.kernel.org/patch/10677315/
+
+Anson Huang (4):
+  rtc: add i.MX system controller RTC support
+  dt-bindings: rtc: add binding doc for i.MX system controller RTC
+    driver
+  defconfig: arm64: add i.MX system controller RTC support
+  ARM64: dts: imx: add i.MX8QXP system controller RTC support
+
+ .../devicetree/bindings/rtc/rtc-imx-sc.txt         |  10 ++
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi         |   4 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/rtc/Kconfig                                |   6 ++
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-imx-sc.c                           | 104 +++++++++++++++++=
+++++
+ 6 files changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-imx-sc.txt
+ create mode 100644 drivers/rtc/rtc-imx-sc.c
+
+--=20
+2.7.4
+
