@@ -2,107 +2,115 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A105C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63710C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC67205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:51:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC67205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2983820989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:56:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="GFLANw8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2983820989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbeK2FyZ (ORCPT
+        id S1727376AbeK2F7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:54:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:27022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeK2FyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:54:25 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A55A308A941;
-        Wed, 28 Nov 2018 18:51:48 +0000 (UTC)
-Received: from dhcp-25.97.bos.redhat.com (unknown [10.18.25.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2B5FA7B605;
-        Wed, 28 Nov 2018 18:51:44 +0000 (UTC)
-From:   Aaron Conole <aconole@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jesper Brouer <brouer@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Rony Efraim <ronye@mellanox.com>,
-        Simon Horman <horms@verge.net.au>,
-        Marcelo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [RFC -next v0 1/3] bpf: modular maps
-References: <20181125180919.13996-1-aconole@bytheb.org>
-        <20181125180919.13996-2-aconole@bytheb.org>
-        <20181127020608.4vucwmhrtu2cxrwu@ast-mbp.dhcp.thefacebook.com>
-        <f7tftvmd2ey.fsf@dhcp-25.97.bos.redhat.com>
-        <20181128051001.wcsgqx3d6c2aszp6@ast-mbp.dhcp.thefacebook.com>
-Date:   Wed, 28 Nov 2018 13:51:42 -0500
-Message-ID: <f7to9a99gsh.fsf@dhcp-25.97.bos.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 29 Nov 2018 00:59:01 -0500
+Received: from mail-eopbgr740139.outbound.protection.outlook.com ([40.107.74.139]:31712
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725772AbeK2F7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 00:59:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=or/HfVT8OIRIaXZlxd1D2dGXyZ4ljobVJOLrhYBmgSU=;
+ b=GFLANw8lrkCziYwsRsEbXICpzXA3lD4Qvh/CniQ3CWCLitlZrIfq4Y5NZsi478LBj3nx60d8i1SfVk9W0ZIiwruY4KPvepbFyXIuOMGOOovyMItVRY6RAZGb1y/bK8DGf28y38mS+pOMmZc90lmWjtluqMU441/v0rY6Jdt9FJo=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3611.namprd06.prod.outlook.com (10.167.236.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Wed, 28 Nov 2018 18:56:18 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c0f3:ea8f:48ba:a5d7]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::c0f3:ea8f:48ba:a5d7%4]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
+ 18:56:18 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "leonard.crestez@nxp.com" <leonard.crestez@nxp.com>
+Subject: Re: [PATCH] pci: imx6: support kernels built in Thumb-2 mode
+Thread-Topic: [PATCH] pci: imx6: support kernels built in Thumb-2 mode
+Thread-Index: AQHUhx3olr351tELyESJsCCkW3sxWqVlXTUAgAAspIA=
+Date:   Wed, 28 Nov 2018 18:56:18 +0000
+Message-ID: <1543431377.18519.94.camel@impinj.com>
+References: <20181128132554.28139-1-stefan@agner.ch>
+         <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
+In-Reply-To: <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3611;6:QQigNdPRlpYaiQuse3niNoW9FLZFJ5D1i1+bzp1vyHWS5otYyJTDZYipTX/lngY9p/NFeCnPUvp96J9esDMyPwdOvV17UuvTNC6D3E3C5j6zMClMKltSXXj7WI4GYe+m9DyIsW2aE2yCEFx7sPq8OvYTlwSRe56tnD7aShcyI6PtIFJIAh/IZG3CctYJye5isY+T2DCMKAV8wbuzYBYi+V1CHWbXz9hU4CSH0rwYOB/NVXhVsV41qgo3KjzCV/nPIBADPe7zM8Dl3w74k1i5LCNjls31N1uWTIJrmgYIPmOQy0ZByC2sEp/LS2gCEBgvrZngJ8J4smGYgWTZqh/nsOAxeHPiriGNOrOpcWpQiqQeew60mh4Hooibblf81UMvlqOzikwQ+wn1DSMAug8F0DE019JXdi/DICn7J0e30dBbDZF8eNhcpudFXrzdHNxzpjOOA0XmaRrk2CrAVPdVbQ==;5:+HaJMWhUexUrylWp+djcd7z0tZ/c51UI64lj0UHE119EGvwq5hBeuL0hcCGtV+9GOpo3d42qewFnXMS6NTsx9Xw4v16d9Ct0uPwPnuNipX5EFMPUMnHty2xi3MD2PLyp3A0rFsGcdv/Lc3RQtErs+fmucIZoI+tQDL+LQxX+mlM=;7:Y+5wKOjrULNxG+qO1bY9szyIwNKycVcFBIESznHzkmAcc5iKmMtw9PM3KGH47jLg5IhXOwBM7uzfswTUEP1WIx1uvrGtTCsnZAlvx9SrQtqVAepcK+LuZwQM2lOrLf/f57f9lLmk3hI96gLANHBzqA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 716026d1-801a-421c-945e-08d655632e1d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3611;
+x-ms-traffictypediagnostic: MWHPR0601MB3611:
+x-microsoft-antispam-prvs: <MWHPR0601MB3611C75B14F05AE5EC3BF1CFD3D10@MWHPR0601MB3611.namprd06.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231443)(999002)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0601MB3611;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3611;
+x-forefront-prvs: 0870212862
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(136003)(39850400004)(346002)(396003)(199004)(189003)(4326008)(6506007)(5660300001)(229853002)(478600001)(6486002)(7416002)(26005)(97736004)(106356001)(105586002)(14454004)(2906002)(3846002)(71190400001)(71200400001)(2616005)(316002)(446003)(11346002)(103116003)(66066001)(486006)(305945005)(81156014)(7736002)(25786009)(36756003)(81166006)(6116002)(14444005)(256004)(2501003)(6436002)(8936002)(110136005)(8676002)(54906003)(476003)(4001150100001)(39060400002)(102836004)(2201001)(6512007)(76176011)(68736007)(99286004)(6246003)(86362001)(186003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3611;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: PqyRbmaBw2eRFAa/v2LbPIOv7b3MivmzNKdATS4mJ4CYFowUn4OksQDsOq6Pfi1qJiAbZHtFUgpi181q36NE3Bi70RGG/gVPkbFeX8IPMr7lYRAyaaKA4RVF1zVwM792LByEfpt4yxw/BTr9vTZN/fvaV0DwYu3JjSPqd9qbvF8xCAxpzEWLOAhgpNiPkBhgRglM84COG7frRrqL1JZDNN6x8l2E3uw3lO68qQYvRp+QKHk8XhZfN2aQ4DmG6CoXzvHGP4eLpMzEQAAj3pYf5CNaIHSXVrOI8e+eVBUUYgyS1jbaU4A/6JBj6/ZLnL4gIHdQHurPQOvGRBP+qEINDLU9nGC5uPENrZ/H2mcGK+8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <43DC035817687E439537C947F6369EBF@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 28 Nov 2018 18:51:48 +0000 (UTC)
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 716026d1-801a-421c-945e-08d655632e1d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 18:56:18.2067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3611
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-
-> On Tue, Nov 27, 2018 at 09:24:05AM -0500, Aaron Conole wrote:
->> 
->>   1. Introduce flowmap again, this time, basically having it close to a
->>      copy of the hashmap.  Introduce a few function calls that allow an
->>      external module to easily manipulate all maps of that type to insert
->>      / remove / update entries.  This makes it similar to, for example,
->>      devmap.
->
-> what is a flowmap?
-> How is this flowmap different from existing hash, lpm and lru maps?
-
-The biggest difference is how relationship works.  Normal map would
-have single key and single value.  Flow map needs to have two keys
-"single-value," because there are two sets of flow tuples to track
-(forward and reverse direction).  That means that when updating the k-v
-pairs, we need to ensure that the data is always consistent and up to
-date.  Probably we could do that with the existing maps if we had some
-kind of allocation mechanism, too (so, keep a pointer to data from two
-keys - not sure if there's a way to do that in ebpf)?
-
-Still I need a way to get the conntrack information from netfilter (or
-really any other entity that will provide it) into the bpf map, whatever
-map type it takes.
-
-> 'close to a copy of hashmap'... why hashmap is not enough for your purpose?
-
-It might be (see the item 2. in that list).  I'm trying to allow
-netfilter conntrack to update the bpf map so that the flow offload data
-is available, and make sure that when I look up a 5-tuple from the
-bpf program in the map, I get the appropriate flow-offload data (ie:
-forward direction addresses could be different from reverse direction so
-just swapping addresses / ports will not match).  Like I wrote in the
-cover letter (but probably poorly, sorry for that), I want to forward
-packets into the stack until a connection is added to the table, and
-then push the packets directly to the places they need to go, doing the
-nat etc.  That lets us use xdp as a fast forwarding path for
-connections, getting all of the advantage of helper modules to do the
-control / parsing, and all the advantage of xdp for packet movement.
-
-Maybe I don't see a better solution, though - or possibly there's a more
-generic approach that works better.
+T24gV2VkLCAyMDE4LTExLTI4IGF0IDE2OjE2ICswMDAwLCBSb2JpbiBNdXJwaHkgd3JvdGU6DQo+
+IA0KPiA+ICAgDQo+ID4gK3N0YXRpYyBpbnQgaW14NnFfcGNpZV9hYm9ydF9oYW5kbGVyX3RodW1i
+Mih1bnNpZ25lZCBsb25nIGFkZHIsDQo+ID4gKwkJdW5zaWduZWQgaW50IGZzciwgc3RydWN0IHB0
+X3JlZ3MgKnJlZ3MpDQo+ID4gK3sNCj4gPiArCXVuc2lnbmVkIGxvbmcgcGMgPSBpbnN0cnVjdGlv
+bl9wb2ludGVyKHJlZ3MpOw0KPiA+ICsJdW5zaWduZWQgbG9uZyBpbnN0ciA9ICoodW5zaWduZWQg
+bG9uZyAqKXBjOw0KPiA+ICsJdW5zaWduZWQgbG9uZyB0aHVtYjJfaW5zdHIgPSBfX21lbV90b19v
+cGNvZGVfdGh1bWIxNihpbnN0cik7DQo+ID4gKwlpbnQgcmVnID0gdGh1bWIyX2luc3RyICYgNzsN
+Cj4gPiArDQo+ID4gKwlpZiAoIV9fb3Bjb2RlX2lzX3RodW1iMTYoaW5zdHIgJiAweDAwMDBmZmZm
+VUwpKQ0KPiA+ICsJCXJldHVybiAxOw0KPiANCj4gVGhlcmUgYXJlIHBsZW50eSBvZiAzMi1iaXQg
+VGh1bWIgZW5jb2RpbmdzIG9mIHZhcmlvdXMgTERSL1NUUiB2YXJpYW50cywgDQo+IGFuZCBJIGRv
+dWJ0IHdlIGNhbiBndWFyYW50ZWUgdGhhdCB0aGUgb2Zmc2V0LCB0YXJnZXQgcmVnaXN0ZXIsIGFu
+ZC9vciANCj4gYWRkcmVzc2luZyBtb2RlIGZvciBhIGNvbmZpZyBzcGFjZSBhY2Nlc3Mgd2lsbCAq
+YWx3YXlzKiBzdWl0IHRoZSANCj4gKHJlbGF0aXZlbHkgbGltaXRlZCkgMTYtYml0IG9uZXMuDQoN
+Ckl0IG1pZ2h0IGJlIHRoZSBjYXNlIHRoYXQgUExEL1BMSSwgMzItYml0IHRodW1iMiBpbnN0cnVj
+dGlvbnMsIGNvdWxkDQp0cmlnZ2VyIGFuIGFib3J0IHRvby4NCg==
