@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB84C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4184C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47B012147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B012147D
+	by mail.kernel.org (Postfix) with ESMTP id A200D2151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A200D2151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeK2JYS (ORCPT
+        id S1726976AbeK2JYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:18 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33119 "EHLO
+        Thu, 29 Nov 2018 04:24:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33128 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbeK2JYR (ORCPT
+        with ESMTP id S1726870AbeK2JYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:17 -0500
+        Thu, 29 Nov 2018 04:24:18 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8Cd-0001GX-Bv; Wed, 28 Nov 2018 23:21:03 +0100
+        id 1gS8Ce-0001GX-Te; Wed, 28 Nov 2018 23:21:05 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 12/29] x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
-Date:   Wed, 28 Nov 2018 23:20:18 +0100
-Message-Id: <20181128222035.2996-13-bigeasy@linutronix.de>
+Subject: [PATCH 13/29] x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()
+Date:   Wed, 28 Nov 2018 23:20:19 +0100
+Message-Id: <20181128222035.2996-14-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,62 +49,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ->initialized is always true for user tasks and kernel threads
-don't get this far, we always save the registers directly to userspace.
+Why does copy_fpstate_to_sigframe() do copy_fxregs_to_kernel() in the
+ia32_fxstate case? I don't know. It just does.
+Maybe it was required at some point, maybe it was added by accident and
+nobody noticed it because it makes no difference.
 
-Remove check for ->initialized because it is always true and remove the
-false condition.
+In copy_fpstate_to_sigframe() we stash the FPU state into the task's
+stackframe. Then the CPU's FPU registers (and its fpu->state) are
+cleared (handle_signal() does fpu__clear()). So it makes *no* difference
+what happens to fpu->state after copy_fpregs_to_sigframe().
+
+Remove copy_fxregs_to_kernel() since it does not matter what it does and
+save a few cycles.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/signal.c | 30 ++++++------------------------
- 1 file changed, 6 insertions(+), 24 deletions(-)
+ arch/x86/kernel/fpu/signal.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 9c35598697b94..42e0f98f34f54 100644
+index 42e0f98f34f54..3a59c578440e2 100644
 --- a/arch/x86/kernel/fpu/signal.c
 +++ b/arch/x86/kernel/fpu/signal.c
-@@ -157,7 +157,6 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
- int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- {
- 	struct fpu *fpu = &current->thread.fpu;
--	struct xregs_state *xsave = &fpu->state.xsave;
- 	struct task_struct *tsk = current;
- 	int ia32_fxstate = (buf != buf_fx);
- 
-@@ -172,29 +171,12 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 			sizeof(struct user_i387_ia32_struct), NULL,
- 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
- 
--	if (fpu->initialized || using_compacted_format()) {
--		/* Save the live register state to the user directly. */
--		if (copy_fpregs_to_sigframe(buf_fx))
--			return -1;
--		/* Update the thread's fxstate to save the fsave header. */
--		if (ia32_fxstate)
--			copy_fxregs_to_kernel(fpu);
--	} else {
--		/*
--		 * It is a *bug* if kernel uses compacted-format for xsave
--		 * area and we copy it out directly to a signal frame. It
--		 * should have been handled above by saving the registers
--		 * directly.
--		 */
--		if (boot_cpu_has(X86_FEATURE_XSAVES)) {
--			WARN_ONCE(1, "x86/fpu: saving compacted-format xsave area to a signal frame!\n");
--			return -1;
--		}
--
--		fpstate_sanitize_xstate(fpu);
--		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
--			return -1;
--	}
-+	/* Save the live register state to the user directly. */
-+	if (copy_fpregs_to_sigframe(buf_fx))
-+		return -1;
-+	/* Update the thread's fxstate to save the fsave header. */
-+	if (ia32_fxstate)
-+		copy_fxregs_to_kernel(fpu);
+@@ -174,9 +174,6 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 	/* Save the live register state to the user directly. */
+ 	if (copy_fpregs_to_sigframe(buf_fx))
+ 		return -1;
+-	/* Update the thread's fxstate to save the fsave header. */
+-	if (ia32_fxstate)
+-		copy_fxregs_to_kernel(fpu);
  
  	/* Save the fsave header for the 32-bit frames. */
  	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
