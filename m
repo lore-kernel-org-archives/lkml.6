@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFD0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BD7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 091392081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB1E20660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCxMG8J2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091392081B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lp7qh8U6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB1E20660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeK1Wob (ORCPT
+        id S1728201AbeK1Wok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:44:31 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44644 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbeK1Wo3 (ORCPT
+        Wed, 28 Nov 2018 17:44:40 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52211 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeK1Wo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:44:29 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so21655337wrt.11;
-        Wed, 28 Nov 2018 03:43:06 -0800 (PST)
+        Wed, 28 Nov 2018 17:44:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id s14so2026039wmh.1;
+        Wed, 28 Nov 2018 03:43:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:subject:date:message-id:in-reply-to:references;
-        bh=L/cBg2Bauzy2BzX2pviJVi4k6LLB7RWGisFDkXSisAA=;
-        b=mCxMG8J2yYnM50g6//QvKAfAvXduGfx6qYRVLnJXitrP1VDWMavKMyd4KSNBLIKEeb
-         Y9nzJ+NHkLmduIEb05QaJKaFr73mwxPVDxErU17jcOYqNTLzTz0y9GiNohYUyZwYU5tp
-         5ASWsd5K2CwyqLiYaKKrtuqbqTzvg8ic9Aib4M3GLjz/ewlBFZtUCN/Gq2uvITG53W+y
-         VrAzBtKQURS75Km5mjbJ4+x+oiWn2REBFBHGbwBy0z0J75Aotyta9fQqCRCNUMO2XmW2
-         H7IFU756jRo4gnc4752DWeKSuO88NllZLVuVJh9K486+rudeHWhDS5syHJZTTvq2Z8Es
-         Otfw==
+        bh=y36Vr6tHWUTE6fkkPoOSAxsWpbq5HwHQ/ij4F5cdR/U=;
+        b=Lp7qh8U6GPKBVbxBhm92DLIATEoyoDOLHeRrXkaX/H5bW5UpfD9hPDaTK900qGqSnG
+         gYiMU0sLJm7sgLrNWx3neWS3zdE8ppFKBHkfkBbme5ZluI1azty9Ilz7PXTnY660DSUN
+         Yq8zmJaCin6gFZGodLSCVWCiYmWyKgDVJs/cCPkAH2jb1ERqRL2iprgDxl0R/u68GBDZ
+         kjnYZxsdQzJXDbD2Lx5k9fWt9KhO0afsRwNw2gwijU+kFvX3nrm32pFKIf1s6fUaRia2
+         Q5V0JZwRrGrdKYLGbRKiyZJBm9K6zGGP26Gg+dh0t5aX2U3PhzuYZuXSi55IGUXPHi3G
+         r2QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:subject:date:message-id
          :in-reply-to:references;
-        bh=L/cBg2Bauzy2BzX2pviJVi4k6LLB7RWGisFDkXSisAA=;
-        b=dhT7MbxkdpuT81cCWb9KREUaQwg1kHs/wRPmpak4iw2QmbIMOgBLUnCmWCVRxN1tUK
-         5/acjr+bxQNi+9BlaicZi9wEzAPkWDnXVAk7La4bQ26xmr8KfKugFF8KVGqVvAWRY1PZ
-         O+lLeQZv1qNV9sQ8Kp1zwNq4J6u/fNn5U0AO4nepORwIlNSRI5fcvp0R5kzM4pka/UbH
-         xqI2JgUZWlRjqLMVIi2yjB/N2iz1cT0iH4NkD7beoHPTk7Q3lbJT7IhtJPyRyuI/iyUt
-         VOdn7qJ+pkWBjhaCd+0BxRK4OX+lTJj46hMWimx72MmzKRqg4ddV4O62/Wnh1jkBNVjD
-         fhHQ==
-X-Gm-Message-State: AA+aEWYSLN1/0w4bW68FYLJSDmv3nFm/NCBlRfXQ/dGNyPfcFNawkjqq
-        zh/XImq6WtqCTMOLGShe190AYQ/t
-X-Google-Smtp-Source: AFSGD/VSaOAnwAg4ZTA9VVhVymdceAZEFH9mBAqWtvpm16N6gEnMOPaVM2nlSgDn3XXBuu9O7oPq2w==
-X-Received: by 2002:a5d:63c3:: with SMTP id c3mr30215088wrw.215.1543405384990;
-        Wed, 28 Nov 2018 03:43:04 -0800 (PST)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id k19sm7061740wre.5.2018.11.28.03.43.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=y36Vr6tHWUTE6fkkPoOSAxsWpbq5HwHQ/ij4F5cdR/U=;
+        b=nXG0Q9DB+OYtw0lCyJCxT9xubL4lrSuGjndqsJekUTtM2hV/TywZ9yqicx2Aubzm4O
+         KxLnN7mBEu1OZvYZIM8Esimbj44tO6+wLkyVIGiIf7jnpgiWrUVdb8l1JFRhOHN+yz66
+         Sh6136iGkEW07ybMai7kcV8hWhTFoEYE+6aLU03bjCl0CqYIw7DoG0T51PlUPqO1DkFU
+         2dQSBcQ55M7nR2vJp3zNcbsEnlDGfxNedYSmplBsjhO8Lv6TdWAEIboF2Ma7m5IAicwR
+         3/OgwgXoDWsj9NusewigZftTwJLCjhQo0GtYVUwz4FZXdRtaS+ylHcrvuKEzdXne78Br
+         r+kg==
+X-Gm-Message-State: AA+aEWa2QlJB5Kx6UcBYRYbhHd+NjiteXH7YSN2CrZJJvTYx5m+eBAkG
+        wwfXLXThrPpyLWlz07G9JQfxo1+/
+X-Google-Smtp-Source: AFSGD/UF+0AH0mZvbPKGxS1rMcME+x5eSn/aBZBUAbmUTKsVPAN/LoYWKkOCRM7PrvLqxeWeaEQtiQ==
+X-Received: by 2002:a1c:238c:: with SMTP id j134mr182309wmj.16.1543405383726;
         Wed, 28 Nov 2018 03:43:03 -0800 (PST)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id k19sm7061740wre.5.2018.11.28.03.43.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 03:43:02 -0800 (PST)
 From:   Paolo Bonzini <pbonzini@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH 3/3] kvm: introduce manual dirty log reprotect
-Date:   Wed, 28 Nov 2018 12:42:59 +0100
-Message-Id: <1543405379-21910-4-git-send-email-pbonzini@redhat.com>
+Subject: [PATCH 2/3] kvm: rename last argument to kvm_get_dirty_log_protect
+Date:   Wed, 28 Nov 2018 12:42:58 +0100
+Message-Id: <1543405379-21910-3-git-send-email-pbonzini@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1543405379-21910-1-git-send-email-pbonzini@redhat.com>
 References: <1543405379-21910-1-git-send-email-pbonzini@redhat.com>
@@ -70,597 +70,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two problems with KVM_GET_DIRTY_LOG.  First, and less important,
-it can take kvm->mmu_lock for an extended period of time.  Second, its user
-can actually see many false positives in some cases.  The latter is due
-to a benign race like this:
+When manual dirty log reprotect will be enabled, kvm_get_dirty_log_protect's
+pointer argument will always be false on exit, because no TLB flush is needed
+until the manual re-protection operation.  Rename it from "is_dirty" to "flush",
+which more accurately tells the caller what they have to do with it.
 
-  1. KVM_GET_DIRTY_LOG returns a set of dirty pages and write protects
-     them.
-  2. The guest modifies the pages, causing them to be marked ditry.
-  3. Userspace actually copies the pages.
-  4. KVM_GET_DIRTY_LOG returns those pages as dirty again, even though
-     they were not written to since (3).
-
-This is especially a problem for large guests, where the time between
-(1) and (3) can be substantial.  This patch introduces a new
-capability which, when enabled, makes KVM_GET_DIRTY_LOG not
-write-protect the pages it returns.  Instead, userspace has to
-explicitly clear the dirty log bits just before using the content
-of the page.  The new KVM_CLEAR_DIRTY_LOG ioctl can also operate on a
-64-page granularity rather than requiring to sync a full memslot;
-this way, the mmu_lock is taken for small amounts of time, and
-only a small amount of time will pass between write protection
-of pages and the sending of their content.
-
+Reviewed-by: Junaid Shahid <junaids@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- Documentation/virtual/kvm/api.txt                  |  67 +++++++++++
- arch/mips/kvm/mips.c                               |  23 ++++
- arch/x86/kvm/x86.c                                 |  27 +++++
- include/linux/kvm_host.h                           |   5 +
- include/uapi/linux/kvm.h                           |  15 +++
- tools/testing/selftests/kvm/Makefile               |   2 +
- tools/testing/selftests/kvm/clear_dirty_log_test.c |   2 +
- tools/testing/selftests/kvm/dirty_log_test.c       |  19 +++
- tools/testing/selftests/kvm/include/kvm_util.h     |   2 +
- tools/testing/selftests/kvm/lib/kvm_util.c         |  13 ++
- virt/kvm/arm/arm.c                                 |  16 +++
- virt/kvm/kvm_main.c                                | 132 ++++++++++++++++++---
- 12 files changed, 306 insertions(+), 17 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c
+ arch/mips/kvm/mips.c     | 6 +++---
+ arch/x86/kvm/x86.c       | 6 +++---
+ include/linux/kvm_host.h | 2 +-
+ virt/kvm/arm/arm.c       | 6 +++---
+ virt/kvm/kvm_main.c      | 6 +++---
+ 5 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 1071c10cf1c7..f2c345f7b630 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -305,6 +305,9 @@ the address space for which you want to return the dirty bitmap.
- They must be less than the value that KVM_CHECK_EXTENSION returns for
- the KVM_CAP_MULTI_ADDRESS_SPACE capability.
- 
-+The bits in the dirty bitmap are cleared before the ioctl returns, unless
-+KVM_CAP_MANUAL_DIRTY_LOG_PROTECT is enabled.  For more information,
-+see the description of the capability.
- 
- 4.9 KVM_SET_MEMORY_ALIAS
- 
-@@ -3758,6 +3761,46 @@ Coalesced pio is based on coalesced mmio. There is little difference
- between coalesced mmio and pio except that coalesced pio records accesses
- to I/O ports.
- 
-+4.117 KVM_CLEAR_DIRTY_LOG (vm ioctl)
-+
-+Capability: KVM_CAP_MANUAL_DIRTY_LOG_PROTECT
-+Architectures: x86
-+Type: vm ioctl
-+Parameters: struct kvm_dirty_log (in)
-+Returns: 0 on success, -1 on error
-+
-+/* for KVM_CLEAR_DIRTY_LOG */
-+struct kvm_clear_dirty_log {
-+	__u32 slot;
-+	__u32 num_pages;
-+	__u64 first_page;
-+	union {
-+		void __user *dirty_bitmap; /* one bit per page */
-+		__u64 padding;
-+	};
-+};
-+
-+The ioctl clears the dirty status of pages in a memory slot, according to
-+the bitmap that is passed in struct kvm_clear_dirty_log's dirty_bitmap
-+field.  Bit 0 of the bitmap corresponds to page "first_page" in the
-+memory slot, and num_pages is the size in bits of the input bitmap.
-+Both first_page and num_pages must be a multiple of 64.  For each bit
-+that is set in the input bitmap, the corresponding page is marked "clean"
-+in KVM's dirty bitmap, and dirty tracking is re-enabled for that page
-+(for example via write-protection, or by clearing the dirty bit in
-+a page table entry).
-+
-+If KVM_CAP_MULTI_ADDRESS_SPACE is available, bits 16-31 specifies
-+the address space for which you want to return the dirty bitmap.
-+They must be less than the value that KVM_CHECK_EXTENSION returns for
-+the KVM_CAP_MULTI_ADDRESS_SPACE capability.
-+
-+This ioctl is mostly useful when KVM_CAP_MANUAL_DIRTY_LOG_PROTECT
-+is enabled; for more information, see the description of the capability.
-+However, it can always be used as long as KVM_CHECK_EXTENSION confirms
-+that KVM_CAP_MANUAL_DIRTY_LOG_PROTECT is present.
-+
-+
- 5. The kvm_run structure
- ------------------------
- 
-@@ -4652,6 +4695,30 @@ and injected exceptions.
- * For the new DR6 bits, note that bit 16 is set iff the #DB exception
-   will clear DR6.RTM.
- 
-+7.18 KVM_CAP_MANUAL_DIRTY_LOG_PROTECT
-+
-+Architectures: all
-+Parameters: args[0] whether feature should be enabled or not
-+
-+With this capability enabled, KVM_GET_DIRTY_LOG will not automatically
-+clear and write-protect all pages that are returned as dirty.
-+Rather, userspace will have to do this operation separately using
-+KVM_CLEAR_DIRTY_LOG.
-+
-+At the cost of a slightly more complicated operation, this provides better
-+scalability and responsiveness for two reasons.  First,
-+KVM_CLEAR_DIRTY_LOG ioctl can operate on a 64-page granularity rather
-+than requiring to sync a full memslot; this ensures that KVM does not
-+take spinlocks for an extended period of time.  Second, in some cases a
-+large amount of time can pass between a call to KVM_GET_DIRTY_LOG and
-+userspace actually using the data in the page.  Pages can be modified
-+during this time, which is inefficint for both the guest and userspace:
-+the guest will incur a higher penalty due to write protection faults,
-+while userspace can see false reports of dirty pages.  Manual reprotection
-+helps reducing this time, improving guest performance and reducing the
-+number of dirty log false positives.
-+
-+
- 8. Other capabilities.
- ----------------------
- 
 diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 3898e657952e..3734cd58895e 100644
+index 1fcc4d149054..3898e657952e 100644
 --- a/arch/mips/kvm/mips.c
 +++ b/arch/mips/kvm/mips.c
-@@ -1023,6 +1023,29 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- 	return r;
- }
- 
-+int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm, struct kvm_clear_dirty_log *log)
-+{
-+	struct kvm_memslots *slots;
-+	struct kvm_memory_slot *memslot;
-+	bool flush = false;
-+	int r;
-+
-+	mutex_lock(&kvm->slots_lock);
-+
-+	r = kvm_clear_dirty_log_protect(kvm, log, &flush);
-+
-+	if (flush) {
-+		slots = kvm_memslots(kvm);
-+		memslot = id_to_memslot(slots, log->slot);
-+
-+		/* Let implementation handle TLB/GVA invalidation */
-+		kvm_mips_callbacks->flush_shadow_memslot(kvm, memslot);
-+	}
-+
-+	mutex_unlock(&kvm->slots_lock);
-+	return r;
-+}
-+
- long kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+@@ -1004,14 +1004,14 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
  {
- 	long r;
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
+-	bool is_dirty = false;
++	bool flush = false;
+ 	int r;
+ 
+ 	mutex_lock(&kvm->slots_lock);
+ 
+-	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
++	r = kvm_get_dirty_log_protect(kvm, log, &flush);
+ 
+-	if (is_dirty) {
++	if (flush) {
+ 		slots = kvm_memslots(kvm);
+ 		memslot = id_to_memslot(slots, log->slot);
+ 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 448f011aa317..6af846c54660 100644
+index 714c5eb0c3bd..448f011aa317 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -4418,6 +4418,33 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- 	return r;
- }
- 
-+int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm, struct kvm_clear_dirty_log *log)
-+{
-+	bool flush = false;
-+	int r;
-+
-+	mutex_lock(&kvm->slots_lock);
-+
-+	/*
-+	 * Flush potentially hardware-cached dirty pages to dirty_bitmap.
-+	 */
-+	if (kvm_x86_ops->flush_log_dirty)
-+		kvm_x86_ops->flush_log_dirty(kvm);
-+
-+	r = kvm_clear_dirty_log_protect(kvm, log, &flush);
-+
-+	/*
-+	 * All the TLBs can be flushed out of mmu lock, see the comments in
-+	 * kvm_mmu_slot_remove_write_access().
-+	 */
-+	lockdep_assert_held(&kvm->slots_lock);
-+	if (flush)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	mutex_unlock(&kvm->slots_lock);
-+	return r;
-+}
-+
- int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_event,
- 			bool line_status)
+@@ -4393,7 +4393,7 @@ static int kvm_vm_ioctl_reinject(struct kvm *kvm,
+  */
+ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
  {
+-	bool is_dirty = false;
++	bool flush = false;
+ 	int r;
+ 
+ 	mutex_lock(&kvm->slots_lock);
+@@ -4404,14 +4404,14 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
+ 	if (kvm_x86_ops->flush_log_dirty)
+ 		kvm_x86_ops->flush_log_dirty(kvm);
+ 
+-	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
++	r = kvm_get_dirty_log_protect(kvm, log, &flush);
+ 
+ 	/*
+ 	 * All the TLBs can be flushed out of mmu lock, see the comments in
+ 	 * kvm_mmu_slot_remove_write_access().
+ 	 */
+ 	lockdep_assert_held(&kvm->slots_lock);
+-	if (is_dirty)
++	if (flush)
+ 		kvm_flush_remote_tlbs(kvm);
+ 
+ 	mutex_unlock(&kvm->slots_lock);
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 8c56b2873b13..e065aeaae29e 100644
+index 54cc06dd7e6c..8c56b2873b13 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -449,6 +449,7 @@ struct kvm {
- #endif
- 	long tlbs_dirty;
- 	struct list_head devices;
-+	bool manual_dirty_log_protect;
- 	struct dentry *debugfs_dentry;
- 	struct kvm_stat_data **debugfs_stat_data;
- 	struct srcu_struct srcu;
-@@ -754,6 +755,8 @@ int kvm_get_dirty_log(struct kvm *kvm,
+@@ -753,7 +753,7 @@ int kvm_get_dirty_log(struct kvm *kvm,
+ 			struct kvm_dirty_log *log, int *is_dirty);
  
  int kvm_get_dirty_log_protect(struct kvm *kvm,
- 			      struct kvm_dirty_log *log, bool *flush);
-+int kvm_clear_dirty_log_protect(struct kvm *kvm,
-+				struct kvm_clear_dirty_log *log, bool *flush);
+-			struct kvm_dirty_log *log, bool *is_dirty);
++			      struct kvm_dirty_log *log, bool *flush);
  
  void kvm_arch_mmu_enable_log_dirty_pt_masked(struct kvm *kvm,
  					struct kvm_memory_slot *slot,
-@@ -762,6 +765,8 @@ void kvm_arch_mmu_enable_log_dirty_pt_masked(struct kvm *kvm,
- 
- int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm,
- 				struct kvm_dirty_log *log);
-+int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm,
-+				  struct kvm_clear_dirty_log *log);
- 
- int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_level,
- 			bool line_status);
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 2b7a652c9fa4..9fe35f1ac938 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -492,6 +492,17 @@ struct kvm_dirty_log {
- 	};
- };
- 
-+/* for KVM_CLEAR_DIRTY_LOG */
-+struct kvm_clear_dirty_log {
-+	__u32 slot;
-+	__u32 num_pages;
-+	__u64 first_page;
-+	union {
-+		void __user *dirty_bitmap; /* one bit per page */
-+		__u64 padding2;
-+	};
-+};
-+
- /* for KVM_SET_SIGNAL_MASK */
- struct kvm_signal_mask {
- 	__u32 len;
-@@ -975,6 +986,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
- #define KVM_CAP_EXCEPTION_PAYLOAD 164
- #define KVM_CAP_ARM_VM_IPA_SIZE 165
-+#define KVM_CAP_MANUAL_DIRTY_LOG_PROTECT 166
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
-@@ -1421,6 +1433,9 @@ struct kvm_enc_region {
- #define KVM_GET_NESTED_STATE         _IOWR(KVMIO, 0xbe, struct kvm_nested_state)
- #define KVM_SET_NESTED_STATE         _IOW(KVMIO,  0xbf, struct kvm_nested_state)
- 
-+/* Available with KVM_CAP_MANUAL_DIRTY_LOG_PROTECT */
-+#define KVM_CLEAR_DIRTY_LOG          _IOWR(KVMIO, 0xc0, struct kvm_clear_dirty_log)
-+
- /* Secure Encrypted Virtualization command */
- enum sev_cmd_id {
- 	/* Guest initialization commands */
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 01a219229238..e35955bf59b3 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -15,8 +15,10 @@ TEST_GEN_PROGS_x86_64 += x86_64/cr4_cpuid_sync_test
- TEST_GEN_PROGS_x86_64 += x86_64/state_test
- TEST_GEN_PROGS_x86_64 += x86_64/evmcs_test
- TEST_GEN_PROGS_x86_64 += dirty_log_test
-+TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
- 
- TEST_GEN_PROGS_aarch64 += dirty_log_test
-+TEST_GEN_PROGS_aarch64 += clear_dirty_log_test
- 
- TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
- LIBKVM += $(LIBKVM_$(UNAME_M))
-diff --git a/tools/testing/selftests/kvm/clear_dirty_log_test.c b/tools/testing/selftests/kvm/clear_dirty_log_test.c
-new file mode 100644
-index 000000000000..749336937d37
---- /dev/null
-+++ b/tools/testing/selftests/kvm/clear_dirty_log_test.c
-@@ -0,0 +1,2 @@
-+#define USE_CLEAR_DIRTY_LOG
-+#include "dirty_log_test.c"
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index aeff95a91b15..4629c7ccfa28 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -275,6 +275,14 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 
- 	vm = create_vm(mode, VCPU_ID, guest_num_pages, guest_code);
- 
-+#ifdef USE_CLEAR_DIRTY_LOG
-+	struct kvm_enable_cap cap = {};
-+
-+	cap.cap = KVM_CAP_MANUAL_DIRTY_LOG_PROTECT;
-+	cap.args[0] = 1;
-+	vm_enable_cap(vm, &cap);
-+#endif
-+
- 	/* Add an extra memory slot for testing dirty logging */
- 	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
- 				    guest_test_mem,
-@@ -316,6 +324,10 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 		/* Give the vcpu thread some time to dirty some pages */
- 		usleep(interval * 1000);
- 		kvm_vm_get_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap);
-+#ifdef USE_CLEAR_DIRTY_LOG
-+		kvm_vm_clear_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap, 0,
-+				       DIV_ROUND_UP(host_num_pages, 64) * 64);
-+#endif
- 		vm_dirty_log_verify(bmap);
- 		iteration++;
- 		sync_global_to_guest(vm, iteration);
-@@ -392,6 +404,13 @@ int main(int argc, char *argv[])
- 	unsigned int mode;
- 	int opt, i;
- 
-+#ifdef USE_CLEAR_DIRTY_LOG
-+	if (!kvm_check_cap(KVM_CAP_MANUAL_DIRTY_LOG_PROTECT)) {
-+		fprintf(stderr, "KVM_CLEAR_DIRTY_LOG not available, skipping tests\n");
-+		exit(KSFT_SKIP);
-+	}
-+#endif
-+
- 	while ((opt = getopt(argc, argv, "hi:I:o:tm:")) != -1) {
- 		switch (opt) {
- 		case 'i':
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index a4e59e3b4826..c51bfaba017a 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -58,6 +58,8 @@ enum vm_mem_backing_src_type {
- void kvm_vm_restart(struct kvm_vm *vmp, int perm);
- void kvm_vm_release(struct kvm_vm *vmp);
- void kvm_vm_get_dirty_log(struct kvm_vm *vm, int slot, void *log);
-+void kvm_vm_clear_dirty_log(struct kvm_vm *vm, int slot, void *log,
-+			    uint64_t first_page, uint32_t num_pages);
- 
- int kvm_memcmp_hva_gva(void *hva, struct kvm_vm *vm, const vm_vaddr_t gva,
- 		       size_t len);
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 1b41e71283d5..c9e94d6503af 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -231,6 +231,19 @@ void kvm_vm_get_dirty_log(struct kvm_vm *vm, int slot, void *log)
- 		    strerror(-ret));
- }
- 
-+void kvm_vm_clear_dirty_log(struct kvm_vm *vm, int slot, void *log,
-+			    uint64_t first_page, uint32_t num_pages)
-+{
-+	struct kvm_clear_dirty_log args = { .dirty_bitmap = log, .slot = slot,
-+		                            .first_page = first_page,
-+	                                    .num_pages = num_pages };
-+	int ret;
-+
-+	ret = ioctl(vm->fd, KVM_CLEAR_DIRTY_LOG, &args);
-+	TEST_ASSERT(ret == 0, "%s: KVM_CLEAR_DIRTY_LOG failed: %s",
-+		    strerror(-ret));
-+}
-+
- /*
-  * Userspace Memory Region Find
-  *
 diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 120a2663dab9..e91adf77d99a 100644
+index 23774970c9df..120a2663dab9 100644
 --- a/virt/kvm/arm/arm.c
 +++ b/virt/kvm/arm/arm.c
-@@ -1219,6 +1219,22 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- 	return r;
- }
- 
-+int kvm_vm_ioctl_clear_dirty_log(struct kvm *kvm, struct kvm_clear_dirty_log *log)
-+{
-+	bool flush = false;
-+	int r;
-+
-+	mutex_lock(&kvm->slots_lock);
-+
-+	r = kvm_clear_dirty_log_protect(kvm, log, &flush);
-+
-+	if (flush)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	mutex_unlock(&kvm->slots_lock);
-+	return r;
-+}
-+
- static int kvm_vm_ioctl_set_device_addr(struct kvm *kvm,
- 					struct kvm_arm_device_addr *dev_addr)
+@@ -1205,14 +1205,14 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+  */
+ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
  {
+-	bool is_dirty = false;
++	bool flush = false;
+ 	int r;
+ 
+ 	mutex_lock(&kvm->slots_lock);
+ 
+-	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
++	r = kvm_get_dirty_log_protect(kvm, log, &flush);
+ 
+-	if (is_dirty)
++	if (flush)
+ 		kvm_flush_remote_tlbs(kvm);
+ 
+ 	mutex_unlock(&kvm->slots_lock);
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 54f0fcfd431e..0041947b7390 100644
+index 1d6b77162d7c..54f0fcfd431e 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -1133,7 +1133,7 @@ int kvm_get_dirty_log(struct kvm *kvm,
- #ifdef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
- /**
-  * kvm_get_dirty_log_protect - get a snapshot of dirty pages, and if any pages
-- *	are dirty write protect them for next write.
-+ *	and reenable dirty page tracking for the corresponding pages.
-  * @kvm:	pointer to kvm instance
-  * @log:	slot id and address to which we copy the log
-  * @is_dirty:	flag set if any page is dirty
-@@ -1176,37 +1176,114 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- 		return -ENOENT;
+@@ -1154,7 +1154,7 @@ int kvm_get_dirty_log(struct kvm *kvm,
+  *
+  */
+ int kvm_get_dirty_log_protect(struct kvm *kvm,
+-			struct kvm_dirty_log *log, bool *is_dirty)
++			struct kvm_dirty_log *log, bool *flush)
+ {
+ 	struct kvm_memslots *slots;
+ 	struct kvm_memory_slot *memslot;
+@@ -1181,7 +1181,7 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
+ 	memset(dirty_bitmap_buffer, 0, n);
  
- 	n = kvm_dirty_bitmap_bytes(memslot);
+ 	spin_lock(&kvm->mmu_lock);
+-	*is_dirty = false;
 +	*flush = false;
-+	if (kvm->manual_dirty_log_protect) {
-+		/*
-+		 * Unlike kvm_get_dirty_log, we always return false in *flush,
-+		 * because no flush is needed until KVM_CLEAR_DIRTY_LOG.  There
-+		 * is some code duplication between this function and
-+		 * kvm_get_dirty_log, but hopefully all architecture
-+		 * transition to kvm_get_dirty_log_protect and kvm_get_dirty_log
-+		 * can be eliminated.
-+		 */
-+		dirty_bitmap_buffer = dirty_bitmap;
-+	} else {
-+		dirty_bitmap_buffer = kvm_second_dirty_bitmap(memslot);
-+		memset(dirty_bitmap_buffer, 0, n);
- 
--	dirty_bitmap_buffer = kvm_second_dirty_bitmap(memslot);
--	memset(dirty_bitmap_buffer, 0, n);
-+		spin_lock(&kvm->mmu_lock);
-+		for (i = 0; i < n / sizeof(long); i++) {
-+			unsigned long mask;
-+			gfn_t offset;
- 
--	spin_lock(&kvm->mmu_lock);
-+			if (!dirty_bitmap[i])
-+				continue;
-+
-+			*flush = true;
-+			mask = xchg(&dirty_bitmap[i], 0);
-+			dirty_bitmap_buffer[i] = mask;
-+
-+			if (mask) {
-+				offset = i * BITS_PER_LONG;
-+				kvm_arch_mmu_enable_log_dirty_pt_masked(kvm, memslot,
-+									offset, mask);
-+			}
-+		}
-+		spin_unlock(&kvm->mmu_lock);
-+	}
-+
-+	if (copy_to_user(log->dirty_bitmap, dirty_bitmap_buffer, n))
-+		return -EFAULT;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(kvm_get_dirty_log_protect);
-+
-+/**
-+ * kvm_clear_dirty_log_protect - clear dirty bits in the bitmap
-+ *	and reenable dirty page tracking for the corresponding pages.
-+ * @kvm:	pointer to kvm instance
-+ * @log:	slot id and address from which to fetch the bitmap of dirty pages
-+ */
-+int kvm_clear_dirty_log_protect(struct kvm *kvm,
-+				struct kvm_clear_dirty_log *log, bool *flush)
-+{
-+	struct kvm_memslots *slots;
-+	struct kvm_memory_slot *memslot;
-+	int as_id, id, n;
-+	gfn_t offset;
-+	unsigned long i;
-+	unsigned long *dirty_bitmap;
-+	unsigned long *dirty_bitmap_buffer;
-+
-+	as_id = log->slot >> 16;
-+	id = (u16)log->slot;
-+	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
-+		return -EINVAL;
-+
-+	if ((log->first_page & 63) || (log->num_pages & 63))
-+		return -EINVAL;
-+
-+	slots = __kvm_memslots(kvm, as_id);
-+	memslot = id_to_memslot(slots, id);
-+
-+	dirty_bitmap = memslot->dirty_bitmap;
-+	if (!dirty_bitmap)
-+		return -ENOENT;
-+
-+	n = kvm_dirty_bitmap_bytes(memslot);
- 	*flush = false;
--	for (i = 0; i < n / sizeof(long); i++) {
--		unsigned long mask;
--		gfn_t offset;
-+	dirty_bitmap_buffer = kvm_second_dirty_bitmap(memslot);
-+	if (copy_from_user(dirty_bitmap_buffer, log->dirty_bitmap, n))
-+		return -EFAULT;
- 
--		if (!dirty_bitmap[i])
-+	spin_lock(&kvm->mmu_lock);
-+	for (offset = log->first_page,
-+	     i = offset / BITS_PER_LONG, n = log->num_pages / BITS_PER_LONG; n--;
-+	     i++, offset += BITS_PER_LONG) {
-+		unsigned long mask = *dirty_bitmap_buffer++;
-+		atomic_long_t *p = (atomic_long_t *) &dirty_bitmap[i];
-+		if (!mask)
+ 	for (i = 0; i < n / sizeof(long); i++) {
+ 		unsigned long mask;
+ 		gfn_t offset;
+@@ -1189,7 +1189,7 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
+ 		if (!dirty_bitmap[i])
  			continue;
  
--		*flush = true;
--
--		mask = xchg(&dirty_bitmap[i], 0);
--		dirty_bitmap_buffer[i] = mask;
-+		mask &= atomic_long_fetch_andnot(mask, p);
+-		*is_dirty = true;
++		*flush = true;
  
-+		/*
-+		 * mask contains the bits that really have been cleared.  This
-+		 * never includes any bits beyond the length of the memslot (if
-+		 * the length is not aligned to 64 pages), therefore it is not
-+		 * a problem if userspace sets them in log->dirty_bitmap.
-+		*/
- 		if (mask) {
--			offset = i * BITS_PER_LONG;
-+			*flush = true;
- 			kvm_arch_mmu_enable_log_dirty_pt_masked(kvm, memslot,
- 								offset, mask);
- 		}
- 	}
--
- 	spin_unlock(&kvm->mmu_lock);
--	if (copy_to_user(log->dirty_bitmap, dirty_bitmap_buffer, n))
--		return -EFAULT;
-+
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(kvm_get_dirty_log_protect);
-+EXPORT_SYMBOL_GPL(kvm_clear_dirty_log_protect);
- #endif
- 
- bool kvm_largepages_enabled(void)
-@@ -2949,6 +3026,9 @@ static long kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
- 	case KVM_CAP_IOEVENTFD_ANY_LENGTH:
- 	case KVM_CAP_CHECK_EXTENSION_VM:
- 	case KVM_CAP_ENABLE_CAP_VM:
-+#ifdef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
-+	case KVM_CAP_MANUAL_DIRTY_LOG_PROTECT:
-+#endif
- 		return 1;
- #ifdef CONFIG_KVM_MMIO
- 	case KVM_CAP_COALESCED_MMIO:
-@@ -2982,6 +3062,13 @@ static int kvm_vm_ioctl_enable_cap_generic(struct kvm *kvm,
- 					   struct kvm_enable_cap *cap)
- {
- 	switch (cap->cap) {
-+#ifdef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
-+	case KVM_CAP_MANUAL_DIRTY_LOG_PROTECT:
-+		if (cap->flags || (cap->args[0] & ~1))
-+			return -EINVAL;
-+		kvm->manual_dirty_log_protect = cap->args[0];
-+		return 0;
-+#endif
- 	default:
- 		return kvm_vm_ioctl_enable_cap(kvm, cap);
- 	}
-@@ -3029,6 +3116,17 @@ static long kvm_vm_ioctl(struct file *filp,
- 		r = kvm_vm_ioctl_get_dirty_log(kvm, &log);
- 		break;
- 	}
-+#ifdef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
-+	case KVM_CLEAR_DIRTY_LOG: {
-+		struct kvm_clear_dirty_log log;
-+
-+		r = -EFAULT;
-+		if (copy_from_user(&log, argp, sizeof(log)))
-+			goto out;
-+		r = kvm_vm_ioctl_clear_dirty_log(kvm, &log);
-+		break;
-+	}
-+#endif
- #ifdef CONFIG_KVM_MMIO
- 	case KVM_REGISTER_COALESCED_MMIO: {
- 		struct kvm_coalesced_mmio_zone zone;
+ 		mask = xchg(&dirty_bitmap[i], 0);
+ 		dirty_bitmap_buffer[i] = mask;
 -- 
 1.8.3.1
+
 
