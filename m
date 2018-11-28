@@ -2,852 +2,201 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0520FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5B5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA1920864
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A83E4205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HcqYy2fb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA1920864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="QyBGaT/C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83E4205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbeK2GlO (ORCPT
+        id S1729614AbeK2Glg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:41:14 -0500
-Received: from mail-io1-f73.google.com ([209.85.166.73]:47100 "EHLO
-        mail-io1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbeK2GlN (ORCPT
+        Thu, 29 Nov 2018 01:41:36 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43405 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbeK2Glg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:41:13 -0500
-Received: by mail-io1-f73.google.com with SMTP id e144-v6so26820780iof.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 11:38:28 -0800 (PST)
+        Thu, 29 Nov 2018 01:41:36 -0500
+Received: by mail-pl1-f195.google.com with SMTP id gn14so17885867plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 11:38:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=/mzBjTCgNR+ITwmtMF9qcoiYEy9ozlu8eqk6jAOiRYA=;
-        b=HcqYy2fb+ed1TkGEJZ4wFTnIOH9oA57pOC4U69LcUOLCrTcxyutGobWdpVh4e9Fi8q
-         TF3WdPCCcmmsDSX5mavVMQ3w5aBNAT6Sjd/1d3GV8DRirONUxd4DsH7c0z2j8iZ4WYb1
-         vHe/E8sm/Y4Zw1im/ZIZYJjljsUxWPhae40ue6kclM53uKZLuk6D6Dq5l5n30uxW/PXq
-         KTWkvJHqnCbQugMJo/2OoB+mbOnVXhbQ4oBjwdw2ScoxV6Nzd4zKjyP09y6Cx88/PUqE
-         oprpUE09djLXtNBJMjetg2Q0ym2iFZN0g1+o+upmXXkMst7B1wm/wyEdeq/CEe3R6cBm
-         3G7A==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=8bQFWKBjiGrYiU8FacAN+YIRavoiuZsYEdpz9LRoF0U=;
+        b=QyBGaT/C4HEetrqDyESuU9yPgennW/eIcdW/G6XY0bnLZquyFMTcRDR70V/AqDFXBs
+         qUh/goUGSySK5DcE0qrYo8a0SVT+MbHcvRRLeZdLtdJ1UKO0rhXgZ7Cep5rO06S28XVG
+         SOrlh8GyE7ql5DOP+6ecv83IM+PbduDX6h2L2OZdle5532eCWE35Afj1pIXGQ8QbeoGb
+         PmaLwPXFtX8Ku+4fTGY8xHonJjLpsR6vVyd6LbbJoF0dwj+cLC5mUfVZgSCmh477MCRz
+         xW/sxAtVFn14aV3sIVH9OIVuwOFUlzx9JRl3M/rnnepF3r8g3cmqUIN/4ebYw9g2Ao3k
+         XUGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=/mzBjTCgNR+ITwmtMF9qcoiYEy9ozlu8eqk6jAOiRYA=;
-        b=ujv56HL0YU0ll9rF8ho+XbR51xMttOe73UGmNyW2p9J0ch3vdU8E7IyZBN99A1GFwU
-         /WYMu/8vLxTAyi9tApy6PCMXNrUWIaEOD5E0O7IUwamLiW8HtBP019NcZlZnRsfH91+K
-         wvj3X69KppCub5e2q6XH9wcdraGoWlnMckuht9cvxLrvcRGqW/Hs3TZwIzUWecqQeeV+
-         HIcHujfH08UM7Dt9noH9JTGH8C24ZW/G6kQuGbjcAkkrD7BYj/Woxki4brgcoaXgPz2x
-         mlD1UqSeHTnqwby6Yy/RvUvIxnj+JxAUjvxeXQBQgPSb6ANnz+VmdfGHFzKmeKjp4IAx
-         iIEQ==
-X-Gm-Message-State: AA+aEWZjbuFPIaOC55yTdRBCEnaSlFTQfyK8dfWcB7WgVz7J+HPh4cQa
-        +U74MYCSnCddHpVVsgjJ6hgtwOm33RsXjGTh/FyXrw==
-X-Google-Smtp-Source: AFSGD/X8AwCP9fzFk0xtNNo/pwbkCXqVeuxx9pcTkLMKu5T5TyMXjYm5QyFuo357p300B/56VmkuwVEini49taEgxl4fMA==
-X-Received: by 2002:a24:2c4d:: with SMTP id i74mr3616474iti.12.1543433908203;
- Wed, 28 Nov 2018 11:38:28 -0800 (PST)
-Date:   Wed, 28 Nov 2018 11:36:35 -0800
-In-Reply-To: <20181128193636.254378-1-brendanhiggins@google.com>
-Message-Id: <20181128193636.254378-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-Subject: [RFC v3 18/19] of: unittest: split out a couple of test cases from unittest
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
-        shuah@kernel.org
-Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
-        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
-        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        kieran.bingham@ideasonboard.com, frowand.list@gmail.com,
-        knut.omang@oracle.com, Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=8bQFWKBjiGrYiU8FacAN+YIRavoiuZsYEdpz9LRoF0U=;
+        b=GdjVrKvOFgfjSk3uDJouJMGh+UwVCu3TxzaVPLI7nlRmqrNbe3kmXn6UYmzk5pEH0s
+         Ag8o/nWsm5eAXO3HNLhtf844eQJEDgcQKs4wKLPOlcQh47a8h4AOWug4l6R9s5JnvAeB
+         m1Tb//RgqBKjBM8Q1aWVrU8FYV9OCakZrvareuW9obk67Ghoq1fzqyb5BS/Ifn7w8179
+         B34B/RzJpouO+2RM0BZQt0QdVLsiLJVm3G2CW+5a34szFgBiDNUzpkh3MUQihc9yunvz
+         jZJrbODC+Zq466hs/rvSCEUfvPQrqtaXnRz8s4muMXk/xZ8jAMTocsFCwpgllVwbOU5N
+         Mn8Q==
+X-Gm-Message-State: AA+aEWbEnNv9USLAW3ZSmJQhPDJ1XjFPlwGtPWIDCENL/bohxUrRWb2I
+        cr4vlPuHC3fai/GVv7F4n0OM9w==
+X-Google-Smtp-Source: AFSGD/XHJFk9Bnq0etBnECrMVC9ECjIwCFlC5kJ5hw6WXpSCV8xsJWLGxEfyaKnsSWmNANYtiD4gAw==
+X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr38088486plb.238.1543433930933;
+        Wed, 28 Nov 2018 11:38:50 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id g2sm10028732pfi.95.2018.11.28.11.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 11:38:50 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <4C297F47-C508-4DC9-8360-5E0873873833@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
+ retry
+Date:   Wed, 28 Nov 2018 12:38:47 -0700
+In-Reply-To: <20181128054923.GF8125@magnolia>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Allison Henderson <allison.henderson@oracle.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Martin Petersen <martin.petersen@oracle.com>,
+        shirley.ma@oracle.com, bob.liu@oracle.com
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <20181128053303.GL6311@dastard> <20181128054923.GF8125@magnolia>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split out a couple of test cases that these features in base.c from the
-unittest.c monolith. The intention is that we will eventually split out
-all test cases and group them together based on what portion of device
-tree they test.
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
----
- drivers/of/Makefile      |   2 +-
- drivers/of/base-test.c   | 214 ++++++++++++++++++++++++++
- drivers/of/test-common.c | 149 ++++++++++++++++++
- drivers/of/test-common.h |  16 ++
- drivers/of/unittest.c    | 316 +--------------------------------------
- 5 files changed, 381 insertions(+), 316 deletions(-)
- create mode 100644 drivers/of/base-test.c
- create mode 100644 drivers/of/test-common.c
- create mode 100644 drivers/of/test-common.h
+--Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-index 663a4af0cccd5..4a4bd527d586c 100644
---- a/drivers/of/Makefile
-+++ b/drivers/of/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_OF_PROMTREE) += pdt.o
- obj-$(CONFIG_OF_ADDRESS)  += address.o
- obj-$(CONFIG_OF_IRQ)    += irq.o
- obj-$(CONFIG_OF_NET)	+= of_net.o
--obj-$(CONFIG_OF_UNITTEST) += unittest.o
-+obj-$(CONFIG_OF_UNITTEST) += unittest.o base-test.o test-common.o
- obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
- obj-$(CONFIG_OF_RESERVED_MEM) += of_reserved_mem.o
- obj-$(CONFIG_OF_RESOLVE)  += resolver.o
-diff --git a/drivers/of/base-test.c b/drivers/of/base-test.c
-new file mode 100644
-index 0000000000000..5731787a3fca8
---- /dev/null
-+++ b/drivers/of/base-test.c
-@@ -0,0 +1,214 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Unit tests for functions defined in base.c.
-+ */
-+#include <linux/of.h>
-+
-+#include <kunit/test.h>
-+
-+#include "test-common.h"
-+
-+static void of_unittest_find_node_by_name(struct kunit *test)
-+{
-+	struct device_node *np;
-+	const char *options, *name;
-+
-+	np = of_find_node_by_path("/testcase-data");
-+	name = kasprintf(GFP_KERNEL, "%pOF", np);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "/testcase-data", name,
-+			       "find /testcase-data failed\n");
-+	of_node_put(np);
-+	kfree(name);
-+
-+	/* Test if trailing '/' works */
-+	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("/testcase-data/"), NULL,
-+			    "trailing '/' on /testcase-data/ should fail\n");
-+
-+	np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	name = kasprintf(GFP_KERNEL, "%pOF", np);
-+	KUNIT_EXPECT_STREQ_MSG(test,
-+			       "/testcase-data/phandle-tests/consumer-a", name,
-+			       "find /testcase-data/phandle-tests/consumer-a failed\n");
-+	of_node_put(np);
-+	kfree(name);
-+
-+	np = of_find_node_by_path("testcase-alias");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	name = kasprintf(GFP_KERNEL, "%pOF", np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "/testcase-data", name,
-+			       "find testcase-alias failed\n");
-+	of_node_put(np);
-+	kfree(name);
-+
-+	/* Test if trailing '/' works on aliases */
-+	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("testcase-alias/"), NULL,
-+			    "trailing '/' on testcase-alias/ should fail\n");
-+
-+	np = of_find_node_by_path("testcase-alias/phandle-tests/consumer-a");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	name = kasprintf(GFP_KERNEL, "%pOF", np);
-+	KUNIT_EXPECT_STREQ_MSG(test,
-+			       "/testcase-data/phandle-tests/consumer-a", name,
-+			       "find testcase-alias/phandle-tests/consumer-a failed\n");
-+	of_node_put(np);
-+	kfree(name);
-+
-+	KUNIT_EXPECT_EQ_MSG(test,
-+			    of_find_node_by_path("/testcase-data/missing-path"),
-+			    NULL,
-+			    "non-existent path returned node %pOF\n", np);
-+	of_node_put(np);
-+
-+	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("missing-alias"), NULL,
-+			    "non-existent alias returned node %pOF\n", np);
-+	of_node_put(np);
-+
-+	KUNIT_EXPECT_EQ_MSG(test,
-+			    of_find_node_by_path("testcase-alias/missing-path"),
-+			    NULL,
-+			    "non-existent alias with relative path returned node %pOF\n",
-+			    np);
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("/testcase-data:testoption", &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "testoption", options,
-+			       "option path test failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("/testcase-data:test/option", &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "test/option", options,
-+			       "option path test, subcase #1 failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path(
-+			"/testcase-data/testcase-device1:test/option",
-+			&options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "test/option", options,
-+			       "option path test, subcase #2 failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("/testcase-data:testoption", NULL);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL_MSG(test, np,
-+					 "NULL option path test failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("testcase-alias:testaliasoption",
-+				       &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "testaliasoption", options,
-+			       "option alias path test failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("testcase-alias:test/alias/option",
-+				       &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_STREQ_MSG(test, "test/alias/option", options,
-+			       "option alias path test, subcase #1 failed\n");
-+	of_node_put(np);
-+
-+	np = of_find_node_opts_by_path("testcase-alias:testaliasoption", NULL);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL_MSG(test, np,
-+					 "NULL option alias path test failed\n");
-+	of_node_put(np);
-+
-+	options = "testoption";
-+	np = of_find_node_opts_by_path("testcase-alias", &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_EQ_MSG(test, options, NULL,
-+			    "option clearing test failed\n");
-+	of_node_put(np);
-+
-+	options = "testoption";
-+	np = of_find_node_opts_by_path("/", &options);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+	KUNIT_EXPECT_EQ_MSG(test, options, NULL,
-+			    "option clearing root node test failed\n");
-+	of_node_put(np);
-+}
-+
-+static void of_unittest_dynamic(struct kunit *test)
-+{
-+	struct device_node *np;
-+	struct property *prop;
-+
-+	np = of_find_node_by_path("/testcase-data");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-+
-+	/* Array of 4 properties for the purpose of testing */
-+	prop = kcalloc(4, sizeof(*prop), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, prop);
-+
-+	/* Add a new property - should pass*/
-+	prop->name = "new-property";
-+	prop->value = "new-property-data";
-+	prop->length = strlen(prop->value) + 1;
-+	KUNIT_EXPECT_EQ_MSG(test, of_add_property(np, prop), 0,
-+			    "Adding a new property failed\n");
-+
-+	/* Try to add an existing property - should fail */
-+	prop++;
-+	prop->name = "new-property";
-+	prop->value = "new-property-data-should-fail";
-+	prop->length = strlen(prop->value) + 1;
-+	KUNIT_EXPECT_NE_MSG(test, of_add_property(np, prop), 0,
-+			    "Adding an existing property should have failed\n");
-+
-+	/* Try to modify an existing property - should pass */
-+	prop->value = "modify-property-data-should-pass";
-+	prop->length = strlen(prop->value) + 1;
-+	KUNIT_EXPECT_EQ_MSG(test, of_update_property(np, prop), 0,
-+			    "Updating an existing property should have passed\n");
-+
-+	/* Try to modify non-existent property - should pass*/
-+	prop++;
-+	prop->name = "modify-property";
-+	prop->value = "modify-missing-property-data-should-pass";
-+	prop->length = strlen(prop->value) + 1;
-+	KUNIT_EXPECT_EQ_MSG(test, of_update_property(np, prop), 0,
-+			    "Updating a missing property should have passed\n");
-+
-+	/* Remove property - should pass */
-+	KUNIT_EXPECT_EQ_MSG(test, of_remove_property(np, prop), 0,
-+			    "Removing a property should have passed\n");
-+
-+	/* Adding very large property - should pass */
-+	prop++;
-+	prop->name = "large-property-PAGE_SIZEx8";
-+	prop->length = PAGE_SIZE * 8;
-+	prop->value = kzalloc(prop->length, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, prop->value);
-+	KUNIT_EXPECT_EQ_MSG(test, of_add_property(np, prop), 0,
-+			    "Adding a large property should have passed\n");
-+}
-+
-+static int of_test_init(struct kunit *test)
-+{
-+	/* adding data for unittest */
-+	KUNIT_ASSERT_EQ(test, 0, unittest_data_add());
-+
-+	if (!of_aliases)
-+		of_aliases = of_find_node_by_path("/aliases");
-+
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, of_find_node_by_path(
-+			"/testcase-data/phandle-tests/consumer-a"));
-+
-+	return 0;
-+}
-+
-+static struct kunit_case of_test_cases[] = {
-+	KUNIT_CASE(of_unittest_find_node_by_name),
-+	KUNIT_CASE(of_unittest_dynamic),
-+	{},
-+};
-+
-+static struct kunit_module of_test_module = {
-+	.name = "of-base-test",
-+	.init = of_test_init,
-+	.test_cases = of_test_cases,
-+};
-+module_test(of_test_module);
-diff --git a/drivers/of/test-common.c b/drivers/of/test-common.c
-new file mode 100644
-index 0000000000000..0b2319fde3b3e
---- /dev/null
-+++ b/drivers/of/test-common.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Common code to be used by unit tests.
-+ */
-+#include "test-common.h"
-+
-+#include <linux/of_fdt.h>
-+#include <linux/slab.h>
-+
-+#include "of_private.h"
-+
-+/**
-+ *	update_node_properties - adds the properties
-+ *	of np into dup node (present in live tree) and
-+ *	updates parent of children of np to dup.
-+ *
-+ *	@np:	node already present in live tree
-+ *	@dup:	node present in live tree to be updated
-+ */
-+static void update_node_properties(struct device_node *np,
-+					struct device_node *dup)
-+{
-+	struct property *prop;
-+	struct device_node *child;
-+
-+	for_each_property_of_node(np, prop)
-+		of_add_property(dup, prop);
-+
-+	for_each_child_of_node(np, child)
-+		child->parent = dup;
-+}
-+
-+/**
-+ *	attach_node_and_children - attaches nodes
-+ *	and its children to live tree
-+ *
-+ *	@np:	Node to attach to live tree
-+ */
-+static int attach_node_and_children(struct device_node *np)
-+{
-+	struct device_node *next, *dup, *child;
-+	unsigned long flags;
-+	const char *full_name;
-+
-+	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
-+	dup = of_find_node_by_path(full_name);
-+	kfree(full_name);
-+	if (dup) {
-+		update_node_properties(np, dup);
-+		return 0;
-+	}
-+
-+	child = np->child;
-+	np->child = NULL;
-+
-+	mutex_lock(&of_mutex);
-+	raw_spin_lock_irqsave(&devtree_lock, flags);
-+	np->sibling = np->parent->child;
-+	np->parent->child = np;
-+	of_node_clear_flag(np, OF_DETACHED);
-+	raw_spin_unlock_irqrestore(&devtree_lock, flags);
-+
-+	__of_attach_node_sysfs(np);
-+	mutex_unlock(&of_mutex);
-+
-+	while (child) {
-+		next = child->sibling;
-+		attach_node_and_children(child);
-+		child = next;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ *	unittest_data_add - Reads, copies data from
-+ *	linked tree and attaches it to the live tree
-+ */
-+int unittest_data_add(void)
-+{
-+	void *unittest_data;
-+	struct device_node *unittest_data_node, *np;
-+	/*
-+	 * __dtb_testcases_begin[] and __dtb_testcases_end[] are magically
-+	 * created by cmd_dt_S_dtb in scripts/Makefile.lib
-+	 */
-+	extern uint8_t __dtb_testcases_begin[];
-+	extern uint8_t __dtb_testcases_end[];
-+	const int size = __dtb_testcases_end - __dtb_testcases_begin;
-+	int rc;
-+
-+	if (!size) {
-+		pr_warn("%s: No testcase data to attach; not running tests\n",
-+			__func__);
-+		return -ENODATA;
-+	}
-+
-+	/* creating copy */
-+	unittest_data = kmemdup(__dtb_testcases_begin, size, GFP_KERNEL);
-+
-+	if (!unittest_data) {
-+		pr_warn("%s: Failed to allocate memory for unittest_data; "
-+			"not running tests\n", __func__);
-+		return -ENOMEM;
-+	}
-+	of_fdt_unflatten_tree(unittest_data, NULL, &unittest_data_node);
-+	if (!unittest_data_node) {
-+		pr_warn("%s: No tree to attach; not running tests\n", __func__);
-+		return -ENODATA;
-+	}
-+
-+	/*
-+	 * This lock normally encloses of_resolve_phandles()
-+	 */
-+	of_overlay_mutex_lock();
-+
-+	rc = of_resolve_phandles(unittest_data_node);
-+	if (rc) {
-+		pr_err("%s: Failed to resolve phandles (rc=%i)\n",
-+		       __func__, rc);
-+		of_overlay_mutex_unlock();
-+		return -EINVAL;
-+	}
-+
-+	if (!of_root) {
-+		of_root = unittest_data_node;
-+		for_each_of_allnodes(np)
-+			__of_attach_node_sysfs(np);
-+		of_aliases = of_find_node_by_path("/aliases");
-+		of_chosen = of_find_node_by_path("/chosen");
-+		of_overlay_mutex_unlock();
-+		return 0;
-+	}
-+
-+	/* attach the sub-tree to live tree */
-+	np = unittest_data_node->child;
-+	while (np) {
-+		struct device_node *next = np->sibling;
-+
-+		np->parent = of_root;
-+		attach_node_and_children(np);
-+		np = next;
-+	}
-+
-+	of_overlay_mutex_unlock();
-+
-+	return 0;
-+}
-+
-diff --git a/drivers/of/test-common.h b/drivers/of/test-common.h
-new file mode 100644
-index 0000000000000..a35484406bbf1
---- /dev/null
-+++ b/drivers/of/test-common.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Common code to be used by unit tests.
-+ */
-+#ifndef _LINUX_OF_TEST_COMMON_H
-+#define _LINUX_OF_TEST_COMMON_H
-+
-+#include <linux/of.h>
-+
-+/**
-+ *	unittest_data_add - Reads, copies data from
-+ *	linked tree and attaches it to the live tree
-+ */
-+int unittest_data_add(void);
-+
-+#endif /* _LINUX_OF_TEST_COMMON_H */
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index a5ef44730ffdb..b8c220d330f03 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -29,182 +29,7 @@
- #include <kunit/test.h>
- 
- #include "of_private.h"
--
--static void of_unittest_find_node_by_name(struct kunit *test)
--{
--	struct device_node *np;
--	const char *options, *name;
--
--	np = of_find_node_by_path("/testcase-data");
--	name = kasprintf(GFP_KERNEL, "%pOF", np);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "/testcase-data", name,
--			       "find /testcase-data failed\n");
--	of_node_put(np);
--	kfree(name);
--
--	/* Test if trailing '/' works */
--	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("/testcase-data/"), NULL,
--			    "trailing '/' on /testcase-data/ should fail\n");
--
--	np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	name = kasprintf(GFP_KERNEL, "%pOF", np);
--	KUNIT_EXPECT_STREQ_MSG(test,
--			       "/testcase-data/phandle-tests/consumer-a", name,
--			       "find /testcase-data/phandle-tests/consumer-a failed\n");
--	of_node_put(np);
--	kfree(name);
--
--	np = of_find_node_by_path("testcase-alias");
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	name = kasprintf(GFP_KERNEL, "%pOF", np);
--	KUNIT_EXPECT_STREQ_MSG(test, "/testcase-data", name,
--			       "find testcase-alias failed\n");
--	of_node_put(np);
--	kfree(name);
--
--	/* Test if trailing '/' works on aliases */
--	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("testcase-alias/"), NULL,
--			    "trailing '/' on testcase-alias/ should fail\n");
--
--	np = of_find_node_by_path("testcase-alias/phandle-tests/consumer-a");
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	name = kasprintf(GFP_KERNEL, "%pOF", np);
--	KUNIT_EXPECT_STREQ_MSG(test,
--			       "/testcase-data/phandle-tests/consumer-a", name,
--			       "find testcase-alias/phandle-tests/consumer-a failed\n");
--	of_node_put(np);
--	kfree(name);
--
--	KUNIT_EXPECT_EQ_MSG(test,
--			    of_find_node_by_path("/testcase-data/missing-path"),
--			    NULL,
--			    "non-existent path returned node %pOF\n", np);
--	of_node_put(np);
--
--	KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("missing-alias"), NULL,
--			    "non-existent alias returned node %pOF\n", np);
--	of_node_put(np);
--
--	KUNIT_EXPECT_EQ_MSG(test,
--			    of_find_node_by_path("testcase-alias/missing-path"),
--			    NULL,
--			    "non-existent alias with relative path returned node %pOF\n",
--			    np);
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("/testcase-data:testoption", &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "testoption", options,
--			       "option path test failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("/testcase-data:test/option", &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "test/option", options,
--			       "option path test, subcase #1 failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("/testcase-data/testcase-device1:test/option", &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "test/option", options,
--			       "option path test, subcase #2 failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("/testcase-data:testoption", NULL);
--	KUNIT_EXPECT_NOT_ERR_OR_NULL_MSG(test, np,
--					 "NULL option path test failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("testcase-alias:testaliasoption",
--				       &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "testaliasoption", options,
--			       "option alias path test failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("testcase-alias:test/alias/option",
--				       &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_STREQ_MSG(test, "test/alias/option", options,
--			       "option alias path test, subcase #1 failed\n");
--	of_node_put(np);
--
--	np = of_find_node_opts_by_path("testcase-alias:testaliasoption", NULL);
--	KUNIT_EXPECT_NOT_ERR_OR_NULL_MSG(test, np,
--					 "NULL option alias path test failed\n");
--	of_node_put(np);
--
--	options = "testoption";
--	np = of_find_node_opts_by_path("testcase-alias", &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_EQ_MSG(test, options, NULL,
--			    "option clearing test failed\n");
--	of_node_put(np);
--
--	options = "testoption";
--	np = of_find_node_opts_by_path("/", &options);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	KUNIT_EXPECT_EQ_MSG(test, options, NULL,
--			    "option clearing root node test failed\n");
--	of_node_put(np);
--}
--
--static void of_unittest_dynamic(struct kunit *test)
--{
--	struct device_node *np;
--	struct property *prop;
--
--	np = of_find_node_by_path("/testcase-data");
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--
--	/* Array of 4 properties for the purpose of testing */
--	prop = kcalloc(4, sizeof(*prop), GFP_KERNEL);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, prop);
--
--	/* Add a new property - should pass*/
--	prop->name = "new-property";
--	prop->value = "new-property-data";
--	prop->length = strlen(prop->value) + 1;
--	KUNIT_EXPECT_EQ_MSG(test, of_add_property(np, prop), 0,
--			    "Adding a new property failed\n");
--
--	/* Try to add an existing property - should fail */
--	prop++;
--	prop->name = "new-property";
--	prop->value = "new-property-data-should-fail";
--	prop->length = strlen(prop->value) + 1;
--	KUNIT_EXPECT_NE_MSG(test, of_add_property(np, prop), 0,
--			    "Adding an existing property should have failed\n");
--
--	/* Try to modify an existing property - should pass */
--	prop->value = "modify-property-data-should-pass";
--	prop->length = strlen(prop->value) + 1;
--	KUNIT_EXPECT_EQ_MSG(test, of_update_property(np, prop), 0,
--			    "Updating an existing property should have passed\n");
--
--	/* Try to modify non-existent property - should pass*/
--	prop++;
--	prop->name = "modify-property";
--	prop->value = "modify-missing-property-data-should-pass";
--	prop->length = strlen(prop->value) + 1;
--	KUNIT_EXPECT_EQ_MSG(test, of_update_property(np, prop), 0,
--			    "Updating a missing property should have passed\n");
--
--	/* Remove property - should pass */
--	KUNIT_EXPECT_EQ_MSG(test, of_remove_property(np, prop), 0,
--			    "Removing a property should have passed\n");
--
--	/* Adding very large property - should pass */
--	prop++;
--	prop->name = "large-property-PAGE_SIZEx8";
--	prop->length = PAGE_SIZE * 8;
--	prop->value = kzalloc(prop->length, GFP_KERNEL);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, prop->value);
--	KUNIT_EXPECT_EQ_MSG(test, of_add_property(np, prop), 0,
--			    "Adding a large property should have passed\n");
--}
-+#include "test-common.h"
- 
- static int of_unittest_check_node_linkage(struct device_node *np)
- {
-@@ -1200,143 +1025,6 @@ static void of_unittest_platform_populate(struct kunit *test)
- 	of_node_put(np);
- }
- 
--/**
-- *	update_node_properties - adds the properties
-- *	of np into dup node (present in live tree) and
-- *	updates parent of children of np to dup.
-- *
-- *	@np:	node already present in live tree
-- *	@dup:	node present in live tree to be updated
-- */
--static void update_node_properties(struct device_node *np,
--					struct device_node *dup)
--{
--	struct property *prop;
--	struct device_node *child;
--
--	for_each_property_of_node(np, prop)
--		of_add_property(dup, prop);
--
--	for_each_child_of_node(np, child)
--		child->parent = dup;
--}
--
--/**
-- *	attach_node_and_children - attaches nodes
-- *	and its children to live tree
-- *
-- *	@np:	Node to attach to live tree
-- */
--static int attach_node_and_children(struct device_node *np)
--{
--	struct device_node *next, *dup, *child;
--	unsigned long flags;
--	const char *full_name;
--
--	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
--	dup = of_find_node_by_path(full_name);
--	kfree(full_name);
--	if (dup) {
--		update_node_properties(np, dup);
--		return 0;
--	}
--
--	child = np->child;
--	np->child = NULL;
--
--	mutex_lock(&of_mutex);
--	raw_spin_lock_irqsave(&devtree_lock, flags);
--	np->sibling = np->parent->child;
--	np->parent->child = np;
--	of_node_clear_flag(np, OF_DETACHED);
--	raw_spin_unlock_irqrestore(&devtree_lock, flags);
--
--	__of_attach_node_sysfs(np);
--	mutex_unlock(&of_mutex);
--
--	while (child) {
--		next = child->sibling;
--		attach_node_and_children(child);
--		child = next;
--	}
--
--	return 0;
--}
--
--/**
-- *	unittest_data_add - Reads, copies data from
-- *	linked tree and attaches it to the live tree
-- */
--static int unittest_data_add(void)
--{
--	void *unittest_data;
--	struct device_node *unittest_data_node, *np;
--	/*
--	 * __dtb_testcases_begin[] and __dtb_testcases_end[] are magically
--	 * created by cmd_dt_S_dtb in scripts/Makefile.lib
--	 */
--	extern uint8_t __dtb_testcases_begin[];
--	extern uint8_t __dtb_testcases_end[];
--	const int size = __dtb_testcases_end - __dtb_testcases_begin;
--	int rc;
--
--	if (!size) {
--		pr_warn("%s: No testcase data to attach; not running tests\n",
--			__func__);
--		return -ENODATA;
--	}
--
--	/* creating copy */
--	unittest_data = kmemdup(__dtb_testcases_begin, size, GFP_KERNEL);
--
--	if (!unittest_data) {
--		pr_warn("%s: Failed to allocate memory for unittest_data; "
--			"not running tests\n", __func__);
--		return -ENOMEM;
--	}
--	of_fdt_unflatten_tree(unittest_data, NULL, &unittest_data_node);
--	if (!unittest_data_node) {
--		pr_warn("%s: No tree to attach; not running tests\n", __func__);
--		return -ENODATA;
--	}
--
--	/*
--	 * This lock normally encloses of_resolve_phandles()
--	 */
--	of_overlay_mutex_lock();
--
--	rc = of_resolve_phandles(unittest_data_node);
--	if (rc) {
--		pr_err("%s: Failed to resolve phandles (rc=%i)\n", __func__, rc);
--		of_overlay_mutex_unlock();
--		return -EINVAL;
--	}
--
--	if (!of_root) {
--		of_root = unittest_data_node;
--		for_each_of_allnodes(np)
--			__of_attach_node_sysfs(np);
--		of_aliases = of_find_node_by_path("/aliases");
--		of_chosen = of_find_node_by_path("/chosen");
--		of_overlay_mutex_unlock();
--		return 0;
--	}
--
--	/* attach the sub-tree to live tree */
--	np = unittest_data_node->child;
--	while (np) {
--		struct device_node *next = np->sibling;
--
--		np->parent = of_root;
--		attach_node_and_children(np);
--		np = next;
--	}
--
--	of_overlay_mutex_unlock();
--
--	return 0;
--}
--
- #ifdef CONFIG_OF_OVERLAY
- static int overlay_data_apply(const char *overlay_name, int *overlay_id);
- 
-@@ -2560,8 +2248,6 @@ static int of_test_init(struct kunit *test)
- static struct kunit_case of_test_cases[] = {
- 	KUNIT_CASE(of_unittest_check_tree_linkage),
- 	KUNIT_CASE(of_unittest_check_phandles),
--	KUNIT_CASE(of_unittest_find_node_by_name),
--	KUNIT_CASE(of_unittest_dynamic),
- 	KUNIT_CASE(of_unittest_parse_phandle_with_args),
- 	KUNIT_CASE(of_unittest_parse_phandle_with_args_map),
- 	KUNIT_CASE(of_unittest_printf),
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+On Nov 27, 2018, at 10:49 PM, Darrick J. Wong <darrick.wong@oracle.com> =
+wrote:
+> On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
+>> On Tue, Nov 27, 2018 at 08:49:44PM -0700, Allison Henderson wrote:
+>>> Motivation:
+>>> When fs data/metadata checksum mismatch, lower block devices may =
+have other
+>>> correct copies. e.g. If XFS successfully reads a metadata buffer off =
+a raid1
+>>> but decides that the metadata is garbage, today it will shut down =
+the entire
+>>> filesystem without trying any of the other mirrors.  This is a =
+severe
+>>> loss of service, and we propose these patches to have XFS try harder =
+to
+>>> avoid failure.
+>>>=20
+>>> This patch prototype this mirror retry idea by:
+>>> * Adding @nr_mirrors to struct request_queue which is similar as
+>>>  blk_queue_nonrot(), filesystem can grab device request queue and =
+check max
+>>>  mirrors this block device has.
+>>>  Helper functions were also added to get/set the nr_mirrors.
+>>>=20
+>>> * Expanding bi_write_hint to bi_rw_hint, now @bi_rw_hint has three =
+meanings.
+>>> 1.Original write_hint.
+>>> 2.end_io() will update @bi_rw_hint to reflect which mirror this i/o =
+really happened.
+>>> 3.Fs set @bi_rw_hint to force driver e.g raid1 read from a specific =
+mirror.
+>>>=20
+>>> * Modify md/raid1 to support this retry feature.
+>>>=20
+>>> * Add b_rw_hint to xfs_buf
+>>>  This patch adds a new field b_rw_hint to xfs_buf.  We will use this =
+to set the
+>>>  new bio->bi_rw_hint when submitting the read request, and also to =
+store the
+>>>  returned mirror when the read completes
+>=20
+>> the retry iterations. That allows us to let he block layer ot pick
+>> whatever leg it wants for the initial read, but if we get a failure
+>> we directly control the mirror we retry from and all bios in the
+>> buffer go to that same mirror.
+>> 	- is it generic/abstract enough to be able to work with
+>> 	  RAID5/6 to trigger verification/recovery from the parity
+>> 	  information in the stripe?
+>=20
+> In theory we could supply a raid5 implementation, wherein rw_hint =3D=3D=
+ 0
+> lets the raid do as it pleases; rw_hint =3D=3D 1 reads from the =
+stripe; and
+> rw_hint =3D=3D 2 forces stripe recovery for the given block.
 
+Definitely this API needs to be useful for RAID-5/6 storage as well, and
+I don't think that needs too complex an interface to achieve.
+
+Basically, the "nr_mirrors" parameter would instead be "nr_retries" or
+similar, so that the caller knows how many possible data combinations
+there are to try and validate.  For mirrors this is easy, and as it is
+currently implemented.  For RAID-5/6 this would essentially be the
+number of data rebuild combinations in the RAID group (e.g. 8 in a
+RAID-5 8+1 setup, and 16 in a RAID-6 8+2).
+
+For each call with nr_retries !=3D 0, the MD RAID-5/6 driver would skip
+one of the data drives, and rebuild that part of the data from parity.
+This wouldn't take too long, since the blocks are already in memory,
+they just need the parity to be recomputed in a few different ways to
+try and find a combination that returns valid data (e.g. if a drive
+failed and the parity also has a latent corrupt sector, not uncommon).
+
+The next step is to have an API that says "retry=3DN returned the =
+correct
+data, rebuild the parity/drive with that combination of devices" so
+that the corrupt parity sector isn't used during the rebuild.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlv+7sgACgkQcqXauRfM
+H+BeOw//Uxw6p/zGQaKjPUSXqnxgyftkyceAkIzeVS82sSgLCxntgcAitmsam3+H
+r6aNJglW47gAn0SufpWkidA1pJGiV5zxSU4frApyGbGaVOl9AqzgfV1JGoWxVggw
+O0cr/MSECJmQD/Za/9hIEY5ENF5PMhIOyaXe8vP0sEH45yKzlL02Fafyy3vR2Fxj
+CRijCgOj7AYv+0BZayjmHT0yPK1psbchWxR7eezXNK1ggebJ3EaMFCSmalRNTUV6
+k2XvUHl+SyiRn6zr+CORoZXPnu+mmOpvdERxcjmeAF0fDRtyER3kbEJc0unqL7Tm
+5JiXWD/SlCLRMEMNsv0XdexNdzjD4fvnScJZ/GG92EktfgkjD/6IpStEmwmTflTQ
+u98S8Fws/hOrvJSW1pDdobmxrSmI4UviVj98BDzZQbkPLvUHW8fJy+us7a7iwBS4
+euECiA4J0XAREwtROnfpvJSyYQ1W758669H7bylydI8Pu29gt4XISWgIJA18ZaIo
+YXTO8YAJCTpF/okwBgEfJ6i6ad05bYjQjAXjKNZf/Y7fV9f4rkoUNhnBTkETZsvR
+SZlZkwljw9nAqPtjqbuyoQ2hZAK8o6IlyNwhHHhqw3POKIYdmsnqNtZplKauVw98
+HZSChSjU156Xc+axJ4YpYdMTAI5aQf61uvUWtr9hdnHJF8DRaIQ=
+=DyFV
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E18FEC91-F3F9-48CF-BEDA-01D625B3A34F--
