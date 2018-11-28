@@ -2,274 +2,116 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6353C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B48C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA372082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA372082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D76F20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:56:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W98GuLgA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D76F20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeK1Tz7 (ORCPT
+        id S1727829AbeK1T46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:55:59 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59350 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbeK1Tz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:55:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E283359B;
-        Wed, 28 Nov 2018 00:55:06 -0800 (PST)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4E26D3F5A0;
-        Wed, 28 Nov 2018 00:55:04 -0800 (PST)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org, mingo@kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCHv2] locking/atomics: build atomic headers as required
-Date:   Wed, 28 Nov 2018 08:54:55 +0000
-Message-Id: <20181128085455.1164-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 28 Nov 2018 14:56:58 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42879 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbeK1T46 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:56:58 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so9189886pga.9
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 00:56:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j2joXtoL181T0Q+21ODaRSamdDlvS5I215c8Di1fWVs=;
+        b=W98GuLgAcg0nB6qqCE3sDvPMTo73UFUgvoi7Y0+0FCPdnSGSRNoJ68DULJZyImO+Uk
+         X3Ywz2WANNZrLW/ebqlF7Uiu9Ea3QddUHMsO78IZ4pBpfIyGloASm/iB4voVCSi+Q3aW
+         AcYQN0ZqLef8yMV3oxXsNYKQDKRFSiDmUpMBg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j2joXtoL181T0Q+21ODaRSamdDlvS5I215c8Di1fWVs=;
+        b=D/Sou1ci5D9jurO5OqMrWmtpaiXiZseLIQ0bShyZqv9BIIufEvntofhE06nSFM4kWi
+         yf/AsU7p+dP24XM+CK6SVID0+/m7lWy09XGkoWBA5sk86wv3Mu5mQDnies+Z0gOrSZJL
+         lZ8sV1FZ4uUGczJBhqv0btFzyEKmLrdXxI9+d5xLlEl3s7VAuI28O4nGgLluJpjhhDKC
+         NaGTXN06mOanIBLa0FQKuJ196wIDLmACAXJvxl2eElg4G9NyKhnq98tgffz5bNgfH0Lr
+         T/I1qlPxmlbPDbhK8heVz8LzIMS2skkaQ/OT/v2JHBGM96mcirwY2xnaFj2VQsoUWLpS
+         CYEg==
+X-Gm-Message-State: AGRZ1gIUGyotsI33S4OCXqSLuPS4G5fo3Ex+7xRPfM+454t2+HPUvWu5
+        vZAx0or/gCKkxrZCcGhVew0PyD2M1qOtlAxKGOQztw==
+X-Google-Smtp-Source: AJdET5cxONVrz01SwOMvHbLkxB35vXTRz12KRwMc2vhsNl/ZTPs/NNfq06/M+CpRCuOZ129zxxQXkjrnz2DsB7+iGyY=
+X-Received: by 2002:a62:d0c1:: with SMTP id p184mr36225520pfg.245.1543395365831;
+ Wed, 28 Nov 2018 00:56:05 -0800 (PST)
+MIME-Version: 1.0
+References: <20181111090341.120786-1-drinkcat@chromium.org>
+ <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
+ <20181121213853.GL3065@bombadil.infradead.org> <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
+ <20181122082336.GA2049@infradead.org> <555dd63a-0634-6a39-7abc-121e02273cb2@suse.cz>
+ <20181126080213.GA17809@infradead.org>
+In-Reply-To: <20181126080213.GA17809@infradead.org>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Wed, 28 Nov 2018 16:55:54 +0800
+Message-ID: <CANMq1KBYAgoPh37e+BPz7xK4z3jJ4Gm30Gs662+_gTdM8v0QDA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
+To:     hch@infradead.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Robin Murphy <robin.murphy@arm.com>, willy@infradead.org,
+        Christoph Lameter <cl@linux.com>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, Michal Hocko <mhocko@suse.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        yingjoe.chen@mediatek.com, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew and Ingo report that the check-atomics.sh script is simply too
-slow to run for every kernel build, and it's impractical to make it
-faster without rewriting it in something other than shell.
+On Mon, Nov 26, 2018 at 4:02 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Nov 23, 2018 at 01:23:41PM +0100, Vlastimil Babka wrote:
+> > Is this also true for caches created by kmem_cache_create(), that
+> > debugging options can result in not respecting the alignment passed to
+> > kmem_cache_create()? That would be rather bad, IMHO.
+>
+> That's what I understood in the discussion.  If not it would make
+> our live simpler, but would need to be well document.
 
-Rather than committing the generated headers, let's regenerate these
-as-required, if we change the data or scripts used to generate the
-atomic headers, or when building from a pristine tree.
+From my experiment, adding `slub_debug` to command line does _not_
+break the alignment of kmem_cache_alloc'ed objects.
 
-That ensures they're always up-to-date, allows them to be built in
-parallel, and avoid redundant rebuilds, which is a 2-8s saving per
-incremental build. Since the results are not committed, it's very
-obvious that they should not be modified directly. If we need to
-generate more headers in future, it's easy to extend Makefile.genheader
-to permit this.
+We do see an increase in slab_size
+(/sys/kernel/slab/io-pgtable_armv7s_l2/slab_size), from 1024 to 3072
+(probably because slub needs to allocate space on each side for the
+red zone/padding, while keeping the alignment?)
 
-I've verified that this works in the cases we previously had issues with
-(out-of-tree builds and where scripts have no execute permissions), and
-have tested these cases for both x86_64 and arm64.
-
-The diffstat looks nice, at least...
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org
----
- Kbuild                                    |   18 +-
- Makefile                                  |    8 +-
- arch/arm64/include/asm/atomic.h           |    2 +-
- arch/x86/include/asm/atomic.h             |    2 +-
- include/asm-generic/atomic-instrumented.h | 1787 ----------------------
- include/asm-generic/atomic-long.h         | 1012 -------------
- include/linux/atomic-fallback.h           | 2294 -----------------------------
- include/linux/atomic.h                    |    4 +-
- scripts/Makefile.genheader                |   26 +
- scripts/atomic/check-atomics.sh           |   19 -
- 10 files changed, 38 insertions(+), 5134 deletions(-)
- delete mode 100644 include/asm-generic/atomic-instrumented.h
- delete mode 100644 include/asm-generic/atomic-long.h
- delete mode 100644 include/linux/atomic-fallback.h
- create mode 100644 scripts/Makefile.genheader
- delete mode 100755 scripts/atomic/check-atomics.sh
-
-Hi Ingo,
-
-Would you be happy to pick this up? Andrew and Peter seemed happy with
-v1 [1].
-
-To save on ~5100 lines of preimage for the deleted files, I generated
-this patch with `git format-patch -D`, which git am will complain about.
-
-I've pushed this to my atomics/regenerate branch [2], based on the tip
-locking/core branch, in the hope you're happy to pick it from there. If
-you can let me know your preference I can resend this however you
-prefer.
-
-Thanks,
-Mark.
-
-Since v1 [1]:
-* Clarify commit message w.r.t. when headers get regenerated
-* Add missing dependencies to Makefile.genheader
-* Minor cleanups for Makefile.genheader
-
-[1] https://lkml.kernel.org/r/20181123153321.8561-1-mark.rutland@arm.com
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/regenerate
-
-diff --git a/Kbuild b/Kbuild
-index 780048056ac5..005304205482 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -6,8 +6,7 @@
- # 2) Generate timeconst.h
- # 3) Generate asm-offsets.h (may need bounds.h and timeconst.h)
- # 4) Check for missing system calls
--# 5) check atomics headers are up-to-date
--# 6) Generate constants.py (may need bounds.h)
-+# 5) Generate constants.py (may need bounds.h)
- 
- #####
- # 1) Generate bounds.h
-@@ -73,20 +72,7 @@ missing-syscalls: scripts/checksyscalls.sh $(offsets-file) FORCE
- 	$(call cmd,syscalls)
- 
- #####
--# 5) Check atomic headers are up-to-date
--#
--
--always += old-atomics
--targets += old-atomics
--
--quiet_cmd_atomics = CALL    $<
--      cmd_atomics = $(CONFIG_SHELL) $<
--
--old-atomics: scripts/atomic/check-atomics.sh FORCE
--	$(call cmd,atomics)
--
--#####
--# 6) Generate constants for Python GDB integration
-+# 5) Generate constants for Python GDB integration
- #
- 
- extra-$(CONFIG_GDB_SCRIPTS) += build_constants_py
-diff --git a/Makefile b/Makefile
-index 6c40d547513c..fd871d2c2f54 100644
---- a/Makefile
-+++ b/Makefile
-@@ -224,7 +224,7 @@ clean-targets := %clean mrproper cleandocs
- no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers_% archheaders archscripts \
--			 %asm-generic kernelversion %src-pkg
-+			 %asm-generic genheader kernelversion %src-pkg
- no-sync-config-targets := $(no-dot-config-targets) install %install \
- 			   kernelrelease
- 
-@@ -1089,7 +1089,7 @@ endif
- # prepare2 creates a makefile if using a separate output directory.
- # From this point forward, .config has been reprocessed, so any rules
- # that need to depend on updated CONFIG_* values can be checked here.
--prepare2: prepare3 outputmakefile asm-generic
-+prepare2: prepare3 outputmakefile asm-generic genheader
- 
- prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
- 	$(cmd_crmodverdir)
-@@ -1113,6 +1113,10 @@ uapi-asm-generic:
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
- 	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
- 
-+PHONY += genheader
-+genheader:
-+	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.genheader obj=include/generated
-+
- PHONY += prepare-objtool
- prepare-objtool: $(objtool_target)
- 
-diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
-index 1f4e9ee641c9..57c73cde3a51 100644
---- a/arch/arm64/include/asm/atomic.h
-+++ b/arch/arm64/include/asm/atomic.h
-@@ -166,7 +166,7 @@
- 
- #define arch_atomic64_dec_if_positive		arch_atomic64_dec_if_positive
- 
--#include <asm-generic/atomic-instrumented.h>
-+#include <generated/atomic-instrumented.h>
- 
- #endif
- #endif
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index ea3d95275b43..d1e3aca236e2 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -262,6 +262,6 @@ static inline int arch_atomic_fetch_xor(int i, atomic_t *v)
- # include <asm/atomic64_64.h>
- #endif
- 
--#include <asm-generic/atomic-instrumented.h>
-+#include <generated/atomic-instrumented.h>
- 
- #endif /* _ASM_X86_ATOMIC_H */
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-deleted file mode 100644
-index b8f5b35216e1..000000000000
-diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
-deleted file mode 100644
-index a833d385a70b..000000000000
-diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
-deleted file mode 100644
-index 1c02c0112fbb..000000000000
-diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-index 4c0d009a46f0..bea7ceec44af 100644
---- a/include/linux/atomic.h
-+++ b/include/linux/atomic.h
-@@ -71,8 +71,8 @@
- 	__ret;								\
- })
- 
--#include <linux/atomic-fallback.h>
-+#include <generated/atomic-fallback.h>
- 
--#include <asm-generic/atomic-long.h>
-+#include <generated/atomic-long.h>
- 
- #endif /* _LINUX_ATOMIC_H */
-diff --git a/scripts/Makefile.genheader b/scripts/Makefile.genheader
-new file mode 100644
-index 000000000000..03aac5628f69
---- /dev/null
-+++ b/scripts/Makefile.genheader
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate common headers under include/generated/
-+
-+include scripts/Kbuild.include
-+
-+.PHONY: all
-+
-+targets += atomic-fallback.h
-+targets += atomic-instrumented.h
-+targets += atomic-long.h
-+
-+all: $(addprefix $(obj)/,$(targets))
-+
-+atomic-dir := $(srctree)/scripts/atomic
-+atomic-tbl := $(atomic-dir)/atomics.tbl
-+
-+atomic-deps := $(atomic-tbl) $(atomic-dir)/atomic-tbl.sh \
-+	       $(atomic-dir)/fallbacks/*
-+
-+quiet_cmd_genatomic = GENHDR  $@
-+cmd_genatomic = $(CONFIG_SHELL) $< $(atomic-tbl) > $@
-+
-+$(obj)/atomic-%.h: $(atomic-dir)/gen-atomic-%.sh $(atomic-deps)
-+	$(call if_changed,genatomic)
-+
-diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
-deleted file mode 100755
-index c30101cddf2d..000000000000
--- 
-2.11.0
-
+> Christoph can probably explain the alignment choices in slub.
+>
+> >
+> > > But I do agree with the sentiment of not wanting to spread GFP_DMA32
+> > > futher into the slab allocator.
+> >
+> > I don't see a problem with GFP_DMA32 for custom caches. Generic
+> > kmalloc() would be worse, since it would have to create a new array of
+> > kmalloc caches. But that's already ruled out due to the alignment.
+>
+> True, purely slab probably isn't too bad.
