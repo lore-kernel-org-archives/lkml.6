@@ -2,112 +2,136 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6142BC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7189BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3355C20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3355C20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 3062520832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:41:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tRjeQb1d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3062520832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeK1Qks (ORCPT
+        id S1727581AbeK1Qlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 11:40:48 -0500
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:25172 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726894AbeK1Qkr (ORCPT
+        Wed, 28 Nov 2018 11:41:55 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36050 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726894AbeK1Qly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 11:40:47 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 28 Nov 2018 16:10:20 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gRsaB-0004AL-FW; Wed, 28 Nov 2018 16:40:19 +1100
-Date:   Wed, 28 Nov 2018 16:40:19 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        martin.petersen@oracle.com, shirley.ma@oracle.com,
-        bob.liu@oracle.com
-Subject: Re: [PATCH v1 6/7] xfs: Rewrite retried read
-Message-ID: <20181128054019.GN6311@dastard>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <1543376991-5764-7-git-send-email-allison.henderson@oracle.com>
- <20181128051719.GK6311@dastard>
- <20181128052604.GE8125@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128052604.GE8125@magnolia>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 28 Nov 2018 11:41:54 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 49DED8EE1F7;
+        Tue, 27 Nov 2018 21:41:30 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UibN9_b1TQ5T; Tue, 27 Nov 2018 21:41:30 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B81028EE0C8;
+        Tue, 27 Nov 2018 21:41:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1543383690;
+        bh=6a261lD2WwsRHMP5wgIib1i/7WBJPZHLxw3C51Gb9G8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tRjeQb1dOQZOtvaJyq5lhabCUCIo3UKLjN2w3EFAkbTS1FXlXgGY8gN0dQwsInVl2
+         z115gNPsp/YFW2gamuZm6fNTmStuYyqx7bBDFyEJU1fFN1Oib6HBAFioivD54o5gWK
+         IBUzbVrfL9qfvkD8P7ekurrbVNEe1ZcPclmbO8LM=
+Message-ID: <1543383684.3518.2.camel@HansenPartnership.com>
+Subject: Re: linux-next: Tree for Nov 27 (scsi/aha1542)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Date:   Tue, 27 Nov 2018 21:41:24 -0800
+In-Reply-To: <20181128153847.08ead1c9@canb.auug.org.au>
+References: <20181127152539.55426063@canb.auug.org.au>
+         <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
+         <20181128153847.08ead1c9@canb.auug.org.au>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-INqxb6r8LVHJxEOwNF5S"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:26:04PM -0800, Darrick J. Wong wrote:
-> On Wed, Nov 28, 2018 at 04:17:19PM +1100, Dave Chinner wrote:
-> > On Tue, Nov 27, 2018 at 08:49:50PM -0700, Allison Henderson wrote:
-> > > If we had to try more than one mirror to get a successful
-> > > read, then write that buffer back to correct the bad mirro
-> > > 
-> > > Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
-> > > ---
-> > >  fs/xfs/xfs_buf.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > > index f102d01..81f6491 100644
-> > > --- a/fs/xfs/xfs_buf.c
-> > > +++ b/fs/xfs/xfs_buf.c
-> > > @@ -847,6 +847,14 @@ xfs_buf_read_map(
-> > >  
-> > >  		}
-> > >  retry_done:
-> > > +
-> > > +		/*
-> > > +		 * if we had to try more than one mirror to sucessfully read
-> > > +		 * the buffer, write the buffer back
-> > > +		 */
-> > > +		if (!bp->b_error && i > 0)
-> > > +			xfs_bwrite(bp);
-> > > +
-> > 
-> > This can go in the case statement on retry and then you don't need
-> > to check for i > 0 or, well, bp->b_error. i.e.
-> > 
-> > 		swtich (bp->b_error) {
-> > 		case -EBADCRC:
-> > 		case -EIO:
-> > 		case -EFSCORRUPTED:
-> > 			/* try again from different copy */
-> > 			continue;
-> > 		0:
-> > 			/* good copy, rewrite it to repair bad copy */
-> > 			xfs_bwrite(bp);
-> 
-> Some day we might want to provide some controls for how long we'll retry
-> these reads and whether or not we automatically rewrite buffers, since
-> some administrators might prefer fast fail to get failover started.
 
-Sure, but if the recovery code is trewn all through the read code,
-it becomes a mess to untangle. isolate the recovery code as much as
-possible, that way we can factor it out as it becomes more complex.
+--=-INqxb6r8LVHJxEOwNF5S
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> (Not now though)
+On Wed, 2018-11-28 at 15:38 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Tue, 27 Nov 2018 20:14:58 -0800 Randy Dunlap <rdunlap@infradead.or
+> g> wrote:
+> >=20
+> > On 11/26/18 8:25 PM, Stephen Rothwell wrote:
+> > > Hi all,
+> > >=20
+> > > Changes since 20181126:
+> > >  =20
+> >=20
+> > on i386:
+> >=20
+> > ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
+> >=20
+> > somewhere in aha1542_interrupt() according to objdump.
+>=20
+> Presumably caused by commit
+>=20
+>   1794ef2b150d ("scsi: aha1542: convert to DMA mapping API")
 
-Which is exactly my point about future recovery complexity.... :P
+Yes, it's because dma_addr_t can be u64 on pae systems but
+isa_virt_to_bus only ever returns unsigned long (because an ISA
+physical address can only be 24 bits).
 
-Cheers,
+I think this is the fix; there doesn't seem to be much point converting
+to do_div given all the limitations.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+James
+
+---
+
+diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
+index a9c29757172f..afb693d7b44f 100644
+--- a/drivers/scsi/aha1542.c
++++ b/drivers/scsi/aha1542.c
+@@ -325,7 +325,7 @@ static irqreturn_t aha1542_interrupt(int irq, void *dev=
+_id)
+ 			return IRQ_HANDLED;
+ 		};
+=20
+-		mbo =3D (scsi2int(mb[mbi].ccbptr) - aha1542->ccb_handle) / sizeof(struct=
+ ccb);
++		mbo =3D (scsi2int(mb[mbi].ccbptr) - (unsigned long)aha1542->ccb_handle) =
+/ sizeof(struct ccb);
+ 		mbistatus =3D mb[mbi].status;
+ 		mb[mbi].status =3D 0;
+ 		aha1542->aha1542_last_mbi_used =3D mbi;
+--=-INqxb6r8LVHJxEOwNF5S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCW/4qhAAKCRDnQslM7pis
+hfOxAQDz5qxC4lFi29t44zMABjdsUIB0s3NkLl3XIr3Okx6nMwD6AhqqSMLVAMOc
+ltgP1Qm/FVEspHfkd4yMFj/ygWexeFY=
+=X0+P
+-----END PGP SIGNATURE-----
+
+--=-INqxb6r8LVHJxEOwNF5S--
+
