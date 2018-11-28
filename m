@@ -4,62 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5969C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B4FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85F462086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:30:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85F462086B
+	by mail.kernel.org (Postfix) with ESMTP id 1EBAD2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:30:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBAD2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeK2Bch (ORCPT
+        id S1728787AbeK2Bcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:32:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52103 "EHLO
+        Wed, 28 Nov 2018 20:32:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59493 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbeK2Bcg (ORCPT
+        with ESMTP id S1727941AbeK2Bcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:32:36 -0500
+        Wed, 28 Nov 2018 20:32:45 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASET4EP2323224
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEUCVU2323468
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:29:04 -0800
+        Wed, 28 Nov 2018 06:30:12 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASET3bi2323221;
-        Wed, 28 Nov 2018 06:29:03 -0800
-Date:   Wed, 28 Nov 2018 06:29:03 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEUBJb2323465;
+        Wed, 28 Nov 2018 06:30:11 -0800
+Date:   Wed, 28 Nov 2018 06:30:11 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-495d470e9828500e0155027f230449ac5e29c025@git.kernel.org>
-Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        luto@kernel.org, longman9394@gmail.com, jpoimboe@redhat.com,
-        peterz@infradead.org, keescook@chromium.org,
-        david.c.stewart@intel.com, hpa@zytor.com,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        thomas.lendacky@amd.com, arjan@linux.intel.com, dwmw@amazon.co.uk,
-        ak@linux.intel.com, jkosina@suse.cz, mingo@kernel.org,
-        jcm@redhat.com, tglx@linutronix.de, aarcange@redhat.com,
-        asit.k.mallick@intel.com, tim.c.chen@linux.intel.com,
-        casey.schaufler@intel.com
-Reply-To: ak@linux.intel.com, jkosina@suse.cz, jcm@redhat.com,
-          mingo@kernel.org, aarcange@redhat.com, tglx@linutronix.de,
-          tim.c.chen@linux.intel.com, asit.k.mallick@intel.com,
-          casey.schaufler@intel.com, linux-kernel@vger.kernel.org,
-          dave.hansen@intel.com, longman9394@gmail.com,
-          jpoimboe@redhat.com, luto@kernel.org, keescook@chromium.org,
-          peterz@infradead.org, david.c.stewart@intel.com, hpa@zytor.com,
-          gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-          thomas.lendacky@amd.com, arjan@linux.intel.com, dwmw@amazon.co.uk
-In-Reply-To: <20181125185004.986890749@linutronix.de>
-References: <20181125185004.986890749@linutronix.de>
+From:   tip-bot for Tim Chen <tipbot@zytor.com>
+Message-ID: <tip-5bfbe3ad5840d941b89bcac54b821ba14f50a0ba@git.kernel.org>
+Cc:     tim.c.chen@linux.intel.com, jcm@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org, longman9394@gmail.com, luto@kernel.org,
+        ak@linux.intel.com, linux-kernel@vger.kernel.org,
+        dwmw@amazon.co.uk, arjan@linux.intel.com,
+        casey.schaufler@intel.com, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        david.c.stewart@intel.com, thomas.lendacky@amd.com,
+        jkosina@suse.cz, hpa@zytor.com, dave.hansen@intel.com,
+        gregkh@linuxfoundation.org, asit.k.mallick@intel.com,
+        keescook@chromium.org, aarcange@redhat.com
+Reply-To: peterz@infradead.org, david.c.stewart@intel.com,
+          jpoimboe@redhat.com, torvalds@linux-foundation.org,
+          casey.schaufler@intel.com, arjan@linux.intel.com,
+          aarcange@redhat.com, keescook@chromium.org,
+          asit.k.mallick@intel.com, gregkh@linuxfoundation.org,
+          dave.hansen@intel.com, hpa@zytor.com, jkosina@suse.cz,
+          thomas.lendacky@amd.com, mingo@kernel.org, tglx@linutronix.de,
+          jcm@redhat.com, tim.c.chen@linux.intel.com, dwmw@amazon.co.uk,
+          linux-kernel@vger.kernel.org, ak@linux.intel.com,
+          luto@kernel.org, longman9394@gmail.com
+In-Reply-To: <20181125185005.176917199@linutronix.de>
+References: <20181125185005.176917199@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Unify conditional spectre v2 print
- functions
-Git-Commit-ID: 495d470e9828500e0155027f230449ac5e29c025
+Subject: [tip:x86/pti] x86/speculation: Prepare for per task indirect branch
+ speculation control
+Git-Commit-ID: 5bfbe3ad5840d941b89bcac54b821ba14f50a0ba
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -73,18 +74,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  495d470e9828500e0155027f230449ac5e29c025
-Gitweb:     https://git.kernel.org/tip/495d470e9828500e0155027f230449ac5e29c025
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:44 +0100
+Commit-ID:  5bfbe3ad5840d941b89bcac54b821ba14f50a0ba
+Gitweb:     https://git.kernel.org/tip/5bfbe3ad5840d941b89bcac54b821ba14f50a0ba
+Author:     Tim Chen <tim.c.chen@linux.intel.com>
+AuthorDate: Sun, 25 Nov 2018 19:33:46 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:09 +0100
+CommitDate: Wed, 28 Nov 2018 11:57:10 +0100
 
-x86/speculation: Unify conditional spectre v2 print functions
+x86/speculation: Prepare for per task indirect branch speculation control
 
-There is no point in having two functions and a conditional at the call
-site.
+To avoid the overhead of STIBP always on, it's necessary to allow per task
+control of STIBP.
 
+Add a new task flag TIF_SPEC_IB and evaluate it during context switch if
+SMT is active and flag evaluation is enabled by the speculation control
+code. Add the conditional evaluation to x86_virt_spec_ctrl() as well so the
+guest/host switch works properly.
+
+This has no effect because TIF_SPEC_IB cannot be set yet and the static key
+which controls evaluation is off. Preparatory patch for adding the control
+code.
+
+[ tglx: Simplify the context switch logic and make the TIF evaluation
+  	depend on SMP=y and on the static key controlling the conditional
+  	update. Rename it to TIF_SPEC_IB because it controls both STIBP and
+  	IBPB ]
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -95,7 +111,6 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -107,46 +122,146 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.986890749@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.176917199@linutronix.de
 
 
 ---
- arch/x86/kernel/cpu/bugs.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/msr-index.h   |  5 +++--
+ arch/x86/include/asm/spec-ctrl.h   | 12 ++++++++++++
+ arch/x86/include/asm/thread_info.h |  5 ++++-
+ arch/x86/kernel/cpu/bugs.c         |  4 ++++
+ arch/x86/kernel/process.c          | 20 ++++++++++++++++++--
+ 5 files changed, 41 insertions(+), 5 deletions(-)
 
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 80f4a4f38c79..c8f73efb4ece 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -41,9 +41,10 @@
+ 
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+-#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++#define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
++#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
+ #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
+-#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
++#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
+ 
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+ #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
+diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-ctrl.h
+index 8e2f8411c7a7..27b0bce3933b 100644
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
+ 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
+ 
++static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
++{
++	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
++	return (tifn & _TIF_SPEC_IB) >> (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
+ {
+ 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
+ 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
+ 
++static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
++{
++	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
++	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ {
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 523c69efc38a..fa583ec99e3e 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -83,6 +83,7 @@ struct thread_info {
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
++#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -110,6 +111,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
++#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+@@ -146,7 +148,8 @@ struct thread_info {
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW							\
+-	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
++	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
++	 _TIF_SSBD|_TIF_SPEC_IB)
+ 
+ #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
+ #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 9279cbabe16e..4f5a6319dca6 100644
+index 3a223cce1fac..1e13dbfc0919 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -257,15 +257,9 @@ static const struct {
- 	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
- };
+@@ -148,6 +148,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
+ 		    static_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
  
--static void __init spec2_print_if_insecure(const char *reason)
-+static void __init spec_v2_print_cond(const char *reason, bool secure)
++		/* Conditional STIBP enabled? */
++		if (static_branch_unlikely(&switch_to_cond_stibp))
++			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
++
+ 		if (hostval != guestval) {
+ 			msrval = setguest ? guestval : hostval;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 70e9832379e1..574b144d2b53 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -404,11 +404,17 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
+ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 						      unsigned long tifn)
  {
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
--}
--
--static void __init spec2_print_if_secure(const char *reason)
--{
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
- 		pr_info("%s selected on command line.\n", reason);
- }
++	unsigned long tif_diff = tifp ^ tifn;
+ 	u64 msr = x86_spec_ctrl_base;
+ 	bool updmsr = false;
  
-@@ -309,11 +303,8 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 		return SPECTRE_V2_CMD_AUTO;
+-	/* If TIF_SSBD is different, select the proper mitigation method */
+-	if ((tifp ^ tifn) & _TIF_SSBD) {
++	/*
++	 * If TIF_SSBD is different, select the proper mitigation
++	 * method. Note that if SSBD mitigation is disabled or permanentely
++	 * enabled this branch can't be taken because nothing can set
++	 * TIF_SSBD.
++	 */
++	if (tif_diff & _TIF_SSBD) {
+ 		if (static_cpu_has(X86_FEATURE_VIRT_SSBD)) {
+ 			amd_set_ssb_virt_state(tifn);
+ 		} else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
+@@ -420,6 +426,16 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 		}
  	}
  
--	if (mitigation_options[i].secure)
--		spec2_print_if_secure(mitigation_options[i].option);
--	else
--		spec2_print_if_insecure(mitigation_options[i].option);
--
-+	spec_v2_print_cond(mitigation_options[i].option,
-+			   mitigation_options[i].secure);
- 	return cmd;
++	/*
++	 * Only evaluate TIF_SPEC_IB if conditional STIBP is enabled,
++	 * otherwise avoid the MSR write.
++	 */
++	if (IS_ENABLED(CONFIG_SMP) &&
++	    static_branch_unlikely(&switch_to_cond_stibp)) {
++		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
++		msr |= stibp_tif_to_spec_ctrl(tifn);
++	}
++
+ 	if (updmsr)
+ 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
  }
- 
