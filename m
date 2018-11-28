@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61768C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6649DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF1720832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22CE320832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S8hfGFdH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF1720832
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IRMnBk/E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22CE320832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeK2JEc (ORCPT
+        id S1726724AbeK2JEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:04:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34393 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeK2JEc (ORCPT
+        Thu, 29 Nov 2018 04:04:35 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40577 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbeK2JEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:04:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 17so10109716pgg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 14:01:27 -0800 (PST)
+        Thu, 29 Nov 2018 04:04:34 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so10100027pgp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 14:01:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xnEBPlZvLoiwiqqm9S9JUInQL+RU7pyQ/G1YI/wchKg=;
-        b=S8hfGFdHktHmbFUcmAAAToL1GHM1166VP0cPbnSTtGAShRAN8OGq7+DzzlKUPc1kwm
-         q9tTlNGl+LwEQxzx0YOB8iSxeNATA+URaq8VoYLMLfwpyHTC4jdI4KnTuEVdJ+ZjLypr
-         DaZFMb38dcGUgHztaRy4p8mUcekTLvtnA3v0k=
+        bh=OR+Emv/hXsuIpqoetjY/PmsPRuVeBGeNKk4nTUUJUzU=;
+        b=IRMnBk/ELZHfdyqOzNiXDXXMFOgGNE01jpNMzoQRU9t1CwXX4MYuBvx1k25n4uQhJA
+         X2BQ0yYsLtqDrktboR0ehpnwY1vRhaMx5/wAJqhlBjE41V31tso4ZKrXf4usxYPzKFew
+         CHIiyE9STum4m75W01TsFRx3UeDFazllDTYkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xnEBPlZvLoiwiqqm9S9JUInQL+RU7pyQ/G1YI/wchKg=;
-        b=oXc2Zmna+s4TAuRjsyhwuNUL8vGxQOySWnBUhO/kYgxRBnCt/K9J6YmW/ScPsCSQ6J
-         hcgqldaPcWHijPG3UlNxB1zbF88CtPl9AjshrxpDtIiVJyJ/AkgZ/1HzezWWIZGxHFlo
-         VY6EYn8QJEhg0VF8PeVuGrrKdzERuDDAzJ++dQv187378wTlt1zSVFOZJUcucn0ELn+z
-         c4bqBU5JdMUHVv1LOG3K+Z7db+qs+RZmVJyPvHeEuecObMvo2JoZ7trOWzfFgtBgVtms
-         0LZdN3w6DNCR7LuaBY2oknFyR+QTR18fhzGNJw5iED+A790yYvfKkCREoCV6cGeDQyI/
-         Hgjw==
-X-Gm-Message-State: AGRZ1gInzalu48WPNDcDa1miFrxEO0q+euNxGTdvK6ZsnHkwDZ+GrOoU
-        pnVRmP2+9g2En+gMXKjd13ssMQ==
-X-Google-Smtp-Source: AFSGD/VTqOtldnj9pe2KJoP34Vc0OFhJx1V7S4OgdE7ZM1hQW814zi1v+8XgzQumlJn7+9spqWHTEg==
-X-Received: by 2002:a63:42c1:: with SMTP id p184mr34369774pga.202.1543442487192;
-        Wed, 28 Nov 2018 14:01:27 -0800 (PST)
+        bh=OR+Emv/hXsuIpqoetjY/PmsPRuVeBGeNKk4nTUUJUzU=;
+        b=mxTWqRwwNIO9fW9j+lqK4Z7UT/OHQkjSE32i9/n2I5ucHVJx6AyGaXL4Jg5EClT3dz
+         crIXwbhwyqsZs9CVWxTjJe7X8peMRk+7+9kUTxhLam859T8a6qHd7ytDflcg+F4XO/3p
+         T98vTTv0aMDrhOEZpoRvnan4W/IxmZFRXpjn+HDB9rOMLqDqSa1U8Ai7OHs0u6RDZh8r
+         pJH7FNHwu+kSq3JbrZPK92pXKKYxYdaA+SIz0ZhrTHfaaZgIU5nOp7LrJrtt+tCqDb+8
+         FGImnVXKafDEFQpbeWDIfyApz7sLgDKWgEzTBn6mzTZFYilbVuCQyMI0SXiDTExC44uZ
+         dFSA==
+X-Gm-Message-State: AA+aEWb17AwJzW8+JPLFXuP/8KkHgQ1HVZPBV5WGxP2Y5qw1KIKPv+We
+        xszWx7Xo5eHUpZfrpLrqNQY4jg==
+X-Google-Smtp-Source: AFSGD/V5GeAeppv2gI2HWx4avTDTrITmFUpI9eVchor2gRvJLE7xsEMvyfambAHzVW7jf01Gq0Fiwg==
+X-Received: by 2002:a63:de46:: with SMTP id y6mr34645335pgi.198.1543442488773;
+        Wed, 28 Nov 2018 14:01:28 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 12sm8698051pgd.35.2018.11.28.14.01.25
+        by smtp.gmail.com with ESMTPSA id 12sm8698051pgd.35.2018.11.28.14.01.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Nov 2018 14:01:26 -0800 (PST)
+        Wed, 28 Nov 2018 14:01:28 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com
 Cc:     tglx@linutronix.de, alexander.shishkin@linux.intel.com,
@@ -64,9 +64,9 @@ Cc:     tglx@linutronix.de, alexander.shishkin@linux.intel.com,
         gregkh@linuxfoundation.org, hpa@zytor.com, suzuki.poulosi@arm.com,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 4/6] coresight: Use PMU driver configuration for sink selection
-Date:   Wed, 28 Nov 2018 15:01:16 -0700
-Message-Id: <1543442478-31465-5-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH v4 5/6] perf tools: Make perf_evsel accessible to PMU driver configuration code
+Date:   Wed, 28 Nov 2018 15:01:17 -0700
+Message-Id: <1543442478-31465-6-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543442478-31465-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1543442478-31465-1-git-send-email-mathieu.poirier@linaro.org>
@@ -75,115 +75,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the PMU driver configuration held in event::hw::drv_config
-to select a sink for each event that is created (the old sysFS way of
-working is kept around for backward compatibility).
-
-By proceeding in this way a sink can be used by multiple sessions
-without having to play games with entries in sysFS.
+Make the perf_evsel available to the PMU driver configuration code.  That
+way function perf_evsel__run_ioctl() can be used from there and
+information pertaining to the perf_evsel_config_term is still available.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c | 58 +++++++++++++++++++-----
- 1 file changed, 46 insertions(+), 12 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 22 +++++++++++++++++++++-
+ tools/perf/arch/arm/util/cs-etm.h |  3 ++-
+ tools/perf/util/drv_configs.c     | 30 +++++++-----------------------
+ tools/perf/util/pmu.h             |  3 ++-
+ 4 files changed, 32 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index f21eb28b6782..0fbff912d515 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -14,6 +14,7 @@
- #include <linux/perf_event.h>
- #include <linux/percpu-defs.h>
- #include <linux/slab.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
- 
-@@ -177,6 +178,26 @@ static void etm_free_aux(void *data)
- 	schedule_work(&event_data->work);
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 2f595cd73da6..d8081c2e6d44 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -635,7 +635,7 @@ static int __printf(2, 3) cs_device__print_file(const char *name, const char *fm
+ 	return ret;
  }
  
-+static struct coresight_device *etm_drv_config_sync(struct perf_event *event)
-+{
-+	struct coresight_device *sink = NULL;
-+	struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
++static int cs_etm_set_drv_config_term(struct perf_evsel_config_term *term)
+ {
+ 	int ret;
+ 	char enable_sink[ENABLE_SINK_MAX];
+@@ -649,3 +649,23 @@ int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
+ 
+ 	return 0;
+ }
 +
++int cs_etm_set_drv_config(struct perf_evsel *evsel,
++			  struct perf_evsel_config_term **err_term)
++{
++	int err = 0;
++	struct perf_evsel_config_term *term;
++
++	list_for_each_entry(term, &evsel->config_terms, list) {
++		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
++			continue;
++
++		err = cs_etm_set_drv_config_term(term);
++		if (err) {
++			*err_term = term;
++			break;
++		}
++	}
++
++	return err;
++}
+diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
+index 1a12e64f5127..a3f8dde6ccef 100644
+--- a/tools/perf/arch/arm/util/cs-etm.h
++++ b/tools/perf/arch/arm/util/cs-etm.h
+@@ -10,6 +10,7 @@
+ #include "../../util/evsel.h"
+ 
+ struct auxtrace_record *cs_etm_record_init(int *err);
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
++int cs_etm_set_drv_config(struct perf_evsel *evsel,
++			  struct perf_evsel_config_term **err_term);
+ 
+ #endif
+diff --git a/tools/perf/util/drv_configs.c b/tools/perf/util/drv_configs.c
+index eec754243f4d..f7c1bcf08549 100644
+--- a/tools/perf/util/drv_configs.c
++++ b/tools/perf/util/drv_configs.c
+@@ -25,7 +25,6 @@ perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
+ {
+ 	bool found = false;
+ 	int err = 0;
+-	struct perf_evsel_config_term *term;
+ 	struct perf_pmu *pmu = NULL;
+ 
+ 	while ((pmu = perf_pmu__scan(pmu)) != NULL)
+@@ -34,29 +33,14 @@ perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
+ 			break;
+ 		}
+ 
+-	list_for_each_entry(term, &evsel->config_terms, list) {
+-		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
+-			continue;
 +	/*
-+	 * Make sure we don't race with perf_drv_config_replace() in
-+	 * kernel/events/core.c.
++	 * No need to continue if we didn't get a match or if there is no
++	 * driver configuration function for this PMU.
 +	 */
-+	raw_spin_lock(&drv_config->lock);
-+
-+	/* Copy what we got from user space if applicable. */
-+	if (drv_config->config)
-+		sink = drv_config->config;
-+
-+	raw_spin_unlock(&drv_config->lock);
-+
-+	return sink;
-+}
-+
- static void *etm_setup_aux(struct perf_event *event, void **pages,
- 			   int nr_pages, bool overwrite)
- {
-@@ -190,18 +211,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 		return NULL;
- 	INIT_WORK(&event_data->work, free_event_data);
++	if (!found || !pmu->set_drv_config)
++		return err;
  
--	/*
--	 * In theory nothing prevent tracers in a trace session from being
--	 * associated with different sinks, nor having a sink per tracer.  But
--	 * until we have HW with this kind of topology we need to assume tracers
--	 * in a trace session are using the same sink.  Therefore go through
--	 * the coresight bus and pick the first enabled sink.
--	 *
--	 * When operated from sysFS users are responsible to enable the sink
--	 * while from perf, the perf tools will do it based on the choice made
--	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
--	 */
--	sink = coresight_get_enabled_sink(true);
-+	/* First get the sink config from user space. */
-+	sink = etm_drv_config_sync(event);
-+	if (!sink)
-+		sink = coresight_get_enabled_sink(true);
-+
- 	if (!sink || !sink_ops(sink)->alloc_buffer)
- 		goto err;
- 
-@@ -454,6 +468,25 @@ static void etm_addr_filters_sync(struct perf_event *event)
- 	filters->nr_filters = i;
+-		/*
+-		 * We have a configuration term, report an error if we
+-		 * can't find the PMU or if the PMU driver doesn't support
+-		 * cmd line driver configuration.
+-		 */
+-		if (!found || !pmu->set_drv_config) {
+-			err = -EINVAL;
+-			*err_term = term;
+-			break;
+-		}
+-
+-		err = pmu->set_drv_config(term);
+-		if (err) {
+-			*err_term = term;
+-			break;
+-		}
+-	}
+-
+-	return err;
++	return pmu->set_drv_config(evsel, err_term);
  }
  
-+static void *etm_drv_config_validate(struct perf_event *event, char *cstr)
-+{
-+	char drv_config[NAME_MAX];
-+	struct device *dev;
-+	struct coresight_device *sink;
-+
-+	strncpy(drv_config, cstr, NAME_MAX);
-+
-+	/* Look for the device with that name on the CS bus. */
-+	dev = bus_find_device_by_name(&coresight_bustype, NULL, drv_config);
-+	if (!dev)
-+		return ERR_PTR(-EINVAL);
-+
-+	sink = to_coresight_device(dev);
-+	put_device(dev);
-+
-+	return sink;
-+}
-+
- int etm_perf_symlink(struct coresight_device *csdev, bool link)
- {
- 	char entry[sizeof("cpu9999999")];
-@@ -498,6 +531,7 @@ static int __init etm_perf_init(void)
- 	etm_pmu.addr_filters_sync	= etm_addr_filters_sync;
- 	etm_pmu.addr_filters_validate	= etm_addr_filters_validate;
- 	etm_pmu.nr_addr_filters		= ETM_ADDR_CMP_MAX;
-+	etm_pmu.drv_config_validate	= etm_drv_config_validate;
+ int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index 76fecec7b3f9..47f44394042b 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -29,7 +29,8 @@ struct perf_pmu {
+ 	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
+ 	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
+ 	struct list_head list;    /* ELEM */
+-	int (*set_drv_config)	(struct perf_evsel_config_term *term);
++	int (*set_drv_config)	(struct perf_evsel *evsel,
++				 struct perf_evsel_config_term **err_term);
+ };
  
- 	ret = perf_pmu_register(&etm_pmu, CORESIGHT_ETM_PMU_NAME, -1);
- 	if (ret == 0)
+ struct perf_pmu_info {
 -- 
 2.7.4
 
