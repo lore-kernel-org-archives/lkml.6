@@ -2,63 +2,62 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE40BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8C9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853CE2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:16:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853CE2086B
+	by mail.kernel.org (Postfix) with ESMTP id 5E912208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E912208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbeK1WR3 (ORCPT
+        id S1728139AbeK1WT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:17:29 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45320 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeK1WR3 (ORCPT
+        Wed, 28 Nov 2018 17:19:59 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41603 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727678AbeK1WT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:17:29 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so21711263edb.12;
-        Wed, 28 Nov 2018 03:16:10 -0800 (PST)
+        Wed, 28 Nov 2018 17:19:59 -0500
+Received: by mail-ed1-f67.google.com with SMTP id z28so21742251edi.8;
+        Wed, 28 Nov 2018 03:18:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JTHy/GTrL8+EFKw7Tj7vAWj8WWnTu1OL6FxHt5d5/v0=;
-        b=PP1sPltEbcQxV53+pwg0h5nB9z7Ii6U0dJViCoJIHQokSmIj3l3A4moHj4azVsxLs3
-         sLeO566BIOWn1/dhDCnvpQIvWecFG7Zor5OkymzJtDKP/NrdwFfoFprEhxQSWQsijGNM
-         JlAdE+PZ8tkf+a1i7ONICqOrDqMzndG02IJtdrPtI5d10SogoKh2JvlTRJII9MCPa/hu
-         PhFtokx5QcTXGUh79S0CPtIZmbmGoGgtMow1CPIThHzxfJBwUzVmgyo1v92B7F1FpsmH
-         C3q0H+qfHIEFYEt4MCrcRO3d+wtIbZ6numLGrbBpqOKG4EU6ageeTfuY/hG2wPynUMrq
-         VtDw==
-X-Gm-Message-State: AA+aEWbTOF/uI1m/A+xHz+vwnhWYqxAoceyuCRRL02txOqPjo58th3qm
-        pXK7Vlu4lChWBT/GK7dHLCGCnmVbfHA=
-X-Google-Smtp-Source: AFSGD/WqaB9rSaBEwXc3NGhsqr9BlJcikCoB9y8/wtMk4g0nbLOdPIAi69631/cVcSv18dEZCj7jiw==
-X-Received: by 2002:a50:8d8c:: with SMTP id r12mr29419060edh.105.1543403769718;
-        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id p36sm1712745edc.78.2018.11.28.03.16.09
+        bh=mzxfgS9gsbjG2ZHUyJOEEkANG9BKskXeKiseFJ4pA/U=;
+        b=ObBlwtB1Lk6wqGrG9J2cdkncBruAI9rHW9xiusQ9zQoU/RJHcLKAn+p01bjLiq+9e3
+         Z6Ntlrg3bNHS2e4R3vhpWOM4fdPSIXcwtCZBFG2+xs3OSWJAJGWXmJ1vEqZrKpMfbvtQ
+         I+cmWhvAd8z2QZhFDSIdA9DGZrmNelFak8wX3v2feqSQ8w/owEMTw7maOZ6J5xkVakT6
+         8Eh6JukmWQO9ShCHOAVYK7v7r3trOFJf1yzifXFBlqZGkzg+Dq53HkjpqopLrtLLxMtc
+         zwUybUJw0ALhqtKI+1dlBGzzsznXo1HGT1Nnsp7HpsXt4DSDQjXkyRfjGivBUNSEL0ee
+         6eIA==
+X-Gm-Message-State: AGRZ1gLVqyVb/sB+rCJ36/DsprYysD7XRqa5r4IibVH1HPyZs0Kz3qtq
+        bxG3e83BDf19Ol/in6FKsv4VEMFrILE=
+X-Google-Smtp-Source: AJdET5dnvcS6UWX4s/j9pTX1Q/dpbirt0LTZqsDV10C/SRO8nIJNhjLZnyA4vQ8jb0o1OwNDH/cV0Q==
+X-Received: by 2002:a17:906:9154:: with SMTP id y20-v6mr26467881ejw.8.1543403918690;
+        Wed, 28 Nov 2018 03:18:38 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id d5sm1752570edb.48.2018.11.28.03.18.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
-Received: by mail-wm1-f46.google.com with SMTP id y1so2172477wmi.3;
-        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
-X-Received: by 2002:a1c:2304:: with SMTP id j4mr2320634wmj.14.1543403768741;
- Wed, 28 Nov 2018 03:16:08 -0800 (PST)
+        Wed, 28 Nov 2018 03:18:38 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id j2so25915643wrw.1;
+        Wed, 28 Nov 2018 03:18:38 -0800 (PST)
+X-Received: by 2002:adf:891a:: with SMTP id s26mr30420916wrs.44.1543403917598;
+ Wed, 28 Nov 2018 03:18:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20181128093013.24442-1-wens@csie.org> <20181128093013.24442-4-wens@csie.org>
- <20181128102015.jfzqgdlstkjmdfwl@flea>
-In-Reply-To: <20181128102015.jfzqgdlstkjmdfwl@flea>
+References: <20181128093013.24442-1-wens@csie.org> <20181128093013.24442-5-wens@csie.org>
+ <20181128103219.b625lttcgoluhgz5@flea>
+In-Reply-To: <20181128103219.b625lttcgoluhgz5@flea>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 28 Nov 2018 19:15:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64wWWHkyt90oZZnHn+1_mPLbL-A_P-igCaOjjOKajxhjw@mail.gmail.com>
-Message-ID: <CAGb2v64wWWHkyt90oZZnHn+1_mPLbL-A_P-igCaOjjOKajxhjw@mail.gmail.com>
-Subject: Re: [PATCH 03/15] dt-bindings: rtc: sun6i-rtc: Deprecate external
- clock output for A31
+Date:   Wed, 28 Nov 2018 19:18:26 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67jPi-RFFkVrzHeh2XHeZV7ZN0tPCE=cOTpd6RQayH_Kg@mail.gmail.com>
+Message-ID: <CAGb2v67jPi-RFFkVrzHeh2XHeZV7ZN0tPCE=cOTpd6RQayH_Kg@mail.gmail.com>
+Subject: Re: [PATCH 04/15] dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alexandre.belloni@bootlin.com,
         Alessandro Zummo <a.zummo@towertech.it>,
@@ -77,20 +76,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 6:20 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Wed, Nov 28, 2018 at 6:33 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Wed, Nov 28, 2018 at 05:30:00PM +0800, Chen-Yu Tsai wrote:
-> > The A31 does not have an external clock output directly from the RTC.
-> > Instead, it has four muxable clock outputs: three (A, B, C) are
-> > controlled from the CCU, and the last (D) is controlled from the PRCM.
+> On Wed, Nov 28, 2018 at 05:30:01PM +0800, Chen-Yu Tsai wrote:
+> > Experiments showed that on at least the H3/H5/A64 the RTC's internal
+> > oscillator also feeds the CPUS mux in the PRCM.
 > >
-> > Deprecate the usage of the external clock output for the A31 compatible.
+> > Export this clock through the device tree, instead of having to use
+> > a dummy fixed-clock device node, for the PRCM to consume. This will
+> > properly describe the relationship between the clocks.
 > >
 > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  Documentation/devicetree/bindings/rtc/sun6i-rtc.txt | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+> > index 78c4fb472eb7..1bd37faadecb 100644
+> > --- a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+> > +++ b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+> > @@ -24,7 +24,7 @@ Required properties:
+> >
+> >  Required properties for new device trees
+> >  - clocks     : phandle to the 32kHz external oscillator
+> > -- clock-output-names : names of the two clock outputs. See below.
+> > +- clock-output-names : names of the three clock outputs. See below.
+> >  - #clock-cells  : must be equal to 1.
+> >
+> >  The RTC provides the following clocks at the given indices:
+> > @@ -32,6 +32,7 @@ The RTC provides the following clocks at the given indices:
+> >  - 1: LOSC external output, known as X32KFOUT in the datasheet.
+> >       This clock is not available on the A31 and is deprecated for old
+> >       device trees still using the "allwinner,sun6i-a31-rtc" compatible.
+> > +- 2: InternalOSC, or internal RC oscillator
 >
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->
-> I guess we should add a warning in the code as well if one tries to
-> use it.
+> It seems to be required only for a few RTC though (H3, H5 and R40?)
 
-That's on the TODO list. :)
+IMO there's no harm in exporting it for all SoCs. I still don't know
+if it's needed for the A31 either. And we don't have documents for the
+PRCM stuff for any of the SoCs involved.
+
+ChenYu
