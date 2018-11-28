@@ -3,107 +3,294 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A911FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C60C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795D32086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:18:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 795D32086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id E11902081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11902081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeK2CUk (ORCPT
+        id S1728756AbeK2CVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:20:40 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:33182 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727789AbeK2CUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:20:40 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wASFBk6x011690;
-        Wed, 28 Nov 2018 09:18:37 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x670vf-1;
-        Wed, 28 Nov 2018 09:18:37 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 2C2DB611E124;
-        Wed, 28 Nov 2018 09:18:37 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
- 15:18:36 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wASFIaGV024024; Wed,
- 28 Nov 2018 15:18:36 GMT
-Date:   Wed, 28 Nov 2018 15:18:36 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 10/10] regulator: tps65090: Let core handle GPIO
- descriptors
-Message-ID: <20181128151836.GU16508@imbe.wolfsonmicro.main>
-References: <20181128104350.31902-1-linus.walleij@linaro.org>
- <20181128104350.31902-11-linus.walleij@linaro.org>
+        Wed, 28 Nov 2018 21:21:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:43288 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727872AbeK2CVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:21:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAE042379;
+        Wed, 28 Nov 2018 07:19:20 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5A983F5AF;
+        Wed, 28 Nov 2018 07:19:15 -0800 (PST)
+Date:   Wed, 28 Nov 2018 15:19:13 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
+        Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump
+ notification
+Message-ID: <20181128151911.GN3505@e103592.cambridge.arm.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+ <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+ <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+ <20181026082812.GA10581@redhat.com>
+ <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+ <20181029111804.GA24820@redhat.com>
+ <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+ <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181128104350.31902-11-linus.walleij@linaro.org>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811280134
+In-Reply-To: <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 11:43:50AM +0100, Linus Walleij wrote:
-> Use the gpiod_get_from_of_node() rather than the devm_*
-> version so that the regulator core can handle the lifecycle
-> of these descriptors.
+On Tue, Nov 27, 2018 at 10:54:41PM +0000, Enke Chen wrote:
+> [Repost as a series, as suggested by Andrew Morton]
 > 
-> This patch requires "gpio: Export gpiod_get_from_of_node()"
-> to be applied first.
+> For simplicity and consistency, this patch provides an implementation
+> for signal-based fault notification prior to the coredump of a child
+> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> be used by an application to express its interest and to specify the
+> signal for such a notification.
 > 
-> Fixes: 3012e81446d0 ("regulator: tps65090: Pass descriptor instead of GPIO number")
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Changes to prctl(2):
+> 
+>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+>           Set the child pre-coredump signal of the calling process to
+>           arg2 (either a signal value in the range 1..maxsig, or 0 to
+>           clear). This is the signal that the calling process will get
+>           prior to the coredump of a child process. This value is
+>           cleared across execve(2), or for the child of a fork(2).
+> 
+>    PR_GET_PREDUMP_SIG (since Linux 4.20.x)
+>           Return the current value of the child pre-coredump signal,
+>           in the location pointed to by (int *) arg2.
+> 
+> Background:
+> 
+> As the coredump of a process may take time, in certain time-sensitive
+> applications it is necessary for a parent process (e.g., a process
+> manager) to be notified of a child's imminent death before the coredump
+> so that the parent process can act sooner, such as re-spawning an
+> application process, or initiating a control-plane fail-over.
+> 
+> One application is BFD. The early fault notification is a critical
+> component for maintaining BFD sessions (with a timeout value of
+> 50 msec or 100 msec) across a control-plane failure.
+> 
+> Currently there are two ways for a parent process to be notified of a
+> child process's state change. One is to use the POSIX signal, and
+> another is to use the kernel connector module. The specific events and
+> actions are summarized as follows:
+> 
+> Process Event    POSIX Signal                Connector-based
+> ----------------------------------------------------------------------
+> ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+>                  SIGCHLD / CLD_STOPPED
+> 
+> ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+>                  SIGCHLD / CLD_CONTINUED
+> 
+> pre_coredump/    N/A                         proc_coredump_connector()
+> get_signal()
+> 
+> post_coredump/   do_notify_parent()          proc_exit_connector()
+> do_exit()        SIGCHLD / exit_signal
+> ----------------------------------------------------------------------
+> 
+> As shown in the table, the signal-based pre-coredump notification is not
+> currently available. In some cases using a connector-based notification
+> can be quite complicated (e.g., when a process manager is written in shell
+> scripts and thus is subject to certain inherent limitations), and a
+> signal-based notification would be simpler and better suited.
+
+Since this is a notification of a change of process status, would it be
+more natural to send it through SIGCHLD?
+
+As with other supplementary child status events, a flag could be added
+for wait and sigaction.sa_flags to indicate whether the parent wants
+this event to be reported or not.
+
+Then a suitable CLD_XXX could be defined for this, and we could
+piggyback on PR_{SET,GET}_PDEATHSIG rather than having to have something
+new.
+
+(I hadn't been watching this thread closely, so apologies if this has
+been discussed already.)
+
+> 
+> Signed-off-by: Enke Chen <enkechen@cisco.com>
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 > ---
->  drivers/regulator/tps65090-regulator.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> v4 -> v5:
+> Addressed review comments from Oleg Nesterov:
+> o use rcu_read_lock instead.
+> o revert back to notify the real_parent.
 > 
-> diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-> index db714d5edafc..223f6974a9f3 100644
-> --- a/drivers/regulator/tps65090-regulator.c
-> +++ b/drivers/regulator/tps65090-regulator.c
-> @@ -376,11 +376,11 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
->  				gflags = GPIOD_OUT_LOW;
->  			gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+>  fs/coredump.c                | 23 +++++++++++++++++++++++
+>  fs/exec.c                    |  3 +++
+>  include/linux/sched/signal.h |  3 +++
+>  include/uapi/linux/prctl.h   |  4 ++++
+>  kernel/sys.c                 | 13 +++++++++++++
+>  5 files changed, 46 insertions(+)
+> 
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index e42e17e..740b1bb 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -536,6 +536,24 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+>  	return err;
+>  }
 >  
-> -			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
-> -								    tps65090_matches[idx].of_node,
-> -								    "dcdc-ext-control-gpios", 0,
-> -								    gflags,
-> -								    "tps65090");
-> +			rpdata->gpiod = gpiod_get_from_of_node(
-> +						tps65090_matches[idx].of_node,
-> +						"dcdc-ext-control-gpios", 0,
-> +						gflags,
-> +						"tps65090");
->  			if (IS_ERR(rpdata->gpiod))
->  				return ERR_CAST(rpdata->gpiod);
->  			if (!rpdata->gpiod)
+> +/*
+> + * While do_notify_parent() notifies the parent of a child's death post
+> + * its coredump, this function lets the parent (if so desired) know about
+> + * the imminent death of a child just prior to its coredump.
+> + */
+> +static void do_notify_parent_predump(void)
+> +{
+> +	struct task_struct *parent;
+> +	int sig;
+> +
+> +	rcu_read_lock();
+> +	parent = rcu_dereference(current->real_parent);
+> +	sig = parent->signal->predump_signal;
+> +	if (sig != 0)
+> +		do_send_sig_info(sig, SEND_SIG_NOINFO, parent, PIDTYPE_TGID);
 
-This one needs some handling to avoid leaking the gpio too.
+Doesn't this send si_code == SI_USER.  That seems wrong: the receiving
+process wouldn't not be able to distinguish a real pre-coredump
+notification from a bogus one sent by kill(2) etc.
 
-Thanks,
-Charles
+SEND_SIG_PRIV also looks wrong, because it assumes that the sender is
+"the kernel" so there is no si_pid.
+
+This may be another reason for building on top of SIGCHLD which already
+has the required (but weird) "si_pid == affected process" semantics,
+rather than si_pid indicating the sender.
+
+> +	rcu_read_unlock();
+> +}
+> +
+>  void do_coredump(const kernel_siginfo_t *siginfo)
+>  {
+>  	struct core_state core_state;
+> @@ -590,6 +608,11 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  	if (retval < 0)
+>  		goto fail_creds;
+>  
+> +	/*
+> +	 * Send the pre-coredump signal to the parent if requested.
+> +	 */
+> +	do_notify_parent_predump();
+> +
+>  	old_cred = override_creds(cred);
+>  
+>  	ispipe = format_corename(&cn, &cprm);
+> diff --git a/fs/exec.c b/fs/exec.c
+> index fc281b7..7714da7 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1181,6 +1181,9 @@ static int de_thread(struct task_struct *tsk)
+>  	/* we have changed execution domain */
+>  	tsk->exit_signal = SIGCHLD;
+>  
+> +	/* Clear the pre-coredump signal before loading a new binary */
+> +	sig->predump_signal = 0;
+> +
+>  #ifdef CONFIG_POSIX_TIMERS
+>  	exit_itimers(sig);
+>  	flush_itimer_signals();
+> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+> index 13789d1..728ef68 100644
+> --- a/include/linux/sched/signal.h
+> +++ b/include/linux/sched/signal.h
+> @@ -112,6 +112,9 @@ struct signal_struct {
+>  	int			group_stop_count;
+>  	unsigned int		flags; /* see SIGNAL_* flags below */
+>  
+> +	/* The signal sent prior to a child's coredump */
+> +	int			predump_signal;
+> +
+>  	/*
+>  	 * PR_SET_CHILD_SUBREAPER marks a process, like a service
+>  	 * manager, to re-parent orphan (double-forking) child processes
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index c0d7ea0..79f0a8a 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -219,4 +219,8 @@ struct prctl_mm_map {
+>  # define PR_SPEC_DISABLE		(1UL << 2)
+>  # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+>  
+> +/* Whether to receive signal prior to child's coredump */
+> +#define PR_SET_PREDUMP_SIG	54
+> +#define PR_GET_PREDUMP_SIG	55
+> +
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 123bd73..39aa3b8 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2476,6 +2476,19 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+>  			return -EINVAL;
+>  		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+>  		break;
+> +	case PR_SET_PREDUMP_SIG:
+> +		if (arg3 || arg4 || arg5)
+
+glibc has
+
+	int prctl(int option, ...);
+
+Some prctls() police extra arguments for zeros, but this means that
+the userspace caller also has to supply pointless 0 arguments.
+
+It's debatable which is the preferred approach.  Did you have any
+particular rationale for your choice here?
+
+[...]
+
+Cheers
+---Dave
