@@ -2,175 +2,130 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A0BC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE924C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57382086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BBC2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="lo07Gml+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57382086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qKSgs+bX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BBC2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeK1UR0 (ORCPT
+        id S1728053AbeK1URm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:17:26 -0500
-Received: from mail-eopbgr750074.outbound.protection.outlook.com ([40.107.75.74]:2647
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727341AbeK1UR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:17:26 -0500
+        Wed, 28 Nov 2018 15:17:42 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41638 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbeK1URm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:17:42 -0500
+Received: by mail-ed1-f65.google.com with SMTP id z28so21439728edi.8;
+        Wed, 28 Nov 2018 01:16:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eCxm36Ca7sjx/uuLLqcVneP59ivZX1ieJx1Omhis6+s=;
- b=lo07Gml+inHnQWTqZnIlncu80kAFWBZXQXf3oBvHyCHxqzhwOazt6ZCLrOvn/qbOjwaLIdXZtzw4m8jmTUnNzCd+IwaUYoqc7IIOnNF9wfQWW/P7RNeGe9r76UQOrMqBVM6L/ipiEWmGykfmN8Q/DsbytndChSkaOjUZoV7A32A=
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com (20.178.25.19) by
- DM6PR06MB4617.namprd06.prod.outlook.com (20.176.110.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Wed, 28 Nov 2018 09:16:13 +0000
-Received: from DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7]) by DM6PR06MB5178.namprd06.prod.outlook.com
- ([fe80::c450:96ae:b322:78c7%4]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 09:16:13 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     Hua Su <suhua.tanke@gmail.com>
-CC:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lightnvm: pblk: add lock protection to list operations
-Thread-Topic: [PATCH] lightnvm: pblk: add lock protection to list operations
-Thread-Index: AQHUhvq1/HfKQQNiM0itSqrt33gBL6Vk6A0A
-Date:   Wed, 28 Nov 2018 09:16:13 +0000
-Message-ID: <930717BD-D32A-4BE2-AEE6-579594E70842@cnexlabs.com>
-References: <20181128091352.5088-1-suhua.tanke@gmail.com>
-In-Reply-To: <20181128091352.5088-1-suhua.tanke@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR06MB4617;6:sd+VzGnv4u9+gz80jnUwijZ340oRGemMtEvhXwOgechtOC6FfeiTSMpqUw11bxgfZcvVN9VmC21irMksjr8bzwA1ylpmdyDiq7nvLhj738hRWAOU14SLuAxePQc9IL7ksMO+6sj/o9IA1pCGHA65ph+w39KoAMMTrtf7zHmjEkHEPyhUhwBswUTq5Dl7Rs9MKE3Np+PmdqREp62ADUT0KRCJUNCHTGE1t1HSPGqEErrO2mL59tfGVAdraECPMEm+McN7ojeQFBnjgLBYmwr2FYuFLzfossG5BaSAkP7kfzEXQJXhEyRYjK3kKgcZDkEXnvZXE6wG1sgd659LOhPlIkylqgg0J038ejzYra/hLp7I/4uX9LG5ERHd6Mm9cacmsIWto9abddHIWMCkgw8Q6FxB94qFhx2UkVq4Cy7bylTP7FkoUxUGcqxtJWB3wRrGh3ru439A4d91drpKpeyOZQ==;5:WxsDuxEHN1bMf5SIOv3Kt74kuI/Snm1Kd5vTZt3drp1INa0u+o+ETX6+7WY62zsm6H7oLZnusMRaV5dD8Fs1/nB57v2d+IaeX0CHK3fOAKmN5l+62kU9mE3yRCR3hyphjwgKqL9kRCuuVLHOSe5JabsUqxzXu/2Ih/UIAPrCDCY=;7:XdlpIi1wh7IHtQYPnUPU4WY3ZzSfaBDZ8yNURJTiwi6qpx/n4NRCti1G9uVKZDvpf9kZbnWg42kfUj9iOT3ij6fZpaYhPqTWiXWps/wXRf+JFM3hLEQzX/58XI928XsUKgsg3c7d3JSxDANKxjR1UA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3dd5f9fe-2d33-4ddf-77eb-08d6551224f3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:DM6PR06MB4617;
-x-ms-traffictypediagnostic: DM6PR06MB4617:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-microsoft-antispam-prvs: <DM6PR06MB46176E806ED4CD201CB5440FBAD10@DM6PR06MB4617.namprd06.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231443)(999002)(944501436)(4983020)(52105112)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM6PR06MB4617;BCL:0;PCL:0;RULEID:;SRVR:DM6PR06MB4617;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39840400004)(376002)(136003)(396003)(346002)(189003)(199004)(8936002)(11346002)(476003)(446003)(6916009)(5660300001)(6246003)(6506007)(316002)(2616005)(186003)(54906003)(86362001)(102836004)(26005)(81166006)(229853002)(8676002)(6116002)(3846002)(39060400002)(6436002)(66066001)(81156014)(486006)(305945005)(4326008)(2906002)(14454004)(6512007)(53936002)(6486002)(71190400001)(71200400001)(36756003)(68736007)(83716004)(99936001)(97736004)(82746002)(99286004)(66574009)(7736002)(105586002)(106356001)(25786009)(76176011)(478600001)(33656002)(14444005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR06MB4617;H:DM6PR06MB5178.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 3gUTjm4lIwWLnx0w7y6qjj805hNSv8vmAjibkvfUwr05sqfystPNoholaEM39MgXrJbRkulSXJmeWKd4k7ilgtmBZjlT2Jg6ei6o0vwpauwbrl9H2SjNtWf65j2D/7qPhUg5AEDoXuNnyJNM5VQ08FVPMttKnuCHHYB2dOBN1tJcAKTGUiXb21W3KaI64CARvVCFl73K+1kMlkCZoExLrt0mBzHCQer1nNS9Glmpt7feP5KGaaW+xCbTJpqKU8yo5C3XlAuUtBXXjZ5NuexvtCrIYXEZvu5KQrJZ0Vcx6xDnRNKrleo2ZWcV2TZGbqc5Ee0Q0PPBCa9V2LlyHND1hk/LXgsZqeklR16DdxIrKEc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_48022DDD-1627-4BA2-B8C8-416BFE625003";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sTZWo8vDJpS8bhCf3AaS91rmTJ+wCscCrVtNvIoVmYA=;
+        b=qKSgs+bXFQMp+lDonwb6C+IlnN5LTnFZrk1peXkjP3boJ72+8fu72IZqGsQeMEaMo1
+         EXIcueanalZYEYhdm90pfqgyudLnXOgdMvmon+uz6yDmXen8McYrkheKOlcVnyIDYG38
+         gu4ZIed/SCyU8OQ3unISMyNufVOAUvcOLv2LHekp+cyq96vm7NSnzPmT9cDs7LtpcK0J
+         stN5KuU3WXNgt5HS/rKes09Fhq5vAUe9CbI2GJppAAWu2/QlB8sGYpzo/AA7elDs7E38
+         wL3tCthPy5R2myWuDym2D9dRrCFayeCZ/zzyWu/SUumAZY2f8Lh3o4emgan5PotzpunD
+         mUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sTZWo8vDJpS8bhCf3AaS91rmTJ+wCscCrVtNvIoVmYA=;
+        b=uYkywrDlBU24OWo52QP1rh5FcS3UXR87Lkm8MOTPD7BcdfBs66WhyboyFyG/56So1M
+         QsBDKDQ0H86TvPURfGJg+fe+75Ocyy2aeCSc783Koi18AkFEfAwMvCA8q1FRlMh9Xw47
+         nWwfEZiV0e1AtknCLkaCq3D5ZsAlt/S3lFnkZNizqmXZoQSfLcq9gnTojX2tgo73SdaW
+         +22J9ykkxksRbi21uAFTibQTOdz2v1+/pah2Fddf4G7yP1nD3/EZDPX3LHUTBI/LgOp+
+         K7egUC1PY39lmgyon5QWfCejo+mHuNaJyLk1/woW/AkYAipB+qYjOK4hJ/4EEr6RZTNX
+         Jl6Q==
+X-Gm-Message-State: AGRZ1gJPqjWuJq078ChAZDdvsW8SWY5SBMmCfrTUyYzKd2mI3Uhd/7ZO
+        htdurERWduuw/rGl/ls409+o3DRZ
+X-Google-Smtp-Source: AJdET5czKFK5SluuV4AvHS748leQkeHTjt6q9BjX1K/8gs35j7N2dmcATYOM9e4RSbzLPtLtExprXA==
+X-Received: by 2002:a17:906:d507:: with SMTP id ge7-v6mr25825718ejb.78.1543396604046;
+        Wed, 28 Nov 2018 01:16:44 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id p22-v6sm978646ejf.48.2018.11.28.01.16.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 01:16:43 -0800 (PST)
+Date:   Wed, 28 Nov 2018 10:16:42 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Robert Yang <decatf@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+Message-ID: <20181128091642.GC17419@ulmo>
+References: <20180925214940.15188-1-decatf@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dd5f9fe-2d33-4ddf-77eb-08d6551224f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 09:16:13.5810
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR06MB4617
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
+Content-Disposition: inline
+In-Reply-To: <20180925214940.15188-1-decatf@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_48022DDD-1627-4BA2-B8C8-416BFE625003
+
+--rQ2U398070+RC21q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
 
-> On 28 Nov 2018, at 10.13, Hua Su <suhua.tanke@gmail.com> wrote:
+On Tue, Sep 25, 2018 at 05:49:40PM -0400, Robert Yang wrote:
+> The current behavior is that clk_round_rate would return the same clock
+> rate passed to it for valid PLL configurations. This change will return
+> the exact rate the PLL will provide in accordance with clk API.
 >=20
-> Protect the list_add on the pblk_line_init_bb() error
-> path in case this code is used for some other purpose
-> in the future.
->=20
-> Signed-off-by: Hua Su <suhua.tanke@gmail.com>
+> Signed-off-by: Robert Yang <decatf@gmail.com>
 > ---
-> drivers/lightnvm/pblk-core.c | 13 ++++++++++---
-> 1 file changed, 10 insertions(+), 3 deletions(-)
+> Changes in V2:
+>  - Move input divider (m =3D=3D 0) check into the cfg constraints check
+>    condition. Forgo adding WARN_ON and avoid using 0 input divider
+>    all together.
 >=20
-> diff --git a/drivers/lightnvm/pblk-core.c =
-b/drivers/lightnvm/pblk-core.c
-> index 6944aac43b01..247112e1db94 100644
-> --- a/drivers/lightnvm/pblk-core.c
-> +++ b/drivers/lightnvm/pblk-core.c
-> @@ -1295,15 +1295,22 @@ int pblk_line_recov_alloc(struct pblk *pblk, =
-struct pblk_line *line)
->=20
-> 	ret =3D pblk_line_alloc_bitmaps(pblk, line);
-> 	if (ret)
-> -		return ret;
-> +		goto fail;
->=20
-> 	if (!pblk_line_init_bb(pblk, line, 0)) {
-> -		list_add(&line->list, &l_mg->free_list);
-> -		return -EINTR;
-> +		ret =3D -EINTR;
-> +		goto fail;
-> 	}
->=20
-> 	pblk_rl_free_lines_dec(&pblk->rl, line, true);
-> 	return 0;
-> +
-> +fail:
-> +	spin_lock(&l_mg->free_lock);
-> +	list_add(&line->list, &l_mg->free_list);
-> +	spin_unlock(&l_mg->free_lock);
-> +
-> +	return ret;
-> }
->=20
-> void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
-> --
-> 2.19.1
+>  drivers/clk/tegra/clk-pll.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Looks good to me.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
-
-
---Apple-Mail=_48022DDD-1627-4BA2-B8C8-416BFE625003
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+--rQ2U398070+RC21q
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlv+XNwACgkQIX4xUKFR
-nnTftA/+KnAY8ehl8/JvxaKmMVfNjuVSVjcwjV+aDnQ1WrFYBLSmif+sRx304dnL
-bAzaA2f0fLW4crIl2bSiWHMFcwjRS5ptRetN2nJfO9z96BENqTOTGR3zsbtWgRgZ
-DJqlPM7jxfwfAiEkSXAodfaXw8MJ5gJA3yb0CDAgoN6rkyoWWGVwjE0mTDyZGO3R
-wFEeLwYlOjotdLzwHwe9ogMHbOhwyar36qfIInv420sw+GfwekykskMECQ3T/ecA
-g8pviK79DYIoR+L5AdEOR68r1QPJ2pV2mBK50PlhSoi2BUWp354HJzkDPu3Mu6cZ
-JLCVIHvcU+e7Qh8n7vN2+PrwVczre3L+1zMlITCb/mTLE6rZPCq0uUsf2UDx0sqK
-JrTN0fyKtXrqnM7aFvtj+MrwP5gsjzb1V7pVIIorvdDKqWWjG2FpDUZu8rqim/JE
-qEQY1TCCMAGuQXZntdylTbMw6FibVGFH3XFvNAOod6HIbCpmpy7pArQAimHGYnu3
-NBCpRa1bf+drt03Ghk3Yk9qOUY8w2Ih64Pp2yZpPiDLjjo1wcfmfa32ygdBQgP1+
-2JZCvDBNTOq5eBkbUllWlR9Mm72lKZ6vN13L0oJUHcgjiYG+uqCNNWmCvqRTSdsv
-NYcP530SudZgrBKD5rc1SZfZ2sqjeGEBuXmIh5r9xsbS9B8bWSM=
-=yiVx
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XPoACgkQ3SOs138+
+s6HcChAAsJUmStXiyFMnv33/TdFkGug/68b2CmxssoFUhVF9wVVzofb9WwJJJ+Gk
+J34qPXy+v+GgCofh0KYrKkb0Jpz6c8fog+sjmvwyCpplml7rAqw2wM4EAfMACAyT
+Hnb3bxRKgmK62ccu9IpMNl/bvHhEyYuh0zsm41PPx9Tbp+VOK4FVBPt2BFnPFpDY
+rTf5riPCOzW7dhb63zSiNkx4SzRygBKDOiQOPQc28DJyKj4JLNVEoCB86mr7gqMU
+BOt/1N8+aGUoO5uhs9BaijEZqexnvIn2H80lVjNRbdfz6PnXK7LWQbFgErvYApHn
+2GLWiXPGK/HVC8YelBWvh+qL/CB/N0b6TCEq0WSd24zFJeY3EOXuGiqne0nNs/w3
+rBLg9XjNIe3xs/sJ2h1Hj+LpIlnS7og0J60mE6psQRuYYr5JX86QhMcUnNx+N8DD
+JywJpvLOaFLJONPwblmKwBqFRMc/EgBrOvQSjLqimyuH85JdgGNtgbYvLzq+pXMC
+QWHhk7iizPslaS8ElgUsgB2jok5OlSGY5CAmieuOK7/AJQjGB0EDYFTPQi0wqrBu
+qhdDUHwWPlVMbOx/0GreRS1RzNwp4mkfc6ZgZ5a2yEkFEtOI7vbOKLh1DIfq9LV9
+RGiuLRnS0ChtoWI+6OugOTBH1h2wzBBvfkljGsyN07JqkZ9fbI4=
+=vg/F
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_48022DDD-1627-4BA2-B8C8-416BFE625003--
+--rQ2U398070+RC21q--
