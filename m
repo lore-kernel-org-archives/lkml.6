@@ -5,53 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07E6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F76C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C413F2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C413F2081B
+	by mail.kernel.org (Postfix) with ESMTP id 64E1E2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E1E2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeK2DrR (ORCPT
+        id S1729075AbeK2DrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:47:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53908 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 22:47:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728141AbeK2DrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:47:17 -0500
-Subject: Re: [GIT PULL] KVM fixes for 4.20-rc4
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884162081B
+        id S1728141AbeK2DrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 22:47:18 -0500
+Subject: Re: [GIT PULL] Btrfs updates for 4.20-rc4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CEA12086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1543405969-25140-1-git-send-email-pbonzini@redhat.com>
-References: <1543405969-25140-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <cover.1543407525.git.dsterba@suse.com>
+References: <cover.1543407525.git.dsterba@suse.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1543405969-25140-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: fd65d3142f734bc4376053c8d75670041903134d
+X-PR-Tracked-Message-Id: <cover.1543407525.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git
+ for-4.20-rc4-tag
+X-PR-Tracked-Commit-Id: 42a657f57628402c73237547f0134e083e2f6764
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d8242d22d501b8403c780f306762fbdf889ec0c5
-Message-Id: <20181128164501.6813.15957.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Wed, 28 Nov 2018 16:45:01 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+X-PR-Merge-Commit-Id: 121b018f8c74b4e0ba81b4b8ee73a82db3f24b7b
+Message-Id: <20181128164502.6813.37767.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Wed, 28 Nov 2018 16:45:02 +0000
+To:     David Sterba <dsterba@suse.com>
+Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
+        clm@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 28 Nov 2018 12:52:49 +0100:
+The pull request you sent on Wed, 28 Nov 2018 13:28:05 +0100:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.20-rc4-tag
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d8242d22d501b8403c780f306762fbdf889ec0c5
+https://git.kernel.org/torvalds/c/121b018f8c74b4e0ba81b4b8ee73a82db3f24b7b
 
 Thank you!
 
