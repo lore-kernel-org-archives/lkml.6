@@ -2,162 +2,415 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7248BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C752C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346E720832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F1C20659
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 05:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZU1tRxF0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346E720832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E8ZiwZWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F1C20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeK1QpO (ORCPT
+        id S1727398AbeK1QtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 11:45:14 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15527 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeK1QpN (ORCPT
+        Wed, 28 Nov 2018 11:49:06 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46455 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727209AbeK1QtG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 11:45:13 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bfe2b510000>; Tue, 27 Nov 2018 21:44:49 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 27 Nov 2018 21:44:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 27 Nov 2018 21:44:47 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 28 Nov
- 2018 05:44:47 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Nov 2018 05:44:47 +0000
-Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5bfe2b4d0004>; Tue, 27 Nov 2018 21:44:46 -0800
-From:   Wei Ni <wni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-        <linux-tegra@vger.kernel.org>
-CC:     <rui.zhang@intel.com>, <edubezval@gmail.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, Wei Ni <wni@nvidia.com>
-Subject: [PATCH v3 3/3] thermal: tegra: parse sensor id before sensor register
-Date:   Wed, 28 Nov 2018 13:44:37 +0800
-Message-ID: <1543383877-20555-4-git-send-email-wni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543383877-20555-1-git-send-email-wni@nvidia.com>
-References: <1543383877-20555-1-git-send-email-wni@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 28 Nov 2018 11:49:06 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so8967753pgp.13
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 21:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aXkJfQr6WxkZDwHmoA9nzkhEzTI3zZemygDMaC87OWQ=;
+        b=E8ZiwZWAUDXkgwxJbq4Tz5KfpDF2OBTRx8oLn1o6EMojf0TLeM7T0Z2uROAznrKmSV
+         on/235QYLLPE34Nwz7JfMcgYaKZ6QD6Cn95ecmptaBECsf1vi4Yr/nWa15iF5Jj5OTyU
+         dEzuUR/sGeEaZEDQthjxufn7av5uHqB/7ew8M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aXkJfQr6WxkZDwHmoA9nzkhEzTI3zZemygDMaC87OWQ=;
+        b=HOXoxhEwFEEYTD6PMZFt3268TwNnmqYj7WcUWQju1y1kbkOrGpAXe472X2VhMhZJ4Y
+         NTI3GkezN8UBg6nGGKJVZAJdnvip1/HlZt1WSycjI8nWELJ2ArVcKA2msNWevGx8KUx4
+         hPzX6doKEK7bYnOiNUzVsjzZrcEQYIXULrWECj0C3uQbFu2oF6x+owqWkdXkbHQr/kEa
+         1yM79Nj67gb837roCAzf7w4DpUUd1kUUeiu9JgnUzXvZ6BfPYHOH8M5o4FeXluQ0/56F
+         v4M63joV5O7h7MNKon9T7FGcB8GjXuGHn3iLmfgOoQ4U9sa6uzscnnYY+/vw9t14Yg36
+         NJcA==
+X-Gm-Message-State: AA+aEWburRJqAaViheWdSy9alszzwNIs6eKfCJzYBp2DXRfSOLi1mS28
+        gNdTB/IH5JQyS0vwHzigRKrTng==
+X-Google-Smtp-Source: AFSGD/XqoNNOLhrchxfYPhD1n6mN6pGA/IVx+E9YyFYRtQmSj2XWIYkdPBuFqGq8BvenHO7s52skIg==
+X-Received: by 2002:a63:314c:: with SMTP id x73mr32422359pgx.323.1543384119457;
+        Tue, 27 Nov 2018 21:48:39 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id h128sm5989799pgc.15.2018.11.27.21.48.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 21:48:37 -0800 (PST)
+Date:   Wed, 28 Nov 2018 11:18:35 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] Documentation: admin-guide: PM: Add cpuidle document
+Message-ID: <20181128054835.gnhistcfxy25rmwf@vireshk-i7>
+References: <4064391.AYvOMBeiDo@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543383889; bh=GJ7fhsnrRP5TtVJJ6RqU5e8J5Il86rbp50JlsYx4V4Q=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=ZU1tRxF0zvuANfEFJS8ESiHKq5wXHBOhYaFqcoWkU+vJiRXfOAo+mS3M7M3hNKmV/
-         CLum5i4uiAMFmjBFVDqZ+L/LNkwNtbFfY3dFbiOmhObFhTslgL0IOnxoUxesR7SAFh
-         OXrIHlkCY3Lc5k9snF/Ln7xZWSSVtwFI5FOYeXgCXNe6c2OMyKYA7bMYR5eTSjbPKS
-         3AWJo1TsgDbNmq6P8JyQEwclkrMR8dtyDatFwzJVlTHs0sDbikLaWGOfAbMy9ZBT7O
-         D6UIwfPiL57kSXpoFsTj5Nvv3VrDldPmSW2MEQ7cmFc7dc68KkxCeyX6C88403j8N4
-         9J54PGHbjdmUA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4064391.AYvOMBeiDo@aspire.rjw.lan>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since different platforms may not support all 4
-sensors, so the sensor registration may be failed.
-Add codes to parse dt to find sensor id which
-need to be registered. So that the registration
-can be successful on all platform.
+On 26-11-18, 14:11, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Important information is missing from user/admin cpuidle documentation
+> available today, so add a new user/admin document for cpuidle containing
+> current and comprehensive information to admin-guide and drop the old
+> .txt documents it is replacing.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  Documentation/admin-guide/pm/cpuidle.rst       |  603 +++++++++++++++++++++++++
+>  Documentation/admin-guide/pm/working-state.rst |    1 
+>  Documentation/cpuidle/core.txt                 |   23 
+>  Documentation/cpuidle/sysfs.txt                |   98 ----
+>  4 files changed, 604 insertions(+), 121 deletions(-)
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 46 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+Nice work Rafael. Minor nits below..
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 375cadbc24cd..79e4628224d7 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1224,6 +1224,44 @@ static void soctherm_init(struct platform_device *pdev)
- 	tegra_soctherm_throttle(&pdev->dev);
- }
- 
-+static bool tegra_soctherm_find_sensor_id(int sensor_id)
-+{
-+	int id;
-+	bool ret = false;
-+	struct of_phandle_args sensor_specs;
-+	struct device_node *np, *sensor_np;
-+
-+	np = of_find_node_by_name(NULL, "thermal-zones");
-+	if (!np)
-+		return ret;
-+
-+	sensor_np = of_get_next_child(np, NULL);
-+	for_each_available_child_of_node(np, sensor_np) {
-+		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-+						 "#thermal-sensor-cells",
-+						 0, &sensor_specs))
-+			continue;
-+
-+		if (sensor_specs.args_count != 1) {
-+			WARN(sensor_specs.args_count > 1,
-+			     "%s: wrong cells in sensor specifier %d\n",
-+			     sensor_specs.np->name, sensor_specs.args_count);
-+			continue;
-+		} else {
-+			id = sensor_specs.args[0];
-+			if (sensor_id == id) {
-+				ret = true;
-+				break;
-+			}
-+		}
-+	}
-+
-+	of_node_put(np);
-+	of_node_put(sensor_np);
-+
-+	return ret;
-+}
-+
- static const struct of_device_id tegra_soctherm_of_match[] = {
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
-@@ -1365,13 +1403,15 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		zone->sg = soc->ttgs[i];
- 		zone->ts = tegra;
- 
-+		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
-+			continue;
- 		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
- 							 soc->ttgs[i]->id, zone,
- 							 &tegra_of_thermal_ops);
- 		if (IS_ERR(z)) {
- 			err = PTR_ERR(z);
--			dev_err(&pdev->dev, "failed to register sensor: %d\n",
--				err);
-+			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
-+				soc->ttgs[i]->name, err);
- 			goto disable_clocks;
- 		}
- 
-@@ -1434,6 +1474,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
- 		struct thermal_zone_device *tz;
- 
- 		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
-+		if (!tz)
-+			continue;
- 		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
- 		if (err) {
- 			dev_err(&pdev->dev,
+> Index: linux-pm/Documentation/admin-guide/pm/cpuidle.rst
+
+> +The ``menu`` Governor
+> +=====================
+> +
+> +The ``menu`` governor is the default ``CPUIdle`` governor for tickless systems.
+> +It is quite complex, but the basic principle of its design is straightforward.
+> +Namely, when invoked to select an idle state for a CPU (i.e. an idle state that
+> +the CPU will ask the processor hardware to enter), it attempts to predict the
+> +idle duration and uses the predicted value for idle state selection.
+> +
+> +It first obtains the time until the closest timer event with the assumption
+> +that the scheduler tick will be stopped.  That time, referred to as the *sleep
+> +length* in what follows, is the upper bound on the time before the next CPU
+> +wakeup.  It is used to determine the sleep length range, which in turn is needed
+> +to get the sleep length correction factor.
+> +
+> +The ``menu`` governor maintains two arrays of sleep length correction factors.
+> +One of them is used when tasks previously running on the given CPU are waiting
+> +for some I/O operations to complete and the other one is used when that is not
+> +the case.  Each array contains several correction factor values that correspond
+> +to different sleep length ranges organized so that each range represented in the
+> +array is approximately 10 times wider than the previous one.
+> +
+> +The correction factor for the given sleep length range (determined before
+> +selecting the idle state for the CPU) is updated after the CPU has been woken
+> +up and the closer the sleep length is to the observed idle duration, the closer
+> +to 1 the correction factor becomes (it must fall between 0 and 1 inclusive).
+> +The sleep length is multiplied by the correction factor for the range that it
+> +falls into to obtain the first approximation of the predicted idle duration.
+> +
+> +Next, the governor uses a simple pattern recognition algorithm to refine its
+> +idle duration prediction.  Namely, it saves the last 8 observed idle duration
+> +values and, when predicting the idle duration next time, it computes the average
+> +and variance of them.  If the variance is small (smaller than 400 square
+> +milliseconds) or it is small relative to the average (the average is greater
+> +that 6 times the standard deviation), the average is regarded as the "typical
+> +interval" value.  Otherwise, the longest of the saved observed idle duration
+> +values is discarded and the computation is repeated for the remaining ones.
+> +Again, if the variance of them is small (in the above sense), the average is
+> +taken as the "typical interval" value and so on, until either the "typical
+> +interval" is determined or too many data points are disregarded, in which case
+> +the "typical interval" is assumed to equal "infinity" (the maximum unsigned
+> +integer value).  The "typical interval" computed this way is compared with the
+> +sleep length multiplied by the correction factor and the minumum of the two is
+
+                                                            minimum
+
+> +taken as the predicted idle duration.
+> +
+> +Then, the governor computes an extra latency limit to help "interactive"
+> +workloads.  It uses the obsevation that if the exit latency of the selected idle
+
+                           observation
+
+> +state is comparable with the predicted idle duration, the total time spent in
+> +that state probably will be very short and the amount of energy to save by
+> +entering it will be relatively small, so likely it is better to avoid the
+> +overhead related to entering that state and exiting it.  Thus selecting a
+> +shallower state is likely to be a better option then.   The first approximation
+> +of the extra latency limit is the predicted idle duration itself which
+> +additionally is divided by a value depending on the number of tasks that
+> +previously ran on the given CPU and now they are waiting for I/O operations to
+> +complete.  The result of that division is compared with the latency limit coming
+> +from the power management quality of service, or `PM QoS <cpu-pm-qos_>`_,
+> +framework and the minimum of the two is taken as the limit for the idle states'
+> +exit latency.
+> +
+> +Now, the governor is ready to walk the list of idle states and choose one of
+> +them.  For this purpose, it compares the target residency of each state with
+> +the predicted idle duration and the exit latecy of it with the computed latency
+
+                                            latency
+
+> +limit.  It selects the state with the target residency closest to the predicted
+> +idle duration, but still below it, and exit latency that does not exceed the
+> +limit.
+> +
+> +In the final step the governor may still need to refine the idle state selection
+> +if it has not decided to `stop the scheduler tick <idle-cpus-and-tick_>`_.  That
+> +happens if the idle duration predicted by it is less than the tick period and
+> +the tick has not been stopped already (in a previous iteration of the idle
+> +loop).  Then, the sleep length used in the previous computations may not reflect
+> +the real time until the closest timer event and if it really is geater than that
+
+                                                                   greater
+
+> +time, the governor may need to select a shallower state with a suitable target
+> +residency.
+> +
+> +
+
+What about a short section for the ladder governor as well ?
+
+> +.. _idle-states-representation:
+> +
+> +Representation of Idle States
+> +=============================
+> +
+> +For the CPU idle time management purposes all of the physical idle states
+> +supported by the processor have to be represented as a one-dimensional array of
+> +|struct cpuidle_state| objects each allowing an individual (logical) CPU to ask
+> +the processor hardware to enter an idle state of certain properties.  If there
+> +is a hierarchy of units in the processor, one |struct cpuidle_state| object can
+> +cover a combination of idle states supported by the units at different levels of
+> +the hierarchy.  In that case, the `target residency and exit latency parameters
+> +of it <idle-loop_>`_, must reflect the properties of the idle state at the
+> +deepest level (i.e. the idle state of the unit containing all of the other
+> +units).
+> +
+> +For example, take a processor with two cores in a larger unit referred to as
+> +a "module" and suppose that asking the hardware to enter a specific idle state
+> +(say "X") at the "core" level by one core will trigger the module to try to
+> +enter a specific idle state of its own (say "MX") if the other core is in idle
+> +state "X" already.  In other words, asking for idle state "X" at the "core"
+> +level gives the hardware a license to go as deep as to idle state "MX" at the
+> +"module" level, but there is no guarantee that this is going to happen (the core
+> +asking for idle state "X" may just end up in that state by itself instead).
+> +Then, the target residency of the |struct cpuidle_state| object representing
+> +idle state "X" must reflect the minimum time to spend in idle state "MX" of
+> +the module (including the time needed to enter it), because that is the minimum
+> +time the CPU needs to be idle to save any energy in case the hardware enters
+> +that state.  Analogously, the exit latency parameter of that object must cover
+> +the exit time of idle state "MX" of the module (and usually its entry time too),
+> +because that is the maximum delay between a wakeup signal and the time the CPU
+> +will start to execute the first new instruction (assuming that both cores in the
+> +module will always be ready to execute instructions as soon as the module
+> +becomes operational as a whole).
+> +
+> +In addition to the target residency and exit latency idle state parameters
+> +discussed above, the objects representing idle states each contain a few other
+> +parameters describing the idle state and a pointer to the function to run in
+> +order to ask the hardware to enter that state.  Also, for each
+> +|struct cpuidle_state| object, there is a corresponding
+> +:c:type:`struct cpuidle_state_usage <cpuidle_state_usage>` one containig usage
+
+                                                                  containing
+
+> +statistics of the given idle state.  That information is exposed by the kernel
+> +via ``sysfs``.
+> +
+> +For each CPU in the system, there is a :file:`/sys/devices/system/cpu<N>/cpuidle/`
+> +directory in ``sysfs``, where the number ``<N>`` is assigned to the given
+> +CPU at the initialization time.  That directory contains a set of subdirectories
+> +called :file:`state0`, :file:`state1` and so on, up to the number of idle state
+> +objects defined for the given CPU minus one.  Each of these directories contains
+> +a number of files (attributes) representing the properties of the idle state
+> +object corresponding to it, as follows:
+> +
+> +
+> +``desc``
+> +	Description of the idle state.
+> +
+> +``disable``
+> +	Whether or not this idle state is disabled.
+> +
+> +``latency``
+> +	Exit latency of the idle state in microseconds.
+> +
+> +``name``
+> +	Name of the idle state.
+> +
+> +``power``
+> +	Power drawn by hardware in this idle state in milliwatts (if specified,
+> +	0 otherwise).
+> +
+> +``residency``
+> +	Target residency of the idle state in microseconds.
+> +
+> +``time``
+> +	Total time spent in this idle state by the given CPU (as measured by the
+> +	kernel) in microseconds.
+> +
+> +``usage``
+> +	Total number of times the hardware has been asked by the given CPU to
+> +	enter this idle state.
+> +
+> +The :file:`desc` and :file:`name` files both contain strings.  The difference
+> +between them is that the name is expected to be more concise, while the
+> +description may be longer and it may contain white space or special characters.
+> +The other files listed above contain integer numbers.
+> +
+> +The :file:`disable` attribute is the only writeable one.  If it contains 1, the
+> +given idle state is disabled for this particular CPU, which means that the
+> +governor will never select it for this particular CPU and the ``CPUIdle``
+> +driver will never ask the hardware to enter it for that CPU as a result.
+> +However, disabling an idle state for one CPU does not prevent it from being
+> +asked for by the other CPUs, so it must be disabled for all of them in order to
+> +never be asked for by any of them.  [Note that, due to the way the ``ladder``
+> +governor is implemented, disabling an idle state prevents that governor from
+> +selecting any idle states deeper than the disabled one too.]
+> +
+> +If the :file:`disable` attribute contains 0, the given idle state is enabled for
+> +this particular CPU, but it still may be disabled for some or all of the other
+> +CPUs in the system at the same time.  Writing 1 to it causes the idle state to
+> +be disabled for this particular CPU and writing 0 to it allows the governor to
+> +take it into consideration for the given CPU and the driver to ask for it,
+> +unless that state was disabled globally in the driver (in which case it cannot
+> +be used at all).
+> +
+> +The :file:`power` attribute is not defined very well, especially for idle state
+> +objects representing combinations of idle states at different levels of the
+> +hierarchy of units in the processor, and it generally is hard to obtain idle
+> +state power numbers for complex hardware, so :file:`power` often contains 0 (not
+> +available) and if it contains a nonzero number, that number may not be very
+> +accurate and it should not be relied on for anything meaningful.
+> +
+> +The number in the :file:`time` file generally may be greater than the total time
+> +really spent by the given CPU in the given idle state, because it is measured by
+> +the kernel and it may not cover the cases in which the hardware refused to enter
+> +this idle state and entered a shallower one instead of it (or even it did not
+> +enter any idle state at all).  The kernel can only measure the time span between
+> +asking the hardware to enter an idle state and the subsequent wakeup of the CPU
+> +and it cannot say what really happened in the meantime at the hardware level.
+> +Moreover, if the idle state object in question represents a combination of idle
+> +states at different levels of the hierarchy of units in the processor,
+> +the kernel can never say how deep the hardware went down the hierarchy in any
+> +particular case.  For these reasons, the only reliable way to find out how
+> +much time has been spent by the hardware in different idle states supported by
+> +it is to use idle state residency counters in the hardware, if available.
+> +
+> +
+
+Maybe I missed, but I couldn't find any text that says what state 0, 1, ... N
+mean. Like which is the deepest idle state and which one is the shallowest.
+
+> +.. _cpu-pm-qos:
+> +
+> +Power Management Quality of Service for CPUs
+> +============================================
+> +
+> +The power management quality of service (PM QoS) framework in the Linux kernel
+> +allows kernel code and user space processes to set constraints on various
+> +energy-efficiency features of the kernel to prevent performance from dropping
+> +below a required level.  The PM QoS constraints can be set globally, in
+> +predefined categories referred to as PM QoS classes, or against individual
+> +devices.
+> +
+> +CPU idle time management can be affected by PM QoS in two ways, through the
+> +global constraint in the ``PM_QOS_CPU_DMA_LATENCY`` class and through the
+> +resume latency constraints for individual CPUs.  Kernel code (e.g. device
+> +drivers) can set both of them with the help of special internal interfaces
+> +provided by the PM QoS framework.  User space can modify the former by opeining
+
+                                                                          opening
+
+> +the :file:`cpu_dma_latency` special device file under :file:`/dev/` and writing
+> +a binary value (interpreted as a signed 32-bit integer) to it.  In turn, the
+> +resume latency constraint for a CPU can be modified by user space by writing a
+> +string (representing a signed 32-bit integer) to the
+> +:file:`power/pm_qos_resume_latency_us` file under
+> +:file:`/sys/devices/system/cpu/cpu<N>/` in ``sysfs``, where the CPU number
+> +``<N>`` is allocated at the system initialization time.  Negative values
+> +will be rejected in both cases and, also in both cases, the written integer
+> +number will be interpreted as a requested PM QoS constraint in microseconds.
+> +
+> +The requested value is not automatically applied as a new constraint, however,
+> +as it may be less restrictive (greater in this particular case) than another
+> +constraint previously requested by someone else.  For this reason, the PM QoS
+> +framework maintains a list of requests that have been made so far in each
+> +global class and for each device, aggregates them and applies the effective
+> +(minimum in this particular case) value as the new constraint.
+> +
+> +In fact, opening the :file:`cpu_dma_latency` special device file causes a new
+> +PM QoS request to be created and added to the priority list of requests in the
+> +``PM_QOS_CPU_DMA_LATENCY`` class and the file descriptor coming from the
+> +"open" operation represents that request.  If that file descriptor is then
+> +used for writing, the number written to it will be associated with the PM QoS
+> +request represented by it as a new requested constraint value.  Next, the
+> +priority list mechanism will be used to determine the new effective value of
+> +the entire list of requests and that effective value will be set as a new
+> +constraint.  Thus setting a new requested constraint value will only change the
+> +real constraint if the effective "list" value is affected by it.  In particular,
+> +for the ``PM_QOS_CPU_DMA_LATENCY`` class it only affects the real constraint if
+> +it is the minimum of the requested contraints in the list.  The process holding
+
+                                      constraints
+
+> +a file descriptor obtained by opening the :file:`cpu_dma_latency` special device
+> +file controls the PM QoS request associated with that file descriptor, but it
+> +controls this particular PM QoS request only.
+> +
+> +Closing the :file:`cpu_dma_latency` special device file or, more precisely, the
+> +file descriptor obtained while opening it, causes the PM QoS request associated
+> +with that file descriptor to be removed from the ``PM_QOS_CPU_DMA_LATENCY``
+> +class priority list and destroyed.  If that happens, the priority list mechanism
+> +will be used, again, to determine the new effective value for the whole list
+> +and that value will become the new real constraint.
+> +
+> +In turn, for each CPU there is only one resume latency PM QoS request
+> +associated with the :file:`power/pm_qos_resume_latency_us` file under
+> +:file:`/sys/devices/system/cpu/cpu<N>/` in ``sysfs`` and writing to it causes
+> +this single PM QoS request to be updated regardless of which user space
+> +process does that.  In other words, this PM QoS request is shared by the entire
+> +user space, so access to the file associated with it needs to be arbitrated
+> +to avoid confusion.  [Arguably, the only legitimate use of this mechanism in
+> +practice is to pin a process to the CPU in question and let it use the
+> +``sysfs`` interface to control the resume latency constraint for it.]  It
+> +still only is a request, however.  It is a member of a priority list used to
+> +determine the effective value to be set as the resume latency constraint for the
+> +CPU in question every time the list of requests is updated this way or another
+> +(there may be other requests coming from kernel code in that list).
+> +
+> +CPU idle time governors are expected to regard the minimum of the global
+> +effective ``PM_QOS_CPU_DMA_LATENCY`` class constraint and the effective
+> +resume latency constraint for the given CPU as the upper limit for the exit
+> +latency of the idle states they can select for that CPU.  They should never
+> +select any idle states with exit latency beyond that limit.
+> +
+
 -- 
-2.7.4
-
+viresh
