@@ -2,108 +2,214 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60E6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB258C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2AB2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TN8CsGdF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AB2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AB96A2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:19:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB96A2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeK1TOd (ORCPT
+        id S1727798AbeK1TT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:14:33 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38456 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbeK1TOd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:14:33 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so22588500lja.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 00:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sT28w4VqOiNSTrHJbFMJkn4OXQZ517REFZ8xfo8WT/o=;
-        b=TN8CsGdFbbenE7mu/JYYtv4IVkpnM9+vR+llRyr3LjP8CTf3KXpi8JRramebxF2HdR
-         FIT1M4NMjw/Pmu5aUd+e7s9Fjuwn33qwKa+i8QdEigaEvT0ZNh7e/8PEEFwis9nPOnN5
-         Lqxf5craHUcP9T5vJ2OxS/lfdyWcxZ9tt8BEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sT28w4VqOiNSTrHJbFMJkn4OXQZ517REFZ8xfo8WT/o=;
-        b=oriPBy6T2ZzHzHs58l6wRcBsoRH6/lG7IDMVlxTVFiUpMR/VX/nCQ5Jq6RMq50dEz8
-         1r354pw5N3xDl3DUpH/2f0GqDSNj2ISNI1onF1GHpIrLEtA1eI7arT6sAAeAXWi5iB09
-         tHPdZqmpLvv6rWyW4ySBWoyRnPwn064wFv9ZXH3K+UdeItpDB6ZIM5ZDQFE2LTZ9tDsK
-         HJeiR8tKYQYD4bFXhYdth7jBiR/MZncPZD+55FX0jzoyp6CYjCrAcQRbc7xAugfDYfQy
-         JksKMGP9UTQ0N4I8CHOghnMGkD4sJTsoX4EqFULT0DIy1KhOlXqlgg6iSRjPOYtLcGiB
-         DmFQ==
-X-Gm-Message-State: AA+aEWZuqELfW5ZVMrn8BmBI6xHW9d4CKdjEVa6y1jgjkBRXEDP+RJUu
-        RbiU4bx+HILd57Xizkhc28AZfA==
-X-Google-Smtp-Source: AFSGD/VBJPRhIHl2ylbKM+Z/W1HG233+r/WJMLHATXbaOp1KYX3nevOZ1atyLY+TJ1r5iLDz53ZPmA==
-X-Received: by 2002:a2e:568b:: with SMTP id k11-v6mr22525904lje.105.1543392826029;
-        Wed, 28 Nov 2018 00:13:46 -0800 (PST)
-Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id f8sm1215827lfe.72.2018.11.28.00.13.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 00:13:45 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     rostedt@goodmis.org, mingo@redhat.com
-Cc:     akpm@linux-foundation.org, dvyukov@google.com,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/2] kernel/trace: fix watchdog soft lockup
-Date:   Wed, 28 Nov 2018 09:13:34 +0100
-Message-Id: <20181128081334.18408-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.19.2
+        Wed, 28 Nov 2018 14:19:56 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15169 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727341AbeK1TT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:19:56 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9B704F5E061ED;
+        Wed, 28 Nov 2018 16:19:03 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
+ 16:19:01 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181128073125.39102-1-jaegeuk@kernel.org>
+ <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
+ <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
+Date:   Wed, 28 Nov 2018 16:19:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building a allmodconfig kernel for arm64 and boot that in qemu,
-CONFIG_FTRACE_STARTUP_TEST gets enabled and that takes time so the
-watchdog expires and prints out a message like this:
-'watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]'
-Each time the function ftrace_replace_code gets called it stays in that
-functions loop for 41424 times.
-Rework so that function cond_resched() gets called in the
-ftrace_replace_code loop.
+On 2018/11/28 16:10, Jaegeuk Kim wrote:
+> On 11/28, Chao Yu wrote:
+>> Hi Jaeguek,
+>>
+>> On 2018/11/28 15:31, Jaegeuk Kim wrote:
+>>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
+>>> of directory tree. Let's do that by regular fsck or unclean shutdown.
+>>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>
+>> BTW, I have patch made some month ago...
+>>
+>> In order to detect nat_bits disabling, could we introduce one more flag for
+>> fsck?
+> 
+> Do we have a way to enable nat_bits very quickly in fsck?
 
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- kernel/trace/ftrace.c | 4 ++++
- 1 file changed, 4 insertions(+)
+For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
+rebuild nat_bits based on verified nat blocks/journals?
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 5b4f73e4fd56..3f456921dedf 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2426,6 +2426,10 @@ void __weak ftrace_replace_code(int enable)
- 
- 	do_for_each_ftrace_rec(pg, rec) {
- 
-+		/* This loop can take minutes when sanitizers are enabled, so
-+		 * lets make sure we allow RCU processing.
-+		 */
-+		cond_resched();
- 		if (rec->flags & FTRACE_FL_DISABLED)
- 			continue;
- 
--- 
-2.19.2
+Thanks,
+
+> 
+>>
+>> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
+>> From: Chao Yu <yuchao0@huawei.com>
+>> Date: Sun, 9 Sep 2018 05:40:20 +0800
+>> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/checkpoint.c    | 12 +++++++++++-
+>>  fs/f2fs/f2fs.h          |  3 ++-
+>>  fs/f2fs/node.c          |  3 +++
+>>  include/linux/f2fs_fs.h |  1 +
+>>  4 files changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
+>> *sbi, struct cp_control *cpc)
+>>  	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
+>>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>>  	unsigned long flags;
+>> +	bool disable_natbits = false;
+>>
+>>  	spin_lock_irqsave(&sbi->cp_lock, flags);
+>>
+>>  	if ((cpc->reason & CP_UMOUNT) &&
+>>  			le32_to_cpu(ckpt->cp_pack_total_block_count) >
+>> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+>> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
+>>  		disable_nat_bits(sbi, false);
+>> +		disable_natbits = true;
+>> +	}
+>>
+>>  	if (cpc->reason & CP_TRIMMED)
+>>  		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+>> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
+>> *sbi, struct cp_control *cpc)
+>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>
+>> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
+>> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
+>> +
+>>  	/* set this flag to activate crc|cp_ver for recovery */
+>>  	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+>>  	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+>>
+>>  	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+>> +
+>> +	if (disable_natbits)
+>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+>> +			"No enough space in CP area, disable nat_bits.");
+>>  }
+>>
+>>  static void commit_checkpoint(struct f2fs_sb_info *sbi,
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index f0cedbe0c536..b55341c269b2 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1107,6 +1107,7 @@ enum {
+>>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+>>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+>>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+>> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
+>>  };
+>>
+>>  enum {
+>> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
+>> f2fs_sb_info *sbi, bool lock)
+>>  {
+>>  	unsigned long flags;
+>>
+>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+>> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
+>>
+>>  	if (lock)
+>>  		spin_lock_irqsave(&sbi->cp_lock, flags);
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index e57add1e8966..0c6f8312a087 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+>>
+>>  	cp_ver |= (cur_cp_crc(ckpt) << 32);
+>>  	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+>> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
+>> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
+>>  		disable_nat_bits(sbi, true);
+>>  		return 0;
+>>  	}
+>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>> index 7196653833fa..1f3ae1504573 100644
+>> --- a/include/linux/f2fs_fs.h
+>> +++ b/include/linux/f2fs_fs.h
+>> @@ -117,6 +117,7 @@ struct f2fs_super_block {
+>>  /*
+>>   * For checkpoint
+>>   */
+>> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
+>>  #define CP_DISABLED_FLAG		0x00001000
+>>  #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+>>  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+>> -- 
+>> 2.18.0.rc1
+>>
+>>
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/f2fs.h | 6 +++++-
+>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index c28a9d1cb278..aa500239baf2 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+>>>  {
+>>>  	unsigned long flags;
+>>>  
+>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> +	/*
+>>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
+>>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
+>>> +	 * so let's rely on regular fsck or unclean shutdown.
+>>> +	 */
+>>>  
+>>>  	if (lock)
+>>>  		spin_lock_irqsave(&sbi->cp_lock, flags);
+>>>
+> 
+> .
+> 
 
