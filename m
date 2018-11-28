@@ -7,55 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772D8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B63C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B15B2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0988120832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:52:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnkMQlgl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B15B2081B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NSMu2IzX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0988120832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbeK2Axd (ORCPT
+        id S1728663AbeK2Axn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:53:33 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45741 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbeK2Axd (ORCPT
+        Wed, 28 Nov 2018 19:53:43 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41799 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728616AbeK2Axn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:53:33 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so10188664pfd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:51:49 -0800 (PST)
+        Wed, 28 Nov 2018 19:53:43 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so10196248pfi.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:51:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=L1KWePsWaBzwLQi7BjylxNbKfiBht2SJGcZ6HLjFNIc=;
-        b=HnkMQlgldjOx/dufu89sbP/DckIY+t3WcfI4GBsyp4r/OGAWzg1ceW/4QLxmlYgczL
-         lo2NzHfXyNbk0MPcNmuoHYELceLA466HcZ92V3lXJNuZ/pVngH4N73rnSjde1Egxxnab
-         576AMBb/fJPenk2d4OahWi6Q8BfghglPI1T+A=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=u6fmImAznleIoNGGi0rVkBDi0LpKZQqF8erXbtWcAbM=;
+        b=NSMu2IzXjhP+ZJp4DxZgYnFWRXmBCSGPjplbSG739y56PGyJ+smjo6ipDhf6sZsG8b
+         dkYy76V5OUXPbRfBrZYB00+vBC5NoWpClDv3ptNfTa4BIlKXPofMmIBlQWlkAYfwMMRQ
+         HvD09bJ7eBI8axNS/l+j5/g0cArGLhY9/VgRc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=L1KWePsWaBzwLQi7BjylxNbKfiBht2SJGcZ6HLjFNIc=;
-        b=gumtGeDRDefD8rT1Yi5mNBJakb2Gy9KqQYcRA9+9w4uiqHs5tvjTxrie6V+OXnPv76
-         PTWyGYsqpH9x1+YVevg17nG9EXuLGdN0q/EVhwYyQ2iYodLHpRsu27h4SVFkFX2s4HdA
-         mMBXyzFzpLKgsp+BgTzELMF20cLkkq7IAuHakUA8A87d86m0SALBfdGUfXTmkCKy6GqE
-         lgyhi2Sq+YMsdsQrfJGFLL6e3eRYPpXfxvOu9oY+nVOWfrgQISN2FgLa9r8TunVb/+7c
-         kESyJ+nQ1es8bUDOzrj1dA2LpCy3+AQhXwcEsLmBlqf/h6qY+IvXRdmviObtgIcoeO11
-         xXlA==
-X-Gm-Message-State: AGRZ1gJvd9hKcBou8ucwuHtGmGyFq5IKt8ilxMPU8OQwQ6W6oNJdMgMP
-        t/i9c3LTLsaV5fXifkB/xv4c
-X-Google-Smtp-Source: AJdET5fU5MAi6MUGtlSd/t9tgitCiKrTVfMbljI5VNCtlq2XjG+/rtEWuWhRUrnqpOUqJQnuuGLOJA==
-X-Received: by 2002:a62:cf84:: with SMTP id b126mr37250307pfg.98.1543413109069;
-        Wed, 28 Nov 2018 05:51:49 -0800 (PST)
+         :references;
+        bh=u6fmImAznleIoNGGi0rVkBDi0LpKZQqF8erXbtWcAbM=;
+        b=qYv3Vq79ZNs63Pjzp02TbLbECF2V8qLXEr0JTqcRgCynQLqS3OYbCrV5ORy29E6i2b
+         HsOvZwdMGKluEN4VqsDagxBZq/PvS+xqEAOnrW5tIPBLGwbwSTz6MAbcrmhmqJ+081zt
+         5L2OLTC8SwJQfq3u5RrIueJ9a0bm9jewUh0Sn54C4RlAvCka0r3EQkUcGm+xsV/Bihc6
+         qdMb/sOzCwVjT/vKRLNTymvbsmW7HCZx4QeORY4FAx417OOQidpCrA4tvpvKqBvLrfbU
+         34zQDhOngguf+dibHPLSl9G+9WyqB5HW5k8SdIqr+fbB7wJ2lkKp49GjqaVjTIoCynPm
+         NPzA==
+X-Gm-Message-State: AA+aEWY5XCP105KecOIoL5ZxRQcPu6kPVDcSMfhK7NHoTG0t0Ie98JMs
+        4WFN+GMXONS5ChpyZwSThogn
+X-Google-Smtp-Source: AFSGD/XV+jbGcQCKQOgZEU8BMm4pGH+tdFzn+ycu26oqnjeM7X/0RkntghlTMX777Sh4l7tD0L5/Yg==
+X-Received: by 2002:a62:5950:: with SMTP id n77mr23081507pfb.128.1543413119530;
+        Wed, 28 Nov 2018 05:51:59 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:90a:a93f:b481:6fae:6692:c3ee])
-        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.51.38
+        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.51.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 05:51:48 -0800 (PST)
+        Wed, 28 Nov 2018 05:51:58 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -67,80 +66,92 @@ Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
         linus.walleij@linaro.org, zhao_steven@263.net,
         overseas.sales@unisoc.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 03/15] ARM: Prepare RDA8810PL SoC
-Date:   Wed, 28 Nov 2018 19:20:54 +0530
-Message-Id: <20181128135106.9255-4-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 04/15] dt-bindings: interrupt-controller: Document RDA8810PL intc
+Date:   Wed, 28 Nov 2018 19:20:55 +0530
+Message-Id: <20181128135106.9255-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
 References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Färber <afaerber@suse.de>
+Document interrupt controller in RDA Micro RDA8810PL SoC.
 
-Introduce ARCH_RDA and mach-rda for RDA Micro SoCs.
-
-Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm/Kconfig           | 2 ++
- arch/arm/Makefile          | 1 +
- arch/arm/mach-rda/Kconfig  | 7 +++++++
- arch/arm/mach-rda/Makefile | 1 +
- 4 files changed, 11 insertions(+)
- create mode 100644 arch/arm/mach-rda/Kconfig
- create mode 100644 arch/arm/mach-rda/Makefile
+ .../interrupt-controller/rda,8810pl-intc.txt  | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 91be74d8df65..084f0983e6b2 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -804,6 +804,8 @@ source "arch/arm/plat-pxa/Kconfig"
- 
- source "arch/arm/mach-qcom/Kconfig"
- 
-+source "arch/arm/mach-rda/Kconfig"
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+new file mode 100644
+index 000000000000..e0062aebf025
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+@@ -0,0 +1,61 @@
++RDA Micro RDA8810PL Interrupt Controller
 +
- source "arch/arm/mach-realview/Kconfig"
- 
- source "arch/arm/mach-rockchip/Kconfig"
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 05a91d8b89f3..10056ccdb8be 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -202,6 +202,7 @@ machine-$(CONFIG_ARCH_ORION5X)		+= orion5x
- machine-$(CONFIG_ARCH_PICOXCELL)	+= picoxcell
- machine-$(CONFIG_ARCH_PXA)		+= pxa
- machine-$(CONFIG_ARCH_QCOM)		+= qcom
-+machine-$(CONFIG_ARCH_RDA)		+= rda
- machine-$(CONFIG_ARCH_REALVIEW)		+= realview
- machine-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip
- machine-$(CONFIG_ARCH_RPC)		+= rpc
-diff --git a/arch/arm/mach-rda/Kconfig b/arch/arm/mach-rda/Kconfig
-new file mode 100644
-index 000000000000..dafab78d7aab
---- /dev/null
-+++ b/arch/arm/mach-rda/Kconfig
-@@ -0,0 +1,7 @@
-+menuconfig ARCH_RDA
-+	bool "RDA Micro SoCs"
-+	depends on ARCH_MULTI_V7
-+	select COMMON_CLK
-+	select GENERIC_IRQ_CHIP
-+	help
-+	  This enables support for the RDA Micro 8810PL SoC family.
-diff --git a/arch/arm/mach-rda/Makefile b/arch/arm/mach-rda/Makefile
-new file mode 100644
-index 000000000000..6bea3d3a2dd7
---- /dev/null
-+++ b/arch/arm/mach-rda/Makefile
-@@ -0,0 +1 @@
-+obj- += dummy.o
++The interrupt controller in RDA8810PL SoC is a custom interrupt controller
++which supports up to 32 interrupts.
++
++Required properties:
++
++- compatible: Should be "rda,8810pl-intc".
++- reg: Specifies base physical address of the registers set.
++- interrupt-controller: Identifies the node as an interrupt controller.
++- #interrupt-cells: Specifies the number of cells needed to encode an
++  interrupt source. The value shall be 2.
++
++The interrupt sources are as follows:
++
++ID	Name
++------------
++0:	PULSE_DUMMY
++1:	I2C
++2:	NAND_NFSC
++3:	SDMMC1
++4:	SDMMC2
++5:	SDMMC3
++6:	SPI1
++7:	SPI2
++8:	SPI3
++9:	UART1
++10:	UART2
++11:	UART3
++12:	GPIO1
++13:	GPIO2
++14:	GPIO3
++15:	KEYPAD
++16:	TIMER
++17:	TIMEROS
++18:	COMREG0
++19:	COMREG1
++20:	USB
++21:	DMC
++22:	DMA
++23:	CAMERA
++24:	GOUDA
++25:	GPU
++26:	VPU_JPG
++27:	VPU_HOST
++28:	VOC
++29:	AUIFC0
++30:	AUIFC1
++31:	L2CC
++
++Example:
++		apb@20800000 {
++			compatible = "simple-bus";
++			...
++			intc: interrupt-controller@0 {
++				compatible = "rda,8810pl-intc";
++				reg = <0x0 0x1000>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++			};
++		};
 -- 
 2.17.1
 
