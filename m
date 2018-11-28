@@ -2,113 +2,178 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5DFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2E3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D35B2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB87C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lYpiKIbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D35B2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LzgJXnKh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB87C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbeK2EB0 (ORCPT
+        id S1729129AbeK2ECK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:01:26 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40550 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728833AbeK2EBZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:01:25 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wASGx0Lx025271;
-        Wed, 28 Nov 2018 10:59:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543424340;
-        bh=eOkKijLLhi/0RTiv42MS8Cw42Cdt10FccWGUM7O3kr8=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=lYpiKIbdYKhXL3peGNMa/YIjLJUUOyC3W++xom/GeiDYoA5nV2qCu2hWUKivFJ3dq
-         Ph7+tpdyVRk0Xv/23IDsMMtNz+TyYT1WZMYwQkhSzVQbRTJEcUEvHhXw51Tl2NKSL/
-         Ofksci+MsWT+tk6JKv24j/YRT0dKJmZ8hBHANluA=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wASGx0ni066446
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 10:59:00 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 28
- Nov 2018 10:59:00 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 28 Nov 2018 10:59:00 -0600
-Received: from [172.22.97.99] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wASGwsjV026257;
-        Wed, 28 Nov 2018 10:58:55 -0600
-Subject: Re: [PATCH v2 0/3] Add support for using external dma in SDHCI
-From:   "Rizvi, Mohammad Faiz Abbas" <faiz_abbas@ti.com>
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>, <broonie@kernel.org>
-References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
- <fb8a9eb6-82a1-1299-489f-9fed4ee48a02@ti.com>
-Message-ID: <5a45f520-03b0-3679-2175-a19681062bf6@ti.com>
-Date:   Wed, 28 Nov 2018 22:28:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 28 Nov 2018 23:02:10 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:9748 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728883AbeK2ECK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 23:02:10 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 296FDA136E;
+        Wed, 28 Nov 2018 17:59:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-type:content-type:in-reply-to:mime-version:date:date
+        :message-id:from:from:references:subject:subject:received; s=
+        mail20150812; t=1543424386; bh=RfFQaq9qRWG0aHSwh71XE6uUhGjndjTaH
+        nf/5rgWpBE=; b=LzgJXnKhwUi+uyRU+xKiITR7RWspE3zT3rrqFCHGU/b8yXr5Y
+        bXOhUC8GM/Xr32aFQx6vG2pzKRAgy4/0wexnl5xkEo4mPLqJl3KCg0iLgNFUn28G
+        2hifyMO2wjXpjFLZzUhPMkRrKjato0AzPkHlDNrlH867UQQ03wxZcpWpDaFFDZUM
+        EdSFPLRMVa70mSPQD/pOXTjKITWwh6N7Hxm8Fq+DF/PR2OmMSMH93pzgzXNhSU3s
+        wOetXSMO1h1ldQDlbN98/E+4S9+WcOMxEyZWuiqcwwlKsmnZ7Z3tfpCWszrIiy7p
+        hLYZAuF68NiorLySEEkQBJeJpbzgiTZltbefA==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id ZpFrS3HRFOw2; Wed, 28 Nov 2018 17:59:46 +0100 (CET)
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        "Andrey Jr. Melnikov" <temnota.am@gmail.com>,
+        linux-ext4@vger.kernel.org
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <20181128041555.GE31885@thunk.org> <en52df-5dh.ln1@banana.localnet>
+ <2547416.7Vy7A2kRpU@siriux> <20181128161033.GH31885@thunk.org>
+From:   Rainer Fiebig <jrf@mailbox.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jrf@mailbox.org; prefer-encrypt=mutual; keydata=
+ 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
+ 6/dT7HxuwnVIkER8kg==
+Message-ID: <ca0f3f35-aff6-78c9-3669-adb4acf7d46f@mailbox.org>
+Date:   Wed, 28 Nov 2018 18:01:32 +0100
 MIME-Version: 1.0
-In-Reply-To: <fb8a9eb6-82a1-1299-489f-9fed4ee48a02@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20181128161033.GH31885@thunk.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="0QsFQGjkMyMDnEK94FEOhomEecNK9Layx"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Mark Brown
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--0QsFQGjkMyMDnEK94FEOhomEecNK9Layx
+Content-Type: multipart/mixed; boundary="WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5";
+ protected-headers="v1"
+From: Rainer Fiebig <jrf@mailbox.org>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ "Andrey Jr. Melnikov" <temnota.am@gmail.com>, linux-ext4@vger.kernel.org
+Message-ID: <ca0f3f35-aff6-78c9-3669-adb4acf7d46f@mailbox.org>
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <20181128041555.GE31885@thunk.org> <en52df-5dh.ln1@banana.localnet>
+ <2547416.7Vy7A2kRpU@siriux> <20181128161033.GH31885@thunk.org>
+In-Reply-To: <20181128161033.GH31885@thunk.org>
 
-Chunyan,
+--WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11/21/2018 5:17 PM, Faiz Abbas wrote:
-> Hi Chunyan,
-> 
-> On 12/11/18 12:56 PM, Chunyan Zhang wrote:
->> Currently the generic SDHCI code in the Linux kernel supports the SD
->> standard DMA integrated into the host controller but does not have any
->> support for external DMA controllers implemented using dmaengine meaning
->> that custom code is needed for any systems that use a generic DMA
->> controller with SDHCI which in practice means any SDHCI controller that
->> doesn't have an integrated DMA controller so we should have this as a
->> generic feature.
+Am 28.11.18 um 17:10 schrieb Theodore Y. Ts'o:
+> On Wed, Nov 28, 2018 at 04:56:51PM +0100, Rainer Fiebig wrote:
 >>
->> There are already a number of controller specific drivers that have dmaengine
->> code, and some could use sdhci.c actually, but needed to implement mmc_ops->request()
->> in their specific driver for sending command with external dma using dmaengine
->> framework, with this patchset, them will take advantage of the generic support.
->> TI's omap controller is the case as an example.
->>
->> Any comments are very appreciated.
->>
-> 
-> This is great. It helps us move am335x and am43xx platforms to
-> sdhci-omap. What platforms have you tested this on?
-> 
+>> If you still see the errors, at least the Ubuntu-kernel could be ruled=
+ out.
+>=20
+> My impression is that some of the people reporting problems have been
+> using stock upstream kernels, so I wasn't really worried about the
+> Ubuntu kernel (although it could be something about the default
+> configs that Ubuntu sets up).  What I was more wondering was whether
+> there was something about userspace or default configs of Ubuntu.
+> This isn't necessarily a *problem* per se; for examople, not that long
+> ago some users were getting surprised when a problem showed up with an
+> older version of the LVM2 userspace with newer upstream kernels.
+> After a while, you learn to get super paranoid about making sure to
+> rule out all possibilities when trying to debug problems that are only
+> hitting a set of users.
+>=20
+> 						- Ted
+>=20
 
-Gentle ping on this. I tried testing these with an am335x-evm board. In 
-their current condition, the card fails to enumerate altogether. The 
-changes suggested by Adrian should fix this. Let me know when you post a v3.
+OK, thanks. Perhaps Andrey can tell us then what impact the default
+=2Econfig had on the problem.
 
-Thanks,
-Faiz
+Rainer Fiebig
+
+
+--WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5--
+
+--0QsFQGjkMyMDnEK94FEOhomEecNK9Layx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6yx5PjBNuGB2qJXG8OH3JiWK+PUFAlv+yfoACgkQ8OH3JiWK
++PWHcxAAz1aNEye1dotyGls5Dh8WTLd/DAF8ddd80Gql+zta0h2AYT8vvbRQwZOI
+UO4qHPtL8Xgoh0uAibHjQ4sn5/t5Sr7PPQmYcft5aTS5SZ8I7NpS7yWtYwtN7258
+af+r0bFNJVP2iAqp/oPMSGB0AsyPK0SlZ6RhWP5wtpYYpaOR7ycfa7px/aMcpBne
+MOZKPR5O4mPU1tsHjxIFiCM8gXW1rVFqSdDkz0uiHNh65pssjnKGS3GdcYcq1gow
+bYTAUEGZRgx1vrKnS9phRypG5Vu6FVnVIRroJi+Lxf1vcH39Tvz47SP+zUv/1ecE
+LNm6hC5ZJX2wXLlkDrxKL6lGMZbd5PWLyGodbjNrHMurtbGwUrdKtRbMaaxJBt25
+m4aOnXS3vG6rSARXBSZY9hCBdDVxrv3wMT3GLSOjcKqsxnIsI6w8NwnNhkA4GcfO
+mkbUI6/+xviYIUOGW/bj5SEhy+KjyJvmeTAuGthDf7xB6glp6/tnPqIm17nKTNIz
+EepX7iEBEX8S54FCo1Kr9/C9ujeKCEfRLNKQmyC9Uhf2InOSNXyitBPm8Otjp7pU
+MIyeG87yLKS0Jokn6k+Zwe/htu1KE8DxR8I9j/42D8L1/VV0GXHziDHzOtrJn2Qu
+Vj0qUGlD1m6NPCiFqmKgbk7J2ndko//tzaDfjFK7XGz4o+HNKXw=
+=aOUD
+-----END PGP SIGNATURE-----
+
+--0QsFQGjkMyMDnEK94FEOhomEecNK9Layx--
