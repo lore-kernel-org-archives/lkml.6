@@ -2,127 +2,96 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1F4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DDBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E667208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:35:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sc2Hh870"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E667208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D5943208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5943208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbeK1Ug2 (ORCPT
+        id S1728110AbeK1UhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:36:28 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44308 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbeK1Ug2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:36:28 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so21232778wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:35:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=M/EBTVrOB+AG7dPL21MbNZywOHLPM/2eMyhUXx4pZpk=;
-        b=Sc2Hh870Nx5CSa7DmWgPShqpc4fMCKFpowj+kZIR/7zZlG0yRiaevnHHukpokPxj+0
-         H+IcDGcHFrbf43CJvz3ngYCnUA6m/NYUxLUBKfzxwJNURfMV1omHuwwitfnZe/PlU7r6
-         DV/iPgjmUBjJ7yKICnNDN7PpiJKvLqnqW9LiU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=M/EBTVrOB+AG7dPL21MbNZywOHLPM/2eMyhUXx4pZpk=;
-        b=s4lpBQYtjik7jjcLpQ4gyIcdL6yDRdEjVT7xTlILDEu5Q+A5CJNWvLNyPiaNuWQ3v/
-         XwXpY+BWoyJ1ehgNXlm+4bmdOydkp38oEScPhYXhLyvSLrZrkCcqB8V+Sf2U4hskK60R
-         edghGG6OwCNsKAZ+QxVQLvBpBwlc89UUHVS4qXRZLxWej9nfOU7yhWP/+hPiWLZ+lHOz
-         bSQl0ae1X6/39W9PPwPYznVCZAmPFN2RcvCRdUqlInP1dXRYU3Js7yclIWX3VIdyllTH
-         TLJm9FcEmCoQuwVtU0+D/k0rX6I629bUPSzqDvKDMfajP1wCp2FOaRTqm4gjey/qZArX
-         ai5g==
-X-Gm-Message-State: AA+aEWbHinULIc0brdVnPsIUfJs+E2azJXBo73gqaD9JfvE6LEUWZbmY
-        78AXQ76sm/dPkWN9GDK7baMPSIHDbDA=
-X-Google-Smtp-Source: AFSGD/XSVTgbcQeUHq3/kFVh20VI/BdmdMWmF18OIrfyCYDY+74Dwn7QSMHX/DDGgB5E7WuoekNUXQ==
-X-Received: by 2002:a5d:63c3:: with SMTP id c3mr29808376wrw.215.1543397726655;
-        Wed, 28 Nov 2018 01:35:26 -0800 (PST)
-Received: from dell ([2.31.167.233])
-        by smtp.gmail.com with ESMTPSA id r76-v6sm1904911wmb.21.2018.11.28.01.35.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 01:35:26 -0800 (PST)
-Date:   Wed, 28 Nov 2018 09:35:24 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, David Dajun Chen <dchen@diasemi.com>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular
-Message-ID: <20181128093524.GD4272@dell>
-References: <1542861179-8941-3-git-send-email-paul.gortmaker@windriver.com>
- <201811231036.wIjm7GBh%fengguang.wu@intel.com>
- <20181123031456.GD14659@windriver.com>
- <20181123144328.GE14659@windriver.com>
+        Wed, 28 Nov 2018 15:37:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44302 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727623AbeK1UhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:37:06 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C701E2125F; Wed, 28 Nov 2018 10:36:03 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5F94720D28;
+        Wed, 28 Nov 2018 10:33:45 +0100 (CET)
+Date:   Wed, 28 Nov 2018 10:33:45 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Lothar =?utf-8?B?V2Hvv73vv71tYW5u?= <LW@KARO-electronics.de>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 4/4] ARM64: dts: imx: add i.MX8QXP system controller RTC
+ support
+Message-ID: <20181128093345.GC8952@piout.net>
+References: <1543311334-8807-1-git-send-email-Anson.Huang@nxp.com>
+ <1543311334-8807-5-git-send-email-Anson.Huang@nxp.com>
+ <20181128100420.0c9a721a@karo-electronics.de>
+ <DB3PR0402MB3916FFD700313BF684CF32AAF5D10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20181128091943.GB8952@piout.net>
+ <DB3PR0402MB39168AC8DB69B81C51CE63C2F5D10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181123144328.GE14659@windriver.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <DB3PR0402MB39168AC8DB69B81C51CE63C2F5D10@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Paul Gortmaker wrote:
-
-> [Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular] On 22/11/2018 (Thu 22:14) Paul Gortmaker wrote:
-> 
-> > [Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular] On 23/11/2018 (Fri 10:21) kbuild test robot wrote:
+On 28/11/2018 09:21:56+0000, Anson Huang wrote:
+> > > This module is NOT depending on any board design, should it be enabled by
+> > default in soc dtsi?
+> > > Like wdog etc..
+> > >
 > > 
+> > I guess the point is that you may not want it enabled, even if it should always
+> > be working. enabling it by default would affect the RTC ordering for example.
 > 
-> [...]
+> i.MX SoCs ONLY have 1 RTC. And RTC are always enabled by default for all i.MX
+> SoCs, so do we have to disable it here and enable it in board dts?
 > 
-> > > 
-> > > All errors (new ones prefixed by >>):
-> > > 
-> > >    drivers/mfd/da9055-i2c.o: In function `da9055_i2c_remove':
-> > > >> drivers/mfd/da9055-i2c.c:53: undefined reference to `da9055_device_exit'
-> > 
-> > Thanks for the report -- I'll look into what causes it, why my testing
-> > didn't see it, and get an update to Lee as soon as possible.
-> 
-> OK, mystery solved.  I chose this smaller subset of MFD "simple" patches
-> from my pending queue of MFD patches - to create a reasonable sized
-> maintainer-friendly send, based on patches with zero runtime changes.
-> 
-> My other pending MFD patches have a trivial runtime behavior change;
-> deleting a ".remove" field/function - that will never be used for a
-> non-module case, but in theory could be (pointlessly) triggered by
-> forcing a driver unbind.  (see mainline 98b72b94def9 as an example)
-> Patches like this were left behind for a future send batch.
-> 
-> Unfortunately that allowed me to overlook the fact that patch #2 link
-> depended on the below ".remove" patch (not sent) to be applied 1st.
-> 
-> Lee, what would you like to have happen?  I can resend the queue with
-> this patch, or I can resend with #2 being temporarily deferred until
-> a future patch batch that has the below da9055-i2c in it, or ...
-> 
-> Whatever is easiest for you - let me know.
 
-Just send them all.
+I would say that most of the i.MX based boards include another RTC
+because the SoC one consumes way too much power.
 
-I'm going to have to review them all at one time or another.
+Note that I don't care too much whether it is enabled by default, I
+was simply explaining why you may want to disable it by default.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
