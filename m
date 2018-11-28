@@ -2,124 +2,202 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88318C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCFEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A9502082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A9502082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FA1621104
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:29:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA1621104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeK1M2l (ORCPT
+        id S1727218AbeK1M27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 07:28:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39808 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbeK1M2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 07:28:41 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D5C513084031;
-        Wed, 28 Nov 2018 01:28:53 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A54D56012B;
-        Wed, 28 Nov 2018 01:28:44 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 09:28:38 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     tom.leiming@gmail.com, axboe@kernel.dk,
-        Gwendal Grignou <gwendal@chromium.org>, asavery@chromium.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
-Message-ID: <20181128012837.GC11128@ming.t460p>
-References: <20181030230624.61834-1-evgreen@chromium.org>
- <20181030230624.61834-3-evgreen@chromium.org>
- <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
- <CACVXFVN63UDefvBnYTQ==tWwYqGJbCS_HK==-1jVa5sVc=-Upw@mail.gmail.com>
- <CAE=gft55MVc7JGJw427VByihrgw1yYDFYCxuqUOh4xm5P4ZoAA@mail.gmail.com>
+        Wed, 28 Nov 2018 07:28:59 -0500
+Received: from p3plsmtpa08-09.prod.phx3.secureserver.net ([173.201.193.110]:43806
+        "EHLO p3plsmtpa08-09.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726548AbeK1M26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 07:28:58 -0500
+X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 07:28:58 EST
+Received: from [192.168.0.55] ([24.218.182.144])
+        by :SMTPAUTH: with ESMTPSA
+        id RoY3ggOhVxfLmRoY4g5zN9; Tue, 27 Nov 2018 18:21:52 -0700
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
+        linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+ <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+ <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+ <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <15e4a0c0-cadd-e549-962f-8d9aa9fc033a@talpey.com>
+Date:   Tue, 27 Nov 2018 20:21:51 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE=gft55MVc7JGJw427VByihrgw1yYDFYCxuqUOh4xm5P4ZoAA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 28 Nov 2018 01:28:53 +0000 (UTC)
+In-Reply-To: <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfIIl29Utz8p5+ukRKmjiKQaLUVSsvQE3AlWAWrTt+Son/m4gxdNeyXjald/IbGOAiB2GlCDAfqBafUL5+a8qa1fL58Qzm+hUtDDTPfmkEAp2A7Pzfu+E
+ 5YtueX0cBErA0OPMRrvSlF56RYFs1j11UcfEBCVRKBOUWb9LceWC2FylQtrDbOvrt2K8gI13xnmvGMWOJJqVSbjhuQ1tZbTq7YsmpUtvNEyZYWZAdYF4SDbQ
+ XVeC4njq8FxI9iBs+4oJ+afwiNGyZWAOXfk9da7NeTr+7lgUnLaCOCgkvaC925gXt57PRVDBcXKto4s8mMvnj/rwFCdTeo24jydhWNB0a0Vd/0coQOupmiBh
+ BtVSSAu4jn7Y1xrG3b/tzFlZcvfbZXUwL4wCY6Qs+NS1e6tTkAE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 03:34:04PM -0800, Evan Green wrote:
-> Hi Ming,
+On 11/21/2018 5:06 PM, John Hubbard wrote:
+> On 11/21/18 8:49 AM, Tom Talpey wrote:
+>> On 11/21/2018 1:09 AM, John Hubbard wrote:
+>>> On 11/19/18 10:57 AM, Tom Talpey wrote:
+>>>> ~14000 4KB read IOPS is really, really low for an NVMe disk.
+>>>
+>>> Yes, but Jan Kara's original config file for fio is *intended* to highlight
+>>> the get_user_pages/put_user_pages changes. It was *not* intended to get max
+>>> performance,  as you can see by the numjobs and direct IO parameters:
+>>>
+>>> cat fio.conf
+>>> [reader]
+>>> direct=1
+>>> ioengine=libaio
+>>> blocksize=4096
+>>> size=1g
+>>> numjobs=1
+>>> rw=read
+>>> iodepth=64
+>>
+>> To be clear - I used those identical parameters, on my lower-spec
+>> machine, and got 400,000 4KB read IOPS. Those results are nearly 30x
+>> higher than yours!
 > 
-> On Mon, Nov 26, 2018 at 6:55 PM Ming Lei <tom.leiming@gmail.com> wrote:
-> >
-> > On Tue, Nov 27, 2018 at 2:55 AM Evan Green <evgreen@chromium.org> wrote:
-> > >
-> > > On Tue, Oct 30, 2018 at 4:06 PM Evan Green <evgreen@chromium.org> wrote:
-> > > >
-> > > > If the backing device for a loop device is a block device,
-> >
-> > This shouldn't be a very common use case wrt. loop.
+> OK, then something really is wrong here...
 > 
-> Yeah, I'm starting to gather that. Or maybe I'm just the first one to
-> mention it on the kernel lists ;) We've used this in our Chrome OS
-> installer, I believe for many years. Gwendal piped in with a few
-> reasons we do it this way on the cover letter, but in general I think
-> it allows us to have a unified set of functions to install to a file,
-> disk, or prepare an image that may have a different block size than
-> those on the running system.
+>>
+>>> So I'm thinking that this is not a "tainted" test, but rather, we're constraining
+>>> things a lot with these choices. It's hard to find a good test config to run that
+>>> allows decisions, but so far, I'm not really seeing anything that says "this
+>>> is so bad that we can't afford to fix the brokenness." I think.
+>>
+>> I'm not suggesting we tune the benchmark, I'm suggesting the results
+>> on your system are not meaningful since they are orders of magnitude
+>> low. And without meaningful data it's impossible to see the performance
+>> impact of the change...
+>>
+>>>> Can you confirm what type of hardware you're running this test on?
+>>>> CPU, memory speed and capacity, and NVMe device especially?
+>>>>
+>>>> Tom.
+>>>
+>>> Yes, it's a nice new system, I don't expect any strange perf problems:
+>>>
+>>> CPU: Intel(R) Core(TM) i7-7800X CPU @ 3.50GHz
+>>>       (Intel X299 chipset)
+>>> Block device: nvme-Samsung_SSD_970_EVO_250GB
+>>> DRAM: 32 GB
+>>
+>> The Samsung Evo 970 250GB is speced to yield 200,000 random read IOPS
+>> with a 4KB QD32 workload:
+>>
+>>
+>> https://www.samsung.com/us/computing/memory-storage/solid-state-drives/ssd-970-evo-nvme-m-2-250gb-mz-v7e250bw/#specs
+>>
+>> And the I7-7800X is a 6-core processor (12 hyperthreads).
+>>
+>>> So, here's a comparison using 20 threads, direct IO, for the baseline vs.
+>>> patched kernel (below). Highlights:
+>>>
+>>>      -- IOPS are similar, around 60k.
+>>>      -- BW gets worse, dropping from 290 to 220 MB/s.
+>>>      -- CPU is well under 100%.
+>>>      -- latency is incredibly long, but...20 threads.
+>>>
+>>> Baseline:
+>>>
+>>> $ ./run.sh
+>>> fio configuration:
+>>> [reader]
+>>> ioengine=libaio
+>>> blocksize=4096
+>>> size=1g
+>>> rw=read
+>>> group_reporting
+>>> iodepth=256
+>>> direct=1
+>>> numjobs=20
+>>
+>> Ouch - 20 threads issuing 256 io's each!? Of course latency skyrockets.
+>> That's going to cause tremendous queuing, and context switching, far
+>> outside of the get_user_pages() change.
+>>
+>> But even so, it only brings IOPS to 74.2K, which is still far short of
+>> the device's 200K spec.
+>>
+>> Comparing anyway:
+>>
+>>
+>>> Patched:
+>>>
+>>> -------- Running fio:
+>>> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=256
+>>> ...
+>>> fio-3.3
+>>> Starting 20 processes
+>>> Jobs: 13 (f=8): [_(1),R(1),_(1),f(1),R(2),_(1),f(2),_(1),R(1),f(1),R(1),f(1),R(1),_(2),R(1),_(1),R(1)][97.9%][r=229MiB/s,w=0KiB/s][r=58.5k,w=0 IOPS][eta 00m:02s]
+>>> reader: (groupid=0, jobs=20): err= 0: pid=2104: Tue Nov 20 22:01:58 2018
+>>>      read: IOPS=56.8k, BW=222MiB/s (232MB/s)(20.0GiB/92385msec)
+>>> ...
+>>> Thoughts?
+>>
+>> Concern - the 74.2K IOPS unpatched drops to 56.8K patched!
+> 
+> ACK. :)
+> 
+>>
+>> What I'd really like to see is to go back to the original fio parameters
+>> (1 thread, 64 iodepth) and try to get a result that gets at least close
+>> to the speced 200K IOPS of the NVMe device. There seems to be something
+>> wrong with yours, currently.
+> 
+> I'll dig into what has gone wrong with the test. I see fio putting data files
+> in the right place, so the obvious "using the wrong drive" is (probably)
+> not it. Even though it really feels like that sort of thing. We'll see.
+> 
+>>
+>> Then of course, the result with the patched get_user_pages, and
+>> compare whichever of IOPS or CPU% changes, and how much.
+>>
+>> If these are within a few percent, I agree it's good to go. If it's
+>> roughly 25% like the result just above, that's a rocky road.
+>>
+>> I can try this after the holiday on some basic hardware and might
+>> be able to scrounge up better. Can you post that github link?
+>>
+> 
+> Here:
+> 
+>     git@github.com:johnhubbard/linux (branch: gup_dma_testing)
 
-OK, got it, it makes sense.
+I'm super-limited here this week hardware-wise and have not been able
+to try testing with the patched kernel.
 
-> 
-> >
-> > > > then mirror the discard properties of the underlying block
-> > > > device into the loop device. While in there, differentiate
-> > > > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
-> > > > different for block devices, but which the loop device had
-> > > > just been lumping together.
-> > > >
-> > > > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > >
-> > > Any thoughts on this patch? This fixes issues for us when using a loop
-> > > device backed by a block device, where we see many logs like:
-> > >
-> > > [  372.767286] print_req_error: I/O error, dev loop5, sector 88125696
-> >
-> > Seems not see any explanation about this IO error and the fix in your patch.
-> > Could you describe it a bit more?
-> 
-> Sure, I probably should have included more context with the series.
-> 
-> The loop device always reports that it supports discard, by setting up
-> the max_discard_sectors and max_write_zeroes_sectors in the blk queue.
-> When the loop device gets a discard or write-zeroes request, it turns
-> around and calls fallocate on the underlying device with the
-> PUNCH_HOLE flag. This makes sense when you're backed by a file and
-> hoping to just deallocate the space, but may fail when you're backed
-> by a block device that doesn't support discard, or doesn't write
-> zeroes to discarded sectors. Weirdly, lo_discard already had some code
-> for preserving EOPNOTSUPP, but then later the error is smashed into
-> EIO. Patch 1 pipes out EOPNOTSUPP properly, so it doesn't get squashed
-> into EIO.
-> 
-> Patch 2 reflects the discard characteristics of the underlying device
-> into the loop device. That way, if you're backed by a file or a block
-> device that does support discard, everything works great, and user
-> mode can even see and use the correct discard and write zero
-> granularities. If you're backed by a block device that does not
-> support discard, this is exposed to user mode, which then usually
-> avoids calling fallocate, and doesn't feel betrayed that their
-> requests are unexpectedly failing.
+I was able to compare my earlier quick test with a Bionic 4.15 kernel
+(400K IOPS) against a similar 4.20rc3 kernel, and the rate dropped to
+~_375K_ IOPS. Which I found perhaps troubling. But it was only a quick
+test, and without your change.
 
-Thanks for your detailed explanation, and I think we need to fix it.
+Say, that branch reports it has not had a commit since June 30. Is that
+the right one? What about gup_dma_for_lpc_2018?
 
-Thanks,
-Ming
+Tom.
