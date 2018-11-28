@@ -2,233 +2,216 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D141AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBC7C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E22620832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:02:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUvVZdXE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E22620832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5013A20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5013A20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeK2JFg (ORCPT
+        id S1726663AbeK2JGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:05:36 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:42618 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeK2JFg (ORCPT
+        Thu, 29 Nov 2018 04:06:24 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33011 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeK2JGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:05:36 -0500
-Received: by mail-yb1-f194.google.com with SMTP id o204-v6so11288241yba.9;
-        Wed, 28 Nov 2018 14:02:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n9DjwpVPcO8qMCgWeLW1awsMeFllRn7jIHwDB0Yp9X4=;
-        b=JUvVZdXEeyw73IIWVStQr5lHm8u8XCq+G992dVBEFDj3XWJFztViG8DjisRl4YjL5t
-         mZgK7cIZ0yekpQL9HcHPtATGrf63ln2UdJZ6nIWvD/fln37cmaMCiKHhFXQnMrmM8xct
-         Omyilg6ChWQuJuuvp21llepxhdi/olDufla6g65U/6UYb4uxJA9U6ISDD8ZvRJc/8q1T
-         zYgtxqLlIKBrAowqgflOeBklGbZnTXPUagzMwy7VJOn3YE4hdQleN53N4BZjgSVxNXsE
-         VXlvdWppYmD0BEAQaDgHvLEAPtWeW7Slx4Y3cB/eDim0zuyMGal6/xNbY5nfh+ESwGmP
-         ocqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=n9DjwpVPcO8qMCgWeLW1awsMeFllRn7jIHwDB0Yp9X4=;
-        b=VLzXMt/VYSexuuiDB3upO1ptG1INe5gxYP/s+uPBC7k2Q7TNa/vP/gvhe7fRJDUyIA
-         pdmho5KUMw9UiZFAW8otl1OC6d4QzS7zFUm/hATAgwb94Sjg2WUwag8td9WNkcqs8N+q
-         p1V8RWdXFPEp973kB2+IkMvR4Q/VMwj/a6ofuGQGWv8gFTBsCons5ehS7KZvok688JvK
-         /KIQLZzP02SnEyfmRPYB3n5vHsby+rt3B9N0ewP8JHcjxulGfEuGCK9SjOJQv3sXV+FX
-         7h283TbelJqkM3bJNj85FaLIHTQl+p91aLIWnqnaTgtsAr/LUBFjI9gJ5w5+tiV8EFZy
-         Cypw==
-X-Gm-Message-State: AA+aEWZqeAAHlMAQVcpRrh5px3eSAJaq8BSHBQNKbirfOJXRi36DLm32
-        VHe6mrN0Jr2/ZBjUkHPmnbfBFoV/
-X-Google-Smtp-Source: AFSGD/X615Rh/MRs+6xs8rnHIJz1VpriaOALuyoSecu83HACFVtCdnhgsVRmRuNddAO3AFidKnjJKQ==
-X-Received: by 2002:a25:2ccb:: with SMTP id s194-v6mr39607155ybs.415.1543442549597;
-        Wed, 28 Nov 2018 14:02:29 -0800 (PST)
-Received: from [10.0.2.15] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id f191-v6sm790296ywh.98.2018.11.28.14.02.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 14:02:28 -0800 (PST)
-Subject: Re: [PATCH net] net: dsa: Fix tagging attribute location
-To:     netdev@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181128214012.16397-1-f.fainelli@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <a0aeb7f0-57f0-f331-1490-ae8424b70624@gmail.com>
-Date:   Wed, 28 Nov 2018 14:02:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 29 Nov 2018 04:06:24 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gS7vP-000170-I0; Wed, 28 Nov 2018 23:03:15 +0100
+Date:   Wed, 28 Nov 2018 23:03:14 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dou Liyang <douliyangs@gmail.com>
+cc:     LKML <linux-kernel@vger.kernel.org>, kashyap.desai@broadcom.com,
+        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
+        ming.lei@redhat.com, Christoph Hellwig <hch@lst.de>,
+        bhelgaas@google.com, linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH v3] genirq/affinity: Create and transfer more irq
+ desc info by a new structure
+In-Reply-To: <20181128164503.6194-1-douliyangs@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811282228570.1879@nanos.tec.linutronix.de>
+References: <20181128164503.6194-1-douliyangs@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181128214012.16397-1-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dou,
+
+On Thu, 29 Nov 2018, Dou Liyang wrote:
+> +/**
+> + * struct irq_affinity_desc - Description for kinds of irq assignements
+> + *		which will be transferred to irqdesc core
+
+Please align this proper
+
+ * struct irq_affinity_desc - Description for kinds of irq assignements
+ *			      which will be transferred to irqdesc core
+
+Aside of that, it's not interesting where these structs are going to be
+transferred today because that might change tomorrow. So something like
+this:
+
+ * struct irq_affinity_desc - Interrupt affinity descriptor
 
 
-On 11/28/18 1:40 PM, Florian Fainelli wrote:
-> While introducing the DSA tagging protocol attribute, it was added to the DSA
-> slave network devices, but those actually see untagged traffic (that is their
-> whole purpose). Correct this mistake by putting the tagging sysfs attribute
-> under the DSA master network device where this is the information that we need.
-> 
-> While at it, also correct the sysfs documentation mistake that missed the
-> "dsa/" directory component of the attribute.
-> 
-> Fixes: 98cdb4807123 ("net: dsa: Expose tagging protocol to user-space")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
+> + * @masks:	cpumask of automatic irq affinity assignments
 
-The changeset in the Fixes tag is in v4.20-rc and has not made it into
-any final kernel yet in case you are wondering.
+@mask: please. It's one cpumask per descriptor.
 
->  Documentation/ABI/testing/sysfs-class-net-dsa |  2 +-
->  net/dsa/master.c                              | 34 ++++++++++++++++++-
->  net/dsa/slave.c                               | 28 ---------------
->  3 files changed, 34 insertions(+), 30 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-net-dsa b/Documentation/ABI/testing/sysfs-class-net-dsa
-> index f240221e071e..985d84c585c6 100644
-> --- a/Documentation/ABI/testing/sysfs-class-net-dsa
-> +++ b/Documentation/ABI/testing/sysfs-class-net-dsa
-> @@ -1,4 +1,4 @@
-> -What:		/sys/class/net/<iface>/tagging
-> +What:		/sys/class/net/<iface>/dsa/tagging
->  Date:		August 2018
->  KernelVersion:	4.20
->  Contact:	netdev@vger.kernel.org
-> diff --git a/net/dsa/master.c b/net/dsa/master.c
-> index c90ee3227dea..5e8c9bef78bd 100644
-> --- a/net/dsa/master.c
-> +++ b/net/dsa/master.c
-> @@ -158,8 +158,31 @@ static void dsa_master_ethtool_teardown(struct net_device *dev)
->  	cpu_dp->orig_ethtool_ops = NULL;
->  }
->  
-> +static ssize_t tagging_show(struct device *d, struct device_attribute *attr,
-> +			    char *buf)
+> + * @flags:	flags to differentiate between managed and
+> + *		unmanaged interrupts
+
+Again, that's the purpose today.
+
+ * @flags:	Flags to convey complementary information
+
+But see further down.
+
+> + */
+> +struct irq_affinity_desc {
+> +	struct cpumask masks;
+> +	unsigned int	flags;
+> +};
+
+Please align the member names vertically with tabs
+
+struct irq_affinity_desc {
+	struct cpumask	masks;
+	unsigned int	flags;
+};
+
+> +/**
+> + * irq_create_affinity_desc - Create affinity desc for multiqueue spreading
+> + * @nvec:	The total number of vectors
+> + * @affd:	Description of the affinity requirements
+> + *
+> + * Returns the irq_affinity_desc pointer or NULL if allocation failed.
+> + */
+> +struct irq_affinity_desc *
+> +irq_create_affinity_desc(int nvec, const struct irq_affinity *affd)
 > +{
-> +	struct net_device *dev = to_net_dev(d);
-> +	struct dsa_port *cpu_dp = dev->dsa_ptr;
+> +	struct irq_affinity_desc *cur_affi_desc, *affi_desc = NULL;
+> +	struct cpumask *curmask, *masks = NULL;
+> +	int i;
 > +
-> +	return sprintf(buf, "%s\n",
-> +		       dsa_tag_protocol_to_str(cpu_dp->tag_ops));
-> +}
-> +static DEVICE_ATTR_RO(tagging);
-> +
-> +static struct attribute *dsa_slave_attrs[] = {
-> +	&dev_attr_tagging.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group dsa_group = {
-> +	.name	= "dsa",
-> +	.attrs	= dsa_slave_attrs,
-> +};
-> +
->  int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
->  {
-> +	int ret;
-> +
->  	/* If we use a tagging format that doesn't have an ethertype
->  	 * field, make sure that all packets from this point on get
->  	 * sent to the tag format's receive function.
-> @@ -168,11 +191,20 @@ int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
->  
->  	dev->dsa_ptr = cpu_dp;
->  
-> -	return dsa_master_ethtool_setup(dev);
-> +	ret = dsa_master_ethtool_setup(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = sysfs_create_group(&dev->dev.kobj, &dsa_group);
-> +	if (ret)
-> +		dsa_master_ethtool_teardown(dev);
-> +
-> +	return ret;
->  }
->  
->  void dsa_master_teardown(struct net_device *dev)
->  {
-> +	sysfs_remove_group(&dev->dev.kobj, &dsa_group);
->  	dsa_master_ethtool_teardown(dev);
->  
->  	dev->dsa_ptr = NULL;
-> diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-> index 7d0c19e7edcf..aec78f5aca72 100644
-> --- a/net/dsa/slave.c
-> +++ b/net/dsa/slave.c
-> @@ -1058,27 +1058,6 @@ static struct device_type dsa_type = {
->  	.name	= "dsa",
->  };
->  
-> -static ssize_t tagging_show(struct device *d, struct device_attribute *attr,
-> -			    char *buf)
-> -{
-> -	struct net_device *dev = to_net_dev(d);
-> -	struct dsa_port *dp = dsa_slave_to_port(dev);
-> -
-> -	return sprintf(buf, "%s\n",
-> -		       dsa_tag_protocol_to_str(dp->cpu_dp->tag_ops));
-> -}
-> -static DEVICE_ATTR_RO(tagging);
-> -
-> -static struct attribute *dsa_slave_attrs[] = {
-> -	&dev_attr_tagging.attr,
-> -	NULL
-> -};
-> -
-> -static const struct attribute_group dsa_group = {
-> -	.name	= "dsa",
-> -	.attrs	= dsa_slave_attrs,
-> -};
-> -
->  static void dsa_slave_phylink_validate(struct net_device *dev,
->  				       unsigned long *supported,
->  				       struct phylink_link_state *state)
-> @@ -1374,14 +1353,8 @@ int dsa_slave_create(struct dsa_port *port)
->  		goto out_phy;
->  	}
->  
-> -	ret = sysfs_create_group(&slave_dev->dev.kobj, &dsa_group);
-> -	if (ret)
-> -		goto out_unreg;
-> -
->  	return 0;
->  
-> -out_unreg:
-> -	unregister_netdev(slave_dev);
->  out_phy:
->  	rtnl_lock();
->  	phylink_disconnect_phy(p->dp->pl);
-> @@ -1405,7 +1378,6 @@ void dsa_slave_destroy(struct net_device *slave_dev)
->  	rtnl_unlock();
->  
->  	dsa_slave_notify(slave_dev, DSA_PORT_UNREGISTER);
-> -	sysfs_remove_group(&slave_dev->dev.kobj, &dsa_group);
->  	unregister_netdev(slave_dev);
->  	phylink_destroy(dp->pl);
->  	free_percpu(p->stats64);
-> 
+> +	masks = irq_create_affinity_masks(nvec, affd);
+> +	if (masks) {
+> +		affi_desc = kcalloc(nvec, sizeof(*affi_desc), GFP_KERNEL);
 
--- 
-Florian
+Why do you want to do that separate allocation here? Just let
+irq_create_affinity_masks() allocate an array of affinity descriptors and
+use that. There is no point in copying that stuff over and over. Setting
+the flag field can be done in the existing function as well.
+
+>  /**
+>   * irq_calc_affinity_vectors - Calculate the optimal number of vectors
+>   * @minvec:	The minimum number of vectors available
+> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
+> index 6a682c229e10..2335b89d9bde 100644
+> --- a/kernel/irq/devres.c
+> +++ b/kernel/irq/devres.c
+> @@ -181,14 +181,33 @@ int __devm_irq_alloc_descs(struct device *dev, int irq, unsigned int from,
+>  			   unsigned int cnt, int node, struct module *owner,
+>  			   const struct cpumask *affinity)
+>  {
+> +	struct irq_affinity_desc *cur_affi_desc, *affi_desc = NULL;
+> +	const struct cpumask *curmask;
+>  	struct irq_desc_devres *dr;
+> -	int base;
+> +	int base, i;
+>  
+>  	dr = devres_alloc(devm_irq_desc_release, sizeof(*dr), GFP_KERNEL);
+>  	if (!dr)
+>  		return -ENOMEM;
+>  
+> -	base = __irq_alloc_descs(irq, from, cnt, node, owner, affinity);
+> +	if (affinity) {
+> +		affi_desc = kcalloc(cnt, sizeof(*affi_desc), GFP_KERNEL);
+> +		if (!affi_desc)
+> +			return -ENOMEM;
+> +
+> +		curmask = affinity;
+> +		cur_affi_desc = affi_desc;
+> +		for (i = 0; i < cnt; i++) {
+> +			cpumask_copy(&cur_affi_desc->masks, curmask);
+> +			cur_affi_desc->flags = 1;
+
+No magic constant's please for a flags field. You really want proper
+constants for that, but I'd rather avoid the whole flags fiddling
+completely. See below.
+
+> +			curmask++;
+> +			cur_affi_desc++;
+> +		}
+
+Can you please change the function signature and fixup the callers, if
+there are any of them? Copying this over and over is horrible.
+
+>  	for (i = 0; i < cnt; i++) {
+> -		if (affinity) {
+> -			node = cpu_to_node(cpumask_first(affinity));
+> -			mask = affinity;
+> -			affinity++;
+> +		if (affi_desc && affi_desc->flags ) {
+
+Please don't check flags for being !=0. Once we add other information than
+the managed/non-managed decision to the flag field, then this will fall
+apart.
+
+To avoid issues like that please use explicit bits in the structure instead
+of the opaque flags field:
+
+struct irq_affinity_desc {
+	struct cpumask	masks;
+	unsigned int	managed : 1;
+};
+
+So if we add new things later they will have an explicit name and there is
+absolute no conflict with existing code.
+
+> +			flags =  IRQD_AFFINITY_MANAGED |
+> +				IRQD_MANAGED_SHUTDOWN;
+> +		} else
+> +			flags = 0;
+
+If you need braces for the if then the else path wants them as well.
+
+> +
+> +		if (affi_desc) {
+> +			mask = &affi_desc->masks;
+> +			node = cpu_to_node(cpumask_first(mask));
+> +			affi_desc++;
+>  		}
+
+>  int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
+> -			   int node, const struct cpumask *affinity)
+> +			   int node, const struct irq_affinity_desc *affi_desc)
+
+You can spare a lot of pointless churn by just keeping the 'affinity' name
+and only changing the struct type. The compiler will catch all places which
+need to be fixed and 'affinity' is generic enough to be used with the new
+struct type as well. As Bjorn said, even 'masks' is fine.
+
+Other than the things I pointed out, the whole thing starts to look
+palatable. Please split it up in the way Bjorn suggested and avoid the
+extra hoops and loops where possible.
+
+Thanks,
+
+	tglx
