@@ -2,147 +2,227 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EF3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6A8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0B0205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17068205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="RJL0wVdv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0B0205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="efK7I162"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17068205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeK2E7q (ORCPT
+        id S1726283AbeK2FAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:59:46 -0500
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:45006 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728341AbeK2E7q (ORCPT
+        Thu, 29 Nov 2018 00:00:24 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35486 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725760AbeK2FAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:59:46 -0500
-Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
-        by m0050102.ppops.net-00190b01. (8.16.0.27/8.16.0.27) with SMTP id wASHubqQ011088;
-        Wed, 28 Nov 2018 17:56:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=jan2016.eng;
- bh=zENIJlbhMglC7hfmVHKZgwsGcTyyoZ+EjBn5IRoHecA=;
- b=RJL0wVdvp0HzM01wm4nZi6coTExkW5r02r8m29QDmx/zTpgNYVCp1JmcF+o/MSRlbrHm
- sDoFVqUp+DiT5vUF/SwOSju3RFrpIrXiZGmXykspdOsOZpYYF2YQhgsQ4Qp6oyxrcD01
- /mfPdNMZo9z6Q0O+X8PTBmmMzxKXnkV1AbH3inINNi/AMPnkj+nsTK5uUQ1qpmWYWQQG
- BiC3RxdOVqOBJEn1bJcwmbajpoBYExVLOjkyD1YqbSrSrVGYX5LtOIt2+nyDkoZhlUas
- SohLObwCktvTU4ucNe5NEkO4ieUa1bs8za48ELCP8uZIG/O/fI3FpKGqv5hcX5SphpYS 3w== 
-Received: from prod-mail-ppoint4 (a96-6-114-87.deploy.static.akamaitechnologies.com [96.6.114.87] (may be forged))
-        by m0050102.ppops.net-00190b01. with ESMTP id 2p1v4bgpe7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Nov 2018 17:56:56 +0000
-Received: from pps.filterd (prod-mail-ppoint4.akamai.com [127.0.0.1])
-        by prod-mail-ppoint4.akamai.com (8.16.0.21/8.16.0.21) with SMTP id wASHoWCA001258;
-        Wed, 28 Nov 2018 12:56:55 -0500
-Received: from email.msg.corp.akamai.com ([172.27.25.33])
-        by prod-mail-ppoint4.akamai.com with ESMTP id 2ny2v31b6a-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 28 Nov 2018 12:56:55 -0500
-Received: from USTX2EX-DAG3MB1.msg.corp.akamai.com (172.27.27.22) by
- ustx2ex-dag3mb5.msg.corp.akamai.com (172.27.27.27) with Microsoft SMTP Server
- (TLS) id 15.0.1365.1; Wed, 28 Nov 2018 12:56:54 -0500
-Received: from USTX2EX-DAG3MB1.msg.corp.akamai.com ([172.27.27.22]) by
- USTX2EX-DAG3MB1.msg.corp.akamai.com ([172.27.27.22]) with mapi id
- 15.00.1365.000; Wed, 28 Nov 2018 12:56:54 -0500
-From:   "Zhivich, Michael" <mzhivich@akamai.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
-        "frederic@kernel.org" <frederic@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        John Stultz <john.stultz@linaro.org>,
-        "kreview@akamai.com" <kreview@akamai.com>,
-        "Jason Wessel" <jason.wessel@windriver.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [kreview] [PATCH] softirq: don't push timer softirq handling to
- ksoftirqd
-Thread-Topic: [kreview] [PATCH] softirq: don't push timer softirq handling to
- ksoftirqd
-Thread-Index: AQHUfQWw4FI0On13i06aTw+ZpYHPW6VRaAsAgAFXT4CAEvaZAP//138A
-Date:   Wed, 28 Nov 2018 17:56:54 +0000
-Message-ID: <C3130484-33F2-4B05-99C7-35B4E6923E39@akamai.com>
-References: <20181115170701.4696-1-mzhivich@akamai.com>
- <CALAqxLV0sQaWx837Vrz3hfGdUNSBa+cJWaaL_RpPsgRTMQknuA@mail.gmail.com>
- <6DB365C6-98F6-4C27-B0BE-0833E5D4962E@akamai.com>
- <alpine.DEB.2.21.1811281616570.1532@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1811281616570.1532@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.19.32.120]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E0F368EB660011418ED55FE7F4ED6DDA@akamai.com>
-Content-Transfer-Encoding: base64
+        Thu, 29 Nov 2018 00:00:24 -0500
+Received: by mail-qk1-f194.google.com with SMTP id w204so17372105qka.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=/NsrvL0kRhjUGNViE+wd/oY81//GuP2wqxtY04IAz2U=;
+        b=efK7I162xP7d8jbNyBE7kkzs5EzdGNlkIpmXGLUcYLrKqPkVwYhDzjih5ntfLnXTMl
+         uREt7uF28mTGNA11P/zYAhqbusTWlIV2hiwbqgU52UzFG2azMPKrhKC/yAdKBxnHj8xE
+         nhTLGzNa3Ps2Jh8w5ROkqPd5vvVBtYzmqvJkH4FkD6epp9JKJ0Ykw7ulWvR3ioZGGTC+
+         VV3DYn7oBEqoa8f6A83/VbmSSOJ6uAZtihnW4JK9QlGsNFxW9psqOsrVDNik3CnKzBd8
+         tt94sECRqoCG8F4lUUwsJSUGe1tCHJnQpvJBjdxxzB92d3i8DwoCSd7i9RC0vaSkdET5
+         2YfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/NsrvL0kRhjUGNViE+wd/oY81//GuP2wqxtY04IAz2U=;
+        b=ttjHgrsKEp/KycgyayLfQcktGv7ZKqqwqmw1+nJ3h0OK6YbK9hDWauPdavhJqmqXxA
+         nnLcPevn5sAKZqIA78DCZw71T6J8LWY8eueGq9zJL5DqZAsycN2YloYEZm/KOysr1Vc7
+         woDAEU6R7kt7p2lga/OYuAldGzd2Ydel3nww94FD9554By2Y8/u6TYEvWp2zvvewi6wJ
+         HX3gomqVRjAj1url+rsWT+L9M3Jg1u/Yi6SxHKcpdEin1EyigoVAsFtt+Q84shquRCZV
+         koKPNhBJznqyef6/Zfn7Ln4hfUt2c6FWeaVGy3mEFO5wDapCe0v+1G6ut1swItEaeqw6
+         RGUQ==
+X-Gm-Message-State: AA+aEWYBTJ85kWPaXPYDKvytkc0egEz1BwAovMTHJiaSyVhLfxrrv88n
+        Epu2q/zqhLne93tfpbqqVdiJSw==
+X-Google-Smtp-Source: AFSGD/XK1c6T2iOfViW+SAI0Y9xFoy6yVdx9sZuKNjkmYmo+VgIuEjmpduEqjauhmDu91Y5f4SG59g==
+X-Received: by 2002:a37:9281:: with SMTP id u123mr36066650qkd.0.1543427875503;
+        Wed, 28 Nov 2018 09:57:55 -0800 (PST)
+Received: from [192.168.0.189] (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id m49sm4850537qtb.40.2018.11.28.09.57.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 09:57:54 -0800 (PST)
+Subject: Re: [Freedreno] [PATCH v2 5/9] drm/msm: add headless gpu device (for
+ imx5)
+To:     freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <dri-devel@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Chris.Healy@zii.aero, festevam@gmail.com
+References: <20181122015237.14534-1-jonathan@marek.ca>
+ <20181122015237.14534-5-jonathan@marek.ca>
+ <20181126154820.GJ31792@jcrouse-lnx.qualcomm.com>
+From:   Jonathan marek <jonathan@marek.ca>
+Message-ID: <7b57657f-6899-5b59-6fb7-cc442518ecd5@marek.ca>
+Date:   Wed, 28 Nov 2018 12:55:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811280155
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811280156
+In-Reply-To: <20181126154820.GJ31792@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMjgvMTgsIDEwOjIyIEFNLCAiVGhvbWFzIEdsZWl4bmVyIiA8dGdseEBsaW51dHJvbml4
-LmRlPiB3cm90ZToNCg0KICAgIE1pY2hhZWwsDQogICAgDQogICAgT24gRnJpLCAxNiBOb3YgMjAx
-OCwgWmhpdmljaCwgTWljaGFlbCB3cm90ZToNCiAgICA+IE9uIDExLzE1LzE4LCAxMjoxNyBQTSwg
-IkpvaG4gU3R1bHR6IiA8am9obi5zdHVsdHpAbGluYXJvLm9yZz4gd3JvdGU6DQogICAgPiAgICAg
-V291bGQgYSBtb3JlIGZvY3VzZWQgZml4IGJlIHRvIG1vdmUgdGhlIGNsb2Nrc291cmNlIHdhdGNo
-ZG9nIGZyb20gYQ0KICAgID4gICAgIG5vcm1hbCB0aW1lciB0byBhIGhydGltZXI/DQogICAgPiAg
-ICAgDQogICAgPiBUaGF0J3MgYW4gaW50ZXJlc3RpbmcgaWRlYSAtIGl0IHdvdWxkIGdldCBjbG9j
-a3NvdXJjZSB3YXRjaGRvZyBvdXQgb2YNCiAgICA+IGtzb2Z0aXJxZC4gIEhvd2V2ZXIsIGNsb2Nr
-c291cmNlIHdhdGNoZG9nIGl0ZXJhdGVzIG92ZXIgYXZhaWxhYmxlIENQVXMgdG8NCiAgICA+IGNo
-ZWNrIHRoZSBUU0Mgb24gZWFjaCBjb3JlIChzZWUgYWRkX3RpbWVyX29uKCkgY2FsbCBpbg0KICAg
-ID4gY2xvY2tzb3VyY2Vfd2F0Y2hkb2coKSkuICBJJ20gbm90IHNlZWluZyBhbiBBUEkgdG8gc3Rh
-cnQgYW4gaHJ0aW1lciBvbiBhDQogICAgPiBzcGVjaWZpYyBDUFUgLSBpcyB0aGlzIHBvc3NpYmxl
-IGFuZCBJJ20gbWlzc2luZyBpdD8gIE9yIHdvdWxkIHNvbWV0aGluZw0KICAgID4gbGlrZSB0aGlz
-IGhhdmUgdG8gYmUgYWRkZWQgdG8gaHJ0aW1lcj8NCiAgICANCiAgICBJdCdzIHN1cmVseSBhbiBp
-bnRlcmVzdGluZyBpZGVhLCBidXQgaXQncyBub3QgdHJpdmlhbC4NCiAgICANCiAgICBUaGVyZSBp
-cyBubyB3YXkgdG8gcmVsaWFibHkgcXVldWUgaHJ0aW1lcnMgcmVtb3RlIHdoZW4gaGlnaCByZXNv
-bHV0aW9uIG1vZGUNCiAgICBpcyBlbmFibGVkLiBJdCBvbmx5IHdvcmtzIHdoZW4gdGhlIHRvIGJl
-IHF1ZXVlZCB0aW1lciBpcyBub3QgdGhlIGZpcnN0IHRvDQogICAgZXhwaXJlIG9uZS4gSWYgaXQg
-ZW5kcyB1cCBiZWluZyB0aGUgZmlyc3QgdG8gZXhwaXJlIHRpbWVyLCB0aGVuIHRoZXJlIGlzDQog
-ICAgY3VycmVudGx5IG5vIHdheSB0byByZWFybSB0aGUgcmVtb3RlIHBlciBjcHUgY2xvY2tldmVu
-dCBkZXZpY2UgYmVjYXVzZSBpdCdzDQogICAgbm90IHJlbW90ZWx5IGFjY2VzaWJsZS4NCiAgICAN
-CiAgICBJdCB3b3VsZCBuZWVkIGFuIFNNUCBmdW5jdGlvbiBjYWxsLCBidXQgdGhhdCBuZWVkcyB0
-byBiZSBhc3luY2hyb25vdXMgZHVlDQogICAgdG8gbG9ja2luZy9pbnRlcnJ1cHQgZGlzYWJsZWQg
-Y29uc3RyYWludHMuIE1heWJlIC4uLg0KICAgIA0KICAgIFRoYW5rcywNCiAgICANCiAgICAJdGds
-eA0KDQogICAgDQpUaG9tYXMsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrIC0gaXQgZG9lcyBz
-b3VuZCB0cmlja3kgdG8gZ2V0IHJpZ2h0LiAgSSdsbCBzcGVuZCBzb21lIG1vcmUgdGltZSB0aGlu
-a2luZyBhYm91dCBpdC4NCg0KTXkgb3JpZ2luYWwgcGF0Y2ggdHJpZXMgdG8gZW5zdXJlIHRoYXQg
-dGltZXIgc29mdGlycXMgYXJlIHNlcnZpY2VkIGltbWVkaWF0ZWx5LCBub3QgcHVudGVkIHRvIGtz
-b2Z0aXJxZC4gIEl0IGlzIHBlcmhhcHMgdG9vIGhlYXZ5LWhhbmRlZCAoYWxsIHNvZnRpcnFzIHdp
-bGwgZ2V0IHNlcnZpY2VkIGlmIGEgdGltZXIgc29mdGlycSBmaXJlZCksIGJ1dCBJIGltYWdpbmUg
-dGhlIGNsb2Nrc291cmNlIHdhdGNoZG9nIGlzIG5vdCB0aGUgb25seSB0aW1lciB0aGF0IGRvZXNu
-J3Qgd2FudCB0byBiZSBhcmJpdHJhcmlseSBkZWxheWVkIHdoZW4gdGhlIG1hY2hpbmUgaXMgYnVz
-eS4NCg0KV291bGQgaXQgbWFrZSBzZW5zZSB0byBtb2RpZnkgdGhlIHBhdGNoIHN1Y2ggdGhhdCBv
-bmx5IHRpbWVyIHNvZnRpcnFzIGFyZSBzZXJ2aWNlZCBpbW1lZGlhdGVseSBpZiBmaXJlZD8gIE9y
-IGFyZSBtb3N0IHRpbWVycyB0aGF0IHJlcXVpcmUgcHJlY2lzaW9uIHdha2V1cHMgdXNpbmcgaHJ0
-aW1lciBmcmFtZXdvcms/DQoNClRoYW5rcywNCn4gTWljaGFlbA0KDQoNCg==
+On 11/26/2018 10:48 AM, Jordan Crouse wrote:
+> On Wed, Nov 21, 2018 at 08:52:31PM -0500, Jonathan Marek wrote:
+>> This patch allows using drm/msm without qcom display hardware. This is
+>> especially useful for iMX5 hardware, which has a a2xx GPU but uses the
+>> imx-drm driver for display.
+>>
+>> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+>> ---
+>> v2: added commit message and removed unnecessary comment
+>>
+>>   drivers/gpu/drm/msm/Kconfig       |  4 ++--
+>>   drivers/gpu/drm/msm/msm_debugfs.c |  2 +-
+>>   drivers/gpu/drm/msm/msm_drv.c     | 21 +++++++++++----------
+>>   3 files changed, 14 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+>> index 843a9d40c05e..cf549f1ed403 100644
+>> --- a/drivers/gpu/drm/msm/Kconfig
+>> +++ b/drivers/gpu/drm/msm/Kconfig
+>> @@ -2,7 +2,7 @@
+>>   config DRM_MSM
+>>   	tristate "MSM DRM"
+>>   	depends on DRM
+>> -	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+>> +	depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
+>>   	depends on OF && COMMON_CLK
+>>   	depends on MMU
+>>   	select QCOM_MDT_LOADER if ARCH_QCOM
+>> @@ -11,7 +11,7 @@ config DRM_MSM
+>>   	select DRM_PANEL
+>>   	select SHMEM
+>>   	select TMPFS
+>> -	select QCOM_SCM
+>> +	select QCOM_SCM if ARCH_QCOM
+>>   	select WANT_DEV_COREDUMP
+>>   	select SND_SOC_HDMI_CODEC if SND_SOC
+>>   	select SYNC_FILE
+> 
+> This is good - there are probably a handful of others you can add too -
+> WANT_DEV_COREDUMP for example (at least for now) but you can audit those later
+> as you try to cut down your binary size.
+> 
+> Also serves as an important reminder for the rest of us that Adreno just isn't
+> for Snapdragon anymore.
+> 
+>> diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
+>> index f0da0d3c8a80..1ca99ca356a4 100644
+>> --- a/drivers/gpu/drm/msm/msm_debugfs.c
+>> +++ b/drivers/gpu/drm/msm/msm_debugfs.c
+>> @@ -235,7 +235,7 @@ int msm_debugfs_init(struct drm_minor *minor)
+>>   	debugfs_create_file("gpu", S_IRUSR, minor->debugfs_root,
+>>   		dev, &msm_gpu_fops);
+>>   
+>> -	if (priv->kms->funcs->debugfs_init) {
+>> +	if (priv->kms && priv->kms->funcs->debugfs_init) {
+>>   		ret = priv->kms->funcs->debugfs_init(priv->kms, minor);
+>>   		if (ret)
+>>   			return ret;
+>> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+>> index 9f219e02f3c7..3f35e57202ef 100644
+>> --- a/drivers/gpu/drm/msm/msm_drv.c
+>> +++ b/drivers/gpu/drm/msm/msm_drv.c
+>> @@ -344,6 +344,7 @@ static int msm_drm_uninit(struct device *dev)
+>>   	return 0;
+>>   }
+>>   
+>> +#define KMS_HEADLESS 1
+>>   #define KMS_MDP4 4
+>>   #define KMS_MDP5 5
+>>   #define KMS_DPU  3
+>> @@ -495,6 +496,9 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>>   	msm_gem_shrinker_init(ddev);
+>>   
+>>   	switch (get_mdp_ver(pdev)) {
+>> +	case KMS_HEADLESS:
+>> +		priv->kms = kms = NULL;
+>> +		break;
+>>   	case KMS_MDP4:
+>>   		kms = mdp4_kms_init(ddev);
+>>   		priv->kms = kms;
+>> @@ -512,12 +516,6 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>>   	}
+>>   
+>>   	if (IS_ERR(kms)) {
+>> -		/*
+>> -		 * NOTE: once we have GPU support, having no kms should not
+>> -		 * be considered fatal.. ideally we would still support gpu
+>> -		 * and (for example) use dmabuf/prime to share buffers with
+>> -		 * imx drm driver on iMX5
+>> -		 */
+>>   		dev_err(dev, "failed to load kms\n");
+>>   		ret = PTR_ERR(kms);
+>>   		goto err_msm_uninit;
+>> @@ -633,7 +631,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>>   	drm_mode_config_reset(ddev);
+>>   
+>>   #ifdef CONFIG_DRM_FBDEV_EMULATION
+>> -	if (fbdev)
+>> +	if (kms && fbdev)
+>>   		priv->fbdev = msm_fbdev_init(ddev);
+>>   #endif
+>>   
+>> @@ -1315,9 +1313,11 @@ static int msm_pdev_probe(struct platform_device *pdev)
+>>   	struct component_match *match = NULL;
+>>   	int ret;
+>>   
+>> -	ret = add_display_components(&pdev->dev, &match);
+>> -	if (ret)
+>> -		return ret;
+>> +	if (get_mdp_ver(pdev) != KMS_HEADLESS) {
+>> +		ret = add_display_components(&pdev->dev, &match);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>>   
+>>   	ret = add_gpu_components(&pdev->dev, &match);
+>>   	if (ret)
+>> @@ -1342,6 +1342,7 @@ static int msm_pdev_remove(struct platform_device *pdev)
+>>   }
+>>   
+>>   static const struct of_device_id dt_match[] = {
+>> +	{ .compatible = "qcom,adreno-headless", .data = (void *)KMS_HEADLESS },
+> 
+> I feel that this should be more descriptive for your hardware and not just
+> generic. You don't need to include the qcom, extension and you'll probably
+> want to use a more descriptive vendor if you are adding imx5 specific data to
+> the DT.
+> 
+
+Perhaps two entries, one for imx and one for qcom? This headless mode 
+can be used with any adreno GPU.
+
+>>   	{ .compatible = "qcom,mdp4", .data = (void *)KMS_MDP4 },
+>>   	{ .compatible = "qcom,mdss", .data = (void *)KMS_MDP5 },
+>>   	{ .compatible = "qcom,sdm845-mdss", .data = (void *)KMS_DPU },
+>> -- 
+>> 2.17.1
+>   
+> 
