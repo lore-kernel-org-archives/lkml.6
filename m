@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCC5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60E6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEFE2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2AB2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jn4+ZB2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEFE2081C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TN8CsGdF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AB2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeK1TOH (ORCPT
+        id S1727851AbeK1TOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:14:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45961 "EHLO
+        Wed, 28 Nov 2018 14:14:33 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38456 "EHLO
         mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbeK1TOH (ORCPT
+        with ESMTP id S1727486AbeK1TOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:14:07 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so22562995ljd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 00:13:20 -0800 (PST)
+        Wed, 28 Nov 2018 14:14:33 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so22588500lja.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 00:13:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5DndGfj+rO1QfUt/p99pUy1MhXDetTHrbF5pavq8NU8=;
-        b=Jn4+ZB2O7N8A4mpqEFvOjLAnO6dDOZuQGt0wj5rPZGI3FBdD+V3Rg+WKww6xm7tGFR
-         jY+2CYCjTBliu6PBMwOtv8k6uyPKB8w0jMnTfSxArxkU8MBTigDEym5tdG9fR4spqHvy
-         gX+ML2II8NAZAWlP+oHDNP70wZBojfBXH7z3s=
+        bh=sT28w4VqOiNSTrHJbFMJkn4OXQZ517REFZ8xfo8WT/o=;
+        b=TN8CsGdFbbenE7mu/JYYtv4IVkpnM9+vR+llRyr3LjP8CTf3KXpi8JRramebxF2HdR
+         FIT1M4NMjw/Pmu5aUd+e7s9Fjuwn33qwKa+i8QdEigaEvT0ZNh7e/8PEEFwis9nPOnN5
+         Lqxf5craHUcP9T5vJ2OxS/lfdyWcxZ9tt8BEE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5DndGfj+rO1QfUt/p99pUy1MhXDetTHrbF5pavq8NU8=;
-        b=XjAfZtEw2pAkkul9lEiZCWlbuGUO5+u9QQ4XqfqhAO79ahMrkJRpZcfQ9x/4XT0Cp5
-         NZ08JlhJuPNXboCNq6Hwl0UaToFnlRIvyq9OwqcatCQsvSjr7FFmBNWEiJjIespHXKGK
-         NgBBg3UBPaWGAUBOE1Ez5ucs1xUhZK//HCIClIYbXdDyXz05HFO9RX8ot4f+V12CID9v
-         RhMyfPgt2lYtfTHCxmALDC9KgawVCAs+MKK3ngZRIOkEjgnX4q4zjTRQ2b7A/F/C9Ppl
-         Ug+lNwVY+wTl+rvfZAKolW43vS+lzwjedt2U64brCnwfO8dlW0y87Y/Ugk8vudqTTzsy
-         mVYQ==
-X-Gm-Message-State: AA+aEWbaBPP3uXi/ZJ29Ls/H2YGzTFosU8AzqkkmjbedYfIK90xVqd9e
-        eO/T7aHFgJ6zt3Y58fwU2a2W5Q==
-X-Google-Smtp-Source: AFSGD/Uc2Fq4zdu9PGeTciSiWrWGVz6zq9oDSng91KES82sxhJlRH2MigrBNcC8xVTK8yWVFQGzKGA==
-X-Received: by 2002:a2e:9655:: with SMTP id z21-v6mr5577591ljh.136.1543392799723;
-        Wed, 28 Nov 2018 00:13:19 -0800 (PST)
+        bh=sT28w4VqOiNSTrHJbFMJkn4OXQZ517REFZ8xfo8WT/o=;
+        b=oriPBy6T2ZzHzHs58l6wRcBsoRH6/lG7IDMVlxTVFiUpMR/VX/nCQ5Jq6RMq50dEz8
+         1r354pw5N3xDl3DUpH/2f0GqDSNj2ISNI1onF1GHpIrLEtA1eI7arT6sAAeAXWi5iB09
+         tHPdZqmpLvv6rWyW4ySBWoyRnPwn064wFv9ZXH3K+UdeItpDB6ZIM5ZDQFE2LTZ9tDsK
+         HJeiR8tKYQYD4bFXhYdth7jBiR/MZncPZD+55FX0jzoyp6CYjCrAcQRbc7xAugfDYfQy
+         JksKMGP9UTQ0N4I8CHOghnMGkD4sJTsoX4EqFULT0DIy1KhOlXqlgg6iSRjPOYtLcGiB
+         DmFQ==
+X-Gm-Message-State: AA+aEWZuqELfW5ZVMrn8BmBI6xHW9d4CKdjEVa6y1jgjkBRXEDP+RJUu
+        RbiU4bx+HILd57Xizkhc28AZfA==
+X-Google-Smtp-Source: AFSGD/VBJPRhIHl2ylbKM+Z/W1HG233+r/WJMLHATXbaOp1KYX3nevOZ1atyLY+TJ1r5iLDz53ZPmA==
+X-Received: by 2002:a2e:568b:: with SMTP id k11-v6mr22525904lje.105.1543392826029;
+        Wed, 28 Nov 2018 00:13:46 -0800 (PST)
 Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id h76sm1086248lfh.58.2018.11.28.00.13.18
+        by smtp.gmail.com with ESMTPSA id f8sm1215827lfe.72.2018.11.28.00.13.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 00:13:19 -0800 (PST)
+        Wed, 28 Nov 2018 00:13:45 -0800 (PST)
 From:   Anders Roxell <anders.roxell@linaro.org>
-To:     akpm@linux-foundation.org, dvyukov@google.com
-Cc:     rostedt@goodmis.org, mingo@redhat.com,
+To:     rostedt@goodmis.org, mingo@redhat.com
+Cc:     akpm@linux-foundation.org, dvyukov@google.com,
         linux-kernel@vger.kernel.org,
         Anders Roxell <anders.roxell@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/2] kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc as notrace
-Date:   Wed, 28 Nov 2018 09:12:39 +0100
-Message-Id: <20181128081239.18317-1-anders.roxell@linaro.org>
+Subject: [PATCH 2/2] kernel/trace: fix watchdog soft lockup
+Date:   Wed, 28 Nov 2018 09:13:34 +0100
+Message-Id: <20181128081334.18408-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -73,52 +73,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since __sanitizer_cov_trace_pc is marked as notrace, function calls in
-__sanitizer_cov_trace_pc shouldn't be traced either. The function
-ftrace_graph_caller() gets called for each function that isn't marked
-'notrace', like canonicalize_ip(). This is the call trace from a run:
-
-[  139.644550]  ftrace_graph_caller+0x1c/0x24
-[  139.648352]  canonicalize_ip+0x18/0x28
-[  139.652313]  __sanitizer_cov_trace_pc+0x14/0x58
-[  139.656184]  sched_clock+0x34/0x1e8
-[  139.659759]  trace_clock_local+0x40/0x88
-[  139.663722]  ftrace_push_return_trace+0x8c/0x1f0
-[  139.667767]  prepare_ftrace_return+0xa8/0x100
-[  139.671709]  ftrace_graph_caller+0x1c/0x24
-
-Rework so that the functions check_kcov_mode and canonicalize_ip that is
-callef from __sanitizer_cov_trace_pc also is marked as notrace.
+When building a allmodconfig kernel for arm64 and boot that in qemu,
+CONFIG_FTRACE_STARTUP_TEST gets enabled and that takes time so the
+watchdog expires and prints out a message like this:
+'watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]'
+Each time the function ftrace_replace_code gets called it stays in that
+functions loop for 41424 times.
+Rework so that function cond_resched() gets called in the
+ftrace_replace_code loop.
 
 Co-developed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signen-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- kernel/kcov.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index 3ebd09efe72a..97959d7b77e2 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -56,7 +56,7 @@ struct kcov {
- 	struct task_struct	*t;
- };
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 5b4f73e4fd56..3f456921dedf 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2426,6 +2426,10 @@ void __weak ftrace_replace_code(int enable)
  
--static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
-+static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
- {
- 	unsigned int mode;
+ 	do_for_each_ftrace_rec(pg, rec) {
  
-@@ -78,7 +78,7 @@ static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
- 	return mode == needed_mode;
- }
++		/* This loop can take minutes when sanitizers are enabled, so
++		 * lets make sure we allow RCU processing.
++		 */
++		cond_resched();
+ 		if (rec->flags & FTRACE_FL_DISABLED)
+ 			continue;
  
--static unsigned long canonicalize_ip(unsigned long ip)
-+static notrace unsigned long canonicalize_ip(unsigned long ip)
- {
- #ifdef CONFIG_RANDOMIZE_BASE
- 	ip -= kaslr_offset();
 -- 
 2.19.2
 
