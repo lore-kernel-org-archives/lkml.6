@@ -2,199 +2,192 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BC8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51883C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D23C20645
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1889820645
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTUSdQQ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D23C20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZYKLGhZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1889820645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeK1L6L (ORCPT
+        id S1727098AbeK1L6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 06:58:11 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42570 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeK1L6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 06:58:10 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so14998200vsd.9;
-        Tue, 27 Nov 2018 16:58:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=OiSEm1IAeLz6T0I8T9fttN0cqnpgsxp1y68v25GOIPE=;
-        b=WTUSdQQ2sDQt0ud0TjCeOovPNlXnl3lAhul4/G3kaN661fC9a3gKAvu/qgIF9HPk1P
-         uYsZ4zwDvDz8+6sFb2jXGGOzHzOhymtbXng7PYZilx/yZyaWPVfu4aSQp5MiUVQarOYj
-         Y2aKH1gg6toEe/wKne+ySayeSgeZOhuXnQ1NAet+XhRsnni61aoIRMvtObaOZhsDKagk
-         p+V2Wjky+f0IzmShaIHZkfB9Uu5mh5RpeYDtPVBxEn+kSz08VHQRCxe/sY9gQqOoaZV5
-         dKWgJJuEtyN9M0RoFnhqYI4WpRd5ZC38ioNNmajzg4paxgVHnDSEwGOM/Xx1+FcF6iwS
-         Qujg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=OiSEm1IAeLz6T0I8T9fttN0cqnpgsxp1y68v25GOIPE=;
-        b=KpK9HYFF0UYQ2PmoWwLvJsVLKU3GT/HwkzLnvlLn31L6vnnKTst0TYkTQ0iyh/vam/
-         YiH0jHSa66FlcLPr/F1YlBEd2sGPZLFN03eaoStJvFZ/2H0IUZRAPcg6E535rftiH2wN
-         8fctqhM02rFAYHLFKABw7Unf0VH4cUMBLKt0gMxKpcvbO3fEWuxtKa2P8JhfxAhJZblg
-         VUsv91Ld67apEsWVol130XkBj5eLk7oFXn5BV2QspEef4qSrJelGgeObCPOpf7kILWFU
-         70AMjl98DGj5jBKPnr/R1EhmkLZXxsZPcYBGXNWhGzzEm2kuJ6ENSrstsG1QyR7vOpNM
-         xong==
-X-Gm-Message-State: AGRZ1gIrkLMoUR/HZCmdDe9thYpNlFBWa9sLIGJMD+E6QVhde1vZJOs6
-        TgVJGqIifT/yJZVlP2k0jg==
-X-Google-Smtp-Source: AJdET5fY/BPGvyWerTF7Mir3Vl/HdpDsqe9zNf2gJETEoF17FyBf3XshVOsRibb6siATqaqTPsGy8g==
-X-Received: by 2002:a67:c86:: with SMTP id 128mr15116796vsm.221.1543366706445;
-        Tue, 27 Nov 2018 16:58:26 -0800 (PST)
-Received: from 960 (c-98-244-175-192.hsd1.ga.comcast.net. [98.244.175.192])
-        by smtp.gmail.com with ESMTPSA id p185sm1699589vsd.20.2018.11.27.16.58.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 16:58:26 -0800 (PST)
-Message-ID: <30a2b3bea95199ffc1a81f374deabbfadaeb2c22.camel@gmail.com>
-Subject: Re: [PATCH v7 2/3] x86: add support for Huawei WMI hotkeys.
-From:   ayman.bagabas@gmail.com
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org, Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Date:   Tue, 27 Nov 2018 19:58:24 -0500
-In-Reply-To: <s5h5zwi7t1s.wl-tiwai@suse.de>
-References: <20181127025752.6459-1-ayman.bagabas@gmail.com>
-         <20181127025752.6459-3-ayman.bagabas@gmail.com>
-         <s5h5zwi7t1s.wl-tiwai@suse.de>
+        Wed, 28 Nov 2018 06:58:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeK1L6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:58:53 -0500
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A0DA20645;
+        Wed, 28 Nov 2018 00:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543366749;
+        bh=7q54EERWrarCm09cdl5l6CxJn23chAyNp6Jjc1wr4Ck=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NZYKLGhZD6YUBlFMzPwRuS+Zwp7BVa3wiC32o7vEPWqzxog4/XE2QFp5leOeR23JP
+         AjNnbtdDjnDdvA/gfYJP33FTv2RCkIfGdkPYVGBKCO3uzGL8hMTm7LG+HQDZzb92zK
+         Ot8vjMGpzJfai61AbTjIciuekTUs0sRG/ZBciyJg=
+Received: by mail-wr1-f51.google.com with SMTP id j2so24601670wrw.1;
+        Tue, 27 Nov 2018 16:59:09 -0800 (PST)
+X-Gm-Message-State: AA+aEWZw7QNij29Y3BXPDiU0CUsoxGV96xfN0LdEqKjvWkND1KPVhSN+
+        YcyQFK5WTBIdeXERr+yj6gWCL0HkQpNrUWpZg/I=
+X-Google-Smtp-Source: AFSGD/W4Pe6m5arwhWIjPAcyjW9WvUUpUTdDj6zBbZ3ZMyQuFZwpSobhdTQnr7MY85JRZ2pW2R0e9Tkas6sy3VUI2+A=
+X-Received: by 2002:a5d:66c1:: with SMTP id k1mr28529061wrw.132.1543366747701;
+ Tue, 27 Nov 2018 16:59:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20181127034254.24721-1-weiyi.lu@mediatek.com> <20181127034254.24721-5-weiyi.lu@mediatek.com>
+ <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com> <CANMq1KB4tt9jdmE+LJXfji=QXC9-6wuhXWjJPkpNfo6hEMXH=A@mail.gmail.com>
+In-Reply-To: <CANMq1KB4tt9jdmE+LJXfji=QXC9-6wuhXWjJPkpNfo6hEMXH=A@mail.gmail.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Tue, 27 Nov 2018 16:58:57 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzqfgLa03p-bEOQaT2qtuOEqUL3e04nDS38TbZ2-2Ohauw@mail.gmail.com>
+Message-ID: <CAGp9LzqfgLa03p-bEOQaT2qtuOEqUL3e04nDS38TbZ2-2Ohauw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] clk: mediatek: Disable tuner_en before change
+ PLL rate
+To:     drinkcat@chromium.org
+Cc:     weiyi.lu@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>,
+        sboyd@codeaurora.org, robh@kernel.org, jamesjj.liao@mediatek.com,
+        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+        fan.chen@mediatek.com, linux-mediatek@lists.infradead.org,
+        owen.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-27 at 10:45 +0100, Takashi Iwai wrote:
-> On Tue, 27 Nov 2018 03:57:48 +0100,
-> Ayman Bagabas wrote:
-> > +static const struct key_entry huawei_wmi_keymap[] __initconst = {
-> > +		{ KE_KEY,    0x281, { KEY_BRIGHTNESSDOWN } },
-> > +		{ KE_KEY,    0x282, { KEY_BRIGHTNESSUP } },
-> > +		{ KE_KEY,    0x284, { KEY_MUTE } },
-> > +		{ KE_KEY,    0x285, { KEY_VOLUMEDOWN } },
-> > +		{ KE_KEY,    0x286, { KEY_VOLUMEUP } },
-> > +		{ KE_KEY,    0x287, { KEY_MICMUTE } },
-> > +		{ KE_KEY,    0x289, { KEY_WLAN } },
-> > +		// Huawei |M| button
-> > +		{ KE_KEY,    0x28a, { KEY_CONFIG } },
-> > +		// Keyboard light
-> > +		{ KE_IGNORE, 0x293, { KEY_KBDILLUMTOGGLE } },
-> > +		{ KE_IGNORE, 0x294, { KEY_KBDILLUMUP } },
-> > +		{ KE_IGNORE, 0x295, { KEY_KBDILLUMUP } },
-> > +		{ KE_END,    0 }
-> 
-> The indentation looks too deep here.
-> 
-> > +static int huawei_wmi_micmute_led_set(bool on)
-> > +{
-> > +	acpi_handle handle;
-> > +	char *method;
-> > +	union acpi_object args[3];
-> > +	struct acpi_object_list arg_list = {
-> > +		.pointer = args,
-> > +		.count = ARRAY_SIZE(args),
-> > +	};
-> > +
-> > +	handle = ACPI_HANDLE(&inputdev->dev);
-> 
-> Just wondering whether the ACPI handle is assigned properly for this
-> device...
+>
+> On Wed, Nov 28, 2018 at 4:37 AM Sean Wang <sean.wang@kernel.org> wrote:
+> >
+> > Weiyi Lu <weiyi.lu@mediatek.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8826=
+=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> > >
+> > > From: Owen Chen <owen.chen@mediatek.com>
+> > >
+> > > PLLs with tuner_en bit, such as APLL1, need to disable
+> > > tuner_en before apply new frequency settings, or the new frequency
+> > > settings (pcw) will not be applied.
+> > > The tuner_en bit will be disabled during changing PLL rate
+> > > and be restored after new settings applied.
+> >
+> > It looks like a bug fix. If so, you should add a fixes tag and even cc
+> > stable tree
+> >
+> > >
+> > > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> > > ---
+> > >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++-=
+-
+> > >  1 file changed, 31 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/cl=
+k-pll.c
+> > > index 1db161aced31..81400601f107 100644
+> > > --- a/drivers/clk/mediatek/clk-pll.c
+> > > +++ b/drivers/clk/mediatek/clk-pll.c
+> > > @@ -27,7 +27,7 @@
+> > >  #define CON0_BASE_EN           BIT(0)
+> > >  #define CON0_PWR_ON            BIT(0)
+> > >  #define CON0_ISO_EN            BIT(1)
+> > > -#define CON0_PCW_CHG           BIT(31)
+> > > +#define CON1_PCW_CHG           BIT(31)
+> >
+> > it seems like an unnecessary change
+>
+> Below, you have:
+> con1 |=3D CON1_PCW_CHG;
+>
+> Presumably PCW_CHG is on BIT(31) of CON1(?), so I think this is a good
+> change. Maybe this needs to be a separate patch, though?
+>
 
-It is, but it returns a handle at "\".
+Sure, for me it's not easily understood why the change is necessary
+from the description. If it's really another fixup, it should be moved
+to a separate patch or add more explanations about that in the same
+patch.
 
-> 
-> > +	args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
-> > +	args[1].integer.value = 0x04;
-> > +
-> > +	if (acpi_has_method(handle, method =
-> > "\\_SB.PCI0.LPCB.EC0.SPIN")) {
-> > +		args[0].integer.value = 0;
-> > +		args[2].integer.value = on ? 1 : 0;
-> > +	} else if (acpi_has_method(handle, method =
-> > "\\_SB.PCI0.LPCB.EC0.WPIN")) {
-> > +		args[0].integer.value = 1;
-> > +		args[2].integer.value = on ? 0 : 1;
-> > +	} else {
-> > +		dev_err(&inputdev->dev, "Unable to find ACPI
-> > method\n");
-> > +		return -ENOSYS;
-> > +	}
-> > +
-> > +	acpi_evaluate_object(handle, method, &arg_list, NULL);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int micmute_led_set(struct led_classdev *led_cdev,
-> > +		enum led_brightness brightness)
-> > +{
-> > +	int state = brightness != LED_OFF;
-> > +	int err;
-> > +
-> > +	err = huawei_wmi_micmute_led_set(state);
-> > +	return err < 0 ? err : 0;
-> 
-> No need for checking err here, you can return
-> huawei_wmi_mute_led_set() directly.
-> 
-> Or even you can fold two functions into one.
-
-I think folding them make more sense.
-
-> 
-> > +static int __init huawei_wmi_init(void)
-> > +{
-> > +	int err;
-> > +
-> > +	if (wmi_has_guid(MBX_EVENT_GUID)) {
-> > +		event_guid = MBX_EVENT_GUID;
-> > +	} else if (wmi_has_guid(MBXP_EVENT_GUID)) {
-> > +		event_guid = MBXP_EVENT_GUID;
-> > +	} else {
-> > +		pr_warn("Compatible WMI GUID not found\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	err = huawei_wmi_input_init();
-> > +	if (err)
-> > +		goto err_input;
-> > +
-> > +	micmute_led_cdev.brightness =
-> > ledtrig_audio_get(LED_AUDIO_MICMUTE);
-> > +	err = led_classdev_register(&inputdev->dev, &micmute_led_cdev);
-> > +	if (err)
-> > +		goto err_leds;
-> > +
-> > +	return 0;
-> 
-> Might it be cleaner to implement on top of wmi_driver?
-> Then you can create both input and led devices on wmi device.
-> 
-
-Done! Now led devices get registered when wmi probes a new device.
-Thanks.
-
-> 
-> thanks,
-> 
-> Takashi
-
+> > >
+> > >  #define AUDPLL_TUNER_EN                BIT(31)
+> > >
+> > > @@ -97,9 +97,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_p=
+ll *pll, u32 pcw,
+> > >  {
+> > >         u32 con1, val;
+> > >         int pll_en;
+> > > +       u32 tuner_en =3D 0;
+> > > +       u32 tuner_en_mask;
+> > > +       void __iomem *tuner_en_addr =3D NULL;
+> > >
+> > >         pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> > >
+> > > +       /* disable tuner */
+> >
+> > similar code pieces are ready on mtk_pll_[un]prepare. maybe we can add
+> > common tuner operations for them to reuse.
+> >
+> > > +       if (pll->tuner_en_addr) {
+> > > +               tuner_en_addr =3D pll->tuner_en_addr;
+> > > +               tuner_en_mask =3D BIT(pll->data->tuner_en_bit);
+> > > +       } else if (pll->tuner_addr) {
+> > > +               tuner_en_addr =3D pll->tuner_addr;
+> > > +               tuner_en_mask =3D AUDPLL_TUNER_EN;
+> > > +       }
+> > > +
+> > > +       if (tuner_en_addr) {
+> > > +               val =3D readl(tuner_en_addr);
+> > > +               tuner_en =3D val & tuner_en_mask;
+> > > +
+> > > +               if (tuner_en) {
+> > > +                       val &=3D ~tuner_en_mask;
+> > > +                       writel(val, tuner_en_addr);
+> > > +               }
+> > > +       }
+> > > +
+> > >         /* set postdiv */
+> > >         val =3D readl(pll->pd_addr);
+> > >         val &=3D ~(POSTDIV_MASK << pll->data->pd_shift);
+> > > @@ -120,12 +142,19 @@ static void mtk_pll_set_rate_regs(struct mtk_cl=
+k_pll *pll, u32 pcw,
+> > >         con1 =3D readl(pll->base_addr + REG_CON1);
+> > >
+> > >         if (pll_en)
+> > > -               con1 |=3D CON0_PCW_CHG;
+> > > +               con1 |=3D CON1_PCW_CHG;
+> > >
+> > >         writel(con1, pll->base_addr + REG_CON1);
+> > >         if (pll->tuner_addr)
+> > >                 writel(con1 + 1, pll->tuner_addr);
+> > >
+> > > +       /* restore tuner_en */
+> > > +       if (tuner_en_addr && tuner_en) {
+> >
+> > if (tuner_en) is sufficient
+> >
+> > > +               val =3D readl(tuner_en_addr);
+> > > +               val |=3D tuner_en_mask;
+> > > +               writel(val, tuner_en_addr);
+> > > +       }
+> > > +
+> > >         if (pll_en)
+> > >                 udelay(20);
+> > >  }
+> > > --
+> > > 2.18.0
+> > >
+> > >
+> > > _______________________________________________
+> > > Linux-mediatek mailing list
+> > > Linux-mediatek@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
