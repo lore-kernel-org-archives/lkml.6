@@ -2,141 +2,68 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00ECC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB75FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB7D2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB7D2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id AD6BC2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6BC2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbeK2BX7 (ORCPT
+        id S1728663AbeK2BYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:23:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43237 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbeK2BX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:23:59 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASELR4R2320854
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:21:27 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASELRoH2320851;
-        Wed, 28 Nov 2018 06:21:27 -0800
-Date:   Wed, 28 Nov 2018 06:21:27 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Tim Chen <tipbot@zytor.com>
-Message-ID: <tip-b86bda0426853bfe8a3506c7d2a5b332760ae46b@git.kernel.org>
-Cc:     dave.hansen@intel.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, keescook@chromium.org, luto@kernel.org,
-        casey.schaufler@intel.com, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org, mingo@kernel.org,
-        longman9394@gmail.com, david.c.stewart@intel.com,
-        asit.k.mallick@intel.com, jcm@redhat.com, thomas.lendacky@amd.com,
-        ak@linux.intel.com, tim.c.chen@linux.intel.com, jkosina@suse.cz,
-        aarcange@redhat.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, arjan@linux.intel.com,
-        tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
-          arjan@linux.intel.com, tglx@linutronix.de, ak@linux.intel.com,
-          jkosina@suse.cz, tim.c.chen@linux.intel.com, aarcange@redhat.com,
-          dwmw@amazon.co.uk, casey.schaufler@intel.com,
-          gregkh@linuxfoundation.org, jpoimboe@redhat.com,
-          mingo@kernel.org, longman9394@gmail.com,
-          david.c.stewart@intel.com, asit.k.mallick@intel.com,
-          jcm@redhat.com, thomas.lendacky@amd.com, dave.hansen@intel.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          luto@kernel.org, keescook@chromium.org
-In-Reply-To: <20181125185003.783903657@linutronix.de>
-References: <20181125185003.783903657@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Remove unnecessary ret variable in
- cpu_show_common()
-Git-Commit-ID: b86bda0426853bfe8a3506c7d2a5b332760ae46b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Nov 2018 20:24:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727979AbeK2BYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:24:15 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C1F920832;
+        Wed, 28 Nov 2018 14:22:25 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 09:22:23 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH] arm64: ftrace: Fix to enable syscall events on arm64
+Message-ID: <20181128092223.2a100448@gandalf.local.home>
+In-Reply-To: <20181128120502.GC24868@arm.com>
+References: <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+        <154333618522.27355.8094935453351562295.stgit@devbox>
+        <20181127165848.GA19569@arm.com>
+        <20181127131859.79ce7da9@gandalf.local.home>
+        <20181128085555.a8987cbe18aa6d1d1f0a827e@kernel.org>
+        <20181128120502.GC24868@arm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b86bda0426853bfe8a3506c7d2a5b332760ae46b
-Gitweb:     https://git.kernel.org/tip/b86bda0426853bfe8a3506c7d2a5b332760ae46b
-Author:     Tim Chen <tim.c.chen@linux.intel.com>
-AuthorDate: Sun, 25 Nov 2018 19:33:31 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:05 +0100
+On Wed, 28 Nov 2018 12:05:02 +0000
+Will Deacon <will.deacon@arm.com> wrote:
 
-x86/speculation: Remove unnecessary ret variable in cpu_show_common()
+> Ok! Then please add a comment to arch_syscall_match_sym_name() along those
+> lines, and you can add my ack:
+> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185003.783903657@linutronix.de
+Shouldn't this go through your tree?
 
-
----
- arch/x86/kernel/cpu/bugs.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 839ab4103e89..b52a48966e01 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -847,8 +847,6 @@ static ssize_t l1tf_show_state(char *buf)
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -866,13 +864,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+-- Steve
