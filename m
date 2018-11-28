@@ -2,345 +2,83 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672C2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A602FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB052086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="jFkBPMzy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB052086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	by mail.kernel.org (Postfix) with ESMTP id 74AA82086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AA82086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbeK2Bp1 (ORCPT
+        id S1729050AbeK2Bpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:45:27 -0500
-Received: from mail-eopbgr790083.outbound.protection.outlook.com ([40.107.79.83]:32472
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728565AbeK2Bp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:45:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IXb+GAEoraiyNOmdqnTOtP3SeGPlwUy8jnhcvWxXRDg=;
- b=jFkBPMzymW7FSl41SXdTMEyvNWldl3qLT3yFLGFJChV4dBy5Tiupw/9WjTeCM5NUmjrOtG8Hn3uy04UZiEzUeJMMI3WwRvHJV/f3vITYWyWh9u9drbpdIF1kLGOnIzYX5dqR0kxwn8qOHsEEJ/Z+x/jWuRUVtMmW4/4iNSBZUhY=
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com (52.135.105.33) by
- SN6PR07MB4399.namprd07.prod.outlook.com (52.135.91.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.18; Wed, 28 Nov 2018 14:43:31 +0000
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::ccc7:d111:7f3d:667d]) by SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::ccc7:d111:7f3d:667d%4]) with mapi id 15.20.1361.018; Wed, 28 Nov 2018
- 14:43:30 +0000
-From:   Robert Richter <rrichter@cavium.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        "Richter, Robert" <Robert.Richter@cavium.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v2 08/10] irqchip/gic-v3-its: Decouple its initialization from
- gic
-Thread-Topic: [PATCH v2 08/10] irqchip/gic-v3-its: Decouple its initialization
- from gic
-Thread-Index: AQHUhyi7J6nxU0I0fUOV/EFE/c3JsQ==
-Date:   Wed, 28 Nov 2018 14:43:30 +0000
-Message-ID: <20181128144240.28727-9-rrichter@cavium.com>
-References: <20181128144240.28727-1-rrichter@cavium.com>
-In-Reply-To: <20181128144240.28727-1-rrichter@cavium.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P194CA0042.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:209:84::19) To SN6PR07MB5326.namprd07.prod.outlook.com
- (2603:10b6:805:73::33)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Robert.Richter@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [77.14.124.106]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR07MB4399;6:OQz25jywiKo5KK1r2TJQVOtyNjeanLJWwghon2vCLKC3D7qi2T30Cy79wL+JTERdjWRTWT+TDMXHpytfTBWA8NPvCs4ClMp+wJq0GjIz54f71rx4/6kwO1Dtxo6SRBtD5upmOG4g9smX91wCtg56WqzG5PHej9kRYMmWxeDulo8cGvnhcDTdr87b89vPLOodnyxFdkt0WYVB3C/ieX4u6fBT1LyvRqG7fa4chn6+E3bUqREJsZiT+NM5Sau3dpfjkBBAEyahYSqUoEjxa8QlBmrQcrDbnC6G4MJCFgFCyPPFRZvbftHwUdkv+LOZqJM88YMKwR8CqGsqILrhI1d3j4YLDdeZOopYGzualFrYp2hCirr5H8eNT+lnAAJPR1M6mdjBuUL1sUYtHu1ov22dHHWMzAM0Jo+oYIulLxPSGTlGoUdyvA2jjeEMXyN6o3NSwzoiM+OPi3rXMvcg3rlM4Q==;5:+l66DSIfY1fbp3lKbkXxJzujbBSHNzpkEvcCsqdZVfIGvOmOm0qNIGoXpXJ1kFsDfnlXS65ywzTnbYeQdKoXL6US1aOxZ4nNWJbqbD0zZ4YLaJyEcnP6wBJ7wjivupS2J+sKux4BLN/NFLp0iFyBXCvJCZinnIsUyT+YYjPe64c=;7:LAsYVfGJol+XoHidK6Vgn/dNL8/ott3wqLsvs/cXlouGb0Tz3K+rJuqhMph4DLLrwUufshPtBEw5GHoFgqjOb/O79Fh29kittoK3NdI6I/Ph5A38lysVPHDGCajK3h3MPkrHYN0YliS+ebvxqYGPJA==
-x-ms-office365-filtering-correlation-id: e0fa4443-9a0d-4911-d27a-08d6553fdd3f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4399;
-x-ms-traffictypediagnostic: SN6PR07MB4399:
-x-microsoft-antispam-prvs: <SN6PR07MB439903E450902B6424B8E3F9F1D10@SN6PR07MB4399.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231443)(999002)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN6PR07MB4399;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4399;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(39860400002)(136003)(199004)(189003)(97736004)(14444005)(256004)(105586002)(4326008)(106356001)(81156014)(8936002)(66066001)(2906002)(54906003)(110136005)(71190400001)(81166006)(6486002)(316002)(14454004)(8676002)(39060400002)(36756003)(76176011)(52116002)(68736007)(186003)(6116002)(7416002)(25786009)(71200400001)(53936002)(478600001)(99286004)(6512007)(446003)(11346002)(6436002)(26005)(305945005)(486006)(575784001)(7736002)(102836004)(72206003)(3846002)(2616005)(6506007)(5660300001)(386003)(476003)(1076002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4399;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: SrHnSxULl5bUGAITusbpMBdLQsDRWRyRWS1J7JMtJ9dOuQN2hFrDFB505A3lfQRmSJetrr0e/4fKlQkrAARf1a/RsA18AJAz621dmnB/qD4PoPWtz11cF1J6Ue2kjURCUdj2yzuVxeaB0HK2vIdsHnLLvdimOfiDuhQ7xqNM8RjCAg3VW3+r89clrKQxUT9zNgKDGck475iFWbLSPYNVa+HCF4IS2SLttV2akXeTzBBVlMqGcjmndIZZjDTZz8l3HfPVKFh1OA9s3Kg6VcBnBlvrsEqC2lSLEa89BRJ6Sg2MSRFhLUrxeiBbGcB1YJ4AVthiB1mVmkU72n02TYp+CAFrdU1MdBK5Nx470X+1hwI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Nov 2018 20:45:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47247 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728619AbeK2Bp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:45:29 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 036753983;
+        Wed, 28 Nov 2018 14:43:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B4291413B;
+        Wed, 28 Nov 2018 14:43:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20181126165606.GA11282@andrea>
+References: <20181126165606.GA11282@andrea> <20181017164848.GA9795@andrea> <20181017151134.GA8966@andrea> <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk> <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk> <14408.1539790333@warthog.procyon.org.uk> <26942.1543249596@warthog.procyon.org.uk>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     dhowells@redhat.com, gregkh@linux-foundation.org,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        viro@zeniv.linux.org.uk, sandeen@redhat.com,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to split atomic_sub & read
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0fa4443-9a0d-4911-d27a-08d6553fdd3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:43:30.8533
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4399
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4282.1543416204.1@warthog.procyon.org.uk>
+Date:   Wed, 28 Nov 2018 14:43:24 +0000
+Message-ID: <4283.1543416204@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 28 Nov 2018 14:43:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch separates its initialization from the gic. Probing and
-initialization of its nodes is separate now. There is an own cpu
-notifier for its now.
+Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 
-Signed-off-by: Robert Richter <rrichter@cavium.com>
----
- drivers/irqchip/irq-gic-v3-its.c   | 58 +++++++++++++++++++++++++---------=
-----
- drivers/irqchip/irq-gic-v3.c       | 14 ++++-----
- include/linux/cpuhotplug.h         |  1 +
- include/linux/irqchip/arm-gic-v3.h |  2 +-
- 4 files changed, 48 insertions(+), 27 deletions(-)
+> > > > > > Fix this by using atomic_sub_return() instead of two calls.
+> > > > > 
+> > > > > Seems a case for atomic_sub_return_relaxed()... why not?
+> > > > 
+> > > > Ummm...  In that case, should it be atomic_sub_return_release()?
+> > > 
+> > > Hard to tell for me: your diff./changelog is all I know about fs-cache
+> > > ... (and this suggests -no-, given that atomic_sub() and atomic_read()
+> > > provide no ordering...); good question though. ;-)
+> > 
+> > Yeah, that doesn't mean that it shouldn't be stricter than 'relaxed'.
+> > It's kind of like an unlock/release operation, so I think 'release' is
+> > probably the minimum requirement.
+> 
+> Sure.  My point was: those operations are currently not atomic _and_
+> they provide no ordering; I think that the above commit message does
+> a good work in explaining *why* we need atomicity, but can't say the
+> same for the memory-ordering requirement.
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
-its.c
-index c28f4158ff70..fd8561fcfdf3 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -167,6 +167,7 @@ static struct {
- } vpe_proxy;
-=20
- static LIST_HEAD(its_nodes);
-+static LIST_HEAD(its_probed);
- static DEFINE_RAW_SPINLOCK(its_lock);
- static struct rdists *gic_rdists;
- static struct irq_domain *its_parent;
-@@ -3482,20 +3483,13 @@ static int __init its_compute_its_list_map(struct i=
-ts_node *its)
-=20
- static void its_free(struct its_node *its)
- {
--	raw_spin_lock(&its_lock);
--	list_del(&its->entry);
--	raw_spin_unlock(&its_lock);
--
- 	kfree(its);
- }
-=20
--static int __init its_init_one(struct its_node *its);
--
- static int __init its_probe_one(struct resource *res,
- 				struct fwnode_handle *handle, int numa_node)
- {
- 	struct its_node *its;
--	int err;
-=20
- 	its =3D kzalloc(sizeof(*its), GFP_KERNEL);
- 	if (!its)
-@@ -3510,16 +3504,12 @@ static int __init its_probe_one(struct resource *re=
-s,
- 	its->numa_node =3D numa_node;
-=20
- 	raw_spin_lock(&its_lock);
--	list_add_tail(&its->entry, &its_nodes);
-+	list_add_tail(&its->entry, &its_probed);
- 	raw_spin_unlock(&its_lock);
-=20
- 	pr_info("ITS %pR\n", res);
-=20
--	err =3D its_init_one(its);
--	if (err)
--		its_free(its);
--
--	return err;
-+	return 0;
- }
-=20
- static int __init its_init_one(struct its_node *its)
-@@ -3717,7 +3707,7 @@ static int redist_disable_lpis(void)
- 	return 0;
- }
-=20
--int its_cpu_init(void)
-+static int its_cpu_init(unsigned int cpu)
- {
- 	if (!list_empty(&its_nodes)) {
- 		int ret;
-@@ -3913,8 +3903,6 @@ static void __init its_acpi_probe(void)
- static void __init its_acpi_probe(void) { }
- #endif
-=20
--static int __init its_init(void);
--
- int __init its_probe(struct fwnode_handle *handle, struct rdists *rdists,
- 		     struct irq_domain *parent_domain)
- {
-@@ -3929,23 +3917,51 @@ int __init its_probe(struct fwnode_handle *handle, =
-struct rdists *rdists,
-=20
- 	gic_rdists =3D rdists;
-=20
--	return its_init();
-+	return 0;
- }
-=20
--static int __init its_init(void)
-+int __init its_init(void)
- {
- 	struct its_node *its;
- 	bool has_v4 =3D false;
- 	int err;
-=20
-+	if (list_empty(&its_probed))
-+		return 0;
-+
-+	raw_spin_lock(&its_lock);
-+redo:
-+	list_for_each_entry(its, &its_probed, entry) {
-+		list_del_init(&its->entry);
-+
-+		raw_spin_unlock(&its_lock);
-+
-+		/* Needs to be called in non-atomic context */
-+		err =3D its_init_one(its);
-+		if (err)
-+			its_free(its);
-+
-+		raw_spin_lock(&its_lock);
-+
-+		if (!err)
-+			list_add_tail(&its->entry, &its_nodes);
-+
-+		goto redo;
-+	}
-+
-+	raw_spin_unlock(&its_lock);
-+
- 	if (list_empty(&its_nodes)) {
- 		pr_warn("ITS: No ITS available, not enabling LPIs\n");
- 		return -ENXIO;
- 	}
-=20
- 	err =3D allocate_lpi_tables();
--	if (err)
-+	if (err) {
-+		pr_warn("ITS: Failed to initialize (%d), not enabling LPIs\n",
-+			err);
- 		return err;
-+	}
-=20
- 	list_for_each_entry(its, &its_nodes, entry)
- 		has_v4 |=3D its->is_v4;
-@@ -3960,5 +3976,9 @@ static int __init its_init(void)
-=20
- 	register_syscore_ops(&its_syscore_ops);
-=20
-+	cpuhp_setup_state(CPUHP_AP_IRQ_GIC_ITS_STARTING,
-+			"irqchip/arm/gicv3-its:starting",
-+			its_cpu_init, NULL);
-+
- 	return 0;
- }
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index e04108b7c6b7..d2942efdb6d5 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -685,9 +685,6 @@ static int gic_starting_cpu(unsigned int cpu)
- {
- 	gic_cpu_init();
-=20
--	if (gic_dist_supports_lpis())
--		its_cpu_init();
--
- 	return 0;
- }
-=20
-@@ -815,7 +812,7 @@ static int gic_set_affinity(struct irq_data *d, const s=
-truct cpumask *mask_val,
- #else
- #define gic_set_affinity	NULL
- #define gic_smp_init()		do { } while(0)
--#endif
-+#endif	/* CONFIG_SMP */
-=20
- #ifdef CONFIG_CPU_PM
- /* Check whether it's single security state view */
-@@ -1131,10 +1128,8 @@ static int __init gic_init_bases(void __iomem *dist_=
-base,
- 	gic_cpu_init();
- 	gic_cpu_pm_init();
-=20
--	if (gic_dist_supports_lpis()) {
-+	if (gic_dist_supports_lpis())
- 		its_probe(handle, &gic_data.rdists, gic_data.domain);
--		its_cpu_init();
--	}
-=20
- 	return 0;
-=20
-@@ -1327,6 +1322,9 @@ static int __init gic_of_init(struct device_node *nod=
-e, struct device_node *pare
-=20
- 	if (static_branch_likely(&supports_deactivate_key))
- 		gic_of_setup_kvm_info(node);
-+
-+	its_init();
-+
- 	return 0;
-=20
- out_unmap_rdist:
-@@ -1630,6 +1628,8 @@ gic_acpi_init(struct acpi_subtable_header *header, co=
-nst unsigned long end)
- 	if (static_branch_likely(&supports_deactivate_key))
- 		gic_acpi_setup_kvm_info();
-=20
-+	its_init();
-+
- 	return 0;
-=20
- out_fwhandle_free:
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index e0cd2baa8380..584f73585142 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -96,6 +96,7 @@ enum cpuhp_state {
- 	CPUHP_AP_SCHED_STARTING,
- 	CPUHP_AP_RCUTREE_DYING,
- 	CPUHP_AP_IRQ_GIC_STARTING,
-+	CPUHP_AP_IRQ_GIC_ITS_STARTING,
- 	CPUHP_AP_IRQ_HIP04_STARTING,
- 	CPUHP_AP_IRQ_ARMADA_XP_STARTING,
- 	CPUHP_AP_IRQ_BCM2836_STARTING,
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm=
--gic-v3.h
-index a6fdb2910f73..f4348fa4260a 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -602,9 +602,9 @@ struct rdists {
-=20
- struct irq_domain;
- struct fwnode_handle;
--int its_cpu_init(void);
- int its_probe(struct fwnode_handle *handle, struct rdists *rdists,
- 	      struct irq_domain *domain);
-+int its_init(void);
- int mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent);
-=20
- static inline bool gic_enable_sre(void)
---=20
-2.11.0
+Having discussed it with Paul McKenney and thought about it some more, I think
+relaxed is probably okay since there isn't a pair of variables that need
+ordering.
 
+David
