@@ -2,121 +2,80 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65654C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F52C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BEE620832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RvXNXcRH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BEE620832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1706520832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1706520832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbeK2Aym (ORCPT
+        id S1728831AbeK2Ayp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:54:42 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39130 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbeK2Aym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:54:42 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so11135335pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:52:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=RvXNXcRHZHMo+xE//oZmLxHt09geXet/i4djGs8nsnYgU0TnGrTLwIe22yMLEZPD6b
-         pr44ZlN7dWIS3mwsxScfui2i/euRbNUNdbEJIYGiat1cABGiNyIaSxewoTOAtTq5LPei
-         +2nbSpyjWQBlBdBiIvWVMJjcSgMByMJpjVv1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=Jb56zw7We5rHT4W2FKlRtgG9jRQ+elhSkXAqQonQ8EvKsT+7Na8UPR8Gu3pkQrJ0Ty
-         1Dzr7AsDpCix2FtQZ1D5C9LeUXKTv1yDsNGWcXQeOOWv8iRbnpx8oznbbnIavgbN6PhU
-         Cd+Eb+a2eX7SZYyvrJ4a7OYiYD/h8EJCqc+G0bm9BmsUXagzUSk3WRlUN6jYj+Ep3N8W
-         HCJ7Ng7ORXm11AhlmzLF0YVORBHuYJEgLw7krXJuePXlHG1O6Iv8yKuU7Z0AxMpXs2Rx
-         nKteeU1NA3iVpO9inmqAGhb12V/P4ZC0nK/1w5palNOjoiBq3lRQPjsQJb8tJ0WEGYyi
-         KVlg==
-X-Gm-Message-State: AA+aEWak7VNp7ifCFuy7BgXAYU+XCsqg9uEOSSwydNzDns5F4NJqeXfu
-        2THhhvy93UVFXhCMIOq6Pvpl
-X-Google-Smtp-Source: AFSGD/X4qU9FeZG0/DvatsZXiVE5uX1w8JvpnUMvt8j8/w2oD00oBd/HRB0aCUPF+OshUbMCPrzCUg==
-X-Received: by 2002:a17:902:8a95:: with SMTP id p21mr32550680plo.183.1543413178149;
-        Wed, 28 Nov 2018 05:52:58 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:90a:a93f:b481:6fae:6692:c3ee])
-        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.52.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 05:52:57 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com
-Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        overseas.sales@unisoc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 10/15] arm: dts: rda8810pl: Add timer support
-Date:   Wed, 28 Nov 2018 19:21:01 +0530
-Message-Id: <20181128135106.9255-11-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
-References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
+        Wed, 28 Nov 2018 19:54:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48616 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728348AbeK2Ayo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:54:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC183AF6F;
+        Wed, 28 Nov 2018 13:52:59 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 07243DAC7E; Wed, 28 Nov 2018 14:52:42 +0100 (CET)
+Date:   Wed, 28 Nov 2018 14:52:42 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Yueyi Li <liyueyi@live.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "w@1wt.eu" <w@1wt.eu>,
+        "donb@securitymouse.com" <donb@securitymouse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        markus@oberhumer.com
+Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
+Message-ID: <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Yueyi Li <liyueyi@live.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "w@1wt.eu" <w@1wt.eu>,
+        "donb@securitymouse.com" <donb@securitymouse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        markus@oberhumer.com
+References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add timer support for RDA Micro RDA8810PL SoC.
+Adding Markus to to CC
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm/boot/dts/rda8810pl.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Wed, Nov 28, 2018 at 07:31:26AM +0000, Yueyi Li wrote:
+> It`s possible ip overrun in lzo1x_1_do_compress() when compressed page is
+> point to the end of memory and which virtual address is 0xfffffffffffff000.
+> Leading to a NULL pointer access during the get_unaligned_le32(ip).
 
-diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
-index 15547b138977..84baa4c0a14c 100644
---- a/arch/arm/boot/dts/rda8810pl.dtsi
-+++ b/arch/arm/boot/dts/rda8810pl.dtsi
-@@ -6,6 +6,8 @@
-  * Copyright (c) 2018 Manivannan Sadhasivam
-  */
- 
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
- / {
- 	compatible = "rda,8810pl";
- 	interrupt-parent = <&intc>;
-@@ -50,6 +52,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x20900000 0x100000>;
-+
-+		timer@10000 {
-+			compatible = "rda,8810pl-timer";
-+			reg = <0x10000 0x1000>;
-+			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <17 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hwtimer", "ostimer";
-+		};
- 	};
- 
- 	apb@20a00000 {
--- 
-2.17.1
+So this could happen in practice in zram, but unlikely for other users
+of lzo (like btrfs). I'm not sure but expect that the last page would
+not be returned by allocator.
 
+The fix is adding a few branches to code that's supposed to be as fast
+as possible. The branches would be evaluated all the time while
+protecting against one signle bad page address. This does not look like
+a good performance tradeoff.
+
+> +#define OVERFLOW_ADD_CHECK(a, b)  \
+> +		(((a) + (b)) < (a))
+
+I'm not sure if this is generally safe overflow check (never not
+optimized out). Here it depends on the types of 'a' and 'b' that are
+pointer (ip) and size_t (m_len). GCC has __builtin_add_overflow_p so
+that one should be used where possible.
