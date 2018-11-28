@@ -2,134 +2,106 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686B8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99F2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E30B21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:52:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNrjPPzX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E30B21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9407520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9407520989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeK1WyR (ORCPT
+        id S1728154AbeK1WzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:54:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38350 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbeK1WyR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:54:17 -0500
-Received: by mail-wm1-f67.google.com with SMTP id k198so2281991wmd.3;
-        Wed, 28 Nov 2018 03:52:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=YgeaODprKPDr+gjJ5AYhg9Y7RCrq3njXrB8fiJjMtYA=;
-        b=UNrjPPzXWBhGpufYYcmy4OZPU4Yk4a6ZKJsaXF3eD03sgkdEDTqMIggK9qnLDqEXYQ
-         YvLBlT9V4Qt7C3oXmv2+hHtVrEgPXMNqGV7B7Pk1v32d/qfIVpiYn7Bgzml0xrP7jc52
-         IaeKN6i+C85zEwqxvyr3+10aw9K9sqjOHpZaSNyjXRp9q4hreeAZ4wT2QRZcBo1TnaUj
-         t+AOG7beyDKGcTwBn10930cvOux+7Gfx2SfBx5ypsDBGiHriKFcAcU/rMz42ga9YXeoa
-         5Y1fZ70+Oy30uvSEC9hg/JjYJNnuyEn4ONE/1dUsEOXYKmPMHMOvPqlYXfFHGe3EgukO
-         uSjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=YgeaODprKPDr+gjJ5AYhg9Y7RCrq3njXrB8fiJjMtYA=;
-        b=GVilKS9XTPECekQzJkwwKubue6eVcUBwtFtHJJPkLxtQS3QMHUmlLWi1hRDqQil9om
-         svQUcLLPi/X5eZcsoyehV0sL3rWKf09nL2tL5B7dQCkn1M1QRS5hS2ByYlS6CaWOempk
-         q96vnYSc7HxWNvNOBm1g9YO43gcjrMem4uZWan7WzAfInG2mPY/yRsjoQg96W4j3wgfs
-         n5ZZTAtyq4RSaEffs7srXK+69DHjC44EW4IYi6HLS4SYL0LhlfnkrK72QmXTmD8o/pgo
-         KLKnUh1QvQPMs+wzsoezam7uHzJvgFNLhRG8OzGA2UwPTd0kNl06h7XwO9nrX6AycRyl
-         Aakg==
-X-Gm-Message-State: AA+aEWZMUQaT86DZVClBeMRKECvlL4en1BvBHHiWGenMYhgjSk46QAeh
-        DifohieGQviSf89j+msygRY=
-X-Google-Smtp-Source: AFSGD/UaXGZXaoVR4Y0ylGEhm2o2u8BEhY9yd36xCyHSebSeXn7icEusQckGrkCOinHb4AivWf5auA==
-X-Received: by 2002:a1c:7616:: with SMTP id r22mr14560wmc.35.1543405970961;
-        Wed, 28 Nov 2018 03:52:50 -0800 (PST)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id v5sm10500480wrn.71.2018.11.28.03.52.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 03:52:50 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for 4.20-rc4
-Date:   Wed, 28 Nov 2018 12:52:49 +0100
-Message-Id: <1543405969-25140-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 28 Nov 2018 17:55:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36852 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727585AbeK1WzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 17:55:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 795773650;
+        Wed, 28 Nov 2018 03:53:41 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 413823F59C;
+        Wed, 28 Nov 2018 03:53:39 -0800 (PST)
+Date:   Wed, 28 Nov 2018 11:53:36 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20181128115336.GB23094@e110439-lin>
+References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+ <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128100241.GA2131@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 28-Nov 11:02, Peter Zijlstra wrote:
+> On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
+> 
+> > Is there anything else that I should do for these patches ?
+> 
+> IIRC, Morten mention they break util_est; Patrick was going to explain.
 
-The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
+I guess the problem is that, once we cross the current capacity,
+strictly speaking util_avg does not represent anymore a utilization.
 
-  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
+With the new signal this could happen and we end up storing estimated
+utilization samples which will overestimate the task requirements.
 
-are available in the git repository at:
+We will have a spike in estimated utilization at next wakeup, since we
+use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
+case we collect multiple samples above the current capacity.
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+So, a possible fix could be to avoid storing util_est samples if we
+end up with a utilization above the current capacity.
 
-for you to fetch changes up to fd65d3142f734bc4376053c8d75670041903134d:
+Something like:
 
-  kvm: svm: Ensure an IBPB on all affected CPUs when freeing a vmcb (2018-11-27 12:50:42 +0100)
+----8<---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ac855b2f4774..93e0cf5d8a76 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3661,6 +3661,10 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ 	if (!task_sleep)
+ 		return;
+ 
++	/* Skip samples which do not represent an actual utilization */
++	if (unlikely(task_util(p) > capacity_of(task_cpu(p))))
++		return;
++
+ 	/*
+ 	 * If the PELT values haven't changed since enqueue time,
+ 	 * skip the util_est update.
+---8<---
 
-----------------------------------------------------------------
-Bugfixes, many of them reported by syzkaller and mostly predating the
-merge window.
+Could that work ?
 
-----------------------------------------------------------------
-Jim Mattson (1):
-      kvm: svm: Ensure an IBPB on all affected CPUs when freeing a vmcb
+Maybe using a new utility function to wrap the new check.
 
-Junaid Shahid (1):
-      kvm: mmu: Fix race in emulated page table writes
+-- 
+#include <best/regards.h>
 
-Leonid Shatz (1):
-      KVM: nVMX/nSVM: Fix bug which sets vcpu->arch.tsc_offset to L1 tsc_offset
-
-Liran Alon (5):
-      KVM: nVMX: Fix kernel info-leak when enabling KVM_CAP_HYPERV_ENLIGHTENED_VMCS more than once
-      KVM: x86: Fix kernel info-leak in KVM_HC_CLOCK_PAIRING hypercall
-      KVM: VMX: Update shared MSRs to be saved/restored on MSR_EFER.LMA changes
-      KVM: nVMX: Verify eVMCS revision id match supported eVMCS version on eVMCS VMPTRLD
-      KVM: nVMX: vmcs12 revision_id is always VMCS12_REVISION even when copied from eVMCS
-
-Luiz Capitulino (1):
-      KVM: VMX: re-add ple_gap module parameter
-
-Michael Roth (1):
-      KVM: PPC: Book3S HV: Fix handling for interrupted H_ENTER_NESTED
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-ppc-fixes-4.20-1' of https://git.kernel.org/.../paulus/powerpc into HEAD
-
-Wanpeng Li (2):
-      KVM: LAPIC: Fix pv ipis use-before-initialization
-      KVM: X86: Fix scan ioapic use-before-initialization
-
-Wei Wang (1):
-      svm: Add mutex_lock to protect apic_access_page_done on AMD systems
-
-Yi Wang (2):
-      KVM: x86: fix empty-body warnings
-      x86/kvm/vmx: fix old-style function declaration
-
- arch/powerpc/kvm/book3s_hv.c    |  1 +
- arch/x86/include/asm/kvm_host.h |  3 +-
- arch/x86/kvm/lapic.c            |  7 ++-
- arch/x86/kvm/mmu.c              | 27 ++++--------
- arch/x86/kvm/svm.c              | 44 +++++++++++-------
- arch/x86/kvm/vmx.c              | 98 +++++++++++++++++++++++++++--------------
- arch/x86/kvm/x86.c              | 10 +++--
- 7 files changed, 118 insertions(+), 72 deletions(-)
+Patrick Bellasi
