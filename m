@@ -4,39 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EEFC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44281C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA4C2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C3A2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0n5mNYBK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA4C2081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vk+znVi+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C3A2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeK1RsL (ORCPT
+        id S1727772AbeK1RsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:48:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49570 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 12:48:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbeK1Rrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:47:55 -0500
+        id S1727285AbeK1Rry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 12:47:54 -0500
 Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A6BB20989;
-        Wed, 28 Nov 2018 06:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1481F2086B;
+        Wed, 28 Nov 2018 06:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543387640;
-        bh=AKjsrteRG1yO521VnOZ7jre1zWgVtvCxoM2AJzc8iNs=;
+        s=default; t=1543387639;
+        bh=bTlMXr+t5cuKbUgfcmMEVyPhJAJOn7VTSPafvijPEYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0n5mNYBKgTmlCOxdLsWg/Wi8/25b8+M/kQNhcRo6Kmtgj3qn3n3gU1eBz3CZAOY3V
-         Qe4tnEc4GoNMtjUgyDLWbE7hwRLtpaedYSMuKVAUQyfuVNxy8XgwQG8SnImAj1fi5i
-         fm4ulE8A1NHjvvTi5zRFkVuLLBZHyxSBAgM+QhFg=
+        b=Vk+znVi+bIH2NLiyVyDvb6RYfg/3taWpRBQ9lEQcGFVm3UuD4kbTKf16K75ZS5Iqx
+         FH82lpMoi9GOTRcrLOxd4uA/o3QPWlV4ViUGLPGrZifdDMKUvBIfapaFAhat15lTPZ
+         9MVImB0UahRPV4Rkqf5GajVHcZKjPzEEYoM9B11E=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     Paul Crowley <paulcrowley@google.com>,
@@ -44,13 +43,14 @@ Cc:     Paul Crowley <paulcrowley@google.com>,
         Milan Broz <gmazyland@gmail.com>,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] crypto: x86/chacha20 - add XChaCha20 support
-Date:   Tue, 27 Nov 2018 22:44:43 -0800
-Message-Id: <20181128064445.3813-5-ebiggers@kernel.org>
+Subject: [PATCH 1/6] crypto: x86/nhpoly1305 - add SSE2 accelerated NHPoly1305
+Date:   Tue, 27 Nov 2018 22:44:40 -0800
+Message-Id: <20181128064445.3813-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181128064445.3813-1-ebiggers@kernel.org>
 References: <20181128064445.3813-1-ebiggers@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,304 +59,273 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add an XChaCha20 implementation that is hooked up to the x86_64 SIMD
-implementation of ChaCha20.  This can be used by Adiantum.
-
-An SSSE3 implementation of single-block HChaCha20 is also added so that
-XChaCha20 can use it rather than the generic implementation.  This
-required refactoring the ChaCha permutation into its own function.
+Add a 64-bit SSE2 implementation of NHPoly1305, an ε-almost-∆-universal
+hash function used in the Adiantum encryption mode.  For now, only the
+NH portion is actually SSE2-accelerated; the Poly1305 part is less
+performance-critical so is just implemented in C.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/x86/crypto/chacha20-ssse3-x86_64.S |  76 ++++++++++++------
- arch/x86/crypto/chacha20_glue.c         | 101 ++++++++++++++++++------
- crypto/Kconfig                          |  12 +--
- 3 files changed, 130 insertions(+), 59 deletions(-)
+ arch/x86/crypto/Makefile               |   4 +
+ arch/x86/crypto/nh-sse2-x86_64.S       | 123 +++++++++++++++++++++++++
+ arch/x86/crypto/nhpoly1305-sse2-glue.c |  76 +++++++++++++++
+ crypto/Kconfig                         |   8 ++
+ 4 files changed, 211 insertions(+)
+ create mode 100644 arch/x86/crypto/nh-sse2-x86_64.S
+ create mode 100644 arch/x86/crypto/nhpoly1305-sse2-glue.c
 
-diff --git a/arch/x86/crypto/chacha20-ssse3-x86_64.S b/arch/x86/crypto/chacha20-ssse3-x86_64.S
-index d8ac75bb448f9..45e4ccdd9c98b 100644
---- a/arch/x86/crypto/chacha20-ssse3-x86_64.S
-+++ b/arch/x86/crypto/chacha20-ssse3-x86_64.S
-@@ -23,37 +23,24 @@ CTRINC:	.octa 0x00000003000000020000000100000000
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index a4b0007a54e17..49dc3d50041c9 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -46,6 +46,8 @@ obj-$(CONFIG_CRYPTO_MORUS1280_GLUE) += morus1280_glue.o
+ obj-$(CONFIG_CRYPTO_MORUS640_SSE2) += morus640-sse2.o
+ obj-$(CONFIG_CRYPTO_MORUS1280_SSE2) += morus1280-sse2.o
  
- .text
++obj-$(CONFIG_CRYPTO_NHPOLY1305_SSE2) += nhpoly1305-sse2.o
++
+ # These modules require assembler to support AVX.
+ ifeq ($(avx_supported),yes)
+ 	obj-$(CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64) += \
+@@ -84,6 +86,8 @@ aegis256-aesni-y := aegis256-aesni-asm.o aegis256-aesni-glue.o
+ morus640-sse2-y := morus640-sse2-asm.o morus640-sse2-glue.o
+ morus1280-sse2-y := morus1280-sse2-asm.o morus1280-sse2-glue.o
  
--ENTRY(chacha20_block_xor_ssse3)
--	# %rdi: Input state matrix, s
--	# %rsi: up to 1 data block output, o
--	# %rdx: up to 1 data block input, i
--	# %rcx: input/output length in bytes
--
--	# This function encrypts one ChaCha20 block by loading the state matrix
--	# in four SSE registers. It performs matrix operation on four words in
--	# parallel, but requires shuffling to rearrange the words after each
--	# round. 8/16-bit word rotation is done with the slightly better
--	# performing SSSE3 byte shuffling, 7/12-bit word rotation uses
--	# traditional shift+OR.
--
--	# x0..3 = s0..3
--	movdqa		0x00(%rdi),%xmm0
--	movdqa		0x10(%rdi),%xmm1
--	movdqa		0x20(%rdi),%xmm2
--	movdqa		0x30(%rdi),%xmm3
--	movdqa		%xmm0,%xmm8
--	movdqa		%xmm1,%xmm9
--	movdqa		%xmm2,%xmm10
--	movdqa		%xmm3,%xmm11
++nhpoly1305-sse2-y := nh-sse2-x86_64.o nhpoly1305-sse2-glue.o
++
+ ifeq ($(avx_supported),yes)
+ 	camellia-aesni-avx-x86_64-y := camellia-aesni-avx-asm_64.o \
+ 					camellia_aesni_avx_glue.o
+diff --git a/arch/x86/crypto/nh-sse2-x86_64.S b/arch/x86/crypto/nh-sse2-x86_64.S
+new file mode 100644
+index 0000000000000..51f52d4ab4bbc
+--- /dev/null
++++ b/arch/x86/crypto/nh-sse2-x86_64.S
+@@ -0,0 +1,123 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * chacha20_permute - permute one block
++ * NH - ε-almost-universal hash function, x86_64 SSE2 accelerated
 + *
-+ * Permute one 64-byte block where the state matrix is in %xmm0-%xmm3.  This
-+ * function performs matrix operations on four words in parallel, but requires
-+ * shuffling to rearrange the words after each round.  8/16-bit word rotation is
-+ * done with the slightly better performing SSSE3 byte shuffling, 7/12-bit word
-+ * rotation uses traditional shift+OR.
++ * Copyright 2018 Google LLC
 + *
-+ * Clobbers: %ecx, %xmm4-%xmm7
++ * Author: Eric Biggers <ebiggers@google.com>
 + */
-+chacha20_permute:
- 
- 	movdqa		ROT8(%rip),%xmm4
- 	movdqa		ROT16(%rip),%xmm5
--
--	mov		%rcx,%rax
- 	mov		$10,%ecx
- 
- .Ldoubleround:
--
- 	# x0 += x1, x3 = rotl32(x3 ^ x0, 16)
- 	paddd		%xmm1,%xmm0
- 	pxor		%xmm0,%xmm3
-@@ -123,6 +110,28 @@ ENTRY(chacha20_block_xor_ssse3)
- 	dec		%ecx
- 	jnz		.Ldoubleround
- 
++
++#include <linux/linkage.h>
++
++#define		PASS0_SUMS	%xmm0
++#define		PASS1_SUMS	%xmm1
++#define		PASS2_SUMS	%xmm2
++#define		PASS3_SUMS	%xmm3
++#define		K0		%xmm4
++#define		K1		%xmm5
++#define		K2		%xmm6
++#define		K3		%xmm7
++#define		T0		%xmm8
++#define		T1		%xmm9
++#define		T2		%xmm10
++#define		T3		%xmm11
++#define		T4		%xmm12
++#define		T5		%xmm13
++#define		T6		%xmm14
++#define		T7		%xmm15
++#define		KEY		%rdi
++#define		MESSAGE		%rsi
++#define		MESSAGE_LEN	%rdx
++#define		HASH		%rcx
++
++.macro _nh_stride	k0, k1, k2, k3, offset
++
++	// Load next message stride
++	movdqu		\offset(MESSAGE), T1
++
++	// Load next key stride
++	movdqu		\offset(KEY), \k3
++
++	// Add message words to key words
++	movdqa		T1, T2
++	movdqa		T1, T3
++	paddd		T1, \k0    // reuse k0 to avoid a move
++	paddd		\k1, T1
++	paddd		\k2, T2
++	paddd		\k3, T3
++
++	// Multiply 32x32 => 64 and accumulate
++	pshufd		$0x10, \k0, T4
++	pshufd		$0x32, \k0, \k0
++	pshufd		$0x10, T1, T5
++	pshufd		$0x32, T1, T1
++	pshufd		$0x10, T2, T6
++	pshufd		$0x32, T2, T2
++	pshufd		$0x10, T3, T7
++	pshufd		$0x32, T3, T3
++	pmuludq		T4, \k0
++	pmuludq		T5, T1
++	pmuludq		T6, T2
++	pmuludq		T7, T3
++	paddq		\k0, PASS0_SUMS
++	paddq		T1, PASS1_SUMS
++	paddq		T2, PASS2_SUMS
++	paddq		T3, PASS3_SUMS
++.endm
++
++/*
++ * void nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++ *		u8 hash[NH_HASH_BYTES])
++ *
++ * It's guaranteed that message_len % 16 == 0.
++ */
++ENTRY(nh_sse2)
++
++	movdqu		0x00(KEY), K0
++	movdqu		0x10(KEY), K1
++	movdqu		0x20(KEY), K2
++	add		$0x30, KEY
++	pxor		PASS0_SUMS, PASS0_SUMS
++	pxor		PASS1_SUMS, PASS1_SUMS
++	pxor		PASS2_SUMS, PASS2_SUMS
++	pxor		PASS3_SUMS, PASS3_SUMS
++
++	sub		$0x40, MESSAGE_LEN
++	jl		.Lloop4_done
++.Lloop4:
++	_nh_stride	K0, K1, K2, K3, 0x00
++	_nh_stride	K1, K2, K3, K0, 0x10
++	_nh_stride	K2, K3, K0, K1, 0x20
++	_nh_stride	K3, K0, K1, K2, 0x30
++	add		$0x40, KEY
++	add		$0x40, MESSAGE
++	sub		$0x40, MESSAGE_LEN
++	jge		.Lloop4
++
++.Lloop4_done:
++	and		$0x3f, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K0, K1, K2, K3, 0x00
++
++	sub		$0x10, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K1, K2, K3, K0, 0x10
++
++	sub		$0x10, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K2, K3, K0, K1, 0x20
++
++.Ldone:
++	// Sum the accumulators for each pass, then store the sums to 'hash'
++	movdqa		PASS0_SUMS, T0
++	movdqa		PASS2_SUMS, T1
++	punpcklqdq	PASS1_SUMS, T0		// => (PASS0_SUM_A PASS1_SUM_A)
++	punpcklqdq	PASS3_SUMS, T1		// => (PASS2_SUM_A PASS3_SUM_A)
++	punpckhqdq	PASS1_SUMS, PASS0_SUMS	// => (PASS0_SUM_B PASS1_SUM_B)
++	punpckhqdq	PASS3_SUMS, PASS2_SUMS	// => (PASS2_SUM_B PASS3_SUM_B)
++	paddq		PASS0_SUMS, T0
++	paddq		PASS2_SUMS, T1
++	movdqu		T0, 0x00(HASH)
++	movdqu		T1, 0x10(HASH)
 +	ret
-+ENDPROC(chacha20_permute)
++ENDPROC(nh_sse2)
+diff --git a/arch/x86/crypto/nhpoly1305-sse2-glue.c b/arch/x86/crypto/nhpoly1305-sse2-glue.c
+new file mode 100644
+index 0000000000000..ed68d164ce140
+--- /dev/null
++++ b/arch/x86/crypto/nhpoly1305-sse2-glue.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * NHPoly1305 - ε-almost-∆-universal hash function for Adiantum
++ * (SSE2 accelerated version)
++ *
++ * Copyright 2018 Google LLC
++ */
 +
-+ENTRY(chacha20_block_xor_ssse3)
-+	# %rdi: Input state matrix, s
-+	# %rsi: up to 1 data block output, o
-+	# %rdx: up to 1 data block input, i
-+	# %rcx: input/output length in bytes
++#include <crypto/internal/hash.h>
++#include <crypto/nhpoly1305.h>
++#include <linux/module.h>
++#include <asm/fpu/api.h>
 +
-+	# x0..3 = s0..3
-+	movdqa		0x00(%rdi),%xmm0
-+	movdqa		0x10(%rdi),%xmm1
-+	movdqa		0x20(%rdi),%xmm2
-+	movdqa		0x30(%rdi),%xmm3
-+	movdqa		%xmm0,%xmm8
-+	movdqa		%xmm1,%xmm9
-+	movdqa		%xmm2,%xmm10
-+	movdqa		%xmm3,%xmm11
++asmlinkage void nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++			u8 hash[NH_HASH_BYTES]);
 +
-+	mov		%rcx,%rax
-+	call		chacha20_permute
-+
- 	# o0 = i0 ^ (x0 + s0)
- 	paddd		%xmm8,%xmm0
- 	cmp		$0x10,%rax
-@@ -189,6 +198,23 @@ ENTRY(chacha20_block_xor_ssse3)
- 
- ENDPROC(chacha20_block_xor_ssse3)
- 
-+ENTRY(hchacha20_block_ssse3)
-+	# %rdi: Input state matrix, s
-+	# %rsi: output (8 32-bit words)
-+
-+	movdqa		0x00(%rdi),%xmm0
-+	movdqa		0x10(%rdi),%xmm1
-+	movdqa		0x20(%rdi),%xmm2
-+	movdqa		0x30(%rdi),%xmm3
-+
-+	call		chacha20_permute
-+
-+	movdqu		%xmm0,0x00(%rsi)
-+	movdqu		%xmm3,0x10(%rsi)
-+
-+	ret
-+ENDPROC(hchacha20_block_ssse3)
-+
- ENTRY(chacha20_4block_xor_ssse3)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 4 data blocks output, o
-diff --git a/arch/x86/crypto/chacha20_glue.c b/arch/x86/crypto/chacha20_glue.c
-index 5928fee7acdd4..ca85b5d2c4751 100644
---- a/arch/x86/crypto/chacha20_glue.c
-+++ b/arch/x86/crypto/chacha20_glue.c
-@@ -23,6 +23,7 @@ asmlinkage void chacha20_block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
- 					 unsigned int len);
- asmlinkage void chacha20_4block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
- 					  unsigned int len);
-+asmlinkage void hchacha20_block_ssse3(const u32 *state, u32 *out);
- #ifdef CONFIG_AS_AVX2
- asmlinkage void chacha20_2block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
- 					 unsigned int len);
-@@ -86,23 +87,19 @@ static void chacha20_dosimd(u32 *state, u8 *dst, const u8 *src,
- 	}
- }
- 
--static int chacha20_simd(struct skcipher_request *req)
-+static int chacha20_simd_stream_xor(struct skcipher_request *req,
-+				    struct chacha_ctx *ctx, u8 *iv)
- {
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
--	u32 *state, state_buf[16 + 2] __aligned(8);
- 	struct skcipher_walk walk;
-+	u32 *state, state_buf[16 + 2] __aligned(8);
- 	int err;
- 
- 	BUILD_BUG_ON(CHACHA20_STATE_ALIGN != 16);
- 	state = PTR_ALIGN(state_buf + 0, CHACHA20_STATE_ALIGN);
- 
--	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
--		return crypto_chacha_crypt(req);
--
- 	err = skcipher_walk_virt(&walk, req, false);
- 
--	crypto_chacha_init(state, ctx, walk.iv);
-+	crypto_chacha_init(state, ctx, iv);
- 
- 	while (walk.nbytes > 0) {
- 		unsigned int nbytes = walk.nbytes;
-@@ -121,21 +118,73 @@ static int chacha20_simd(struct skcipher_request *req)
- 	return err;
- }
- 
--static struct skcipher_alg alg = {
--	.base.cra_name		= "chacha20",
--	.base.cra_driver_name	= "chacha20-simd",
--	.base.cra_priority	= 300,
--	.base.cra_blocksize	= 1,
--	.base.cra_ctxsize	= sizeof(struct chacha_ctx),
--	.base.cra_module	= THIS_MODULE,
--
--	.min_keysize		= CHACHA_KEY_SIZE,
--	.max_keysize		= CHACHA_KEY_SIZE,
--	.ivsize			= CHACHA_IV_SIZE,
--	.chunksize		= CHACHA_BLOCK_SIZE,
--	.setkey			= crypto_chacha20_setkey,
--	.encrypt		= chacha20_simd,
--	.decrypt		= chacha20_simd,
-+static int chacha20_simd(struct skcipher_request *req)
++/* wrapper to avoid indirect call to assembly, which doesn't work with CFI */
++static void _nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++		     __le64 hash[NH_NUM_PASSES])
 +{
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-+
-+	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
-+		return crypto_chacha_crypt(req);
-+
-+	return chacha20_simd_stream_xor(req, ctx, req->iv);
++	nh_sse2(key, message, message_len, (u8 *)hash);
 +}
 +
-+static int xchacha20_simd(struct skcipher_request *req)
++static int nhpoly1305_sse2_update(struct shash_desc *desc,
++				  const u8 *src, unsigned int srclen)
 +{
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-+	struct chacha_ctx subctx;
-+	u32 *state, state_buf[16 + 2] __aligned(8);
-+	u8 real_iv[16];
++	if (srclen < 64 || !irq_fpu_usable())
++		return crypto_nhpoly1305_update(desc, src, srclen);
 +
-+	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
-+		return crypto_xchacha_crypt(req);
++	do {
++		unsigned int n = min_t(unsigned int, srclen, PAGE_SIZE);
 +
-+	BUILD_BUG_ON(CHACHA20_STATE_ALIGN != 16);
-+	state = PTR_ALIGN(state_buf + 0, CHACHA20_STATE_ALIGN);
-+	crypto_chacha_init(state, ctx, req->iv);
-+
-+	kernel_fpu_begin();
-+	hchacha20_block_ssse3(state, subctx.key);
-+	kernel_fpu_end();
-+
-+	memcpy(&real_iv[0], req->iv + 24, 8);
-+	memcpy(&real_iv[8], req->iv + 16, 8);
-+	return chacha20_simd_stream_xor(req, &subctx, real_iv);
++		kernel_fpu_begin();
++		crypto_nhpoly1305_update_helper(desc, src, n, _nh_sse2);
++		kernel_fpu_end();
++		src += n;
++		srclen -= n;
++	} while (srclen);
++	return 0;
 +}
 +
-+static struct skcipher_alg algs[] = {
-+	{
-+		.base.cra_name		= "chacha20",
-+		.base.cra_driver_name	= "chacha20-simd",
-+		.base.cra_priority	= 300,
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
-+		.base.cra_module	= THIS_MODULE,
++static struct shash_alg nhpoly1305_alg = {
++	.base.cra_name		= "nhpoly1305",
++	.base.cra_driver_name	= "nhpoly1305-sse2",
++	.base.cra_priority	= 200,
++	.base.cra_ctxsize	= sizeof(struct nhpoly1305_key),
++	.base.cra_module	= THIS_MODULE,
++	.digestsize		= POLY1305_DIGEST_SIZE,
++	.init			= crypto_nhpoly1305_init,
++	.update			= nhpoly1305_sse2_update,
++	.final			= crypto_nhpoly1305_final,
++	.setkey			= crypto_nhpoly1305_setkey,
++	.descsize		= sizeof(struct nhpoly1305_state),
++};
 +
-+		.min_keysize		= CHACHA_KEY_SIZE,
-+		.max_keysize		= CHACHA_KEY_SIZE,
-+		.ivsize			= CHACHA_IV_SIZE,
-+		.chunksize		= CHACHA_BLOCK_SIZE,
-+		.setkey			= crypto_chacha20_setkey,
-+		.encrypt		= chacha20_simd,
-+		.decrypt		= chacha20_simd,
-+	}, {
-+		.base.cra_name		= "xchacha20",
-+		.base.cra_driver_name	= "xchacha20-simd",
-+		.base.cra_priority	= 300,
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
-+		.base.cra_module	= THIS_MODULE,
++static int __init nhpoly1305_mod_init(void)
++{
++	if (!boot_cpu_has(X86_FEATURE_XMM2))
++		return -ENODEV;
 +
-+		.min_keysize		= CHACHA_KEY_SIZE,
-+		.max_keysize		= CHACHA_KEY_SIZE,
-+		.ivsize			= XCHACHA_IV_SIZE,
-+		.chunksize		= CHACHA_BLOCK_SIZE,
-+		.setkey			= crypto_chacha20_setkey,
-+		.encrypt		= xchacha20_simd,
-+		.decrypt		= xchacha20_simd,
-+	},
- };
- 
- static int __init chacha20_simd_mod_init(void)
-@@ -148,12 +197,12 @@ static int __init chacha20_simd_mod_init(void)
- 			    boot_cpu_has(X86_FEATURE_AVX2) &&
- 			    cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM, NULL);
- #endif
--	return crypto_register_skcipher(&alg);
-+	return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
- static void __exit chacha20_simd_mod_fini(void)
- {
--	crypto_unregister_skcipher(&alg);
-+	crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
- module_init(chacha20_simd_mod_init);
-@@ -164,3 +213,5 @@ MODULE_AUTHOR("Martin Willi <martin@strongswan.org>");
- MODULE_DESCRIPTION("chacha20 cipher algorithm, SIMD accelerated");
- MODULE_ALIAS_CRYPTO("chacha20");
- MODULE_ALIAS_CRYPTO("chacha20-simd");
-+MODULE_ALIAS_CRYPTO("xchacha20");
-+MODULE_ALIAS_CRYPTO("xchacha20-simd");
++	return crypto_register_shash(&nhpoly1305_alg);
++}
++
++static void __exit nhpoly1305_mod_exit(void)
++{
++	crypto_unregister_shash(&nhpoly1305_alg);
++}
++
++module_init(nhpoly1305_mod_init);
++module_exit(nhpoly1305_mod_exit);
++
++MODULE_DESCRIPTION("NHPoly1305 ε-almost-∆-universal hash function (SSE2-accelerated)");
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
++MODULE_ALIAS_CRYPTO("nhpoly1305");
++MODULE_ALIAS_CRYPTO("nhpoly1305-sse2");
 diff --git a/crypto/Kconfig b/crypto/Kconfig
-index e084e2fb6743b..ecfc10a3e9f3e 100644
+index b6376d5d973e0..b85133966d643 100644
 --- a/crypto/Kconfig
 +++ b/crypto/Kconfig
-@@ -1468,19 +1468,13 @@ config CRYPTO_CHACHA20
- 	  in some performance-sensitive scenarios.
+@@ -501,6 +501,14 @@ config CRYPTO_NHPOLY1305
+ 	select CRYPTO_HASH
+ 	select CRYPTO_POLY1305
  
- config CRYPTO_CHACHA20_X86_64
--	tristate "ChaCha20 cipher algorithm (x86_64/SSSE3/AVX2)"
-+	tristate "ChaCha stream cipher algorithms (x86_64/SSSE3/AVX2)"
- 	depends on X86 && 64BIT
- 	select CRYPTO_BLKCIPHER
++config CRYPTO_NHPOLY1305_SSE2
++	tristate "NHPoly1305 hash function (x86_64 SSE2 implementation)"
++	depends on X86 && 64BIT
++	select CRYPTO_NHPOLY1305
++	help
++	  SSE2 optimized implementation of the hash function used by the
++	  Adiantum encryption mode.
++
+ config CRYPTO_ADIANTUM
+ 	tristate "Adiantum support"
  	select CRYPTO_CHACHA20
- 	help
--	  ChaCha20 cipher algorithm, RFC7539.
--
--	  ChaCha20 is a 256-bit high-speed stream cipher designed by Daniel J.
--	  Bernstein and further specified in RFC7539 for use in IETF protocols.
--	  This is the x86_64 assembler implementation using SIMD instructions.
--
--	  See also:
--	  <http://cr.yp.to/chacha/chacha-20080128.pdf>
-+	  SSSE3 and AVX2 optimized implementations of the ChaCha20 and XChaCha20
-+	  stream ciphers.
- 
- config CRYPTO_SEED
- 	tristate "SEED cipher algorithm"
 -- 
 2.19.2
 
