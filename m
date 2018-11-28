@@ -2,166 +2,414 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8D4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20161C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36573206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA752206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hrLY43ae"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36573206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KEAqJMiF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA752206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeK2Fc3 (ORCPT
+        id S1728485AbeK2FiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:32:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33072 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725761AbeK2Fc3 (ORCPT
+        Thu, 29 Nov 2018 00:38:13 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49476 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbeK2FiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:32:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z11so9876523pgu.0;
-        Wed, 28 Nov 2018 10:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=XtrritqyCgXvd/Oac0XlhV9ZTEWanBaIrFkfpwFUgoI=;
-        b=hrLY43aeQQctAtGXs6mvsCbS1JaUdjCeCQKH9Jd4/kyn3F2By200bXeF+JzmVXfB+9
-         OAsPOy/AkaCVaPb8fBYZX8qyr6crHsSIBtjEAxdbzGtOe+vYaZQ9KD1cO8CLDW31d1sS
-         AwrYr9s1NK3XswCkKQ8eyIk231QfBFzzAh/QqE88UiKkl4x/PB7YWJPCtDs48JDpZf9N
-         2l75Aysh89DDhew7js8hV4q/Sd4eqqxXSyeErCes86pB7hK+ttTdmhLdUNPsnadQj6ES
-         qtONysdhpb5sjrdnC80ugXTFeZqOyZbeGQclLTgnziseJs/fZPSUsW5jABZEcsn5zFTX
-         XzmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=XtrritqyCgXvd/Oac0XlhV9ZTEWanBaIrFkfpwFUgoI=;
-        b=VHfW+Cho5AFXEEGF1DEEQ+w/xlv3npiRKLYXx6vx2vJPq6JuARZa3IQpc1o17GOWDN
-         7LzXX5zBtwAAOViOw8swRMCxGlGOLj/r1fUR9LL9Oguwv20xmB8ARh+bLFZ6CuSEA9QT
-         wA50XmB3iWieqxtrNt/rB3QDPr+H4QH6yCTLplMxieO3CGrklqjYwPI6KSy+fbr6MEkg
-         KmarCjYQstkuhasBDUl+Po0UTFYu1cPgI+zGrBmB5TaRl99Nrrf16y5fRuppyMRHeIyd
-         CioTA533gKHTc0Hkk6T6eEEQiQavq62ytR01wKaqEoRNbdGl0fyxUrQTnrMMAb+Q1kFa
-         IPug==
-X-Gm-Message-State: AGRZ1gLnEDRvofWmANjtBn4/F6dA4C2XLipcZL2NRj7OlnS7QF10/wWx
-        0er1nJyoAv0vN87VdlziUds=
-X-Google-Smtp-Source: AJdET5cxLrEPX5yKWJ5TLS8PAm3NG73T+mF0FtJhUvU3AVAfODcjXXAo7JAzYe8q28Vwn8DmmXM0OQ==
-X-Received: by 2002:a62:1bd7:: with SMTP id b206mr38415056pfb.213.1543429794690;
-        Wed, 28 Nov 2018 10:29:54 -0800 (PST)
-Received: from [10.33.114.204] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id b5sm16446863pfc.150.2018.11.28.10.29.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 10:29:53 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: =?utf-8?Q?Re=3A_=5BPATCH_0/2=5D_Don=E2=80=99t_leave_executable_TL?=
- =?utf-8?Q?B_entries_to_freed_pages?=
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181128095734.GA23467@arm.com>
-Date:   Wed, 28 Nov 2018 10:29:52 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thu, 29 Nov 2018 00:38:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KkC0GL8MQROSN0aHOLYMpeyBNmkSDMw9jBzORqIbfkI=; b=KEAqJMiFXgRUvxMtrraEsR/El
+        kksx5ssXBKW+fCiJyU3/FxdMM7QAtXO5+PbL+0JIYF9CLbJX/7dYAm/1auq2qkxgZcRa8/FX+0Ouc
+        Dn65QEyyWyCUSvgYioWkLrm1S7Xt9VUgCuPrC/TOGiQkmFU41vZip72KoLHtgv1523ZJlyRKat/S6
+        YgCEeW6cNMu5twiaWfEghQRsWlZeLiIAV/RB/XX57S16yiam5jrSzSbshaC+QVOGMljv/VqtIbktV
+        UesLYhZzxLtSV4OjMdqcB8kIX36PxNbi7kgub5KZpzVxunAOdmINt9PmrpWxTShZ4+sMoMZK7Nvqz
+        XIlrKuu4g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gS4gR-0003fx-RH; Wed, 28 Nov 2018 18:35:35 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-        David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, ast@kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>, jeyu@kernel.org,
-        netdev@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>, kristen@linux.intel.com,
-        dave.hansen@intel.com, deneen.t.dock@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FB747B26-5C1A-4417-9DE9-8C356AB1C593@gmail.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <CDB8B7C1-FD55-44AD-9B71-B3A750BF5489@gmail.com>
- <449E6648-5599-476D-8136-EE570101F930@gmail.com>
- <20181128095734.GA23467@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] aio: Convert ioctx_table to XArray
+Date:   Wed, 28 Nov 2018 10:35:31 -0800
+Message-Id: <20181128183531.5139-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Nov 28, 2018, at 1:57 AM, Will Deacon <will.deacon@arm.com> wrote:
->=20
-> On Tue, Nov 27, 2018 at 05:21:08PM -0800, Nadav Amit wrote:
->>> On Nov 27, 2018, at 5:06 PM, Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->>>=20
->>>> On Nov 27, 2018, at 4:07 PM, Rick Edgecombe =
-<rick.p.edgecombe@intel.com> wrote:
->>>>=20
->>>> Sometimes when memory is freed via the module subsystem, an =
-executable
->>>> permissioned TLB entry can remain to a freed page. If the page is =
-re-used to
->>>> back an address that will receive data from userspace, it can =
-result in user
->>>> data being mapped as executable in the kernel. The root of this =
-behavior is
->>>> vfree lazily flushing the TLB, but not lazily freeing the =
-underlying pages.=20
->>>>=20
->>>> There are sort of three categories of this which show up across =
-modules, bpf,
->>>> kprobes and ftrace:
->>>>=20
->>>> 1. When executable memory is touched and then immediatly freed
->>>>=20
->>>> This shows up in a couple error conditions in the module loader and =
-BPF JIT
->>>> compiler.
->>>=20
->>> Interesting!
->>>=20
->>> Note that this may cause conflict with "x86: avoid W^X being broken =
-during
->>> modules loading=E2=80=9D, which I recently submitted.
->>=20
->> I actually have not looked on the vmalloc() code too much recent, but =
-it
->> seems =E2=80=A6 strange:
->>=20
->>  void vm_unmap_aliases(void)
->>  {      =20
->>=20
->>  ...
->>  	mutex_lock(&vmap_purge_lock);
->>  	purge_fragmented_blocks_allcpus();
->>  	if (!__purge_vmap_area_lazy(start, end) && flush)
->>  		flush_tlb_kernel_range(start, end);
->>  	mutex_unlock(&vmap_purge_lock);
->>  }
->>=20
->> Since __purge_vmap_area_lazy() releases the memory, it seems there is =
-a time
->> window between the release of the region and the TLB flush, in which =
-the
->> area can be allocated for another purpose. This can result in a
->> (theoretical) correctness issue. No?
->=20
-> If __purge_vmap_area_lazy() returns false, then it hasn't freed the =
-memory,
-> so we only invalidate the TLB if 'flush' is true in that case. If
-> __purge_vmap_area_lazy() returns true instead, then it takes care of =
-the TLB
-> invalidation before the freeing.
+This custom resizing array was vulnerable to a Spectre attack (speculating
+off the end of an array to a user-controlled offset).  The XArray is
+not vulnerable to Spectre as it always masks its lookups to be within
+the bounds of the array.
 
-Right. Sorry for my misunderstanding.
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ fs/aio.c                 | 182 ++++++++++++++-------------------------
+ include/linux/mm_types.h |   5 +-
+ kernel/fork.c            |   3 +-
+ mm/debug.c               |   6 --
+ 4 files changed, 67 insertions(+), 129 deletions(-)
 
-Thanks,
-Nadav
+diff --git a/fs/aio.c b/fs/aio.c
+index 301e6314183b..51ba7446a24f 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -71,12 +71,6 @@ struct aio_ring {
+ 
+ #define AIO_RING_PAGES	8
+ 
+-struct kioctx_table {
+-	struct rcu_head		rcu;
+-	unsigned		nr;
+-	struct kioctx __rcu	*table[];
+-};
+-
+ struct kioctx_cpu {
+ 	unsigned		reqs_available;
+ };
+@@ -313,27 +307,22 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
+ {
+ 	struct file *file = vma->vm_file;
+ 	struct mm_struct *mm = vma->vm_mm;
+-	struct kioctx_table *table;
+-	int i, res = -EINVAL;
++	struct kioctx *ctx;
++	unsigned long index;
++	int res = -EINVAL;
+ 
+-	spin_lock(&mm->ioctx_lock);
+-	rcu_read_lock();
+-	table = rcu_dereference(mm->ioctx_table);
+-	for (i = 0; i < table->nr; i++) {
+-		struct kioctx *ctx;
+-
+-		ctx = rcu_dereference(table->table[i]);
+-		if (ctx && ctx->aio_ring_file == file) {
+-			if (!atomic_read(&ctx->dead)) {
+-				ctx->user_id = ctx->mmap_base = vma->vm_start;
+-				res = 0;
+-			}
+-			break;
++	xa_lock(&mm->ioctx);
++	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
++		if (ctx->aio_ring_file != file)
++			continue;
++		if (!atomic_read(&ctx->dead)) {
++			ctx->user_id = ctx->mmap_base = vma->vm_start;
++			res = 0;
+ 		}
++		break;
+ 	}
++	xa_unlock(&mm->ioctx);
+ 
+-	rcu_read_unlock();
+-	spin_unlock(&mm->ioctx_lock);
+ 	return res;
+ }
+ 
+@@ -617,57 +606,21 @@ static void free_ioctx_users(struct percpu_ref *ref)
+ 
+ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+ {
+-	unsigned i, new_nr;
+-	struct kioctx_table *table, *old;
+ 	struct aio_ring *ring;
++	int err;
+ 
+-	spin_lock(&mm->ioctx_lock);
+-	table = rcu_dereference_raw(mm->ioctx_table);
+-
+-	while (1) {
+-		if (table)
+-			for (i = 0; i < table->nr; i++)
+-				if (!rcu_access_pointer(table->table[i])) {
+-					ctx->id = i;
+-					rcu_assign_pointer(table->table[i], ctx);
+-					spin_unlock(&mm->ioctx_lock);
+-
+-					/* While kioctx setup is in progress,
+-					 * we are protected from page migration
+-					 * changes ring_pages by ->ring_lock.
+-					 */
+-					ring = kmap_atomic(ctx->ring_pages[0]);
+-					ring->id = ctx->id;
+-					kunmap_atomic(ring);
+-					return 0;
+-				}
+-
+-		new_nr = (table ? table->nr : 1) * 4;
+-		spin_unlock(&mm->ioctx_lock);
+-
+-		table = kzalloc(sizeof(*table) + sizeof(struct kioctx *) *
+-				new_nr, GFP_KERNEL);
+-		if (!table)
+-			return -ENOMEM;
+-
+-		table->nr = new_nr;
+-
+-		spin_lock(&mm->ioctx_lock);
+-		old = rcu_dereference_raw(mm->ioctx_table);
+-
+-		if (!old) {
+-			rcu_assign_pointer(mm->ioctx_table, table);
+-		} else if (table->nr > old->nr) {
+-			memcpy(table->table, old->table,
+-			       old->nr * sizeof(struct kioctx *));
++	err = xa_alloc(&mm->ioctx, &ctx->id, UINT_MAX, ctx, GFP_KERNEL);
++	if (err)
++		return err;
+ 
+-			rcu_assign_pointer(mm->ioctx_table, table);
+-			kfree_rcu(old, rcu);
+-		} else {
+-			kfree(table);
+-			table = old;
+-		}
+-	}
++	/*
++	 * While kioctx setup is in progress, we are protected from
++	 * page migration changing ring_pages by ->ring_lock.
++	 */
++	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring->id = ctx->id;
++	kunmap_atomic(ring);
++	return 0;
+ }
+ 
+ static void aio_nr_sub(unsigned nr)
+@@ -793,27 +746,8 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
+ 	return ERR_PTR(err);
+ }
+ 
+-/* kill_ioctx
+- *	Cancels all outstanding aio requests on an aio context.  Used
+- *	when the processes owning a context have all exited to encourage
+- *	the rapid destruction of the kioctx.
+- */
+-static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+-		      struct ctx_rq_wait *wait)
++static void __kill_ioctx(struct kioctx *ctx, struct ctx_rq_wait *wait)
+ {
+-	struct kioctx_table *table;
+-
+-	spin_lock(&mm->ioctx_lock);
+-	if (atomic_xchg(&ctx->dead, 1)) {
+-		spin_unlock(&mm->ioctx_lock);
+-		return -EINVAL;
+-	}
+-
+-	table = rcu_dereference_raw(mm->ioctx_table);
+-	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
+-	RCU_INIT_POINTER(table->table[ctx->id], NULL);
+-	spin_unlock(&mm->ioctx_lock);
+-
+ 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
+ 	wake_up_all(&ctx->wait);
+ 
+@@ -831,6 +765,30 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+ 
+ 	ctx->rq_wait = wait;
+ 	percpu_ref_kill(&ctx->users);
++}
++
++/* kill_ioctx
++ *	Cancels all outstanding aio requests on an aio context.  Used
++ *	when the processes owning a context have all exited to encourage
++ *	the rapid destruction of the kioctx.
++ */
++static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
++		      struct ctx_rq_wait *wait)
++{
++	struct kioctx *old;
++
++	/* I don't understand what this lock is protecting against */
++	xa_lock(&mm->ioctx);
++	if (atomic_xchg(&ctx->dead, 1)) {
++		xa_unlock(&mm->ioctx);
++		return -EINVAL;
++	}
++
++	old = __xa_erase(&mm->ioctx, ctx->id);
++	WARN_ON(old != ctx);
++	xa_unlock(&mm->ioctx);
++
++	__kill_ioctx(ctx, wait);
+ 	return 0;
+ }
+ 
+@@ -844,26 +802,21 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+  */
+ void exit_aio(struct mm_struct *mm)
+ {
+-	struct kioctx_table *table = rcu_dereference_raw(mm->ioctx_table);
++	struct kioctx *ctx;
+ 	struct ctx_rq_wait wait;
+-	int i, skipped;
++	unsigned long index;
+ 
+-	if (!table)
++	if (xa_empty(&mm->ioctx))
+ 		return;
+ 
+-	atomic_set(&wait.count, table->nr);
++	/*
++	 * Prevent count from getting to 0 until we're ready for it
++	 */
++	atomic_set(&wait.count, 1);
+ 	init_completion(&wait.comp);
+ 
+-	skipped = 0;
+-	for (i = 0; i < table->nr; ++i) {
+-		struct kioctx *ctx =
+-			rcu_dereference_protected(table->table[i], true);
+-
+-		if (!ctx) {
+-			skipped++;
+-			continue;
+-		}
+-
++	xa_lock(&mm->ioctx);
++	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
+ 		/*
+ 		 * We don't need to bother with munmap() here - exit_mmap(mm)
+ 		 * is coming and it'll unmap everything. And we simply can't,
+@@ -872,16 +825,16 @@ void exit_aio(struct mm_struct *mm)
+ 		 * that it needs to unmap the area, just set it to 0.
+ 		 */
+ 		ctx->mmap_size = 0;
+-		kill_ioctx(mm, ctx, &wait);
++		atomic_inc(&wait.count);
++		__xa_erase(&mm->ioctx, ctx->id);
++		__kill_ioctx(ctx, &wait);
+ 	}
++	xa_unlock(&mm->ioctx);
+ 
+-	if (!atomic_sub_and_test(skipped, &wait.count)) {
++	if (!atomic_sub_and_test(1, &wait.count)) {
+ 		/* Wait until all IO for the context are done. */
+ 		wait_for_completion(&wait.comp);
+ 	}
+-
+-	RCU_INIT_POINTER(mm->ioctx_table, NULL);
+-	kfree(table);
+ }
+ 
+ static void put_reqs_available(struct kioctx *ctx, unsigned nr)
+@@ -1026,24 +979,17 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
+ 	struct aio_ring __user *ring  = (void __user *)ctx_id;
+ 	struct mm_struct *mm = current->mm;
+ 	struct kioctx *ctx, *ret = NULL;
+-	struct kioctx_table *table;
+ 	unsigned id;
+ 
+ 	if (get_user(id, &ring->id))
+ 		return NULL;
+ 
+ 	rcu_read_lock();
+-	table = rcu_dereference(mm->ioctx_table);
+-
+-	if (!table || id >= table->nr)
+-		goto out;
+-
+-	ctx = rcu_dereference(table->table[id]);
++	ctx = xa_load(&mm->ioctx, id);
+ 	if (ctx && ctx->user_id == ctx_id) {
+ 		if (percpu_ref_tryget_live(&ctx->users))
+ 			ret = ctx;
+ 	}
+-out:
+ 	rcu_read_unlock();
+ 	return ret;
+ }
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5ed8f6292a53..1a95bb27f5a7 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -14,6 +14,7 @@
+ #include <linux/uprobes.h>
+ #include <linux/page-flags-layout.h>
+ #include <linux/workqueue.h>
++#include <linux/xarray.h>
+ 
+ #include <asm/mmu.h>
+ 
+@@ -336,7 +337,6 @@ struct core_state {
+ 	struct completion startup;
+ };
+ 
+-struct kioctx_table;
+ struct mm_struct {
+ 	struct {
+ 		struct vm_area_struct *mmap;		/* list of VMAs */
+@@ -431,8 +431,7 @@ struct mm_struct {
+ 		atomic_t membarrier_state;
+ #endif
+ #ifdef CONFIG_AIO
+-		spinlock_t			ioctx_lock;
+-		struct kioctx_table __rcu	*ioctx_table;
++		struct xarray ioctx;
+ #endif
+ #ifdef CONFIG_MEMCG
+ 		/*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff89c7b..acb775f9592d 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -946,8 +946,7 @@ __setup("coredump_filter=", coredump_filter_setup);
+ static void mm_init_aio(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_AIO
+-	spin_lock_init(&mm->ioctx_lock);
+-	mm->ioctx_table = NULL;
++	xa_init_flags(&mm->ioctx, XA_FLAGS_ALLOC);
+ #endif
+ }
+ 
+diff --git a/mm/debug.c b/mm/debug.c
+index cdacba12e09a..d45ec63aed8c 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -127,9 +127,6 @@ void dump_mm(const struct mm_struct *mm)
+ 		"start_brk %lx brk %lx start_stack %lx\n"
+ 		"arg_start %lx arg_end %lx env_start %lx env_end %lx\n"
+ 		"binfmt %px flags %lx core_state %px\n"
+-#ifdef CONFIG_AIO
+-		"ioctx_table %px\n"
+-#endif
+ #ifdef CONFIG_MEMCG
+ 		"owner %px "
+ #endif
+@@ -158,9 +155,6 @@ void dump_mm(const struct mm_struct *mm)
+ 		mm->start_brk, mm->brk, mm->start_stack,
+ 		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
+ 		mm->binfmt, mm->flags, mm->core_state,
+-#ifdef CONFIG_AIO
+-		mm->ioctx_table,
+-#endif
+ #ifdef CONFIG_MEMCG
+ 		mm->owner,
+ #endif
+-- 
+2.19.1
 
