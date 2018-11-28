@@ -2,69 +2,74 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096CCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77071C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5D8B2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:22:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D8B2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 350112081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:24:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w46ZAEtf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350112081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeK1PWc (ORCPT
+        id S1727249AbeK1PYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:22:32 -0500
-Received: from mout.gmx.net ([212.227.17.21]:36253 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbeK1PWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:22:31 -0500
-Received: from ovpn-120-189.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
- (mrgmx101 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MHLNn-1gEOp82xgh-00E8Pw; Wed, 28 Nov 2018 05:21:53 +0100
-From:   Qian Cai <cai@gmx.us>
-Subject: Re: kmemleak: Early log buffer exceeded (525980) during boot
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kasan-dev@googlegroups.com,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1541712198.12945.12.camel@gmx.us>
- <D7C9EA14-C812-406F-9570-CFF36F4C3983@gmx.us>
- <20181110165938.lbt6dfamk2ljafcv@localhost>
-Message-ID: <a2a9180f-32cf-a0fa-3829-f36133e3b924@gmx.us>
-Date:   Tue, 27 Nov 2018 23:21:51 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181110165938.lbt6dfamk2ljafcv@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:A9U4XCZVDy4Vk907K3Zn6bIvRZ5ylpUUT0wYKWXMHM3gHW3mcCb
- IcgEiPl0WIkJgadbQ9ecTJg6nUUPwBreGjYw+sH7XVC8K7MHMOKnfiUtutc3jYi1bAcRwyH
- z0eBsTt6UjGW3ZDacRqRJYjNlUp5OPIem0o4mqWDaMiM/OQ8TGm6awV3haM5eL5GJgA7u6w
- gCOR8ZMoUk/9teaIMPxsg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OrSyPj44jMg=:WHMzUD0CsR6RKKGwmL0mWu
- /W+OQmdoR7ZDMZ2vMPp/kiPKcXLKeYy9samaio0qJ+GrTciLcmKSgLM/Bzvfz4EhXrsuruysa
- 6exRajD6uSNE6TEG+/BQ4rCNuHBs+UUh8yiSTt8tBYOykUo+Qq8qDBwOyrfqN1G8ekXV3nzJF
- kRPmiKVZJdUN6mNWhz/uN67nl2zswyPYm72xpxJNGNzMXD2iu+OptFh2Y/SMpC+p/AYwlaTjI
- SFe07qyt8Wsd3aIow6N5fc8f3pV+ABgFv6cnjMnBC/gLkJL8G1vR1TLOG9BDSD08gfx45R/7w
- MrYo0/eW8aI0BprZODfIya5VeojPZXo/6eHVr6q72i1x/6hhrV9MCdBnb/5ojERV6VrLPUsIU
- BheS9wLv6vBOoArgf4eEflBu4soiKvjLbs8jQXDDKIHt/ZwpNqboLJGKMVOBQSKBoN16Pkrij
- f01/NDpIrKfzpldj6u5JFDVoa0Ba9/TPh7FarRLOwLQ1WXkrS7ITtITTJDScOlho/KCT3tcH0
- 96jRUgh0qKrjTt/F2B7tZoSMEBm/LPntZLVv5Cb2LfRiPFW/pDaRPpQOgz46qtVPhESgL1eqp
- 6KUEK9DYgO8vf7py9ERMneXqR660rROkYtCxYlJeC4oEhmUqZjPv67RRLiXU5TqlgDG179/Nl
- ZxUxEYfVUGzx/zhH0pDk6Faf3bInm/PkN/0e7sJys6eBXHOvy5cPixGim0XXq9RKDTJfOYrt7
- ElsbKbXKg8ENuTx0wCj3zLmMb/Xggwvpea23iUMxGrPfC9utplyFXv3kE6JJuJ0Ve3PWsUBou
- TlsnIZhjT8c8FZhVSqS3B8/m99M+tGSJ/cUYmiQSee4XdRY9XrmfpoOpsbyUCBqT6qng034RO
- q1NUcnsKyM+JAsDlE+s4SNNkInFaTRH0lXJzb5k3U=
+        Wed, 28 Nov 2018 10:24:50 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:43396 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbeK1PYu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 10:24:50 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAS4NvA7015695;
+        Wed, 28 Nov 2018 04:24:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=OqJN3hwJVtXN0GLXo6jvJNpUpmhuGv6IkgI5jzanZqM=;
+ b=w46ZAEtfZVE7n3X906pfLLs2LKrnVR4VhuXsZzYfyFKp3eoPXP/GmF0FDy6i08TmlaXY
+ ukilelGD++/KkUID5m8xEO4WNLEEN5FT5B0Qry5wOCjHKT54jxWgy3StRKkFUNI2GDZj
+ hYRGSRvq6cp0tH4udUqgT41F4E//g8Q5Ov1ThjwAlG42eas9nRs4WGLCJsuxR37gOdUE
+ s3hCKD59wHeThjRsxsfb5rbWQeQhqlP0u9L+2qZyAkFlPtoVC1W4bqpZeDx6IrX0EMjI
+ oa0bAkeWwNbEj4BqUx6CXJCabPC2Quc0LkvA3j0ak3KhMZpXIgXLyYaZHjlQSvH09MdR ug== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nxy9r7ttt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 04:24:35 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAS4OTLX001497
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 04:24:30 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAS4OTdq006186;
+        Wed, 28 Nov 2018 04:24:29 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Nov 2018 20:24:29 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Small typo fix
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181127210459.11809-1-ates@bu.edu>
+Date:   Tue, 27 Nov 2018 21:24:22 -0700
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5740EF93-84C7-4234-B6F3-2D55271F06B1@oracle.com>
+References: <20181127210459.11809-1-ates@bu.edu>
+To:     Emre Ates <ates@bu.edu>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,35 +77,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 11/10/18 11:59 AM, Catalin Marinas wrote:
-> On Sat, Nov 10, 2018 at 10:08:10AM -0500, Qian Cai wrote:
->> On Nov 8, 2018, at 4:23 PM, Qian Cai <cai@gmx.us> wrote:
->>> The maximum value for DEBUG_KMEMLEAK_EARLY_LOG_SIZE is only 40000, so it
->>> disables kmemleak every time on this aarch64 server running the latest mainline
->>> (b00d209).
->>>
->>> # echo scan > /sys/kernel/debug/kmemleak 
->>> -bash: echo: write error: Device or resource busy
->>>
->>> Any idea on how to enable kmemleak there?
->>
->> I have managed to hard-code DEBUG_KMEMLEAK_EARLY_LOG_SIZE to 600000,
-> 
-> That's quite a high number, I wouldn't have thought it is needed.
-> Basically the early log buffer is only used until the slub allocator
-> gets initialised and kmemleak_init() is called from start_kernel(). I
-> don't know what allocates that much memory so early.
-> 
+> On Nov 27, 2018, at 2:04 PM, Emre Ates <ates@bu.edu> wrote:
+>=20
+> ---
+> mm/vmstat.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 9c624595e904..cc7d04928c2e 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1106,7 +1106,7 @@ int fragmentation_index(struct zone *zone, =
+unsigned int order)
+> 					TEXT_FOR_HIGHMEM(xx) xx =
+"_movable",
+>=20
+> const char * const vmstat_text[] =3D {
+> -	/* enum zone_stat_item countes */
+> +	/* enum zone_stat_item counters */
+> 	"nr_free_pages",
+> 	"nr_zone_inactive_anon",
+> 	"nr_zone_active_anon",
+> --
+> 2.19.1
+>=20
+> Signed-off-by: Emre Ates <ates@bu.edu>
 
-It turned out that kmemleak does not play well with KASAN on those aarch64 (HPE
-Apollo 70 and Huawei TaiShan 2280) servers.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-After calling start_kernel()->setup_arch()->kasan_init(), kmemleak early log
-buffer went from something like from 280 to 260000. The multitude of
-kmemleak_alloc() calls is,
-
-for_each_memblock(memory, reg) x \
-while (pgdp++, addr = next, addr != end) x \
-while (ptep++, addr = next, addr != end && \ pte_none(READ_ONCE(*ptep)))
-
-Is this expected?
