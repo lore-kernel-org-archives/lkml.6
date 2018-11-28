@@ -2,182 +2,140 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22251C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA08C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E665C20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:26:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E665C20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D9E802082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:27:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b8zoVDfm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9E802082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeK1M00 (ORCPT
+        id S1727190AbeK1M1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 07:26:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbeK1M00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 07:26:26 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0831858E39;
-        Wed, 28 Nov 2018 01:26:39 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 560AF5C1B2;
-        Wed, 28 Nov 2018 01:26:31 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 09:26:26 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Alexis Savery <asavery@chromium.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
-Message-ID: <20181128012624.GB11128@ming.t460p>
-References: <20181030230624.61834-1-evgreen@chromium.org>
- <20181030230624.61834-3-evgreen@chromium.org>
+        Wed, 28 Nov 2018 07:27:12 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38528 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbeK1M1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 07:27:12 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAS1RFFt096815;
+        Tue, 27 Nov 2018 19:27:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543368435;
+        bh=iL3WCl4ASjsA/ygQPkMwqi3EuwwGA75WXKbsT0nDFVM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=b8zoVDfmaLbMpv2jUDZ8LoUXv6CGfWbGnp2ZrPown+RzDwXA9hledJhCD53Im2Yoc
+         sp1d0dYfyfAI6zVEVIDRZpw9qIwbwgFdkEj97mYjgPkdrhEy1ErAL/ufZv/GeEI2kv
+         ORkUvg39t4ZyG7N2Ef7Gn7o9fNlRLV5GJbx3LUcI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAS1RFog065811
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Nov 2018 19:27:15 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 27
+ Nov 2018 19:27:15 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 27 Nov 2018 19:27:15 -0600
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAS1RFSE011241;
+        Tue, 27 Nov 2018 19:27:15 -0600
+Subject: Re: [PATCH] net: ethernet: ti: cpsw: allow to configure min tx packet
+ size
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20181125234315.28313-1-grygorii.strashko@ti.com>
+ <20181126022711.GD32164@lunn.ch>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <7a194258-2888-2268-42d1-27ac513a5c8a@ti.com>
+Date:   Tue, 27 Nov 2018 19:27:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030230624.61834-3-evgreen@chromium.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 28 Nov 2018 01:26:39 +0000 (UTC)
+In-Reply-To: <20181126022711.GD32164@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 04:06:24PM -0700, Evan Green wrote:
-> If the backing device for a loop device is a block device,
-> then mirror the discard properties of the underlying block
-> device into the loop device. While in there, differentiate
-> between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
-> different for block devices, but which the loop device had
-> just been lumping together.
+Hi Andrew,
+
+On 11/25/18 8:27 PM, Andrew Lunn wrote:
+> On Sun, Nov 25, 2018 at 05:43:15PM -0600, Grygorii Strashko wrote:
+>> For proper VLAN packets forwarding CPSW driver uses min tx packet size of
+>> 64bytes (VLAN_ETH_ZLEN, excluding ETH_FCS) which was corrected by
+>> commit 9421c9015047 ("net: ethernet: ti: cpsw: fix min eth packet size").
+>>
+>> Unfortunately, this breaks some industrial automation protocols, as
+>> reported by TI customers [1], which can work only with min TX packet size
+>> from 60 byte (ecluding FCS).
 > 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
+> Hi Grygorii
 > 
->  drivers/block/loop.c | 61 +++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 41 insertions(+), 20 deletions(-)
+> excluding...
 > 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 28990fc94841a..176e65101c4ef 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
->  	return ret;
->  }
->  
-> -static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-> +static int lo_discard(struct loop_device *lo, struct request *rq,
-> +		int mode, loff_t pos)
->  {
-> -	/*
-> -	 * We use punch hole to reclaim the free space used by the
-> -	 * image a.k.a. discard. However we do not support discard if
-> -	 * encryption is enabled, because it may give an attacker
-> -	 * useful information.
-> -	 */
->  	struct file *file = lo->lo_backing_file;
-> -	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-> +	struct request_queue *q = lo->lo_queue;
->  	int ret;
->  
-> -	if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> +	if (!blk_queue_discard(q)) {
->  		ret = -EOPNOTSUPP;
->  		goto out;
->  	}
-> @@ -603,8 +598,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
->  	case REQ_OP_FLUSH:
->  		return lo_req_flush(lo, rq);
->  	case REQ_OP_DISCARD:
-> +		return lo_discard(lo, rq,
-> +			FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-> +
->  	case REQ_OP_WRITE_ZEROES:
-> -		return lo_discard(lo, rq, pos);
-> +		return lo_discard(lo, rq,
-> +			FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-> +
->  	case REQ_OP_WRITE:
->  		if (lo->transfer)
->  			return lo_write_transfer(lo, rq, pos);
-> @@ -859,6 +859,25 @@ static void loop_config_discard(struct loop_device *lo)
->  	struct file *file = lo->lo_backing_file;
->  	struct inode *inode = file->f_mapping->host;
->  	struct request_queue *q = lo->lo_queue;
-> +	struct request_queue *backingq;
-> +
-> +	/*
-> +	 * If the backing device is a block device, mirror its discard
-> +	 * capabilities.
-> +	 */
-> +	if (S_ISBLK(inode->i_mode)) {
-> +		backingq = bdev_get_queue(inode->i_bdev);
-> +		blk_queue_max_discard_sectors(q,
-> +			backingq->limits.max_discard_sectors);
-> +
-> +		blk_queue_max_write_zeroes_sectors(q,
-> +			backingq->limits.max_write_zeroes_sectors);
-> +
-> +		q->limits.discard_granularity =
-> +			backingq->limits.discard_granularity;
-> +
-> +		q->limits.discard_alignment =
-> +			backingq->limits.discard_alignment;
+>> Hence, introduce module boot parameter "tx_packet_min" to allow configure
+>> min TX packet size at boot time.
+> 
+> Module parameters are generally not liked.
 
-I think it isn't necessary to mirror backing queue's discard/write_zeros
-capabilities, given either fs of the underlying queue can deal with well.
+not sure how to proceed otherwise. There is always one instance of CPSW per SoC,
+so Module parameter is safe here at least.
 
->  
->  	/*
->  	 * We use punch hole to reclaim the free space used by the
-> @@ -866,22 +885,24 @@ static void loop_config_discard(struct loop_device *lo)
->  	 * encryption is enabled, because it may give an attacker
->  	 * useful information.
->  	 */
-> -	if ((!file->f_op->fallocate) ||
-> -	    lo->lo_encrypt_key_size) {
-> +	} else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
->  		q->limits.discard_granularity = 0;
->  		q->limits.discard_alignment = 0;
->  		blk_queue_max_discard_sectors(q, 0);
->  		blk_queue_max_write_zeroes_sectors(q, 0);
-> -		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> -		return;
-> -	}
->  
-> -	q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> -	q->limits.discard_alignment = 0;
-> +	} else {
-> +		q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> +		q->limits.discard_alignment = 0;
-> +
-> +		blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> +		blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> +	}
->  
-> -	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> -	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> -	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> +	if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
-> +		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> +	else
-> +		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
->  }
+> 
+> What actually happens here with this lower limit? Does the hardware
+> send runt packets? Does the protocol actually require runt packets?
 
-Looks it should work just by mirroring backing queue's discard
-capability to loop queue in case that the loop is backed by
-block device, doesn't it? Meantime the unified discard limits &
-write_zeros limits can be kept.
+I do not have more details in addition to what's described in [1]:
+"While for instance the ARP protocol does not seem to have a problem with additional
+padding in the payload, some industrial automation protocols seem to be strict in this regard."
+"We're basically running a bridge for different industrial protocols like ProfiNet"
 
-thanks,
-Ming
+As per my understanding there some industrial HW and SW which has very
+strict limitation to min packet size and just can't handle other min packet
+sizes.
+
+> 
+> I'm just wondering if the module parameter can be avoided by setting
+> this as the default. 
+
+It was a default value 60 bytes (64 bytes with FCS), but I changed it to 64 byte (68 byte with FCS) 
+as per above mentioned commit for proper VLAN tagged packets forwarding support
+(which seems legal as per 802.1q - G.2.1 Treatment of PAD fields in IEEE 802.3 frames).
+
+Use case:
+ - Port 0 (int) - vlan capable host.
+ - Port 1 (ext) - vlan capable network
+ - port 2 (ext)- non vlan capable network. pvid is set.
+   all egress traffic untagged. CPSW HW can't align packet properly
+   when vlan tag is removed, so need to use 68 byte min packet size.
+
+Hence, both use cases need to be supported - this patch posted.
+without it TI customers will continue do revert manually when required
+which definitely not a good option.
+
+>But we need to ensure ARP packets, which are
+> smaller than the minimum MTU are correctly padded.
+
+
+[1] https://e2e.ti.com/support/arm/sitara_arm/f/791/t/701669
+
+-- 
+regards,
+-grygorii
