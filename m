@@ -2,193 +2,116 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5FFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC71C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DEB20645
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D6A20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="qIb4Qp0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DEB20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tT3Ehiha"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D6A20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbeK1MCx (ORCPT
+        id S1726989AbeK1MF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 07:02:53 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:57573 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeK1MCx (ORCPT
+        Wed, 28 Nov 2018 07:05:56 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46780 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbeK1MF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 07:02:53 -0500
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id wAS1316r032397;
-        Wed, 28 Nov 2018 10:03:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wAS1316r032397
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543366982;
-        bh=D97CGI90gL/nTViCyKYsk69JASJM+LyJoWpONhxQ/yM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qIb4Qp0yA+ghlRUlnuskDiX9Xgtts8sl9qyeZbIjWs8G2W++klOakndoKr0DxtEhu
-         /zenDNK5jOkDE34DJV+DvY57Jt9wC87lcLsF6K4DkCaMyePsiWBkYujZizO5ys2AH2
-         tXm8obEFVJTUZWfFTGfNvqaZi8DxldyD18UWrz/5gc53GCxGTcD+79mG9EH2qVU1Es
-         AmFmMxHJHGd8us91jqq3Rnkht5t1NswmkUfAnI+JiITqLjESzHBt4/bnXa4B6dK9RV
-         2dzxsk40e6Qxz+JHa4UB2rIIKl89R3DLWhGPJGzPImqj4L6Dn/Ij7OcFdtpxcvNTF/
-         uKQVInmrWwBgg==
-X-Nifty-SrcIP: [209.85.221.181]
-Received: by mail-vk1-f181.google.com with SMTP id o130so5532529vke.10;
-        Tue, 27 Nov 2018 17:03:01 -0800 (PST)
-X-Gm-Message-State: AA+aEWats8uhyOWAiBQ7jn7lqoe9SF6nigR7Ep1+M4L1UfePpdyLGlP3
-        jP/5yXw6dD4WYtHdrU5OPbZlkoXt+z8lhrpi03g=
-X-Google-Smtp-Source: AFSGD/Uo6ACs1ohKEYMNMDWotiNVJM94cF5QZTdNdBjA7piXKQWR4pu2z/OeEdfg4i0opwHVNZLHrBVjYI2LOnuxl5k=
-X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr13930643vki.84.1543366980187;
- Tue, 27 Nov 2018 17:03:00 -0800 (PST)
-MIME-Version: 1.0
-References: <1539276063-5103-1-git-send-email-yamada.masahiro@socionext.com>
- <20181124141616.GH3175@vkoul-mobl.Dlink> <CAK7LNAR8Tk9iXPLnv4XDM0E=kTWwv2+UGz+xmtA-eJyjRFjFRw@mail.gmail.com>
- <20181127145911.GC3175@vkoul-mobl.Dlink>
-In-Reply-To: <20181127145911.GC3175@vkoul-mobl.Dlink>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 28 Nov 2018 10:02:24 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT1wxdpp7qUAf9YgJu8MfzqrgnWkXA-032nnpSBZR9o6A@mail.gmail.com>
-Message-ID: <CAK7LNAT1wxdpp7qUAf9YgJu8MfzqrgnWkXA-032nnpSBZR9o6A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] dmaengine: add UniPhier MIO DMAC driver
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Nov 2018 07:05:56 -0500
+Received: by mail-yb1-f196.google.com with SMTP id i17-v6so9915712ybp.13;
+        Tue, 27 Nov 2018 17:06:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=oEKw5XAazEQBN9tvsv+EkVGZCeB7omnmnmXVeDUn3ik=;
+        b=tT3EhihaMUgBIIgedRmXq2B9B2y0EzQAZYnkFH2z1TD2a+KcniQFwbikqGSDP6Nmzk
+         52j9FmIigPYVFeUkbVLvAMG0PMgW36ojYo0d04TChZc/Zpi1qU98yWk8SpHIUDs2UoC8
+         Xzxg3MlsUFy0iA9c6Ln8OeIfmqOvspAZACZuX7OmyKynNWJw2pnDqmAL7ULNC4v4x4gO
+         GoQ8kHSp/9AIaZ43MruF1eSp4nui0LJLopdDpnopKFZjcfimwy7vEG6MAJ/YI/e4wLlm
+         2XvJ+GXbaFeiVdd3IC5CJBZ4uS5vNrLAWLie27Mrw5oz/b68KRDJE3C9eSIWDJpTUnBy
+         f9xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=oEKw5XAazEQBN9tvsv+EkVGZCeB7omnmnmXVeDUn3ik=;
+        b=f2HveFFlH6nbp0+/v+BhLOQyiWiamiJOCslWhoC9OY/FFiwREb6oeJ+KQll1Q0sorq
+         l3W2tlOO6kdrLl0PrtFStSBzQ4ei9Xr67fVRLGx5kG8JAYuBXTSiVuMc5ZiHUrA63DcA
+         7Rk4AApQ+R5tqYc6w9FqNjDll8xxoQZp8ltijabOmzs8wlfNCc3cOAweFMzku+wJF2UK
+         h2Vta8ezr8X04jMrZWKhQNRjvjmiDBhXMFF8Dp6yurw64Q9919HugOc99TA4xptMGlzD
+         4Zf4A/j456P/0xpmjfxBAC8yMjKs45nlxMtgu7EDquilDOBJURRrN/Cf1zcAc5Gr2cyl
+         Wffw==
+X-Gm-Message-State: AA+aEWY28RwKcwe4fiYappMyDbraMhwsa3rYkw2oCXclkOPUid99d244
+        ckuMjg+CH5qs6MLO8EAMhas=
+X-Google-Smtp-Source: AFSGD/V7yWe9/bdo7r9LW4WTexMnxJVGhdWXPJxYkTpkkfnTy1LJF2sBttJFB0M1i2/KCiizclZWKw==
+X-Received: by 2002:a25:2206:: with SMTP id i6-v6mr34828443ybi.151.1543367170280;
+        Tue, 27 Nov 2018 17:06:10 -0800 (PST)
+Received: from [10.33.114.204] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id x4sm7876302ywj.80.2018.11.27.17.06.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 17:06:09 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: =?utf-8?Q?Re=3A_=5BPATCH_0/2=5D_Don=E2=80=99t_leave_executable_TL?=
+ =?utf-8?Q?B_entries_to_freed_pages?=
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+Date:   Tue, 27 Nov 2018 17:06:05 -0800
+Cc:     akpm@linux-foundation.org, luto@kernel.org, will.deacon@arm.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
+        davem@davemloft.net, mhiramat@kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+        jeyu@kernel.org, netdev@vger.kernel.org, ard.biesheuvel@linaro.org,
+        jannh@google.com, kristen@linux.intel.com, dave.hansen@intel.com,
+        deneen.t.dock@intel.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CDB8B7C1-FD55-44AD-9B71-B3A750BF5489@gmail.com>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 12:01 AM Vinod Koul <vkoul@kernel.org> wrote:
->
-> On 25-11-18, 22:53, Masahiro Yamada wrote:
-> > On Sat, Nov 24, 2018 at 11:16 PM Vinod Koul <vkoul@kernel.org> wrote:
-> > >
-> > > On 12-10-18, 01:41, Masahiro Yamada wrote:
-> > > > 1/2: DT-binding
-> > > > 2/2: driver
-> > >
-> > > Applied this series, thanks
-> >
-> >
-> > Thanks.
-> >
-> >
-> > > While building I noticed that we get few warns when compiling with
-> > > C=1, I would prefer you fix them. Please send fixes on top of the
-> > > applied patches.
-> >
-> > My code is fine.
->
-> Lets see..
->
-> > If you are talking about the following, your sparse is too old.
-> > Upgrade your sparse.
->
-> Not really!!
->
-> $ sparse --version
-> 0.5.2
->
-> .. is the last released version!
->
-> Do you use from git?
+> On Nov 27, 2018, at 4:07 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>=20
+> Sometimes when memory is freed via the module subsystem, an executable
+> permissioned TLB entry can remain to a freed page. If the page is =
+re-used to
+> back an address that will receive data from userspace, it can result =
+in user
+> data being mapped as executable in the kernel. The root of this =
+behavior is
+> vfree lazily flushing the TLB, but not lazily freeing the underlying =
+pages.=20
+>=20
+> There are sort of three categories of this which show up across =
+modules, bpf,
+> kprobes and ftrace:
+>=20
+> 1. When executable memory is touched and then immediatly freed
+>=20
+>   This shows up in a couple error conditions in the module loader and =
+BPF JIT
+>   compiler.
 
+Interesting!
 
-Yes.
+Note that this may cause conflict with "x86: avoid W^X being broken =
+during
+modules loading=E2=80=9D, which I recently submitted.
 
-My version is v0.5.2-853-g06a4545
-
-
-I only see './include/linux/slab.h:332:43: warning: dubious: x & !y'
-in linux-next.
-
-
-The warning in slab.h is already on the way in mm subsystem.
-
-
-
-masahiro@pug:~/ref/linux-next$ git log --oneline -1
-9d52999 Add linux-next specific files for 20181127
-masahiro@pug:~/ref/linux-next$ make ARCH=arm64
-CROSS_COMPILE=aarch64-linux-gnu- C=2 defconfig
-drivers/dma/uniphier-mdmac.o
-*** Default configuration is based on 'defconfig'
-#
-# configuration written to .config
-#
-scripts/kconfig/conf  --syncconfig Kconfig
-  CHECK   scripts/mod/empty.c
-  CC      scripts/mod/empty.o
-  MKELF   scripts/mod/elfconfig.h
-  HOSTCC  scripts/mod/modpost.o
-  CC      scripts/mod/devicetable-offsets.s
-  HOSTCC  scripts/mod/file2alias.o
-  HOSTCC  scripts/mod/sumversion.o
-  HOSTLD  scripts/mod/modpost
-  CC      kernel/bounds.s
-  UPD     include/generated/bounds.h
-  UPD     include/generated/timeconst.h
-  CC      arch/arm64/kernel/asm-offsets.s
-  UPD     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-<stdin>:1338:2: warning: #warning syscall open_tree not implemented [-Wcpp]
-<stdin>:1341:2: warning: #warning syscall move_mount not implemented [-Wcpp]
-<stdin>:1344:2: warning: #warning syscall fsopen not implemented [-Wcpp]
-<stdin>:1347:2: warning: #warning syscall fsconfig not implemented [-Wcpp]
-<stdin>:1350:2: warning: #warning syscall fsmount not implemented [-Wcpp]
-<stdin>:1353:2: warning: #warning syscall fspick not implemented [-Wcpp]
-<stdin>:1356:2: warning: #warning syscall fsinfo not implemented [-Wcpp]
-  CALL    scripts/atomic/check-atomics.sh
-  LDS     arch/arm64/kernel/vdso/vdso.lds
-  VDSOA   arch/arm64/kernel/vdso/gettimeofday.o
-  VDSOA   arch/arm64/kernel/vdso/sigreturn.o
-  VDSOL   arch/arm64/kernel/vdso/vdso.so.dbg
-  VDSOSYM include/generated/vdso-offsets.h
-  CHECK   drivers/dma/uniphier-mdmac.c
-./include/linux/slab.h:332:43: warning: dubious: x & !y
-  CC      drivers/dma/uniphier-mdmac.o
-
-
-
-
-> > ./include/linux/overflow.h:285:13: error: undefined identifier
-> > '__builtin_mul_overflow'
-> > ./include/linux/overflow.h:285:13: error: incorrect type in conditional
-> > ./include/linux/overflow.h:285:13:    got void
-> > ./include/linux/overflow.h:287:13: error: undefined identifier
-> > '__builtin_add_overflow'
-> > ./include/linux/overflow.h:287:13: error: incorrect type in conditional
-> > ./include/linux/overflow.h:287:13:    got void
-> > ./include/linux/overflow.h:285:13: warning: call with no type!
-> > ./include/linux/overflow.h:287:13: warning: call with no type!
->
-> and I was also talking about:
->
-> arch/arm64/include/asm/sysreg.h:471:42: warning: constant 0xffffffffffffffff is so big it is unsigned long
-> arch/arm64/include/asm/sysreg.h:512:42: warning: constant 0xffffffffffffffff is so big it is unsigned long
-> include/linux/slab.h:332:43: warning: dubious: x & !y
->
-> --
-> ~Vinod
-
-
-
--- 
-Best Regards
-Masahiro Yamada
