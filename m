@@ -2,208 +2,183 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BD7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C77C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB1E20660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC9720660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:43:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lp7qh8U6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB1E20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tkvDiDJX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC9720660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeK1Wok (ORCPT
+        id S1728249AbeK1Woq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:44:40 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52211 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbeK1Wo2 (ORCPT
+        Wed, 28 Nov 2018 17:44:46 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44872 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728206AbeK1Wop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:44:28 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so2026039wmh.1;
-        Wed, 28 Nov 2018 03:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:subject:date:message-id:in-reply-to:references;
-        bh=y36Vr6tHWUTE6fkkPoOSAxsWpbq5HwHQ/ij4F5cdR/U=;
-        b=Lp7qh8U6GPKBVbxBhm92DLIATEoyoDOLHeRrXkaX/H5bW5UpfD9hPDaTK900qGqSnG
-         gYiMU0sLJm7sgLrNWx3neWS3zdE8ppFKBHkfkBbme5ZluI1azty9Ilz7PXTnY660DSUN
-         Yq8zmJaCin6gFZGodLSCVWCiYmWyKgDVJs/cCPkAH2jb1ERqRL2iprgDxl0R/u68GBDZ
-         kjnYZxsdQzJXDbD2Lx5k9fWt9KhO0afsRwNw2gwijU+kFvX3nrm32pFKIf1s6fUaRia2
-         Q5V0JZwRrGrdKYLGbRKiyZJBm9K6zGGP26Gg+dh0t5aX2U3PhzuYZuXSi55IGUXPHi3G
-         r2QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:subject:date:message-id
-         :in-reply-to:references;
-        bh=y36Vr6tHWUTE6fkkPoOSAxsWpbq5HwHQ/ij4F5cdR/U=;
-        b=nXG0Q9DB+OYtw0lCyJCxT9xubL4lrSuGjndqsJekUTtM2hV/TywZ9yqicx2Aubzm4O
-         KxLnN7mBEu1OZvYZIM8Esimbj44tO6+wLkyVIGiIf7jnpgiWrUVdb8l1JFRhOHN+yz66
-         Sh6136iGkEW07ybMai7kcV8hWhTFoEYE+6aLU03bjCl0CqYIw7DoG0T51PlUPqO1DkFU
-         2dQSBcQ55M7nR2vJp3zNcbsEnlDGfxNedYSmplBsjhO8Lv6TdWAEIboF2Ma7m5IAicwR
-         3/OgwgXoDWsj9NusewigZftTwJLCjhQo0GtYVUwz4FZXdRtaS+ylHcrvuKEzdXne78Br
-         r+kg==
-X-Gm-Message-State: AA+aEWa2QlJB5Kx6UcBYRYbhHd+NjiteXH7YSN2CrZJJvTYx5m+eBAkG
-        wwfXLXThrPpyLWlz07G9JQfxo1+/
-X-Google-Smtp-Source: AFSGD/UF+0AH0mZvbPKGxS1rMcME+x5eSn/aBZBUAbmUTKsVPAN/LoYWKkOCRM7PrvLqxeWeaEQtiQ==
-X-Received: by 2002:a1c:238c:: with SMTP id j134mr182309wmj.16.1543405383726;
-        Wed, 28 Nov 2018 03:43:03 -0800 (PST)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id k19sm7061740wre.5.2018.11.28.03.43.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 03:43:02 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: [PATCH 2/3] kvm: rename last argument to kvm_get_dirty_log_protect
-Date:   Wed, 28 Nov 2018 12:42:58 +0100
-Message-Id: <1543405379-21910-3-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1543405379-21910-1-git-send-email-pbonzini@redhat.com>
-References: <1543405379-21910-1-git-send-email-pbonzini@redhat.com>
+        Wed, 28 Nov 2018 17:44:45 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wASBgwFr121174;
+        Wed, 28 Nov 2018 05:42:59 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543405379;
+        bh=VXv9cILKOOhGDrJtZMvfwHZzUytHGlB6auBt90YH7Ug=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=tkvDiDJXZHk8pdiixb8LYmTvD151Vx6faN53tv3XuYMgNSZNdWZCvv+n8z33xfD/Q
+         Z+vFlnErqkj1MIGo0/OjMleeyzzIkt3umPCzLx/R9RYDViDc4uTsxqizTX3G0DgvZA
+         e0rQsTqxSNYEp7ECE5Q1/cGOuBX/BOl5mngnKvHg=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wASBgwDT017724
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 05:42:58 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 28
+ Nov 2018 05:42:58 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 28 Nov 2018 05:42:58 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wASBgtTk004794;
+        Wed, 28 Nov 2018 05:42:56 -0600
+Subject: Re: [PATCH 1/2] mfd: ti_am335x_tscadc: Provide unique name for child
+ mfd cells
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181119064236.28902-1-vigneshr@ti.com>
+ <20181119064236.28902-2-vigneshr@ti.com> <20181128090726.GS4272@dell>
+ <16f2b753-1fde-3d20-6ddf-5dc5e4f13a15@ti.com> <20181128110321.GG4272@dell>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <30d8df49-f39d-8259-773c-23ebad273e96@ti.com>
+Date:   Wed, 28 Nov 2018 17:13:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181128110321.GG4272@dell>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When manual dirty log reprotect will be enabled, kvm_get_dirty_log_protect's
-pointer argument will always be false on exit, because no TLB flush is needed
-until the manual re-protection operation.  Rename it from "is_dirty" to "flush",
-which more accurately tells the caller what they have to do with it.
 
-Reviewed-by: Junaid Shahid <junaids@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/mips/kvm/mips.c     | 6 +++---
- arch/x86/kvm/x86.c       | 6 +++---
- include/linux/kvm_host.h | 2 +-
- virt/kvm/arm/arm.c       | 6 +++---
- virt/kvm/kvm_main.c      | 6 +++---
- 5 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 1fcc4d149054..3898e657952e 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -1004,14 +1004,14 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
--	bool is_dirty = false;
-+	bool flush = false;
- 	int r;
- 
- 	mutex_lock(&kvm->slots_lock);
- 
--	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
-+	r = kvm_get_dirty_log_protect(kvm, log, &flush);
- 
--	if (is_dirty) {
-+	if (flush) {
- 		slots = kvm_memslots(kvm);
- 		memslot = id_to_memslot(slots, log->slot);
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 714c5eb0c3bd..448f011aa317 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4393,7 +4393,7 @@ static int kvm_vm_ioctl_reinject(struct kvm *kvm,
-  */
- int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- {
--	bool is_dirty = false;
-+	bool flush = false;
- 	int r;
- 
- 	mutex_lock(&kvm->slots_lock);
-@@ -4404,14 +4404,14 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- 	if (kvm_x86_ops->flush_log_dirty)
- 		kvm_x86_ops->flush_log_dirty(kvm);
- 
--	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
-+	r = kvm_get_dirty_log_protect(kvm, log, &flush);
- 
- 	/*
- 	 * All the TLBs can be flushed out of mmu lock, see the comments in
- 	 * kvm_mmu_slot_remove_write_access().
- 	 */
- 	lockdep_assert_held(&kvm->slots_lock);
--	if (is_dirty)
-+	if (flush)
- 		kvm_flush_remote_tlbs(kvm);
- 
- 	mutex_unlock(&kvm->slots_lock);
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 54cc06dd7e6c..8c56b2873b13 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -753,7 +753,7 @@ int kvm_get_dirty_log(struct kvm *kvm,
- 			struct kvm_dirty_log *log, int *is_dirty);
- 
- int kvm_get_dirty_log_protect(struct kvm *kvm,
--			struct kvm_dirty_log *log, bool *is_dirty);
-+			      struct kvm_dirty_log *log, bool *flush);
- 
- void kvm_arch_mmu_enable_log_dirty_pt_masked(struct kvm *kvm,
- 					struct kvm_memory_slot *slot,
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 23774970c9df..120a2663dab9 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -1205,14 +1205,14 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
-  */
- int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- {
--	bool is_dirty = false;
-+	bool flush = false;
- 	int r;
- 
- 	mutex_lock(&kvm->slots_lock);
- 
--	r = kvm_get_dirty_log_protect(kvm, log, &is_dirty);
-+	r = kvm_get_dirty_log_protect(kvm, log, &flush);
- 
--	if (is_dirty)
-+	if (flush)
- 		kvm_flush_remote_tlbs(kvm);
- 
- 	mutex_unlock(&kvm->slots_lock);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 1d6b77162d7c..54f0fcfd431e 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1154,7 +1154,7 @@ int kvm_get_dirty_log(struct kvm *kvm,
-  *
-  */
- int kvm_get_dirty_log_protect(struct kvm *kvm,
--			struct kvm_dirty_log *log, bool *is_dirty)
-+			struct kvm_dirty_log *log, bool *flush)
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
-@@ -1181,7 +1181,7 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- 	memset(dirty_bitmap_buffer, 0, n);
- 
- 	spin_lock(&kvm->mmu_lock);
--	*is_dirty = false;
-+	*flush = false;
- 	for (i = 0; i < n / sizeof(long); i++) {
- 		unsigned long mask;
- 		gfn_t offset;
-@@ -1189,7 +1189,7 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- 		if (!dirty_bitmap[i])
- 			continue;
- 
--		*is_dirty = true;
-+		*flush = true;
- 
- 		mask = xchg(&dirty_bitmap[i], 0);
- 		dirty_bitmap_buffer[i] = mask;
+On 28/11/18 4:33 PM, Lee Jones wrote:
+> On Wed, 28 Nov 2018, Vignesh R wrote:
+> 
+>> Hi,
+>>
+>> On 28/11/18 2:37 PM, Lee Jones wrote:
+>>> On Mon, 19 Nov 2018, Vignesh R wrote:
+>>>
+>>>> Provide unique names for child mfd cells, this is required in order to
+>>>> support registering of multiple instances of same ti_am335x_tscadc IP.
+>>>
+>>> I don't think it is.  What is the error you are receiving?
+>>
+>> W/o this patch I get:
+>>
+>> [    2.296839] sysfs: cannot create duplicate filename '/bus/platform/devices/TI-am335x-adc'
+>> [    2.305085] CPU: 0 PID: 31 Comm: kworker/0:1 Not tainted 4.20.0-rc3-next-20181123-00018-g
+>> 7791ce8f123f-dirty #182
+>> [    2.315254] Hardware name: Texas Instruments AM654 Base Board (DT)
+>> [    2.321447] Workqueue: events deferred_probe_work_func
+>> [    2.326585] Call trace:
+>> [    2.329036]  dump_backtrace+0x0/0x1c0
+>> [    2.332699]  show_stack+0x14/0x20
+>> [    2.336017]  dump_stack+0x9c/0xbc
+>> [    2.339333]  sysfs_warn_dup+0x60/0x78
+>> [    2.342995]  sysfs_do_create_link_sd.isra.0+0xdc/0xe8
+>> [    2.348042]  sysfs_create_link+0x20/0x40
+>> [    2.351963]  bus_add_device+0x68/0x130
+>> [    2.355711]  device_add+0x398/0x618
+>> [    2.359199]  platform_device_add+0x120/0x290
+>> [    2.363469]  mfd_add_device+0x23c/0x2e8
+>> [    2.367302]  mfd_add_devices+0xb4/0x158
+>> [    2.371136]  ti_tscadc_probe+0x35c/0x4c8
+>> [    2.375056]  platform_drv_probe+0x50/0xa0
+>> [    2.379062]  really_probe+0x204/0x2a8
+>> [    2.382722]  driver_probe_device+0x58/0x100
+>> [    2.386903]  __device_attach_driver+0x98/0xf0
+>> [    2.391258]  bus_for_each_drv+0x64/0xc8
+>> [    2.395091]  __device_attach+0xd8/0x138
+>> [    2.398923]  device_initial_probe+0x10/0x18
+>> [    2.403103]  bus_probe_device+0x90/0x98
+>> [    2.406938]  deferred_probe_work_func+0x74/0xb0
+>> [    2.411470]  process_one_work+0x1e0/0x330
+>> [    2.415478]  worker_thread+0x238/0x460
+>> [    2.419225]  kthread+0x128/0x130
+>> [    2.422452]  ret_from_fork+0x10/0x1c
+>> [    2.426195] ti_am3359-tscadc: probe of 40210000.tscadc failed with error -1
+> 
+> That's because of the way the cells are being registered:
+> 
+>         err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
+>                 tscadc->used_cells, NULL, 0, NULL);
+> 
+> The cells are not numbered (tscadc->cells->id is always 0) and you are
+> forcing the use of the platform ID from the parent platform device
+> (with pdev->id here).  Instead you should s/pdev->id/PLATFORM_DEVID_AUTO/
+> or number the cells manually. I suggest the former.
+> 
+
+Using PLATFORM_DEVID_AUTO works fine. I will post v2 with this change.
+Thanks for the suggestion!
+
+Regards
+Vignesh
+
+>>>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>>>> ---
+>>>>  drivers/mfd/ti_am335x_tscadc.c | 6 ++++--
+>>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+>>>> index c2d47d78705b..ee08af34f81d 100644
+>>>> --- a/drivers/mfd/ti_am335x_tscadc.c
+>>>> +++ b/drivers/mfd/ti_am335x_tscadc.c
+>>>> @@ -248,7 +248,8 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+>>>>  	if (tsc_wires > 0) {
+>>>>  		tscadc->tsc_cell = tscadc->used_cells;
+>>>>  		cell = &tscadc->cells[tscadc->used_cells++];
+>>>> -		cell->name = "TI-am335x-tsc";
+>>>> +		cell->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s:%s",
+>>>> +					    dev_name(&pdev->dev), "tsc");
+>>>>  		cell->of_compatible = "ti,am3359-tsc";
+>>>>  		cell->platform_data = &tscadc;
+>>>>  		cell->pdata_size = sizeof(tscadc);
+>>>> @@ -258,7 +259,8 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+>>>>  	if (adc_channels > 0) {
+>>>>  		tscadc->adc_cell = tscadc->used_cells;
+>>>>  		cell = &tscadc->cells[tscadc->used_cells++];
+>>>> -		cell->name = "TI-am335x-adc";
+>>>> +		cell->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s:%s",
+>>>> +					    dev_name(&pdev->dev), "adc");
+>>>>  		cell->of_compatible = "ti,am3359-adc";
+>>>>  		cell->platform_data = &tscadc;
+>>>>  		cell->pdata_size = sizeof(tscadc);
+>>>
+>>
+> 
+
 -- 
-1.8.3.1
-
-
+Regards
+Vignesh
