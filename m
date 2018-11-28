@@ -2,37 +2,39 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D73AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A81C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2812081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2812081B
+	by mail.kernel.org (Postfix) with ESMTP id 1F19D2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:34:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F19D2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbeK1Wd1 (ORCPT
+        id S1728142AbeK1Wfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:33:27 -0500
-Received: from mga06.intel.com ([134.134.136.31]:31062 "EHLO mga06.intel.com"
+        Wed, 28 Nov 2018 17:35:37 -0500
+Received: from mga09.intel.com ([134.134.136.24]:1109 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbeK1Wbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:31:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727641AbeK1Wfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 17:35:37 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 03:30:30 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 03:34:16 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
-   d="scan'208";a="278181893"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 28 Nov 2018 03:30:26 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C5B85413; Wed, 28 Nov 2018 13:30:25 +0200 (EET)
+   d="scan'208";a="103886088"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Nov 2018 03:34:13 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gRy6e-0001Lc-GW; Wed, 28 Nov 2018 13:34:12 +0200
+Date:   Wed, 28 Nov 2018 13:34:12 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org,
@@ -43,50 +45,95 @@ To:     Darren Hart <dvhart@infradead.org>,
         linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 04/15] platform/x86: i2c-multi-instantiate: Accept errors of i2c_acpi_new_device()
-Date:   Wed, 28 Nov 2018 13:30:13 +0200
-Message-Id: <20181128113024.42126-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181128113024.42126-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 00/15] i2c-multi-instantiate: Adapt for INT3515 and
+ alike
+Message-ID: <20181128113412.GA10650@smile.fi.intel.com>
 References: <20181128113024.42126-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128113024.42126-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the future i2c_acpi_new_device() will return error pointer in some cases.
-Prepare i2c-multi-instantiate driver to support that.
+On Wed, Nov 28, 2018 at 01:30:09PM +0200, Andy Shevchenko wrote:
+> Currently i2c-multi-instantiate driver does not support the case
+> of INT3515 USB PD device, where:
+> 
+> - Interrupt() is used instead of GpioInt()
+> - All slaves may be the same from IP point of view
+> - There can be variadic amount of slaves
+> 
+> This series is addressing all above.
+> 
+> Note, series has been smoke tested (Heikki would do BAT or more)
+> on Intel Coffee Lake system.
+> 
+> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
+> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
+> 
+> Testing and comments are warmly welcome.
+> 
+> In v4:
+> - directly return -EPROBE_DEFER from i2c_acpi_new_device()
+> - due to above split error handling simplification to separate patches
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-index 5456581b473c..16a0eabe1e31 100644
---- a/drivers/platform/x86/i2c-multi-instantiate.c
-+++ b/drivers/platform/x86/i2c-multi-instantiate.c
-@@ -72,9 +72,14 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
- 			board_info.irq = ret;
- 		}
- 		multi->clients[i] = i2c_acpi_new_device(dev, i, &board_info);
--		if (!multi->clients[i]) {
-+		if (IS_ERR(multi->clients[i]))
-+			ret = PTR_ERR(multi->clients[i]);
-+		else if (!multi->clients[i])
-+			ret = -EPROBE_DEFER; /* Wait for i2c-adapter to load */
-+		else
-+			ret = 0;
-+		if (ret) {
- 			dev_err(dev, "Error creating i2c-client, idx %d\n", i);
--			ret = -ENODEV;
- 			goto error;
- 		}
- 	}
+Please, ignore this.
+I messed up with the patches.
+
+> 
+> In v3:
+> - revisit error codes returned by i2c_acpi_new_device() (Hans, Mika)
+> - add documentation to exported i2c_acpi_get_i2c_resource() (Mika)
+> - drop Hans' Rb tag in patch 5 due to changes
+> - append Mika's Ab tag to patch 6
+> 
+> In v2:
+> - drop patches to copy fwnode and to handle BOSC0200 device
+> - append check for amount of devices listed in the driver's mapping
+> - add Rb tag given by Hans
+> 
+> Andy Shevchenko (15):
+>   defconfig: enable I2C_DEBUG_CORE
+>   platform/x86: intel_cht_int33fe: Remove duplicate NULL check
+>   platform/x86: intel_cht_int33fe: Accept errors of
+>     i2c_acpi_new_device()
+>   platform/x86: i2c-multi-instantiate: Accept errors of
+>     i2c_acpi_new_device()
+>   i2c: acpi: Return error pointers from i2c_acpi_new_device()
+>   platform/x86: intel_cht_int33fe: Get rid of obsolete conditional
+>   platform/x86: i2c-multi-instantiate: Get rid of obsolete conditional
+>   i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
+>   i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
+>   platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
+>   platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
+>   platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
+>   platform/x86: i2c-multi-instantiate: Allow to have same slaves
+>   ACPI / scan: Create platform device for INT3515 ACPI nodes
+>   iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
+> 
+>  arch/x86/configs/i386_defconfig              |  1 +
+>  arch/x86/configs/x86_64_defconfig            |  1 +
+>  drivers/acpi/scan.c                          |  1 +
+>  drivers/i2c/i2c-core-acpi.c                  | 64 +++++++++----
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
+>  drivers/platform/x86/i2c-multi-instantiate.c | 97 ++++++++++++++++----
+>  drivers/platform/x86/intel_cht_int33fe.c     | 20 ++--
+>  drivers/usb/typec/tps6598x.c                 |  8 +-
+>  include/linux/acpi.h                         | 11 +++
+>  9 files changed, 159 insertions(+), 60 deletions(-)
+> 
+> --
+> 2.19.2
+> 
+
 -- 
-2.19.2
+With Best Regards,
+Andy Shevchenko
+
 
