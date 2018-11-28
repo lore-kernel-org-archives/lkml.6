@@ -2,234 +2,107 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E908BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA66BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A5820660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A5820660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A2C8520660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="y1RfWGYM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C8520660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeK1Xmv (ORCPT
+        id S1728672AbeK1Xnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:42:51 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728372AbeK1Xmu (ORCPT
+        Wed, 28 Nov 2018 18:43:45 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54384 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728201AbeK1Xnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:42:50 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASCd9LY129210
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:41:17 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1u27ge17-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:41:17 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 28 Nov 2018 12:41:15 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Nov 2018 12:41:11 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASCfAE015990908
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 12:41:10 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 130514C046;
-        Wed, 28 Nov 2018 12:41:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC79B4C040;
-        Wed, 28 Nov 2018 12:41:09 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.168])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Nov 2018 12:41:09 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     pasic@linux.vnet.ibm.com
-Cc:     cohuck@redhat.com, farman@linux.ibm.com, alifm@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [PATCH v3 2/6] vfio: ccw: Rework subchannel state on setup
-Date:   Wed, 28 Nov 2018 13:41:03 +0100
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543408867-16465-1-git-send-email-pmorel@linux.ibm.com>
-References: <1543408867-16465-1-git-send-email-pmorel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18112812-0012-0000-0000-000002D17963
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112812-0013-0000-0000-00002106BE1E
-Message-Id: <1543408867-16465-3-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=911 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811280112
+        Wed, 28 Nov 2018 18:43:45 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASCcXwi046280;
+        Wed, 28 Nov 2018 12:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=LA7CRSqknIo1Ut0TXZU47z3lRwWj0OLvoPru1JLK8Xg=;
+ b=y1RfWGYMMSf1OkebAEAFU/09x0xMiYl3ZnEiqqGh6Df1Tnc/Jm2GKBc/Ho+jE0Jo56aN
+ 5j2dBjiJFekZfIShwLXv3HZfT5jfboRnOrdjWaKCTamHzUlT4CWLK10ocr2/tqW6rA5I
+ bcu9ArSqNiqkU0VD/YVVQSvHqoiRJ6AKHLuJpQZWln941thk0dPoMXavV6AfkF3dlo6h
+ A3Xsa7bcoThH+qN0sM9CF0R6GlOcgiVRcU8RK4K06qfNFK5L9pWHMeiSQHzS10nEvb3z
+ cN8IACfALvhshw7NH9TEPtoBKoEsqWoA/PBdUj2F3dfW8fa/uWBfUrxwxDL6SY5GLA+P KQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nxx2u9y9x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 12:41:53 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wASCfloW018450
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 12:41:47 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wASCflhe010173;
+        Wed, 28 Nov 2018 12:41:47 GMT
+Received: from [192.168.1.9] (/116.231.183.115)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 04:41:46 -0800
+Subject: Re: [PATCH v1 5/7] xfs: Add device retry
+To:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>
+Cc:     Allison Henderson <allison.henderson@oracle.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        martin.petersen@oracle.com, shirley.ma@oracle.com
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <1543376991-5764-6-git-send-email-allison.henderson@oracle.com>
+ <20181128050850.GJ6311@dastard> <20181128073520.GA7084@infradead.org>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <f30fd190-28e5-938a-1cb9-3690559a60f0@oracle.com>
+Date:   Wed, 28 Nov 2018 20:41:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181128073520.GA7084@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The subchannel enablement and the according setting to the
-VFIO_CCW_STATE_STANDBY state should only be done when all
-parts of the VFIO mediated device have been initialized
-i.e. after the mediated device has been successfully opened.
+On 11/28/18 3:35 PM, Christoph Hellwig wrote:
+> On Wed, Nov 28, 2018 at 04:08:50PM +1100, Dave Chinner wrote:
+>> So the first time through this loop the block layer devices what
+>> device to read from, then we iterate devices 1..n on error.
+>>
+>> Whihc means if device 0 is the only one with good information in it,
+>> we may not ever actually read from it.
+>>
+>> I'd suggest that a hint of "-1" (or equivalent max value) should be
+>> used for "device selects mirror leg" rather than 0, so we can
+>> actually read from the first device on command.
+> 
+> Yes.  For one thing I think we really need to split this retry counter
+> of sorts from the write hints.  I.e. make both u8 types and keep them
+> separate.  Then start out with (u8)-1 as initialized by the block layer
+> for the first attempt.  The device then fills out which leg it used
+> (in the completion path, so that another underlying driver doesn't
+> override it!), and then the file system just preserves this value on
+> a resumit, leaving the driver to chose a new value when it gets a
+> non -1 value.
+> 
 
-Let's stay in VFIO_CCW_STATE_NOT_OPER until the mediated
-device has been opened and set the VFIO_CCW_STATE_STANDBY
-on a successful open.
+Will update as suggested, thank you for all your feedback :)
 
-On release the state is set back to VFIO_CCW_STATE_NOT_OPER
-by vfio_ccw_sch_quiesce().
-
-When the mediated device is closed,  disable the sub channel
-by calling vfio_ccw_sch_quiesce().
-
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
----
- drivers/s390/cio/vfio_ccw_async.c   | 11 +++++++++++
- drivers/s390/cio/vfio_ccw_drv.c     | 10 +---------
- drivers/s390/cio/vfio_ccw_ops.c     | 27 +++++++++++++++++++++------
- drivers/s390/cio/vfio_ccw_private.h |  1 +
- 4 files changed, 34 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/s390/cio/vfio_ccw_async.c b/drivers/s390/cio/vfio_ccw_async.c
-index 8c7f51d..033574e 100644
---- a/drivers/s390/cio/vfio_ccw_async.c
-+++ b/drivers/s390/cio/vfio_ccw_async.c
-@@ -76,6 +76,17 @@ const struct vfio_ccw_regops vfio_ccw_async_region_ops = {
- 	.release = vfio_ccw_async_region_release,
- };
- 
-+void vfio_ccw_unregister_async_dev_regions(struct vfio_ccw_private *private)
-+{
-+	int i;
-+
-+	for (i = 0; i < private->num_regions; i++)
-+		private->region[i].ops->release(private, &private->region[i]);
-+	private->num_regions = 0;
-+	kfree(private->region);
-+	private->region = NULL;
-+}
-+
- int vfio_ccw_register_async_dev_regions(struct vfio_ccw_private *private)
- {
- 	return vfio_ccw_register_dev_region(private,
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index bce7fed..d3527b6 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -133,26 +133,18 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
- 	private->sch = sch;
- 	dev_set_drvdata(&sch->dev, private);
- 
--	spin_lock_irq(sch->lock);
- 	private->state = VFIO_CCW_STATE_NOT_OPER;
- 	sch->isc = VFIO_CCW_ISC;
--	ret = cio_enable_subchannel(sch, (u32)(unsigned long)sch);
--	spin_unlock_irq(sch->lock);
--	if (ret)
--		goto out_free;
- 
- 	INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
- 	atomic_set(&private->avail, 1);
--	private->state = VFIO_CCW_STATE_STANDBY;
- 
- 	ret = vfio_ccw_mdev_reg(sch);
- 	if (ret)
--		goto out_disable;
-+		goto out_free;
- 
- 	return 0;
- 
--out_disable:
--	cio_disable_subchannel(sch);
- out_free:
- 	dev_set_drvdata(&sch->dev, NULL);
- 	if (private->cmd_region)
-diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
-index 0e1f7f7b..cc7d46a 100644
---- a/drivers/s390/cio/vfio_ccw_ops.c
-+++ b/drivers/s390/cio/vfio_ccw_ops.c
-@@ -113,14 +113,11 @@ static int vfio_ccw_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
- 	struct vfio_ccw_private *private =
- 		dev_get_drvdata(mdev_parent_dev(mdev));
- 
--	if (private->state == VFIO_CCW_STATE_NOT_OPER)
--		return -ENODEV;
--
- 	if (atomic_dec_if_positive(&private->avail) < 0)
- 		return -EPERM;
- 
- 	private->mdev = mdev;
--	private->state = VFIO_CCW_STATE_IDLE;
-+	private->state = VFIO_CCW_STATE_NOT_OPER;
- 
- 	return 0;
- }
-@@ -148,6 +145,7 @@ static int vfio_ccw_mdev_open(struct mdev_device *mdev)
- 	struct vfio_ccw_private *private =
- 		dev_get_drvdata(mdev_parent_dev(mdev));
- 	unsigned long events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
-+	struct subchannel *sch = private->sch;
- 	int ret;
- 
- 	private->nb.notifier_call = vfio_ccw_mdev_notifier;
-@@ -159,8 +157,24 @@ static int vfio_ccw_mdev_open(struct mdev_device *mdev)
- 
- 	ret = vfio_ccw_register_async_dev_regions(private);
- 	if (ret)
--		vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
--					 &private->nb);
-+		goto err_regions;
-+
-+	spin_lock_irq(private->sch->lock);
-+	ret = cio_enable_subchannel(sch, (u32)(unsigned long)sch);
-+	if (ret)
-+		goto err_enable;
-+
-+	private->state = VFIO_CCW_STATE_STANDBY;
-+	spin_unlock_irq(sch->lock);
-+	return 0;
-+
-+err_enable:
-+	spin_unlock_irq(sch->lock);
-+	vfio_ccw_unregister_async_dev_regions(private);
-+
-+err_regions:
-+	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
-+				 &private->nb);
- 	return ret;
- }
- 
-@@ -170,6 +184,7 @@ static void vfio_ccw_mdev_release(struct mdev_device *mdev)
- 		dev_get_drvdata(mdev_parent_dev(mdev));
- 	int i;
- 
-+	vfio_ccw_sch_quiesce(private->sch);
- 	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
- 				 &private->nb);
- 
-diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
-index 1a41a14..5d799b7 100644
---- a/drivers/s390/cio/vfio_ccw_private.h
-+++ b/drivers/s390/cio/vfio_ccw_private.h
-@@ -54,6 +54,7 @@ int vfio_ccw_register_dev_region(struct vfio_ccw_private *private,
- 				 size_t size, u32 flags, void *data);
- 
- int vfio_ccw_register_async_dev_regions(struct vfio_ccw_private *private);
-+void vfio_ccw_unregister_async_dev_regions(struct vfio_ccw_private *private);
- 
- /**
-  * struct vfio_ccw_private
--- 
-2.7.4
-
+-Bob
