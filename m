@@ -2,75 +2,85 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31E9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1D0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A88A2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A88A2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 24F3F206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F3F206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeK2Cc4 (ORCPT
+        id S1728807AbeK2Cec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:32:56 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47685 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbeK2Ccz (ORCPT
+        Wed, 28 Nov 2018 21:34:32 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:46904 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbeK2Ceb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:32:55 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gS1nd-0006cM-2D; Wed, 28 Nov 2018 15:30:49 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: fix spelling mistake "manufaucturing" -> "manufacturing"
-Date:   Wed, 28 Nov 2018 15:30:48 +0000
-Message-Id: <20181128153048.13804-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 28 Nov 2018 21:34:31 -0500
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wASFWCRF011446
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 28 Nov 2018 07:32:12 -0800 (PST)
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 28 Nov 2018 07:32:05 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 36C162E130B; Wed, 28 Nov 2018 10:32:05 -0500 (EST)
+Date:   Wed, 28 Nov 2018 10:32:05 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+CC:     Joerg Roedel <joro@8bytes.org>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular
+Message-ID: <20181128153204.GI14659@windriver.com>
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
+ <1543271498-28966-6-git-send-email-paul.gortmaker@windriver.com>
+ <cdded4c3-4bc5-39b3-ebc9-64fa145c9242@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cdded4c3-4bc5-39b3-ebc9-64fa145c9242@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+[Re: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular] On 28/11/2018 (Wed 12:50) Robin Murphy wrote:
 
-There is a spelling mistake in some description text, fix it.
+> On 26/11/2018 22:31, Paul Gortmaker wrote:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/mpt3sas/mpt3sas_config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
-index 8516713f980b..fb0a17252f86 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_config.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
-@@ -119,7 +119,7 @@ _config_display_some_debug(struct MPT3SAS_ADAPTER *ioc, u16 smid,
- 		desc = "raid_volume";
- 		break;
- 	case MPI2_CONFIG_PAGETYPE_MANUFACTURING:
--		desc = "manufaucturing";
-+		desc = "manufacturing";
- 		break;
- 	case MPI2_CONFIG_PAGETYPE_RAID_PHYSDISK:
- 		desc = "physdisk";
--- 
-2.19.1
+> >diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> >index 9e2655f1c1bf..de39ef992d8a 100644
+> >--- a/drivers/iommu/ipmmu-vmsa.c
+> >+++ b/drivers/iommu/ipmmu-vmsa.c
+> >@@ -1,6 +1,8 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * IPMMU VMSA
+> 
+> Nit: this line doesn't convey any information that the module description
+> below doesn't also say far more clearly, so you may as well just replace it
+> entirely.
 
+No problem. Will do in v2.
+
+P.
+--
+
+> 
+> Robin.
+> 
+> >+ * IOMMU API for Renesas VMSA-compatible IPMMU
+> >+ * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+[...]
