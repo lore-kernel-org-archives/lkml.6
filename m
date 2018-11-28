@@ -2,137 +2,170 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E019DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31237C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A671B20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB8EB20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUVpQ9US"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A671B20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvPnTkvN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8EB20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeK2KVV (ORCPT
+        id S1727024AbeK2KXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:21:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42564 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 05:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726895AbeK2KVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:21:20 -0500
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726382AbeK2KXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 05:23:00 -0500
+Received: from gmail.com (unknown [104.132.1.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7360F2154B
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 23:18:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBB25208E7;
+        Wed, 28 Nov 2018 23:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543447083;
-        bh=bxAM7ltx5XC6qmxKpnV3A+uLJ2l1kN84hmfOSjSQGQ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mUVpQ9USZQEPf5vOngflrM1xMH7g2menQd410kOIzXGvGjAKAijQm7RyiUi9K076l
-         uFGZurIetgxXzC34k6fucXQUsJ1ueB5cogbbENwQMg6BPIdzvo27S8Z3606h66BWLU
-         KnFyzMT0t3tH/UUFjJqctY5nIjYe8zIqGCJ4wpCE=
-Received: by mail-wr1-f52.google.com with SMTP id v13so12903wrw.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:18:03 -0800 (PST)
-X-Gm-Message-State: AA+aEWaZlwW0cnWV7b8p9KuKynYY/yeZnwMWfP7T2/nhaTYYPjHPa7iQ
-        dqCYkRvLJx7k2c/iHl1S1U4idI+323sOf2/yLbSW7Q==
-X-Google-Smtp-Source: AFSGD/XgYIh+gz4d7B1moYaGTn09nObDfnqXScbToF83XB02ucudP6vERM2p0zBKSPWbYfH1YIr9Sy8ty7kqVgzVjsg=
-X-Received: by 2002:a5d:5541:: with SMTP id g1mr33776117wrw.330.1543447081767;
- Wed, 28 Nov 2018 15:18:01 -0800 (PST)
+        s=default; t=1543447183;
+        bh=G/mWoFapGnNvF++zuh02gB8xa9kZBEp+ubRIYqwRlQM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QvPnTkvNeT85/ABR9+d0CTd8KLFe4QHXPFt8Aq1ghEBaX6SfT2cWuxjclul13P+9G
+         7XWFwlMap/kjtI7qsjMaA36R/D2SWBG8kZW+0b0xYOP7dqp9JO4exDO+i5euLANyA9
+         XhKLuYCqchTwr8abeiFYpKAE7kfz9Y+de1McV5wc=
+Date:   Wed, 28 Nov 2018 15:19:41 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
+Message-ID: <20181128231940.GB131170@gmail.com>
+References: <000000000000a722550577796543@google.com>
+ <20181103015854.7380-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20181128130439.GB28206@altlinux.org> <20181128130601.GC28206@altlinux.org>
- <20181128134913.GC30395@redhat.com> <20181128140533.GF28206@altlinux.org>
- <20181128142006.GE30395@redhat.com> <20181128152346.GG28206@altlinux.org> <20181128221125.GA2800@altlinux.org>
-In-Reply-To: <20181128221125.GA2800@altlinux.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 28 Nov 2018 15:17:49 -0800
-X-Gmail-Original-Message-ID: <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
-Message-ID: <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in ptrace_message
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, strace-devel@lists.strace.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181103015854.7380-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 2:11 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
->
-> On Wed, Nov 28, 2018 at 06:23:46PM +0300, Dmitry V. Levin wrote:
-> > On Wed, Nov 28, 2018 at 03:20:06PM +0100, Oleg Nesterov wrote:
-> > > On 11/28, Dmitry V. Levin wrote:
-> > > > On Wed, Nov 28, 2018 at 02:49:14PM +0100, Oleg Nesterov wrote:
-> > > > > On 11/28, Dmitry V. Levin wrote:
-> > > > > >
-> > > > > > +/*
-> > > > > > + * These values are stored in task->ptrace_message by tracehook_report_syscall_*
-> > > > > > + * to describe current syscall-stop.
-> > > > > > + *
-> > > > > > + * Values for these constants are chosen so that they do not appear
-> > > > > > + * in task->ptrace_message by other means.
-> > > > > > + */
-> > > > > > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY        0x80000000U
-> > > > > > +#define PTRACE_EVENTMSG_SYSCALL_EXIT 0x90000000U
-> > > > >
-> > > > > Again, I do not really understand the comment... Why should we care about
-> > > > > "do not appear in task->ptrace_message by other means" ?
-> > > > >
-> > > > > 2/2 should detect ptrace_report_syscall() case correctly, so we can use any
-> > > > > numbers, say, 1 and 2?
-> > > > >
-> > > > > If debugger does PTRACE_GETEVENTMSG it should know how to interpet the value
-> > > > > anyway after wait(status).
-> > > >
-> > > > Given that without this patch the value returned by PTRACE_GETEVENTMSG
-> > > > during syscall stop is undefined, we need two different ptrace_message
-> > > > values that cannot be set by other ptrace events to enable reliable
-> > > > identification of syscall-enter-stop and syscall-exit-stop in userspace:
-> > > > if we make PTRACE_GETEVENTMSG return 0 or any other value routinely set by
-> > > > other ptrace events, it would be hard for userspace to find out whether
-> > > > the kernel implements new semantics or not.
-> > >
-> > > Hmm, why? Debugger can just do ptrace(PTRACE_GET_SYSCALL_INFO, NULL), if it
-> > > returns EIO then it is not implemented?
-> >
-> > The debugger that uses PTRACE_GET_SYSCALL_INFO does not need to call
-> > PTRACE_GETEVENTMSG for syscall stops.
-> > My concern here is the PTRACE_GETEVENTMSG interface itself.  If we use
-> > ptrace_message to implement PTRACE_GET_SYSCALL_INFO and expose
-> > PTRACE_EVENTMSG_SYSCALL_{ENTRY,EXIT} for regular PTRACE_GETEVENTMSG users,
-> > it should have clear semantics.
->
-> Since our implementation of PTRACE_GET_SYSCALL_INFO uses ptrace_message
-> to distinguish syscall-enter-stop from syscall-exit-stop, we could choose
-> one of the following approaches:
->
-> 1. Do not document the values saved into ptrace_message during syscall
-> stops (and exposed via PTRACE_GETEVENTMSG) as a part of ptrace API,
-> leaving the value returned by PTRACE_GETEVENTMSG during syscall stops
-> as undefined.
->
-> 2. Document these values chosen to avoid collisions with ptrace_message values
-> set by other ptrace events so that PTRACE_GETEVENTMSG users can easily tell
-> whether this new semantics is supported by the kernel or not.
+On Fri, Nov 02, 2018 at 06:58:54PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+> called from construct_alloc_key() during sys_request_key(), because the
+> length of the key description was never calculated.
+> 
+> The problem is that we rely on ->desc_len being initialized by
+> search_process_keyrings(), specifically by search_nested_keyrings().
+> But, if the process isn't subscribed to any keyrings that never happens.
+> 
+> Fix it by always initializing keyring_index_key::desc_len as soon as the
+> description is set, like we already do in some places.
+> 
+> The following program reproduces the BUG_ON() when it's run as root and
+> no session keyring has been installed.  If it doesn't work, try removing
+> pam_keyinit.so from /etc/pam.d/login and rebooting.
+> 
+>     #include <stdlib.h>
+>     #include <unistd.h>
+>     #include <keyutils.h>
+> 
+>     int main(void)
+>     {
+>             int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+> 
+>             keyctl_setperm(id, KEY_OTH_WRITE);
+>             setreuid(5000, 5000);
+>             request_key("user", "desc", "", id);
+>     }
+> 
+> Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> Cc: <stable@vger.kernel.org> # v3.13+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v2: In proc_keys_show(), assign index_key directly
+> 
+>  security/keys/keyring.c          | 4 +---
+>  security/keys/proc.c             | 3 +--
+>  security/keys/request_key.c      | 1 +
+>  security/keys/request_key_auth.c | 2 +-
+>  4 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 41bcf57e96f21..99a55145ddcd2 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
+>  	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+>  	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+>  
+> -	if (ctx->index_key.description)
+> -		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+> -
+>  	/* Check to see if this top-level keyring is what we are looking for
+>  	 * and whether it is valid or not.
+>  	 */
+> @@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+>  	struct keyring_search_context ctx = {
+>  		.index_key.type		= type,
+>  		.index_key.description	= description,
+> +		.index_key.desc_len	= strlen(description),
+>  		.cred			= current_cred(),
+>  		.match_data.cmp		= key_default_cmp,
+>  		.match_data.raw_data	= description,
+> diff --git a/security/keys/proc.c b/security/keys/proc.c
+> index 5af2934965d80..d38be9db2cc07 100644
+> --- a/security/keys/proc.c
+> +++ b/security/keys/proc.c
+> @@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+>  	int rc;
+>  
+>  	struct keyring_search_context ctx = {
+> -		.index_key.type		= key->type,
+> -		.index_key.description	= key->description,
+> +		.index_key		= key->index_key,
+>  		.cred			= m->file->f_cred,
+>  		.match_data.cmp		= lookup_user_key_possessed,
+>  		.match_data.raw_data	= key,
+> diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+> index 114f7408feee6..7385536986497 100644
+> --- a/security/keys/request_key.c
+> +++ b/security/keys/request_key.c
+> @@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
+>  	struct keyring_search_context ctx = {
+>  		.index_key.type		= type,
+>  		.index_key.description	= description,
+> +		.index_key.desc_len	= strlen(description),
+>  		.cred			= current_cred(),
+>  		.match_data.cmp		= key_default_cmp,
+>  		.match_data.raw_data	= description,
+> diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+> index 424e1d90412ea..6797843154f03 100644
+> --- a/security/keys/request_key_auth.c
+> +++ b/security/keys/request_key_auth.c
+> @@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+>  	struct key *authkey;
+>  	key_ref_t authkey_ref;
+>  
+> -	sprintf(description, "%x", target_id);
+> +	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+>  
+>  	authkey_ref = search_process_keyrings(&ctx);
+>  
+> -- 
+> 2.19.1
+> 
 
-I don't like any of this at all.  Can we please choose a sensible API
-design and let the API drive the implementation instead of vice versa?
- ISTM the correct solution is to add some new state to task_struct for
-this.
+Ping.  David, are you planning to apply this?
 
-If we're concerned about making task_struct bigger, I have a
-half-finished patch to factor all the ptrace tracee state into a
-separate struct.
+- Eric
