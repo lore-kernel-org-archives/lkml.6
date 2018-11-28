@@ -2,522 +2,727 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D444C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFC8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C6A20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:38:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="XeQolSdL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tHla2eYi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C6A20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
+	by mail.kernel.org (Postfix) with ESMTP id 2BBDD20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBDD20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbeK1Oio (ORCPT
+        id S1727230AbeK1Okl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 09:38:44 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:38795 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726847AbeK1Oio (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 09:38:44 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id F101921C93;
-        Tue, 27 Nov 2018 22:38:37 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 27 Nov 2018 22:38:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
-        date:from:to:cc:subject:message-id:mime-version:content-type
-        :in-reply-to; s=fm1; bh=ZDAwhBkrhRixnkeYgag/RL5hez4GX5NKPpNKYO8P
-        ejw=; b=XeQolSdLlSMB/kWl3ZSTr4Ud9R8Sh7hmBxTgol13zc1o06AfWzZWsXdf
-        bAwIlCkA3+BBc5+rZTOx6pc1vmDcN++guoSVjX6ZlLcMWmiEtYLnLWae/aGqo+qc
-        FWS1EVkKV1UlL6jSL9PG/9koSdcctx1oxNZ6xTxUe98i4+rcO2AuJWvyJDZAQNim
-        S+qUHxn4ROhmwFNKhTHrP0IJe2x/dT3/7BVPoxcBX54R9utigboFSw8Pv/EpBBIv
-        fYswaAxFNDWymWBnvEnXK/zwmqA8vDxC6rE+A+5DuK0syjqshDsG5Cf6aNCcV1iB
-        HF85tuEErDFB05X3NqDz+5HgoGiElA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ZDAwhBkrhRixnkeYg
-        ag/RL5hez4GX5NKPpNKYO8Pejw=; b=tHla2eYiAIGXm4Rdqg41Lf57JDwpo0Qia
-        KRKfOCOdGS3JvI7xRnNZmlvjIUgz1aRbHt28C0mGpJ6qgauJ+o0dKgAkSm1pZGph
-        wsGxxFUZuHjPYCoW2XFyOgSwCYeYi/zTCljOC3Gb265zuSenUsRYW/KknF7sdp3u
-        OGcOjA+7W/KQcqWfBB2VMiojDR/60IwfZZTckq9ITmol1tv6BijaXVAT/0y3phOR
-        76KwdsGv8iDNS5stgEuOx4N5TfLGiikn51gn70TC72jNw/MrMpUHaD+iuecqCqFu
-        PpopRwQ7qYetb7QKxJ+/PgO4diTiXIaQX+KrzTa/kgczhApdQD2qw==
-X-ME-Sender: <xms:vQ3-W0LaIoZ4L8y6e5oMhLjn7_zJkA3iRgTVOLiSeGxocjdNLjpYng>
-X-ME-Proxy: <xmx:vQ3-W56fXwcDo3mLB8i1KSEm60eXLQ90YqZ3z-ZWxc3qNxPBBUwwNA>
-    <xmx:vQ3-W0Cn3GvC9Ry_rtgJW_B4uB9Xu3Dmg2PUyRKsRff3H2h-G2VAbQ>
-    <xmx:vQ3-W_cPM95wiwIrzSRGkdEhcO0wD-xN_ZEgMBB_woBh3WcoDaN6vg>
-    <xmx:vQ3-WzL-Arzn8Ez5Pg8Wi0Q9Hq6dHwM_lnzGkDxF8xk3qTs16ISuMg>
-    <xmx:vQ3-W61oMGfw0L5GBEHUobYNjw9X2tbCwtWYUBMgbaCjZhuJJHc1hA>
-    <xmx:vQ3-WyY8W3aXJbgFnTadRS_umVfNdgTcaLbRtZ-jxNuW_E12v4fghA>
-Received: from jelly (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 55D1DE4122;
-        Tue, 27 Nov 2018 22:38:34 -0500 (EST)
-Date:   Wed, 28 Nov 2018 13:38:33 +1000
-From:   Peter Hutterer <peter.hutterer@who-t.net>
-To:     linux-input@vger.kernel.org
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Harry Cutts <hcutts@chromium.org>,
-        torvalds@linux-foundation.org,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v2 8/8] HID: logitech: Enable high-resolution scrolling on
- Logitech mice
-Message-ID: <20181128033833.GA20646@jelly>
+        Wed, 28 Nov 2018 09:40:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726989AbeK1Okl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 09:40:41 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26C7D208E7;
+        Wed, 28 Nov 2018 03:40:33 +0000 (UTC)
+Date:   Tue, 27 Nov 2018 22:40:31 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] tracing: Fix fgraph design bug and sched_switch state
+ output
+Message-ID: <20181127224031.76681fe0@vmware.local.home>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122063409.15816-9-peter.hutterer@who-t.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harry Cutts <hcutts@chromium.org>
 
-There are three features used by various Logitech mice for
-high-resolution scrolling: the scrolling acceleration bit in HID++ 1.0,
-and the x2120 and x2121 features in HID++ 2.0 and above. This patch
-supports all three, and uses the multiplier reported by the mouse for
-the HID++ 2.0+ features.
+Linus,
 
-The full list of product IDs of mice which support high-resolution
-scrolling was provided by Logitech, but the patch was tested using the
-following mice (using the Unifying receiver):
+While rewriting the function graph tracer, I discovered a design flaw that
+was introduced by a patch that tried to fix one bug, but by doing so created
+another bug. As both bugs corrupt the output (but they do not crash the
+kernel), I decided to fix the design such that it could have both bugs
+fixed. The original fix, fixed time reporting of the function graph tracer
+when doing a max_depth of one. This was code that can test how much the
+kernel interferes with userspace. But in doing so, it could corrupt the time
+keeping of the function profiler.
 
-* HID++ 1.0: Anywhere MX, Performance MX
-* x2120: M560
-* x2121: MX Anywhere 2, MX Master 2S
+The issue is that the curr_ret_stack variable was being used for two
+different meanings. One was to keep track of the stack pointer on the
+ret_stack (shadow stack used by the function graph tracer), and the other
+use case was the graph call depth.  Although, the two may be closely
+related, where they got updated was the issue that lead to the two different
+bugs that required the two use cases to be updated differently.
 
-This patch is a combinations of the now-reverted commits 1ff2e1a44e0,
-d56ca9855bf9, 5fe2ccbef9d, 044ee89028 together with some extra bits for the
-directional and timeout-based reset.
-The previous patch series was in hid-input, it appears this remainder
-handling is logitech-specific and was moved to hid-logitech-hidpp.c and
-renamed accordingly.
+The big issue with this fix is that it requires changing each architecture.
+The good news is, I was able to remove a lot of code that was duplicated
+within the architectures and place it into a single location. Then I could
+make the fix in one place.
 
-Signed-off-by: Harry Cutts <hcutts@chromium.org>
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
----
-Changes to v1:
-- get rid of the timer in favour of sched_clock()
-- drop storing the multiplier and calculate value on the fly
+I pushed this code into linux-next to let it settle over a week, and before
+doing so, I cross compiled all the affected architectures to make sure that
+they built fine.
 
- drivers/hid/hid-logitech-hidpp.c | 292 ++++++++++++++++++++++++++++++-
- 1 file changed, 288 insertions(+), 4 deletions(-)
+In the mean time, I also pulled in a patch that fixes the sched_switch
+previous tasks state output, that was not actually correct.
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index 67ca587aecfa..236ed256e4e7 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -21,6 +21,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-+#include <linux/sched/clock.h>
- #include <linux/kfifo.h>
- #include <linux/input/mt.h>
- #include <linux/workqueue.h>
-@@ -64,6 +65,14 @@ MODULE_PARM_DESC(disable_tap_to_click,
- #define HIDPP_QUIRK_NO_HIDINPUT			BIT(23)
- #define HIDPP_QUIRK_FORCE_OUTPUT_REPORTS	BIT(24)
- #define HIDPP_QUIRK_UNIFYING			BIT(25)
-+#define HIDPP_QUIRK_HI_RES_SCROLL_1P0		BIT(26)
-+#define HIDPP_QUIRK_HI_RES_SCROLL_X2120		BIT(27)
-+#define HIDPP_QUIRK_HI_RES_SCROLL_X2121		BIT(28)
-+
-+/* Convenience constant to check for any high-res support. */
-+#define HIDPP_QUIRK_HI_RES_SCROLL	(HIDPP_QUIRK_HI_RES_SCROLL_1P0 | \
-+					 HIDPP_QUIRK_HI_RES_SCROLL_X2120 | \
-+					 HIDPP_QUIRK_HI_RES_SCROLL_X2121)
- 
- #define HIDPP_QUIRK_DELAYED_INIT		HIDPP_QUIRK_NO_HIDINPUT
- 
-@@ -128,6 +137,25 @@ struct hidpp_battery {
- 	bool online;
- };
- 
-+/**
-+ * struct hidpp_scroll_counter - Utility class for processing high-resolution
-+ *                             scroll events.
-+ * @dev: the input device for which events should be reported.
-+ * @wheel_multiplier: the scalar multiplier to be applied to each wheel event
-+ * @remainder: counts the number of high-resolution units moved since the last
-+ *             low-resolution event (REL_WHEEL or REL_HWHEEL) was sent. Should
-+ *             only be used by class methods.
-+ * @direction: direction of last movement (1 or -1)
-+ * @last_time: last event time, used to reset remainder after inactivity
-+ */
-+struct hidpp_scroll_counter {
-+	struct input_dev *dev;
-+	int wheel_multiplier;
-+	int remainder;
-+	int direction;
-+	unsigned long long last_time;
-+};
-+
- struct hidpp_device {
- 	struct hid_device *hid_dev;
- 	struct mutex send_mutex;
-@@ -149,6 +177,7 @@ struct hidpp_device {
- 	unsigned long capabilities;
- 
- 	struct hidpp_battery battery;
-+	struct hidpp_scroll_counter vertical_wheel_counter;
- };
- 
- /* HID++ 1.0 error codes */
-@@ -391,6 +420,67 @@ static void hidpp_prefix_name(char **name, int name_length)
- 	*name = new_name;
- }
- 
-+/**
-+ * hidpp_scroll_counter_handle_scroll() - Send high- and low-resolution scroll
-+ *                                        events given a high-resolution wheel
-+ *                                        movement.
-+ * @counter: a hid_scroll_counter struct describing the wheel.
-+ * @hi_res_value: the movement of the wheel, in the mouse's high-resolution
-+ *                units.
-+ *
-+ * Given a high-resolution movement, this function converts the movement into
-+ * fractions of 120 and emits high-resolution scroll events for the input
-+ * device. It also uses the multiplier from &struct hid_scroll_counter to
-+ * emit low-resolution scroll events when appropriate for
-+ * backwards-compatibility with userspace input libraries.
-+ */
-+static void hidpp_scroll_counter_handle_scroll(struct hidpp_scroll_counter *counter,
-+					       int hi_res_value)
-+{
-+	int low_res_value, remainder, direction;
-+	unsigned long long now, previous;
-+
-+	hi_res_value = hi_res_value * 120/counter->wheel_multiplier;
-+	input_report_rel(counter->dev, REL_WHEEL_HI_RES, hi_res_value);
-+
-+	remainder = counter->remainder;
-+	direction = hi_res_value > 0 ? 1 : -1;
-+
-+	now = sched_clock();
-+	previous = counter->last_time;
-+	counter->last_time = now;
-+	/*
-+	 * Reset the remainder after a period of inactivity or when the
-+	 * direction changes. This prevents the REL_WHEEL emulation point
-+	 * from sliding for devices that don't always provide the same
-+	 * number of movements per detent.
-+	 */
-+	if (now - previous > 1000000000 || direction != counter->direction)
-+		remainder = 0;
-+
-+	counter->direction = direction;
-+	remainder += hi_res_value;
-+
-+	/* Some wheels will rest 7/8ths of a detent from the previous detent
-+	 * after slow movement, so we want the threshold for low-res events to
-+	 * be in the middle between two detents (e.g. after 4/8ths) as
-+	 * opposed to on the detents themselves (8/8ths).
-+	 */
-+	if (abs(remainder) >= 60) {
-+		/* Add (or subtract) 1 because we want to trigger when the wheel
-+		 * is half-way to the next detent (i.e. scroll 1 detent after a
-+		 * 1/2 detent movement, 2 detents after a 1 1/2 detent movement,
-+		 * etc.).
-+		 */
-+		low_res_value = remainder / 120;
-+		if (low_res_value == 0)
-+			low_res_value = (hi_res_value > 0 ? 1 : -1);
-+		input_report_rel(counter->dev, REL_WHEEL, low_res_value);
-+		remainder -= low_res_value * 120;
-+	}
-+	counter->remainder = remainder;
-+}
-+
- /* -------------------------------------------------------------------------- */
- /* HIDP++ 1.0 commands                                                        */
- /* -------------------------------------------------------------------------- */
-@@ -1157,6 +1247,99 @@ static int hidpp_battery_get_property(struct power_supply *psy,
- 	return ret;
- }
- 
-+/* -------------------------------------------------------------------------- */
-+/* 0x2120: Hi-resolution scrolling                                            */
-+/* -------------------------------------------------------------------------- */
-+
-+#define HIDPP_PAGE_HI_RESOLUTION_SCROLLING			0x2120
-+
-+#define CMD_HI_RESOLUTION_SCROLLING_SET_HIGHRES_SCROLLING_MODE	0x10
-+
-+static int hidpp_hrs_set_highres_scrolling_mode(struct hidpp_device *hidpp,
-+	bool enabled, u8 *multiplier)
-+{
-+	u8 feature_index;
-+	u8 feature_type;
-+	int ret;
-+	u8 params[1];
-+	struct hidpp_report response;
-+
-+	ret = hidpp_root_get_feature(hidpp,
-+				     HIDPP_PAGE_HI_RESOLUTION_SCROLLING,
-+				     &feature_index,
-+				     &feature_type);
-+	if (ret)
-+		return ret;
-+
-+	params[0] = enabled ? BIT(0) : 0;
-+	ret = hidpp_send_fap_command_sync(hidpp, feature_index,
-+					  CMD_HI_RESOLUTION_SCROLLING_SET_HIGHRES_SCROLLING_MODE,
-+					  params, sizeof(params), &response);
-+	if (ret)
-+		return ret;
-+	*multiplier = response.fap.params[1];
-+	return 0;
-+}
-+
-+/* -------------------------------------------------------------------------- */
-+/* 0x2121: HiRes Wheel                                                        */
-+/* -------------------------------------------------------------------------- */
-+
-+#define HIDPP_PAGE_HIRES_WHEEL		0x2121
-+
-+#define CMD_HIRES_WHEEL_GET_WHEEL_CAPABILITY	0x00
-+#define CMD_HIRES_WHEEL_SET_WHEEL_MODE		0x20
-+
-+static int hidpp_hrw_get_wheel_capability(struct hidpp_device *hidpp,
-+	u8 *multiplier)
-+{
-+	u8 feature_index;
-+	u8 feature_type;
-+	int ret;
-+	struct hidpp_report response;
-+
-+	ret = hidpp_root_get_feature(hidpp, HIDPP_PAGE_HIRES_WHEEL,
-+				     &feature_index, &feature_type);
-+	if (ret)
-+		goto return_default;
-+
-+	ret = hidpp_send_fap_command_sync(hidpp, feature_index,
-+					  CMD_HIRES_WHEEL_GET_WHEEL_CAPABILITY,
-+					  NULL, 0, &response);
-+	if (ret)
-+		goto return_default;
-+
-+	*multiplier = response.fap.params[0];
-+	return 0;
-+return_default:
-+	hid_warn(hidpp->hid_dev,
-+		 "Couldn't get wheel multiplier (error %d)\n", ret);
-+	return ret;
-+}
-+
-+static int hidpp_hrw_set_wheel_mode(struct hidpp_device *hidpp, bool invert,
-+	bool high_resolution, bool use_hidpp)
-+{
-+	u8 feature_index;
-+	u8 feature_type;
-+	int ret;
-+	u8 params[1];
-+	struct hidpp_report response;
-+
-+	ret = hidpp_root_get_feature(hidpp, HIDPP_PAGE_HIRES_WHEEL,
-+				     &feature_index, &feature_type);
-+	if (ret)
-+		return ret;
-+
-+	params[0] = (invert          ? BIT(2) : 0) |
-+		    (high_resolution ? BIT(1) : 0) |
-+		    (use_hidpp       ? BIT(0) : 0);
-+
-+	return hidpp_send_fap_command_sync(hidpp, feature_index,
-+					   CMD_HIRES_WHEEL_SET_WHEEL_MODE,
-+					   params, sizeof(params), &response);
-+}
-+
- /* -------------------------------------------------------------------------- */
- /* 0x4301: Solar Keyboard                                                     */
- /* -------------------------------------------------------------------------- */
-@@ -2420,7 +2603,8 @@ static int m560_raw_event(struct hid_device *hdev, u8 *data, int size)
- 		input_report_rel(mydata->input, REL_Y, v);
- 
- 		v = hid_snto32(data[6], 8);
--		input_report_rel(mydata->input, REL_WHEEL, v);
-+		hidpp_scroll_counter_handle_scroll(
-+				&hidpp->vertical_wheel_counter, v);
- 
- 		input_sync(mydata->input);
- 	}
-@@ -2548,6 +2732,37 @@ static int g920_get_config(struct hidpp_device *hidpp)
- 	return 0;
- }
- 
-+/* -------------------------------------------------------------------------- */
-+/* High-resolution scroll wheels                                              */
-+/* -------------------------------------------------------------------------- */
-+
-+static int hi_res_scroll_enable(struct hidpp_device *hidpp)
-+{
-+	int ret;
-+	u8 multiplier = 1;
-+
-+	if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2121) {
-+		ret = hidpp_hrw_set_wheel_mode(hidpp, false, true, false);
-+		if (ret == 0)
-+			ret = hidpp_hrw_get_wheel_capability(hidpp, &multiplier);
-+	} else if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2120) {
-+		ret = hidpp_hrs_set_highres_scrolling_mode(hidpp, true,
-+							   &multiplier);
-+	} else /* if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_1P0) */ {
-+		ret = hidpp10_enable_scrolling_acceleration(hidpp);
-+		multiplier = 8;
-+	}
-+	if (ret)
-+		return ret;
-+
-+	if (multiplier == 0)
-+		multiplier = 1;
-+
-+	hidpp->vertical_wheel_counter.wheel_multiplier = multiplier;
-+	hid_info(hidpp->hid_dev, "multiplier = %d\n", multiplier);
-+	return 0;
-+}
-+
- /* -------------------------------------------------------------------------- */
- /* Generic HID++ devices                                                      */
- /* -------------------------------------------------------------------------- */
-@@ -2593,6 +2808,11 @@ static void hidpp_populate_input(struct hidpp_device *hidpp,
- 		wtp_populate_input(hidpp, input, origin_is_hid_core);
- 	else if (hidpp->quirks & HIDPP_QUIRK_CLASS_M560)
- 		m560_populate_input(hidpp, input, origin_is_hid_core);
-+
-+	if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL) {
-+		input_set_capability(input, EV_REL, REL_WHEEL_HI_RES);
-+		hidpp->vertical_wheel_counter.dev = input;
-+	}
- }
- 
- static int hidpp_input_configured(struct hid_device *hdev,
-@@ -2711,6 +2931,27 @@ static int hidpp_raw_event(struct hid_device *hdev, struct hid_report *report,
- 	return 0;
- }
- 
-+static int hidpp_event(struct hid_device *hdev, struct hid_field *field,
-+	struct hid_usage *usage, __s32 value)
-+{
-+	/* This function will only be called for scroll events, due to the
-+	 * restriction imposed in hidpp_usages.
-+	 */
-+	struct hidpp_device *hidpp = hid_get_drvdata(hdev);
-+	struct hidpp_scroll_counter *counter = &hidpp->vertical_wheel_counter;
-+	/* A scroll event may occur before the multiplier has been retrieved or
-+	 * the input device set, or high-res scroll enabling may fail. In such
-+	 * cases we must return early (falling back to default behaviour) to
-+	 * avoid a crash in hidpp_scroll_counter_handle_scroll.
-+	 */
-+	if (!(hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL) || value == 0
-+	    || counter->dev == NULL || counter->wheel_multiplier == 0)
-+		return 0;
-+
-+	hidpp_scroll_counter_handle_scroll(counter, value);
-+	return 1;
-+}
-+
- static int hidpp_initialize_battery(struct hidpp_device *hidpp)
+
+Please pull the latest trace-v4.20-rc3 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v4.20-rc3
+
+Tag SHA1: adc352569eb25f7a0ecb4785b595a85315074020
+Head SHA1: 3054426dc68e5d63aa6a6e9b91ac4ec78e3f3805
+
+
+Pavankumar Kondeti (1):
+      sched, trace: Fix prev_state output in sched_switch tracepoint
+
+Steven Rostedt (VMware) (18):
+      function_graph: Create function_graph_enter() to consolidate architecture code
+      x86/function_graph: Simplify with function_graph_enter()
+      ARM: function_graph: Simplify with function_graph_enter()
+      arm64: function_graph: Simplify with function_graph_enter()
+      microblaze: function_graph: Simplify with function_graph_enter()
+      MIPS: function_graph: Simplify with function_graph_enter()
+      nds32: function_graph: Simplify with function_graph_enter()
+      parisc: function_graph: Simplify with function_graph_enter()
+      powerpc/function_graph: Simplify with function_graph_enter()
+      riscv/function_graph: Simplify with function_graph_enter()
+      s390/function_graph: Simplify with function_graph_enter()
+      sh/function_graph: Simplify with function_graph_enter()
+      sparc/function_graph: Simplify with function_graph_enter()
+      function_graph: Make ftrace_push_return_trace() static
+      function_graph: Use new curr_ret_depth to manage depth instead of curr_ret_stack
+      function_graph: Move return callback before update of curr_ret_stack
+      function_graph: Reverse the order of pushing the ret_stack and the callback
+      function_graph: Have profiler use curr_ret_stack and not depth
+
+----
+ arch/arm/kernel/ftrace.c             | 17 +------------
+ arch/arm64/kernel/ftrace.c           | 15 +----------
+ arch/microblaze/kernel/ftrace.c      | 15 ++---------
+ arch/mips/kernel/ftrace.c            | 14 ++---------
+ arch/nds32/kernel/ftrace.c           | 18 ++-----------
+ arch/parisc/kernel/ftrace.c          | 17 +++----------
+ arch/powerpc/kernel/trace/ftrace.c   | 15 ++---------
+ arch/riscv/kernel/ftrace.c           | 14 ++---------
+ arch/s390/kernel/ftrace.c            | 13 ++--------
+ arch/sh/kernel/ftrace.c              | 16 ++----------
+ arch/sparc/kernel/ftrace.c           | 11 +-------
+ arch/x86/kernel/ftrace.c             | 15 +----------
+ include/linux/ftrace.h               |  4 +--
+ include/linux/sched.h                |  1 +
+ include/trace/events/sched.h         | 12 ++++++++-
+ kernel/trace/ftrace.c                |  7 ++++--
+ kernel/trace/trace_functions_graph.c | 49 ++++++++++++++++++++++++++++--------
+ 17 files changed, 78 insertions(+), 175 deletions(-)
+---------------------------
+diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
+index 0142fcfcc3d3..bda949fd84e8 100644
+--- a/arch/arm/kernel/ftrace.c
++++ b/arch/arm/kernel/ftrace.c
+@@ -183,9 +183,7 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ 			   unsigned long frame_pointer)
  {
- 	static atomic_t battery_no = ATOMIC_INIT(0);
-@@ -2922,6 +3163,9 @@ static void hidpp_connect_event(struct hidpp_device *hidpp)
- 	if (hidpp->battery.ps)
- 		power_supply_changed(hidpp->battery.ps);
+ 	unsigned long return_hooker = (unsigned long) &return_to_handler;
+-	struct ftrace_graph_ent trace;
+ 	unsigned long old;
+-	int err;
  
-+	if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL)
-+		hi_res_scroll_enable(hidpp);
-+
- 	if (!(hidpp->quirks & HIDPP_QUIRK_NO_HIDINPUT) || hidpp->delayed_input)
- 		/* if the input nodes are already created, we can stop now */
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
  		return;
-@@ -3107,6 +3351,10 @@ static void hidpp_remove(struct hid_device *hdev)
- 	mutex_destroy(&hidpp->send_mutex);
+@@ -193,21 +191,8 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ 	old = *parent;
+ 	*parent = return_hooker;
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
++	if (function_graph_enter(old, self_addr, frame_pointer, NULL))
+ 		*parent = old;
+-		return;
+-	}
+-
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				       frame_pointer, NULL);
+-	if (err == -EBUSY) {
+-		*parent = old;
+-		return;
+-	}
  }
  
-+#define LDJ_DEVICE(product) \
-+	HID_DEVICE(BUS_USB, HID_GROUP_LOGITECH_DJ_DEVICE, \
-+		   USB_VENDOR_ID_LOGITECH, (product))
-+
- static const struct hid_device_id hidpp_devices[] = {
- 	{ /* wireless touchpad */
- 	  LDJ_DEVICE(0x4011),
-@@ -3119,10 +3367,39 @@ static const struct hid_device_id hidpp_devices[] = {
- 	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH,
- 		USB_DEVICE_ID_LOGITECH_T651),
- 	  .driver_data = HIDPP_QUIRK_CLASS_WTP },
-+	{ /* Mouse Logitech Anywhere MX */
-+	  LDJ_DEVICE(0x1017), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_1P0 },
-+	{ /* Mouse Logitech Cube */
-+	  LDJ_DEVICE(0x4010), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2120 },
-+	{ /* Mouse Logitech M335 */
-+	  LDJ_DEVICE(0x4050), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech M515 */
-+	  LDJ_DEVICE(0x4007), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2120 },
- 	{ /* Mouse logitech M560 */
--	  HID_DEVICE(BUS_USB, HID_GROUP_LOGITECH_DJ_DEVICE,
--		USB_VENDOR_ID_LOGITECH, 0x402d),
--	  .driver_data = HIDPP_QUIRK_DELAYED_INIT | HIDPP_QUIRK_CLASS_M560 },
-+	  LDJ_DEVICE(0x402d),
-+	  .driver_data = HIDPP_QUIRK_DELAYED_INIT | HIDPP_QUIRK_CLASS_M560
-+		| HIDPP_QUIRK_HI_RES_SCROLL_X2120 },
-+	{ /* Mouse Logitech M705 (firmware RQM17) */
-+	  LDJ_DEVICE(0x101b), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_1P0 },
-+	{ /* Mouse Logitech M705 (firmware RQM67) */
-+	  LDJ_DEVICE(0x406d), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech M720 */
-+	  LDJ_DEVICE(0x405e), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech MX Anywhere 2 */
-+	  LDJ_DEVICE(0x404a), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ LDJ_DEVICE(0xb013), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ LDJ_DEVICE(0xb018), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ LDJ_DEVICE(0xb01f), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech MX Anywhere 2S */
-+	  LDJ_DEVICE(0x406a), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech MX Master */
-+	  LDJ_DEVICE(0x4041), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ LDJ_DEVICE(0x4060), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ LDJ_DEVICE(0x4071), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech MX Master 2S */
-+	  LDJ_DEVICE(0x4069), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-+	{ /* Mouse Logitech Performance MX */
-+	  LDJ_DEVICE(0x101a), .driver_data = HIDPP_QUIRK_HI_RES_SCROLL_1P0 },
- 	{ /* Keyboard logitech K400 */
- 	  LDJ_DEVICE(0x4024),
- 	  .driver_data = HIDPP_QUIRK_CLASS_K400 },
-@@ -3139,12 +3416,19 @@ static const struct hid_device_id hidpp_devices[] = {
+ #ifdef CONFIG_DYNAMIC_FTRACE
+diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+index 50986e388d2b..57e962290df3 100644
+--- a/arch/arm64/kernel/ftrace.c
++++ b/arch/arm64/kernel/ftrace.c
+@@ -216,8 +216,6 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ {
+ 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+ 	unsigned long old;
+-	struct ftrace_graph_ent trace;
+-	int err;
  
- MODULE_DEVICE_TABLE(hid, hidpp_devices);
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		return;
+@@ -229,18 +227,7 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ 	 */
+ 	old = *parent;
  
-+static const struct hid_usage_id hidpp_usages[] = {
-+	{ HID_GD_WHEEL, EV_REL, REL_WHEEL_HI_RES },
-+	{ HID_ANY_ID - 1, HID_ANY_ID - 1, HID_ANY_ID - 1}
-+};
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace))
+-		return;
+-
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				       frame_pointer, NULL);
+-	if (err == -EBUSY)
+-		return;
+-	else
++	if (!function_graph_enter(old, self_addr, frame_pointer, NULL))
+ 		*parent = return_hooker;
+ }
+ 
+diff --git a/arch/microblaze/kernel/ftrace.c b/arch/microblaze/kernel/ftrace.c
+index d57563c58a26..224eea40e1ee 100644
+--- a/arch/microblaze/kernel/ftrace.c
++++ b/arch/microblaze/kernel/ftrace.c
+@@ -22,8 +22,7 @@
+ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
+ {
+ 	unsigned long old;
+-	int faulted, err;
+-	struct ftrace_graph_ent trace;
++	int faulted;
+ 	unsigned long return_hooker = (unsigned long)
+ 				&return_to_handler;
+ 
+@@ -63,18 +62,8 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
+ 		return;
+ 	}
+ 
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth, 0, NULL);
+-	if (err == -EBUSY) {
++	if (function_graph_enter(old, self_addr, 0, NULL))
+ 		*parent = old;
+-		return;
+-	}
+-
+-	trace.func = self_addr;
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
+-		current->curr_ret_stack--;
+-		*parent = old;
+-	}
+ }
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+ 
+diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
+index 7f3dfdbc3657..b122cbb4aad1 100644
+--- a/arch/mips/kernel/ftrace.c
++++ b/arch/mips/kernel/ftrace.c
+@@ -322,7 +322,6 @@ void prepare_ftrace_return(unsigned long *parent_ra_addr, unsigned long self_ra,
+ 			   unsigned long fp)
+ {
+ 	unsigned long old_parent_ra;
+-	struct ftrace_graph_ent trace;
+ 	unsigned long return_hooker = (unsigned long)
+ 	    &return_to_handler;
+ 	int faulted, insns;
+@@ -369,12 +368,6 @@ void prepare_ftrace_return(unsigned long *parent_ra_addr, unsigned long self_ra,
+ 	if (unlikely(faulted))
+ 		goto out;
+ 
+-	if (ftrace_push_return_trace(old_parent_ra, self_ra, &trace.depth, fp,
+-				     NULL) == -EBUSY) {
+-		*parent_ra_addr = old_parent_ra;
+-		return;
+-	}
+-
+ 	/*
+ 	 * Get the recorded ip of the current mcount calling site in the
+ 	 * __mcount_loc section, which will be used to filter the function
+@@ -382,13 +375,10 @@ void prepare_ftrace_return(unsigned long *parent_ra_addr, unsigned long self_ra,
+ 	 */
+ 
+ 	insns = core_kernel_text(self_ra) ? 2 : MCOUNT_OFFSET_INSNS + 1;
+-	trace.func = self_ra - (MCOUNT_INSN_SIZE * insns);
++	self_ra -= (MCOUNT_INSN_SIZE * insns);
+ 
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
+-		current->curr_ret_stack--;
++	if (function_graph_enter(old_parent_ra, self_ra, fp, NULL))
+ 		*parent_ra_addr = old_parent_ra;
+-	}
+ 	return;
+ out:
+ 	ftrace_graph_stop();
+diff --git a/arch/nds32/kernel/ftrace.c b/arch/nds32/kernel/ftrace.c
+index a0a9679ad5de..8a41372551ff 100644
+--- a/arch/nds32/kernel/ftrace.c
++++ b/arch/nds32/kernel/ftrace.c
+@@ -211,29 +211,15 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ 			   unsigned long frame_pointer)
+ {
+ 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+-	struct ftrace_graph_ent trace;
+ 	unsigned long old;
+-	int err;
+ 
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		return;
+ 
+ 	old = *parent;
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace))
+-		return;
+-
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				       frame_pointer, NULL);
+-
+-	if (err == -EBUSY)
+-		return;
+-
+-	*parent = return_hooker;
++	if (!function_graph_enter(old, self_addr, frame_pointer, NULL))
++		*parent = return_hooker;
+ }
+ 
+ noinline void ftrace_graph_caller(void)
+diff --git a/arch/parisc/kernel/ftrace.c b/arch/parisc/kernel/ftrace.c
+index 6fa8535d3cce..e46a4157a894 100644
+--- a/arch/parisc/kernel/ftrace.c
++++ b/arch/parisc/kernel/ftrace.c
+@@ -30,7 +30,6 @@ static void __hot prepare_ftrace_return(unsigned long *parent,
+ 					unsigned long self_addr)
+ {
+ 	unsigned long old;
+-	struct ftrace_graph_ent trace;
+ 	extern int parisc_return_to_handler;
+ 
+ 	if (unlikely(ftrace_graph_is_dead()))
+@@ -41,19 +40,9 @@ static void __hot prepare_ftrace_return(unsigned long *parent,
+ 
+ 	old = *parent;
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace))
+-		return;
+-
+-        if (ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				     0, NULL) == -EBUSY)
+-                return;
+-
+-	/* activate parisc_return_to_handler() as return point */
+-	*parent = (unsigned long) &parisc_return_to_handler;
++	if (!function_graph_enter(old, self_addr, 0, NULL))
++		/* activate parisc_return_to_handler() as return point */
++		*parent = (unsigned long) &parisc_return_to_handler;
+ }
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+ 
+diff --git a/arch/powerpc/kernel/trace/ftrace.c b/arch/powerpc/kernel/trace/ftrace.c
+index 4bf051d3e21e..b65c8a34ad6e 100644
+--- a/arch/powerpc/kernel/trace/ftrace.c
++++ b/arch/powerpc/kernel/trace/ftrace.c
+@@ -950,7 +950,6 @@ int ftrace_disable_ftrace_graph_caller(void)
+  */
+ unsigned long prepare_ftrace_return(unsigned long parent, unsigned long ip)
+ {
+-	struct ftrace_graph_ent trace;
+ 	unsigned long return_hooker;
+ 
+ 	if (unlikely(ftrace_graph_is_dead()))
+@@ -961,18 +960,8 @@ unsigned long prepare_ftrace_return(unsigned long parent, unsigned long ip)
+ 
+ 	return_hooker = ppc_function_entry(return_to_handler);
+ 
+-	trace.func = ip;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace))
+-		goto out;
+-
+-	if (ftrace_push_return_trace(parent, ip, &trace.depth, 0,
+-				     NULL) == -EBUSY)
+-		goto out;
+-
+-	parent = return_hooker;
++	if (!function_graph_enter(parent, ip, 0, NULL))
++		parent = return_hooker;
+ out:
+ 	return parent;
+ }
+diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+index 1157b6b52d25..c433f6d3dd64 100644
+--- a/arch/riscv/kernel/ftrace.c
++++ b/arch/riscv/kernel/ftrace.c
+@@ -132,7 +132,6 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ {
+ 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+ 	unsigned long old;
+-	struct ftrace_graph_ent trace;
+ 	int err;
+ 
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+@@ -144,17 +143,8 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+ 	 */
+ 	old = *parent;
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	if (!ftrace_graph_entry(&trace))
+-		return;
+-
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				       frame_pointer, parent);
+-	if (err == -EBUSY)
+-		return;
+-	*parent = return_hooker;
++	if (function_graph_enter(old, self_addr, frame_pointer, parent))
++		*parent = return_hooker;
+ }
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+diff --git a/arch/s390/kernel/ftrace.c b/arch/s390/kernel/ftrace.c
+index 84be7f02d0c2..39b13d71a8fe 100644
+--- a/arch/s390/kernel/ftrace.c
++++ b/arch/s390/kernel/ftrace.c
+@@ -203,22 +203,13 @@ device_initcall(ftrace_plt_init);
+  */
+ unsigned long prepare_ftrace_return(unsigned long parent, unsigned long ip)
+ {
+-	struct ftrace_graph_ent trace;
+-
+ 	if (unlikely(ftrace_graph_is_dead()))
+ 		goto out;
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		goto out;
+ 	ip -= MCOUNT_INSN_SIZE;
+-	trace.func = ip;
+-	trace.depth = current->curr_ret_stack + 1;
+-	/* Only trace if the calling function expects to. */
+-	if (!ftrace_graph_entry(&trace))
+-		goto out;
+-	if (ftrace_push_return_trace(parent, ip, &trace.depth, 0,
+-				     NULL) == -EBUSY)
+-		goto out;
+-	parent = (unsigned long) return_to_handler;
++	if (!function_graph_enter(parent, ip, 0, NULL))
++		parent = (unsigned long) return_to_handler;
+ out:
+ 	return parent;
+ }
+diff --git a/arch/sh/kernel/ftrace.c b/arch/sh/kernel/ftrace.c
+index 96dd9f7da250..1b04270e5460 100644
+--- a/arch/sh/kernel/ftrace.c
++++ b/arch/sh/kernel/ftrace.c
+@@ -321,8 +321,7 @@ int ftrace_disable_ftrace_graph_caller(void)
+ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
+ {
+ 	unsigned long old;
+-	int faulted, err;
+-	struct ftrace_graph_ent trace;
++	int faulted;
+ 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+ 
+ 	if (unlikely(ftrace_graph_is_dead()))
+@@ -365,18 +364,7 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
+ 		return;
+ 	}
+ 
+-	err = ftrace_push_return_trace(old, self_addr, &trace.depth, 0, NULL);
+-	if (err == -EBUSY) {
++	if (function_graph_enter(old, self_addr, 0, NULL))
+ 		__raw_writel(old, parent);
+-		return;
+-	}
+-
+-	trace.func = self_addr;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
+-		current->curr_ret_stack--;
+-		__raw_writel(old, parent);
+-	}
+ }
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+diff --git a/arch/sparc/kernel/ftrace.c b/arch/sparc/kernel/ftrace.c
+index 915dda4ae412..684b84ce397f 100644
+--- a/arch/sparc/kernel/ftrace.c
++++ b/arch/sparc/kernel/ftrace.c
+@@ -126,20 +126,11 @@ unsigned long prepare_ftrace_return(unsigned long parent,
+ 				    unsigned long frame_pointer)
+ {
+ 	unsigned long return_hooker = (unsigned long) &return_to_handler;
+-	struct ftrace_graph_ent trace;
+ 
+ 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+ 		return parent + 8UL;
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace))
+-		return parent + 8UL;
+-
+-	if (ftrace_push_return_trace(parent, self_addr, &trace.depth,
+-				     frame_pointer, NULL) == -EBUSY)
++	if (function_graph_enter(parent, self_addr, frame_pointer, NULL))
+ 		return parent + 8UL;
+ 
+ 	return return_hooker;
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 01ebcb6f263e..7ee8067cbf45 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -994,7 +994,6 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
+ {
+ 	unsigned long old;
+ 	int faulted;
+-	struct ftrace_graph_ent trace;
+ 	unsigned long return_hooker = (unsigned long)
+ 				&return_to_handler;
+ 
+@@ -1046,19 +1045,7 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
+ 		return;
+ 	}
+ 
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
++	if (function_graph_enter(old, self_addr, frame_pointer, parent))
+ 		*parent = old;
+-		return;
+-	}
+-
+-	if (ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				     frame_pointer, parent) == -EBUSY) {
+-		*parent = old;
+-		return;
+-	}
+ }
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index a397907e8d72..dd16e8218db3 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -777,8 +777,8 @@ struct ftrace_ret_stack {
+ extern void return_to_handler(void);
+ 
+ extern int
+-ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
+-			 unsigned long frame_pointer, unsigned long *retp);
++function_graph_enter(unsigned long ret, unsigned long func,
++		     unsigned long frame_pointer, unsigned long *retp);
+ 
+ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
+ 				    unsigned long ret, unsigned long *retp);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a51c13c2b1a0..d6183a55e8eb 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1116,6 +1116,7 @@ struct task_struct {
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	/* Index of current stored address in ret_stack: */
+ 	int				curr_ret_stack;
++	int				curr_ret_depth;
+ 
+ 	/* Stack of return addresses for return function tracing: */
+ 	struct ftrace_ret_stack		*ret_stack;
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index f07b270d4fc4..9a4bdfadab07 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -107,6 +107,8 @@ DEFINE_EVENT(sched_wakeup_template, sched_wakeup_new,
+ #ifdef CREATE_TRACE_POINTS
+ static inline long __trace_sched_switch_state(bool preempt, struct task_struct *p)
+ {
++	unsigned int state;
 +
- static struct hid_driver hidpp_driver = {
- 	.name = "logitech-hidpp-device",
- 	.id_table = hidpp_devices,
- 	.probe = hidpp_probe,
- 	.remove = hidpp_remove,
- 	.raw_event = hidpp_raw_event,
-+	.usage_table = hidpp_usages,
-+	.event = hidpp_event,
- 	.input_configured = hidpp_input_configured,
- 	.input_mapping = hidpp_input_mapping,
- 	.input_mapped = hidpp_input_mapped,
--- 
-2.19.1
-
+ #ifdef CONFIG_SCHED_DEBUG
+ 	BUG_ON(p != current);
+ #endif /* CONFIG_SCHED_DEBUG */
+@@ -118,7 +120,15 @@ static inline long __trace_sched_switch_state(bool preempt, struct task_struct *
+ 	if (preempt)
+ 		return TASK_REPORT_MAX;
+ 
+-	return 1 << task_state_index(p);
++	/*
++	 * task_state_index() uses fls() and returns a value from 0-8 range.
++	 * Decrement it by 1 (except TASK_RUNNING state i.e 0) before using
++	 * it for left shift operation to get the correct task->state
++	 * mapping.
++	 */
++	state = task_state_index(p);
++
++	return state ? (1 << (state - 1)) : state;
+ }
+ #endif /* CREATE_TRACE_POINTS */
+ 
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f536f601bd46..77734451cb05 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -817,7 +817,7 @@ function_profile_call(unsigned long ip, unsigned long parent_ip,
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ static int profile_graph_entry(struct ftrace_graph_ent *trace)
+ {
+-	int index = trace->depth;
++	int index = current->curr_ret_stack;
+ 
+ 	function_profile_call(trace->func, 0, NULL, NULL);
+ 
+@@ -852,7 +852,7 @@ static void profile_graph_return(struct ftrace_graph_ret *trace)
+ 	if (!fgraph_graph_time) {
+ 		int index;
+ 
+-		index = trace->depth;
++		index = current->curr_ret_stack;
+ 
+ 		/* Append this call time to the parent time to subtract */
+ 		if (index)
+@@ -6814,6 +6814,7 @@ static int alloc_retstack_tasklist(struct ftrace_ret_stack **ret_stack_list)
+ 			atomic_set(&t->tracing_graph_pause, 0);
+ 			atomic_set(&t->trace_overrun, 0);
+ 			t->curr_ret_stack = -1;
++			t->curr_ret_depth = -1;
+ 			/* Make sure the tasks see the -1 first: */
+ 			smp_wmb();
+ 			t->ret_stack = ret_stack_list[start++];
+@@ -7038,6 +7039,7 @@ graph_init_task(struct task_struct *t, struct ftrace_ret_stack *ret_stack)
+ void ftrace_graph_init_idle_task(struct task_struct *t, int cpu)
+ {
+ 	t->curr_ret_stack = -1;
++	t->curr_ret_depth = -1;
+ 	/*
+ 	 * The idle task has no parent, it either has its own
+ 	 * stack or no stack at all.
+@@ -7068,6 +7070,7 @@ void ftrace_graph_init_task(struct task_struct *t)
+ 	/* Make sure we do not use the parent ret_stack */
+ 	t->ret_stack = NULL;
+ 	t->curr_ret_stack = -1;
++	t->curr_ret_depth = -1;
+ 
+ 	if (ftrace_graph_active) {
+ 		struct ftrace_ret_stack *ret_stack;
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 169b3c44ee97..2561460d7baf 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -118,8 +118,8 @@ print_graph_duration(struct trace_array *tr, unsigned long long duration,
+ 		     struct trace_seq *s, u32 flags);
+ 
+ /* Add a function return address to the trace stack on thread info.*/
+-int
+-ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
++static int
++ftrace_push_return_trace(unsigned long ret, unsigned long func,
+ 			 unsigned long frame_pointer, unsigned long *retp)
+ {
+ 	unsigned long long calltime;
+@@ -177,9 +177,31 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
+ #ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
+ 	current->ret_stack[index].retp = retp;
+ #endif
+-	*depth = current->curr_ret_stack;
++	return 0;
++}
++
++int function_graph_enter(unsigned long ret, unsigned long func,
++			 unsigned long frame_pointer, unsigned long *retp)
++{
++	struct ftrace_graph_ent trace;
++
++	trace.func = func;
++	trace.depth = ++current->curr_ret_depth;
++
++	if (ftrace_push_return_trace(ret, func,
++				     frame_pointer, retp))
++		goto out;
++
++	/* Only trace if the calling function expects to */
++	if (!ftrace_graph_entry(&trace))
++		goto out_ret;
+ 
+ 	return 0;
++ out_ret:
++	current->curr_ret_stack--;
++ out:
++	current->curr_ret_depth--;
++	return -EBUSY;
+ }
+ 
+ /* Retrieve a function return address to the trace stack on thread info.*/
+@@ -241,7 +263,13 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
+ 	trace->func = current->ret_stack[index].func;
+ 	trace->calltime = current->ret_stack[index].calltime;
+ 	trace->overrun = atomic_read(&current->trace_overrun);
+-	trace->depth = index;
++	trace->depth = current->curr_ret_depth--;
++	/*
++	 * We still want to trace interrupts coming in if
++	 * max_depth is set to 1. Make sure the decrement is
++	 * seen before ftrace_graph_return.
++	 */
++	barrier();
+ }
+ 
+ /*
+@@ -255,6 +283,12 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
+ 
+ 	ftrace_pop_return_trace(&trace, &ret, frame_pointer);
+ 	trace.rettime = trace_clock_local();
++	ftrace_graph_return(&trace);
++	/*
++	 * The ftrace_graph_return() may still access the current
++	 * ret_stack structure, we need to make sure the update of
++	 * curr_ret_stack is after that.
++	 */
+ 	barrier();
+ 	current->curr_ret_stack--;
+ 	/*
+@@ -267,13 +301,6 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
+ 		return ret;
+ 	}
+ 
+-	/*
+-	 * The trace should run after decrementing the ret counter
+-	 * in case an interrupt were to come in. We don't want to
+-	 * lose the interrupt if max_depth is set.
+-	 */
+-	ftrace_graph_return(&trace);
+-
+ 	if (unlikely(!ret)) {
+ 		ftrace_graph_stop();
+ 		WARN_ON(1);
