@@ -2,98 +2,151 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7873AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9ADCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48B5420873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:04:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B5420873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=KARO-electronics.de
+	by mail.kernel.org (Postfix) with ESMTP id 9FCB020832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AkVyZoAp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FCB020832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeK1UF2 convert rfc822-to-8bit (ORCPT
+        id S1728006AbeK1UFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:05:28 -0500
-Received: from smtprelay07.ispgateway.de ([134.119.228.104]:8274 "EHLO
-        smtprelay07.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbeK1UF2 (ORCPT
+        Wed, 28 Nov 2018 15:05:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36030 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbeK1UFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:05:28 -0500
-Received: from [89.1.81.74] (helo=karo-electronics.de)
-        by smtprelay07.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <LW@KARO-electronics.de>)
-        id 1gRvle-0008K8-Vl; Wed, 28 Nov 2018 10:04:23 +0100
-Date:   Wed, 28 Nov 2018 10:04:20 +0100
-From:   Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 4/4] ARM64: dts: imx: add i.MX8QXP system controller RTC
- support
-Message-ID: <20181128100420.0c9a721a@karo-electronics.de>
-In-Reply-To: <1543311334-8807-5-git-send-email-Anson.Huang@nxp.com>
-References: <1543311334-8807-1-git-send-email-Anson.Huang@nxp.com>
-        <1543311334-8807-5-git-send-email-Anson.Huang@nxp.com>
-Organization: Ka-Ro electronics GmbH
+        Wed, 28 Nov 2018 15:05:53 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a18so1065448wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=yLLvV0awuLMcFk5jBlViuTe6EadRbFI8xCh6hOecpPo=;
+        b=AkVyZoApcK+Ep7O+PPXRR41XhcHq9XTXfXm7vZ+JZizTxxjA9AhRpAFGD2ZuXtxS5d
+         hyn76Xl6qVdScfa7HpYZUlnI8EIpIM7xX0A2l0W2sHQnprI7gbpjJvnEzPjimYj9eFKH
+         Ec33LKhJyZricpNRelA+63ykJEULlr1NK7eHc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=yLLvV0awuLMcFk5jBlViuTe6EadRbFI8xCh6hOecpPo=;
+        b=n3c00aCnVjBXnrG8o7b0+0s2xrFKrG/vMGpLyUm4AGAznPMV4IOPxmRcY7D8PovF5I
+         ZTwNGXnXptdUeNVIyI0moTd4r3mD2cbq3LDeHne95ShtqeeFbvfCF4Yd7wZBLBkDjbQs
+         hCmhLWjdF/R1awxRumuYpclyBWUt01uqpQVkg/aZRUesTqjMDe/dPAEdjW4MDpnPkN5H
+         INx6j0Dytfnpp625RE7h5CHICu61ucJ60DFiIKuBj8lG4p1n96QYQYTsOmxJvFOPoTI8
+         pYZnnYIo7h2rz48yzCi8AsgKgB69MbkC44u9cNIHRaTIQ8s9D/fKuoatuFdwLOKHiS3Z
+         z4Lg==
+X-Gm-Message-State: AA+aEWYqCup0USsuRr+k9n2OdNMhHi3+9Gg0DZ7PEbwnE8Pagx90fr/E
+        KBYEoecqbAvnoww+MBlb+bgDDQ==
+X-Google-Smtp-Source: AFSGD/ULDgGbpkRfo30sT+BOSflY6InGgiR3U9Wq/KyPsW7ELakNmioj9KSF1FnCcj4pZ3wMlVm4qg==
+X-Received: by 2002:a1c:8acf:: with SMTP id m198mr1917089wmd.15.1543395897837;
+        Wed, 28 Nov 2018 01:04:57 -0800 (PST)
+Received: from dell ([2.31.167.233])
+        by smtp.gmail.com with ESMTPSA id t5sm1713829wmd.15.2018.11.28.01.04.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 01:04:56 -0800 (PST)
+Date:   Wed, 28 Nov 2018 09:04:54 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Mark Brown <broonie@kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Freeman Liu <freeman.liu@spreadtrum.com>,
+        linux-input@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v3 2/4] iio: adc: add STMPE ADC driver using IIO framework
+Message-ID: <20181128090454.GR4272@dell>
+References: <20181123142411.8921-1-dev@pschenker.ch>
+ <20181123142411.8921-2-dev@pschenker.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181123142411.8921-2-dev@pschenker.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 23 Nov 2018, Philippe Schenker wrote:
 
-On Tue, 27 Nov 2018 09:41:46 +0000 Anson Huang wrote:
-> Add i.MX8QXP system controller RTC support.
+> From: Stefan Agner <stefan@agner.ch>
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> This adds an ADC driver for the STMPE device using the industrial
+> input/output interface. The driver supports raw reading of values.
+> The driver depends on the MFD STMPE driver. If the touchscreen
+> block is enabled too, only four of the 8 ADC channels are available.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> index 9155d45..ef57db6 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> @@ -433,4 +433,8 @@
->  		#size-cells = <1>;
->  		ranges = <0x5f000000 0x0 0x5f000000 0x1000000>;
->  	};
-> +
-> +	rtc: rtc {
-> +		compatible = "nxp,imx8qxp-sc-rtc";
-> +	};
->  };
-IMO this should be disabled by default.
+> Changes in v3:
+>  - Undo ADC-settings related code-deletions in stmpe-ts.c that the code is
+>    backwards-compatible to older devicetrees.
+> 
+> Changes in v2:
+>  - Code formatting
+>  - Move code to setup ADC to MFD device, as it is used by both drivers
+>    adc and touchscreen
+>  - Removed unused includes
+>  - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
+>  - Added new macro that defines the channel of the temperature sensor.
+>    Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it throughout
+>    the code for better readability.
+>  - Added mutex_unlock where missing.
+> 
+>  drivers/iio/adc/Kconfig              |   7 +
+>  drivers/iio/adc/Makefile             |   1 +
+>  drivers/iio/adc/stmpe-adc.c          | 326 +++++++++++++++++++++++++++
+>  drivers/input/touchscreen/stmpe-ts.c |  36 +--
 
+>  drivers/mfd/Kconfig                  |   3 +-
+>  drivers/mfd/stmpe.c                  |  81 +++++++
+>  include/linux/mfd/stmpe.h            |   9 +
 
-Lothar Waßmann
+The MFD changes should be contained in a separate patch.
+
+I don't see anything which ties the changes together.
+
+>  7 files changed, 437 insertions(+), 26 deletions(-)
+>  create mode 100644 drivers/iio/adc/stmpe-adc.c
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
