@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DC3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772D8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2870020832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B15B2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d17O4Svg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2870020832
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnkMQlgl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B15B2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbeK2AxV (ORCPT
+        id S1728608AbeK2Axd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:53:21 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45309 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728544AbeK2AxV (ORCPT
+        Wed, 28 Nov 2018 19:53:33 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45741 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728580AbeK2Axd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:53:21 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so9525550pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:51:38 -0800 (PST)
+        Wed, 28 Nov 2018 19:53:33 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so10188664pfd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:51:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MpKApkbZh5UuKp02YzW5T5e/e2xGXhow1EV1I9MOaJE=;
-        b=d17O4SvgBbuCy21nNSEV0esnJ/ow37xiyVsnrnnQzO56ADysjAmfJTA/AyRVIr7vmx
-         R9Er7RqFMcSP9NV4kAQop669EmO73RONEZjdEp/bWTHbQsmomyt6dt5kDvrCSShpw7Pf
-         GWq9HWia/Ug6b+LoFcZMeUAjZGiT34Gxzvm3Q=
+        bh=L1KWePsWaBzwLQi7BjylxNbKfiBht2SJGcZ6HLjFNIc=;
+        b=HnkMQlgldjOx/dufu89sbP/DckIY+t3WcfI4GBsyp4r/OGAWzg1ceW/4QLxmlYgczL
+         lo2NzHfXyNbk0MPcNmuoHYELceLA466HcZ92V3lXJNuZ/pVngH4N73rnSjde1Egxxnab
+         576AMBb/fJPenk2d4OahWi6Q8BfghglPI1T+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MpKApkbZh5UuKp02YzW5T5e/e2xGXhow1EV1I9MOaJE=;
-        b=ZDdybpL+XFQbvLx1yci1BYAK6K9oKKXaui2M9bdhQaz2Fn+NUJ1pbf8aUOlq7UYUZD
-         TH5iCU1e0FmJ34HoO8UK5m5fNOL8jU5gCXgKDtHSEikRll2OxilPN0a/aCoDScA79B9I
-         AecOaBhgfgFNwJ4c94yyUl/SvpeC6oHFiFVBpKOKxE3RwmqskheLzurVJilu8smn+mh5
-         1h/BhyzHs++CZ/pg2Dvr5rWE1wiN/pkgZ6ik9Kw1uz14hegQ2cx/+xCCf6REVOoeZNVq
-         ZAf1ireXsn61F4qGv8FIzX4iKsbsD1CGnKbN2r+r6iwJL42AVremCz8JKAkwAAhCSznj
-         ImjQ==
-X-Gm-Message-State: AA+aEWbgi7I7efcklg/6+hOwRiwO2fQPudRaoAouIuv4vGlr1xEDgRcP
-        RnIKSntMLmaKrbCecHDj1V1a
-X-Google-Smtp-Source: AFSGD/UDrdJgNoGeCZwTdECtWiv2yPSfEukqx3EEnUHRdd5UlA7Oy+GHFHKYrAPtyf3VVtqKVILEZQ==
-X-Received: by 2002:a63:1848:: with SMTP id 8mr32777558pgy.81.1543413097787;
-        Wed, 28 Nov 2018 05:51:37 -0800 (PST)
+        bh=L1KWePsWaBzwLQi7BjylxNbKfiBht2SJGcZ6HLjFNIc=;
+        b=gumtGeDRDefD8rT1Yi5mNBJakb2Gy9KqQYcRA9+9w4uiqHs5tvjTxrie6V+OXnPv76
+         PTWyGYsqpH9x1+YVevg17nG9EXuLGdN0q/EVhwYyQ2iYodLHpRsu27h4SVFkFX2s4HdA
+         mMBXyzFzpLKgsp+BgTzELMF20cLkkq7IAuHakUA8A87d86m0SALBfdGUfXTmkCKy6GqE
+         lgyhi2Sq+YMsdsQrfJGFLL6e3eRYPpXfxvOu9oY+nVOWfrgQISN2FgLa9r8TunVb/+7c
+         kESyJ+nQ1es8bUDOzrj1dA2LpCy3+AQhXwcEsLmBlqf/h6qY+IvXRdmviObtgIcoeO11
+         xXlA==
+X-Gm-Message-State: AGRZ1gJvd9hKcBou8ucwuHtGmGyFq5IKt8ilxMPU8OQwQ6W6oNJdMgMP
+        t/i9c3LTLsaV5fXifkB/xv4c
+X-Google-Smtp-Source: AJdET5fU5MAi6MUGtlSd/t9tgitCiKrTVfMbljI5VNCtlq2XjG+/rtEWuWhRUrnqpOUqJQnuuGLOJA==
+X-Received: by 2002:a62:cf84:: with SMTP id b126mr37250307pfg.98.1543413109069;
+        Wed, 28 Nov 2018 05:51:49 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:90a:a93f:b481:6fae:6692:c3ee])
-        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.51.29
+        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.51.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 05:51:37 -0800 (PST)
+        Wed, 28 Nov 2018 05:51:48 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -67,9 +67,9 @@ Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
         linus.walleij@linaro.org, zhao_steven@263.net,
         overseas.sales@unisoc.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 02/15] dt-bindings: arm: Document RDA8810PL and reference boards
-Date:   Wed, 28 Nov 2018 19:20:53 +0530
-Message-Id: <20181128135106.9255-3-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 03/15] ARM: Prepare RDA8810PL SoC
+Date:   Wed, 28 Nov 2018 19:20:54 +0530
+Message-Id: <20181128135106.9255-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
 References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
@@ -83,43 +83,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andreas Färber <afaerber@suse.de>
 
-Add bindings for RDA Micro RDA8810PL SoC and below reference boards:
+Introduce ARCH_RDA and mach-rda for RDA Micro SoCs.
 
-1. Orange Pi 2G-IoT - http://www.orangepi.org/OrangePi2GIOT/
-2. Orange Pi i96 - https://www.96boards.org/product/orangepi-i96/
-
-Cc: overseas.sales@unisoc.com
-Cc: zhao_steven@263.net
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/rda.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/rda.txt
+ arch/arm/Kconfig           | 2 ++
+ arch/arm/Makefile          | 1 +
+ arch/arm/mach-rda/Kconfig  | 7 +++++++
+ arch/arm/mach-rda/Makefile | 1 +
+ 4 files changed, 11 insertions(+)
+ create mode 100644 arch/arm/mach-rda/Kconfig
+ create mode 100644 arch/arm/mach-rda/Makefile
 
-diff --git a/Documentation/devicetree/bindings/arm/rda.txt b/Documentation/devicetree/bindings/arm/rda.txt
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 91be74d8df65..084f0983e6b2 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -804,6 +804,8 @@ source "arch/arm/plat-pxa/Kconfig"
+ 
+ source "arch/arm/mach-qcom/Kconfig"
+ 
++source "arch/arm/mach-rda/Kconfig"
++
+ source "arch/arm/mach-realview/Kconfig"
+ 
+ source "arch/arm/mach-rockchip/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 05a91d8b89f3..10056ccdb8be 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -202,6 +202,7 @@ machine-$(CONFIG_ARCH_ORION5X)		+= orion5x
+ machine-$(CONFIG_ARCH_PICOXCELL)	+= picoxcell
+ machine-$(CONFIG_ARCH_PXA)		+= pxa
+ machine-$(CONFIG_ARCH_QCOM)		+= qcom
++machine-$(CONFIG_ARCH_RDA)		+= rda
+ machine-$(CONFIG_ARCH_REALVIEW)		+= realview
+ machine-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip
+ machine-$(CONFIG_ARCH_RPC)		+= rpc
+diff --git a/arch/arm/mach-rda/Kconfig b/arch/arm/mach-rda/Kconfig
 new file mode 100644
-index 000000000000..43c80762c428
+index 000000000000..dafab78d7aab
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/rda.txt
-@@ -0,0 +1,17 @@
-+RDA Micro platforms device tree bindings
-+----------------------------------------
-+
-+RDA8810PL SoC
-+=============
-+
-+Required root node properties:
-+
-+ - compatible :  must contain "rda,8810pl"
-+
-+
-+Boards:
-+
-+Root node property compatible must contain, depending on board:
-+
-+ - Orange Pi 2G-IoT: "xunlong,orangepi-2g-iot"
-+ - Orange Pi i96: "xunlong,orangepi-i96"
++++ b/arch/arm/mach-rda/Kconfig
+@@ -0,0 +1,7 @@
++menuconfig ARCH_RDA
++	bool "RDA Micro SoCs"
++	depends on ARCH_MULTI_V7
++	select COMMON_CLK
++	select GENERIC_IRQ_CHIP
++	help
++	  This enables support for the RDA Micro 8810PL SoC family.
+diff --git a/arch/arm/mach-rda/Makefile b/arch/arm/mach-rda/Makefile
+new file mode 100644
+index 000000000000..6bea3d3a2dd7
+--- /dev/null
++++ b/arch/arm/mach-rda/Makefile
+@@ -0,0 +1 @@
++obj- += dummy.o
 -- 
 2.17.1
 
