@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791F3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97E5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEF62081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AFBC2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:48:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aitKZSEY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEF62081C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5jKs4i2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFBC2081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeK2IvW (ORCPT
+        id S1726585AbeK2Ivl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:51:22 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:47030 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeK2IvW (ORCPT
+        Thu, 29 Nov 2018 03:51:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34329 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeK2Ivl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:51:22 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so10802745pfe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:48:20 -0800 (PST)
+        Thu, 29 Nov 2018 03:51:41 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so10836194pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:48:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fMzQs1T2YHojEpjr1RYaT5RiK9bTBU7ADy8t1EE0gEU=;
-        b=aitKZSEYkNWimjssX6UX2ckmhM8qvkTerrI+rwrntSdIvQU9XKL/o/fsTUJHtVZ6GG
-         9YgU8MUERItWBCDbPeiVxMcTp62UxZDS9vKAlC50QWsZhm7zmCbiXwsbEk2QePhiChIP
-         mN+cbENC4XRmJl8DqIA0+1ZPS0bVv2aBnSwNbMpPodV9BBhjKLT2VSy/qFvotCtFxyr6
-         MBHk4O08Il1acRZ8RD1OtXsavw7l6UVgjycfGNq/XWIcP07TMj/RFeCmQ8gj71kz9pyj
-         EyCmxngbyLDv3Y5yQC0Tq7vV9NzSy/6fPD2ywUdV1Pbtw8vhsPzxcugvgriM65X8iRAK
-         Yc3g==
+        bh=B2sFRs0i8vXz6y0fhJandC/ey/yyg/GEQaJfZy9xWjs=;
+        b=e5jKs4i2f2MW8/ZPoRuzlo1mSm7qxxfJ4mMrGo5dQR2ZH14yAML6SSIJunnBU6YKP7
+         OerZJEZ+Z9xT81dMRgwWBsFCewGz0NpSJMK/yb98l1g/6VLXc5YITUOQPVamGysId3i0
+         1uHNq9JBJ0DQUkj6siid974vq+Kb4Zc9yX1UzWdbkls6DxQTuAjJeCtIDvgbQ8XZIMbo
+         wy9YHOjyRCmSB67O48nDnjEMb7/S06K01JczfTwwo4936xlGy1x4+t1yuaYpkYPnYUcV
+         QsEstGeyZxNaFQxEBMruvzyiXGH8qSty/qabyoDXti6tZw0OjJ/9mkCP5WXaYW7L84KS
+         KhZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=fMzQs1T2YHojEpjr1RYaT5RiK9bTBU7ADy8t1EE0gEU=;
-        b=qH77wnGrKjY07GNJpkfH4FpvqMnmBZt4tqkalqmb2QYSqr7HDKnHqC96WTb/S/yTal
-         e0VyA/+M8AFZL1d7PGzKetDBBt6GqticiSh+qW6ZmHFCoJU98Ib2hA21FxvVhQEt01wC
-         iT5rmjsiTPXCSR0D+pqPJ2a7x5niLm8pKuTa0LLu3jNe23SKEitSBWuCfG4dM6k8FRGC
-         tiU2CVvTkWcigyCtrRJQQ3MTHfMy7Ni6Mdy6U5YRYhrSIo9r3kGXymNqE/u2k24cWT5u
-         nComInD35DjIUA4bUy6vZmo+/9OSy9tvSZZruUP+aKpQau+Gc0rNZLx0MftD3MhB7Pu+
-         iGsA==
-X-Gm-Message-State: AGRZ1gLj7PsKL83Lp+jwYur5KedEPbUgofrZSZXUPhpaAMQ7TeN5ztgq
-        4c7dYaLRAFKVh4IH1WfTxIA=
-X-Google-Smtp-Source: AFSGD/V5TMtnr+ZxCPY0X52Eph0rj5ATwPvDYQCH2U57FGkuEyqwF6maer7PgGp3xIyGIhEiVZqPBA==
-X-Received: by 2002:a63:1f1c:: with SMTP id f28mr34760995pgf.193.1543441699662;
-        Wed, 28 Nov 2018 13:48:19 -0800 (PST)
+        bh=B2sFRs0i8vXz6y0fhJandC/ey/yyg/GEQaJfZy9xWjs=;
+        b=YmPIWF8k/0VlHlaEKRfMJkQrOs8ddOZH9eC1G04ctjWpAbRckIieDSf5cUhHVl2A27
+         F/8/r5q2a3bZRVo+lSHwETZgTAtah7JmTA24H4d5ExLJq98Fkq1ZqcZ2b4zUBc8Cy7y3
+         Jx+mtMFns5R/76c8whJ0LYKwza8EO+HU0SIS3g5gn8f3jdwtnCP+ZX9M35/4i7L0hDmS
+         kccmLdfwqtxxy9Q+xe1ooCG8i8F2lHG8CnBT8QoWLe/HRlgeUOfZck3ay1q8aSj+/zwy
+         nUga+r5hgrY137+zd+9uVsWCqTN4WcNm2qd6XE51RaKyMd63d3H4NDYJj7sv4yOEgTA6
+         By6Q==
+X-Gm-Message-State: AA+aEWY48b3Yye1k9pizc51rTekuba2Dhb8Zxxb8we2m48SQ0OiMfagr
+        UX4Dmq7LX4bkSNC1DnYaE2k=
+X-Google-Smtp-Source: AFSGD/W8/scmlLBYzxVANzh5gpvGSq2SLdS827BjCCDKncekXZINH6XlojS/yLjGEDvLCYCeSTggTQ==
+X-Received: by 2002:a65:5286:: with SMTP id y6mr34661741pgp.439.1543441718027;
+        Wed, 28 Nov 2018 13:48:38 -0800 (PST)
 Received: from [10.0.2.15] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id m20sm10852345pgv.93.2018.11.28.13.48.16
+        by smtp.gmail.com with ESMTPSA id v5sm13737260pgn.5.2018.11.28.13.48.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 13:48:18 -0800 (PST)
-Subject: Re: [GIT PULL 1/4] bcm2835-defconfig-next-2018-11-27
+        Wed, 28 Nov 2018 13:48:36 -0800 (PST)
+Subject: Re: [GIT PULL 2/4] bcm2835-soc-next-2018-11-27
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -68,13 +68,14 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com
 References: <20181127211301.30296-1-eric@anholt.net>
+ <20181127211301.30296-2-eric@anholt.net>
 From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <da219894-4bba-21a3-94dc-da7ff7e63896@gmail.com>
-Date:   Wed, 28 Nov 2018 13:48:15 -0800
+Message-ID: <4fe7238a-5775-0cdd-b36a-d7ec5dde3d71@gmail.com>
+Date:   Wed, 28 Nov 2018 13:48:34 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181127211301.30296-1-eric@anholt.net>
+In-Reply-To: <20181127211301.30296-2-eric@anholt.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,27 +89,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 11/27/18 1:12 PM, Eric Anholt wrote:
 > Hi Florian,
 > 
-> Hopefully I'm not too late this time around.  Stefan's been doing a
-> great job maintaining the bcm2835 branches, and was waiting for me to
-> send the PRs.
-> 
 > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 > 
 >   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 > 
 > are available in the Git repository at:
 > 
->   git://github.com/anholt/linux tags/bcm2835-defconfig-next-2018-11-27
+>   git://github.com/anholt/linux tags/bcm2835-soc-next-2018-11-27
 > 
-> for you to fetch changes up to 24632d6b78a1929b14f32cab762a0859db7086f2:
+> for you to fetch changes up to 7b369a42e6d06c59fc56a1769fb4da797fac9bad:
 > 
->   ARM: bcm2835_defconfig: Enable BCM2835 MMAL-based V4L2 camera driver (2018-11-15 19:07:36 +0100)
+>   ARM: mach-bcm: Switch bcm2835 and platsmp to SPDX identifier (2018-11-14 20:55:30 +0100)
 > 
 > ----------------------------------------------------------------
-> This pull request enables the V4L2 camera driver on the Pi1 defconfig.
+> This pull request adds SPDX identifiers to the bcm2835 platform files.
 > 
 > ----------------------------------------------------------------
 
-Merged into defconfig/next, thanks Eric.
+Merged into soc/next, thanks Eric.
 -- 
 Florian
