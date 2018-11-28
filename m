@@ -2,216 +2,121 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBC7C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6626C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5013A20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5013A20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9C0A520863
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:03:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ue0aGUwW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0A520863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeK2JGY (ORCPT
+        id S1726648AbeK2JGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:06:24 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33011 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeK2JGY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:06:24 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gS7vP-000170-I0; Wed, 28 Nov 2018 23:03:15 +0100
-Date:   Wed, 28 Nov 2018 23:03:14 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <douliyangs@gmail.com>
-cc:     LKML <linux-kernel@vger.kernel.org>, kashyap.desai@broadcom.com,
-        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
-        ming.lei@redhat.com, Christoph Hellwig <hch@lst.de>,
-        bhelgaas@google.com, linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH v3] genirq/affinity: Create and transfer more irq
- desc info by a new structure
-In-Reply-To: <20181128164503.6194-1-douliyangs@gmail.com>
-Message-ID: <alpine.DEB.2.21.1811282228570.1879@nanos.tec.linutronix.de>
-References: <20181128164503.6194-1-douliyangs@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 29 Nov 2018 04:06:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbeK2JGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 04:06:53 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1635120832;
+        Wed, 28 Nov 2018 22:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543442628;
+        bh=0dabq8TB30UqkotGbejyx53E19VTweaYSW54JXUeu/U=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ue0aGUwWDwkku+x3V2P/6YEJun/R0OWpGzKPZk4IBiIq55B5W6wEZ+kc6v3LWTPJP
+         X/j7N75wOoRTOnp4MKJatidB7vT65Uye5vzVGqm8EV91aMmWljZdVBjEN1WjeZCcRx
+         Yu06/c+5dCmvnZ1G7V0aQrCRa7fLn0ny0hELuPK0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87a7lzq1jz.fsf@bootlin.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+ <20180922181709.13007-7-gregory.clement@bootlin.com>
+ <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
+ <87a7lzq1jz.fsf@bootlin.com>
+Message-ID: <154344262734.88331.5318941402726866903@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+Date:   Wed, 28 Nov 2018 14:03:47 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dou,
+Quoting Gregory CLEMENT (2018-11-23 07:02:56)
+> Hi Stephen,
+>  =
 
-On Thu, 29 Nov 2018, Dou Liyang wrote:
-> +/**
-> + * struct irq_affinity_desc - Description for kinds of irq assignements
-> + *		which will be transferred to irqdesc core
+>  On ven., oct. 12 2018, Stephen Boyd <sboyd@kernel.org> wrote:
+> =
 
-Please align this proper
+> > +Rob
+> >
+> > Quoting Gregory CLEMENT (2018-09-22 11:17:09)
+> >> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm6=
+4/boot/dts/marvell/armada-ap806.dtsi
+> >> index 4a65e4e830aa..27c840e91abe 100644
+> >> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> >> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> >> @@ -280,6 +280,12 @@
+> >>                                 #address-cells =3D <1>;
+> >>                                 #size-cells =3D <1>;
+> >>  =
 
- * struct irq_affinity_desc - Description for kinds of irq assignements
- *			      which will be transferred to irqdesc core
+> >> +                               cpu_clk: clock-cpu {
+> >> +                                       compatible =3D "marvell,ap806-=
+cpu-clock";
+> >> +                                       clocks =3D <&ap_clk 0>, <&ap_c=
+lk 1>;
+> >> +                                       #clock-cells =3D <1>;
+> >> +                               };
+> >
+> > This looks like the wrong place because there isn't a reg property. It
+> =
 
-Aside of that, it's not interesting where these structs are going to be
-transferred today because that might change tomorrow. So something like
-this:
+> There is no reg property because we are inside a syscon node where the
+> registers are shared between multiple IPs.
 
- * struct irq_affinity_desc - Interrupt affinity descriptor
+The node right after this node has a reg property. What's going on?
+
+> =
+
+> > should go to the root of the tree. And then it looks like we're adding
+> > something to DT to get a driver to probe, which is improper DT design.
+> =
+
+> There is nothing related to the driver, this subnode describes the way
+> the hardware is designed. Under the system controller node there are
+> several IPs , like the CPU clocks, but also the GPIO or the pinctrl.
+> =
 
 
-> + * @masks:	cpumask of automatic irq affinity assignments
+Ok. And some of them have reg properties and others don't? We should
+somehow deprecate the idea of a syscon with child nodes. It leads to
+this weird twisting of DT. The only use for syscon from my perspective
+is when we have a register region that other random devices with their
+own 'reg' property need to peek/poke random things into.
 
-@mask: please. It's one cpumask per descriptor.
-
-> + * @flags:	flags to differentiate between managed and
-> + *		unmanaged interrupts
-
-Again, that's the purpose today.
-
- * @flags:	Flags to convey complementary information
-
-But see further down.
-
-> + */
-> +struct irq_affinity_desc {
-> +	struct cpumask masks;
-> +	unsigned int	flags;
-> +};
-
-Please align the member names vertically with tabs
-
-struct irq_affinity_desc {
-	struct cpumask	masks;
-	unsigned int	flags;
-};
-
-> +/**
-> + * irq_create_affinity_desc - Create affinity desc for multiqueue spreading
-> + * @nvec:	The total number of vectors
-> + * @affd:	Description of the affinity requirements
-> + *
-> + * Returns the irq_affinity_desc pointer or NULL if allocation failed.
-> + */
-> +struct irq_affinity_desc *
-> +irq_create_affinity_desc(int nvec, const struct irq_affinity *affd)
-> +{
-> +	struct irq_affinity_desc *cur_affi_desc, *affi_desc = NULL;
-> +	struct cpumask *curmask, *masks = NULL;
-> +	int i;
-> +
-> +	masks = irq_create_affinity_masks(nvec, affd);
-> +	if (masks) {
-> +		affi_desc = kcalloc(nvec, sizeof(*affi_desc), GFP_KERNEL);
-
-Why do you want to do that separate allocation here? Just let
-irq_create_affinity_masks() allocate an array of affinity descriptors and
-use that. There is no point in copying that stuff over and over. Setting
-the flag field can be done in the existing function as well.
-
->  /**
->   * irq_calc_affinity_vectors - Calculate the optimal number of vectors
->   * @minvec:	The minimum number of vectors available
-> diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
-> index 6a682c229e10..2335b89d9bde 100644
-> --- a/kernel/irq/devres.c
-> +++ b/kernel/irq/devres.c
-> @@ -181,14 +181,33 @@ int __devm_irq_alloc_descs(struct device *dev, int irq, unsigned int from,
->  			   unsigned int cnt, int node, struct module *owner,
->  			   const struct cpumask *affinity)
->  {
-> +	struct irq_affinity_desc *cur_affi_desc, *affi_desc = NULL;
-> +	const struct cpumask *curmask;
->  	struct irq_desc_devres *dr;
-> -	int base;
-> +	int base, i;
->  
->  	dr = devres_alloc(devm_irq_desc_release, sizeof(*dr), GFP_KERNEL);
->  	if (!dr)
->  		return -ENOMEM;
->  
-> -	base = __irq_alloc_descs(irq, from, cnt, node, owner, affinity);
-> +	if (affinity) {
-> +		affi_desc = kcalloc(cnt, sizeof(*affi_desc), GFP_KERNEL);
-> +		if (!affi_desc)
-> +			return -ENOMEM;
-> +
-> +		curmask = affinity;
-> +		cur_affi_desc = affi_desc;
-> +		for (i = 0; i < cnt; i++) {
-> +			cpumask_copy(&cur_affi_desc->masks, curmask);
-> +			cur_affi_desc->flags = 1;
-
-No magic constant's please for a flags field. You really want proper
-constants for that, but I'd rather avoid the whole flags fiddling
-completely. See below.
-
-> +			curmask++;
-> +			cur_affi_desc++;
-> +		}
-
-Can you please change the function signature and fixup the callers, if
-there are any of them? Copying this over and over is horrible.
-
->  	for (i = 0; i < cnt; i++) {
-> -		if (affinity) {
-> -			node = cpu_to_node(cpumask_first(affinity));
-> -			mask = affinity;
-> -			affinity++;
-> +		if (affi_desc && affi_desc->flags ) {
-
-Please don't check flags for being !=0. Once we add other information than
-the managed/non-managed decision to the flag field, then this will fall
-apart.
-
-To avoid issues like that please use explicit bits in the structure instead
-of the opaque flags field:
-
-struct irq_affinity_desc {
-	struct cpumask	masks;
-	unsigned int	managed : 1;
-};
-
-So if we add new things later they will have an explicit name and there is
-absolute no conflict with existing code.
-
-> +			flags =  IRQD_AFFINITY_MANAGED |
-> +				IRQD_MANAGED_SHUTDOWN;
-> +		} else
-> +			flags = 0;
-
-If you need braces for the if then the else path wants them as well.
-
-> +
-> +		if (affi_desc) {
-> +			mask = &affi_desc->masks;
-> +			node = cpu_to_node(cpumask_first(mask));
-> +			affi_desc++;
->  		}
-
->  int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
-> -			   int node, const struct cpumask *affinity)
-> +			   int node, const struct irq_affinity_desc *affi_desc)
-
-You can spare a lot of pointless churn by just keeping the 'affinity' name
-and only changing the struct type. The compiler will catch all places which
-need to be fixed and 'affinity' is generic enough to be used with the new
-struct type as well. As Bjorn said, even 'masks' is fine.
-
-Other than the things I pointed out, the whole thing starts to look
-palatable. Please split it up in the way Bjorn suggested and avoid the
-extra hoops and loops where possible.
-
-Thanks,
-
-	tglx
