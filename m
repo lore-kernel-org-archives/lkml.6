@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9862DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DFCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586862081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586862081C
+	by mail.kernel.org (Postfix) with ESMTP id 55B6D2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B6D2081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeK2JYh (ORCPT
+        id S1727307AbeK2JYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:37 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33200 "EHLO
+        Thu, 29 Nov 2018 04:24:39 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33221 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbeK2JYg (ORCPT
+        with ESMTP id S1727223AbeK2JYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:36 -0500
+        Thu, 29 Nov 2018 04:24:38 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8Cu-0001GX-Ay; Wed, 28 Nov 2018 23:21:20 +0100
+        id 1gS8Cy-0001GX-3f; Wed, 28 Nov 2018 23:21:24 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 22/29] x86/entry: Add TIF_NEED_FPU_LOAD
-Date:   Wed, 28 Nov 2018 23:20:28 +0100
-Message-Id: <20181128222035.2996-23-bigeasy@linutronix.de>
+Subject: [PATCH 24/29] x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD
+Date:   Wed, 28 Nov 2018 23:20:30 +0100
+Message-Id: <20181128222035.2996-25-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,44 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add TIF_NEED_FPU_LOAD. This is reserved for loading the FPU registers
-before returning to userland. This flag must not be set for systems
-without a FPU.
-If this flag is cleared, the CPU's FPU register hold the current content
-of current()'s FPU register. The in-memory copy (union fpregs_state) is
-not valid.
-If this flag is set, then all of CPU's FPU register may hold a random
-value (except for PKRU) and it is required to load the content of the
-FPU register on return to userland.
+From: Rik van Riel <riel@surriel.com>
 
-It is introduced now, so we can add code handling it now before adding
-the main feature.
+The FPU registers need only to be saved if TIF_NEED_FPU_LOAD is not set.
+Otherwise this has been already done and can be skipped.
 
+Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/thread_info.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/fpu/signal.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index cd6920674b905..1e64222030612 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -83,6 +83,7 @@ struct thread_info {
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-+#define TIF_NEED_FPU_LOAD	10	/* load FPU on return to userspace */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_PATCH_PENDING	13	/* pending live patching update */
-@@ -110,6 +111,7 @@ struct thread_info {
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-+#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index d8c2242877040..6e516eeaea328 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -156,7 +156,16 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 			sizeof(struct user_i387_ia32_struct), NULL,
+ 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
+ 
+-	copy_fpregs_to_fpstate(fpu);
++	__fpregs_changes_begin();
++	/*
++	 * If we do not need to load the FPU registers at return to userspace
++	 * then the CPU has the current state and we need to save it. Otherwise
++	 * it is already done and we can skip it.
++	 */
++	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
++		copy_fpregs_to_fpstate(fpu);
++
++	__fpregs_changes_end();
+ 
+ 	if (using_compacted_format()) {
+ 		copy_xstate_to_user(buf_fx, xsave, 0, size);
 -- 
 2.20.0.rc1
 
