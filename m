@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE9DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4438BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6FD2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083B7206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="a/+iXty8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6FD2081B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="Fnkfcu5E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083B7206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeK2Kr3 (ORCPT
+        id S1727349AbeK2Krb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:47:29 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:55187 "EHLO
+        Thu, 29 Nov 2018 05:47:31 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:45815 "EHLO
         com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbeK2Kr2 (ORCPT
+        with ESMTP id S1727120AbeK2Krb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:28 -0500
+        Thu, 29 Nov 2018 05:47:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=IVQVJsxbuowAbd/yxJNd0DNFSGZunvv8p3kE/MEcu70=; b=a/+iXty8h/PL
-        IA2ExFqwt3yM3bLLXv2WP1ap1tCC3LIkG77a0sWVSs9oJstn8FOLBGOQFOweG/Ff0JobPbbD5rKK+
-        rVtre/GBZWbWsxb+cxldMzWIRdzaAtp7GTxxM28g9VTTz/4oNaiLwzGO+C5sK4ylOqtYJXzB9EjG2
-        tW98FrG+/0J1DvlgJa/c7lTf4ANUiqmDKC8VjDxOrlKC0iOqwTTVPlmWMyf4qS2ULit8xUBcY9yRL
-        s/EN6Nx9yZkrceDX4iUrURACZP5QmoOV9u7LfQBVYSDlHIg1nqaxlJbgvnAylHliFFVSVf16bxadi
-        xSOOgPIj3PyNdodwVgo8gA==;
+        content-type; bh=NbDJS5KCUmlgmti0x7bPYn3Se3WmXYSYsFjXhyzWgQA=; b=Fnkfcu5EJzii
+        0cjcpP+3Oo7c2OiduT/hWOs0f2HeyvB2D7/+FqKgs047CTmaGc4QUlyNOwhnlMz54ajWU4nWGDkDz
+        vp73PjRa9pDuMqw9fTetLBPfVXE3VSfarcHH7qXSeYcLynv3j7QtXuJtjnL0uHgatpEn4x61y8W/u
+        G3u+hysO+5rHZ6YdRt7fD4J0+UMLOxGLWYKJl3WqOPIuFesnDLQZ860Ku9uALY7YZlaB/OvG5co8A
+        HOVUFOG/HZjo/RAf6epalIX1eBdFTsql6z5tSioqxZGv1gXmVTkbsSpM6+2Wv8qbMMjqcCYFMnRDf
+        C7Jkv+8UBwBxNuo3Qry9VA==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
         by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gS9Ur-0001zT-He; Thu, 29 Nov 2018 00:43:57 +0100
+        id 1gS9Ut-0001zB-Qk; Thu, 29 Nov 2018 00:44:00 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 43E0AC16D1;
-        Thu, 29 Nov 2018 00:43:42 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 4398FC11FB;
+        Thu, 29 Nov 2018 00:43:57 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 04/27] lockdep tests: Run lockdep tests a second time under Valgrind
-Date:   Wed, 28 Nov 2018 15:43:02 -0800
-Message-Id: <20181128234325.110011-5-bvanassche@acm.org>
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 11/27] timekeeping: Assign a name to tk_core.seq.dep_map
+Date:   Wed, 28 Nov 2018 15:43:09 -0800
+Message-Id: <20181128234325.110011-12-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
 References: <20181128234325.110011-1-bvanassche@acm.org>
@@ -61,59 +62,55 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.04)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0077418294842)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5pAc/85ACmEzY6vCUC+7SEN602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: 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
- 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
+ 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
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This improves test coverage.
+This patch makes lockdep reports that refer to tk_core.seq more
+informative.
 
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- tools/lib/lockdep/run_tests.sh | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
-index 38b8c9034b8e..f1b5027925db 100755
---- a/tools/lib/lockdep/run_tests.sh
-+++ b/tools/lib/lockdep/run_tests.sh
-@@ -30,3 +30,17 @@ find tests -name '*.c' | sort | while read -r i; do
- 	fi
- 	rm -f "tests/$testname"
- done
-+
-+find tests -name '*.c' | sort | while read -r i; do
-+	testname=$(basename "$i" .c)
-+	echo -ne "(PRELOAD + Valgrind) $testname... "
-+	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
-+		{ timeout 10 valgrind --read-var-info=yes ./lockdep "./tests/$testname" >& "tests/${testname}.vg.out"; true; } &&
-+		"tests/${testname}.sh" < "tests/${testname}.vg.out" &&
-+		! grep -Eq '(^==[0-9]*== (Invalid |Uninitialised ))|Mismatched free|Source and destination overlap| UME ' "tests/${testname}.vg.out"; then
-+		echo "PASSED!"
-+	else
-+		echo "FAILED!"
-+	fi
-+	rm -f "tests/$testname"
-+done
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 2d110c948805..6c9493495538 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -50,7 +50,9 @@ enum timekeeping_adv_mode {
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
+ 
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
