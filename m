@@ -2,124 +2,206 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6B2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63114C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEBF2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1126C2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBL+dR0+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEBF2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="wmQji8Yx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1126C2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeK2Cl5 (ORCPT
+        id S1728590AbeK2Cob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:41:57 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37554 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeK2Cl5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:41:57 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 40so23899956oth.4;
-        Wed, 28 Nov 2018 07:39:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=550FDsaVFHWAgUfQ7T9Iyvm0Wnrve/q00wxmvCndFSs=;
-        b=lBL+dR0+4laf5f7EckiilPHSwUQzzUlj397z8JWDVmKiZshP/Zo1eukrU2cDxIcZ/m
-         Mb2WXyrVwPfW+Kzx7cqKrHKG7J075RUc8+G2hqDk9lCThiErc2RHj8yRsAqdvcJidoBC
-         m8sr+RRR9luGsCHx+9QzwK3vhPm5urjo+NwWrG0Yi9Dl3QNZASlz3nhe2xaQPYwpxoRc
-         Ij/QncyWXyRY5kPViGIBvxIvkDT++SNBAcA09Pwv9WesQBo4Hp8NsK8+w2jQzl4sKolO
-         Dfpe3TjoaRg2IV4+Y/idPx0+RBu0fpStdjHXL0QKb5zQ1ynJmRGL/IEyD8d72rRR0gqE
-         W4Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=550FDsaVFHWAgUfQ7T9Iyvm0Wnrve/q00wxmvCndFSs=;
-        b=a1qCxL1L4ja/rtj8L0c9KEI+98SfUsXQEb7wMxin0Hk9K6vWQlVuCCIQ89Q2q6HUVB
-         K5/OAjgrJJ26kUmGkV3j4sWywOQ1Mg7szM7Ij3WrEd5n+513xvYQQqV7VXJ5RbM6AVry
-         c20dH3OkCqBhtAWv2O/RlBWwM0F2f6p6GancQ0HFK56b/JtP+5YCFLJ9Kn0LgBayba2+
-         oaDjTbHcqOz1A4tnWUtenfzIxC1y/RN/IFh69xoeMOvcVphyBKI7M4doicdsgooomB9Z
-         cpjSr2Irc9af4fOKXafpf1y5ko5ErgzKyGR+MfS6esvIiLrIg2HBTkYREx9rzcN6EMuu
-         Pt5Q==
-X-Gm-Message-State: AA+aEWYEJBZ5MfgIaYmq6TL/n9D296/343K+sCU69tUsBygOkhc/ZCLC
-        zHkgoPk8hheWluWt4xeGOv/NhOkKTBK1GaO8PhQ=
-X-Google-Smtp-Source: AFSGD/WVMU5fO/u4fBZ4E6kfcfIEtyz3ofy3rcG4BIy9BcNW5JpIobGg6ExW4c53ZQxFhXCOiqP9vNs6uPv3olp+eAA=
-X-Received: by 2002:a9d:7e87:: with SMTP id m7mr22775271otp.225.1543419592340;
- Wed, 28 Nov 2018 07:39:52 -0800 (PST)
+        Wed, 28 Nov 2018 21:44:31 -0500
+Received: from vern.gendns.com ([98.142.107.122]:56894 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727789AbeK2Coa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:44:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5lxk16se+yWU15wf3pp7o74cUXSPR6W0L92TUjSzSlU=; b=wmQji8YxKOBEQCsvOFFTN1WDAy
+        5Ss3BZke6k0OKmjON0JavfCNjE6jHqY8gQc3UhuaoZ6eoaKX3nTEFCNpNTH8TZT1r3AkpDeCua5rI
+        fGjCztHqzH46nkhB7SHY78izb+FBcPN5VQHlJy2pbP8fPhNF6YhMerSos96+Pj9BXSm2Ys93TO8OR
+        fjGtLXtUBzIl7qK00tGQJJdzYPsBuWC747/mGSWzoZr6KO6PtP6vDLJvjf7ipQqYKfI2+A2TAacjC
+        5obDLfdl6576QonPjC2W3IUzybPiyoTC7en8n8ZmkHp1Ecx+hmrFYQdP5CtEQizb64PSRCWbpjLM3
+        eXYgG1Hw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48946 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gS1xv-0000X7-1T; Wed, 28 Nov 2018 10:41:27 -0500
+Subject: Re: [PATCH 01/17] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
+Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
+        ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
+        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
+        m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+ <1542886753-17625-2-git-send-email-rogerq@ti.com>
+ <a4fe952b-9065-d91b-4c07-984ec3f5b276@lechnology.com>
+ <5BFD5F83.3070807@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <ee02b7d3-e7fd-2f4a-4213-d556d364194b@lechnology.com>
+Date:   Wed, 28 Nov 2018 09:42:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181121150709.6030-1-TheSven73@googlemail.com>
- <20181121150709.6030-2-TheSven73@googlemail.com> <20181127075431.GG13965@kroah.com>
-In-Reply-To: <20181127075431.GG13965@kroah.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Wed, 28 Nov 2018 10:39:41 -0500
-Message-ID: <CAGngYiUL7bZVEehj4LGC2H+kv+Z4v_s=tG4uosOp1-Rc4_pGWw@mail.gmail.com>
-Subject: Re: [PATCH anybus v4 1/7] fieldbus_dev: add Fieldbus Device subsystem.
-To:     gregkh@linuxfoundation.org
-Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5BFD5F83.3070807@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wow Greg, thanks for the review, this is awesome !!
+On 11/27/18 9:15 AM, Roger Quadros wrote:
+> 
+> On 26/11/18 23:14, David Lechner wrote:
+>> On 11/22/18 5:38 AM, Roger Quadros wrote:
+>>> From: Suman Anna <s-anna@ti.com>
+>>>
+>>> This patch adds the bindings for the Programmable Real-Time Unit
+>>> and Industrial Communication Subsystem (PRU-ICSS) present on various
+>>> TI SoCs. The IP is present on multiple TI SoC architecture families
+>>> including the OMAP architecture SoCs such as AM33xx, AM437x and
+>>> AM57xx; and on a Keystone 2 architecture based 66AK2G SoC. It is
+>>> also present on the Davinci based OMAPL138 SoCs and K3 architecture
+>>> based AM65x SoCs as well (not covered for now). Details have been
+>>> added to include bindings for various core sub-modules like the PRU
+>>> Cores, the PRUSS Interrupt Controller, and other sub-modules used
+>>> for Industrial Communication purposes, covering the MDIO, MII_RT
+>>> and the IEP sub-modules. The binding mostly uses standard DT
+>>> properties.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>> ---
+>>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 +++++++++++++++++++++
+>>>    1 file changed, 360 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>> new file mode 100644
+>>> index 0000000..24fedad
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>
+>> ...
+>>
+>>> +
+>>> +PRU-ICSS SoC Bus Parent Node
+>>> +=============================
+>>> +This node represents the integration of the PRU-ICSS IP into a SoC, and is
+>>> +required for all SoCs. The PRU-ICSS parent nodes need to be defined as child
+>>> +nodes of this node.
+>>> +
+>>> +Required Properties:
+>>> +--------------------
+>>> +- compatible     : should be one of,
+>>> +                       "ti,am3356-pruss-soc-bus" for AM335x family of SoCs
+>>> +                       "ti,am4376-pruss-soc-bus" for AM437x family of SoCs
+>>> +                       "ti,am5728-pruss-soc-bus" for AM57xx family of SoCs
+>>> +                       "ti,k2g-pruss-soc-bus" for 66AK2G family of SoCs
+>>> +- reg            : address and size of the PRUSS CFG sub-module registers
+>>> +                   dictating the interconnect configuration
+>>
+>> I haven't looked into Tony's suggestion of using ti-sysc yet, so this may be a
+>> moot point, but how will this work with AM18xx that does not have a PRUSS CFG
+>> register? It seems to me that reg here should be the address and size of the
+>> entire PRUSS IP block and the CFG register should be a syscon node or something
+>> like that.
+> 
+> The reg property description is incorrect in the patch. It should have been
+> 
+> reg		: address of SYSCFG register.
+> 
+> The SYSCFG register is used to enable and reset the module.
+> 
+> But based on Tony's suggestion this wrapper driver will change to ti,sysc for
+> OMAP like SoCs.
+> 
+> For AM18xx it could be a simple wrapper driver that just populates the children?
 
-On Tue, Nov 27, 2018 at 2:54 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+I suppose that could work. I will look into it (perhaps after seeing what you
+come up with in v2).
 
->> +     cdev_init(&fb->cdev, &fieldbus_fops);
->> +     err = cdev_add(&fb->cdev, devno, 1);
->> +     if (err) {
->> +             pr_err("fieldbus_dev%d unable to add device %d:%d\n",
->> +                     fb->id, MAJOR(fieldbus_devt), fb->id);
->> +             goto err_cdev;
->> +     }
->
-> Why do you have a static cdev?
+> 
+>>
+>>> +- #address-cells : should be 1
+>>> +- #size-cells    : should be 1
+>>> +- ranges         : standard ranges definition
+>>> +
+>>
+>> ...
+>>
+>>> +
+>>> +PRUSS INTC Child Node
+>>> +======================
+>>> +Each PRUSS has a single interrupt controller instance that is common to both
+>>> +the PRU cores. Each interrupt controller can detect 64 input events which are
+>>> +then mapped to 10 possible output interrupts through two levels of mapping. The
+>>> +input events can be triggered by either the PRUs and/or various other PRUSS
+>>> +internal and external peripherals. The first 2 output interrupts are fed
+>>> +exclusively to the internal PRU cores, with the remaining 8 connected to
+>>> +external interrupt controllers including the MPU.
+>>
+>> FYI, on AM18xx, there is a PRUSSEVTSEL bit in CFGCHIP3[3] (already a syscon node
+>> in the device tree) that allows selecting one of two groups of 32 input events
+>> out of this group of 64. This is perhaps getting out of the scope of this patch
+>> series, but I just want to make sure we end up with something that can be easily
+>> extended for this case. For example, I was thinking that this binding could be
+>> modified so that #interrupt-cells could be 1 or 2. If it is 2, then the first
+>> cell specifies the PRUSSEVTSEL value and the second value is the event number.
+>>
+> 
+> this is da850.dtsi correct?
 
-The proposed fieldbus API needs a single /dev/fieldbus_devX node for every
-device. I just looked around the drivers/ tree to see how others accomplish
-this.
+Yes.
 
-Is there a better way?
+> 
+> As PRUSSEVTSEL is not SYSEVENT specific but applies to all the SYSEVENTs at a time.
+> I don't think interrupt-cells is the right place to specify this.
+> 
+> Can it be set in DT in the board file? But this can't change once booted so maybe restrictive.
 
->> +     fb->online_sd = sysfs_get_dirent(fb->dev->kobj.sd, "online");
->
-> Ick, what?  Why?  Why are you messing around with a raw sysfs attribute?
+I guess the way I see this is that it is like specifying the bank and index for
+a GPIO. If you only specify the system event number, then it is not clear which
+event you mean - it could be one of two events. You have to also specify the
+PRUSSEVTSEL value (one could call this the bank or group, I suppose) to fully
+describe the system event.
 
-The proposed fieldbus API has a sysfs attribute that can be poll/select'ed on.
-Is this behaviour still allowed / ok?
-If so, you're saying that I should not store the raw attribute, but just do:
-sysfs_notify(&fb->dev->kobj, NULL, "online") ?
+> 
+> If runtime change is required it can only be done before a PRU boots.
+> 
+> How about providing this info in the resource table and/or application DT node?
 
-Now that I (hopefully) have a few seconds of your attention...
-I suppose the fieldbus API in this patch can't go anywhere, without buy-in from
-multiple people who also want to use fieldbus. Right now, there are none.
-
-This might be a chicken-and-egg problem. Perhaps here are no fieldbus
-devices because
-there's no good general API. There's no good general API because there are no
-fieldbus devices yet.
-
- Is there a tried and tested way to break this deadlock?
+This seems like this would make it easy to end up with a broken interrupts
+if you accidentally try to use interrupts from both groups. Instead this
+could be implemented in the irqchip driver such that the first interrupt
+(system event) requested gets to select the group. If any interrupts from
+the other group are requested later, they can just return an error. Any
+interrupts in the same group as the first can be requested successfully.
