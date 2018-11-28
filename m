@@ -2,91 +2,130 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B1FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA65C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3DC20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:44:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3DC20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 8BFDA20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:46:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFDA20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbeK1Up3 (ORCPT
+        id S1727868AbeK1UrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:45:29 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37012 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbeK1Up3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:45:29 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h15so21522357edb.4;
-        Wed, 28 Nov 2018 01:44:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B8L73hWa2Rbe1pct5sx5N8Rgy222BMSrNaMLd1w8jBk=;
-        b=azPpBDV0WOgrPdMJalgrNPv+9bN+OAMAaop0ejEgvt6qZuSNuv8mb6n5/VXYkjj0Pa
-         ULmO8o8gwsUOMBohhxJKJreafT/Ojg3ghv9S4LwMXLU393vTfAEuo1LB9ClSu7Ssxn4K
-         WwJYolvk1urR6LRO/qj/IDQyFL67X5YuVZitQLg+sg3R5DFxMfgGX8ZzMfNzCAXAAkcX
-         P7qdr5S+tj2X5T7TEt92+MzPDQNtUL4sNMaHALY4C0V6t3JHPa1Lg9X1e2qabPSlu5b5
-         z8zJMlDJA6YIsUsYpY1z4vECd6gRcWS2jWMQ1c1XZn3urLEkGovQyKTKAgAC4QeW+hhY
-         kalQ==
-X-Gm-Message-State: AGRZ1gI7AUDCSLtXQ8PIPFS1aBGhSmEfjuOg/udjFbBJnKV/Y1jJ6mPx
-        +yMuEV++Z9n5Meae7UB0hbZEuzyCMZo=
-X-Google-Smtp-Source: AJdET5eoXI+TAD2glE4h8i7pchjrx+iQlmInYtXngob9j4ILhM0IlpemgDbTrHagvNnp4Kyzc8R5VQ==
-X-Received: by 2002:a17:906:7a9c:: with SMTP id f28-v6mr26267704ejo.135.1543398264810;
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id p16-v6sm978743eju.73.2018.11.28.01.44.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-Received: by mail-wm1-f44.google.com with SMTP id g67so1851479wmd.2;
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-X-Received: by 2002:a1c:f611:: with SMTP id w17mr2145389wmc.116.1543398263655;
- Wed, 28 Nov 2018 01:44:23 -0800 (PST)
+        Wed, 28 Nov 2018 15:47:25 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:11736 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbeK1UrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:47:25 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 434bQ42WL3z9vBmK;
+        Wed, 28 Nov 2018 10:46:20 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id OFTozA-0L65h; Wed, 28 Nov 2018 10:46:20 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 434bQ41q5Dz9vBmJ;
+        Wed, 28 Nov 2018 10:46:20 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 316298B85D;
+        Wed, 28 Nov 2018 10:46:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Be2a1pSxcfe1; Wed, 28 Nov 2018 10:46:21 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 04ECB8B853;
+        Wed, 28 Nov 2018 10:46:21 +0100 (CET)
+Subject: Re: [RFC PATCH v2 07/11] powerpc/mm/radix: Use KUEP API for Radix MMU
+To:     Russell Currey <ruscur@russell.cc>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
+ <312a6ca863fb46569b705d0dc5f5e38dfcd64889.1543356926.git.christophe.leroy@c-s.fr>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <cbd84ca9-4337-658e-d834-25943f5f3753@c-s.fr>
+Date:   Wed, 28 Nov 2018 10:46:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181128093013.24442-1-wens@csie.org> <20181128093013.24442-9-wens@csie.org>
-In-Reply-To: <20181128093013.24442-9-wens@csie.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 28 Nov 2018 17:44:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v669CSQLq+jQPkzn0MH3Avt2tf0vEA4E29epeXrQA4=yww@mail.gmail.com>
-Message-ID: <CAGb2v669CSQLq+jQPkzn0MH3Avt2tf0vEA4E29epeXrQA4=yww@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 07/15] rtc: sun6i: Add support for all known variants
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        alexandre.belloni@bootlin.com,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <312a6ca863fb46569b705d0dc5f5e38dfcd64889.1543356926.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 5:30 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> There are different variants to the RTC hardware first seen on sun6i
-> (A31). The differences we care about in this driver are the clock rate
-> for the internal oscillator, prescalers, and the presence of an external
-> clock output.
->
-> This patch adds support for all the known base compatibles using the
-> variants data structure previously introduced.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Sorry, I forgot to reset the author so the patch appears as coming from 
+yourself.
 
-This one was from a prior WiP version. Please ignore it.
-
-ChenYu
+Le 28/11/2018 à 10:27, Russell Currey a écrit :
+> Execution protection already exists on radix, this just refactors
+> the radix init to provide the KUEP setup function instead.
+> 
+> Thus, the only functional change is that it can now be disabled.
+> 
+> Signed-off-by: Russell Currey <ruscur@russell.cc>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>   arch/powerpc/mm/pgtable-radix.c        | 9 ++++++---
+>   arch/powerpc/platforms/Kconfig.cputype | 1 +
+>   2 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
+> index 931156069a81..45aa9e501e76 100644
+> --- a/arch/powerpc/mm/pgtable-radix.c
+> +++ b/arch/powerpc/mm/pgtable-radix.c
+> @@ -535,8 +535,13 @@ static void radix_init_amor(void)
+>   	mtspr(SPRN_AMOR, (3ul << 62));
+>   }
+>   
+> -static void radix_init_iamr(void)
+> +void setup_kuep(bool disabled)
+>   {
+> +	if (disabled)
+> +		return;
+> +
+> +	pr_info("Activating Kernel Userspace Execution Prevention\n");
+> +
+>   	/*
+>   	 * Radix always uses key0 of the IAMR to determine if an access is
+>   	 * allowed. We set bit 0 (IBM bit 1) of key0, to prevent instruction
+> @@ -605,7 +610,6 @@ void __init radix__early_init_mmu(void)
+>   
+>   	memblock_set_current_limit(MEMBLOCK_ALLOC_ANYWHERE);
+>   
+> -	radix_init_iamr();
+>   	radix_init_pgtable();
+>   	/* Switch to the guard PID before turning on MMU */
+>   	radix__switch_mmu_context(NULL, &init_mm);
+> @@ -627,7 +631,6 @@ void radix__early_init_mmu_secondary(void)
+>   		      __pa(partition_tb) | (PATB_SIZE_SHIFT - 12));
+>   		radix_init_amor();
+>   	}
+> -	radix_init_iamr();
+>   
+>   	radix__switch_mmu_context(NULL, &init_mm);
+>   	if (cpu_has_feature(CPU_FTR_HVMODE))
+> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+> index a20669a9ec13..e6831d0ec159 100644
+> --- a/arch/powerpc/platforms/Kconfig.cputype
+> +++ b/arch/powerpc/platforms/Kconfig.cputype
+> @@ -334,6 +334,7 @@ config PPC_RADIX_MMU
+>   	bool "Radix MMU Support"
+>   	depends on PPC_BOOK3S_64
+>   	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
+> +	select PPC_HAVE_KUEP
+>   	default y
+>   	help
+>   	  Enable support for the Power ISA 3.0 Radix style MMU. Currently this
+> 
