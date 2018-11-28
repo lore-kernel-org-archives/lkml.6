@@ -2,97 +2,160 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF60C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1D1C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D589420832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D589420832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AC0712086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0712086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeK1RbR (ORCPT
+        id S1727527AbeK1RbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:31:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55112 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726972AbeK1RbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:31:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EC5E9B08A;
-        Wed, 28 Nov 2018 06:30:43 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 07:30:40 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>, rong.a.chen@intel.com,
-        s.priebe@profihost.ag, alex.williamson@redhat.com,
-        mgorman@techsingularity.net, zi.yan@cs.rutgers.edu,
-        Vlastimil Babka <vbabka@suse.cz>, rientjes@google.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181128063040.GF6923@dhcp22.suse.cz>
-References: <20181127062503.GH6163@shao2-debian>
- <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
- <20181127205737.GI16136@redhat.com>
- <CAHk-=wiEUPBzAOPkH1aHypnxW6+vVtmCw_vsOPgNZtOvQnrG8w@mail.gmail.com>
+        Wed, 28 Nov 2018 12:31:25 -0500
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:31656 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726972AbeK1RbY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 12:31:24 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl6.internode.on.net with ESMTP; 28 Nov 2018 17:00:49 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gRtN0-0004DR-Iy; Wed, 28 Nov 2018 17:30:46 +1100
+Date:   Wed, 28 Nov 2018 17:30:46 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Allison Henderson <allison.henderson@oracle.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        martin.petersen@oracle.com, shirley.ma@oracle.com,
+        bob.liu@oracle.com
+Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
+ retry
+Message-ID: <20181128063046.GO6311@dastard>
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <20181128053303.GL6311@dastard>
+ <20181128054923.GF8125@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiEUPBzAOPkH1aHypnxW6+vVtmCw_vsOPgNZtOvQnrG8w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181128054923.GF8125@magnolia>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-11-18 14:50:05, Linus Torvalds wrote:
-> On Tue, Nov 27, 2018 at 12:57 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
-> >
-> > This difference can only happen with defrag=always, and that's not the
-> > current upstream default.
+On Tue, Nov 27, 2018 at 09:49:23PM -0800, Darrick J. Wong wrote:
+> On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
+> > On Tue, Nov 27, 2018 at 08:49:44PM -0700, Allison Henderson wrote:
+> > > Motivation:
+> > > When fs data/metadata checksum mismatch, lower block devices may have other
+> > > correct copies. e.g. If XFS successfully reads a metadata buffer off a raid1 but
+> > > decides that the metadata is garbage, today it will shut down the entire
+> > > filesystem without trying any of the other mirrors.  This is a severe
+> > > loss of service, and we propose these patches to have XFS try harder to
+> > > avoid failure.
+> > > 
+> > > This patch prototype this mirror retry idea by:
+> > > * Adding @nr_mirrors to struct request_queue which is similar as
+> > >   blk_queue_nonrot(), filesystem can grab device request queue and check max
+> > >   mirrors this block device has.
+> > >   Helper functions were also added to get/set the nr_mirrors.
+> > > 
+> > > * Expanding bi_write_hint to bi_rw_hint, now @bi_rw_hint has three meanings.
+> > >  1.Original write_hint.
+> > >  2.end_io() will update @bi_rw_hint to reflect which mirror this i/o really happened.
+> > >  3.Fs set @bi_rw_hint to force driver e.g raid1 read from a specific mirror.
+> > > 
+> > > * Modify md/raid1 to support this retry feature.
+> > > 
+> > > * Add b_rw_hint to xfs_buf
+> > >   This patch adds a new field b_rw_hint to xfs_buf.  We will use this to set the
+> > >   new bio->bi_rw_hint when submitting the read request, and also to store the
+> > >   returned mirror when the read compleates
+> > 
+> > One thing that is going to make this more complex at the XFS layer
+> > is discontiguous buffers. They require multiple IOs (and therefore
+> > bios) and so we are going to need to ensure that all the bios use
+> > the same bi_rw_hint.
 > 
-> Ok, thanks. That makes it a bit less critical.
+> Hmm, we hadn't thought about that.  What happens if we have a
+> discontiguous buffer mapped to multiple blocks, and there's only one
+> good copy of each block on separate disks in the whole array?
 > 
-> > That MADV_HUGEPAGE causes flights with NUMA balancing is not great
-> > indeed, qemu needs NUMA locality too, but then the badness caused by
-> > __GFP_THISNODE was a larger regression in the worst case for qemu.
-> [...]
-> > So the short term alternative again would be the alternate patch that
-> > does __GFP_THISNODE|GFP_ONLY_COMPACT appended below.
-> 
-> Sounds like we should probably do this. Particularly since Vlastimil
-> pointed out that we'd otherwise have issues with the back-port for 4.4
-> where that "defrag=always" was the default.
-> 
-> The patch doesn't look horrible, and it directly addresses this
-> particular issue.
-> 
-> Is there some reason we wouldn't want to do it?
+> e.g. we have 8k directory blocks on a 4k block filesystem, only disk 0
+> has a good copy of block 0 and only disk 1 has a good copy of block 1?
 
-We have discussed it previously and the biggest concern was that it
-introduces a new GFP flag with a very weird and one-off semantic.
-Anytime we have done that in the past it basically kicked back because
-people have started to use such a flag and any further changes were
-really hard to do. So I would really prefer some more systematic
-solution. And I believe we can do that here. MADV_HUGEPAGE (resp. THP
-always enabled) has gained a local memory policy with the patch which
-got effectively reverted. I do believe that conflating "I want THP" with
-"I want them local" is just wrong from the API point of view. There are
-different classes of usecases which obviously disagree on the later.
+Then the user has a disaster on their hands because they have
+multiple failing disks. 
 
-So I believe that a long term solution should introduce a
-MPOL_NODE_RECLAIM kind of policy. It would effectively reclaim local
-nodes (within NODE_RECLAIM distance) before falling to other nodes.
+> I think we're just stuck with failing the whole thing because we can't
+> check the halves of the 8k block independently and there's too much of a
+> combinatoric explosion potential to try to mix and match.
 
-Apart from that we need a less disruptive reclaim driven by compaction
-and Mel is already working on that AFAIK.
+Yup, user needs to fix their storage before the filesystem can
+attempt recovery.
+
+> > > We're not planning to take over all 16 bits of the read hint field; just looking for
+> > > feedback about the sanity of the overall approach.
+> > 
+> > It seems conceptually simple enough - the biggest questions I have
+> > are:
+> > 
+> > 	- how does propagation through stacked layers work?
+> 
+> Right now it doesn't, though once we work out how to make stacking work
+> through device mapper (my guess is that simple dm targets like linear
+> and crypt can set the mirror count to min(all underlying devices).
+> 
+> > 	- is it generic/abstract enough to be able to work with
+> > 	  RAID5/6 to trigger verification/recovery from the parity
+> > 	  information in the stripe?
+> 
+> In theory we could supply a raid5 implementation, wherein rw_hint == 0
+> lets the raid do as it pleases; rw_hint == 1 reads from the stripe; and
+> rw_hint == 2 forces stripe recovery for the given block.
+
+So more magic numbers to define complex behaviours? :P
+
+> A trickier scenario that I have no idea how to solve is the question of
+> how to handle dynamic redundancy levels.  We don't have a standard bio
+> error value that means "this mirror is temporarily offline", so if you
+
+We can get ETIMEDOUT, ENOLINK, EBUSY and EAGAIN from the block layer
+which all indicate temporary errors (see blk_errors[]). Whether the
+specific storage layers are actually using them is another matter...
+
+> have a raid1 of two disks and disk 0 goes offline, the retry loop in xfs
+> will hit the EIO and abort without even asking disk 1.  It's also
+> unclear if we need to designate a second bio error value to mean "this
+> mirror is permanently gone".
+
+If we have a mirror based retries, we should probably consider EIO
+as "try next mirror", not as a hard failure.
+
+> [Also insert handwaving about whether or not online fsck will want to
+> control retries and automatic rewrite; I suspect the answer is that it
+> doesn't care.]
+
+Don't care - have the storage fix itself, then check what comes
+back and fix it from there.
+
+> [[Also insert severe handwaving about do we expose this to userspace so
+> that xfs_repair can use it?]]
+
+I suspect the answer there is through the AIO interfaces....
+
+Cheers,
+
+Dave.
 -- 
-Michal Hocko
-SUSE Labs
+Dave Chinner
+david@fromorbit.com
