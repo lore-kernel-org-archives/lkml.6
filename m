@@ -2,191 +2,129 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FF9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB62AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD02120660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:48:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD02120660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id BC3F620660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:48:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC3F620660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbeK1Wrr (ORCPT
+        id S1729017AbeK1Wte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:47:47 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:56313 "EHLO pegase1.c-s.fr"
+        Wed, 28 Nov 2018 17:49:34 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61911 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbeK1Wrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:47:46 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 434f4Y017Kz9v09t;
-        Wed, 28 Nov 2018 12:46:21 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id mlbki0NNHsNr; Wed, 28 Nov 2018 12:46:20 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 434f4X6S2fz9v09s;
-        Wed, 28 Nov 2018 12:46:20 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DDC868B869;
-        Wed, 28 Nov 2018 12:46:21 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id J-zpBxXAtI4k; Wed, 28 Nov 2018 12:46:21 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B080C8B867;
-        Wed, 28 Nov 2018 12:46:21 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A1A7569B1B; Wed, 28 Nov 2018 11:46:21 +0000 (UTC)
-Message-Id: <cover.1543405086.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v7 00/16] Implement use of HW assistance on TLB table walk on 8xx
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 28 Nov 2018 11:46:21 +0000 (UTC)
+        id S1728123AbeK1WrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 17:47:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 03:45:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
+   d="scan'208";a="114556497"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 28 Nov 2018 03:45:40 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9CF58433; Wed, 28 Nov 2018 13:45:36 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 05/15] i2c: acpi: Return error pointers from i2c_acpi_new_device()
+Date:   Wed, 28 Nov 2018 13:45:25 +0200
+Message-Id: <20181128114535.80223-6-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this serie is to implement hardware assistance for TLB table walk
-on the 8xx.
+The caller would like to know the reason why the i2c_acpi_new_device() fails.
+For example, if adapter is not available, it might be in the future and we
+would like to re-probe the clients again. But at the same time we would like to
+bail out if the error seems unrecoverable, such as invalid argument supplied.
+To achieve this, return error pointer in some cases.
 
-First part prepares for using HW assistance in TLB routines:
-- Reverts a former patch which broke SWAP on the 8xx
-- move book3s64 page fragment code in a common part for reusing it by the
-8xx as 16k page size mode still uses 4k page tables.
-- switches to patch_site instead of patch_instruction, as it makes the code
-clearer and avoids pollution with global symbols.
-- Optimise access to perf counters (hence reducing number of registers used)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i2c/i2c-core-acpi.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-Second part implements HW assistance in TLB routines in the following steps:
-- Disable 16k page size mode and 512k hugepages
-- Switch 4k to HW assistance
-- Bring back 512k hugepages
-- Bring back 16k page size mode.
-
-Tested successfully on 8xx and 83xx (book3s/32)
-
-Changes in v7:
- - Reordered to get trivial and already reviewed patches in front.
- - Reordered to regroup all HW assistance related patches together.
- - Rebased on today merge branch (28 Nov)
- - Added a helper for access to mm_context_t.frag
- - Reduced the amount of changes in PPC32 to support pte_fragment
- - Applied pte_fragment to both nohash/32 and book3s/32
-
-Changes in v6:
- - Droped the part related to handling GUARD attribute at PGD/PMD level.
- - Moved the commonalisation of page_fragment in the begining (this part has been reviewed by Aneesh)
- - Rebased on today merge branch (19 Oct)
-
-Changes in v5:
- - Also avoid useless lock in get_pmd_from_cache()
- - A new patch to relocate mmu headers in platform specific directories
- - A new patch to distribute pgtable_t typedefs in platform specific
-   mmu headers instead of the uggly #ifdef
- - Moved early_pte_alloc_kernel() in platform specific pgalloc
- - Restricted definition of PTE_FRAG_SIZE and PTE_FRAG_NR to platforms
-   using the pte fragmentation.
- - arch_exit_mmap() and destroy_pagetable_cache() are now platform specific.
-
-Changes in v4:
- - Reordered the serie to put at the end the modifications which makes
-   L1 and L2 entries independant.
- - No modifications to ppc64 ioremap (we still have an opportunity to
-   merge them, for a future patch serie)
- - 8xx code modified to use patch_site instead of patch_instruction
-   to get a clearer code and avoid object pollution with global symbols
- - Moved perf counters in first 32kb of memory to optimise access
- - Split the big bang to HW assistance in several steps:
-   1. Temporarily removes support of 16k pages and 512k hugepages
-   2. Change TLB routines to use HW assistance for 4k pages and 8M hugepages
-   3. Add back support for 512k hugepages
-   4. Add back support for 16k pages (using pte_fragment as page tables are still 4k)
-
-Changes in v3:
- - Fixed an issue in the 09/14 when CONFIG_PIN_TLB_TEXT was not enabled
- - Added performance measurement in the 09/14 commit log
- - Rebased on latest 'powerpc/merge' tree, which conflicted with 13/14
-
-Changes in v2:
- - Removed the 3 first patchs which have been applied already
- - Fixed compilation errors reported by Michael
- - Squashed the commonalisation of ioremap functions into a single patch
- - Fixed the use of pte_fragment
- - Added a patch optimising perf counting of TLB misses and instructions
-
-
-Christophe Leroy (16):
-  powerpc/book3s32: Remove CONFIG_BOOKE dependent code
-  powerpc/8xx: Remove PTE_ATOMIC_UPDATES
-  powerpc/mm: Move pte_fragment_alloc() to a common location
-  powerpc/mm: Avoid useless lock with single page fragments
-  powerpc/mm: move platform specific mmu-xxx.h in platform directories
-  powerpc/mm: Move pgtable_t into platform headers
-  powerpc/mm: add helpers to get/set mm.context->pte_frag
-  powerpc/mm: Extend pte_fragment functionality to PPC32
-  powerpc/8xx: Move SW perf counters in first 32kb of memory
-  powerpc/8xx: Temporarily disable 16k pages and hugepages
-  powerpc/mm: Use hardware assistance in TLB handlers on the 8xx
-  powerpc/mm: Enable 8M hugepage support with HW assistance on the 8xx
-  powerpc/mm: Enable 512k hugepage support with HW assistance on the 8xx
-  powerpc/mm: reintroduce 16K pages with HW assistance on 8xx
-  powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 in TLB Miss handlers
-  powerpc/8xx: regroup TLB handler routines
-
- arch/powerpc/include/asm/book3s/32/mmu-hash.h      |   5 +
- arch/powerpc/include/asm/book3s/32/pgalloc.h       |  36 +-
- arch/powerpc/include/asm/book3s/32/pgtable.h       |  19 +-
- arch/powerpc/include/asm/book3s/64/mmu.h           |   9 +
- arch/powerpc/include/asm/book3s/64/pgalloc.h       |   1 +
- arch/powerpc/include/asm/hugetlb.h                 |   4 +-
- arch/powerpc/include/asm/mmu.h                     |  14 +-
- arch/powerpc/include/asm/mmu_context.h             |   2 +-
- arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h |   0
- arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h |   0
- arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h |   1 +
- arch/powerpc/include/asm/nohash/32/mmu.h           |  25 ++
- arch/powerpc/include/asm/nohash/32/pgalloc.h       |  23 +-
- arch/powerpc/include/asm/nohash/32/pgtable.h       |  27 +-
- arch/powerpc/include/asm/nohash/32/pte-8xx.h       |   3 -
- arch/powerpc/include/asm/nohash/64/mmu.h           |  12 +
- arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h |   0
- arch/powerpc/include/asm/nohash/mmu.h              |  11 +
- arch/powerpc/include/asm/nohash/pgtable.h          |   4 +
- arch/powerpc/include/asm/page.h                    |  14 -
- arch/powerpc/include/asm/pgtable-types.h           |   4 +
- arch/powerpc/include/asm/pgtable.h                 |  31 ++
- arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
- arch/powerpc/kernel/head_8xx.S                     | 366 ++++++++-------------
- arch/powerpc/kvm/e500.h                            |   2 +-
- arch/powerpc/mm/8xx_mmu.c                          |   4 +-
- arch/powerpc/mm/Makefile                           |   5 +-
- arch/powerpc/mm/hugetlbpage.c                      |  13 +
- arch/powerpc/mm/mmu_context.c                      |  10 +
- arch/powerpc/mm/mmu_context_book3s64.c             |  15 -
- arch/powerpc/mm/mmu_context_nohash.c               |   2 +-
- arch/powerpc/mm/pgtable-book3s64.c                 |  88 +----
- arch/powerpc/mm/pgtable-frag.c                     | 119 +++++++
- arch/powerpc/mm/pgtable_32.c                       |  25 +-
- 34 files changed, 452 insertions(+), 444 deletions(-)
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h (100%)
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h (100%)
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h (99%)
- create mode 100644 arch/powerpc/include/asm/nohash/32/mmu.h
- create mode 100644 arch/powerpc/include/asm/nohash/64/mmu.h
- rename arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h (100%)
- create mode 100644 arch/powerpc/include/asm/nohash/mmu.h
- create mode 100644 arch/powerpc/mm/pgtable-frag.c
-
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index 32affd3fa8bd..689c0c467e97 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -386,20 +386,22 @@ struct notifier_block i2c_acpi_notifier = {
+  *
+  * Also see i2c_new_device, which this function calls to create the i2c-client.
+  *
+- * Returns a pointer to the new i2c-client, or NULL if the adapter is not found.
++ * Returns a pointer to the new i2c-client, or error pointer in case of failure.
++ * Specifically, -EPROBE_DEFER is returned if the adapter is not found.
+  */
+ struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+ 				       struct i2c_board_info *info)
+ {
+ 	struct i2c_acpi_lookup lookup;
+ 	struct i2c_adapter *adapter;
++	struct i2c_client *client;
+ 	struct acpi_device *adev;
+ 	LIST_HEAD(resource_list);
+ 	int ret;
+ 
+ 	adev = ACPI_COMPANION(dev);
+ 	if (!adev)
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 
+ 	memset(&lookup, 0, sizeof(lookup));
+ 	lookup.info = info;
+@@ -408,16 +410,23 @@ struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+ 
+ 	ret = acpi_dev_get_resources(adev, &resource_list,
+ 				     i2c_acpi_fill_info, &lookup);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
+ 	acpi_dev_free_resource_list(&resource_list);
+ 
+-	if (ret < 0 || !info->addr)
+-		return NULL;
++	if (!info->addr)
++		return ERR_PTR(-EADDRNOTAVAIL);
+ 
+ 	adapter = i2c_acpi_find_adapter_by_handle(lookup.adapter_handle);
+ 	if (!adapter)
+-		return NULL;
++		return ERR_PTR(-EPROBE_DEFER);
++
++	client = i2c_new_device(adapter, info);
++	if (!client)
++		return ERR_PTR(-ENODEV);
+ 
+-	return i2c_new_device(adapter, info);
++	return client;
+ }
+ EXPORT_SYMBOL_GPL(i2c_acpi_new_device);
+ 
 -- 
-2.13.3
+2.19.2
 
