@@ -2,190 +2,348 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=FREEMAIL_REPLYTO_END_DIGIT,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE65C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666D2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981FD20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981FD20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 23CC620989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CC620989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbeK2BhP (ORCPT
+        id S1728959AbeK2BhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:37:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38582 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727726AbeK2BhO (ORCPT
+        Wed, 28 Nov 2018 20:37:24 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46451 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbeK2BhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:37:14 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASEYIkl094124
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:22 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1ugqvc64-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:22 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 28 Nov 2018 14:35:21 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Nov 2018 14:35:18 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASEZHNg20512924
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 14:35:17 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BC656E058;
-        Wed, 28 Nov 2018 14:35:17 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 552996E053;
-        Wed, 28 Nov 2018 14:35:14 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.85.87.253])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Nov 2018 14:35:13 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH V2 5/5] arch/powerpc/mm/hugetlb: NestMMU workaround for hugetlb mprotect RW upgrade
-Date:   Wed, 28 Nov 2018 20:04:38 +0530
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181128143438.29458-1-aneesh.kumar@linux.ibm.com>
-References: <20181128143438.29458-1-aneesh.kumar@linux.ibm.com>
+        Wed, 28 Nov 2018 20:37:23 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEYmK82324220
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 28 Nov 2018 06:34:48 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEYm3p2324217;
+        Wed, 28 Nov 2018 06:34:48 -0800
+Date:   Wed, 28 Nov 2018 06:34:48 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-9137bb27e60e554dab694eafa4cca241fa3a694f@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        david.c.stewart@intel.com, asit.k.mallick@intel.com,
+        tim.c.chen@linux.intel.com, keescook@chromium.org,
+        dwmw@amazon.co.uk, mingo@kernel.org, thomas.lendacky@amd.com,
+        peterz@infradead.org, dave.hansen@intel.com, jpoimboe@redhat.com,
+        torvalds@linux-foundation.org, hpa@zytor.com, jcm@redhat.com,
+        gregkh@linuxfoundation.org, casey.schaufler@intel.com,
+        arjan@linux.intel.com, longman9394@gmail.com, jkosina@suse.cz,
+        luto@kernel.org, ak@linux.intel.com, aarcange@redhat.com
+Reply-To: longman9394@gmail.com, arjan@linux.intel.com,
+          casey.schaufler@intel.com, ak@linux.intel.com, jkosina@suse.cz,
+          luto@kernel.org, aarcange@redhat.com, asit.k.mallick@intel.com,
+          david.c.stewart@intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, keescook@chromium.org,
+          tim.c.chen@linux.intel.com, thomas.lendacky@amd.com,
+          peterz@infradead.org, dave.hansen@intel.com, mingo@kernel.org,
+          dwmw@amazon.co.uk, gregkh@linuxfoundation.org, jcm@redhat.com,
+          hpa@zytor.com, torvalds@linux-foundation.org, jpoimboe@redhat.com
+In-Reply-To: <20181125185005.866780996@linutronix.de>
+References: <20181125185005.866780996@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation: Add prctl() control for indirect
+ branch speculation
+Git-Commit-ID: 9137bb27e60e554dab694eafa4cca241fa3a694f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112814-8235-0000-0000-00000E2FC527
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010137; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01124008; UDB=6.00583546; IPR=6.00904138;
- MB=3.00024366; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-28 14:35:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112814-8236-0000-0000-000043843E47
-Message-Id: <20181128143438.29458-6-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=584 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811280129
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NestMMU requires us to mark the pte invalid and flush the tlb when we do a
-RW upgrade of pte. We fixed a variant of this in the fault path in commit
-Fixes: bd5050e38aec ("powerpc/mm/radix: Change pte relax sequence to handle nest MMU hang")
+Commit-ID:  9137bb27e60e554dab694eafa4cca241fa3a694f
+Gitweb:     https://git.kernel.org/tip/9137bb27e60e554dab694eafa4cca241fa3a694f
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Sun, 25 Nov 2018 19:33:53 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Nov 2018 11:57:13 +0100
 
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+x86/speculation: Add prctl() control for indirect branch speculation
+
+Add the PR_SPEC_INDIRECT_BRANCH option for the PR_GET_SPECULATION_CTRL and
+PR_SET_SPECULATION_CTRL prctls to allow fine grained per task control of
+indirect branch speculation via STIBP and IBPB.
+
+Invocations:
+ Check indirect branch speculation status with
+ - prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
+
+ Enable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
+
+ Disable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
+
+ Force disable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+
+See Documentation/userspace-api/spec_ctrl.rst.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181125185005.866780996@linutronix.de
+
 ---
- arch/powerpc/include/asm/book3s/64/hugetlb.h | 12 ++++++++
- arch/powerpc/mm/hugetlbpage-radix.c          | 17 ++++++++++++
- arch/powerpc/mm/hugetlbpage.c                | 29 ++++++++++++++++++++
- 3 files changed, 58 insertions(+)
+ Documentation/userspace-api/spec_ctrl.rst |  9 +++++
+ arch/x86/include/asm/nospec-branch.h      |  1 +
+ arch/x86/kernel/cpu/bugs.c                | 67 +++++++++++++++++++++++++++++++
+ arch/x86/kernel/process.c                 |  5 +++
+ include/linux/sched.h                     |  9 +++++
+ include/uapi/linux/prctl.h                |  1 +
+ tools/include/uapi/linux/prctl.h          |  1 +
+ 7 files changed, 93 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/hugetlb.h b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-index 5b0177733994..66c1e4f88d65 100644
---- a/arch/powerpc/include/asm/book3s/64/hugetlb.h
-+++ b/arch/powerpc/include/asm/book3s/64/hugetlb.h
-@@ -13,6 +13,10 @@ radix__hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 				unsigned long len, unsigned long pgoff,
- 				unsigned long flags);
- 
-+extern void radix__huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
-+						unsigned long addr, pte_t *ptep,
-+						pte_t old_pte, pte_t pte);
+diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
+index 32f3d55c54b7..c4dbe6f7cdae 100644
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -92,3 +92,12 @@ Speculation misfeature controls
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
 +
- static inline int hstate_get_psize(struct hstate *hstate)
++- PR_SPEC_INDIR_BRANCH: Indirect Branch Speculation in User Processes
++                        (Mitigate Spectre V2 style attacks against user processes)
++
++  Invocations:
++   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index d4d35baf0430..2adbe7b047fa 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -232,6 +232,7 @@ enum spectre_v2_mitigation {
+ enum spectre_v2_user_mitigation {
+ 	SPECTRE_V2_USER_NONE,
+ 	SPECTRE_V2_USER_STRICT,
++	SPECTRE_V2_USER_PRCTL,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 9cab538e10f1..74359fff87fd 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -566,6 +566,8 @@ void arch_smt_update(void)
+ 	case SPECTRE_V2_USER_STRICT:
+ 		update_stibp_strict();
+ 		break;
++	case SPECTRE_V2_USER_PRCTL:
++		break;
+ 	}
+ 
+ 	mutex_unlock(&spec_ctrl_mutex);
+@@ -752,12 +754,50 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
+ 	return 0;
+ }
+ 
++static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
++			return 0;
++		/*
++		 * Indirect branch speculation is always disabled in strict
++		 * mode.
++		 */
++		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
++			return -EPERM;
++		task_clear_spec_ib_disable(task);
++		task_update_spec_tif(task);
++		break;
++	case PR_SPEC_DISABLE:
++	case PR_SPEC_FORCE_DISABLE:
++		/*
++		 * Indirect branch speculation is always allowed when
++		 * mitigation is force disabled.
++		 */
++		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
++			return -EPERM;
++		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
++			return 0;
++		task_set_spec_ib_disable(task);
++		if (ctrl == PR_SPEC_FORCE_DISABLE)
++			task_set_spec_ib_force_disable(task);
++		task_update_spec_tif(task);
++		break;
++	default:
++		return -ERANGE;
++	}
++	return 0;
++}
++
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
  {
- 	unsigned long shift;
-@@ -42,4 +46,12 @@ static inline bool gigantic_page_supported(void)
- /* hugepd entry valid bit */
- #define HUGEPD_VAL_BITS		(0x8000000000000000UL)
- 
-+#define huge_ptep_modify_prot_start huge_ptep_modify_prot_start
-+extern pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma,
-+					 unsigned long addr, pte_t *ptep);
-+
-+#define huge_ptep_modify_prot_commit huge_ptep_modify_prot_commit
-+extern void huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
-+					 unsigned long addr, pte_t *ptep,
-+					 pte_t old_pte, pte_t new_pte);
- #endif
-diff --git a/arch/powerpc/mm/hugetlbpage-radix.c b/arch/powerpc/mm/hugetlbpage-radix.c
-index 2486bee0f93e..1f77d71e7708 100644
---- a/arch/powerpc/mm/hugetlbpage-radix.c
-+++ b/arch/powerpc/mm/hugetlbpage-radix.c
-@@ -90,3 +90,20 @@ radix__hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 
- 	return vm_unmapped_area(&info);
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_set(task, ctrl);
++	case PR_SPEC_INDIRECT_BRANCH:
++		return ib_prctl_set(task, ctrl);
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -790,11 +830,34 @@ static int ssb_prctl_get(struct task_struct *task)
+ 	}
  }
-+
-+void radix__huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
-+					 unsigned long addr, pte_t *ptep,
-+					 pte_t old_pte, pte_t pte)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+
-+	/*
-+	 * To avoid NMMU hang while relaxing access we need to flush the tlb before
-+	 * we set the new value.
-+	 */
-+	if (is_pte_rw_upgrade(pte_val(old_pte), pte_val(pte)) &&
-+	    (atomic_read(&mm->context.copros) > 0))
-+		flush_hugetlb_page(vma, addr);
-+
-+	set_huge_pte_at(vma->vm_mm, addr, ptep, pte);
-+}
-diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-index 8cf035e68378..39d33a3d0dc6 100644
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -912,3 +912,32 @@ int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
  
- 	return 1;
++static int ib_prctl_get(struct task_struct *task)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
++		return PR_SPEC_NOT_AFFECTED;
++
++	switch (spectre_v2_user) {
++	case SPECTRE_V2_USER_NONE:
++		return PR_SPEC_ENABLE;
++	case SPECTRE_V2_USER_PRCTL:
++		if (task_spec_ib_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ib_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	case SPECTRE_V2_USER_STRICT:
++		return PR_SPEC_DISABLE;
++	default:
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_get(task);
++	case PR_SPEC_INDIRECT_BRANCH:
++		return ib_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -974,6 +1037,8 @@ static char *stibp_state(void)
+ 		return ", STIBP: disabled";
+ 	case SPECTRE_V2_USER_STRICT:
+ 		return ", STIBP: forced";
++	case SPECTRE_V2_USER_PRCTL:
++		return "";
+ 	}
+ 	return "";
  }
+@@ -986,6 +1051,8 @@ static char *ibpb_state(void)
+ 			return ", IBPB: disabled";
+ 		case SPECTRE_V2_USER_STRICT:
+ 			return ", IBPB: always-on";
++		case SPECTRE_V2_USER_PRCTL:
++			return "";
+ 		}
+ 	}
+ 	return "";
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index afbe2eb4a1c6..7d31192296a8 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -450,6 +450,11 @@ static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
+ 			set_tsk_thread_flag(tsk, TIF_SSBD);
+ 		else
+ 			clear_tsk_thread_flag(tsk, TIF_SSBD);
 +
-+#ifdef CONFIG_PPC_BOOK3S_64
-+pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma,
-+				  unsigned long addr, pte_t *ptep)
-+{
-+	unsigned long pte_val;
-+	/*
-+	 * Clear the _PAGE_PRESENT so that no hardware parallel update is
-+	 * possible. Also keep the pte_present true so that we don't take
-+	 * wrong fault.
-+	 */
-+	pte_val = pte_update(vma->vm_mm, addr, ptep,
-+			     _PAGE_PRESENT, _PAGE_INVALID, 1);
++		if (task_spec_ib_disable(tsk))
++			set_tsk_thread_flag(tsk, TIF_SPEC_IB);
++		else
++			clear_tsk_thread_flag(tsk, TIF_SPEC_IB);
+ 	}
+ 	/* Return the updated threadinfo flags*/
+ 	return task_thread_info(tsk)->flags;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a51c13c2b1a0..d607db5fcc6a 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void)
+ #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
+ #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
+ #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
++#define PFA_SPEC_IB_DISABLE		5	/* Indirect branch speculation restricted */
++#define PFA_SPEC_IB_FORCE_DISABLE	6	/* Indirect branch speculation permanently restricted */
+ 
+ #define TASK_PFA_TEST(name, func)					\
+ 	static inline bool task_##func(struct task_struct *p)		\
+@@ -1484,6 +1486,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
+ TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ 
++TASK_PFA_TEST(SPEC_IB_DISABLE, spec_ib_disable)
++TASK_PFA_SET(SPEC_IB_DISABLE, spec_ib_disable)
++TASK_PFA_CLEAR(SPEC_IB_DISABLE, spec_ib_disable)
 +
-+	return __pte(pte_val);
-+}
-+EXPORT_SYMBOL(huge_ptep_modify_prot_start);
++TASK_PFA_TEST(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
++TASK_PFA_SET(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
 +
-+void huge_ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr,
-+				  pte_t *ptep, pte_t old_pte, pte_t pte)
-+{
-+
-+	if (radix_enabled())
-+		return radix__huge_ptep_modify_prot_commit(vma, addr, ptep,
-+							   old_pte, pte);
-+	set_huge_pte_at(vma->vm_mm, addr, ptep, pte);
-+}
-+EXPORT_SYMBOL(huge_ptep_modify_prot_commit);
-+#endif
--- 
-2.19.1
-
+ static inline void
+ current_restore_flags(unsigned long orig_flags, unsigned long flags)
+ {
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0bf5b6..b17201edfa09 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIRECT_BRANCH	1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
+diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
+index c0d7ea0bf5b6..b17201edfa09 100644
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIRECT_BRANCH	1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
