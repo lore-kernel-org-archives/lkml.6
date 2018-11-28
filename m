@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB4BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5697BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0AB9206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195E82081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:46:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="ADlbZKZo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0AB9206B2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="eSgik51x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195E82081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeK2KtU (ORCPT
+        id S1727754AbeK2Kt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:49:20 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:39501 "EHLO
+        Thu, 29 Nov 2018 05:49:29 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:44455 "EHLO
         com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeK2Krb (ORCPT
+        with ESMTP id S1727223AbeK2Kr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:31 -0500
+        Thu, 29 Nov 2018 05:47:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=99dL3HsMKgD31l7uRetJxzAT3iEwJVjD9ZjcYavMW6g=; b=ADlbZKZo1uVD
-        ySXN6cpnSFAykB83QX85Z8hHPfC6XZEiIM8bjJ4aII+8jAzv5+BfqOxXjRnx8qiCqOyMuOgk5823O
-        EAMQenOeM57i3hpKY2SG7eFQQXkBWY0iZJCGc1irqpmEaFwgGaiP3NANNQ32KJsYzd3eLUCQmvOo1
-        9vcBv0nPcGQddrmgaWNi89jaF5kND02l1ETyTTNvVak5KpIyhzg9lbwPrk7x3FkWvc0Z4fkHU7HsY
-        fTX5q73RcyWiSx/sBj1+fVwwt9eYXHWbnSC3xg+ZGQGwt4eQRiuo45OV+k29+kp09XPpajA6O9muR
-        7vUV4N6x/y7uve/0zXpOPw==;
+        content-type; bh=BALoDcUBtyG9ZZ13DGdmhSlWSeWljzi1XO/eJ2Uo9ZQ=; b=eSgik51xUZiQ
+        vtlvg8GzDUpTldzqxVvnRB8al/jOKICnebXFY1zTP95VLz6EBRNOcT3IonRPTeonMQrzuA/7BavK+
+        OirO6LNSLKislC6WSWwZ1nKh2qlLZTfrzmpuXOhrf8L45B6eSKnSQSK4iKouZpbvEBof0e/Xr1V84
+        STKcCnurQCDWqKOz/rSVKFa/7O1vVeAvdoJM5jYIPYzaqOpcIaiNoNjCz8QzARJq16O2Bb7OYt+d/
+        53kxtWrYGm4Es5ufRQqOjJw6pUpeguILbboBBqDMLC3IjVNaiDXMZaDsyqX29XT1/QqdHMAmDWHYS
+        JMPS8sfuzJU4l548olDXOg==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
         by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gS9Uw-0001zB-Cp; Thu, 29 Nov 2018 00:44:02 +0100
+        id 1gS9Up-0001zB-KG; Thu, 29 Nov 2018 00:43:56 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 6C712C11FB;
-        Thu, 29 Nov 2018 00:43:58 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id B95FCC16CB;
+        Thu, 29 Nov 2018 00:43:38 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: [PATCH 12/27] net/core: Assign a name to devnet_rename_seq.dep_map
-Date:   Wed, 28 Nov 2018 15:43:10 -0800
-Message-Id: <20181128234325.110011-13-bvanassche@acm.org>
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH 02/27] lockdep tests: Fix shellcheck warnings
+Date:   Wed, 28 Nov 2018 15:43:00 -0800
+Message-Id: <20181128234325.110011-3-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
 References: <20181128234325.110011-1-bvanassche@acm.org>
@@ -62,52 +61,76 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00436199908081)
+X-SpamExperts-Outgoing-Evidence: Combined (0.02)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5ow55E0a5s1bVATtYWoeb2J602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTacR+7WyMgzHjz+T9oPWai2IJR/LLbceaqS8MKPufzxmNfX
- yKo+pvzCeHRww82sG/8HW2me2F11ZDpUG2A5Oiv0I5mALh2L1FvYZOvwUqXjvDk55wR+TsdsSUF6
- GKzdvFqIq2rgmnTfzvSnaZPSpdF4ea4rbEb5nCRA6afYiNM/uEuf+eM3l5KPnbp/eQthjVOWYHcP
- 06zXqyXOojRJS4zkklapCMIpB7xZTagDrnxQTQTJsjWw5+0eZIpQIcK9yrRZBI4MtpSGpU9W4FdB
- tQesEelBF7Ngqas1fLSi+EsXiO7J//0XCxCMJn8bXo41UD3u+ZQGpXspg4TOqv23+spbzJ3vJBBY
- vcIXZcvdbj7fjbZn+1a2iCCdPFy3WGiBkBZc+BBb+UeYFBhPAZQ65C2d4vB6Mmh6nzlzGKK4CNTd
- FmC4kGAnKNZdqPIYy5/0C0oKEgxQF7G4ajroXShVPl5s3ZvBSOdcZaQYlKee2Vxut+excQEBokpi
- mN+IpZsSCXc5abhTdeMRIGIFGG7eQynS17NirEYyqwqMBGrw8ELiqFSHA33y5Mb3HyPilJ6ZEZbN
- sFlW4xzv3KSabGJbxYTP9L1EoXi+CD9t4odUMDuXpq4Dt0gTEK9vOlOvpFXXjOyucj735mFcFqoc
- 4yysvQM8ASJFC/49WOPBr5nlEUI4xIoCyX1J9mISBKtKiIG9rsVhspljkOhpjzwdmRUuxUAkJFpJ
- QUo3xelXG5xGR9WrwtMqpQY/wTdSn/KmmRPQe1WngoWueOlSkfQrrNQ0YaVuKF0zwGgxiH5VYpT1
- 74cN8FvxDejqc1gSvA2YxCROcMK2BmRxGQKegzOmzXDxmXJaDPc+rUuIsEwVJ+BZMX32wspaYuNn
- lf+xG0rJagZQpvsbTUZvTFCrhb03Se6iiRxyUV8ShebT8U8Xw9HTDfreWRYYPDOuh+QYnmwzDWDO
- +6vF+qi4JhiyJsp7oQFHICv3/5BQ64Vz3kPXuj5BYP5ioVC/LbdJldJ8xntHMcYfWXZf0dFZX9FP
- 4Sdv0y+AiR3/grHo9BntmBzD6tps2qyeMO7J//0XCxCMJn8bXo41UD2nJ33TKG1BQebqdAt2Cyon
- bEaUvgji2bemCFdq6WVPktdpl4o13pcoUjSBRABE8Sc=
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5sESnthZTQhfRxVWlfxAwIR602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
+ AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyB41b1wEpWO6ik9HITpMsqebHcXK5F5szpMR3
+ ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aVOoPHq
+ O8NS+F4S4g/aBu4eq2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi2wFVccsCAZ2dyI5DAR
+ qfkZNCNwpGn8jfSb3NCl2WUq09dCYgcgr835yVjKQZA6hJL1LiMHCxRezvZaFOrUVh8zaVyj66M1
+ yz85ZZhpUrhTRbASVYnBhdKUnGmBdHG7BUn2dK6UtSEdwn3yFtfkzf2g6K04cY809V1JdCwiLdDQ
+ Dow7RSjhmGOVelXQaHGaUkCLb5mum9xAXSaS3KKPtTZXWZip9+GhedmPokL8D3vhvY6dhwYzYMxd
+ D9vfHZcjDv9O+eyolGM4l8rlxuGfhU+3NYPzMyldJaF5xZTjcWEFHpu0VYQwuqxmozzkDLIpUMoG
+ SJj2/VGV7PqOahGXkaU4twU/8XGrHu5QsNBEHc0tEDNi5zR1WYi0E09NG6GB18n4mJSlGpCLjjP2
+ TVCcvwpqTCQ1Sv9MnzaFVU0e1WSElpPtRVkPryfKs6DA7QYq3G1BRp7ylSZxUEGgJw4nFzgd7yt3
+ 7BfpyvvZ6l+boZNfkk++GRKi3fJfRTPr/PuJHE36okpX82/BtXToloueSaXs0TK8OQ3cB9QF11y7
+ 2DRSHKQElPJyNJdgFsJFEs/93MUsWul8MX8uzZtQAzy8HZQD5AnI+wExEi2ZXZcwFmj/G9G9XUMB
+ gNDO+NkNGowFW+REN2PQUubU67h4IQuWPMZ4HKssSJVidkER7VZq4yeVz8oBMMMFnt8VzQUPDSXZ
+ uD7+tXK85NWt4CYBo2l7vp9TheM8Ply7UNk9s+JR29DmIqQBJ7TPMihJUfmPOEFZaWOoGwSHnDFQ
+ 4P4YDtlBXByrTecUvjKvjZONtLXg4KjauZafx+OvKcOyQvUosS9CO/I=
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes lockdep reports about devnet_rename_seq more informative.
+Use find instead of ls to avoid splitting filenames that contain spaces.
+Use rm -f instead of if ... then rm ...; fi. This patch addresses all
+shellcheck complaints about the run_tests.sh shell script.
 
-Cc: David S. Miller <davem@davemloft.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/lockdep/run_tests.sh | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index ddc551f24ba2..8c109a1624ba 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -194,7 +194,7 @@ static DEFINE_SPINLOCK(napi_hash_lock);
- static unsigned int napi_gen_id = NR_CPUS;
- static DEFINE_READ_MOSTLY_HASHTABLE(napi_hash, 8);
+diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
+index eef3fe4a24fe..e4f41318aa79 100755
+--- a/tools/lib/lockdep/run_tests.sh
++++ b/tools/lib/lockdep/run_tests.sh
+@@ -6,7 +6,7 @@ if ! make >/dev/null; then
+     echo "FAILED!"
+ fi
  
--static seqcount_t devnet_rename_seq;
-+static seqcount_t devnet_rename_seq = SEQCNT_ZERO(devnet_rename_seq);
+-for i in `ls tests/*.c`; do
++find tests -name '*.c' | sort | while read -r i; do
+ 	testname=$(basename "$i" .c)
+ 	echo -ne "$testname... "
+ 	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
+@@ -15,12 +15,10 @@ for i in `ls tests/*.c`; do
+ 	else
+ 		echo "FAILED!"
+ 	fi
+-	if [ -f "tests/$testname" ]; then
+-		rm tests/$testname
+-	fi
++	rm -f "tests/$testname"
+ done
  
- static inline void dev_base_seq_inc(struct net *net)
- {
+-for i in `ls tests/*.c`; do
++find tests -name '*.c' | sort | while read -r i; do
+ 	testname=$(basename "$i" .c)
+ 	echo -ne "(PRELOAD) $testname... "
+ 	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
+@@ -29,7 +27,5 @@ for i in `ls tests/*.c`; do
+ 	else
+ 		echo "FAILED!"
+ 	fi
+-	if [ -f "tests/$testname" ]; then
+-		rm tests/$testname
+-	fi
++	rm -f "tests/$testname"
+ done
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
