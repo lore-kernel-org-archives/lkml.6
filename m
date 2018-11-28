@@ -2,78 +2,93 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA22BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3C1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94EB82081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:27:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EB82081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=adamwong.me
+	by mail.kernel.org (Postfix) with ESMTP id 303BB2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303BB2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbeK2IaN (ORCPT
+        id S1726438AbeK2Ib0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:30:13 -0500
-Received: from h1.fbrelay.privateemail.com ([131.153.2.42]:39137 "EHLO
-        h1.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726239AbeK2IaN (ORCPT
+        Thu, 29 Nov 2018 03:31:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:32983 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbeK2Ib0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:30:13 -0500
-X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Nov 2018 03:30:12 EST
-Received: from MTA-06-3.privateemail.com (mta-06.privateemail.com [68.65.122.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h1.fbrelay.privateemail.com (Postfix) with ESMTPS id AFA95815F9;
-        Wed, 28 Nov 2018 16:20:09 -0500 (EST)
-Received: from MTA-06.privateemail.com (localhost [127.0.0.1])
-        by MTA-06.privateemail.com (Postfix) with ESMTP id 1476C60049;
-        Wed, 28 Nov 2018 16:20:06 -0500 (EST)
-Received: from localhost.localdomain (unknown [10.20.151.221])
-        by MTA-06.privateemail.com (Postfix) with ESMTPA id 97E3760045;
-        Wed, 28 Nov 2018 21:20:04 +0000 (UTC)
-From:   adam@adamwong.me
-To:     dmitry.torokhov@gmail.com
-Cc:     benjamin.tissoires@redhat.com, kt.liao@emc.com.tw,
-        dshanty@protonmail.com, robh@kernel.org, jackxviichaos@gmail.com,
-        ben.hutchings@codethink.co.uk, gregkh@linuxfoundation.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        TheWongGuy <adam@adamwong.me>
-Subject: [PATCH] Input: mouse: elan_i2c_core: Added support for ELAN0621 touchpad.
-Date:   Wed, 28 Nov 2018 16:20:01 -0500
-Message-Id: <20181128212001.20839-1-adam@adamwong.me>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thu, 29 Nov 2018 03:31:26 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gS7Nd-0000m7-Oe; Wed, 28 Nov 2018 22:28:21 +0100
+Date:   Wed, 28 Nov 2018 22:28:20 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+cc:     douliyangs@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        shivasharan.srikanteshwara@broadcom.com,
+        Sumit Saxena <sumit.saxena@broadcom.com>, ming.lei@redhat.com,
+        Christoph Hellwig <hch@lst.de>, linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH v3] genirq/affinity: Create and transfer more irq
+ desc info by a new structure
+In-Reply-To: <CAErSpo5NCy6C7xqaWUNnC2uY+RRpZnbpOJUQxrz0aER-g6+XqQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811282226280.1879@nanos.tec.linutronix.de>
+References: <20181128164503.6194-1-douliyangs@gmail.com> <CAErSpo5NCy6C7xqaWUNnC2uY+RRpZnbpOJUQxrz0aER-g6+XqQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: TheWongGuy <adam@adamwong.me>
+On Wed, 28 Nov 2018, Bjorn Helgaas wrote:
+> On Wed, Nov 28, 2018 at 10:45 AM Dou Liyang <douliyangs@gmail.com> wrote:
+> >         if (affd)
+> > -               masks = irq_create_affinity_masks(nvec, affd);
+> > -
+> > +               affi_desc = irq_create_affinity_desc(nvec, affd);
+> >
+> >         /* MSI Entry Initialization */
+> > -       entry = alloc_msi_entry(&dev->dev, nvec, masks);
+> > +       entry = alloc_msi_entry(&dev->dev, nvec, affi_desc);
+> 
+> Can you split this into two or more patches?  Most of these changes
+> are trivial and not very interesting, and the fact that they're all in
+> one patch makes it hard to find and review the interesting bits.  For
+> example,
+> 
+>   1) Rename all the local variables while keeping the type the same
+> (or just leave the name the same; I think "affinity" would be a fine
+> name, and I would be OK if we ended up with "struct irq_affinity_desc
+> *masks" or "struct irq_affinity_desc *affinity").  This patch would
+> obviously have no functional impact and would remove a lot of the
+> trivial changes.
+> 
+>   2) Add "struct irq_affinity_desc" containing only "struct cpumask
+> masks" and irq_create_affinity_desc() (or leave the name as
+> irq_create_affinity_masks() and adjust the signature).  This would
+> also have no functional impact and would be a fairly trivial patch.
+> 
+>   3) Add "flags" to struct irq_affinity_desc and the related code.
+> This is the real meat of your patch, and with the above out of the
+> way, it will be much smaller and it'll be obvious what the important
+> changes are.
 
-Added the ability to detect the ELAN0621 touchpad found in some Lenovo
-laptops.
+You beat me to it. I was going to ask the same thing. Albeit I'll go over
+the conceptual stuff right now as I roughly know what it tries to achieve.
 
-Signed-off-by: Adam Wong <adam@adamwong.me>
----
- drivers/input/mouse/elan_i2c_core.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
 
-diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
-index b0f9d19b3410..a84362d0c99d 100644
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1348,6 +1348,7 @@ static const struct acpi_device_id elan_acpi_id[] = {
- 	{ "ELAN0618", 0 },
- 	{ "ELAN061C", 0 },
- 	{ "ELAN061D", 0 },
-+	{ "ELAN0621", 0 },
- 	{ "ELAN0622", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
--- 
-2.17.1
-
+	tglx
