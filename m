@@ -2,210 +2,130 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D24BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA87C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148C02081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148C02081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 8A79C2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 11:30:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A79C2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbeK1WbC (ORCPT
+        id S1728090AbeK1Wbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 17:31:02 -0500
-Received: from shell.v3.sk ([90.176.6.54]:37728 "EHLO shell.v3.sk"
+        Wed, 28 Nov 2018 17:31:49 -0500
+Received: from mga04.intel.com ([192.55.52.120]:22116 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727476AbeK1WbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 17:31:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 151F2989A3;
-        Wed, 28 Nov 2018 12:29:39 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id X0_dvJbXB4v5; Wed, 28 Nov 2018 12:29:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C18BB989B2;
-        Wed, 28 Nov 2018 12:29:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id efbIHuhGnyHC; Wed, 28 Nov 2018 12:29:35 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id A66AB989A3;
-        Wed, 28 Nov 2018 12:29:34 +0100 (CET)
-Message-ID: <868bd721260bc8948835fe2a697a047ae2277cd0.camel@v3.sk>
-Subject: Re: [PATCH v3 03/14] media: ov7670: hook s_power onto v4l2 core
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Date:   Wed, 28 Nov 2018 12:29:33 +0100
-In-Reply-To: <20181122122146.a6wydozsg676i3w7@valkosipuli.retiisi.org.uk>
-References: <20181120100318.367987-1-lkundrak@v3.sk>
-         <20181120100318.367987-4-lkundrak@v3.sk>
-         <20181122122146.a6wydozsg676i3w7@valkosipuli.retiisi.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727476AbeK1Wbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 17:31:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 03:30:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
+   d="scan'208";a="114552183"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 28 Nov 2018 03:30:26 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id BABF1374; Wed, 28 Nov 2018 13:30:25 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 03/15] platform/x86: intel_cht_int33fe: Accept errors of i2c_acpi_new_device()
+Date:   Wed, 28 Nov 2018 13:30:12 +0200
+Message-Id: <20181128113024.42126-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181128113024.42126-1-andriy.shevchenko@linux.intel.com>
+References: <20181128113024.42126-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-22 at 14:21 +0200, Sakari Ailus wrote:
-> Hi Lubomir,
-> 
-> On Tue, Nov 20, 2018 at 11:03:08AM +0100, Lubomir Rintel wrote:
-> > The commit 71862f63f351 ("media: ov7670: Add the ov7670_s_power function")
-> > added a power control routing. However, it was not good enough to use as
-> > a s_power() callback: it merely flipped on the power GPIOs without
-> > restoring the register settings.
-> > 
-> > Fix this now and register an actual power callback.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > 
-> > ---
-> > Changes since v2:
-> > - Restore the controls, format and frame rate on power on
-> > 
-> >  drivers/media/i2c/ov7670.c | 50 +++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 44 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> > index ead0c360df33..cbaab60aaaac 100644
-> > --- a/drivers/media/i2c/ov7670.c
-> > +++ b/drivers/media/i2c/ov7670.c
-> > @@ -242,6 +242,7 @@ struct ov7670_info {
-> >  	struct ov7670_format_struct *fmt;  /* Current format */
-> >  	struct ov7670_win_size *wsize;
-> >  	struct clk *clk;
-> > +	int on;
-> >  	struct gpio_desc *resetb_gpio;
-> >  	struct gpio_desc *pwdn_gpio;
-> >  	unsigned int mbus_config;	/* Media bus configuration flags */
-> > @@ -1615,19 +1616,54 @@ static int ov7670_s_register(struct v4l2_subdev *sd, const struct v4l2_dbg_regis
-> >  }
-> >  #endif
-> >  
-> > -static int ov7670_s_power(struct v4l2_subdev *sd, int on)
-> > +static void ov7670_power_on(struct v4l2_subdev *sd)
-> >  {
-> >  	struct ov7670_info *info = to_state(sd);
-> >  
-> > +	if (info->on)
-> > +		return;
-> > +
-> >  	if (info->pwdn_gpio)
-> > -		gpiod_set_value(info->pwdn_gpio, !on);
-> > -	if (on && info->resetb_gpio) {
-> > +		gpiod_set_value(info->pwdn_gpio, 0);
-> > +	if (info->resetb_gpio) {
-> >  		gpiod_set_value(info->resetb_gpio, 1);
-> >  		usleep_range(500, 1000);
-> >  		gpiod_set_value(info->resetb_gpio, 0);
-> >  		usleep_range(3000, 5000);
-> >  	}
-> >  
-> > +	info->on = true;
-> > +}
-> > +
-> > +static void ov7670_power_off(struct v4l2_subdev *sd)
-> > +{
-> > +	struct ov7670_info *info = to_state(sd);
-> > +
-> > +	if (!info->on)
-> > +		return;
-> > +
-> > +	if (info->pwdn_gpio)
-> > +		gpiod_set_value(info->pwdn_gpio, 1);
-> > +
-> > +	info->on = false;
-> > +}
-> > +
-> > +static int ov7670_s_power(struct v4l2_subdev *sd, int on)
-> > +{
-> > +	struct ov7670_info *info = to_state(sd);
-> > +
-> > +	if (info->on == on)
-> > +		return 0;
-> > +
-> > +	if (on) {
-> > +		ov7670_power_on (sd);
-> > +		ov7670_apply_fmt(sd);
-> > +		ov7675_apply_framerate(sd);
-> > +		v4l2_ctrl_handler_setup(&info->hdl);
-> > +	} else {
-> > +		ov7670_power_off (sd);
-> > +	}
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > @@ -1660,6 +1696,7 @@ static int ov7670_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> >  static const struct v4l2_subdev_core_ops ov7670_core_ops = {
-> >  	.reset = ov7670_reset,
-> >  	.init = ov7670_init,
-> > +	.s_power = ov7670_s_power,
-> >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> >  	.g_register = ov7670_g_register,
-> >  	.s_register = ov7670_s_register,
-> > @@ -1825,6 +1862,7 @@ static int ov7670_probe(struct i2c_client *client,
-> >  		else
-> >  			return ret;
-> >  	}
-> > +
-> >  	if (info->clk) {
-> >  		ret = clk_prepare_enable(info->clk);
-> >  		if (ret)
-> > @@ -1841,7 +1879,7 @@ static int ov7670_probe(struct i2c_client *client,
-> >  	if (ret)
-> >  		goto clk_disable;
-> >  
-> > -	ov7670_s_power(sd, 1);
-> > +	ov7670_power_on(sd);
-> >  
-> >  	/* Make sure it's an ov7670 */
-> >  	ret = ov7670_detect(sd);
-> > @@ -1929,7 +1967,7 @@ static int ov7670_probe(struct i2c_client *client,
-> >  hdl_free:
-> >  	v4l2_ctrl_handler_free(&info->hdl);
-> >  power_off:
-> > -	ov7670_s_power(sd, 0);
-> > +	ov7670_power_off(sd);
-> >  clk_disable:
-> >  	clk_disable_unprepare(info->clk);
-> >  	return ret;
-> > @@ -1945,7 +1983,7 @@ static int ov7670_remove(struct i2c_client *client)
-> >  	v4l2_ctrl_handler_free(&info->hdl);
-> >  	clk_disable_unprepare(info->clk);
-> >  	media_entity_cleanup(&info->sd.entity);
-> > -	ov7670_s_power(sd, 0);
-> > +	ov7670_power_off(sd);
-> >  	return 0;
-> >  }
-> >  
-> 
-> Could you consider instead switching to runtime PM? A few drivers such as
-> the ov2685 driver does that already.
+In the future i2c_acpi_new_device() will return error pointer in some cases.
+Prepare intel_cht_int33fe driver to support that.
 
-Yes, I'll take a look. Thanks for the suggestion. I didn't know such
-thing exists, so it may take some time for me to grasp it though.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/intel_cht_int33fe.c | 28 +++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-Take care,
-Lubo
-
-> 
+diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+index 431151d4e611..367d6e304ade 100644
+--- a/drivers/platform/x86/intel_cht_int33fe.c
++++ b/drivers/platform/x86/intel_cht_int33fe.c
+@@ -168,8 +168,14 @@ static int cht_int33fe_probe(struct platform_device *pdev)
+ 		board_info.dev_name = "max17047";
+ 		board_info.properties = max17047_props;
+ 		data->max17047 = i2c_acpi_new_device(dev, 1, &board_info);
+-		if (!data->max17047)
+-			return -EPROBE_DEFER; /* Wait for i2c-adapter to load */
++		if (IS_ERR(data->max17047))
++			ret = PTR_ERR(data->max17047);
++		else if (!data->max17047)
++			ret = -EPROBE_DEFER; /* Wait for i2c-adapter to load */
++		else
++			ret = 0;
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	data->connections[0].endpoint[0] = "port0";
+@@ -194,7 +200,13 @@ static int cht_int33fe_probe(struct platform_device *pdev)
+ 	board_info.irq = fusb302_irq;
+ 
+ 	data->fusb302 = i2c_acpi_new_device(dev, 2, &board_info);
+-	if (!data->fusb302)
++	if (IS_ERR(data->fusb302))
++		ret = PTR_ERR(data->fusb302);
++	else if (!data->fusb302)
++		ret = -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
++	else
++		ret = 0;
++	if (ret)
+ 		goto out_unregister_max17047;
+ 
+ 	memset(&board_info, 0, sizeof(board_info));
+@@ -202,7 +214,13 @@ static int cht_int33fe_probe(struct platform_device *pdev)
+ 	strlcpy(board_info.type, "pi3usb30532", I2C_NAME_SIZE);
+ 
+ 	data->pi3usb30532 = i2c_acpi_new_device(dev, 3, &board_info);
+-	if (!data->pi3usb30532)
++	if (IS_ERR(data->pi3usb30532))
++		ret = PTR_ERR(data->pi3usb30532);
++	else if (!data->pi3usb30532)
++		ret = -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
++	else
++		ret = 0;
++	if (ret)
+ 		goto out_unregister_fusb302;
+ 
+ 	platform_set_drvdata(pdev, data);
+@@ -217,7 +235,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
+ 
+ 	device_connections_remove(data->connections);
+ 
+-	return -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
++	return ret;
+ }
+ 
+ static int cht_int33fe_remove(struct platform_device *pdev)
+-- 
+2.19.2
 
