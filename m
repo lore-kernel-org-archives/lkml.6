@@ -2,142 +2,79 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87335C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEF2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7AB2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7AB2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id CF3232082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3232082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeK1Lxl (ORCPT
+        id S1726972AbeK1Lxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 06:53:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48402 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726418AbeK1Lxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 06:53:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E143AAC38;
-        Wed, 28 Nov 2018 00:53:56 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     "J. Bruce Fields" <bfields@redhat.com>,
-        kernel test robot <rong.a.chen@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Date:   Wed, 28 Nov 2018 11:53:48 +1100
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>, lkp@01.org,
-        linux-nfs@vger.kernel.org
-Subject: [PATCH] locks: fix performance regressions.
-In-Reply-To: <87mupup0ot.fsf@notabene.neil.brown.name>
-References: <20181127060102.GF6163@shao2-debian> <20181127174315.GA29963@parsley.fieldses.org> <87mupup0ot.fsf@notabene.neil.brown.name>
-Message-ID: <87k1kyowdf.fsf@notabene.neil.brown.name>
+        Wed, 28 Nov 2018 06:53:51 -0500
+Received: from mga05.intel.com ([192.55.52.43]:30551 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeK1Lxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:53:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 16:54:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
+   d="scan'208";a="113005221"
+Received: from haiyuewa-mobl.ccr.corp.intel.com (HELO [10.67.64.126]) ([10.67.64.126])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Nov 2018 16:54:06 -0800
+Subject: Re: [PATCH] ipmi: kcs_bmc: handle devm_kasprintf() failure case
+To:     minyard@acm.org, Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <1542812905-27337-1-git-send-email-hofrat@osadl.org>
+ <9320680f-679e-fc89-4349-17dbbd30bbfc@acm.org>
+From:   "Wang, Haiyue" <haiyue.wang@linux.intel.com>
+Message-ID: <67962bdd-f7db-5a7d-e5d8-baaefd748ab5@linux.intel.com>
+Date:   Wed, 28 Nov 2018 08:54:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <9320680f-679e-fc89-4349-17dbbd30bbfc@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+[Resend for wrong reply HTML format mail]
 
+Great check for making kcs_bmc module be more stable and handle things gracefully.
 
-The kernel test robot reported two performance regressions
-caused by recent patches.
-Both appear to related to the global spinlock blocked_lock_lock
-being taken more often.
+My tag if needed.
+      Reviewed-by: Haiyue Wang<haiyue.wang@linux.intel.com>
 
-This patch avoids taking that lock in the cases tested.
-
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-Hi Jeff,
- you might like to merge these back into the patches that introduced
- the problem.
- Or you might like me to re-send the series with these merged in,
- in which case, please ask.
-
- And a BIG thank-you to the kernel-test-robot team!!
-
-Thanks,
-NeilBrown
-
- fs/locks.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index f456cd3d9d50..67519a43e27a 100644
-=2D-- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -444,6 +444,13 @@ static void locks_move_blocks(struct file_lock *new, s=
-truct file_lock *fl)
- {
- 	struct file_lock *f;
-=20
-+	/*
-+	 * As ctx->flc_lock is held, new requests cannot be added to
-+	 * ->fl_blocked_requests, so we don't need a lock to check if it
-+	 * is empty.
-+	 */
-+	if (list_empty(&fl->fl_blocked_requests))
-+		return;
- 	spin_lock(&blocked_lock_lock);
- 	list_splice_init(&fl->fl_blocked_requests, &new->fl_blocked_requests);
- 	list_for_each_entry(f, &fl->fl_blocked_requests, fl_blocked_member)
-@@ -749,6 +756,20 @@ int locks_delete_block(struct file_lock *waiter)
- {
- 	int status =3D -ENOENT;
-=20
-+	/*
-+	 * If fl_blocker is NULL, it won't be set again as this thread
-+	 * "owns" the lock and is the only one that might try to claim
-+	 * the lock.  So it is safe to test fl_blocker locklessly.
-+	 * Also if fl_blocker is NULL, this waiter is not listed on
-+	 * fl_blocked_requests for some lock, so no other request can
-+	 * be added to the list of fl_blocked_requests for this
-+	 * request.  So if fl_blocker is NULL, it is safe to
-+	 * locklessly check if fl_blocked_requests is empty.  If both
-+	 * of these checks succeed, there is no need to take the lock.
-+	 */
-+	if (waiter->fl_blocker =3D=3D NULL &&
-+	    list_empty(&waiter->fl_blocked_requests))
-+		return status;
- 	spin_lock(&blocked_lock_lock);
- 	if (waiter->fl_blocker)
- 		status =3D 0;
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlv95xwACgkQOeye3VZi
-gbk0jBAAjDCBtfHca0W64cD2SH8WRTmbw4F0oGVbrS63g96xW8ap6IkKDQYIV2d2
-D2yHOyySmAhmQqKhG2sfcz5W3Mtib5FiauzVES7iz+o5cAvBErCzALfq3B76mBlY
-Q3MnSGLge46xOpENsfUxkuboH/v3fYBIBdB/c7lK45XU32c8CJ6fRZzrBhn9lVI4
-Ege1P1rpJiXMALuN/Csc0Lr9uX9PO7fQd9mvX/79noV2L02hzu7VytZ8XEoXnzFM
-o/2gdSLmlSeCijH/t2loq8A6DPvuAhKTOHfkO4QNZFLQ9N6n9EizdpRhDbQtXlfZ
-d3Hp3p3mf9/BtrNcYiNW85LEbffLhPH8mWTzt6aT5owd3Xx0KExQXQjakr7Rj2fp
-EDXCpnilzSuh5Ia55nWGmBAA/hMeJYtKqp6mpErVkElFf/1qh3LbH7ixhlDJu+sp
-AmOQm+E26V8nbTUWst4j8wIEq/ux4uzkRGlLqLGHbA0T9TZlyslGBrIl4/edJbZz
-+ucFrjlzy1RSm7P86UvzV1s0cAgh9VS8Yto5/Ou26ZXrHIf+IjnAKPtF1q7lb+co
-sGDxbLvHABmkTmaNs0NS6DFM3P2nIOgEb4pGCcYI8hJtu+KcuTZlKRwMP4PlALzc
-frcFONJYdcwl5Ad1ZY32hi2v8q/LfnEX6OA38n/XJxR5KtFz7YY=
-=R6to
------END PGP SIGNATURE-----
---=-=-=--
+在 2018-11-27 21:36, Corey Minyard 写道:
+> On 11/21/18 9:08 AM, Nicholas Mc Guire wrote:
+>> devm_kasprintf() may return NULL if internal allocation failed so this
+>> assignment is not safe. Moved the error exit path and added the !NULL
+>> which then allows the devres manager to take care of cleanup.
+>
+>
+> Added the original author.  This looks correct to me, I've included 
+> it, but I would
+> like Haiyue to comment, if possible.
+>
+> Thanks,
+>
+> -corey
+>
+>
+>> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+>> Fixes: cd2315d471f4 ("ipmi: kcs_bmc: don't change device name") 
