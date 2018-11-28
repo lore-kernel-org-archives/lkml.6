@@ -2,101 +2,101 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5580EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66DEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82CD206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CE81206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:15:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="P/kA/6zr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82CD206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rIo1ep0r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE81206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeK2FR7 (ORCPT
+        id S1728341AbeK2FSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:17:59 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:56486 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeK2FR7 (ORCPT
+        Thu, 29 Nov 2018 00:18:03 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43849 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeK2FSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:17:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543428929; x=1574964929;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=VbCtUK0B6nIp8n9Xq8wecIQp5tDLrwRfU98MVtEmGLc=;
-  b=P/kA/6zrBhuw87gtYjSZS0pglvdxHXnpvFkVX57ODYAwgIebRoNhxe3E
-   +wD13yhT+HfTKbz1A8c7NeUxoFTy0vTZEKuwBXkmn/Oo5djGMVIeZMnlf
-   AtddFST3WLZCdlIYmPLDZPZFL/HNo3pLrrzLO8MXL+ZpoptmKR0jc5BeC
-   UVON1zC+uSoCPOY/cXKblmxnyw4tHtxrBSUjeAm/01/wngOFtEpCZm56T
-   tfRV7NcSjI0DWgybFZ7cnqg3icGkpAAiz2KvgKU4C8A3HGpb6/aNOKvxa
-   RLxed5xjHEc1Kw6/BXohzm8BQdbzAyh1OwBenoR1ZCa17eQOaRxcTqeT7
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,291,1539619200"; 
-   d="scan'208";a="97070176"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Nov 2018 02:15:29 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 28 Nov 2018 09:58:27 -0800
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.72.98]) ([10.111.72.98])
-  by uls-op-cesaip02.wdc.com with ESMTP; 28 Nov 2018 10:15:29 -0800
-Subject: Re: macb: probe of 10090000.ethernet failed with error -110
-To:     Andreas Schwab <schwab@suse.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <mvmefb5fr6d.fsf@suse.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <f1e5d078-bc4d-910e-8717-f5870a0e994a@wdc.com>
-Date:   Wed, 28 Nov 2018 10:15:28 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
+        Thu, 29 Nov 2018 00:18:03 -0500
+Received: by mail-qk1-f193.google.com with SMTP id r71so17356363qkr.10;
+        Wed, 28 Nov 2018 10:15:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=0YsASNn8KNZVVRlRICNLoCyTLlKveFqQ7IBqojFvt68=;
+        b=rIo1ep0rfrv/cW1k9G9RKGA0ZsVKeeTr/nigCm1U/xLIYCggHvJrT84Fe6pk9UB0R3
+         tIFEHgU2gcK3irG+/SGxU4CPgIoNlpLQEjbLLLQ62BiQ8F1x+XdocpzFKZuWJCzBGuol
+         JfGHV26sXr9qtzDtoi2ZH85XzIldoQA0uKaAP+EH7gWq/r2lJ4mtuw35kRdR/Cdxd4qR
+         0VSMcAtXwclMbVvP3hSqzvBpdfM0S4makbzcSyimyM7uDBfsUg3bKAvHiWc8veKo6RBp
+         It8Bd6w2i7iFhHG8NhjpuMwutdyG71QAg56WAvnou6qJe+Pr6480MsszlfcbTgfDaSxv
+         DDJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=0YsASNn8KNZVVRlRICNLoCyTLlKveFqQ7IBqojFvt68=;
+        b=a382JhjIlzQ7e820U5c5dhwb0ssR2RDYaJlDtTYsYgKV9nF9kGOmN8bvDnLelYVtVS
+         lX39QMXyFy7vH1xqTiZgKIY2kpcEEYRKSMdpxRVE+VzwsOSHz2tFpg8x4PSmWgiPZ3Pv
+         dyVXyWJsMJWlP8HJgCT9t+m3VCsFJP7goNzDobaE9SNh3LJnw5PvEhWMlZdrqsQLs1oE
+         MqOHUk9li0eIdiux++gtDDQKz4LOfu52zbT+4+KNsC2J957wmD24/vLrBpZDuLSmUCfx
+         qFa4BRhltpiV4iZgKEmnwRyUwqfi6IpNE8tJ0IR8ECY7oAYpKATgCoN9onrRoW5bBQgM
+         f6OQ==
+X-Gm-Message-State: AA+aEWbn2Rlv7zXbPzks0BZZlKyAx66qy8/I/SlGn/Inwelw7/LNdkN0
+        Vv+9DZyTt1W2ZjHn5mqWVKw=
+X-Google-Smtp-Source: AFSGD/VrknUGMRW9KkNT6y134hAOvCtLsBgSijuO16BGX8nmGARuvDStpkOW5OEB9KLq6QbMhS/9/w==
+X-Received: by 2002:a37:17df:: with SMTP id 92mr35710998qkx.191.1543428931732;
+        Wed, 28 Nov 2018 10:15:31 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id 46sm2558324qtv.22.2018.11.28.10.15.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 10:15:31 -0800 (PST)
+From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
+X-Google-Original-From: Giuliano Belinassi <giuliano.belinassi@usp.br>
+Date:   Wed, 28 Nov 2018 16:15:25 -0200
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
+        renatogeh@gmail.com
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH 0/2] staging: iio: ad7780: move out of staging
+Message-ID: <cover.1543428366.git.giuliano.belinassi@usp.br>
 MIME-Version: 1.0
-In-Reply-To: <mvmefb5fr6d.fsf@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/18 2:11 AM, Andreas Schwab wrote:
-> The PHY probing of the macb driver appears to be rather unreliable.
-> Most of the time it doesn't work the first time, I have to reload the
-> module several times to let it succeed.
-> 
-> [   40.530000] macb: GEM doesn't support hardware ptp.
-> [   40.530000] libphy: MACB_mii_bus: probed
-> [   41.450000] macb 10090000.ethernet (unnamed net_device) (uninitialized): Could not attach to PHY
-> [   41.510000] macb: probe of 10090000.ethernet failed with error -110
-> [ 1354.400000] macb: GEM doesn't support hardware ptp.
-> [ 1354.410000] libphy: MACB_mii_bus: probed
-> [ 1355.260000] macb 10090000.ethernet (unnamed net_device) (uninitialized): Could not attach to PHY
-> [ 1355.300000] macb: probe of 10090000.ethernet failed with error -110
-> [ 1358.100000] macb: GEM doesn't support hardware ptp.
-> [ 1358.110000] libphy: MACB_mii_bus: probed
-> [ 1358.310000] Microsemi VSC8541 SyncE 10090000.ethernet-ffffffff:00: attached PHY driver [Microsemi VSC8541 SyncE] (mii_bus:phy_addr=10090000.ethernet-ffffffff:00, irq=POLL)
-> [ 1358.320000] macb 10090000.ethernet eth0: Cadence GEM rev 0x10070109 at 0x10090000 irq 12 (70:b3:d5:92:f1:07)
-> 
-> This is 4.20-rc4 on a HiFive-U.
-> 
-> Andreas.
-> 
+This series of patches add user input to ad7780 'gain' & 'filter' gpio
+pins. Also, it moves the ad7780 out of staging to the main tree.
 
-Here is my previous analysis on the issue.
-http://lists.infradead.org/pipermail/linux-riscv/2018-September/001503.html
+Giuliano Belinassi (2):
+  staging: iio: ad7780: Add gain & filter gpio support
+  staging: iio: ad7780: Moving ad7780 out of staging
 
-Not sure if you have tried the hack already. But here it is anyways.
-https://github.com/atishp04/riscv-linux/commit/aa230e7dc2ab01db5b630f427e57297ffc25c884
+ drivers/iio/adc/Kconfig                |  13 +
+ drivers/iio/adc/Makefile               |   1 +
+ drivers/iio/adc/ad7780.c               | 347 +++++++++++++++++++++++++
+ drivers/staging/iio/adc/Kconfig        |  13 -
+ drivers/staging/iio/adc/Makefile       |   1 -
+ drivers/staging/iio/adc/ad7780.c       | 277 --------------------
+ include/linux/iio/adc/ad_sigma_delta.h |   5 +
+ 7 files changed, 366 insertions(+), 291 deletions(-)
+ create mode 100644 drivers/iio/adc/ad7780.c
+ delete mode 100644 drivers/staging/iio/adc/ad7780.c
 
+-- 
+2.19.1
 
-Regards,
-Atish
