@@ -2,88 +2,89 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9219C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F720C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF5120873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:43:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF5120873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id E08142086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:45:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ukQhE4B+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08142086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeK1Soi (ORCPT
+        id S1727703AbeK1Sq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:44:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:17779 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727247AbeK1Soh (ORCPT
+        Wed, 28 Nov 2018 13:46:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47382 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeK1Sq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:44:37 -0500
-X-UUID: f2a9d06b0fc4449f8441d39386385ffb-20181128
-X-UUID: f2a9d06b0fc4449f8441d39386385ffb-20181128
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <leilk.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1732245233; Wed, 28 Nov 2018 15:43:50 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Nov 2018 15:43:48 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Nov 2018 15:43:46 +0800
-From:   Leilk Liu <leilk.liu@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <ryder.lee@mediatek.com>, Leilk Liu <leilk.liu@mediatek.com>
-Subject: [PATCH v3] spi: mediatek: Add bindings for mediatek MT7629 soc platform
-Date:   Wed, 28 Nov 2018 15:43:30 +0800
-Message-ID: <1543391010-23554-1-git-send-email-leilk.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 28 Nov 2018 13:46:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EPIzflvAJUlGi6iavBRobzBf1shUiab75r8qH4BYRX8=; b=ukQhE4B+N5Ks7zVLHUscRckOr
+        /AhGXkPOAwO+/aCQzRfD9WvYfJIWKOuoyCCJ6kLCj6OEk647uMZEG1Ig1IPn8zx5ckdMYG4kyekbG
+        nhaLQYmwUadip1jYB2nA16VlXHurQ5niw0biRftJ8kCrHA8mig2CHhD7qQEcoKtD5+AwHUBOQc5JD
+        /xm47XvnkgjCOHYFPszuwAknT7rt5WmRY5WrlMc/yDrMFNnfOho+za2mB90qcs3z9NaRZY6Slvr7S
+        TaBFXHs++KVo1sPrSYksfh0w9XGt7mQcD85V7lhfYYFk0QVsa/Tx3Ub2UThehbPDacJ48JrQQcf8T
+        VBKbWxn4w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRuXY-00071p-RX; Wed, 28 Nov 2018 07:45:44 +0000
+Date:   Tue, 27 Nov 2018 23:45:44 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Allison Henderson <allison.henderson@oracle.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        martin.petersen@oracle.com, shirley.ma@oracle.com,
+        bob.liu@oracle.com
+Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
+ retry
+Message-ID: <20181128074544.GA20702@infradead.org>
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <20181128053303.GL6311@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: EB018FB4ABCC1FD44570ABFE306832FABC4CF16901F58B258EBB0FFB2196E9642000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128053303.GL6311@dastard>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a DT binding documentation for the MT7629 soc.
+On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
+> 	- how does propagation through stacked layers work?
 
-Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
----
-v3:
-remove cover-letter.
+The only way it works is by each layering driving it.  Thus my
+recommendation above bilding on your earlier one to use an index
+that is filled by the driver at I/O completion time.
 
-v2:
-remove "mediatek,mt7629-spi" compatible according Matthias's advice.
+E.g.
 
-v1:
-This series are based on 4.20-rc1 and provide two patches to support mt7629 IC.
----
- .../devicetree/bindings/spi/spi-mt65xx.txt         |    1 +
- 1 file changed, 1 insertion(+)
+	bio_init:		bi_leg = -1
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-index 7940940..69c3567 100644
---- a/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-mt65xx.txt
-@@ -6,6 +6,7 @@ Required properties:
-     - mediatek,mt2712-spi: for mt2712 platforms
-     - mediatek,mt6589-spi: for mt6589 platforms
-     - mediatek,mt7622-spi: for mt7622 platforms
-+    - "mediatek,mt7629-spi", "mediatek,mt7622-spi": for mt7629 platforms
-     - mediatek,mt8135-spi: for mt8135 platforms
-     - mediatek,mt8173-spi: for mt8173 platforms
-     - mediatek,mt8183-spi: for mt8183 platforms
--- 
-1.7.9.5
+	raid1:			submit bio to lower driver
+	raid 1 completion:	set bi_leg to 0 or 1
 
+Now if we want to allow stacking we need to save/restore bi_leg
+before submitting to the underlying device.  Which is possible,
+but quite a bit of work in the drivers.
+
+> 	- is it generic/abstract enough to be able to work with
+> 	  RAID5/6 to trigger verification/recovery from the parity
+> 	  information in the stripe?
+
+If we get the non -1 bi_leg for paritity raid this is an inidicator
+that parity rebuild needs to happen.  For multi-parity setups we could
+also use different levels there.
