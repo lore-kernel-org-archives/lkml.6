@@ -2,130 +2,166 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE924C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B0AC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86BBC2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:16:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qKSgs+bX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BBC2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A8262081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:17:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8262081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbeK1URm (ORCPT
+        id S1728044AbeK1USM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:17:42 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41638 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbeK1URm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:17:42 -0500
-Received: by mail-ed1-f65.google.com with SMTP id z28so21439728edi.8;
-        Wed, 28 Nov 2018 01:16:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sTZWo8vDJpS8bhCf3AaS91rmTJ+wCscCrVtNvIoVmYA=;
-        b=qKSgs+bXFQMp+lDonwb6C+IlnN5LTnFZrk1peXkjP3boJ72+8fu72IZqGsQeMEaMo1
-         EXIcueanalZYEYhdm90pfqgyudLnXOgdMvmon+uz6yDmXen8McYrkheKOlcVnyIDYG38
-         gu4ZIed/SCyU8OQ3unISMyNufVOAUvcOLv2LHekp+cyq96vm7NSnzPmT9cDs7LtpcK0J
-         stN5KuU3WXNgt5HS/rKes09Fhq5vAUe9CbI2GJppAAWu2/QlB8sGYpzo/AA7elDs7E38
-         wL3tCthPy5R2myWuDym2D9dRrCFayeCZ/zzyWu/SUumAZY2f8Lh3o4emgan5PotzpunD
-         mUMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sTZWo8vDJpS8bhCf3AaS91rmTJ+wCscCrVtNvIoVmYA=;
-        b=uYkywrDlBU24OWo52QP1rh5FcS3UXR87Lkm8MOTPD7BcdfBs66WhyboyFyG/56So1M
-         QsBDKDQ0H86TvPURfGJg+fe+75Ocyy2aeCSc783Koi18AkFEfAwMvCA8q1FRlMh9Xw47
-         nWwfEZiV0e1AtknCLkaCq3D5ZsAlt/S3lFnkZNizqmXZoQSfLcq9gnTojX2tgo73SdaW
-         +22J9ykkxksRbi21uAFTibQTOdz2v1+/pah2Fddf4G7yP1nD3/EZDPX3LHUTBI/LgOp+
-         K7egUC1PY39lmgyon5QWfCejo+mHuNaJyLk1/woW/AkYAipB+qYjOK4hJ/4EEr6RZTNX
-         Jl6Q==
-X-Gm-Message-State: AGRZ1gJPqjWuJq078ChAZDdvsW8SWY5SBMmCfrTUyYzKd2mI3Uhd/7ZO
-        htdurERWduuw/rGl/ls409+o3DRZ
-X-Google-Smtp-Source: AJdET5czKFK5SluuV4AvHS748leQkeHTjt6q9BjX1K/8gs35j7N2dmcATYOM9e4RSbzLPtLtExprXA==
-X-Received: by 2002:a17:906:d507:: with SMTP id ge7-v6mr25825718ejb.78.1543396604046;
-        Wed, 28 Nov 2018 01:16:44 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm978646ejf.48.2018.11.28.01.16.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 01:16:43 -0800 (PST)
-Date:   Wed, 28 Nov 2018 10:16:42 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robert Yang <decatf@gmail.com>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20181128091642.GC17419@ulmo>
-References: <20180925214940.15188-1-decatf@gmail.com>
+        Wed, 28 Nov 2018 15:18:12 -0500
+Received: from mga18.intel.com ([134.134.136.126]:34274 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727341AbeK1USM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:18:12 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 01:17:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
+   d="scan'208";a="112866993"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
+  by orsmga002.jf.intel.com with ESMTP; 28 Nov 2018 01:17:14 -0800
+Date:   Wed, 28 Nov 2018 17:17:30 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     NeilBrown <neilb@suse.com>
+Cc:     "J. Bruce Fields" <bfields@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>, lkp@01.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] locks: fix performance regressions.
+Message-ID: <20181128091730.GD21676@shao2-debian>
+References: <20181127060102.GF6163@shao2-debian>
+ <20181127174315.GA29963@parsley.fieldses.org>
+ <87mupup0ot.fsf@notabene.neil.brown.name>
+ <87k1kyowdf.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180925214940.15188-1-decatf@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87k1kyowdf.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---rQ2U398070+RC21q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 25, 2018 at 05:49:40PM -0400, Robert Yang wrote:
-> The current behavior is that clk_round_rate would return the same clock
-> rate passed to it for valid PLL configurations. This change will return
-> the exact rate the PLL will provide in accordance with clk API.
->=20
-> Signed-off-by: Robert Yang <decatf@gmail.com>
+On Wed, Nov 28, 2018 at 11:53:48AM +1100, NeilBrown wrote:
+> 
+> The kernel test robot reported two performance regressions
+> caused by recent patches.
+> Both appear to related to the global spinlock blocked_lock_lock
+> being taken more often.
+> 
+> This patch avoids taking that lock in the cases tested.
+> 
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Signed-off-by: NeilBrown <neilb@suse.com>
 > ---
-> Changes in V2:
->  - Move input divider (m =3D=3D 0) check into the cfg constraints check
->    condition. Forgo adding WARN_ON and avoid using 0 input divider
->    all together.
->=20
->  drivers/clk/tegra/clk-pll.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> Hi Jeff,
+>  you might like to merge these back into the patches that introduced
+>  the problem.
+>  Or you might like me to re-send the series with these merged in,
+>  in which case, please ask.
+> 
+>  And a BIG thank-you to the kernel-test-robot team!!
+> 
+> Thanks,
+> NeilBrown
+> 
+>  fs/locks.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index f456cd3d9d50..67519a43e27a 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -444,6 +444,13 @@ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+>  {
+>  	struct file_lock *f;
+>  
+> +	/*
+> +	 * As ctx->flc_lock is held, new requests cannot be added to
+> +	 * ->fl_blocked_requests, so we don't need a lock to check if it
+> +	 * is empty.
+> +	 */
+> +	if (list_empty(&fl->fl_blocked_requests))
+> +		return;
+>  	spin_lock(&blocked_lock_lock);
+>  	list_splice_init(&fl->fl_blocked_requests, &new->fl_blocked_requests);
+>  	list_for_each_entry(f, &fl->fl_blocked_requests, fl_blocked_member)
+> @@ -749,6 +756,20 @@ int locks_delete_block(struct file_lock *waiter)
+>  {
+>  	int status = -ENOENT;
+>  
+> +	/*
+> +	 * If fl_blocker is NULL, it won't be set again as this thread
+> +	 * "owns" the lock and is the only one that might try to claim
+> +	 * the lock.  So it is safe to test fl_blocker locklessly.
+> +	 * Also if fl_blocker is NULL, this waiter is not listed on
+> +	 * fl_blocked_requests for some lock, so no other request can
+> +	 * be added to the list of fl_blocked_requests for this
+> +	 * request.  So if fl_blocker is NULL, it is safe to
+> +	 * locklessly check if fl_blocked_requests is empty.  If both
+> +	 * of these checks succeed, there is no need to take the lock.
+> +	 */
+> +	if (waiter->fl_blocker == NULL &&
+> +	    list_empty(&waiter->fl_blocked_requests))
+> +		return status;
+>  	spin_lock(&blocked_lock_lock);
+>  	if (waiter->fl_blocker)
+>  		status = 0;
+> -- 
+> 2.14.0.rc0.dirty
+> 
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+FYI, the performance recovered back, we didn't find any regression between the two commits.
 
---rQ2U398070+RC21q
-Content-Type: application/pgp-signature; name="signature.asc"
+commit: 
+  48a7a13ff3 ("locks: use properly initialized file_lock when unlocking.")
+  8f64e497be ("locks: fix performance regressions.")
 
------BEGIN PGP SIGNATURE-----
+48a7a13ff31f0728  8f64e497be9929a2d5904c39c4  
+----------------  --------------------------  
+         %stddev      change         %stddev
+             \          |                \  
+     33.56 ±  3%         5%      35.30        boot-time.boot
+     10497 ±  3%        12%      11733 ±  4%  proc-vmstat.nr_shmem
+     67392                       68449        proc-vmstat.nr_zone_active_anon
+     67392                       68449        proc-vmstat.nr_active_anon
+     16303                       16206        proc-vmstat.nr_slab_reclaimable
+     30602                       29921        proc-vmstat.nr_slab_unreclaimable
+         0            9e+03       9009 ± 80%  latency_stats.avg.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_do_create.nfs3_proc_create.nfs_create.path_openat.do_filp_open.do_sys_open.do_syscall_64
+         0            6e+03       5837 ±139%  latency_stats.avg.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.path_openat.do_filp_open.do_sys_open.do_syscall_64.entry_SYSCALL_64_after_hwframe
+       149 ± 17%      5e+03       5457 ±137%  latency_stats.avg.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_getattr.__nfs_revalidate_inode.nfs_do_access.nfs_permission.inode_permission.link_path_walk.path_lookupat
+       175 ± 29%      4e+03       3807 ±136%  latency_stats.avg.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.__lookup_slow.lookup_slow.walk_component.path_lookupat.filename_lookup
+     52868 ±110%     -4e+04      17482 ±  4%  latency_stats.avg.max
+     45055 ±141%     -5e+04          0        latency_stats.avg.io_schedule.nfs_lock_and_join_requests.nfs_updatepage.nfs_write_end.generic_perform_write.nfs_file_write.__vfs_write.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
+       227 ± 10%      1e+04       9907 ±136%  latency_stats.max.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_getattr.__nfs_revalidate_inode.nfs_do_access.nfs_permission.inode_permission.link_path_walk.path_lookupat
+         0            9e+03       9367 ± 78%  latency_stats.max.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_do_create.nfs3_proc_create.nfs_create.path_openat.do_filp_open.do_sys_open.do_syscall_64
+         0            6e+03       5837 ±139%  latency_stats.max.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.path_openat.do_filp_open.do_sys_open.do_syscall_64.entry_SYSCALL_64_after_hwframe
+       175 ± 29%      4e+03       3807 ±136%  latency_stats.max.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.__lookup_slow.lookup_slow.walk_component.path_lookupat.filename_lookup
+     98043 ±124%     -8e+04      20999 ± 27%  latency_stats.max.max
+     90059 ±141%     -9e+04          0        latency_stats.max.io_schedule.nfs_lock_and_join_requests.nfs_updatepage.nfs_write_end.generic_perform_write.nfs_file_write.__vfs_write.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1251 ± 23%      5e+04      49005 ±137%  latency_stats.sum.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_getattr.__nfs_revalidate_inode.nfs_do_access.nfs_permission.inode_permission.link_path_walk.path_lookupat
+         0            1e+04      12061 ± 70%  latency_stats.sum.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_do_create.nfs3_proc_create.nfs_create.path_openat.do_filp_open.do_sys_open.do_syscall_64
+         0            6e+03       5837 ±139%  latency_stats.sum.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.path_openat.do_filp_open.do_sys_open.do_syscall_64.entry_SYSCALL_64_after_hwframe
+       175 ± 29%      4e+03       3807 ±136%  latency_stats.sum.rpc_wait_bit_killable.__rpc_execute.rpc_run_task.rpc_call_sync.nfs3_rpc_wrapper.nfs3_proc_lookup.nfs_lookup.__lookup_slow.lookup_slow.walk_component.path_lookupat.filename_lookup
+     90111 ±141%     -9e+04          0        latency_stats.sum.io_schedule.nfs_lock_and_join_requests.nfs_updatepage.nfs_write_end.generic_perform_write.nfs_file_write.__vfs_write.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+XPoACgkQ3SOs138+
-s6HcChAAsJUmStXiyFMnv33/TdFkGug/68b2CmxssoFUhVF9wVVzofb9WwJJJ+Gk
-J34qPXy+v+GgCofh0KYrKkb0Jpz6c8fog+sjmvwyCpplml7rAqw2wM4EAfMACAyT
-Hnb3bxRKgmK62ccu9IpMNl/bvHhEyYuh0zsm41PPx9Tbp+VOK4FVBPt2BFnPFpDY
-rTf5riPCOzW7dhb63zSiNkx4SzRygBKDOiQOPQc28DJyKj4JLNVEoCB86mr7gqMU
-BOt/1N8+aGUoO5uhs9BaijEZqexnvIn2H80lVjNRbdfz6PnXK7LWQbFgErvYApHn
-2GLWiXPGK/HVC8YelBWvh+qL/CB/N0b6TCEq0WSd24zFJeY3EOXuGiqne0nNs/w3
-rBLg9XjNIe3xs/sJ2h1Hj+LpIlnS7og0J60mE6psQRuYYr5JX86QhMcUnNx+N8DD
-JywJpvLOaFLJONPwblmKwBqFRMc/EgBrOvQSjLqimyuH85JdgGNtgbYvLzq+pXMC
-QWHhk7iizPslaS8ElgUsgB2jok5OlSGY5CAmieuOK7/AJQjGB0EDYFTPQi0wqrBu
-qhdDUHwWPlVMbOx/0GreRS1RzNwp4mkfc6ZgZ5a2yEkFEtOI7vbOKLh1DIfq9LV9
-RGiuLRnS0ChtoWI+6OugOTBH1h2wzBBvfkljGsyN07JqkZ9fbI4=
-=vg/F
------END PGP SIGNATURE-----
 
---rQ2U398070+RC21q--
+Best Regards,
+Rong Chen
