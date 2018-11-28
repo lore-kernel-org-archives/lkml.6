@@ -2,172 +2,137 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F48C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C0DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D5F52082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB642082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="gnFGTHTC";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="R/zjxiGY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5F52082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="e9yDlIRv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB642082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeK1RQN (ORCPT
+        id S1727501AbeK1RQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:16:13 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:24362 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeK1RQN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:16:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1543385744; x=1574921744;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ddPYgzGF6fo4NrQ0Fnz0hC9s1zTP4p6Yf9hINoY8DI0=;
-  b=gnFGTHTCl2EwEwYYJR6fT1jPQ2QIFw7kmwqeXv0BLWDIVw5cMhBYiSBW
-   5W0XkB0ly6j2nsA31zih5MdUcntSJUYPqsY0voYzYV1JLh2Y8xEtyMTAX
-   leME0GC3xxSC2gY9AwpJmDlmvGTBmCfohI40K8u0nCHzbXCvl3RIreqfy
-   lD7xRjxOobDgenPLcJwATaZD35tT34vORpbiv5bVtP+3zboAo+zgrTa7R
-   w8z3nJjmLEwbeSuqkjy4N9v2GCI3uF9q0GGw6SHp/NfygzZTIt5yRe4ZE
-   fBlo/QWN8Kgh7W2sVBgEgtItNg43zsvlvTVi8Tiwrq8JQQ7vRdB0W/oRA
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,289,1539619200"; 
-   d="scan'208";a="97010559"
-Received: from mail-sn1nam02lp0021.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([216.32.180.21])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2018 14:15:43 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+        Wed, 28 Nov 2018 12:16:42 -0500
+Received: from mail-oln040092007087.outbound.protection.outlook.com ([40.92.7.87]:11438
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727209AbeK1RQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 12:16:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gHyfRYSTa2ICQWO7RLZEpar01E+r9Jd35O3B2vvKDbk=;
- b=R/zjxiGYx2qUrOUaXc7sQYw2m8KsGiU0JAM3Um96Xzr6sgiVRPa18PKumAS3mZE1jNkxdyQ229yhcp+0ID8Mg7gf91wjlHyoPhfIB27gwXYP6vYQSCfT/NaywnkfZmX71o2b/rY+YxRtHV7ccUtN7VEIbHpwS5xl0+9qRSUgp2I=
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
- SN6PR04MB3952.namprd04.prod.outlook.com (52.135.82.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.18; Wed, 28 Nov 2018 06:15:41 +0000
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::4c22:c9b8:6198:5fd1]) by SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::4c22:c9b8:6198:5fd1%3]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 06:15:41 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>
-CC:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: RE: [PATCH 40/41] scsi: ufs: ufshcd: mark expected switch
- fall-throughs
-Thread-Topic: [PATCH 40/41] scsi: ufs: ufshcd: mark expected switch
- fall-throughs
-Thread-Index: AQHUhtOsykeuJ9/KFkq+7D0/NPkLHqVktZhQ
-Date:   Wed, 28 Nov 2018 06:15:41 +0000
-Message-ID: <SN6PR04MB4925E511F16036DF52A6FFA7FCD10@SN6PR04MB4925.namprd04.prod.outlook.com>
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <f4ee30ab52b0fadd2242dd189fe03b60ecba1f47.1543374820.git.gustavo@embeddedor.com>
-In-Reply-To: <f4ee30ab52b0fadd2242dd189fe03b60ecba1f47.1543374820.git.gustavo@embeddedor.com>
-Accept-Language: en-US
+ bh=QPN1Pl0loR+houYqxUQMvj1lUL6z7c5Tu9fpIqoVfCU=;
+ b=e9yDlIRvTrOr6YqTCD1W8iBOHoj1T6wnkA3yFEOak1HszjgkP8563rm/hdD425u0t4Tf4l5WMaN8acJcdoQAoAnBBetKvZr5DIh8QmgNethmMIE47CjWSWFFVVve2MZpZlLpiTqhiJFoCDdrTh8MGPUzxqaU6SoH92BOW5tPkBLZgyDIacOETtfHhbyNvr6Rbm0voxxoTZzham9cw4N/hP/IS693b0Te5XAI/XY9g4WjQQis1QnIDla+ey2n/Deya3bV9BrRw0MoKDCVBLFdM/dtnaQyR6CjIU0dc9GhodE+JQfWz3xkr4BboMJ2zQ/BtrOZF0BKMw8bka+ybDXMWw==
+Received: from BY2NAM03FT023.eop-NAM03.prod.protection.outlook.com
+ (10.152.84.55) by BY2NAM03HT048.eop-NAM03.prod.protection.outlook.com
+ (10.152.85.215) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.10; Wed, 28 Nov
+ 2018 06:16:10 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com (10.152.84.59) by
+ BY2NAM03FT023.mail.protection.outlook.com (10.152.84.226) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.10 via Frontend Transport; Wed, 28 Nov 2018 06:16:10 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::eccf:c550:ed97:f1e7]) by BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::eccf:c550:ed97:f1e7%7]) with mapi id 15.20.1382.012; Wed, 28 Nov 2018
+ 06:16:10 +0000
+From:   Yueyi Li <liyueyi@live.com>
+To:     Willy Tarreau <w@1wt.eu>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "donb@securitymouse.com" <donb@securitymouse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lzo: fix ip overrun during compress.
+Thread-Topic: [PATCH] lzo: fix ip overrun during compress.
+Thread-Index: AQHUhjzFV7dxiksDcEGXoSZcs8ZKe6Vkk4UAgAAjrQA=
+Date:   Wed, 28 Nov 2018 06:16:10 +0000
+Message-ID: <BLUPR13MB0289DF5EA12E2D27D7908CF7DFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+References: <BLUPR13MB0289FB16D885625827E8DD27DFD00@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <20181128040820.GC19711@1wt.eu>
+In-Reply-To: <20181128040820.GC19711@1wt.eu>
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
+x-clientproxiedby: HK0PR03CA0087.apcprd03.prod.outlook.com
+ (2603:1096:203:72::27) To BLUPR13MB0289.namprd13.prod.outlook.com
+ (2a01:111:e400:5951::22)
+x-incomingtopheadermarker: OriginalChecksum:B0F91FE8B32C90A6E41C2A517E3F6AA1F94F84FCA3518A6929B59924E5BCDF15;UpperCasedChecksum:E33A3F7004EFBC633B3D865296A2AF6B57E2646F933481DB1859B0E73F39C2F7;SizeAsReceived:7606;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [dLWNZb/rXNBlIccn9wJNVabO7aZJ023R]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR04MB3952;6:dAdQlBePFWSK+qztEdpPuPg8yunuZ/bd11psYd+qGJ8egoJHHWphzTtohjGp96jNe6cu8Y7AkWYunrjRqbHQ29FtodxMTjy0/8UE9TMA0LBfm8K6yqtVwKYeZ76WlyV/x9S6dukSLg0PHTb0WQRcqeAV59+R+M/jhGYgFP7UVWM8BckIVc88xEZyNG7GeL3fmimUlAoSrguTjraoiKPgZaKr7wCXg+tVedjJ33IKPpWZyGzn/GYumt+QRpdKXjGBw+U3aAdeNixhPL/KlyGgVcMJiXqR9s2uzrghtHptTDQaHnunHw6/L4BPvn07lIQH1TBRiN3DucRwHtQ3Joh5aqEqCZ+9B/iV4dj12Xc+hYGpVNdyoVgqjyVSAW9vgUV/7gb/VIe4oUshDZZiR2JyVCfgYxgPR3RTIJaEEW1OFPyANztgxtQWwkSpp5Ea2cxussuMknClGeyIm9Qj+yxtCw==;5:RHSMJWgUHUkmHh4mjEYUlFKjm1YvpAn7ZXsh9aLuE80VOetrczo/0Pv5+lS7Ns/Q/lbBwG8kKd53BUPLpTGbxxOmxiEc8dcsXYK0siPeKEVzMggzcA6lPXMClcVE8PxUt627cVCbDo58OWXcF/UzZq4FHRcM7aPDUli0z51fWHQ=;7:xkXjZNfTeumgeQbdxIjB3agOcaoCZvTnYmO9ZRi84km5ewvwPUmyMIO+drA75uTvIBD+pqyjtqGHGyAxSzFCGpBZcXkg+p5leeKGiudnmOj4KdBBopoUClUDP27Rr0ssORmxXvNe/kdR/XQEJlUCSQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 94625574-cae6-422e-f9fe-08d654f8ec63
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB3952;
-x-ms-traffictypediagnostic: SN6PR04MB3952:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <SN6PR04MB3952905CF85E0CCE1C1F343AFCD10@SN6PR04MB3952.namprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN6PR04MB3952;BCL:0;PCL:0;RULEID:;SRVR:SN6PR04MB3952;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(376002)(346002)(13464003)(199004)(189003)(26005)(186003)(3846002)(6116002)(14454004)(99286004)(316002)(8676002)(55016002)(9686003)(6306002)(6506007)(53546011)(102836004)(86362001)(66066001)(476003)(33656002)(6436002)(110136005)(54906003)(7696005)(76176011)(486006)(446003)(68736007)(11346002)(25786009)(229853002)(966005)(105586002)(72206003)(106356001)(256004)(71200400001)(71190400001)(305945005)(7736002)(8936002)(2906002)(6246003)(97736004)(478600001)(53936002)(39060400002)(4326008)(81156014)(5660300001)(81166006)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB3952;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: nckFuxAmgGOFN1DT9Mf3RVrDJ10O9X1u/XZ3mtDbpo67Fg7E3hu5xvSSWNAFi5099Y747YyuZ+yWxNWwapHq159z1ON4mozWIHyzExqPF978h3UJwaqI8c7i59640j2GdG72Qf60VuUHBUgVic19KiWRnlp/0fwBPpKM877xlYRraf7hBf1j9ToTygxFerVVHgwod67okV91uI6Pl28fA/eqrODDBWf/qBWy0oZAG0FLJmy6A/2rJIHMtVULR1mVRw3yL9Q9CzGMROD1C9mUEJmQZRH6U6Yjf0E6CuGVRAhPUuDHCXcoG3NSdR4EYfH9F+NXL15FtuXXQz0XPziCaLWJ5ggQwejue+J81s3HF58=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+x-microsoft-exchange-diagnostics: 1;BY2NAM03HT048;6:m8HvjhWAOLTTGW5Y+UyLUu00SPdc9gKyCXSKTQ8JJcxhPHSdQ8JhsSNtttqLxov28mlbmDbzP3K7GnOCWWj4OB/BDBslkzvYIHXy9oEByRNPi1H7PSpiNr6jTsT3nAtG8wQrQPzjM+xuFIoZUAA8FVCJ5G+B8H0O+5LNnF+qyNZQU05idq9jhZmFGg2HMI1Zh8RVDy6C9mhtPH7bWHdZHT+R7/iJeaHSDdveycKoALBNdp6UIBYryiMJaEjdU8UXP6sI11Bov3lhh3J8AmqAsjA+4CMs0A1bode6beJ0q23vl7TURYPiJAs0Q1jGK+30vUW2VtcbTIsloS1Cf3RkKUSXYQpNxVEdIlQbPPyY6grAAdYxu5k3tG3C1vCIJLIfvgxTog+yRjRFv7JctYOGxW99lXusJknY5vK0EgzfbYRyrlGBSfF7+X3rIiKwvgAuNtzZ4bvelFiuSR2sGkEJyg==;5:M3xF9NGRv37bDNzphdsMdsW7ZJN5PPpj/98Q243OuBL75UWlTmKiK6VMfNG+0CChYnpAtHga/hvlm0jmxicyazauI3X5ItTWXYmrAiShN1kDOiEGReBzcQVU8f6NIdMCQ1fUY0ZxulKpLY/Cy7pwSdwTj99fgjHRQPFJsP1yYsc=;7:Arnxx2t5F8fBI4t4TffNHm+x2AXsMgI+h6MgTrxR7J5PkzMPlRgs5HyoUr2rK8jGM9bzXFdHF0ojhvVLOQPY7aoBgpdL7rUCYDWinOPwjjAWVVY3hMwDCWf3KRvhlhHnd1EzeoOBqHljCoYe2p3mIg==
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:BY2NAM03HT048;
+x-ms-traffictypediagnostic: BY2NAM03HT048:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BY2NAM03HT048;BCL:0;PCL:0;RULEID:;SRVR:BY2NAM03HT048;
+x-microsoft-antispam-message-info: rwzGcp+3j4nz67LhN09gH8VzhbvaFKu4qJlFVVlMGk9zVmhXEK4b3jIwgZAiZyQm
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <5BABA93CE16A6A4B8652EC85464CC7B5@namprd13.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94625574-cae6-422e-f9fe-08d654f8ec63
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 06:15:41.2530
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-Network-Message-Id: a618ba1d-b12d-49ee-5ecc-08d654f8fd6f
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 06:16:10.7116
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB3952
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2NAM03HT048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Already submitted by Tomas:
-https://www.spinics.net/lists/linux-scsi/msg125659.html
+Hi Willy,
+
+
+On 2018/11/28 12:08, Willy Tarreau wrote:
+> Hi Yueyi,
+>
+> On Tue, Nov 27, 2018 at 10:34:26AM +0000, Yueyi Li wrote:
+>> It`s possible ip overrun in lzo1x_1_do_compress() when compressed page i=
+s
+>> point to the end of memory and which virtual address is 0xfffffffffffff0=
+00.
+>> Leading to a NULL pointer access during the get_unaligned_le32(ip).
+> Thanks for this report.
+>
+> (...)
+>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+>> index 236eb21..a0265a6 100644
+>> --- a/lib/lzo/lzo1x_compress.c
+>> +++ b/lib/lzo/lzo1x_compress.c
+>> @@ -17,6 +17,9 @@
+>>   #include <linux/lzo.h>
+>>   #include "lzodefs.h"
+>>  =20
+>> +#define OVERFLOW_ADD_CHECK(a, b)  \
+>> +	((size_t)~0 - (size_t)(a) < (size_t)(b) ? true : false)
+>> +
+> I think the test would be easier to grasp this way :
+>
+> #define OVERFLOW_ADD_CHECK(a, b)  \
+> 	((size_t)(b) >=3D (size_t)((void*)0 - (void *)(a)))
+>
+> But the following should be more efficient since we build with
+> -fno-strict-overflow :
+>
+> #define OVERFLOW_ADD_CHECK(a, b)  \
+> 	(((a) + (b)) < (a))
+Thanks for the suggestion,  I will change it in next version.
+> Could you please recheck ?
+>
+> Thanks,
+> Willy
 
 Thanks,
-Avri
-
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org <linux-scsi-owner@vger.kernel.org>
-> On Behalf Of Gustavo A. R. Silva
-> Sent: Wednesday, November 28, 2018 6:34 AM
-> To: Vinayak Holikatti <vinholikatti@gmail.com>
-> Cc: James E.J. Bottomley <jejb@linux.ibm.com>; Martin K. Petersen
-> <martin.petersen@oracle.com>; linux-scsi@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Subject: [PATCH 40/41] scsi: ufs: ufshcd: mark expected switch fall-throu=
-ghs
->=20
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
->=20
-> Addresses-Coverity-ID: 1087954 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 003d489f1b4b..be207197b63f 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -1551,6 +1551,7 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
->  		 * currently running. Hence, fall through to cancel gating
->  		 * work and to enable clocks.
->  		 */
-> +		/* fall through */
->  	case CLKS_OFF:
->  		ufshcd_scsi_block_requests(hba);
->  		hba->clk_gating.state =3D REQ_CLKS_ON;
-> @@ -1562,6 +1563,7 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
->  		 * fall through to check if we should wait for this
->  		 * work to be done or not.
->  		 */
-> +		/* fall through */
->  	case REQ_CLKS_ON:
->  		if (async) {
->  			rc =3D -EAGAIN;
-> @@ -4620,6 +4622,7 @@ ufshcd_scsi_cmd_status(struct ufshcd_lrb *lrbp,
-> int scsi_status)
->  	switch (scsi_status) {
->  	case SAM_STAT_CHECK_CONDITION:
->  		ufshcd_copy_sense_data(lrbp);
-> +		/* fall through */
->  	case SAM_STAT_GOOD:
->  		result |=3D DID_OK << 16 |
->  			  COMMAND_COMPLETE << 8 |
-> --
-> 2.17.1
-
+Yueyi
