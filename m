@@ -2,87 +2,89 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1EEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0821C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B951420832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:06:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B951420832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A213C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:10:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="m4w0rPHg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A213C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeK1TH2 (ORCPT
+        id S1727789AbeK1TLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:07:28 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40181 "EHLO mail.bootlin.com"
+        Wed, 28 Nov 2018 14:11:05 -0500
+Received: from m12-12.163.com ([220.181.12.12]:36587 "EHLO m12-12.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbeK1TH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:07:27 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7160E207B0; Wed, 28 Nov 2018 09:06:41 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 31F9B20726;
-        Wed, 28 Nov 2018 09:06:31 +0100 (CET)
-Date:   Wed, 28 Nov 2018 09:06:30 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Pan Bian <bianpan2016@163.com>
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ubi: do not drop UBI device reference before using
-Message-ID: <20181128090631.1a99f995@bbrezillon>
-In-Reply-To: <1543375203-97876-1-git-send-email-bianpan2016@163.com>
-References: <1543375203-97876-1-git-send-email-bianpan2016@163.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727341AbeK1TLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:11:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=fGF0EvfL4BG/ZpF0fV
+        QPS/2dUAjOs42csNN5iZYV9vo=; b=m4w0rPHgWuYYba/eOuK8dw2gR8ko4A6Qt3
+        fHbthUCWNflNHXLcAXsQoW84ibVaZ3u0vjlt931eYFN7FH6T81kux4zs5MuwHaDQ
+        69/MbgZnaFHwrSN6yJ7PJA4/yhVzDUi2qVtjo5KqB2IpAEJE2qP8nbQQRonsQhFM
+        4I1Q/8WO4=
+Received: from bp.localdomain (unknown [106.120.213.96])
+        by smtp8 (Coremail) with SMTP id DMCowACnUkFITf5b_eBhCQ--.28506S3;
+        Wed, 28 Nov 2018 16:09:47 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] amd-xgbe: set skb to NULL after freeing it
+Date:   Wed, 28 Nov 2018 16:09:45 +0800
+Message-Id: <1543392585-17962-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: DMCowACnUkFITf5b_eBhCQ--.28506S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr47KFy7ur1rCFy8Kr1fXrb_yoWDZFXE9r
+        yrXa1Uta1DCF1Y9r4YkFsxAryqkw4DurWkXa1Sy3yYy3srJFnxX39Yvrn7Wrn3Ca10yFZ8
+        GF13KayFy34jgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8Q_-JUUUUU==
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBUQsNclaD0V6JOAAAsO
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 11:20:03 +0800
-Pan Bian <bianpan2016@163.com> wrote:
+The buffer skb is freed via dev_kfree_skb in a loop. skb may be used
+again in the next iteration, resulting in a use-after-free bug. To fix
+this, the patch set skb to NULL after dev_kfree_skb(skb).
 
-> The UBI device reference is dropped but then the device is used as a
-> parameter of ubi_err. The bug is introduced in changing ubi_err's 
-> behavior. The old ubi_err does not require a UBI device as its first 
-> parameter, but the new one does.
-> 
-> Fixes: 32608703310 ("UBI: Extend UBI layer debug/messaging capabilities")
-> 
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Unnecessary blank line here.
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+index 0cc911f..ac6b82d 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-drv.c
+@@ -2754,6 +2754,7 @@ static int xgbe_rx_poll(struct xgbe_channel *channel, int budget)
+ 				netif_err(pdata, rx_err, netdev,
+ 					  "error in received packet\n");
+ 			dev_kfree_skb(skb);
++			skb = NULL;
+ 			goto next_packet;
+ 		}
+ 
+@@ -2806,6 +2807,7 @@ static int xgbe_rx_poll(struct xgbe_channel *channel, int budget)
+ 			netif_err(pdata, rx_err, netdev,
+ 				  "packet length exceeds configured MTU\n");
+ 			dev_kfree_skb(skb);
++			skb = NULL;
+ 			goto next_packet;
+ 		}
+ 
+-- 
+2.7.4
 
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/mtd/ubi/kapi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
-> index e9e9ecb..0b8f0c4 100644
-> --- a/drivers/mtd/ubi/kapi.c
-> +++ b/drivers/mtd/ubi/kapi.c
-> @@ -227,9 +227,9 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
->  out_free:
->  	kfree(desc);
->  out_put_ubi:
-> -	ubi_put_device(ubi);
->  	ubi_err(ubi, "cannot open device %d, volume %d, error %d",
->  		ubi_num, vol_id, err);
-> +	ubi_put_device(ubi);
->  	return ERR_PTR(err);
->  }
->  EXPORT_SYMBOL_GPL(ubi_open_volume);
 
