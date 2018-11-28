@@ -2,178 +2,156 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2E3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39915C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB87C2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:59:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LzgJXnKh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB87C2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
+	by mail.kernel.org (Postfix) with ESMTP id 03FAA2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:03:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03FAA2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeK2ECK (ORCPT
+        id S1729112AbeK2EF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:02:10 -0500
-Received: from mx2.mailbox.org ([80.241.60.215]:9748 "EHLO mx2.mailbox.org"
+        Wed, 28 Nov 2018 23:05:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49212 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbeK2ECK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:02:10 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1728807AbeK2EFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 23:05:25 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 296FDA136E;
-        Wed, 28 Nov 2018 17:59:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-type:content-type:in-reply-to:mime-version:date:date
-        :message-id:from:from:references:subject:subject:received; s=
-        mail20150812; t=1543424386; bh=RfFQaq9qRWG0aHSwh71XE6uUhGjndjTaH
-        nf/5rgWpBE=; b=LzgJXnKhwUi+uyRU+xKiITR7RWspE3zT3rrqFCHGU/b8yXr5Y
-        bXOhUC8GM/Xr32aFQx6vG2pzKRAgy4/0wexnl5xkEo4mPLqJl3KCg0iLgNFUn28G
-        2hifyMO2wjXpjFLZzUhPMkRrKjato0AzPkHlDNrlH867UQQ03wxZcpWpDaFFDZUM
-        EdSFPLRMVa70mSPQD/pOXTjKITWwh6N7Hxm8Fq+DF/PR2OmMSMH93pzgzXNhSU3s
-        wOetXSMO1h1ldQDlbN98/E+4S9+WcOMxEyZWuiqcwwlKsmnZ7Z3tfpCWszrIiy7p
-        hLYZAuF68NiorLySEEkQBJeJpbzgiTZltbefA==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id ZpFrS3HRFOw2; Wed, 28 Nov 2018 17:59:46 +0100 (CET)
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        "Andrey Jr. Melnikov" <temnota.am@gmail.com>,
-        linux-ext4@vger.kernel.org
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
- <20181128041555.GE31885@thunk.org> <en52df-5dh.ln1@banana.localnet>
- <2547416.7Vy7A2kRpU@siriux> <20181128161033.GH31885@thunk.org>
-From:   Rainer Fiebig <jrf@mailbox.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jrf@mailbox.org; prefer-encrypt=mutual; keydata=
- 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
- 6/dT7HxuwnVIkER8kg==
-Message-ID: <ca0f3f35-aff6-78c9-3669-adb4acf7d46f@mailbox.org>
-Date:   Wed, 28 Nov 2018 18:01:32 +0100
+        by mx1.redhat.com (Postfix) with ESMTPS id B946430832C1;
+        Wed, 28 Nov 2018 17:03:05 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 492307C281;
+        Wed, 28 Nov 2018 17:03:03 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C61052208FC; Wed, 28 Nov 2018 12:03:02 -0500 (EST)
+Date:   Wed, 28 Nov 2018 12:03:02 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181128170302.GA12405@redhat.com>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181128161033.GH31885@thunk.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0QsFQGjkMyMDnEK94FEOhomEecNK9Layx"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 28 Nov 2018 17:03:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0QsFQGjkMyMDnEK94FEOhomEecNK9Layx
-Content-Type: multipart/mixed; boundary="WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5";
- protected-headers="v1"
-From: Rainer Fiebig <jrf@mailbox.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
- "Andrey Jr. Melnikov" <temnota.am@gmail.com>, linux-ext4@vger.kernel.org
-Message-ID: <ca0f3f35-aff6-78c9-3669-adb4acf7d46f@mailbox.org>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
- <20181128041555.GE31885@thunk.org> <en52df-5dh.ln1@banana.localnet>
- <2547416.7Vy7A2kRpU@siriux> <20181128161033.GH31885@thunk.org>
-In-Reply-To: <20181128161033.GH31885@thunk.org>
+On Wed, Nov 28, 2018 at 11:00:09AM +0100, Miklos Szeredi wrote:
+> On Tue, Nov 27, 2018 at 10:05 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Nov 27, 2018 at 08:58:06PM +0100, Miklos Szeredi wrote:
+> > > [resending with fixed email address for Paul Moore]
+> > >
+> > > Moving discussion from github[1] to here.
+> > >
+> > > To summarize: commit 007ea44892e6 ("ovl: relax permission checking on
+> > > underlying layers") was added in 4.20-rc1 to make overlayfs access
+> > > checks on underlying "real" filesystems more consistent.  The
+> > > discussion leading up to this commit can be found at [2].  The commit
+> > > broke some selinux-testsuite cases, possibly indicating a security
+> > > hole opened by this commit.
+> > >
+> > > The model this patch tries to follow is that if "cp --preserve=all"
+> > > was allowed to the mounter from underlying layer to the overlay layer,
+> > > then operation is allowed.  That means even if mounter's creds doesn't
+> > > provide permission to for example execute underying file X, if
+> > > mounter's creds provide sufficient permission to perform "cp
+> > > --preserve=all X Y"  and original creds allow execute on Y, then the
+> > > operation is allowed.  This provides consistency in the face of
+> > > copy-ups.  Consistency is only provided in sane setups, where mounter
+> > > has sufficient privileges to access both the lower and upper layers.
+> >
+> > [cc daniel walsh]
+> >
+> > I think current selinux testsuite tests are written keeping these
+> > rules in mind.
+> >
+> > 1. Check overlay inode creds in the context of task and underlying
+> >    inode creds (lower/upper), in the context of mounter.
+> >
+> > 2. For a lower inode, if said file is being copied up, then only
+> >    check MAY_READ on lower. This is equivalent to mounter creating
+> >    a copy of file and providing caller access to it (context mount).
+> >
+> > For the case of special devices, we do not copy up these. So should
+> > we continue to do check on lower inode in the context of mounter
+> > (instead of not doing any check on lower at all).
+> 
+> Hmm, I'm trying to understand the logic... If we follow the "cp
+> --preserve=all" thing, than mounter needs to have CREATE permission
+> for the special file, not READ or WRITE.  Does that make sense?  Would
+> that help with the context= mount use case?
 
---WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Ok. If we follow "cp --preserve=all" methodology, then checking for
+mounter CREATE permission on upper for special files makes sense. Or
+change logic to copy up this special file during open. I am assuming
+we don't copy up special file during open as it is not necessary
+for things to work but copying up will work as well?
 
-Am 28.11.18 um 17:10 schrieb Theodore Y. Ts'o:
-> On Wed, Nov 28, 2018 at 04:56:51PM +0100, Rainer Fiebig wrote:
->>
->> If you still see the errors, at least the Ubuntu-kernel could be ruled=
- out.
->=20
-> My impression is that some of the people reporting problems have been
-> using stock upstream kernels, so I wasn't really worried about the
-> Ubuntu kernel (although it could be something about the default
-> configs that Ubuntu sets up).  What I was more wondering was whether
-> there was something about userspace or default configs of Ubuntu.
-> This isn't necessarily a *problem* per se; for examople, not that long
-> ago some users were getting surprised when a problem showed up with an
-> older version of the LVM2 userspace with newer upstream kernels.
-> After a while, you learn to get super paranoid about making sure to
-> rule out all possibilities when trying to debug problems that are only
-> hitting a set of users.
->=20
-> 						- Ted
->=20
+So rules will become.
 
-OK, thanks. Perhaps Andrey can tell us then what impact the default
-=2Econfig had on the problem.
+- Two levels of checks.
+- For lower level inode, check MAY_READ for regular files. (including
+  exec).
+- For special files, only make sure mounter can CREATE object in upper.
 
-Rainer Fiebig
+- What about checks on files on upper/. As of now we seem to check
+  access in mounter's context if it is regular file. Skip the checks
+  completely for special files and for executables.
 
+While non-context mount should still be ok, but this means lot of
+privilige granting to unprivileged process using context mounts. So
+unprivileged process which could not open a device/socket/fifo for
+read/write on host fs, can open it for those operations for context
+mounts. 
 
---WXuAiaQpiTEknLRql6T46iqdg4NFSo8N5--
+IOW, for context mount case, an unprivileged user will gain lot of
+privileges. But that seems to be the point of context mount anyway
+on regular disks. If a disk is mounted using context mount option,
+then all real labels are ignored and all access checking happens
+using context label. We are doing similar thing. With one step extra
+and that is making sure if mounter itself can not do certain operation
+on host, that will still be denied.
 
---0QsFQGjkMyMDnEK94FEOhomEecNK9Layx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+This probably means that context= mounts should be used very carefully.
+It will grant lot of priviliges to the process (and allow operations
+which process could not do on host without overlayfs mount).
 
------BEGIN PGP SIGNATURE-----
+Case of device file still baffels me though. We don't do any mounter's
+checks on device files. So if a device file is on upper which mounter
+can't open for read but mounter is still granting priviliges to client
+to open that device file. That's unintutive to me and seems counter
+to the principle of that mounter can't give more priviliges than what
+it itself can't do on host.
 
-iQIzBAEBCAAdFiEE6yx5PjBNuGB2qJXG8OH3JiWK+PUFAlv+yfoACgkQ8OH3JiWK
-+PWHcxAAz1aNEye1dotyGls5Dh8WTLd/DAF8ddd80Gql+zta0h2AYT8vvbRQwZOI
-UO4qHPtL8Xgoh0uAibHjQ4sn5/t5Sr7PPQmYcft5aTS5SZ8I7NpS7yWtYwtN7258
-af+r0bFNJVP2iAqp/oPMSGB0AsyPK0SlZ6RhWP5wtpYYpaOR7ycfa7px/aMcpBne
-MOZKPR5O4mPU1tsHjxIFiCM8gXW1rVFqSdDkz0uiHNh65pssjnKGS3GdcYcq1gow
-bYTAUEGZRgx1vrKnS9phRypG5Vu6FVnVIRroJi+Lxf1vcH39Tvz47SP+zUv/1ecE
-LNm6hC5ZJX2wXLlkDrxKL6lGMZbd5PWLyGodbjNrHMurtbGwUrdKtRbMaaxJBt25
-m4aOnXS3vG6rSARXBSZY9hCBdDVxrv3wMT3GLSOjcKqsxnIsI6w8NwnNhkA4GcfO
-mkbUI6/+xviYIUOGW/bj5SEhy+KjyJvmeTAuGthDf7xB6glp6/tnPqIm17nKTNIz
-EepX7iEBEX8S54FCo1Kr9/C9ujeKCEfRLNKQmyC9Uhf2InOSNXyitBPm8Otjp7pU
-MIyeG87yLKS0Jokn6k+Zwe/htu1KE8DxR8I9j/42D8L1/VV0GXHziDHzOtrJn2Qu
-Vj0qUGlD1m6NPCiFqmKgbk7J2ndko//tzaDfjFK7XGz4o+HNKXw=
-=aOUD
------END PGP SIGNATURE-----
+Dan, stephen, paul moore, does this sound ok to you folks from selinux
+point of view.
 
---0QsFQGjkMyMDnEK94FEOhomEecNK9Layx--
+Thanks
+Vivek
+
