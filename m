@@ -2,132 +2,90 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB42AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7ABC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5582073F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D317F2073F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RceGW/dM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5582073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T6j7Q8LR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D317F2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeK2K6z (ORCPT
+        id S1727097AbeK2LAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:58:55 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38652 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbeK2K6z (ORCPT
+        Thu, 29 Nov 2018 06:00:15 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:40960 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbeK2LAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:58:55 -0500
-Received: by mail-io1-f68.google.com with SMTP id l14so79326ioj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rAo7eNFTAOvntn7w4xkOfgHD9+s+0OjB6lQm+RJmv0M=;
-        b=RceGW/dMCsIwSzYA+BCKQ1hPAic0MmXHH+Bv0oTZETuq4mDi/PquDGa55gM5fSMHdI
-         VggyxXmDiNCUZApj6Aa7kRoygHXYQF5YMN57Zv/OhtBPUQFbQ8qC0nqm7U/yRxyAogNs
-         oYWGXdGnIHOnnwtELU8mANCh3oA7uAMQjKwjyJusY1F1BFEhHr6QbzbV5YKknxfyEC0o
-         SuiPg2FegoRjiG/vAkDb02ZHgOokJWJ3n8js30hgJqDhdrKaNji0fAJnz9AFytVRoGhM
-         V42oVDTBcL47YUrOM7/2YtutndQUU7kfU8jDC8LENEngUgbeKBtmaVPo+vXfHLM6EgRk
-         o1GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rAo7eNFTAOvntn7w4xkOfgHD9+s+0OjB6lQm+RJmv0M=;
-        b=aZ4sIaOp7wAFDa+fz/bLQynIkk2QHmqhG8TjLZqEPFLbwmtMIUr8tH/T6oj+IffxXJ
-         toZsO00JPzdyCEsRUaoCIVbGfyPSmmYk2cPYxJWP4cvzSKaxXn0Eaz0FC23BKMOGFSnE
-         oKzGZEac8UBqTQ6bkKd25Q8SFBY7+lI8IpFbJAQjpnU32vG0I45t7Dog9KOw/uRKq5EX
-         L57vxz5dVDY47y4cBTZKrNELEOsbMIaHpG7TPY873SGxB1ij7YRolRvCLrNo+SEJMv7S
-         vwczvYuSwbVT3MA10AKfdQfpC6W3CIblnoCotcCcejeSx7aMqB/8AheuBd7b1j8VMfVC
-         zpyw==
-X-Gm-Message-State: AA+aEWavZDzRtc5vGg8PULxKf3LYzFL1727pN7hAptAhNhNKIJe5kLTr
-        fF7tCC3KHMfAuS0xGbxCd/JCYg==
-X-Google-Smtp-Source: AFSGD/V9Qm30w/cfBPWe/3jTX2s8WyRXBQcuuMg/+p6yAp8qU54L97a8I7BrkKDHRow//lmJohx4NQ==
-X-Received: by 2002:a6b:6a02:: with SMTP id x2mr18551104iog.204.1543449332685;
-        Wed, 28 Nov 2018 15:55:32 -0800 (PST)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id y13sm31490ioa.56.2018.11.28.15.55.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 15:55:31 -0800 (PST)
-From:   Yu Zhao <yuzhao@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] mm: remove pte_lock_deinit()
-Date:   Wed, 28 Nov 2018 16:55:25 -0700
-Message-Id: <20181128235525.58780-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
+        Thu, 29 Nov 2018 06:00:15 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASNsM2J175359;
+        Wed, 28 Nov 2018 23:56:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=wwFzzGWpwxAbPnm2agQcDPNhkBySkCNV9hy9+YSIiAk=;
+ b=T6j7Q8LRFXKAqhArFDit+b1oBHpbZIqyAcyJkA0XjPn1mxsor93EBswZMLtVd6UlukEF
+ EpUfZhqTntx5Dyykra4LkbsrYboHNBXnx1Wa2cpJwXXaUWJd9hIQaDqX4nV5zQOCM+w0
+ Qu7y26sb1VlqRy5VWsCHwvlOyHOa4H1r9OKL3IahpNjFQ8kFMB/YjPT2yUbgYZaf8lbd
+ oSNYL763C40f4o9ufYgaaR74ePVB1Ocew8fEFlFud2WUNEKzVOrM9Sh5+p2xQcTeYfIZ
+ x87ChtDFM/1t4NdN0pvI0RFqEmktOM+uBDF6Ve8A5aFlfswKtIsUfxkUXb/cvC3HVkjp gg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nxy9rd9tf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 23:56:46 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wASNujSD012466
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 23:56:45 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wASNuiY9005796;
+        Wed, 28 Nov 2018 23:56:44 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 15:56:44 -0800
+To:     Cathy Avery <cavery@redhat.com>
+Cc:     martin.petersen@oracle.com, jejb@linux.vnet.ibm.com, hch@lst.de,
+        jgill@vmware.com, emilne@redhat.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1543346933-440-1-git-send-email-cavery@redhat.com>
+Date:   Wed, 28 Nov 2018 18:56:41 -0500
+In-Reply-To: <1543346933-440-1-git-send-email-cavery@redhat.com> (Cathy
+        Avery's message of "Tue, 27 Nov 2018 14:28:53 -0500")
+Message-ID: <yq14lc03gee.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=859
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pagetable page doesn't touch page->mapping or have any used field
-that overlaps with it. No need to clear mapping in dtor. In fact,
-doing so might mask problems that otherwise would be detected by
-bad_page().
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- include/linux/mm.h | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+Cathy,
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..7c8f4fc9244e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1900,13 +1900,6 @@ static inline bool ptlock_init(struct page *page)
- 	return true;
- }
- 
--/* Reset page->mapping so free_pages_check won't complain. */
--static inline void pte_lock_deinit(struct page *page)
--{
--	page->mapping = NULL;
--	ptlock_free(page);
--}
--
- #else	/* !USE_SPLIT_PTE_PTLOCKS */
- /*
-  * We use mm->page_table_lock to guard all pagetable pages of the mm.
-@@ -1917,7 +1910,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
- }
- static inline void ptlock_cache_init(void) {}
- static inline bool ptlock_init(struct page *page) { return true; }
--static inline void pte_lock_deinit(struct page *page) {}
-+static inline void ptlock_free(struct page *page) {}
- #endif /* USE_SPLIT_PTE_PTLOCKS */
- 
- static inline void pgtable_init(void)
-@@ -1937,7 +1930,7 @@ static inline bool pgtable_page_ctor(struct page *page)
- 
- static inline void pgtable_page_dtor(struct page *page)
- {
--	pte_lock_deinit(page);
-+	ptlock_free(page);
- 	__ClearPageTable(page);
- 	dec_zone_page_state(page, NR_PAGETABLE);
- }
+> Currently pvscsi_remove calls free_irq more than once as
+> pvscsi_release_resources and __pvscsi_shutdown both call
+> pvscsi_shutdown_intr. This results in a 'Trying to free
+> already-free IRQ' warning and stack trace. To solve the problem
+> pvscsi_shutdown_intr has been moved out of pvscsi_release_resources.
+
+Applied to 4.20/scsi-fixes, thanks!
+
 -- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+Martin K. Petersen	Oracle Linux Engineering
