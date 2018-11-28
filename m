@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108A9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F4FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D59C12081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59C12081B
+	by mail.kernel.org (Postfix) with ESMTP id 94BFE20873
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:58:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94BFE20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeK1O6e (ORCPT
+        id S1727301AbeK1O6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 09:58:34 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51653 "EHLO mga06.intel.com"
+        Wed, 28 Nov 2018 09:58:05 -0500
+Received: from mga06.intel.com ([134.134.136.31]:51642 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbeK1O6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 09:58:34 -0500
+        id S1727218AbeK1O6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 09:58:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 19:58:18 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 19:57:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,289,1539673200"; 
-   d="scan'208";a="113554441"
+   d="scan'208";a="113554353"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Nov 2018 19:58:16 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 27 Nov 2018 19:57:54 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -41,9 +41,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v5 12/12] iommu/vt-d: Remove deferred invalidation
-Date:   Wed, 28 Nov 2018 11:54:49 +0800
-Message-Id: <20181128035449.10226-13-baolu.lu@linux.intel.com>
+Subject: [PATCH v5 03/12] iommu/vt-d: Move page table helpers into header
+Date:   Wed, 28 Nov 2018 11:54:40 +0800
+Message-Id: <20181128035449.10226-4-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181128035449.10226-1-baolu.lu@linux.intel.com>
 References: <20181128035449.10226-1-baolu.lu@linux.intel.com>
@@ -52,9 +52,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deferred invalidation is an ECS specific feature. It will not be
-supported when IOMMU works in scalable mode. As we deprecated the
-ECS support, remove deferred invalidation and cleanup the code.
+So that they could also be used in other source files.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -63,123 +61,119 @@ Cc: Liu Yi L <yi.l.liu@intel.com>
 Cc: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 ---
- drivers/iommu/intel-iommu.c |  1 -
- drivers/iommu/intel-svm.c   | 45 -------------------------------------
- include/linux/intel-iommu.h |  8 -------
- 3 files changed, 54 deletions(-)
+ drivers/iommu/intel-iommu.c | 43 -------------------------------------
+ include/linux/intel-iommu.h | 43 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 43 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 1c718bd9d6e9..f85f3fd1fb47 100644
+index 656ef01dfda0..4866bdeb932d 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -1697,7 +1697,6 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- 	if (pasid_supported(iommu)) {
- 		if (ecap_prs(iommu->ecap))
- 			intel_svm_finish_prq(iommu);
--		intel_svm_exit(iommu);
- 	}
- #endif
+@@ -290,49 +290,6 @@ static inline void context_clear_entry(struct context_entry *context)
+ 	context->hi = 0;
  }
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index d639da5e020b..c20e319c14e0 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -31,15 +31,8 @@
  
- static irqreturn_t prq_event_thread(int irq, void *d);
- 
--struct pasid_state_entry {
+-/*
+- * 0: readable
+- * 1: writable
+- * 2-6: reserved
+- * 7: super page
+- * 8-10: available
+- * 11: snoop behavior
+- * 12-63: Host physcial address
+- */
+-struct dma_pte {
 -	u64 val;
 -};
 -
- int intel_svm_init(struct intel_iommu *iommu)
- {
--	struct page *pages;
--	int order;
--
- 	if (cpu_feature_enabled(X86_FEATURE_GBPAGES) &&
- 			!cap_fl1gp_support(iommu->cap))
- 		return -EINVAL;
-@@ -48,39 +41,6 @@ int intel_svm_init(struct intel_iommu *iommu)
- 			!cap_5lp_support(iommu->cap))
- 		return -EINVAL;
- 
--	/* Start at 2 because it's defined as 2^(1+PSS) */
--	iommu->pasid_max = 2 << ecap_pss(iommu->ecap);
--
--	/* Eventually I'm promised we will get a multi-level PASID table
--	 * and it won't have to be physically contiguous. Until then,
--	 * limit the size because 8MiB contiguous allocations can be hard
--	 * to come by. The limit of 0x20000, which is 1MiB for each of
--	 * the PASID and PASID-state tables, is somewhat arbitrary. */
--	if (iommu->pasid_max > 0x20000)
--		iommu->pasid_max = 0x20000;
--
--	order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
--	if (ecap_dis(iommu->ecap)) {
--		pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
--		if (pages)
--			iommu->pasid_state_table = page_address(pages);
--		else
--			pr_warn("IOMMU: %s: Failed to allocate PASID state table\n",
--				iommu->name);
--	}
--
--	return 0;
+-static inline void dma_clear_pte(struct dma_pte *pte)
+-{
+-	pte->val = 0;
 -}
 -
--int intel_svm_exit(struct intel_iommu *iommu)
+-static inline u64 dma_pte_addr(struct dma_pte *pte)
 -{
--	int order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
+-#ifdef CONFIG_64BIT
+-	return pte->val & VTD_PAGE_MASK;
+-#else
+-	/* Must have a full atomic 64-bit read */
+-	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
+-#endif
+-}
 -
--	if (iommu->pasid_state_table) {
--		free_pages((unsigned long)iommu->pasid_state_table, order);
--		iommu->pasid_state_table = NULL;
--	}
+-static inline bool dma_pte_present(struct dma_pte *pte)
+-{
+-	return (pte->val & 3) != 0;
+-}
 -
- 	return 0;
- }
- 
-@@ -214,11 +174,6 @@ static void intel_flush_svm_range(struct intel_svm *svm, unsigned long address,
- {
- 	struct intel_svm_dev *sdev;
- 
--	/* Try deferred invalidate if available */
--	if (svm->iommu->pasid_state_table &&
--	    !cmpxchg64(&svm->iommu->pasid_state_table[svm->pasid].val, 0, 1ULL << 63))
--		return;
+-static inline bool dma_pte_superpage(struct dma_pte *pte)
+-{
+-	return (pte->val & DMA_PTE_LARGE_PAGE);
+-}
 -
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(sdev, &svm->devs, list)
- 		intel_flush_svm_range_dev(svm, sdev, address, pages, ih, gl);
+-static inline int first_pte_in_page(struct dma_pte *pte)
+-{
+-	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+-}
+-
+ /*
+  * This domain is a statically identity mapping domain.
+  *	1. This domain creats a static 1:1 mapping to all usable memory.
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index cfcf9c1e1872..0605f3bf6e79 100644
+index 8c9b6063d275..b4da61385ebf 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -541,15 +541,8 @@ struct intel_iommu {
- 	struct iommu_flush flush;
- #endif
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	/* These are large and need to be contiguous, so we allocate just
--	 * one for now. We'll maybe want to rethink that if we truly give
--	 * devices away to userspace processes (e.g. for DPDK) and don't
--	 * want to trust that userspace will use *only* the PASID it was
--	 * told to. But while it's all driver-arbitrated, we're fine. */
--	struct pasid_state_entry *pasid_state_table;
- 	struct page_req_dsc *prq;
- 	unsigned char prq_name[16];    /* Name for PRQ interrupt */
--	u32 pasid_max;
- #endif
- 	struct q_inval  *qi;            /* Queued invalidation info */
- 	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
-@@ -663,7 +656,6 @@ void iommu_flush_write_buffer(struct intel_iommu *iommu);
+@@ -590,6 +590,49 @@ static inline void __iommu_flush_cache(
+ 		clflush_cache_range(addr, size);
+ }
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
- int intel_svm_init(struct intel_iommu *iommu);
--int intel_svm_exit(struct intel_iommu *iommu);
- extern int intel_svm_enable_prq(struct intel_iommu *iommu);
- extern int intel_svm_finish_prq(struct intel_iommu *iommu);
++/*
++ * 0: readable
++ * 1: writable
++ * 2-6: reserved
++ * 7: super page
++ * 8-10: available
++ * 11: snoop behavior
++ * 12-63: Host physcial address
++ */
++struct dma_pte {
++	u64 val;
++};
++
++static inline void dma_clear_pte(struct dma_pte *pte)
++{
++	pte->val = 0;
++}
++
++static inline u64 dma_pte_addr(struct dma_pte *pte)
++{
++#ifdef CONFIG_64BIT
++	return pte->val & VTD_PAGE_MASK;
++#else
++	/* Must have a full atomic 64-bit read */
++	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
++#endif
++}
++
++static inline bool dma_pte_present(struct dma_pte *pte)
++{
++	return (pte->val & 3) != 0;
++}
++
++static inline bool dma_pte_superpage(struct dma_pte *pte)
++{
++	return (pte->val & DMA_PTE_LARGE_PAGE);
++}
++
++static inline int first_pte_in_page(struct dma_pte *pte)
++{
++	return !((unsigned long)pte & ~VTD_PAGE_MASK);
++}
++
+ extern struct dmar_drhd_unit * dmar_find_matched_drhd_unit(struct pci_dev *dev);
+ extern int dmar_find_matched_atsr_unit(struct pci_dev *dev);
  
 -- 
 2.17.1
