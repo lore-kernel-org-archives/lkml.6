@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E99C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66392C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EC420864
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EC420864
+	by mail.kernel.org (Postfix) with ESMTP id 388A520864
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388A520864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729440AbeK2E4a (ORCPT
+        id S1729456AbeK2E4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:56:30 -0500
+        Wed, 28 Nov 2018 23:56:32 -0500
 Received: from shell.v3.sk ([90.176.6.54]:39387 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbeK2E4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:56:30 -0500
+        id S1729429AbeK2E4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 23:56:31 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C0660998D3;
-        Wed, 28 Nov 2018 18:54:01 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 28241999DE;
+        Wed, 28 Nov 2018 18:54:03 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id MCss26D1fWYR; Wed, 28 Nov 2018 18:53:46 +0100 (CET)
+        with ESMTP id 6_Cd3_dyJWBx; Wed, 28 Nov 2018 18:53:49 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E5BC9999DE;
-        Wed, 28 Nov 2018 18:53:34 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3D2D6999C5;
+        Wed, 28 Nov 2018 18:53:39 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SYZR2wloU1lC; Wed, 28 Nov 2018 18:53:30 +0100 (CET)
+        with ESMTP id Ysa8GWDGdrcW; Wed, 28 Nov 2018 18:53:36 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id DDEE399A91;
-        Wed, 28 Nov 2018 18:53:29 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 8D02799B07;
+        Wed, 28 Nov 2018 18:53:31 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     arm@kernel.org, Olof Johansson <olof@lixom.net>,
         Arnd Bergmann <arnd@arndb.de>
@@ -48,9 +48,9 @@ Cc:     Eric Miao <eric.y.miao@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, James Cameron <quozl@laptop.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4 06/20] DT: marvell,mmp2: fix TWSI2
-Date:   Wed, 28 Nov 2018 18:53:10 +0100
-Message-Id: <20181128175324.163202-7-lkundrak@v3.sk>
+Subject: [PATCH v4 12/20] irqchip/mmp: do not use of_address_to_resource() to get mux regs
+Date:   Wed, 28 Nov 2018 18:53:16 +0100
+Message-Id: <20181128175324.163202-13-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181128175324.163202-1-lkundrak@v3.sk>
 References: <20181128175324.163202-1-lkundrak@v3.sk>
@@ -61,50 +61,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
+are offsets from intc's base, not addresses on the parent bus. At this
+point it probably can't be fixed.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
-
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
-
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
-
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
+On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
+axi bus, and thus of_address_to_resource() won't work. We should treat
+the values as mere integers as opposed to bus addresses.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Changes since v3:
+- Added this patch
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 1120fe6abbdc..c5787eea57c7 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -257,12 +257,15 @@
- 				status =3D "disabled";
- 			};
+ drivers/irqchip/irq-mmp.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index 1ed38f9f1d0a..e34b57f006e3 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -423,9 +423,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_=
+init);
+ static int __init mmp2_mux_of_init(struct device_node *node,
+ 				   struct device_node *parent)
+ {
+-	struct resource res;
+ 	int i, ret, irq, j =3D 0;
+ 	u32 nr_irqs, mfp_irq;
++	u32 reg[4];
 =20
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4025000 0x1000>;
--				interrupts =3D <58>;
-+				reg =3D <0xd4031000 0x1000>;
-+				interrupt-parent =3D <&intcmux17>;
-+				interrupts =3D <0>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets =3D <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
- 				status =3D "disabled";
- 			};
-=20
+ 	if (!parent)
+ 		return -ENODEV;
+@@ -437,18 +437,13 @@ static int __init mmp2_mux_of_init(struct device_no=
+de *node,
+ 		pr_err("Not found mrvl,intc-nr-irqs property\n");
+ 		return -EINVAL;
+ 	}
+-	ret =3D of_address_to_resource(node, 0, &res);
++	ret =3D of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+ 	if (ret < 0) {
+ 		pr_err("Not found reg property\n");
+ 		return -EINVAL;
+ 	}
+-	icu_data[i].reg_status =3D mmp_icu_base + res.start;
+-	ret =3D of_address_to_resource(node, 1, &res);
+-	if (ret < 0) {
+-		pr_err("Not found reg property\n");
+-		return -EINVAL;
+-	}
+-	icu_data[i].reg_mask =3D mmp_icu_base + res.start;
++	icu_data[i].reg_status =3D mmp_icu_base + reg[0];
++	icu_data[i].reg_mask =3D mmp_icu_base + reg[2];
+ 	icu_data[i].cascade_irq =3D irq_of_parse_and_map(node, 0);
+ 	if (!icu_data[i].cascade_irq)
+ 		return -EINVAL;
 --=20
 2.19.1
 
