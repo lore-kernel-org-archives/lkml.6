@@ -2,110 +2,124 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95DFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88318C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7832086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga/g5Az4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7832086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A9502082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 01:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A9502082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeK1M2O (ORCPT
+        id S1727205AbeK1M2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 07:28:14 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50991 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbeK1M2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 07:28:13 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 125so896703wmh.0;
-        Tue, 27 Nov 2018 17:28:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3JcnDy7jgAld4GixisXnricG8EofDL0nd37oUN/+JHA=;
-        b=ga/g5Az4G+L5cEjCgHVMqaTNGTDwMAugz5choy5S7oGSmRYIU19z4Ft3/bacj7yNw/
-         6Kkv4AkySk5DuNh8nWtziDWaqktBb1WwiOSUbNldQ98qm53dblHQjJy8Z76CIXpB7v/Q
-         ExLXV+RQUBnOtwQnGw+5KWooFJy1DKn7inmnd0LekV1/j5magzwoqYWgcHGo2s1AMNPh
-         USvrNfnephtnNbsQA+Ss/gNBCBG60fYWH+f2EjBAQD8vAldpE1spUeJFpjXh54ZOadqa
-         4x3SrC6P/hczrU8LMjm4bLpOVrcea+9+E/eNgcMlVsWxRw6XwH0urjJeDN4Rs2VxKRcY
-         GRsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3JcnDy7jgAld4GixisXnricG8EofDL0nd37oUN/+JHA=;
-        b=hsrPICfz3+HhAHIE0QQ4I6e0ZH0cFuSnnbdVbWiIC3GoMDE5FJScsDVpz9rUNnQgCc
-         BlijUhli/UEwXogS02qpvOV5ZzyR9usRmZ7dgzptDi7e4EMcsNA3tdpL29B1vBt4a8lt
-         sKddsuM9nB9gPFZCqoshn1gMSobFafQbjQYmhiJLa1Zekj/AlXxPL+g88S9Pee94j744
-         WX6gIzC6bxKhx4wYXj6VHKs0u7JqJ1LKPPhvFHUtp1KfudmcCZS0xBe4i0PlE4xmB4g5
-         RmIOoraI0Ix1bATtpRHEN1Rf42oyqHIdWdS7zZOFni939PWjOdu0GOghfQJuAspr0KJf
-         RSjQ==
-X-Gm-Message-State: AA+aEWYcIUVJQSPd+5egEjWEGtDqfPOuQY2uJLJzyKCK42b7gqc0bYqx
-        KPcFayDGvYHuISIxkdw4dKSUCJI5ko3XtpO+2o0U8t9N
-X-Google-Smtp-Source: AFSGD/WY/SxJer6fUSBrRgSPkgcY4AkeU6WY9ToHTcMz9fcW3N+JF0sok2kUzTxEGTi88eKl3h1JS3hAzHR5wOUeLd0=
-X-Received: by 2002:a1c:8a09:: with SMTP id m9mr904393wmd.27.1543368504862;
- Tue, 27 Nov 2018 17:28:24 -0800 (PST)
+        Wed, 28 Nov 2018 07:28:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39808 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbeK1M2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 07:28:41 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5C513084031;
+        Wed, 28 Nov 2018 01:28:53 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A54D56012B;
+        Wed, 28 Nov 2018 01:28:44 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 09:28:38 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     tom.leiming@gmail.com, axboe@kernel.dk,
+        Gwendal Grignou <gwendal@chromium.org>, asavery@chromium.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
+Message-ID: <20181128012837.GC11128@ming.t460p>
+References: <20181030230624.61834-1-evgreen@chromium.org>
+ <20181030230624.61834-3-evgreen@chromium.org>
+ <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
+ <CACVXFVN63UDefvBnYTQ==tWwYqGJbCS_HK==-1jVa5sVc=-Upw@mail.gmail.com>
+ <CAE=gft55MVc7JGJw427VByihrgw1yYDFYCxuqUOh4xm5P4ZoAA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181120132705.6917-1-stefan@agner.ch> <20181120132705.6917-3-stefan@agner.ch>
- <CAHQ1cqEfjqtJbb6qxTRa-rVvgy8+_Og4Eh21XMRETJHnRG9a6w@mail.gmail.com> <CAOMZO5DZRUUkkqNPRZWhK0C56sRU+eQqFzV+akpEvwcKHW1DNw@mail.gmail.com>
-In-Reply-To: <CAOMZO5DZRUUkkqNPRZWhK0C56sRU+eQqFzV+akpEvwcKHW1DNw@mail.gmail.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Tue, 27 Nov 2018 17:28:13 -0800
-Message-ID: <CAHQ1cqFprD4k+aO_x-znEs6sXpx9jxih-moSuNZZ3dAKHuLpPw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] PCI: imx6: limit DBI register length
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Stefan Agner <stefan@agner.ch>, Jingoo Han <jingoohan1@gmail.com>,
-        gustavo.pimentel@synopsys.com,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=gft55MVc7JGJw427VByihrgw1yYDFYCxuqUOh4xm5P4ZoAA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 28 Nov 2018 01:28:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 5:12 PM Fabio Estevam <festevam@gmail.com> wrote:
->
-> Hi Andrey,
->
-> On Tue, Nov 27, 2018 at 10:57 PM Andrey Smirnov
-> <andrew.smirnov@gmail.com> wrote:
->
-> > Could this be a regression? Prior to 415b6185c541 ("PCI: imx6: Fix
-> > config read timeout handling") all of the imprecise aborts were caught
-> > and handled via no-op handler. I did an experiment on i.MX6Q board
-> > that I have (ZII RDU2) and adding a simple no-op for imprecise aborts
-> > via
+On Tue, Nov 27, 2018 at 03:34:04PM -0800, Evan Green wrote:
+> Hi Ming,
+> 
+> On Mon, Nov 26, 2018 at 6:55 PM Ming Lei <tom.leiming@gmail.com> wrote:
 > >
-> > hook_fault_code(16 + 6, imx6q_pcie_no_op_handler, SIGBUS, 0,
-> >                        "imprecise external abort");
+> > On Tue, Nov 27, 2018 at 2:55 AM Evan Green <evgreen@chromium.org> wrote:
+> > >
+> > > On Tue, Oct 30, 2018 at 4:06 PM Evan Green <evgreen@chromium.org> wrote:
+> > > >
+> > > > If the backing device for a loop device is a block device,
 > >
-> > seems to "resolve" this problem:
->
-> Please check https://patchwork.kernel.org/patch/9720313/
->
-> This commit fixed a kernel crash on mx6q boards with a PCI switch.
->
-> So we can't go back to the simple no-op.
+> > This shouldn't be a very common use case wrt. loop.
+> 
+> Yeah, I'm starting to gather that. Or maybe I'm just the first one to
+> mention it on the kernel lists ;) We've used this in our Chrome OS
+> installer, I believe for many years. Gwendal piped in with a few
+> reasons we do it this way on the cover letter, but in general I think
+> it allows us to have a unified set of functions to install to a file,
+> disk, or prepare an image that may have a different block size than
+> those on the running system.
 
-It's probably not exactly clear form my message, but I wasn't
-proposing to go back to a no-op. What I had in mind is having a no-op
-handler for imprecise aborts _alongside_ the non-linefetch handlers
-that is already there when running against i.MX6Q type of the IP
-block.
+OK, got it, it makes sense.
+
+> 
+> >
+> > > > then mirror the discard properties of the underlying block
+> > > > device into the loop device. While in there, differentiate
+> > > > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
+> > > > different for block devices, but which the loop device had
+> > > > just been lumping together.
+> > > >
+> > > > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > >
+> > > Any thoughts on this patch? This fixes issues for us when using a loop
+> > > device backed by a block device, where we see many logs like:
+> > >
+> > > [  372.767286] print_req_error: I/O error, dev loop5, sector 88125696
+> >
+> > Seems not see any explanation about this IO error and the fix in your patch.
+> > Could you describe it a bit more?
+> 
+> Sure, I probably should have included more context with the series.
+> 
+> The loop device always reports that it supports discard, by setting up
+> the max_discard_sectors and max_write_zeroes_sectors in the blk queue.
+> When the loop device gets a discard or write-zeroes request, it turns
+> around and calls fallocate on the underlying device with the
+> PUNCH_HOLE flag. This makes sense when you're backed by a file and
+> hoping to just deallocate the space, but may fail when you're backed
+> by a block device that doesn't support discard, or doesn't write
+> zeroes to discarded sectors. Weirdly, lo_discard already had some code
+> for preserving EOPNOTSUPP, but then later the error is smashed into
+> EIO. Patch 1 pipes out EOPNOTSUPP properly, so it doesn't get squashed
+> into EIO.
+> 
+> Patch 2 reflects the discard characteristics of the underlying device
+> into the loop device. That way, if you're backed by a file or a block
+> device that does support discard, everything works great, and user
+> mode can even see and use the correct discard and write zero
+> granularities. If you're backed by a block device that does not
+> support discard, this is exposed to user mode, which then usually
+> avoids calling fallocate, and doesn't feel betrayed that their
+> requests are unexpectedly failing.
+
+Thanks for your detailed explanation, and I think we need to fix it.
 
 Thanks,
-Andrey Smirnov
+Ming
