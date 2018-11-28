@@ -2,186 +2,117 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2B4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DABC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992EE2133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992EE2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1546C206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:54:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="sXFxT+Sd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1546C206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeK2Cyz (ORCPT
+        id S1728776AbeK2C4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:54:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37982 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbeK2Cyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:54:55 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 72F1920757; Wed, 28 Nov 2018 16:52:47 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 404EC20726;
-        Wed, 28 Nov 2018 16:52:37 +0100 (CET)
-Date:   Wed, 28 Nov 2018 16:52:37 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     linux-sunxi@googlegroups.com, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: uapi: Add H264 low-level
- decoder API compound controls.
-Message-ID: <20181128155237.5sb7sgik67pcndsw@flea>
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
- <20181115145650.9827-2-maxime.ripard@bootlin.com>
- <2123591.3TCVFQjlgd@jernej-laptop>
+        Wed, 28 Nov 2018 21:56:13 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46474 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeK2C4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:56:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YAagMpJp3hyABKQqg5vm4cENQLdI7Z+/oQMcgiBLooY=; b=sXFxT+SdwXKjS5D0R5VXeMg47
+        JmY2glC4tnnavFyhE8IcYXILs72pS8Id5nVMzMVycyjDUGh0ZYWJr5SVIIjf82deCdrturVGdc60p
+        rHmIEOcCY4OIXUnkKD7iPH7ite4Qgnlp0ZAsE+rG1UCCzwSmiXiBd8L3kwE+xnQqOr1mk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gS2A8-0005u7-Gc; Wed, 28 Nov 2018 15:54:04 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 126CA112521B; Wed, 28 Nov 2018 15:54:04 +0000 (GMT)
+Date:   Wed, 28 Nov 2018 15:54:04 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [GIT PULL] SPI fixes for v4.20
+Message-ID: <20181128155404.GJ6828@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ora72zak626rtt66"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0FRtVia6Q6lt+M0P"
 Content-Disposition: inline
-In-Reply-To: <2123591.3TCVFQjlgd@jernej-laptop>
-User-Agent: NeoMutt/20180716
+X-Cookie: I had pancake makeup for brunch!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ora72zak626rtt66
-Content-Type: text/plain; charset=utf-8
+--0FRtVia6Q6lt+M0P
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jernej,
+The following changes since commit 0c903aafc8529f64d24d2cd6df32f2bf16aad20b:
 
-On Tue, Nov 27, 2018 at 06:23:10PM +0100, Jernej =C5=A0krabec wrote:
-> > @@ -1156,4 +1164,162 @@ struct v4l2_ctrl_mpeg2_quantization {
-> >  	__u8	chroma_non_intra_quantiser_matrix[64];
-> >  };
-> >=20
-> > +/* Compounds controls */
-> > +
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET0_FLAG			0x01
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET1_FLAG			0x02
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET2_FLAG			0x04
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET3_FLAG			0x08
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET4_FLAG			0x10
-> > +#define V4L2_H264_SPS_CONSTRAINT_SET5_FLAG			0x20
->=20
-> How are these constraint flags meant to be used?
+  spi: lpspi: add imx8qxp compatible string (2018-10-21 16:55:23 +0100)
 
-They are supposed to be used as bit fields in the constraint_set_flags
-variable part of the v4l2_ctrl_h264_sps structure.
+are available in the Git repository at:
 
-> > +
-> > +#define V4L2_H264_SPS_FLAG_SEPARATE_COLOUR_PLANE		0x01
-> > +#define V4L2_H264_SPS_FLAG_QPPRIME_Y_ZERO_TRANSFORM_BYPASS	0x02
-> > +#define V4L2_H264_SPS_FLAG_DELTA_PIC_ORDER_ALWAYS_ZERO		0x04
-> > +#define V4L2_H264_SPS_FLAG_GAPS_IN_FRAME_NUM_VALUE_ALLOWED	0x08
-> > +#define V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY			0x10
-> > +#define V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD		0x20
-> > +#define V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE			0x40
-> > +
-> > +struct v4l2_ctrl_h264_sps {
-> > +	__u8 profile_idc;
-> > +	__u8 constraint_set_flags;
-> > +	__u8 level_idc;
-> > +	__u8 seq_parameter_set_id;
-> > +	__u8 chroma_format_idc;
-> > +	__u8 bit_depth_luma_minus8;
-> > +	__u8 bit_depth_chroma_minus8;
-> > +	__u8 log2_max_frame_num_minus4;
-> > +	__u8 pic_order_cnt_type;
-> > +	__u8 log2_max_pic_order_cnt_lsb_minus4;
-> > +	__u8 max_num_ref_frames;
-> > +	__u8 num_ref_frames_in_pic_order_cnt_cycle;
-> > +	__s32 offset_for_ref_frame[255];
-> > +	__s32 offset_for_non_ref_pic;
-> > +	__s32 offset_for_top_to_bottom_field;
-> > +	__u16 pic_width_in_mbs_minus1;
-> > +	__u16 pic_height_in_map_units_minus1;
-> > +	__u8 flags;
-> > +};
-> > +
-> > +#define V4L2_H264_PPS_FLAG_ENTROPY_CODING_MODE				0x0001
-> > +#define V4L2_H264_PPS_FLAG_BOTTOM_FIELD_PIC_ORDER_IN_FRAME_PRESENT	0x0=
-002
-> > +#define V4L2_H264_PPS_FLAG_WEIGHTED_PRED				0x0004
-> > +#define V4L2_H264_PPS_FLAG_DEBLOCKING_FILTER_CONTROL_PRESENT		0x0008
-> > +#define V4L2_H264_PPS_FLAG_CONSTRAINED_INTRA_PRED			0x0010
-> > +#define V4L2_H264_PPS_FLAG_REDUNDANT_PIC_CNT_PRESENT			0x0020
-> > +#define V4L2_H264_PPS_FLAG_TRANSFORM_8X8_MODE				0x0040
-> > +#define V4L2_H264_PPS_FLAG_PIC_SCALING_MATRIX_PRESENT			0x0080
-> > +
-> > +struct v4l2_ctrl_h264_pps {
-> > +	__u8 pic_parameter_set_id;
-> > +	__u8 seq_parameter_set_id;
-> > +	__u8 num_slice_groups_minus1;
-> > +	__u8 num_ref_idx_l0_default_active_minus1;
-> > +	__u8 num_ref_idx_l1_default_active_minus1;
-> > +	__u8 weighted_bipred_idc;
-> > +	__s8 pic_init_qp_minus26;
-> > +	__s8 pic_init_qs_minus26;
-> > +	__s8 chroma_qp_index_offset;
-> > +	__s8 second_chroma_qp_index_offset;
-> > +	__u8 flags;
-> > +};
-> > +
-> > +struct v4l2_ctrl_h264_scaling_matrix {
-> > +	__u8 scaling_list_4x4[6][16];
-> > +	__u8 scaling_list_8x8[6][64];
-> > +};
-> > +
-> > +struct v4l2_h264_weight_factors {
-> > +	__s8 luma_weight[32];
-> > +	__s8 luma_offset[32];
-> > +	__s8 chroma_weight[32][2];
-> > +	__s8 chroma_offset[32][2];
-> > +};
->=20
-> Regarding weight type __s8 - isn't too small just a bit?
->=20
-> ITU-T Rec. H264 (05/2003) says that this field has value between -128 to =
-127 if=20
-> weight flag is set. That fits perfectly. However, when weight flag is 0, =
-default=20
-> value is 2^luma_log2_weight_denom (for example). luma_log2_weight_denom c=
-an=20
-> have values between 0 and 7, which means that weight will have values fro=
-m 1=20
-> to 128. That is just slightly over the max value for __s8.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git spi-fix-v4.20-rc4
 
-luma_log2_weight_denom is in the v4l2_h264_pred_weight_table
-structure, so you wouldn't use the weights if the weight flag isn't
-set.
+for you to fetch changes up to 91b9deefedf4c35a01027ce38bed7299605026a3:
 
-Maxime
+  spi: omap2-mcspi: Add missing suspend and resume calls (2018-11-15 16:20:43 -0800)
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+----------------------------------------------------------------
+spi: Fixes for v4.20
 
---ora72zak626rtt66
+A few driver specific fixes here, nothing big or that stands out for
+anyone other than the driver users.
+
+----------------------------------------------------------------
+
+Forgot to note that the mcspi thing is a fix for issues that started
+showing up with a change in defconfig in this release to make cpuidle
+get turned on by default.
+
+Keiji Hayashibara (1):
+      spi: uniphier: fix incorrect property items
+
+Leilk Liu (1):
+      spi: mediatek: use correct mata->xfer_len when in fifo transfer
+
+Tony Lindgren (1):
+      spi: omap2-mcspi: Add missing suspend and resume calls
+
+ .../devicetree/bindings/spi/spi-uniphier.txt       | 14 ++++----
+ drivers/spi/spi-mt65xx.c                           |  4 +--
+ drivers/spi/spi-omap2-mcspi.c                      | 37 +++++++++++++++-------
+ 3 files changed, 35 insertions(+), 20 deletions(-)
+
+--0FRtVia6Q6lt+M0P
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/65xQAKCRDj7w1vZxhR
-xfVgAPwPyBxI7cDvrAYJyRbFuUI9l7ivW0+o26mnXxH20xwC2wEAh9mWwtu+y2M3
-Lua5L8Pkady5dgTg0pZlPrHnP0qwKww=
-=E6X7
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv+uhsACgkQJNaLcl1U
+h9CQ2Qf8Ch14TJIWzZKoqdxC0TfLYDzF4DXB0Yyc8XXKk00RGB1LFbjw7qL4M2jL
+5w941OlkAdVxz6g2V4ZX5JPwl7vFeCvdXvfVCprs95BGJfrFHJv5X4QdSOqJbTAI
+dWft8/QU8xk167iuf2JZdk0nmCLQxnSddktavaTwMoqqRWGRfT/kl+jP45fwYEZN
+EBciJtOjTe+0if3VaX0tMnRE7cchhAvv/nS405XHDyuENPIdT/5Rq6JKQQcPiRea
+bSlSx+spCGstk7rO24LkatJSSKt95kX1vgX6h5jzFX/i6fmOs9pTyHs3csXZ//jP
+BFujcsR6hqJcOnyQLBMcNEDrSoaFxw==
+=eYeu
 -----END PGP SIGNATURE-----
 
---ora72zak626rtt66--
+--0FRtVia6Q6lt+M0P--
