@@ -2,63 +2,64 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=FREEMAIL_REPLYTO_END_DIGIT,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666D2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365B2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23CC620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CC620989
+	by mail.kernel.org (Postfix) with ESMTP id E8E4D2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:36:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E4D2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbeK2BhY (ORCPT
+        id S1728608AbeK2Bh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:37:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46451 "EHLO
+        Wed, 28 Nov 2018 20:37:57 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57581 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727726AbeK2BhX (ORCPT
+        with ESMTP id S1727979AbeK2Bh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:37:23 -0500
+        Wed, 28 Nov 2018 20:37:57 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEYmK82324220
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEZNTX2324449
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:34:48 -0800
+        Wed, 28 Nov 2018 06:35:24 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEYm3p2324217;
-        Wed, 28 Nov 2018 06:34:48 -0800
-Date:   Wed, 28 Nov 2018 06:34:48 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEZNO12324438;
+        Wed, 28 Nov 2018 06:35:23 -0800
+Date:   Wed, 28 Nov 2018 06:35:23 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-9137bb27e60e554dab694eafa4cca241fa3a694f@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        david.c.stewart@intel.com, asit.k.mallick@intel.com,
-        tim.c.chen@linux.intel.com, keescook@chromium.org,
-        dwmw@amazon.co.uk, mingo@kernel.org, thomas.lendacky@amd.com,
-        peterz@infradead.org, dave.hansen@intel.com, jpoimboe@redhat.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, jcm@redhat.com,
-        gregkh@linuxfoundation.org, casey.schaufler@intel.com,
-        arjan@linux.intel.com, longman9394@gmail.com, jkosina@suse.cz,
-        luto@kernel.org, ak@linux.intel.com, aarcange@redhat.com
-Reply-To: longman9394@gmail.com, arjan@linux.intel.com,
-          casey.schaufler@intel.com, ak@linux.intel.com, jkosina@suse.cz,
-          luto@kernel.org, aarcange@redhat.com, asit.k.mallick@intel.com,
-          david.c.stewart@intel.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, keescook@chromium.org,
-          tim.c.chen@linux.intel.com, thomas.lendacky@amd.com,
-          peterz@infradead.org, dave.hansen@intel.com, mingo@kernel.org,
-          dwmw@amazon.co.uk, gregkh@linuxfoundation.org, jcm@redhat.com,
-          hpa@zytor.com, torvalds@linux-foundation.org, jpoimboe@redhat.com
-In-Reply-To: <20181125185005.866780996@linutronix.de>
-References: <20181125185005.866780996@linutronix.de>
+Message-ID: <tip-7cc765a67d8e04ef7d772425ca5a2a1e2b894c15@git.kernel.org>
+Cc:     mingo@kernel.org, peterz@infradead.org, david.c.stewart@intel.com,
+        longman9394@gmail.com, jkosina@suse.cz, ak@linux.intel.com,
+        casey.schaufler@intel.com, gregkh@linuxfoundation.org,
+        arjan@linux.intel.com, jcm@redhat.com, tglx@linutronix.de,
+        thomas.lendacky@amd.com, dave.hansen@intel.com, luto@kernel.org,
+        hpa@zytor.com, asit.k.mallick@intel.com, jpoimboe@redhat.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        dwmw@amazon.co.uk, aarcange@redhat.com, keescook@chromium.org,
+        tim.c.chen@linux.intel.com
+Reply-To: jpoimboe@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          asit.k.mallick@intel.com, keescook@chromium.org,
+          tim.c.chen@linux.intel.com, dwmw@amazon.co.uk,
+          torvalds@linux-foundation.org, aarcange@redhat.com,
+          jcm@redhat.com, thomas.lendacky@amd.com, dave.hansen@intel.com,
+          luto@kernel.org, tglx@linutronix.de, ak@linux.intel.com,
+          longman9394@gmail.com, jkosina@suse.cz,
+          gregkh@linuxfoundation.org, arjan@linux.intel.com,
+          casey.schaufler@intel.com, mingo@kernel.org,
+          david.c.stewart@intel.com, peterz@infradead.org
+In-Reply-To: <20181125185005.958421388@linutronix.de>
+References: <20181125185005.958421388@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Add prctl() control for indirect
- branch speculation
-Git-Commit-ID: 9137bb27e60e554dab694eafa4cca241fa3a694f
+Subject: [tip:x86/pti] x86/speculation: Enable prctl mode for
+ spectre_v2_user
+Git-Commit-ID: 7cc765a67d8e04ef7d772425ca5a2a1e2b894c15
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -72,35 +73,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9137bb27e60e554dab694eafa4cca241fa3a694f
-Gitweb:     https://git.kernel.org/tip/9137bb27e60e554dab694eafa4cca241fa3a694f
+Commit-ID:  7cc765a67d8e04ef7d772425ca5a2a1e2b894c15
+Gitweb:     https://git.kernel.org/tip/7cc765a67d8e04ef7d772425ca5a2a1e2b894c15
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:53 +0100
+AuthorDate: Sun, 25 Nov 2018 19:33:54 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 28 Nov 2018 11:57:13 +0100
 
-x86/speculation: Add prctl() control for indirect branch speculation
+x86/speculation: Enable prctl mode for spectre_v2_user
 
-Add the PR_SPEC_INDIRECT_BRANCH option for the PR_GET_SPECULATION_CTRL and
-PR_SET_SPECULATION_CTRL prctls to allow fine grained per task control of
-indirect branch speculation via STIBP and IBPB.
+Now that all prerequisites are in place:
 
-Invocations:
- Check indirect branch speculation status with
- - prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
+ - Add the prctl command line option
 
- Enable indirect branch speculation with
- - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
+ - Default the 'auto' mode to 'prctl'
 
- Disable indirect branch speculation with
- - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
+ - When SMT state changes, update the static key which controls the
+   conditional STIBP evaluation on context switch.
 
- Force disable indirect branch speculation with
- - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+ - At init update the static key which controls the conditional IBPB
+   evaluation on context switch.
 
-See Documentation/userspace-api/spec_ctrl.rst.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -111,6 +104,7 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -122,228 +116,150 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.866780996@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.958421388@linutronix.de
+
 
 ---
- Documentation/userspace-api/spec_ctrl.rst |  9 +++++
- arch/x86/include/asm/nospec-branch.h      |  1 +
- arch/x86/kernel/cpu/bugs.c                | 67 +++++++++++++++++++++++++++++++
- arch/x86/kernel/process.c                 |  5 +++
- include/linux/sched.h                     |  9 +++++
- include/uapi/linux/prctl.h                |  1 +
- tools/include/uapi/linux/prctl.h          |  1 +
- 7 files changed, 93 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  7 ++++-
+ arch/x86/kernel/cpu/bugs.c                      | 41 +++++++++++++++++++------
+ 2 files changed, 38 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
-index 32f3d55c54b7..c4dbe6f7cdae 100644
---- a/Documentation/userspace-api/spec_ctrl.rst
-+++ b/Documentation/userspace-api/spec_ctrl.rst
-@@ -92,3 +92,12 @@ Speculation misfeature controls
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
-+
-+- PR_SPEC_INDIR_BRANCH: Indirect Branch Speculation in User Processes
-+                        (Mitigate Spectre V2 style attacks against user processes)
-+
-+  Invocations:
-+   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
-+   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index d4d35baf0430..2adbe7b047fa 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -232,6 +232,7 @@ enum spectre_v2_mitigation {
- enum spectre_v2_user_mitigation {
- 	SPECTRE_V2_USER_NONE,
- 	SPECTRE_V2_USER_STRICT,
-+	SPECTRE_V2_USER_PRCTL,
- };
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b6e5b33b9d75..a9b98a4e8789 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4236,9 +4236,14 @@
+ 			off     - Unconditionally disable mitigations. Is
+ 				  enforced by spectre_v2=off
  
- /* The Speculative Store Bypass disable variants */
++			prctl   - Indirect branch speculation is enabled,
++				  but mitigation can be enabled via prctl
++				  per thread.  The mitigation control state
++				  is inherited on fork.
++
+ 			auto    - Kernel selects the mitigation depending on
+ 				  the available CPU features and vulnerability.
+-				  Default is off.
++				  Default is prctl.
+ 
+ 			Not specifying this option is equivalent to
+ 			spectre_v2_user=auto.
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 9cab538e10f1..74359fff87fd 100644
+index 74359fff87fd..d0137d10f9a6 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -566,6 +566,8 @@ void arch_smt_update(void)
- 	case SPECTRE_V2_USER_STRICT:
+@@ -255,11 +255,13 @@ enum spectre_v2_user_cmd {
+ 	SPECTRE_V2_USER_CMD_NONE,
+ 	SPECTRE_V2_USER_CMD_AUTO,
+ 	SPECTRE_V2_USER_CMD_FORCE,
++	SPECTRE_V2_USER_CMD_PRCTL,
+ };
+ 
+ static const char * const spectre_v2_user_strings[] = {
+ 	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
+ 	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
++	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
+ };
+ 
+ static const struct {
+@@ -270,6 +272,7 @@ static const struct {
+ 	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
+ 	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
+ 	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
++	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
+ };
+ 
+ static void __init spec_v2_user_print_cond(const char *reason, bool secure)
+@@ -324,12 +327,15 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
+ 		smt_possible = false;
+ 
+ 	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
+-	case SPECTRE_V2_USER_CMD_AUTO:
+ 	case SPECTRE_V2_USER_CMD_NONE:
+ 		goto set_mode;
+ 	case SPECTRE_V2_USER_CMD_FORCE:
+ 		mode = SPECTRE_V2_USER_STRICT;
+ 		break;
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_PRCTL:
++		mode = SPECTRE_V2_USER_PRCTL;
++		break;
+ 	}
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier */
+@@ -340,6 +346,9 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
+ 		case SPECTRE_V2_USER_STRICT:
+ 			static_branch_enable(&switch_mm_always_ibpb);
+ 			break;
++		case SPECTRE_V2_USER_PRCTL:
++			static_branch_enable(&switch_mm_cond_ibpb);
++			break;
+ 		default:
+ 			break;
+ 		}
+@@ -352,6 +361,12 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return;
+ 
++	/*
++	 * If SMT is not possible or STIBP is not available clear the STIPB
++	 * mode.
++	 */
++	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
++		mode = SPECTRE_V2_USER_NONE;
+ set_mode:
+ 	spectre_v2_user = mode;
+ 	/* Only print the STIBP mode when SMT possible */
+@@ -552,6 +567,15 @@ static void update_stibp_strict(void)
+ 	on_each_cpu(update_stibp_msr, NULL, 1);
+ }
+ 
++/* Update the static key controlling the evaluation of TIF_SPEC_IB */
++static void update_indir_branch_cond(void)
++{
++	if (sched_smt_active())
++		static_branch_enable(&switch_to_cond_stibp);
++	else
++		static_branch_disable(&switch_to_cond_stibp);
++}
++
+ void arch_smt_update(void)
+ {
+ 	/* Enhanced IBRS implies STIBP. No update required. */
+@@ -567,6 +591,7 @@ void arch_smt_update(void)
  		update_stibp_strict();
  		break;
-+	case SPECTRE_V2_USER_PRCTL:
-+		break;
+ 	case SPECTRE_V2_USER_PRCTL:
++		update_indir_branch_cond();
+ 		break;
  	}
  
- 	mutex_unlock(&spec_ctrl_mutex);
-@@ -752,12 +754,50 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
- 	return 0;
- }
- 
-+static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
-+	switch (ctrl) {
-+	case PR_SPEC_ENABLE:
-+		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
-+			return 0;
-+		/*
-+		 * Indirect branch speculation is always disabled in strict
-+		 * mode.
-+		 */
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+			return -EPERM;
-+		task_clear_spec_ib_disable(task);
-+		task_update_spec_tif(task);
-+		break;
-+	case PR_SPEC_DISABLE:
-+	case PR_SPEC_FORCE_DISABLE:
-+		/*
-+		 * Indirect branch speculation is always allowed when
-+		 * mitigation is force disabled.
-+		 */
-+		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
-+			return -EPERM;
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+			return 0;
-+		task_set_spec_ib_disable(task);
-+		if (ctrl == PR_SPEC_FORCE_DISABLE)
-+			task_set_spec_ib_force_disable(task);
-+		task_update_spec_tif(task);
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+	return 0;
-+}
-+
- int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
- 			     unsigned long ctrl)
- {
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_set(task, ctrl);
-+	case PR_SPEC_INDIRECT_BRANCH:
-+		return ib_prctl_set(task, ctrl);
- 	default:
- 		return -ENODEV;
- 	}
-@@ -790,11 +830,34 @@ static int ssb_prctl_get(struct task_struct *task)
- 	}
- }
- 
-+static int ib_prctl_get(struct task_struct *task)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+		return PR_SPEC_NOT_AFFECTED;
-+
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		return PR_SPEC_ENABLE;
-+	case SPECTRE_V2_USER_PRCTL:
-+		if (task_spec_ib_force_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
-+		if (task_spec_ib_disable(task))
-+			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
-+		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
-+	case SPECTRE_V2_USER_STRICT:
-+		return PR_SPEC_DISABLE;
-+	default:
-+		return PR_SPEC_NOT_AFFECTED;
-+	}
-+}
-+
- int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
- {
- 	switch (which) {
- 	case PR_SPEC_STORE_BYPASS:
- 		return ssb_prctl_get(task);
-+	case PR_SPEC_INDIRECT_BRANCH:
-+		return ib_prctl_get(task);
- 	default:
- 		return -ENODEV;
- 	}
-@@ -974,6 +1037,8 @@ static char *stibp_state(void)
- 		return ", STIBP: disabled";
+@@ -1038,7 +1063,8 @@ static char *stibp_state(void)
  	case SPECTRE_V2_USER_STRICT:
  		return ", STIBP: forced";
-+	case SPECTRE_V2_USER_PRCTL:
-+		return "";
+ 	case SPECTRE_V2_USER_PRCTL:
+-		return "";
++		if (static_key_enabled(&switch_to_cond_stibp))
++			return ", STIBP: conditional";
  	}
  	return "";
  }
-@@ -986,6 +1051,8 @@ static char *ibpb_state(void)
- 			return ", IBPB: disabled";
- 		case SPECTRE_V2_USER_STRICT:
+@@ -1046,14 +1072,11 @@ static char *stibp_state(void)
+ static char *ibpb_state(void)
+ {
+ 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+-		switch (spectre_v2_user) {
+-		case SPECTRE_V2_USER_NONE:
+-			return ", IBPB: disabled";
+-		case SPECTRE_V2_USER_STRICT:
++		if (static_key_enabled(&switch_mm_always_ibpb))
  			return ", IBPB: always-on";
-+		case SPECTRE_V2_USER_PRCTL:
-+			return "";
- 		}
+-		case SPECTRE_V2_USER_PRCTL:
+-			return "";
+-		}
++		if (static_key_enabled(&switch_mm_cond_ibpb))
++			return ", IBPB: conditional";
++		return ", IBPB: disabled";
  	}
  	return "";
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index afbe2eb4a1c6..7d31192296a8 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -450,6 +450,11 @@ static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
- 			set_tsk_thread_flag(tsk, TIF_SSBD);
- 		else
- 			clear_tsk_thread_flag(tsk, TIF_SSBD);
-+
-+		if (task_spec_ib_disable(tsk))
-+			set_tsk_thread_flag(tsk, TIF_SPEC_IB);
-+		else
-+			clear_tsk_thread_flag(tsk, TIF_SPEC_IB);
- 	}
- 	/* Return the updated threadinfo flags*/
- 	return task_thread_info(tsk)->flags;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index a51c13c2b1a0..d607db5fcc6a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void)
- #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
- #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
- #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
-+#define PFA_SPEC_IB_DISABLE		5	/* Indirect branch speculation restricted */
-+#define PFA_SPEC_IB_FORCE_DISABLE	6	/* Indirect branch speculation permanently restricted */
- 
- #define TASK_PFA_TEST(name, func)					\
- 	static inline bool task_##func(struct task_struct *p)		\
-@@ -1484,6 +1486,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
- TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
- 
-+TASK_PFA_TEST(SPEC_IB_DISABLE, spec_ib_disable)
-+TASK_PFA_SET(SPEC_IB_DISABLE, spec_ib_disable)
-+TASK_PFA_CLEAR(SPEC_IB_DISABLE, spec_ib_disable)
-+
-+TASK_PFA_TEST(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
-+TASK_PFA_SET(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
-+
- static inline void
- current_restore_flags(unsigned long orig_flags, unsigned long flags)
- {
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index c0d7ea0bf5b6..b17201edfa09 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_SPEC_INDIRECT_BRANCH	1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
-index c0d7ea0bf5b6..b17201edfa09 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -212,6 +212,7 @@ struct prctl_mm_map {
- #define PR_SET_SPECULATION_CTRL		53
- /* Speculation control variants */
- # define PR_SPEC_STORE_BYPASS		0
-+# define PR_SPEC_INDIRECT_BRANCH	1
- /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
- # define PR_SPEC_NOT_AFFECTED		0
- # define PR_SPEC_PRCTL			(1UL << 0)
+ }
