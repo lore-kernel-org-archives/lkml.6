@@ -2,464 +2,91 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ED5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6417AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84B952081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:32:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84B952081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2930A20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:35:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2930A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbeK1XeQ (ORCPT
+        id S1728092AbeK1XhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:34:16 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:47583 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbeK1XeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:34:16 -0500
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gRyur-00025C-3C from Jiada_Wang@mentor.com ; Wed, 28 Nov 2018 04:26:05 -0800
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 28 Nov 2018 04:26:01 -0800
-From:   <jiada_wang@mentor.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>
-Subject: [PATCH 1/1] ASoC: pcm3168a: Don't disable pcm3168a when CONFIG_PM defined
-Date:   Wed, 28 Nov 2018 21:26:12 +0900
-Message-ID: <20181128122612.17820-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 28 Nov 2018 18:37:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38266 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727676AbeK1XhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:37:24 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E4FE308FF0C;
+        Wed, 28 Nov 2018 12:35:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3A4ED2DE67;
+        Wed, 28 Nov 2018 12:35:47 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 28 Nov 2018 13:35:52 +0100 (CET)
+Date:   Wed, 28 Nov 2018 13:35:46 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        strace-devel@lists.strace.io, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
+ support to PTRACE_GET_SYSCALL_INFO
+Message-ID: <20181128123545.GA30395@redhat.com>
+References: <20181125022150.46258a20@akathisia>
+ <20181125022340.5703400f@akathisia>
+ <20181126143524.GB1660@redhat.com>
+ <20181127040732.1c9f7965@akathisia>
+ <20181127123116.GA13284@redhat.com>
+ <20181127232753.GA18755@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181127232753.GA18755@altlinux.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 28 Nov 2018 12:35:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On 11/28, Dmitry V. Levin wrote:
+>
+> > Just like ptrace_request(PTRACE_LISTEN)
+> > does but you can do this lockless (no need to lock_task_sighand()).
+>
+> Why this can be done lockless?  All other places in that file do
+> the locking,
 
-pcm3168 codec support runtime_[resume|suspend], whenever it
-is not active, it enters suspend mode, and it's clock and regulators
-will be disabled. so there is no need to disable them again in
-remove callback.  Otherwise we got following kernel warnings,
-when unload pcm3168a driver
+PTRACE_LISTEN too doesn't need lock_task_sighand() to access ->last_siginfo,
+this code predates ptrace_freeze_traced() which ensures that the tracee can't
+go away and clear ->last_siginfo.
 
-[  222.257514] unbalanced disables for amp-en-regulator
-[  222.262526] ------------[ cut here ]------------
-[  222.267158] WARNING: CPU: 0 PID: 2423 at drivers/regulator/core.c:2264 _regulator_disable+0x28/0x108
-[  222.276291] Modules linked in:
-[  222.279343]  snd_soc_pcm3168a_i2c(-)
-[  222.282916]  snd_aloop
-[  222.285272]  arc4
-[  222.287194]  wl18xx
-[  222.289289]  wlcore
-[  222.291385]  mac80211
-[  222.293654]  cfg80211
-[  222.295923]  aes_ce_blk
-[  222.298366]  crypto_simd
-[  222.300896]  cryptd
-[  222.302992]  aes_ce_cipher
-[  222.305696]  crc32_ce
-[  222.307965]  ghash_ce
-[  222.310234]  aes_arm64
-[  222.312590]  gf128mul
-[  222.314860]  snd_soc_rcar
-[  222.317476]  sha2_ce
-[  222.319658]  xhci_plat_hcd
-[  222.322362]  sha256_arm64
-[  222.324978]  xhci_hcd
-[  222.327247]  sha1_ce
-[  222.329430]  renesas_usbhs
-[  222.332133]  evdev
-[  222.334142]  sha1_generic
-[  222.336758]  rcar_gen3_thermal
-[  222.339810]  cpufreq_dt
-[  222.342253]  ravb_streaming(C)
-[  222.345304]  wlcore_sdio
-[  222.347834]  thermal_sys
-[  222.350363]  udc_core
-[  222.352632]  mch_core(C)
-[  222.355161]  usb_dmac
-[  222.357430]  snd_soc_pcm3168a
-[  222.360394]  snd_soc_ak4613
-[  222.363184]  gpio_keys
-[  222.365540]  virt_dma
-[  222.367809]  nfsd
-[  222.369730]  ipv6
-[  222.371652]  autofs4
-[  222.373834]  [last unloaded: snd_soc_pcm3168a_i2c]
-[  222.378629] CPU: 0 PID: 2423 Comm: rmmod Tainted: G        WC      4.14.63-04798-gd456126e4a42-dirty #457
-[  222.388196] Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
-[  222.396199] task: ffff8006fa8c6200 task.stack: ffff00000a0a0000
-[  222.402117] PC is at _regulator_disable+0x28/0x108
-[  222.406906] LR is at _regulator_disable+0x28/0x108
-[  222.411695] pc : [<ffff0000083bd89c>] lr : [<ffff0000083bd89c>] pstate: 00000145
-[  222.419089] sp : ffff00000a0a3c80
-[  222.422401] x29: ffff00000a0a3c80
-[  222.425799] x28: ffff8006fa8c6200
-[  222.429199] x27: ffff0000086f1000
-[  222.432597] x26: 000000000000006a
-[  222.435997] x25: 0000000000000124
-[  222.439395] x24: 0000000000000018
-[  222.442795] x23: 0000000000000006
-[  222.446193] x22: ffff8006f925d490
-[  222.449592] x21: ffff8006f9ac2068
-[  222.452991] x20: ffff8006f9ac2000
-[  222.456390] x19: 0000000000000005
-[  222.459787] x18: 000000000000000a
-[  222.463186] x17: 0000000000000000
-[  222.466584] x16: 0000000000000000
-[  222.469984] x15: 000000000d3f616a
-[  222.473382] x14: 0720072007200720
-[  222.476781] x13: 0720072007200720
-[  222.480179] x12: 0720072007200720
-[  222.483578] x11: 0720072007200720
-[  222.486975] x10: 0720072007200720
-[  222.490375] x9 : 0720072007200720
-[  222.493773] x8 : 07200772076f0774
-[  222.497172] x7 : 0000000000000000
-[  222.500570] x6 : 0000000000000007
-[  222.503969] x5 : 0000000000000000
-[  222.507367] x4 : 0000000000000000
-[  222.510766] x3 : 0000000000000000
-[  222.514164] x2 : c790b852091e2600
-[  222.517563] x1 : 0000000000000000
-[  222.520961] x0 : 0000000000000028
-[  222.524361] Call trace:
-[  222.526805] Exception stack(0xffff00000a0a3b40 to 0xffff00000a0a3c80)
-[  222.533245] 3b40: 0000000000000028 0000000000000000 c790b852091e2600 0000000000000000
-[  222.541075] 3b60: 0000000000000000 0000000000000000 0000000000000007 0000000000000000
-[  222.548905] 3b80: 07200772076f0774 0720072007200720 0720072007200720 0720072007200720
-[  222.556735] 3ba0: 0720072007200720 0720072007200720 0720072007200720 000000000d3f616a
-[  222.564564] 3bc0: 0000000000000000 0000000000000000 000000000000000a 0000000000000005
-[  222.572394] 3be0: ffff8006f9ac2000 ffff8006f9ac2068 ffff8006f925d490 0000000000000006
-[  222.580224] 3c00: 0000000000000018 0000000000000124 000000000000006a ffff0000086f1000
-[  222.588053] 3c20: ffff8006fa8c6200 ffff00000a0a3c80 ffff0000083bd89c ffff00000a0a3c80
-[  222.595883] 3c40: ffff0000083bd89c 0000000000000145 0000000000000000 0000000000000000
-[  222.603713] 3c60: 0000ffffffffffff ffff00000a0a3c30 ffff00000a0a3c80 ffff0000083bd89c
-[  222.611543] [<ffff0000083bd89c>] _regulator_disable+0x28/0x108
-[  222.617375] [<ffff0000083bd9c4>] regulator_disable+0x48/0x68
-[  222.623033] [<ffff0000083be8e4>] regulator_bulk_disable+0x58/0xc0
-[  222.629134] [<ffff0000007d831c>] pcm3168a_remove+0x30/0x50 [snd_soc_pcm3168a]
-[  222.636270] [<ffff0000007e5010>] pcm3168a_i2c_remove+0x10/0x1c [snd_soc_pcm3168a_i2c]
-[  222.644106] [<ffff0000084b9d9c>] i2c_device_remove+0x38/0x70
-[  222.649766] [<ffff00000843cd5c>] device_release_driver_internal+0xd0/0x1c0
-[  222.656640] [<ffff00000843ced8>] driver_detach+0x70/0x7c
-[  222.661951] [<ffff00000843bf68>] bus_remove_driver+0x74/0xa0
-[  222.667609] [<ffff00000843d7e4>] driver_unregister+0x48/0x4c
-[  222.673268] [<ffff0000084ba8dc>] i2c_del_driver+0x24/0x30
-[  222.678666] [<ffff0000007e5078>] pcm3168a_i2c_driver_exit+0x10/0xf98 [snd_soc_pcm3168a_i2c]
-[  222.687019] [<ffff00000811bd28>] SyS_delete_module+0x198/0x1d4
-[  222.692850] Exception stack(0xffff00000a0a3ec0 to 0xffff00000a0a4000)
-[  222.699289] 3ec0: 0000aaaafeb4b268 0000000000000800 14453f6470497100 0000fffffaa520d8
-[  222.707119] 3ee0: 0000fffffaa520d9 000000000000000a 1999999999999999 0000000000000000
-[  222.714948] 3f00: 000000000000006a 0000ffffa8f7d1d8 000000000000000a 0000000000000005
-[  222.722778] 3f20: 0000000000000000 0000000000000000 000000000000002d 0000000000000000
-[  222.730607] 3f40: 0000aaaae19b9f68 0000ffffa8f411f0 0000000000000000 0000aaaae19b9000
-[  222.738436] 3f60: 0000fffffaa533b8 0000fffffaa531f0 0000000000000000 0000000000000001
-[  222.746266] 3f80: 0000fffffaa53ec6 0000000000000000 0000aaaafeb4b200 0000aaaafeb4a010
-[  222.754096] 3fa0: 0000000000000000 0000fffffaa53130 0000aaaae199f36c 0000fffffaa53130
-[  222.761926] 3fc0: 0000ffffa8f411f8 0000000000000000 0000aaaafeb4b268 000000000000006a
-[  222.769755] 3fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-[  222.777589] [<ffff0000080832c0>] el0_svc_naked+0x34/0x38
-[  222.782899] ---[ end trace eaf8939a3698b1a8 ]---
-[  222.787609] Failed to disable VCCDA2: -5
-[  222.791649] ------------[ cut here ]------------
-[  222.796283] WARNING: CPU: 0 PID: 2423 at drivers/clk/clk.c:595 clk_core_disable+0xc/0x1d8
-[  222.804460] Modules linked in:
-[  222.807511]  snd_soc_pcm3168a_i2c(-)
-[  222.811083]  snd_aloop
-[  222.813439]  arc4
-[  222.815360]  wl18xx
-[  222.817456]  wlcore
-[  222.819551]  mac80211
-[  222.821820]  cfg80211
-[  222.824088]  aes_ce_blk
-[  222.826531]  crypto_simd
-[  222.829060]  cryptd
-[  222.831155]  aes_ce_cipher
-[  222.833859]  crc32_ce
-[  222.836127]  ghash_ce
-[  222.838396]  aes_arm64
-[  222.840752]  gf128mul
-[  222.843020]  snd_soc_rcar
-[  222.845637]  sha2_ce
-[  222.847818]  xhci_plat_hcd
-[  222.850522]  sha256_arm64
-[  222.853138]  xhci_hcd
-[  222.855407]  sha1_ce
-[  222.857589]  renesas_usbhs
-[  222.860292]  evdev
-[  222.862300]  sha1_generic
-[  222.864917]  rcar_gen3_thermal
-[  222.867968]  cpufreq_dt
-[  222.870410]  ravb_streaming(C)
-[  222.873461]  wlcore_sdio
-[  222.875991]  thermal_sys
-[  222.878520]  udc_core
-[  222.880789]  mch_core(C)
-[  222.883318]  usb_dmac
-[  222.885587]  snd_soc_pcm3168a
-[  222.888551]  snd_soc_ak4613
-[  222.891341]  gpio_keys
-[  222.893696]  virt_dma
-[  222.895965]  nfsd
-[  222.897886]  ipv6
-[  222.899808]  autofs4
-[  222.901990]  [last unloaded: snd_soc_pcm3168a_i2c]
-[  222.906783] CPU: 0 PID: 2423 Comm: rmmod Tainted: G        WC      4.14.63-04798-gd456126e4a42-dirty #457
-[  222.916349] Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
-[  222.924351] task: ffff8006fa8c6200 task.stack: ffff00000a0a0000
-[  222.930270] PC is at clk_core_disable+0xc/0x1d8
-[  222.934799] LR is at clk_core_disable_lock+0x20/0x34
-[  222.939761] pc : [<ffff0000083ab9b8>] lr : [<ffff0000083acd28>] pstate: 800001c5
-[  222.947154] sp : ffff00000a0a3cf0
-[  222.950466] x29: ffff00000a0a3cf0
-[  222.953864] x28: ffff8006fa8c6200
-[  222.957263] x27: ffff0000086f1000
-[  222.960661] x26: 000000000000006a
-[  222.964061] x25: 0000000000000124
-[  222.967458] x24: 0000000000000015
-[  222.970858] x23: ffff8006f9ffa8d0
-[  222.974256] x22: ffff8006faf16480
-[  222.977655] x21: ffff0000007e7040
-[  222.981053] x20: ffff8006faadd100
-[  222.984452] x19: 0000000000000140
-[  222.987850] x18: 000000000000000a
-[  222.991249] x17: 0000000000000000
-[  222.994647] x16: 0000000000000000
-[  222.998046] x15: 000000000d477819
-[  223.001444] x14: 0720072007200720
-[  223.004843] x13: 0720072007200720
-[  223.008242] x12: 0720072007200720
-[  223.011641] x11: 0720072007200720
-[  223.015039] x10: 0720072007200720
-[  223.018438] x9 : 0720072007200720
-[  223.021837] x8 : 0720072007200720
-[  223.025236] x7 : 0000000000000000
-[  223.028634] x6 : 0000000000000007
-[  223.032034] x5 : 0000000000000000
-[  223.035432] x4 : 0000000000000000
-[  223.038831] x3 : 0000000000000000
-[  223.042229] x2 : 0000000004720471
-[  223.045628] x1 : 0000000000000000
-[  223.049026] x0 : ffff8006faadd100
-[  223.052426] Call trace:
-[  223.054870] Exception stack(0xffff00000a0a3bb0 to 0xffff00000a0a3cf0)
-[  223.061309] 3ba0:                                   ffff8006faadd100 0000000000000000
-[  223.069139] 3bc0: 0000000004720471 0000000000000000 0000000000000000 0000000000000000
-[  223.076969] 3be0: 0000000000000007 0000000000000000 0720072007200720 0720072007200720
-[  223.084798] 3c00: 0720072007200720 0720072007200720 0720072007200720 0720072007200720
-[  223.092628] 3c20: 0720072007200720 000000000d477819 0000000000000000 0000000000000000
-[  223.100458] 3c40: 000000000000000a 0000000000000140 ffff8006faadd100 ffff0000007e7040
-[  223.108287] 3c60: ffff8006faf16480 ffff8006f9ffa8d0 0000000000000015 0000000000000124
-[  223.116117] 3c80: 000000000000006a ffff0000086f1000 ffff8006fa8c6200 ffff00000a0a3cf0
-[  223.123947] 3ca0: ffff0000083acd28 ffff00000a0a3cf0 ffff0000083ab9b8 00000000800001c5
-[  223.131777] 3cc0: ffff00000a0a3cf0 ffff0000083acd1c 0000ffffffffffff ffff8006faadd100
-[  223.139606] 3ce0: ffff00000a0a3cf0 ffff0000083ab9b8
-[  223.144483] [<ffff0000083ab9b8>] clk_core_disable+0xc/0x1d8
-[  223.150054] [<ffff0000083acd58>] clk_disable+0x1c/0x28
-[  223.155198] [<ffff0000007d8328>] pcm3168a_remove+0x3c/0x50 [snd_soc_pcm3168a]
-[  223.162334] [<ffff0000007e5010>] pcm3168a_i2c_remove+0x10/0x1c [snd_soc_pcm3168a_i2c]
-[  223.170167] [<ffff0000084b9d9c>] i2c_device_remove+0x38/0x70
-[  223.175826] [<ffff00000843cd5c>] device_release_driver_internal+0xd0/0x1c0
-[  223.182700] [<ffff00000843ced8>] driver_detach+0x70/0x7c
-[  223.188012] [<ffff00000843bf68>] bus_remove_driver+0x74/0xa0
-[  223.193669] [<ffff00000843d7e4>] driver_unregister+0x48/0x4c
-[  223.199329] [<ffff0000084ba8dc>] i2c_del_driver+0x24/0x30
-[  223.204726] [<ffff0000007e5078>] pcm3168a_i2c_driver_exit+0x10/0xf98 [snd_soc_pcm3168a_i2c]
-[  223.213079] [<ffff00000811bd28>] SyS_delete_module+0x198/0x1d4
-[  223.218909] Exception stack(0xffff00000a0a3ec0 to 0xffff00000a0a4000)
-[  223.225349] 3ec0: 0000aaaafeb4b268 0000000000000800 14453f6470497100 0000fffffaa520d8
-[  223.233179] 3ee0: 0000fffffaa520d9 000000000000000a 1999999999999999 0000000000000000
-[  223.241008] 3f00: 000000000000006a 0000ffffa8f7d1d8 000000000000000a 0000000000000005
-[  223.248838] 3f20: 0000000000000000 0000000000000000 000000000000002d 0000000000000000
-[  223.256668] 3f40: 0000aaaae19b9f68 0000ffffa8f411f0 0000000000000000 0000aaaae19b9000
-[  223.264497] 3f60: 0000fffffaa533b8 0000fffffaa531f0 0000000000000000 0000000000000001
-[  223.272327] 3f80: 0000fffffaa53ec6 0000000000000000 0000aaaafeb4b200 0000aaaafeb4a010
-[  223.280157] 3fa0: 0000000000000000 0000fffffaa53130 0000aaaae199f36c 0000fffffaa53130
-[  223.287986] 3fc0: 0000ffffa8f411f8 0000000000000000 0000aaaafeb4b268 000000000000006a
-[  223.295816] 3fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-[  223.303648] [<ffff0000080832c0>] el0_svc_naked+0x34/0x38
-[  223.308958] ---[ end trace eaf8939a3698b1a9 ]---
-[  223.313752] ------------[ cut here ]------------
-[  223.318383] WARNING: CPU: 0 PID: 2423 at drivers/clk/clk.c:477 clk_core_unprepare+0xc/0x1ac
-[  223.326733] Modules linked in:
-[  223.329784]  snd_soc_pcm3168a_i2c(-)
-[  223.333356]  snd_aloop
-[  223.335712]  arc4
-[  223.337633]  wl18xx
-[  223.339728]  wlcore
-[  223.341823]  mac80211
-[  223.344092]  cfg80211
-[  223.346360]  aes_ce_blk
-[  223.348803]  crypto_simd
-[  223.351332]  cryptd
-[  223.353428]  aes_ce_cipher
-[  223.356131]  crc32_ce
-[  223.358400]  ghash_ce
-[  223.360668]  aes_arm64
-[  223.363024]  gf128mul
-[  223.365293]  snd_soc_rcar
-[  223.367909]  sha2_ce
-[  223.370091]  xhci_plat_hcd
-[  223.372794]  sha256_arm64
-[  223.375410]  xhci_hcd
-[  223.377679]  sha1_ce
-[  223.379861]  renesas_usbhs
-[  223.382564]  evdev
-[  223.384572]  sha1_generic
-[  223.387188]  rcar_gen3_thermal
-[  223.390239]  cpufreq_dt
-[  223.392682]  ravb_streaming(C)
-[  223.395732]  wlcore_sdio
-[  223.398261]  thermal_sys
-[  223.400790]  udc_core
-[  223.403059]  mch_core(C)
-[  223.405588]  usb_dmac
-[  223.407856]  snd_soc_pcm3168a
-[  223.410820]  snd_soc_ak4613
-[  223.413609]  gpio_keys
-[  223.415965]  virt_dma
-[  223.418234]  nfsd
-[  223.420155]  ipv6
-[  223.422076]  autofs4
-[  223.424258]  [last unloaded: snd_soc_pcm3168a_i2c]
-[  223.429050] CPU: 0 PID: 2423 Comm: rmmod Tainted: G        WC      4.14.63-04798-gd456126e4a42-dirty #457
-[  223.438616] Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
-[  223.446618] task: ffff8006fa8c6200 task.stack: ffff00000a0a0000
-[  223.452536] PC is at clk_core_unprepare+0xc/0x1ac
-[  223.457239] LR is at clk_unprepare+0x28/0x3c
-[  223.461506] pc : [<ffff0000083ab5a4>] lr : [<ffff0000083ace4c>] pstate: 60000145
-[  223.468900] sp : ffff00000a0a3d00
-[  223.472211] x29: ffff00000a0a3d00
-[  223.475609] x28: ffff8006fa8c6200
-[  223.479009] x27: ffff0000086f1000
-[  223.482407] x26: 000000000000006a
-[  223.485807] x25: 0000000000000124
-[  223.489205] x24: 0000000000000015
-[  223.492604] x23: ffff8006f9ffa8d0
-[  223.496003] x22: ffff8006faf16480
-[  223.499402] x21: ffff0000007e7040
-[  223.502800] x20: ffff8006faf16420
-[  223.506199] x19: ffff8006faadd100
-[  223.509597] x18: 000000000000000a
-[  223.512997] x17: 0000000000000000
-[  223.516395] x16: 0000000000000000
-[  223.519794] x15: 0000000000000000
-[  223.523192] x14: 00000033fe89076c
-[  223.526591] x13: 0000000000000400
-[  223.529989] x12: 0000000000000400
-[  223.533388] x11: 0000000000000000
-[  223.536786] x10: 00000000000009e0
-[  223.540185] x9 : ffff00000a0a3be0
-[  223.543583] x8 : ffff8006fa8c6c40
-[  223.546982] x7 : ffff8006fa8c6400
-[  223.550380] x6 : 0000000000000001
-[  223.553780] x5 : 0000000000000000
-[  223.557178] x4 : ffff8006fa8c6200
-[  223.560577] x3 : 0000000000000000
-[  223.563975] x2 : ffff8006fa8c6200
-[  223.567374] x1 : 0000000000000000
-[  223.570772] x0 : ffff8006faadd100
-[  223.574170] Call trace:
-[  223.576615] Exception stack(0xffff00000a0a3bc0 to 0xffff00000a0a3d00)
-[  223.583054] 3bc0: ffff8006faadd100 0000000000000000 ffff8006fa8c6200 0000000000000000
-[  223.590884] 3be0: ffff8006fa8c6200 0000000000000000 0000000000000001 ffff8006fa8c6400
-[  223.598714] 3c00: ffff8006fa8c6c40 ffff00000a0a3be0 00000000000009e0 0000000000000000
-[  223.606544] 3c20: 0000000000000400 0000000000000400 00000033fe89076c 0000000000000000
-[  223.614374] 3c40: 0000000000000000 0000000000000000 000000000000000a ffff8006faadd100
-[  223.622204] 3c60: ffff8006faf16420 ffff0000007e7040 ffff8006faf16480 ffff8006f9ffa8d0
-[  223.630033] 3c80: 0000000000000015 0000000000000124 000000000000006a ffff0000086f1000
-[  223.637863] 3ca0: ffff8006fa8c6200 ffff00000a0a3d00 ffff0000083ace4c ffff00000a0a3d00
-[  223.645693] 3cc0: ffff0000083ab5a4 0000000060000145 0000000000000140 ffff8006faadd100
-[  223.653523] 3ce0: 0000ffffffffffff ffff0000083ace44 ffff00000a0a3d00 ffff0000083ab5a4
-[  223.661353] [<ffff0000083ab5a4>] clk_core_unprepare+0xc/0x1ac
-[  223.667103] [<ffff0000007d8330>] pcm3168a_remove+0x44/0x50 [snd_soc_pcm3168a]
-[  223.674239] [<ffff0000007e5010>] pcm3168a_i2c_remove+0x10/0x1c [snd_soc_pcm3168a_i2c]
-[  223.682070] [<ffff0000084b9d9c>] i2c_device_remove+0x38/0x70
-[  223.687731] [<ffff00000843cd5c>] device_release_driver_internal+0xd0/0x1c0
-[  223.694604] [<ffff00000843ced8>] driver_detach+0x70/0x7c
-[  223.699915] [<ffff00000843bf68>] bus_remove_driver+0x74/0xa0
-[  223.705572] [<ffff00000843d7e4>] driver_unregister+0x48/0x4c
-[  223.711230] [<ffff0000084ba8dc>] i2c_del_driver+0x24/0x30
-[  223.716628] [<ffff0000007e5078>] pcm3168a_i2c_driver_exit+0x10/0xf98 [snd_soc_pcm3168a_i2c]
-[  223.724980] [<ffff00000811bd28>] SyS_delete_module+0x198/0x1d4
-[  223.730811] Exception stack(0xffff00000a0a3ec0 to 0xffff00000a0a4000)
-[  223.737250] 3ec0: 0000aaaafeb4b268 0000000000000800 14453f6470497100 0000fffffaa520d8
-[  223.745079] 3ee0: 0000fffffaa520d9 000000000000000a 1999999999999999 0000000000000000
-[  223.752909] 3f00: 000000000000006a 0000ffffa8f7d1d8 000000000000000a 0000000000000005
-[  223.760739] 3f20: 0000000000000000 0000000000000000 000000000000002d 0000000000000000
-[  223.768568] 3f40: 0000aaaae19b9f68 0000ffffa8f411f0 0000000000000000 0000aaaae19b9000
-[  223.776398] 3f60: 0000fffffaa533b8 0000fffffaa531f0 0000000000000000 0000000000000001
-[  223.784227] 3f80: 0000fffffaa53ec6 0000000000000000 0000aaaafeb4b200 0000aaaafeb4a010
-[  223.792057] 3fa0: 0000000000000000 0000fffffaa53130 0000aaaae199f36c 0000fffffaa53130
-[  223.799886] 3fc0: 0000ffffa8f411f8 0000000000000000 0000aaaafeb4b268 000000000000006a
-[  223.807715] 3fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-[  223.815546] [<ffff0000080832c0>] el0_svc_naked+0x34/0x38
-[  223.820855] ---[ end trace eaf8939a3698b1aa ]---
+However, unlike ptrace_get_syscall(), PTRACE_LISTEN needs spin_lock_irq(siglock),
+it modifies ->jobctl and calls signal_wake_up().
 
-Fix this issue by only disable clock and regulators in remove callback
-when CONFIG_PM isn't defined
+> > Of course, debugger can do PTRACE_SETSIGINFO and confuse itself but probably we
+> > do not care?
+>
+> The only potential issue I could think of is whether PTRACE_SETSIGINFO
+> could be used this way to cause an information leak by making
+> PTRACE_GET_SYSCALL_INFO access some unrelated data.
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- sound/soc/codecs/pcm3168a.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+Well, afaics ptrace_get_syscall() does nothing "special", debugger can use other
+PTRACE_ requests to get the same info?
 
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index 115f21658222..08d3fe192e65 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -758,15 +758,22 @@ int pcm3168a_probe(struct device *dev, struct regmap *regmap)
- }
- EXPORT_SYMBOL_GPL(pcm3168a_probe);
- 
--void pcm3168a_remove(struct device *dev)
-+static void pcm3168a_disable(struct device *dev)
- {
- 	struct pcm3168a_priv *pcm3168a = dev_get_drvdata(dev);
- 
--	pm_runtime_disable(dev);
- 	regulator_bulk_disable(ARRAY_SIZE(pcm3168a->supplies),
--				pcm3168a->supplies);
-+			       pcm3168a->supplies);
- 	clk_disable_unprepare(pcm3168a->scki);
- }
-+
-+void pcm3168a_remove(struct device *dev)
-+{
-+	pm_runtime_disable(dev);
-+#ifndef CONFIG_PM
-+	pcm3168a_disable(dev);
-+#endif
-+}
- EXPORT_SYMBOL_GPL(pcm3168a_remove);
- 
- #ifdef CONFIG_PM
-@@ -821,10 +828,7 @@ static int pcm3168a_rt_suspend(struct device *dev)
- 
- 	regcache_cache_only(pcm3168a->regmap, true);
- 
--	regulator_bulk_disable(ARRAY_SIZE(pcm3168a->supplies),
--			       pcm3168a->supplies);
--
--	clk_disable_unprepare(pcm3168a->scki);
-+	pcm3168a_disable(dev);
- 
- 	return 0;
- }
--- 
-2.17.0
+Oleg.
 
