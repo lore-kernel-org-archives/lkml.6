@@ -2,121 +2,118 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C92EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74EF2C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5BDF2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 398C520832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/h+if3q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BDF2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqbADwpP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398C520832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeK2ITq (ORCPT
+        id S1726399AbeK2IXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:19:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 03:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726188AbeK2ITp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:19:45 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726188AbeK2IXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 03:23:00 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116D12133F;
-        Wed, 28 Nov 2018 21:16:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15B3D2081B;
+        Wed, 28 Nov 2018 21:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543439806;
-        bh=eToAFo4MzrP94ConyJkWrG02WSbR735hlb6Wlk7Jq3c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J/h+if3qpvhT6dcleEF1JzFNBfpx8jYf1F1XWHwDFFkx/pDnaP5Hw2AJaeNmIHLeT
-         oz+6geOBMUN96SOgeIOF4uOQNPBG2ZalhyHJ913abCDj4vWiLde3ZoUD04YoSazIGK
-         GhKNglxG/b09vgIovxQLSVhn4CQAegi3LYQd2Lgw=
-Received: by mail-qk1-f182.google.com with SMTP id y78so6972467qka.12;
-        Wed, 28 Nov 2018 13:16:46 -0800 (PST)
-X-Gm-Message-State: AA+aEWZWmaMHxlAO0rrwSV1ti2j4EwF34XUpnxY7YeokV2S1XAQK3JyC
-        arU3nn1iqGONIrrC6rQlPiBst9UfQRE8CCLbng==
-X-Google-Smtp-Source: AFSGD/WdKPVi4YAcajAYtg7gGkf/z1T9haNO5LYX3vdPsFhlVy0Nm3KrTI3KsKRTBUGZ4yWf5psnFa+T4+mEPSMmTkg=
-X-Received: by 2002:ae9:edd8:: with SMTP id c207mr34364085qkg.184.1543439805217;
- Wed, 28 Nov 2018 13:16:45 -0800 (PST)
+        s=default; t=1543440001;
+        bh=Au0ai4isniIf5LJsBVixFVvOARWAsmlxT498yS1vRd4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gqbADwpPqICXEn59VIxTzaIH8LJlKno/OvyFtj/ivrkDQfyYEsdNBnA2HzULPDFSP
+         pFs8jpjuispc88Sl8B9WjYWH88bTpFuSp00jJLwjJzTXmZpfc70i0In1ok/309dabb
+         p70SnfiFZfHgASn9qCMNo3F1zbje9jxG3k0domy4=
+Date:   Wed, 28 Nov 2018 15:19:59 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     bjorn@helgaas.com
+Cc:     linux-pci@vger.kernel.org, Mertarg10@gmail.com,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Fwd: [Bug 201647] New: Intel Wireless card 3165 does not get
+ detected but bluetooth works
+Message-ID: <20181128211959.GB178809@google.com>
+References: <bug-201647-193951@https.bugzilla.kernel.org/>
+ <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com> <20181128193636.254378-17-brendanhiggins@google.com>
-In-Reply-To: <20181128193636.254378-17-brendanhiggins@google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 28 Nov 2018 15:16:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK5cG=QzMBFSZ31_-3ujnxqxv=jj3XYajbRLT7yWYZbfw@mail.gmail.com>
-Message-ID: <CAL_JsqK5cG=QzMBFSZ31_-3ujnxqxv=jj3XYajbRLT7yWYZbfw@mail.gmail.com>
-Subject: Re: [RFC v3 16/19] arch: um: make UML unflatten device tree when testing
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Frank Rowand <frowand.list@gmail.com>, knut.omang@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABhMZUXc4FS-f52ZDsErEhbkm_jjEz+kn75YO5Tuvp42Qm+1xw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 1:38 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> Make UML unflatten any present device trees when running KUnit tests.
->
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
->  arch/um/kernel/um_arch.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
-> index a818ccef30ca2..bd58ae3bf4148 100644
-> --- a/arch/um/kernel/um_arch.c
-> +++ b/arch/um/kernel/um_arch.c
-> @@ -13,6 +13,7 @@
->  #include <linux/sched.h>
->  #include <linux/sched/task.h>
->  #include <linux/kmsg_dump.h>
-> +#include <linux/of_fdt.h>
->
->  #include <asm/pgtable.h>
->  #include <asm/processor.h>
-> @@ -347,6 +348,9 @@ void __init setup_arch(char **cmdline_p)
->         read_initrd();
->
->         paging_init();
-> +#if IS_ENABLED(CONFIG_OF_UNITTEST)
-> +       unflatten_device_tree();
-> +#endif
+[+cc Emmanuel, LKML]
 
-Kind of strange to have this in the arch code. I'd rather have this in
-the unittest code if possible. Can we have an initcall conditional on
-CONFIG_UM in the unittest do this? Side note, use a C if with
-IS_ENABLED() whenever possible instead of pre-processor #if.
+On Fri, Nov 09, 2018 at 03:43:06PM -0600, Bjorn Helgaas wrote:
+> ---------- Forwarded message ---------
+> From: <bugzilla-daemon@bugzilla.kernel.org>
+> Date: Fri, Nov 9, 2018 at 4:10 AM
+> Subject: [Bug 201647] New: Intel Wireless card 3165 does not get
+> detected but bluetooth works
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=201647
+> 
+>             Bug ID: 201647
+>            Summary: Intel Wireless card 3165 does not get detected but
+>                     bluetooth works
+>            Product: Drivers
+>            Version: 2.5
+>     Kernel Version: 4.19.1
+>           Hardware: Intel
+>                 OS: Linux
+>               Tree: Mainline
+>             Status: NEW
+>           Severity: high
+>           Priority: P1
+>          Component: PCI
+>           Assignee: drivers_pci@kernel-bugs.osdl.org
+>           Reporter: Mertarg10@gmail.com
+>         Regression: No
+> 
+> This bug affects most of the devices with a Celeron N4000 and an
+> Intel wifi 3165 Ac adapter.
+> 
+> When using Linux wifi is not working however, Bluetooth is working
+> fine.  Also, Bluetooth part of this chip is connected via btusb and
+> the wifi part of this chip is connected via PCIe.
 
-I'll take a fix separately as it was on my todo to fix. I've got the
-unit tests running in a gitlab CI job now[1].
+Can you attach a screenshot of the Windows 10 device manager info for
+the wifi adapter to the bugzilla?  If you can get a raw hex dump of
+its config space, that would be awesome.
 
-Rob
+Also attach a copy of your kernel .config file (typically in /boot/).
 
-[1] https://gitlab.com/robherring/linux-dt-unittest/pipelines
+My only guess is that maybe the system keeps wifi completely powered
+down and uses hotplug to add it when needed.  [1] mentions wifi being
+on pcibus 1 under Windows.  Your lspci does show bridge 00:13.0
+leading to bus 01, but Linux doesn't find any devices on bus 01.
+
+Hotplug could be done via either acpiphp (ACPI mediated hotplug) or
+pciehp (native PCIe hotplug).  Your dmesg shows you do have acpiphp.
+
+I can't tell about pciehp (your .config will show that), but I think
+pciehp will only claim bridges where SltCap contains HotPlug+, and
+yours shows HotPlug-, so I don't think pciehp will do anything on your
+system.
+
+Even if the system does use hotplug, I don't know what mechanism the
+OS would use to wake up the device, since we don't know it even
+exists.  I guess there could be some magic switch accessible via USB.
+But if that were the case, I'm sure Emmanuel would know about it.
+
+[1] https://www.chinamobilemag.de/forum/hardware/3779-teclast-f5-linux-erkennt-kein-wlan-intel-3165-in-ubuntu-18-04-1.html?start=10
