@@ -2,254 +2,149 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B9FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1167CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA11208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:05:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTizoemQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA11208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D2DBF21019
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2DBF21019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbeK1XHI (ORCPT
+        id S1727970AbeK1XIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:07:08 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33072 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeK1XHH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:07:07 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so25532053qtp.0;
-        Wed, 28 Nov 2018 04:05:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g38JUkNzrd/JzSzD8dypVUhgCQxyR8XnmT5NEVXrEi0=;
-        b=JTizoemQ52kgaxBgeMZvPHFqTpRaKH6f0zJagf78eR6jVWUe8HjOK872qVAOCgUa/8
-         MHvh349NSk7RHADie6nGsmMJLzxNLh8YiUtzmxU/jBLrIoNn4VuSccgfGVp/OhvoJfKH
-         uFRGQdHbZc3qwFMNuJn38mZonTSwGtrARnL5qGQyLnLzolcnVl8Xr9GasX3GZQpu/CGH
-         ymUGP/xfOlkfqBZAOAoy5r07dKk1/0WgHAlhTvJxaq1d63Peya7T+vO8oUd3IRxQ/JRF
-         SgGh8SOxsfZvFrIojeHuzHf5hbw7nvTd0+8ezXWveKzVFUgXOpwO+sNSXrdCnG9uKMD9
-         S3Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g38JUkNzrd/JzSzD8dypVUhgCQxyR8XnmT5NEVXrEi0=;
-        b=e8UG/ykHmYnPx0EwR2a3um2UqLTBRXJx1+tHRPXnH+xeExgoX2IBK74c7UVKft28wT
-         TzuRrwj/+gKKZ1AjREVumJDTiEwG0w3nmacAQJAyMwPC5lGsfbf9CBVcEsVQYWwNFavd
-         fziDEfKaa7iu5/XeMOrIJOwczdJCrfX5htVmZOg+LFQjp9zACAQfvgseaF4eLOhAPKM9
-         Ez2u7r2zuNkQytCo3YCg0cVWgTVdFOZlIM/8+5i4W3rpc/ZRF0mjv91YtRhh00C06FQr
-         vWCZqvQORgcIlLiiXv1giJAw+HQez4eanar7rMlP8jdAzeHONH+xmjjd+mtk+3pn5F/l
-         jFOA==
-X-Gm-Message-State: AGRZ1gLfebQ3Fh6KzrE7CafUf/B2RkIxuMmqoRnPDe/dflO5sYo59jfd
-        IGtFxyB9cKzCFmsGCnYWXnCEdf2VbF7ZZP7t+6o=
-X-Google-Smtp-Source: AJdET5cN0NjYOd8x9DKe/TySpB+AeHhJlnsaGTjLg6w+z88NPovp/1eZTalL3tRE2rAeBZgLY2aBiw4lRakSzFmbves=
-X-Received: by 2002:aed:2d26:: with SMTP id h35mr35221396qtd.373.1543406740493;
- Wed, 28 Nov 2018 04:05:40 -0800 (PST)
+        Wed, 28 Nov 2018 18:08:52 -0500
+Received: from mga05.intel.com ([192.55.52.43]:29063 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727673AbeK1XIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:08:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 04:07:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
+   d="scan'208";a="116504574"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 28 Nov 2018 04:07:22 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 28 Nov 2018 14:07:21 +0200
+Date:   Wed, 28 Nov 2018 14:07:21 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 14/15] ACPI / scan: Create platform device for INT3515
+ ACPI nodes
+Message-ID: <20181128120721.GB32679@kuha.fi.intel.com>
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+ <20181128114535.80223-15-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20181127132508.5501-1-fe@dev.tdt.de> <20181127132508.5501-3-fe@dev.tdt.de>
-In-Reply-To: <20181127132508.5501-3-fe@dev.tdt.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 28 Nov 2018 14:05:29 +0200
-Message-ID: <CAHp75Vctp4M-RacCzbv1CvWezkKnzMgwXH6pS8iwFw1iFqOGwQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] platform: Add reset button device for PC Engines
- APU boards
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Eckert.Florian@googlemail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128114535.80223-15-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 3:25 PM Florian Eckert <fe@dev.tdt.de> wrote:
->
-> Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
-> This device uses the gpio-apu driver for APU borads from PC Engines.
+On Wed, Nov 28, 2018 at 01:45:34PM +0200, Andy Shevchenko wrote:
+> The ACPI device with INT3515 _HID is representing a complex USB PD
+> hardware infrastructure which includes several I2C slave ICs.
+> 
+> We add an ID to the I2C multi instantiate list to enumerate
+> all I2C slaves correctly.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Yep, and actually this one has to instantiate a GPIO.
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
->
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 > ---
->  drivers/platform/x86/Kconfig                  |  11 +++
->  drivers/platform/x86/Makefile                 |   1 +
->  drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
->  3 files changed, 126 insertions(+)
->  create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 54f6a40c75c6..5cd27c2174cb 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
->           To compile this driver as a module, choose M here: the module
->           will be called intel_atomisp2_pm.
->
-> +config PCENGINES_APU_PLATFORM
-> +       bool "PCEngines APU System Support"
-> +       depends on X86_64 && DMI && GPIOLIB
-> +       help
-> +         This option enables system support for the PCEngines APU platform.
-> +         At present this just adds the GPIO reset button platform device on
-> +         APU2/APU3 boards.
-> +
-> +         Note: You must still enable the drivers for GPIO and LED support
-> +         (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
-> +
->  endif # X86_PLATFORM_DEVICES
->
->  config PMC_ATOM
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 39ae94135406..f899cc4c6b48 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
->  obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)    += intel_chtdc_ti_pwrbtn.o
->  obj-$(CONFIG_I2C_MULTI_INSTANTIATE)    += i2c-multi-instantiate.o
->  obj-$(CONFIG_INTEL_ATOMISP2_PM)        += intel_atomisp2_pm.o
-> +obj-$(CONFIG_PCENGINES_APU_PLATFORM)   += pcengines-apu-platform.o
-> diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
-> new file mode 100644
-> index 000000000000..3bfbaa93cb11
-> --- /dev/null
-> +++ b/drivers/platform/x86/pcengines-apu-platform.c
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * System Specific setup for PC-Engines APU2/APU3 devices
-> + *
-> + * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-> + */
-> +
-> +#include <linux/dmi.h>
-> +#include <linux/gpio_keys.h>
-> +#include <linux/input.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
-> +       /* PC Engines APU2 with "Legacy" bios < 4.0.8 */
-> +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "APU2")
-> +               }
-> +       },
-> +       /* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-> +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "apu2")
-> +               }
-> +       },
-> +       /* PC Engines APU2 with "Mainline" bios */
-> +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-> +               }
-> +       },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
-> +
-> +static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
-> +       /* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "APU3")
-> +               }
-> +       },
-> +       /* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "apu3")
-> +               }
-> +       },
-> +       /* PC Engines APU3 with "Mainline" bios */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-> +               }
-> +       },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
-> +
-> +
-> +static struct gpio_keys_button apu_gpio_buttons[] = {
-> +       {
-> +               .code                   = KEY_RESTART,
-> +               .gpio                   = 20,
-> +               .active_low             = 1,
-> +               .desc                   = "Reset button",
-> +               .type                   = EV_KEY,
-> +               .debounce_interval      = 60,
-> +       }
+>  drivers/acpi/scan.c                          | 1 +
+>  drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++++
+>  drivers/usb/typec/tps6598x.c                 | 8 ++++----
+>  3 files changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index bd1c59fb0e17..e9eda5558c1f 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1541,6 +1541,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+>  	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
+>  		{"BSG1160", },
+>  		{"INT33FE", },
+> +		{"INT3515", },
+>  		{}
+>  	};
+>  
+> diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
+> index 2439d4c71118..3d893e0ac250 100644
+> --- a/drivers/platform/x86/i2c-multi-instantiate.c
+> +++ b/drivers/platform/x86/i2c-multi-instantiate.c
+> @@ -159,12 +159,21 @@ static const struct i2c_inst_data bsg1160_data[]  = {
+>  	{}
+>  };
+>  
+> +static const struct i2c_inst_data int3515_data[]  = {
+> +	{ "tps6598x", IRQ_RESOURCE_APIC, 0 },
+> +	{ "tps6598x", IRQ_RESOURCE_APIC, 1 },
+> +	{ "tps6598x", IRQ_RESOURCE_APIC, 2 },
+> +	{ "tps6598x", IRQ_RESOURCE_APIC, 3 },
+> +	{}
 > +};
 > +
-> +static struct gpio_keys_platform_data apu_buttons_data = {
-> +       .buttons                = apu_gpio_buttons,
-> +       .nbuttons               = ARRAY_SIZE(apu_gpio_buttons),
-> +       .poll_interval          = 20,
-> +};
-> +
-> +static struct platform_device apu_button_dev = {
-> +       .name                   = "gpio-keys-polled",
-> +       .id                     = 1,
-> +       .dev = {
-> +               .platform_data          = &apu_buttons_data,
-> +       }
-> +};
-> +
-> +static int __init apu_init(void)
-> +{
-> +       if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
-> +               !(dmi_check_system(apu3_gpio_dmi_table))) {
-> +               return -ENODEV;
-> +       }
-> +
-> +       return platform_device_register(&apu_button_dev);
-> +}
-> +
-> +static void __exit apu_exit(void)
-> +{
-> +       platform_device_unregister(&apu_button_dev);
-> +}
-> +
-> +module_init(apu_init);
-> +module_exit(apu_exit);
-> --
-> 2.11.0
->
-
+>  /*
+>   * Note new device-ids must also be added to i2c_multi_instantiate_ids in
+>   * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+>   */
+>  static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
+>  	{ "BSG1160", (unsigned long)bsg1160_data },
+> +	{ "INT3515", (unsigned long)int3515_data },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(acpi, i2c_multi_inst_acpi_ids);
+> diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+> index c84c8c189e90..1c0033ad8738 100644
+> --- a/drivers/usb/typec/tps6598x.c
+> +++ b/drivers/usb/typec/tps6598x.c
+> @@ -501,19 +501,19 @@ static int tps6598x_remove(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> -static const struct acpi_device_id tps6598x_acpi_match[] = {
+> -	{ "INT3515", 0 },
+> +static const struct i2c_device_id tps6598x_id[] = {
+> +	{ "tps6598x" },
+>  	{ }
+>  };
+> -MODULE_DEVICE_TABLE(acpi, tps6598x_acpi_match);
+> +MODULE_DEVICE_TABLE(i2c, tps6598x_id);
+>  
+>  static struct i2c_driver tps6598x_i2c_driver = {
+>  	.driver = {
+>  		.name = "tps6598x",
+> -		.acpi_match_table = tps6598x_acpi_match,
+>  	},
+>  	.probe_new = tps6598x_probe,
+>  	.remove = tps6598x_remove,
+> +	.id_table = tps6598x_id,
+>  };
+>  module_i2c_driver(tps6598x_i2c_driver);
+>  
+> -- 
+> 2.19.2
 
 -- 
-With Best Regards,
-Andy Shevchenko
+heikki
