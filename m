@@ -2,175 +2,279 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950F9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07555C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DBD320832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78FAB2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FaJ0UkVl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBD320832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fe5cPxYg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FAB2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbeK1Uz3 (ORCPT
+        id S1728164AbeK1U4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:55:29 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34254 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbeK1Uz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:55:29 -0500
-Received: by mail-io1-f67.google.com with SMTP id f6so19480693iob.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:54:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=asPHqtM9SwAdm0TIABcF60TM7XmwfRX+ZOZAFXz/aiI=;
-        b=FaJ0UkVlA65ZwMkt+n+MqC8qSgHEySQWX5K5FIjZRGD6hP7at4F/IWvdlovAmufy74
-         YxcHeFefK8wKsspDAFs1FXzHoCMa7lvkY/jAAp3AFqVzSNFTzzQ9wwv8C5sOXdXUVl2x
-         kdE6R14TKevMsNkGPcNwp5Z5k1DzHh844TZ7g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=asPHqtM9SwAdm0TIABcF60TM7XmwfRX+ZOZAFXz/aiI=;
-        b=eWEssj0mP5CMdS6znrkFhNcfaVal0Nq+2n/a1VV7Iu9cZ0qBRwplJkT2RBGIDATC6v
-         43yRireglnRXN9qkKJkubc45sMmd/r3q+s0N6yBEdU7Ugrt7baZvzT1LNMDnt3uqZf6U
-         +1NNIW33m1rWpmLOT6Cdd8jTuVVsPP6Wv1okRv08zwOrLzD8jRGG7KLNpxt2HqkHKxY4
-         azvbv+RGVZU8hoX+Pzxg5WYX/3YpscQadldjtuWYyM39qtsubFwVcJokqXce6oDYg0y4
-         WFm8xmHO/ybQDWVEfI9mqDL5JKJvMGe3qHI5wNIemaYtCc0PkBP+3PZKn9QWmbnf79XI
-         pMjg==
-X-Gm-Message-State: AA+aEWa4/grASR1B4RCZhwVOHsluzv9ZXO5zngJl1r9hWeqXHcgac+an
-        q/Et/t9cHgpjUrX0Db6uU4Xn6Vtk3/GoNylvzRyIjUu3
-X-Google-Smtp-Source: AFSGD/W9+Iy2vLB92BbXvMSI79/a+C9+o2gCa8AHHCPkeVMwu8KBTXdgdKeRC7lIvuwJHLdIyBuuuaLZzWe08B1ogKU=
-X-Received: by 2002:a6b:fe13:: with SMTP id x19mr26646740ioh.294.1543398864335;
- Wed, 28 Nov 2018 01:54:24 -0800 (PST)
+        Wed, 28 Nov 2018 15:56:19 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:22316 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727662AbeK1U4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:56:19 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 4067F427F4;
+        Wed, 28 Nov 2018 10:55:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-type:content-type:in-reply-to:mime-version:date:date
+        :message-id:from:from:references:subject:subject:received; s=
+        mail20150812; t=1543398909; bh=i1wmpEFbY+K6ZBz5WtStbgvISdIFiB6mn
+        h9iJHBqXu0=; b=fe5cPxYgnagdSxgZzia/xlTCDPB32RV3yXGvDyW7Geyo+YXtV
+        Kj0YR0LSsYAQYvEfYOX0KPAe6IrWSxu3Nv4f1gPwMxT5LcG6dAf7JmU60YshtQMt
+        4KomFVRWH1IIelIzTG6Gt7T7mZsT00cfoTlxuhHjPvYlmmvA3JRZyAqORFarGBHi
+        M6Mj/KqUufoFkrhfte8pF+swSiVG+p6uje6jF/Bw07MAc02w4a2sMNw3o7+J+4fc
+        5ASG6inXrRqR7T4jA7T3wmqTAT8pQQHW3r+RkB6aqvhJ6vDz2/ZiQpOCt11xwYVf
+        NuxkPm/2GprVErBy8PPSvI8p7Rxei5dVL1bEA==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id JOPuqnXW43mz; Wed, 28 Nov 2018 10:55:09 +0100 (CET)
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, grendel@twistedcode.net,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+ <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+ <2157925.3ZPi3Rj3bs@siriux> <20181127212255.GA2987@roeck-us.net>
+From:   Rainer Fiebig <jrf@mailbox.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jrf@mailbox.org; prefer-encrypt=mutual; keydata=
+ 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
+ 6/dT7HxuwnVIkER8kg==
+Message-ID: <ff046ad7-5a57-c53c-2803-55f6604732b0@mailbox.org>
+Date:   Wed, 28 Nov 2018 10:56:50 +0100
 MIME-Version: 1.0
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org> <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 28 Nov 2018 10:54:13 +0100
-Message-ID: <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127212255.GA2987@roeck-us.net>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="mFeNj4Q8ttMRQBmq2sOG9ojwA7yHwpEWm"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--mFeNj4Q8ttMRQBmq2sOG9ojwA7yHwpEWm
+Content-Type: multipart/mixed; boundary="SbQYsgVsPm5IkRJPb5ZHjeHBV5vK3dpP1";
+ protected-headers="v1"
+From: Rainer Fiebig <jrf@mailbox.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, grendel@twistedcode.net,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-ext4@vger.kernel.org
+Message-ID: <ff046ad7-5a57-c53c-2803-55f6604732b0@mailbox.org>
+Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
+References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
+ <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net>
+ <5d94f857-b31d-a02c-5a20-2796076f447e@twistedcode.net>
+ <2157925.3ZPi3Rj3bs@siriux> <20181127212255.GA2987@roeck-us.net>
+In-Reply-To: <20181127212255.GA2987@roeck-us.net>
 
-On Tue, 20 Nov 2018 at 11:55, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> The current implementation of load tracking invariance scales the
-> contribution with current frequency and uarch performance (only for
-> utilization) of the CPU. One main result of this formula is that the
-> figures are capped by current capacity of CPU. Another one is that the
-> load_avg is not invariant because not scaled with uarch.
->
-> The util_avg of a periodic task that runs r time slots every p time slots
-> varies in the range :
->
->     U * (1-y^r)/(1-y^p) * y^i < Utilization < U * (1-y^r)/(1-y^p)
->
-> with U is the max util_avg value = SCHED_CAPACITY_SCALE
->
-> At a lower capacity, the range becomes:
->
->     U * C * (1-y^r')/(1-y^p) * y^i' < Utilization <  U * C * (1-y^r')/(1-y^p)
->
-> with C reflecting the compute capacity ratio between current capacity and
-> max capacity.
->
-> so C tries to compensate changes in (1-y^r') but it can't be accurate.
->
-> Instead of scaling the contribution value of PELT algo, we should scale the
-> running time. The PELT signal aims to track the amount of computation of
-> tasks and/or rq so it seems more correct to scale the running time to
-> reflect the effective amount of computation done since the last update.
->
-> In order to be fully invariant, we need to apply the same amount of
-> running time and idle time whatever the current capacity. Because running
-> at lower capacity implies that the task will run longer, we have to ensure
-> that the same amount of idle time will be applied when system becomes idle
-> and no idle time has been "stolen". But reaching the maximum utilization
-> value (SCHED_CAPACITY_SCALE) means that the task is seen as an
-> always-running task whatever the capacity of the CPU (even at max compute
-> capacity). In this case, we can discard this "stolen" idle times which
-> becomes meaningless.
->
-> In order to achieve this time scaling, a new clock_pelt is created per rq.
-> The increase of this clock scales with current capacity when something
-> is running on rq and synchronizes with clock_task when rq is idle. With
-> this mechanism, we ensure the same running and idle time whatever the
-> current capacity. This also enables to simplify the pelt algorithm by
-> removing all references of uarch and frequency and applying the same
-> contribution to utilization and loads. Furthermore, the scaling is done
-> only once per update of clock (update_rq_clock_task()) instead of during
-> each update of sched_entities and cfs/rt/dl_rq of the rq like the current
-> implementation. This is interesting when cgroup are involved as shown in
-> the results below:
->
-> On a hikey (octo Arm64 platform).
-> Performance cpufreq governor and only shallowest c-state to remove variance
-> generated by those power features so we only track the impact of pelt algo.
->
-> each test runs 16 times
->
-> ./perf bench sched pipe
-> (higher is better)
-> kernel  tip/sched/core     + patch
->         ops/seconds        ops/seconds         diff
-> cgroup
-> root    59652(+/- 0.18%)   59876(+/- 0.24%)    +0.38%
-> level1  55608(+/- 0.27%)   55923(+/- 0.24%)    +0.57%
-> level2  52115(+/- 0.29%)   52564(+/- 0.22%)    +0.86%
->
-> hackbench -l 1000
-> (lower is better)
-> kernel  tip/sched/core     + patch
->         duration(sec)      duration(sec)        diff
-> cgroup
-> root    4.453(+/- 2.37%)   4.383(+/- 2.88%)     -1.57%
-> level1  4.859(+/- 8.50%)   4.830(+/- 7.07%)     -0.60%
-> level2  5.063(+/- 9.83%)   4.928(+/- 9.66%)     -2.66%
->
-> Then, the responsiveness of PELT is improved when CPU is not running at max
-> capacity with this new algorithm. I have put below some examples of
-> duration to reach some typical load values according to the capacity of the
-> CPU with current implementation and with this patch. These values has been
-> computed based on the geometric series and the half period value:
->
-> Util (%)     max capacity  half capacity(mainline)  half capacity(w/ patch)
-> 972 (95%)    138ms         not reachable            276ms
-> 486 (47.5%)  30ms          138ms                     60ms
-> 256 (25%)    13ms           32ms                     26ms
->
-> On my hikey (octo Arm64 platform) with schedutil governor, the time to
-> reach max OPP when starting from a null utilization, decreases from 223ms
-> with current scale invariance down to 121ms with the new algorithm.
->
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+--SbQYsgVsPm5IkRJPb5ZHjeHBV5vK3dpP1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Is there anything else that I should do for these patches ?
+Am 27.11.18 um 22:22 schrieb Guenter Roeck:
+> On Tue, Nov 27, 2018 at 07:55:01PM +0100, Rainer Fiebig wrote:
+>> Am Dienstag, 27. November 2018, 15:48:19 schrieb Marek Habersack:
+>>> On 27/11/2018 15:32, Guenter Roeck wrote:
+>>> Hi,
+>>>
+>>> You might try to see if you have CONFIG_SCSI_MQ_DEFAULT=3Dyes in your=
+ kernel
+>>> config. Starting with 4.19.1 it somehow interferes with ext4 and caus=
+es
+>>> problems similar to the ones you list below. Ever since I disabled MQ=
 
-Regards,
-Vincent
+>>> (either recompile your kernel or add `scsi_mod.use_blk_mq=3D0` to the=
+ kernel
+>>> command line) none of those errors came back.
+>>>
+>>> hope it helps,
+>>>
+>>> marek
+>>
+>> Unfortunately, this doesn't seem to work in every case:=20
+>> https://bugzilla.kernel.org/show_bug.cgi?id=3D201685#c54
+>>
+>> And I'm using a defconfig-4.19.3 (meaning: CONFIG_SCSI_MQ_DEFAULT=3Dye=
+s) in a VM=20
+>> and I'm not seeing those errors there. OK, it's a VM - but anyway.
+>>
+>=20
+> Agreed. I disabled CONFIG_SCSI_MQ_DEFAULT, but the problem is still see=
+n
+> at least on one of my servers, so disabling it does not help, at least =
+not
+> in my case.
+>=20
+> If the problem is somehow related to CONFIG_SCSI_MQ_DEFAULT, you might
+> have to explicitly use a scsi drive (virtio-scsi-pci or similar) to
+> trigger its use in a VM.
+
+It seems more likely to me now that it may have nothing to do with the
+SCSI-settings. Perhaps with some other config-option that's not set in a
+defconfig.
+
+I had hoped the problem would show up in the VM, so I could have safely
+bisected it there. But tough luck.
+
+So long!
+
+Rainer Fiebig
+
+
+>=20
+> Guenter
+>=20
+>> The definite cause of this can only be found by bisecting, IMO. And it=
+ needs=20
+>> to be pinned down because else some feeling of insecurity will remain.=
+
+>>
+>> So long!
+>>
+>> Rainer Fiebig
+>>
+>>>
+>>>> [trying again, this time with correct kernel.org address]
+>>>>
+>>>> Hi,
+>>>>
+>>>> I have seen the following and similar problems several times,
+>>>> with both v4.19.3 and v4.19.4:
+>>>>
+>>>> Nov 23 04:32:25 mars kernel: [112668.673671] EXT4-fs error (device s=
+db1):
+>>>> ext4_iget:4831: inode #12602889: comm git: bad extra_isize 33661 (in=
+ode
+>>>> size 256)
+>>>> Nov 23 04:32:25 mars kernel: [112668.675217] Aborting journal on dev=
+ice
+>>>> sdb1-8. Nov 23 04:32:25 mars kernel: [112668.676681] EXT4-fs (sdb1):=
+
+>>>> Remounting filesystem read-only Nov 23 04:32:25 mars kernel:
+>>>> [112668.808886] EXT4-fs error (device sdb1): ext4_iget:4831: inode
+>>>> #12602881: comm rm: bad extra_isize 33685 (inode size 256)
+>>>> ...
+>>>>
+>>>> Nov 25 00:12:43 saturn kernel: [59377.725984] EXT4-fs error (device =
+sda1):
+>>>> ext4_lookup:1578: inode #238034131: comm updatedb.mlocat: deleted in=
+ode
+>>>> referenced: 238160407
+>>>> Nov 25 00:12:43 saturn kernel: [59377.766638] Aborting journal on de=
+vice
+>>>> sda1-8. Nov 25 00:12:43 saturn kernel: [59377.779372] EXT4-fs (sda1)=
+:
+>>>> Remounting filesystem read-only ...
+>>>>
+>>>> Nov 24 01:52:31 saturn kernel: [189085.240016] EXT4-fs error (device=
+
+>>>> sda1): ext4_lookup:1578: inode #52038457: comm nfsd: deleted inode
+>>>> referenced: 52043796
+>>>> Nov 24 01:52:31 saturn kernel: [189085.263427] Aborting journal on d=
+evice
+>>>> sda1-8. Nov 24 01:52:31 saturn kernel: [189085.275313] EXT4-fs (sda1=
+):
+>>>> Remounting filesystem read-only
+>>>>
+>>>>
+>>>> The same systems running v4.18.6 never experienced a problem.
+>>>>
+>>>> Has anyone else seen similar problems ? Is there anything I can do
+>>>> to help tracking down the problem ?
+>>>>
+>>>> Thanks,
+>>>> Guenter
+>>
+>> --=20
+>> The truth always turns out to be simpler than you thought.
+>> Richard Feynman
+>=20
+>=20
+
+
+
+--SbQYsgVsPm5IkRJPb5ZHjeHBV5vK3dpP1--
+
+--mFeNj4Q8ttMRQBmq2sOG9ojwA7yHwpEWm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6yx5PjBNuGB2qJXG8OH3JiWK+PUFAlv+Zm8ACgkQ8OH3JiWK
++PUagQ//Vz3/FSlRLfrQhm/b0kAhVJPdT+zQ0CYratQQBYl/1ETHgUkmsWJY9u5H
+5m0DlBkT2LTRWaaZT6eFpOkdnSK+xofn8cgPfBPvnpbeFf+AYAO6wupxRwsBZnJb
+JIdhvWg25spx5EEgPircp5l2ZYk9eO74dPgNkskjhWOYfvplLRZ43rd6tRL9hi4U
+hxVDMD4cC/cpFgY0vkMtz1c8HKUtAhKs329kS9zhFa6+4h/vwwy+XxkltCzWwsYj
+s4vWKPUR6cMGmLTAy6uzPPZruFO9UiLlT97Qw6culB3wyovftAfubVjbrerPGZrV
+kuZxYrxFyS4lBxfxGXYJ2W8v6detvO0imGHh/4wtConJCY4vWpxJA6KX3IrwYucF
+k5H6ekz5IjMv+kZZPZ/IYYqDAdUIgZKAlAaI5ZV5zzVs6I3AhftdfxBOrKu1aosH
+sOZ//stbZtP3DV/g0wx+6siZGbEoexTUBtwe5ZiauTNCN0/Q6y0JcZ7TJcnkgcC5
+DD1rncm7gSy1gDe86VyyxbSf1kPS/WDycJ6tIEIqD9IbADyKq5tbBR4PeZsT+lBw
+9sD+kQ/RUSaTKQBjrKPbX3/6eanSmuwqVSyFOZosYZJzQB/0ZnyRNLXnt8IlEA2H
+lwHOfP9GE+XCXi/jNfR9omJxYf1eJeyme9USWBg09q+2hdyYM4o=
+=bFdK
+-----END PGP SIGNATURE-----
+
+--mFeNj4Q8ttMRQBmq2sOG9ojwA7yHwpEWm--
