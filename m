@@ -2,120 +2,129 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BC8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12B6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D332082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:02:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6fUy9yr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D332082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C1AEE2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AEE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeK1SDB (ORCPT
+        id S1727634AbeK1SDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:03:01 -0500
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:44998 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbeK1SDA (ORCPT
+        Wed, 28 Nov 2018 13:03:51 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:5087 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727107AbeK1SDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:03:00 -0500
-Received: by mail-pg1-f181.google.com with SMTP id t13so9061877pgr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 23:02:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OuYkgNH7d+KeIf14OR5GPo6wKsnGRaZzP10vGX4sTh4=;
-        b=d6fUy9yr7DnL5+BIl1DAomlOQG0EEXCAHib7Xwfi9MIRQMCnV/ToDTpjEx+4Nuq5F5
-         EjJ8kaBk7bQKqaXXhJmJSx/QUcbxq6w4LBXPQZnNlVH+tpwDfYUeqZ0Qunm/B5tXsVE7
-         iYWGyIp+ekE1dOvKgd7O7cf+IFxlcJGV3uDqUnJNGry2kxrK0AGiHo7xR1O0mfF0NbJS
-         O+Pp5Ws6B0iaRXnjMcwMp9HMOJaErq+qCE8pdz2C34dzGBfDFN6E/QK2Bni0KhS1CV7n
-         doKdPDiF0auzCysqE0FQihx/vKmSFqjJxePCA9pAtldhH0pmWjMP7P20IurHUlrOYnX/
-         XYhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=OuYkgNH7d+KeIf14OR5GPo6wKsnGRaZzP10vGX4sTh4=;
-        b=MIqXoSntxJmD2NGc+b/rtBM502BBwfJdHkUSe2trNgahRaXF/wKo8D7upLR1jDas8X
-         wdwLZIPblpyJfGcVwn8LzQ3k4+/JC3NvAAQsRJCqum1ocsFnTOj7jA0CDlwUE2v1cDxF
-         uFGqNGWtHmrZhrcuOWv9HL3pI+2LjL/nGgwdIAM81NSXx54t1BzZgn1j2xVjLn3B5Uba
-         DaOXCfGOshmc8jP0vd9eJOM0CDRBc608xVydrIhZFySF+Uq5XBJQKYHRJ+YB7nj/qDwX
-         /0tXzg35rkGO8eKyMknjZi8H9p9zimNHjplGp5ahJr69sbO9p87ftMVSBrjMhQB0BW5j
-         yYXA==
-X-Gm-Message-State: AA+aEWbnxQuMP6vtpNIYNcbsbDxkuJnhrYcpXunfeL6cq2FGVpQW2LgZ
-        EbfZylm1JuZ/yljAd07wx4pkHkOinoo=
-X-Google-Smtp-Source: AFSGD/Vu0RFDXlu4iCdQpsu5Y3iT371Qs8GVkEwxouLBr6YUa2dxwWR6s0Wzu2k73/bM/7mafv1ACQ==
-X-Received: by 2002:a62:5658:: with SMTP id k85mr25958495pfb.231.1543388543341;
-        Tue, 27 Nov 2018 23:02:23 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id z13sm6601520pgf.84.2018.11.27.23.02.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Nov 2018 23:02:22 -0800 (PST)
-Date:   Tue, 27 Nov 2018 21:02:20 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     David CARLIER <devnexen@gmail.com>
-Cc:     alexander.shishkin@linux.intel.com,
-        Joey Pabalinas <joeypabalinas@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Little memset_explicit optimisation
-Message-ID: <20181128070220.zvjakjmgmt4l6nny@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        David CARLIER <devnexen@gmail.com>,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
-References: <CA+XhMqyP1=WCDGJXbLCpz44fKs0gWbc7a0Bfw2M815mSt4fAxA@mail.gmail.com>
+        Wed, 28 Nov 2018 13:03:51 -0500
+X-UUID: ed5a464ecd8f43c1a5a7976e68a9049c-20181128
+X-UUID: ed5a464ecd8f43c1a5a7976e68a9049c-20181128
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1809863021; Wed, 28 Nov 2018 15:02:57 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 28 Nov
+ 2018 15:02:56 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 28 Nov 2018 15:02:56 +0800
+Message-ID: <1543388576.32173.106.camel@mhfsdcap03>
+Subject: Re: [PATCH] usb/mtu3: power down device ip at setup
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Wed, 28 Nov 2018 15:02:56 +0800
+In-Reply-To: <CAJMQK-joY4M-=4+XoYAC5SJUie554i_EO=7VgrkJj2JNbbDdxg@mail.gmail.com>
+References: <20181128060412.630-1-hsinyi@chromium.org>
+         <1543386149.32173.87.camel@mhfsdcap03>
+         <CAJMQK-joY4M-=4+XoYAC5SJUie554i_EO=7VgrkJj2JNbbDdxg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qsuc5pzhezrzecsa"
-Content-Disposition: inline
-In-Reply-To: <CA+XhMqyP1=WCDGJXbLCpz44fKs0gWbc7a0Bfw2M815mSt4fAxA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-11-28 at 14:26 +0800, Hsin-Yi Wang wrote:
+> Hi Chunfeng,
+> On mt8183, We found `ip sleep failed!!!` with powerd_dbus_suspend.
+Did you enable usb device mode in BROM or LK stage? e.g. download image
+by fastboot / flashtool
 
---qsuc5pzhezrzecsa
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  Referenced from xhci, it also power down device ip at
+> xhci_mtk_ssusb_config().
+It may happen when user downloads images by usb device in LK/BROM stage,
+but not disable it before enter kernel stage.
 
-On Wed, Nov 28, 2018 at 06:32:27AM +0000, David CARLIER wrote:
-> Bad entrance with bad idea I m afraid :-) sorry for the noise.
+>  Also if dr_mode is PERIPHERAL and OTG, they both power down device ip
+> at ssusb_gadget_init().
+Yes, it tries to save power;
+> 
+> On Wed, Nov 28, 2018 at 2:22 PM Chunfeng Yun
+> <chunfeng.yun@mediatek.com> wrote:
+> 
+>         Hi Hsin-Yi,
+>         
+>         On Wed, 2018-11-28 at 14:04 +0800, Hsin-Yi, Wang wrote:
+>         > Originally, when dr_mode is USB_DR_MODE_HOST, it didn't
+>         power down device ip,
+>         > so host ip sleep will fail at ssusb_host_disable.
+>         > 
+>         > Power down device ip at ssusb_host_setup.
+>         > 
+>         > Signed-off-by: Hsin-Yi, Wang <hsinyi@chromium.org>
+>         > ---
+>         >  drivers/usb/mtu3/mtu3_host.c | 8 ++++++++
+>         >  1 file changed, 8 insertions(+)
+>         > 
+>         > diff --git a/drivers/usb/mtu3/mtu3_host.c
+>         b/drivers/usb/mtu3/mtu3_host.c
+>         > index c871b94f3e6f..d17cf43305db 100644
+>         > --- a/drivers/usb/mtu3/mtu3_host.c
+>         > +++ b/drivers/usb/mtu3/mtu3_host.c
+>         > @@ -192,9 +192,17 @@ int ssusb_host_disable(struct ssusb_mtk
+>         *ssusb, bool suspend)
+>         >  static void ssusb_host_setup(struct ssusb_mtk *ssusb)
+>         >  {
+>         >       struct otg_switch_mtk *otg_sx = &ssusb->otg_switch;
+>         > +     void __iomem *ibase = ssusb->ippc_base;
+>         >  
+>         >       host_ports_num_get(ssusb);
+>         >  
+>         > +     /*
+>         > +      * device ip is default power-on in fact
+>         The device ip is power-off by default, no need power down it
+>         here.
+>         
+>         On which platform did you encounter the issue?
+>         
+>         > +      * power down device ip, otherwise ip-sleep will fail
+>         > +      */
+>         > +     if (ssusb->dr_mode == USB_DR_MODE_HOST)
+>         > +             mtu3_setbits(ibase, U3D_SSUSB_IP_PW_CTRL2,
+>         SSUSB_IP_DEV_PDN);
+>         > +
+Could you please put it in ssusb_ip_sw_reset(), after ip reset, in
+mtu3_plat.c, if it fix the issue?
 
-We all start somewhere, no worries :)
+>         >       /*
+>         >        * power on host and power on/enable all ports
+>         >        * if support OTG, gadget driver will switch port0 to
+>         device mode
+>         
+>         
 
---=20
-Cheers,
-Joey Pabalinas
 
---qsuc5pzhezrzecsa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv+PXsACgkQ2rGdfm9D
-tVJueRAAhBHzY0bOGl+xkVuZKe/0La9YiwMdRFwgD5stlIpIRsgkFTmtrIW1R117
-oQ2C08fZkhNRxZ56Sy0LnGCY6wM1E2X9qrp0OyHP0c1q02wM0bCJnq6c7GtPZ8/n
-m3BUcLyUlVZkXfc8sRo65w9dv8taFeqxe6IXPo4ISIdnpKjV7YHx1cl1Okin/pgo
-cTxOxQrp6QjwRSAawelg1NTnC0ldJaDKAWTBUBcpoCojPpNaT9GOs3bjaDgrRn8b
-ELGxoxiOeaQpeyBM+MAof+cM+aB/QAGOFriaqmCJYg/Tk1odHBDIpfxRCMVUzb2W
-QFoTArJ3r3gud3yVdgfR6iOCCvIEh9sMYDbovC0dMnOPpVLxdyHjRqCFPxJtSyO5
-D39DnhlCekC6qjgzC0Qa0rPkQkWo6zXzLqth02+K4k7aMGKhS1LXV1wDVPufuorj
-8HF3nAnljVjlomiCwnTLJjh/DXColykMi4MbM6eNYHQQ+oyUsZ1rDZxcYXkVFInp
-ZJa1PPQ3zqF4JrCv9bGMORR9FtJJpabGoA3dwGM/gKESynMMJsSwJgxLRBxGLSPx
-IsK2Bq+OrKIEnXRfPF5OdYdm0o5fTRmwhj5+grVqb5n2gySUu+i/UTkncbt4SHi5
-KuFRQD5wm8oJ8NzgWCXm5IcRVGMBJ90ooi4PxyuWWkVIM8e1RUM=
-=2EHC
------END PGP SIGNATURE-----
-
---qsuc5pzhezrzecsa--
