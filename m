@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9E5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18813C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0161C2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0161C2081C
+	by mail.kernel.org (Postfix) with ESMTP id DB6A72147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6A72147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbeK2JYM (ORCPT
+        id S1726836AbeK2JYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:12 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33079 "EHLO
+        Thu, 29 Nov 2018 04:24:13 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33088 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeK2JYL (ORCPT
+        with ESMTP id S1726688AbeK2JYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:11 -0500
+        Thu, 29 Nov 2018 04:24:13 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8CX-0001GX-KQ; Wed, 28 Nov 2018 23:20:58 +0100
+        id 1gS8CY-0001GX-JS; Wed, 28 Nov 2018 23:20:59 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 07/29] x86/fpu: don't export __kernel_fpu_{begin|end}()
-Date:   Wed, 28 Nov 2018 23:20:13 +0100
-Message-Id: <20181128222035.2996-8-bigeasy@linutronix.de>
+Subject: [PATCH 08/29] x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
+Date:   Wed, 28 Nov 2018 23:20:14 +0100
+Message-Id: <20181128222035.2996-9-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,112 +49,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one user using __kernel_fpu_begin() and before invoking it, it
-invokes preempt_disable(). So it could invoke kernel_fpu_begin() right
-away. The 32bit version of arch_efi_call_virt_setup() and
-arch_efi_call_virt_teardown() does this already.
+This is a preparation for the removal of the ->initialized member in the
+fpu struct.
+__fpu__restore_sig() is deactivating the FPU via fpu__drop() and then
+setting manually ->initialized followed by fpu__restore(). The result is
+that it is possible to manipulate fpu->state and the state of registers
+won't be saved/restored on a context switch which would overwrite
+fpu->state.
 
-The comment above *kernel_fpu*() claims that before invoking
-__kernel_fpu_begin() preemption should be disabled and that KVM is a
-good example of doing it. Well, KVM doesn't do that since commit
+Don't access the fpu->state while the content is read from user space
+and examined / sanitized. Use a temporary kmalloc() buffer for the
+preparation of the FPU registers and once the state is considered okay,
+load it. Should something go wrong, return with an error and without
+altering the original FPU registers.
 
-  f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
-
-so it is not an example anymore.
-With EFI gone as the last user of __kernel_fpu_{begin|end}(), it can be
-made static and not exported anymore.
+The removal of "fpu__initialize()" is a nop because fpu->initialized is
+already set for the user task.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/efi.h     |  6 ++----
- arch/x86/include/asm/fpu/api.h | 16 ++++++----------
- arch/x86/kernel/fpu/core.c     |  6 ++----
- 3 files changed, 10 insertions(+), 18 deletions(-)
+ arch/x86/include/asm/fpu/signal.h |  2 +-
+ arch/x86/kernel/fpu/regset.c      |  5 ++--
+ arch/x86/kernel/fpu/signal.c      | 41 ++++++++++++-------------------
+ 3 files changed, 19 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index eea40d52ca785..45864898f7e50 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -82,8 +82,7 @@ struct efi_scratch {
- #define arch_efi_call_virt_setup()					\
- ({									\
- 	efi_sync_low_kernel_mappings();					\
--	preempt_disable();						\
--	__kernel_fpu_begin();						\
-+	kernel_fpu_begin();						\
- 	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
-@@ -99,8 +98,7 @@ struct efi_scratch {
- 		efi_switch_mm(efi_scratch.prev_mm);			\
- 									\
- 	firmware_restrict_branch_speculation_end();			\
--	__kernel_fpu_end();						\
--	preempt_enable();						\
-+	kernel_fpu_end();						\
- })
+diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
+index 44bbc39a57b30..7fb516b6893a8 100644
+--- a/arch/x86/include/asm/fpu/signal.h
++++ b/arch/x86/include/asm/fpu/signal.h
+@@ -22,7 +22,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
  
- extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned long size,
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index a9caac9d4a729..d6e094c282779 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -12,17 +12,13 @@
- #define _ASM_X86_FPU_API_H
+ extern void convert_from_fxsr(struct user_i387_ia32_struct *env,
+ 			      struct task_struct *tsk);
+-extern void convert_to_fxsr(struct task_struct *tsk,
++extern void convert_to_fxsr(struct fxregs_state *fxsave,
+ 			    const struct user_i387_ia32_struct *env);
  
- /*
-- * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
-- * and they don't touch the preempt state on their own.
-- * If you enable preemption after __kernel_fpu_begin(), preempt notifier
-- * should call the __kernel_fpu_end() to prevent the kernel/user FPU
-- * state from getting corrupted. KVM for example uses this model.
-- *
-- * All other cases use kernel_fpu_begin/end() which disable preemption
-- * during kernel FPU usage.
-+ * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
-+ * disables preemption so be carefull if you intend to use it for long periods
-+ * of time.
-+ * If you intend to use the FPU in softirq you need to check first with
-+ * irq_fpu_usable() if it is possible.
-+ * Using the FPU in hardirq is not allowed.
-  */
--extern void __kernel_fpu_begin(void);
--extern void __kernel_fpu_end(void);
- extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
- extern bool irq_fpu_usable(void);
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ea85b32421a0..2e5003fef51a9 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
+ unsigned long
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index bc02f5144b958..5dbc099178a88 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -269,11 +269,10 @@ convert_from_fxsr(struct user_i387_ia32_struct *env, struct task_struct *tsk)
+ 		memcpy(&to[i], &from[i], sizeof(to[0]));
  }
- EXPORT_SYMBOL(irq_fpu_usable);
  
--void __kernel_fpu_begin(void)
-+static void __kernel_fpu_begin(void)
+-void convert_to_fxsr(struct task_struct *tsk,
++void convert_to_fxsr(struct fxregs_state *fxsave,
+ 		     const struct user_i387_ia32_struct *env)
+ 
  {
- 	struct fpu *fpu = &current->thread.fpu;
+-	struct fxregs_state *fxsave = &tsk->thread.fpu.state.fxsave;
+ 	struct _fpreg *from = (struct _fpreg *) &env->st_space[0];
+ 	struct _fpxreg *to = (struct _fpxreg *) &fxsave->st_space[0];
+ 	int i;
+@@ -350,7 +349,7 @@ int fpregs_set(struct task_struct *target, const struct user_regset *regset,
  
-@@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
- 		__cpu_invalidate_fpregs_state();
+ 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &env, 0, -1);
+ 	if (!ret)
+-		convert_to_fxsr(target, &env);
++		convert_to_fxsr(&target->thread.fpu.state.fxsave, &env);
+ 
+ 	/*
+ 	 * update the header bit in the xsave header, indicating the
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index d99a8ee9e185e..9c35598697b94 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -207,11 +207,11 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ }
+ 
+ static inline void
+-sanitize_restored_xstate(struct task_struct *tsk,
++sanitize_restored_xstate(union fpregs_state *state,
+ 			 struct user_i387_ia32_struct *ia32_env,
+ 			 u64 xfeatures, int fx_only)
+ {
+-	struct xregs_state *xsave = &tsk->thread.fpu.state.xsave;
++	struct xregs_state *xsave = &state->xsave;
+ 	struct xstate_header *header = &xsave->header;
+ 
+ 	if (use_xsave()) {
+@@ -238,7 +238,7 @@ sanitize_restored_xstate(struct task_struct *tsk,
+ 		 */
+ 		xsave->i387.mxcsr &= mxcsr_feature_mask;
+ 
+-		convert_to_fxsr(tsk, ia32_env);
++		convert_to_fxsr(&state->fxsave, ia32_env);
  	}
  }
--EXPORT_SYMBOL(__kernel_fpu_begin);
  
--void __kernel_fpu_end(void)
-+static void __kernel_fpu_end(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
+@@ -284,8 +284,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 	if (!access_ok(VERIFY_READ, buf, size))
+ 		return -EACCES;
  
-@@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
+-	fpu__initialize(fpu);
+-
+ 	if (!static_cpu_has(X86_FEATURE_FPU))
+ 		return fpregs_soft_set(current, NULL,
+ 				       0, sizeof(struct user_i387_ia32_struct),
+@@ -314,41 +312,34 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		 * thread's fpu state, reconstruct fxstate from the fsave
+ 		 * header. Validate and sanitize the copied state.
+ 		 */
++		union fpregs_state *state;
++		void *tmp;
+ 		struct user_i387_ia32_struct env;
+ 		int err = 0;
  
- 	kernel_fpu_enable();
- }
--EXPORT_SYMBOL(__kernel_fpu_end);
+-		/*
+-		 * Drop the current fpu which clears fpu->initialized. This ensures
+-		 * that any context-switch during the copy of the new state,
+-		 * avoids the intermediate state from getting restored/saved.
+-		 * Thus avoiding the new restored state from getting corrupted.
+-		 * We will be ready to restore/save the state only after
+-		 * fpu->initialized is again set.
+-		 */
+-		fpu__drop(fpu);
++		tmp = kzalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
++		if (!tmp)
++			return -ENOMEM;
++		state = PTR_ALIGN(tmp, 64);
  
- void kernel_fpu_begin(void)
- {
+ 		if (using_compacted_format()) {
+-			err = copy_user_to_xstate(&fpu->state.xsave, buf_fx);
++			err = copy_user_to_xstate(&state->xsave, buf_fx);
+ 		} else {
+-			err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
++			err = __copy_from_user(&state->xsave, buf_fx, state_size);
+ 
+ 			if (!err && state_size > offsetof(struct xregs_state, header))
+-				err = validate_xstate_header(&fpu->state.xsave.header);
++				err = validate_xstate_header(&state->xsave.header);
+ 		}
+ 
+ 		if (err || __copy_from_user(&env, buf, sizeof(env))) {
+-			fpstate_init(&fpu->state);
+-			trace_x86_fpu_init_state(fpu);
+ 			err = -1;
+ 		} else {
+-			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
++			sanitize_restored_xstate(state, &env,
++						 xfeatures, fx_only);
++			copy_kernel_to_fpregs(state);
+ 		}
+ 
+-		local_bh_disable();
+-		fpu->initialized = 1;
+-		fpu__restore(fpu);
+-		local_bh_enable();
+-
++		kfree(tmp);
+ 		return err;
+ 	} else {
+ 		/*
 -- 
 2.20.0.rc1
 
