@@ -2,174 +2,129 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D48CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0C6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88AF208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D1C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:53:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jjJqDbxQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88AF208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjfCXX16"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D1C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeK1Owm (ORCPT
+        id S1727526AbeK1Oxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 09:52:42 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49868 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbeK1Owl (ORCPT
+        Wed, 28 Nov 2018 09:53:54 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37664 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbeK1Oxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 09:52:41 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAS3n7cD189030;
-        Wed, 28 Nov 2018 03:52:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=BGxfOtbnwbxoSi86gUIBC5QMn8k64hISnYOpB7SmpVE=;
- b=jjJqDbxQ5S1OgAErXyJi3ukv7lpyF3jBLnHzYjpQ2IJBC4G8KRyy4eG7DvGsI8eOosL+
- IjxA+10xGpEid2GI3zpCTRCXd+QRrQZPrqIb9jIevTbAjMwxwcCC1aoWWQN8YoIlZHZz
- 25uEKFvyYiTgun23m22MLa3EYawAMrJic/QZsK+H3UeY47QnN/RW5UuGzQKOXdPCgXtr
- /Du4RiE+VMA6UWJLOlKydW/cuRf5SLd0tZbmVFKOGo222q8dawus8wFqZvid8ME6deQ8
- R5oUFTtB2fpVYxd69m1j3+bt4Lw1+zB3b2JW1w3shdsc3ni86dKpx6UBHijJwnFGWzAG cw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2nxy9r7rb9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 03:52:33 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAS3qWPu018742
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 03:52:32 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAS3qWAu005861;
-        Wed, 28 Nov 2018 03:52:32 GMT
-Received: from localhost.localdomain (/70.176.225.12)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Nov 2018 19:52:32 -0800
-From:   Allison Henderson <allison.henderson@oracle.com>
-To:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     martin.petersen@oracle.com, shirley.ma@oracle.com,
-        bob.liu@oracle.com, allison.henderson@oracle.com
-Subject: [PATCH v1 3/7] md: raid1: handle bi_rw_hint accordingly
-Date:   Tue, 27 Nov 2018 20:49:47 -0700
-Message-Id: <1543376991-5764-4-git-send-email-allison.henderson@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811280033
+        Wed, 28 Nov 2018 09:53:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 80so8864652pge.4;
+        Tue, 27 Nov 2018 19:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cPtt2u1IbbKoJZkuH9Oh8GFlJB8QWN7Me6aCSoMtezU=;
+        b=IjfCXX16hbvo4+51jVpRq80pew6QE+QU6nqeA2p5eIOpS4juiIsq5dzS+UOpAyr/Ey
+         WjAm8Wzc6NutLDip23gF/aJXueYsIxQuJycd7v7WyULTnQ4pLtr2EEAIrnJejXgsxXtR
+         EowPu2VLUZJhBPYphA6lv970L/ZVhtkeiuKZtSm1OhesldbSzwjJLI9ndwCGDExeTh3e
+         6RTdqaEEbs20AXBpCQyoqVmboiQ3rWTFFz5aTngYohJp4lEq4ZLOnzLOR4cUcgIxP/N/
+         5ZC0yQtQpbeRgU+Vtlsrxn9B5/l/dDWEbUIMP5jf3RCjDB7OpZ+ItztJCqxRR/AbTFL3
+         6SDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cPtt2u1IbbKoJZkuH9Oh8GFlJB8QWN7Me6aCSoMtezU=;
+        b=t7wqxBSgxRurzeTt5EB3hUxp9pbSOjLE5JZXCeebpSYQL4Fhpj5S3xhAafmJnWwEmJ
+         C7D2vFNw4EP1CQAlLvtEaoRoeSpzI4XSJJ8pGb2RH2OFV5RxqKYrYqk05ku3mMY8WR2G
+         BLmTXFAHy9Cr8JighFZefPYDjVwWFvKJ+ACJpH9gG+1V0cOLGDZg8AA8SH9E/HLbyvHu
+         WLNq2pohmWNzIEgGBF/slTT5gVMKZLRo3VKh3bCOUtBfq50FlnWUUDW1zLhYQbAOCQvL
+         uGhRwiGTvh+dH0kjzKz1JACJN85uV6kfhGFCtgwhqV2VICigjYvJUgrlt/pa1NYtfhQV
+         o9Bw==
+X-Gm-Message-State: AGRZ1gK3mnKpZpKrpxomemDnyUBYVeZTRW8/aUP0X1hzh1MQq0xyG7O8
+        mUa/ic5GU17DBBYzVLEms1I=
+X-Google-Smtp-Source: AJdET5f5IIJa3+mTtviKIlZbJc5AzgnfAdt/CpY4lduBvzJupvXGhOFZ0K8VkDwPRV2gyrj8FDLH0Q==
+X-Received: by 2002:a62:1f9d:: with SMTP id l29mr35848521pfj.14.1543377225171;
+        Tue, 27 Nov 2018 19:53:45 -0800 (PST)
+Received: from ?IPv6:2604:4080:1012:8070:9a48:b5d:be16:1cdc? ([2604:4080:1012:8070:9a48:b5d:be16:1cdc])
+        by smtp.gmail.com with ESMTPSA id q1sm7288071pfb.96.2018.11.27.19.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 19:53:44 -0800 (PST)
+Subject: Re: [PATCH] Input: xpad - add support for Hyperkin Duke Xbox One
+ gamepad
+From:   Cameron Gutman <aicommander@gmail.com>
+To:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmitry.torokhov@gmail.com
+Cc:     shelby@jueden.org
+References: <20181128032857.26167-1-aicommander@gmail.com>
+Message-ID: <e920f403-a9e0-5345-27a7-522488b89d27@gmail.com>
+Date:   Tue, 27 Nov 2018 19:53:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181128032857.26167-1-aicommander@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Liu <bob.liu@oracle.com>
 
-* nr_mirrors that raid1 device support should be @raid_disks, init it properly.
-* Recording i/o went to which mirror in bio->bi_rw_hint.
-* Read from specific real device if bi_rw_hint was set.
 
-Todo:
- * Support more drivers.
+On 11/27/2018 07:28 PM, Cameron Gutman wrote:
+> Originally submitted by Shelby Jueden (GitHub: AkBKukU) to paroj/xpad:
+> https://github.com/paroj/xpad/pull/97
+> 
+> Minor change to the location of the new entries done by me.
+> 
+> Cc: Shelby Jueden <shelby@jueden.org>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+> ---
 
-Signed-off-by: Bob Liu <bob.liu@oracle.com>
----
- drivers/md/raid1.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+I'm going to actually NACK this one myself.
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index fedf8c0..d2bdd0e 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -553,7 +553,8 @@ static sector_t align_to_barrier_unit_end(sector_t start_sector,
-  *
-  * The rdev for the device selected will have nr_pending incremented.
-  */
--static int read_balance(struct r1conf *conf, struct r1bio *r1_bio, int *max_sectors)
-+static int read_balance(struct r1conf *conf, struct r1bio *r1_bio, int *max_sectors,
-+			unsigned short disk_hint)
- {
- 	const sector_t this_sector = r1_bio->sector;
- 	int sectors;
-@@ -566,6 +567,7 @@ static int read_balance(struct r1conf *conf, struct r1bio *r1_bio, int *max_sect
- 	struct md_rdev *rdev;
- 	int choose_first;
- 	int choose_next_idle;
-+	int max_disks;
- 
- 	rcu_read_lock();
- 	/*
-@@ -593,7 +595,20 @@ static int read_balance(struct r1conf *conf, struct r1bio *r1_bio, int *max_sect
- 	else
- 		choose_first = 0;
- 
--	for (disk = 0 ; disk < conf->raid_disks * 2 ; disk++) {
-+	if (disk_hint) {
-+		disk = disk_hint - 1;
-+		/*
-+		 * Consider replacement as a special case, use original device to
-+		 * indicate which mirror this i/o was happened.
-+		 */
-+		if (disk >= conf->raid_disks)
-+			disk -= conf->raid_disks;
-+		max_disks = disk + 1;
-+	} else {
-+		disk = 0;
-+		max_disks = conf->raid_disks * 2;
-+	}
-+	for (; disk < max_disks; disk++) {
- 		sector_t dist;
- 		sector_t first_bad;
- 		int bad_sectors;
-@@ -1234,7 +1249,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 	 * make_request() can abort the operation when read-ahead is being
- 	 * used and no empty request is available.
- 	 */
--	rdisk = read_balance(conf, r1_bio, &max_sectors);
-+	rdisk = read_balance(conf, r1_bio, &max_sectors, bio->bi_rw_hint);
- 
- 	if (rdisk < 0) {
- 		/* couldn't find anywhere to read from */
-@@ -1247,6 +1262,10 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 		raid_end_bio_io(r1_bio);
- 		return;
- 	}
-+
-+	/* Recording i/o went to which real device. */
-+	bio->bi_rw_hint = rdisk;
-+
- 	mirror = conf->mirrors + rdisk;
- 
- 	if (print_msg)
-@@ -1279,6 +1298,11 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 	r1_bio->read_disk = rdisk;
- 
- 	read_bio = bio_clone_fast(bio, gfp, &mddev->bio_set);
-+	/*
-+	 * Clear bi_rw_hint, because it was set last i/o went to which real
-+	 * device.
-+	 */
-+	read_bio->bi_rw_hint = 0;
- 
- 	r1_bio->bios[rdisk] = read_bio;
- 
-@@ -3078,6 +3102,7 @@ static int raid1_run(struct mddev *mddev)
- 	if (mddev->queue) {
- 		blk_queue_max_write_same_sectors(mddev->queue, 0);
- 		blk_queue_max_write_zeroes_sectors(mddev->queue, 0);
-+		blk_queue_set_mirrors(mddev->queue, mddev->raid_disks);
- 	}
- 
- 	rdev_for_each(rdev, mddev) {
--- 
-2.7.4
+I didn't realize Shelby had already submitted it here and received
+feedback - https://patchwork.kernel.org/patch/10421897/
 
+I believe I have a patch to always read from Xbox One gamepads kicking around
+here somewhere. I'll send that in a series with this patch (or Shelby's if he
+wants to make a v2 with the ordering fixed).
+
+>  drivers/input/joystick/xpad.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+> index cfc8b94527b9..8d6ea091a01a 100644
+> --- a/drivers/input/joystick/xpad.c
+> +++ b/drivers/input/joystick/xpad.c
+> @@ -330,6 +330,7 @@ static const struct xpad_device {
+>  	{ 0x24c6, 0x5b03, "Thrustmaster Ferrari 458 Racing Wheel", 0, XTYPE_XBOX360 },
+>  	{ 0x24c6, 0x5d04, "Razer Sabertooth", 0, XTYPE_XBOX360 },
+>  	{ 0x24c6, 0xfafe, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+> +	{ 0x2e24, 0x0652, "Hyperkin Duke X-Box One pad", 0, XTYPE_XBOXONE },
+>  	{ 0x3767, 0x0101, "Fanatec Speedster 3 Forceshock Wheel", 0, XTYPE_XBOX },
+>  	{ 0xffff, 0xffff, "Chinese-made Xbox Controller", 0, XTYPE_XBOX },
+>  	{ 0x0000, 0x0000, "Generic X-Box pad", 0, XTYPE_UNKNOWN }
+> @@ -440,6 +441,7 @@ static const struct usb_device_id xpad_table[] = {
+>  	XPAD_XBOX360_VENDOR(0x1bad),		/* Harminix Rock Band Guitar and Drums */
+>  	XPAD_XBOX360_VENDOR(0x24c6),		/* PowerA Controllers */
+>  	XPAD_XBOXONE_VENDOR(0x24c6),		/* PowerA Controllers */
+> +	XPAD_XBOXONE_VENDOR(0x2e24),		/* Hyperkin Duke X-Box One pad */
+>  	{ }
+>  };
+>  
+> 
