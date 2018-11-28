@@ -2,82 +2,77 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE46C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BC7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E580E205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:08:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E580E205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id 6488A208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:15:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qhsAXnR/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6488A208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeK1PIf (ORCPT
+        id S1727290AbeK1PP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:08:35 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:49435 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726894AbeK1PIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:08:35 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id wAS48K1P020178;
-        Wed, 28 Nov 2018 05:08:20 +0100
-Date:   Wed, 28 Nov 2018 05:08:20 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     Yueyi Li <liyueyi@live.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lzo: fix ip overrun during compress.
-Message-ID: <20181128040820.GC19711@1wt.eu>
-References: <BLUPR13MB0289FB16D885625827E8DD27DFD00@BLUPR13MB0289.namprd13.prod.outlook.com>
+        Wed, 28 Nov 2018 10:15:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57218 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbeK1PP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 10:15:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oE09f7qYHKPuWY8/p61vpM2C1nmazqx6v1jVlKC9baI=; b=qhsAXnR/TwgNux0N3Ucp4l7DI
+        IpZruluehOtRjTqZXSe36QunUAIw029kS+FtqMzeVsaaYH8ED8wwj6A7wFg8nV0aH6FHNuEhiDGjH
+        uaUJVAI/49+MeUxD+2a9NRdFiFSS6V/YVs7DJOI0/f/OaQhFEXVUrG9j5MAHAaq0G2zb40nt0V9ze
+        jZmFOJ5orpBTaCbBLDjOn8NbPKwfc0GA/c4USD3QXKs3CrS2AlwR0WNNGjr7+gMEcYD7cKobgB+c7
+        uM6D9/cfFjd9mzRXY6Uz0lMRSnFJ0IZC9K5QwkWnCOAFpCnI4zpVj3DO5tZ6hWhJfHtjQ1OeT0UyB
+        6KQoAvxJw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRrFt-0005Ec-Cj; Wed, 28 Nov 2018 04:15:17 +0000
+Subject: Re: linux-next: Tree for Nov 27 (scsi/aha1542)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>
+References: <20181127152539.55426063@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
+Date:   Tue, 27 Nov 2018 20:14:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BLUPR13MB0289FB16D885625827E8DD27DFD00@BLUPR13MB0289.namprd13.prod.outlook.com>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+In-Reply-To: <20181127152539.55426063@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yueyi,
+On 11/26/18 8:25 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181126:
+> 
 
-On Tue, Nov 27, 2018 at 10:34:26AM +0000, Yueyi Li wrote:
-> It`s possible ip overrun in lzo1x_1_do_compress() when compressed page is
-> point to the end of memory and which virtual address is 0xfffffffffffff000.
-> Leading to a NULL pointer access during the get_unaligned_le32(ip).
+on i386:
 
-Thanks for this report.
+ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
 
-(...)
-> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-> index 236eb21..a0265a6 100644
-> --- a/lib/lzo/lzo1x_compress.c
-> +++ b/lib/lzo/lzo1x_compress.c
-> @@ -17,6 +17,9 @@
->  #include <linux/lzo.h>
->  #include "lzodefs.h"
->  
-> +#define OVERFLOW_ADD_CHECK(a, b)  \
-> +	((size_t)~0 - (size_t)(a) < (size_t)(b) ? true : false)
-> +
+somewhere in aha1542_interrupt() according to objdump.
 
-I think the test would be easier to grasp this way :
 
-#define OVERFLOW_ADD_CHECK(a, b)  \
-	((size_t)(b) >= (size_t)((void*)0 - (void *)(a)))
-
-But the following should be more efficient since we build with
--fno-strict-overflow :
-
-#define OVERFLOW_ADD_CHECK(a, b)  \
-	(((a) + (b)) < (a))
-
-Could you please recheck ?
-
-Thanks,
-Willy
+-- 
+~Randy
