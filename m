@@ -2,74 +2,98 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C988AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE43C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2DA20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:16:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F2DA20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id 4B42220832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B42220832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbeK2BRt (ORCPT
+        id S1728315AbeK2BSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:17:49 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:49665 "EHLO 1wt.eu"
+        Wed, 28 Nov 2018 20:18:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33325 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbeK2BRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:17:49 -0500
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id wASEFlgJ020544;
-        Wed, 28 Nov 2018 15:15:47 +0100
-Date:   Wed, 28 Nov 2018 15:15:47 +0100
-From:   Willy Tarreau <w@1wt.eu>
-To:     dsterba@suse.cz, Yueyi Li <liyueyi@live.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        markus@oberhumer.com
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-Message-ID: <20181128141547.GD20409@1wt.eu>
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
- <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
+        id S1727789AbeK2BSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:18:53 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6972120729; Wed, 28 Nov 2018 15:17:03 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 197D02039F;
+        Wed, 28 Nov 2018 15:17:03 +0100 (CET)
+Date:   Wed, 28 Nov 2018 15:17:02 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+Cc:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] mtd: spi-nor: fix erase_type array to indicate
+ current map conf
+Message-ID: <20181128151702.5f8b1bf2@bbrezillon>
+In-Reply-To: <2ae2459e-f5e7-f621-fd63-0982a1e59e86@nokia.com>
+References: <20181126124531.17548-1-tudor.ambarus@microchip.com>
+        <2ae2459e-f5e7-f621-fd63-0982a1e59e86@nokia.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Hi Alexander,
 
-On Wed, Nov 28, 2018 at 02:52:42PM +0100, David Sterba wrote:
-> The fix is adding a few branches to code that's supposed to be as fast
-> as possible. The branches would be evaluated all the time while
-> protecting against one signle bad page address. This does not look like
-> a good performance tradeoff.
+On Mon, 26 Nov 2018 13:04:45 +0000
+"Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+wrote:
 
-That was my concern as well, though the simplified test should be cheaper
-especially since the branch is (almost) never taken and easily predicted.
-
-> > +#define OVERFLOW_ADD_CHECK(a, b)  \
-> > +		(((a) + (b)) < (a))
+> Hello Tudor and all,
 > 
-> I'm not sure if this is generally safe overflow check (never not
-> optimized out). Here it depends on the types of 'a' and 'b' that are
-> pointer (ip) and size_t (m_len). GCC has __builtin_add_overflow_p so
-> that one should be used where possible.
+> On 26/11/2018 13:45, Tudor.Ambarus@microchip.com wrote:
+> > From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> > 
+> > BFPT advertises all the erase types supported by all the possible
+> > map configurations. Mask out the erase types that are not supported
+> > by the current map configuration.
+> > 
+> > Backward compatibility test done on sst26vf064b.
+> > 
+> > Fixes: b038e8e3be72 ("mtd: spi-nor: parse SFDP Sector Map Parameter Table")
+> > Reported-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>  
+> 
+> I've verified the erasesize, partitioning and erase function of the S25FS128S
+> and all the above is at least back to pre-SFDP state.
+> 
+> So the patch works as intended and it's
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+> 
+> There is still a regression with write when S25FS128S is used with SFDP
+> because SFDP of the S25FS128S is just broken. It advertises 512 bytes
+> of write page size but factory delivery configuration wraps the address
+> on 256 bytes boundary. I found no way to fetch this configuration in a
+> vendor-neutral way (or JEDEC-conform way). Which means, S25FS128S
+> could be the first user of SPI_NOR_SKIP_SFDP flag :\.
 
-Sure but that one came with gcc 7 which is not exactly a reasonable
-prerequisite especially when it comes to stable kernels. However I'm
-now seeing that we have include/linux/overflow.h which provides this.
-I have not checked what versions support it though, but 4.14 already
-doesn't have it. Thus a fallback will be needed anyway and maintaining
-two versions is not exactly the best thing to have to do :-/
+You might be interested in my work around SPI NOR fixups[1]. I added a
+few fixup hooks that can be implemented by manufacturer drivers (a new
+concept) or on a per-chip basis. Looks like you'd need to implement a
+->post_bfpt() fixup hook for this particular chip (see what's been done
+for this Macronix chip [2]).
 
-Willy
+Regards,
+
+Boris
+
+[1]https://github.com/bbrezillon/linux-0day/commits/spi-nor/manuf-drv
+[2]https://github.com/bbrezillon/linux-0day/commit/b29625fdc55fa8ccfd4299904d727b44f8382c18
