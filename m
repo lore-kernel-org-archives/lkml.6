@@ -2,94 +2,78 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85B2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA22BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FBC2208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:26:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5x41Bpi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FBC2208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 94EB82081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EB82081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=adamwong.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbeK2I3Q (ORCPT
+        id S1726578AbeK2IaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeK2I3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:29:15 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 29 Nov 2018 03:30:13 -0500
+Received: from h1.fbrelay.privateemail.com ([131.153.2.42]:39137 "EHLO
+        h1.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726239AbeK2IaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 03:30:13 -0500
+X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Nov 2018 03:30:12 EST
+Received: from MTA-06-3.privateemail.com (mta-06.privateemail.com [68.65.122.16])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A322521473;
-        Wed, 28 Nov 2018 21:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543440375;
-        bh=S3aSizor1tYetDGI46llMZE2aURa2KBznnluKYwPoms=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=N5x41BpiBRLwgtqu+ESJsP2N8kTUV9EyJPLY10ktgsKfJKfkWq0PlSBLUH5zYcyCZ
-         IqIQmlzxfxeBnBIlLTjB4zjnaCehnbnUY9a1qKb4Hua9kx+y/bcUAKBT4oFDGu3O2V
-         L5CzxXxSjb3ed4aB3B/KBEjLxrPRXflQW76z010k=
-Received: by mail-qt1-f178.google.com with SMTP id d19so27593913qtq.9;
-        Wed, 28 Nov 2018 13:26:15 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKaLynhZt3yxuaDBiew30RYqsBR8SV7IWr1/wzpj/m55Hb8P+mL
-        PDT+UFbhiSWZbURTuh0UfSTA+j8uuQ6CGvvKgw==
-X-Google-Smtp-Source: AJdET5eT1bCzJlTYb9NKHsPIb2FyaSpZ43u+D6A4SSwK5oWQ+ta0ejvwaswh9l17Z2HDf374MgYbsqkRuNAhzKT60Uo=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr37178170qtf.26.1543440374751;
- Wed, 28 Nov 2018 13:26:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com> <20181128193636.254378-7-brendanhiggins@google.com>
-In-Reply-To: <20181128193636.254378-7-brendanhiggins@google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 28 Nov 2018 15:26:03 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
-Message-ID: <CAL_JsqJLNSg-38hej8LV+Oh-YXBM2hRGomie3b_psa9LvzoRYg@mail.gmail.com>
-Subject: Re: [RFC v3 06/19] arch: um: enable running kunit from User Mode Linux
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Frank Rowand <frowand.list@gmail.com>, knut.omang@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+        by h1.fbrelay.privateemail.com (Postfix) with ESMTPS id AFA95815F9;
+        Wed, 28 Nov 2018 16:20:09 -0500 (EST)
+Received: from MTA-06.privateemail.com (localhost [127.0.0.1])
+        by MTA-06.privateemail.com (Postfix) with ESMTP id 1476C60049;
+        Wed, 28 Nov 2018 16:20:06 -0500 (EST)
+Received: from localhost.localdomain (unknown [10.20.151.221])
+        by MTA-06.privateemail.com (Postfix) with ESMTPA id 97E3760045;
+        Wed, 28 Nov 2018 21:20:04 +0000 (UTC)
+From:   adam@adamwong.me
+To:     dmitry.torokhov@gmail.com
+Cc:     benjamin.tissoires@redhat.com, kt.liao@emc.com.tw,
+        dshanty@protonmail.com, robh@kernel.org, jackxviichaos@gmail.com,
+        ben.hutchings@codethink.co.uk, gregkh@linuxfoundation.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        TheWongGuy <adam@adamwong.me>
+Subject: [PATCH] Input: mouse: elan_i2c_core: Added support for ELAN0621 touchpad.
+Date:   Wed, 28 Nov 2018 16:20:01 -0500
+Message-Id: <20181128212001.20839-1-adam@adamwong.me>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 1:37 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> Make minimum number of changes outside of the KUnit directories for
-> KUnit to build and run using UML.
+From: TheWongGuy <adam@adamwong.me>
 
-There's nothing in this patch limiting this to UML. Only patch 1 does
-that and I would remove that depends. I'd guess most folks will want
-to run under something other than UML. DRM for instance (though the
-virtual KMS stuff may work in UML?).
+Added the ability to detect the ELAN0621 touchpad found in some Lenovo
+laptops.
 
-Plus you want to make sure this all builds with allmodconfig for x86
-(or ARM) because those get the most (and quickest) compile coverage.
+Signed-off-by: Adam Wong <adam@adamwong.me>
+---
+ drivers/input/mouse/elan_i2c_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rob
+diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
+index b0f9d19b3410..a84362d0c99d 100644
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1348,6 +1348,7 @@ static const struct acpi_device_id elan_acpi_id[] = {
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN0621", 0 },
+ 	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
+-- 
+2.17.1
+
