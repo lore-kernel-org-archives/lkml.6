@@ -2,149 +2,117 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DFEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B0FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74572081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:39:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74572081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BB8720660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:41:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB8720660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbeK1XlX (ORCPT
+        id S1728312AbeK1Xms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:41:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7690 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbeK1XlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:41:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 04:39:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
-   d="scan'208";a="95277620"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by orsmga006.jf.intel.com with ESMTP; 28 Nov 2018 04:39:49 -0800
-Subject: Re: [PATCH] perf intel-pt: Fix error with config term pt=0
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20181127084336.12142-1-adrian.hunter@intel.com>
- <20181127123928.GB15747@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com>
-Date:   Wed, 28 Nov 2018 14:38:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181127123928.GB15747@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 18:42:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45258 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727841AbeK1Xmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:42:47 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASCdRTg069179
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:41:14 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1qjwsabg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:41:14 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 28 Nov 2018 12:41:12 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Nov 2018 12:41:10 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASCf8cc9961854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 12:41:08 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0EF24C044;
+        Wed, 28 Nov 2018 12:41:08 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7CB924C040;
+        Wed, 28 Nov 2018 12:41:08 +0000 (GMT)
+Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.168])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 12:41:08 +0000 (GMT)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     pasic@linux.vnet.ibm.com
+Cc:     cohuck@redhat.com, farman@linux.ibm.com, alifm@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH v3 1/6] vfio: ccw: Register mediated device once all structures are initialized
+Date:   Wed, 28 Nov 2018 13:41:02 +0100
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543408867-16465-1-git-send-email-pmorel@linux.ibm.com>
+References: <1543408867-16465-1-git-send-email-pmorel@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18112812-0012-0000-0000-000002D17961
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112812-0013-0000-0000-00002106BE1D
+Message-Id: <1543408867-16465-2-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=790 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811280112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/11/18 2:39 PM, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Nov 27, 2018 at 10:43:36AM +0200, Adrian Hunter escreveu:
->> Users should never use 'pt=0', but if they do it may give a meaningless
->> error:
->>
->> 	$ perf record -e intel_pt/pt=0/u uname
->> 	Error:
->> 	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
->> 	event (intel_pt/pt=0/u).
->>
->> Fix that by forcing 'pt=1'.
->>
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->> ---
->>  tools/perf/arch/x86/util/intel-pt.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
->> index db0ba8caf5a2..af25a7824ee0 100644
->> --- a/tools/perf/arch/x86/util/intel-pt.c
->> +++ b/tools/perf/arch/x86/util/intel-pt.c
->> @@ -524,10 +524,18 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
->>  				    struct perf_evsel *evsel)
->>  {
->>  	int err;
->> +	char c;
->>  
->>  	if (!evsel)
->>  		return 0;
->>  
->> +	/*
->> +	 * If supported, force pass-through config term (pt=1) even if user
->> +	 * sets pt=0, which avoids senseless kernel errors.
->> +	 */
->> +	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1)
->> +		evsel->attr.config |= 1;
-> 
-> shouldn't we have a warning like:
-> 
->    pr_warning("pt=0 doesn't make sense, forcing pt=1")
-> 
-> 
-> Instead of silently doing something the user, mistakenly, did
-> explicitely?
+There is a risk that the mediated device is used before all the
+data are initialized if it is registered too early.
 
-Sure, here it is:
+Let's register the mediated device when all the data structures
+which could be used are initialized.
 
-From: Adrian Hunter <adrian.hunter@intel.com>
-Date: Mon, 26 Nov 2018 14:12:52 +0200
-Subject: [PATCH] perf intel-pt: Fix error with config term pt=0
-
-Users should never use 'pt=0', but if they do it may give a meaningless
-error:
-
-	$ perf record -e intel_pt/pt=0/u uname
-	Error:
-	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-	event (intel_pt/pt=0/u).
-
-Fix that by forcing 'pt=1'.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: Eric Farman <farman@linux.ibm.com>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/s390/cio/vfio_ccw_drv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index db0ba8caf5a2..ba8ecaf52200 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 				    struct perf_evsel *evsel)
- {
- 	int err;
-+	char c;
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index 2f2e5d1..bce7fed 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -141,14 +141,14 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
+ 	if (ret)
+ 		goto out_free;
  
- 	if (!evsel)
- 		return 0;
+-	ret = vfio_ccw_mdev_reg(sch);
+-	if (ret)
+-		goto out_disable;
+-
+ 	INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
+ 	atomic_set(&private->avail, 1);
+ 	private->state = VFIO_CCW_STATE_STANDBY;
  
-+	/*
-+	 * If supported, force pass-through config term (pt=1) even if user
-+	 * sets pt=0, which avoids senseless kernel errors.
-+	 */
-+	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
-+	    !(evsel->attr.config & 1)) {
-+		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
-+		evsel->attr.config |= 1;
-+	}
++	ret = vfio_ccw_mdev_reg(sch);
++	if (ret)
++		goto out_disable;
 +
- 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
- 				       "cyc_thresh", "caps/psb_cyc",
- 				       evsel->attr.config);
+ 	return 0;
+ 
+ out_disable:
 -- 
-2.17.1
+2.7.4
 
