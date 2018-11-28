@@ -2,146 +2,93 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979F5C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1759BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2D12086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:19:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="t34DvvKe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2D12086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id D615820832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D615820832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeK1XVW (ORCPT
+        id S1728092AbeK1XW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:21:22 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:41154 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeK1XVW (ORCPT
+        Wed, 28 Nov 2018 18:22:28 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:43894 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbeK1XW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:21:22 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 89CFF5C0D8F;
-        Wed, 28 Nov 2018 13:19:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1543407590;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IOaznXUhgSUqF5ImwCosCQAP0wNYk4thXHfjoSnpR3k=;
-        b=t34DvvKeE3IBzfJgzQf9FTaKk0XVZYK1YOdMiL3NGZY4HnQhoFX0I7O8JrAwklDF1fL2Ld
-        PQK1hY99xey4KJDoEaxHpGGXsMBmSZjPzOb1Ig84rEtx8vbEYet3PYuLDuKvrwtzjk15eU
-        TGaz+uWnvRfGDtptYvTgIUPUHVmVnQ4=
+        Wed, 28 Nov 2018 18:22:28 -0500
+Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 2F7F867A7D0;
+        Wed, 28 Nov 2018 13:20:57 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
+ (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 28 Nov
+ 2018 13:20:56 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Wed, 28 Nov 2018 13:20:56 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Subject: Re: [PATCH] mtd: nand: spi: Add initial support for Toshiba
+ TC58CVG2S0H
+Thread-Topic: [PATCH] mtd: nand: spi: Add initial support for Toshiba
+ TC58CVG2S0H
+Thread-Index: AQHUdz2L3HigzaAOUUKXPQ4ku2nhHqVWAI6AgA8p0wA=
+Date:   Wed, 28 Nov 2018 12:20:56 +0000
+Message-ID: <c3811f92-a982-2fc0-f0df-f207c6ff120c@kontron.de>
+References: <1541665796-21092-1-git-send-email-frieder.schrempf@kontron.de>
+ <20181118214721.1ede9fb6@xps13>
+In-Reply-To: <20181118214721.1ede9fb6@xps13>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3FBDD1E9DA66FB42A4730FBC7B4A9F41@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 28 Nov 2018 13:19:50 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     lorenzo.pieralisi@arm.com, Trent Piepho <tpiepho@impinj.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        linux-kernel@vger.kernel.org, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, andrew.smirnov@gmail.com,
-        linux-pci@vger.kernel.org, l.stach@pengutronix.de,
-        bhelgaas@google.com
-Subject: Re: [PATCH v3 2/2] PCI: imx6: limit DBI register length
-In-Reply-To: <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-References: <20181120165626.26424-1-stefan@agner.ch>
- <20181120165626.26424-2-stefan@agner.ch>
- <581b9548043d5276f6685f534386180fd0673a9a.camel@nxp.com>
- <1542741198.30311.608.camel@impinj.com>
- <268e109e1c6b309454bd5a313078894c@agner.ch>
- <1542749302.30311.624.camel@impinj.com>
- <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-Message-ID: <fd07b82d2473d5d7db9826142e79b00a@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 2F7F867A7D0.AEB70
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
+        computersforpeace@gmail.com, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com,
+        peron.clem@gmail.com, richard@nod.at
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.11.2018 14:47, Leonard Crestez wrote:
-> On 11/20/2018 11:28 PM, Trent Piepho wrote:
->> On Tue, 2018-11-20 at 21:42 +0100, Stefan Agner wrote:
->>> On 20.11.2018 20:13, Trent Piepho wrote:
-> 
->>>> It also seems to me that this doesn't need to be in the internal pci
->>>> config access functions.  The driver shouldn't be reading registers
->>>> that don't exist anyway.  It's really about trying to fix sysfs access
->>>> to registers that don't exist.  So maybe it should be done there.
->>>
->>> That was my first approach, see:
->>
->> Yes, but that just used the pci device id which applies to every IMX
->> design.
->>
->> It's also not totally correct, as it seems real registers after 0x200
->> do work on imx6, and that would prevent access to them.
-> 
-> I see that Lorenzo already accepted the patch in pci/dwc:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/commit/?h=pci/dwc&id=f14eaec153aaebbe940ddd21e4198cc2abc927c2
-> 
-> My tests show that this series breaks pci cards on 6qdl and I think it 
-> should be reverted until a fix is found. Are you OK with this?
-> 
-> Fixing might require an entirely different approach.
-
-I tried to reproduce this issue on Apalis iMX6 (i.MX 6Q) with a ath9k
-PCIe WiFi card, the issue you are seeing did not happen. My lspci looks
-as follows:
-
-root@ea210c63d739:/# lspci -v
-00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
-[Normal decode])
-        Flags: bus master, fast devsel, latency 0, IRQ 255
-        Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
-        Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
-        Memory behind bridge: 01100000-011fffff
-        [virtual] Expansion ROM at 01200000 [disabled] [size=64K]
-        Capabilities: [40] Power Management version 3
-        Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
-        Capabilities: [70] Express Root Port (Slot-), MSI 00
-        Capabilities: [100] Advanced Error Reporting
-        Capabilities: [140] Virtual Channel
-lspci: Unable to load libkmod resources: error -12
-
-01:00.0 Network controller: Qualcomm Atheros AR928X Wireless Network
-Adapter (PCI-Express) (rev 01)
-        Subsystem: Foxconn International, Inc. Device e007
-        Flags: bus master, fast devsel, latency 0, IRQ 312
-        Memory at 01100000 (64-bit, non-prefetchable) [size=64K]
-        Capabilities: [40] Power Management version 2
-        Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit-
-        Capabilities: [60] Express Legacy Endpoint, MSI 00
-        Capabilities: [90] MSI-X: Enable- Count=1 Masked-
-        Capabilities: [100] Advanced Error Reporting
-        Capabilities: [140] Virtual Channel
-        Capabilities: [160] Device Serial Number 00-00-00-00-00-00-00-00
-        Kernel driver in use: ath9k
-
-
-I did also setup a WiFi network and transmitted some packages, but I did
-not get a nobody carred message. Do you have an idea why that might be?
-
-# cat /proc/interrupts
-...
-312:      10967          0          0          0       GPC 123 Level    
-ath9k
-...
-
-
-Your conclusion in this thread seem reasonable, hence reverting the
-issue does. However, I still would like to reproduce the issue so I can
-make sure that future patches don't break it :-)
-
---
-Stefan
+SGkgTWlxdcOobCwNCg0KT24gMTguMTEuMTggMjE6NDcsIE1pcXVlbCBSYXluYWwgd3JvdGU6DQo+
+IEhpIFNjaHJlbXBmLA0KPiANCj4gU2NocmVtcGYgRnJpZWRlciA8ZnJpZWRlci5zY2hyZW1wZkBr
+b250cm9uLkRlPiB3cm90ZSBvbiBUaHUsIDggTm92IDIwMTgNCj4gMDg6MzI6MTEgKzAwMDA6DQo+
+IA0KPj4gQWRkIG1pbmltYWwgc3VwcG9ydCBmb3IgdGhlIFRvc2hpYmEgVEM1OENWRzJTMEggU1BJ
+IE5BTkQgY2hpcC4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmll
+ZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+PiAtLS0NCj4gDQo+IFdpdGggIm10ZDogc3BpbmFu
+ZDoiIGFzIHByZWZpeCwgYXBwbGllZCB0byBuYW5kL25leHQuDQoNCkNsw6ltZW50IHN1Z2dlc3Rl
+ZCBzb21lIGZpeGVzL2ltcHJvdmVtZW50cyBmb3IgdGhpcyBwYXRjaC4gWW91IGNhbiBmaW5kIA0K
+dGhlbSBpbiB0aGlzIHBhdGNoOiBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzEw
+MDQ1MDEvLg0KDQpXaGVuIHRoZXNlIGNoYW5nZXMgYXJlIGFwcHJvdmVkLCB5b3UgY2FuIGRlY2lk
+ZSBpZiB5b3UgYXBwbHkgdGhpcyBvbiB0b3AgDQpvZiB0aGUgaW5pdGlhbCBwYXRjaCBvciBpZiB5
+b3UgY2FuL3dhbnQgdG8gc3F1YXNoIGJvdGggcGF0Y2hlcy4NCg0KVGhhbmtzLA0KRnJpZWRlcg==
