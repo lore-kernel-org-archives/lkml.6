@@ -2,108 +2,147 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43215C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CBCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152CC20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:19:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152CC20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 391F020832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391F020832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeK2BVl (ORCPT
+        id S1728391AbeK2BV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:21:41 -0500
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:37219 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbeK2BVl (ORCPT
+        Wed, 28 Nov 2018 20:21:56 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55875 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728031AbeK2BV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:21:41 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5467D2800B1D3;
-        Wed, 28 Nov 2018 15:19:50 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id F30C3140749; Wed, 28 Nov 2018 15:19:49 +0100 (CET)
-Date:   Wed, 28 Nov 2018 15:19:49 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>, airlied@linux.ie,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, tfiga@chromium.org,
-        Sean Paul <seanpaul@chromium.org>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-Message-ID: <20181128141949.6mww6g2ze3qkzxhj@wunner.de>
-References: <20181126213710.3084-1-vivek.gautam@codeaurora.org>
- <20181128073940.GA13072@infradead.org>
+        Wed, 28 Nov 2018 20:21:56 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEJanX2320475
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 28 Nov 2018 06:19:36 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEJamK2320472;
+        Wed, 28 Nov 2018 06:19:36 -0800
+Date:   Wed, 28 Nov 2018 06:19:36 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
+Message-ID: <tip-ef014aae8f1cd2793e4e014bbb102bed53f852b7@git.kernel.org>
+Cc:     zhenzhong.duan@oracle.com, konrad.wilk@oracle.com,
+        dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+        bp@suse.de, hpa@zytor.com, srinivas.eeda@oracle.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
+          bp@suse.de, srinivas.eeda@oracle.com, hpa@zytor.com,
+          konrad.wilk@oracle.com, zhenzhong.duan@oracle.com,
+          linux-kernel@vger.kernel.org, dwmw@amazon.co.uk
+In-Reply-To: <f06f0a89-5587-45db-8ed2-0a9d6638d5c0@default>
+References: <f06f0a89-5587-45db-8ed2-0a9d6638d5c0@default>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/retpoline: Remove minimal retpoline support
+Git-Commit-ID: ef014aae8f1cd2793e4e014bbb102bed53f852b7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181128073940.GA13072@infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 11:39:40PM -0800, Christoph Hellwig wrote:
-> > +		/*
-> > +		 * dma_sync_sg_*() flush the physical pages, so point
-> > +		 * sg->dma_address to the physical ones for the right behavior.
-> > +		 */
-> > +		for_each_sg(msm_obj->sgt->sgl, s, msm_obj->sgt->nents, i)
-> > +			sg_dma_address(s) = sg_phys(s);
-> > +
-> 
-> I'm sorry, but this is completely bogus and not acceptable.
-> 
-> The only place that is allowed to initialize sg_dma_address is
-> dma_map_sg.  If the default dma ops don't work for your setup we have
-> major a problem and need to fix the dma api / iommu integration instead
-> of hacking around it.
+Commit-ID:  ef014aae8f1cd2793e4e014bbb102bed53f852b7
+Gitweb:     https://git.kernel.org/tip/ef014aae8f1cd2793e4e014bbb102bed53f852b7
+Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+AuthorDate: Fri, 2 Nov 2018 01:45:41 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Nov 2018 11:57:03 +0100
 
-Somewhat related, I recently submitted a patch for the spi-bcm2835.c
-driver to overcome a limitation of the DMA engine and the spi0 master
-on the Raspberry Pi:
+x86/retpoline: Remove minimal retpoline support
 
-http://lists.infradead.org/pipermail/linux-rpi-kernel/2018-November/008275.html
+Now that CONFIG_RETPOLINE hard depends on compiler support, there is no
+reason to keep the minimal retpoline support around which only provided
+basic protection in the assembly files.
 
-If a buffer needs to be sent or received which was vmalloc'ed (hence is
-not contiguous in physical memory) and starts in the middle of a page
-with an offset not a multiple of 4, the buffer could not be transmitted
-with DMA so far because the spi0 master requires 4 byte writes to the
-FIFO and the DMA engine is incapable of combining multiple sglist
-entries of arbitrary length into a continuous stream of 4 byte chunks.
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: <srinivas.eeda@oracle.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/f06f0a89-5587-45db-8ed2-0a9d6638d5c0@default
 
-The solution I've found is to transfer the first few bytes of the first
-sglist entry with programmed I/O such that the remainder has a length
-which is a multiple of 4.  For this to work, I have to massage the first
-sglist entry, i.e. I have to add the number of bytes transmitted with
-PIO to the DMA address and subtract it from the sglist entry's length.
-After the DMA engine has done its job, I undo those changes to the
-sglist.
 
-Could you comment on the acceptibility of this approach?  If you do not
-deem it acceptable, could you make a suggestion how the dma-mapping API
-shall be amended to support such use cases?
+---
+ arch/x86/include/asm/nospec-branch.h |  2 --
+ arch/x86/kernel/cpu/bugs.c           | 13 ++-----------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
-(I sure hope the approach *is* acceptable, getting this to work at all
-required endless fiddling.  The BCM2835 is in some ways a not so great
-SoC and could do with better documentation, to put it mildly.)
-
-(Note: I've since amended the above-linked patch to sync only the modified
-cachelines back to memory, not the full first sglist entry.  I've also
-switched to the sg_dma_address() and sg_dma_len() syntax instead of
-referencing the sglist entry members directly, this appears to be more
-common in the tree even for l-values.  I was going to post these changes
-as v2 shortly.)
-
-Thanks,
-
-Lukas
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 8b09cbb2d52c..c202a64edd95 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -221,8 +221,6 @@
+ /* The Spectre V2 mitigation variants */
+ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_NONE,
+-	SPECTRE_V2_RETPOLINE_MINIMAL,
+-	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+ 	SPECTRE_V2_IBRS_ENHANCED,
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index d0108fb6e4dd..7f6d8159398e 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -135,8 +135,6 @@ enum spectre_v2_mitigation_cmd {
+ 
+ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_NONE]			= "Vulnerable",
+-	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
+-	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
+ 	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+@@ -250,11 +248,6 @@ static void __init spec2_print_if_secure(const char *reason)
+ 		pr_info("%s selected on command line.\n", reason);
+ }
+ 
+-static inline bool retp_compiler(void)
+-{
+-	return __is_defined(CONFIG_RETPOLINE);
+-}
+-
+ static inline bool match_option(const char *arg, int arglen, const char *opt)
+ {
+ 	int len = strlen(opt);
+@@ -417,14 +410,12 @@ retpoline_auto:
+ 			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
+ 			goto retpoline_generic;
+ 		}
+-		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
+-					 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
++		mode = SPECTRE_V2_RETPOLINE_AMD;
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	} else {
+ 	retpoline_generic:
+-		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_GENERIC :
+-					 SPECTRE_V2_RETPOLINE_MINIMAL;
++		mode = SPECTRE_V2_RETPOLINE_GENERIC;
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
+ 
