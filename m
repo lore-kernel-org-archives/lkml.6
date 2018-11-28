@@ -2,213 +2,91 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD953C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E3CC04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0BC2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:20:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0BC2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9667A20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 03:21:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pYN9w2fS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9667A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbeK1OUM (ORCPT
+        id S1727254AbeK1OUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 09:20:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:1776 "EHLO mga11.intel.com"
+        Wed, 28 Nov 2018 09:20:50 -0500
+Received: from m12-17.163.com ([220.181.12.17]:40975 "EHLO m12-17.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbeK1OUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 09:20:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 19:20:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,289,1539673200"; 
-   d="scan'208";a="93232682"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.27])
-  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2018 19:20:07 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, <s.priebe@profihost.ag>,
-        <mgorman@techsingularity.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        <alex.williamson@redhat.com>, <lkp@01.org>, <rientjes@google.com>,
-        <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>,
-        <zi.yan@cs.rutgers.edu>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
-References: <20181127062503.GH6163@shao2-debian>
-        <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com>
-        <20181127205737.GI16136@redhat.com>
-Date:   Wed, 28 Nov 2018 11:20:06 +0800
-In-Reply-To: <20181127205737.GI16136@redhat.com> (Andrea Arcangeli's message
-        of "Tue, 27 Nov 2018 15:57:37 -0500")
-Message-ID: <87tvk1yjkp.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        id S1726847AbeK1OUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 09:20:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=ITOznSn5bQ58RWLkTe
+        WjlqppC3foqi5QhYIlals98a4=; b=pYN9w2fShkpa8iNJ7jqwwqG6ltDR/S68/7
+        mftKKva9Nr265I8l8B30CFFgwhwWqD0BEJLmjPsMclq3KmCzbu9bZYwNZmw9/TCm
+        mXruAN3gLDMDBjHT7kTRL+pGvWWfm6emDNTmYuHGQ5Gg2N30EVtXgL4lU3od9Vg8
+        2KBpgl6zg=
+Received: from bp.localdomain (unknown [106.120.213.96])
+        by smtp13 (Coremail) with SMTP id EcCowACnRHZhCf5beSCwBw--.43667S3;
+        Wed, 28 Nov 2018 11:20:03 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] ubi: do not drop UBI device reference before using
+Date:   Wed, 28 Nov 2018 11:20:03 +0800
+Message-Id: <1543375203-97876-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: EcCowACnRHZhCf5beSCwBw--.43667S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr4UKr15Aw1DXF47Zw13urg_yoWfKwb_WF
+        yxZFnIqr40gr18Kw1Sqr4fZFyI9FyY9F4IkF12g395Wayjgry5uFyvqr97ZFW7ZryIya4D
+        Zr12vw45Gr43KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0G9aJUUUUU==
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBzwUNclaD0cQdXAAAs0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrea Arcangeli <aarcange@redhat.com> writes:
+The UBI device reference is dropped but then the device is used as a
+parameter of ubi_err. The bug is introduced in changing ubi_err's 
+behavior. The old ubi_err does not require a UBI device as its first 
+parameter, but the new one does.
 
-> Hi Linus,
->
-> On Tue, Nov 27, 2018 at 09:08:50AM -0800, Linus Torvalds wrote:
->> On Mon, Nov 26, 2018 at 10:24 PM kernel test robot
->> <rong.a.chen@intel.com> wrote:
->> >
->> > FYI, we noticed a -61.3% regression of vm-scalability.throughput due
->> > to commit ac5b2c18911f ("mm: thp: relax __GFP_THISNODE for
->> > MADV_HUGEPAGE mappings")
->> 
->> Well, that's certainly noticeable and not good.
->
-> Noticed this email too.
->
-> This difference can only happen with defrag=always, and that's not the
-> current upstream default.
->
->         thp_enabled: always
->         thp_defrag: always
->         ^^^^^^^^^^^^^^^^^^ emulates MADV_HUGEPAGE always set
->
->> Andrea, I suspect it might be causing fights with auto numa migration..
->
-> That MADV_HUGEPAGE causes flights with NUMA balancing is not great
-> indeed, qemu needs NUMA locality too, but then the badness caused by
-> __GFP_THISNODE was a larger regression in the worst case for qemu.
->
-> When the kernel wants to allocate a THP from node A, if there are no
-> THP generated on node A but there are in node B, they'll be picked from
-> node B now.
->
-> __GFP_THISNODE previously prevented any THP to be allocated from any
-> node except A. This introduces a higher chance of initial misplacement
-> which NUMA balancing will correct over time, but it should only apply
-> to long lived allocations under MADV_HUGEPAGE. Perhaps the workload
-> here uses short lived allocations and sets defrag=always which is not
-> optimal to begin with?
->
-> The motivation of the fix, is that the previous code invoked reclaim
-> with __GFP_THISNODE set. That looked insecure and such behavior should
-> only have been possible under a mlock/mempolicy
-> capability. __GFP_THISNODE is like a transient but still privileged
-> mbind for reclaim.
->
-> Before the fix, __GFP_THISNODE would end up swapping out everything
-> from node A to free 4k pages from node A, despite perhaps there were
-> gigabytes of memory free in node B. That caused severe regression to
-> threaded workloads whose memory spanned more than one NUMA node. So
-> again going back doesn't sounds great for NUMA in general.
->
-> The vmscalability test is most certainly not including any
-> multithreaded process whose memory doesn't fit in a single NUMA node
-> or we'd see also the other side of the tradeoff. It'd be nice to add
-> such a test to be sure that the old __GFP_THISNODE behavior won't
-> happen again for apps that don't fit in a single node.
+Fixes: 32608703310 ("UBI: Extend UBI layer debug/messaging capabilities")
 
-The test case is to test swap subsystem.  Where tens (32 in test job)
-processes are run to eat memory to trigger to swap to NVMe disk.  The
-memory size to eat is almost same in this commit and its parent.  But I
-found the swap triggered is much more for this commit.
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ drivers/mtd/ubi/kapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  70934968 ± 10%     +51.7%  1.076e+08 ±  3%  proc-vmstat.pswpout
-
-One possibility is that for parent commit, some processes exit much
-earlier than other processes, so the total memory requirement of the
-whole system is much lower.  So I dig more on test log and found,
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index e9e9ecb..0b8f0c4 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -227,9 +227,9 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+ out_free:
+ 	kfree(desc);
+ out_put_ubi:
+-	ubi_put_device(ubi);
+ 	ubi_err(ubi, "cannot open device %d, volume %d, error %d",
+ 		ubi_num, vol_id, err);
++	ubi_put_device(ubi);
+ 	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(ubi_open_volume);
+-- 
+2.7.4
 
 
-For the parent commit,
-
-$ grep 'usecs =' vm-scalability
-24573771360 bytes / 13189705 usecs = 1819435 KB/s
-24573771360 bytes / 13853913 usecs = 1732205 KB/s
-24573771360 bytes / 42953388 usecs = 558694 KB/s
-24573771360 bytes / 52782761 usecs = 454652 KB/s
-24573771360 bytes / 84026989 usecs = 285596 KB/s
-24573771360 bytes / 111677310 usecs = 214885 KB/s
-24573771360 bytes / 146084698 usecs = 164273 KB/s
-24573771360 bytes / 146978329 usecs = 163274 KB/s
-24573771360 bytes / 149371224 usecs = 160658 KB/s
-24573771360 bytes / 162892070 usecs = 147323 KB/s
-24573771360 bytes / 177949001 usecs = 134857 KB/s
-24573771360 bytes / 181729992 usecs = 132052 KB/s
-24573771360 bytes / 189812698 usecs = 126428 KB/s
-24573771360 bytes / 190992698 usecs = 125647 KB/s
-24573771360 bytes / 200039238 usecs = 119965 KB/s
-24573771360 bytes / 201254461 usecs = 119241 KB/s
-24573771360 bytes / 202825077 usecs = 118317 KB/s
-24573771360 bytes / 203441285 usecs = 117959 KB/s
-24573771360 bytes / 205378150 usecs = 116847 KB/s
-24573771360 bytes / 204840555 usecs = 117153 KB/s
-24573771360 bytes / 206235458 usecs = 116361 KB/s
-24573771360 bytes / 206419877 usecs = 116257 KB/s
-24573771360 bytes / 206619347 usecs = 116145 KB/s
-24573771360 bytes / 206942267 usecs = 115963 KB/s
-24573771360 bytes / 210289229 usecs = 114118 KB/s
-24573771360 bytes / 210504531 usecs = 114001 KB/s
-24573771360 bytes / 210521351 usecs = 113992 KB/s
-24573771360 bytes / 211012852 usecs = 113726 KB/s
-24573771360 bytes / 211547509 usecs = 113439 KB/s
-24573771360 bytes / 212179521 usecs = 113101 KB/s
-24573771360 bytes / 212907825 usecs = 112714 KB/s
-24573771360 bytes / 215558786 usecs = 111328 KB/s
-
-For this commit,
-
-$ grep 'usecs =' vm-scalability
-24573681072 bytes / 203705073 usecs = 117806 KB/s
-24573681072 bytes / 216146130 usecs = 111025 KB/s
-24573681072 bytes / 257234408 usecs = 93291 KB/s
-24573681072 bytes / 259530715 usecs = 92465 KB/s
-24573681072 bytes / 261335046 usecs = 91827 KB/s
-24573681072 bytes / 260134706 usecs = 92251 KB/s
-24573681072 bytes / 258848653 usecs = 92709 KB/s
-24573681072 bytes / 259889050 usecs = 92338 KB/s
-24573681072 bytes / 265457907 usecs = 90401 KB/s
-24573681072 bytes / 261698183 usecs = 91700 KB/s
-24573681072 bytes / 266806783 usecs = 89944 KB/s
-24573681072 bytes / 273096611 usecs = 87872 KB/s
-24573681072 bytes / 273601276 usecs = 87710 KB/s
-24573681072 bytes / 276132454 usecs = 86906 KB/s
-24573681072 bytes / 274162852 usecs = 87530 KB/s
-24573681072 bytes / 277901662 usecs = 86353 KB/s
-24573681072 bytes / 282373557 usecs = 84985 KB/s
-24573681072 bytes / 278202538 usecs = 86259 KB/s
-24573681072 bytes / 283311157 usecs = 84704 KB/s
-24573681072 bytes / 284181483 usecs = 84445 KB/s
-24573681072 bytes / 283331985 usecs = 84698 KB/s
-24573681072 bytes / 284573067 usecs = 84328 KB/s
-24573681072 bytes / 277832459 usecs = 86374 KB/s
-24573681072 bytes / 284753391 usecs = 84275 KB/s
-24573681072 bytes / 287701035 usecs = 83412 KB/s
-24573681072 bytes / 287816910 usecs = 83378 KB/s
-24573681072 bytes / 287871244 usecs = 83362 KB/s
-24573681072 bytes / 288322443 usecs = 83232 KB/s
-24573681072 bytes / 288750156 usecs = 83108 KB/s
-24573681072 bytes / 289595079 usecs = 82866 KB/s
-24573681072 bytes / 289741926 usecs = 82824 KB/s
-24573681072 bytes / 290746427 usecs = 82538 KB/s
-
-
-From the above data, for the parent commit 3 processes exited within
-14s, another 3 exited within 100s.  For this commit, the first process
-exited at 203s.  That is, this commit makes memory allocation more fair
-among processes, so that processes proceeded at more similar speed.  But
-this raises system memory footprint too, so triggered much more swap,
-thus lower benchmark score.
-
-In general, memory allocation fairness among processes should be a good
-thing.  So I think the report should have been a "performance
-improvement" instead of "performance regression".
-
-Best Regards,
-Huang, Ying
