@@ -2,188 +2,217 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8B8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22301C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62116206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:45:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qm9cbxBS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62116206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B458D206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:47:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B458D206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeK2FsL (ORCPT
+        id S1727648AbeK2Ftk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:48:11 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51301 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeK2FsL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:48:11 -0500
-Received: by mail-wm1-f65.google.com with SMTP id s14so3499908wmh.1;
-        Wed, 28 Nov 2018 10:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kA0EaRVco4/yVtEHc7rLURp/z2b/HxSi3M+1DLjPSII=;
-        b=Qm9cbxBS5epTU2LP6B6bQ2LJABOXpifNR7CpYwlxMs0FFbnvnW99UxLtX1yxpeXfKc
-         bEmf8N2woIWkSBg8ZoUZzR/NBvZ0jhu+2P3hXWfm7T9GumEv7qUZx6ouAOXVQOHOE0fF
-         keuqGl9U/8oOM3Vj0lMnl5ODMEQgsv8mRdtbv3UAjQ8eoplbkSAJTVgxmDHGUBioLT2c
-         s/qgXC/s0AAwsScXmgg1g6RrQMVC5UDknm5hnR5On2XmxpcmS6+LMtXHTuth23+zmhq8
-         SYDTKg+2HacAuymjf1ybo3mUQtIR9jc6gaK0BhRDDa5GoiFlHkN9X4K3F6eueQCLYNWg
-         kw/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kA0EaRVco4/yVtEHc7rLURp/z2b/HxSi3M+1DLjPSII=;
-        b=ncSa3ESO6BzL+U/d2cZJGgXVBFajasBVKSfV7j/xWmjrry3rkqPigKEzjZ/unQ6pBm
-         i2Wd2MJGJDfL3e//syyFzyqnWp2nK312HsFDKLsrWS2gUlx/mCQOMYz+IOBLYwjC9oac
-         otteRUWIjjtePqFGWVZNBjs+Vh19/MKoFBoBKmRZsOASfQ1y0AV6lmSVoEI/eKWtdwvk
-         nKmUhSpmZXov0Plpx9oktXiSkT808+ybOx5rry8CgJM/m+dprNB6f5w7XXmKjNdL41lX
-         6T+0ogWD/fkZBsiDi09496XIeN6SXs+GuiwGyl1lPSFfQGGNzLJZXgAbKZvXjaznRIVl
-         xQYA==
-X-Gm-Message-State: AA+aEWbQFtAZ952wKdinwnrK0VGXAWekVy29uameR/Yl553hBs0WSSuv
-        F3NnKJfFkGhDGT4Iq/XVFcE=
-X-Google-Smtp-Source: AFSGD/XxOUKIwxAmkRcQZklzja3iUyoNqyO4Z5BZcH3XgsI9rtpXH3uGXeIuKYwdL2nZ6oDsRh8teg==
-X-Received: by 2002:a1c:3a8d:: with SMTP id h135-v6mr3808575wma.92.1543430732246;
-        Wed, 28 Nov 2018 10:45:32 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id v19sm11818698wrd.46.2018.11.28.10.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 10:45:31 -0800 (PST)
-Date:   Wed, 28 Nov 2018 19:45:28 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH 00/15] rtc: sun6i: clock rework and pre-H6
- SoC support
-Message-ID: <20181128184528.GA22504@Red>
-References: <20181128093013.24442-1-wens@csie.org>
+        Thu, 29 Nov 2018 00:49:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725772AbeK2Ftk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 00:49:40 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65150206B2;
+        Wed, 28 Nov 2018 18:47:02 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 13:47:00 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, ldv@altlinux.org,
+        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Rough idea of implementing blocking perf calls for system call
+ tracepoints
+Message-ID: <20181128134700.212ed035@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128093013.24442-1-wens@csie.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 05:29:57PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
-> 
-> This series was started as part of enabling Bluetooth on various
-> Allwinner SBCs. The bluetooth controller requires a precise 32.768 kHz
-> clock fed to it to correctly detect the frequency of its main oscillator.
-> This clock signal is provided by the RTC, either directly from a special
-> pin on the SoC, or some clock output function from the clock controllers.
-> I found that the clock-related properties of the RTC on later SoCs were
-> incorrect or missing.
-> 
-> This series reworks the compatible strings and clock parts of the device
-> tree bindings for sun6i-rtc. Currently we assume most Allwinner SoCs use
-> the same sun6i-rtc variant, when in fact they do not. The differences
-> that matter with regards to clocks are a) the A31 does not have an extra
-> external output for the RTC 32K clock, while most of the others do;
-> b) the clock frequency of the internal RC oscillator is different on
-> some SoCs; c) on the H6 the RTC also handles the 24 MHz DCXO, which
-> feeds the system HOSC. The last difference, and by extension the H6, are
-> not covered in this series.
-> 
-> Patch 1 cleans up the clock-related section of the RTC device tree
-> binding. This would make it easier to read and easier to add additional
-> clocks.
-> 
-> Patch 2 adds compatible strings for all identified variants introduced
-> prior to the H6.
-> 
-> Patch 3 deprecates the external clock output for the A31. The A31 does
-> not have this output, so it's introduction and usage was an error.
-> 
-> Patch 4 adds a clock output for the RTC's internal oscillator to the
-> device tree binding. This feeds the PRCM in some SoCs.
-> 
-> Patch 5 adds a default clock name for the LOSC to the RTC driver.
-> 
-> Patch 6 adds support for different hardware variants to the RTC driver.
-> 
-> Patch 7 adds support for all known pre-H6 variants.
-> 
-> Patch 8 exposes the RTC's internal oscillator through the device tree.
-> 
-> Patch 9 makes the R40's CCU use the LOSC from the RTC module, instead of
-> its own internal oscillator.
-> 
-> Patch 10 through 15 adds an RTC node or fixes up the RTC device node
-> address ranges, clock properties, names of existing clocks, and adds
-> accuracy properties for the external fixed oscillators.
-> 
-> The clock names require fixing because the sunxi clock driver implicitly
-> depends on the HOSC and LOSC being named "osc24M" and "osc32k". The
-> "fixes" to the clock hierarchy introduced in this series means the names
-> must also be shuffled around or the in kernel representation would be
-> incorrect. This has been the case since the sunxi-ng drivers were
-> introduced. There are plans to address this, but the code is still in its
-> early stages.
-> 
-> Please have a look.
-> 
-> Thanks
-> ChenYu
-> 
-> Chen-Yu Tsai (15):
->   dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
->   dt-bindings: rtc: sun6i-rtc: Add compatible strings for pre-H6
->     variants
->   dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
->   dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
->   rtc: sun6i: Add default clock name for LOSC
->   rtc: sun6i: Add support for different variants
->   rtc: sun6i: Add support for all known pre-H6 variants
->   rtc: sun6i: Expose internal oscillator through device tree
->   clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC output
->   ARM: dts: sun8i: a23/a33: Fix up RTC device node
->   ARM: dts: sunxi: h3/h5: Add clock accuracy for external oscillators
->   ARM: dts: sunxi: h3/h5: Fix up RTC device node and clock references
->   ARM: dts: sun8i: r40: Add clock accuracy for external oscillators
->   ARM: dts: sun8i: r40: Add RTC device node
->   arm64: dts: allwinner: a64: Fix up RTC device node and clock
->     references
-> 
->  .../devicetree/bindings/rtc/sun6i-rtc.txt     |  31 ++++-
->  arch/arm/boot/dts/sun8i-a23-a33.dtsi          |   6 +-
->  arch/arm/boot/dts/sun8i-h3.dtsi               |   4 +
->  arch/arm/boot/dts/sun8i-r40.dtsi              |  18 ++-
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  28 ++---
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  22 ++--
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   4 +
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c          |  11 ++
->  drivers/rtc/rtc-sun6i.c                       | 117 ++++++++++++++++--
->  9 files changed, 188 insertions(+), 53 deletions(-)
-> 
-> -- 
 
-Hello
+[
+ Sorry for the late reply on this, when I got back from Plumbers, my
+ work was really piled up, and then Turkey day came and just added more
+ to the chaos.
+]
 
-Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Tested-on: sun8i-r40-bananapi-m2-ultra
-Tested-on: sun50i-h5-nanopi-neo-plus2
+From our discussion at the Linux Plumbers strace talk about
+implementing strace with perf. As strace requires to be lossless, it
+currently can not be implemented with perf because there's always a
+chance to lose events. The idea here is to have a way to instrument a
+way to record system calls from perf but also block when the perf ring
+buffer is full.
 
-Regards
+Below is a patch I wrote that gives an idea of what needs to be done.
+It is by no means a real patch (wont even compile). And I left out the
+wake up part, as I'm not familiar enough with how perf works to
+implement it. But hopefully someone on this list can :-)
+
+The idea here is that we set the tracepoints sys_enter and sys_exit
+with a new flag called TRACE_EVENT_FL_BLOCK. When the perf code records
+the event, if the buffer is full, it will set a "perf_block" field in
+the current task structure to point to the tp_event, if the tp_event
+has the BLOCK flag set.
+
+Then on the exit of the syscall tracepoints, the perf_block field is
+checked, and if it is set, it knows that the event was dropped, and
+will add itself to a wait queue. When the reader reads the perf buffer
+and hits a water mark, it can wake whatever is on the queue (not sure
+where to put this queue, but someone can figure it out).
+
+Once woken, it will try to write to the perf system call tracepoint
+again (notice that it only tries perf and doesn't call the generic
+tracepoint code, as only perf requires a repeat).
+
+This is just a basic idea patch, to hopefully give someone else an idea
+of what I envision. I think it can work, and if it does, I can imagine
+that it would greatly improve the performance of strace!
+
+Thoughts?
+
+-- Steve
+
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 3b2490b81918..57fe95950a24 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -123,8 +123,22 @@ static long syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ #endif
+ 
+-	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
++	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT))) {
++		current->perf_block = NULL;
+ 		trace_sys_enter(regs, regs->orig_ax);
++		while (current->perf_block) {
++			DECLARE_WAITQUEUE(wait, current);
++			struct trace_event_call *tp_event = current->perf_block;
++
++			current->perf_block = NULL;
++
++			set_current_state(TASK_INTERRUPTIBLE);
++			add_wait_queue(&tp_event->block_queue, &wait);
++			perf_trace_sys_enter(tp_event, regs, regs->orig_ax);
++			if (current->perf_block)
++				schedule();
++		}
++	}
+ 
+ 	do_audit_syscall_entry(regs, arch);
+ 
+@@ -224,8 +238,22 @@ static void syscall_slow_exit_work(struct pt_regs *regs, u32 cached_flags)
+ 
+ 	audit_syscall_exit(regs);
+ 
+-	if (cached_flags & _TIF_SYSCALL_TRACEPOINT)
++	if (cached_flags & _TIF_SYSCALL_TRACEPOINT) {
++		current->perf_block = NULL;
+ 		trace_sys_exit(regs, regs->ax);
++		while (current->perf_block) {
++			DECLARE_WAITQUEUE(wait, current);
++			struct trace_event_call *tp_event = current->perf_block;
++
++			current->perf_block = NULL;
++
++			set_current_state(TASK_INTERRUPTIBLE);
++			add_wait_queue(&tp_event->block_queue, &wait);
++			perf_trace_sys_exit(tp_event, regs, regs->orig_ax);
++			if (current->perf_block)
++				schedule();
++		}
++	}
+ 
+ 	/*
+ 	 * If TIF_SYSCALL_EMU is set, we only get here because of
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index d6183a55e8eb..39a98da0e03b 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1009,6 +1009,7 @@ struct task_struct {
+ 	struct perf_event_context	*perf_event_ctxp[perf_nr_task_contexts];
+ 	struct mutex			perf_event_mutex;
+ 	struct list_head		perf_event_list;
++	struct trace_event_call		*perf_block;
+ #endif
+ #ifdef CONFIG_DEBUG_PREEMPT
+ 	unsigned long			preempt_disable_ip;
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 4130a5497d40..35a71f853d64 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -226,6 +226,7 @@ enum {
+ 	TRACE_EVENT_FL_TRACEPOINT_BIT,
+ 	TRACE_EVENT_FL_KPROBE_BIT,
+ 	TRACE_EVENT_FL_UPROBE_BIT,
++	TRACE_EVENT_FL_BLOCK_BIT,
+ };
+ 
+ /*
+@@ -246,6 +247,7 @@ enum {
+ 	TRACE_EVENT_FL_TRACEPOINT	= (1 << TRACE_EVENT_FL_TRACEPOINT_BIT),
+ 	TRACE_EVENT_FL_KPROBE		= (1 << TRACE_EVENT_FL_KPROBE_BIT),
+ 	TRACE_EVENT_FL_UPROBE		= (1 << TRACE_EVENT_FL_UPROBE_BIT),
++	TRACE_EVENT_FL_BLOCK		= (1 << TRACE_EVENT_FL_BLOCK_BIT),
+ };
+ 
+ #define TRACE_EVENT_FL_UKPROBE (TRACE_EVENT_FL_KPROBE | TRACE_EVENT_FL_UPROBE)
+diff --git a/include/trace/events/syscalls.h b/include/trace/events/syscalls.h
+index 44a3259ed4a5..3fc4ecafebcf 100644
+--- a/include/trace/events/syscalls.h
++++ b/include/trace/events/syscalls.h
+@@ -39,7 +39,7 @@ TRACE_EVENT_FN(sys_enter,
+ 	syscall_regfunc, syscall_unregfunc
+ );
+ 
+-TRACE_EVENT_FLAGS(sys_enter, TRACE_EVENT_FL_CAP_ANY)
++TRACE_EVENT_FLAGS(sys_enter, TRACE_EVENT_FL_CAP_ANY | TRACE_EVENT_FL_BLOCK)
+ 
+ TRACE_EVENT_FN(sys_exit,
+ 
+@@ -63,7 +63,7 @@ TRACE_EVENT_FN(sys_exit,
+ 	syscall_regfunc, syscall_unregfunc
+ );
+ 
+-TRACE_EVENT_FLAGS(sys_exit, TRACE_EVENT_FL_CAP_ANY)
++TRACE_EVENT_FLAGS(sys_exit, TRACE_EVENT_FL_CAP_ANY | TRACE_EVENT_FL_BLOCK)
+ 
+ #endif /* CONFIG_HAVE_SYSCALL_TRACEPOINTS */
+ 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 84530ab358c3..64be3de9ee41 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6505,8 +6505,12 @@ __perf_event_output(struct perf_event *event,
+ 
+ 	perf_prepare_sample(&header, data, event, regs);
+ 
+-	if (output_begin(&handle, event, header.size))
++	if (output_begin(&handle, event, header.size)) {
++		if (event->tp_event &&
++		    event->tp_event->flags & TRACE_EVENT_FL_BLOCK)
++			current->perf_block = event->tp_event;
+ 		goto exit;
++	}
+ 
+ 	perf_output_sample(&handle, &header, data, event);
+ 
