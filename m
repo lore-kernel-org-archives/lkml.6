@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAC0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2933DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF2520665
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF2520665
+	by mail.kernel.org (Postfix) with ESMTP id DA4D120665
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:07:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4D120665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbeK2GJs (ORCPT
+        id S1729158AbeK2GIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:09:48 -0500
-Received: from mga01.intel.com ([192.55.52.88]:52264 "EHLO mga01.intel.com"
+        Thu, 29 Nov 2018 01:08:24 -0500
+Received: from mga17.intel.com ([192.55.52.151]:46494 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeK2GIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:08:25 -0500
+        id S1725996AbeK2GIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 01:08:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 11:05:45 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 11:05:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,291,1539673200"; 
-   d="scan'208";a="104537387"
+   d="scan'208";a="113116720"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 28 Nov 2018 11:05:43 -0800
+  by orsmga002.jf.intel.com with ESMTP; 28 Nov 2018 11:05:39 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 040D46BB; Wed, 28 Nov 2018 21:05:38 +0200 (EET)
+        id 82230288; Wed, 28 Nov 2018 21:05:38 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alessandro Zummo <a.zummo@towertech.it>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
@@ -43,10 +43,20 @@ To:     Alessandro Zummo <a.zummo@towertech.it>,
         linux-kernel@vger.kernel.org,
         Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 10/21] rtc: pic32: Switch to use %ptR
-Date:   Wed, 28 Nov 2018 21:05:26 +0200
-Message-Id: <20181128190537.14074-11-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v4 02/21] lib/vsprintf: Print time and date in human readable format via %pt
+Date:   Wed, 28 Nov 2018 21:05:18 +0200
+Message-Id: <20181128190537.14074-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
 References: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
@@ -57,64 +67,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use %ptR instead of open coded variant to print content of
+There are users which print time and date represented by content of
 struct rtc_time in human readable format.
 
+Instead of open coding that each time introduce %ptR[dt][r] specifier.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Guan Xuetao <gxt@mprc.pku.edu.cn>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/rtc/rtc-pic32.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ Documentation/core-api/printk-formats.rst |  18 ++++
+ lib/test_printf.c                         |   6 ++
+ lib/vsprintf.c                            | 111 ++++++++++++++++++++++
+ 3 files changed, 135 insertions(+)
 
-diff --git a/drivers/rtc/rtc-pic32.c b/drivers/rtc/rtc-pic32.c
-index 3c08eab4f1a8..d7ef0a6f8931 100644
---- a/drivers/rtc/rtc-pic32.c
-+++ b/drivers/rtc/rtc-pic32.c
-@@ -170,9 +170,7 @@ static int pic32_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index ff48b55040ef..a7fae4538946 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -412,6 +412,24 @@ Examples::
  
- 	rtc_tm->tm_year += 100;
+ Passed by reference.
  
--	dev_dbg(dev, "read time %04d.%02d.%02d %02d:%02d:%02d\n",
--		1900 + rtc_tm->tm_year, rtc_tm->tm_mon, rtc_tm->tm_mday,
--		rtc_tm->tm_hour, rtc_tm->tm_min, rtc_tm->tm_sec);
-+	dev_dbg(dev, "read time %ptR\n", rtc_tm);
++Time and date (struct rtc_time)
++-------------------------------
++
++::
++
++	%ptR		YYYY-mm-ddTHH:MM:SS
++	%ptRd		YYYY-mm-dd
++	%ptRt		HH:MM:SS
++	%ptR[dt][r]
++
++For printing date and time as represented by struct rtc_time structure in
++human readable format.
++
++By default year will be incremented by 1900 and month by 1. Use %ptRr (raw)
++to suppress this behaviour.
++
++Passed by reference.
++
+ struct clk
+ ----------
  
- 	clk_disable(pdata->clk);
- 	return 0;
-@@ -184,9 +182,7 @@ static int pic32_rtc_settime(struct device *dev, struct rtc_time *tm)
- 	void __iomem *base = pdata->reg_base;
- 	int year = tm->tm_year - 100;
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 53527ea822b5..97b7d14961d6 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -418,6 +418,11 @@ struct_va_format(void)
+ {
+ }
  
--	dev_dbg(dev, "set time %04d.%02d.%02d %02d:%02d:%02d\n",
--		1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
--		tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "set time %ptR\n", tm);
++static void __init
++struct_rtc_time(void)
++{
++}
++
+ static void __init
+ struct_clk(void)
+ {
+@@ -529,6 +534,7 @@ test_pointer(void)
+ 	uuid();
+ 	dentry();
+ 	struct_va_format();
++	struct_rtc_time();
+ 	struct_clk();
+ 	bitmap();
+ 	netdev_features();
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 37a54a6dd594..0a66d0b9c589 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -30,6 +30,7 @@
+ #include <linux/ioport.h>
+ #include <linux/dcache.h>
+ #include <linux/cred.h>
++#include <linux/rtc.h>
+ #include <linux/uuid.h>
+ #include <linux/of.h>
+ #include <net/addrconf.h>
+@@ -822,6 +823,20 @@ static const struct printf_spec default_dec_spec = {
+ 	.precision = -1,
+ };
  
- 	if (year < 0 || year >= 100) {
- 		dev_err(dev, "rtc only supports 100 years\n");
-@@ -224,10 +220,7 @@ static int pic32_rtc_getalarm(struct device *dev, struct rtc_wkalrm *alrm)
++static const struct printf_spec default_dec02_spec = {
++	.base = 10,
++	.field_width = 2,
++	.precision = -1,
++	.flags = ZEROPAD,
++};
++
++static const struct printf_spec default_dec04_spec = {
++	.base = 10,
++	.field_width = 4,
++	.precision = -1,
++	.flags = ZEROPAD,
++};
++
+ static noinline_for_stack
+ char *resource_string(char *buf, char *end, struct resource *res,
+ 		      struct printf_spec spec, const char *fmt)
+@@ -1549,6 +1564,98 @@ char *address_val(char *buf, char *end, const void *addr, const char *fmt)
+ 	return special_hex_number(buf, end, num, size);
+ }
  
- 	alrm->enabled = (alm_en & PIC32_RTCALRM_ALRMEN) ? 1 : 0;
- 
--	dev_dbg(dev, "getalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
--		alm_en,
--		1900 + alm_tm->tm_year, alm_tm->tm_mon, alm_tm->tm_mday,
--		alm_tm->tm_hour, alm_tm->tm_min, alm_tm->tm_sec);
-+	dev_dbg(dev, "getalarm: %d, %ptR\n", alm_en, alm_tm);
- 
- 	alm_tm->tm_sec = bcd2bin(alm_tm->tm_sec);
- 	alm_tm->tm_min = bcd2bin(alm_tm->tm_min);
-@@ -247,10 +240,7 @@ static int pic32_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	void __iomem *base = pdata->reg_base;
- 
- 	clk_enable(pdata->clk);
--	dev_dbg(dev, "setalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
--		alrm->enabled,
--		1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
--		tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "setalarm: %d, %ptR\n", alrm->enabled, tm);
- 
- 	writel(0x00, base + PIC32_ALRMTIME);
- 	writel(0x00, base + PIC32_ALRMDATE);
++static noinline_for_stack
++char *date_str(char *buf, char *end, const struct rtc_time *tm, bool r)
++{
++	int year = tm->tm_year + (r ? 0 : 1900);
++	int mon = tm->tm_mon + (r ? 0 : 1);
++
++	buf = number(buf, end, year, default_dec04_spec);
++	if (buf < end)
++		*buf = '-';
++	buf++;
++
++	buf = number(buf, end, mon, default_dec02_spec);
++	if (buf < end)
++		*buf = '-';
++	buf++;
++
++	return number(buf, end, tm->tm_mday, default_dec02_spec);
++}
++
++static noinline_for_stack
++char *time_str(char *buf, char *end, const struct rtc_time *tm, bool r)
++{
++	buf = number(buf, end, tm->tm_hour, default_dec02_spec);
++	if (buf < end)
++		*buf = ':';
++	buf++;
++
++	buf = number(buf, end, tm->tm_min, default_dec02_spec);
++	if (buf < end)
++		*buf = ':';
++	buf++;
++
++	return number(buf, end, tm->tm_sec, default_dec02_spec);
++}
++
++static noinline_for_stack
++char *rtc_str(char *buf, char *end, const struct rtc_time *tm, const char *fmt)
++{
++	bool have_t = true, have_d = true;
++	bool raw = false;
++	int count = 2;
++	bool found;
++
++	switch (fmt[count]) {
++	case 'd':
++		have_t = false;
++		count++;
++		break;
++	case 't':
++		have_d = false;
++		count++;
++		break;
++	}
++
++	found = true;
++	do {
++		switch (fmt[count++]) {
++		case 'r':
++			raw = true;
++			break;
++		default:
++			found = false;
++			break;
++		}
++	} while (found);
++
++	if (have_d)
++		buf = date_str(buf, end, tm, raw);
++	if (have_d && have_t) {
++		/* Respect ISO 8601 */
++		if (buf < end)
++			*buf = 'T';
++		buf++;
++	}
++	if (have_t)
++		buf = time_str(buf, end, tm, raw);
++
++	return buf;
++}
++
++static noinline_for_stack
++char *timeanddate(char *buf, char *end, void *ptr, struct printf_spec spec,
++		  const char *fmt)
++{
++	switch (fmt[1]) {
++	case 'R':
++		return rtc_str(buf, end, (const struct rtc_time *)ptr, fmt);
++	default:
++		return ptr_to_id(buf, end, ptr, spec);
++	}
++}
++
+ static noinline_for_stack
+ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
+ 	    const char *fmt)
+@@ -1828,6 +1935,8 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+  * - 'd[234]' For a dentry name (optionally 2-4 last components)
+  * - 'D[234]' Same as 'd' but for a struct file
+  * - 'g' For block_device name (gendisk + partition number)
++ * - 't[R][dt][rv]' For time and date as represented:
++ *      R    struct rtc_time
+  * - 'C' For a clock, it prints the name (Common Clock Framework) or address
+  *       (legacy clock framework) of the clock
+  * - 'Cn' For a clock, it prints the name (Common Clock Framework) or address
+@@ -1952,6 +2061,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 		return address_val(buf, end, ptr, fmt);
+ 	case 'd':
+ 		return dentry_name(buf, end, ptr, spec, fmt);
++	case 't':
++		return timeanddate(buf, end, ptr, spec, fmt);
+ 	case 'C':
+ 		return clock(buf, end, ptr, spec, fmt);
+ 	case 'D':
 -- 
 2.19.2
 
