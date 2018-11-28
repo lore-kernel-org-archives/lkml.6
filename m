@@ -2,131 +2,113 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAFAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC4CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21A0206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28A872081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aSEQ2GhY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21A0206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="nKJ4A+Zc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A872081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeK2KrN (ORCPT
+        id S1727219AbeK2Kr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:47:13 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43612 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbeK2KrN (ORCPT
+        Thu, 29 Nov 2018 05:47:27 -0500
+Received: from out002.mailprotect.be ([83.217.72.86]:56127 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbeK2Kr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:13 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 83-v6so38370ljf.10
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:43:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yB4safdTcWcpcZlNQIgP7SVO+vxyNJ2W8+iYUZ2dKEo=;
-        b=aSEQ2GhYxwlppKmw8uM1YekRZOfVfzBoZDK8duCgSDmZkltYdEjM6c2u8Ud3Yf6yTZ
-         hq8KQmxqb7YHuP9ENdo2ti6+t4pxg2r0wPy8q6hAUEbV04rMgeuvJX4D6j5zMHgfGbms
-         K8PCwcfv9COWJDZ1Ah4sF3xz7vQydoEEefGOw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yB4safdTcWcpcZlNQIgP7SVO+vxyNJ2W8+iYUZ2dKEo=;
-        b=YT3tvl29VJWs3l4923egnQjVwBwF/igskSSTpc0+IcABKR/nozaI9UXYJ9aAOFiEme
-         QiF4XLGgnZEL7X1IQLUVeA9cYJMrF4orNftjQu+Y2Dnci8loGtxcw+3FSR55L5MXBxBB
-         yFf+3UfzGob5MjCTxGXdEo0JIxR82FcMpSwkUU4aZI+Du4t1KQApY5C/SB0NpIG1HABW
-         R7vhEirlb1pqIDVPnYCV1pB/FbX2lz0q46yHoQKA2GjtPOgvZwWZqeuYQO//WiZZq+8j
-         Rt55MEfxoNjmQCmEiOjRy1rMAK+LdkWr236orON9a02TpsRRedZ5MYqEkjxQQ4GP5ZfR
-         /xtA==
-X-Gm-Message-State: AA+aEWYzLhu4IWSD38w7saAkb1InDf5+1tZcvYS7a7b/JklZ1vwbGHiw
-        GB16jjkyL7sfgJp+w3otZtqtF7zKb+M=
-X-Google-Smtp-Source: AFSGD/WiHElFcFhUFZrYCVM74sXLyRl3Vc6zVTTO4jYsEpkSHHlaj0rnOga52b8JjR5yCGevbcYBLQ==
-X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr23806270lji.93.1543448631869;
-        Wed, 28 Nov 2018 15:43:51 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id x11sm9047lfd.81.2018.11.28.15.43.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 15:43:50 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id c16so37925lfj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:43:50 -0800 (PST)
-X-Received: by 2002:a19:1bca:: with SMTP id b193mr22124164lfb.153.1543448630074;
- Wed, 28 Nov 2018 15:43:50 -0800 (PST)
+        Thu, 29 Nov 2018 05:47:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
+        content-type; bh=cxFOWs3I/8LsI9MZgMEBkQ2cdyiU/r7dj/EsNHOBAaU=; b=nKJ4A+Zcb5HY
+        HtiGwaELoPTR3ilzVHBO35645UYWkE1ZWZrzsBS1PCrHrJA3m3zFfdSZJ0a0Ri8Sg5++KrJHXgdee
+        HjLrEc+B2oJuU2LBWv2vbeM+YMSdzhgre/2RQr5+7HN46XJx1YY0I/EhHh264PaE/8ISiEdx4hFMg
+        FVi5C+oAo6cSeQB0hsZMUZw2Ld/ktXQebmsorbP48S16Zg5VCHnEzw6+0fA94pedA+CUv4PBqMCrh
+        FrxgIfYCfz32aS0ar+5pOT+1Af55s+03+h7EDeLynrcD4NzdahLBisVPnQNNGTdRAlNwOtr5fJIde
+        Ca1J9NllX98HaiOnpxsr3Q==;
+Received: from smtp-auth.mailprotect.be ([178.208.39.159])
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        (envelope-from <bvanassche@acm.org>)
+        id 1gS9Un-000Fj9-AJ; Thu, 29 Nov 2018 00:43:54 +0100
+Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 8027DC1235;
+        Thu, 29 Nov 2018 00:43:47 +0100 (CET)
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH 06/27] liblockdep: Add dummy print_irqtrace_events() implementation
+Date:   Wed, 28 Nov 2018 15:43:04 -0800
+Message-Id: <20181128234325.110011-7-bvanassche@acm.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
+References: <20181128234325.110011-1-bvanassche@acm.org>
 MIME-Version: 1.0
-References: <20181026173544.136037-1-evgreen@chromium.org> <20181026173544.136037-4-evgreen@chromium.org>
- <20181122071847.GL2225@minitux>
-In-Reply-To: <20181122071847.GL2225@minitux>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 28 Nov 2018 15:43:13 -0800
-X-Gmail-Original-Message-ID: <CAE=gft55NLPAD4Z5w5aDDPB0YRPJP9xX-RmD1sz4ZfNCxURb+Q@mail.gmail.com>
-Message-ID: <CAE=gft55NLPAD4Z5w5aDDPB0YRPJP9xX-RmD1sz4ZfNCxURb+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: sdm845: add UFS controller
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     robh@kernel.org, Andy Gross <andy.gross@linaro.org>, kishon@ti.com,
-        Doug Anderson <dianders@chromium.org>, swboyd@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        David Brown <david.brown@linaro.org>, mark.rutland@arm.com,
-        linux-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: 178.208.39.159
+X-SpamExperts-Domain: mailprotect.be
+X-SpamExperts-Username: 178.208.39.128/27
+Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.04)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5sZNRgMEdqx1YY92X890MUB602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
+ AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyB41b1wEpWO6ik9HITpMsqebHcXK5F5szpMR3
+ ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aXcGYz2
+ l3Ll2FYwbIPUv0EYq2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi33Iz6Zvpm8cPQnANwk
+ DQ5BNCNwpGn8jfSb3NCl2WUq09dCYgcgr835yVjKQZA6hJL1LiMHCxRezvZaFOrUVh8zaVyj66M1
+ yz85ZZhpUrhTRbASVYnBhdKUnGmBdHG7BUn2dK6UtSEdwn3yFtfkzf2g6K04cY809V1JdCwiLdDQ
+ Dow7RSjhmGOVelXQaHGaUkCLb5mum9xAXSaS3KKPtTZXWZip9+GhedmPokL8D3vhvY6dhwYzYMxd
+ D9vfHZcjDv9O+eyolGM4l8rlxuGfhU+3NYPzMyldJaF5xZTjcWEFHpu0VYQwuqxmozzkDLIpUMoG
+ SJj2/VGV7PqOahGXkaU4twU/8XGrHu5QsNBEHc0tEDNi5zR1WYi0E09NG6GB18nXQzDvPzq7iERC
+ 6EDedzAj+cNwQ3D43FTA39dfhCtQkpPtRVkPryfKs6DA7QYq3G1BRp7ylSZxUEGgJw4nFzgd7yt3
+ 7BfpyvvZ6l+boZNfkk++GRKi3fJfRTPr/PuJHE36okpX82/BtXToloueSaXs0TK8OQ3cB9QF11y7
+ 2DRSHKQElPJyNJdgFsJFEs/93MUxAp6lp7UQayvhkcHnK3fh5AnI+wExEi2ZXZcwFmj/G9G9XUMB
+ gNDO+NkNGowFW+REN2PQUubU67h4IQuWPMZ4HKssSJVidkER7VZq4yeVz8oBMMMFnt8VzQUPDSXZ
+ uD7+tXK85NWt4CYBo2l7vp9TheM8Ply7UNk9s+JR29DmIqQBJ7TPMihJUfmPOEFZaWOoGwSHnDFQ
+ 4P4YDtlBXByrTecUvjKvjZONtLXg4KjauZafx+OvKcOyQvUosS9CO/I=
+X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:18 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Fri 26 Oct 10:35 PDT 2018, Evan Green wrote:
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index b72bdb0a31a5..9c72edb678ec 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -808,6 +808,73 @@
-> >                       };
-> >               };
-> >
-> > +             ufshc1: ufshc@1d84000 {
->
-> There's only one ufshc and one ufsphy, so no need to include the index.
+This patch avoids that linking against liblockdep fails due to no
+print_irqtrace_events() definition being available.
 
-Aren't there two UFS controllers on SDM845, a "card" one and a "mem"
-one? I'm only adding the "mem" one here since that's all I can test,
-but I thought it made sense to leave the number there so someone could
-add the "card" one later if needed.
->
-> [..]
-> > +                     resets = <&gcc GCC_UFS_PHY_BCR>;
-> > +                     reset-names = "rst";
->
-> I have this as well, but this is not used by the upstream driver nor is
-> it mentioned in the dt-binding.
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ tools/lib/lockdep/lockdep.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I see it in Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt,
-but then the only place I see it being used is ufs-hisi.c. So you're
-right, I think I should spin and remove this. Since I'm spinning, let
-me know about the numbering thing above.
+diff --git a/tools/lib/lockdep/lockdep.c b/tools/lib/lockdep/lockdep.c
+index 6002fcf2f9bc..348a9d0fb766 100644
+--- a/tools/lib/lockdep/lockdep.c
++++ b/tools/lib/lockdep/lockdep.c
+@@ -15,6 +15,11 @@ u32 prandom_u32(void)
+ 	abort();
+ }
+ 
++void print_irqtrace_events(struct task_struct *curr)
++{
++	abort();
++}
++
+ static struct new_utsname *init_utsname(void)
+ {
+ 	static struct new_utsname n = (struct new_utsname) {
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
-
->
-> > +
-> > +                     status = "disabled";
-> > +             };
-> > +
-> > +             ufsphy1: phy@1d87000 {
->
-> With reservation for the "reset" issue:
->
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->
-> Regards,
-> Bjorn
