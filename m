@@ -3,57 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6D2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C440C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7982133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3402086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:06:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="aarVW/No"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7982133F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="V77yvcqI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C3402086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeK2DIN (ORCPT
+        id S1729070AbeK2DIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:08:13 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38374 "EHLO
+        Wed, 28 Nov 2018 22:08:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38942 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728881AbeK2DIL (ORCPT
+        with ESMTP id S1728664AbeK2DI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:08:11 -0500
+        Wed, 28 Nov 2018 22:08:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QQezNpBcqbJUXcwT7HZ9n3ul65V6EP/uiHKNOAMALI4=; b=aarVW/NoXPtz
-        t64sQT//PDJN7kphJjry5TD2Q/t7MvahBLECIlzkthYSkQQMuBCqmz8kRWKNNoUgGjQLJJmrYvwPa
-        RR1eeR0DWPHysYUmz9lv9Id5yyTESI706pMMjM4BGJ3/PHAkvUZyGBo1rRrBvWf5APU/wECrbbTwW
-        QgUo0=;
+        List-Archive; bh=USn8T5DUuL0JBN1z09MrPjgcjZaOWlHTBNpQBu+adh0=; b=V77yvcqI3nz6
+        Bs1KQRU5EO/+LiryrzafdrKs3TUWEP/nI690WdE4sx7xd65WL9pWHjYN4riL6nm6ARMY01lHNYw4v
+        Rak6JWFlyO9DrJw5MvP78tt/i4rpJXm4/HNBunkqBG/jIQU/L+YArSAKM21M5XogqwUUPfJMKtm2C
+        jDxrI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gS2LY-0005xe-Or; Wed, 28 Nov 2018 16:05:52 +0000
+        id 1gS2La-0005xh-Hx; Wed, 28 Nov 2018 16:05:54 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 7DDA5112521B; Wed, 28 Nov 2018 16:05:52 +0000 (GMT)
+        id 460C0112521B; Wed, 28 Nov 2018 16:05:54 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Leilk Liu <leilk.liu@mediatek.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, ryder.lee@mediatek.com,
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
+Cc:     Mark Brown <broonie@kernel.org>, richard.genoud@gmail.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.co, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: mediatek: add spi support for mt7629 IC" to the spi tree
-In-Reply-To:  <1542703268-17285-3-git-send-email-leilk.liu@mediatek.com>
-Message-Id: <20181128160552.7DDA5112521B@debutante.sirena.org.uk>
-Date:   Wed, 28 Nov 2018 16:05:52 +0000 (GMT)
+Subject: Applied "spi: at91-usart: add power management support" to the spi tree
+In-Reply-To:  <20181121112732.15690-2-radu_nicolae.pirea@upb.ro>
+Message-Id: <20181128160554.460C0112521B@debutante.sirena.org.uk>
+Date:   Wed, 28 Nov 2018 16:05:54 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: mediatek: add spi support for mt7629 IC
+   spi: at91-usart: add power management support
 
 has been applied to the spi tree at
 
@@ -86,33 +86,113 @@ to this mail.
 Thanks,
 Mark
 
-From 942779c6f1f899bc54332f7bb67666244f3f6d6c Mon Sep 17 00:00:00 2001
-From: Leilk Liu <leilk.liu@mediatek.com>
-Date: Tue, 20 Nov 2018 16:41:08 +0800
-Subject: [PATCH] spi: mediatek: add spi support for mt7629 IC
+From 96ed3ecde2c0911ffa11838050a058c2a40742f0 Mon Sep 17 00:00:00 2001
+From: Radu Pirea <radu_nicolae.pirea@upb.ro>
+Date: Wed, 21 Nov 2018 13:27:30 +0200
+Subject: [PATCH] spi: at91-usart: add power management support
 
-this patch add support for mt7629 IC.
+This patch implements power management callback function for USART as
+SPI driver.
 
-Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
+Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-mt65xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-at91-usart.c | 61 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 9ee1fe968a2d..0cce6f0ba824 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -150,6 +150,9 @@ static const struct of_device_id mtk_spi_of_match[] = {
- 	{ .compatible = "mediatek,mt7622-spi",
- 		.data = (void *)&mt7622_compat,
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index a924657642fa..0b07c746453d 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <linux/spi/spi.h>
+ 
+@@ -399,6 +400,59 @@ static int at91_usart_spi_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++__maybe_unused static int at91_usart_spi_runtime_suspend(struct device *dev)
++{
++	struct spi_controller *ctlr = dev_get_drvdata(dev);
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++
++	clk_disable_unprepare(aus->clk);
++	pinctrl_pm_select_sleep_state(dev);
++
++	return 0;
++}
++
++__maybe_unused static int at91_usart_spi_runtime_resume(struct device *dev)
++{
++	struct spi_controller *ctrl = dev_get_drvdata(dev);
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctrl);
++
++	pinctrl_pm_select_default_state(dev);
++
++	return clk_prepare_enable(aus->clk);
++}
++
++__maybe_unused static int at91_usart_spi_suspend(struct device *dev)
++{
++	struct spi_controller *ctrl = dev_get_drvdata(dev);
++	int ret;
++
++	ret = spi_controller_suspend(ctrl);
++	if (ret)
++		return ret;
++
++	if (!pm_runtime_suspended(dev))
++		at91_usart_spi_runtime_suspend(dev);
++
++	return 0;
++}
++
++__maybe_unused static int at91_usart_spi_resume(struct device *dev)
++{
++	struct spi_controller *ctrl = dev_get_drvdata(dev);
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctrl);
++	int ret;
++
++	if (!pm_runtime_suspended(dev)) {
++		ret = at91_usart_spi_runtime_resume(dev);
++		if (ret)
++			return ret;
++	}
++
++	at91_usart_spi_init(aus);
++
++	return spi_controller_resume(ctrl);
++}
++
+ static int at91_usart_spi_remove(struct platform_device *pdev)
+ {
+ 	struct spi_controller *ctlr = platform_get_drvdata(pdev);
+@@ -409,6 +463,12 @@ static int at91_usart_spi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct dev_pm_ops at91_usart_spi_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(at91_usart_spi_suspend, at91_usart_spi_resume)
++	SET_RUNTIME_PM_OPS(at91_usart_spi_runtime_suspend,
++			   at91_usart_spi_runtime_resume, NULL)
++};
++
+ static const struct of_device_id at91_usart_spi_dt_ids[] = {
+ 	{ .compatible = "microchip,at91sam9g45-usart-spi"},
+ 	{ /* sentinel */}
+@@ -419,6 +479,7 @@ MODULE_DEVICE_TABLE(of, at91_usart_spi_dt_ids);
+ static struct platform_driver at91_usart_spi_driver = {
+ 	.driver = {
+ 		.name = "at91_usart_spi",
++		.pm = &at91_usart_spi_pm_ops,
  	},
-+	{ .compatible = "mediatek,mt7629-spi",
-+		.data = (void *)&mt7622_compat,
-+	},
- 	{ .compatible = "mediatek,mt8135-spi",
- 		.data = (void *)&mtk_common_compat,
- 	},
+ 	.probe = at91_usart_spi_probe,
+ 	.remove = at91_usart_spi_remove,
 -- 
 2.19.0.rc2
 
