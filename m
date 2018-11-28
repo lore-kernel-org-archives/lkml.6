@@ -2,130 +2,112 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BBAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FCBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9B72086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:09:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tL8Am1wT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B9B72086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F09820989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:12:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F09820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeK2ALX (ORCPT
+        id S1728391AbeK2AN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:11:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbeK2ALW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:11:22 -0500
-Received: from quaco.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63ED720832;
-        Wed, 28 Nov 2018 13:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543410585;
-        bh=7YU7ZQXq/P3DtNilzh8wU9XZYduEwvEdBmJ4aX7+4YY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tL8Am1wTbjDucXgXlTHCKbwfoCZ+OO1n1QKf0EeDXkkoRbhXJqA6BC5zBsLL89Hr4
-         CpevFa36loYc055cZCvgb8b2wTp1m9LGQFpz/CMNLxjiZ+j8b8CyFm8etAnw09e54u
-         Gjyizj5A5FD7mL5vRV+x5q+NFUQ0vyq1XJyYiZzs=
-Received: by quaco.infradead.org (Postfix, from userid 1000)
-        id CD10340341; Wed, 28 Nov 2018 10:09:42 -0300 (-03)
-Date:   Wed, 28 Nov 2018 10:09:42 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf intel-pt: Fix error with config term pt=0
-Message-ID: <20181128130942.GC31608@kernel.org>
-References: <20181127084336.12142-1-adrian.hunter@intel.com>
- <20181127123928.GB15747@kernel.org>
- <b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 28 Nov 2018 19:13:59 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:63737 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727726AbeK2AN7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:13:59 -0500
+X-IronPort-AV: E=Sophos;i="5.56,290,1539628200"; 
+   d="scan'208";a="256833"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 28 Nov 2018 18:40:46 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9090"; a="2214625"
+Received: from mgottam-linux.qualcomm.com ([10.204.65.20])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 28 Nov 2018 18:40:45 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id B64DC3211; Wed, 28 Nov 2018 18:40:44 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        stanimir.varbanov@linaro.org, vgarodia@codeaurora.org,
+        mgottam@codeaurora.org
+Subject: [PATCH v2] arm64: dts: sdm845: add video nodes
+Date:   Wed, 28 Nov 2018 18:40:42 +0530
+Message-Id: <1543410642-6475-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Nov 28, 2018 at 02:38:13PM +0200, Adrian Hunter escreveu:
-> On 27/11/18 2:39 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Nov 27, 2018 at 10:43:36AM +0200, Adrian Hunter escreveu:
-> >> Users should never use 'pt=0', but if they do it may give a meaningless
-> >> error:
-> >>
-> >> 	$ perf record -e intel_pt/pt=0/u uname
-> >> 	Error:
-> >> 	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-> >> 	event (intel_pt/pt=0/u).
-> >>
-> >> Fix that by forcing 'pt=1'.
-> >>
-> >> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> >> ---
-> >>  tools/perf/arch/x86/util/intel-pt.c | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
-> >>
-> >> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-> >> index db0ba8caf5a2..af25a7824ee0 100644
-> >> --- a/tools/perf/arch/x86/util/intel-pt.c
-> >> +++ b/tools/perf/arch/x86/util/intel-pt.c
-> >> @@ -524,10 +524,18 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
-> >>  				    struct perf_evsel *evsel)
-> >>  {
-> >>  	int err;
-> >> +	char c;
-> >>  
-> >>  	if (!evsel)
-> >>  		return 0;
-> >>  
-> >> +	/*
-> >> +	 * If supported, force pass-through config term (pt=1) even if user
-> >> +	 * sets pt=0, which avoids senseless kernel errors.
-> >> +	 */
-> >> +	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1)
-> >> +		evsel->attr.config |= 1;
-> > 
-> > shouldn't we have a warning like:
-> > 
-> >    pr_warning("pt=0 doesn't make sense, forcing pt=1")
-> > 
-> > 
-> > Instead of silently doing something the user, mistakenly, did
-> > explicitely?
-> 
-> Sure, here it is:
+This adds video nodes to sdm845 based on the examples
+in the bindings.
 
-Thanks, sticked this to the cset:
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-------------------------
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 0c9a2aa..4c9d6a4 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -84,6 +84,11 @@
+ 			reg = <0 0x86200000 0 0x2d00000>;
+ 			no-map;
+ 		};
++
++		venus_region: memory@95800000 {
++			reg = <0x0 0x95800000 0x0 0x500000>;
++			no-map;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -1103,5 +1108,35 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		video-codec@aa00000 {
++			compatible = "qcom,sdm845-venus";
++			reg = <0x0aa00000 0xff000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&videocc VENUS_GDSC>;
++			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
++				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
++				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>;
++			clock-names = "core", "iface", "bus";
++			iommus = <&apps_smmu 0x10a0 0x8>,
++				 <&apps_smmu 0x10b0 0x0>;
++			memory-region = <&venus_region>;
++
++			video-core0 {
++				compatible = "venus-decoder";
++				clocks = <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC0_GDSC>;
++			};
++
++			video-core1 {
++				compatible = "venus-encoder";
++				clocks = <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC1_GDSC>;
++			};
++		};
+ 	};
+ };
+-- 
+1.9.1
 
-Committer testing:
-
-  # perf record -e intel_pt/pt=0/u uname
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
-  /bin/dmesg | grep -i perf may provide additional information.
-
-  # perf record -e intel_pt/pt=0/u uname
-  pt=0 doesn't make sense, forcing pt=1
-  Linux
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.020 MB perf.data ]
-  #
-------------------------
-
-Thanks, applied.
-
-- Arnaldo
