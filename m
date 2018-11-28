@@ -2,142 +2,145 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCBEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807C6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6AFD20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4974020873
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="giNAkHP3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AFD20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ksP0+QdE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4974020873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbeK1UCv (ORCPT
+        id S1727872AbeK1UDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:02:51 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43910 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbeK1UCv (ORCPT
+        Wed, 28 Nov 2018 15:03:32 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34572 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbeK1UDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:02:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XeQArfQBhp0xgJ4icQdOZToGC9l49S0mWq/p18skFV4=; b=giNAkHP3xDoJLYmPyxXWTuwij
-        KfNgdOrbMCiSSdi/TR/VxiGmvUPmNmPZ4N0UfQqEGu5ILwBvudtKtUAl1Hz0xhuHOgPn17cMRFqgR
-        SQCm0qxfL2Un6MmsXKtFb57dCpI0zmEibPRBnBx92JqLqH/B1veDHn4CWjY2+iNgVLo+gKvCxEiBR
-        21DqYO/FdFojuHCY9oApG06ivGeC12EXGDKbrEi3qXPuwLJnASW6w4MFFLNREIo0iZmUZAq0sF6gu
-        TlUON5oy4p6ecRw7JNsDaS7jbMP4107GIUKBHVvEE/K65P1DG01jYaMCrv9X3cPPYsYZlNaIa56K9
-        C20ZFgkOA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRvj9-0002dz-Kt; Wed, 28 Nov 2018 09:01:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0D4E02029FD58; Wed, 28 Nov 2018 10:01:46 +0100 (CET)
-Date:   Wed, 28 Nov 2018 10:01:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, catalin.marinas@arm.com, rml@tech9.net,
-        tglx@linutronix.de, schwidefsky@de.ibm.com
-Subject: Re: [PATCH 0/2] arm64: Only call into preempt_schedule() if
- need_resched()
-Message-ID: <20181128090146.GF2149@hirez.programming.kicks-ass.net>
-References: <1543347902-21170-1-git-send-email-will.deacon@arm.com>
- <20181128085640.GX2131@hirez.programming.kicks-ass.net>
+        Wed, 28 Nov 2018 15:03:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j2so25465223wrw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:02:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pYPKx23m+3RIAQ/CZEOBUkvcYzaX0MjUaVr7exMZKeY=;
+        b=ksP0+QdEHBWTOzlB7xkkrqu1rPSlnHClzWgTBfKtQi9V09sqIqT/1jLPI/gRacjLZV
+         UBGiPc0dp4xAHb9E2gbdCi23MG1ezSyKN38dwnbLGxHMRmrvqjWETj1wK6ldnZxQ/W5l
+         vvyRk1SS4gREAYvn5FL0Yu8NpOGqc8ec/eEWo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pYPKx23m+3RIAQ/CZEOBUkvcYzaX0MjUaVr7exMZKeY=;
+        b=f8vxLwJ7/WlFevYkImiB5cf90c0Q8SpX0U2pE0nrfe8kttHtTZmF6yBktfYL3jGi5X
+         T77tms0amhM8qGCsfzRyh7jBR6QUKP4P6NyF22hdjb1CLuksAa9SU3Q4uIgDm3lu82Us
+         x3rUyx+i2b8HI1lQbSVK1e4TbdaWpTnzkN4whLvKZzrRtUqKMS2LyC4+uXHNo9hR2X6i
+         LlQfM06GHhRwRiRx9s0BgNP7hYQmPL+603Jchy7vGM/K2wIK1JniwpX0SDEOXSaAH15q
+         0jri9tqGSc2DR0nbex+JWItvWXs5QJTEmXY3x6x/fFZ/ce8kBt/FN9OckgGI/mJWuClu
+         cakA==
+X-Gm-Message-State: AA+aEWbI9c7x5saiab+33ha9yZdJeGMatlmnheep3b3yBn9jzV8HCWJe
+        tGyigo0+Rceb5L15ie1hQtOpRw==
+X-Google-Smtp-Source: AFSGD/W4INxutTJvxidSVtO0kyrv2l5Ph8TVRqQRlNMlVWqz9III90AnmyL1ouxOASRkPlagD33Pbg==
+X-Received: by 2002:adf:f1c2:: with SMTP id z2mr31673900wro.218.1543395756472;
+        Wed, 28 Nov 2018 01:02:36 -0800 (PST)
+Received: from dell ([2.31.167.233])
+        by smtp.gmail.com with ESMTPSA id s3sm492841wmj.23.2018.11.28.01.02.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 01:02:35 -0800 (PST)
+Date:   Wed, 28 Nov 2018 09:02:33 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 3/4] iio: adc: add STMPE ADC devicetree bindings
+Message-ID: <20181128090233.GQ4272@dell>
+References: <20181123142411.8921-1-dev@pschenker.ch>
+ <20181123142411.8921-3-dev@pschenker.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181128085640.GX2131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181123142411.8921-3-dev@pschenker.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 09:56:40AM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 27, 2018 at 07:45:00PM +0000, Will Deacon wrote:
-> > Hi all,
-> > 
-> > This pair of patches improves our preempt_enable() implementation slightly
-> > on arm64 by making the resulting call to preempt_schedule() conditional
-> > on need_resched(), which is tracked in bit 32 of the preempt count. The
-> > logic is inverted so that we can detect the preempt count going to zero
-> > and need_resched being set with a single CBZ instruction.
-> 
-> >   40:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
-> >   44:   910003fd        mov     x29, sp
-> >   48:   d5384101        mrs     x1, sp_el0
-> >   4c:   f9400820        ldr     x0, [x1, #16]
-> 
-> We load x0 which is a u64, right?
-> 
-> >   50:   d1000400        sub     x0, x0, #0x1
-> >   54:   b9001020        str     w0, [x1, #16]
-> 
-> But we store w0, which is the low u32, such as to not touch the high
-> word which contains the preempt bit.
-> 
-> >   58:   b4000060        cbz     x0, 64 <will+0x24>
-> >   5c:   a8c17bfd        ldp     x29, x30, [sp], #16
-> >   60:   d65f03c0        ret
-> >   64:   94000000        bl      0 <preempt_schedule>
-> >   68:   a8c17bfd        ldp     x29, x30, [sp], #16
-> >   6c:   d65f03c0        ret
-> 
-> Why not?
-> 
->    58:   b4000060        cbnz    x0, 60 <will+0x24>
->    5c:   94000000        bl      0 <preempt_schedule>
->    60:   a8c17bfd        ldp     x29, x30, [sp], #16
->    64:   d65f03c0        ret
-> 
-> which seems shorter.
-> 
-> 
-> So it's still early, and I haven't finished (or really even started) my
-> pot 'o tea, but what about:
-> 
-> 
-> 	ldr x0, [x1, #16]	// seees the high bit set -- no preempt needed
-> 	sub x0, x0, #1
-> 
-> 	<interrupt>
-> 	  ...
-> 	  resched_curr()
-> 	    set_tsk_need_resched();
-> 	    set_preempt_need_resched();
-> 	</interrupt> // sees preempt_count != 0, does not preempt
-> 
-> 	str w0, [x1, #16] // stores preempt_count == 0
-> 	cbnz x0, 1f // taken, we still observe the high word from before
-> 
-> 1:	ret
-> 
-> 
-> Which then ends with preempt_count==0, need_resched==0 and no actual
-> preemption afaict.
-> 
-> Can you use mis-matched ll x0 / sc w0 to do this same thing and detector
-> the intermediate write on the high word?
+On Fri, 23 Nov 2018, Philippe Schenker wrote:
 
-That is, something along these here lines:
+> From: Stefan Agner <stefan@agner.ch>
+> 
+> This adds the devicetree bindings for the STMPE ADC.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> ---
+> 
+> Changes in v3:
+>  - Reformatted documentation for touchscreen to use tabs and have a better
+>    overview of the settings.
+>  - Added note which adc-settings will take precedence.
+>  - changed typo in sample-time setting from 144 clocks to 124 clocks, as stated
+>    in the datasheet.
+> 
+> Changes in v2:
+>  - Moved the bindings for ADC to the overlying mfd.
+>  - Reformatted for better readability
+> 
+>  .../devicetree/bindings/iio/adc/stmpe-adc.txt | 21 +++++++
+>  .../bindings/input/touchscreen/stmpe.txt      | 60 ++++++++++++-------
+>  .../devicetree/bindings/mfd/stmpe.txt         | 28 ++++++---
+>  3 files changed, 80 insertions(+), 29 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
+[...]
 
-1:	ldxr x0, [x1, #16]
-	sub  x0, x0, #1
-	stxr w1, w0, [x1, #16]
-	cbnz w1, 1b
+> diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
+> index c797c05cd3c2..d4408a417193 100644
+> --- a/Documentation/devicetree/bindings/mfd/stmpe.txt
+> +++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
+> @@ -4,15 +4,29 @@ STMPE is an MFD device which may expose the following inbuilt devices: gpio,
+>  keypad, touchscreen, adc, pwm, rotator.
+>  
+>  Required properties:
+> - - compatible                   : "st,stmpe[610|801|811|1600|1601|2401|2403]"
+> - - reg                          : I2C/SPI address of the device
+> + - compatible			: "st,stmpe[610|801|811|1600|1601|2401|2403]"
+> + - reg				: I2C/SPI address of the device
 
-	cbnz x0, 2f
-	bl   preempt_schedule
-2:	ret
+Formatting changes should be completed in a separate patch.
 
-can that work?
+Here they only serve to obscure the real changes you have made.
+
+Please split the formatting changes out and re-submit.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
