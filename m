@@ -2,113 +2,86 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE43C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C617C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D88C22145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A7C920863
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="MYfWu/ey"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88C22145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddYje/Zn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7C920863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbeK2JJF (ORCPT
+        id S1726559AbeK2JJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:09:05 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35412 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeK2JJE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:09:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so10112280pgs.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 14:05:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YIRWX8HfezgQR+9EQQES7Z/KXWx7Tuf/kx19LqqRruw=;
-        b=MYfWu/ey04TPJAI8Zt09WEoL6rOdVOYOyysShRoiBq2bmHXlkOwy500Ak+nnB6cP9C
-         1HEW3mP/FU8IhpQGzW3dTTCuyIJNh8CW1Pc+PejKkDnDQ7YotsGFIdJw3gn3ZuOkezlL
-         aWGgXRqMGFHiHDJ82AZVrkxsXLXsnx8w48brA6EOuCw6VKgiEgrz5fnkPcgpN7R1tzao
-         wodVYBUnIT8yjKy2yWBPDyBXzX7I2F9iqkz99nO5LwG9M9skrwlGAddtllXK49Kb6VbE
-         F/bQsuQilNzieG4uPUua2LA0xROeCPFyHhHimkW0IQYKFWRx5odBjHc4F9KexOzEgteL
-         Nw1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YIRWX8HfezgQR+9EQQES7Z/KXWx7Tuf/kx19LqqRruw=;
-        b=Ls5RUhobE/w85y1+6AKKkmn4AtYo3SbgIykgFi8LLdcVFqITCbglAXMHrgnzHWI+pF
-         SXCcQ8PdYTdOMTvHhbd5uax3nPfhUvNUF6eJwY4dZ5d7B75a9DtSDoELOHhkSS9Yni9W
-         nZspqxKpYPPOHm9vAFIZ13c/Fua2MW+eEbWFlDjwP0Y7ymNxl+Mo7l2r/dygMoG/kFce
-         HXSjjUDkAFnxqtwU3iBC4nGXGi6de6e8D/pd294Pr3HrVXgLlTX7R7S2Az6IKRInQtgY
-         jjxtY8/rgQHkQvbKBJrr8AprSi0VQ2jNDew3iekzkHriXLRluteIu/bjwmqeOsic5Z/g
-         /7zA==
-X-Gm-Message-State: AGRZ1gKBLwMluAH3Iu9/j/hPPin1W7KUs63eCCKuSZvYSTK+L52d+gXd
-        MzIgMR+a7GR69p3nyUf4sV8zMA==
-X-Google-Smtp-Source: AJdET5dWk+dfUhvdoSbp2gGrSV7wfZGuK19Ot1uDUg61FeasNdf5jnOQOTbrnLzSbDvJx7LO6/tJKg==
-X-Received: by 2002:a62:824c:: with SMTP id w73mr39066971pfd.150.1543442758958;
-        Wed, 28 Nov 2018 14:05:58 -0800 (PST)
-Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
-        by smtp.gmail.com with ESMTPSA id m17-v6sm9831262pfi.102.2018.11.28.14.05.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 14:05:58 -0800 (PST)
-Date:   Wed, 28 Nov 2018 23:05:49 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>
-Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-Message-ID: <20181128220545.fplqmbkfhxowx3lf@brauner.io>
-References: <20181119103241.5229-1-christian@brauner.io>
- <20181119103241.5229-3-christian@brauner.io>
- <20181128214534.xxqoyy7mi5dw54kj@gmail.com>
+        Thu, 29 Nov 2018 04:09:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726324AbeK2JJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 04:09:58 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F50E2081B;
+        Wed, 28 Nov 2018 22:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543442812;
+        bh=KrsGISj7ZENgpGpLWVt8/KZ+K2g/bU25TO6MfWgXWfs=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ddYje/ZnIBXqricYZc2lQcr8/dZ8eV65hZ4f0+eQao0SWNmbX9uJnu2i3hTD4CUPg
+         IfvCmJKiPTGOBUWXOteQgT7OkP9fvvHTNN8dfgdNYfhN7ji4zfHc9BjnckbIF6NZgz
+         7K5QRbZ6XlM8cZX0TMJXQeBvPazwiDmXWQLKoRhU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181128214534.xxqoyy7mi5dw54kj@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+To:     David Lechner <david@lechnology.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1542994408-28466-1-git-send-email-hofrat@osadl.org>
+Cc:     Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+References: <1542994408-28466-1-git-send-email-hofrat@osadl.org>
+Message-ID: <154344281182.88331.6325160815919343344@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: davinci: check for devm_kasprintf() failure
+Date:   Wed, 28 Nov 2018 14:06:51 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 11:45:34AM -1000, Joey Pabalinas wrote:
-> On Mon, Nov 19, 2018 at 11:32:39AM +0100, Christian Brauner wrote:
-> > +	if (info) {
-> > +		ret = __copy_siginfo_from_user(sig, &kinfo, info);
-> > +		if (unlikely(ret))
-> > +			goto err;
-> 
+Quoting Nicholas Mc Guire (2018-11-23 09:33:28)
+> devm_kasprintf() may return NULL on failure of internal allocation thus
+> the assignment to  lpsc->pm_domain.name  is not safe if not checked. On =
 
-I think you're misreading here. It jumps to:
+> error davinci_lpsc_clk_register() returns a pointer to davinci_lpsc_clk
+> which is checked with IS_ERR() so returning ERR_PTR(-ENOMEM) should be =
 
-err:
-        fdput(f);
-	return ret;
+> fine here.
+> =
 
-and does propagate the error. This is also an old iteration of the patch.
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
+> ---
+> =
 
-Christian
+> Problem located with experimental coccinelle script
+> =
 
-> What's the reason you don't propagate up the errors from __copy_siginfo_from_user()?
-> Granted, I admit that -E2BIG is kind of weird to return, but -EFAULT seems like a
-> fairly sane error.
-> 
-> Or is there some reason it's more useful to just return -EINVAL for all of the
-> failure cases here?
-> 
-> -- 
-> Cheers,
-> Joey Pabalinas
+> Patch was compile tested with: davinci_all_defconfig
+> =
 
+> Patch is against 4.20-rc3 (localversion-next is next-20181123)
+
+There are a bunch of other allocation issues with this driver so I'd
+rather not expend the effort to review the one coccinelle script fix
+here and instead I'd like to see the whole fix to this driver. Please
+add proper lifetime management for all the allocations in this code.
 
