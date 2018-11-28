@@ -6,84 +6,164 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E42EC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DE2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020B720660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:27:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020B720660
+	by mail.kernel.org (Postfix) with ESMTP id 074C82086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:27:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074C82086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbeK1U2V (ORCPT
+        id S1728236AbeK1U2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:28:21 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:4834 "EHLO pegase1.c-s.fr"
+        Wed, 28 Nov 2018 15:28:23 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:53808 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728187AbeK1U2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:28:20 -0500
+        id S1728187AbeK1U2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:28:23 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 434b080yTgz9vBKJ;
-        Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 434b0B1RfJz9vBKB;
+        Wed, 28 Nov 2018 10:27:22 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id YjjvL2ikzmYX; Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        with ESMTP id 1prmLuigC57V; Wed, 28 Nov 2018 10:27:22 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 434b080TWjz9vBK9;
-        Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 434b0B0xQqz9vBK9;
+        Wed, 28 Nov 2018 10:27:22 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F0ACF8B85D;
-        Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 085E48B85D;
+        Wed, 28 Nov 2018 10:27:23 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 8bbXTsbtW2aF; Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        with ESMTP id wRCp4XiKhRQ9; Wed, 28 Nov 2018 10:27:22 +0100 (CET)
 Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D73F68B853;
-        Wed, 28 Nov 2018 10:27:20 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DAB768B853;
+        Wed, 28 Nov 2018 10:27:22 +0100 (CET)
 Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B14D169AFA; Wed, 28 Nov 2018 09:27:20 +0000 (UTC)
-Message-Id: <5b09cecccb64a577ee9c0cdef3b294ccd7f2ee70.1543356926.git.christophe.leroy@c-s.fr>
+        id B906169AFA; Wed, 28 Nov 2018 09:27:22 +0000 (UTC)
+Message-Id: <35d4c80a7438b5e5998784c3b1e8de08949855fa.1543356926.git.christophe.leroy@c-s.fr>
 In-Reply-To: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
 References: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v2 09/11] powerpc/32: add helper to write into segment
- registers
+Subject: [RFC PATCH v2 10/11] powerpc/book3s32: Prepare Kernel Userspace
+ Access Protection
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, ruscur@russell.cc
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 28 Nov 2018 09:27:20 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 09:27:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add an helper which wraps 'mtsrin' instruction
-to write into segment registers.
+This patch prepares Kernel Userspace Access Protection for
+book3s/32.
+
+Due to limitations of the processor page protection capabilities,
+the protection is only against writing. read protection cannot be
+achieved using page protection.
+
+In order to provide the protection, Ku and Ks keys are modified in
+Userspace Segment registers, and different PP bits are used to:
+
+PP01 provides RW for Key 0 and RO for Key 1
+PP10 provides RW for all
+PP11 provides RO for all
+
+Today PP10 is used for RW pages and PP11 for RO pages, SR Ku and Ks
+set to 1. This patch modifies page protection to user PP01 for RW pages.
+
+Then segment registers are set to Ku 0 and Ks 0. This will allow
+to setup Userspace write access protection by settng Ks to 1 in the
+following patch.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/reg.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/kernel/head_32.S | 20 +++++++++++---------
+ arch/powerpc/mm/hash_low_32.S |  6 +++---
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index d9598e6790d8..6b5d2a61af5a 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -1424,6 +1424,11 @@ static inline void msr_check_and_clear(unsigned long bits)
- #define mfsrin(v)	({unsigned int rval; \
- 			asm volatile("mfsrin %0,%1" : "=r" (rval) : "r" (v)); \
- 					rval;})
-+
-+static inline void mtsrin(u32 val, u32 idx)
-+{
-+	asm volatile("mtsrin %0, %1" : : "r" (val), "r" (idx));
-+}
- #endif
+diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+index 61ca27929355..1aca0dba0ec1 100644
+--- a/arch/powerpc/kernel/head_32.S
++++ b/arch/powerpc/kernel/head_32.S
+@@ -522,13 +522,13 @@ InstructionTLBMiss:
+ 	 */
+ 	stw	r0,0(r2)		/* update PTE (accessed bit) */
+ 	/* Convert linux-style PTE to low word of PPC-style PTE */
+-	rlwinm	r1,r0,32-10,31,31	/* _PAGE_RW -> PP lsb */
+-	rlwinm	r2,r0,32-7,31,31	/* _PAGE_DIRTY -> PP lsb */
++	rlwinm	r1,r0,32-9,30,30	/* _PAGE_RW -> PP msb */
++	rlwinm	r2,r0,32-6,30,30	/* _PAGE_DIRTY -> PP msb */
+ 	and	r1,r1,r2		/* writable if _RW and _DIRTY */
+ 	rlwimi	r0,r0,32-1,30,30	/* _PAGE_USER -> PP msb */
+ 	rlwimi	r0,r0,32-1,31,31	/* _PAGE_USER -> PP lsb */
+ 	ori	r1,r1,0xe04		/* clear out reserved bits */
+-	andc	r1,r0,r1		/* PP = user? (rw&dirty? 2: 3): 0 */
++	andc	r1,r0,r1		/* PP = user? (rw&dirty? 1: 3): 0 */
+ BEGIN_FTR_SECTION
+ 	rlwinm	r1,r1,0,~_PAGE_COHERENT	/* clear M (coherence not required) */
+ END_FTR_SECTION_IFCLR(CPU_FTR_NEED_COHERENT)
+@@ -596,8 +596,8 @@ DataLoadTLBMiss:
+ 	 */
+ 	stw	r0,0(r2)		/* update PTE (accessed bit) */
+ 	/* Convert linux-style PTE to low word of PPC-style PTE */
+-	rlwinm	r1,r0,32-10,31,31	/* _PAGE_RW -> PP lsb */
+-	rlwinm	r2,r0,32-7,31,31	/* _PAGE_DIRTY -> PP lsb */
++	rlwinm	r1,r0,32-9,30,30	/* _PAGE_RW -> PP msb */
++	rlwinm	r2,r0,32-6,30,30	/* _PAGE_DIRTY -> PP msb */
+ 	and	r1,r1,r2		/* writable if _RW and _DIRTY */
+ 	rlwimi	r0,r0,32-1,30,30	/* _PAGE_USER -> PP msb */
+ 	rlwimi	r0,r0,32-1,31,31	/* _PAGE_USER -> PP lsb */
+@@ -680,9 +680,9 @@ DataStoreTLBMiss:
+ 	 */
+ 	stw	r0,0(r2)		/* update PTE (accessed/dirty bits) */
+ 	/* Convert linux-style PTE to low word of PPC-style PTE */
+-	rlwimi	r0,r0,32-1,30,30	/* _PAGE_USER -> PP msb */
+-	li	r1,0xe05		/* clear out reserved bits & PP lsb */
+-	andc	r1,r0,r1		/* PP = user? 2: 0 */
++	rlwimi	r0,r0,32-2,31,31	/* _PAGE_USER -> PP lsb */
++	li	r1,0xe06		/* clear out reserved bits & PP msb */
++	andc	r1,r0,r1		/* PP = user? 1: 0 */
+ BEGIN_FTR_SECTION
+ 	rlwinm	r1,r1,0,~_PAGE_COHERENT	/* clear M (coherence not required) */
+ END_FTR_SECTION_IFCLR(CPU_FTR_NEED_COHERENT)
+@@ -1014,7 +1014,9 @@ _ENTRY(switch_mmu_context)
+ 	blt-	4f
+ 	mulli	r3,r3,897	/* multiply context by skew factor */
+ 	rlwinm	r3,r3,4,8,27	/* VSID = (context & 0xfffff) << 4 */
+-	addis	r3,r3,0x6000	/* Set Ks, Ku bits */
++#ifdef CONFIG_PPC_KUAP
++	addis	r3,r3,0x4000	/* Set Ks, clear Ku bits */
++#endif
+ 	li	r0,NUM_USER_SEGMENTS
+ 	mtctr	r0
  
- #define proc_trap()	asm volatile("trap")
+diff --git a/arch/powerpc/mm/hash_low_32.S b/arch/powerpc/mm/hash_low_32.S
+index 26acf6c8c20c..0e549eb91823 100644
+--- a/arch/powerpc/mm/hash_low_32.S
++++ b/arch/powerpc/mm/hash_low_32.S
+@@ -316,13 +316,13 @@ Hash_msk = (((1 << Hash_bits) - 1) * 64)
+ 
+ _GLOBAL(create_hpte)
+ 	/* Convert linux-style PTE (r5) to low word of PPC-style PTE (r8) */
+-	rlwinm	r8,r5,32-10,31,31	/* _PAGE_RW -> PP lsb */
+-	rlwinm	r0,r5,32-7,31,31	/* _PAGE_DIRTY -> PP lsb */
++	rlwinm	r8,r5,32-9,30,30	/* _PAGE_RW -> PP msb */
++	rlwinm	r0,r5,32-6,30,30	/* _PAGE_DIRTY -> PP msb */
+ 	and	r8,r8,r0		/* writable if _RW & _DIRTY */
+ 	rlwimi	r5,r5,32-1,30,30	/* _PAGE_USER -> PP msb */
+ 	rlwimi	r5,r5,32-2,31,31	/* _PAGE_USER -> PP lsb */
+ 	ori	r8,r8,0xe04		/* clear out reserved bits */
+-	andc	r8,r5,r8		/* PP = user? (rw&dirty? 2: 3): 0 */
++	andc	r8,r5,r8		/* PP = user? (rw&dirty? 1: 3): 0 */
+ BEGIN_FTR_SECTION
+ 	rlwinm	r8,r8,0,~_PAGE_COHERENT	/* clear M (coherence not required) */
+ END_FTR_SECTION_IFCLR(CPU_FTR_NEED_COHERENT)
 -- 
 2.13.3
 
