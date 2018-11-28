@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D325C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FDDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D902081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF9C42081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ORPnWLzE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D902081C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kz/EvwqW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9C42081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeK2GAm (ORCPT
+        id S1728964AbeK2GAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:00:42 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39497 "EHLO
+        Thu, 29 Nov 2018 01:00:45 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39498 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeK2GAm (ORCPT
+        with ESMTP id S1729040AbeK2GAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:00:42 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w6so9905330pgl.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:58:04 -0800 (PST)
+        Thu, 29 Nov 2018 01:00:43 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w6so9905355pgl.6
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 10:58:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s5w4IN2H7W8bHGPBbVZSOf6yGCi4eThxvzg0kR6f4Dk=;
-        b=ORPnWLzEOtNhR2Z8E07sRFXQTwvb+7KTAMy8h+G+SnigHFd6vYQRJl07adqmHmZ5g/
-         sLlEFgcHxVtzE0q3bhjqQeyI3L0GpyDfbEwNuHZRRAB59xsZlc4C+JXoOH8DHKLdO1xZ
-         OeTnq/PfBBgS9SGlNyJUvM0cOCUTmaq+Nm6Zw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=o4JaW6KsachO2boGyRKX4iE75v/yjSYr68O1hs1YRx4=;
+        b=kz/EvwqWHWxqYmUARzxdAL/Zs9HlCxG5QK2h/ULQilFoJmpzYwA3b5cGFmLgGFyvd6
+         2VPNJnNgVEo9Oe31ixOV/2iXH7g4rOsWcpZ0F0IQ8fIJlCEORl6C78ynciqH28T5dqlc
+         RJ0aYnlG1RmTIDtEdGdsSbCHKn9OC9I5lwAfY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s5w4IN2H7W8bHGPBbVZSOf6yGCi4eThxvzg0kR6f4Dk=;
-        b=i90EC+aCO88JLepFaHUK7oEHOGwWy++3FO00xSzWMloIiawsS+BkqxJGUwrxgFHLI6
-         dK4Fvd8p3TNIX3cgNDotLSdj596A0LhE/bcH2FDgTrHSFe90pK0QePHkryNmUbQJTNmk
-         jwyO2pJOTOTNRTqBNC3tWjp2KC17zQ8yrhKpxXkrYWLzjhwblBOPrhqF4L0qGnWX6UOq
-         3v49WLH/7RnlTuDFpW7XEKE79ldFYZ7L72XkkUzCUepcxk3HHuAjlNuphdzmOLSpHeve
-         aZOCTuOTdYtoNpl68Wj4NZ+5LAIwIg9xUhP2+9bWiDN0/asv2Au7hKRxhAnEVQPiAuc8
-         IVcw==
-X-Gm-Message-State: AA+aEWZi7koqzg+obDwjCrJk65vCH/BFDHqgpfAXHzzuUJ6LOhHrFEeb
-        jkbBkPLtUnla3Hsp1iQnxi4wHQ==
-X-Google-Smtp-Source: AFSGD/ViFzCTzgFemv+Mv4raYZFfi443LSS3nw/HOXRLZodnt2sY4IIlLiBIwccuaEtunULlBz6d0Q==
-X-Received: by 2002:a62:3948:: with SMTP id g69mr4371089pfa.114.1543431484179;
-        Wed, 28 Nov 2018 10:58:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=o4JaW6KsachO2boGyRKX4iE75v/yjSYr68O1hs1YRx4=;
+        b=R20s4jkRZ7Tm0Ua/LQnCW1a/4gANdYPBJGBWKea7KkTXUl/hyv25FLjWhuYvvLufXz
+         8YNJTRew7k2WSgGaurTQuCYs7K6nXXKl/aZl5X+Vy8gLHfAEUnEde1jQ+2gb0gXMta9K
+         +8Lei1Y3k+udDA37brd6XbtiIjvoWBjobgN660HvwMBLbSDOV48VAszGpbLsOnPtG/Sf
+         mrUZyRlM8DIVHGR0arTpHyRvdzcLN5Svs0oZoZwikSfvZQaJ0SJ3a2DEU9DC/5zrUVor
+         oqabJvOauLJ18PYjN7V/jhalrvdMbrmodBd7dztxQmFYjgz7D73WVH9QiX5yFzAdG6FS
+         7e2Q==
+X-Gm-Message-State: AA+aEWa3TIxJ1aFHGsJxqayOiJORGovuSi7JPaoVrB+4LqnumpyMLb9O
+        QgHvAFLgIWCpu4AEF+yBWMRTWg==
+X-Google-Smtp-Source: AFSGD/X2AsbMXlXlHpwT3l8HhNJE2uZi9sUs5TQgj6X7n4Vhsorv8VVNv+PML7tNhSFN2fa+wjcv2g==
+X-Received: by 2002:a62:c505:: with SMTP id j5mr2651863pfg.149.1543431485440;
+        Wed, 28 Nov 2018 10:58:05 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id f6sm13204214pfg.188.2018.11.28.10.58.02
+        by smtp.gmail.com with ESMTPSA id f6sm13204214pfg.188.2018.11.28.10.58.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 10:58:03 -0800 (PST)
+        Wed, 28 Nov 2018 10:58:04 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
@@ -63,14 +63,16 @@ Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
         Jordan Crouse <jcrouse@codeaurora.org>,
         Amit Nischal <anischal@codeaurora.org>,
         Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: clock: qcom: Fix the xo parent in gpucc example
-Date:   Wed, 28 Nov 2018 10:57:42 -0800
-Message-Id: <20181128185743.75328-1-dianders@chromium.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Subject: [PATCH 2/2] arm64: dts: sdm845: Add gpu clock controller node
+Date:   Wed, 28 Nov 2018 10:57:43 -0800
+Message-Id: <20181128185743.75328-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+In-Reply-To: <20181128185743.75328-1-dianders@chromium.org>
+References: <20181128185743.75328-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,39 +80,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the bindings that landed for the gpucc we require that the XO clock
-(one possible parent of the gpucc) be listed.  The code doesn't use
-this yet--this is just to allow us to move toward the day when it does
-use it.  What the code does do today is to hardcode the parent name to
-"bi_tcxo".  That's all well and good.
+Add the GPU clock controller nodes as per the example.
 
-...but the example in the bindings shows this clock mapping to the
-clock "xo_board".  On the current sdm845.dtsi file the "xo_board"
-clock is a fixed clock with an output name of "xo_board".  The clock
-with the name "bi_tcxo" is actually provided by the RPMh Clock
-Controller.  Presumably that's the one that was wanted.
-
-Let's update the example to make this clearer.
-
-Fixes: e431c92188a9 ("dt-bindings: clock: Introduce QCOM Graphics clock bindings")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- Documentation/devicetree/bindings/clock/qcom,gpucc.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-index 9d0358cc08b4..4e5215ef1acd 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-@@ -17,6 +17,6 @@ Example:
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
- 		#power-domain-cells = <1>;
--		clocks = <&xo_board>;
-+		clocks = <&rpmhcc RPMH_CXO_CLK>;
- 		clock-names = "xo";
- 	};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 1419b0098cb3..300688e92439 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
+ #include <dt-bindings/clock/qcom,gcc-sdm845.h>
++#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy-qcom-qusb2.h>
+@@ -1078,6 +1079,16 @@
+ 			};
+ 		};
+ 
++		gpucc: clock-controller@5090000 {
++			compatible = "qcom,sdm845-gpucc";
++			reg = <0x5090000 0x9000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "xo";
++		};
++
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+ 			reg = <0x88e2000 0x400>;
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
