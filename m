@@ -2,188 +2,158 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D3DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A84C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5092B205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s4+vRqYi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5092B205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C5CD1205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:52:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5CD1205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbeK1Vpy (ORCPT
+        id S1728206AbeK1Vxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:45:54 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41023 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727809AbeK1Vpy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:45:54 -0500
-Received: by mail-ed1-f67.google.com with SMTP id z28so21654505edi.8;
-        Wed, 28 Nov 2018 02:44:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A+L4+VpYEMHbBAPSGcpp/+QQTNEFAiVbJ/YxlGWW4GE=;
-        b=s4+vRqYi+VIUIzVnOrjQDZobeJBXQ5n1CYUHFHy6eSc95RzBCax+3Qd9HnoRokQ6aY
-         PFfYVBqA5h6Sxo5GBnpV8vKfCNRfsUYBskz7yI3e9JOBlxILZELTArwxuu6/aLWj5DsF
-         7gYFzWRUDkHzW/v0+Esm24T6hDCLn+j8q+FkIjTSZ9YcvOzctnjjDvlUCZ6rwT6afsCG
-         zdeR1uMfnFvVRP4bkvCqPEAdILgPFDYPYGAIADsPZD4k7OdDqHssuN4EmiBXzX31jA4N
-         vXauSe3/EVQ3w7mqjST6cnQ5mym9DoTso+K+ZK9zG/8zBzF8Mh0WtADLR/9ZueL+V4wf
-         Shhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A+L4+VpYEMHbBAPSGcpp/+QQTNEFAiVbJ/YxlGWW4GE=;
-        b=YI0slWdlfG9ByF28bwJB+zOzL5SCspj25pizmDt5HA4LSBdOg1uQS/Nw4Qbq61rZKH
-         /uE3lQeh9U12PPyWEVBMaKb/EE81G38MC+7StgrdrZaeES38K4xA28oVkRXZy3ZmZNnV
-         pfUw6y5ai12u2kuyyNVy7c351iZpSMgZAyTN5CMIr4FOIODu/ucMiPIVrxOOWsaUTzdB
-         HsjUlFaMYab/aojWkb8ICUBf2obmtJjmrbbZoNuyQnwEDmcGOmpy3N5cmwrksPwdg0nD
-         tAyKQZPMsC+c+otPbYknjLZEwATLWKkbHioF+46i1h7nmqC4byRSbJFhoued1uEyMV4E
-         14Lg==
-X-Gm-Message-State: AGRZ1gIfuEz0nbqFA8xJLQLLNLDy74wmGaftmPkDwkhlgu3eiMDbxQpU
-        a+g5yc4VmWou9w6/yNquYDg=
-X-Google-Smtp-Source: AJdET5eFptZI91m50G+9OVZ9bdQft0ebmRI3YpOL0Ayi/BFJH9HDSn9krvcvEIEHkEiG5rmkKmGTQQ==
-X-Received: by 2002:a17:906:3548:: with SMTP id s8-v6mr26246365eja.161.1543401878710;
-        Wed, 28 Nov 2018 02:44:38 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id y53sm1693904edd.84.2018.11.28.02.44.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 02:44:37 -0800 (PST)
-Date:   Wed, 28 Nov 2018 11:44:36 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 28 Nov 2018 16:53:45 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:55588 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727616AbeK1Vxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:53:45 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wASAnf6w023645;
+        Wed, 28 Nov 2018 04:49:41 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wASAnf5H023644;
+        Wed, 28 Nov 2018 04:49:41 -0600
+Date:   Wed, 28 Nov 2018 04:49:41 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
-Message-ID: <20181128104436.GA22559@ulmo>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-8-thierry.reding@gmail.com>
- <20181015144612.GA23929@bogus>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181128104941.GA23077@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com> <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181126215145.GC868@linux.intel.com> <20181126230436.GA6737@linux.intel.com> <20181127085533.GA12247@wind.enjellic.com> <20181127164129.GB4170@linux.intel.com> <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015144612.GA23929@bogus>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 28 Nov 2018 04:49:42 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 27, 2018 at 09:55:45AM -0800, Andy Lutomirski wrote:
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > On Nov 27, 2018, at 8:41 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> > 
+> >> On Tue, Nov 27, 2018 at 02:55:33AM -0600, Dr. Greg wrote:
+> >> Since the thread has become a bit divergent I wanted to note that we
+> >> have offered a proposal for a general policy management framework
+> >> based on MRSIGNER values.  This framework is consistent with the SGX
+> >> security model, ie. cryptographic rather then DAC based policy
+> >> controls.  This framework also allows a much more flexible policy
+> >> implementation that doesn't result in combinatoric issues.
+> >> 
+> >> Our framework also allows the preservation of the current ABI which
+> >> allows an EINITTOKEN to be passed in from userspace.  The framework
+> >> also supports the ability to specify that only a kernel based launch
+> >> enclave (LE) should be available if the platform owner or distribution
+> >> should desire to implement such a model.
+> >> 
+> >> The policy management framework is straight forward.  Three linked
+> >> lists or their equivalent which are populated through /sysfs
+> >> pseudo-files or equivalent plumbing.  Each list is populated with
+> >> MRSIGNER values for signing keys that are allowed to initialize
+> >> enclaves under three separate conditions.
+> >> 
+> >> 1.) General enclaves without special attribute bits.
+> >> 
+> >> 2.) Enclaves with the SGX_FLAGS_PROVISION_KEY attribute set. - i.e.,
+> >> 'Provisioning Enclaves'.
+> >> 
+> >> 3.) Enclaves with the SGX_FLAGS_LICENSE_KEY attribute set - i.e., 'Launch
+> >> Enclaves'.
+> >> 
+> >> An all-null MRSIGNER value serves as a 'sealing' value that locks a
+> >> list from any further modifications.
+> >> 
+> >> This architecture allows platform policies to be specified and then
+> >> sealed at early boot by the root user.  At that point cryptographic
+> >> policy controls are in place rather then DAC based controls, the
+> >> latter of which have perpetual security liabilities in addition to the
+> >> useability constraints inherent in a DAC or device node model.
+> >> 
+> >> We have developed an independent implementation of the PSW and
+> >> arguably have as much experience with issues surrounding how to
+> >> interact with the device driver as anyone.  We have spent a lot of
+> >> time thinking about these issues and the above framework provides the
+> >> most flexible architecture available.
+> > 
+> > Sounds like a lot bloat and policy added to the kernel whereas with
+> > Andy's proposal you can implement logic to a daemon and provide only
+> > mechanism to do it.
 
-On Mon, Oct 15, 2018 at 09:46:12AM -0500, Rob Herring wrote:
-> On Fri, Sep 21, 2018 at 12:25:44PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Tegra186 and later have some top-level controls for wake events in the
-> > power management controller (PMC). In order to enable the system to wake
-> > up from low power states, additional registers in the PMC need to be
-> > programmed. Add a wakeup-parent property to establish this relationship
-> > between the GPIO controller and the PMC.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpi=
-o.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > index adff16c71d21..cbb51a8990c3 100644
-> > --- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> > @@ -127,6 +127,11 @@ Required properties:
-> >              - 8: Active low level-sensitive.
-> >              Valid combinations are 1, 2, 3, 4, 8.
-> > =20
-> > +Optional properties:
-> > +- wake-parent
-> > +    A phandle to the Power Management Controller (PMC) that contains t=
-op-
-> > +    level controls to enable the wake-up capabilities of some GPIOs.
-> > +
-> >  Example:
-> > =20
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> > @@ -148,6 +153,7 @@ gpio@2200000 {
-> >  	#gpio-cells =3D <2>;
-> >  	interrupt-controller;
-> >  	#interrupt-cells =3D <2>;
-> > +	wakeup-parent =3D <&pmc>;
-> >  };
-> > =20
-> >  gpio@c2f0000 {
-> > @@ -162,4 +168,5 @@ gpio@c2f0000 {
-> >  	#gpio-cells =3D <2>;
-> >  	interrupt-controller;
-> >  	#interrupt-cells =3D <2>;
-> > +	wakeup-parent =3D <&pmc>;
->=20
-> If all the GPIO instances point to the same PMC and have no per instance=
-=20
-> data, why do you need this in DT? You can just search for the compatible=
-=20
-> node.
+> Well, almost. We'd need SGX_IOC_FREEZE_MR{ENCLAVE,SIGNER} or
+> similar.  Or maybe the daemon could handle the entire loading process.
+> But this can wait until after the main driver is upstream.
+>
+> This does lead to a question: enclaves are kind-of-sort-of mapped
+> into a given address space. What happens if you issue the various
+> ioctls in the context of a different mm?  For that matter, can two
+> processes mmap the same enclave?
 
-That would be slightly annoying to do. I mean, we'd have to somehow
-construct the compatible string that we're looking for. I guess we could
-get around this mostly by just looking for a device matching one of the
-entries in a "pmc_gpio_of_match" table. That would potentially match a
-Tegra194 GPIO against a Tegra186 PMC, but that should never happen in
-practice because it'd be a bug in the DT.
+Fascinating.
 
-Although that somewhat depends on exactly what we mean by "compatible".
-Technically the Tegra194 PMC is compatible with the Tegra186 PMC in
-terms of register layout and so on. However, since both chips have
-undergone quite some changes with regards to the pins they expose, the
-set of wake events exposed on Tegra186 and Tegra194 varies wildly. So if
-that means that the compatible needs to be different (I think it should)
-then we could go with the OF match table approach.
+We've been carrying a patch, that drops in on top of the proposed
+kernel driver, that implements the needed policy management framework
+for DAC fragile (FLC) platforms.  After a meeting yesterday with the
+client that is funding the work, a decision was made to release the
+enhancements when the SGX driver goes mainline.  That will at least
+give developers the option of creating solutions on Linux that
+implement the security guarantees that SGX was designed to deliver.
 
-Actually, thinking about it some more, even if we had a Tegra186
-fallback compatible string in the Tegra194 PMC's device tree node, we'd
-still be matching on the correct instance, and therefore get the right
-IRQ domain for the hierarchy.
+Most importantly, since it implements a driver consistent with the
+design of SGX, it has the added benefit of allowing system
+administrators the ability to enable the driver to work on non-FLC
+(locked) platforms.  Since Jarkko confirmed that FLC is the option of
+platform vendors, this would seem to be important as SGX on Linux will
+only work in a random fashion dependent on the whims of hardware OEM's
+in probably a SKU dependent fashion.  Which is why the client has
+interest in the work.
 
-I'll rework the patches accordingly.
+Best wishes for a productive remainder of the week.
 
-Thierry
+Dr. Greg
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+cZIACgkQ3SOs138+
-s6EyIA/+LkKrq620emgEtZpd9U8q5GjkFRVNO7ncdVE1d3P1znsFtICWHyX0Iux5
-r3V0vB7/R4HoH0bPDZzJdbFH/BrsWRf9H2E+S7LbFNsBDuN07vjHQlDGexR82c5q
-h0D+QQ9JYzJkqciahQlqIvJ/AulAbXfozP/3jxlq0FtSSnc3apn8YDyRV1kWCDnc
-IOgW59NqqBBoXCz1cBXIk+U22NvbtxLVL/qR+TjQJIsHZKWh7Kqv6oAZM53xW7XJ
-sLt3Hvvot+6pwfOMQAhViix/MZgIM/Yq8gmy7ZmPW4JpIOtHvtqoIekrdpw2M+8q
-gjsv1yU/4zrgtlRq4FqEqJjFAPNo6lnFt3uas1be1PrzDVQU1BYe6DPtqJhileFa
-gi2kBD+MfPPGaz58IXnpCFHZ+ynoj/lzqlU85txkXC7C4iTHtn7NKhGA3g7+7Pok
-FQNlhm1VKjzyac7qFu3MLtXy7Yit+k9AFqmYh7PtH9OfX5C046lnawKiEahzAd5c
-AQrxCT7/Q+dRVWXTRhZ4YQyBeYRLM/cayFgUrRs3lB0zNf4Kdv+dW7WcW2P64+i1
-T9dfM5cq/Su66zqOWp1KT/wqOG5aUk4OovC6CsYv7wtMAGtiWBozzizYDBSji6dl
-XwEX54BBof0kWZAhShV0lSB469yw3m3ebkluFoVGy0fNVyN+muw=
-=U3yi
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Five year projections, are you kidding me.  We don't know what we are
+ supposed to be doing at the 4 o'clock meeting this afternoon."
+                                -- Terry Wieland
+                                   Resurrection
