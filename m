@@ -2,93 +2,85 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3C1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DFBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303BB2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303BB2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 87F6720832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:29:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1M6fi2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F6720832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeK2Ib0 (ORCPT
+        id S1726549AbeK2IcF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:31:26 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:32983 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbeK2Ib0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:31:26 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gS7Nd-0000m7-Oe; Wed, 28 Nov 2018 22:28:21 +0100
-Date:   Wed, 28 Nov 2018 22:28:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-cc:     douliyangs@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        shivasharan.srikanteshwara@broadcom.com,
-        Sumit Saxena <sumit.saxena@broadcom.com>, ming.lei@redhat.com,
-        Christoph Hellwig <hch@lst.de>, linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH v3] genirq/affinity: Create and transfer more irq
- desc info by a new structure
-In-Reply-To: <CAErSpo5NCy6C7xqaWUNnC2uY+RRpZnbpOJUQxrz0aER-g6+XqQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1811282226280.1879@nanos.tec.linutronix.de>
-References: <20181128164503.6194-1-douliyangs@gmail.com> <CAErSpo5NCy6C7xqaWUNnC2uY+RRpZnbpOJUQxrz0aER-g6+XqQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 29 Nov 2018 03:32:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbeK2IcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 03:32:05 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DC962081B;
+        Wed, 28 Nov 2018 21:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543440545;
+        bh=+ePQ1+C+CiT7J2d8VmYN8mgSP5fwmIIfMuINI/pWZfA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=S1M6fi2BH+Yhgck29Td8JWPTWoJ35SJFs3w7jSr/fgaJwFH24KzUsQPAOKNOYTq8o
+         oeIk5f0/yC8JMaTEyIdc8HJGs0zmZoIc1F3DjE/81jJxEWyhruuQX8OfYjWrdnB6zj
+         3bjm02M8mon+r8Ppn2JWv+/hIykLqcFHT2G5lYpM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: quoted-printable
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181128093013.24442-11-wens@csie.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20181128093013.24442-1-wens@csie.org>
+ <20181128093013.24442-11-wens@csie.org>
+Message-ID: <154344054442.88331.8887745218976145062@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 09/15] clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC output
+Date:   Wed, 28 Nov 2018 13:29:04 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018, Bjorn Helgaas wrote:
-> On Wed, Nov 28, 2018 at 10:45 AM Dou Liyang <douliyangs@gmail.com> wrote:
-> >         if (affd)
-> > -               masks = irq_create_affinity_masks(nvec, affd);
-> > -
-> > +               affi_desc = irq_create_affinity_desc(nvec, affd);
-> >
-> >         /* MSI Entry Initialization */
-> > -       entry = alloc_msi_entry(&dev->dev, nvec, masks);
-> > +       entry = alloc_msi_entry(&dev->dev, nvec, affi_desc);
-> 
-> Can you split this into two or more patches?  Most of these changes
-> are trivial and not very interesting, and the fact that they're all in
-> one patch makes it hard to find and review the interesting bits.  For
-> example,
-> 
->   1) Rename all the local variables while keeping the type the same
-> (or just leave the name the same; I think "affinity" would be a fine
-> name, and I would be OK if we ended up with "struct irq_affinity_desc
-> *masks" or "struct irq_affinity_desc *affinity").  This patch would
-> obviously have no functional impact and would remove a lot of the
-> trivial changes.
-> 
->   2) Add "struct irq_affinity_desc" containing only "struct cpumask
-> masks" and irq_create_affinity_desc() (or leave the name as
-> irq_create_affinity_masks() and adjust the signature).  This would
-> also have no functional impact and would be a fairly trivial patch.
-> 
->   3) Add "flags" to struct irq_affinity_desc and the related code.
-> This is the real meat of your patch, and with the above out of the
-> way, it will be much smaller and it'll be obvious what the important
-> changes are.
+Quoting Chen-Yu Tsai (2018-11-28 01:30:07)
+> On the R40, in addition to a mux between the RTC's own RC oscillator and
+> an external 32768 Hz crystal, which are muxed inside the RTC module, the
+> CCU also has its own RC oscillator, which runs at around 2 MHz, and can
+> be muxed with the LOSC output from the RTC. This muxed output is called
+> "SYS 32K" in the module clock diagram, but otherwise referred to as the
+> LOSC throughout the CCU documentation.
+> =
 
-You beat me to it. I was going to ask the same thing. Albeit I'll go over
-the conceptual stuff right now as I roughly know what it tries to achieve.
+> The RC oscillator is not very accurate, even though it has an undocumented
+> calibration function. We really want a precise clock at 32768 Hz,
+> instead of something at around 32 KHz. This patch forces the SYS 32K
+> clock to use the RTC output as its parent, and doesn't bother
+> registering the internal oscillator nor a clock mux.
+> =
 
-Thanks,
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
 
-	tglx
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
