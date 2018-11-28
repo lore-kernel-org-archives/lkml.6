@@ -2,105 +2,151 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21495C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B45C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40D92081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C215208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kiHjQbuO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40D92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhNBvjx9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C215208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbeK2Hs1 (ORCPT
+        id S1726362AbeK2Hw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 02:48:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39024 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbeK2Hs1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 02:48:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b14so25974edt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 12:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qkIU8ANFxK92+K1ZAwkgAqqJJ/gVt3nrYv81jkIB5V0=;
-        b=kiHjQbuORkZnW8mi5sY+q9KzsQsjj7rpmm0TwgXSDiGJm/jvPC3wGsitkrCIYrv/G/
-         2dTuaH8+htMFh9vHZS+uN4lhEez68TcGTREWAW6V4+gOcO4U1ScejTeKlibQF+JJL4TP
-         q1haE0vSuXUgXbPyld1OOjFCXMM+/97E/qmI8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qkIU8ANFxK92+K1ZAwkgAqqJJ/gVt3nrYv81jkIB5V0=;
-        b=pNxL/hGO9LAUfIYisyQqzHIFH7xqkwPvEFtoA5dePf6Xa0xfTDZOpg8uKZw02FeMpA
-         QS1XOJel2AQAF3xZNCJvfAO2ArACMnQGE+P0Ag9OMAoC/Z7fO1F+kbITcgek4aJwxHnL
-         hdLUIPTFfv0V/D0mu0zjpKXMfn3Fa1PjgE7zlxXqApEO2Zkm9WeCotIwXdhblBEeuWFz
-         jqjCGjeuzpx9tjbsIWA+IQCQqwbmJ4Afo6ZEukZs1YNC1sr82RK7Jj+NDDgBiI3NNB37
-         V9wYe2lJ1K/HZWnZs1GIP19dTmq1PcKbPo5sj7O92kk41tbS6TTccM2vrIwDSt2Vjl+r
-         8XZA==
-X-Gm-Message-State: AA+aEWZ0F74K325mP0C5ssDEyAp6suhMs/kSS9ilWgCDf0MzzuFGdwG+
-        hRiXwgihTl1e2GmAYKmAGOdRvA==
-X-Google-Smtp-Source: AFSGD/XWInGAEazhNJhmwLiEK/dSVhdOq3h6VzDM+qvxLoQOxq//BAyobDLbXn1WtPUaN8oZwEdk5g==
-X-Received: by 2002:a50:ba3d:: with SMTP id g58mr31879434edc.35.1543437931570;
-        Wed, 28 Nov 2018 12:45:31 -0800 (PST)
-Received: from andrea (dynamic-2a00-1028-8386-da8a-eacb-c188-78b9-634c.ipv6.broadband.iol.cz. [2a00:1028:8386:da8a:eacb:c188:78b9:634c])
-        by smtp.gmail.com with ESMTPSA id j21-v6sm1805ejz.51.2018.11.28.12.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 12:45:30 -0800 (PST)
-Date:   Wed, 28 Nov 2018 21:45:23 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        gregkh@linux-foundation.org,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        viro@zeniv.linux.org.uk, sandeen@redhat.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to
- split atomic_sub & read
-Message-ID: <20181128204522.GA3183@andrea>
-References: <20181126165606.GA11282@andrea>
- <20181017164848.GA9795@andrea>
- <20181017151134.GA8966@andrea>
- <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk>
- <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
- <14408.1539790333@warthog.procyon.org.uk>
- <26942.1543249596@warthog.procyon.org.uk>
- <4283.1543416204@warthog.procyon.org.uk>
+        Thu, 29 Nov 2018 02:52:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbeK2Hw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 02:52:59 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01FBC20832;
+        Wed, 28 Nov 2018 20:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543438203;
+        bh=kMR29eF5WCE2KzsX5DX3Uj+WdaPC90IxY947g5YyhYw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FhNBvjx9wViVfwfydq9/dAgxHMAJSFwa/NVrJpw+0DayFDi+v2rskybDoGiEwFosL
+         yWHJ0IGowrec1GBPuq3Ox1oQrd3bdxR6XzvykpfDTYUf5nV/UMbABFCu+lY2RH9wfT
+         TJZGMt2u2HAh3R2d7reZ32k9kNHWk24m4TLBnMT4=
+Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Knut Omang <knut.omang@oracle.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
+        brakmo@fb.com, richard@nod.at, dri-devel@lists.freedesktop.org,
+        linux-nvdimm@lists.01.org, mpe@ellerman.id.au, Tim.Bird@sony.com,
+        linux-um@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rostedt@goodmis.org, kieran.bingham@ideasonboard.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Joel Stanley <joel@jms.id.au>, linux-kselftest@vger.kernel.org,
+        khilman@baylibre.com, joe@perches.com, dan.j.williams@intel.com,
+        jdike@addtoit.com, kunit-dev@googlegroups.com,
+        hidenori.yamaji@sony.com, alan.maguire@oracle.com, shuah@kernel.org
+References: <20181023235750.103146-1-brendanhiggins@google.com>
+ <1543036529.4680.655.camel@oracle.com>
+ <CAFd5g45oPSp870hJLDSHiMfU7Mh-EvpYcFdAaOQxecXNde5PSw@mail.gmail.com>
+ <1543434888.4680.862.camel@oracle.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <abf3aff0-dfb3-717e-f14f-02dbe5574f49@kernel.org>
+Date:   Wed, 28 Nov 2018 13:50:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4283.1543416204@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1543434888.4680.862.camel@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Sure.  My point was: those operations are currently not atomic _and_
-> > they provide no ordering; I think that the above commit message does
-> > a good work in explaining *why* we need atomicity, but can't say the
-> > same for the memory-ordering requirement.
+On 11/28/18 12:54 PM, Knut Omang wrote:
+> On Mon, 2018-11-26 at 17:41 -0800, Brendan Higgins wrote:
+>> On Fri, Nov 23, 2018 at 9:15 PM Knut Omang <knut.omang@oracle.com> wrote:
+>>>
+>>> On Tue, 2018-10-23 at 16:57 -0700, Brendan Higgins wrote:
+>> <snip>
+>>>
+>>> Brendan, I regret you weren't at this year's testing and fuzzing workshop at
+>>> LPC last week so we could have continued our discussions from last year there!
+>>
+>> Likewise! Unfortunately, I could not make it. So it goes.
+>>
+>>>
+>>> I hope we can work on this for a while longer before anything gets merged.
+>>> Maybe it can be topic for a longer session in a future test related workshop?
+>>
+>> I don't see why we cannot just discuss it here as we are already
+>> doing.
 > 
-> Having discussed it with Paul McKenney and thought about it some more, I think
-> relaxed is probably okay since there isn't a pair of variables that need
-> ordering.
+> Yes, as long as we are not wasting all the Cc:'ed people's valuable time.
+> 
+>> Besides, you are mostly interested in out of tree testing,
+>> right? I don't see how this precludes anything that you are trying to
+>> do with KTF.
+> 
+> Both approaches provide assertion macros for running tests inside the kernel,
+> I doubt the kernel community would like to see yet two such sets of macros,
+> with differing syntax merged. One of the good reasons to have a *framework*
+> is that it is widely used and understood, so that people coming from one part of the
+> kernel can easily run, understand and relate to selected tests from another part.
+> 
+> The goal with KTF is to allow this for any kernel, old or new, not just kernels
+> built specifically for testing purposes. We felt that providing it as a separate git
+> module (still open source, for anyone to contribute to) is a more efficient approach
+> until we have more examples and experience with using it in different parts
+> of the kernel. We can definitely post the kernel side of KTF as a patch series fairly soon
+> if the community wants us to. Except for hybrid tests, the ktf.ko module works fine
+> independently of any user side support, just using the debugfs interface to run and
+> examine tests.
+> 
 
-Count several troubled, and exiting!, weekends spent "processing" (my)
-conversations with Paul...  so been there! ;-)
+Having test framework in the kernel sources tree has benefits. It allows
+us (kernel developers) to do co-development of kernel features and tests
+for these features.
 
-Makes all sense to me of course, thank you for the clarification.
+It encourages developers to write regression tests. More importantly,
+kernel features and tests for these features are included in the same
+release in most cases and/or allows us freedom to do so if test 
+framework and tests are part of the kernel sources.
 
-  Andrea
+We have seen this with our experience with kselftest. It would not have
+see the same level of attention and growth if it stayed outside the
+kernel sources.
 
+Most kernel developers would not want to include a externally maintained
+module for testing. As a general rule, it has to be easy to run tests.
+
+> I think there are good uses cases for having the ability to maintain a
+> single source for tests that can be run against multiple kernels,
+> also distro kernels that the test framework cannot expect to be able to modify,
+> except from using the module interfaces.
+
+Same reasons as above. Having the tests included in the kernel sources
+makes it easier for distros to run those tests and include running them
+during their qualification.
 
 > 
-> David
+> And there are good arguments for having (at least parts of)
+> the test framework easily available within the kernel under test.
+> 
+
+When Kernel unit, functional, and regressions tests reside in the kernel
+sources, they evolve quicker as kernel developers contribute tests as
+part of their kernel work-flow. Maintaining tests and framework
+separately will make it harder to maintain them and keep them updated
+for us the kernel community.
+
+thanks,
+-- Shuah
