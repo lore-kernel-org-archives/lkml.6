@@ -2,158 +2,100 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFA8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0EDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A427620832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A427620832
+	by mail.kernel.org (Postfix) with ESMTP id 99453208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99453208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeK2BWX (ORCPT
+        id S1728590AbeK2BW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:22:23 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38405 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728522AbeK2BWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:22:22 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so22240596ede.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 06:20:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BfesgYdO54q4pYgbRjAV6Quo3oYSaQvkZq0teuCDPQg=;
-        b=dELrklI4qYSFKEJuAd6HYtmJkKb+mrVMIDjGzGrQOZdBe+UEuggPxSSdLk2KLvgKqb
-         MEuUx8iqOCZSuh1fcqbyYCqe36iPA4Xf+K8nMeW5NXvcbfqnD2JL6Wep8ubMuTjj7F9X
-         KFO6pYxruzeE5qCmyk4YO7ZrmVAX8q0wCmT3IcUQTM92UM5a385DWb8JYmppEW0p9gUT
-         DGwNPex1V62OmyU5BllKD08V98OthMYlZr5iGLjFsFXh+/QpU8cw8mS86/bsB4vHYTCC
-         CH2F72BURZ2aqqh4pc9IDOajZr8WYqtWg73ODU4VYjFrqTuW9LlgYwMY6dyi+j+SeNZi
-         5Y2g==
-X-Gm-Message-State: AGRZ1gJR+qJHRjMf40UbyVaG985d3LtY2sEVuorOrlrIVYYXJxUgMEZ/
-        2EeQ6cd/VcKklF19iDWJ9QQMBej75/E=
-X-Google-Smtp-Source: AJdET5dtcYaab6cHvJ1aCdVU6UPxkXxiwzSFwjnbd5zTRtp7Cj1VRhRdFi+j+Sn8TVv23dbm1zwtBQ==
-X-Received: by 2002:a17:906:7805:: with SMTP id u5-v6mr27386285ejm.213.1543414832101;
-        Wed, 28 Nov 2018 06:20:32 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id o37sm1791575edc.32.2018.11.28.06.20.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 06:20:31 -0800 (PST)
-Subject: Re: [PATCH v5 00/15] i2c-multi-instantiate: Adapt for INT3515 and
- alike
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <776a33a7-bea0-fac9-3dbd-e17223180623@redhat.com>
-Date:   Wed, 28 Nov 2018 15:20:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 28 Nov 2018 20:22:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728387AbeK2BW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:22:28 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 55FB84D4DF;
+        Wed, 28 Nov 2018 14:20:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A88AC1057042;
+        Wed, 28 Nov 2018 14:20:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 28 Nov 2018 15:20:39 +0100 (CET)
+Date:   Wed, 28 Nov 2018 15:20:06 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        strace-devel@lists.strace.io
+Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
+ ptrace_message
+Message-ID: <20181128142006.GE30395@redhat.com>
+References: <20181128130439.GB28206@altlinux.org>
+ <20181128130601.GC28206@altlinux.org>
+ <20181128134913.GC30395@redhat.com>
+ <20181128140533.GF28206@altlinux.org>
 MIME-Version: 1.0
-In-Reply-To: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128140533.GF28206@altlinux.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 28 Nov 2018 14:20:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 11/28, Dmitry V. Levin wrote:
+>
+> On Wed, Nov 28, 2018 at 02:49:14PM +0100, Oleg Nesterov wrote:
+> > On 11/28, Dmitry V. Levin wrote:
+> > >
+> > > +/*
+> > > + * These values are stored in task->ptrace_message by tracehook_report_syscall_*
+> > > + * to describe current syscall-stop.
+> > > + *
+> > > + * Values for these constants are chosen so that they do not appear
+> > > + * in task->ptrace_message by other means.
+> > > + */
+> > > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
+> > > +#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U
+> > 
+> > Again, I do not really understand the comment... Why should we care about
+> > "do not appear in task->ptrace_message by other means" ?
+> > 
+> > 2/2 should detect ptrace_report_syscall() case correctly, so we can use any
+> > numbers, say, 1 and 2?
+> > 
+> > If debugger does PTRACE_GETEVENTMSG it should know how to interpet the value
+> > anyway after wait(status).
+> 
+> Given that without this patch the value returned by PTRACE_GETEVENTMSG
+> during syscall stop is undefined, we need two different ptrace_message
+> values that cannot be set by other ptrace events to enable reliable
+> identification of syscall-enter-stop and syscall-exit-stop in userspace:
+> if we make PTRACE_GETEVENTMSG return 0 or any other value routinely set by
+> other ptrace events, it would be hard for userspace to find out whether
+> the kernel implements new semantics or not.
 
-On 28-11-18 12:45, Andy Shevchenko wrote:
-> Currently i2c-multi-instantiate driver does not support the case
-> of INT3515 USB PD device, where:
-> 
-> - Interrupt() is used instead of GpioInt()
-> - All slaves may be the same from IP point of view
-> - There can be variadic amount of slaves
-> 
-> This series is addressing all above.
-> 
-> Note, series has been smoke tested (Heikki would do BAT or more)
-> on Intel Coffee Lake system.
-> 
-> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
-> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
-> 
-> Testing and comments are warmly welcome.
-> 
-> In v5:
-> - unmess with patches 3 and 4 (there were squashed by my mistake)
-> - other than above no code change from v4
+Hmm, why? Debugger can just do ptrace(PTRACE_GET_SYSCALL_INFO, NULL), if it
+returns EIO then it is not implemented?
 
-v5 looks good to me, you can add my:
+Oleg.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-To the patches which don't have this yet.
-
-Regards,
-
-Hans
-
-
-
-
-> 
-> In v4:
-> - directly return -EPROBE_DEFER from i2c_acpi_new_device()
-> - due to above split error handling simplification to separate patches
-> 
-> In v3:
-> - revisit error codes returned by i2c_acpi_new_device() (Hans, Mika)
-> - add documentation to exported i2c_acpi_get_i2c_resource() (Mika)
-> - drop Hans' Rb tag in patch 5 due to changes
-> - append Mika's Ab tag to patch 6
-> 
-> In v2:
-> - drop patches to copy fwnode and to handle BOSC0200 device
-> - append check for amount of devices listed in the driver's mapping
-> - add Rb tag given by Hans
-> 
-> Andy Shevchenko (15):
->    platform/x86: intel_cht_int33fe: Remove duplicate NULL check
->    platform/x86: intel_cht_int33fe: Accept errors of
->      i2c_acpi_new_device()
->    platform/x86: i2c-multi-instantiate: Accept errors of
->      i2c_acpi_new_device()
->    platform/x86: i2c-multi-instantiate: Defer probe when no adapter found
->    i2c: acpi: Return error pointers from i2c_acpi_new_device()
->    platform/x86: intel_cht_int33fe: Get rid of obsolete conditional
->    platform/x86: i2c-multi-instantiate: Get rid of obsolete conditional
->    i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
->    i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
->    platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
->    platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
->    platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
->    platform/x86: i2c-multi-instantiate: Allow to have same slaves
->    ACPI / scan: Create platform device for INT3515 ACPI nodes
->    iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
-> 
->   drivers/acpi/scan.c                          |  1 +
->   drivers/i2c/i2c-core-acpi.c                  | 64 +++++++++----
->   drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
->   drivers/platform/x86/i2c-multi-instantiate.c | 97 ++++++++++++++++----
->   drivers/platform/x86/intel_cht_int33fe.c     | 20 ++--
->   drivers/usb/typec/tps6598x.c                 |  8 +-
->   include/linux/acpi.h                         | 11 +++
->   7 files changed, 157 insertions(+), 60 deletions(-)
-> 
-> --
-> 2.19.2
-> 
