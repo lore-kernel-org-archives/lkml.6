@@ -2,91 +2,71 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D610DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE1AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A17B320832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A17B320832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id DABEB208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:08:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABEB208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbeK2CE6 (ORCPT
+        id S1728442AbeK2CKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:04:58 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:35921 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbeK2CE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:04:58 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E9F9220741; Wed, 28 Nov 2018 16:02:58 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8CB6120D23;
-        Wed, 28 Nov 2018 16:02:15 +0100 (CET)
-Date:   Wed, 28 Nov 2018 16:02:15 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
-Message-ID: <20181128160215.45e5162e@bbrezillon>
-In-Reply-To: <7634bb45-6167-31e8-e169-b5c9bf7e2fc5@kontron.de>
-References: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
-        <20181128154104.577d5923@bbrezillon>
-        <7634bb45-6167-31e8-e169-b5c9bf7e2fc5@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 28 Nov 2018 21:10:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:47285 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbeK2CKJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:10:09 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gS1Rh-0005eG-GC; Wed, 28 Nov 2018 15:08:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8188eu: fix spelling mistake "inferface" -> "interface"
+Date:   Wed, 28 Nov 2018 15:08:09 +0000
+Message-Id: <20181128150809.13027-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 14:55:45 +0000
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Hi Boris,
-> 
-> On 28.11.18 15:41, Boris Brezillon wrote:
-> > On Tue, 27 Nov 2018 07:44:52 +0000
-> > Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
-> >   
-> >> Fix the size of the buffer allocated to store the in-memory BBT.
-> >> This bug was previously hidden by a different bug, that was fixed in
-> >> d098093ba06e.
-> >>
-> >> Fixes: 9c3736a3de21 ("mtd: nand: Add core infrastructure to deal with NAND devices")
-> >> Cc: <stable@vger.kernel.org>
-> >> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>  
-> > 
-> > Looks like your From header does not match the SoB tag
-> > ('Frieder Schrempf' vs 'Schrempf Frieder') and checkpatch does not like
-> > that. I'll fix it when applying, but maybe you should fix
-> > your .gitconfig to make them match.  
-> 
-> Actually the From header in my local patch is correct (<first name> 
-> <last name>, Frieder Schrempf) as it comes from my git config. But since 
-> our company was renamed and our mail servers were transferred, our 
-> e-mails are sent with From=<last name> <first name>.
-> 
-> It seems like git send-email or patchwork or whatever uses the 
-> information from the e-mail header instead of what is in the patch.
-> 
-> I will try to raise this issue with our IT department as this would be 
-> best fixed on their side.
+Fix spelling mistake in module description text.
 
-There's another solution: make git send-email add a From header in the
-message body.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8188eu/os_dep/os_intfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-git config --global sendemail.from "Schrempf Frieder <frieder.schrempf@kontron.de>"
+diff --git a/drivers/staging/rtl8188eu/os_dep/os_intfs.c b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
+index fb213a90ed1b..abcce2240f15 100644
+--- a/drivers/staging/rtl8188eu/os_dep/os_intfs.c
++++ b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
+@@ -131,7 +131,7 @@ MODULE_PARM_DESC(debug, "Set debug level (1-9) (default 1)");
+ 
+ static bool rtw_monitor_enable;
+ module_param_named(monitor_enable, rtw_monitor_enable, bool, 0444);
+-MODULE_PARM_DESC(monitor_enable, "Enable monitor inferface (default: false)");
++MODULE_PARM_DESC(monitor_enable, "Enable monitor interface (default: false)");
+ 
+ static int netdev_close(struct net_device *pnetdev);
+ 
+-- 
+2.19.1
+
