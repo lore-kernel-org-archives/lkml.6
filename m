@@ -2,80 +2,346 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F52C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD07AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1706520832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1706520832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 69D5E20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:53:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B91yePc3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D5E20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbeK2Ayp (ORCPT
+        id S1728854AbeK2Ayu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:54:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48616 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728348AbeK2Ayo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:54:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC183AF6F;
-        Wed, 28 Nov 2018 13:52:59 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 07243DAC7E; Wed, 28 Nov 2018 14:52:42 +0100 (CET)
-Date:   Wed, 28 Nov 2018 14:52:42 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Yueyi Li <liyueyi@live.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "w@1wt.eu" <w@1wt.eu>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        markus@oberhumer.com
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-Message-ID: <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Yueyi Li <liyueyi@live.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "w@1wt.eu" <w@1wt.eu>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        markus@oberhumer.com
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+        Wed, 28 Nov 2018 19:54:50 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34854 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728518AbeK2Ayu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:54:50 -0500
+Received: by mail-pg1-f195.google.com with SMTP id s198so9541261pgs.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:53:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=26VYVlm/7DQ8zvIFy3sM7Uxwxt2X3SzL1OFz91WiDts=;
+        b=B91yePc3ndsQEZXdLDxxmNH55NSAPRDOAQa86wK0zmWBeAnrdPTfDpSiURmShdcf85
+         LkRtxlFOGkGsyjckbF1U/yYZ6jTDLulYjv/GgbRQ/UhkBRBM/Y/wRsCLNcjxJe+OSbUc
+         q+CW1OqPGsOWF4ApsBvrXnJBvirgkR+Gn7TNU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=26VYVlm/7DQ8zvIFy3sM7Uxwxt2X3SzL1OFz91WiDts=;
+        b=fc8rBOgOrxbBFnyt7bFlxplN04nsCP67B5BT94R1a5RT7vKRmfoXWFkewt15h39PZ/
+         +FWF8UrLCZecFS3xV8E0/WoPhpVS5bVMuSWGnq8uHhv7xiiadC+y/UQ9NbocVpJdfh2s
+         WkCIx//SEFKYF4/+0UMCftLQvdSfKClKoGvn1XJoqQJPOQqlzly5lLKJIcjsJl64hvR6
+         4hG/c3JQ0g1U13T59uiQM/3pCnsOfjB1R+2IjsKgBBtDODisMWiXvSNUHSSpRecwL1LH
+         gx1cwb9EvwdFYaL2/x/uWSISqFPA9CLHPLPEsyZwLPSjvWt7UIGn6jpbeZjz/aZ6XQ6/
+         B9uA==
+X-Gm-Message-State: AA+aEWaQw7Jffgk/t0T3S+zKzLpcVUUDbI5xpqV9DSrJGres9/O6zJ0/
+        /Znvj6gFoTeA9tD4+2Yv0+x0
+X-Google-Smtp-Source: AFSGD/UxfLaqAE6gsbzEWStRQBkgcFy2x6Mu/bXO7QqVgNkV1EebDTm43zjJcGriFXJC9F96m91BMQ==
+X-Received: by 2002:a63:3287:: with SMTP id y129mr33335726pgy.337.1543413186009;
+        Wed, 28 Nov 2018 05:53:06 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:90a:a93f:b481:6fae:6692:c3ee])
+        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.52.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 05:53:05 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
+        linus.walleij@linaro.org, zhao_steven@263.net,
+        overseas.sales@unisoc.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 11/15] clocksource: Add clock driver for RDA8810PL SoC
+Date:   Wed, 28 Nov 2018 19:21:02 +0530
+Message-Id: <20181128135106.9255-12-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
+References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Markus to to CC
+Add clock driver for RDA Micro RDA8810PL SoC supporting OSTIMER
+and HWTIMER.
 
-On Wed, Nov 28, 2018 at 07:31:26AM +0000, Yueyi Li wrote:
-> It`s possible ip overrun in lzo1x_1_do_compress() when compressed page is
-> point to the end of memory and which virtual address is 0xfffffffffffff000.
-> Leading to a NULL pointer access during the get_unaligned_le32(ip).
+RDA8810PL has two independent timers: OSTIMER (56 bit) and HWTIMER
+(64 bit). Each timer provides optional interrupt support. In this
+driver, OSTIMER is used for clockevents and HWTIMER is used for
+clocksource.
 
-So this could happen in practice in zram, but unlikely for other users
-of lzo (like btrfs). I'm not sure but expect that the last page would
-not be returned by allocator.
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm/mach-rda/Kconfig       |   1 +
+ drivers/clocksource/Kconfig     |   8 ++
+ drivers/clocksource/Makefile    |   1 +
+ drivers/clocksource/timer-rda.c | 195 ++++++++++++++++++++++++++++++++
+ 4 files changed, 205 insertions(+)
+ create mode 100644 drivers/clocksource/timer-rda.c
 
-The fix is adding a few branches to code that's supposed to be as fast
-as possible. The branches would be evaluated all the time while
-protecting against one signle bad page address. This does not look like
-a good performance tradeoff.
+diff --git a/arch/arm/mach-rda/Kconfig b/arch/arm/mach-rda/Kconfig
+index 29012bc68ca4..1ea753f57b2d 100644
+--- a/arch/arm/mach-rda/Kconfig
++++ b/arch/arm/mach-rda/Kconfig
+@@ -4,5 +4,6 @@ menuconfig ARCH_RDA
+ 	select COMMON_CLK
+ 	select GENERIC_IRQ_CHIP
+ 	select RDA_INTC
++	select RDA_TIMER
+ 	help
+ 	  This enables support for the RDA Micro 8810PL SoC family.
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 55c77e44bb2d..598b592e03d7 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -105,6 +105,14 @@ config OWL_TIMER
+ 	help
+ 	  Enables the support for the Actions Semi Owl timer driver.
+ 
++config RDA_TIMER
++	bool "RDA timer driver" if COMPILE_TEST
++	depends on GENERIC_CLOCKEVENTS
++	select CLKSRC_MMIO
++	select TIMER_OF
++	help
++	  Enables the support for the RDA Micro timer driver.
++
+ config SUN4I_TIMER
+ 	bool "Sun4i timer driver" if COMPILE_TEST
+ 	depends on HAS_IOMEM
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index dd9138104568..150020a90707 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
+ obj-$(CONFIG_OWL_TIMER)		+= timer-owl.o
+ obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
+ obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
++obj-$(CONFIG_RDA_TIMER)		+= timer-rda.o
+ 
+ obj-$(CONFIG_ARC_TIMERS)		+= arc_timer.o
+ obj-$(CONFIG_ARM_ARCH_TIMER)		+= arm_arch_timer.o
+diff --git a/drivers/clocksource/timer-rda.c b/drivers/clocksource/timer-rda.c
+new file mode 100644
+index 000000000000..fd1199c189bf
+--- /dev/null
++++ b/drivers/clocksource/timer-rda.c
+@@ -0,0 +1,195 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * RDA8810PL SoC timer driver
++ *
++ * Copyright RDA Microelectronics Company Limited
++ * Copyright (c) 2017 Andreas Färber
++ * Copyright (c) 2018 Manivannan Sadhasivam
++ *
++ * RDA8810PL has two independent timers: OSTIMER (56 bit) and HWTIMER (64 bit).
++ * Each timer provides optional interrupt support. In this driver, OSTIMER is
++ * used for clockevents and HWTIMER is used for clocksource.
++ */
++
++#include <linux/init.h>
++#include <linux/interrupt.h>
++
++#include "timer-of.h"
++
++#define RDA_OSTIMER_LOADVAL_L	0x000
++#define RDA_OSTIMER_CTRL	0x004
++#define RDA_HWTIMER_LOCKVAL_L	0x024
++#define RDA_HWTIMER_LOCKVAL_H	0x028
++#define RDA_TIMER_IRQ_MASK_SET	0x02c
++#define RDA_TIMER_IRQ_MASK_CLR	0x030
++#define RDA_TIMER_IRQ_CLR	0x034
++
++#define RDA_OSTIMER_CTRL_ENABLE		BIT(24)
++#define RDA_OSTIMER_CTRL_REPEAT		BIT(28)
++#define RDA_OSTIMER_CTRL_LOAD		BIT(30)
++
++#define RDA_TIMER_IRQ_MASK_OSTIMER	BIT(0)
++
++#define RDA_TIMER_IRQ_CLR_OSTIMER	BIT(0)
++
++static int rda_ostimer_start(void __iomem *base, bool periodic, u64 cycles)
++{
++	u32 ctrl, load_l;
++
++	load_l = (u32)cycles;
++	ctrl = ((cycles >> 32) & 0xffffff);
++	ctrl |= RDA_OSTIMER_CTRL_LOAD | RDA_OSTIMER_CTRL_ENABLE;
++	if (periodic)
++		ctrl |= RDA_OSTIMER_CTRL_REPEAT;
++
++	/* Enable ostimer interrupt first */
++	writel_relaxed(RDA_TIMER_IRQ_MASK_OSTIMER,
++		       base + RDA_TIMER_IRQ_MASK_SET);
++
++	/* Write low 32 bits first, high 24 bits are with ctrl */
++	writel_relaxed(load_l, base + RDA_OSTIMER_LOADVAL_L);
++	writel_relaxed(ctrl, base + RDA_OSTIMER_CTRL);
++
++	return 0;
++}
++
++static int rda_ostimer_stop(void __iomem *base)
++{
++	/* Disable ostimer interrupt first */
++	writel_relaxed(RDA_TIMER_IRQ_MASK_OSTIMER,
++		       base + RDA_TIMER_IRQ_MASK_CLR);
++
++	writel_relaxed(0, base + RDA_OSTIMER_CTRL);
++
++	return 0;
++}
++
++static int rda_ostimer_set_state_shutdown(struct clock_event_device *evt)
++{
++	struct timer_of *to = to_timer_of(evt);
++
++	rda_ostimer_stop(timer_of_base(to));
++
++	return 0;
++}
++
++static int rda_ostimer_set_state_oneshot(struct clock_event_device *evt)
++{
++	struct timer_of *to = to_timer_of(evt);
++
++	rda_ostimer_stop(timer_of_base(to));
++
++	return 0;
++}
++
++static int rda_ostimer_set_state_periodic(struct clock_event_device *evt)
++{
++	struct timer_of *to = to_timer_of(evt);
++	unsigned long cycles_per_jiffy;
++
++	rda_ostimer_stop(timer_of_base(to));
++
++	cycles_per_jiffy = ((unsigned long long)NSEC_PER_SEC / HZ *
++			     evt->mult) >> evt->shift;
++	rda_ostimer_start(timer_of_base(to), true, cycles_per_jiffy);
++
++	return 0;
++}
++
++static int rda_ostimer_tick_resume(struct clock_event_device *evt)
++{
++	return 0;
++}
++
++static int rda_ostimer_set_next_event(unsigned long evt,
++				      struct clock_event_device *ev)
++{
++	struct timer_of *to = to_timer_of(ev);
++
++	rda_ostimer_start(timer_of_base(to), false, evt);
++
++	return 0;
++}
++
++static irqreturn_t rda_ostimer_interrupt(int irq, void *dev_id)
++{
++	struct clock_event_device *evt = dev_id;
++	struct timer_of *to = to_timer_of(evt);
++
++	/* clear timer int */
++	writel_relaxed(RDA_TIMER_IRQ_CLR_OSTIMER,
++		       timer_of_base(to) + RDA_TIMER_IRQ_CLR);
++
++	if (evt->event_handler)
++		evt->event_handler(evt);
++
++	return IRQ_HANDLED;
++}
++
++static struct timer_of rda_ostimer_of = {
++	.flags = TIMER_OF_IRQ | TIMER_OF_BASE,
++
++	.clkevt = {
++		.name = "rda-ostimer",
++		.rating = 250,
++		.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
++			    CLOCK_EVT_FEAT_DYNIRQ,
++		.set_state_shutdown = rda_ostimer_set_state_shutdown,
++		.set_state_oneshot = rda_ostimer_set_state_oneshot,
++		.set_state_periodic = rda_ostimer_set_state_periodic,
++		.tick_resume = rda_ostimer_tick_resume,
++		.set_next_event	= rda_ostimer_set_next_event,
++	},
++
++	.of_base = {
++		.name = "rda-timer",
++		.index = 0,
++	},
++
++	.of_irq = {
++		.name = "ostimer",
++		.handler = rda_ostimer_interrupt,
++		.flags = IRQF_TIMER,
++	},
++};
++
++static u64 rda_hwtimer_read(struct clocksource *cs)
++{
++	void __iomem *base = timer_of_base(&rda_ostimer_of);
++	u32 lo, hi;
++
++	/* Always read low 32 bits first */
++	do {
++		lo = readl_relaxed(base + RDA_HWTIMER_LOCKVAL_L);
++		hi = readl_relaxed(base + RDA_HWTIMER_LOCKVAL_H);
++	} while (hi != readl_relaxed(base + RDA_HWTIMER_LOCKVAL_H));
++
++	return ((u64)hi << 32) | lo;
++}
++
++static struct clocksource rda_hwtimer_clocksource = {
++	.name           = "rda-timer",
++	.rating         = 400,
++	.read           = rda_hwtimer_read,
++	.mask           = CLOCKSOURCE_MASK(64),
++	.flags          = CLOCK_SOURCE_IS_CONTINUOUS,
++};
++
++static int __init rda_timer_init(struct device_node *np)
++{
++	unsigned long rate = 2000000;
++	int ret;
++
++	ret = timer_of_init(np, &rda_ostimer_of);
++	if (ret)
++		return ret;
++
++	clocksource_register_hz(&rda_hwtimer_clocksource, rate);
++
++	clockevents_config_and_register(&rda_ostimer_of.clkevt, rate,
++					0x2, UINT_MAX);
++
++	return 0;
++}
++
++TIMER_OF_DECLARE(rda8810pl, "rda,8810pl-timer", rda_timer_init);
+-- 
+2.17.1
 
-> +#define OVERFLOW_ADD_CHECK(a, b)  \
-> +		(((a) + (b)) < (a))
-
-I'm not sure if this is generally safe overflow check (never not
-optimized out). Here it depends on the types of 'a' and 'b' that are
-pointer (ip) and size_t (m_len). GCC has __builtin_add_overflow_p so
-that one should be used where possible.
