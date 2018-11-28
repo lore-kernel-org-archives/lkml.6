@@ -2,124 +2,167 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39C0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D39C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B28E420660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28E420660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 69ACA20660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69ACA20660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbeK1Xpr (ORCPT
+        id S1728426AbeK1Xpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:45:47 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:51818 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbeK1Xpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:45:46 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 632DB72CC59;
-        Wed, 28 Nov 2018 15:44:11 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 578567CD0D7; Wed, 28 Nov 2018 15:44:11 +0300 (MSK)
-Date:   Wed, 28 Nov 2018 15:44:11 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io
-Subject: Re: [RFC PATCH RESEND v3 3/3] ptrace: add PTRACE_EVENT_SECCOMP
- support to PTRACE_GET_SYSCALL_INFO
-Message-ID: <20181128124411.GA28206@altlinux.org>
-References: <20181125022150.46258a20@akathisia>
- <20181125022340.5703400f@akathisia>
- <20181126143524.GB1660@redhat.com>
- <20181127040732.1c9f7965@akathisia>
- <20181127123116.GA13284@redhat.com>
- <20181127232753.GA18755@altlinux.org>
- <20181128123545.GA30395@redhat.com>
+        Wed, 28 Nov 2018 18:45:55 -0500
+Received: from foss.arm.com ([217.140.101.70]:38482 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727829AbeK1Xpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:45:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 611AA37D8;
+        Wed, 28 Nov 2018 04:44:22 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27DB73F59C;
+        Wed, 28 Nov 2018 04:44:21 -0800 (PST)
+Subject: Re: [PATCH 9/9] iommu: arm-smmu-v3: make it explicitly non-modular
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Nate Watterson <nwatters@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
+ <1543271498-28966-10-git-send-email-paul.gortmaker@windriver.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <148f1301-76fc-a64f-aeb3-d6d2483e74b1@arm.com>
+Date:   Wed, 28 Nov 2018 12:44:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <20181128123545.GA30395@redhat.com>
+In-Reply-To: <1543271498-28966-10-git-send-email-paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/11/2018 22:31, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/iommu/Kconfig:config ARM_SMMU_V3
+> drivers/iommu/Kconfig:  bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, but unlike most drivers, we can't delete the
+> function tied to the ".remove" field.  This is because as of commit
+> 7aa8619a66ae ("iommu/arm-smmu-v3: Implement shutdown method") the
+> .remove function was given a one line wrapper and re-used to provide a
+> .shutdown service.  So we delete the wrapper and re-name the function
+> from remove to shutdown.
+> 
+> We add a moduleparam.h include since the file does actually declare
+> some module parameters, and leaving them as such is the easiest way
+> currently to remain backwards compatible with existing use cases.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+With the title fixed up,
 
-On Wed, Nov 28, 2018 at 01:35:46PM +0100, Oleg Nesterov wrote:
-> On 11/28, Dmitry V. Levin wrote:
-> >
-> > > Just like ptrace_request(PTRACE_LISTEN)
-> > > does but you can do this lockless (no need to lock_task_sighand()).
-> >
-> > Why this can be done lockless?  All other places in that file do
-> > the locking,
->=20
-> PTRACE_LISTEN too doesn't need lock_task_sighand() to access ->last_sigin=
-fo,
-> this code predates ptrace_freeze_traced() which ensures that the tracee c=
-an't
-> go away and clear ->last_siginfo.
->=20
-> However, unlike ptrace_get_syscall(), PTRACE_LISTEN needs spin_lock_irq(s=
-iglock),
-> it modifies ->jobctl and calls signal_wake_up().
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-What about PTRACE_GETSIGINFO?  Can it also be done lockless because
-ptrace_check_attach() has already called ptrace_freeze_traced()?
-
-> > > Of course, debugger can do PTRACE_SETSIGINFO and confuse itself but p=
-robably we
-> > > do not care?
-> >
-> > The only potential issue I could think of is whether PTRACE_SETSIGINFO
-> > could be used this way to cause an information leak by making
-> > PTRACE_GET_SYSCALL_INFO access some unrelated data.
->=20
-> Well, afaics ptrace_get_syscall() does nothing "special", debugger can us=
-e other
-> PTRACE_ requests to get the same info?
-
-I agree.
-
-
---=20
-ldv
-
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb/o2bAAoJEAVFT+BVnCUIhvUQAIITUiL87+l7B5purj2mbkde
-iOE/2Upl2PG1jlb+aKB1rQTknLKRPXkprZud8j6327ts1xhKyxkkzHJwiEODo1Eg
-DjYSysvUYMKHkZ2erWw4rUD21u3g100pnVKe/nx55ePOgq8HVFHjjuW+1yFCS7AQ
-YWPQmnlhCjIRAZjH3N7Qapcp/DdjDPhobziUeKE9lyTQU+Ea7NgH1imDz2yTG3MZ
-n+ntMSaFFFz9exMbW3IbEnYSP+0wboJpmUXKLurXYuLF+jXcjWPH1SjDHo2KmNm2
-necxBlcveAl8f8IYTOzRwelHG0I/GdHFdLoN7Bcw1gZLPLWYa16zZpdAhrp5xZ5x
-zU3+2ABICMEsa3kG17g574F0hotpu2AIVxqkc1aY67O84WboiJaemwA3twoL8WeT
-FkxIctOP7qu6H1REgWkxoWrRTcHUfQAWRuh+ehonhCX/GrI1p0ibkKOJkYOJap4M
-vXADBKoZQ0kT/FSMRsfye9n+P7Gn3xTUrYCC74s/3X0bI9JhUiUxNCvF/zVlvmD5
-dCMIkpGZUlnyyyUHXPPKZtdSghbsvkYSNdsxSPwZDrfgYda/dl1Pk7wCJiEvpOqa
-DQEOris9iGq3yhGp4KihLU2OvB6spqr1F0FRdLyyWLkPkr3fTeaFgyyFk1T6Nszf
-36mOBoXMlGz/IOrToycg
-=4nL6
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Nate Watterson <nwatters@codeaurora.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: iommu@lists.linux-foundation.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>   drivers/iommu/arm-smmu-v3.c | 25 +++++++++----------------
+>   1 file changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 6947ccf26512..1189c06079d4 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -20,7 +20,8 @@
+>   #include <linux/interrupt.h>
+>   #include <linux/iommu.h>
+>   #include <linux/iopoll.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/moduleparam.h>
+>   #include <linux/msi.h>
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+> @@ -356,6 +357,10 @@
+>   #define MSI_IOVA_BASE			0x8000000
+>   #define MSI_IOVA_LENGTH			0x100000
+>   
+> +/*
+> + * not really modular, but the easiest way to keep compat with existing
+> + * bootargs behaviour is to continue using module_param_named here.
+> + */
+>   static bool disable_bypass = 1;
+>   module_param_named(disable_bypass, disable_bypass, bool, S_IRUGO);
+>   MODULE_PARM_DESC(disable_bypass,
+> @@ -2928,37 +2933,25 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> -static int arm_smmu_device_remove(struct platform_device *pdev)
+> +static void arm_smmu_device_shutdown(struct platform_device *pdev)
+>   {
+>   	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
+>   
+>   	arm_smmu_device_disable(smmu);
+> -
+> -	return 0;
+> -}
+> -
+> -static void arm_smmu_device_shutdown(struct platform_device *pdev)
+> -{
+> -	arm_smmu_device_remove(pdev);
+>   }
+>   
+>   static const struct of_device_id arm_smmu_of_match[] = {
+>   	{ .compatible = "arm,smmu-v3", },
+>   	{ },
+>   };
+> -MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+>   
+>   static struct platform_driver arm_smmu_driver = {
+>   	.driver	= {
+>   		.name		= "arm-smmu-v3",
+>   		.of_match_table	= of_match_ptr(arm_smmu_of_match),
+> +		.suppress_bind_attrs = true,
+>   	},
+>   	.probe	= arm_smmu_device_probe,
+> -	.remove	= arm_smmu_device_remove,
+>   	.shutdown = arm_smmu_device_shutdown,
+>   };
+> -module_platform_driver(arm_smmu_driver);
+> -
+> -MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
+> -MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(arm_smmu_driver);
+> 
