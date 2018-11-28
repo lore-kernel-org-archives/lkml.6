@@ -2,208 +2,158 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE70C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFA8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E111920832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E111920832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A427620832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A427620832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeK2BWH (ORCPT
+        id S1728552AbeK2BWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:22:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59095 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbeK2BWG (ORCPT
+        Wed, 28 Nov 2018 20:22:23 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38405 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728522AbeK2BWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:22:06 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEItTI2320436
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:18:55 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEItrQ2320433;
-        Wed, 28 Nov 2018 06:18:55 -0800
-Date:   Wed, 28 Nov 2018 06:18:55 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
-Message-ID: <tip-4cd24de3a0980bf3100c9dcb08ef65ca7c31af48@git.kernel.org>
-Cc:     dwmw@amazon.co.uk, luto@kernel.org, srinivas.eeda@oracle.com,
-        linux-kernel@vger.kernel.org, zhenzhong.duan@oracle.com,
-        yamada.masahiro@socionext.com, hpa@zytor.com,
-        michal.lkml@markovi.net, konrad.wilk@oracle.com,
-        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        daniel@iogearbox.net, bp@suse.de
-Reply-To: srinivas.eeda@oracle.com, linux-kernel@vger.kernel.org,
-          dwmw@amazon.co.uk, luto@kernel.org, tglx@linutronix.de,
-          peterz@infradead.org, mingo@kernel.org, daniel@iogearbox.net,
-          bp@suse.de, zhenzhong.duan@oracle.com,
-          yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-          hpa@zytor.com, konrad.wilk@oracle.com
-In-Reply-To: <cca0cb20-f9e2-4094-840b-fb0f8810cd34@default>
-References: <cca0cb20-f9e2-4094-840b-fb0f8810cd34@default>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/retpoline: Make CONFIG_RETPOLINE depend on
- compiler support
-Git-Commit-ID: 4cd24de3a0980bf3100c9dcb08ef65ca7c31af48
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Nov 2018 20:22:22 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h50so22240596ede.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 06:20:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BfesgYdO54q4pYgbRjAV6Quo3oYSaQvkZq0teuCDPQg=;
+        b=dELrklI4qYSFKEJuAd6HYtmJkKb+mrVMIDjGzGrQOZdBe+UEuggPxSSdLk2KLvgKqb
+         MEuUx8iqOCZSuh1fcqbyYCqe36iPA4Xf+K8nMeW5NXvcbfqnD2JL6Wep8ubMuTjj7F9X
+         KFO6pYxruzeE5qCmyk4YO7ZrmVAX8q0wCmT3IcUQTM92UM5a385DWb8JYmppEW0p9gUT
+         DGwNPex1V62OmyU5BllKD08V98OthMYlZr5iGLjFsFXh+/QpU8cw8mS86/bsB4vHYTCC
+         CH2F72BURZ2aqqh4pc9IDOajZr8WYqtWg73ODU4VYjFrqTuW9LlgYwMY6dyi+j+SeNZi
+         5Y2g==
+X-Gm-Message-State: AGRZ1gJR+qJHRjMf40UbyVaG985d3LtY2sEVuorOrlrIVYYXJxUgMEZ/
+        2EeQ6cd/VcKklF19iDWJ9QQMBej75/E=
+X-Google-Smtp-Source: AJdET5dtcYaab6cHvJ1aCdVU6UPxkXxiwzSFwjnbd5zTRtp7Cj1VRhRdFi+j+Sn8TVv23dbm1zwtBQ==
+X-Received: by 2002:a17:906:7805:: with SMTP id u5-v6mr27386285ejm.213.1543414832101;
+        Wed, 28 Nov 2018 06:20:32 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id o37sm1791575edc.32.2018.11.28.06.20.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 06:20:31 -0800 (PST)
+Subject: Re: [PATCH v5 00/15] i2c-multi-instantiate: Adapt for INT3515 and
+ alike
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <776a33a7-bea0-fac9-3dbd-e17223180623@redhat.com>
+Date:   Wed, 28 Nov 2018 15:20:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181128114535.80223-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4cd24de3a0980bf3100c9dcb08ef65ca7c31af48
-Gitweb:     https://git.kernel.org/tip/4cd24de3a0980bf3100c9dcb08ef65ca7c31af48
-Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-AuthorDate: Fri, 2 Nov 2018 01:45:41 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:03 +0100
+Hi,
 
-x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
+On 28-11-18 12:45, Andy Shevchenko wrote:
+> Currently i2c-multi-instantiate driver does not support the case
+> of INT3515 USB PD device, where:
+> 
+> - Interrupt() is used instead of GpioInt()
+> - All slaves may be the same from IP point of view
+> - There can be variadic amount of slaves
+> 
+> This series is addressing all above.
+> 
+> Note, series has been smoke tested (Heikki would do BAT or more)
+> on Intel Coffee Lake system.
+> 
+> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
+> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
+> 
+> Testing and comments are warmly welcome.
+> 
+> In v5:
+> - unmess with patches 3 and 4 (there were squashed by my mistake)
+> - other than above no code change from v4
 
-Since retpoline capable compilers are widely available, make
-CONFIG_RETPOLINE hard depend on the compiler capability.
+v5 looks good to me, you can add my:
 
-Break the build when CONFIG_RETPOLINE is enabled and the compiler does not
-support it. Emit an error message in that case:
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
- "arch/x86/Makefile:226: *** You are building kernel with non-retpoline
-  compiler, please update your compiler..  Stop."
+To the patches which don't have this yet.
 
-[dwmw: Fail the build with non-retpoline compiler]
+Regards,
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: <srinivas.eeda@oracle.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/cca0cb20-f9e2-4094-840b-fb0f8810cd34@default
+Hans
 
 
----
- arch/x86/Kconfig                     |  4 ----
- arch/x86/Makefile                    |  5 +++--
- arch/x86/include/asm/nospec-branch.h | 10 ++++++----
- arch/x86/kernel/cpu/bugs.c           |  2 +-
- scripts/Makefile.build               |  2 --
- 5 files changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 9d734f3c8234..b5286ad2a982 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -444,10 +444,6 @@ config RETPOLINE
- 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
- 	  support for full protection. The kernel may run slower.
- 
--	  Without compiler support, at least indirect branches in assembler
--	  code are eliminated. Since this includes the syscall entry path,
--	  it is not entirely pointless.
--
- config INTEL_RDT
- 	bool "Intel Resource Director Technology support"
- 	depends on X86 && CPU_SUP_INTEL
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 88398fdf8129..f5d7f4134524 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -220,9 +220,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
- 
- # Avoid indirect branches in kernel to deal with Spectre
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
--  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
-+ifeq ($(RETPOLINE_CFLAGS),)
-+  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
- endif
-+  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
- endif
- 
- archscripts: scripts_basic
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 80dc14422495..8b09cbb2d52c 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -162,11 +162,12 @@
- 	_ASM_PTR " 999b\n\t"					\
- 	".popsection\n\t"
- 
--#if defined(CONFIG_X86_64) && defined(RETPOLINE)
-+#ifdef CONFIG_RETPOLINE
-+#ifdef CONFIG_X86_64
- 
- /*
-- * Since the inline asm uses the %V modifier which is only in newer GCC,
-- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
-+ * Inline asm uses the %V modifier which is only in newer GCC
-+ * which is ensured when CONFIG_RETPOLINE is defined.
-  */
- # define CALL_NOSPEC						\
- 	ANNOTATE_NOSPEC_ALTERNATIVE				\
-@@ -181,7 +182,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
- 
--#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
-+#else /* CONFIG_X86_32 */
- /*
-  * For i386 we use the original ret-equivalent retpoline, because
-  * otherwise we'll run out of registers. We don't care about CET
-@@ -211,6 +212,7 @@
- 	X86_FEATURE_RETPOLINE_AMD)
- 
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-+#endif
- #else /* No retpoline for C / inline asm */
- # define CALL_NOSPEC "call *%[thunk_target]\n"
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c37e66e493bf..d0108fb6e4dd 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure(const char *reason)
- 
- static inline bool retp_compiler(void)
- {
--	return __is_defined(RETPOLINE);
-+	return __is_defined(CONFIG_RETPOLINE);
- }
- 
- static inline bool match_option(const char *arg, int arglen, const char *opt)
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index a8e7ba9f73e8..6a6be9f440cf 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -236,10 +236,8 @@ ifdef CONFIG_GCOV_KERNEL
- objtool_args += --no-unreachable
- endif
- ifdef CONFIG_RETPOLINE
--ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args += --retpoline
- endif
--endif
- 
- 
- ifdef CONFIG_MODVERSIONS
+
+> 
+> In v4:
+> - directly return -EPROBE_DEFER from i2c_acpi_new_device()
+> - due to above split error handling simplification to separate patches
+> 
+> In v3:
+> - revisit error codes returned by i2c_acpi_new_device() (Hans, Mika)
+> - add documentation to exported i2c_acpi_get_i2c_resource() (Mika)
+> - drop Hans' Rb tag in patch 5 due to changes
+> - append Mika's Ab tag to patch 6
+> 
+> In v2:
+> - drop patches to copy fwnode and to handle BOSC0200 device
+> - append check for amount of devices listed in the driver's mapping
+> - add Rb tag given by Hans
+> 
+> Andy Shevchenko (15):
+>    platform/x86: intel_cht_int33fe: Remove duplicate NULL check
+>    platform/x86: intel_cht_int33fe: Accept errors of
+>      i2c_acpi_new_device()
+>    platform/x86: i2c-multi-instantiate: Accept errors of
+>      i2c_acpi_new_device()
+>    platform/x86: i2c-multi-instantiate: Defer probe when no adapter found
+>    i2c: acpi: Return error pointers from i2c_acpi_new_device()
+>    platform/x86: intel_cht_int33fe: Get rid of obsolete conditional
+>    platform/x86: i2c-multi-instantiate: Get rid of obsolete conditional
+>    i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
+>    i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
+>    platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
+>    platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
+>    platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
+>    platform/x86: i2c-multi-instantiate: Allow to have same slaves
+>    ACPI / scan: Create platform device for INT3515 ACPI nodes
+>    iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
+> 
+>   drivers/acpi/scan.c                          |  1 +
+>   drivers/i2c/i2c-core-acpi.c                  | 64 +++++++++----
+>   drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
+>   drivers/platform/x86/i2c-multi-instantiate.c | 97 ++++++++++++++++----
+>   drivers/platform/x86/intel_cht_int33fe.c     | 20 ++--
+>   drivers/usb/typec/tps6598x.c                 |  8 +-
+>   include/linux/acpi.h                         | 11 +++
+>   7 files changed, 157 insertions(+), 60 deletions(-)
+> 
+> --
+> 2.19.2
+> 
