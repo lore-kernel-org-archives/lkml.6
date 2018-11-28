@@ -2,233 +2,227 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703ECC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1268CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32470206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:42:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32470206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C0F452081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:43:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kooTq+ye"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F452081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeK2Kpo (ORCPT
+        id S1727119AbeK2Kqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:45:44 -0500
-Received: from mga02.intel.com ([134.134.136.20]:55028 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726635AbeK2Kpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:45:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 15:42:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,292,1539673200"; 
-   d="scan'208";a="117436390"
-Received: from isister-mobl.amr.corp.intel.com ([10.255.76.222])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Nov 2018 15:42:23 -0800
-Message-ID: <ff8ca3062cad3747a664e6888790cc3c58e24c7e.camel@linux.intel.com>
-Subject: Re: [PATCH v2 00/12] tracing: Unifying dynamic event interface
-From:   Tom Zanussi <tom.zanussi@linux.intel.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date:   Wed, 28 Nov 2018 17:42:22 -0600
-In-Reply-To: <20181128163101.d86844338bcba3fc3b0580f1@kernel.org>
-References: <154140838606.17322.15294184388075458777.stgit@devbox>
-         <20181128163101.d86844338bcba3fc3b0580f1@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Nov 2018 05:46:33 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36496 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbeK2Kqd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 05:46:33 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a18so395668wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:43:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eFxFHAhxhJIs1y2b8RAt95A2ABOqjOFINkdabGLCjtE=;
+        b=kooTq+yeafdgSYsMFGjkac1PuxTzQqMyqqC22B2gJam7FysNlJSMzvzNOIpJhEO9X6
+         wHDWEk+TLbvaWeYqhq4Gl6Sybp/5G24Y6N3zDeAZRPQIAsbPHZFN3oTGAN2GjJc/kmS7
+         R5tEDyX6R6+RxUqzh1nTGC0vzIZdr5edGHTn18Po3JMK/jC1CFKF6NZpJ8rQE8/N7OQs
+         WdK88tCka1M5KSf/egGIHN1tZOAgpm16KdsFwgAc8OIkSn04y1NF8R2GlRmqaEtXoIyC
+         1FOn4NMuyakOj/kd+vcN6uSHVFW909vC0YoBUavsq7fbzM5CKkg7XL0xb2tB4WROEBog
+         4C0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eFxFHAhxhJIs1y2b8RAt95A2ABOqjOFINkdabGLCjtE=;
+        b=tr7VPoliAxxKT9jIKjYOrtMJqyrupYDHYfRf6VFQ3JescxUtTg/lF0D2aO8MDL1opr
+         ExUy5rSp1n46CltFaX2FwXNax8GXrEfdtsjQRdlNqb/UPuNYh+IBAzCBm9fhBq0LEW3i
+         OfQB5OICo2VFMeygKNm8ND+RsT5+7jKgToZoEf6+xxduWmXUnA0KhA+AK3SltJ3r+NQJ
+         BvC6MbtNIlFuGBvGdnc3iEMj32CWTuq077rbE3uo5JhXpNBWI6bXQbJ9DHMjv5JMMGgf
+         ESmOLDL/kNIv+aiUZ3ScbTXnTqiTjLVwFPJNe4mbsT4Xvpfddf+/UoGRfAFRTn/jERqn
+         lHow==
+X-Gm-Message-State: AA+aEWZ4kP34tnXzcGvT1l4ihq5Rnk2OK6Cao11pz7KQ5nzWTwjb83SM
+        6lKe4Re1rgXHW4f1YL3twJ4=
+X-Google-Smtp-Source: AFSGD/WEk8DlbZGxLBYIt68454QUehT3Fg8uB2ChJMTZ/Pk9kMS6LOFVZslxZRUwy/BcRlPgrVJDyg==
+X-Received: by 2002:a1c:f41:: with SMTP id 62mr4386530wmp.96.1543448591326;
+        Wed, 28 Nov 2018 15:43:11 -0800 (PST)
+Received: from localhost.localdomain ([88.97.17.19])
+        by smtp.gmail.com with ESMTPSA id o81sm744845wmd.10.2018.11.28.15.43.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 15:43:10 -0800 (PST)
+From:   =?UTF-8?q?Szilveszter=20Sz=C3=A9kely?= <szekelyszilv@gmail.com>
+Cc:     =?UTF-8?q?Szilveszter=20Sz=C3=A9kely?= <szekelyszilv@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vchiq_arm: add __user pointer annotations
+Date:   Wed, 28 Nov 2018 23:40:32 +0000
+Message-Id: <20181128234032.7170-1-szekelyszilv@gmail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+Add __user to pointers based on context and suggestions by sparse.
 
-On Wed, 2018-11-28 at 16:31 +0900, Masami Hiramatsu wrote:
-> Ping?
-> 
-> Hi Tom,
-> 
-> This series, especially [09/12] tracing: Remove unneeded
-> synth_event_mutex
-> will effect your current working series. Please tell me your opinion.
-> 
+Other sparse warnings still remain, in cases where more change would be
+required apart from adding __user.
 
-Sorry for the delay in reviewing this - I completely forgot about it in
-my inbox.
+Signed-off-by: Szilveszter Székely <szekelyszilv@gmail.com>
+---
+ .../interface/vchiq_arm/vchiq_arm.c           | 28 +++++++++----------
+ .../interface/vchiq_arm/vchiq_if.h            |  2 +-
+ .../interface/vchiq_arm/vchiq_ioctl.h         |  4 +--
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
-It's all very nice, and the mutex updates along with the dyn_event
-management make that part of the code much cleaner, thanks!
-
-In any case, you can have my
-
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Tested-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-
-Thanks,
-
-Tom
-
-
-> Thank you,
-> 
-> On Mon,  5 Nov 2018 17:59:46 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hi,
-> > 
-> > This is v2 series of unifying dynamic event interface on ftrace.
-> > Currently ftrace has 3 dynamic event interfaces, kprobes, uprobes
-> > and synthetic. This series unifies those dynamic event interfaces
-> > to "dynamic_events" so that we can add other dynamic events easily
-> > on same interface, e.g. function events.
-> > The older interfaces are left on the tracefs for backward
-> > compatibility.
-> > 
-> > dynamic_events syntax has no difference from kprobe_events and
-> > uprobe_events. You can use same syntax for dynamic_events
-> > interface.
-> > For synthetic events, similar to the probe events, dynamic_events
-> > adds "s:[GROUP/]" prefix, where the "GROUP/" must be "synthetic/".
-> > 
-> >  s:[synthetic/]<event-name> type arg [type arg]...
-> > 
-> > E.g.
-> > 
-> >  $ echo 'wakeup_latency u64 lat pid_t pid char' > synthetic_events
-> > 
-> > is same as
-> > 
-> >  $ echo 's:wakeup_latency u64 lat pid_t pid char' > dynamic_events
-> > 
-> > Or
-> > 
-> >  $ echo 's:synthetic/wakeup_latency u64 lat pid_t pid char' >
-> > dynamic_events
-> > 
-> > This series modifies synthetic event interface behavior a bit,
-> > reorder lock dependency and related cleanups so that we can
-> > integrate
-> > the synthetic event to dynamic_events interface. 
-> > 
-> > In this version, I changed the generic '!' erase command, which
-> > now supports entire line style like other interfaces. So you can
-> > delete events via dynamic_events as below
-> > 
-> >  $ cat dynamic_events | while read line; \
-> >    do echo "!$line" >> dynamic_events; done
-> > 
-> > Also, the big change will be removing dyn_event_mutex and
-> > synth_event_mutex because all those parts are protected by
-> > event_mutex.
-> > 
-> > Changes from v2 are here;
-> > 
-> > New patches:
-> >  - Reorder event_mutex and synth_event_mutex to solve
-> >    AB-BA deadlock correctly. ([2/12])
-> >  - Simplify creation and deletion of synthetic event. ([3/12])
-> >  - Retern -ENOENT if there is no synthetic event when deleting
-> > ([4/12])
-> >  - Integrate similar probe argument parsers ([5/12])
-> >  - Use dyn_event framework for synthetic events ([9/12])
-> >  - Remove synth_event_mutex ([10/12])
-> >  - Remove unused APIs ([11/12])
-> > 
-> > Modified patches:
-> >  [6/12] - [8/12]
-> >  - Generalize delete event and export as dyn_event_release_all().
-> >  - Add match operation for find deleting event.
-> >  - Reorder event_mutex and dyn_event_mutex to solve lock dependency
-> >    issue.
-> >  - Pass const char **argv for create operation and use -ECANCELED
-> > to
-> >    signal for trying next dyn_event_operations.
-> >  - Remove dyn_event_mutex.
-> > 
-> >  [12/12]
-> >  - Accept entire line, but instead of checking the given entire
-> > line
-> >    strictly, simply checking the event and group name.
-> > 
-> > Tom, thanks for your Ack for v1 series. Since I changed many things
-> > from v1 (not only minor change), I decided to not add your Ack for
-> > this version. Anyway, what I've added in this version are related
-> > to
-> > synthetic events. I need your review for those.
-> > (especially removing synth_event_mutex)
-> > 
-> > You can try it from my git tree.
-> > 
-> >   https://github.com/mhiramat/linux/tree/unify-dynamic-events-v2
-> > 
-> > Thank you,
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (12):
-> >       tracing/uprobes: Add busy check when cleanup all uprobes
-> >       tracing: Lock event_mutex before synth_event_mutex
-> >       tracing: Simplify creation and deletion of synthetic event
-> >       tracing: Integrate similar probe argument parsers
-> >       tracing: Add unified dynamic event framework
-> >       tracing/kprobes: Use dyn_event framework for kprobe events
-> >       tracing/uprobes: Use dyn_event framework for uprobe events
-> >       tracing: Use dyn_event framework for synthetic events
-> >       tracing: Remove unneeded synth_event_mutex
-> >       tracing: Remove orphaned trace_add/remove_event_call
-> > functions
-> >       tracing: Add generic event-name based remove event method
-> >       selftests/ftrace: Add testcases for dynamic event
-> > 
-> > 
-> >  Documentation/trace/kprobetrace.rst                |    3 
-> >  Documentation/trace/uprobetracer.rst               |    4 
-> >  include/linux/trace_events.h                       |    4 
-> >  kernel/trace/Kconfig                               |    6 
-> >  kernel/trace/Makefile                              |    1 
-> >  kernel/trace/trace.c                               |   12 +
-> >  kernel/trace/trace_dynevent.c                      |  217
-> > ++++++++++++
-> >  kernel/trace/trace_dynevent.h                      |  119 +++++++
-> >  kernel/trace/trace_events.c                        |   12 -
-> >  kernel/trace/trace_events_hist.c                   |  322
-> > ++++++++++--------
-> >  kernel/trace/trace_kprobe.c                        |  357
-> > ++++++++++----------
-> >  kernel/trace/trace_probe.c                         |   74 ++++
-> >  kernel/trace/trace_probe.h                         |    9 -
-> >  kernel/trace/trace_uprobe.c                        |  305
-> > ++++++++---------
-> >  .../ftrace/test.d/dynevent/add_remove_kprobe.tc    |   30 ++
-> >  .../ftrace/test.d/dynevent/add_remove_synth.tc     |   27 ++
-> >  .../ftrace/test.d/dynevent/clear_select_events.tc  |   50 +++
-> >  .../ftrace/test.d/dynevent/generic_clear_event.tc  |   49 +++
-> >  18 files changed, 1094 insertions(+), 507 deletions(-)
-> >  create mode 100644 kernel/trace/trace_dynevent.c
-> >  create mode 100644 kernel/trace/trace_dynevent.h
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/dynevent/add_remove_kprobe.tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/dynevent/add_remove_synth.tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/dynevent/clear_select_events.
-> > tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/dynevent/generic_clear_event.
-> > tc
-> > 
-> > --
-> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-> 
-> 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 0caee2d69..f28f68119 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -1593,7 +1593,7 @@ vchiq_compat_ioctl_queue_message(struct file *file,
+ 				 unsigned long arg)
+ {
+ 	VCHIQ_QUEUE_MESSAGE_T *args;
+-	struct vchiq_element *elements;
++	struct vchiq_element __user *elements;
+ 	struct vchiq_queue_message32 args32;
+ 	unsigned int count;
+ 
+@@ -1659,7 +1659,7 @@ vchiq_compat_ioctl_queue_bulk(struct file *file,
+ 			      unsigned int cmd,
+ 			      unsigned long arg)
+ {
+-	VCHIQ_QUEUE_BULK_TRANSFER_T *args;
++	VCHIQ_QUEUE_BULK_TRANSFER_T __user *args;
+ 	struct vchiq_queue_bulk_transfer32 args32;
+ 	struct vchiq_queue_bulk_transfer32 *ptrargs32 =
+ 		(struct vchiq_queue_bulk_transfer32 *)arg;
+@@ -1725,16 +1725,16 @@ vchiq_compat_ioctl_await_completion(struct file *file,
+ 				    unsigned int cmd,
+ 				    unsigned long arg)
+ {
+-	VCHIQ_AWAIT_COMPLETION_T *args;
+-	VCHIQ_COMPLETION_DATA_T *completion;
++	VCHIQ_AWAIT_COMPLETION_T __user *args;
++	VCHIQ_COMPLETION_DATA_T __user *completion;
+ 	VCHIQ_COMPLETION_DATA_T completiontemp;
+ 	struct vchiq_await_completion32 args32;
+ 	struct vchiq_completion_data32 completion32;
+-	unsigned int *msgbufcount32;
++	unsigned int __user *msgbufcount32;
+ 	unsigned int msgbufcount_native;
+ 	compat_uptr_t msgbuf32;
+-	void *msgbuf;
+-	void **msgbufptr;
++	void __user *msgbuf;
++	void * __user *msgbufptr;
+ 	long ret;
+ 
+ 	args = compat_alloc_user_space(sizeof(*args) +
+@@ -1743,11 +1743,11 @@ vchiq_compat_ioctl_await_completion(struct file *file,
+ 	if (!args)
+ 		return -EFAULT;
+ 
+-	completion = (VCHIQ_COMPLETION_DATA_T *)(args + 1);
+-	msgbufptr = (void __user **)(completion + 1);
++	completion = (VCHIQ_COMPLETION_DATA_T __user *)(args + 1);
++	msgbufptr = (void * __user *)(completion + 1);
+ 
+ 	if (copy_from_user(&args32,
+-			   (struct vchiq_completion_data32 *)arg,
++			   (struct vchiq_completion_data32 __user *)arg,
+ 			   sizeof(args32)))
+ 		return -EFAULT;
+ 
+@@ -1875,7 +1875,7 @@ vchiq_compat_ioctl_dequeue_message(struct file *file,
+ 				   unsigned int cmd,
+ 				   unsigned long arg)
+ {
+-	VCHIQ_DEQUEUE_MESSAGE_T *args;
++	VCHIQ_DEQUEUE_MESSAGE_T __user *args;
+ 	struct vchiq_dequeue_message32 args32;
+ 
+ 	args = compat_alloc_user_space(sizeof(*args));
+@@ -1883,7 +1883,7 @@ vchiq_compat_ioctl_dequeue_message(struct file *file,
+ 		return -EFAULT;
+ 
+ 	if (copy_from_user(&args32,
+-			   (struct vchiq_dequeue_message32 *)arg,
++			   (struct vchiq_dequeue_message32 __user *)arg,
+ 			   sizeof(args32)))
+ 		return -EFAULT;
+ 
+@@ -1910,7 +1910,7 @@ vchiq_compat_ioctl_get_config(struct file *file,
+ 			      unsigned int cmd,
+ 			      unsigned long arg)
+ {
+-	VCHIQ_GET_CONFIG_T *args;
++	VCHIQ_GET_CONFIG_T __user *args;
+ 	struct vchiq_get_config32 args32;
+ 
+ 	args = compat_alloc_user_space(sizeof(*args));
+@@ -1918,7 +1918,7 @@ vchiq_compat_ioctl_get_config(struct file *file,
+ 		return -EFAULT;
+ 
+ 	if (copy_from_user(&args32,
+-			   (struct vchiq_get_config32 *)arg,
++			   (struct vchiq_get_config32 __user *)arg,
+ 			   sizeof(args32)))
+ 		return -EFAULT;
+ 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
+index 7b948a173..0cdaebee9 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
+@@ -87,7 +87,7 @@ typedef struct vchiq_header_struct {
+ } VCHIQ_HEADER_T;
+ 
+ struct vchiq_element {
+-	const void *data;
++	const void __user *data;
+ 	unsigned int size;
+ };
+ 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
+index 9f859953f..858f46bd2 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
+@@ -50,7 +50,7 @@ typedef struct {
+ typedef struct {
+ 	unsigned int handle;
+ 	unsigned int count;
+-	const struct vchiq_element *elements;
++	const struct vchiq_element __user *elements;
+ } VCHIQ_QUEUE_MESSAGE_T;
+ 
+ typedef struct {
+@@ -85,7 +85,7 @@ typedef struct {
+ 
+ typedef struct {
+ 	unsigned int config_size;
+-	VCHIQ_CONFIG_T *pconfig;
++	VCHIQ_CONFIG_T __user *pconfig;
+ } VCHIQ_GET_CONFIG_T;
+ 
+ typedef struct {
+-- 
+2.19.2
 
