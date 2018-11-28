@@ -2,104 +2,88 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3E3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9863C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077032086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:30:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WMDgsZWo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077032086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DA97208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA97208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeK1Ua6 (ORCPT
+        id S1728167AbeK1Ubd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:30:58 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38199 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbeK1Ua5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:30:57 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so9254161pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:29:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bZfZFWO8LVzOeMYPieoDTbNggt+PEiM2bxAXF77bHsI=;
-        b=WMDgsZWolkQsoERl+MdBz0avaFGJ5YhHTtfSzrjl9JJkHYMEzR4TRtej616H/kvPoL
-         W9j4i0NtBjQgAKvPVh1/XBEV82kr1ZhlFuA3ZWNPtSNYdNSXG7hNz7kj0pYFbwWDLTAz
-         XfBxYFNvhGCzzCvS+Og9FulVJMqigqgjPIBVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bZfZFWO8LVzOeMYPieoDTbNggt+PEiM2bxAXF77bHsI=;
-        b=mVD69Gds5L5VqjqEW3q0oK+Ns+5PfCog9/f3tSQsciPa2bawsY+Z9KTpstJAqk+stu
-         ZdaLxZR47EMrJIIahBVeOy+NzA27U3z764ACmybdb8+C3V3RgSeiOS/d6NfPda5HckW/
-         9GfoTjHWXZ0kH7wiUR80XdjEzzy0eZK5VFz6Juvx+qmKx0EvnFDb4C3GauvCrt6NrMJb
-         NqDaVb/Pvh3l+7v1JfpLkPcbs2xS5SwJMTD1hA0iAQKu2al6JdkvRanL2MThh0ErcU4O
-         vuvFgHG/xQjq0bB4WhqOSvscLEa7VJUZPxtACYweaAiD0jJtF6+2qVBaq5kTyx5VFv0N
-         3i9Q==
-X-Gm-Message-State: AA+aEWasWLLTcpwGtO2RziDJQUr8KNIFg/X5py+uteOIde0qa2bXbNBl
-        vMdqGNdL7MiRlAnqP83s/DFYNw==
-X-Google-Smtp-Source: AFSGD/XV4jsXigI2p3fC9If+Tm7pBoVjiB0eBEexvS8sarPOwafw9wxmFI8L8aFLOtyKhImoKDzgtg==
-X-Received: by 2002:a63:f1f:: with SMTP id e31mr145184pgl.274.1543397398353;
-        Wed, 28 Nov 2018 01:29:58 -0800 (PST)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id e128sm7870444pfe.67.2018.11.28.01.29.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Nov 2018 01:29:57 -0800 (PST)
-From:   "Hsin-Yi, Wang" <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [V2] usb/mtu3: power down device ip at setup
-Date:   Wed, 28 Nov 2018 17:29:53 +0800
-Message-Id: <20181128092953.41541-1-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181128060412.630-1-hsinyi@chromium.org>
-References: <20181128060412.630-1-hsinyi@chromium.org>
+        Wed, 28 Nov 2018 15:31:33 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49088 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727986AbeK1Ubc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:31:32 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id 352325F725; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 01/15] dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
+Date:   Wed, 28 Nov 2018 17:29:58 +0800
+Message-Id: <20181128093013.24442-2-wens@csie.org>
+X-Mailer: git-send-email 2.20.0.rc1
+In-Reply-To: <20181128093013.24442-1-wens@csie.org>
+References: <20181128093013.24442-1-wens@csie.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Originally, when dr_mode is USB_DR_MODE_HOST, it didn't power down device ip,
-so host ip sleep will fail at ssusb_host_disable.
+The clock output section for this binding describes the two outputs in
+the descriptions for both the #clock-cells and clock-output-names
+properties.
 
-Power down device ip at ssusb_host_setup.
+Instead of overlapping information that is hard to read, rewrite the
+clock outputs as a list of indices and descriptions. The properies
+can reference this list instead. This will also make it easier to
+add notes or conditions to the clocks, and also for adding new outputs.
 
-
-Signed-off-by: Hsin-Yi, Wang <hsinyi@chromium.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/usb/mtu3/mtu3_plat.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/rtc/sun6i-rtc.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
-index 46551f6d16fd..cdef66141e20 100644
---- a/drivers/usb/mtu3/mtu3_plat.c
-+++ b/drivers/usb/mtu3/mtu3_plat.c
-@@ -200,6 +200,12 @@ static void ssusb_ip_sw_reset(struct ssusb_mtk *ssusb)
- 	mtu3_setbits(ssusb->ippc_base, U3D_SSUSB_IP_PW_CTRL0, SSUSB_IP_SW_RST);
- 	udelay(1);
- 	mtu3_clrbits(ssusb->ippc_base, U3D_SSUSB_IP_PW_CTRL0, SSUSB_IP_SW_RST);
-+
-+	/*
-+	 * device ip is default power-on in fact
-+	 * power down device ip, otherwise ip-sleep will fail
-+	 */
-+	mtu3_setbits(ssusb->ippc_base, U3D_SSUSB_IP_PW_CTRL2, SSUSB_IP_DEV_PDN);
- }
+diff --git a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+index 12c083c1140a..d3e96459fc66 100644
+--- a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+@@ -10,10 +10,12 @@ Required properties:
  
- /* ignore the error if the clock does not exist */
+ Required properties for new device trees
+ - clocks	: phandle to the 32kHz external oscillator
+-- clock-output-names : names of the LOSC and its external output clocks created
+-- #clock-cells  : must be equals to 1. The RTC provides two clocks: the
+-		  LOSC and its external output, with index 0 and 1
+-		  respectively.
++- clock-output-names : names of the two clock outputs. See below.
++- #clock-cells  : must be equal to 1.
++
++The RTC provides the following clocks at the given indices:
++- 0: LOSC
++- 1: LOSC external output, known as X32KFOUT in the datasheet.
+ 
+ Example:
+ 
 -- 
-2.18.1
+2.20.0.rc1
 
