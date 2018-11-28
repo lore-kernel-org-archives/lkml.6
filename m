@@ -2,80 +2,119 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0C9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81ABAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EEF2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EEF2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4455E2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4455E2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeK1Te7 (ORCPT
+        id S1727813AbeK1Tii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:34:59 -0500
-Received: from mga18.intel.com ([134.134.136.126]:29515 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727341AbeK1Te7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:34:59 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 00:34:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
-   d="scan'208";a="116444816"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 28 Nov 2018 00:34:06 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 28 Nov 2018 10:34:06 +0200
-Date:   Wed, 28 Nov 2018 10:34:06 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] driver core: Add fwnode member to struct
- device_connection
-Message-ID: <20181128083406.GA32679@kuha.fi.intel.com>
-References: <20181127142855.73899-1-heikki.krogerus@linux.intel.com>
- <20181127142855.73899-5-heikki.krogerus@linux.intel.com>
- <20181127143237.GA22859@kuha.fi.intel.com>
- <20181127150756.GV10650@smile.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127150756.GV10650@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 28 Nov 2018 14:38:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727476AbeK1Tii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:38:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9C87ADFF;
+        Wed, 28 Nov 2018 08:37:47 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 09:37:47 +0100
+Message-ID: <s5hwoox61ic.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Chanho Min" <chanho.min@lge.com>
+Cc:     "'Jaroslav Kysela'" <perex@perex.cz>,
+        "'Takashi Iwai'" <tiwai@kernel.org>,
+        "'Vinod Koul'" <vkoul@kernel.org>,
+        "'Daniel Mentz'" <danielmentz@google.com>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        "'Seungho Park'" <seungho1.park@lge.com>,
+        "'Jongsung Kim'" <neidhard.kim@lge.com>,
+        "'Wonmin Jung'" <wonmin.jung@lge.com>,
+        "'Jaehyun Kim'" <jehn.kim@lge.com>,
+        "'Hyonwoo Park'" <hyonwoo.park@lge.com>
+Subject: Re: [PATCH] ALSA: pcm: Fix starvation on down_write_nonblock()
+In-Reply-To: <1aaf01d486ab$8017a5b0$8046f110$@lge.com>
+References: <1543210597-6717-1-git-send-email-chanho.min@lge.com>
+        <s5hin0k6xqy.wl-tiwai@suse.de>
+        <1aaf01d486ab$8017a5b0$8046f110$@lge.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 05:07:56PM +0200, Andy Shevchenko wrote:
-> On Tue, Nov 27, 2018 at 04:32:37PM +0200, Heikki Krogerus wrote:
-> > On Tue, Nov 27, 2018 at 05:28:55PM +0300, Heikki Krogerus wrote:
-> > > This will prepare the device connection API for connections
-> > > described in firmware.
+On Wed, 28 Nov 2018 00:47:03 +0100,
+Chanho Min wrote:
+> 
+> > On Mon, 26 Nov 2018 06:36:37 +0100,
+> > Chanho Min wrote:
+> > >
+> > > Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM
+> > > stream") fixes deadlock for non-atomic PCM stream. But, This patch
+> > causes antother stuck.
+> > > If writer is RT thread and reader is a normal thread, the reader
+> > > thread will be difficult to get scheduled. It may not give chance to
+> > > release readlocks and writer gets stuck for a long time if they are
+> > pinned to single cpu.
+> > >
+> > > The deadlock described in the previous commit is because the linux
+> > > rwsem queues like a FIFO. So, we might need non-FIFO writelock, not non-
+> > block one.
+> > >
+> > > My suggestion is that the writer gives reader a chance to be scheduled
+> > > by using the minimum msleep() instaed of spinning without blocking by
+> > > writer. Also, The *_nonblock may be changed to *_nonfifo appropriately
+> > to this concept.
+> > > In terms of performance, when trylock is failed, this minimum periodic
+> > > msleep will have the same performance as the tick-based
+> > schedule()/wake_up_q().
+> > >
+> > > Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
+> > > Signed-off-by: Chanho Min <chanho.min@lge.com>
 > > 
-> > This one does not belong to this series, sorry. Please skip it, or if
-> > you prefer, I'll resend.
+> > Hrm, converting unconditionally with msleep() looks too drastic.
 > 
-> Please, resend. It would reduce amount of confusion,
+> Yes, it looks drastic. But, IMHO, I can't say busy-spin is not non-drastic.
+> To fix the root cause, We may need another rwsem that does not work as a
+> FIFO.
+
+Right, but applying msleep(1) unconditionally is really bad.
+
+> > I guess you've hit this while not explicitly using the linked PCM streams,
+> > i.e. in the call of snd_pcm_unlink() at close, right?
+> > 
+> > Then this can be worked around by checking the link before calling it.
+> > Could you check the patch below?
 > 
-> Otherwise the series looks good to me.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> More testing is needed, but it seems to be fixed by your patch.
+> We may not use the linked PCM.
 
-Sure. I'll resend. Thanks Andy!
+Then I'm sure that my patch papers over.
 
-br,
+> But, If the linked PCM is enabled,  Can snd_pcm_unlink() be called?
+> This also seems to be a workaround.
 
--- 
-heikki
+Yes, for the linked streams, something else is needed *in addition*.
+
+The original fix with busy loop also assumed that this code path (via
+snd_pcm_link() and snd_pcm_unlink()) is the rare occasion, and it
+didn't consider that it were called for regular use cases.  So the fix
+to make things just works for regular use cases without any artifact
+must be implemented in the first place.  The fix for the linked
+streams comes at next.  It might be like your msleep() change as a
+workaround, but in anyway it's far less urgency.
+
+
+Takashi
