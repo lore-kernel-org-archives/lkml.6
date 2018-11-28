@@ -2,81 +2,123 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063C0C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A51C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98F22086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:46:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98F22086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 86DED2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DED2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeK1SrA (ORCPT
+        id S1727686AbeK1SvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:47:00 -0500
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:29178 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727247AbeK1Sq7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:46:59 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 28 Nov 2018 18:16:15 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gRuY1-0004Hw-4c; Wed, 28 Nov 2018 18:46:13 +1100
-Date:   Wed, 28 Nov 2018 18:46:13 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        martin.petersen@oracle.com, shirley.ma@oracle.com,
-        bob.liu@oracle.com
-Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
- retry
-Message-ID: <20181128074613.GP6311@dastard>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <20181128053303.GL6311@dastard>
- <20181128073722.GB7084@infradead.org>
+        Wed, 28 Nov 2018 13:51:25 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32785 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727268AbeK1SvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 13:51:24 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 91678C7C568CE;
+        Wed, 28 Nov 2018 07:50:38 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
+ 2018 07:50:31 +0000
+Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-3-roberto.sassu@huawei.com>
+ <20181116133851.GB4163@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <5c4866e4-dee0-730c-f08b-8ea8d00dbd96@huawei.com>
+Date:   Wed, 28 Nov 2018 08:50:26 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128073722.GB7084@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181116133851.GB4163@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 11:37:22PM -0800, Christoph Hellwig wrote:
-> On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
-> > One thing that is going to make this more complex at the XFS layer
-> > is discontiguous buffers. They require multiple IOs (and therefore
-> > bios) and so we are going to need to ensure that all the bios use
-> > the same bi_rw_hint.
+On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
+> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
+>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+>> for a list of hash algorithms used for event logs and event log digests.
+>>
+>> However, according to TCG EFI Protocol Specification, these arrays have
+>> variable sizes. Setting the array size to zero or 3 does not make any
+>> difference, because the parser has to adjust the offset depending on the
+>> actual array size to access structure members after the static arrays.
+>>
+>> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
+>> the array size to zero.
+>>
+>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+>> event log")
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   include/linux/tpm_eventlog.h | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+>> index 20d9da77fc11..3d5d162f09cc 100644
+>> --- a/include/linux/tpm_eventlog.h
+>> +++ b/include/linux/tpm_eventlog.h
+>> @@ -8,7 +8,6 @@
+>>   #define TCG_EVENT_NAME_LEN_MAX	255
+>>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
+>>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+>> -#define TPM2_ACTIVE_PCR_BANKS	3
+>>   
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+>>   	u8 spec_errata;
+>>   	u8 uintnsize;
+>>   	u32 num_algs;
+>> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tcg_efi_specid_event_algs digest_sizes[0];
+>>   	u8 vendor_info_size;
+>>   	u8 vendor_info[0];
+>>   } __packed;
+>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+>>   	u32 pcr_idx;
+>>   	u32 event_type;
+>>   	u32 count;
+>> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tpm2_digest digests[0];
+>>   	struct tcg_event_field event;
+>>   } __packed;
+>>   
+>> -- 
+>> 2.17.1
+>>
 > 
-> Well, in case of raid 1 the load balancing code might actually
-> map different bios to different initial legs.   What we really need
-> is to keep the 'index' or each bio.  One good way to archive that
-> is to just reuse the bio for the retry instead of allocating a new one.
+> NAK for the same reason as last time.
 
-Not sure that is practical, because by the time we run the verifier
-that discovers the error we've already released and freed all the
-bios. And we don't know when we complete the individual bios whether
-to kep it or not as the failure may occur in a bio that has not yet
-completed.
+No Fixes tag, or Fixes tag without newline?
 
-Maybe we should be chaining bios for discontig buffers rather than
-submitting them individually - that keeps the whole chain around
-until all bios in the chain have completed, right?
+Roberto
 
-Cheers,
 
-Dave.
+> /Jarkko
+> 
+
 -- 
-Dave Chinner
-david@fromorbit.com
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
