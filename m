@@ -2,414 +2,157 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20161C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501E3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA752206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17CD7206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 18:36:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KEAqJMiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA752206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0GTcn8+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CD7206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeK2FiN (ORCPT
+        id S1728993AbeK2FjA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 00:38:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49476 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbeK2FiM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 00:38:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KkC0GL8MQROSN0aHOLYMpeyBNmkSDMw9jBzORqIbfkI=; b=KEAqJMiFXgRUvxMtrraEsR/El
-        kksx5ssXBKW+fCiJyU3/FxdMM7QAtXO5+PbL+0JIYF9CLbJX/7dYAm/1auq2qkxgZcRa8/FX+0Ouc
-        Dn65QEyyWyCUSvgYioWkLrm1S7Xt9VUgCuPrC/TOGiQkmFU41vZip72KoLHtgv1523ZJlyRKat/S6
-        YgCEeW6cNMu5twiaWfEghQRsWlZeLiIAV/RB/XX57S16yiam5jrSzSbshaC+QVOGMljv/VqtIbktV
-        UesLYhZzxLtSV4OjMdqcB8kIX36PxNbi7kgub5KZpzVxunAOdmINt9PmrpWxTShZ4+sMoMZK7Nvqz
-        XIlrKuu4g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gS4gR-0003fx-RH; Wed, 28 Nov 2018 18:35:35 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] aio: Convert ioctx_table to XArray
-Date:   Wed, 28 Nov 2018 10:35:31 -0800
-Message-Id: <20181128183531.5139-1-willy@infradead.org>
-X-Mailer: git-send-email 2.14.5
+        Thu, 29 Nov 2018 00:39:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725266AbeK2FjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 00:39:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B554F206B2;
+        Wed, 28 Nov 2018 18:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543430185;
+        bh=ZvcrH6GDjl4Qi6aOy8Az2emOnoJVXZZQxXSVbmujHnY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k0GTcn8+9hQ3FznOdzngQ1+FSy/hVHbDDAxk9O8rnm8bttmcdTR76mOf0rzfq+AYo
+         KZqzdukMfG0I/7AX0I07pVC5PuCnxNTGmSF3Q6Xlzfr5gp2YjReC8GHdYAQX01tXCT
+         KnuFuXoPeRry/CSsiBy6V94gCC2sBf0JHWoxk1Qs=
+Date:   Wed, 28 Nov 2018 19:36:22 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH anybus v4 1/7] fieldbus_dev: add Fieldbus Device
+ subsystem.
+Message-ID: <20181128183622.GA9236@kroah.com>
+References: <20181121150709.6030-1-TheSven73@googlemail.com>
+ <20181121150709.6030-2-TheSven73@googlemail.com>
+ <20181127075431.GG13965@kroah.com>
+ <CAGngYiUL7bZVEehj4LGC2H+kv+Z4v_s=tG4uosOp1-Rc4_pGWw@mail.gmail.com>
+ <20181128174238.GA4367@kroah.com>
+ <CAGngYiXqscqVtSUkwwKGGweOgMm=E=W8nbxOXAbpeyYsk=5B0g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGngYiXqscqVtSUkwwKGGweOgMm=E=W8nbxOXAbpeyYsk=5B0g@mail.gmail.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This custom resizing array was vulnerable to a Spectre attack (speculating
-off the end of an array to a user-controlled offset).  The XArray is
-not vulnerable to Spectre as it always masks its lookups to be within
-the bounds of the array.
+On Wed, Nov 28, 2018 at 01:19:05PM -0500, Sven Van Asbroeck wrote:
+> On Wed, Nov 28, 2018 at 12:42 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > It depends on what you want to do with this device node.  You can use a
+> > static one in your structure if you use it to "cast back" to your real
+> > structure in the open() call, do you do that?
+> 
+> I do...
+> 
+> static int fieldbus_open(struct inode *inode, struct file *filp)
+> {
+>         struct fieldbus_dev *fbdev = container_of(inode->i_cdev,
+>                                                 struct fieldbus_dev,
+>                                                 cdev);
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- fs/aio.c                 | 182 ++++++++++++++-------------------------
- include/linux/mm_types.h |   5 +-
- kernel/fork.c            |   3 +-
- mm/debug.c               |   6 --
- 4 files changed, 67 insertions(+), 129 deletions(-)
+Ok, good, that's a nice way to use this, nevermind my objection.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 301e6314183b..51ba7446a24f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -71,12 +71,6 @@ struct aio_ring {
- 
- #define AIO_RING_PAGES	8
- 
--struct kioctx_table {
--	struct rcu_head		rcu;
--	unsigned		nr;
--	struct kioctx __rcu	*table[];
--};
--
- struct kioctx_cpu {
- 	unsigned		reqs_available;
- };
-@@ -313,27 +307,22 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
- {
- 	struct file *file = vma->vm_file;
- 	struct mm_struct *mm = vma->vm_mm;
--	struct kioctx_table *table;
--	int i, res = -EINVAL;
-+	struct kioctx *ctx;
-+	unsigned long index;
-+	int res = -EINVAL;
- 
--	spin_lock(&mm->ioctx_lock);
--	rcu_read_lock();
--	table = rcu_dereference(mm->ioctx_table);
--	for (i = 0; i < table->nr; i++) {
--		struct kioctx *ctx;
--
--		ctx = rcu_dereference(table->table[i]);
--		if (ctx && ctx->aio_ring_file == file) {
--			if (!atomic_read(&ctx->dead)) {
--				ctx->user_id = ctx->mmap_base = vma->vm_start;
--				res = 0;
--			}
--			break;
-+	xa_lock(&mm->ioctx);
-+	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
-+		if (ctx->aio_ring_file != file)
-+			continue;
-+		if (!atomic_read(&ctx->dead)) {
-+			ctx->user_id = ctx->mmap_base = vma->vm_start;
-+			res = 0;
- 		}
-+		break;
- 	}
-+	xa_unlock(&mm->ioctx);
- 
--	rcu_read_unlock();
--	spin_unlock(&mm->ioctx_lock);
- 	return res;
- }
- 
-@@ -617,57 +606,21 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 
- static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
- {
--	unsigned i, new_nr;
--	struct kioctx_table *table, *old;
- 	struct aio_ring *ring;
-+	int err;
- 
--	spin_lock(&mm->ioctx_lock);
--	table = rcu_dereference_raw(mm->ioctx_table);
--
--	while (1) {
--		if (table)
--			for (i = 0; i < table->nr; i++)
--				if (!rcu_access_pointer(table->table[i])) {
--					ctx->id = i;
--					rcu_assign_pointer(table->table[i], ctx);
--					spin_unlock(&mm->ioctx_lock);
--
--					/* While kioctx setup is in progress,
--					 * we are protected from page migration
--					 * changes ring_pages by ->ring_lock.
--					 */
--					ring = kmap_atomic(ctx->ring_pages[0]);
--					ring->id = ctx->id;
--					kunmap_atomic(ring);
--					return 0;
--				}
--
--		new_nr = (table ? table->nr : 1) * 4;
--		spin_unlock(&mm->ioctx_lock);
--
--		table = kzalloc(sizeof(*table) + sizeof(struct kioctx *) *
--				new_nr, GFP_KERNEL);
--		if (!table)
--			return -ENOMEM;
--
--		table->nr = new_nr;
--
--		spin_lock(&mm->ioctx_lock);
--		old = rcu_dereference_raw(mm->ioctx_table);
--
--		if (!old) {
--			rcu_assign_pointer(mm->ioctx_table, table);
--		} else if (table->nr > old->nr) {
--			memcpy(table->table, old->table,
--			       old->nr * sizeof(struct kioctx *));
-+	err = xa_alloc(&mm->ioctx, &ctx->id, UINT_MAX, ctx, GFP_KERNEL);
-+	if (err)
-+		return err;
- 
--			rcu_assign_pointer(mm->ioctx_table, table);
--			kfree_rcu(old, rcu);
--		} else {
--			kfree(table);
--			table = old;
--		}
--	}
-+	/*
-+	 * While kioctx setup is in progress, we are protected from
-+	 * page migration changing ring_pages by ->ring_lock.
-+	 */
-+	ring = kmap_atomic(ctx->ring_pages[0]);
-+	ring->id = ctx->id;
-+	kunmap_atomic(ring);
-+	return 0;
- }
- 
- static void aio_nr_sub(unsigned nr)
-@@ -793,27 +746,8 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
- 	return ERR_PTR(err);
- }
- 
--/* kill_ioctx
-- *	Cancels all outstanding aio requests on an aio context.  Used
-- *	when the processes owning a context have all exited to encourage
-- *	the rapid destruction of the kioctx.
-- */
--static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
--		      struct ctx_rq_wait *wait)
-+static void __kill_ioctx(struct kioctx *ctx, struct ctx_rq_wait *wait)
- {
--	struct kioctx_table *table;
--
--	spin_lock(&mm->ioctx_lock);
--	if (atomic_xchg(&ctx->dead, 1)) {
--		spin_unlock(&mm->ioctx_lock);
--		return -EINVAL;
--	}
--
--	table = rcu_dereference_raw(mm->ioctx_table);
--	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
--	RCU_INIT_POINTER(table->table[ctx->id], NULL);
--	spin_unlock(&mm->ioctx_lock);
--
- 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
- 	wake_up_all(&ctx->wait);
- 
-@@ -831,6 +765,30 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
- 
- 	ctx->rq_wait = wait;
- 	percpu_ref_kill(&ctx->users);
-+}
-+
-+/* kill_ioctx
-+ *	Cancels all outstanding aio requests on an aio context.  Used
-+ *	when the processes owning a context have all exited to encourage
-+ *	the rapid destruction of the kioctx.
-+ */
-+static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
-+		      struct ctx_rq_wait *wait)
-+{
-+	struct kioctx *old;
-+
-+	/* I don't understand what this lock is protecting against */
-+	xa_lock(&mm->ioctx);
-+	if (atomic_xchg(&ctx->dead, 1)) {
-+		xa_unlock(&mm->ioctx);
-+		return -EINVAL;
-+	}
-+
-+	old = __xa_erase(&mm->ioctx, ctx->id);
-+	WARN_ON(old != ctx);
-+	xa_unlock(&mm->ioctx);
-+
-+	__kill_ioctx(ctx, wait);
- 	return 0;
- }
- 
-@@ -844,26 +802,21 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
-  */
- void exit_aio(struct mm_struct *mm)
- {
--	struct kioctx_table *table = rcu_dereference_raw(mm->ioctx_table);
-+	struct kioctx *ctx;
- 	struct ctx_rq_wait wait;
--	int i, skipped;
-+	unsigned long index;
- 
--	if (!table)
-+	if (xa_empty(&mm->ioctx))
- 		return;
- 
--	atomic_set(&wait.count, table->nr);
-+	/*
-+	 * Prevent count from getting to 0 until we're ready for it
-+	 */
-+	atomic_set(&wait.count, 1);
- 	init_completion(&wait.comp);
- 
--	skipped = 0;
--	for (i = 0; i < table->nr; ++i) {
--		struct kioctx *ctx =
--			rcu_dereference_protected(table->table[i], true);
--
--		if (!ctx) {
--			skipped++;
--			continue;
--		}
--
-+	xa_lock(&mm->ioctx);
-+	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
- 		/*
- 		 * We don't need to bother with munmap() here - exit_mmap(mm)
- 		 * is coming and it'll unmap everything. And we simply can't,
-@@ -872,16 +825,16 @@ void exit_aio(struct mm_struct *mm)
- 		 * that it needs to unmap the area, just set it to 0.
- 		 */
- 		ctx->mmap_size = 0;
--		kill_ioctx(mm, ctx, &wait);
-+		atomic_inc(&wait.count);
-+		__xa_erase(&mm->ioctx, ctx->id);
-+		__kill_ioctx(ctx, &wait);
- 	}
-+	xa_unlock(&mm->ioctx);
- 
--	if (!atomic_sub_and_test(skipped, &wait.count)) {
-+	if (!atomic_sub_and_test(1, &wait.count)) {
- 		/* Wait until all IO for the context are done. */
- 		wait_for_completion(&wait.comp);
- 	}
--
--	RCU_INIT_POINTER(mm->ioctx_table, NULL);
--	kfree(table);
- }
- 
- static void put_reqs_available(struct kioctx *ctx, unsigned nr)
-@@ -1026,24 +979,17 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- 	struct aio_ring __user *ring  = (void __user *)ctx_id;
- 	struct mm_struct *mm = current->mm;
- 	struct kioctx *ctx, *ret = NULL;
--	struct kioctx_table *table;
- 	unsigned id;
- 
- 	if (get_user(id, &ring->id))
- 		return NULL;
- 
- 	rcu_read_lock();
--	table = rcu_dereference(mm->ioctx_table);
--
--	if (!table || id >= table->nr)
--		goto out;
--
--	ctx = rcu_dereference(table->table[id]);
-+	ctx = xa_load(&mm->ioctx, id);
- 	if (ctx && ctx->user_id == ctx_id) {
- 		if (percpu_ref_tryget_live(&ctx->users))
- 			ret = ctx;
- 	}
--out:
- 	rcu_read_unlock();
- 	return ret;
- }
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..1a95bb27f5a7 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -14,6 +14,7 @@
- #include <linux/uprobes.h>
- #include <linux/page-flags-layout.h>
- #include <linux/workqueue.h>
-+#include <linux/xarray.h>
- 
- #include <asm/mmu.h>
- 
-@@ -336,7 +337,6 @@ struct core_state {
- 	struct completion startup;
- };
- 
--struct kioctx_table;
- struct mm_struct {
- 	struct {
- 		struct vm_area_struct *mmap;		/* list of VMAs */
-@@ -431,8 +431,7 @@ struct mm_struct {
- 		atomic_t membarrier_state;
- #endif
- #ifdef CONFIG_AIO
--		spinlock_t			ioctx_lock;
--		struct kioctx_table __rcu	*ioctx_table;
-+		struct xarray ioctx;
- #endif
- #ifdef CONFIG_MEMCG
- 		/*
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff89c7b..acb775f9592d 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -946,8 +946,7 @@ __setup("coredump_filter=", coredump_filter_setup);
- static void mm_init_aio(struct mm_struct *mm)
- {
- #ifdef CONFIG_AIO
--	spin_lock_init(&mm->ioctx_lock);
--	mm->ioctx_table = NULL;
-+	xa_init_flags(&mm->ioctx, XA_FLAGS_ALLOC);
- #endif
- }
- 
-diff --git a/mm/debug.c b/mm/debug.c
-index cdacba12e09a..d45ec63aed8c 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -127,9 +127,6 @@ void dump_mm(const struct mm_struct *mm)
- 		"start_brk %lx brk %lx start_stack %lx\n"
- 		"arg_start %lx arg_end %lx env_start %lx env_end %lx\n"
- 		"binfmt %px flags %lx core_state %px\n"
--#ifdef CONFIG_AIO
--		"ioctx_table %px\n"
--#endif
- #ifdef CONFIG_MEMCG
- 		"owner %px "
- #endif
-@@ -158,9 +155,6 @@ void dump_mm(const struct mm_struct *mm)
- 		mm->start_brk, mm->brk, mm->start_stack,
- 		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
- 		mm->binfmt, mm->flags, mm->core_state,
--#ifdef CONFIG_AIO
--		mm->ioctx_table,
--#endif
- #ifdef CONFIG_MEMCG
- 		mm->owner,
- #endif
--- 
-2.19.1
+> > Or use a misc device?  How many of these do you need?
+> 
+> Just one per fieldbus device.
+> But my main concern is naming in sysfs. A misc device will always show up as
+> /sys/class/misc/..., right? Given that this is a userspace fieldbus API,
+> we'd prefer /sys/class/fieldbus_dev/..., and cdev is the only way?
 
+Ah, the common misunderstanding.
+
+A cdev has NOTHING to do with the /sys/class/ entries.  It is only there
+to register a char device with the kernel core and to handle the file
+operations that are caused by it.  It does not do much, and not even the
+/dev/NODE stuff either.  That is up to your class device code.
+
+So you still need a char device, and you will have have a load of them,
+just use the misc device api.  It's simple, clean, and is hard to get
+wrong.  The cdev api is hard, complex, and trivial to get wrong in any
+number of different ways that it can be used :)
+
+That being said, it looks like you used it correctly, so all should be
+fine here.
+
+And your /sys/class/fieldbus_dev/ is "interesting", why name it that?
+
+> > For an online/offline attribute, no need to poll on it, just do a
+> > 'kobject change' event for online/offline and all should be fine.  This
+> > is not a high-frequency event, right?
+> 
+> Grepping... you mean kobject_uevent(KOBJ_CHANGE) ?
+> THAT mechanism seems to fit much better, thanks !!
+
+Yes, use that please.
+
+> > Hey, if no one wants to use it, either no need to write any code at all,
+> > or you get to decide everything.  Either way, you're in charge!  :)
+> 
+> I did get the impression that people are reluctant to take my patch partly
+> because of an unproven userspace API. Maybe they are (rightly) worried that,
+> once in, we will have to support this userspace API for evermore.
+> 
+> I'd love to get others involved in Fieldbus on Linux, but I'm not sure
+> how.
+
+Adding a new driver subsystem is messy, it takes a lot of work and
+finding the right reviewers is hard.  It's not just you, it happens all
+the time (look at how long the i3c code took to get merged as one
+example...)
+
+So keep submitting, I'll try to review it the next time around, and all
+should be fine.  But keep your user api as simple as possible for now,
+only doing what you need it to do, worry about future stuff then.
+
+
+> > But you do need to document the thing, in Documentation/ABI/ to get it
+> > correct and able to be reviewed.
+> 
+> The documentation is already included in this patch? Should I indicate this
+> in some standardized fashion?
+> 
+>  create mode 100644 Documentation/ABI/testing/fieldbus-dev-cdev
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-fieldbus-dev
+
+Ah, sorry, I didn't read it, my fault :(
+
+Why not just /sys/class/fieldbus/ ?  No need for "dev", right?
+
+greg k-h
