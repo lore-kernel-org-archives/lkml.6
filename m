@@ -2,130 +2,164 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79696C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D96C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8F521019
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:22:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F4ePQxdf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8F521019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B659F208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:22:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B659F208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbeK1UXP (ORCPT
+        id S1728126AbeK1UXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:23:15 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39291 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728016AbeK1UXP (ORCPT
+        Wed, 28 Nov 2018 15:23:22 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36155 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeK1UXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:23:15 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n133so1776986wmd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:22:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=I5U0N/Cyvg+QB+OiDptGqb978H7/FxhJCm2x55dJjPM=;
-        b=F4ePQxdfnWm37rz0Mro8hj+KsIqPxNtPv1ri4EwC+KGPDOSqr/v/gdNKjKKZyrIzFs
-         dm+zPGurm3UlXrib6UmwlmQk00XL3jQ9ggjQ0JftRTwva44B78O0Grtw3mVMBFiyize7
-         zv6Q1JH/AHxNxeNlHv4Yu871JPnSITnRGsvSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=I5U0N/Cyvg+QB+OiDptGqb978H7/FxhJCm2x55dJjPM=;
-        b=kuU94BvPymFG1og67NzFNGRBJ/h13Jo/mmPSXAu4WVNocb34o5KjaJ4KkyhScZov3q
-         7ByA6h/A4P8fclH9lyv+BzHtjNKC6mPf+tS50HWcMdEfJczVw5ISEzfzViU05tcfWcn3
-         +epBcI9LN+nxhtyYuwR6czWBZTsIekgqwhlYjh8aQxcrK1jASJRebae9ZNgL3EpTHyg2
-         QX0dA60Hc5joH4Pi2La/hlwNyz6Qnyi79+q9KovuoBgY7KIC5taPJEoYweKF6wG2N7hx
-         e1zUorU1d7MMutjniLw9et0lkCPSp/8ChaynV7XAOAXo5pW1UM96RfHcy1HhcBPm6Dv3
-         N3Wg==
-X-Gm-Message-State: AA+aEWZQHTIYEhKop1ohtsniXn3g8k6u/DmFGjR9uLUoIKpE2g0JXEYM
-        PT/13tkDj3AOOLwjrJU6tlMfzQ==
-X-Google-Smtp-Source: AFSGD/UDW4h5SbideVHcM/Z8X7F9rVbUuGETi3uxP9l0XNwK0SNlsC3l6Rt7e+ANZzofKTJqUZvh/g==
-X-Received: by 2002:a1c:b94b:: with SMTP id j72mr1855396wmf.58.1543396935927;
-        Wed, 28 Nov 2018 01:22:15 -0800 (PST)
-Received: from dell ([2.31.167.233])
-        by smtp.gmail.com with ESMTPSA id z9sm6004513wrs.63.2018.11.28.01.22.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 01:22:15 -0800 (PST)
-Date:   Wed, 28 Nov 2018 09:22:13 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 6/8] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181128092213.GW4272@dell>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-6-ckeepax@opensource.cirrus.com>
+        Wed, 28 Nov 2018 15:23:22 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAS9LpsV2233961
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 28 Nov 2018 01:21:51 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAS9Loh02233958;
+        Wed, 28 Nov 2018 01:21:50 -0800
+Date:   Wed, 28 Nov 2018 01:21:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-60c8144afc287ef09ce8c1230c6aa972659ba1bb@git.kernel.org>
+Cc:     aravindksg.lkml@gmail.com, tony.luck@intel.com, john@deater.net,
+        hpa@zytor.com, Yazen.Ghannam@amd.com, clemej@gmail.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, bp@suse.de,
+        tglx@linutronix.de, rafal@milecki.pl
+Reply-To: clemej@gmail.com, Yazen.Ghannam@amd.com,
+          linux-kernel@vger.kernel.org, bp@suse.de, mingo@kernel.org,
+          rafal@milecki.pl, tglx@linutronix.de, john@deater.net,
+          tony.luck@intel.com, aravindksg.lkml@gmail.com, hpa@zytor.com
+In-Reply-To: <20181127101700.2964-1-zajec5@gmail.com>
+References: <20181127101700.2964-1-zajec5@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/MCE/AMD: Fix the thresholding machinery
+ initialization order
+Git-Commit-ID: 60c8144afc287ef09ce8c1230c6aa972659ba1bb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120141631.18949-6-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Charles Keepax wrote:
+Commit-ID:  60c8144afc287ef09ce8c1230c6aa972659ba1bb
+Gitweb:     https://git.kernel.org/tip/60c8144afc287ef09ce8c1230c6aa972659ba1bb
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Tue, 27 Nov 2018 14:41:37 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 28 Nov 2018 10:10:36 +0100
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board. Audio system topology,
-> clocking and power can all be controlled through the Lochnagar
-> controller chip, allowing the device under test to be used in
-> a variety of possible use cases.
-> 
-> As the Lochnagar is a fairly complex device this MFD driver
-> allows the drivers for the various features to be bound
-> in. Initially clocking, regulator and pinctrl will be added as
-> these are necessary to configure the system. But in time at least
-> audio and voltage/current monitoring will also be added.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
-> 
-> No change since v4.
-> 
-> Thanks,
-> Charles
-> 
->  MAINTAINERS                         |  17 ++
->  drivers/mfd/Kconfig                 |   8 +
->  drivers/mfd/Makefile                |   2 +
->  drivers/mfd/lochnagar-i2c.c         | 394 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/lochnagar.h       |  55 +++++
->  include/linux/mfd/lochnagar1_regs.h | 157 ++++++++++++++
->  include/linux/mfd/lochnagar2_regs.h | 253 +++++++++++++++++++++++
->  7 files changed, 886 insertions(+)
->  create mode 100644 drivers/mfd/lochnagar-i2c.c
->  create mode 100644 include/linux/mfd/lochnagar.h
->  create mode 100644 include/linux/mfd/lochnagar1_regs.h
->  create mode 100644 include/linux/mfd/lochnagar2_regs.h
+x86/MCE/AMD: Fix the thresholding machinery initialization order
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Currently, the code sets up the thresholding interrupt vector and only
+then goes about initializing the thresholding banks. Which is wrong,
+because an early thresholding interrupt would cause a NULL pointer
+dereference when accessing those banks and prevent the machine from
+booting.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Therefore, set the thresholding interrupt vector only *after* having
+initialized the banks successfully.
+
+Fixes: 18807ddb7f88 ("x86/mce/AMD: Reset Threshold Limit after logging error")
+Reported-by: Rafał Miłecki <rafal@milecki.pl>
+Reported-by: John Clemens <clemej@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Rafał Miłecki <rafal@milecki.pl>
+Tested-by: John Clemens <john@deater.net>
+Cc: Aravind Gopalakrishnan <aravindksg.lkml@gmail.com>
+Cc: linux-edac@vger.kernel.org
+Cc: stable@vger.kernel.org
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86@kernel.org
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Link: https://lkml.kernel.org/r/20181127101700.2964-1-zajec5@gmail.com
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201291
+---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index dd33c357548f..e12454e21b8a 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -56,7 +56,7 @@
+ /* Threshold LVT offset is at MSR0xC0000410[15:12] */
+ #define SMCA_THR_LVT_OFF	0xF000
+ 
+-static bool thresholding_en;
++static bool thresholding_irq_en;
+ 
+ static const char * const th_names[] = {
+ 	"load_store",
+@@ -534,9 +534,8 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
+ 
+ set_offset:
+ 	offset = setup_APIC_mce_threshold(offset, new);
+-
+-	if ((offset == new) && (mce_threshold_vector != amd_threshold_interrupt))
+-		mce_threshold_vector = amd_threshold_interrupt;
++	if (offset == new)
++		thresholding_irq_en = true;
+ 
+ done:
+ 	mce_threshold_block_init(&b, offset);
+@@ -1357,9 +1356,6 @@ int mce_threshold_remove_device(unsigned int cpu)
+ {
+ 	unsigned int bank;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (!(per_cpu(bank_map, cpu) & (1 << bank)))
+ 			continue;
+@@ -1377,9 +1373,6 @@ int mce_threshold_create_device(unsigned int cpu)
+ 	struct threshold_bank **bp;
+ 	int err = 0;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	bp = per_cpu(threshold_banks, cpu);
+ 	if (bp)
+ 		return 0;
+@@ -1408,9 +1401,6 @@ static __init int threshold_init_device(void)
+ {
+ 	unsigned lcpu = 0;
+ 
+-	if (mce_threshold_vector == amd_threshold_interrupt)
+-		thresholding_en = true;
+-
+ 	/* to hit CPUs online before the notifier is up */
+ 	for_each_online_cpu(lcpu) {
+ 		int err = mce_threshold_create_device(lcpu);
+@@ -1419,6 +1409,9 @@ static __init int threshold_init_device(void)
+ 			return err;
+ 	}
+ 
++	if (thresholding_irq_en)
++		mce_threshold_vector = amd_threshold_interrupt;
++
+ 	return 0;
+ }
+ /*
