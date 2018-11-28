@@ -2,124 +2,489 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5F0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41400C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E08206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6BE224E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWVXdaF4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E08206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LQlNdAIv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6BE224E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeK2BxR (ORCPT
+        id S1728590AbeK2B4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:53:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42802 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbeK2BxQ (ORCPT
+        Wed, 28 Nov 2018 20:56:20 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:36280 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeK2B4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:53:16 -0500
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so23684836lja.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 06:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ajHurSNRwtNrFtV6PIPueDAKLX7oClZwfNaHBmZLEm8=;
-        b=dWVXdaF4xoPiK4bRpMfxF1z7310rWKfT/o5rL2uML0A2a/4wGq62Blo/FuRl6YKKlG
-         cHazFpwCukY/AuDxZ65sHJl09cOH/6yiYLSL/AWKhQjLQ10CCEVwrs32mWY/gylExWDy
-         K8d063yrWPj/s4CAqM+bHZnah5tBJlTrHXaNTG/z8h0uNBD90NnEIuSl+iiAFdhGupUs
-         r5e9NS8d3atHIx9BMbTIqiUE1FByUnaHSwtTqEguFzBvY4L5SNaD8zn9pEgf3KNWyDnI
-         /j1ptPGheKIcWfxbyUL1hmgM53UiqxrM7pQ3rrdhxKFFbsMkG4XH4y49Fw2cVa07C/Nh
-         eQkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ajHurSNRwtNrFtV6PIPueDAKLX7oClZwfNaHBmZLEm8=;
-        b=cv8OBJr+FLaDt22S1Kd3qkN48yqCpz+DWcG2KZZ5LGccZX3uGxGMbuGbH3rUje3gj0
-         0Qu5+/3yJSvnQRc4T7Ao3ZaMVcTS+lQQagHbVciw/hGy5kNwhtRbB6UDY/hCclTiy2HD
-         JL4PEbK700t6K1bXkNCtwxhWdo8UzrQip5xsg3NainZFHyPqpfCnaUfYjJk6GKQUnEJU
-         pnPlPv/TwuDdF92zKlAq/sGzLAnWwboZDHKszkMjnmvAjZPZDNq5jDDhta5qi6txjzge
-         1Z2aJ/mGeMw2zVDxue6OTOW6vIqvYk7s45cMEgk1dwIYrhocpT4HoUY527roiH1punk9
-         TVLA==
-X-Gm-Message-State: AGRZ1gLwb07lWk/NuJTey/WN8OepfKALX0u6ZEjTYp0rVBXLax5dZYZ/
-        c4RjxGzaFhdAdazpw3QKMwOUrCbpGHrn+QU4ErI=
-X-Google-Smtp-Source: AFSGD/Vjs69wQyxBZEnf8N+MJY6qmVp/lKO9ODvai2sRgVZXq4U75EnCvpJ5ccx5rsbXvbdMkH250ObVL4gLOPhWVm0=
-X-Received: by 2002:a2e:a289:: with SMTP id k9-v6mr22830722lja.24.1543416680181;
- Wed, 28 Nov 2018 06:51:20 -0800 (PST)
+        Wed, 28 Nov 2018 20:56:20 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wASEsHFF117938;
+        Wed, 28 Nov 2018 08:54:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543416857;
+        bh=EVJ8l61Ls+bWnu1ZpMY6Q67JGzQtBtkcF8EVPtibDPo=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=LQlNdAIvQDHiTvxe8jSfpKkYoHxioqCoSPmUK0AioMBUSdqAdAsmn944picx5GAL6
+         bkgEkfS3M+Nb5upB/kj+fYLTRCmDyTXoHZxuXj0d455P3Zw6C90wmX6/lYMaaqUPj0
+         vbj9oqBS3qbYnmQ9oAXe85v//7xcX5Pwv+A2woU4=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wASEsHC3072103
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 08:54:17 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 28
+ Nov 2018 08:54:16 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 28 Nov 2018 08:54:16 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wASEsCvI025482;
+        Wed, 28 Nov 2018 08:54:13 -0600
+Subject: Re: [RFC PATCH v2 11/15] usb:cdns3: Implements ISR functionality.
+To:     Pawel Laszczak <pawell@cadence.com>, <devicetree@vger.kernel.org>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-12-git-send-email-pawell@cadence.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <adouglas@cadence.com>,
+        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
+        <sureshp@cadence.com>, <peter.chen@nxp.com>, <pjez@cadence.com>,
+        <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFEAC14.1030408@ti.com>
+Date:   Wed, 28 Nov 2018 16:54:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <CGME20181115050724eucas1p169b2046c03e108035199a4481a82a560@eucas1p1.samsung.com>
- <1542258430-19885-1-git-send-email-huijin.park@samsung.com> <20181115102921.5117af90@xps13>
-In-Reply-To: <20181115102921.5117af90@xps13>
-From:   Huijin Park <bbanghj.park@gmail.com>
-Date:   Wed, 28 Nov 2018 23:51:06 +0900
-Message-ID: <CAMy0x0=H0pwHN09Bp_eKkHFHwbURFLt3MKJvBNC51TyqiZJyGA@mail.gmail.com>
-Subject: Re: [PATCH v2] mtd: change len type from signed to unsigned type
-To:     miquel.raynal@bootlin.com
-Cc:     huijin.park@samsung.com, boris.brezillon@bootlin.com,
-        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1542535751-16079-12-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miqu=C3=A8l,
 
-On Thu, Nov 15, 2018 at 6:29 PM Miquel Raynal <miquel.raynal@bootlin.com> w=
-rote:
->
-> Hi Huijin,
->
-> Huijin Park <huijin.park@samsung.com> wrote on Thu, 15 Nov 2018
-> 00:07:10 -0500:
->
-> > From: "huijin.park" <huijin.park@samsung.com>
-> >
-> > This patch casts the "len" parameter to an unsigned int.
-> > The callers of erase_write() pass the "len" parameter as unsigned int.
->
-> Indeed. Perhaps it is worth backporting this patch to a stable releases?
->
 
-It doesn't need backporting.
-Because this patch is for enforcing code correctness.
+On 18/11/18 12:09, Pawel Laszczak wrote:
+> Patch adds set of generic functions used for handling interrupts
+> generated by controller. Interrupt related functions are divided
+> into three groups. The first is related to ep0 and is placed in ep0.c.
+> The second is responsible for non-default endpoints and is
+> implemented in gadget.c file. The last group is not related to
+> endpoints interrupts and is placed in gadget.c.
+> All groups have common entry point in cdns3_irq_handler_thread function.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/ep0.c    |  63 +++++++++++
+>  drivers/usb/cdns3/gadget.c | 224 ++++++++++++++++++++++++++++++++++++-
+>  drivers/usb/cdns3/gadget.h |   1 +
+>  3 files changed, 287 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
+> index d05169e73631..eb92fd234bd7 100644
+> --- a/drivers/usb/cdns3/ep0.c
+> +++ b/drivers/usb/cdns3/ep0.c
+> @@ -90,6 +90,69 @@ static void cdns3_set_hw_configuration(struct cdns3_device *priv_dev)
+>  	}
+>  }
+>  
+> +static void __pending_setup_status_handler(struct cdns3_device *priv_dev)
+> +{
+> +	//TODO: Implements this function
+> +}
+> +
+> +/**
+> + * cdns3_ep0_setup_phase - Handling setup USB requests
+> + * @priv_dev: extended gadget object
+> + */
+> +static void cdns3_ep0_setup_phase(struct cdns3_device *priv_dev)
+> +{
+> +	//TODO: Implements this function.
+> +}
+> +
+> +static void cdns3_transfer_completed(struct cdns3_device *priv_dev)
+> +{
+> +	//TODO: Implements this function
+> +}
+> +
+> +/**
+> + * cdns3_check_ep0_interrupt_proceed - Processes interrupt related to endpoint 0
+> + * @priv_dev: extended gadget object
+> + * @dir: 1 for IN direction, 0 for OUT direction
+> + */
+> +void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, int dir)
+> +{
+> +	struct cdns3_usb_regs __iomem *regs = priv_dev->regs;
+> +	u32 ep_sts_reg;
+> +
+> +	cdns3_select_ep(priv_dev, 0 | (dir ? USB_DIR_IN : USB_DIR_OUT));
+> +	ep_sts_reg = readl(&regs->ep_sts);
+> +
+> +	__pending_setup_status_handler(priv_dev);
+> +
+> +	if ((ep_sts_reg & EP_STS_SETUP) && dir == 0) {
+> +		struct usb_ctrlrequest *setup = priv_dev->setup;
+> +
+> +		writel(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
 
-> >
-> > Signed-off-by: huijin.park <huijin.park@samsung.com>
-> > ---
-> >  drivers/mtd/mtdblock.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
-> > index a5b1933..b2d5ed1 100644
-> > --- a/drivers/mtd/mtdblock.c
-> > +++ b/drivers/mtd/mtdblock.c
-> > @@ -56,7 +56,7 @@ struct mtdblk_dev {
-> >   */
-> >
-> >  static int erase_write (struct mtd_info *mtd, unsigned long pos,
-> > -                     int len, const char *buf)
-> > +                     unsigned int len, const char *buf)
-> >  {
-> >       struct erase_info erase;
-> >       size_t retlen;
->
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
->
->
-> Thanks,
-> Miqu=C3=A8l
+instead you can just clear all events at the end of this function by
+	writel(ep_sts_reg, &regs->ep_sts);
+> +
+> +		priv_dev->ep0_data_dir = setup->bRequestType & USB_DIR_IN;
+> +		cdns3_ep0_setup_phase(priv_dev);
+> +		ep_sts_reg &= ~(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP);
 
-Thanks,
-Huijin
+Not required.
+
+> +	}
+> +
+> +	if (ep_sts_reg & EP_STS_TRBERR)
+> +		writel(EP_STS_TRBERR, &priv_dev->regs->ep_sts);
+
+Can be omitted.
+> +
+> +	if (ep_sts_reg & EP_STS_DESCMIS) {
+> +		writel(EP_STS_DESCMIS, &priv_dev->regs->ep_sts);
+
+This as well.
+> +
+> +		if (dir == 0 && !priv_dev->setup_pending) {
+> +			priv_dev->ep0_data_dir = 0;
+> +			cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma,
+> +					       8, 0);
+> +		}
+> +	}
+> +
+> +	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP)) {
+> +		writel(EP_STS_IOC, &priv_dev->regs->ep_sts);
+
+this write can be omitted.
+> +		cdns3_transfer_completed(priv_dev);
+> +	}
+
+here you can do
+	writel(ep_sts_reg, &regs->ep_sts);
+> +}
+> +
+>  /**
+>   * cdns3_gadget_ep0_enable
+>   * Function shouldn't be called by gadget driver,
+> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+> index c965da16c0c8..309202474e57 100644
+> --- a/drivers/usb/cdns3/gadget.c
+> +++ b/drivers/usb/cdns3/gadget.c
+> @@ -58,6 +58,18 @@ void cdns3_set_register_bit(void __iomem *ptr, u32 mask)
+>  	writel(mask, ptr);
+>  }
+>  
+> +/**
+> + * cdns3_ep_reg_pos_to_index - Macro converts bit position of ep_ists register
+> + * to index of endpoint object in cdns3_device.eps[] container
+> + * @i: bit position of endpoint for which endpoint object is required
+> + *
+> + * Remember that endpoint container doesn't contain default endpoint
+> + */
+> +static u8 cdns3_ep_reg_pos_to_index(int i)
+> +{
+> +	return ((i / 16) + (((i % 16) - 2) * 2));
+> +}
+> +
+>  /**
+>   * cdns3_next_request - returns next request from list
+>   * @list: list containing requests
+> @@ -188,6 +200,21 @@ static void cdns3_ep_stall_flush(struct cdns3_endpoint *priv_ep)
+>  	priv_ep->flags |= EP_STALL;
+>  }
+>  
+> +/**
+> + * cdns3_gadget_unconfig - reset device configuration
+> + * @priv_dev: extended gadget object
+> + */
+> +void cdns3_gadget_unconfig(struct cdns3_device *priv_dev)
+> +{
+> +	/* RESET CONFIGURATION */
+> +	writel(USB_CONF_CFGRST, &priv_dev->regs->usb_conf);
+> +
+> +	cdns3_enable_l1(priv_dev, 0);
+> +	priv_dev->hw_configured_flag = 0;
+> +	priv_dev->onchip_mem_allocated_size = 0;
+> +	priv_dev->out_mem_is_allocated = 0;
+> +}
+> +
+>  void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable)
+>  {
+>  	if (enable)
+> @@ -196,6 +223,23 @@ void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable)
+>  		writel(USB_CONF_L1DS, &priv_dev->regs->usb_conf);
+>  }
+>  
+> +static enum usb_device_speed cdns3_get_speed(struct cdns3_device *priv_dev)
+> +{
+> +	u32 reg;
+> +
+> +	reg = readl(&priv_dev->regs->usb_sts);
+> +
+> +	if (DEV_SUPERSPEED(reg))
+> +		return USB_SPEED_SUPER;
+> +	else if (DEV_HIGHSPEED(reg))
+> +		return USB_SPEED_HIGH;
+> +	else if (DEV_FULLSPEED(reg))
+> +		return USB_SPEED_FULL;
+> +	else if (DEV_LOWSPEED(reg))
+> +		return USB_SPEED_LOW;
+> +	return USB_SPEED_UNKNOWN;
+> +}
+> +
+>  /**
+>   * cdns3_gadget_giveback - call struct usb_request's ->complete callback
+>   * @priv_ep: The endpoint to whom the request belongs to
+> @@ -221,12 +265,136 @@ void cdns3_gadget_giveback(struct cdns3_endpoint *priv_ep,
+>   */
+>  int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
+>  			  struct usb_request *request)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void cdns3_transfer_completed(struct cdns3_device *priv_dev,
+> +				     struct cdns3_endpoint *priv_ep)
+>  {
+>  	//TODO: Implements this function.
+> +}
+> +
+> +/**
+> + * cdns3_check_ep_interrupt_proceed - Processes interrupt related to endpoint
+> + * @priv_ep: endpoint object
+> + *
+> + * Returns 0
+> + */
+> +static int cdns3_check_ep_interrupt_proceed(struct cdns3_endpoint *priv_ep)
+> +{
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	struct cdns3_usb_regs __iomem *regs;
+> +	u32 ep_sts_reg;
+> +
+> +	regs = priv_dev->regs;
+> +
+> +	cdns3_select_ep(priv_dev, priv_ep->endpoint.address);
+> +	ep_sts_reg = readl(&regs->ep_sts);
+> +
+> +	if (ep_sts_reg & EP_STS_TRBERR)
+> +		writel(EP_STS_TRBERR, &regs->ep_sts);
+> +
+> +	if (ep_sts_reg & EP_STS_ISOERR)
+> +		writel(EP_STS_ISOERR, &regs->ep_sts);
+> +
+> +	if (ep_sts_reg & EP_STS_OUTSMM)
+> +		writel(EP_STS_OUTSMM, &regs->ep_sts);
+> +
+> +	if (ep_sts_reg & EP_STS_NRDY)
+> +		writel(EP_STS_NRDY, &regs->ep_sts);
+
+Why check for each bit when you are not doing anything. Instead at the end
+you could just do
+	writel(ep_sts_reg, &regs->ep_sts)
+to clear all pending events.
+
+> +
+> +	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP)) {
+> +		writel(EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
+> +		cdns3_transfer_completed(priv_dev, priv_ep);
+> +	}
+> +
+> +	if (ep_sts_reg & EP_STS_DESCMIS)
+> +		writel(EP_STS_DESCMIS, &regs->ep_sts);
+>  
+>  	return 0;
+>  }
+>  
+> +/**
+> + * cdns3_check_usb_interrupt_proceed - Processes interrupt related to device
+> + * @priv_dev: extended gadget object
+> + * @usb_ists: bitmap representation of device's reported interrupts
+> + * (usb_ists register value)
+> + */
+> +static void cdns3_check_usb_interrupt_proceed(struct cdns3_device *priv_dev,
+> +					      u32 usb_ists)
+> +{
+> +	struct cdns3_usb_regs __iomem *regs;
+> +	int speed = 0;
+> +
+> +	regs = priv_dev->regs;
+> +
+> +	/* Connection detected */
+> +	if (usb_ists & (USB_ISTS_CON2I | USB_ISTS_CONI)) {
+> +		writel(USB_ISTS_CON2I | USB_ISTS_CONI, &regs->usb_ists);
+> +		speed = cdns3_get_speed(priv_dev);
+> +
+> +		dev_dbg(&priv_dev->dev, "Connection detected at speed: %s %d\n",
+> +			usb_speed_string(speed), speed);
+> +
+> +		priv_dev->gadget.speed = speed;
+> +		priv_dev->is_connected = 1;
+> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_POWERED);
+> +		cdns3_ep0_config(priv_dev);
+> +	}
+> +
+> +	/* SS Disconnection detected */
+> +	if (usb_ists & (USB_ISTS_DIS2I | USB_ISTS_DISI)) {
+> +		dev_dbg(&priv_dev->dev, "Disconnection detected\n");
+> +
+> +		writel(USB_ISTS_DIS2I | USB_ISTS_DISI, &regs->usb_ists);
+> +		if (priv_dev->gadget_driver &&
+> +		    priv_dev->gadget_driver->disconnect) {
+> +			spin_unlock(&priv_dev->lock);
+> +			priv_dev->gadget_driver->disconnect(&priv_dev->gadget);
+> +			spin_lock(&priv_dev->lock);
+> +		}
+> +		priv_dev->gadget.speed = USB_SPEED_UNKNOWN;
+> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_NOTATTACHED);
+> +		priv_dev->is_connected = 0;
+> +		cdns3_gadget_unconfig(priv_dev);
+> +	}
+
+What about non Super-Speed disconnects?
+
+> +
+> +	if (usb_ists & USB_ISTS_L2ENTI) {
+> +		dev_dbg(&priv_dev->dev, "Device suspended\n");
+> +		writel(USB_ISTS_L2ENTI, &regs->usb_ists);
+> +	}
+> +
+> +	/* Exit from standby mode on L2 exit (Suspend in HS/FS or SS) */
+> +	if (usb_ists & USB_ISTS_L2EXTI) {
+> +		dev_dbg(&priv_dev->dev, "[Interrupt] L2 exit detected\n");
+> +		writel(USB_ISTS_L2EXTI, &regs->usb_ists);
+> +	}
+> +
+> +	/* Exit from standby mode on U3 exit (Suspend in HS/FS or SS). */
+> +	if (usb_ists & USB_ISTS_U3EXTI) {
+> +		dev_dbg(&priv_dev->dev, "U3 exit detected\n");
+> +		writel(USB_ISTS_U3EXTI, &regs->usb_ists);
+> +	}
+> +
+> +	/* resets cases */
+> +	if (usb_ists & (USB_ISTS_UWRESI | USB_ISTS_UHRESI | USB_ISTS_U2RESI)) {
+> +		writel(USB_ISTS_U2RESI | USB_ISTS_UWRESI | USB_ISTS_UHRESI,
+> +		       &regs->usb_ists);
+> +
+> +		/*read again to check the actuall speed*/
+> +		speed = cdns3_get_speed(priv_dev);
+> +
+> +		dev_dbg(&priv_dev->dev, "Reset detected at speed: %s %d\n",
+> +			usb_speed_string(speed), speed);
+> +
+> +		usb_gadget_set_state(&priv_dev->gadget, USB_STATE_DEFAULT);
+> +		priv_dev->gadget.speed = speed;
+> +		cdns3_gadget_unconfig(priv_dev);
+> +		cdns3_ep0_config(priv_dev);
+> +	}
+> +}
+> +
+>  /**
+>   * cdns3_irq_handler - irq line interrupt handler
+>   * @cdns: cdns3 instance
+> @@ -237,8 +405,62 @@ int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
+>   */
+>  static irqreturn_t cdns3_irq_handler_thread(struct cdns3 *cdns)
+>  {
+> +	struct cdns3_device *priv_dev;
+>  	irqreturn_t ret = IRQ_NONE;
+> -	//TODO: implements this function
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	priv_dev = container_of(cdns->gadget_dev, struct cdns3_device, dev);
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+> +
+> +	/* check USB device interrupt */
+> +	reg = readl(&priv_dev->regs->usb_ists);
+> +	if (reg) {
+> +		dev_dbg(&priv_dev->dev, "IRQ: usb_ists: %08X\n", reg);
+
+dev_dbg will be terribly slow to be useful. Tracepoints?
+
+> +		cdns3_check_usb_interrupt_proceed(priv_dev, reg);
+> +		ret = IRQ_HANDLED;
+> +	}
+> +
+> +	/* check endpoint interrupt */
+> +	reg = readl(&priv_dev->regs->ep_ists);
+> +	if (reg != 0) {
+> +		dev_dbg(&priv_dev->dev, "IRQ ep_ists: %08X\n", reg);
+> +	} else {
+> +		if (USB_STS_CFGSTS(readl(&priv_dev->regs->usb_sts)))
+> +			ret = IRQ_HANDLED;
+
+Why is this done. We don't seem to be handling anything here.
+Don't we need to clear the usb_sts?
+
+> +		goto irqend;
+> +	}
+> +
+> +	/* handle default endpoint OUT */
+> +	if (reg & EP_ISTS_EP_OUT0) {
+> +		cdns3_check_ep0_interrupt_proceed(priv_dev, 0);
+> +		ret = IRQ_HANDLED;
+> +	}
+> +
+> +	/* handle default endpoint IN */
+> +	if (reg & EP_ISTS_EP_IN0) {
+> +		cdns3_check_ep0_interrupt_proceed(priv_dev, 1);
+> +		ret = IRQ_HANDLED;
+> +	}
+> +
+> +	/* check if interrupt from non default endpoint, if no exit */
+> +	reg &= ~(EP_ISTS_EP_OUT0 | EP_ISTS_EP_IN0);
+> +	if (!reg)
+> +		goto irqend;
+> +
+> +	do {
+> +		unsigned int bit_pos = ffs(reg);
+> +		u32 bit_mask = 1 << (bit_pos - 1);
+> +		int index;
+> +
+> +		index = cdns3_ep_reg_pos_to_index(bit_pos);
+> +		cdns3_check_ep_interrupt_proceed(priv_dev->eps[index]);
+> +		reg &= ~bit_mask;
+> +		ret = IRQ_HANDLED;
+> +	} while (reg);
+> +
+> +irqend:
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+>  	return ret;
+>  }
+>  
+> diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
+> index 224f6b830bc9..8c2f363f9340 100644
+> --- a/drivers/usb/cdns3/gadget.h
+> +++ b/drivers/usb/cdns3/gadget.h
+> @@ -1072,6 +1072,7 @@ int cdns3_handshake(void __iomem *ptr, u32 mask, u32 done, int usec);
+>  void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
+>  int cdns3_init_ep0(struct cdns3_device *priv_dev);
+>  void cdns3_ep0_config(struct cdns3_device *priv_dev);
+> +void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, int dir);
+>  void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
+>  void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable);
+>  struct usb_request *cdns3_next_request(struct list_head *list);
+> 
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
