@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458DAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672C2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1CF206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB052086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:43:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="XORwnPZO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1CF206B6
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="jFkBPMzy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB052086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbeK2BpZ (ORCPT
+        id S1729022AbeK2Bp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:45:25 -0500
-Received: from mail-eopbgr790087.outbound.protection.outlook.com ([40.107.79.87]:32768
+        Wed, 28 Nov 2018 20:45:27 -0500
+Received: from mail-eopbgr790083.outbound.protection.outlook.com ([40.107.79.83]:32472
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728565AbeK2BpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:45:24 -0500
+        id S1728565AbeK2Bp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 20:45:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tq2M1TlVT4F+bOTdvDJjbvGp/OA4i8Nm/ptqbYMNPS0=;
- b=XORwnPZOxjgxBH9eQwGdX8josZJGmOdwaY5BDoTOZ+32+/vZ9b/01NnjX9tSOgLahbUEmmkcjg79lGs8J2NTtE6IGg1awckVmb2GCdIorK1vcb0XT6ybSVtxNUIT2nwczoMU8RBRKVTUZ6VZEr64lMUFPAZwabKQiwPFKRKrkpk=
+ bh=IXb+GAEoraiyNOmdqnTOtP3SeGPlwUy8jnhcvWxXRDg=;
+ b=jFkBPMzymW7FSl41SXdTMEyvNWldl3qLT3yFLGFJChV4dBy5Tiupw/9WjTeCM5NUmjrOtG8Hn3uy04UZiEzUeJMMI3WwRvHJV/f3vITYWyWh9u9drbpdIF1kLGOnIzYX5dqR0kxwn8qOHsEEJ/Z+x/jWuRUVtMmW4/4iNSBZUhY=
 Received: from SN6PR07MB5326.namprd07.prod.outlook.com (52.135.105.33) by
  SN6PR07MB4399.namprd07.prod.outlook.com (52.135.91.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.18; Wed, 28 Nov 2018 14:43:27 +0000
+ 15.20.1361.18; Wed, 28 Nov 2018 14:43:31 +0000
 Received: from SN6PR07MB5326.namprd07.prod.outlook.com
  ([fe80::ccc7:d111:7f3d:667d]) by SN6PR07MB5326.namprd07.prod.outlook.com
  ([fe80::ccc7:d111:7f3d:667d%4]) with mapi id 15.20.1361.018; Wed, 28 Nov 2018
- 14:43:27 +0000
+ 14:43:30 +0000
 From:   Robert Richter <rrichter@cavium.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -53,13 +53,13 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
         "Richter, Robert" <Robert.Richter@cavium.com>,
         Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v2 07/10] irqchip/gic-v3-its: Split probing from its node
- initialization
-Thread-Topic: [PATCH v2 07/10] irqchip/gic-v3-its: Split probing from its node
- initialization
-Thread-Index: AQHUhyi49zwsWTLFgkavvMhD/AmiTA==
-Date:   Wed, 28 Nov 2018 14:43:26 +0000
-Message-ID: <20181128144240.28727-8-rrichter@cavium.com>
+Subject: [PATCH v2 08/10] irqchip/gic-v3-its: Decouple its initialization from
+ gic
+Thread-Topic: [PATCH v2 08/10] irqchip/gic-v3-its: Decouple its initialization
+ from gic
+Thread-Index: AQHUhyi7J6nxU0I0fUOV/EFE/c3JsQ==
+Date:   Wed, 28 Nov 2018 14:43:30 +0000
+Message-ID: <20181128144240.28727-9-rrichter@cavium.com>
 References: <20181128144240.28727-1-rrichter@cavium.com>
 In-Reply-To: <20181128144240.28727-1-rrichter@cavium.com>
 Accept-Language: en-US
@@ -74,26 +74,26 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [77.14.124.106]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR07MB4399;6:YOlNepsUlCq0llNopMFTiGAFwIgpRTLEWYeBjX7WpeY+oiE1BXMVfi730Rw/+EVFAh9ehpFLA8Yo0CdTWZWIHls9zCDxRXbaY9f1THtgjQe9Y+3KpIL1do966svEnhbBZZ1Ap4+CRA4ikcBSlxLv34ZZewQ779Tm3ojuZ2fLLD+OOGUODRK+Um0NAoOT9VNRzILap2JF0KJrVo5Z9IMY2a1xnoptwdgEeQwzuWOCCAekJUoy/tXOIz1Tb2ybyqKG6ZHlfA9/JYMhbapEUkf5yuDWA8dnmwSDBMnTRU7Vg1YCHAgNqDrVXUeaNmtLrU7VodDSAZZw3X5BifQDIcDalcKYSHeGeetmCKkaCPQz7tQ+Q4kt42fV+x7E4yCM5BjOsdI+tzMaFHklx8++i/igVpOZGHA4K18rqnzV7s5ufQZBPmccJjPCmIqp5ZUOXmM7kAmtloUqCptlCWC0WOUFBg==;5:GjwfWcloSlsbVqy138aoh85brMGFxSIHxlKXAsErgyeITJmAtgPGKCSF9GZeg+vBz4okpn1LIiIwx2JplPLr+valuD20EsMRu2lFYmRq9zXlJx6pO8Fc3lcGTr2Zg0Lm6qFIbKRcNGgq15nVAJrRKOchBih2PwBVKkqmIXRqlEU=;7:YC+7118cCK2lNr6XjDLPs0gPNJbi4aOkUg5OumQ/nwEf6UsMQ7nqPvXWcQeooa1EXiXd5atkZGcPjYwE1BuA9ifovANh07GEGLrxNKMEi+bnNdpQAvrsWmaoqxSzSlzfOb2INLXrZczj11bzTTT/9A==
-x-ms-office365-filtering-correlation-id: 97106d82-30c4-402e-1a7a-08d6553fdabc
+x-microsoft-exchange-diagnostics: 1;SN6PR07MB4399;6:OQz25jywiKo5KK1r2TJQVOtyNjeanLJWwghon2vCLKC3D7qi2T30Cy79wL+JTERdjWRTWT+TDMXHpytfTBWA8NPvCs4ClMp+wJq0GjIz54f71rx4/6kwO1Dtxo6SRBtD5upmOG4g9smX91wCtg56WqzG5PHej9kRYMmWxeDulo8cGvnhcDTdr87b89vPLOodnyxFdkt0WYVB3C/ieX4u6fBT1LyvRqG7fa4chn6+E3bUqREJsZiT+NM5Sau3dpfjkBBAEyahYSqUoEjxa8QlBmrQcrDbnC6G4MJCFgFCyPPFRZvbftHwUdkv+LOZqJM88YMKwR8CqGsqILrhI1d3j4YLDdeZOopYGzualFrYp2hCirr5H8eNT+lnAAJPR1M6mdjBuUL1sUYtHu1ov22dHHWMzAM0Jo+oYIulLxPSGTlGoUdyvA2jjeEMXyN6o3NSwzoiM+OPi3rXMvcg3rlM4Q==;5:+l66DSIfY1fbp3lKbkXxJzujbBSHNzpkEvcCsqdZVfIGvOmOm0qNIGoXpXJ1kFsDfnlXS65ywzTnbYeQdKoXL6US1aOxZ4nNWJbqbD0zZ4YLaJyEcnP6wBJ7wjivupS2J+sKux4BLN/NFLp0iFyBXCvJCZinnIsUyT+YYjPe64c=;7:LAsYVfGJol+XoHidK6Vgn/dNL8/ott3wqLsvs/cXlouGb0Tz3K+rJuqhMph4DLLrwUufshPtBEw5GHoFgqjOb/O79Fh29kittoK3NdI6I/Ph5A38lysVPHDGCajK3h3MPkrHYN0YliS+ebvxqYGPJA==
+x-ms-office365-filtering-correlation-id: e0fa4443-9a0d-4911-d27a-08d6553fdd3f
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4399;
 x-ms-traffictypediagnostic: SN6PR07MB4399:
-x-microsoft-antispam-prvs: <SN6PR07MB43998C1A32403AC3DEDCA76CF1D10@SN6PR07MB4399.namprd07.prod.outlook.com>
+x-microsoft-antispam-prvs: <SN6PR07MB439903E450902B6424B8E3F9F1D10@SN6PR07MB4399.namprd07.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231443)(999002)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN6PR07MB4399;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4399;
 x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(39860400002)(136003)(199004)(189003)(97736004)(14444005)(256004)(105586002)(4326008)(106356001)(81156014)(8936002)(66066001)(2906002)(54906003)(110136005)(71190400001)(81166006)(6486002)(316002)(14454004)(8676002)(39060400002)(36756003)(76176011)(52116002)(68736007)(186003)(6116002)(7416002)(25786009)(71200400001)(53936002)(478600001)(99286004)(6512007)(446003)(11346002)(6436002)(26005)(305945005)(486006)(7736002)(102836004)(72206003)(3846002)(2616005)(6506007)(5660300001)(386003)(476003)(1076002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4399;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(39860400002)(136003)(199004)(189003)(97736004)(14444005)(256004)(105586002)(4326008)(106356001)(81156014)(8936002)(66066001)(2906002)(54906003)(110136005)(71190400001)(81166006)(6486002)(316002)(14454004)(8676002)(39060400002)(36756003)(76176011)(52116002)(68736007)(186003)(6116002)(7416002)(25786009)(71200400001)(53936002)(478600001)(99286004)(6512007)(446003)(11346002)(6436002)(26005)(305945005)(486006)(575784001)(7736002)(102836004)(72206003)(3846002)(2616005)(6506007)(5660300001)(386003)(476003)(1076002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4399;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: cavium.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: xziSxoPHfjnA+MRNnBGBN4fHQmuBwzMfapuXRVy3W8peGrG25dGENWDAVBzYEeh7cPqrRZcrnTCtmEWqKahsP0VeP6bgRmIXoXKPUnNUOP1gAGHXzmoGecyq+I1ARVR7NOBp1mN0Xqqjul0eZ6X/G747KHEW3szct4ugGaK8pffaTrBMB4GlSzhc9fPq18DMCxjheXn19xe+hNFuBJ56BDlUhpNrg/n91xVmVetLqntm7Zwn1ufq0QS91aosg0LcXD9hUwEvHXIXUK7WCnX5fuBIAIvgczEwo+dJgVfthbK/WiJdRGXn3kboC4yFjHpm9zlefPmrE51LCF+DBaOa/H7fe5pv50xE9KA3M59nwFI=
+x-microsoft-antispam-message-info: SrHnSxULl5bUGAITusbpMBdLQsDRWRyRWS1J7JMtJ9dOuQN2hFrDFB505A3lfQRmSJetrr0e/4fKlQkrAARf1a/RsA18AJAz621dmnB/qD4PoPWtz11cF1J6Ue2kjURCUdj2yzuVxeaB0HK2vIdsHnLLvdimOfiDuhQ7xqNM8RjCAg3VW3+r89clrKQxUT9zNgKDGck475iFWbLSPYNVa+HCF4IS2SLttV2akXeTzBBVlMqGcjmndIZZjDTZz8l3HfPVKFh1OA9s3Kg6VcBnBlvrsEqC2lSLEa89BRJ6Sg2MSRFhLUrxeiBbGcB1YJ4AVthiB1mVmkU72n02TYp+CAFrdU1MdBK5Nx470X+1hwI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97106d82-30c4-402e-1a7a-08d6553fdabc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:43:26.9314
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0fa4443-9a0d-4911-d27a-08d6553fdd3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:43:30.8533
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
@@ -103,341 +103,241 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To initialize the its nodes at a later point during boot, we need to
-split probing from initialization. Collect all information required
-for initialization in struct its_node. We can then use the its node
-list for initialization.
+This patch separates its initialization from the gic. Probing and
+initialization of its nodes is separate now. There is an own cpu
+notifier for its now.
 
 Signed-off-by: Robert Richter <rrichter@cavium.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 135 +++++++++++++++++++++++----------=
+ drivers/irqchip/irq-gic-v3-its.c   | 58 +++++++++++++++++++++++++---------=
 ----
- drivers/irqchip/irq-gic-v3.c       |   2 +-
- include/linux/irqchip/arm-gic-v3.h |   4 +-
- 3 files changed, 87 insertions(+), 54 deletions(-)
+ drivers/irqchip/irq-gic-v3.c       | 14 ++++-----
+ include/linux/cpuhotplug.h         |  1 +
+ include/linux/irqchip/arm-gic-v3.h |  2 +-
+ 4 files changed, 48 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
 its.c
-index 4033f71f5181..c28f4158ff70 100644
+index c28f4158ff70..fd8561fcfdf3 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -103,6 +103,7 @@ struct its_node {
- 	struct list_head	entry;
- 	void __iomem		*base;
- 	phys_addr_t		phys_base;
-+	phys_addr_t		phys_size;
- 	struct its_cmd_block	*cmd_base;
- 	struct its_cmd_block	*cmd_write;
- 	struct its_baser	tables[GITS_BASER_NR_REGS];
-@@ -3375,7 +3376,7 @@ static struct syscore_ops its_syscore_ops =3D {
- 	.resume =3D its_restore_enable,
- };
+@@ -167,6 +167,7 @@ static struct {
+ } vpe_proxy;
 =20
--static int its_init_domain(struct fwnode_handle *handle, struct its_node *=
-its)
-+static int its_init_domain(struct its_node *its)
+ static LIST_HEAD(its_nodes);
++static LIST_HEAD(its_probed);
+ static DEFINE_RAW_SPINLOCK(its_lock);
+ static struct rdists *gic_rdists;
+ static struct irq_domain *its_parent;
+@@ -3482,20 +3483,13 @@ static int __init its_compute_its_list_map(struct i=
+ts_node *its)
+=20
+ static void its_free(struct its_node *its)
  {
- 	struct irq_domain *inner_domain;
- 	struct msi_domain_info *info;
-@@ -3384,7 +3385,8 @@ static int its_init_domain(struct fwnode_handle *hand=
-le, struct its_node *its)
- 	if (!info)
- 		return -ENOMEM;
-=20
--	inner_domain =3D irq_domain_create_tree(handle, &its_domain_ops, its);
-+	inner_domain =3D irq_domain_create_tree(its->fwnode_handle,
-+					&its_domain_ops, its);
- 	if (!inner_domain) {
- 		kfree(info);
- 		return -ENOMEM;
-@@ -3441,8 +3443,7 @@ static int its_init_vpe_domain(void)
- 	return 0;
+-	raw_spin_lock(&its_lock);
+-	list_del(&its->entry);
+-	raw_spin_unlock(&its_lock);
+-
+ 	kfree(its);
  }
 =20
--static int __init its_compute_its_list_map(struct resource *res,
--					   void __iomem *its_base)
-+static int __init its_compute_its_list_map(struct its_node *its)
- {
- 	int its_number;
- 	u32 ctlr;
-@@ -3456,15 +3457,15 @@ static int __init its_compute_its_list_map(struct r=
-esource *res,
- 	its_number =3D find_first_zero_bit(&its_list_map, GICv4_ITS_LIST_MAX);
- 	if (its_number >=3D GICv4_ITS_LIST_MAX) {
- 		pr_err("ITS@%pa: No ITSList entry available!\n",
--		       &res->start);
-+		       &its->phys_base);
- 		return -EINVAL;
- 	}
-=20
--	ctlr =3D readl_relaxed(its_base + GITS_CTLR);
-+	ctlr =3D readl_relaxed(its->base + GITS_CTLR);
- 	ctlr &=3D ~GITS_CTLR_ITS_NUMBER;
- 	ctlr |=3D its_number << GITS_CTLR_ITS_NUMBER_SHIFT;
--	writel_relaxed(ctlr, its_base + GITS_CTLR);
--	ctlr =3D readl_relaxed(its_base + GITS_CTLR);
-+	writel_relaxed(ctlr, its->base + GITS_CTLR);
-+	ctlr =3D readl_relaxed(its->base + GITS_CTLR);
- 	if ((ctlr & GITS_CTLR_ITS_NUMBER) !=3D (its_number << GITS_CTLR_ITS_NUMBE=
-R_SHIFT)) {
- 		its_number =3D ctlr & GITS_CTLR_ITS_NUMBER;
- 		its_number >>=3D GITS_CTLR_ITS_NUMBER_SHIFT;
-@@ -3472,83 +3473,110 @@ static int __init its_compute_its_list_map(struct =
-resource *res,
-=20
- 	if (test_and_set_bit(its_number, &its_list_map)) {
- 		pr_err("ITS@%pa: Duplicate ITSList entry %d\n",
--		       &res->start, its_number);
-+		       &its->phys_base, its_number);
- 		return -EINVAL;
- 	}
-=20
- 	return its_number;
- }
-=20
-+static void its_free(struct its_node *its)
-+{
-+	raw_spin_lock(&its_lock);
-+	list_del(&its->entry);
-+	raw_spin_unlock(&its_lock);
-+
-+	kfree(its);
-+}
-+
-+static int __init its_init_one(struct its_node *its);
-+
+-static int __init its_init_one(struct its_node *its);
+-
  static int __init its_probe_one(struct resource *res,
  				struct fwnode_handle *handle, int numa_node)
  {
  	struct its_node *its;
-+	int err;
-+
-+	its =3D kzalloc(sizeof(*its), GFP_KERNEL);
-+	if (!its)
-+		return -ENOMEM;
-+
-+	raw_spin_lock_init(&its->lock);
-+	INIT_LIST_HEAD(&its->entry);
-+	INIT_LIST_HEAD(&its->its_device_list);
-+	its->fwnode_handle =3D handle;
-+	its->phys_base =3D res->start;
-+	its->phys_size =3D resource_size(res);
-+	its->numa_node =3D numa_node;
-+
-+	raw_spin_lock(&its_lock);
-+	list_add_tail(&its->entry, &its_nodes);
-+	raw_spin_unlock(&its_lock);
-+
-+	pr_info("ITS %pR\n", res);
-+
-+	err =3D its_init_one(its);
-+	if (err)
-+		its_free(its);
-+
-+	return err;
-+}
-+
-+static int __init its_init_one(struct its_node *its)
-+{
- 	void __iomem *its_base;
- 	u32 val, ctlr;
- 	u64 baser, tmp, typer;
- 	int err;
+-	int err;
 =20
--	its_base =3D ioremap(res->start, resource_size(res));
-+	its_base =3D ioremap(its->phys_base, its->phys_size);
- 	if (!its_base) {
--		pr_warn("ITS@%pa: Unable to map ITS registers\n", &res->start);
--		return -ENOMEM;
-+		pr_warn("ITS@%pa: Unable to map ITS registers\n", &its->phys_base);
-+		err =3D -ENOMEM;
-+		goto fail;
- 	}
-=20
- 	val =3D readl_relaxed(its_base + GITS_PIDR2) & GIC_PIDR2_ARCH_MASK;
- 	if (val !=3D 0x30 && val !=3D 0x40) {
--		pr_warn("ITS@%pa: No ITS detected, giving up\n", &res->start);
-+		pr_warn("ITS@%pa: No ITS detected, giving up\n", &its->phys_base);
- 		err =3D -ENODEV;
- 		goto out_unmap;
- 	}
-=20
- 	err =3D its_force_quiescent(its_base);
- 	if (err) {
--		pr_warn("ITS@%pa: Failed to quiesce, giving up\n", &res->start);
-+		pr_warn("ITS@%pa: Failed to quiesce, giving up\n", &its->phys_base);
- 		goto out_unmap;
- 	}
-=20
--	pr_info("ITS %pR\n", res);
--
--	its =3D kzalloc(sizeof(*its), GFP_KERNEL);
--	if (!its) {
--		err =3D -ENOMEM;
--		goto out_unmap;
--	}
--
--	raw_spin_lock_init(&its->lock);
--	INIT_LIST_HEAD(&its->entry);
--	INIT_LIST_HEAD(&its->its_device_list);
- 	typer =3D gic_read_typer(its_base + GITS_TYPER);
- 	its->base =3D its_base;
--	its->phys_base =3D res->start;
- 	its->ite_size =3D GITS_TYPER_ITT_ENTRY_SIZE(typer);
- 	its->device_ids =3D GITS_TYPER_DEVBITS(typer);
- 	its->is_v4 =3D !!(typer & GITS_TYPER_VLPIS);
- 	if (its->is_v4) {
- 		if (!(typer & GITS_TYPER_VMOVP)) {
--			err =3D its_compute_its_list_map(res, its_base);
-+			err =3D its_compute_its_list_map(its);
- 			if (err < 0)
--				goto out_free_its;
-+				goto out_unmap;
-=20
- 			its->list_nr =3D err;
-=20
- 			pr_info("ITS@%pa: Using ITS number %d\n",
--				&res->start, err);
-+				&its->phys_base, err);
- 		} else {
--			pr_info("ITS@%pa: Single VMOVP capable\n", &res->start);
-+			pr_info("ITS@%pa: Single VMOVP capable\n",
-+				&its->phys_base);
- 		}
- 	}
-=20
--	its->numa_node =3D numa_node;
--
- 	its->cmd_base =3D (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
- 						get_order(ITS_CMD_QUEUE_SZ));
- 	if (!its->cmd_base) {
- 		err =3D -ENOMEM;
--		goto out_free_its;
-+		goto out_unmap;
- 	}
- 	its->cmd_write =3D its->cmd_base;
--	its->fwnode_handle =3D handle;
- 	its->get_msi_base =3D its_irq_get_msi_base;
- 	its->msi_domain_flags =3D IRQ_DOMAIN_FLAG_MSI_REMAP;
-=20
-@@ -3597,13 +3625,11 @@ static int __init its_probe_one(struct resource *re=
+ 	its =3D kzalloc(sizeof(*its), GFP_KERNEL);
+ 	if (!its)
+@@ -3510,16 +3504,12 @@ static int __init its_probe_one(struct resource *re=
 s,
- 	if (GITS_TYPER_HCC(typer))
- 		its->flags |=3D ITS_FLAGS_SAVE_SUSPEND_STATE;
+ 	its->numa_node =3D numa_node;
 =20
--	err =3D its_init_domain(handle, its);
-+	err =3D its_init_domain(its);
- 	if (err)
- 		goto out_free_tables;
-=20
--	raw_spin_lock(&its_lock);
+ 	raw_spin_lock(&its_lock);
 -	list_add_tail(&its->entry, &its_nodes);
--	raw_spin_unlock(&its_lock);
-+	pr_info("ITS@%pa: ITS node added\n", &its->phys_base);
++	list_add_tail(&its->entry, &its_probed);
+ 	raw_spin_unlock(&its_lock);
 =20
- 	return 0;
+ 	pr_info("ITS %pR\n", res);
 =20
-@@ -3611,11 +3637,10 @@ static int __init its_probe_one(struct resource *re=
-s,
- 	its_free_tables(its);
- out_free_cmd:
- 	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
--out_free_its:
--	kfree(its);
- out_unmap:
- 	iounmap(its_base);
--	pr_err("ITS@%pa: failed probing (%d)\n", &res->start, err);
-+fail:
-+	pr_err("ITS@%pa: failed probing (%d)\n", &its->phys_base, err);
- 	return err;
+-	err =3D its_init_one(its);
+-	if (err)
+-		its_free(its);
+-
+-	return err;
++	return 0;
  }
 =20
-@@ -3888,13 +3913,12 @@ static void __init its_acpi_probe(void)
+ static int __init its_init_one(struct its_node *its)
+@@ -3717,7 +3707,7 @@ static int redist_disable_lpis(void)
+ 	return 0;
+ }
+=20
+-int its_cpu_init(void)
++static int its_cpu_init(unsigned int cpu)
+ {
+ 	if (!list_empty(&its_nodes)) {
+ 		int ret;
+@@ -3913,8 +3903,6 @@ static void __init its_acpi_probe(void)
  static void __init its_acpi_probe(void) { }
  #endif
 =20
--int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
--		    struct irq_domain *parent_domain)
-+static int __init its_init(void);
-+
-+int __init its_probe(struct fwnode_handle *handle, struct rdists *rdists,
-+		     struct irq_domain *parent_domain)
+-static int __init its_init(void);
+-
+ int __init its_probe(struct fwnode_handle *handle, struct rdists *rdists,
+ 		     struct irq_domain *parent_domain)
  {
- 	struct device_node *of_node;
--	struct its_node *its;
--	bool has_v4 =3D false;
--	int err;
+@@ -3929,23 +3917,51 @@ int __init its_probe(struct fwnode_handle *handle, =
+struct rdists *rdists,
 =20
- 	its_parent =3D parent_domain;
- 	of_node =3D to_of_node(handle);
-@@ -3903,13 +3927,22 @@ int __init its_init(struct fwnode_handle *handle, s=
-truct rdists *rdists,
- 	else
- 		its_acpi_probe();
+ 	gic_rdists =3D rdists;
 =20
-+	gic_rdists =3D rdists;
+-	return its_init();
++	return 0;
+ }
+=20
+-static int __init its_init(void)
++int __init its_init(void)
+ {
+ 	struct its_node *its;
+ 	bool has_v4 =3D false;
+ 	int err;
+=20
++	if (list_empty(&its_probed))
++		return 0;
 +
-+	return its_init();
-+}
++	raw_spin_lock(&its_lock);
++redo:
++	list_for_each_entry(its, &its_probed, entry) {
++		list_del_init(&its->entry);
 +
-+static int __init its_init(void)
-+{
-+	struct its_node *its;
-+	bool has_v4 =3D false;
-+	int err;
++		raw_spin_unlock(&its_lock);
++
++		/* Needs to be called in non-atomic context */
++		err =3D its_init_one(its);
++		if (err)
++			its_free(its);
++
++		raw_spin_lock(&its_lock);
++
++		if (!err)
++			list_add_tail(&its->entry, &its_nodes);
++
++		goto redo;
++	}
++
++	raw_spin_unlock(&its_lock);
 +
  	if (list_empty(&its_nodes)) {
  		pr_warn("ITS: No ITS available, not enabling LPIs\n");
  		return -ENXIO;
  	}
 =20
--	gic_rdists =3D rdists;
--
  	err =3D allocate_lpi_tables();
- 	if (err)
+-	if (err)
++	if (err) {
++		pr_warn("ITS: Failed to initialize (%d), not enabling LPIs\n",
++			err);
  		return err;
-@@ -3917,10 +3950,10 @@ int __init its_init(struct fwnode_handle *handle, s=
-truct rdists *rdists,
++	}
+=20
  	list_for_each_entry(its, &its_nodes, entry)
  		has_v4 |=3D its->is_v4;
+@@ -3960,5 +3976,9 @@ static int __init its_init(void)
 =20
--	if (has_v4 & rdists->has_vlpis) {
-+	if (has_v4 & gic_rdists->has_vlpis) {
- 		if (its_init_vpe_domain() ||
--		    its_init_v4(parent_domain, &its_vpe_domain_ops)) {
--			rdists->has_vlpis =3D false;
-+		    its_init_v4(its_parent, &its_vpe_domain_ops)) {
-+			gic_rdists->has_vlpis =3D false;
- 			pr_err("ITS: Disabling GICv4 support\n");
- 		}
- 	}
+ 	register_syscore_ops(&its_syscore_ops);
+=20
++	cpuhp_setup_state(CPUHP_AP_IRQ_GIC_ITS_STARTING,
++			"irqchip/arm/gicv3-its:starting",
++			its_cpu_init, NULL);
++
+ 	return 0;
+ }
 diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 8f87f40c9460..e04108b7c6b7 100644
+index e04108b7c6b7..d2942efdb6d5 100644
 --- a/drivers/irqchip/irq-gic-v3.c
 +++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1132,7 +1132,7 @@ static int __init gic_init_bases(void __iomem *dist_b=
-ase,
+@@ -685,9 +685,6 @@ static int gic_starting_cpu(unsigned int cpu)
+ {
+ 	gic_cpu_init();
+=20
+-	if (gic_dist_supports_lpis())
+-		its_cpu_init();
+-
+ 	return 0;
+ }
+=20
+@@ -815,7 +812,7 @@ static int gic_set_affinity(struct irq_data *d, const s=
+truct cpumask *mask_val,
+ #else
+ #define gic_set_affinity	NULL
+ #define gic_smp_init()		do { } while(0)
+-#endif
++#endif	/* CONFIG_SMP */
+=20
+ #ifdef CONFIG_CPU_PM
+ /* Check whether it's single security state view */
+@@ -1131,10 +1128,8 @@ static int __init gic_init_bases(void __iomem *dist_=
+base,
+ 	gic_cpu_init();
  	gic_cpu_pm_init();
 =20
- 	if (gic_dist_supports_lpis()) {
--		its_init(handle, &gic_data.rdists, gic_data.domain);
-+		its_probe(handle, &gic_data.rdists, gic_data.domain);
- 		its_cpu_init();
- 	}
+-	if (gic_dist_supports_lpis()) {
++	if (gic_dist_supports_lpis())
+ 		its_probe(handle, &gic_data.rdists, gic_data.domain);
+-		its_cpu_init();
+-	}
 =20
+ 	return 0;
+=20
+@@ -1327,6 +1322,9 @@ static int __init gic_of_init(struct device_node *nod=
+e, struct device_node *pare
+=20
+ 	if (static_branch_likely(&supports_deactivate_key))
+ 		gic_of_setup_kvm_info(node);
++
++	its_init();
++
+ 	return 0;
+=20
+ out_unmap_rdist:
+@@ -1630,6 +1628,8 @@ gic_acpi_init(struct acpi_subtable_header *header, co=
+nst unsigned long end)
+ 	if (static_branch_likely(&supports_deactivate_key))
+ 		gic_acpi_setup_kvm_info();
+=20
++	its_init();
++
+ 	return 0;
+=20
+ out_fwhandle_free:
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index e0cd2baa8380..584f73585142 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -96,6 +96,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_SCHED_STARTING,
+ 	CPUHP_AP_RCUTREE_DYING,
+ 	CPUHP_AP_IRQ_GIC_STARTING,
++	CPUHP_AP_IRQ_GIC_ITS_STARTING,
+ 	CPUHP_AP_IRQ_HIP04_STARTING,
+ 	CPUHP_AP_IRQ_ARMADA_XP_STARTING,
+ 	CPUHP_AP_IRQ_BCM2836_STARTING,
 diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm=
 -gic-v3.h
-index 071b4cbdf010..a6fdb2910f73 100644
+index a6fdb2910f73..f4348fa4260a 100644
 --- a/include/linux/irqchip/arm-gic-v3.h
 +++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -603,8 +603,8 @@ struct rdists {
+@@ -602,9 +602,9 @@ struct rdists {
+=20
  struct irq_domain;
  struct fwnode_handle;
- int its_cpu_init(void);
--int its_init(struct fwnode_handle *handle, struct rdists *rdists,
--	     struct irq_domain *domain);
-+int its_probe(struct fwnode_handle *handle, struct rdists *rdists,
-+	      struct irq_domain *domain);
+-int its_cpu_init(void);
+ int its_probe(struct fwnode_handle *handle, struct rdists *rdists,
+ 	      struct irq_domain *domain);
++int its_init(void);
  int mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent);
 =20
  static inline bool gic_enable_sre(void)
