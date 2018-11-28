@@ -2,101 +2,105 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7761C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524A7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9261A2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9261A2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 15A3D2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:04:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D1IamjTX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A3D2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeK1RDd (ORCPT
+        id S1727463AbeK1REq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:03:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52440 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727107AbeK1RDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:03:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C2B7B084;
-        Wed, 28 Nov 2018 06:03:03 +0000 (UTC)
-Subject: Re: [PATCH 41/41] scsi: xen-scsifront: mark expected switch
- fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <00c2a9d45e39fb294f4995b07a9b7547206c3085.1543374820.git.gustavo@embeddedor.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a17db312-3e7c-113b-a8a1-ff444322c233@suse.com>
-Date:   Wed, 28 Nov 2018 07:03:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <00c2a9d45e39fb294f4995b07a9b7547206c3085.1543374820.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 12:04:46 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34049 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbeK1REp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 12:04:45 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h3so9654877pfg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CP0ZZK7SqB43zKSvumuMlYKiaZyMxI0xBVfIYtC5CkA=;
+        b=D1IamjTXkEXtalGe/CAe5Tfj4HAw4u1TftWQ5QZru+RLNmGqft2uZo1f0MgRbgfBUU
+         EHsdzo7ncC0DiUQouXjCN47aXgiNGi//IvzoH/NnXY+Rvl40q3aPLVXBr352jojKWZ5j
+         JhydCMxHTvi/hFhwVV8gNTw4O0qLxq1ve6G7U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CP0ZZK7SqB43zKSvumuMlYKiaZyMxI0xBVfIYtC5CkA=;
+        b=J1shaFHGQNXgGh2Lgs26mFXtJqla6BFsgZR3OywScBLZ93JcZxyobQFRkARRe702cq
+         MKxNu4yacWCV293YauMDbeLF0vK/uKC8O12MpARQS1jBkTw0cFdGZnY+I1YlmOoL0foN
+         Ew/U9RPsGSxarnKMxyEQymU8HJvhOn30JSDmfFwk+qkvoeR8OtAwS3k5W13bMxWQ8aSe
+         ddnACk6eNBiUS42+zSKFfZRR4lTz7UEgPziWnOdJo0y0XepTEagj8QyntRMXsD/Rdn4D
+         YdrlUF9JNuI6btCduJbcMpVmDsmaH7xjLoWeW3FQhUYRvgkg2dovF3oyyVdzP13xodBo
+         5+TA==
+X-Gm-Message-State: AA+aEWZ9PAb55lip7w68u/nHgfJE9lWjlBCqlOTb2myF6d4w8l8FzmL/
+        DCwL3rIH/8Cga7pXW0CXXkU+3w==
+X-Google-Smtp-Source: AFSGD/Upc7VGPqDgAmd1BSZnB+zR3FOjHi3jqz/rHjnH4jQsb3qI8+/8eR6N0Aa3KQdfamknOC7YQw==
+X-Received: by 2002:a63:1d1d:: with SMTP id d29mr30798324pgd.49.1543385057493;
+        Tue, 27 Nov 2018 22:04:17 -0800 (PST)
+Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
+        by smtp.gmail.com with ESMTPSA id l85sm6598368pfg.161.2018.11.27.22.04.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 27 Nov 2018 22:04:17 -0800 (PST)
+From:   "Hsin-Yi, Wang" <hsinyi@chromium.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb/mtu3: power down device ip at setup
+Date:   Wed, 28 Nov 2018 14:04:12 +0800
+Message-Id: <20181128060412.630-1-hsinyi@chromium.org>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/11/2018 05:34, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Notice that, in this particular case, I replaced
-> "Missed the backend's Closing state -- fallthrough" with
-> "fall through - Missed the backend's Closing state", which
-> contains the "fall through" annotation at the beginnig of
-> the code comment, which is what GCC is expecting to find.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Originally, when dr_mode is USB_DR_MODE_HOST, it didn't power down device ip,
+so host ip sleep will fail at ssusb_host_disable.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Power down device ip at ssusb_host_setup.
 
+Signed-off-by: Hsin-Yi, Wang <hsinyi@chromium.org>
+---
+ drivers/usb/mtu3/mtu3_host.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Juergen
+diff --git a/drivers/usb/mtu3/mtu3_host.c b/drivers/usb/mtu3/mtu3_host.c
+index c871b94f3e6f..d17cf43305db 100644
+--- a/drivers/usb/mtu3/mtu3_host.c
++++ b/drivers/usb/mtu3/mtu3_host.c
+@@ -192,9 +192,17 @@ int ssusb_host_disable(struct ssusb_mtk *ssusb, bool suspend)
+ static void ssusb_host_setup(struct ssusb_mtk *ssusb)
+ {
+ 	struct otg_switch_mtk *otg_sx = &ssusb->otg_switch;
++	void __iomem *ibase = ssusb->ippc_base;
+ 
+ 	host_ports_num_get(ssusb);
+ 
++	/*
++	 * device ip is default power-on in fact
++	 * power down device ip, otherwise ip-sleep will fail
++	 */
++	if (ssusb->dr_mode == USB_DR_MODE_HOST)
++		mtu3_setbits(ibase, U3D_SSUSB_IP_PW_CTRL2, SSUSB_IP_DEV_PDN);
++
+ 	/*
+ 	 * power on host and power on/enable all ports
+ 	 * if support OTG, gadget driver will switch port0 to device mode
+-- 
+2.18.1
+
