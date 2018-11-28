@@ -3,168 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC756C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBC9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C29220832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C29220832
+	by mail.kernel.org (Postfix) with ESMTP id 7040F20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7040F20832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeK1Vff (ORCPT
+        id S1728168AbeK1Vfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:35:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40090 "EHLO mx1.redhat.com"
+        Wed, 28 Nov 2018 16:35:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37127 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbeK1Vfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:35:33 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727944AbeK1Vfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:35:36 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A652930842AE;
-        Wed, 28 Nov 2018 10:34:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2587A3001580;
+        Wed, 28 Nov 2018 10:34:25 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A3C11001F50;
-        Wed, 28 Nov 2018 10:34:19 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0AC75C21C;
+        Wed, 28 Nov 2018 10:34:21 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id C212E5E4E6; Wed, 28 Nov 2018 11:34:18 +0100 (CET)
+        id 0F9BA5E4E8; Wed, 28 Nov 2018 11:34:19 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org
 Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
         VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/6] drm/qxl: use shadow bo directly
-Date:   Wed, 28 Nov 2018 11:34:16 +0100
-Message-Id: <20181128103418.28023-5-kraxel@redhat.com>
+Subject: [PATCH 6/6] drm/qxl: use qxl_num_crtc directly
+Date:   Wed, 28 Nov 2018 11:34:18 +0100
+Message-Id: <20181128103418.28023-7-kraxel@redhat.com>
 In-Reply-To: <20181128103418.28023-1-kraxel@redhat.com>
 References: <20181128103418.28023-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 28 Nov 2018 10:34:22 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 28 Nov 2018 10:34:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pass the shadow bo to qxl_io_create_primary() instead of expecting
-qxl_io_create_primary to check bo->shadow.  Set is_primary flag on the
-shadow bo.  Move the is_primary tracking into qxl_io_create_primary()
-and qxl_io_destroy_primary() functions.
-
-That simplifies primary surface tracking and the workflow in
-qxl_primary_atomic_update().
+Skip the pointless and slightly confusing indirection via
+qdev->monitors_config->max_allowed.  Just use qxl_num_crtc instead.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/qxl/qxl_cmd.c     |  8 +++-----
- drivers/gpu/drm/qxl/qxl_display.c | 29 ++++++++---------------------
- 2 files changed, 11 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/qxl/qxl_display.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
-index 3c606f0f7a..3957e70ca0 100644
---- a/drivers/gpu/drm/qxl/qxl_cmd.c
-+++ b/drivers/gpu/drm/qxl/qxl_cmd.c
-@@ -372,6 +372,7 @@ void qxl_io_flush_surfaces(struct qxl_device *qdev)
- void qxl_io_destroy_primary(struct qxl_device *qdev)
- {
- 	wait_for_io_cmd(qdev, 0, QXL_IO_DESTROY_PRIMARY_ASYNC);
-+	qdev->primary_bo->is_primary = false;
- 	qdev->primary_bo = NULL;
- }
- 
-@@ -388,11 +389,7 @@ void qxl_io_create_primary(struct qxl_device *qdev, struct qxl_bo *bo)
- 	create->width = bo->surf.width;
- 	create->height = bo->surf.height;
- 	create->stride = bo->surf.stride;
--	if (bo->shadow) {
--		create->mem = qxl_bo_physical_address(qdev, bo->shadow, 0);
--	} else {
--		create->mem = qxl_bo_physical_address(qdev, bo, 0);
--	}
-+	create->mem = qxl_bo_physical_address(qdev, bo, 0);
- 
- 	DRM_DEBUG_DRIVER("mem = %llx, from %p\n", create->mem, bo->kptr);
- 
-@@ -401,6 +398,7 @@ void qxl_io_create_primary(struct qxl_device *qdev, struct qxl_bo *bo)
- 
- 	wait_for_io_cmd(qdev, 0, QXL_IO_CREATE_PRIMARY_ASYNC);
- 	qdev->primary_bo = bo;
-+	qdev->primary_bo->is_primary = true;
- }
- 
- void qxl_io_memslot_add(struct qxl_device *qdev, uint8_t id)
 diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index 69b180735d..472df00c02 100644
+index a6110ec5ba..731a17ba50 100644
 --- a/drivers/gpu/drm/qxl/qxl_display.c
 +++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -526,14 +526,13 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+@@ -80,10 +80,10 @@ static int qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
+ 		DRM_DEBUG_KMS("no client monitors configured\n");
+ 		return status;
+ 	}
+-	if (num_monitors > qdev->monitors_config->max_allowed) {
++	if (num_monitors > qxl_num_crtc) {
+ 		DRM_DEBUG_KMS("client monitors list will be truncated: %d < %d\n",
+-			      qdev->monitors_config->max_allowed, num_monitors);
+-		num_monitors = qdev->monitors_config->max_allowed;
++			      qxl_num_crtc, num_monitors);
++		num_monitors = qxl_num_crtc;
+ 	} else {
+ 		num_monitors = qdev->rom->client_monitors_config.count;
+ 	}
+@@ -96,8 +96,7 @@ static int qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
+ 		return status;
+ 	}
+ 	/* we copy max from the client but it isn't used */
+-	qdev->client_monitors_config->max_allowed =
+-				qdev->monitors_config->max_allowed;
++	qdev->client_monitors_config->max_allowed = qxl_num_crtc;
+ 	for (i = 0 ; i < qdev->client_monitors_config->count ; ++i) {
+ 		struct qxl_urect *c_rect =
+ 			&qdev->rom->client_monitors_config.heads[i];
+@@ -204,7 +203,7 @@ static int qxl_add_monitors_config_modes(struct drm_connector *connector,
+ 
+ 	if (!qdev->monitors_config)
+ 		return 0;
+-	if (h >= qdev->monitors_config->max_allowed)
++	if (h >= qxl_num_crtc)
+ 		return 0;
+ 	if (!qdev->client_monitors_config)
+ 		return 0;
+@@ -307,8 +306,7 @@ static void qxl_crtc_update_monitors_config(struct drm_crtc *crtc,
+ 		return;
+ 	}
+ 
+-	if (!qdev->monitors_config ||
+-	    qdev->monitors_config->max_allowed <= i)
++	if (!qdev->monitors_config || qxl_num_crtc <= i)
+ 		return;
+ 
+ 	head.id = i;
+@@ -350,9 +348,10 @@ static void qxl_crtc_update_monitors_config(struct drm_crtc *crtc,
+ 	if (oldcount != qdev->monitors_config->count)
+ 		DRM_DEBUG_KMS("active heads %d -> %d (%d total)\n",
+ 			      oldcount, qdev->monitors_config->count,
+-			      qdev->monitors_config->max_allowed);
++			      qxl_num_crtc);
+ 
+ 	qdev->monitors_config->heads[i] = head;
++	qdev->monitors_config->max_allowed = qxl_num_crtc;
+ 	qxl_send_monitors_config(qdev);
+ }
+ 
+@@ -1146,9 +1145,8 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
  {
- 	struct qxl_device *qdev = plane->dev->dev_private;
- 	struct qxl_bo *bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
--	struct qxl_bo *bo_old;
-+	struct qxl_bo *bo_old, *primary;
- 	struct drm_clip_rect norect = {
- 	    .x1 = 0,
- 	    .y1 = 0,
- 	    .x2 = plane->state->fb->width,
- 	    .y2 = plane->state->fb->height
- 	};
--	bool same_shadow = false;
+ 	int ret;
+ 	struct drm_gem_object *gobj;
+-	int max_allowed = qxl_num_crtc;
+ 	int monitors_config_size = sizeof(struct qxl_monitors_config) +
+-		max_allowed * sizeof(struct qxl_head);
++		qxl_num_crtc * sizeof(struct qxl_head);
  
- 	if (old_state->fb) {
- 		bo_old = gem_to_qxl_bo(old_state->fb->obj[0]);
-@@ -541,26 +540,13 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
- 		bo_old = NULL;
- 	}
+ 	ret = qxl_gem_object_create(qdev, monitors_config_size, 0,
+ 				    QXL_GEM_DOMAIN_VRAM,
+@@ -1170,9 +1168,8 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
+ 		qxl_bo_physical_address(qdev, qdev->monitors_config_bo, 0);
  
--	if (bo == bo_old)
--		return;
-+	primary = bo->shadow ? bo->shadow : bo;
- 
--	if (bo_old && bo_old->shadow && bo->shadow &&
--	    bo_old->shadow == bo->shadow) {
--		same_shadow = true;
--	}
+ 	memset(qdev->monitors_config, 0, monitors_config_size);
+-	qdev->monitors_config->max_allowed = max_allowed;
 -
--	if (bo_old && bo_old->is_primary) {
--		if (!same_shadow)
-+	if (!primary->is_primary) {
-+		if (qdev->primary_bo)
- 			qxl_io_destroy_primary(qdev);
--		bo_old->is_primary = false;
--	}
--
--	if (!bo->is_primary) {
--		if (!same_shadow) {
--			qxl_io_create_primary(qdev, bo);
--			qxl_primary_apply_cursor(plane);
--		}
--		bo->is_primary = true;
-+		qxl_io_create_primary(qdev, primary);
-+		qxl_primary_apply_cursor(plane);
- 	}
+-	qdev->dumb_heads = kcalloc(max_allowed, sizeof(qdev->dumb_heads[0]), GFP_KERNEL);
++	qdev->dumb_heads = kcalloc(qxl_num_crtc, sizeof(qdev->dumb_heads[0]),
++				   GFP_KERNEL);
+ 	return 0;
+ }
  
- 	qxl_draw_dirty_fb(qdev, plane->state->fb, bo, 0, 0, &norect, 1, 1);
-@@ -756,6 +742,7 @@ static int qxl_plane_prepare_fb(struct drm_plane *plane,
- 			qxl_bo_create(qdev, user_bo->gem_base.size,
- 				      true, true, QXL_GEM_DOMAIN_VRAM, NULL,
- 				      &user_bo->shadow);
-+			user_bo->shadow->surf = user_bo->surf;
- 		}
- 	}
- 
-@@ -784,7 +771,7 @@ static void qxl_plane_cleanup_fb(struct drm_plane *plane,
- 	user_bo = gem_to_qxl_bo(obj);
- 	qxl_bo_unpin(user_bo);
- 
--	if (user_bo->shadow && !user_bo->is_primary) {
-+	if (user_bo->shadow && !user_bo->shadow->is_primary) {
- 		drm_gem_object_put_unlocked(&user_bo->shadow->gem_base);
- 		user_bo->shadow = NULL;
- 	}
 -- 
 2.9.3
 
