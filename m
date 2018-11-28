@@ -2,224 +2,161 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFC3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E8AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658FF20864
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:48:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqQMTv4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658FF20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9DACE2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DACE2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbeK2Eud (ORCPT
+        id S1729088AbeK2ExL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:50:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58122 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727867AbeK2Eud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:50:33 -0500
-Received: from localhost (unknown [104.132.1.80])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58CBF20832;
-        Wed, 28 Nov 2018 17:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543427286;
-        bh=NoSySHPzQAJPUonyrY/rPZwF+awZHbsJm0quZ1z2Y/k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YqQMTv4JrucscYlTP3extVFCZNUk14o8Rb6uj4/el5Cn2JfzFFD7wNkG4J2r9HfdY
-         AWHCQKB+DzLQ1VT2QCboG7Ar4zi0JiyD9dU2+lcQuPDXwrFZlkxBti3xBC9QMjz11S
-         TqTPDuB7HoF5FXRbrDEqYGgMHjG/fgj6xFF1Yh0I=
-Date:   Wed, 28 Nov 2018 09:48:05 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
-Message-ID: <20181128174805.GB41969@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181128073125.39102-1-jaegeuk@kernel.org>
- <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
- <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
- <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        Wed, 28 Nov 2018 23:53:11 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46373 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbeK2ExL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 23:53:11 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gS3yy-0003VL-PR; Wed, 28 Nov 2018 18:50:40 +0100
+Message-ID: <1543427438.2507.52.camel@pengutronix.de>
+Subject: Re: [PATCH v3 2/2] PCI: imx6: limit DBI register length
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Stefan Agner <stefan@agner.ch>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     lorenzo.pieralisi@arm.com, Trent Piepho <tpiepho@impinj.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-kernel@vger.kernel.org, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, andrew.smirnov@gmail.com,
+        linux-pci@vger.kernel.org, bhelgaas@google.com
+Date:   Wed, 28 Nov 2018 18:50:38 +0100
+In-Reply-To: <fd74de3125bf7df8789e83f2e0631157@agner.ch>
+References: <20181120165626.26424-1-stefan@agner.ch>
+         <20181120165626.26424-2-stefan@agner.ch>
+         <581b9548043d5276f6685f534386180fd0673a9a.camel@nxp.com>
+         <1542741198.30311.608.camel@impinj.com>
+         <268e109e1c6b309454bd5a313078894c@agner.ch>
+         <1542749302.30311.624.camel@impinj.com>
+         <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+         <fd07b82d2473d5d7db9826142e79b00a@agner.ch>
+         <fd74de3125bf7df8789e83f2e0631157@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28, Chao Yu wrote:
-> On 2018/11/28 16:10, Jaegeuk Kim wrote:
-> > On 11/28, Chao Yu wrote:
-> >> Hi Jaeguek,
-> >>
-> >> On 2018/11/28 15:31, Jaegeuk Kim wrote:
-> >>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
-> >>> of directory tree. Let's do that by regular fsck or unclean shutdown.
-> >>
-> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >>
-> >> BTW, I have patch made some month ago...
-> >>
-> >> In order to detect nat_bits disabling, could we introduce one more flag for
-> >> fsck?
+Am Mittwoch, den 28.11.2018, 18:36 +0100 schrieb Stefan Agner:
+> On 28.11.2018 13:19, Stefan Agner wrote:
+> > On 21.11.2018 14:47, Leonard Crestez wrote:
+> > > On 11/20/2018 11:28 PM, Trent Piepho wrote:
+> > > > On Tue, 2018-11-20 at 21:42 +0100, Stefan Agner wrote:
+> > > > > On 20.11.2018 20:13, Trent Piepho wrote:
+> > > > > > It also seems to me that this doesn't need to be in the internal pci
+> > > > > > config access functions.  The driver shouldn't be reading registers
+> > > > > > that don't exist anyway.  It's really about trying to fix sysfs access
+> > > > > > to registers that don't exist.  So maybe it should be done there.
+> > > > > 
+> > > > > That was my first approach, see:
+> > > > 
+> > > > Yes, but that just used the pci device id which applies to every IMX
+> > > > design.
+> > > > 
+> > > > It's also not totally correct, as it seems real registers after 0x200
+> > > > do work on imx6, and that would prevent access to them.
+> > > 
+> > > I see that Lorenzo already accepted the patch in pci/dwc:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/commit/?h=pci/dwc&id=f14eaec153aaebbe940ddd21e4198cc2abc927c2
+> > > 
+> > > My tests show that this series breaks pci cards on 6qdl and I think it
+> > > should be reverted until a fix is found. Are you OK with this?
+> > > 
+> > > Fixing might require an entirely different approach.
 > > 
-> > Do we have a way to enable nat_bits very quickly in fsck?
+> > I tried to reproduce this issue on Apalis iMX6 (i.MX 6Q) with a ath9k
+> > PCIe WiFi card, the issue you are seeing did not happen. My lspci looks
+> > as follows:
+> > 
+> > root@ea210c63d739:/# lspci -v
+> > 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
+> > [Normal decode])
+> >         Flags: bus master, fast devsel, latency 0, IRQ 255
+> >         Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
+> >         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+> >         Memory behind bridge: 01100000-011fffff
+> >         [virtual] Expansion ROM at 01200000 [disabled] [size=64K]
+> >         Capabilities: [40] Power Management version 3
+> >         Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+> >         Capabilities: [70] Express Root Port (Slot-), MSI 00
+> >         Capabilities: [100] Advanced Error Reporting
+> >         Capabilities: [140] Virtual Channel
+> > lspci: Unable to load libkmod resources: error -12
+> > 
+> > 01:00.0 Network controller: Qualcomm Atheros AR928X Wireless Network
+> > Adapter (PCI-Express) (rev 01)
+> >         Subsystem: Foxconn International, Inc. Device e007
+> >         Flags: bus master, fast devsel, latency 0, IRQ 312
+> >         Memory at 01100000 (64-bit, non-prefetchable) [size=64K]
+> >         Capabilities: [40] Power Management version 2
+> >         Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit-
+> >         Capabilities: [60] Express Legacy Endpoint, MSI 00
+> >         Capabilities: [90] MSI-X: Enable- Count=1 Masked-
+> >         Capabilities: [100] Advanced Error Reporting
+> >         Capabilities: [140] Virtual Channel
+> >         Capabilities: [160] Device Serial Number 00-00-00-00-00-00-00-00
+> >         Kernel driver in use: ath9k
+> > 
+> > 
+> > I did also setup a WiFi network and transmitted some packages, but I did
+> > not get a nobody carred message. Do you have an idea why that might be?
+> > 
+> > # cat /proc/interrupts
+> > ...
+> > 312:      10967          0          0          0       GPC 123 Level    
+> > ath9k
+> > ...
+> > 
+> > 
+> > Your conclusion in this thread seem reasonable, hence reverting the
+> > issue does. However, I still would like to reproduce the issue so I can
+> > make sure that future patches don't break it :-)
 > 
-> For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
-> rebuild nat_bits based on verified nat blocks/journals?
+> Hm, I realized that I need to enable CONFIG_PCIEPORTBUS and set
+> ath9k.use_msi=1 to get MSI for that card. However, it seems that ath9k
+> does not behave well in that setup. It does get interrupts, and seems to
+> work to some degree, but I was not successful in transmitting data over
+> WiFi, but that might be an entirly different thing.
+> 
+> However, what I noticed is that when CONFIG_PCIEPORTBUS and
+> CONFIG_PCI_MSI is enabled, MSI works but legacy interrupt seem not to
+> fire anymore. That is true for ath9k as well as e1000e (using
+> e1000e.IntMode=0 to force legacy). Is that a known issue/limitation with
+> i.MX 6 PCIe?
 
-I'm leaning to rely on full scan to enable nat_bits again. We may add a mount
-count or timer to trigger fsck regularly?
+Yes, this is a known issue with the Designware PCIe core, not just on
+i.MX6. As soon as any MSI interrupt is enabled, the core doesn't
+forward legacy IRQs anymore.
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
-> >> From: Chao Yu <yuchao0@huawei.com>
-> >> Date: Sun, 9 Sep 2018 05:40:20 +0800
-> >> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/checkpoint.c    | 12 +++++++++++-
-> >>  fs/f2fs/f2fs.h          |  3 ++-
-> >>  fs/f2fs/node.c          |  3 +++
-> >>  include/linux/f2fs_fs.h |  1 +
-> >>  4 files changed, 17 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
-> >> --- a/fs/f2fs/checkpoint.c
-> >> +++ b/fs/f2fs/checkpoint.c
-> >> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
-> >> *sbi, struct cp_control *cpc)
-> >>  	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
-> >>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-> >>  	unsigned long flags;
-> >> +	bool disable_natbits = false;
-> >>
-> >>  	spin_lock_irqsave(&sbi->cp_lock, flags);
-> >>
-> >>  	if ((cpc->reason & CP_UMOUNT) &&
-> >>  			le32_to_cpu(ckpt->cp_pack_total_block_count) >
-> >> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
-> >> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
-> >>  		disable_nat_bits(sbi, false);
-> >> +		disable_natbits = true;
-> >> +	}
-> >>
-> >>  	if (cpc->reason & CP_TRIMMED)
-> >>  		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
-> >> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
-> >> *sbi, struct cp_control *cpc)
-> >>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>
-> >> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
-> >> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
-> >> +
-> >>  	/* set this flag to activate crc|cp_ver for recovery */
-> >>  	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
-> >>  	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
-> >>
-> >>  	spin_unlock_irqrestore(&sbi->cp_lock, flags);
-> >> +
-> >> +	if (disable_natbits)
-> >> +		f2fs_msg(sbi->sb, KERN_NOTICE,
-> >> +			"No enough space in CP area, disable nat_bits.");
-> >>  }
-> >>
-> >>  static void commit_checkpoint(struct f2fs_sb_info *sbi,
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index f0cedbe0c536..b55341c269b2 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -1107,6 +1107,7 @@ enum {
-> >>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
-> >>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
-> >>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
-> >> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
-> >>  };
-> >>
-> >>  enum {
-> >> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
-> >> f2fs_sb_info *sbi, bool lock)
-> >>  {
-> >>  	unsigned long flags;
-> >>
-> >> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
-> >>
-> >>  	if (lock)
-> >>  		spin_lock_irqsave(&sbi->cp_lock, flags);
-> >> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >> index e57add1e8966..0c6f8312a087 100644
-> >> --- a/fs/f2fs/node.c
-> >> +++ b/fs/f2fs/node.c
-> >> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
-> >>
-> >>  	cp_ver |= (cur_cp_crc(ckpt) << 32);
-> >>  	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
-> >> +		f2fs_msg(sbi->sb, KERN_NOTICE,
-> >> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
-> >> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
-> >>  		disable_nat_bits(sbi, true);
-> >>  		return 0;
-> >>  	}
-> >> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> >> index 7196653833fa..1f3ae1504573 100644
-> >> --- a/include/linux/f2fs_fs.h
-> >> +++ b/include/linux/f2fs_fs.h
-> >> @@ -117,6 +117,7 @@ struct f2fs_super_block {
-> >>  /*
-> >>   * For checkpoint
-> >>   */
-> >> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
-> >>  #define CP_DISABLED_FLAG		0x00001000
-> >>  #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
-> >>  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
-> >> -- 
-> >> 2.18.0.rc1
-> >>
-> >>
-> >>
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/f2fs.h | 6 +++++-
-> >>>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>> index c28a9d1cb278..aa500239baf2 100644
-> >>> --- a/fs/f2fs/f2fs.h
-> >>> +++ b/fs/f2fs/f2fs.h
-> >>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
-> >>>  {
-> >>>  	unsigned long flags;
-> >>>  
-> >>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >>> +	/*
-> >>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
-> >>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
-> >>> +	 * so let's rely on regular fsck or unclean shutdown.
-> >>> +	 */
-> >>>  
-> >>>  	if (lock)
-> >>>  		spin_lock_irqsave(&sbi->cp_lock, flags);
-> >>>
-> > 
-> > .
-> > 
+So if any card in your system needs legacy interrupts (and ath9k is
+very likely to need this, as MSI support is pretty new and
+experimental), you need to boot with "nomsi" set on the kernel command
+line.
+
+Regards,
+Lucas
