@@ -2,346 +2,98 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9426C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF3EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CBC2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="avQL8dwu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CBC2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	by mail.kernel.org (Postfix) with ESMTP id BE329206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:05:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE329206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free-electrons.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbeK2IHP (ORCPT
+        id S1726413AbeK2IIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:07:15 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46493 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbeK2IHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:07:15 -0500
-Received: by mail-qt1-f196.google.com with SMTP id y20so27535302qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xsj1IUtq0P/hKOj+fRKOHaZLcbQc1maqXelgBBjJu0A=;
-        b=avQL8dwuIqoraydWmRLkkJYNkhF22ArhTuZd4GKBtnub52vTtsYNpc44yAGKp/pysK
-         jarOx2aPOUFJtf/oqLQZLfzxtZxukmrZDtNDRSRI5lJxHcYB3Y27Ra0trEWkEi/C72Fn
-         2uOVs60shDtNuR3bXdW1kOodpf6GWzh76aCZDgtSFGsO/y7inp2OnME30pJlgHbTdrte
-         dM6cw8D4nxXON8K/3Z3RLvi5vLTVVZHQjW5HRn7rPEFdeYWtCJtj7sDbY0G5Yw7uz442
-         vuWL/rxUP6nRD/ADISI9OiClnWrCdQwwL26W3l2JjudHt+8SBXKkSUtdLXiUNakzklJ0
-         WZpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xsj1IUtq0P/hKOj+fRKOHaZLcbQc1maqXelgBBjJu0A=;
-        b=kMBhko9TJuicIiGKvMFuNN3YtFftLa7YMTS0+TswCalU+Fms4n0WsH7JpcYWKYk7DP
-         5nekgv0t1jHwbc0nIBM0HQfOwyAtDm4Tqkb3cr9Qjqid+2c52EA8wmeMj548yoXPqKqU
-         vSs4OEyc1pq1/mzxJPFuYkVsDtPDw/s1HhzpVQmG39ma72w2rK98d34ya8o/5QeFXaTR
-         pJcrKqJiquPWlQk+AU9HU3RMkkQNWVS0glA/k13sxxbWl4+UWWtlOyT+lMEYKGsv/Nr0
-         GHnvSmAebJFvHnwFzC1vH3Ge0Tzz1y3Jb+3AGfy9OdHU/Sv+lvJGM9KRAM0aL8vlmfVq
-         t8/w==
-X-Gm-Message-State: AGRZ1gI1ZMtidxpMlItPNU0eSZtlSKxR0QpeKs/j1FZaX+tXSK1PTUXA
-        xur7q9uZ5ryW+plii8ccpOXzWA==
-X-Google-Smtp-Source: AJdET5etEJUJcJcKoHon/EGv5PVQUQY3flpOF8lSh5IieK444HkIpd7nMtZfPVCgJYmdJEBJZh7L8A==
-X-Received: by 2002:ac8:8e1:: with SMTP id y30mr36808144qth.3.1543439057429;
-        Wed, 28 Nov 2018 13:04:17 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id 94sm7937607qks.8.2018.11.28.13.04.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 13:04:16 -0800 (PST)
-Date:   Wed, 28 Nov 2018 16:04:15 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Sean Paul <sean@poorly.run>, Jerry Zuo <Jerry.Zuo@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "drm/dp_mst: Skip validating ports during
- destruction, just ref"
-Message-ID: <20181128210415.GF154160@art_vandelay>
-References: <20181128210005.24434-1-lyude@redhat.com>
+        Thu, 29 Nov 2018 03:08:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46646 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbeK2IIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 03:08:46 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B60D8207BD; Wed, 28 Nov 2018 22:05:47 +0100 (CET)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8298A206FF;
+        Wed, 28 Nov 2018 22:05:47 +0100 (CET)
+Date:   Wed, 28 Nov 2018 22:05:47 +0100
+From:   Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v4 01/21] nvmem: Mark nvmem_type_str array with
+ __maybe_unused
+Message-ID: <20181128210547.GI8952@piout.net>
+References: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
+ <20181128190537.14074-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181128210005.24434-1-lyude@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181128190537.14074-2-andriy.shevchenko@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 04:00:05PM -0500, Lyude Paul wrote:
-> This reverts commit:
+On 28/11/2018 21:05:17+0200, Andy Shevchenko wrote:
+> Since we put static variable to a header file it's copied to each module
+> that includes the header. But not all of them are actually using it.
 > 
-> c54c7374ff44 ("drm/dp_mst: Skip validating ports during destruction, just ref")
+> Mark nvmem_type_str array with __maybe_unused to make a compiler happy:
 > 
-> ugh.
+> In file included from include/linux/rtc.h:18,
+>                  from drivers/rtc/rtc-proc.c:15:
+> include/linux/nvmem-provider.h:29:27: warning: ‘nvmem_type_str’ defined but not used [-Wunused-const-variable=]
+>  static const char * const nvmem_type_str[] = {
+>                            ^~~~~~~~~~~~~~
 > 
-> In drm_dp_destroy_connector_work(), we have a pretty good chance of
-> freeing the actual struct drm_dp_mst_port. However, after destroying
-> things we send a hotplug through (*mgr->cbs->hotplug)(mgr) which is
-> where the problems start.
-> 
-> For i915, this calls all the way down to the fbcon probing helpers,
-> which start trying to access the port in a modeset.
-> 
-> [   45.062001] ==================================================================
-> [   45.062112] BUG: KASAN: use-after-free in ex_handler_refcount+0x146/0x180
-> [   45.062196] Write of size 4 at addr ffff8882b4b70968 by task kworker/3:1/53
-> 
-> [   45.062325] CPU: 3 PID: 53 Comm: kworker/3:1 Kdump: loaded Tainted: G           O      4.20.0-rc4Lyude-Test+ #3
-> [   45.062442] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
-> [   45.062554] Workqueue: events drm_dp_destroy_connector_work [drm_kms_helper]
-> [   45.062641] Call Trace:
-> [   45.062685]  dump_stack+0xbd/0x15a
-> [   45.062735]  ? dump_stack_print_info.cold.0+0x1b/0x1b
-> [   45.062801]  ? printk+0x9f/0xc5
-> [   45.062847]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
-> [   45.062909]  ? ex_handler_refcount+0x146/0x180
-> [   45.062970]  print_address_description+0x71/0x239
-> [   45.063036]  ? ex_handler_refcount+0x146/0x180
-> [   45.063095]  kasan_report.cold.5+0x242/0x30b
-> [   45.063155]  __asan_report_store4_noabort+0x1c/0x20
-> [   45.063313]  ex_handler_refcount+0x146/0x180
-> [   45.063371]  ? ex_handler_clear_fs+0xb0/0xb0
-> [   45.063428]  fixup_exception+0x98/0xd7
-> [   45.063484]  ? raw_notifier_call_chain+0x20/0x20
-> [   45.063548]  do_trap+0x6d/0x210
-> [   45.063605]  ? _GLOBAL__sub_I_65535_1_drm_dp_aux_unregister_devnode+0x2f/0x1c6 [drm_kms_helper]
-> [   45.063732]  do_error_trap+0xc0/0x170
-> [   45.063802]  ? _GLOBAL__sub_I_65535_1_drm_dp_aux_unregister_devnode+0x2f/0x1c6 [drm_kms_helper]
-> [   45.063929]  do_invalid_op+0x3b/0x50
-> [   45.063997]  ? _GLOBAL__sub_I_65535_1_drm_dp_aux_unregister_devnode+0x2f/0x1c6 [drm_kms_helper]
-> [   45.064103]  invalid_op+0x14/0x20
-> [   45.064162] RIP: 0010:_GLOBAL__sub_I_65535_1_drm_dp_aux_unregister_devnode+0x2f/0x1c6 [drm_kms_helper]
-> [   45.064274] Code: 00 48 c7 c7 80 fe 53 a0 48 89 e5 e8 5b 6f 26 e1 5d c3 48 8d 0e 0f 0b 48 8d 0b 0f 0b 48 8d 0f 0f 0b 48 8d 0f 0f 0b 49 8d 4d 00 <0f> 0b 49 8d 0e 0f 0b 48 8d 08 0f 0b 49 8d 4d 00 0f 0b 48 8d 0b 0f
-> [   45.064569] RSP: 0018:ffff8882b789ee10 EFLAGS: 00010282
-> [   45.064637] RAX: ffff8882af47ae70 RBX: ffff8882af47aa60 RCX: ffff8882b4b70968
-> [   45.064723] RDX: ffff8882af47ae70 RSI: 0000000000000008 RDI: ffff8882b788bdb8
-> [   45.064808] RBP: ffff8882b789ee28 R08: ffffed1056f13db4 R09: ffffed1056f13db3
-> [   45.064894] R10: ffffed1056f13db3 R11: ffff8882b789ed9f R12: ffff8882af47ad28
-> [   45.064980] R13: ffff8882b4b70968 R14: ffff8882acd86728 R15: ffff8882b4b75dc8
-> [   45.065084]  drm_dp_mst_reset_vcpi_slots+0x12/0x80 [drm_kms_helper]
-> [   45.065225]  intel_mst_disable_dp+0xda/0x180 [i915]
-> [   45.065361]  intel_encoders_disable.isra.107+0x197/0x310 [i915]
-> [   45.065498]  haswell_crtc_disable+0xbe/0x400 [i915]
-> [   45.065622]  ? i9xx_disable_plane+0x1c0/0x3e0 [i915]
-> [   45.065750]  intel_atomic_commit_tail+0x74e/0x3e60 [i915]
-> [   45.065884]  ? intel_pre_plane_update+0xbc0/0xbc0 [i915]
-> [   45.065968]  ? drm_atomic_helper_swap_state+0x88b/0x1d90 [drm_kms_helper]
-> [   45.066054]  ? kasan_check_write+0x14/0x20
-> [   45.066165]  ? i915_gem_track_fb+0x13a/0x330 [i915]
-> [   45.066277]  ? i915_sw_fence_complete+0xe9/0x140 [i915]
-> [   45.066406]  ? __i915_sw_fence_complete+0xc50/0xc50 [i915]
-> [   45.066540]  intel_atomic_commit+0x72e/0xef0 [i915]
-> [   45.066635]  ? drm_dev_dbg+0x200/0x200 [drm]
-> [   45.066764]  ? intel_atomic_commit_tail+0x3e60/0x3e60 [i915]
-> [   45.066898]  ? intel_atomic_commit_tail+0x3e60/0x3e60 [i915]
-> [   45.067001]  drm_atomic_commit+0xc4/0xf0 [drm]
-> [   45.067074]  restore_fbdev_mode_atomic+0x562/0x780 [drm_kms_helper]
-> [   45.067166]  ? drm_fb_helper_debug_leave+0x690/0x690 [drm_kms_helper]
-> [   45.067249]  ? kasan_check_read+0x11/0x20
-> [   45.067324]  restore_fbdev_mode+0x127/0x4b0 [drm_kms_helper]
-> [   45.067364]  ? kasan_check_read+0x11/0x20
-> [   45.067406]  drm_fb_helper_restore_fbdev_mode_unlocked+0x164/0x200 [drm_kms_helper]
-> [   45.067462]  ? drm_fb_helper_hotplug_event+0x30/0x30 [drm_kms_helper]
-> [   45.067508]  ? kasan_check_write+0x14/0x20
-> [   45.070360]  ? mutex_unlock+0x22/0x40
-> [   45.073748]  drm_fb_helper_set_par+0xb2/0xf0 [drm_kms_helper]
-> [   45.075846]  drm_fb_helper_hotplug_event.part.33+0x1cd/0x290 [drm_kms_helper]
-> [   45.078088]  drm_fb_helper_hotplug_event+0x1c/0x30 [drm_kms_helper]
-> [   45.082614]  intel_fbdev_output_poll_changed+0x9f/0x140 [i915]
-> [   45.087069]  drm_kms_helper_hotplug_event+0x67/0x90 [drm_kms_helper]
-> [   45.089319]  intel_dp_mst_hotplug+0x37/0x50 [i915]
-> [   45.091496]  drm_dp_destroy_connector_work+0x510/0x6f0 [drm_kms_helper]
-> [   45.093675]  ? drm_dp_update_payload_part1+0x1220/0x1220 [drm_kms_helper]
-> [   45.095851]  ? kasan_check_write+0x14/0x20
-> [   45.098473]  ? kasan_check_read+0x11/0x20
-> [   45.101155]  ? strscpy+0x17c/0x530
-> [   45.103808]  ? __switch_to_asm+0x34/0x70
-> [   45.106456]  ? syscall_return_via_sysret+0xf/0x7f
-> [   45.109711]  ? read_word_at_a_time+0x20/0x20
-> [   45.113138]  ? __switch_to_asm+0x40/0x70
-> [   45.116529]  ? __switch_to_asm+0x34/0x70
-> [   45.119891]  ? __switch_to_asm+0x40/0x70
-> [   45.123224]  ? __switch_to_asm+0x34/0x70
-> [   45.126540]  ? __switch_to_asm+0x34/0x70
-> [   45.129824]  process_one_work+0x88d/0x15d0
-> [   45.133172]  ? pool_mayday_timeout+0x850/0x850
-> [   45.136459]  ? pci_mmcfg_check_reserved+0x110/0x128
-> [   45.139739]  ? wake_q_add+0xb0/0xb0
-> [   45.143010]  ? check_preempt_wakeup+0x652/0x1050
-> [   45.146304]  ? worker_enter_idle+0x29e/0x740
-> [   45.149589]  ? __schedule+0x1ec0/0x1ec0
-> [   45.152937]  ? kasan_check_read+0x11/0x20
-> [   45.156179]  ? _raw_spin_lock_irq+0xa3/0x130
-> [   45.159382]  ? _raw_read_unlock_irqrestore+0x30/0x30
-> [   45.162542]  ? kasan_check_write+0x14/0x20
-> [   45.165657]  worker_thread+0x1a5/0x1470
-> [   45.168725]  ? set_load_weight+0x2e0/0x2e0
-> [   45.171755]  ? process_one_work+0x15d0/0x15d0
-> [   45.174806]  ? __switch_to_asm+0x34/0x70
-> [   45.177645]  ? __switch_to_asm+0x40/0x70
-> [   45.180323]  ? __switch_to_asm+0x34/0x70
-> [   45.182936]  ? __switch_to_asm+0x40/0x70
-> [   45.185539]  ? __switch_to_asm+0x34/0x70
-> [   45.188100]  ? __switch_to_asm+0x40/0x70
-> [   45.190628]  ? __schedule+0x7d4/0x1ec0
-> [   45.193143]  ? save_stack+0xa9/0xd0
-> [   45.195632]  ? kasan_check_write+0x10/0x20
-> [   45.198162]  ? kasan_kmalloc+0xc4/0xe0
-> [   45.200609]  ? kmem_cache_alloc_trace+0xdd/0x190
-> [   45.203046]  ? kthread+0x9f/0x3b0
-> [   45.205470]  ? ret_from_fork+0x35/0x40
-> [   45.207876]  ? unwind_next_frame+0x43/0x50
-> [   45.210273]  ? __save_stack_trace+0x82/0x100
-> [   45.212658]  ? deactivate_slab.isra.67+0x3d4/0x580
-> [   45.215026]  ? default_wake_function+0x35/0x50
-> [   45.217399]  ? kasan_check_read+0x11/0x20
-> [   45.219825]  ? _raw_spin_lock_irqsave+0xae/0x140
-> [   45.222174]  ? __lock_text_start+0x8/0x8
-> [   45.224521]  ? replenish_dl_entity.cold.62+0x4f/0x4f
-> [   45.226868]  ? __kthread_parkme+0x87/0xf0
-> [   45.229200]  kthread+0x2f7/0x3b0
-> [   45.231557]  ? process_one_work+0x15d0/0x15d0
-> [   45.233923]  ? kthread_park+0x120/0x120
-> [   45.236249]  ret_from_fork+0x35/0x40
-> 
-> [   45.240875] Allocated by task 242:
-> [   45.243136]  save_stack+0x43/0xd0
-> [   45.245385]  kasan_kmalloc+0xc4/0xe0
-> [   45.247597]  kmem_cache_alloc_trace+0xdd/0x190
-> [   45.249793]  drm_dp_add_port+0x1e0/0x2170 [drm_kms_helper]
-> [   45.252000]  drm_dp_send_link_address+0x4a7/0x740 [drm_kms_helper]
-> [   45.254389]  drm_dp_check_and_send_link_address+0x1a7/0x210 [drm_kms_helper]
-> [   45.256803]  drm_dp_mst_link_probe_work+0x6f/0xb0 [drm_kms_helper]
-> [   45.259200]  process_one_work+0x88d/0x15d0
-> [   45.261597]  worker_thread+0x1a5/0x1470
-> [   45.264038]  kthread+0x2f7/0x3b0
-> [   45.266371]  ret_from_fork+0x35/0x40
-> 
-> [   45.270937] Freed by task 53:
-> [   45.273170]  save_stack+0x43/0xd0
-> [   45.275382]  __kasan_slab_free+0x139/0x190
-> [   45.277604]  kasan_slab_free+0xe/0x10
-> [   45.279826]  kfree+0x99/0x1b0
-> [   45.282044]  drm_dp_free_mst_port+0x4a/0x60 [drm_kms_helper]
-> [   45.284330]  drm_dp_destroy_connector_work+0x43e/0x6f0 [drm_kms_helper]
-> [   45.286660]  process_one_work+0x88d/0x15d0
-> [   45.288934]  worker_thread+0x1a5/0x1470
-> [   45.291231]  kthread+0x2f7/0x3b0
-> [   45.293547]  ret_from_fork+0x35/0x40
-> 
-> [   45.298206] The buggy address belongs to the object at ffff8882b4b70968
->                 which belongs to the cache kmalloc-2k of size 2048
-> [   45.303047] The buggy address is located 0 bytes inside of
->                 2048-byte region [ffff8882b4b70968, ffff8882b4b71168)
-> [   45.308010] The buggy address belongs to the page:
-> [   45.310477] page:ffffea000ad2dc00 count:1 mapcount:0 mapping:ffff8882c080cf40 index:0x0 compound_mapcount: 0
-> [   45.313051] flags: 0x8000000000010200(slab|head)
-> [   45.315635] raw: 8000000000010200 ffffea000aac2808 ffffea000abe8608 ffff8882c080cf40
-> [   45.318300] raw: 0000000000000000 00000000000d000d 00000001ffffffff 0000000000000000
-> [   45.320966] page dumped because: kasan: bad access detected
-> 
-> [   45.326312] Memory state around the buggy address:
-> [   45.329085]  ffff8882b4b70800: fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [   45.331845]  ffff8882b4b70880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [   45.334584] >ffff8882b4b70900: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
-> [   45.337302]                                                           ^
-> [   45.340061]  ffff8882b4b70980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [   45.342910]  ffff8882b4b70a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [   45.345748] ==================================================================
-> 
-> So, this definitely isn't a fix that we want. This being said; there's
-> no real easy fix for this problem because of some of the catch-22's of
-> the MST helpers current design. For starters; we always need to validate
-> a port with drm_dp_get_validated_port_ref(), but validation relies on
-> the lifetime of the port in the actual topology. So once the port is
-> gone, it can't be validated again.
-> 
-> If we were to try to make the payload helpers not use port validation,
-> then we'd cause another problem: if the port isn't validated, it could
-> be freed and we'd just start causing more KASAN issues. There are
-> already hacks that attempt to workaround this in
-> drm_dp_mst_destroy_connector_work() by re-initializing the kref so that
-> it can be used again and it's memory can be freed once the VCPI helpers
-> finish removing the port's respective payloads. But none of these really
-> do anything helpful since the port still can't be validated since it's
-> gone from the topology. Also, that workaround is immensely confusing to
-> read through.
-> 
-> What really needs to be done in order to fix this is to teach DRM how to
-> track the lifetime of the structs for MST ports and branch devices
-> seperately from their lifetime in the actual topology. Simply put; this
-> means having two different krefs-one that removes the port/branch device
-> from the topology, and one that finally calls kfree(). This would let us
-> simplify things, since we'd now be able to keep ports around without
-> having to keep them in the topology at the same time, which is exactly
-> what we need in order to teach our VCPI helpers to only validate ports
-> when it's actually necessary without running the risk of trying to use
-> unallocated memory.
-> 
-> Such a fix is on it's way, but for now let's play it safe and just
-> revert this. If this bug has been around for well over a year, we can
-> wait a little while to get an actual proper fix here.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: c54c7374ff44 ("drm/dp_mst: Skip validating ports during destruction, just ref")
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-> Cc: Harry Wentland <Harry.Wentland@amd.com>
-> Cc: stable@vger.kernel.org # v4.6+
-
-Acked-by: Sean Paul <sean@poorly.run>
-
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/gpu/drm/drm_dp_mst_topology.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
+>  include/linux/nvmem-provider.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index 08978ad72f33..529414556962 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -1023,20 +1023,9 @@ static struct drm_dp_mst_port *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
->  static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
->  {
->  	struct drm_dp_mst_port *rport = NULL;
-> -
->  	mutex_lock(&mgr->lock);
-> -	/*
-> -	 * Port may or may not be 'valid' but we don't care about that when
-> -	 * destroying the port and we are guaranteed that the port pointer
-> -	 * will be valid until we've finished
-> -	 */
-> -	if (current_work() == &mgr->destroy_connector_work) {
-> -		kref_get(&port->kref);
-> -		rport = port;
-> -	} else if (mgr->mst_primary) {
-> -		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-> -						       port);
-> -	}
-> +	if (mgr->mst_primary)
-> +		rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary, port);
->  	mutex_unlock(&mgr->lock);
->  	return rport;
->  }
+> diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+> index 00ff92571683..e33919ddb026 100644
+> --- a/include/linux/nvmem-provider.h
+> +++ b/include/linux/nvmem-provider.h
+> @@ -26,7 +26,7 @@ enum nvmem_type {
+>  	NVMEM_TYPE_BATTERY_BACKED,
+>  };
+>  
+> -static const char * const nvmem_type_str[] = {
+> +static const __maybe_unused char * const nvmem_type_str[] = {
+
+Hum, it is probably better to move the array to nvmem/core.c. I should
+have done that from the beginning.
+
+>  	[NVMEM_TYPE_UNKNOWN] = "Unknown",
+>  	[NVMEM_TYPE_EEPROM] = "EEPROM",
+>  	[NVMEM_TYPE_OTP] = "OTP",
 > -- 
 > 2.19.2
 > 
 
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
