@@ -2,109 +2,112 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA8EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194ECC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E9C20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2FD620832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:52:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Ba9dJd4Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E9C20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pf1iKreE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FD620832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbeK2IzT (ORCPT
+        id S1726598AbeK2Izw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:55:19 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51334 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeK2IzT (ORCPT
+        Thu, 29 Nov 2018 03:55:52 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43637 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeK2Izv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:55:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id s14so211026wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:52:15 -0800 (PST)
+        Thu, 29 Nov 2018 03:55:51 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so20564696lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+A6kKVDT/lzse7xZ8rGbuT3M9IaS07gutU1qZJ0FKGs=;
-        b=Ba9dJd4YCsnI+qe8Wnv/2jONoooWXrGAh+x0TELwQaOpSzPl2JSdtXT0OClCfZSAD5
-         LCyHfk0Mu1V1B+aDy/kz482gHNQeMI2xk5YhIb3AKpgf12FRGRcW80oqe5tUBwl39BTB
-         5fjN9GmunOq3dSkK1BoS/D7sJrE+Baqsqq+TLRY+Np068Vh72A8yjiyx7Yof6r6aiSas
-         jWUI9TiwQwK2EqQJtdo/QYSisoW/xwfhdpa9UAav2YTVT4QMR9wr4OEGO8SdOrOOydCT
-         LizZ6Jt4WBmGSX4d4Yd4e+AXoMlo9/jXaUj+Lwzw8o+ef8gi16XUtedy5Ar8cgbAjyLn
-         uudQ==
+        bh=/UbjfQW9J9BBwf59qii6+dDVIsy8pzC8Vzhlevq+m+o=;
+        b=pf1iKreEhOtTcOR7CtXvtC0XBEiXy9otF4h8WYBxanI8MGpOKvDtB86cz6C3uJoZ3A
+         /Id8YuEjrNidD3YmRBvscRWDIUmZpnMnuDt8c+AhgdeuA4IA+J++TkmqrVvIaU7wPSe9
+         nqw9myUE07PJMz5L6+WD4VpWT2Pnp8amCqaB4lRRp7n+nzBtD/CfqMWYUgElGPAujML+
+         49vMy9YTnlh6PJT4BM1MzRoGB3mxGx6BQY2+Uz/Dx17zbI9HhdK9DtNzfMXt6aFLEM4/
+         fTUZ8F7fXMGoRs6n3YB6fm4gMKHlgj+SmQ1wrAXRVL+9M1DChfKhpIZA9IuSIOvtbh8t
+         RUeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+A6kKVDT/lzse7xZ8rGbuT3M9IaS07gutU1qZJ0FKGs=;
-        b=iWiG8p3TA6KaDKQlyNOSOdKc9SxAH8+fYiZ9CybYcl772rI/WySDpexwVDJPNareCM
-         LWAFIZ/8s0Hzswz26FnPp4WPc/IE+bQkRkPdSAZGpCpThDdCDJyUAs1BRQgRCdZencJQ
-         3/WUwZ/lzmTY0oOJUSnRMwEjRxP8dCbyhi39OhVz2sHWXLQ7wDm7b3Nmn6milFTWS6yW
-         jodcZ/4iMX+mArW8kUK1bz6O6zwwOvj4JkMMCQUZKm5W5aiUVrQqT1JNacbrum4QWr3T
-         EV3Qs1UK6i4l4hyxgILqUyte7jamD3HljzYDh69diO/kxwHP4bDcMpnbixLl8adP0a/o
-         DjtA==
-X-Gm-Message-State: AA+aEWY0++yuT/aHBRnNoTqzWRLJog9lzZMOwKBFiZ/PG7XmrBfPdILX
-        sGardytvYf4lJX926YLOzl5VYljaSIAn4+PO+/ntIQ==
-X-Google-Smtp-Source: AFSGD/WcBX8wZdAEeTz3PUAHR4hYaTuMcJcpc4OYW4xhCKQve6ov+lVJ8iSq82mPV7WPFpt/X2RgXXTg1V7ClWRYMKg=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr4500608wmf.32.1543441934150;
- Wed, 28 Nov 2018 13:52:14 -0800 (PST)
+        bh=/UbjfQW9J9BBwf59qii6+dDVIsy8pzC8Vzhlevq+m+o=;
+        b=OHBBB8Muw7yII3mS93ANyAMCDxZJjI+tKqaqlI4pmxPQr+BF4YWKNhwBsEMKo8fg0o
+         VFOGGKMjQunTzTRce0+WGVc1ihCAE7NRfpdR5u/vhCV0YZWbHd99wc6zyvqNfmVSApcT
+         MFiAQNPhw5VWKYAyxvQNYjalr5lFkHJ1bjYHjPAZKE+xJp56NoOJpaAshK1lBt4+JIv4
+         B6voVo97bbqe7mJ/3GN7kNma74CVUP+4pm8fDjytb2Dptl6o/lrmGvdxgqL0kNCmABac
+         5JPO+N8O4YZHR+SUzgZOtrBAeRY82AfcTXGqW55wJoVJTU6OsYuqIAWfkQVqomRmULbd
+         drpA==
+X-Gm-Message-State: AGRZ1gJci7nUx8wMZYs10pnH3xxr6zNd5m700mSGbBiGEMXn7YQZLvBj
+        /6n3PP1+RlCu4bmVMsIIpXWExTQoXQtI4av7a8pK
+X-Google-Smtp-Source: AJdET5djzW1NAOHCvwT0PMz2L4+UQUpJxPRT9oMcKZUtMaEOprcKLU1isAfml/cT01TEqb2fItGLT4vPQ15G70ZNk8o=
+X-Received: by 2002:a19:40cc:: with SMTP id n195mr22735114lfa.40.1543441966492;
+ Wed, 28 Nov 2018 13:52:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
- <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com>
- <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181126215145.GC868@linux.intel.com>
- <20181126230436.GA6737@linux.intel.com> <20181127085533.GA12247@wind.enjellic.com>
-In-Reply-To: <20181127085533.GA12247@wind.enjellic.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 28 Nov 2018 13:52:00 -0800
-Message-ID: <CALCETrV4UA5bn6dkq5aVycApx1ubq-rho_z=sHhxABbOSGZWMw@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     "Dr. Greg Wettstein" <greg@enjellic.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
+ <20181127225013.133adc7d@canb.auug.org.au>
+In-Reply-To: <20181127225013.133adc7d@canb.auug.org.au>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 28 Nov 2018 16:52:35 -0500
+Message-ID: <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
+To:     sfr@canb.auug.org.au, omosnace@redhat.com
+Cc:     viro@zeniv.linux.org.uk, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:55 AM Dr. Greg <greg@enjellic.com> wrote:
-> Since the thread has become a bit divergent I wanted to note that we
-> have offered a proposal for a general policy management framework
-> based on MRSIGNER values.  This framework is consistent with the SGX
-> security model, ie. cryptographic rather then DAC based policy
-> controls.  This framework also allows a much more flexible policy
-> implementation that doesn't result in combinatoric issues.
+On Tue, Nov 27, 2018 at 6:50 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Ondrej,
+>
+> On Tue, 27 Nov 2018 09:53:32 +0100 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > Hm... seems that there was some massive overhaul in the VFS code right
+> > at the wrong moment... There are new hooks for mounting now and the
+>
+> The mount changes have been in linux-next since before the last
+> release ...
+>
+> > code that our commit changes is now here:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/tree/security/selinux/hooks.c?h=for-next#n3131
+> >
+> > It seems that the logic is still the same, just now our patch (or the
+> > VFS one) needs to be updated to change the above line as such
+> > (untested pseudo-patch):
+> >
+> > - if (fc->purpose == FS_CONTEXT_FOR_KERNEL_MOUNT)
+> > + if (fc->purpose == (FS_CONTEXT_FOR_KERNEL_MOUNT|FS_CONTEXT_FOR_SUBMOUNT))
+>
+> OK, so from tomorrow I will use that merge resolution.  Someone needs
+> to remember to tell Linus about this when the latter of the vfs and
+> selinux trees reach him.
 
-Can you give a concrete explanation of a problem that your proposal
-would solve?  As far as I can tell, it gets rid of a case in which an
-unprivileged attacker who can run enclaves but hasn't compromised the
-kernel can learn the PPID and other SGX-related permanent platform
-identifiers, but it does nothing to prevent the same attacker from
-learning non-SGX-related permanent identifiers, nor does it prevent
-the attacker from using the Intel quoting enclave (unless configured
-in a surprising way) and thus attesting to a remote system.
+I will, or at least I'll do my best to remember; since we only have a
+few more week until the merge window I like my odds.  FWIW, I
+typically do a test merge on top of Linus' tree before sending the
+SELinux PR just to verify that everything is relatively clean and
+there are no surprises.
 
-So what problem does it solve?
+Ondrej, please work with David Howells to ensure that submounts are
+handled correctly in his mount rework.
+
+-- 
+paul moore
+www.paul-moore.com
