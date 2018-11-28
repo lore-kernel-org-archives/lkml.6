@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D5EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00890C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2CBF2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5E272082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:14:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mEVEmUrP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2CBF2086B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bplo53fR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E272082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbeK1RLm (ORCPT
+        id S1727476AbeK1ROc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:11:42 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:46400 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeK1RLm (ORCPT
+        Wed, 28 Nov 2018 12:14:32 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42454 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbeK1ROc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:11:42 -0500
-Received: by mail-ua1-f67.google.com with SMTP id v24so8496109uap.13
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:11:13 -0800 (PST)
+        Wed, 28 Nov 2018 12:14:32 -0500
+Received: by mail-vs1-f65.google.com with SMTP id b74so15338444vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=95/j4OaP+7oLfip7mT7xIJREPajjcQ3AuDdxuZHfAGQ=;
-        b=mEVEmUrPhbcRQ0uChz3gwEXAcgrVoIU9LBpeFJB5D1ZFqD0YB/vmbGnfMywOC6rJUW
-         WLE7hOex1yfgJuwn8OooIin3X5UPt8BDudEYrxGKSeVZZobOpsOxTIgc9PeupdcjMdKv
-         o9pCHldRppUpfogMehwXzWzUeet0eBbQ3uAW0=
+        bh=7Ve3r8U3X5hes3hzah7mGfTA45tELFjJj2jydqsRFCY=;
+        b=Bplo53fRDrkSibdNSIbgNW1EXoGumlz9V4UOfQePTz3OUC6TzZ9iLOTFM5f3oBeLzL
+         Mag8bJTA5uIInA1bblXO8Qr9FVG+JqLDp/4QqPoNuhux51nevJbSue2aAdXs12OLVqYe
+         t8cGEAYLQiYZ4gFa1MLQvnnxo+FM3kfdMkRR4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=95/j4OaP+7oLfip7mT7xIJREPajjcQ3AuDdxuZHfAGQ=;
-        b=FWfDpbsxD3hfEtsYKW9X8hkEAlyl4tscGJQnFMYSnc8bUmC0TyCo9LY/mXHhfCkBcL
-         h7cUMrjCNLL8hcIRlBd7M6ilbraOZBEMRkpBFaIYsozINzT9l+qLV+44gTjnYpfn5EUa
-         VCB+p8UfeUorKKcA0svguAxNLPxduPGtEpCST3GmklE3jxsSsr26+JHkYRfSjd8gb1+5
-         2j5aBePfHifYaNpIbaQ95SNhfqLG4vR3MJ8/dc/foSDTLbH3VeHu2Cc79dsKLpNc0qDE
-         xmiWB6TO3tGiHPdW+zNT9CKBvLC2xSlteRA9qP6HIG/JIqErKDJTTk2Squr5KSI42wh9
-         ABKQ==
-X-Gm-Message-State: AA+aEWb0Kwsv2p4OX8FGgIReVtI1QznDZvUhXkknNyk4vhSVZG7xeEEB
-        SPTZPbwgDIRiVT0VlBduXTT0HzHaobg=
-X-Google-Smtp-Source: AFSGD/Vkbd5q+J+8ByCGlk7cXdp4gMcWefGB8zuclcEF50/AcAEPsxbzMJK8rYT5Px69RkeHy9OaZg==
-X-Received: by 2002:a9f:2709:: with SMTP id a9mr14820339uaa.10.1543385472819;
-        Tue, 27 Nov 2018 22:11:12 -0800 (PST)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
-        by smtp.gmail.com with ESMTPSA id k20sm1567948uaq.2.2018.11.27.22.11.11
+        bh=7Ve3r8U3X5hes3hzah7mGfTA45tELFjJj2jydqsRFCY=;
+        b=L05uuFiPg1Oq4gbi3MmWJdzJduaxK4ieB1NfoukQmOqFEwBhat4Mw+x1McxlT3mcrE
+         oNwUDhbya4DAmR4tpUC5/Tst/rIr+XGN+dkLzEzAKF7+I33/y19uahhayaHzIoGafRyH
+         +m3K1BIYXGNIch7gQJ0wdXlwu6dGYyWSkYDE2ealTp5s96NN8CEsVcrt9IcF1niQPjtv
+         E9vQqKqj9rOcMFidO1kZl+O1nGFbqeF8e8G+UXlMkVrLMUehY8Wp6eJ5+3+ApOIxP6R9
+         1rtkUmtBAZwPRa6zfb0i8AJLaaDioIaN3gW4uF60Qny2R09f10CN61Vjy3Zsjkd1mC4H
+         A9ow==
+X-Gm-Message-State: AGRZ1gJjvr5HYTtWvXGb1GZ5ETJkj3tYMANNBdFOggXo0nN7FPEQeDXv
+        tM/cSlo/rrzJdH8+OHAfph2ydxh8s2I=
+X-Google-Smtp-Source: AJdET5c8JX8INGglgJV6mH9rpDmykeYnie3pDRxy1HDFse5LJS9yg1D/g4YZX0WagksWWwwwdulYyA==
+X-Received: by 2002:a67:7ad3:: with SMTP id v202mr15347502vsc.49.1543385641603;
+        Tue, 27 Nov 2018 22:14:01 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 30sm2028618vkq.49.2018.11.27.22.14.00
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 22:11:11 -0800 (PST)
-Received: by mail-vk1-f172.google.com with SMTP id t127so5653683vke.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:11:11 -0800 (PST)
-X-Received: by 2002:a1f:1881:: with SMTP id 123mr4137813vky.40.1543385470608;
- Tue, 27 Nov 2018 22:11:10 -0800 (PST)
+        Tue, 27 Nov 2018 22:14:00 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id q80so5667640vka.6
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:14:00 -0800 (PST)
+X-Received: by 2002:a1f:4301:: with SMTP id q1mr14916667vka.70.1543385639650;
+ Tue, 27 Nov 2018 22:13:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20181126231159.122298-1-mka@chromium.org> <20181126231159.122298-5-mka@chromium.org>
-In-Reply-To: <20181126231159.122298-5-mka@chromium.org>
+References: <20181126231159.122298-1-mka@chromium.org> <20181126231159.122298-8-mka@chromium.org>
+In-Reply-To: <20181126231159.122298-8-mka@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 27 Nov 2018 22:10:58 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XWaQqhzwBp0YAavnD-2kL+QFO7_wZBxp+2KjN7HNEfMQ@mail.gmail.com>
-Message-ID: <CAD=FV=XWaQqhzwBp0YAavnD-2kL+QFO7_wZBxp+2KjN7HNEfMQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] arm64: dts: qcom: msm8916: Set 'xo_board' as ref
- clock of the DSI PHY
+Date:   Tue, 27 Nov 2018 22:13:47 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xbb4GchyndP2EDM660gfHPOtEEeoF6A8j9xr+kz-MWaA@mail.gmail.com>
+Message-ID: <CAD=FV=Xbb4GchyndP2EDM660gfHPOtEEeoF6A8j9xr+kz-MWaA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] drm/msm/dsi: 10nm PHY: Get ref clock from the DT
 To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
@@ -95,21 +94,21 @@ Hi,
 
 On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
 >
-> Add 'xo_board' as ref clock for the DSI PHYs, it was previously
-> hardcoded in the PLL 'driver' for the 28nm PHY.
-
-Note: presumably your series should have one more patch to fix
-"arch/arm/boot/dts/qcom-apq8064.dtsi" too?
-
-
+> Get the ref clock of the PHY from the device tree instead of
+> hardcoding its name and rate.
+>
 > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
 > Changes in v2:
-> - patch added to the series
+> - remove anonymous array in clk_init_data assignment
+> - log error code if devm_clk_get() fails
+> - don't log devm_clk_get() failures for -EPROBE_DEFER
+> - updated commit message
 > ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 
-This looks right to me.
+Same feedback as with 14nm PHY patch; if you address that feedback
+feel free to add my Reviewed-by here too.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+-Doug
