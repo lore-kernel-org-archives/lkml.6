@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2940C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE7AC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96AB3205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AB3205C9
+	by mail.kernel.org (Postfix) with ESMTP id 52EDC205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:54:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EDC205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbeK2E4v (ORCPT
+        id S1729608AbeK2E4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:56:51 -0500
-Received: from shell.v3.sk ([90.176.6.54]:39506 "EHLO shell.v3.sk"
+        Wed, 28 Nov 2018 23:56:52 -0500
+Received: from shell.v3.sk ([90.176.6.54]:39518 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729540AbeK2E4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729537AbeK2E4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 23:56:51 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id DEED199B07;
-        Wed, 28 Nov 2018 18:54:22 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 70E9B99A51;
+        Wed, 28 Nov 2018 18:54:21 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id p1eUjYhcIjan; Wed, 28 Nov 2018 18:54:08 +0100 (CET)
+        with ESMTP id bRXCUJoswf8E; Wed, 28 Nov 2018 18:54:01 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7883199B60;
-        Wed, 28 Nov 2018 18:53:45 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id B2EAD99B07;
+        Wed, 28 Nov 2018 18:53:41 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id q0tCLb9Z7Ki5; Wed, 28 Nov 2018 18:53:42 +0100 (CET)
+        with ESMTP id dWUQ9O-UcFzV; Wed, 28 Nov 2018 18:53:36 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D2E8399B67;
-        Wed, 28 Nov 2018 18:53:33 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2757D99B26;
+        Wed, 28 Nov 2018 18:53:32 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     arm@kernel.org, Olof Johansson <olof@lixom.net>,
         Arnd Bergmann <arnd@arndb.de>
@@ -48,9 +48,9 @@ Cc:     Eric Miao <eric.y.miao@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, James Cameron <quozl@laptop.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4 20/20] USB: gadget: mv-udc: use phy-pxa-usb
-Date:   Wed, 28 Nov 2018 18:53:24 +0100
-Message-Id: <20181128175324.163202-21-lkundrak@v3.sk>
+Subject: [PATCH v4 14/20] ARM: mmp/mmp2: use cpu_is_pj4() instead of cpu_is_mmp2()
+Date:   Wed, 28 Nov 2018 18:53:18 +0100
+Message-Id: <20181128175324.163202-15-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181128175324.163202-1-lkundrak@v3.sk>
 References: <20181128175324.163202-1-lkundrak@v3.sk>
@@ -61,152 +61,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a proper PHY driver, instead of hooks to a board support package.
+The MMP2 platform uses the PJ4 CPU. The cpu_is_mmp2() macro is thus
+actually not useful at all and moreover gives the wrong result on
+MACH_MMP2_DT.
+
+The actual problem I aim to fix is that on a device-tree enabled system,
+the timer ends up being initialized incorrectly. In fact, it ticks like
+at rate that's 1/100 slower or so.
+
+Perhaps the other cpu_is_mmp2() uses are more benign, but still useless.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- arch/arm/mach-mmp/devices.c          | 11 +-------
- drivers/usb/gadget/udc/mv_udc.h      |  7 ++++-
- drivers/usb/gadget/udc/mv_udc_core.c | 38 ++++++++--------------------
- 3 files changed, 17 insertions(+), 39 deletions(-)
+ arch/arm/mach-mmp/cputype.h | 9 ---------
+ arch/arm/mach-mmp/mmp2.c    | 2 +-
+ arch/arm/mach-mmp/pm-mmp2.c | 2 +-
+ arch/arm/mach-mmp/time.c    | 2 +-
+ 4 files changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/devices.c b/arch/arm/mach-mmp/devices.c
-index eb9b3c34e90a..d925be9f14a9 100644
---- a/arch/arm/mach-mmp/devices.c
-+++ b/arch/arm/mach-mmp/devices.c
-@@ -263,21 +263,12 @@ struct platform_device pxa168_device_usb_phy =3D {
+diff --git a/arch/arm/mach-mmp/cputype.h b/arch/arm/mach-mmp/cputype.h
+index 446edaeb78a7..405dbbbbbcdd 100644
+--- a/arch/arm/mach-mmp/cputype.h
++++ b/arch/arm/mach-mmp/cputype.h
+@@ -44,13 +44,4 @@ static inline int cpu_is_pxa910(void)
+ #define cpu_is_pxa910()	(0)
+ #endif
 =20
- #if IS_ENABLED(CONFIG_USB_MV_UDC)
- struct resource pxa168_u2o_resources[] =3D {
--	/* regbase */
- 	[0] =3D {
--		.start	=3D PXA168_U2O_REGBASE + U2x_CAPREGS_OFFSET,
-+		.start	=3D PXA168_U2O_REGBASE,
- 		.end	=3D PXA168_U2O_REGBASE + USB_REG_RANGE,
- 		.flags	=3D IORESOURCE_MEM,
--		.name	=3D "capregs",
- 	},
--	/* phybase */
- 	[1] =3D {
--		.start	=3D PXA168_U2O_PHYBASE,
--		.end	=3D PXA168_U2O_PHYBASE + USB_PHY_RANGE,
--		.flags	=3D IORESOURCE_MEM,
--		.name	=3D "phyregs",
--	},
--	[2] =3D {
- 		.start	=3D IRQ_PXA168_USB1,
- 		.end	=3D IRQ_PXA168_USB1,
- 		.flags	=3D IORESOURCE_IRQ,
-diff --git a/drivers/usb/gadget/udc/mv_udc.h b/drivers/usb/gadget/udc/mv_=
-udc.h
-index b3f759c0962c..6f04f432964d 100644
---- a/drivers/usb/gadget/udc/mv_udc.h
-+++ b/drivers/usb/gadget/udc/mv_udc.h
-@@ -6,6 +6,9 @@
- #ifndef __MV_UDC_H
- #define __MV_UDC_H
-=20
-+/* registers */
-+#define U2x_CAPREGS_OFFSET	0x100
-+
- #define VUSBHS_MAX_PORTS	8
-=20
- #define DQH_ALIGNMENT		2048
-@@ -174,9 +177,9 @@ struct mv_udc {
- 	struct platform_device		*dev;
- 	int				irq;
-=20
-+	void __iomem                    *base;
- 	struct mv_cap_regs __iomem	*cap_regs;
- 	struct mv_op_regs __iomem	*op_regs;
--	void __iomem                    *phy_regs;
- 	unsigned int			max_eps;
- 	struct mv_dqh			*ep_dqh;
- 	size_t				ep_dqh_size;
-@@ -219,6 +222,8 @@ struct mv_udc {
-=20
- 	/* some SOC has mutiple clock sources for USB*/
- 	struct clk      *clk;
-+
-+	struct phy	*phy;
- };
-=20
- /* endpoint data structure */
-diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/ud=
-c/mv_udc_core.c
-index cafde053788b..35b0bde2d46f 100644
---- a/drivers/usb/gadget/udc/mv_udc_core.c
-+++ b/drivers/usb/gadget/udc/mv_udc_core.c
-@@ -1069,14 +1069,11 @@ static int mv_udc_enable_internal(struct mv_udc *=
-udc)
- 	if (retval)
- 		return retval;
-=20
--	if (udc->pdata->phy_init) {
--		retval =3D udc->pdata->phy_init(udc->phy_regs);
--		if (retval) {
--			dev_err(&udc->dev->dev,
--				"init phy error %d\n", retval);
--			udc_clock_disable(udc);
--			return retval;
--		}
-+	retval =3D phy_init(udc->phy);
-+	if (retval) {
-+		dev_err(&udc->dev->dev, "init phy error %d\n", retval);
-+		udc_clock_disable(udc);
-+		return retval;
- 	}
- 	udc->active =3D 1;
-=20
-@@ -1095,8 +1092,7 @@ static void mv_udc_disable_internal(struct mv_udc *=
-udc)
- {
- 	if (udc->active) {
- 		dev_dbg(&udc->dev->dev, "disable udc\n");
--		if (udc->pdata->phy_deinit)
--			udc->pdata->phy_deinit(udc->phy_regs);
-+		phy_exit(udc->phy);
- 		udc_clock_disable(udc);
- 		udc->active =3D 0;
- 	}
-@@ -2147,30 +2143,16 @@ static int mv_udc_probe(struct platform_device *p=
-dev)
- 	if (IS_ERR(udc->clk))
- 		return PTR_ERR(udc->clk);
-=20
--	r =3D platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "capregs")=
-;
-+	r =3D platform_get_resource(udc->dev, IORESOURCE_MEM, 0);
- 	if (r =3D=3D NULL) {
- 		dev_err(&pdev->dev, "no I/O memory resource defined\n");
- 		return -ENODEV;
- 	}
-=20
--	udc->cap_regs =3D (struct mv_cap_regs __iomem *)
--		devm_ioremap(&pdev->dev, r->start, resource_size(r));
--	if (udc->cap_regs =3D=3D NULL) {
--		dev_err(&pdev->dev, "failed to map I/O memory\n");
--		return -EBUSY;
--	}
+-#ifdef CONFIG_CPU_MMP2
+-static inline int cpu_is_mmp2(void)
+-{
+-	return (((read_cpuid_id() >> 8) & 0xff) =3D=3D 0x58);
+-}
+-#else
+-#define cpu_is_mmp2()	(0)
+-#endif
 -
--	r =3D platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "phyregs")=
-;
--	if (r =3D=3D NULL) {
--		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
--		return -ENODEV;
--	}
-+	udc->base =3D devm_ioremap(&pdev->dev, r->start, resource_size(r));
+ #endif /* __ASM_MACH_CPUTYPE_H */
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index afba5460cdaf..b670fafedeac 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -104,7 +104,7 @@ void __init mmp2_init_irq(void)
 =20
--	udc->phy_regs =3D devm_ioremap(&pdev->dev, r->start, resource_size(r));
--	if (udc->phy_regs =3D=3D NULL) {
--		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
--		return -EBUSY;
--	}
-+	udc->cap_regs =3D
-+		(void __iomem *) ((unsigned long)udc->base + U2x_CAPREGS_OFFSET);
+ static int __init mmp2_init(void)
+ {
+-	if (cpu_is_mmp2()) {
++	if (cpu_is_pj4()) {
+ #ifdef CONFIG_CACHE_TAUROS2
+ 		tauros2_init(0);
+ #endif
+diff --git a/arch/arm/mach-mmp/pm-mmp2.c b/arch/arm/mach-mmp/pm-mmp2.c
+index 17699be3bc3d..bcd5111ffb37 100644
+--- a/arch/arm/mach-mmp/pm-mmp2.c
++++ b/arch/arm/mach-mmp/pm-mmp2.c
+@@ -220,7 +220,7 @@ static int __init mmp2_pm_init(void)
+ {
+ 	uint32_t apcr;
 =20
- 	/* we will acces controller register, so enable the clk */
- 	retval =3D mv_udc_enable_internal(udc);
+-	if (!cpu_is_mmp2())
++	if (!cpu_is_pj4())
+ 		return -EIO;
+=20
+ 	suspend_set_ops(&mmp2_pm_ops);
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 96ad1db0b04b..0f49ac579a17 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -163,7 +163,7 @@ static void __init timer_config(void)
+=20
+ 	__raw_writel(0x0, mmp_timer_base + TMR_CER); /* disable */
+=20
+-	ccr &=3D (cpu_is_mmp2()) ? (TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
++	ccr &=3D (cpu_is_pj4()) ? (TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
+ 		(TMR_CCR_CS_0(3) | TMR_CCR_CS_1(3));
+ 	__raw_writel(ccr, mmp_timer_base + TMR_CCR);
+=20
 --=20
 2.19.1
 
