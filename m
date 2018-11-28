@@ -2,121 +2,91 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18069C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B94C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD22F2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD22F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 776C920660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:55:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P6Yxmdgi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776C920660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeK1Vzi (ORCPT
+        id S1728262AbeK1V42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:55:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:49185 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727616AbeK1Vzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:55:38 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 02:54:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
-   d="scan'208";a="253809969"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga004.jf.intel.com with SMTP; 28 Nov 2018 02:54:16 -0800
-Received: by lahna (sSMTP sendmail emulation); Wed, 28 Nov 2018 12:54:15 +0200
-Date:   Wed, 28 Nov 2018 12:54:15 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, ckellner@redhat.com,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] PCI / ACPI: Identify untrusted PCI devices
-Message-ID: <20181128105415.GV2296@lahna.fi.intel.com>
-References: <20181126111526.56340-1-mika.westerberg@linux.intel.com>
- <20181126111526.56340-2-mika.westerberg@linux.intel.com>
- <CAJZ5v0he4BmyJ97=uwVpJtojhe0f5pTq81LBdAQG6RFy6edKrQ@mail.gmail.com>
+        Wed, 28 Nov 2018 16:56:28 -0500
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:43081 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbeK1V42 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:56:28 -0500
+Received: by mail-wr1-f43.google.com with SMTP id r10so25790121wrs.10
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 02:55:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=peb2CMWYGnPnF1h+DkmNVlAiKPzlmpt2jBjxl/6OVtQ=;
+        b=P6YxmdgibSf/aRVawrMfOuokxS46qJjFHwfy7ZHlMXC/rqXfdysN2oE5bpdw44kdhN
+         GaBci4AIppklly4dFEQ2VMtj2zBmMqcJns/EuNnXc/x46iFMj4lv7HpLAAKg1lhkzveq
+         BbHD1ZLNICtUnEdDle8gMKVZkKE9v3HzkAKUg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=peb2CMWYGnPnF1h+DkmNVlAiKPzlmpt2jBjxl/6OVtQ=;
+        b=bmsnj8BdYgOJ+2b++ueSdW+m7A6ssT6wYTRmJ1/LJJvR0DuB0Vm3xcJKIJzM8Xwxr5
+         UDVQxV6XwW9DanBueZlNbARWMIlczhTk7kvQRTFKR6LoBlHAegUWW9zrHPkDb1DFfzpw
+         89DHlSPS2hiknQH6dVomEvCgwufauCoMVdid/v7yIEwsRvX2bUsrUSkJmWJO6q8LXdXJ
+         0wnOeURlS7lStHMvPQ9FsjErYcLPUmyJiCAyMHNuDcIvc8F4r+1ajspZxFR9dogs8Txd
+         qMMR7+00ZqOw8l50v+I2P95EtAxroS70nv5ceMN5ZQs4FW6PDYQL3CL54/I6ZfKrzFfB
+         4zeQ==
+X-Gm-Message-State: AA+aEWZazpc8ttV6ZYVheIwgoMmjDdDxyLuw5Za6Rd4HBB5AHJsjZsBi
+        uyuyPxNvcgvTUscOwP997nPwZg==
+X-Google-Smtp-Source: AFSGD/VA2Pg9jQaWSynO3q/CRzAayQF5E2sBctqg/rP95OtDLzlr2bHkQY0v1F+PLtoUn0xpqLahAA==
+X-Received: by 2002:adf:b253:: with SMTP id y19mr30294684wra.184.1543402511820;
+        Wed, 28 Nov 2018 02:55:11 -0800 (PST)
+Received: from dell ([2.31.167.233])
+        by smtp.gmail.com with ESMTPSA id l37sm6437111wre.69.2018.11.28.02.55.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 02:55:11 -0800 (PST)
+Date:   Wed, 28 Nov 2018 10:55:09 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [RESEND PATCH] mfd: wm5110: Add missing ASRC rate register
+Message-ID: <20181128105509.GF4272@dell>
+References: <20181128100422.12918-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0he4BmyJ97=uwVpJtojhe0f5pTq81LBdAQG6RFy6edKrQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181128100422.12918-1-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 06:14:43PM +0100, Rafael J. Wysocki wrote:
-> > diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> > index 8c7c4583b52d..4bdad32f62c8 100644
-> > --- a/drivers/acpi/property.c
-> > +++ b/drivers/acpi/property.c
-> > @@ -31,6 +31,9 @@ static const guid_t prp_guids[] = {
-> >         /* Hotplug in D3 GUID: 6211e2c0-58a3-4af3-90e1-927a4e0c55a4 */
-> >         GUID_INIT(0x6211e2c0, 0x58a3, 0x4af3,
-> >                   0x90, 0xe1, 0x92, 0x7a, 0x4e, 0x0c, 0x55, 0xa4),
-> > +       /* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
-> > +       GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
-> > +                 0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
-> >  };
-> 
-> One observation here.  Note that I really have no strong opinion on
-> that, so this is not an objection, but IMO it is fair to make things
-> clear for everybody.
-> 
-> So this causes the External facing port GUID (which already is the
-> case with the Hotplug in D3 GUID for that matter) to be practically
-> equivalent to the ACPI _DSD device properties GUID.  This means that
-> Linux will consider a combination of any of these GUIDs with any
-> properties defined for any of them as valid, which need not be the
-> case in Windows.
-> 
-> For example, since the ExternalFacingPort property is defined along
-> with the External facing port GUID, Windows will likely ignore it if
-> it is used in a combination with the Hotplug in D3 GUID or the ACPI
-> _DSD device properties GUID.  If the firmware combines the Hotplug in
-> D3 GUID or the ACPI _DSD device properties GUID with that property,
-> Windows will not regard it as valid, most likely, but Linux will use
-> it just fine.  In the face of ASL bugs, which are inevitable (at least
-> just because ASL is code written by humans), that may become a real
-> problem, as systems successfully tested with Windows may not work with
-> Linux as expected and vice versa because of it.
+On Wed, 28 Nov 2018, Charles Keepax wrote:
 
-That's a fair point.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+>  drivers/mfd/wm5110-tables.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-> >From the ecosystem purity perspective this should be avoided, but then
-> I do realize that this allows code to be re-used and avoids quite a
-> bit of complexity.  The likelihood of an ASL bug that will expose this
-> issue is arguably small, so maybe it is not a practical concern after
-> all.
+Applied, thanks.
 
-One option assuming we want to prevent the potential discrepancy you
-described above is to add ACPI specific property accessors that take
-GUID as parameter. Then it would only look properties inside that
-particular _DSD entry. I'm not sure if it is worth the added complexity,
-though.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
