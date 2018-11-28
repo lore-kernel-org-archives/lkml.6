@@ -2,145 +2,118 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98672C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4974020873
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BA8A20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ksP0+QdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4974020873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ITLkKK0o";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Su2us9EP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA8A20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeK1UDc (ORCPT
+        id S1728034AbeK1UDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:03:32 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34572 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbeK1UDb (ORCPT
+        Wed, 28 Nov 2018 15:03:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40650 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbeK1UDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:03:31 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so25465223wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:02:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=pYPKx23m+3RIAQ/CZEOBUkvcYzaX0MjUaVr7exMZKeY=;
-        b=ksP0+QdEHBWTOzlB7xkkrqu1rPSlnHClzWgTBfKtQi9V09sqIqT/1jLPI/gRacjLZV
-         UBGiPc0dp4xAHb9E2gbdCi23MG1ezSyKN38dwnbLGxHMRmrvqjWETj1wK6ldnZxQ/W5l
-         vvyRk1SS4gREAYvn5FL0Yu8NpOGqc8ec/eEWo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=pYPKx23m+3RIAQ/CZEOBUkvcYzaX0MjUaVr7exMZKeY=;
-        b=f8vxLwJ7/WlFevYkImiB5cf90c0Q8SpX0U2pE0nrfe8kttHtTZmF6yBktfYL3jGi5X
-         T77tms0amhM8qGCsfzRyh7jBR6QUKP4P6NyF22hdjb1CLuksAa9SU3Q4uIgDm3lu82Us
-         x3rUyx+i2b8HI1lQbSVK1e4TbdaWpTnzkN4whLvKZzrRtUqKMS2LyC4+uXHNo9hR2X6i
-         LlQfM06GHhRwRiRx9s0BgNP7hYQmPL+603Jchy7vGM/K2wIK1JniwpX0SDEOXSaAH15q
-         0jri9tqGSc2DR0nbex+JWItvWXs5QJTEmXY3x6x/fFZ/ce8kBt/FN9OckgGI/mJWuClu
-         cakA==
-X-Gm-Message-State: AA+aEWbI9c7x5saiab+33ha9yZdJeGMatlmnheep3b3yBn9jzV8HCWJe
-        tGyigo0+Rceb5L15ie1hQtOpRw==
-X-Google-Smtp-Source: AFSGD/W4INxutTJvxidSVtO0kyrv2l5Ph8TVRqQRlNMlVWqz9III90AnmyL1ouxOASRkPlagD33Pbg==
-X-Received: by 2002:adf:f1c2:: with SMTP id z2mr31673900wro.218.1543395756472;
-        Wed, 28 Nov 2018 01:02:36 -0800 (PST)
-Received: from dell ([2.31.167.233])
-        by smtp.gmail.com with ESMTPSA id s3sm492841wmj.23.2018.11.28.01.02.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 01:02:35 -0800 (PST)
-Date:   Wed, 28 Nov 2018 09:02:33 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Philippe Schenker <dev@pschenker.ch>
-Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 3/4] iio: adc: add STMPE ADC devicetree bindings
-Message-ID: <20181128090233.GQ4272@dell>
-References: <20181123142411.8921-1-dev@pschenker.ch>
- <20181123142411.8921-3-dev@pschenker.ch>
+        Wed, 28 Nov 2018 15:03:43 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D4FD560C61; Wed, 28 Nov 2018 09:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543395769;
+        bh=VYoCnpZS0pG7F3nwYm6u0/ssqCRXzYD+NX4/SExvkN0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ITLkKK0oBmjuK7UJ2t++3WJ3x41gZ9sgRZ9vGQ1wG75bmZqlc7+K0mT7OTfgdE/88
+         HOfTPn3J9363uYcWQGF1fNsA/vaNZk5wLjR+ykL6Ia1xq+Jsh9JOwVXez7k4m7TQfd
+         pW9RZ7MrJDKcQhdKAc+p3hIiK00NFvusBgt/4Sqw=
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9564760B62;
+        Wed, 28 Nov 2018 09:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543395767;
+        bh=VYoCnpZS0pG7F3nwYm6u0/ssqCRXzYD+NX4/SExvkN0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Su2us9EP5u+ChhPO0Qmb6GH30Qw1A2sIBy860t7oLpfA7advqhxfWth6xjFW4QLqG
+         bAUTXJg9D6aVtwD9kBsLsZjmZkb76cVnq5qC8bBFxhNTQg1T4CcK9Aq/8mgihMyGmd
+         3viKOvsDgI0QVfDGN0QVT0fw2aeDbC4HTMWPAmdg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9564760B62
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qt1-f176.google.com with SMTP id v11so24989857qtc.2;
+        Wed, 28 Nov 2018 01:02:47 -0800 (PST)
+X-Gm-Message-State: AA+aEWYDitEH2vxeXIZUOAnx76q+klWB+1/gusrlOCnleqIJ+YAPyfs/
+        g2AfJBBUePJkX1tr1pfn8pqrOK+zhzxduQIAzcI=
+X-Google-Smtp-Source: AFSGD/UsyZ3GMUP8iz5Gwc5M1qacGc5czpyEjDK+dH92No1FpzWAyorKdpF+UntAim+l6FkVk0rVOsnY92Kzd5UR+p4=
+X-Received: by 2002:a0c:f9c3:: with SMTP id j3mr293036qvo.107.1543395766444;
+ Wed, 28 Nov 2018 01:02:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181123142411.8921-3-dev@pschenker.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181126213710.3084-1-vivek.gautam@codeaurora.org> <20181128073940.GA13072@infradead.org>
+In-Reply-To: <20181128073940.GA13072@infradead.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Wed, 28 Nov 2018 14:32:34 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iHDh3-5+RTikaPz1SMqxCaVMJ86WvPJjpSVp9GjzOfLfQ@mail.gmail.com>
+Message-ID: <CAFp+6iHDh3-5+RTikaPz1SMqxCaVMJ86WvPJjpSVp9GjzOfLfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     hch@infradead.org
+Cc:     David Airlie <airlied@linux.ie>, Rob Clark <robdclark@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>, seanpaul@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Philippe Schenker wrote:
+Hi Christoph ,
 
-> From: Stefan Agner <stefan@agner.ch>
-> 
-> This adds the devicetree bindings for the STMPE ADC.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-> ---
-> 
-> Changes in v3:
->  - Reformatted documentation for touchscreen to use tabs and have a better
->    overview of the settings.
->  - Added note which adc-settings will take precedence.
->  - changed typo in sample-time setting from 144 clocks to 124 clocks, as stated
->    in the datasheet.
-> 
-> Changes in v2:
->  - Moved the bindings for ADC to the overlying mfd.
->  - Reformatted for better readability
-> 
->  .../devicetree/bindings/iio/adc/stmpe-adc.txt | 21 +++++++
->  .../bindings/input/touchscreen/stmpe.txt      | 60 ++++++++++++-------
->  .../devicetree/bindings/mfd/stmpe.txt         | 28 ++++++---
->  3 files changed, 80 insertions(+), 29 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
-[...]
+On Wed, Nov 28, 2018 at 1:10 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> > +             /*
+> > +              * dma_sync_sg_*() flush the physical pages, so point
+> > +              * sg->dma_address to the physical ones for the right behavior.
+> > +              */
+> > +             for_each_sg(msm_obj->sgt->sgl, s, msm_obj->sgt->nents, i)
+> > +                     sg_dma_address(s) = sg_phys(s);
+> > +
+>
+> I'm sorry, but this is completely bogus and not acceptable.
+>
+> The only place that is allowed to initialize sg_dma_address is
+> dma_map_sg.  If the default dma ops don't work for your setup we have
+> major a problem and need to fix the dma api / iommu integration instead
+> of hacking around it.
 
-> diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
-> index c797c05cd3c2..d4408a417193 100644
-> --- a/Documentation/devicetree/bindings/mfd/stmpe.txt
-> +++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
-> @@ -4,15 +4,29 @@ STMPE is an MFD device which may expose the following inbuilt devices: gpio,
->  keypad, touchscreen, adc, pwm, rotator.
->  
->  Required properties:
-> - - compatible                   : "st,stmpe[610|801|811|1600|1601|2401|2403]"
-> - - reg                          : I2C/SPI address of the device
-> + - compatible			: "st,stmpe[610|801|811|1600|1601|2401|2403]"
-> + - reg				: I2C/SPI address of the device
+Thanks for reviewing this change.
+From what I understand the things in drm, we don't use the default
+iommu-dma domain
+for drm devices. Rather we allocate a new iommu domain, and therefore we can't
+use the default dma ops. Hence we need separate dma_sync_sg*() to
+flush/invalidate
+the cache. For this we need to initialize the sg's addresses.
 
-Formatting changes should be completed in a separate patch.
+Please correct me if my understanding is incomplete.
 
-Here they only serve to obscure the real changes you have made.
+Best regards
+Vivek
 
-Please split the formatting changes out and re-submit.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
