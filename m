@@ -2,214 +2,131 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB258C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE90C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB96A2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:19:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB96A2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AABC2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:22:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sgwYlEwV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AABC2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeK1TT4 (ORCPT
+        id S1727789AbeK1TXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:19:56 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15169 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727341AbeK1TT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:19:56 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9B704F5E061ED;
-        Wed, 28 Nov 2018 16:19:03 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Wed, 28 Nov 2018
- 16:19:01 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20181128073125.39102-1-jaegeuk@kernel.org>
- <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
- <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
-Date:   Wed, 28 Nov 2018 16:19:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 28 Nov 2018 14:23:02 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35314 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbeK1TXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:23:02 -0500
+Received: by mail-io1-f65.google.com with SMTP id u19so19282091ioc.2;
+        Wed, 28 Nov 2018 00:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=siM6v/1L68XdJs+wF5i4ZFk7Kgv0czl2Db4weIXjO5w=;
+        b=sgwYlEwVglaiaiiFIdcSYTwwe9HtwUoyC32lg6kXTRUbi0Shfsz7COLnW15AOh0P+R
+         +ccNacU8lIy+acSAzlFpM/dR+i0pSgfb3Avgiugh8mLH08dnuqyidFnzPCcWDB7fuRlY
+         0Ato5wkBYMnJUnZIYTrgWeLzYbmoBl1UjIEkT4zIhLK826em6mYDv5DPcGkRxpOvkqiH
+         A0nX3ECr5GPVGf0f+wcGkfAh2hKRm2AJc2b876xFsOFq9CphvoaYf+wQz1KOmE/I6oOL
+         hLxSkxSWpS72X2/Lp9f62coRqy1HzbzJEMPqI9cYMntG++jSlvjsbOfrkKRxMZfu5XW3
+         yiFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=siM6v/1L68XdJs+wF5i4ZFk7Kgv0czl2Db4weIXjO5w=;
+        b=nNn+d/b7/Kz0/5uWwjakoJVrSLfK0Fn8mrFHzF3icc+3uCqB8PPQ8bGUx6b++j0RRB
+         S51E6odIGzWpx3i+uK0tzmHI0oBb/YIHrUbot+2qxKAxE2LPf9Y6JDZprZO/LJp4Nff4
+         WL4fQbQEHkb6n2m+avBg2q0Hx5sAUiPI1aOzfhjGVmF0UnTjaDVlEA3kFQky4SAstXiU
+         WGNojPu/fJi54EZXS8Ci+6cai2iZyEeAC0O/WaEVg8heLhw3i0qF98sJ0FflPGORL2Yp
+         BYBKhdxe6wqRipdp8/9dUqDfWgSN85anrW+y7hU0GsaZX4p/Tne7SK/TPXoxvU75Qi7o
+         0Tow==
+X-Gm-Message-State: AA+aEWZEYvmpT1tontr/ixMSTq4GslENTQr151Ck5caRBuTHwKefq540
+        jO2lKogdnSZrPWi81OYXWOG+0orh
+X-Google-Smtp-Source: AFSGD/W5aeVbaDz2kXdxOpdtFhzg/7zgEgad1B4gqgzb+WivODN634KY2hOAvpDDBSBs/PRGeibynA==
+X-Received: by 2002:a5e:d607:: with SMTP id w7mr27613046iom.75.1543393334501;
+        Wed, 28 Nov 2018 00:22:14 -0800 (PST)
+Received: from Schmitz-MBP.telecom (122-58-176-92-adsl.sparkbb.co.nz. [122.58.176.92])
+        by smtp.googlemail.com with ESMTPSA id x3sm2122207ion.9.2018.11.28.00.22.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 00:22:13 -0800 (PST)
+Subject: Re: [PATCH 02/41] scsi: NCR5380: Mark expected switch fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Finn Thain <fthain@telegraphics.com.au>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <8b4ef418aa7803199954100fd89717f38d61ae06.1543374820.git.gustavo@embeddedor.com>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <0caad885-94ad-9226-fbf1-996b5d465473@gmail.com>
+Date:   Wed, 28 Nov 2018 21:22:04 +1300
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <8b4ef418aa7803199954100fd89717f38d61ae06.1543374820.git.gustavo@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/28 16:10, Jaegeuk Kim wrote:
-> On 11/28, Chao Yu wrote:
->> Hi Jaeguek,
->>
->> On 2018/11/28 15:31, Jaegeuk Kim wrote:
->>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
->>> of directory tree. Let's do that by regular fsck or unclean shutdown.
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> BTW, I have patch made some month ago...
->>
->> In order to detect nat_bits disabling, could we introduce one more flag for
->> fsck?
-> 
-> Do we have a way to enable nat_bits very quickly in fsck?
+Gustavo,
 
-For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
-rebuild nat_bits based on verified nat blocks/journals?
 
-Thanks,
+Am 28.11.18 um 17:24 schrieb Gustavo A. R. Silva:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Notice that in this particular case, I replaced "Fall through to reject message"
+> with a "fall through" annotation at the bottom of the case, which is what GCC
+> is expecting to find.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/scsi/NCR5380.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+> index 01c23d27f290..12073e52a0eb 100644
+> --- a/drivers/scsi/NCR5380.c
+> +++ b/drivers/scsi/NCR5380.c
+> @@ -1933,12 +1933,11 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
+>  					if (!hostdata->connected)
+>  						return;
+>  
+> -					/* Fall through to reject message */
+> -
+>  					/*
+>  					 * If we get something weird that we aren't expecting,
+>  					 * reject it.
+>  					 */
+> +					/* fall through */
+>  				default:
+>  					if (tmp == EXTENDED_MESSAGE)
+>  						scmd_printk(KERN_INFO, cmd,
+I believe the 'if we get something weird' comment block relates to the
+default branch of the switch, _not_ the fall through from the case above
+(extended message received that we end up rejecting). Ordering the
+comments like you did just for GCC's sake is misleading.
 
-> 
->>
->> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
->> From: Chao Yu <yuchao0@huawei.com>
->> Date: Sun, 9 Sep 2018 05:40:20 +0800
->> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c    | 12 +++++++++++-
->>  fs/f2fs/f2fs.h          |  3 ++-
->>  fs/f2fs/node.c          |  3 +++
->>  include/linux/f2fs_fs.h |  1 +
->>  4 files changed, 17 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
->> *sbi, struct cp_control *cpc)
->>  	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
->>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->>  	unsigned long flags;
->> +	bool disable_natbits = false;
->>
->>  	spin_lock_irqsave(&sbi->cp_lock, flags);
->>
->>  	if ((cpc->reason & CP_UMOUNT) &&
->>  			le32_to_cpu(ckpt->cp_pack_total_block_count) >
->> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
->> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
->>  		disable_nat_bits(sbi, false);
->> +		disable_natbits = true;
->> +	}
->>
->>  	if (cpc->reason & CP_TRIMMED)
->>  		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
->> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
->> *sbi, struct cp_control *cpc)
->>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>
->> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
->> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
->> +
->>  	/* set this flag to activate crc|cp_ver for recovery */
->>  	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
->>  	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
->>
->>  	spin_unlock_irqrestore(&sbi->cp_lock, flags);
->> +
->> +	if (disable_natbits)
->> +		f2fs_msg(sbi->sb, KERN_NOTICE,
->> +			"No enough space in CP area, disable nat_bits.");
->>  }
->>
->>  static void commit_checkpoint(struct f2fs_sb_info *sbi,
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index f0cedbe0c536..b55341c269b2 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1107,6 +1107,7 @@ enum {
->>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
->>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
->>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
->> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
->>  };
->>
->>  enum {
->> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
->> f2fs_sb_info *sbi, bool lock)
->>  {
->>  	unsigned long flags;
->>
->> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
->>
->>  	if (lock)
->>  		spin_lock_irqsave(&sbi->cp_lock, flags);
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index e57add1e8966..0c6f8312a087 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
->>
->>  	cp_ver |= (cur_cp_crc(ckpt) << 32);
->>  	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
->> +		f2fs_msg(sbi->sb, KERN_NOTICE,
->> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
->> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
->>  		disable_nat_bits(sbi, true);
->>  		return 0;
->>  	}
->> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->> index 7196653833fa..1f3ae1504573 100644
->> --- a/include/linux/f2fs_fs.h
->> +++ b/include/linux/f2fs_fs.h
->> @@ -117,6 +117,7 @@ struct f2fs_super_block {
->>  /*
->>   * For checkpoint
->>   */
->> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
->>  #define CP_DISABLED_FLAG		0x00001000
->>  #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
->>  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
->> -- 
->> 2.18.0.rc1
->>
->>
->>
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/f2fs.h | 6 +++++-
->>>  1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index c28a9d1cb278..aa500239baf2 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
->>>  {
->>>  	unsigned long flags;
->>>  
->>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
->>> +	/*
->>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
->>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
->>> +	 * so let's rely on regular fsck or unclean shutdown.
->>> +	 */
->>>  
->>>  	if (lock)
->>>  		spin_lock_irqsave(&sbi->cp_lock, flags);
->>>
-> 
-> .
-> 
+The comment block should perhaps be moved after the default label. And
+it would be nice if the reason for the fall through could be retained in
+the comment.
+
+Cheers,
+
+    Michael
+
+
 
