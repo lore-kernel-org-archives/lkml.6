@@ -2,86 +2,193 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FD5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3415C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93D02081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:49:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93D02081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FF8E20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:51:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EI0hnTpU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF8E20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeK2AvE (ORCPT
+        id S1728488AbeK2AxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:51:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727979AbeK2AvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:51:04 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3CBC93138B83;
-        Wed, 28 Nov 2018 13:49:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D377360606;
-        Wed, 28 Nov 2018 13:49:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 28 Nov 2018 14:49:20 +0100 (CET)
-Date:   Wed, 28 Nov 2018 14:49:14 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        strace-devel@lists.strace.io
-Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
- ptrace_message
-Message-ID: <20181128134913.GC30395@redhat.com>
-References: <20181128130439.GB28206@altlinux.org>
- <20181128130601.GC28206@altlinux.org>
+        Wed, 28 Nov 2018 19:53:03 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38073 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728217AbeK2AxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:53:03 -0500
+Received: by mail-pg1-f194.google.com with SMTP id g189so9546527pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:51:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I50nFMd9URCppMyU0fPjpiiOmYaN9MjB3/vOqwqOX2s=;
+        b=EI0hnTpU9X9vZw8Ik6X/3OhI0Zjsqa3tNIZnJX5VsDh2U5EuCb5FZhkg8meAZSKM0q
+         Men+WDGiLJNZiNk2z3ffxQz6eXfGLhOTjqkKWEN1feKK/TSuuGu8h1JgojI/QpyEzcvm
+         1qGPGj9DDsu7uWIS9P3tz71RKJOLbgYhNz5nI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I50nFMd9URCppMyU0fPjpiiOmYaN9MjB3/vOqwqOX2s=;
+        b=nfGtiR5Vb/MwxkDTCdYwWz7wQ8SyTl3OZ3OtXKVj0cwwTdBO71SiKEM8/5eyVY17kl
+         aTLoT+c2Req3kxoEy55ysXGLaS4BUjideZe19ZNKaYhfkClVCPkBb0JhT5LPY0AGDDcU
+         Bb5iN6K/efz22yzG9a7FeWBG3N37jbX3JzTyQobI0iO1+3CdB6Ui33z9Vj0Qh/Xatn4x
+         tCqKY2IeUrrO5Hyq5mgpgthunvSYNHBEkRQm5NXFbrtJdW9yOCfsio3yVQgElvbl18Sw
+         wNJ4WhuBLL9pjdPijBnJG6t3sIvx8nCzL7yvN4cI+J+urDlvkvRYUz7HlVugD0W0v2qc
+         SMOA==
+X-Gm-Message-State: AGRZ1gIGYqSbCRVB25dHNEL/47/xRpKcRf7stgYltU7Ukcu7Yf33nV4l
+        MmMxAjklN7FgU1e/LhqjXtBt
+X-Google-Smtp-Source: AJdET5fppzS/IuffI5mPsTCvcOYocwD6xN0jHLsOTlcAee1FkzeE2C57o/pbj2AGeG7XA3SpR0SQWg==
+X-Received: by 2002:a62:2606:: with SMTP id m6mr36686869pfm.133.1543413079570;
+        Wed, 28 Nov 2018 05:51:19 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:90a:a93f:b481:6fae:6692:c3ee])
+        by smtp.gmail.com with ESMTPSA id c4sm22049854pfm.151.2018.11.28.05.51.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 05:51:18 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
+        linus.walleij@linaro.org, zhao_steven@263.net,
+        overseas.sales@unisoc.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 00/15] Add initial RDA8810PL SoC and Orange Pi boards support
+Date:   Wed, 28 Nov 2018 19:20:51 +0530
+Message-Id: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128130601.GC28206@altlinux.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 28 Nov 2018 13:49:21 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28, Dmitry V. Levin wrote:
->
-> +/*
-> + * These values are stored in task->ptrace_message by tracehook_report_syscall_*
-> + * to describe current syscall-stop.
-> + *
-> + * Values for these constants are chosen so that they do not appear
-> + * in task->ptrace_message by other means.
-> + */
-> +#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
-> +#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U
+Hello,
 
-Again, I do not really understand the comment... Why should we care about
-"do not appear in task->ptrace_message by other means" ?
+This patchset adds initial RDA8810PL SoC and Orange Pi boards (2G IoT and
+i96) support. RDA8810PL is an ARM Cortex A5 based SoC with Vivante's GC860
+GPU. The SoC has been added as a new ARM sub architecture with myself
+and Andreas as the maintainers.
 
-2/2 should detect ptrace_report_syscall() case correctly, so we can use any
-numbers, say, 1 and 2?
+More information about the boards can be found in below links:
 
-If debugger does PTRACE_GETEVENTMSG it should know how to interpet the value
-anyway after wait(status).
+1. Orange Pi 2G-IoT - http://www.orangepi.org/OrangePi2GIOT/
+2. Orange Pi i96 - https://www.96boards.org/product/orangepi-i96/
 
-Oleg.
+This patchset is based on the initial revision sent out by Andreas long
+back (http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/515951.html).
+
+I have extended his patchset with proper irqchip and UART drivers. Now,
+boards can boot into initramfs with console at UART2.
+
+Thanks,
+Mani
+
+Changes in v3:
+
+As per Marc's review:
+
+* Removed unused header and defines from irqchip driver.
+* Removed setting flow handlers from set_type callback.
+* Minor code cleanups.
+
+As per Arnd's review:
+
+* Modified the UART indexes to start from 1 to match the SoC numbering
+* Enabled exposed UARTs (all 3 on both boards)
+* Modified the serial aliases as per board numbering
+
+* Added Greg's Reviewed-by tag for serial driver.
+
+Changes in v2:
+
+* Used readl/writel_relaxed calls for both irqchip and timer drivers as
+  per Marc's review.
+* Implemented the logic to prevent counter wrapping during read as
+  suggested by Marc.
+* Used the timer-of API as per Daniel's suggestion.
+* Added description about the timer in both commit log and driver.
+* Changed the Vendor name for RDA to Unisoc Communications Inc.
+* Removed the soc node level and cleaned up devicetrees as per Rob's
+  review.
+* Merged interrupt controller DT patch to SoC.
+* Moved aliases to board dts as per Arnd's suggestion.
+* Removed RDA Micro support mail address and used Unisoc one and added
+  my missing signed off by tag as per Andreas's comments.
+
+Andreas Färber (4):
+  dt-bindings: Add RDA Micro vendor prefix
+  dt-bindings: arm: Document RDA8810PL and reference boards
+  ARM: Prepare RDA8810PL SoC
+  dt-bindings: serial: Document RDA Micro UART
+
+Manivannan Sadhasivam (11):
+  dt-bindings: interrupt-controller: Document RDA8810PL intc
+  arm: dts: Add devicetree for RDA8810PL SoC
+  arm: dts: Add devicetree for OrangePi 2G IoT board
+  arm: dts: Add devicetree for OrangePi i96 board
+  irqchip: Add RDA8810PL interrupt driver
+  dt-bindings: timer: Document RDA8810PL SoC timer
+  arm: dts: rda8810pl: Add timer support
+  clocksource: Add clock driver for RDA8810PL SoC
+  arm: dts: rda8810pl: Add interrupt support for UART
+  tty: serial: Add RDA8810PL UART driver
+  MAINTAINERS: Add entry for RDA Micro SoC architecture
+
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ Documentation/devicetree/bindings/arm/rda.txt |  17 +
+ .../interrupt-controller/rda,8810pl-intc.txt  |  61 ++
+ .../bindings/serial/rda,8810pl-uart.txt       |  15 +
+ .../bindings/timer/rda,8810pl-timer.txt       |  21 +
+ .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+ MAINTAINERS                                   |  14 +
+ arch/arm/Kconfig                              |   2 +
+ arch/arm/Makefile                             |   1 +
+ arch/arm/boot/dts/Makefile                    |   3 +
+ .../boot/dts/rda8810pl-orangepi-2g-iot.dts    |  50 ++
+ arch/arm/boot/dts/rda8810pl-orangepi-i96.dts  |  50 ++
+ arch/arm/boot/dts/rda8810pl.dtsi              |  99 +++
+ arch/arm/mach-rda/Kconfig                     |   9 +
+ arch/arm/mach-rda/Makefile                    |   1 +
+ drivers/clocksource/Kconfig                   |   8 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-rda.c               | 195 ++++
+ drivers/irqchip/Kconfig                       |   4 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-rda-intc.c                | 107 +++
+ drivers/tty/serial/Kconfig                    |  19 +
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/rda-uart.c                 | 831 ++++++++++++++++++
+ include/uapi/linux/serial_core.h              |   3 +
+ 25 files changed, 1520 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/rda.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+ create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
+ create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
+ create mode 100644 arch/arm/boot/dts/rda8810pl.dtsi
+ create mode 100644 arch/arm/mach-rda/Kconfig
+ create mode 100644 arch/arm/mach-rda/Makefile
+ create mode 100644 drivers/clocksource/timer-rda.c
+ create mode 100644 drivers/irqchip/irq-rda-intc.c
+ create mode 100644 drivers/tty/serial/rda-uart.c
+
+-- 
+2.17.1
 
