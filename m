@@ -2,119 +2,108 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6D9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43215C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85DD20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:17:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qQily++P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85DD20832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 152CC20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:19:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152CC20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbeK2BTE (ORCPT
+        id S1728217AbeK2BVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:19:04 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:63334 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeK2BTE (ORCPT
+        Wed, 28 Nov 2018 20:21:41 -0500
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:37219 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbeK2BVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:19:04 -0500
-X-IronPort-AV: E=Sophos;i="5.56,290,1539673200"; 
-   d="scan'208";a="23306973"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Nov 2018 07:17:15 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 28 Nov 2018 07:17:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLCWU75+HdW190iKRin21v6SvNpZorURPQQRLDF2W4o=;
- b=qQily++P11EjkatB7e+sb0aI3HK/WVDJYjqyL51xAsjKBKhV8FrFA/3arzta28OiyVaQkP+GZFL+GZblfWWrB+l9ri1hfqgwAf8+J/a7hkiihG3HVZd/zHheFiDdw8OMPAylkjJrwPgXGsBcFUYgnCYpXJ+BjW9ADFr86G0v660=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB2020.namprd11.prod.outlook.com (10.173.26.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Wed, 28 Nov 2018 14:17:12 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1361.019; Wed, 28 Nov 2018
- 14:17:12 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@bootlin.com>
-CC:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <Cyrille.Pitchen@microchip.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
-Thread-Topic: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction
- Table
-Thread-Index: AQHUgMfp7padVqHddU2ujFJxxustT6Vk3oeAgABp/4A=
-Date:   Wed, 28 Nov 2018 14:17:12 +0000
-Message-ID: <b1052dff-e1a9-2d3f-b921-661c72e0e137@microchip.com>
-References: <20181120115512.15958-1-tudor.ambarus@microchip.com>
- <20181128085745.1ef607b3@bbrezillon>
-In-Reply-To: <20181128085745.1ef607b3@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P193CA0003.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:800:bd::13) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB2020;6:tqArwqXrGjuyUefvK93ddfmkwvUkT/UjgDDVpmg6s/JQeWEvLMP3HtpQ3mZT/TayJHcc+ez8muhbOBiv3VSU0/GRBxx/AElsdruXjWFgG5FBs463fIwxaHom1ITS3P+STVBIm0b1ukhWWwj2lyGRSbtHzok2n/pcxuwWJdFDAmo8tNxjlIo8R4KKXPZPdg2SN8DytgNfPVxk1B1EUxAxeoqNcgFPf/gSuIxXejtW0B8avO20AEzVQu4X2K7NgfB2ZsyR5CU7/6mc02vZbBUXZ8D6/2YPC59QfRyKi1DfIRHZvOzGJcRKG/BGrTt/dQAEQlNeFnu22XZWHJdYxlIbMXvPiIJAVWFNkPRX2RpMCc3GX6F/louegZtnifORrMpAe7gHpmPlQzITDn5t1lZRfPLm9O+OtfhCQyzOSPYrB2gM+60ft9UAUPD/ic3nGpdXZ0ExUpDT9WuBaQH+mjljWw==;5:v/3c/1PjRUqE1gADIRh3jHEVpMP6Y33VzXr9pzrV+aGA+5kwhlEYrNG9BYmH2oLC/j4cDjftyvoAZIKtuOlcx4el4BMA6VmFhIV/uh5kv3ADTDRn+wPTZIKOh5UkIwn9Snz4++BYgzPiUdigXh62OnjYYOMVLPleV+AfvmpWxLA=;7:1aH6BW3oa4drWpefbaZVdasoczJtQMKVVUe/9iD0v7BCaXFnAzW7cPEgWDm06qPAXQ/+EsFkog14it92TfGV7aNkZa/MywFB/siGaPF1z8bEoveNddOO5tFtdVm4y1dMUGofeNKFGoKSDe7Oc6tyng==
-x-ms-office365-filtering-correlation-id: a3a63e86-827f-48eb-0200-08d6553c305b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB2020;
-x-ms-traffictypediagnostic: BN6PR11MB2020:
-x-microsoft-antispam-prvs: <BN6PR11MB20209ABB12655EBAEB1CB97DF0D10@BN6PR11MB2020.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231443)(999002)(944501410)(4982022)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB2020;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB2020;
-x-forefront-prvs: 0870212862
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(39860400002)(396003)(189003)(199004)(72206003)(3846002)(6116002)(36756003)(71200400001)(71190400001)(97736004)(11346002)(4326008)(68736007)(105586002)(186003)(99286004)(7736002)(8676002)(5660300001)(106356001)(6306002)(81156014)(14454004)(446003)(81166006)(305945005)(478600001)(52116002)(256004)(86362001)(53936002)(76176011)(31696002)(476003)(2616005)(6486002)(6436002)(316002)(6506007)(39060400002)(386003)(31686004)(486006)(6512007)(102836004)(25786009)(6916009)(26005)(6246003)(8936002)(2906002)(66066001)(229853002)(54906003)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB2020;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: da5jzvJhXBtzf9SyWbPmiuzfy9/ECWJQPD0cCJZJn8Om0aFvNgdNgYedwH3hYBMG4UhN5l8/EDbDVnO6K126f1PGOnOl+szfe3jQJwcDGrlkbTUqcDmxi8j4NqWdjk8dZFfUPhSivjIL7+lbD4yhkeQP1rnJiyGplCj+jPwVkc0YRlWFN6zQ3n/yGKf03PMWdq0kzgDxSnbxwF3AkDydKcBjILwfwe6WMFwsyUwb3IbrFUPiLWNNTzdS4J++HCdhnjJeFcKRaws5OkCrit1RRHHESf/YustMNfOe5L+DU+sxcbJMznMJScDG+bFSb5MuxGuR//df6ow1BeqLfhPKMm82qQ4U3B8W/PTNoth2f5k=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DE881623AAD4EB44BC8FDC3DBF3466F7@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 28 Nov 2018 20:21:41 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5467D2800B1D3;
+        Wed, 28 Nov 2018 15:19:50 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id F30C3140749; Wed, 28 Nov 2018 15:19:49 +0100 (CET)
+Date:   Wed, 28 Nov 2018 15:19:49 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>, airlied@linux.ie,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tfiga@chromium.org,
+        Sean Paul <seanpaul@chromium.org>,
+        freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+Message-ID: <20181128141949.6mww6g2ze3qkzxhj@wunner.de>
+References: <20181126213710.3084-1-vivek.gautam@codeaurora.org>
+ <20181128073940.GA13072@infradead.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3a63e86-827f-48eb-0200-08d6553c305b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Nov 2018 14:17:12.1066
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB2020
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128073940.GA13072@infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzI4LzIwMTggMDk6NTcgQU0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
-VHVlLCAyMCBOb3YgMjAxOCAxMTo1NToyMSArMDAwMA0KPiA8VHVkb3IuQW1iYXJ1c0BtaWNyb2No
-aXAuY29tPiB3cm90ZToNCj4gDQo+PiArDQo+PiArCS8qDQo+PiArCSAqIFdlIHNldCBub3ItPmFk
-ZHJfd2lkdGggaGVyZSB0byBza2lwIHNwaV9ub3Jfc2V0XzRieXRlX29wY29kZXMoKQ0KPj4gKwkg
-KiBsYXRlciBiZWNhdXNlIHRoaXMgbGF0ZXN0IGZ1bmN0aW9uIGltcGxlbWVudHMgYSBsZWdhY3kg
-cXVpcmsgZm9yDQo+PiArCSAqIHRoZSBlcmFzZSBzaXplIG9mIFNwYW5zaW9uIG1lbW9yeS4gSG93
-ZXZlciB0aGlzIHF1aXJrIGlzIG5vIGxvbmdlcg0KPj4gKwkgKiBuZWVkZWQgd2l0aCBuZXcgU0ZE
-UCBjb21wbGlhbnQgbWVtb3JpZXMuDQo+PiArCSAqLw0KPj4gKwlub3ItPmFkZHJfd2lkdGggPSA0
-Ow0KPj4gKwlub3ItPmZsYWdzIHw9IFNQSV9OT1JfNEJfT1BDT0RFUzsNCj4gDQo+IFlvdSBtZWFu
-IFNOT1JfRl80Ql9PUENPREVTICh0aGUgb25lIGludHJvZHVjZWQgaGVyZSBbMV0pLCBiZWNhdXNl
-DQo+IFNQSV9OT1JfNEJfT1BDT0RFUyBzaG91bGQgb25seSBiZSB1c2VkIGZvciBmbGFzaF9pbmZv
-LT5mbGFncyBhbmQgbWlnaHQNCj4gc29vbiBjb25mbGljdCB3aXRoIGFub3RoZXIgU05PUl9GXyBm
-bGFnPw0KPiANCg0KeWVzLCB5b3UncmUgcmlnaHQuDQoNCj4gWzFdaHR0cDovL3BhdGNod29yay5v
-emxhYnMub3JnL3BhdGNoLzk5MTQ3Ni8NCj4gDQoNCkNhbiB5b3UgYXBwbHkgeW91ciBwYXRjaD8g
-V2lsbCBzdWJtaXQgYSBuZXcgdmVyc2lvbiBhZnRlcndhcmRzLg0KDQpUaGFua3MsDQp0YQ0K
+On Tue, Nov 27, 2018 at 11:39:40PM -0800, Christoph Hellwig wrote:
+> > +		/*
+> > +		 * dma_sync_sg_*() flush the physical pages, so point
+> > +		 * sg->dma_address to the physical ones for the right behavior.
+> > +		 */
+> > +		for_each_sg(msm_obj->sgt->sgl, s, msm_obj->sgt->nents, i)
+> > +			sg_dma_address(s) = sg_phys(s);
+> > +
+> 
+> I'm sorry, but this is completely bogus and not acceptable.
+> 
+> The only place that is allowed to initialize sg_dma_address is
+> dma_map_sg.  If the default dma ops don't work for your setup we have
+> major a problem and need to fix the dma api / iommu integration instead
+> of hacking around it.
+
+Somewhat related, I recently submitted a patch for the spi-bcm2835.c
+driver to overcome a limitation of the DMA engine and the spi0 master
+on the Raspberry Pi:
+
+http://lists.infradead.org/pipermail/linux-rpi-kernel/2018-November/008275.html
+
+If a buffer needs to be sent or received which was vmalloc'ed (hence is
+not contiguous in physical memory) and starts in the middle of a page
+with an offset not a multiple of 4, the buffer could not be transmitted
+with DMA so far because the spi0 master requires 4 byte writes to the
+FIFO and the DMA engine is incapable of combining multiple sglist
+entries of arbitrary length into a continuous stream of 4 byte chunks.
+
+The solution I've found is to transfer the first few bytes of the first
+sglist entry with programmed I/O such that the remainder has a length
+which is a multiple of 4.  For this to work, I have to massage the first
+sglist entry, i.e. I have to add the number of bytes transmitted with
+PIO to the DMA address and subtract it from the sglist entry's length.
+After the DMA engine has done its job, I undo those changes to the
+sglist.
+
+Could you comment on the acceptibility of this approach?  If you do not
+deem it acceptable, could you make a suggestion how the dma-mapping API
+shall be amended to support such use cases?
+
+(I sure hope the approach *is* acceptable, getting this to work at all
+required endless fiddling.  The BCM2835 is in some ways a not so great
+SoC and could do with better documentation, to put it mildly.)
+
+(Note: I've since amended the above-linked patch to sync only the modified
+cachelines back to memory, not the full first sglist entry.  I've also
+switched to the sg_dma_address() and sg_dma_len() syntax instead of
+referencing the sglist entry members directly, this appears to be more
+common in the tree even for l-values.  I was going to post these changes
+as v2 shortly.)
+
+Thanks,
+
+Lukas
