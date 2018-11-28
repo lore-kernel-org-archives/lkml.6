@@ -2,160 +2,69 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1D1C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A879C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0712086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:30:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0712086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 51FCA20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:32:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3K2Zyfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FCA20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeK1RbZ (ORCPT
+        id S1727547AbeK1RdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:31:25 -0500
-Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:31656 "EHLO
-        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726972AbeK1RbY (ORCPT
+        Wed, 28 Nov 2018 12:33:11 -0500
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:40778 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeK1RdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:31:24 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl6.internode.on.net with ESMTP; 28 Nov 2018 17:00:49 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gRtN0-0004DR-Iy; Wed, 28 Nov 2018 17:30:46 +1100
-Date:   Wed, 28 Nov 2018 17:30:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        martin.petersen@oracle.com, shirley.ma@oracle.com,
-        bob.liu@oracle.com
-Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
- retry
-Message-ID: <20181128063046.GO6311@dastard>
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <20181128053303.GL6311@dastard>
- <20181128054923.GF8125@magnolia>
+        Wed, 28 Nov 2018 12:33:11 -0500
+Received: by mail-oi1-f179.google.com with SMTP id t204so21646071oie.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:32:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=LkQbJhcEoQSy97O815vZAu/hkBv3aSBNP4afYn4tHXE=;
+        b=f3K2Zyfyoq4Y96ACxI1VB6uF734Nd1n1mbf2oL5xlZeJv7+0IASxWmnqUKFzuf1M+G
+         V0l12q3x40DwjH373Hx4QEcNPp3QQl8Huvj0bKSJs1U0nMBJ+vIwK05ZUuOTeE5m8P1i
+         FtbVkxOXDGpAX0as1NnvKyjcZxFNovtyOOeKmZMWhTt1QZWhcJQ+Bsde3RSSuMvzKkuu
+         T7QsXToC6uf+7qP26rKzFZIy5UO8caWpnFKZjIpihf1LwQgl/sE7wqQ+VcVMCNWBlQxU
+         7DgW5ocZNGy3Gi0P+u77KKMchym2sX4jvvMKe9YpIwZBzgmYnwNQOnQOmxBPe3GM5cxn
+         T4xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=LkQbJhcEoQSy97O815vZAu/hkBv3aSBNP4afYn4tHXE=;
+        b=bC2q3NkqgWd89bB22e9eT96kJ7vuhcb7MiZ7uMJ2lk8BnXwwpNZJelAQ/yegvMh8pv
+         c+FQALqJD8IN0Ob3Kp8NokrMz2dhSA5mO1BszzgRoFc3S0n+WwfNlG1wXbyBhRAh97Ec
+         mv/cbS6qC7PnFO5RXaqH52emIV+8KzuJfRrSlK1HVO2ekZ7tC4TDOIZOoqDl2HBTMnst
+         lKc7PNeucltfyODUK3K/Bh9RsaxCxQTDquaqI6NHXFqhOUuK6hNckPMOSZLE7rEMz34r
+         VUqP4nbwWcIpPaof23U4cx/9YFl9QZueLLHZ6IbmPrXLl1HG7FGkGcT2zDlNVxK5s/N0
+         A2yQ==
+X-Gm-Message-State: AA+aEWbMzPzl7MU3R6OiVEtTE8pUrj4Xra5ZGwVzCMbdy98vStYLYrEb
+        4PGTUlq+zzFyiGiq48VhJQ+/gqpNDVwv0vNeCMo=
+X-Google-Smtp-Source: AFSGD/X7835o0eGjpY5dE8TShgWWHduNJAUGoT9Shpc0797bfs7ouQ5VYXISz8unBBDhGE79S2cBc8fam5okgMGkEN0=
+X-Received: by 2002:a54:4d8e:: with SMTP id y14mr20008034oix.60.1543386758539;
+ Tue, 27 Nov 2018 22:32:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128054923.GF8125@magnolia>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   David CARLIER <devnexen@gmail.com>
+Date:   Wed, 28 Nov 2018 06:32:27 +0000
+Message-ID: <CA+XhMqyP1=WCDGJXbLCpz44fKs0gWbc7a0Bfw2M815mSt4fAxA@mail.gmail.com>
+Subject: Re: [PATCH] Little memset_explicit optimisation
+To:     alexander.shishkin@linux.intel.com,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 09:49:23PM -0800, Darrick J. Wong wrote:
-> On Wed, Nov 28, 2018 at 04:33:03PM +1100, Dave Chinner wrote:
-> > On Tue, Nov 27, 2018 at 08:49:44PM -0700, Allison Henderson wrote:
-> > > Motivation:
-> > > When fs data/metadata checksum mismatch, lower block devices may have other
-> > > correct copies. e.g. If XFS successfully reads a metadata buffer off a raid1 but
-> > > decides that the metadata is garbage, today it will shut down the entire
-> > > filesystem without trying any of the other mirrors.  This is a severe
-> > > loss of service, and we propose these patches to have XFS try harder to
-> > > avoid failure.
-> > > 
-> > > This patch prototype this mirror retry idea by:
-> > > * Adding @nr_mirrors to struct request_queue which is similar as
-> > >   blk_queue_nonrot(), filesystem can grab device request queue and check max
-> > >   mirrors this block device has.
-> > >   Helper functions were also added to get/set the nr_mirrors.
-> > > 
-> > > * Expanding bi_write_hint to bi_rw_hint, now @bi_rw_hint has three meanings.
-> > >  1.Original write_hint.
-> > >  2.end_io() will update @bi_rw_hint to reflect which mirror this i/o really happened.
-> > >  3.Fs set @bi_rw_hint to force driver e.g raid1 read from a specific mirror.
-> > > 
-> > > * Modify md/raid1 to support this retry feature.
-> > > 
-> > > * Add b_rw_hint to xfs_buf
-> > >   This patch adds a new field b_rw_hint to xfs_buf.  We will use this to set the
-> > >   new bio->bi_rw_hint when submitting the read request, and also to store the
-> > >   returned mirror when the read compleates
-> > 
-> > One thing that is going to make this more complex at the XFS layer
-> > is discontiguous buffers. They require multiple IOs (and therefore
-> > bios) and so we are going to need to ensure that all the bios use
-> > the same bi_rw_hint.
-> 
-> Hmm, we hadn't thought about that.  What happens if we have a
-> discontiguous buffer mapped to multiple blocks, and there's only one
-> good copy of each block on separate disks in the whole array?
-> 
-> e.g. we have 8k directory blocks on a 4k block filesystem, only disk 0
-> has a good copy of block 0 and only disk 1 has a good copy of block 1?
-
-Then the user has a disaster on their hands because they have
-multiple failing disks. 
-
-> I think we're just stuck with failing the whole thing because we can't
-> check the halves of the 8k block independently and there's too much of a
-> combinatoric explosion potential to try to mix and match.
-
-Yup, user needs to fix their storage before the filesystem can
-attempt recovery.
-
-> > > We're not planning to take over all 16 bits of the read hint field; just looking for
-> > > feedback about the sanity of the overall approach.
-> > 
-> > It seems conceptually simple enough - the biggest questions I have
-> > are:
-> > 
-> > 	- how does propagation through stacked layers work?
-> 
-> Right now it doesn't, though once we work out how to make stacking work
-> through device mapper (my guess is that simple dm targets like linear
-> and crypt can set the mirror count to min(all underlying devices).
-> 
-> > 	- is it generic/abstract enough to be able to work with
-> > 	  RAID5/6 to trigger verification/recovery from the parity
-> > 	  information in the stripe?
-> 
-> In theory we could supply a raid5 implementation, wherein rw_hint == 0
-> lets the raid do as it pleases; rw_hint == 1 reads from the stripe; and
-> rw_hint == 2 forces stripe recovery for the given block.
-
-So more magic numbers to define complex behaviours? :P
-
-> A trickier scenario that I have no idea how to solve is the question of
-> how to handle dynamic redundancy levels.  We don't have a standard bio
-> error value that means "this mirror is temporarily offline", so if you
-
-We can get ETIMEDOUT, ENOLINK, EBUSY and EAGAIN from the block layer
-which all indicate temporary errors (see blk_errors[]). Whether the
-specific storage layers are actually using them is another matter...
-
-> have a raid1 of two disks and disk 0 goes offline, the retry loop in xfs
-> will hit the EIO and abort without even asking disk 1.  It's also
-> unclear if we need to designate a second bio error value to mean "this
-> mirror is permanently gone".
-
-If we have a mirror based retries, we should probably consider EIO
-as "try next mirror", not as a hard failure.
-
-> [Also insert handwaving about whether or not online fsck will want to
-> control retries and automatic rewrite; I suspect the answer is that it
-> doesn't care.]
-
-Don't care - have the storage fix itself, then check what comes
-back and fix it from there.
-
-> [[Also insert severe handwaving about do we expose this to userspace so
-> that xfs_repair can use it?]]
-
-I suspect the answer there is through the AIO interfaces....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Bad entrance with bad idea I m afraid :-) sorry for the noise.
