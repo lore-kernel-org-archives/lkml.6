@@ -2,84 +2,113 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD9BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B981C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D3720645
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:31:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D3720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 2BD962081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:35:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpNSzciR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD962081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbeK2EeP (ORCPT
+        id S1728776AbeK2Ehy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:34:15 -0500
-Received: from anholt.net ([50.246.234.109]:51674 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728300AbeK2EeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:34:15 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id DF09310A12C6;
-        Wed, 28 Nov 2018 09:31:51 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id zCISjtQeZJpD; Wed, 28 Nov 2018 09:31:51 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id F156B10A02AD;
-        Wed, 28 Nov 2018 09:31:50 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 8DE322FE2D5E; Wed, 28 Nov 2018 09:31:50 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Yangtao Li <tiny.windzz@gmail.com>, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: Re: [PATCH] drm/pl111: add of_node_put()
-In-Reply-To: <20181121131723.22431-1-tiny.windzz@gmail.com>
-References: <20181121131723.22431-1-tiny.windzz@gmail.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Wed, 28 Nov 2018 09:31:50 -0800
-Message-ID: <87va4h5cs9.fsf@anholt.net>
+        Wed, 28 Nov 2018 23:37:54 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38143 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbeK2Ehy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 23:37:54 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19-v6so24208481lja.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/QuhxiVq/xxyT4idFm0A4A0PmbM8weVG/FM8Lm7YGUQ=;
+        b=SpNSzciRmXPQikMvb/KMmsJ9Kkukvlrhw6IvvgXypHOFxl4aXsk8VNpt8vn1EPMQ4O
+         8MTuCA/0CfVKX7oiv2+OcetGjKoJMnEyUmJyBuULBCcDnwS8eFiCrffWs0OsVV2qyUnX
+         eI20RlTpjE/IiPgubPqIjH+DXDrvs06wGG9wH2CudZ4G3CoayitYJpGzN3kNr1DbPhcG
+         F2rTEOxqGd1c1dEVmdaAR7SPrt3F1TY9lxfvw0CyALHTJAdAH2xbROe0yWYnnUy+3yxt
+         YwXYfoe0r6uTezUNRMkNpEkOFOmTHpE2qm53MsDDFfdZ/Z3w1z+5HaOxq2E3Sd5x/VmT
+         evog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/QuhxiVq/xxyT4idFm0A4A0PmbM8weVG/FM8Lm7YGUQ=;
+        b=ULc7PESC/xdhAfO2rLuKLbpVlYeYxJALf5fqWItELI6LDMe3TjwF9AN9mt1C0CmiFy
+         Q66uyUJk39n937LA7lfHx4Zvc7gz7mqdj+shBXKL0X/es4+ZnZMHBPgrJWQSyeBZOw94
+         D1Y6yNizy8BwmJVgJvp2vVeojLj7ecwbLhFP74GIaA5yhbHB17UzWfkyLWcm0hGheSfo
+         aqGMLNt12RWVy/+j61SkD6hLbey8wPJNj7VB+DqO7AUuEuQVDM+bcyCt+Bd/xuG2ToLA
+         iCx2QLpf+PQJ+UtcvkcjANizRJqphIQgeQFwAYjegtxnHf61hkxqd35yRgZSSGlxLDKI
+         OUYw==
+X-Gm-Message-State: AA+aEWYH3w9Mz8oAqlNsjMe7Xh5nl+Sa0/GqXS2pQ0rJW3U2XQNVZEvy
+        06OAsAQz9n4OrHUWP8czAJgvKYig0M5+tWcbA3A=
+X-Google-Smtp-Source: AJdET5eo9c3wYqeOyeoWRCmdO8/GzOre3em6kYnV4wQrfJ/JUqfpf7H9WmNNSqhjZFJsmzo5WxJZ4+gZQj9Q7pw00eA=
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr26285522ljj.61.1543426529224;
+ Wed, 28 Nov 2018 09:35:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+References: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
+In-Reply-To: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 28 Nov 2018 18:35:18 +0100
+Message-ID: <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
+Subject: Re: [PATCH] Compiler Attributes: move kernel-only attributes into __KERNEL__
+To:     liuxiaozhou@bytedance.com
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Hi Xiaozhou,
 
-Yangtao Li <tiny.windzz@gmail.com> writes:
+On Wed, Nov 28, 2018 at 3:09 PM Xiaozhou Liu <liuxiaozhou@bytedance.com> wr=
+ote:
+>
+> Attributes such as `__gnu_inline' are meant to be used within the
+> kernel. When userspace somehow includes <linux/compiler.h>
+> (eg. tools/bpf), compilation errors would be shown:
+>
+>         "error: unknown type name =E2=80=98__gnu_inline=E2=80=99"
+>
+> So just move these things into __KERNEL__ and the behavior is kept
+> as before.
 
-> of_find_node_by_path() acquires a reference to the node
-> returned by it and that reference needs to be dropped by its caller.
-> bl_idle_init() doesn't do that, so fix it.
+That is not exactly correct -- a3f8a30f3f00 moved some attributes to
+another file, moving them into __KERNEL__ (in particular,__gnu_inline
+is).
 
-The "bl_idle_init" appeared to be copy-and-paste from some other commit
-message, so I droppped that bit and pushed.  Thanks!
+The problem is, instead, that __gnu_inline is not anymore defined
+outside __KERNEL__, but something else that uses it is (the inline
+macro definition, if I had to guess).
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+If your problem is fixed by putting __gnu_inline into __KERNEL__
+again, it means we can simply move the inline definition inside
+__KERNEL__ too. That way, we don't pollute userspace users with macro
+definitions.
 
------BEGIN PGP SIGNATURE-----
+Having said that, does someone know whether userspace should have
+access to those attributes (or rather, other code that uses in turn
+those attributes)?
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlv+0QYACgkQtdYpNtH8
-nuiDzQ//VcsSv6hBfJRFUp+C3eKbHJlmjDLlYtpIm7LXJtzUBRdQnmPWbLhHDVVg
-8aPL5fQ+kr1Xuu7fkLtnBjHSNmqXZS+rE7x2O7UaN66P7oOmW+S2G7+x6wEBdW9q
-A026vC0O8Ld4BYTBZJxdZMO5KXyT6K8UeJLSGCeAm3UQXqzEQdUm+48ZlNeHELN1
-W6sI+w95R8JqWwA0v4u0+1jlZDTe4SS7Q1LlNWfy/nvTYF6TN1dGkKhHXMOQ0oc8
-GEUXaB9MO+HynYy+unjDfabwMBZoGSBF88fSE09x0CQzlmyBqXWKmpCwRAjdCoo4
-yxDn0LXwzZzVY09L2PPZcm5RB9eI1dHod+kf9qRSaLdn1NJW1mkQlNl2GDs31tzI
-IiNmsjAKHAomcgGl/TEoEUWKfPhcHxDoQwSKQH/iuE1n8LmwBcZkX6Khha8J8tCf
-k07alQSoROFHREDZyqbFaiW0OUBa0MNym/JRwF/W1frntlQj7Cwb0gG5o3iXFkiP
-Ey8YIQY9gEkz9Y4nLgWPxHeh952jPBu5H6SBrV08GJWzG3uBQL+S3fA49AHdVCQr
-R2brLwOGj/7Sr8NxGsEF9UQ4Z/Ue9pmCsAqNqKrS1vcx/CXCdbQKe+L0T/7yzqWO
-Sczi7YZI+DpBx/ojBYwhLZ8lzvcdk3162oJG9ilrf5I9lrF4C2U=
-=/ZFC
------END PGP SIGNATURE-----
---=-=-=--
+Cheers,
+Miguel
