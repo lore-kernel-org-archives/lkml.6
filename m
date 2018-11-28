@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DD5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9862DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFDFB2133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDFB2133F
+	by mail.kernel.org (Postfix) with ESMTP id 586862081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586862081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeK2JYe (ORCPT
+        id S1727239AbeK2JYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:34 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33193 "EHLO
+        Thu, 29 Nov 2018 04:24:37 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33200 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbeK2JYd (ORCPT
+        with ESMTP id S1727181AbeK2JYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:33 -0500
+        Thu, 29 Nov 2018 04:24:36 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8Cs-0001GX-OQ; Wed, 28 Nov 2018 23:21:19 +0100
+        id 1gS8Cu-0001GX-Ay; Wed, 28 Nov 2018 23:21:20 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 21/29] x86/fpu: Eager switch PKRU state
-Date:   Wed, 28 Nov 2018 23:20:27 +0100
-Message-Id: <20181128222035.2996-22-bigeasy@linutronix.de>
+Subject: [PATCH 22/29] x86/entry: Add TIF_NEED_FPU_LOAD
+Date:   Wed, 28 Nov 2018 23:20:28 +0100
+Message-Id: <20181128222035.2996-23-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,80 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+Add TIF_NEED_FPU_LOAD. This is reserved for loading the FPU registers
+before returning to userland. This flag must not be set for systems
+without a FPU.
+If this flag is cleared, the CPU's FPU register hold the current content
+of current()'s FPU register. The in-memory copy (union fpregs_state) is
+not valid.
+If this flag is set, then all of CPU's FPU register may hold a random
+value (except for PKRU) and it is required to load the content of the
+FPU register on return to userland.
 
-While most of a task's FPU state is only needed in user space, the
-protection keys need to be in place immediately after a context switch.
+It is introduced now, so we can add code handling it now before adding
+the main feature.
 
-The reason is that any access to userspace memory while running in
-kernel mode also need to abide by the memory permissions specified in
-the protection keys.
-
-The "eager switch" is a preparation for loading the FPU state on return
-to userland. Instead of decoupling PKRU state from xstate I update PKRU
-within xstate on write operations by the kernel.
-
-The read/write_pkru() is moved to another header file so it can easily
-accessed from pgtable.h and fpu/internal.h.
-
-For user tasks we should always get the PKRU from the xsave area and it
-should not change anything because the PKRU value was loaded as part of
-FPU restore.
-For kernel kernel threads we now will have the default "allow
-everything" written.  Before this commit the kernel thread would end up
-with a random value which it inherited from the previous user task.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-[bigeasy: save pkru to xstate, no cache, don't use __raw_xsave_addr()]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/internal.h | 20 ++++++++++++++++++--
- arch/x86/include/asm/fpu/xstate.h   |  1 +
- 2 files changed, 19 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/thread_info.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 21a8b4f5a5efd..788b307e66233 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -557,8 +557,24 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-  */
- static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
- {
--	if (static_cpu_has(X86_FEATURE_FPU))
--		__fpregs_load_activate(new_fpu, cpu);
-+	struct pkru_state *pk;
-+	u32 pkru_val = 0;
-+
-+	if (!static_cpu_has(X86_FEATURE_FPU))
-+		return;
-+
-+	__fpregs_load_activate(new_fpu, cpu);
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
-+		return;
-+
-+	if (current->mm) {
-+		pk = get_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
-+		WARN_ON_ONCE(!pk);
-+		if (pk)
-+			pkru_val = pk->pkru;
-+	}
-+	__write_pkru(pkru_val);
- }
- 
- /*
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index fbe41f808e5d8..4e18a837223ff 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -5,6 +5,7 @@
- #include <linux/types.h>
- #include <asm/processor.h>
- #include <linux/uaccess.h>
-+#include <asm/user.h>
- 
- /* Bit 63 of XCR0 is reserved for future expansion */
- #define XFEATURE_MASK_EXTEND	(~(XFEATURE_MASK_FPSSE | (1ULL << 63)))
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index cd6920674b905..1e64222030612 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -83,6 +83,7 @@ struct thread_info {
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
++#define TIF_NEED_FPU_LOAD	10	/* load FPU on return to userspace */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -110,6 +111,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
++#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
 -- 
 2.20.0.rc1
 
