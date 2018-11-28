@@ -2,100 +2,142 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002E4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCBEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A6B20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6AFD20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:01:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FHZOP6yf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A6B20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="giNAkHP3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AFD20832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeK1UCD (ORCPT
+        id S1728013AbeK1UCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:02:03 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42077 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeK1UCD (ORCPT
+        Wed, 28 Nov 2018 15:02:51 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43910 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeK1UCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:02:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id x21-v6so17053800pln.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 01:01:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4mgb/onAr98Zp+HQOGZfPEtTRj6NtMnv3HBwE0KuWAw=;
-        b=FHZOP6yfjv/1aN+klAGWOIfqI4ZZrKNlF/gncHnRxrapfezGDlW3eBfikbCz/Fy46a
-         t1IwwF66dfkkFtFQqEx0k5xLMi4VUQgCb0jljIQxBFS7s+Oc4VMXJ+vulfZMCnN+eC9e
-         VXJ/j18FlbceSIVFnYwwOx4pfotIkWIylzfTY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4mgb/onAr98Zp+HQOGZfPEtTRj6NtMnv3HBwE0KuWAw=;
-        b=cAUmquKYXxaZz6zyYUbBPHxm1fijMgbw+vk5a6g9JQg8TvtutCyHQi/5x/B+79iVoA
-         L/HB+vuCqk+5e3Q9+qQ/IpW1Dstyx+6YQRTQPK7FbylkNHU075+L2C9PXFYfKXrbXrBo
-         pnGmVjmDiYRQMotoDJVBuI8JbcQC2Gat49pzIeHXoazf/uRxNC3fz+YnzVT1XTyA2aGe
-         kIL4ClbIhvcD+Zepkw50Kl9UTUbg4BTMCN5S6yLceoSP6aVqxFnQPd1iaG+kDFFpMUBI
-         0KwmZrRsp+loetFNtQugGYpp/yE+lQPheGTqe6047+o0NJYF+7ic4LrRIdYvUoy/jJT9
-         rcgw==
-X-Gm-Message-State: AA+aEWbpfdPoQLoH8wAcGgplpJJlUAnDJ9VtGy+bEGYzboVeEfN5dqll
-        FuLJq69WMMxdYorKMTTd/UrQ1Y7O3Sg=
-X-Google-Smtp-Source: AFSGD/UdR8jr51W9aDnD0bPddU8RgUxUok8+X5uxCF3ab7j/GnwFSG9kf5f9hT3NtNiBMyknUmmXoA==
-X-Received: by 2002:a17:902:728c:: with SMTP id d12mr20791215pll.284.1543395669427;
-        Wed, 28 Nov 2018 01:01:09 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id i72sm11568607pfe.181.2018.11.28.01.01.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 01:01:08 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH v2 5/5] ASoC: qcom: Kconfig: select config for codec
-Date:   Wed, 28 Nov 2018 17:00:37 +0800
-Message-Id: <20181128090037.257359-5-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-In-Reply-To: <20181128090037.257359-1-cychiang@chromium.org>
-References: <20181128090037.257359-1-cychiang@chromium.org>
+        Wed, 28 Nov 2018 15:02:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XeQArfQBhp0xgJ4icQdOZToGC9l49S0mWq/p18skFV4=; b=giNAkHP3xDoJLYmPyxXWTuwij
+        KfNgdOrbMCiSSdi/TR/VxiGmvUPmNmPZ4N0UfQqEGu5ILwBvudtKtUAl1Hz0xhuHOgPn17cMRFqgR
+        SQCm0qxfL2Un6MmsXKtFb57dCpI0zmEibPRBnBx92JqLqH/B1veDHn4CWjY2+iNgVLo+gKvCxEiBR
+        21DqYO/FdFojuHCY9oApG06ivGeC12EXGDKbrEi3qXPuwLJnASW6w4MFFLNREIo0iZmUZAq0sF6gu
+        TlUON5oy4p6ecRw7JNsDaS7jbMP4107GIUKBHVvEE/K65P1DG01jYaMCrv9X3cPPYsYZlNaIa56K9
+        C20ZFgkOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRvj9-0002dz-Kt; Wed, 28 Nov 2018 09:01:48 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0D4E02029FD58; Wed, 28 Nov 2018 10:01:46 +0100 (CET)
+Date:   Wed, 28 Nov 2018 10:01:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, catalin.marinas@arm.com, rml@tech9.net,
+        tglx@linutronix.de, schwidefsky@de.ibm.com
+Subject: Re: [PATCH 0/2] arm64: Only call into preempt_schedule() if
+ need_resched()
+Message-ID: <20181128090146.GF2149@hirez.programming.kicks-ass.net>
+References: <1543347902-21170-1-git-send-email-will.deacon@arm.com>
+ <20181128085640.GX2131@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128085640.GX2131@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select SND_SOC_RT5663 and SND_SOC_MAX98927 for SND_SOC_SDM845.
+On Wed, Nov 28, 2018 at 09:56:40AM +0100, Peter Zijlstra wrote:
+> On Tue, Nov 27, 2018 at 07:45:00PM +0000, Will Deacon wrote:
+> > Hi all,
+> > 
+> > This pair of patches improves our preempt_enable() implementation slightly
+> > on arm64 by making the resulting call to preempt_schedule() conditional
+> > on need_resched(), which is tracked in bit 32 of the preempt count. The
+> > logic is inverted so that we can detect the preempt count going to zero
+> > and need_resched being set with a single CBZ instruction.
+> 
+> >   40:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
+> >   44:   910003fd        mov     x29, sp
+> >   48:   d5384101        mrs     x1, sp_el0
+> >   4c:   f9400820        ldr     x0, [x1, #16]
+> 
+> We load x0 which is a u64, right?
+> 
+> >   50:   d1000400        sub     x0, x0, #0x1
+> >   54:   b9001020        str     w0, [x1, #16]
+> 
+> But we store w0, which is the low u32, such as to not touch the high
+> word which contains the preempt bit.
+> 
+> >   58:   b4000060        cbz     x0, 64 <will+0x24>
+> >   5c:   a8c17bfd        ldp     x29, x30, [sp], #16
+> >   60:   d65f03c0        ret
+> >   64:   94000000        bl      0 <preempt_schedule>
+> >   68:   a8c17bfd        ldp     x29, x30, [sp], #16
+> >   6c:   d65f03c0        ret
+> 
+> Why not?
+> 
+>    58:   b4000060        cbnz    x0, 60 <will+0x24>
+>    5c:   94000000        bl      0 <preempt_schedule>
+>    60:   a8c17bfd        ldp     x29, x30, [sp], #16
+>    64:   d65f03c0        ret
+> 
+> which seems shorter.
+> 
+> 
+> So it's still early, and I haven't finished (or really even started) my
+> pot 'o tea, but what about:
+> 
+> 
+> 	ldr x0, [x1, #16]	// seees the high bit set -- no preempt needed
+> 	sub x0, x0, #1
+> 
+> 	<interrupt>
+> 	  ...
+> 	  resched_curr()
+> 	    set_tsk_need_resched();
+> 	    set_preempt_need_resched();
+> 	</interrupt> // sees preempt_count != 0, does not preempt
+> 
+> 	str w0, [x1, #16] // stores preempt_count == 0
+> 	cbnz x0, 1f // taken, we still observe the high word from before
+> 
+> 1:	ret
+> 
+> 
+> Which then ends with preempt_count==0, need_resched==0 and no actual
+> preemption afaict.
+> 
+> Can you use mis-matched ll x0 / sc w0 to do this same thing and detector
+> the intermediate write on the high word?
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- sound/soc/qcom/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+That is, something along these here lines:
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 2a4c912d1e484..3528c4279cbae 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -100,6 +100,8 @@ config SND_SOC_SDM845
- 	depends on QCOM_APR
- 	select SND_SOC_QDSP6
- 	select SND_SOC_QCOM_COMMON
-+	select SND_SOC_RT5663
-+	select SND_SOC_MAX98927
- 	help
- 	  To add support for audio on Qualcomm Technologies Inc.
- 	  SDM845 SoC-based systems.
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+1:	ldxr x0, [x1, #16]
+	sub  x0, x0, #1
+	stxr w1, w0, [x1, #16]
+	cbnz w1, 1b
 
+	cbnz x0, 2f
+	bl   preempt_schedule
+2:	ret
+
+can that work?
