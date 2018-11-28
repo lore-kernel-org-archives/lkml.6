@@ -2,191 +2,274 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E9BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6353C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9069520832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:50:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sIV6kga5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9069520832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BA372082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 08:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA372082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbeK1Tve (ORCPT
+        id S1727790AbeK1Tz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:51:34 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40119 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbeK1Tve (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:51:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q26so1649889wmf.5;
-        Wed, 28 Nov 2018 00:50:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=VtLSsDsh1WFVqeKQ3regGblelzuW5yA41ua+KR+e/hE=;
-        b=sIV6kga5f73q9oITq+0XflnobxTi6lBwbyqGJeGI54m6cilMFxabYkAQEm8FFi6BEw
-         pJNtmwbl9+9XpzE6QPXPolv962VlOtXSNxyTGQefGLgi4fNRox3BfQ9jdaaXy7vK6r+V
-         VNDAiJHj92jj5MiGCgY/lOdaqtP1CSN0uF47heuMU1CJziKCzcuF1v5uh+Q5+0r7G/jZ
-         W3FT3f4BLS5HpOE3mBXis/V9NSO08reH5JeEkrG4aCu8Q0KoknLPODxUNbX9e6KG5BGJ
-         XOfNHrChBwef0fLmVhMEJ+G2coP4q6DsBMwm7iBMixKTNT20hPJcYGtUaoNwjttdNVEZ
-         KU9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=VtLSsDsh1WFVqeKQ3regGblelzuW5yA41ua+KR+e/hE=;
-        b=nUXEL62L0Msv7e7qsPRpGjELXp7h3FZilzvbXCF2rm7XcaXfLNUaCj0AEezeXaxn1L
-         GljuEV2+zIVkUqZitZMIxL+CnzNSQ2+99VHZpuWwVCELS/u9qyQ+4uw0ysd/Nl4nbUAs
-         Ky76AbHR/f0Tm65hAg9tI/RExqOuz3+RrVW5xT4LoagPRJ1PbszWygPmVVenQE++SxR2
-         ikPUs+bei3FKPw7kyjk3zroVSWPbwysygvoo7Rn2rXei4+wTDkfWwMZ+Z/U4VcpYgcH6
-         dec57Qfsh42xEalNd4lG0HqXA4ixB0oVzKQMw7JSCkqUAImj+Mw2IGDaAtWA2vw9GBU/
-         yrIA==
-X-Gm-Message-State: AA+aEWZ4nomnpXPJwhiuXxcM8T5hje2BtUY8q7hrmAlNHhKEEVGo5Ix4
-        Ah5S3aR12o36YBye2toOypcHW+Gq
-X-Google-Smtp-Source: AFSGD/U2FeA135fUXqRBO7NinwpXX6RyFig2mSvKZx/+Wz6Q0sCA4USK9KoKebl7OzWF4MgGvNXljw==
-X-Received: by 2002:a1c:1801:: with SMTP id 1mr1977663wmy.153.1543395040286;
-        Wed, 28 Nov 2018 00:50:40 -0800 (PST)
-Received: from inc028000049.lancs.ac.uk (inc028000049.lancs.ac.uk. [148.88.224.78])
-        by smtp.gmail.com with ESMTPSA id p6sm6027304wrx.50.2018.11.28.00.50.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 00:50:39 -0800 (PST)
-Date:   Wed, 28 Nov 2018 08:50:39 +0000
-From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: oops when ext4 fs is full
-Message-ID: <20181128085038.iaklny2yuygrixhs@inc028000049.lancs.ac.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 28 Nov 2018 14:55:59 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59350 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727726AbeK1Tz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 14:55:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E283359B;
+        Wed, 28 Nov 2018 00:55:06 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4E26D3F5A0;
+        Wed, 28 Nov 2018 00:55:04 -0800 (PST)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org, mingo@kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCHv2] locking/atomics: build atomic headers as required
+Date:   Wed, 28 Nov 2018 08:54:55 +0000
+Message-Id: <20181128085455.1164-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-I got a Oops when the hard drive was COMPLETELY full using a ext4 fs.
-After it, any command on the directory where the last write should have occurred freezes, while any other directory behave just fine.
+Andrew and Ingo report that the check-atomics.sh script is simply too
+slow to run for every kernel build, and it's impractical to make it
+faster without rewriting it in something other than shell.
 
-If this email is not relevant for you, please point me what to do.
+Rather than committing the generated headers, let's regenerate these
+as-required, if we change the data or scripts used to generate the
+atomic headers, or when building from a pristine tree.
 
-Best Regards,
-Willy
+That ensures they're always up-to-date, allows them to be built in
+parallel, and avoid redundant rebuilds, which is a 2-8s saving per
+incremental build. Since the results are not committed, it's very
+obvious that they should not be modified directly. If we need to
+generate more headers in future, it's easy to extend Makefile.genheader
+to permit this.
 
+I've verified that this works in the cases we previously had issues with
+(out-of-tree builds and where scripts have no execute permissions), and
+have tested these cases for both x86_64 and arm64.
 
-$ cat /proc/version 
-Linux version 4.18.7-dirty (willy@inc028000049) (gcc version 6.3.0 20170516 (Debian 6.3.0-18)) #32 SMP PREEMPT Thu Sep 27 19:31:11 BST 2018
+The diffstat looks nice, at least...
 
-The kernel is dirty but the modifications are not related to the fs subsystem. The system is running on a Hardkernel Odroid-xu3 but running with the mainline linux at 8ea7eadbef2f7103d5871016f03fc38b3adeaddb
-Also, the fs is on a SD-card. I did a fs check after the oops, no errors are reported.
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ Kbuild                                    |   18 +-
+ Makefile                                  |    8 +-
+ arch/arm64/include/asm/atomic.h           |    2 +-
+ arch/x86/include/asm/atomic.h             |    2 +-
+ include/asm-generic/atomic-instrumented.h | 1787 ----------------------
+ include/asm-generic/atomic-long.h         | 1012 -------------
+ include/linux/atomic-fallback.h           | 2294 -----------------------------
+ include/linux/atomic.h                    |    4 +-
+ scripts/Makefile.genheader                |   26 +
+ scripts/atomic/check-atomics.sh           |   19 -
+ 10 files changed, 38 insertions(+), 5134 deletions(-)
+ delete mode 100644 include/asm-generic/atomic-instrumented.h
+ delete mode 100644 include/asm-generic/atomic-long.h
+ delete mode 100644 include/linux/atomic-fallback.h
+ create mode 100644 scripts/Makefile.genheader
+ delete mode 100755 scripts/atomic/check-atomics.sh
 
-$ awk -f scripts/ver_linux
-If some fields are empty or look unusual you may have an old version.
-Compare to the current minimal requirements in Documentation/Changes.
+Hi Ingo,
 
-Linux odroid-xu3-1 4.18.7-dirty #32 SMP PREEMPT Thu Sep 27 19:31:11 BST 2018 armv7l armv7l armv7l GNU/Linux
+Would you be happy to pick this up? Andrew and Peter seemed happy with
+v1 [1].
 
-GNU C                   6.4.0
-GNU Make                4.1
-Binutils                2.26.1
-Util-linux              2.27.1
-Mount                   2.27.1
-Module-init-tools       22
-E2fsprogs               1.42.13
-Linux C Library         2.23
-Dynamic linker (ldd)    2.23
-Linux C++ Library       6.0.24
-Procps                  3.3.10
-Net-tools               1.60
-Kbd                     1.15.5
-Console-tools           1.15.5
-Sh-utils                8.25
-Udev                    229
-Wireless-tools          30
-Modules Loaded          exynos_gsc media s5p_cec s5p_jpeg s5p_mfc v4l2_common v4l2_mem2mem videobuf2_common videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videodev
+To save on ~5100 lines of preimage for the deleted files, I generated
+this patch with `git format-patch -D`, which git am will complain about.
 
+I've pushed this to my atomics/regenerate branch [2], based on the tip
+locking/core branch, in the hope you're happy to pick it from there. If
+you can let me know your preference I can resend this however you
+prefer.
 
+Thanks,
+Mark.
 
-[545367.991991] CPU: 5 PID: 1235 Comm: D_control Tainted: G        W         4.18.7-dirty #32
-[545368.000222] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[545368.006390] [<c0113050>] (unwind_backtrace) from [<c010ecdc>] (show_stack+0x10/0x14)
-[545368.014180] [<c010ecdc>] (show_stack) from [<c0a91e40>] (dump_stack+0x98/0xc4)
-[545368.021459] [<c0a91e40>] (dump_stack) from [<c0186034>] (register_lock_class+0x604/0x610)
-[545368.029688] [<c0186034>] (register_lock_class) from [<c01895fc>] (__lock_acquire+0x98/0x1ac0)
-[545368.038266] [<c01895fc>] (__lock_acquire) from [<c018ba50>] (lock_acquire+0xe0/0x2bc)
-[545368.046152] [<c018ba50>] (lock_acquire) from [<c0aaf880>] (_raw_spin_lock+0x38/0x48)
-[545368.053953] [<c0aaf880>] (_raw_spin_lock) from [<c02b4bb0>] (__d_instantiate+0x30/0x104)
-[545368.062098] [<c02b4bb0>] (__d_instantiate) from [<c02b58dc>] (d_instantiate_new+0x40/0x90)
-[545368.070417] [<c02b58dc>] (d_instantiate_new) from [<c0365f58>] (ext4_add_nondir+0x54/0x5c)
-[545368.078734] [<c0365f58>] (ext4_add_nondir) from [<c03661bc>] (ext4_create+0xdc/0x188)
-[545368.086618] [<c03661bc>] (ext4_create) from [<c02ac230>] (path_openat+0x9f4/0xf78)
-[545368.094247] [<c02ac230>] (path_openat) from [<c02ad754>] (do_filp_open+0x70/0xdc)
-[545368.101787] [<c02ad754>] (do_filp_open) from [<c0299f14>] (do_sys_open+0x134/0x1e4)
-[545368.109499] [<c0299f14>] (do_sys_open) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-[545368.117294] Exception stack(0xecf2dfa8 to 0xecf2dff0)
-[545368.122405] dfa0:                   000a0042 0002b9ed 0002b9ed 000a0042 000001a4 00000000
-[545368.130640] dfc0: 000a0042 0002b9ed 000001a4 00000005 00020042 000001a4 b6effb48 b6ee69c8
-[545368.138870] dfe0: 00000005 b6b54af0 b6e59ee9 b6e5b456
-[545368.144070] Unable to handle kernel NULL pointer dereference at virtual address 000002a0
-[545368.152183] pgd = 0eb5bb04
-[545368.154904] [000002a0] *pgd=b823c835
-[545368.158549] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-[545368.164011] Modules linked in: s5p_jpeg s5p_mfc exynos_gsc v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media s5p_cec
-[545368.179810] CPU: 5 PID: 1235 Comm: D_control Tainted: G        W         4.18.7-dirty #32
-[545368.188020] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[545368.194168] PC is at __d_instantiate+0x9c/0x104
-[545368.198757] LR is at do_raw_spin_lock+0xac/0x120
-[545368.203435] pc : [<c02b4c1c>]    lr : [<c018ef08>]    psr: 800f0013
-[545368.209764] sp : ecf2dd68  ip : 7f2b5c30  fp : 00000001
-[545368.215047] r10: e9d44980  r9 : 000081a4  r8 : 00000027
-[545368.220333] r7 : ecf2c060  r6 : 00400002  r5 : cac82198  r4 : ecf2c000
-[545368.226922] r3 : 00000078  r2 : 00010000  r1 : 00000000  r0 : 00000000
-[545368.233509] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[545368.240703] Control: 10c5387d  Table: 6b12006a  DAC: 00000051
-[545368.246504] Process D_control (pid: 1235, stack limit = 0x77cf525b)
-[545368.252831] Stack: (0xecf2dd68 to 0xecf2e000)
-[545368.257247] dd60:                   cac82198 ecf2c000 cac82200 00000001 00000027 c02b58dc
-[545368.265490] dd80: cac82198 00000000 ecf2c000 c0365f58 cac82198 e9839858 ecf2c000 c0b0ee80
-[545368.273723] dda0: 00000027 c03661bc 00000000 00000000 00000000 00000004 0000098f 00000027
-[545368.281954] ddc0: e9d44958 c1007448 00000000 2cd8660f ecf2de44 ecf2df70 c03660e0 eb6ef450
-[545368.290187] dde0: e9d44958 ee278c80 ecf2dec0 ecf2de8c 00020042 c02ac230 00000001 c17f6460
-[545368.298419] de00: 00000006 00000000 00000040 c1007448 00000041 00000001 e9839858 eb6ef450
-[545368.306651] de20: 00020042 ecf2c000 000081a4 00000000 00000001 00004511 c1644ac4 ec96f408
-[545368.314883] de40: c1007448 00000000 dead4ead ffffffff ffffffff c1800da4 00000000 00000000
-[545368.323115] de60: c0d4e9b4 ecf2de64 ecf2de64 00000000 dead4ead ffffffff ffffffff c1800da4
-[545368.331347] de80: 00000000 00000000 c0d4e9b4 ecf2de64 ecf2de64 2cd8660f fefefeff c1007448
-[545368.339579] dea0: c1007448 ecf2df70 00000001 fffff000 ecf2c000 00000005 b6ee69c8 c02ad754
-[545368.347812] dec0: ee13ed10 eb6ef450 ecbeaa78 0000000f ed4d9024 00000000 00000000 edae5000
-[545368.356043] dee0: e9839858 00000301 00000002 00000736 00000000 00000000 00000000 ecf2df00
-[545368.364276] df00: ecf2c000 ed6541c0 00000001 e9329b80 00000000 00100000 ed6541c0 00000001
-[545368.372508] df20: c0d62914 c0aafab0 00000005 c02be5f4 ed4d9000 00000000 00000005 00000002
-[545368.380740] df40: ffffff9c 000a0042 c1007448 2cd8660f ed4d9000 00000005 c1007448 ffffff9c
-[545368.388972] df60: ed4d9000 c0299f14 5bfb4efe 00000000 00020042 c01881a4 00000006 00000300
-[545368.397204] df80: 00000001 2cd8660f 000a0042 0002b9ed 000001a4 00000005 c01011c4 ecf2c000
-[545368.405437] dfa0: 00000005 c0101000 000a0042 0002b9ed 0002b9ed 000a0042 000001a4 00000000
-[545368.413669] dfc0: 000a0042 0002b9ed 000001a4 00000005 00020042 000001a4 b6effb48 b6ee69c8
-[545368.421900] dfe0: 00000005 b6b54af0 b6e59ee9 b6e5b456 800f0030 0002b9ed 00000000 00000000
-[545368.430136] [<c02b4c1c>] (__d_instantiate) from [<c02b58dc>] (d_instantiate_new+0x40/0x90)
-[545368.438454] [<c02b58dc>] (d_instantiate_new) from [<c0365f58>] (ext4_add_nondir+0x54/0x5c)
-[545368.446772] [<c0365f58>] (ext4_add_nondir) from [<c03661bc>] (ext4_create+0xdc/0x188)
-[545368.454656] [<c03661bc>] (ext4_create) from [<c02ac230>] (path_openat+0x9f4/0xf78)
-[545368.462280] [<c02ac230>] (path_openat) from [<c02ad754>] (do_filp_open+0x70/0xdc)
-[545368.469821] [<c02ad754>] (do_filp_open) from [<c0299f14>] (do_sys_open+0x134/0x1e4)
-[545368.477533] [<c0299f14>] (do_sys_open) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-[545368.485329] Exception stack(0xecf2dfa8 to 0xecf2dff0)
-[545368.490436] dfa0:                   000a0042 0002b9ed 0002b9ed 000a0042 000001a4 00000000
-[545368.498676] dfc0: 000a0042 0002b9ed 000001a4 00000005 00020042 000001a4 b6effb48 b6ee69c8
-[545368.506908] dfe0: 00000005 b6b54af0 b6e59ee9 b6e5b456
-[545368.512014] Code: e5843004 0a000015 e5943020 e5933038 (e5932228) 
-[545368.518205] ---[ end trace 8eec0ae4f0c9a717 ]---
+Since v1 [1]:
+* Clarify commit message w.r.t. when headers get regenerated
+* Add missing dependencies to Makefile.genheader
+* Minor cleanups for Makefile.genheader
+
+[1] https://lkml.kernel.org/r/20181123153321.8561-1-mark.rutland@arm.com
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/regenerate
+
+diff --git a/Kbuild b/Kbuild
+index 780048056ac5..005304205482 100644
+--- a/Kbuild
++++ b/Kbuild
+@@ -6,8 +6,7 @@
+ # 2) Generate timeconst.h
+ # 3) Generate asm-offsets.h (may need bounds.h and timeconst.h)
+ # 4) Check for missing system calls
+-# 5) check atomics headers are up-to-date
+-# 6) Generate constants.py (may need bounds.h)
++# 5) Generate constants.py (may need bounds.h)
+ 
+ #####
+ # 1) Generate bounds.h
+@@ -73,20 +72,7 @@ missing-syscalls: scripts/checksyscalls.sh $(offsets-file) FORCE
+ 	$(call cmd,syscalls)
+ 
+ #####
+-# 5) Check atomic headers are up-to-date
+-#
+-
+-always += old-atomics
+-targets += old-atomics
+-
+-quiet_cmd_atomics = CALL    $<
+-      cmd_atomics = $(CONFIG_SHELL) $<
+-
+-old-atomics: scripts/atomic/check-atomics.sh FORCE
+-	$(call cmd,atomics)
+-
+-#####
+-# 6) Generate constants for Python GDB integration
++# 5) Generate constants for Python GDB integration
+ #
+ 
+ extra-$(CONFIG_GDB_SCRIPTS) += build_constants_py
+diff --git a/Makefile b/Makefile
+index 6c40d547513c..fd871d2c2f54 100644
+--- a/Makefile
++++ b/Makefile
+@@ -224,7 +224,7 @@ clean-targets := %clean mrproper cleandocs
+ no-dot-config-targets := $(clean-targets) \
+ 			 cscope gtags TAGS tags help% %docs check% coccicheck \
+ 			 $(version_h) headers_% archheaders archscripts \
+-			 %asm-generic kernelversion %src-pkg
++			 %asm-generic genheader kernelversion %src-pkg
+ no-sync-config-targets := $(no-dot-config-targets) install %install \
+ 			   kernelrelease
+ 
+@@ -1089,7 +1089,7 @@ endif
+ # prepare2 creates a makefile if using a separate output directory.
+ # From this point forward, .config has been reprocessed, so any rules
+ # that need to depend on updated CONFIG_* values can be checked here.
+-prepare2: prepare3 outputmakefile asm-generic
++prepare2: prepare3 outputmakefile asm-generic genheader
+ 
+ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
+ 	$(cmd_crmodverdir)
+@@ -1113,6 +1113,10 @@ uapi-asm-generic:
+ 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+ 	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
+ 
++PHONY += genheader
++genheader:
++	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.genheader obj=include/generated
++
+ PHONY += prepare-objtool
+ prepare-objtool: $(objtool_target)
+ 
+diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
+index 1f4e9ee641c9..57c73cde3a51 100644
+--- a/arch/arm64/include/asm/atomic.h
++++ b/arch/arm64/include/asm/atomic.h
+@@ -166,7 +166,7 @@
+ 
+ #define arch_atomic64_dec_if_positive		arch_atomic64_dec_if_positive
+ 
+-#include <asm-generic/atomic-instrumented.h>
++#include <generated/atomic-instrumented.h>
+ 
+ #endif
+ #endif
+diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
+index ea3d95275b43..d1e3aca236e2 100644
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -262,6 +262,6 @@ static inline int arch_atomic_fetch_xor(int i, atomic_t *v)
+ # include <asm/atomic64_64.h>
+ #endif
+ 
+-#include <asm-generic/atomic-instrumented.h>
++#include <generated/atomic-instrumented.h>
+ 
+ #endif /* _ASM_X86_ATOMIC_H */
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+deleted file mode 100644
+index b8f5b35216e1..000000000000
+diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
+deleted file mode 100644
+index a833d385a70b..000000000000
+diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
+deleted file mode 100644
+index 1c02c0112fbb..000000000000
+diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+index 4c0d009a46f0..bea7ceec44af 100644
+--- a/include/linux/atomic.h
++++ b/include/linux/atomic.h
+@@ -71,8 +71,8 @@
+ 	__ret;								\
+ })
+ 
+-#include <linux/atomic-fallback.h>
++#include <generated/atomic-fallback.h>
+ 
+-#include <asm-generic/atomic-long.h>
++#include <generated/atomic-long.h>
+ 
+ #endif /* _LINUX_ATOMIC_H */
+diff --git a/scripts/Makefile.genheader b/scripts/Makefile.genheader
+new file mode 100644
+index 000000000000..03aac5628f69
+--- /dev/null
++++ b/scripts/Makefile.genheader
+@@ -0,0 +1,26 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Generate common headers under include/generated/
++
++include scripts/Kbuild.include
++
++.PHONY: all
++
++targets += atomic-fallback.h
++targets += atomic-instrumented.h
++targets += atomic-long.h
++
++all: $(addprefix $(obj)/,$(targets))
++
++atomic-dir := $(srctree)/scripts/atomic
++atomic-tbl := $(atomic-dir)/atomics.tbl
++
++atomic-deps := $(atomic-tbl) $(atomic-dir)/atomic-tbl.sh \
++	       $(atomic-dir)/fallbacks/*
++
++quiet_cmd_genatomic = GENHDR  $@
++cmd_genatomic = $(CONFIG_SHELL) $< $(atomic-tbl) > $@
++
++$(obj)/atomic-%.h: $(atomic-dir)/gen-atomic-%.sh $(atomic-deps)
++	$(call if_changed,genatomic)
++
+diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
+deleted file mode 100755
+index c30101cddf2d..000000000000
+-- 
+2.11.0
 
