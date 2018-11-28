@@ -2,119 +2,117 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240B4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4871FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D725620660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:28:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNNFVZyY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D725620660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 16B2820660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B2820660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbeK2AaD (ORCPT
+        id S1728461AbeK2Abf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:30:03 -0500
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:35938 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbeK2AaD (ORCPT
+        Wed, 28 Nov 2018 19:31:35 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23600 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727982AbeK2Abe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:30:03 -0500
-Received: by mail-wr1-f44.google.com with SMTP id t3so26297654wrr.3;
-        Wed, 28 Nov 2018 05:28:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=9NkcTKRksPGYUJMIlXRI8RDdOouKGlby2xtegxMOhq4=;
-        b=hNNFVZyYHQZml2ZrY8epe6F3D6SSVKCn3XThrtFRKHNmjXZ1bl+lSWLgRiQTVmc4Jh
-         RxfJWrLQr/jshpGXcUryYuEN+1lnvtCUBGOsFvxx9tJShZ0CK1arDAsZNDJDt/wfcSgu
-         AdUZtoScGxEIG9S9QCOrvnH6tPg+66iQXHZjaiL3eY6YucveXfbMvRa9Dzl2qGZlvWsV
-         oWnN1v+OcwPlJcONJuS+wHa+t/esHa5YEb7F+esYpjZHtiramExtRHnKLDNN97sHfAe1
-         kltnaroF4T613aIvC1IieAv1cezyPLmiElMd6QdaO+/QsM/l55iDkzwCSeV3a/qMcPhb
-         ovaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=9NkcTKRksPGYUJMIlXRI8RDdOouKGlby2xtegxMOhq4=;
-        b=KakHtq8O3S2tOZ18mmEqdeZ4kNz/aHnYR/sC3a89v9D26uySs6ri0L2fY1j8GKFxpX
-         DCoxidTaiyO6EonYcrqQLzYII2cvnbMNx6hdsuvPk+amdNswzjo5i2CBDRCslVi+ZpA6
-         F1L9sUMz1bT4CX/7SG+3LlIVfQ+IN+TurAWa+8Ae1aYa9t4UevMDpG1sBtwaqCF9eCEE
-         t74uQ6Z+TSVyk671GAyoT4P2cknxaTveeNAG2FeFrhXboMRjhXj8Lt4X+aElXZK0N43v
-         cU2IODSdB9nBqtYUp5AN91zmRGvph17/6oNLHyLmetSvEwhWkLntp7beZfrDi8L7DdV/
-         6ezg==
-X-Gm-Message-State: AA+aEWZ3EGHBIQSg6vv6gkKOdYAbqah3sgiv8XvDkbIlWg/YvApaGwnV
-        YyD258aSglBmjElwORGTKmQXNU9GCdeVguasEw8AJvNdAZ0=
-X-Google-Smtp-Source: AFSGD/URO8XVNpj5lhq9B+uTKpBjdC0jLE9+DS4ttogLIj3z/j3uAhqDvfEiez3nXiHh9mE8FEev/UiuCXeYSmiuGnM=
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr30447329wrt.43.1543411701989;
- Wed, 28 Nov 2018 05:28:21 -0800 (PST)
+        Wed, 28 Nov 2018 19:31:34 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-185-7gT-X27jM6O-UE-mcTAibA-1; Wed, 28 Nov 2018 13:29:43 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 28 Nov 2018 13:29:52 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 28 Nov 2018 13:29:52 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Steven Rostedt' <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
+CC:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: RE: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
+ messages.
+Thread-Topic: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
+ messages.
+Thread-Index: AQHUg0UlCAjoqkcY10WwAvBZzORuiaVlNSag
+Date:   Wed, 28 Nov 2018 13:29:52 +0000
+Message-ID: <d630011ed50140b082e15ddc05d0c640@AcuMS.aculab.com>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
+        <20181108044510.GC2343@jagdpanzerIV>
+        <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp>
+        <20181109061204.GC599@jagdpanzerIV>
+        <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
+        <20181109154326.apqkbsojmbg26o3b@pathway.suse.cz>
+        <deb8d78b-0593-2b8e-1c7a-9203aa77005f@i-love.sakura.ne.jp>
+        <20181123124647.jmewvgrqdpra7wbm@pathway.suse.cz>
+ <20181123105634.4956c255@vmware.local.home>
+In-Reply-To: <20181123105634.4956c255@vmware.local.home>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net>
- <b43fb902-9b64-22d9-25ca-c970b3842a43@roeck-us.net> <vb31df-25g.ln1@banana.localnet>
- <20181128041555.GE31885@thunk.org>
-In-Reply-To: <20181128041555.GE31885@thunk.org>
-From:   Andrey Melnikov <temnota.am@gmail.com>
-Date:   Wed, 28 Nov 2018 16:28:10 +0300
-Message-ID: <CA+PODjrow+vYB8JiGK0LatjkSU4JA9zM+rt2SriNEtfLNfcSaA@mail.gmail.com>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-To:     "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MC-Unique: 7gT-X27jM6O-UE-mcTAibA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D1=81=D1=80, 28 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 07:15, Theod=
-ore Y. Ts'o <tytso@mit.edu>:
->
-> On Wed, Nov 28, 2018 at 03:16:33AM +0300, Andrey Jr. Melnikov wrote:
-> > Corrupted inodes - always directory, not touched at least year or
-> > more for writing. Something wrong when updating atime?
->
-> We're not sure.  The frustrating thing is that it's not reproducing
-> for me.  I run extensive regression tests, and I'm using 4.19 on my
-> development laptop without notcing any problems.  If I could reproduce
-> it, I could debug it, but since I can't, I need to rely on those who
-> are seeing the problem to help pinpoint the problem.
->
-> I'm trying to figure out common factors from those people who are
-> reporting problems.
+From: Steven Rostedt
+> > Steven told me on Plumbers conference that even few initial
+> > characters saved him a day few times.
+> 
+> Yes, and that has happened more than once. I would reboot and retest
+> code that is crashing, and due to a triple fault, the machine would
+> reboot because of some race, and the little output I get from the
+> console would help tremendously.
+> 
+> Remember, debugging the kernel is a lot like forensics, especially when
+> it's from a customer's site. You look at all the evidence that you can
+> get, and sometimes it's just 10 characters in the output that gives you
+> an idea of where things went wrong. I'm really not liking the buffering
+> idea because of this.
 
-For me - switching off CONFIG_EXT4_ENCRYPTION helps. machine survive
-run updatedb & kernel compile. Switch it back to ON - crashed again:
+Yep, it is a real PITA that syslogd (or linux equiv) stops messages being
+written to the console by the kernel (which used to be synchronous) and
+instead writes them out from userspace.
+By that time it has all died.
 
-[  118.204547] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155777: comm updatedb: bad extra_isize 13898 (inode size 256)
-[  118.248928] Aborting journal on device sde2-8.
-[  118.272239] EXT4-fs (sde2): Remounting filesystem read-only
-[  118.293364] EXT4-fs error (device sde2):
-ext4_journal_check_start:61: Detected aborted journal
-[  118.315146] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155778: comm updatedb: bad extra_isize 38198 (inode size 256)
-[  118.326760] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155780: comm updatedb: bad extra_isize 5023 (inode size 256)
-[  118.337916] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155782: comm updatedb: bad extra_isize 44080 (inode size 256)
-[  118.349149] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155784: comm updatedb: bad extra_isize 56093 (inode size 256)
-[  118.360336] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155786: comm updatedb: bad extra_isize 13308 (inode size 256)
-[  118.387113] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155788: comm updatedb: bad extra_isize 38399 (inode size 256)
-[  118.422779] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155790: comm updatedb: bad extra_isize 24014 (inode size 256)
-[  118.438124] EXT4-fs error (device sde2): ext4_iget:4831: inode
-#14155792: comm updatedb: bad extra_isize 23262 (inode size 256)
+Sometimes you want a printk() that writes the data to the serial port
+before returning.
 
-CONFIG_SCSI_MQ_DEFAULT=3Dy in both cases.
+I also spent a week trying to work out why a customer kernel was
+locking up - only to finally find out that the distro they were
+using set 'panic on opps' - making it almost impossible to find
+out what was happening.
 
-Any ideas?
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
