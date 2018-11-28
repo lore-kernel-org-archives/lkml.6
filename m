@@ -2,137 +2,132 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CCEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96CEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453A120832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="z6atr7yQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453A120832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id A008620832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:46:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A008620832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeK2Aps (ORCPT
+        id S1728493AbeK2Arw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:45:48 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40627 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbeK2Aps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:45:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i12so10186383pfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:44:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7zDTfHt/ugH4s9MDSR3+6OcGT1VGlctx6MQg0nD7ryE=;
-        b=z6atr7yQ3iFy6c+mjsKbGtJKtoY4INRIDKLn2ctg3Xp5JT6x7ocMzEZ2HPxv9dHQTK
-         iijiZCJLg9jEmNS89Id8ye5JAjUXqQJQr6mGAWvONxa0Zh7vUWCrN4Uf+UeabhKijE/1
-         34E/tod9+3QfnjbAD9gRnVDmsQn5Wt8P2XzRNETPBUeWJsWy4/kqLmPBoILTF8lRVOf6
-         pBSdGhHY0cVZ+BOiI5ZTUD5xjSMICY7sVkTod4fkrIfWxG4hZgYLFockgeTx3eHYpP6T
-         +oKZfOv9sStHO9kpfKBmSnsZE4W/8gxQnwt8rHsHMN9ZdvdQ107GNLbCW62zgksaAg+T
-         /7fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7zDTfHt/ugH4s9MDSR3+6OcGT1VGlctx6MQg0nD7ryE=;
-        b=k24OvjdQZwCu04YvBf72ojzgrSQBXKC7J7hitYXFBwDOhmIUc7zI2ZDRGFRxKhLF2R
-         hfx4YZK6iDx99P+JPNLzCxZ7DZzicDtJMNJg7Eruu5geGiaF6R+lzNhpWyJ8vmlPmUT1
-         0+yNSdlKUQUpEjeOJ6T1YDzhp1Gajr9LzUoBYnSbL8gzGa5+Y9Xr4dqr/Q7XgrzYbiS2
-         PVj02XBjA8z/1EHVNBm+iTZf7/Mn2b4KlLhbwXRt39EYPhPAqdB7Wvam0T5y9KIt6tBz
-         6tTorRVDyFemKI6BTTuNsFhiWUGhxQ6HMx22Eo6HVB7OavQNVkHKzsGwpR6OPCKwXKTm
-         X7ag==
-X-Gm-Message-State: AA+aEWYLJ1IosduP2kdGhaJfDUOK7hJL7aeRB18lyWL2wO39yv79/J+S
-        AdeRB5+N4GZPn4rl/CaMKarJrQ==
-X-Google-Smtp-Source: AFSGD/VpgWFbWqw7HHw4H6IebL4oKrh/k/zhasDsE54IK5/AtyaiHcazONlEr8g8biKk8VA/p/HR1g==
-X-Received: by 2002:a63:441e:: with SMTP id r30mr33671645pga.128.1543412645990;
-        Wed, 28 Nov 2018 05:44:05 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id n22sm14673393pfh.166.2018.11.28.05.44.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 05:44:04 -0800 (PST)
-Subject: Re: [PATCH V12 00/20] block: support multi-page bvec
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-References: <20181126021720.19471-1-ming.lei@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7096bc4e-0617-29d0-a90d-ae7caf09a16d@kernel.dk>
-Date:   Wed, 28 Nov 2018 06:44:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 28 Nov 2018 19:47:52 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:44520 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727802AbeK2Arw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:47:52 -0500
+Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gS0AC-0004rB-TO; Wed, 28 Nov 2018 14:46:00 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Derek Basehore <dbasehore@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, Tony Xie <tony.xie@rock-chips.com>,
+        Chris <zyw@rock-chips.com>, ayaka@soulik.info,
+        "nickey.yang" <nickey.yang@rock-chips.com>,
+        =?utf-8?B?6YOR6Iic5Lm+?= <zhengsq@rock-chips.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add 32k clk on rk3399-gru
+Date:   Wed, 28 Nov 2018 14:45:59 +0100
+Message-ID: <6602824.AOVt5XvbUN@diego>
+In-Reply-To: <CAD=FV=WJCvt-Ez_F+gTJaLWnOOY2J0fXxgq8vy0ojKoHv+AQ7w@mail.gmail.com>
+References: <20181127232331.49628-1-dbasehore@chromium.org> <CAD=FV=WJCvt-Ez_F+gTJaLWnOOY2J0fXxgq8vy0ojKoHv+AQ7w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181126021720.19471-1-ming.lei@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/25/18 7:17 PM, Ming Lei wrote:
+Am Mittwoch, 28. November 2018, 01:42:36 CET schrieb Doug Anderson:
 > Hi,
 > 
-> This patchset brings multi-page bvec into block layer:
+> On Tue, Nov 27, 2018 at 3:23 PM Derek Basehore <dbasehore@chromium.org> 
+wrote:
+> > This adds the 32k clock to the RK3399 Gru board file. Even though it's
+> > not directly used, muxes will end up traversing the entire clk tree on
+> > calls to determine_rate if it doesn't exist. This is because the 32k
+> > clk is listed as a possible parent on some clks. Since the clk doesn't
+> > know about the 32k clk (it was never registered), it triggers a global
+> > search for it. This can happen about 40 times per second, which isn't
+> > great for power.
 > 
-> 1) what is multi-page bvec?
+> I seem to remember Heiko requesting something be added to the commit
 > 
-> Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
-> which are physically contiguous instead of one single page used in linux
-> kernel for long time.
+> message.  Ah yes, he said:
+> > That would also be a great part of the commit message, like
+> > "...on Gru boards the 32kHz clock gets produced by a Silego oscillator"
+> > or so when you move it over to rk3399-gru.dtsi .
 > 
-> 2) why is multi-page bvec introduced?
+> Presumably Heiko could add that to the commit message when he applies
+> the patch, so maybe wait to see if he wants you to respin it?
 > 
-> Kent proposed the idea[1] first. 
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > ---
+> > 
+> >  arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi index
+> > ca07f6032200..a07aa4c570c0 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > @@ -14,6 +14,13 @@
+> > 
+> >                 stdout-path = "serial2:115200n8";
+> >         
+> >         };
+> > 
+> > +       ap_rtc_clk: ap-rtc-clk {
+> > +               compatible = "fixed-clock";
+> > +               clock-frequency = <32768>;
+> > +               clock-output-names = "xin32k";
+> > +               #clock-cells = <0>;
+> > +       };
+> > +
+> > 
+> >         /*
+> >         
+> >          * Power Tree
 > 
-> As system's RAM becomes much bigger than before, and huge page, transparent
-> huge page and memory compaction are widely used, it is a bit easy now
-> to see physically contiguous pages from fs in I/O. On the other hand, from
-> block layer's view, it isn't necessary to store intermediate pages into bvec,
-> and it is enough to just store the physicallly contiguous 'segment' in each
-> io vector.
+> Really this should be below the power tree, AKA right above
+> "gpio-keys".  Convention has typically been that only "special" nodes
+> like "chosen" go all the way at the top here.  Then the power tree
+> (parents first), then other nodes.
 > 
-> Also huge pages are being brought to filesystem and swap [2][6], we can
-> do IO on a hugepage each time[3], which requires that one bio can transfer
-> at least one huge page one time. Turns out it isn't flexiable to change
-> BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
-> As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
-> as much bigger, such as 512, which requires at least two 4K pages for holding
-> the bvec table.
+> In the Chrome OS tree we had an "/* END REGULATORS */ comment to try
+> to separate out the power tree from the rest of the nodes, but I guess
+> Heiko didn't like that when this went upstream so now you just have to
+> know the convention.  :-P
+> 
+> Possibly Heiko would re-sort this for you himself when applying the
+> change if he agrees with my understanding of the conventions.
 
-I'm pretty happy with this patchset at this point, looks like it just
-needs a respin to address the last comments. My only concern is whether
-it's a good idea to target this for 4.21, or if we should wait until
-4.22. 4.21 has a fairly substantial amount of changes in terms of block
-already, it's not the best timing for something of this magnitude too.
+We hashed out the dt-conventions somewhat together during veyron
+times, so I'd be surprised if we didn't agree on them :-D .
 
-I'm going back and forth on those one a bit. Any concerns with
-pushing this to 4.22?
+In any case, I've adapted the commit message to add the Silego part,
+moved the clock to the correct position and applied the result with
+your Reviewed-by for 4.21.
 
--- 
-Jens Axboe
+
+Heiko
+
 
