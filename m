@@ -2,102 +2,173 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D567C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6269EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FA7208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:07:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tE2isRbs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FA7208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ACD42086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:12:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACD42086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeK1XJD (ORCPT
+        id S1727858AbeK1XNw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:09:03 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34922 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeK1XJD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:09:03 -0500
-Received: by mail-qt1-f196.google.com with SMTP id v11so25488370qtc.2;
-        Wed, 28 Nov 2018 04:07:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G1NmIhB34gIvHrOSZjMOLfwQxmnFKJiHwT6Ugcjpndo=;
-        b=tE2isRbsROzKvmb/J7GUlvOc2/cDNvngZ35F23mqVoRoTqeF4n3YBpwu39C/OyQ5TH
-         JL39nTpXu+o9r1IbtB8wVLURTLmCmgsAmAWbSF1F1vlpRmF77/czHSkyh5VXIxPvlzIO
-         tuhxZwZ5ICDPk6940n1RaJ3GxpIGMqJ70nBYupAnB8SthGUsVAC9GLkctMcJxfNvN6vr
-         JF+VDRy1KLUGrmEGt+NnuQl1u3+biIZjLq5jssW/WRY496ab/7ExcJT4txH+fzxDjcsi
-         9IIOH/2i+yTJL7RyLm7c2UGhEKUEkEdqGhp9L/E2E3hFhTGZWdBUOa0kdLfb6i92gH7O
-         IQtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G1NmIhB34gIvHrOSZjMOLfwQxmnFKJiHwT6Ugcjpndo=;
-        b=U+7P7HDzUJkFM64yrn82qSzsO4KMPQImjvfuYCHWJHjd0NVRdn/Wq9/50JGd9UTx2j
-         3Hix+w8VOKV7rexMMyvyxcfnGYNcVQrPhuhGdsv9N4qvbzfH1jsThm8KfcHFjTt+ppLR
-         nsGaBJfWobaVvw/dJK8fAamDUuxatu4QvXypK2jJXlkZxqpUXgLPEMrqLTz3xHqo3cpS
-         sfvnQwyJMUK89sLERdqEJCdEpR1ww7FDKTxrkSbVeIZlh2FU1V8BFrGENHKHpKLNbxC1
-         MQENdC9d1qKyv8iZRtq7N6xUBtsy4kgYeNkJUny334ih9DDEPA6LLds+dgiHSE6rGYbW
-         uxFQ==
-X-Gm-Message-State: AA+aEWZcA5eU5YrmMXt+Y6brUyG36WFygOXuQ3V5K/t7wNjBTtV1UkOS
-        a9wk8KBvUUjBMpfv0TI8Tem8Ef4rCVXXPKhel8lDqwJI
-X-Google-Smtp-Source: AFSGD/UM4MMfcapeiuj9nQainu/Ax6k1vetwMBHSQZVSmRBlDS/eWBs9N0j40GMJUSRTpf0AglcFRTaAHlRH46EFtpI=
-X-Received: by 2002:a0c:d268:: with SMTP id o37mr35183232qvh.136.1543406856481;
- Wed, 28 Nov 2018 04:07:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127132508.5501-1-fe@dev.tdt.de>
-In-Reply-To: <20181127132508.5501-1-fe@dev.tdt.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 28 Nov 2018 14:07:25 +0200
-Message-ID: <CAHp75VfFYJQzTv_oe8RKPo03-FLYHy6BkrKaG23svAKtC+jVBg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add device driver for APU2/APU3 GPIOs
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Eckert.Florian@googlemail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Nov 2018 18:13:52 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:48019 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727713AbeK1XNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:13:52 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 434ffZ32PBz9vF7T;
+        Wed, 28 Nov 2018 13:12:22 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 4TVtPPf_DEQz; Wed, 28 Nov 2018 13:12:22 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 434ffZ2NZrz9vF7S;
+        Wed, 28 Nov 2018 13:12:22 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 627308B869;
+        Wed, 28 Nov 2018 13:12:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id SAhDT2u0HwfB; Wed, 28 Nov 2018 13:12:23 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 299C38B853;
+        Wed, 28 Nov 2018 13:12:23 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 1C14469B13; Wed, 28 Nov 2018 12:12:23 +0000 (UTC)
+Message-Id: <cover.1543407004.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v10 0/9] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Wed, 28 Nov 2018 12:12:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 3:25 PM Florian Eckert <fe@dev.tdt.de> wrote:
+The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+moves the thread_info into task_struct.
 
-> Changes v5:
-> gpio-apu.c
-> - Remove GPIO_GENERIC select from Kconfig
-> - Make gpio_chip real member of apu_gpio_pdata
-> - Use BIT macro for get_data and get_dir functions
-> - Pass platform data to devm_gpiochip_add_data to get data
->   per-instance state container
-> - Remove DEVNAME define
-> - Remove platfrom_device member from apu_gpio_pdata this
-> - Clean up init function
-> - Remove MODULE_ALIAS
->
-> Until now it was not possible to get more information to detect the
-> MMIO_BASE address from the ACPI subsystem.
+Moving thread_info into task_struct has the following advantages:
+- It protects thread_info from corruption in the case of stack
+overflows.
+- Its address is harder to determine if stack addresses are
+leaked, making a number of attacks more difficult.
 
-I'm sorry if I already asked, please, remind me where dump of ACPI
-tables can be found?
-Also would be nice to have the output of `lspci -nk -vv -xxx` on such platform.
+Changes since v9:
+ - Rebased on 183cbf93be88 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Fixed conflict on xmon
+
+Changes since v8:
+ - Rebased on e589b79e40d9 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Main impact was conflicts due to commit 9a8dd708d547 ("memblock: rename memblock_alloc{_nid,_try_nid} to memblock_phys_alloc*")
+
+Changes since v7:
+ - Rebased on fb6c6ce7907d ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+
+Changes since v6:
+ - Fixed validate_sp() to exclude NULL sp in 'regain entire stack space' patch (early crash with CONFIG_KMEMLEAK)
+
+Changes since v5:
+ - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
+ - Fixed PPC_BPF_LOAD_CPU() macro
+
+Changes since v4:
+ - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
+ already existing, was due to spaces instead of a tab in the Makefile
+
+Changes since RFC v3: (based on Nick's review)
+ - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+ - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+ - Removed CURRENT_THREAD_INFO macro completely.
+ - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+ - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+ - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+ - Fixed a few commit logs
+ - Fixed checkpatch report.
+
+Changes since RFC v2:
+ - Removed the modification of names in asm-offsets
+ - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+ - Modified asm/smp.h to use the offset set in CFLAGS
+ - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+ - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
+
+Changes since RFC v1:
+ - Removed the first patch which was modifying header inclusion order in timer
+ - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+ - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+ - Moved some changes from the activation patch to the preparation patch.
+
+Christophe Leroy (9):
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
+
+ arch/powerpc/Kconfig                           |  1 +
+ arch/powerpc/Makefile                          |  7 +++
+ arch/powerpc/include/asm/asm-prototypes.h      |  4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |  2 +-
+ arch/powerpc/include/asm/exception-64s.h       |  4 +-
+ arch/powerpc/include/asm/irq.h                 | 14 ++---
+ arch/powerpc/include/asm/livepatch.h           |  7 ++-
+ arch/powerpc/include/asm/processor.h           | 39 +------------
+ arch/powerpc/include/asm/ptrace.h              |  2 +-
+ arch/powerpc/include/asm/reg.h                 |  2 +-
+ arch/powerpc/include/asm/smp.h                 | 17 +++++-
+ arch/powerpc/include/asm/task_size_user64.h    | 42 ++++++++++++++
+ arch/powerpc/include/asm/thread_info.h         | 19 -------
+ arch/powerpc/kernel/asm-offsets.c              | 10 ++--
+ arch/powerpc/kernel/entry_32.S                 | 66 ++++++++--------------
+ arch/powerpc/kernel/entry_64.S                 | 12 ++--
+ arch/powerpc/kernel/epapr_hcalls.S             |  5 +-
+ arch/powerpc/kernel/exceptions-64e.S           | 13 +----
+ arch/powerpc/kernel/exceptions-64s.S           |  2 +-
+ arch/powerpc/kernel/head_32.S                  | 14 ++---
+ arch/powerpc/kernel/head_40x.S                 |  4 +-
+ arch/powerpc/kernel/head_44x.S                 |  8 +--
+ arch/powerpc/kernel/head_64.S                  |  1 +
+ arch/powerpc/kernel/head_8xx.S                 |  2 +-
+ arch/powerpc/kernel/head_booke.h               | 12 +---
+ arch/powerpc/kernel/head_fsl_booke.S           | 16 +++---
+ arch/powerpc/kernel/idle_6xx.S                 |  8 +--
+ arch/powerpc/kernel/idle_book3e.S              |  2 +-
+ arch/powerpc/kernel/idle_e500.S                |  8 +--
+ arch/powerpc/kernel/idle_power4.S              |  2 +-
+ arch/powerpc/kernel/irq.c                      | 77 +++++---------------------
+ arch/powerpc/kernel/kgdb.c                     | 28 ----------
+ arch/powerpc/kernel/machine_kexec_64.c         |  6 +-
+ arch/powerpc/kernel/misc_32.S                  | 17 +++---
+ arch/powerpc/kernel/process.c                  | 40 ++++++-------
+ arch/powerpc/kernel/setup-common.c             |  2 +-
+ arch/powerpc/kernel/setup_32.c                 | 15 ++---
+ arch/powerpc/kernel/setup_64.c                 | 41 ++++----------
+ arch/powerpc/kernel/smp.c                      | 16 +++---
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |  6 +-
+ arch/powerpc/kvm/book3s_hv_hmi.c               |  1 +
+ arch/powerpc/mm/hash_low_32.S                  | 14 ++---
+ arch/powerpc/net/bpf_jit32.h                   |  5 +-
+ arch/powerpc/sysdev/6xx-suspend.S              |  5 +-
+ arch/powerpc/xmon/xmon.c                       |  2 +-
+ 45 files changed, 240 insertions(+), 380 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_user64.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.3
+
