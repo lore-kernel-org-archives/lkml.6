@@ -2,103 +2,102 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 883E3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A067C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8F22086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BB2D2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:40:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="caoOofVj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8F22086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RI9xdeFk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB2D2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeK1ReG (ORCPT
+        id S1727431AbeK1Rky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:34:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbeK1ReG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:34:06 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 033DC20832;
-        Wed, 28 Nov 2018 06:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543386814;
-        bh=jsUpE1/eZaCywvhk6jhysfLOGHKwuEDvwJTTJhOi/7I=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=caoOofVj35eG2JRTcMLx1itR44+vLE0lYo7LLsTf6aM9q9MmnKFdU/6SG+1rF7dxY
-         nuaBVF44p4wi9jaqlP2sVKNejNFtv4iBoT7DqTYIV0Y6MQzi7bsvP3/PCED7k4GCzd
-         UzZ8bWp2UU4otuEXl/CAf490q8EXpX/oWwpTpp1s=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 28 Nov 2018 12:40:54 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40249 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbeK1Rkx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 12:40:53 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so21113013edx.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5ttGnbqrOXizJJR+07WyXPDAIfutG877DgO/P4anA6k=;
+        b=RI9xdeFk7oWTOcbfmv6Bwb7BQK+mE/SFqG8r6zIBzBu19T2BXQEsl8ilxAPnKzdRSc
+         NV/nZlUfu9ay0k5JH4rY0dhE3uFh4Rq2/2oSKgJMZBmWLtn/e4NLxj1qA0YIDw5LfgtH
+         D/LsNlynuIFaQSx5iT9JcXLhkBuEVjs5w8sdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5ttGnbqrOXizJJR+07WyXPDAIfutG877DgO/P4anA6k=;
+        b=WivZojoPwNF41IPODtc6XHyNYqCIqP7XeYq4iXhbAsm9ZCIr2ZBZZscfv9DFvynMOB
+         6EA0p68hXy19fqB7a5OfxIOXNQvnk5c9Rk8IlBIL3WCK6+N8KK12odOHsQblmNjoBhsI
+         LV7LW3ScCGFbvwl9b69Fa5CnU+cfPuPmISFfhi8HcDRDLqJt0nYPPfe6Zjc40tMIllaS
+         NIS+7z2MEXqX/N3prfV99sp+DFQlIbWaeOvqScUKpGJ+FlqP81mGg9BOP6UqVURkaOmS
+         0f284aBsceQYd2qHSq1iZR5fOY8rL3BBM7JefT/TjsjzCO6BJqazlxccsRfWHq70us6D
+         ZuUg==
+X-Gm-Message-State: AA+aEWb1jQbzG0BvMvfv5KsGO9yz44PwZTV/8lut0E974i4poKY7sxet
+        FOygAyTTLvMHLhQJ/9U5DUbhbdFs1JANBqzmGp4fCg==
+X-Google-Smtp-Source: AFSGD/XJWRqmu5SzS5AcOIkSR5eXqbxXJ97ZkXyoSyMMLTimpOFji8N/lrs7FRoDULhtBBVp1x/eSVglxEYIpc2ArDo=
+X-Received: by 2002:a17:906:c3c3:: with SMTP id cj3-v6mr12172570ejb.178.1543387218797;
+ Tue, 27 Nov 2018 22:40:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181122073043.GN2225@minitux>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181106055013.11271-1-bjorn.andersson@linaro.org>
- <154279089454.88331.1059903104788594574@swboyd.mtv.corp.google.com>
- <20181122073043.GN2225@minitux>
-Message-ID: <154338681330.88331.11964099120255315856@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
-Date:   Tue, 27 Nov 2018 22:33:33 -0800
+References: <cover.1543374820.git.gustavo@embeddedor.com> <073efb316d0acba28e6105fcd4f4d5deda2ff3f7.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <073efb316d0acba28e6105fcd4f4d5deda2ff3f7.1543374820.git.gustavo@embeddedor.com>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Wed, 28 Nov 2018 12:10:07 +0530
+Message-ID: <CAL2rwxodKijDbDYEEDSn_CfdFZ3k1md7GbvoNM8Eu6SaZV=oXA@mail.gmail.com>
+Subject: Re: [PATCH 29/41] scsi: megaraid: megaraid_sas_base: Mark expected
+ switch fall-through
+To:     gustavo@embeddedor.com
+Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        megaraidlinux.pdl@broadcom.com, jejb@linux.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-11-21 23:30:43)
-> On Wed 21 Nov 01:01 PST 2018, Stephen Boyd wrote:
-> =
-
-> > Quoting Bjorn Andersson (2018-11-05 21:50:13)
-> > > As of v4.20-rc1 probing the GCC driver on a SDM845 device with the
-> > > standard security implementation causes an access violation and an
-> > > immediate system restart. Use the protected-clocks property to mark t=
-he
-> > > offending clocks protected for the MTP, in order to allow it to boot.
-> > > =
-
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > > =
-
-> > > This depends on the acceptance of
-> > > https://lore.kernel.org/lkml/20181105194011.43770-1-swboyd@chromium.o=
-rg/
-> > =
-
-> > Do you need me to merge this into clk-fixes so that Andy can send this
-> > up for v4.20 final? I thought you may have other boot blocking issues so
-> > this wouldn't be a critical fix.
-> > =
-
-> =
-
-> We resolved the gpio-related issues, so iirc this is the only other item
-> preventing the MTP from booting. So yes please.
-> =
-
-> Unless you enable USB support, because configuring the first USB
-> controller in host currently crashes the device - I've not yet found the
-> cause for this though.
-> =
-
-
-Ok let me do the necessary shuffling to get this all lined up for
-merging later this week, including this dts patch.
-
+On Wed, Nov 28, 2018 at 10:02 AM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_base.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+> index b7d3fc6fb118..9db7aebc3564 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+> @@ -3281,6 +3281,7 @@ megasas_complete_cmd(struct megasas_instance *instance, struct megasas_cmd *cmd,
+>                         megasas_complete_int_cmd(instance, cmd);
+>                         break;
+>                 }
+> +               /* fall through */
+>
+>         case MFI_CMD_LD_READ:
+>         case MFI_CMD_LD_WRITE:
+> --
+> 2.17.1
+>
