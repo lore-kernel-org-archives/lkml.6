@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540A3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE76C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A801205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CBAF20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 10:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EcWJrBHi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A801205C9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nz0VKdjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBAF20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeK1VpR (ORCPT
+        id S1728190AbeK1VpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:45:17 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36942 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbeK1VpR (ORCPT
+        Wed, 28 Nov 2018 16:45:19 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34897 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbeK1VpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:45:17 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e5-v6so22981635lja.4
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 02:44:03 -0800 (PST)
+        Wed, 28 Nov 2018 16:45:19 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so22982008ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 02:44:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=U0ANQBd09LcGDKebw9OrEkrU3xRG8J5BfhAYKK76wok=;
-        b=EcWJrBHi25Mrr1atFR0tEoCdEdwFxVdh5RM0THY+2gytq0Ri1MOvDGAb6PpL/AGNK9
-         6z4IN6RqNgtaZE2zLaLNEUsQx4ALWt7nr3Qa1S91/3Ggj9n7PGNDCucGSzhcbo0Ogiv2
-         MvqKUn2Pv5WyVTgZGuia2X+Ixcb3KFBk9Nmtk=
+        bh=uFUKjxTT9vhRdoORnKcL1go1+WQ1lrKrvE6sIAkGI9I=;
+        b=Nz0VKdjCMqLGPbYKRJYOxaVnpQh1k58x0DVVOkjpY1BI3lwBX4HROZeN1QPA8vhlwp
+         Xjg2dlpHd+vr6o2tPZT4t1T9ZjTOcMsmCdDC+dmQX/6YjAMaAqmlYtFYfvfBRtNo3bdZ
+         D7pR+uGNDF41vynPtMgm0C+Z3M58qyv7tSPQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=U0ANQBd09LcGDKebw9OrEkrU3xRG8J5BfhAYKK76wok=;
-        b=Qe2j3ALKtySDvrpyEd1QkXLaRhNikaKMhhl5FLOqdNJGc6CSNsyyxrnNE6qhNyXsa3
-         6fl8pPNPIPL24YO51/t31nSIJLQf5wkqDfwZOahvqFB9fVEfI6egwvlHaZ/DIXZyDliE
-         TefwErzCrJ991IjXbNB6G1xl/rkyyuROolUE9bCinH8qHJylXiLnB1hdxlRlspGTgudr
-         dQboJ4N6d0jj+lEs1LY4zAhcjWa4hCMD0IBRCoKQK6hrZDI95oBuCPv04mMIrRGU2StN
-         QiAGjLJYcW9S/HlM8sruNmcCsJ5QNmWOuDn6U1o4pPWLsKid0SxmfYFtEVs/Ue506iI4
-         CrjQ==
-X-Gm-Message-State: AA+aEWYJGFcl27q/l6U9Ke+vCZia/80E9WbKzw5bW80FDTHlxkn2f3WV
-        qK9MZK/AT70jc5+nz0o5XVsD5A==
-X-Google-Smtp-Source: AFSGD/UQoBYqX1BBJuKVNkmeRiFPzXHbwqEoRVZBtPZGoTjbEdyHMbG0r+ilnrci8uAgaNV12TPK0A==
-X-Received: by 2002:a2e:9d86:: with SMTP id c6-v6mr6496603ljj.146.1543401842378;
-        Wed, 28 Nov 2018 02:44:02 -0800 (PST)
+        bh=uFUKjxTT9vhRdoORnKcL1go1+WQ1lrKrvE6sIAkGI9I=;
+        b=jhg1CJj/XtFu9RKpjhAjkUZFS7Nb1uHqu/NeP8hW7X7aJRFBdPzFNBEBjUg8NVMR48
+         aDdzm7NHA8v3+ECuTmR4jRDVU5kqfvl7p0KbK38OPFn8I7ArT7E1kyCLkdTI5tqjRFpO
+         GIn9zYDWZVLb1Tzr/Myw0KKQYgiGaXp8FtjutT1eQ1DjZWwI7R2utfLYpXXnzDSmW7W9
+         lkfACSHL56it/xd4kEnfm9TixYM7P7aeGyycBdVb0D2qhWQbmUyhBPISQ6Kgjeeh64J1
+         dleXLdb1m7S8d2lDr4lsW+feOpmPQQfuiQXbSz+kZP671uCkT9WbSM0aF94dYBiA6rJx
+         /TeA==
+X-Gm-Message-State: AA+aEWYIfMFD86aIRgW1xHqDzSzYFPGM3qoyOXCewdvIlJghV+khJLui
+        2jq/ihAMQDFbDqZruQqfvEeqYnzKi4IDmA==
+X-Google-Smtp-Source: AFSGD/VkjgfG60Lmh23capoW6HY10ztUylfK/4vuPQxBzNpa9IUJSh5sJQ4ii1ck1uivK4zoMU0UWQ==
+X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr22072216ljd.45.1543401844472;
+        Wed, 28 Nov 2018 02:44:04 -0800 (PST)
 Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id c20sm1095101lfj.67.2018.11.28.02.44.01
+        by smtp.gmail.com with ESMTPSA id c20sm1095101lfj.67.2018.11.28.02.44.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 02:44:01 -0800 (PST)
+        Wed, 28 Nov 2018 02:44:03 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -63,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Charles Keepax <ckeepax@opensource.cirrus.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 03/10] regulator: lp8788-ldo: Let core handle GPIO descriptor
-Date:   Wed, 28 Nov 2018 11:43:43 +0100
-Message-Id: <20181128104350.31902-4-linus.walleij@linaro.org>
+Subject: [PATCH 04/10] regulator: max8952: Let core handle GPIO descriptor
+Date:   Wed, 28 Nov 2018 11:43:44 +0100
+Message-Id: <20181128104350.31902-5-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181128104350.31902-1-linus.walleij@linaro.org>
 References: <20181128104350.31902-1-linus.walleij@linaro.org>
@@ -79,34 +79,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Use the gpiod_get() rather than the devm_* version so that the
 regulator core can handle the lifecycle of these descriptors.
 
-Fixes: 2468f0d51548 ("regulator: lp8788-ldo: Pass descriptor instead of GPIO number")
+Fixes: d7a261c2d1f2 ("regulator: max8952: Pass descriptor instead of GPIO number")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/lp8788-ldo.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/regulator/max8952.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index 553b4790050f..416d073ec62c 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -502,7 +502,7 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 	}
+diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
+index 6c39fff73b8a..baa8b771a6e4 100644
+--- a/drivers/regulator/max8952.c
++++ b/drivers/regulator/max8952.c
+@@ -231,9 +231,9 @@ static int max8952_pmic_probe(struct i2c_client *client,
+ 	else
+ 		gflags = GPIOD_OUT_LOW;
+ 	gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+-	gpiod = devm_gpiod_get_optional(&client->dev,
+-					"max8952,en",
+-					gflags);
++	gpiod = gpiod_get_optional(&client->dev,
++				   "max8952,en",
++				   gflags);
+ 	if (IS_ERR(gpiod))
+ 		return PTR_ERR(gpiod);
+ 	if (gpiod)
+@@ -241,6 +241,8 @@ static int max8952_pmic_probe(struct i2c_client *client,
  
- 	/* FIXME: check default mode for GPIO here: high or low? */
--	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
-+	ldo->ena_gpiod = gpiod_get_index_optional(&pdev->dev,
- 					       "enable",
- 					       enable_id,
- 					       GPIOD_OUT_HIGH |
-@@ -548,6 +548,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
- 
- 	rdev = devm_regulator_register(&pdev->dev, &lp8788_dldo_desc[id], &cfg);
+ 	rdev = devm_regulator_register(&client->dev, &regulator, &config);
  	if (IS_ERR(rdev)) {
-+		if (ldo->ena_gpiod)
-+			gpiod_put(ldo->ena_gpiod);
++		if (gpiod)
++			gpiod_put(gpiod);
  		ret = PTR_ERR(rdev);
- 		dev_err(&pdev->dev, "DLDO%d regulator register err = %d\n",
- 				id + 1, ret);
+ 		dev_err(&client->dev, "regulator init failed (%d)\n", ret);
+ 		return ret;
 -- 
 2.19.1
 
