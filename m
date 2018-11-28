@@ -2,129 +2,63 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12B6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C3DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1AEE2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:03:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AEE2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 895E42082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:05:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WIfzD5F+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895E42082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeK1SDv (ORCPT
+        id S1727501AbeK1SFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:03:51 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:5087 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727107AbeK1SDv (ORCPT
+        Wed, 28 Nov 2018 13:05:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:32902 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbeK1SFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:03:51 -0500
-X-UUID: ed5a464ecd8f43c1a5a7976e68a9049c-20181128
-X-UUID: ed5a464ecd8f43c1a5a7976e68a9049c-20181128
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1809863021; Wed, 28 Nov 2018 15:02:57 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 28 Nov
- 2018 15:02:56 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Nov 2018 15:02:56 +0800
-Message-ID: <1543388576.32173.106.camel@mhfsdcap03>
-Subject: Re: [PATCH] usb/mtu3: power down device ip at setup
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Wed, 28 Nov 2018 15:02:56 +0800
-In-Reply-To: <CAJMQK-joY4M-=4+XoYAC5SJUie554i_EO=7VgrkJj2JNbbDdxg@mail.gmail.com>
-References: <20181128060412.630-1-hsinyi@chromium.org>
-         <1543386149.32173.87.camel@mhfsdcap03>
-         <CAJMQK-joY4M-=4+XoYAC5SJUie554i_EO=7VgrkJj2JNbbDdxg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 13:05:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=WIfzD5F+K5raFMdUD0Da5mY1d
+        cBUV4GHgHODXZecSs0FMlMMR3Pv+vwdjq0SmRSkCwkjTjxqBcHGnVRNszBh5A9r92EVkRcNO3piXQ
+        Ef2N6nqJv2EdwU5gB6Ss0snvP9Up6euWAaMgssWysPJCBb37gpuSnEYn8iCP/Q6cUpXnLHY6cR1q8
+        R2aMZpN0DyIAGI2bFJ0B+wYCF2bEt5tkfT0h8nXv1BtuwrHnG2kxKPZCcEbs5Ec9VSPlP2RZWpRmq
+        vAumspAc5G/Q7dLVF/rL+gZhTA7lExkfe4qmydBUexqY3HHwpWSgOz1J9/7nH67EAfVYqPEMsu+mW
+        aYM1r8KPg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRtuH-0000xo-AY; Wed, 28 Nov 2018 07:05:09 +0000
+Date:   Tue, 27 Nov 2018 23:05:09 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: read ->revision before dropping pci_device reference
+Message-ID: <20181128070509.GA30936@infradead.org>
+References: <1543369243-64252-1-git-send-email-bianpan2016@163.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543369243-64252-1-git-send-email-bianpan2016@163.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-28 at 14:26 +0800, Hsin-Yi Wang wrote:
-> Hi Chunfeng,
-> On mt8183, We found `ip sleep failed!!!` with powerd_dbus_suspend.
-Did you enable usb device mode in BROM or LK stage? e.g. download image
-by fastboot / flashtool
+Looks good,
 
->  Referenced from xhci, it also power down device ip at
-> xhci_mtk_ssusb_config().
-It may happen when user downloads images by usb device in LK/BROM stage,
-but not disable it before enter kernel stage.
-
->  Also if dr_mode is PERIPHERAL and OTG, they both power down device ip
-> at ssusb_gadget_init().
-Yes, it tries to save power;
-> 
-> On Wed, Nov 28, 2018 at 2:22 PM Chunfeng Yun
-> <chunfeng.yun@mediatek.com> wrote:
-> 
->         Hi Hsin-Yi,
->         
->         On Wed, 2018-11-28 at 14:04 +0800, Hsin-Yi, Wang wrote:
->         > Originally, when dr_mode is USB_DR_MODE_HOST, it didn't
->         power down device ip,
->         > so host ip sleep will fail at ssusb_host_disable.
->         > 
->         > Power down device ip at ssusb_host_setup.
->         > 
->         > Signed-off-by: Hsin-Yi, Wang <hsinyi@chromium.org>
->         > ---
->         >  drivers/usb/mtu3/mtu3_host.c | 8 ++++++++
->         >  1 file changed, 8 insertions(+)
->         > 
->         > diff --git a/drivers/usb/mtu3/mtu3_host.c
->         b/drivers/usb/mtu3/mtu3_host.c
->         > index c871b94f3e6f..d17cf43305db 100644
->         > --- a/drivers/usb/mtu3/mtu3_host.c
->         > +++ b/drivers/usb/mtu3/mtu3_host.c
->         > @@ -192,9 +192,17 @@ int ssusb_host_disable(struct ssusb_mtk
->         *ssusb, bool suspend)
->         >  static void ssusb_host_setup(struct ssusb_mtk *ssusb)
->         >  {
->         >       struct otg_switch_mtk *otg_sx = &ssusb->otg_switch;
->         > +     void __iomem *ibase = ssusb->ippc_base;
->         >  
->         >       host_ports_num_get(ssusb);
->         >  
->         > +     /*
->         > +      * device ip is default power-on in fact
->         The device ip is power-off by default, no need power down it
->         here.
->         
->         On which platform did you encounter the issue?
->         
->         > +      * power down device ip, otherwise ip-sleep will fail
->         > +      */
->         > +     if (ssusb->dr_mode == USB_DR_MODE_HOST)
->         > +             mtu3_setbits(ibase, U3D_SSUSB_IP_PW_CTRL2,
->         SSUSB_IP_DEV_PDN);
->         > +
-Could you please put it in ssusb_ip_sw_reset(), after ip reset, in
-mtu3_plat.c, if it fix the issue?
-
->         >       /*
->         >        * power on host and power on/enable all ports
->         >        * if support OTG, gadget driver will switch port0 to
->         device mode
->         
->         
-
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
