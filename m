@@ -2,206 +2,266 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63114C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716D4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1126C2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 227002081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="wmQji8Yx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1126C2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpI5fRTg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 227002081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeK2Cob (ORCPT
+        id S1728807AbeK2Coh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:44:31 -0500
-Received: from vern.gendns.com ([98.142.107.122]:56894 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbeK2Coa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:44:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5lxk16se+yWU15wf3pp7o74cUXSPR6W0L92TUjSzSlU=; b=wmQji8YxKOBEQCsvOFFTN1WDAy
-        5Ss3BZke6k0OKmjON0JavfCNjE6jHqY8gQc3UhuaoZ6eoaKX3nTEFCNpNTH8TZT1r3AkpDeCua5rI
-        fGjCztHqzH46nkhB7SHY78izb+FBcPN5VQHlJy2pbP8fPhNF6YhMerSos96+Pj9BXSm2Ys93TO8OR
-        fjGtLXtUBzIl7qK00tGQJJdzYPsBuWC747/mGSWzoZr6KO6PtP6vDLJvjf7ipQqYKfI2+A2TAacjC
-        5obDLfdl6576QonPjC2W3IUzybPiyoTC7en8n8ZmkHp1Ecx+hmrFYQdP5CtEQizb64PSRCWbpjLM3
-        eXYgG1Hw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48946 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gS1xv-0000X7-1T; Wed, 28 Nov 2018 10:41:27 -0500
-Subject: Re: [PATCH 01/17] dt-bindings: remoteproc: Add TI PRUSS bindings
-To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
-Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
-        ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
-        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
-        m-karicheri2@ti.com, woods.technical@gmail.com,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-2-git-send-email-rogerq@ti.com>
- <a4fe952b-9065-d91b-4c07-984ec3f5b276@lechnology.com>
- <5BFD5F83.3070807@ti.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <ee02b7d3-e7fd-2f4a-4213-d556d364194b@lechnology.com>
-Date:   Wed, 28 Nov 2018 09:42:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 28 Nov 2018 21:44:37 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52647 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728217AbeK2Cof (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 21:44:35 -0500
+Received: by mail-it1-f196.google.com with SMTP id i7so5032693iti.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 07:42:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0uUjT4ItIRh9y4vgEIOefwEK1rUf8/o5NSvJYCDiNqg=;
+        b=QpI5fRTgwcA6NW7hv+ad1nIkjnv/E07MUMhqrYOupClaUNVqBfqhQhiw8h1wDDaTg7
+         cYCtAkJ5Nu75HeSCnGf1/VxPCJaU3Fu1wGWMOViprECUJckNpSrEKAs2+0o26Ym9mtQT
+         tNZ9CwCy+lxtMSde5bh27KnSAiqT1rJqDhXag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0uUjT4ItIRh9y4vgEIOefwEK1rUf8/o5NSvJYCDiNqg=;
+        b=EScK9OTPhEcYPwwXIhUfDfiS5eCg8quE6Tx6EhIbfRPts8EX+lT2aQh4Tfu4UU/dhs
+         Iv0gu5nQy2v/y5SBHRsAQom3iEWgp1Zl/O9MilFkdNTMKJGPX7N2VDXq8MlVbu+qAbNK
+         Maknvt1SwleBz/1iYC7r5tvrsYKLimkz+185ye5JbQXRiC2uY083pn7MvInIHfuP7nGu
+         vE2RfhSrjJR3A2RYJeNV7VSbEdQCFHAd6HPNEkEThWC+UbHvzbJBMnq9J5u8x/4gpHjx
+         pSQjFE60ouOoFoHYtrPlktvufVoqFa1Sm12Sy0Hh0HMEtu8zfFa6G+KPvMPBN/6l7KZl
+         ghmA==
+X-Gm-Message-State: AA+aEWYs+FPppEkIbJwrIXJNUgkxkUls+e4qwpCOy15qqk1t49HIs5yj
+        UMTR0S5Vfknw4XGDvlfN7X+IfCdNmQw5jyJrMlZBRA==
+X-Google-Smtp-Source: AJdET5c38JVFLP6Qfaw7SlhN35A+IKNZSWmquSH+ppYBloqNRAzRG0Nb/J+ZOY8PYHb5QxKHHRV4bsW9t4BveVj2lVc=
+X-Received: by 2002:a02:6019:: with SMTP id i25mr34247138jac.137.1543419749929;
+ Wed, 28 Nov 2018 07:42:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5BFD5F83.3070807@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+ <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net> <20181128115336.GB23094@e110439-lin>
+ <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
+ <20181128144039.GC23094@e110439-lin> <CAKfTPtAR7otTTwKYbg5OWbgrUYNKBNsUnOcMS9CfQtbYspvO5A@mail.gmail.com>
+ <20181128152133.GD23094@e110439-lin>
+In-Reply-To: <20181128152133.GD23094@e110439-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 28 Nov 2018 16:42:18 +0100
+Message-ID: <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/18 9:15 AM, Roger Quadros wrote:
-> 
-> On 26/11/18 23:14, David Lechner wrote:
->> On 11/22/18 5:38 AM, Roger Quadros wrote:
->>> From: Suman Anna <s-anna@ti.com>
->>>
->>> This patch adds the bindings for the Programmable Real-Time Unit
->>> and Industrial Communication Subsystem (PRU-ICSS) present on various
->>> TI SoCs. The IP is present on multiple TI SoC architecture families
->>> including the OMAP architecture SoCs such as AM33xx, AM437x and
->>> AM57xx; and on a Keystone 2 architecture based 66AK2G SoC. It is
->>> also present on the Davinci based OMAPL138 SoCs and K3 architecture
->>> based AM65x SoCs as well (not covered for now). Details have been
->>> added to include bindings for various core sub-modules like the PRU
->>> Cores, the PRUSS Interrupt Controller, and other sub-modules used
->>> for Industrial Communication purposes, covering the MDIO, MII_RT
->>> and the IEP sub-modules. The binding mostly uses standard DT
->>> properties.
->>>
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>> ---
->>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 +++++++++++++++++++++
->>>    1 file changed, 360 insertions(+)
->>>    create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>> new file mode 100644
->>> index 0000000..24fedad
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>
->> ...
->>
->>> +
->>> +PRU-ICSS SoC Bus Parent Node
->>> +=============================
->>> +This node represents the integration of the PRU-ICSS IP into a SoC, and is
->>> +required for all SoCs. The PRU-ICSS parent nodes need to be defined as child
->>> +nodes of this node.
->>> +
->>> +Required Properties:
->>> +--------------------
->>> +- compatible     : should be one of,
->>> +                       "ti,am3356-pruss-soc-bus" for AM335x family of SoCs
->>> +                       "ti,am4376-pruss-soc-bus" for AM437x family of SoCs
->>> +                       "ti,am5728-pruss-soc-bus" for AM57xx family of SoCs
->>> +                       "ti,k2g-pruss-soc-bus" for 66AK2G family of SoCs
->>> +- reg            : address and size of the PRUSS CFG sub-module registers
->>> +                   dictating the interconnect configuration
->>
->> I haven't looked into Tony's suggestion of using ti-sysc yet, so this may be a
->> moot point, but how will this work with AM18xx that does not have a PRUSS CFG
->> register? It seems to me that reg here should be the address and size of the
->> entire PRUSS IP block and the CFG register should be a syscon node or something
->> like that.
-> 
-> The reg property description is incorrect in the patch. It should have been
-> 
-> reg		: address of SYSCFG register.
-> 
-> The SYSCFG register is used to enable and reset the module.
-> 
-> But based on Tony's suggestion this wrapper driver will change to ti,sysc for
-> OMAP like SoCs.
-> 
-> For AM18xx it could be a simple wrapper driver that just populates the children?
+On Wed, 28 Nov 2018 at 16:21, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+>
+> On 28-Nov 15:55, Vincent Guittot wrote:
+> > On Wed, 28 Nov 2018 at 15:40, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > >
+> > > On 28-Nov 14:33, Vincent Guittot wrote:
+> > > > On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > > > >
+> > > > > On 28-Nov 11:02, Peter Zijlstra wrote:
+> > > > > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
+> > > > > >
+> > > > > > > Is there anything else that I should do for these patches ?
+> > > > > >
+> > > > > > IIRC, Morten mention they break util_est; Patrick was going to explain.
+> > > > >
+> > > > > I guess the problem is that, once we cross the current capacity,
+> > > > > strictly speaking util_avg does not represent anymore a utilization.
+> > > > >
+> > > > > With the new signal this could happen and we end up storing estimated
+> > > > > utilization samples which will overestimate the task requirements.
+> > > > >
+> > > > > We will have a spike in estimated utilization at next wakeup, since we
+> > > > > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
+> > > > > case we collect multiple samples above the current capacity.
+> > > >
+> > > > TBH I don't see how it's different from current implementation with a
+> > > > task that was scheduled on big core and now wakes up on little core.
+> > > > The util_est is overestimated as well.
+> > >
+> > > While running below the capacity of a CPU, either big or LITTLE, we
+> > > can still measure the actual used bandwidth as long as we have idle
+> > > time. If the task is then moved into a lower capacity core, I think
+> > > it's still safe to assume that, likely, it would need more capacity.
+> > >
+> > > Why do you say it's the same ?
+> >
+> > In the example of a task that runs 39ms in period of 80ms that we used
+> > during previous version,
+> > the utilization on the big core will reach 709 so will util_est too
+> > When the task migrates on little core (512), util_est is higher than
+> > current cpu capacity
+>
+> Right, and what's the problem ?
 
-I suppose that could work. I will look into it (perhaps after seeing what you
-come up with in v2).
+you worry about an util_est being higher than capacity which is the case there
 
-> 
->>
->>> +- #address-cells : should be 1
->>> +- #size-cells    : should be 1
->>> +- ranges         : standard ranges definition
->>> +
->>
->> ...
->>
->>> +
->>> +PRUSS INTC Child Node
->>> +======================
->>> +Each PRUSS has a single interrupt controller instance that is common to both
->>> +the PRU cores. Each interrupt controller can detect 64 input events which are
->>> +then mapped to 10 possible output interrupts through two levels of mapping. The
->>> +input events can be triggered by either the PRUs and/or various other PRUSS
->>> +internal and external peripherals. The first 2 output interrupts are fed
->>> +exclusively to the internal PRU cores, with the remaining 8 connected to
->>> +external interrupt controllers including the MPU.
->>
->> FYI, on AM18xx, there is a PRUSSEVTSEL bit in CFGCHIP3[3] (already a syscon node
->> in the device tree) that allows selecting one of two groups of 32 input events
->> out of this group of 64. This is perhaps getting out of the scope of this patch
->> series, but I just want to make sure we end up with something that can be easily
->> extended for this case. For example, I was thinking that this binding could be
->> modified so that #interrupt-cells could be 1 or 2. If it is 2, then the first
->> cell specifies the PRUSSEVTSEL value and the second value is the event number.
->>
-> 
-> this is da850.dtsi correct?
+>
+> 1) We know that PELT is calibrated to 32ms period task and in your
+>    example, since the runtime is higher then the half-life, it's
+>    correct to estimate a utilization higher then 50%.
+>
+>    PELT utilization is defined _based on the half-life_: thus
+>    your task having a 50% duty cycle does not mean we are not correct
+>    if report a utilization != 50%.
+>    It would be as broken as reporting 10% utilization for a task
+>    running 100ms every 1s.
+>
+> 2) If it was a 70% task on a previous activation, once it's moved into
+>    a lower capacity CPU it's still correct to assume that it's likely
+>    going to require the same bandwidth and thus will be
+>    under-provisioned.
+>
+> I still don't see where we are wrong in this case :/
+>
+> To me it looks different then the problem I described.
+>
+> > > With your new signal instead, once we cross the current capacity,
+> > > utilization is just not anymore utilization. Thus, IMHO it make sense
+> > > avoid to accumulate a sample for what we call "estimated utilization".
 
-Yes.
+This is not true. With the example above, the util_est will be exactly the same
+ on big and little cores with the new signal
 
-> 
-> As PRUSSEVTSEL is not SYSEVENT specific but applies to all the SYSEVENTs at a time.
-> I don't think interrupt-cells is the right place to specify this.
-> 
-> Can it be set in DT in the board file? But this can't change once booted so maybe restrictive.
+> > >
+> > > I would also say that, with the current implementation which caps
+> > > utilization to the current capacity, we get better estimation in
+> > > general. At least we can say with absolute precision:
+> > >
+> > >    "the task needs _at least_ that amount of capacity".
+> > >
+> > > Potentially we can also flag the task as being under-provisioned, in
+> > > case there was not idle time, and _let a policy_ decide what to do
+> > > with it and the granted information we have.
+> > >
+> > > While, with your new signal, once we are over the current capacity,
+> > > the "utilization" is just a sort of "random" number at best useful to
+> > > drive some conclusions about how long the task has been delayed.
 
-I guess the way I see this is that it is like specifying the bank and index for
-a GPIO. If you only specify the system event number, then it is not clear which
-event you mean - it could be one of two events. You have to also specify the
-PRUSSEVTSEL value (one could call this the bank or group, I suppose) to fully
-describe the system event.
+see my comment above
 
-> 
-> If runtime change is required it can only be done before a PRU boots.
-> 
-> How about providing this info in the resource table and/or application DT node?
+> > >
+> > > IOW, I fear that we are embedding a policy within a signal which is
+> > > currently representing something very well defined: how much cpu
+> > > bandwidth a task used. While, latency/under-provisioning policies
+> > > perhaps should be better placed somewhere else.
+> > >
+> > > Perhaps I've missed it in some of the previous discussions:
+> > > have we have considered/discussed this signal-vs-policy aspect ?
+>
+> What's your opinion on the above instead ?
 
-This seems like this would make it easy to end up with a broken interrupts
-if you accidentally try to use interrupts from both groups. Instead this
-could be implemented in the irqchip driver such that the first interrupt
-(system event) requested gets to select the group. If any interrupts from
-the other group are requested later, they can just return an error. Any
-interrupts in the same group as the first can be requested successfully.
+It's not a policy but it gives better knowledge about the amount a work done
+I have put below discussion on the  subject on previous version
+
+> >
+> > With contribution scaling the PELT utilization of a task is a _minimum_
+> > utilization. Regardless of where the task is currently/was running (and
+> > provided that it doesn't change behaviour) its PELT utilization will
+> > approximate its _minimum_ utilization on an idle 1024 capacity CPU.
+>
+> The main drawback is that the _minimum_ utilization depends on the CPU
+> capacity on which the task runs. The two 25% tasks on a 256 capacity
+> CPU will have an utilization of 128 as an example
+>
+> >
+> > With time scaling the PELT utilization doesn't really have a meaning on
+> > its own. It has to be compared to the capacity of the CPU where it
+> > is/was running to know what the its current PELT utilization means. When
+>
+> I would have said the opposite. The utilization of the task will
+> always reflect the same amount of work that has been already done
+> whatever the CPU capacity.
+> In fact, the new scaling mechanism uses the real amount of work that
+> has been already done to compute the utilization signal which is not
+> the case currently. This gives more information about the real amount
+> of worked that has been computed in the over utilization case.
+>
+> > the utilization over-shoots the capacity its value is no longer
+> > represents utilization, it just means that it has a higher compute
+> > demand than is offered on its current CPU and a high value means that it
+> > has been suffering longer. It can't be used to predict the actual
+> > utilization on an idle 1024 capacity any better than contribution scaled
+> > PELT utilization.
+>
+> I think that it provides earlier detection of over utilization and
+> more accurate signal for a longer time duration which can help the
+> load balance
+> Coming back to 50% task example . I will use a 50ms running time
+> during a 100ms period for the example below to make it easier
+>
+> Starting from 0, the evolution of the utilization is:
+>
+> With contribution scaling:
+>          time  0ms  50ms  100ms  150ms  200ms
+> capacity
+> 1024           0    666
+> 512            0    333   453
+> When the CPU start to be over utilized (@100ms), the utilization is
+> already too low (453 instead of 666) and scheduler doesn't detect yet
+> that we are over utilized
+> 256            0    169   226    246    252
+> That's even worse with this lower capacity
+>
+> With time scaling,
+>          time  0ms  50ms  100ms  150ms  200ms
+> capacity
+> 1024           0    666
+> 512            0    428   677
+> We know that the current capacity is not enough and the utilization
+> reflect the correct utilization level compare to 1024 capacity (the
+> 666 vs 677 difference comes from the 1024us window so the last window
+> is not full in the case of max capacity)
+> 256            0    234   468    564    677
+> At 100ms, we know that there is not enough capacity. (In fact we know
+> that at 56ms). And even at time 200ms, the amount of work is exactly
+> what would have been executed on a CPU 4x faster
+>
+> >
+> > This change might not be a showstopper, but it is something to be aware
+> > off and take into account wherever PELT utilization is used.
+>
+> The point above is clearly a big difference between the 2 approaches
+> of the no spare cycle case but I think it will help by giving more
+> information in the over utilization case
+>
+> Vincent
+> >
+> > Morten
+
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
