@@ -2,98 +2,220 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99165C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4BBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A502081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A502081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E60662081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 21:40:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZ+35K7F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60662081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbeK2ImZ (ORCPT
+        id S1726565AbeK2InY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:42:25 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41328 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeK2ImY (ORCPT
+        Thu, 29 Nov 2018 03:43:24 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:46678 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeK2InY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:42:24 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 189so17759120qkj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 13:39:23 -0800 (PST)
+        Thu, 29 Nov 2018 03:43:24 -0500
+Received: by mail-yw1-f67.google.com with SMTP id t13so11351586ywe.13;
+        Wed, 28 Nov 2018 13:40:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AcREcZFLQT/C2j921gV62NNDdhrR+J2aV3MAuqaBKAo=;
+        b=eZ+35K7Fi/9O12SlzjZgQ/Hp8D/fDVZFwhA44VNs5usN3Z/uvQ7JoUbx3OeMyUjZ71
+         DaoH5QNwqDvOQTTm7k0swWKBeOJ2q4itwWYaxfjzrMlXnsBL/y+n6hP0o8weZXcCbEe/
+         tPMZrIV09ldLxlSFK3EObLFfmAmZdPvDjfklNPjf5NbkIcBcpnWQKz2DHNS7t3rEeubC
+         ReZxfaPppoItFrmcuFkyO3j1fovohhR0bM/GUkcxr1lYm7wRlzi6YAisBR8Q+t4yJbXW
+         HvPa5jDkDlfHls/T+oGO5kbQNPfmUjIxAN3qEbkrf0RmfGH/jvtnBuqZwyK/2tv/V+ar
+         cJgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EiarKnn39NjVGvMXlH6qjFTx+j2qctE/BWf0hiux/C8=;
-        b=XRAFLhVn2eUJJ3mMQmYNtg42i5LsaH76C3EBhjcsJwer4445hN4aPmLAeIZeyFVZxk
-         AZmv75yUpwASfM08XGNsFQqEmZuRqa384LmvhIOxY5n/P8miBd/81GY2EMQChWbrIT8b
-         yciJReGD/BZYDVD0p5C+0PGoha7astX8ydMxhb8wqFtstbtOyqHG6xdWlQgbJJZkiyr9
-         U6R9kRWmGUdKVpysK3Vo50KbtsLiRX4QYW6gOLxpZMgSHOL7ZQNuZ4VkqpC2TY7bKDFQ
-         2guhtkjPKnQFCC+ck08GCw6LSiqCxhugIo9E6YpqyVMalojETCbL10KCoEMzGYaSsyC0
-         o0aQ==
-X-Gm-Message-State: AA+aEWacWhm4QPAj5X4cje/THzoMZ5oRnnK6LfhxgB80374rl4qW/RVB
-        3TtTr6FFtjYotZGusZHc3YGYpskWCfJdPs65aoE=
-X-Google-Smtp-Source: AFSGD/XS7vQ9U+psp8ycxkRvP91DA15xOm/nhsAa8GjBeO5TCg+M/BtzpMRtO2p02WfMEjC01a1REZde6P6jAqbuYlU=
-X-Received: by 2002:a37:a3c6:: with SMTP id m189mr35746213qke.173.1543441162850;
- Wed, 28 Nov 2018 13:39:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AcREcZFLQT/C2j921gV62NNDdhrR+J2aV3MAuqaBKAo=;
+        b=T3dkOa+d5CLRIabLIiC+5k5eqsQyKr4vhRUzNjbkOxTtI+jxFI7zH2Bhd610w3t1tB
+         DFcHODNO2Sx4JAFXvLo/U9H9hLGXjLEvkHGn5/Nto75XyRH1i16qnkOLbBBdiRYP0Hpb
+         DseZwWv37NcEZ49I0wzrz0SGxhm7wNd8amMra8GRQ1UTZimb7FpqVDs8zS8/HntvBdub
+         7o7tAaFOJbhEmCB3KZeiU/twqmGm6O9jDcnLNVv0Xxk5HqyyH6u9wtLbWbPnPSl+0qra
+         DFf5YINjRKrobk3cAxfuuJkcfJIp2zMPFIjqnUs9Jw6ZogWZUrLasbSqXh+i036AYm8+
+         e2sA==
+X-Gm-Message-State: AA+aEWZOdgPKQEqL3X54pZX3I+hQXdgcBBqYDpiJyvCRrW+24t7uBcbt
+        YZGMv98tpwDB5OK6QvYNXkLxWh7u
+X-Google-Smtp-Source: AFSGD/Wjq444xMWJKDzbPTVsaSL6jKxUZAf4Rd3tPlY13iGvMo4MnCYzUF9CLo+/Cujt4cNRpUd4WQ==
+X-Received: by 2002:a81:6a04:: with SMTP id f4mr2719222ywc.485.1543441221268;
+        Wed, 28 Nov 2018 13:40:21 -0800 (PST)
+Received: from cox.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id j65sm2118157ywf.21.2018.11.28.13.40.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 13:40:20 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: dsa: Fix tagging attribute location
+Date:   Wed, 28 Nov 2018 13:40:04 -0800
+Message-Id: <20181128214012.16397-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181128175324.163202-1-lkundrak@v3.sk>
-In-Reply-To: <20181128175324.163202-1-lkundrak@v3.sk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 28 Nov 2018 22:39:06 +0100
-Message-ID: <CAK8P3a0jN1PBy1oKHrx5abX4OKHVxjgevbUcXbUDPbU+VdvUPg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/20] MMP platform fixes
-To:     lkundrak@v3.sk
-Cc:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Pavel Machek <pavel@ucw.cz>, quozl@laptop.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 6:53 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> Hi,
->
-> this series contains contains a bunch of MMP2 platform fixes.
->
-> Previous spins of the patch set were sent out over the course of last
-> three months to the MMP platform maintainers, with Arnd and
-> linux-arm-kernel@lists.infradead.org on copy.
->
-> Unfortunatelly, MMP maintainers (Eric Miao and Haojian Zhuang) don't
-> seem to respond anymore. That's a shame, because the MMP2 support seems to
-> in need for some love. The DT/multiplatform kernels can't even boot without
-> 14/20, 15/20 and perhaps more.
->
-> I'm wondering if this cat gen in via the arm-soc tree? Would it be
-> appropriate if I followed up with a MAINTAINERS update in that case?
+While introducing the DSA tagging protocol attribute, it was added to the DSA
+slave network devices, but those actually see untagged traffic (that is their
+whole purpose). Correct this mistake by putting the tagging sysfs attribute
+under the DSA master network device where this is the information that we need.
 
-Yes, sounds good to me. I looked through the series again, and
-found one patch that seems wrong to me. Everything else should
-just go in.
+While at it, also correct the sysfs documentation mistake that missed the
+"dsa/" directory component of the attribute.
 
-Patches that are purely bugfixes should probably also get backported
-to stable kernels, so please add a 'Cc: stable@vger.kernel.org' tag
-in the changelog for things that are required to make older kernels
-work correctly (as opposed to adding features that were never supposed
-to work), and describe in the changelog which kernel versions should
-see that backport.
+Fixes: 98cdb4807123 ("net: dsa: Expose tagging protocol to user-space")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-class-net-dsa |  2 +-
+ net/dsa/master.c                              | 34 ++++++++++++++++++-
+ net/dsa/slave.c                               | 28 ---------------
+ 3 files changed, 34 insertions(+), 30 deletions(-)
 
-> The patch set has been tested on an OLPC XO-1.75 laptop.
+diff --git a/Documentation/ABI/testing/sysfs-class-net-dsa b/Documentation/ABI/testing/sysfs-class-net-dsa
+index f240221e071e..985d84c585c6 100644
+--- a/Documentation/ABI/testing/sysfs-class-net-dsa
++++ b/Documentation/ABI/testing/sysfs-class-net-dsa
+@@ -1,4 +1,4 @@
+-What:		/sys/class/net/<iface>/tagging
++What:		/sys/class/net/<iface>/dsa/tagging
+ Date:		August 2018
+ KernelVersion:	4.20
+ Contact:	netdev@vger.kernel.org
+diff --git a/net/dsa/master.c b/net/dsa/master.c
+index c90ee3227dea..5e8c9bef78bd 100644
+--- a/net/dsa/master.c
++++ b/net/dsa/master.c
+@@ -158,8 +158,31 @@ static void dsa_master_ethtool_teardown(struct net_device *dev)
+ 	cpu_dp->orig_ethtool_ops = NULL;
+ }
+ 
++static ssize_t tagging_show(struct device *d, struct device_attribute *attr,
++			    char *buf)
++{
++	struct net_device *dev = to_net_dev(d);
++	struct dsa_port *cpu_dp = dev->dsa_ptr;
++
++	return sprintf(buf, "%s\n",
++		       dsa_tag_protocol_to_str(cpu_dp->tag_ops));
++}
++static DEVICE_ATTR_RO(tagging);
++
++static struct attribute *dsa_slave_attrs[] = {
++	&dev_attr_tagging.attr,
++	NULL
++};
++
++static const struct attribute_group dsa_group = {
++	.name	= "dsa",
++	.attrs	= dsa_slave_attrs,
++};
++
+ int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
+ {
++	int ret;
++
+ 	/* If we use a tagging format that doesn't have an ethertype
+ 	 * field, make sure that all packets from this point on get
+ 	 * sent to the tag format's receive function.
+@@ -168,11 +191,20 @@ int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
+ 
+ 	dev->dsa_ptr = cpu_dp;
+ 
+-	return dsa_master_ethtool_setup(dev);
++	ret = dsa_master_ethtool_setup(dev);
++	if (ret)
++		return ret;
++
++	ret = sysfs_create_group(&dev->dev.kobj, &dsa_group);
++	if (ret)
++		dsa_master_ethtool_teardown(dev);
++
++	return ret;
+ }
+ 
+ void dsa_master_teardown(struct net_device *dev)
+ {
++	sysfs_remove_group(&dev->dev.kobj, &dsa_group);
+ 	dsa_master_ethtool_teardown(dev);
+ 
+ 	dev->dsa_ptr = NULL;
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 7d0c19e7edcf..aec78f5aca72 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1058,27 +1058,6 @@ static struct device_type dsa_type = {
+ 	.name	= "dsa",
+ };
+ 
+-static ssize_t tagging_show(struct device *d, struct device_attribute *attr,
+-			    char *buf)
+-{
+-	struct net_device *dev = to_net_dev(d);
+-	struct dsa_port *dp = dsa_slave_to_port(dev);
+-
+-	return sprintf(buf, "%s\n",
+-		       dsa_tag_protocol_to_str(dp->cpu_dp->tag_ops));
+-}
+-static DEVICE_ATTR_RO(tagging);
+-
+-static struct attribute *dsa_slave_attrs[] = {
+-	&dev_attr_tagging.attr,
+-	NULL
+-};
+-
+-static const struct attribute_group dsa_group = {
+-	.name	= "dsa",
+-	.attrs	= dsa_slave_attrs,
+-};
+-
+ static void dsa_slave_phylink_validate(struct net_device *dev,
+ 				       unsigned long *supported,
+ 				       struct phylink_link_state *state)
+@@ -1374,14 +1353,8 @@ int dsa_slave_create(struct dsa_port *port)
+ 		goto out_phy;
+ 	}
+ 
+-	ret = sysfs_create_group(&slave_dev->dev.kobj, &dsa_group);
+-	if (ret)
+-		goto out_unreg;
+-
+ 	return 0;
+ 
+-out_unreg:
+-	unregister_netdev(slave_dev);
+ out_phy:
+ 	rtnl_lock();
+ 	phylink_disconnect_phy(p->dp->pl);
+@@ -1405,7 +1378,6 @@ void dsa_slave_destroy(struct net_device *slave_dev)
+ 	rtnl_unlock();
+ 
+ 	dsa_slave_notify(slave_dev, DSA_PORT_UNREGISTER);
+-	sysfs_remove_group(&slave_dev->dev.kobj, &dsa_group);
+ 	unregister_netdev(slave_dev);
+ 	phylink_destroy(dp->pl);
+ 	free_percpu(p->stats64);
+-- 
+2.19.1
 
-Excellent!
-
-        Arnd
