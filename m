@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A74EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46854C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5078F21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5078F21479
+	by mail.kernel.org (Postfix) with ESMTP id 17BEF21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BEF21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbeK2JYI (ORCPT
+        id S1726770AbeK2JYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:08 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33046 "EHLO
+        Thu, 29 Nov 2018 04:24:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33058 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeK2JYH (ORCPT
+        with ESMTP id S1726688AbeK2JYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:07 -0500
+        Thu, 29 Nov 2018 04:24:08 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8CR-0001GX-9x; Wed, 28 Nov 2018 23:20:51 +0100
+        id 1gS8CW-0001GX-0M; Wed, 28 Nov 2018 23:20:56 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -35,11 +35,10 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 03/29] x86/entry: Remove _TIF_ALLWORK_MASK
-Date:   Wed, 28 Nov 2018 23:20:09 +0100
-Message-Id: <20181128222035.2996-4-bigeasy@linutronix.de>
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 05/29] x86/fpu: add might_fault() to user_insn()
+Date:   Wed, 28 Nov 2018 23:20:11 +0100
+Message-Id: <20181128222035.2996-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -50,35 +49,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no user of _TIF_ALLWORK_MASK since commit 21d375b6b34ff
-("x86/entry/64: Remove the SYSCALL64 fast path").
-Remove unused define _TIF_ALLWORK_MASK.
+Every user of user_insn() passes an user memory pointer to this macro.
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
+
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/thread_info.h | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 2ff2a30a264f4..cd6920674b905 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -136,14 +136,6 @@ struct thread_info {
- 	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT |	\
- 	 _TIF_NOHZ)
- 
--/* work to do on any return to user space */
--#define _TIF_ALLWORK_MASK						\
--	(_TIF_SYSCALL_TRACE | _TIF_NOTIFY_RESUME | _TIF_SIGPENDING |	\
--	 _TIF_NEED_RESCHED | _TIF_SINGLESTEP | _TIF_SYSCALL_EMU |	\
--	 _TIF_SYSCALL_AUDIT | _TIF_USER_RETURN_NOTIFY | _TIF_UPROBE |	\
--	 _TIF_PATCH_PENDING | _TIF_NOHZ | _TIF_SYSCALL_TRACEPOINT |	\
--	 _TIF_FSCHECK)
--
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b611..978a1633c0698 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,7 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++	might_fault();							\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
 -- 
 2.20.0.rc1
 
