@@ -2,187 +2,267 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F2DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAC7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA542081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA542081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A15F02081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15F02081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbeK2Bgw (ORCPT
+        id S1728827AbeK2Bgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:36:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44007 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbeK2Bgv (ORCPT
+        Wed, 28 Nov 2018 20:36:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50550 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728102AbeK2Bgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:36:51 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEYEGr2324116
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:34:14 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEYEwl2324113;
-        Wed, 28 Nov 2018 06:34:14 -0800
-Date:   Wed, 28 Nov 2018 06:34:14 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-6893a959d7fdebbab5f5aa112c277d5a44435ba1@git.kernel.org>
-Cc:     jkosina@suse.cz, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, longman9394@gmail.com,
-        dwmw@amazon.co.uk, luto@kernel.org, ak@linux.intel.com,
-        gregkh@linuxfoundation.org, thomas.lendacky@amd.com,
-        david.c.stewart@intel.com, torvalds@linux-foundation.org,
-        dave.hansen@intel.com, arjan@linux.intel.com, jpoimboe@redhat.com,
-        mingo@kernel.org, peterz@infradead.org, asit.k.mallick@intel.com,
-        keescook@chromium.org, casey.schaufler@intel.com,
-        tim.c.chen@linux.intel.com, aarcange@redhat.com, jcm@redhat.com
-Reply-To: casey.schaufler@intel.com, keescook@chromium.org,
-          aarcange@redhat.com, jcm@redhat.com, tim.c.chen@linux.intel.com,
-          dave.hansen@intel.com, asit.k.mallick@intel.com,
-          peterz@infradead.org, mingo@kernel.org, arjan@linux.intel.com,
-          jpoimboe@redhat.com, luto@kernel.org, dwmw@amazon.co.uk,
-          longman9394@gmail.com, torvalds@linux-foundation.org,
-          david.c.stewart@intel.com, gregkh@linuxfoundation.org,
-          thomas.lendacky@amd.com, ak@linux.intel.com, jkosina@suse.cz,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20181125185005.759457117@linutronix.de>
-References: <20181125185005.759457117@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Prepare arch_smt_update() for PRCTL
- mode
-Git-Commit-ID: 6893a959d7fdebbab5f5aa112c277d5a44435ba1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 28 Nov 2018 20:36:54 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASEYIpO068586
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:02 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1ucr4u1y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:02 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 28 Nov 2018 14:35:01 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Nov 2018 14:34:57 -0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASEYuQV16646388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 14:34:56 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 462056E04E;
+        Wed, 28 Nov 2018 14:34:56 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E1526E05B;
+        Wed, 28 Nov 2018 14:34:53 +0000 (GMT)
+Received: from skywalker.ibmuc.com (unknown [9.85.87.253])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 14:34:52 +0000 (GMT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH V2 1/5] mm: Update ptep_modify_prot_start/commit to take vm_area_struct as arg
+Date:   Wed, 28 Nov 2018 20:04:34 +0530
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181128143438.29458-1-aneesh.kumar@linux.ibm.com>
+References: <20181128143438.29458-1-aneesh.kumar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-TM-AS-GCONF: 00
+x-cbid: 18112814-0020-0000-0000-00000E918F65
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010137; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01124008; UDB=6.00583546; IPR=6.00904138;
+ MB=3.00024366; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-28 14:34:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112814-0021-0000-0000-000063DE30D5
+Message-Id: <20181128143438.29458-2-aneesh.kumar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=807 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811280129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6893a959d7fdebbab5f5aa112c277d5a44435ba1
-Gitweb:     https://git.kernel.org/tip/6893a959d7fdebbab5f5aa112c277d5a44435ba1
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:52 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 28 Nov 2018 11:57:13 +0100
+Some architecture may want to call flush_tlb_range from these helpers.
 
-x86/speculation: Prepare arch_smt_update() for PRCTL mode
-
-The upcoming fine grained per task STIBP control needs to be updated on CPU
-hotplug as well.
-
-Split out the code which controls the strict mode so the prctl control code
-can be added later. Mark the SMP function call argument __unused while at it.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.759457117@linutronix.de
-
-
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 46 +++++++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+ arch/s390/include/asm/pgtable.h | 4 ++--
+ arch/s390/mm/pgtable.c          | 6 ++++--
+ arch/x86/include/asm/paravirt.h | 7 +++++--
+ fs/proc/task_mmu.c              | 4 ++--
+ include/asm-generic/pgtable.h   | 8 ++++----
+ mm/memory.c                     | 4 ++--
+ mm/mprotect.c                   | 4 ++--
+ 7 files changed, 21 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 29f40a92f5a8..9cab538e10f1 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -530,40 +530,44 @@ specv2_set_mode:
- 	arch_smt_update();
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 063732414dfb..5d730199e37b 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -1069,8 +1069,8 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
  }
  
--static bool stibp_needed(void)
-+static void update_stibp_msr(void * __unused)
+ #define __HAVE_ARCH_PTEP_MODIFY_PROT_TRANSACTION
+-pte_t ptep_modify_prot_start(struct mm_struct *, unsigned long, pte_t *);
+-void ptep_modify_prot_commit(struct mm_struct *, unsigned long, pte_t *, pte_t);
++pte_t ptep_modify_prot_start(struct vm_area_struct *, unsigned long, pte_t *);
++void ptep_modify_prot_commit(struct vm_area_struct *, unsigned long, pte_t *, pte_t);
+ 
+ #define __HAVE_ARCH_PTEP_CLEAR_FLUSH
+ static inline pte_t ptep_clear_flush(struct vm_area_struct *vma,
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index f2cc7da473e4..29c0a21cd34a 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -301,12 +301,13 @@ pte_t ptep_xchg_lazy(struct mm_struct *mm, unsigned long addr,
+ }
+ EXPORT_SYMBOL(ptep_xchg_lazy);
+ 
+-pte_t ptep_modify_prot_start(struct mm_struct *mm, unsigned long addr,
++pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr,
+ 			     pte_t *ptep)
  {
--	/* Enhanced IBRS makes using STIBP unnecessary. */
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
--		return false;
--
--	/* Check for strict user mitigation mode */
--	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- }
+ 	pgste_t pgste;
+ 	pte_t old;
+ 	int nodat;
++	struct mm_struct *mm = vma->vm_mm;
  
--static void update_stibp_msr(void *info)
-+/* Update x86_spec_ctrl_base in case SMT state changed. */
-+static void update_stibp_strict(void)
+ 	preempt_disable();
+ 	pgste = ptep_xchg_start(mm, addr, ptep);
+@@ -320,10 +321,11 @@ pte_t ptep_modify_prot_start(struct mm_struct *mm, unsigned long addr,
+ }
+ EXPORT_SYMBOL(ptep_modify_prot_start);
+ 
+-void ptep_modify_prot_commit(struct mm_struct *mm, unsigned long addr,
++void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr,
+ 			     pte_t *ptep, pte_t pte)
  {
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+	u64 mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
-+
-+	if (sched_smt_active())
-+		mask |= SPEC_CTRL_STIBP;
-+
-+	if (mask == x86_spec_ctrl_base)
-+		return;
-+
-+	pr_info("Update user space SMT mitigation: STIBP %s\n",
-+		mask & SPEC_CTRL_STIBP ? "always-on" : "off");
-+	x86_spec_ctrl_base = mask;
-+	on_each_cpu(update_stibp_msr, NULL, 1);
+ 	pgste_t pgste;
++	struct mm_struct *mm = vma->vm_mm;
+ 
+ 	if (!MACHINE_HAS_NX)
+ 		pte_val(pte) &= ~_PAGE_NOEXEC;
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index 4bf42f9e4eea..1154f154025d 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -417,19 +417,22 @@ static inline pgdval_t pgd_val(pgd_t pgd)
  }
  
- void arch_smt_update(void)
+ #define  __HAVE_ARCH_PTEP_MODIFY_PROT_TRANSACTION
+-static inline pte_t ptep_modify_prot_start(struct mm_struct *mm, unsigned long addr,
++static inline pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr,
+ 					   pte_t *ptep)
  {
--	u64 mask;
--
--	if (!stibp_needed())
-+	/* Enhanced IBRS implies STIBP. No update required. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
+ 	pteval_t ret;
++	struct mm_struct *mm = vma->vm_mm;
  
- 	mutex_lock(&spec_ctrl_mutex);
+ 	ret = PVOP_CALL3(pteval_t, mmu.ptep_modify_prot_start, mm, addr, ptep);
  
--	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
--	if (sched_smt_active())
--		mask |= SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
-+	switch (spectre_v2_user) {
-+	case SPECTRE_V2_USER_NONE:
-+		break;
-+	case SPECTRE_V2_USER_STRICT:
-+		update_stibp_strict();
-+		break;
- 	}
-+
- 	mutex_unlock(&spec_ctrl_mutex);
+ 	return (pte_t) { .pte = ret };
  }
  
+-static inline void ptep_modify_prot_commit(struct mm_struct *mm, unsigned long addr,
++static inline void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr,
+ 					   pte_t *ptep, pte_t pte)
+ {
++	struct mm_struct *mm = vma->vm_mm;
++
+ 	if (sizeof(pteval_t) > sizeof(long))
+ 		/* 5 arg words */
+ 		pv_ops.mmu.ptep_modify_prot_commit(mm, addr, ptep, pte);
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 47c3764c469b..9952d7185170 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -940,10 +940,10 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
+ 	pte_t ptent = *pte;
+ 
+ 	if (pte_present(ptent)) {
+-		ptent = ptep_modify_prot_start(vma->vm_mm, addr, pte);
++		ptent = ptep_modify_prot_start(vma, addr, pte);
+ 		ptent = pte_wrprotect(ptent);
+ 		ptent = pte_clear_soft_dirty(ptent);
+-		ptep_modify_prot_commit(vma->vm_mm, addr, pte, ptent);
++		ptep_modify_prot_commit(vma, addr, pte, ptent);
+ 	} else if (is_swap_pte(ptent)) {
+ 		ptent = pte_swp_clear_soft_dirty(ptent);
+ 		set_pte_at(vma->vm_mm, addr, pte, ptent);
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 359fb935ded6..c9897dcc46c4 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -606,22 +606,22 @@ static inline void __ptep_modify_prot_commit(struct mm_struct *mm,
+  * queue the update to be done at some later time.  The update must be
+  * actually committed before the pte lock is released, however.
+  */
+-static inline pte_t ptep_modify_prot_start(struct mm_struct *mm,
++static inline pte_t ptep_modify_prot_start(struct vm_area_struct *vma,
+ 					   unsigned long addr,
+ 					   pte_t *ptep)
+ {
+-	return __ptep_modify_prot_start(mm, addr, ptep);
++	return __ptep_modify_prot_start(vma->vm_mm, addr, ptep);
+ }
+ 
+ /*
+  * Commit an update to a pte, leaving any hardware-controlled bits in
+  * the PTE unmodified.
+  */
+-static inline void ptep_modify_prot_commit(struct mm_struct *mm,
++static inline void ptep_modify_prot_commit(struct vm_area_struct *vma,
+ 					   unsigned long addr,
+ 					   pte_t *ptep, pte_t pte)
+ {
+-	__ptep_modify_prot_commit(mm, addr, ptep, pte);
++	__ptep_modify_prot_commit(vma->vm_mm, addr, ptep, pte);
+ }
+ #endif /* __HAVE_ARCH_PTEP_MODIFY_PROT_TRANSACTION */
+ #endif /* CONFIG_MMU */
+diff --git a/mm/memory.c b/mm/memory.c
+index 4ad2d293ddc2..d36b0eaa7862 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3588,12 +3588,12 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	 * Make it present again, Depending on how arch implementes non
+ 	 * accessible ptes, some can allow access by kernel mode.
+ 	 */
+-	pte = ptep_modify_prot_start(vma->vm_mm, vmf->address, vmf->pte);
++	pte = ptep_modify_prot_start(vma, vmf->address, vmf->pte);
+ 	pte = pte_modify(pte, vma->vm_page_prot);
+ 	pte = pte_mkyoung(pte);
+ 	if (was_writable)
+ 		pte = pte_mkwrite(pte);
+-	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
++	ptep_modify_prot_commit(vma, vmf->address, vmf->pte, pte);
+ 	update_mmu_cache(vma, vmf->address, vmf->pte);
+ 
+ 	page = vm_normal_page(vma, vmf->address, pte);
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 6d331620b9e5..a301d4c83d3c 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -110,7 +110,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 					continue;
+ 			}
+ 
+-			ptent = ptep_modify_prot_start(mm, addr, pte);
++			ptent = ptep_modify_prot_start(vma, addr, pte);
+ 			ptent = pte_modify(ptent, newprot);
+ 			if (preserve_write)
+ 				ptent = pte_mk_savedwrite(ptent);
+@@ -121,7 +121,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 					 !(vma->vm_flags & VM_SOFTDIRTY))) {
+ 				ptent = pte_mkwrite(ptent);
+ 			}
+-			ptep_modify_prot_commit(mm, addr, pte, ptent);
++			ptep_modify_prot_commit(vma, addr, pte, ptent);
+ 			pages++;
+ 		} else if (IS_ENABLED(CONFIG_MIGRATION)) {
+ 			swp_entry_t entry = pte_to_swp_entry(oldpte);
+-- 
+2.19.1
+
