@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C685BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11CFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950A62081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950A62081B
+	by mail.kernel.org (Postfix) with ESMTP id 7D5822081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5822081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeK1Pvp (ORCPT
+        id S1727761AbeK1Pvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:51:45 -0500
-Received: from gateway30.websitewelcome.com ([192.185.168.15]:27846 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727337AbeK1Pvc (ORCPT
+        Wed, 28 Nov 2018 10:51:51 -0500
+Received: from gateway36.websitewelcome.com ([192.185.194.2]:26999 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727062AbeK1Pvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:51:32 -0500
-X-Greylist: delayed 1449 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 10:51:31 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 33F5373D0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:28:53 -0600 (CST)
+        Wed, 28 Nov 2018 10:51:50 -0500
+X-Greylist: delayed 1356 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 10:51:50 EST
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id C214C400C3337
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 21:38:33 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id RrT3gvz5aRPojRrT3g4dAD; Tue, 27 Nov 2018 22:28:53 -0600
+        id RrTAgzNnuaSeyRrTAgC0n2; Tue, 27 Nov 2018 22:29:00 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.78.127] (port=58284 helo=embeddedor)
+Received: from [189.250.78.127] (port=58286 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gRrT2-001lfZ-LN; Tue, 27 Nov 2018 22:28:52 -0600
-Date:   Tue, 27 Nov 2018 22:28:52 -0600
+        id 1gRrT9-001ljK-Nw; Tue, 27 Nov 2018 22:29:00 -0600
+Date:   Tue, 27 Nov 2018 22:28:57 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     linux-kernel@vger.kernel.org
+To:     Bradley Grove <linuxdrivers@attotech.com>
 Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 13/41] scsi: csiostor: csio_wr: mark expected switch
- fall-through
-Message-ID: <5e846a635bfaf121af56e1f60a99816091e55170.1543374820.git.gustavo@embeddedor.com>
+Subject: [PATCH 14/41] scsi: esas2r: esas2r_init: mark expected switch
+ fall-throughs
+Message-ID: <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
 References: <cover.1543374820.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -59,13 +59,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.78.127
 X-Source-L: No
-X-Exim-ID: 1gRrT2-001lfZ-LN
+X-Exim-ID: 1gRrT9-001ljK-Nw
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.78.127]:58284
+X-Source-Sender: (embeddedor) [189.250.78.127]:58286
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 112
+X-Email-Count: 120
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,24 +76,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1056538 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/scsi/csiostor/csio_wr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/esas2r/esas2r_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/csiostor/csio_wr.c b/drivers/scsi/csiostor/csio_wr.c
-index dc12933533d5..b6861ea66c9f 100644
---- a/drivers/scsi/csiostor/csio_wr.c
-+++ b/drivers/scsi/csiostor/csio_wr.c
-@@ -808,6 +808,7 @@ csio_wr_destroy_queues(struct csio_hw *hw, bool cmd)
+diff --git a/drivers/scsi/esas2r/esas2r_init.c b/drivers/scsi/esas2r/esas2r_init.c
+index 46b2c83ba21f..950cd92df2ff 100644
+--- a/drivers/scsi/esas2r/esas2r_init.c
++++ b/drivers/scsi/esas2r/esas2r_init.c
+@@ -1241,6 +1241,7 @@ static bool esas2r_format_init_msg(struct esas2r_adapter *a,
+ 			a->init_msg = ESAS2R_INIT_MSG_GET_INIT;
+ 			break;
+ 		}
++		/* fall through */
  
- 				csio_q_eqid(hw, i) = CSIO_MAX_QID;
+ 	case ESAS2R_INIT_MSG_GET_INIT:
+ 		if (msg == ESAS2R_INIT_MSG_GET_INIT) {
+@@ -1254,7 +1255,7 @@ static bool esas2r_format_init_msg(struct esas2r_adapter *a,
+ 				esas2r_hdebug("FAILED");
  			}
-+			/* fall through */
- 		case CSIO_INGRESS:
- 			if (csio_q_iqid(hw, i) != CSIO_MAX_QID) {
- 				csio_wr_cleanup_iq_ftr(hw, i);
+ 		}
+-	/* fall through */
++		/* fall through */
+ 
+ 	default:
+ 		rq->req_stat = RS_SUCCESS;
 -- 
 2.17.1
 
