@@ -4,39 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEE7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F180C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6272081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB162086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:47:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2rOSP4G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E6272081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg/ScfA8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB162086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeK1Rr6 (ORCPT
+        id S1727701AbeK1Rr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49584 "EHLO mail.kernel.org"
+        Wed, 28 Nov 2018 12:47:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbeK1Rr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727341AbeK1Rr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 12:47:56 -0500
 Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 899FE21019;
+        by mail.kernel.org (Postfix) with ESMTPSA id E5DED21104;
         Wed, 28 Nov 2018 06:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543387640;
-        bh=wlAE5CnK6OIr875evAfu3pHF6DUPVNnNt1Xi97bSAt8=;
+        s=default; t=1543387641;
+        bh=T5Gs/Ch/S/z8TMHiu7ATx8GrwcxUtW2aOGe2ccyXPpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S2rOSP4G7S1QjURfwQ0wRef8Jqnm389KXmPEU6gSc5M3Zia2haSwT0nExNhPB5lu4
-         0TLmemPwd2L9Dv+9NppGDrIiG8uwJKu38R4Oto2yqtrwIL9eIhwdITOpeNfUAU7QOE
-         Euki1Gh+SWx146xZdY0Cs/0Ib7s+/auSHlcbYoZw=
+        b=Qg/ScfA8eJrz+zV4qV+eNrMSilUUmyVlfI/cMeQzlPmOcJt+r6/V11owRcKVhV5e4
+         EnNKb6vWKo7WG3/DOXYt396DkPosCPDyXxbHaUYaqdkFcc3K/n2n5La8j47ZyHbkxL
+         e4Xpv6EfGM23YQ3R8UbnfeNg+I06YOEQg5BoAYV0=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     Paul Crowley <paulcrowley@google.com>,
@@ -44,9 +43,9 @@ Cc:     Paul Crowley <paulcrowley@google.com>,
         Milan Broz <gmazyland@gmail.com>,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] crypto: x86/chacha20 - refactor to allow varying number of rounds
-Date:   Tue, 27 Nov 2018 22:44:44 -0800
-Message-Id: <20181128064445.3813-6-ebiggers@kernel.org>
+Subject: [PATCH 6/6] crypto: x86/chacha - add XChaCha12 support
+Date:   Tue, 27 Nov 2018 22:44:45 -0800
+Message-Id: <20181128064445.3813-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181128064445.3813-1-ebiggers@kernel.org>
 References: <20181128064445.3813-1-ebiggers@kernel.org>
@@ -59,564 +58,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-In preparation for adding XChaCha12 support, rename/refactor the x86_64
-SIMD implementations of ChaCha20 to support different numbers of rounds.
+Now that the x86_64 SIMD implementations of ChaCha20 and XChaCha20 have
+been refactored to support varying the number of rounds, add support for
+XChaCha12.  This is identical to XChaCha20 except for the number of
+rounds, which is 12 instead of 20.  This can be used by Adiantum.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/x86/crypto/Makefile                      |   6 +-
- ...a20-avx2-x86_64.S => chacha-avx2-x86_64.S} |  33 +++---
- ...0-ssse3-x86_64.S => chacha-ssse3-x86_64.S} |  41 ++++---
- .../crypto/{chacha20_glue.c => chacha_glue.c} | 110 +++++++++---------
- 4 files changed, 97 insertions(+), 93 deletions(-)
- rename arch/x86/crypto/{chacha20-avx2-x86_64.S => chacha-avx2-x86_64.S} (97%)
- rename arch/x86/crypto/{chacha20-ssse3-x86_64.S => chacha-ssse3-x86_64.S} (96%)
- rename arch/x86/crypto/{chacha20_glue.c => chacha_glue.c} (56%)
+ arch/x86/crypto/chacha_glue.c | 17 +++++++++++++++++
+ crypto/Kconfig                |  4 ++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
-index 006433da45f8c..164b4e792e8d2 100644
---- a/arch/x86/crypto/Makefile
-+++ b/arch/x86/crypto/Makefile
-@@ -23,7 +23,7 @@ obj-$(CONFIG_CRYPTO_CAMELLIA_X86_64) += camellia-x86_64.o
- obj-$(CONFIG_CRYPTO_BLOWFISH_X86_64) += blowfish-x86_64.o
- obj-$(CONFIG_CRYPTO_TWOFISH_X86_64) += twofish-x86_64.o
- obj-$(CONFIG_CRYPTO_TWOFISH_X86_64_3WAY) += twofish-x86_64-3way.o
--obj-$(CONFIG_CRYPTO_CHACHA20_X86_64) += chacha20-x86_64.o
-+obj-$(CONFIG_CRYPTO_CHACHA20_X86_64) += chacha-x86_64.o
- obj-$(CONFIG_CRYPTO_SERPENT_SSE2_X86_64) += serpent-sse2-x86_64.o
- obj-$(CONFIG_CRYPTO_AES_NI_INTEL) += aesni-intel.o
- obj-$(CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL) += ghash-clmulni-intel.o
-@@ -77,7 +77,7 @@ camellia-x86_64-y := camellia-x86_64-asm_64.o camellia_glue.o
- blowfish-x86_64-y := blowfish-x86_64-asm_64.o blowfish_glue.o
- twofish-x86_64-y := twofish-x86_64-asm_64.o twofish_glue.o
- twofish-x86_64-3way-y := twofish-x86_64-asm_64-3way.o twofish_glue_3way.o
--chacha20-x86_64-y := chacha20-ssse3-x86_64.o chacha20_glue.o
-+chacha-x86_64-y := chacha-ssse3-x86_64.o chacha_glue.o
- serpent-sse2-x86_64-y := serpent-sse2-x86_64-asm_64.o serpent_sse2_glue.o
- 
- aegis128-aesni-y := aegis128-aesni-asm.o aegis128-aesni-glue.o
-@@ -102,7 +102,7 @@ endif
- 
- ifeq ($(avx2_supported),yes)
- 	camellia-aesni-avx2-y := camellia-aesni-avx2-asm_64.o camellia_aesni_avx2_glue.o
--	chacha20-x86_64-y += chacha20-avx2-x86_64.o
-+	chacha-x86_64-y += chacha-avx2-x86_64.o
- 	serpent-avx2-y := serpent-avx2-asm_64.o serpent_avx2_glue.o
- 
- 	morus1280-avx2-y := morus1280-avx2-asm.o morus1280-avx2-glue.o
-diff --git a/arch/x86/crypto/chacha20-avx2-x86_64.S b/arch/x86/crypto/chacha-avx2-x86_64.S
-similarity index 97%
-rename from arch/x86/crypto/chacha20-avx2-x86_64.S
-rename to arch/x86/crypto/chacha-avx2-x86_64.S
-index b6ab082be6572..32da1be9a3550 100644
---- a/arch/x86/crypto/chacha20-avx2-x86_64.S
-+++ b/arch/x86/crypto/chacha-avx2-x86_64.S
-@@ -1,5 +1,5 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, x64 AVX2 functions
-+ * ChaCha 256-bit cipher algorithm, x64 AVX2 functions
-  *
-  * Copyright (C) 2015 Martin Willi
-  *
-@@ -38,13 +38,14 @@ CTR4BL:	.octa 0x00000000000000000000000000000002
- 
- .text
- 
--ENTRY(chacha20_2block_xor_avx2)
-+ENTRY(chacha_2block_xor_avx2)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 2 data blocks output, o
- 	# %rdx: up to 2 data blocks input, i
- 	# %rcx: input/output length in bytes
-+	# %r8d: nrounds
- 
--	# This function encrypts two ChaCha20 blocks by loading the state
-+	# This function encrypts two ChaCha blocks by loading the state
- 	# matrix twice across four AVX registers. It performs matrix operations
- 	# on four words in each matrix in parallel, but requires shuffling to
- 	# rearrange the words after each round.
-@@ -68,7 +69,6 @@ ENTRY(chacha20_2block_xor_avx2)
- 	vmovdqa		ROT16(%rip),%ymm5
- 
- 	mov		%rcx,%rax
--	mov		$10,%ecx
- 
- .Ldoubleround:
- 
-@@ -138,7 +138,7 @@ ENTRY(chacha20_2block_xor_avx2)
- 	# x3 = shuffle32(x3, MASK(0, 3, 2, 1))
- 	vpshufd		$0x39,%ymm3,%ymm3
- 
--	dec		%ecx
-+	sub		$2,%r8d
- 	jnz		.Ldoubleround
- 
- 	# o0 = i0 ^ (x0 + s0)
-@@ -228,15 +228,16 @@ ENTRY(chacha20_2block_xor_avx2)
- 	lea		-8(%r10),%rsp
- 	jmp		.Ldone2
- 
--ENDPROC(chacha20_2block_xor_avx2)
-+ENDPROC(chacha_2block_xor_avx2)
- 
--ENTRY(chacha20_4block_xor_avx2)
-+ENTRY(chacha_4block_xor_avx2)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 4 data blocks output, o
- 	# %rdx: up to 4 data blocks input, i
- 	# %rcx: input/output length in bytes
-+	# %r8d: nrounds
- 
--	# This function encrypts four ChaCha20 block by loading the state
-+	# This function encrypts four ChaCha block by loading the state
- 	# matrix four times across eight AVX registers. It performs matrix
- 	# operations on four words in two matrices in parallel, sequentially
- 	# to the operations on the four words of the other two matrices. The
-@@ -269,7 +270,6 @@ ENTRY(chacha20_4block_xor_avx2)
- 	vmovdqa		ROT16(%rip),%ymm9
- 
- 	mov		%rcx,%rax
--	mov		$10,%ecx
- 
- .Ldoubleround4:
- 
-@@ -389,7 +389,7 @@ ENTRY(chacha20_4block_xor_avx2)
- 	vpshufd		$0x39,%ymm3,%ymm3
- 	vpshufd		$0x39,%ymm7,%ymm7
- 
--	dec		%ecx
-+	sub		$2,%r8d
- 	jnz		.Ldoubleround4
- 
- 	# o0 = i0 ^ (x0 + s0), first block
-@@ -533,15 +533,16 @@ ENTRY(chacha20_4block_xor_avx2)
- 	lea		-8(%r10),%rsp
- 	jmp		.Ldone4
- 
--ENDPROC(chacha20_4block_xor_avx2)
-+ENDPROC(chacha_4block_xor_avx2)
- 
--ENTRY(chacha20_8block_xor_avx2)
-+ENTRY(chacha_8block_xor_avx2)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 8 data blocks output, o
- 	# %rdx: up to 8 data blocks input, i
- 	# %rcx: input/output length in bytes
-+	# %r8d: nrounds
- 
--	# This function encrypts eight consecutive ChaCha20 blocks by loading
-+	# This function encrypts eight consecutive ChaCha blocks by loading
- 	# the state matrix in AVX registers eight times. As we need some
- 	# scratch registers, we save the first four registers on the stack. The
- 	# algorithm performs each operation on the corresponding word of each
-@@ -588,8 +589,6 @@ ENTRY(chacha20_8block_xor_avx2)
- 	# x12 += counter values 0-3
- 	vpaddd		%ymm1,%ymm12,%ymm12
- 
--	mov		$10,%ecx
--
- .Ldoubleround8:
- 	# x0 += x4, x12 = rotl32(x12 ^ x0, 16)
- 	vpaddd		0x00(%rsp),%ymm4,%ymm0
-@@ -775,7 +774,7 @@ ENTRY(chacha20_8block_xor_avx2)
- 	vpsrld		$25,%ymm4,%ymm4
- 	vpor		%ymm0,%ymm4,%ymm4
- 
--	dec		%ecx
-+	sub		$2,%r8d
- 	jnz		.Ldoubleround8
- 
- 	# x0..15[0-3] += s[0..15]
-@@ -1023,4 +1022,4 @@ ENTRY(chacha20_8block_xor_avx2)
- 
- 	jmp		.Ldone8
- 
--ENDPROC(chacha20_8block_xor_avx2)
-+ENDPROC(chacha_8block_xor_avx2)
-diff --git a/arch/x86/crypto/chacha20-ssse3-x86_64.S b/arch/x86/crypto/chacha-ssse3-x86_64.S
-similarity index 96%
-rename from arch/x86/crypto/chacha20-ssse3-x86_64.S
-rename to arch/x86/crypto/chacha-ssse3-x86_64.S
-index 45e4ccdd9c98b..613f80ae98576 100644
---- a/arch/x86/crypto/chacha20-ssse3-x86_64.S
-+++ b/arch/x86/crypto/chacha-ssse3-x86_64.S
-@@ -1,5 +1,5 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, x64 SSSE3 functions
-+ * ChaCha 256-bit cipher algorithm, x64 SSSE3 functions
-  *
-  * Copyright (C) 2015 Martin Willi
-  *
-@@ -24,7 +24,7 @@ CTRINC:	.octa 0x00000003000000020000000100000000
- .text
- 
- /*
-- * chacha20_permute - permute one block
-+ * chacha_permute - permute one block
-  *
-  * Permute one 64-byte block where the state matrix is in %xmm0-%xmm3.  This
-  * function performs matrix operations on four words in parallel, but requires
-@@ -32,13 +32,14 @@ CTRINC:	.octa 0x00000003000000020000000100000000
-  * done with the slightly better performing SSSE3 byte shuffling, 7/12-bit word
-  * rotation uses traditional shift+OR.
-  *
-- * Clobbers: %ecx, %xmm4-%xmm7
-+ * The round count is given in %r8d.
-+ *
-+ * Clobbers: %r8d, %xmm4-%xmm7
-  */
--chacha20_permute:
-+chacha_permute:
- 
- 	movdqa		ROT8(%rip),%xmm4
- 	movdqa		ROT16(%rip),%xmm5
--	mov		$10,%ecx
- 
- .Ldoubleround:
- 	# x0 += x1, x3 = rotl32(x3 ^ x0, 16)
-@@ -107,17 +108,18 @@ chacha20_permute:
- 	# x3 = shuffle32(x3, MASK(0, 3, 2, 1))
- 	pshufd		$0x39,%xmm3,%xmm3
- 
--	dec		%ecx
-+	sub		$2,%r8d
- 	jnz		.Ldoubleround
- 
- 	ret
--ENDPROC(chacha20_permute)
-+ENDPROC(chacha_permute)
- 
--ENTRY(chacha20_block_xor_ssse3)
-+ENTRY(chacha_block_xor_ssse3)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 1 data block output, o
- 	# %rdx: up to 1 data block input, i
- 	# %rcx: input/output length in bytes
-+	# %r8d: nrounds
- 
- 	# x0..3 = s0..3
- 	movdqa		0x00(%rdi),%xmm0
-@@ -130,7 +132,7 @@ ENTRY(chacha20_block_xor_ssse3)
- 	movdqa		%xmm3,%xmm11
- 
- 	mov		%rcx,%rax
--	call		chacha20_permute
-+	call		chacha_permute
- 
- 	# o0 = i0 ^ (x0 + s0)
- 	paddd		%xmm8,%xmm0
-@@ -196,32 +198,35 @@ ENTRY(chacha20_block_xor_ssse3)
- 	lea		-8(%r10),%rsp
- 	jmp		.Ldone
- 
--ENDPROC(chacha20_block_xor_ssse3)
-+ENDPROC(chacha_block_xor_ssse3)
- 
--ENTRY(hchacha20_block_ssse3)
-+ENTRY(hchacha_block_ssse3)
- 	# %rdi: Input state matrix, s
- 	# %rsi: output (8 32-bit words)
-+	# %edx: nrounds
- 
- 	movdqa		0x00(%rdi),%xmm0
- 	movdqa		0x10(%rdi),%xmm1
- 	movdqa		0x20(%rdi),%xmm2
- 	movdqa		0x30(%rdi),%xmm3
- 
--	call		chacha20_permute
-+	mov		%edx,%r8d
-+	call		chacha_permute
- 
- 	movdqu		%xmm0,0x00(%rsi)
- 	movdqu		%xmm3,0x10(%rsi)
- 
- 	ret
--ENDPROC(hchacha20_block_ssse3)
-+ENDPROC(hchacha_block_ssse3)
- 
--ENTRY(chacha20_4block_xor_ssse3)
-+ENTRY(chacha_4block_xor_ssse3)
- 	# %rdi: Input state matrix, s
- 	# %rsi: up to 4 data blocks output, o
- 	# %rdx: up to 4 data blocks input, i
- 	# %rcx: input/output length in bytes
-+	# %r8d: nrounds
- 
--	# This function encrypts four consecutive ChaCha20 blocks by loading the
-+	# This function encrypts four consecutive ChaCha blocks by loading the
- 	# the state matrix in SSE registers four times. As we need some scratch
- 	# registers, we save the first four registers on the stack. The
- 	# algorithm performs each operation on the corresponding word of each
-@@ -274,8 +279,6 @@ ENTRY(chacha20_4block_xor_ssse3)
- 	# x12 += counter values 0-3
- 	paddd		%xmm1,%xmm12
- 
--	mov		$10,%ecx
--
- .Ldoubleround4:
- 	# x0 += x4, x12 = rotl32(x12 ^ x0, 16)
- 	movdqa		0x00(%rsp),%xmm0
-@@ -493,7 +496,7 @@ ENTRY(chacha20_4block_xor_ssse3)
- 	psrld		$25,%xmm4
- 	por		%xmm0,%xmm4
- 
--	dec		%ecx
-+	sub		$2,%r8d
- 	jnz		.Ldoubleround4
- 
- 	# x0[0-3] += s0[0]
-@@ -784,4 +787,4 @@ ENTRY(chacha20_4block_xor_ssse3)
- 
- 	jmp		.Ldone4
- 
--ENDPROC(chacha20_4block_xor_ssse3)
-+ENDPROC(chacha_4block_xor_ssse3)
-diff --git a/arch/x86/crypto/chacha20_glue.c b/arch/x86/crypto/chacha_glue.c
-similarity index 56%
-rename from arch/x86/crypto/chacha20_glue.c
-rename to arch/x86/crypto/chacha_glue.c
-index ca85b5d2c4751..c643993a29c9f 100644
---- a/arch/x86/crypto/chacha20_glue.c
+diff --git a/arch/x86/crypto/chacha_glue.c b/arch/x86/crypto/chacha_glue.c
+index c643993a29c9f..1aa43cdd5f7cb 100644
+--- a/arch/x86/crypto/chacha_glue.c
 +++ b/arch/x86/crypto/chacha_glue.c
-@@ -1,5 +1,6 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, SIMD glue code
-+ * x64 SIMD accelerated ChaCha and XChaCha stream ciphers,
-+ * including ChaCha20 (RFC7539)
-  *
-  * Copyright (C) 2015 Martin Willi
-  *
-@@ -17,85 +18,85 @@
- #include <asm/fpu/api.h>
- #include <asm/simd.h>
- 
--#define CHACHA20_STATE_ALIGN 16
-+#define CHACHA_STATE_ALIGN 16
- 
--asmlinkage void chacha20_block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
--					 unsigned int len);
--asmlinkage void chacha20_4block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
--					  unsigned int len);
--asmlinkage void hchacha20_block_ssse3(const u32 *state, u32 *out);
-+asmlinkage void chacha_block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
-+				       unsigned int len, int nrounds);
-+asmlinkage void chacha_4block_xor_ssse3(u32 *state, u8 *dst, const u8 *src,
-+					unsigned int len, int nrounds);
-+asmlinkage void hchacha_block_ssse3(const u32 *state, u32 *out, int nrounds);
- #ifdef CONFIG_AS_AVX2
--asmlinkage void chacha20_2block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
--					 unsigned int len);
--asmlinkage void chacha20_4block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
--					 unsigned int len);
--asmlinkage void chacha20_8block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
--					 unsigned int len);
--static bool chacha20_use_avx2;
-+asmlinkage void chacha_2block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
-+				       unsigned int len, int nrounds);
-+asmlinkage void chacha_4block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
-+				       unsigned int len, int nrounds);
-+asmlinkage void chacha_8block_xor_avx2(u32 *state, u8 *dst, const u8 *src,
-+				       unsigned int len, int nrounds);
-+static bool chacha_use_avx2;
- #endif
- 
--static unsigned int chacha20_advance(unsigned int len, unsigned int maxblocks)
-+static unsigned int chacha_advance(unsigned int len, unsigned int maxblocks)
- {
- 	len = min(len, maxblocks * CHACHA_BLOCK_SIZE);
- 	return round_up(len, CHACHA_BLOCK_SIZE) / CHACHA_BLOCK_SIZE;
- }
- 
--static void chacha20_dosimd(u32 *state, u8 *dst, const u8 *src,
--			    unsigned int bytes)
-+static void chacha_dosimd(u32 *state, u8 *dst, const u8 *src,
-+			  unsigned int bytes, int nrounds)
- {
- #ifdef CONFIG_AS_AVX2
--	if (chacha20_use_avx2) {
-+	if (chacha_use_avx2) {
- 		while (bytes >= CHACHA_BLOCK_SIZE * 8) {
--			chacha20_8block_xor_avx2(state, dst, src, bytes);
-+			chacha_8block_xor_avx2(state, dst, src, bytes, nrounds);
- 			bytes -= CHACHA_BLOCK_SIZE * 8;
- 			src += CHACHA_BLOCK_SIZE * 8;
- 			dst += CHACHA_BLOCK_SIZE * 8;
- 			state[12] += 8;
- 		}
- 		if (bytes > CHACHA_BLOCK_SIZE * 4) {
--			chacha20_8block_xor_avx2(state, dst, src, bytes);
--			state[12] += chacha20_advance(bytes, 8);
-+			chacha_8block_xor_avx2(state, dst, src, bytes, nrounds);
-+			state[12] += chacha_advance(bytes, 8);
- 			return;
- 		}
- 		if (bytes > CHACHA_BLOCK_SIZE * 2) {
--			chacha20_4block_xor_avx2(state, dst, src, bytes);
--			state[12] += chacha20_advance(bytes, 4);
-+			chacha_4block_xor_avx2(state, dst, src, bytes, nrounds);
-+			state[12] += chacha_advance(bytes, 4);
- 			return;
- 		}
- 		if (bytes > CHACHA_BLOCK_SIZE) {
--			chacha20_2block_xor_avx2(state, dst, src, bytes);
--			state[12] += chacha20_advance(bytes, 2);
-+			chacha_2block_xor_avx2(state, dst, src, bytes, nrounds);
-+			state[12] += chacha_advance(bytes, 2);
- 			return;
- 		}
- 	}
- #endif
- 	while (bytes >= CHACHA_BLOCK_SIZE * 4) {
--		chacha20_4block_xor_ssse3(state, dst, src, bytes);
-+		chacha_4block_xor_ssse3(state, dst, src, bytes, nrounds);
- 		bytes -= CHACHA_BLOCK_SIZE * 4;
- 		src += CHACHA_BLOCK_SIZE * 4;
- 		dst += CHACHA_BLOCK_SIZE * 4;
- 		state[12] += 4;
- 	}
- 	if (bytes > CHACHA_BLOCK_SIZE) {
--		chacha20_4block_xor_ssse3(state, dst, src, bytes);
--		state[12] += chacha20_advance(bytes, 4);
-+		chacha_4block_xor_ssse3(state, dst, src, bytes, nrounds);
-+		state[12] += chacha_advance(bytes, 4);
- 		return;
- 	}
- 	if (bytes) {
--		chacha20_block_xor_ssse3(state, dst, src, bytes);
-+		chacha_block_xor_ssse3(state, dst, src, bytes, nrounds);
- 		state[12]++;
- 	}
- }
- 
--static int chacha20_simd_stream_xor(struct skcipher_request *req,
--				    struct chacha_ctx *ctx, u8 *iv)
-+static int chacha_simd_stream_xor(struct skcipher_request *req,
-+				  struct chacha_ctx *ctx, u8 *iv)
- {
- 	struct skcipher_walk walk;
- 	u32 *state, state_buf[16 + 2] __aligned(8);
- 	int err;
- 
--	BUILD_BUG_ON(CHACHA20_STATE_ALIGN != 16);
--	state = PTR_ALIGN(state_buf + 0, CHACHA20_STATE_ALIGN);
-+	BUILD_BUG_ON(CHACHA_STATE_ALIGN != 16);
-+	state = PTR_ALIGN(state_buf + 0, CHACHA_STATE_ALIGN);
- 
- 	err = skcipher_walk_virt(&walk, req, false);
- 
-@@ -108,8 +109,8 @@ static int chacha20_simd_stream_xor(struct skcipher_request *req,
- 			nbytes = round_down(nbytes, walk.stride);
- 
- 		kernel_fpu_begin();
--		chacha20_dosimd(state, walk.dst.virt.addr, walk.src.virt.addr,
--				nbytes);
-+		chacha_dosimd(state, walk.dst.virt.addr, walk.src.virt.addr,
-+			      nbytes, ctx->nrounds);
- 		kernel_fpu_end();
- 
- 		err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
-@@ -118,7 +119,7 @@ static int chacha20_simd_stream_xor(struct skcipher_request *req,
- 	return err;
- }
- 
--static int chacha20_simd(struct skcipher_request *req)
-+static int chacha_simd(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-@@ -126,10 +127,10 @@ static int chacha20_simd(struct skcipher_request *req)
- 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
- 		return crypto_chacha_crypt(req);
- 
--	return chacha20_simd_stream_xor(req, ctx, req->iv);
-+	return chacha_simd_stream_xor(req, ctx, req->iv);
- }
- 
--static int xchacha20_simd(struct skcipher_request *req)
-+static int xchacha_simd(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-@@ -140,17 +141,18 @@ static int xchacha20_simd(struct skcipher_request *req)
- 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
- 		return crypto_xchacha_crypt(req);
- 
--	BUILD_BUG_ON(CHACHA20_STATE_ALIGN != 16);
--	state = PTR_ALIGN(state_buf + 0, CHACHA20_STATE_ALIGN);
-+	BUILD_BUG_ON(CHACHA_STATE_ALIGN != 16);
-+	state = PTR_ALIGN(state_buf + 0, CHACHA_STATE_ALIGN);
- 	crypto_chacha_init(state, ctx, req->iv);
- 
- 	kernel_fpu_begin();
--	hchacha20_block_ssse3(state, subctx.key);
-+	hchacha_block_ssse3(state, subctx.key, ctx->nrounds);
- 	kernel_fpu_end();
-+	subctx.nrounds = ctx->nrounds;
- 
- 	memcpy(&real_iv[0], req->iv + 24, 8);
- 	memcpy(&real_iv[8], req->iv + 16, 8);
--	return chacha20_simd_stream_xor(req, &subctx, real_iv);
-+	return chacha_simd_stream_xor(req, &subctx, real_iv);
- }
- 
- static struct skcipher_alg algs[] = {
-@@ -167,8 +169,8 @@ static struct skcipher_alg algs[] = {
- 		.ivsize			= CHACHA_IV_SIZE,
- 		.chunksize		= CHACHA_BLOCK_SIZE,
+@@ -186,6 +186,21 @@ static struct skcipher_alg algs[] = {
  		.setkey			= crypto_chacha20_setkey,
--		.encrypt		= chacha20_simd,
--		.decrypt		= chacha20_simd,
-+		.encrypt		= chacha_simd,
-+		.decrypt		= chacha_simd,
- 	}, {
- 		.base.cra_name		= "xchacha20",
- 		.base.cra_driver_name	= "xchacha20-simd",
-@@ -182,35 +184,35 @@ static struct skcipher_alg algs[] = {
- 		.ivsize			= XCHACHA_IV_SIZE,
- 		.chunksize		= CHACHA_BLOCK_SIZE,
- 		.setkey			= crypto_chacha20_setkey,
--		.encrypt		= xchacha20_simd,
--		.decrypt		= xchacha20_simd,
+ 		.encrypt		= xchacha_simd,
+ 		.decrypt		= xchacha_simd,
++	}, {
++		.base.cra_name		= "xchacha12",
++		.base.cra_driver_name	= "xchacha12-simd",
++		.base.cra_priority	= 300,
++		.base.cra_blocksize	= 1,
++		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
++		.base.cra_module	= THIS_MODULE,
++
++		.min_keysize		= CHACHA_KEY_SIZE,
++		.max_keysize		= CHACHA_KEY_SIZE,
++		.ivsize			= XCHACHA_IV_SIZE,
++		.chunksize		= CHACHA_BLOCK_SIZE,
++		.setkey			= crypto_chacha12_setkey,
 +		.encrypt		= xchacha_simd,
 +		.decrypt		= xchacha_simd,
  	},
  };
  
--static int __init chacha20_simd_mod_init(void)
-+static int __init chacha_simd_mod_init(void)
- {
- 	if (!boot_cpu_has(X86_FEATURE_SSSE3))
- 		return -ENODEV;
- 
- #ifdef CONFIG_AS_AVX2
--	chacha20_use_avx2 = boot_cpu_has(X86_FEATURE_AVX) &&
--			    boot_cpu_has(X86_FEATURE_AVX2) &&
--			    cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM, NULL);
-+	chacha_use_avx2 = boot_cpu_has(X86_FEATURE_AVX) &&
-+			  boot_cpu_has(X86_FEATURE_AVX2) &&
-+			  cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM, NULL);
- #endif
- 	return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
--static void __exit chacha20_simd_mod_fini(void)
-+static void __exit chacha_simd_mod_fini(void)
- {
- 	crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
--module_init(chacha20_simd_mod_init);
--module_exit(chacha20_simd_mod_fini);
-+module_init(chacha_simd_mod_init);
-+module_exit(chacha_simd_mod_fini);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Martin Willi <martin@strongswan.org>");
--MODULE_DESCRIPTION("chacha20 cipher algorithm, SIMD accelerated");
-+MODULE_DESCRIPTION("ChaCha and XChaCha stream ciphers (x64 SIMD accelerated)");
- MODULE_ALIAS_CRYPTO("chacha20");
+@@ -217,3 +232,5 @@ MODULE_ALIAS_CRYPTO("chacha20");
  MODULE_ALIAS_CRYPTO("chacha20-simd");
  MODULE_ALIAS_CRYPTO("xchacha20");
+ MODULE_ALIAS_CRYPTO("xchacha20-simd");
++MODULE_ALIAS_CRYPTO("xchacha12");
++MODULE_ALIAS_CRYPTO("xchacha12-simd");
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index ecfc10a3e9f3e..a3ee51a711447 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -1473,8 +1473,8 @@ config CRYPTO_CHACHA20_X86_64
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_CHACHA20
+ 	help
+-	  SSSE3 and AVX2 optimized implementations of the ChaCha20 and XChaCha20
+-	  stream ciphers.
++	  SSSE3 and AVX2 optimized implementations of the ChaCha20, XChaCha20,
++	  and XChaCha12 stream ciphers.
+ 
+ config CRYPTO_SEED
+ 	tristate "SEED cipher algorithm"
 -- 
 2.19.2
 
