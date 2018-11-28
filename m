@@ -2,72 +2,79 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D65C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB42AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048672081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B5582073F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:55:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DpGimiam"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 048672081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RceGW/dM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5582073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeK2K6j (ORCPT
+        id S1727095AbeK2K6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:58:39 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35269 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbeK2K6j (ORCPT
+        Thu, 29 Nov 2018 05:58:55 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38652 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbeK2K6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:58:39 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so54264plo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:55:17 -0800 (PST)
+        Thu, 29 Nov 2018 05:58:55 -0500
+Received: by mail-io1-f68.google.com with SMTP id l14so79326ioj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:55:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wQE4LgQnSQaslbz0fvJXIldEboshXmIAOvX+8/1krbo=;
-        b=DpGimiamTpG/uJ3+YM0Q+r6g7BZtmIJ9BbPxvSumn9TzCMVNHniyZNhUQXEcBDC9up
-         q+JoxjxxjrvxDGHYaGCAlP1CQa592d1yELs3GQ/ZGTUEOqBgOTCIsYc48oDvb+EDjuiw
-         5OXu2Yk3NUaIeV2cQ5dfEIXj2jukopprXARgQ=
+        bh=rAo7eNFTAOvntn7w4xkOfgHD9+s+0OjB6lQm+RJmv0M=;
+        b=RceGW/dMCsIwSzYA+BCKQ1hPAic0MmXHH+Bv0oTZETuq4mDi/PquDGa55gM5fSMHdI
+         VggyxXmDiNCUZApj6Aa7kRoygHXYQF5YMN57Zv/OhtBPUQFbQ8qC0nqm7U/yRxyAogNs
+         oYWGXdGnIHOnnwtELU8mANCh3oA7uAMQjKwjyJusY1F1BFEhHr6QbzbV5YKknxfyEC0o
+         SuiPg2FegoRjiG/vAkDb02ZHgOokJWJ3n8js30hgJqDhdrKaNji0fAJnz9AFytVRoGhM
+         V42oVDTBcL47YUrOM7/2YtutndQUU7kfU8jDC8LENEngUgbeKBtmaVPo+vXfHLM6EgRk
+         o1GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wQE4LgQnSQaslbz0fvJXIldEboshXmIAOvX+8/1krbo=;
-        b=MqNYid84p2pMfE6R2MTPT+CWojeLkpP8slzfyGFQQjVQZV5BQa16RvFUAGQiLIM6aw
-         M+4Ze9Xv+Vr33xLUNlqm5TUYj1GJc9sbOI9qYrQQXxNNNm3vyNDCIXtEGx3pzDy81f6G
-         eyul1aqw4eVqDG74FKQEcCKHKXggGCnrDwWpkJcvb9F0eWySdd9EPQb7ZThSR00mKDxq
-         T0LfFKwXuhZwEJcP2wW3ZN5tt3Xz29FWS4WsyAdbFtFMylPbfx9mCoHbpIV6mNKUUrzJ
-         RKjnbq1Cu0PneVkQjtRmihjhKetfl1yIoQFDjEq0NgJlxFmFxypxFDI0gVnOgPE+vf1I
-         b5Dw==
-X-Gm-Message-State: AA+aEWaYW0B49YQXuWj/gB53DqLD47TwPF3+MIAc8oQIyRfa06nSlDu8
-        SGOHMoR9dj1Ujed/UhUim+swIQ==
-X-Google-Smtp-Source: AFSGD/XzFAEdcnsiuyS/ffvNCbpM/iCsVPmlMnQCzvrJ8UsQMpVlvPjQ3EtgMIkQ0KS3A7U94qPbFQ==
-X-Received: by 2002:a17:902:d891:: with SMTP id b17mr39724905plz.80.1543449317102;
-        Wed, 28 Nov 2018 15:55:17 -0800 (PST)
-Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
-        by smtp.gmail.com with ESMTPSA id s4sm75689pgp.13.2018.11.28.15.55.16
+        bh=rAo7eNFTAOvntn7w4xkOfgHD9+s+0OjB6lQm+RJmv0M=;
+        b=aZ4sIaOp7wAFDa+fz/bLQynIkk2QHmqhG8TjLZqEPFLbwmtMIUr8tH/T6oj+IffxXJ
+         toZsO00JPzdyCEsRUaoCIVbGfyPSmmYk2cPYxJWP4cvzSKaxXn0Eaz0FC23BKMOGFSnE
+         oKzGZEac8UBqTQ6bkKd25Q8SFBY7+lI8IpFbJAQjpnU32vG0I45t7Dog9KOw/uRKq5EX
+         L57vxz5dVDY47y4cBTZKrNELEOsbMIaHpG7TPY873SGxB1ij7YRolRvCLrNo+SEJMv7S
+         vwczvYuSwbVT3MA10AKfdQfpC6W3CIblnoCotcCcejeSx7aMqB/8AheuBd7b1j8VMfVC
+         zpyw==
+X-Gm-Message-State: AA+aEWavZDzRtc5vGg8PULxKf3LYzFL1727pN7hAptAhNhNKIJe5kLTr
+        fF7tCC3KHMfAuS0xGbxCd/JCYg==
+X-Google-Smtp-Source: AFSGD/V9Qm30w/cfBPWe/3jTX2s8WyRXBQcuuMg/+p6yAp8qU54L97a8I7BrkKDHRow//lmJohx4NQ==
+X-Received: by 2002:a6b:6a02:: with SMTP id x2mr18551104iog.204.1543449332685;
+        Wed, 28 Nov 2018 15:55:32 -0800 (PST)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id y13sm31490ioa.56.2018.11.28.15.55.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 15:55:16 -0800 (PST)
-From:   Ryan Case <ryandcase@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>
-Subject: [PATCH v2] tty: serial: qcom_geni_serial: Fix softlock
-Date:   Wed, 28 Nov 2018 15:54:59 -0800
-Message-Id: <20181128235459.180940-1-ryandcase@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+        Wed, 28 Nov 2018 15:55:31 -0800 (PST)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Hugh Dickins <hughd@google.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH] mm: remove pte_lock_deinit()
+Date:   Wed, 28 Nov 2018 16:55:25 -0700
+Message-Id: <20181128235525.58780-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,173 +82,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Transfers were being divided into device FIFO sized (64 byte max)
-operations which would poll for completion within a spin_lock_irqsave /
-spin_unlock_irqrestore block. This both made things slow by waiting for
-the FIFO to completely drain before adding further data and would also
-result in softlocks on large transmissions.
+Pagetable page doesn't touch page->mapping or have any used field
+that overlaps with it. No need to clear mapping in dtor. In fact,
+doing so might mask problems that otherwise would be detected by
+bad_page().
 
-This patch allows larger transfers with continuous FIFO additions as
-space becomes available and removes polling from the interrupt handler.
-
-Signed-off-by: Ryan Case <ryandcase@chromium.org>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
+ include/linux/mm.h | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-Changes in v2:
-- Addressed nits raised by Stephen
-
- drivers/tty/serial/qcom_geni_serial.c | 56 +++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 7ded51081add..26f7c0df83ae 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -117,6 +117,8 @@ struct qcom_geni_serial_port {
- 	u32 *rx_fifo;
- 	u32 loopback;
- 	bool brk;
-+
-+	unsigned int tx_remaining;
- };
- 
- static const struct uart_ops qcom_geni_console_pops;
-@@ -439,6 +441,7 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 	struct qcom_geni_serial_port *port;
- 	bool locked = true;
- 	unsigned long flags;
-+	u32 geni_status;
- 
- 	WARN_ON(co->index < 0 || co->index >= GENI_UART_CONS_PORTS);
- 
-@@ -452,6 +455,8 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 	else
- 		spin_lock_irqsave(&uport->lock, flags);
- 
-+	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
-+
- 	/* Cancel the current write to log the fault */
- 	if (!locked) {
- 		geni_se_cancel_m_cmd(&port->se);
-@@ -465,9 +470,19 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
- 		}
- 		writel_relaxed(M_CMD_CANCEL_EN, uport->membase +
- 							SE_GENI_M_IRQ_CLEAR);
-+	} else if ((geni_status & M_GENI_CMD_ACTIVE) && !port->tx_remaining) {
-+		/*
-+		 * It seems we can interrupt existing transfers unless all data
-+		 * has been sent, in which case we need to look for done first.
-+		 */
-+		qcom_geni_serial_poll_tx_done(uport);
- 	}
- 
- 	__qcom_geni_serial_console_write(uport, s, count);
-+
-+	if (port->tx_remaining)
-+		qcom_geni_serial_setup_tx(uport, port->tx_remaining);
-+
- 	if (locked)
- 		spin_unlock_irqrestore(&uport->lock, flags);
- }
-@@ -701,40 +716,45 @@ static void qcom_geni_serial_handle_rx(struct uart_port *uport, bool drop)
- 	port->handle_rx(uport, total_bytes, drop);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5411de93a363..7c8f4fc9244e 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1900,13 +1900,6 @@ static inline bool ptlock_init(struct page *page)
+ 	return true;
  }
  
--static void qcom_geni_serial_handle_tx(struct uart_port *uport)
-+static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
-+		bool active)
+-/* Reset page->mapping so free_pages_check won't complain. */
+-static inline void pte_lock_deinit(struct page *page)
+-{
+-	page->mapping = NULL;
+-	ptlock_free(page);
+-}
+-
+ #else	/* !USE_SPLIT_PTE_PTLOCKS */
+ /*
+  * We use mm->page_table_lock to guard all pagetable pages of the mm.
+@@ -1917,7 +1910,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+ }
+ static inline void ptlock_cache_init(void) {}
+ static inline bool ptlock_init(struct page *page) { return true; }
+-static inline void pte_lock_deinit(struct page *page) {}
++static inline void ptlock_free(struct page *page) {}
+ #endif /* USE_SPLIT_PTE_PTLOCKS */
+ 
+ static inline void pgtable_init(void)
+@@ -1937,7 +1930,7 @@ static inline bool pgtable_page_ctor(struct page *page)
+ 
+ static inline void pgtable_page_dtor(struct page *page)
  {
- 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
- 	struct circ_buf *xmit = &uport->state->xmit;
- 	size_t avail;
- 	size_t remaining;
-+	size_t pending;
- 	int i;
- 	u32 status;
- 	unsigned int chunk;
- 	int tail;
--	u32 irq_en;
- 
--	chunk = uart_circ_chars_pending(xmit);
- 	status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
--	/* Both FIFO and framework buffer are drained */
--	if (!chunk && !status) {
-+
-+	/* Complete the current tx command before taking newly added data */
-+	if (active)
-+		pending = port->tx_remaining;
-+	else
-+		pending = uart_circ_chars_pending(xmit);
-+
-+	/* All data has been transmitted and acknowledged as received */
-+	if (!pending && !status && done) {
- 		qcom_geni_serial_stop_tx(uport);
- 		goto out_write_wakeup;
- 	}
- 
--	if (!uart_console(uport)) {
--		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
--		irq_en &= ~(M_TX_FIFO_WATERMARK_EN);
--		writel_relaxed(0, uport->membase + SE_GENI_TX_WATERMARK_REG);
--		writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
--	}
-+	avail = port->tx_fifo_depth - (status & TX_FIFO_WC);
-+	avail *= port->tx_bytes_pw;
- 
--	avail = (port->tx_fifo_depth - port->tx_wm) * port->tx_bytes_pw;
- 	tail = xmit->tail;
--	chunk = min3((size_t)chunk, (size_t)(UART_XMIT_SIZE - tail), avail);
-+	chunk = min3(avail, pending, (UART_XMIT_SIZE - tail));
- 	if (!chunk)
- 		goto out_write_wakeup;
- 
--	qcom_geni_serial_setup_tx(uport, chunk);
-+	if (!port->tx_remaining) {
-+		qcom_geni_serial_setup_tx(uport, pending);
-+		port->tx_remaining = pending;
-+	}
- 
- 	remaining = chunk;
- 	for (i = 0; i < chunk; ) {
-@@ -753,11 +773,10 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport)
- 		tail += tx_bytes;
- 		uport->icount.tx += tx_bytes;
- 		remaining -= tx_bytes;
-+		port->tx_remaining -= tx_bytes;
- 	}
- 
- 	xmit->tail = tail & (UART_XMIT_SIZE - 1);
--	if (uart_console(uport))
--		qcom_geni_serial_poll_tx_done(uport);
- out_write_wakeup:
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(uport);
-@@ -767,6 +786,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- {
- 	unsigned int m_irq_status;
- 	unsigned int s_irq_status;
-+	unsigned int geni_status;
- 	struct uart_port *uport = dev;
- 	unsigned long flags;
- 	unsigned int m_irq_en;
-@@ -780,6 +800,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- 	spin_lock_irqsave(&uport->lock, flags);
- 	m_irq_status = readl_relaxed(uport->membase + SE_GENI_M_IRQ_STATUS);
- 	s_irq_status = readl_relaxed(uport->membase + SE_GENI_S_IRQ_STATUS);
-+	geni_status = readl_relaxed(uport->membase + SE_GENI_STATUS);
- 	m_irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
- 	writel_relaxed(m_irq_status, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	writel_relaxed(s_irq_status, uport->membase + SE_GENI_S_IRQ_CLEAR);
-@@ -794,7 +815,8 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- 
- 	if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
- 	    m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
--		qcom_geni_serial_handle_tx(uport);
-+		qcom_geni_serial_handle_tx(uport, m_irq_status & M_CMD_DONE_EN,
-+					geni_status & M_GENI_CMD_ACTIVE);
- 
- 	if (s_irq_status & S_GP_IRQ_0_EN || s_irq_status & S_GP_IRQ_1_EN) {
- 		if (s_irq_status & S_GP_IRQ_0_EN)
+-	pte_lock_deinit(page);
++	ptlock_free(page);
+ 	__ClearPageTable(page);
+ 	dec_zone_page_state(page, NR_PAGETABLE);
+ }
 -- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+2.20.0.rc1.387.gf8505762e3-goog
 
