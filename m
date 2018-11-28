@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A81BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618D5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D65D2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D65D2086B
+	by mail.kernel.org (Postfix) with ESMTP id 34A0C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 09:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A0C2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbeK1Ubc (ORCPT
+        id S1728474AbeK1UdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:31:32 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49122 "EHLO
+        Wed, 28 Nov 2018 15:33:13 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49146 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbeK1Ubc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727955AbeK1Ubc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Nov 2018 15:31:32 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 42A8F5FF70; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
+        id 47BB85FD9A; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -36,9 +36,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 03/15] dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
-Date:   Wed, 28 Nov 2018 17:30:00 +0800
-Message-Id: <20181128093013.24442-4-wens@csie.org>
+Subject: [PATCH 04/15] dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
+Date:   Wed, 28 Nov 2018 17:30:01 +0800
+Message-Id: <20181128093013.24442-5-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128093013.24442-1-wens@csie.org>
 References: <20181128093013.24442-1-wens@csie.org>
@@ -49,39 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A31 does not have an external clock output directly from the RTC.
-Instead, it has four muxable clock outputs: three (A, B, C) are
-controlled from the CCU, and the last (D) is controlled from the PRCM.
+Experiments showed that on at least the H3/H5/A64 the RTC's internal
+oscillator also feeds the CPUS mux in the PRCM.
 
-Deprecate the usage of the external clock output for the A31 compatible.
+Export this clock through the device tree, instead of having to use
+a dummy fixed-clock device node, for the PRCM to consume. This will
+properly describe the relationship between the clocks.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- Documentation/devicetree/bindings/rtc/sun6i-rtc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/rtc/sun6i-rtc.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
-index b1eaa443347d..78c4fb472eb7 100644
+index 78c4fb472eb7..1bd37faadecb 100644
 --- a/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
 +++ b/Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
-@@ -30,6 +30,8 @@ Required properties for new device trees
+@@ -24,7 +24,7 @@ Required properties:
+ 
+ Required properties for new device trees
+ - clocks	: phandle to the 32kHz external oscillator
+-- clock-output-names : names of the two clock outputs. See below.
++- clock-output-names : names of the three clock outputs. See below.
+ - #clock-cells  : must be equal to 1.
+ 
  The RTC provides the following clocks at the given indices:
- - 0: LOSC
+@@ -32,6 +32,7 @@ The RTC provides the following clocks at the given indices:
  - 1: LOSC external output, known as X32KFOUT in the datasheet.
-+     This clock is not available on the A31 and is deprecated for old
-+     device trees still using the "allwinner,sun6i-a31-rtc" compatible.
+      This clock is not available on the A31 and is deprecated for old
+      device trees still using the "allwinner,sun6i-a31-rtc" compatible.
++- 2: InternalOSC, or internal RC oscillator
  
  Example:
  
-@@ -37,7 +39,7 @@ rtc: rtc@1f00000 {
- 	compatible = "allwinner,sun6i-a31-rtc";
- 	reg = <0x01f00000 0x54>;
- 	interrupts = <0 40 4>, <0 41 4>;
--	clock-output-names = "osc32k", "osc32k-out";
-+	clock-output-names = "osc32k";
- 	clocks = <&ext_osc32k>;
- 	#clock-cells = <1>;
- };
 -- 
 2.20.0.rc1
 
