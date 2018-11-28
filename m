@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA71DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A91C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DA32081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F490206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="TXE72AGV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DA32081C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="QpmBbBj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F490206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeK2Krz (ORCPT
+        id S1727767AbeK2Krz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 29 Nov 2018 05:47:55 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:54459 "EHLO
+Received: from out002.mailprotect.be ([83.217.72.86]:59715 "EHLO
         out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeK2Kry (ORCPT
+        with ESMTP id S1727031AbeK2Krx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:47:54 -0500
+        Thu, 29 Nov 2018 05:47:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=Yanva0oX2cQ99oHZwHM+IVh8IfTDUFvfF6yZuVSexyE=; b=TXE72AGV/iNo
-        JSWOWn4JTNED8MAHiHrQzikuUGNwVqPVAWyQ1pB/lM/pwUxHkVrXBK/c6fRl9CeMvYA0AHo7x7QPb
-        NXCNaZoVGNcreyaLl20cd3z0CO2nueh2yAGhvOkdTDf4MRNxWaPcD5x3SHffl4RCZ8Rx5W1q8BfOl
-        sbxOTin1ai9O/dpLx9esEtrkToa30zo+LcGX72wmdUMfq66mK+bg2ZXqeW2BT8WAwjZSDA7bfYWWK
-        JEVcz1op9nLaVYm+DMR+7GiH6IX6iw5nTVQZ7ckdfWREjUUimcfTHF0n0/3eYZHDSKx7lQXVNuere
-        o2UA1IaVG+bWWtnc3w33lg==;
+        content-type; bh=mcUvMjoYe3PeH3YzeCRQeNkb9nVP6UyQiX031dtXHfw=; b=QpmBbBj5iVTz
+        0IsRiM4AEqe41R6s+VYM8GokT0M0bKGzQc3Wmo0x7mdMMMG5A9QmpL45Kf5Kaeh8aumLVX0VnnwD1
+        ojIvUOzh1W7yoxTI4X0rPLDdg8UORylLuKWuTGhY7EHukA/9OSpev+qHXzZhthXeU5JKcKzauoKkD
+        r6MKGyhNuUqiWg1mWdwoxYvXmDziMZpcisayAxr8TyofiKAMyd/pLpggjV6zdLe1c/c9NA1ZVPtDB
+        n8q125hlBCqrhZUCBOOGLhpB73RwVss2VB1PvsCBC+hFCGho1szWAIHI+N63NxMKpX7nIGOzGnfDK
+        9dI0VtN52hKeytPdB+wIpQ==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
         by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gS9VI-000Fm0-00; Thu, 29 Nov 2018 00:44:24 +0100
+        id 1gS9VJ-000Fm0-AM; Thu, 29 Nov 2018 00:44:25 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 3DF26C11D1;
-        Thu, 29 Nov 2018 00:44:21 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 316C0C1235;
+        Thu, 29 Nov 2018 00:44:23 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 26/27] kernel/workqueue: Use dynamic lockdep keys for workqueues
-Date:   Wed, 28 Nov 2018 15:43:24 -0800
-Message-Id: <20181128234325.110011-27-bvanassche@acm.org>
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH 27/27] lockdep tests: Test dynamic key registration
+Date:   Wed, 28 Nov 2018 15:43:25 -0800
+Message-Id: <20181128234325.110011-28-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181128234325.110011-1-bvanassche@acm.org>
 References: <20181128234325.110011-1-bvanassche@acm.org>
@@ -61,327 +60,108 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.000675244900006)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00147027635519)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5rlM6x7xI01TwafEu/vtmBd602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTbXCyMe5v8y2H30acbVA7+CsLowAEMLnIs/c915wTAPANfX
- yKo+pvzCeHRww82sG/8HW2me2F11ZDpUG2A5Oiv0I5mALh2L1FvYZOvwUqXjvDk55wR+TsdsSUF6
- GKzdvFqIq2rgmnTfzvSnaZPSpdF4ea4rbEb5nCRA6afYiNM/uEuf+eM3l5KPnbp/eQthjVOWYHcP
- 06zXqyXOojRJS4zk6vzFJo0AdCg5ctQBwDBlYATJsjWw5+0eZIpQIcK9yrRZBI4MtpSGpU9W4FdB
- tQesEelBF7Ngqas1fLSi+EsXiGRbN4cS9m3JKQpYnU+jEObu+ZQGpXspg4TOqv23+spbzJ3vJBBY
- vcIXZcvdbj7fjbZn+1a2iCCdPFy3WGiBkBZc+BBb+UeYFBhPAZQ65C2d4vB6Mmh6nzlzGKK4CNTd
- FmC4kGAnKNZdqPIYy5/0C0oKEgxQF7G4ajroXShVPl5s3ZvBSOdcZaQYlKee2Vxut+excQEBokpi
- mN+IpZsSCXc5abhTdeMRIGIFGG7eQynS17NirEYyqwqMBGrw8ELiqFSHA33y5Mb3HyPilJ6ZEZbN
- sFlW4xzv3KSabGJbxYTP9L1EoXi+CD9t4odUMDuXpq4Dt0gTEK9vOlOvpFXXjOyucj735mFcFqoc
- 4yysvQM8ASJFC/49WOPBr5nlEUI4xK39jKJ12NRmh/QKxJLghohhspljkOhpjzwdmRUuxUAkvLui
- r/Dx38cmAKzhwBVmTtMqpQY/wTdSn/KmmRPQe1WngoWueOlSkfQrrNQ0YaVuKF0zwGgxiH5VYpT1
- 74cN8FvxDejqc1gSvA2YxCROcMK2BmRxGQKegzOmzXDxmXJaDPc+rUuIsEwVJ+BZMX32wn3Pgyvz
- 8smJ4cFvw9NYpwMuEdh9gD+WCYAkTQKI1BpdUV8ShebT8U8Xw9HTDfreWRYYPDOuh+QYnmwzDWDO
- +6vF+qi4JhiyJsp7oQFHICv3/5BQ64Vz3kPXuj5BYP5ioVC/LbdJldJ8xntHMcYfWXZf0dFZX9FP
- 4Sdv0y+AiR3/grHo9BntmBzD6tps2qyeMO7J//0XCxCMJn8bXo41UD2nJ33TKG1BQebqdAt2Cyon
- bEaUvgji2bemCFdq6WVPktdpl4o13pcoUjSBRABE8Sc=
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5h5KxyMl6wMjMQAJSbWPT/B602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
+ AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyB41b1wEpWO6ik9HITpMsqebHcXK5F5szpMR3
+ ucwUCaulpCLw+Xb9GLNy0GASgpn9t8C9mOBdONdnsxgsk1D2p09kN7MM31r8n6t5T2S20aXt4Z/Z
+ A/b0vwYEnDdnyRMpq2ydL+V39l/HBScm+SV6be+d9aVwS6cHCn1lU19HAi33Iz6Zvpm8cPQnANwk
+ DQ5BNCNwpGn8jfSb3NCl2WUq09dCYgcgr835yVjKQZA6hJL1LiMHCxRezvZaFOrUVh8zaVyj66M1
+ yz85ZZhpUrhTRbASVYnBhdKUnGmBdHG7BUn2dK6UtSEdwn3yFtfkzf2g6K04cY809V1JdCwiLdDQ
+ Dow7RSjhmGOVelXQaHGaUkBvyMjbyNpr4xR6RL2C9+qlIny++hg9dJLqN5zmWqF/oNe6FVV7drXD
+ mtOldfpWzeUCaRHvx+uLGHS3n3Y0pMd0ZyCgxZHINA6A5+7T9o6by6wCf9/ixXi9QE6xc2MJdJIs
+ WkULIn/2FBvF31UHbsndehIqUczFWeS6sE8e1b5/UlaX0Ao5X99TlizdjWjXhcukjPvPb2ztUwUU
+ F4ekbSpuNzlrea/7iuldgAMiBvdjMSLFyWVVGDLjLtLLMFFx8O0HmFDqewO9xyOqCYO8P1aHcsG0
+ kWCiESR44kXyAcFBnvq0JaXhRWKyqy0OhbkmMxu2AdrcZPAiQvyjIZ4LQqnqqLEDUnB02oJPHAlf
+ IubJYzA0XAoGECHs14pjPDDBgamvNiA5kjk+kUt44s0jst5fr31tEQH03yNqct6Xqa5I+n5W0k4Q
+ x9aozXEd9vD1qTZuhWzfuvHd4y0L/HyfN5U858I8R2vIYlYbA7G/CY3eeSCFRiwDn8j3yWGHtM7w
+ dRonBy/PpUxgSFRPcWxJF+/beJHmCfSNEcGdfFKs5M18F1x96tlonSt5Ig9mwLw4vXsdf68W0InH
+ /+bTMKNm38MHV+diwrlXuxzeO2WnJyd7g8lLLKZgdBo3YHaSgbLEg7M4I+zZPnIX6k9TnzH5sZcr
+ MS+4ayUpOtEhdxekWDmK9g==
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 87915adc3f0a ("workqueue: re-add lockdep dependencies for flushing")
-improved deadlock checking in the workqueue implementation. Unfortunately
-that patch also introduced a few false positive lockdep complaints. This
-patch suppresses these false positives by allocating the workqueue mutex
-lockdep key dynamically. An example of a false positive lockdep complaint
-suppressed by this report can be found below. The root cause of the
-lockdep complaint shown below is that the direct I/O code can call
-alloc_workqueue() from inside a work item created by another
-alloc_workqueue() call and that both workqueues share the same lockdep
-key. This patch avoids that that lockdep complaint is triggered by
-allocating the work queue lockdep keys dynamically. In other words, this
-patch guarantees that a unique lockdep key is associated with each work
-queue mutex.
+Make sure that the lockdep_register_key() and lockdep_unregister_key()
+code is tested when running the lockdep tests.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.0-dbg+ #1 Not tainted
-------------------------------------------------------
-fio/4129 is trying to acquire lock:
-00000000a01cfe1a ((wq_completion)"dio/%s"sb->s_id){+.+.}, at: flush_workqueue+0xd0/0x970
-
-but task is already holding lock:
-00000000a0acecf9 (&sb->s_type->i_mutex_key#14){+.+.}, at: ext4_file_write_iter+0x154/0x710
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&sb->s_type->i_mutex_key#14){+.+.}:
-       down_write+0x3d/0x80
-       __generic_file_fsync+0x77/0xf0
-       ext4_sync_file+0x3c9/0x780
-       vfs_fsync_range+0x66/0x100
-       dio_complete+0x2f5/0x360
-       dio_aio_complete_work+0x1c/0x20
-       process_one_work+0x481/0x9f0
-       worker_thread+0x63/0x5a0
-       kthread+0x1cf/0x1f0
-       ret_from_fork+0x24/0x30
-
--> #1 ((work_completion)(&dio->complete_work)){+.+.}:
-       process_one_work+0x447/0x9f0
-       worker_thread+0x63/0x5a0
-       kthread+0x1cf/0x1f0
-       ret_from_fork+0x24/0x30
-
--> #0 ((wq_completion)"dio/%s"sb->s_id){+.+.}:
-       lock_acquire+0xc5/0x200
-       flush_workqueue+0xf3/0x970
-       drain_workqueue+0xec/0x220
-       destroy_workqueue+0x23/0x350
-       sb_init_dio_done_wq+0x6a/0x80
-       do_blockdev_direct_IO+0x1f33/0x4be0
-       __blockdev_direct_IO+0x79/0x86
-       ext4_direct_IO+0x5df/0xbb0
-       generic_file_direct_write+0x119/0x220
-       __generic_file_write_iter+0x131/0x2d0
-       ext4_file_write_iter+0x3fa/0x710
-       aio_write+0x235/0x330
-       io_submit_one+0x510/0xeb0
-       __x64_sys_io_submit+0x122/0x340
-       do_syscall_64+0x71/0x220
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  (wq_completion)"dio/%s"sb->s_id --> (work_completion)(&dio->complete_work) --> &sb->s_type->i_mutex_key#14
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sb->s_type->i_mutex_key#14);
-                               lock((work_completion)(&dio->complete_work));
-                               lock(&sb->s_type->i_mutex_key#14);
-  lock((wq_completion)"dio/%s"sb->s_id);
-
- *** DEADLOCK ***
-
-1 lock held by fio/4129:
- #0: 00000000a0acecf9 (&sb->s_type->i_mutex_key#14){+.+.}, at: ext4_file_write_iter+0x154/0x710
-
-stack backtrace:
-CPU: 3 PID: 4129 Comm: fio Not tainted 4.19.0-dbg+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0x86/0xc5
- print_circular_bug.isra.32+0x20a/0x218
- __lock_acquire+0x1c68/0x1cf0
- lock_acquire+0xc5/0x200
- flush_workqueue+0xf3/0x970
- drain_workqueue+0xec/0x220
- destroy_workqueue+0x23/0x350
- sb_init_dio_done_wq+0x6a/0x80
- do_blockdev_direct_IO+0x1f33/0x4be0
- __blockdev_direct_IO+0x79/0x86
- ext4_direct_IO+0x5df/0xbb0
- generic_file_direct_write+0x119/0x220
- __generic_file_write_iter+0x131/0x2d0
- ext4_file_write_iter+0x3fa/0x710
- aio_write+0x235/0x330
- io_submit_one+0x510/0xeb0
- __x64_sys_io_submit+0x122/0x340
- do_syscall_64+0x71/0x220
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- include/linux/workqueue.h | 28 +++---------------
- kernel/workqueue.c        | 60 +++++++++++++++++++++++++++++++++------
- 2 files changed, 55 insertions(+), 33 deletions(-)
+ tools/lib/lockdep/include/liblockdep/common.h |  2 ++
+ tools/lib/lockdep/include/liblockdep/mutex.h  | 11 ++++++-----
+ tools/lib/lockdep/tests/ABBA.c                |  9 +++++++++
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 60d673e15632..d9a1a480e920 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -390,43 +390,23 @@ extern struct workqueue_struct *system_freezable_wq;
- extern struct workqueue_struct *system_power_efficient_wq;
- extern struct workqueue_struct *system_freezable_power_efficient_wq;
+diff --git a/tools/lib/lockdep/include/liblockdep/common.h b/tools/lib/lockdep/include/liblockdep/common.h
+index d640a9761f09..a81d91d4fc78 100644
+--- a/tools/lib/lockdep/include/liblockdep/common.h
++++ b/tools/lib/lockdep/include/liblockdep/common.h
+@@ -45,6 +45,8 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ void lock_release(struct lockdep_map *lock, int nested,
+ 			unsigned long ip);
+ void lockdep_reset_lock(struct lockdep_map *lock);
++void lockdep_register_key(struct lock_class_key *key);
++void lockdep_unregister_key(struct lock_class_key *key);
+ extern void debug_check_no_locks_freed(const void *from, unsigned long len);
  
--extern struct workqueue_struct *
--__alloc_workqueue_key(const char *fmt, unsigned int flags, int max_active,
--	struct lock_class_key *key, const char *lock_name, ...) __printf(1, 6);
--
- /**
-  * alloc_workqueue - allocate a workqueue
-  * @fmt: printf format for the name of the workqueue
-  * @flags: WQ_* flags
-  * @max_active: max in-flight work items, 0 for default
-- * @args...: args for @fmt
-+ * remaining args: args for @fmt
-  *
-  * Allocate a workqueue with the specified parameters.  For detailed
-  * information on WQ_* flags, please refer to
-  * Documentation/core-api/workqueue.rst.
-  *
-- * The __lock_name macro dance is to guarantee that single lock_class_key
-- * doesn't end up with different namesm, which isn't allowed by lockdep.
-- *
-  * RETURNS:
-  * Pointer to the allocated workqueue on success, %NULL on failure.
-  */
--#ifdef CONFIG_LOCKDEP
--#define alloc_workqueue(fmt, flags, max_active, args...)		\
--({									\
--	static struct lock_class_key __key;				\
--	const char *__lock_name;					\
--									\
--	__lock_name = "(wq_completion)"#fmt#args;			\
--									\
--	__alloc_workqueue_key((fmt), (flags), (max_active),		\
--			      &__key, __lock_name, ##args);		\
--})
--#else
--#define alloc_workqueue(fmt, flags, max_active, args...)		\
--	__alloc_workqueue_key((fmt), (flags), (max_active),		\
--			      NULL, NULL, ##args)
--#endif
-+struct workqueue_struct *alloc_workqueue(const char *fmt,
-+					 unsigned int flags,
-+					 int max_active, ...);
+ #define STATIC_LOCKDEP_MAP_INIT(_name, _key) \
+diff --git a/tools/lib/lockdep/include/liblockdep/mutex.h b/tools/lib/lockdep/include/liblockdep/mutex.h
+index 2073d4e1f2f0..783dd0df06f9 100644
+--- a/tools/lib/lockdep/include/liblockdep/mutex.h
++++ b/tools/lib/lockdep/include/liblockdep/mutex.h
+@@ -7,6 +7,7 @@
  
- /**
-  * alloc_ordered_workqueue - allocate an ordered workqueue
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 0280deac392e..82e155f764b7 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -259,6 +259,8 @@ struct workqueue_struct {
- 	struct wq_device	*wq_dev;	/* I: for sysfs interface */
- #endif
- #ifdef CONFIG_LOCKDEP
-+	char			*lock_name;
-+	struct lock_class_key	key;
- 	struct lockdep_map	lockdep_map;
- #endif
- 	char			name[WQ_NAME_LEN]; /* I: workqueue name */
-@@ -3314,11 +3316,50 @@ static int init_worker_pool(struct worker_pool *pool)
- 	return 0;
+ struct liblockdep_pthread_mutex {
+ 	pthread_mutex_t mutex;
++	struct lock_class_key key;
+ 	struct lockdep_map dep_map;
+ };
+ 
+@@ -27,11 +28,10 @@ static inline int __mutex_init(liblockdep_pthread_mutex_t *lock,
+ 	return pthread_mutex_init(&lock->mutex, __mutexattr);
  }
  
-+#ifdef CONFIG_LOCKDEP
-+static void wq_init_lockdep(struct workqueue_struct *wq)
-+{
-+	char *lock_name;
-+
-+	lockdep_register_key(&wq->key);
-+	lock_name = kasprintf(GFP_KERNEL, "%s%s", "(wq_completion)", wq->name);
-+	if (!lock_name)
-+		lock_name = wq->name;
-+	lockdep_init_map(&wq->lockdep_map, lock_name, &wq->key, 0);
-+}
-+
-+static void wq_unregister_lockdep(struct workqueue_struct *wq)
-+{
-+	lockdep_reset_lock(&wq->lockdep_map);
-+	lockdep_unregister_key(&wq->key);
-+}
-+
-+static void wq_free_lockdep(struct workqueue_struct *wq)
-+{
-+	if (wq->lock_name != wq->name)
-+		kfree(wq->lock_name);
-+}
-+#else
-+static void wq_init_lockdep(struct workqueue_struct *wq)
-+{
-+}
-+
-+static void wq_unregister_lockdep(struct workqueue_struct *wq)
-+{
-+}
-+
-+static void wq_free_lockdep(struct workqueue_struct *wq)
-+{
-+}
-+#endif
-+
- static void rcu_free_wq(struct rcu_head *rcu)
+-#define liblockdep_pthread_mutex_init(mutex, mutexattr)		\
+-({								\
+-	static struct lock_class_key __key;			\
+-								\
+-	__mutex_init((mutex), #mutex, &__key, (mutexattr));	\
++#define liblockdep_pthread_mutex_init(mutex, mutexattr)			\
++({									\
++	lockdep_register_key(&(mutex)->key);				\
++	__mutex_init((mutex), #mutex, &(mutex)->key, (mutexattr));	\
+ })
+ 
+ static inline int liblockdep_pthread_mutex_lock(liblockdep_pthread_mutex_t *lock)
+@@ -55,6 +55,7 @@ static inline int liblockdep_pthread_mutex_trylock(liblockdep_pthread_mutex_t *l
+ static inline int liblockdep_pthread_mutex_destroy(liblockdep_pthread_mutex_t *lock)
  {
- 	struct workqueue_struct *wq =
- 		container_of(rcu, struct workqueue_struct, rcu);
+ 	lockdep_reset_lock(&lock->dep_map);
++	lockdep_unregister_key(&lock->key);
+ 	return pthread_mutex_destroy(&lock->mutex);
+ }
  
-+	wq_free_lockdep(wq);
+diff --git a/tools/lib/lockdep/tests/ABBA.c b/tools/lib/lockdep/tests/ABBA.c
+index 623313f54720..543789bc3e37 100644
+--- a/tools/lib/lockdep/tests/ABBA.c
++++ b/tools/lib/lockdep/tests/ABBA.c
+@@ -14,4 +14,13 @@ void main(void)
+ 
+ 	pthread_mutex_destroy(&b);
+ 	pthread_mutex_destroy(&a);
 +
- 	if (!(wq->flags & WQ_UNBOUND))
- 		free_percpu(wq->cpu_pwqs);
- 	else
-@@ -3509,8 +3550,10 @@ static void pwq_unbound_release_workfn(struct work_struct *work)
- 	 * If we're the last pwq going away, @wq is already dead and no one
- 	 * is gonna access it anymore.  Schedule RCU free.
- 	 */
--	if (is_last)
-+	if (is_last) {
-+		wq_unregister_lockdep(wq);
- 		call_rcu_sched(&wq->rcu, rcu_free_wq);
-+	}
++	pthread_mutex_init(&a, NULL);
++	pthread_mutex_init(&b, NULL);
++
++	LOCK_UNLOCK_2(a, b);
++	LOCK_UNLOCK_2(b, a);
++
++	pthread_mutex_destroy(&b);
++	pthread_mutex_destroy(&a);
  }
- 
- /**
-@@ -4044,11 +4087,9 @@ static int init_rescuer(struct workqueue_struct *wq)
- 	return 0;
- }
- 
--struct workqueue_struct *__alloc_workqueue_key(const char *fmt,
--					       unsigned int flags,
--					       int max_active,
--					       struct lock_class_key *key,
--					       const char *lock_name, ...)
-+struct workqueue_struct *alloc_workqueue(const char *fmt,
-+					 unsigned int flags,
-+					 int max_active, ...)
- {
- 	size_t tbl_size = 0;
- 	va_list args;
-@@ -4083,7 +4124,7 @@ struct workqueue_struct *__alloc_workqueue_key(const char *fmt,
- 			goto err_free_wq;
- 	}
- 
--	va_start(args, lock_name);
-+	va_start(args, max_active);
- 	vsnprintf(wq->name, sizeof(wq->name), fmt, args);
- 	va_end(args);
- 
-@@ -4100,7 +4141,7 @@ struct workqueue_struct *__alloc_workqueue_key(const char *fmt,
- 	INIT_LIST_HEAD(&wq->flusher_overflow);
- 	INIT_LIST_HEAD(&wq->maydays);
- 
--	lockdep_init_map(&wq->lockdep_map, lock_name, key, 0);
-+	wq_init_lockdep(wq);
- 	INIT_LIST_HEAD(&wq->list);
- 
- 	if (alloc_and_link_pwqs(wq) < 0)
-@@ -4138,7 +4179,7 @@ struct workqueue_struct *__alloc_workqueue_key(const char *fmt,
- 	destroy_workqueue(wq);
- 	return NULL;
- }
--EXPORT_SYMBOL_GPL(__alloc_workqueue_key);
-+EXPORT_SYMBOL_GPL(alloc_workqueue);
- 
- /**
-  * destroy_workqueue - safely terminate a workqueue
-@@ -4191,6 +4232,7 @@ void destroy_workqueue(struct workqueue_struct *wq)
- 		kthread_stop(wq->rescuer->task);
- 
- 	if (!(wq->flags & WQ_UNBOUND)) {
-+		wq_unregister_lockdep(wq);
- 		/*
- 		 * The base ref is never dropped on per-cpu pwqs.  Directly
- 		 * schedule RCU free.
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
