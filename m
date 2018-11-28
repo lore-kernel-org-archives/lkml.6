@@ -2,107 +2,192 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA66BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A153C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C8520660
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="y1RfWGYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C8520660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 16EA22086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EA22086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeK1Xnp (ORCPT
+        id S1728694AbeK1XoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:43:45 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54384 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbeK1Xnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:43:45 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASCcXwi046280;
-        Wed, 28 Nov 2018 12:41:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LA7CRSqknIo1Ut0TXZU47z3lRwWj0OLvoPru1JLK8Xg=;
- b=y1RfWGYMMSf1OkebAEAFU/09x0xMiYl3ZnEiqqGh6Df1Tnc/Jm2GKBc/Ho+jE0Jo56aN
- 5j2dBjiJFekZfIShwLXv3HZfT5jfboRnOrdjWaKCTamHzUlT4CWLK10ocr2/tqW6rA5I
- bcu9ArSqNiqkU0VD/YVVQSvHqoiRJ6AKHLuJpQZWln941thk0dPoMXavV6AfkF3dlo6h
- A3Xsa7bcoThH+qN0sM9CF0R6GlOcgiVRcU8RK4K06qfNFK5L9pWHMeiSQHzS10nEvb3z
- cN8IACfALvhshw7NH9TEPtoBKoEsqWoA/PBdUj2F3dfW8fa/uWBfUrxwxDL6SY5GLA+P KQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2nxx2u9y9x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 12:41:53 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wASCfloW018450
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Nov 2018 12:41:47 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wASCflhe010173;
-        Wed, 28 Nov 2018 12:41:47 GMT
-Received: from [192.168.1.9] (/116.231.183.115)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Nov 2018 04:41:46 -0800
-Subject: Re: [PATCH v1 5/7] xfs: Add device retry
-To:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Allison Henderson <allison.henderson@oracle.com>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        martin.petersen@oracle.com, shirley.ma@oracle.com
-References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
- <1543376991-5764-6-git-send-email-allison.henderson@oracle.com>
- <20181128050850.GJ6311@dastard> <20181128073520.GA7084@infradead.org>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <f30fd190-28e5-938a-1cb9-3690559a60f0@oracle.com>
-Date:   Wed, 28 Nov 2018 20:41:40 +0800
+        Wed, 28 Nov 2018 18:44:09 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38352 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727945AbeK1XoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 18:44:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F134C37D8;
+        Wed, 28 Nov 2018 04:42:36 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7FD03F59C;
+        Wed, 28 Nov 2018 04:42:33 -0800 (PST)
+Subject: Re: [PATCH 8/9] iommu: arm-smmu: make it explicitly non-modular
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Nate Watterson <nwatters@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
+ <1543271498-28966-9-git-send-email-paul.gortmaker@windriver.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <755c95d7-882c-0dec-207e-20bf8f22b159@arm.com>
+Date:   Wed, 28 Nov 2018 12:42:31 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181128073520.GA7084@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1543271498-28966-9-git-send-email-paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9090 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811280112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/18 3:35 PM, Christoph Hellwig wrote:
-> On Wed, Nov 28, 2018 at 04:08:50PM +1100, Dave Chinner wrote:
->> So the first time through this loop the block layer devices what
->> device to read from, then we iterate devices 1..n on error.
->>
->> Whihc means if device 0 is the only one with good information in it,
->> we may not ever actually read from it.
->>
->> I'd suggest that a hint of "-1" (or equivalent max value) should be
->> used for "device selects mirror leg" rather than 0, so we can
->> actually read from the first device on command.
-> 
-> Yes.  For one thing I think we really need to split this retry counter
-> of sorts from the write hints.  I.e. make both u8 types and keep them
-> separate.  Then start out with (u8)-1 as initialized by the block layer
-> for the first attempt.  The device then fills out which leg it used
-> (in the completion path, so that another underlying driver doesn't
-> override it!), and then the file system just preserves this value on
-> a resumit, leaving the driver to chose a new value when it gets a
-> non -1 value.
-> 
+Hi Paul,
 
-Will update as suggested, thank you for all your feedback :)
+On 26/11/2018 22:31, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/iommu/Kconfig:config ARM_SMMU
+> drivers/iommu/Kconfig:  bool "ARM Ltd. System MMU (SMMU) Support"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, but unlike most drivers, we can't delete the
+> function tied to the ".remove" field.  This is because as of commit
+> 7aa8619a66ae ("iommu/arm-smmu-v3: Implement shutdown method") the
+> .remove function was given a one line wrapper and re-used to provide a
+> .shutdown service.  So we delete the wrapper and re-name the function
+> from remove to shutdown.
+> 
+> We add a moduleparam.h include since the file does actually declare
+> some module parameters, and leaving them as such is the easiest way
+> currently to remain backwards compatible with existing use cases.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Nate Watterson <nwatters@codeaurora.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: iommu@lists.linux-foundation.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>   drivers/iommu/arm-smmu.c | 32 +++++++++++++-------------------
+>   1 file changed, 13 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 5a28ae892504..4a2e143fdf52 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -41,7 +41,8 @@
+>   #include <linux/io-64-nonatomic-hi-lo.h>
+>   #include <linux/iommu.h>
+>   #include <linux/iopoll.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/moduleparam.h>
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+>   #include <linux/of_device.h>
+> @@ -101,6 +102,10 @@
+>   #define MSI_IOVA_LENGTH			0x100000
+>   
+>   static int force_stage;
+> +/*
+> + * not really modular, but the easiest way to keep compat with existing
+> + * bootargs behaviour is to continue using module_param() here.
+> + */
 
--Bob
+Is it worth introducing builtin_param() and friends for this sort of 
+thing, to echo the *_platform_driver() helpers? It seems like that could 
+be justifiable under the motivation described in the cover letter.
+
+Otherwise, the changes look reasonable. I still hold out hope that one 
+day we'll be able to make IOMMU drivers modular (it can work with 
+minimal hacks today, but it's far from robust in general), but for now I 
+agree this makes sense (and it'll be easy enough to revert for playing 
+with further hacks). With the title fixed up as Joerg asked,
+
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+
+>   module_param(force_stage, int, S_IRUGO);
+>   MODULE_PARM_DESC(force_stage,
+>   	"Force SMMU mappings to be installed at a particular stage of translation. A value of '1' or '2' forces the corresponding stage. All other values are ignored (i.e. no stage is forced). Note that selecting a specific stage will disable support for nested translation.");
+> @@ -1964,7 +1969,6 @@ static const struct of_device_id arm_smmu_of_match[] = {
+>   	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
+>   	{ },
+>   };
+> -MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+>   
+>   #ifdef CONFIG_ACPI
+>   static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
+> @@ -2224,24 +2228,18 @@ static int arm_smmu_legacy_bus_init(void)
+>   }
+>   device_initcall_sync(arm_smmu_legacy_bus_init);
+>   
+> -static int arm_smmu_device_remove(struct platform_device *pdev)
+> +static void arm_smmu_device_shutdown(struct platform_device *pdev)
+>   {
+>   	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
+>   
+>   	if (!smmu)
+> -		return -ENODEV;
+> +		return;
+>   
+>   	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
+>   		dev_err(&pdev->dev, "removing device with active domains!\n");
+>   
+>   	/* Turn the thing off */
+>   	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+> -	return 0;
+> -}
+> -
+> -static void arm_smmu_device_shutdown(struct platform_device *pdev)
+> -{
+> -	arm_smmu_device_remove(pdev);
+>   }
+>   
+>   static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+> @@ -2256,16 +2254,12 @@ static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
+>   
+>   static struct platform_driver arm_smmu_driver = {
+>   	.driver	= {
+> -		.name		= "arm-smmu",
+> -		.of_match_table	= of_match_ptr(arm_smmu_of_match),
+> -		.pm		= &arm_smmu_pm_ops,
+> +		.name			= "arm-smmu",
+> +		.of_match_table		= of_match_ptr(arm_smmu_of_match),
+> +		.pm			= &arm_smmu_pm_ops,
+> +		.suppress_bind_attrs	= true,
+>   	},
+>   	.probe	= arm_smmu_device_probe,
+> -	.remove	= arm_smmu_device_remove,
+>   	.shutdown = arm_smmu_device_shutdown,
+>   };
+> -module_platform_driver(arm_smmu_driver);
+> -
+> -MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
+> -MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(arm_smmu_driver);
+> 
