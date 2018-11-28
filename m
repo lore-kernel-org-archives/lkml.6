@@ -2,187 +2,648 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B58C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EA7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2682521104
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:45:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="YRdXvqfx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682521104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id A5E1820660
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 12:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E1820660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbeK1Xqv (ORCPT
+        id S1728381AbeK1XsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:46:51 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:41468 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbeK1Xqv (ORCPT
+        Wed, 28 Nov 2018 18:48:00 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55198 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727811AbeK1Xr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:46:51 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 603B95C03BB;
-        Wed, 28 Nov 2018 13:45:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1543409115;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i37+8Zmu7QIa2sTS41oBI+kGzorEJQk3OyenywtQJRg=;
-        b=YRdXvqfx3U6i0WuVn7huD1kD42AjA5zjH44RKeBEoHg8ZAXBuzfbtHtFEaLq2kI5NU3TBc
-        xqy2jdsxdPbugpLhpHE88qqr9Ojy1wQwXqFNMrNQbl3N1cQH7oH2aiebfFF9UnkgReu7nc
-        UcYdh95awa1Hnrv11nYdwbpRYPAthSM=
+        Wed, 28 Nov 2018 18:47:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wASCkFkV082027;
+        Wed, 28 Nov 2018 06:46:15 -0600
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wASCkF6I090022
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 06:46:15 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 28
+ Nov 2018 06:46:15 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 28 Nov 2018 06:46:15 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wASCkB2l023573;
+        Wed, 28 Nov 2018 06:46:12 -0600
+Subject: Re: [RFC PATCH v2 09/15] usb:cdns3: EpX operations part of the API
+To:     Pawel Laszczak <pawell@cadence.com>, <devicetree@vger.kernel.org>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-10-git-send-email-pawell@cadence.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <adouglas@cadence.com>,
+        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
+        <sureshp@cadence.com>, <peter.chen@nxp.com>, <pjez@cadence.com>,
+        <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFE8E12.9080307@ti.com>
+Date:   Wed, 28 Nov 2018 14:46:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1542535751-16079-10-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 28 Nov 2018 13:45:15 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        gustavo.pimentel@synopsys.com,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH v2 3/3] PCI: imx6: limit DBI register length
-In-Reply-To: <CAHQ1cqFprD4k+aO_x-znEs6sXpx9jxih-moSuNZZ3dAKHuLpPw@mail.gmail.com>
-References: <20181120132705.6917-1-stefan@agner.ch>
- <20181120132705.6917-3-stefan@agner.ch>
- <CAHQ1cqEfjqtJbb6qxTRa-rVvgy8+_Og4Eh21XMRETJHnRG9a6w@mail.gmail.com>
- <CAOMZO5DZRUUkkqNPRZWhK0C56sRU+eQqFzV+akpEvwcKHW1DNw@mail.gmail.com>
- <CAHQ1cqFprD4k+aO_x-znEs6sXpx9jxih-moSuNZZ3dAKHuLpPw@mail.gmail.com>
-Message-ID: <482dc823b1567c9a933104b02a6bfeac@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.11.2018 02:28, Andrey Smirnov wrote:
-> On Tue, Nov 27, 2018 at 5:12 PM Fabio Estevam <festevam@gmail.com> wrote:
->>
->> Hi Andrey,
->>
->> On Tue, Nov 27, 2018 at 10:57 PM Andrey Smirnov
->> <andrew.smirnov@gmail.com> wrote:
->>
->> > Could this be a regression? Prior to 415b6185c541 ("PCI: imx6: Fix
->> > config read timeout handling") all of the imprecise aborts were caught
->> > and handled via no-op handler. I did an experiment on i.MX6Q board
->> > that I have (ZII RDU2) and adding a simple no-op for imprecise aborts
->> > via
->> >
->> > hook_fault_code(16 + 6, imx6q_pcie_no_op_handler, SIGBUS, 0,
->> >                        "imprecise external abort");
 
-Unsurprisingly, introducing this handler also "fixes" the issue in my
-setup.
 
-FWIW, during my investigation with the Thumb2 issue, I was looking at
-the abort handler and its history a bit more closely too. I was about to
-suggest readding this handler too, you just beat me by some hours :-)
-
-The current 4.9 downstream BSP still has the old fault handler, and
-hence this issue does not happen in the downstream BSP.
-
->> >
->> > seems to "resolve" this problem:
->>
->> Please check https://patchwork.kernel.org/patch/9720313/
->>
->> This commit fixed a kernel crash on mx6q boards with a PCI switch.
->>
->> So we can't go back to the simple no-op.
+On 18/11/18 12:09, Pawel Laszczak wrote:
+> Patch implements callback functions for non-default endpoints
+> defined in usb_ep_ops object.
 > 
-> It's probably not exactly clear form my message, but I wasn't
-> proposing to go back to a no-op. What I had in mind is having a no-op
-> handler for imprecise aborts _alongside_ the non-linefetch handlers
-> that is already there when running against i.MX6Q type of the IP
-> block.
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/ep0.c    |  18 ++
+>  drivers/usb/cdns3/gadget.c | 442 ++++++++++++++++++++++++++++++++++++-
+>  drivers/usb/cdns3/gadget.h |   3 +
+>  3 files changed, 461 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
+> index c08d02665f9d..ca1795467155 100644
+> --- a/drivers/usb/cdns3/ep0.c
+> +++ b/drivers/usb/cdns3/ep0.c
+> @@ -23,6 +23,24 @@ static void cdns3_prepare_setup_packet(struct cdns3_device *priv_dev)
+>  	//TODO: Implements this function
+>  }
+>  
+> +/**
+> + * cdns3_gadget_ep_set_wedge Set wedge on selected endpoint
+> + * @ep: endpoint object
+> + *
+> + * Returns 0
+> + */
+> +int cdns3_gadget_ep_set_wedge(struct usb_ep *ep)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +
+> +	dev_dbg(&priv_dev->dev, "Wedge for %s\n", ep->name);
+> +	cdns3_gadget_ep_set_halt(ep, 1);
+> +	priv_ep->flags |= EP_WEDGE;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * cdns3_ep0_config - Configures default endpoint
+>   * @priv_dev: extended gadget object
+> diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+> index 702a05faa664..1f2a434486dc 100644
+> --- a/drivers/usb/cdns3/gadget.c
+> +++ b/drivers/usb/cdns3/gadget.c
+> @@ -58,6 +58,19 @@ void cdns3_set_register_bit(void __iomem *ptr, u32 mask)
+>  	writel(mask, ptr);
+>  }
+>  
+> +/**
+> + * cdns3_next_request - returns next request from list
+> + * @list: list containing requests
+> + *
+> + * Returns request or NULL if no requests in list
+> + */
+> +struct usb_request *cdns3_next_request(struct list_head *list)
+> +{
+> +	if (list_empty(list))
+> +		return NULL;
+> +	return list_first_entry(list, struct usb_request, list);
+> +}
+> +
+>  /**
+>   * select_ep - selects endpoint
+>   * @priv_dev:  extended gadget object
+> @@ -73,6 +86,53 @@ void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep)
+>  	writel(ep, &priv_dev->regs->ep_sel);
+>  }
+>  
+> +/**
+> + * cdns3_allocate_trb_pool - Allocates TRB's pool for selected endpoint
+> + * @priv_ep:  endpoint object
+> + *
+> + * Function will return 0 on success or -ENOMEM on allocation error
+> + */
+> +static int cdns3_allocate_trb_pool(struct cdns3_endpoint *priv_ep)
+> +{
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	struct cdns3_trb *link_trb;
+> +
+> +	if (!priv_ep->trb_pool) {
+> +		priv_ep->trb_pool = dma_zalloc_coherent(priv_dev->sysdev,
+> +							TRB_RIGN_SIZE,
+
+TRB_RING_SIZE
+
+> +							&priv_ep->trb_pool_dma,
+> +							GFP_DMA);
+> +		if (!priv_ep->trb_pool)
+> +			return -ENOMEM;
+> +	} else {
+> +		memset(priv_ep->trb_pool, 0, TRB_RIGN_SIZE);
+
+here too.
+
+> +	}
+> +
+> +	if (!priv_ep->aligned_buff) {
+> +		priv_ep->aligned_buff = dma_alloc_coherent(priv_dev->sysdev,
+> +							   CDNS3_UNALIGNED_BUF_SIZE,
+
+CDNS3_ALIGNED_BUF_SIZE
+
+> +							   &priv_ep->aligned_dma_addr,
+> +							   GFP_DMA);
+> +		if (!priv_ep->aligned_buff) {
+> +			dma_free_coherent(priv_dev->sysdev,
+> +					  TRB_RIGN_SIZE,
+> +					  priv_ep->trb_pool,
+> +					  priv_ep->trb_pool_dma);
+> +			priv_ep->trb_pool = NULL;
+> +
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +
+> +	/* Initialize the last TRB as Link TRB */
+> +	link_trb = (priv_ep->trb_pool + TRBS_PER_SEGMENT - 1);
+> +	link_trb->buffer = TRB_BUFFER(priv_ep->trb_pool_dma);
+> +	link_trb->control = TRB_CYCLE | TRB_TYPE(TRB_LINK) |
+> +			    TRB_CHAIN | TRB_TOGGLE;
+> +
+> +	return 0;
+> +}
+> +
+>  static void cdns3_free_trb_pool(struct cdns3_endpoint *priv_ep)
+>  {
+>  	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> @@ -92,6 +152,73 @@ static void cdns3_free_trb_pool(struct cdns3_endpoint *priv_ep)
+>  	}
+>  }
+>  
+> +/**
+> + * cdns3_data_flush - flush data at onchip buffer
+> + * @priv_ep: endpoint object
+> + *
+> + * Endpoint must be selected before call to this function
+> + *
+> + * Returns zero on success or negative value on failure
+> + */
+> +static int cdns3_data_flush(struct cdns3_endpoint *priv_ep)
+> +{
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +
+> +	writel(EP_CMD_DFLUSH, &priv_dev->regs->ep_cmd);
+> +
+> +	/* wait for DFLUSH cleared */
+> +	return cdns3_handshake(&priv_dev->regs->ep_cmd, EP_CMD_DFLUSH, 0, 100);
+> +}
+> +
+> +/**
+> + * cdns3_ep_stall_flush - Stalls and flushes selected endpoint
+> + * @priv_ep: endpoint object
+> + *
+> + * Endpoint must be selected before call to this function
+> + */
+> +static void cdns3_ep_stall_flush(struct cdns3_endpoint *priv_ep)
+> +{
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +
+> +	writel(EP_CMD_DFLUSH | EP_CMD_ERDY | EP_CMD_SSTALL,
+> +	       &priv_dev->regs->ep_cmd);
+> +
+> +	/* wait for DFLUSH cleared */
+> +	cdns3_handshake(&priv_dev->regs->ep_cmd, EP_CMD_DFLUSH, 0, 100);
+> +	priv_ep->flags |= EP_STALL;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_giveback - call struct usb_request's ->complete callback
+> + * @priv_ep: The endpoint to whom the request belongs to
+> + * @priv_req: The request we're giving back
+> + * @status: completion code for the request
+> + *
+> + * Must be called with controller's lock held and interrupts disabled. This
+> + * function will unmap @req and call its ->complete() callback to notify upper
+> + * layers that it has completed.
+> + */
+> +void cdns3_gadget_giveback(struct cdns3_endpoint *priv_ep,
+> +			   struct cdns3_request *priv_req,
+> +			   int status)
+> +{
+> +	//TODO: Implements this function.
+> +}
+> +
+> +/**
+> + * cdns3_ep_run_transfer - start transfer on no-default endpoint hardware
+> + * @priv_ep: endpoint object
+> + *
+> + * Returns zero on success or negative value on failure
+> + */
+> +int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
+> +			  struct usb_request *request)
+> +{
+> +	//TODO: Implements this function.
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * cdns3_irq_handler - irq line interrupt handler
+>   * @cdns: cdns3 instance
+> @@ -170,6 +297,318 @@ static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
+>  	return &priv_ep->endpoint;
+>  }
+>  
+> +/**
+> + * cdns3_gadget_ep_enable Enable endpoint
+> + * @ep: endpoint object
+> + * @desc: endpoint descriptor
+> + *
+> + * Returns 0 on success, error code elsewhere
+> + */
+> +static int cdns3_gadget_ep_enable(struct usb_ep *ep,
+> +				  const struct usb_endpoint_descriptor *desc)
+> +{
+> +	struct cdns3_endpoint *priv_ep;
+> +	struct cdns3_device *priv_dev;
+> +	unsigned long flags;
+> +	int ret;
+> +	u32 reg;
+> +
+> +	priv_ep = ep_to_cdns3_ep(ep);
+> +	priv_dev = priv_ep->cdns3_dev;
+> +
+> +	if (!ep || !desc || desc->bDescriptorType != USB_DT_ENDPOINT) {
+> +		dev_err(&priv_dev->dev, "usbss: invalid parameters\n");
+
+dev_dbg()?
+
+Gadget driver will be more verbose.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!desc->wMaxPacketSize) {
+> +		dev_err(&priv_dev->dev, "usbss: missing wMaxPacketSize\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (dev_WARN_ONCE(&priv_dev->dev, priv_ep->flags & EP_ENABLED,
+> +			  "%s is already enabled\n", priv_ep->name))
+> +		return 0;
+> +
+> +	ret = cdns3_allocate_trb_pool(priv_ep);
+> +	if (ret)
+> +		return ret;
+
+Why not allocate the TRB pool once for all endpoints at gadget init?
+
+you don't seem to be calling cdns3_allocate_trb_pool() in cdns3_gadget_ep_disable().
+
+> +
+> +	dev_dbg(&priv_dev->dev, "Enabling endpoint: %s\n", ep->name);
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+> +	cdns3_select_ep(priv_dev, desc->bEndpointAddress);
+> +	writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
+> +
+> +	ret = cdns3_handshake(&priv_dev->regs->ep_cmd,
+> +			      EP_CMD_CSTALL | EP_CMD_EPRST, 0, 100);
+> +
+> +	cdns3_set_register_bit(&priv_dev->regs->ep_cfg, EP_CFG_ENABLE);
+> +
+> +	ep->desc = desc;
+> +	priv_ep->flags &= ~(EP_PENDING_REQUEST | EP_STALL);
+> +	priv_ep->flags |= EP_ENABLED | EP_UPDATE_EP_TRBADDR;
+> +	priv_ep->enqueue = 0;
+> +	priv_ep->dequeue = 0;
+> +	reg = readl(&priv_dev->regs->ep_sts);
+> +	priv_ep->pcs = !!EP_STS_CCS(reg);
+> +	priv_ep->ccs = !!EP_STS_CCS(reg);
+> +	/* one TRB is reserved for link TRB used in DMULT mode*/
+> +	priv_ep->free_trbs = TRBS_PER_SEGMENT - 1;
+> +
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +	return 0;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_disable Disable endpoint
+> + * @ep: endpoint object
+> + *
+> + * Returns 0 on success, error code elsewhere
+> + */
+> +static int cdns3_gadget_ep_disable(struct usb_ep *ep)
+> +{
+> +	struct cdns3_endpoint *priv_ep;
+> +	struct cdns3_device *priv_dev;
+> +	unsigned long flags;
+> +	int ret = 0;
+> +	struct usb_request *request;
+> +	u32 ep_cfg;
+> +
+> +	if (!ep) {
+> +		pr_debug("usbss: invalid parameters\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv_ep = ep_to_cdns3_ep(ep);
+> +	priv_dev = priv_ep->cdns3_dev;
+> +
+> +	if (dev_WARN_ONCE(&priv_dev->dev, !(priv_ep->flags & EP_ENABLED),
+> +			  "%s is already disabled\n", priv_ep->name))
+> +		return 0;
+> +
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+> +	if (!priv_dev->start_gadget) {
+> +		dev_dbg(&priv_dev->dev,
+> +			"Disabling endpoint at disconnection: %s\n", ep->name);
+
+This flag is looking very tricky.
+What do you mean by "disabling at disconnection"?
+
+> +		spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +		return 0;
+
+EP is not yet disabled and we're returning 0. This will cause an unbalance.
+I'd avoid that flag altogether.
+
+> +	}
+> +
+> +	dev_dbg(&priv_dev->dev, "Disabling endpoint: %s\n", ep->name);
+> +
+> +	cdns3_select_ep(priv_dev, ep->desc->bEndpointAddress);
+> +	ret = cdns3_data_flush(priv_ep);
+> +	while (!list_empty(&priv_ep->request_list)) {
+> +		request = cdns3_next_request(&priv_ep->request_list);
+> +
+> +		cdns3_gadget_giveback(priv_ep, to_cdns3_request(request),
+> +				      -ESHUTDOWN);
+> +	}
+> +
+> +	ep_cfg = readl(&priv_dev->regs->ep_cfg);
+> +	ep_cfg &= ~EP_CFG_ENABLE;
+> +	writel(ep_cfg, &priv_dev->regs->ep_cfg);
+> +	ep->desc = NULL;
+> +	priv_ep->flags &= ~EP_ENABLED;
+> +
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_alloc_request Allocates request
+> + * @ep: endpoint object associated with request
+> + * @gfp_flags: gfp flags
+> + *
+> + * Returns allocated request address, NULL on allocation error
+> + */
+> +struct usb_request *cdns3_gadget_ep_alloc_request(struct usb_ep *ep,
+> +						  gfp_t gfp_flags)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_request *priv_req;
+> +
+> +	priv_req = kzalloc(sizeof(*priv_req), gfp_flags);
+> +	if (!priv_req)
+> +		return NULL;
+> +
+> +	priv_req->priv_ep = priv_ep;
+> +
+> +	return &priv_req->request;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_free_request Free memory occupied by request
+> + * @ep: endpoint object associated with request
+> + * @request: request to free memory
+> + */
+> +void cdns3_gadget_ep_free_request(struct usb_ep *ep,
+> +				  struct usb_request *request)
+> +{
+> +	struct cdns3_request *priv_req = to_cdns3_request(request);
+> +
+> +	kfree(priv_req);
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_queue Transfer data on endpoint
+> + * @ep: endpoint object
+> + * @request: request object
+> + * @gfp_flags: gfp flags
+> + *
+> + * Returns 0 on success, error code elsewhere
+> + */
+> +static int __cdns3_gadget_ep_queue(struct usb_ep *ep,
+> +				   struct usb_request *request,
+> +				   gfp_t gfp_flags)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	int ret = 0;
+> +
+> +	request->actual = 0;
+> +	request->status = -EINPROGRESS;
+> +
+> +	dev_dbg(&priv_dev->dev, "Queuing to endpoint: %s\n", priv_ep->name);
+> +
+> +	ret = usb_gadget_map_request_by_dev(priv_dev->sysdev, request,
+> +					    usb_endpoint_dir_in(ep->desc));
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!cdns3_ep_run_transfer(priv_ep, request))
+> +		list_add_tail(&request->list, &priv_ep->request_list);
+
+how about catching the return value if cdns3_ep_run_transfer() fails?
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int cdns3_gadget_ep_queue(struct usb_ep *ep, struct usb_request *request,
+> +				 gfp_t gfp_flags)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	struct usb_request *zlp_request;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+> +	ret = __cdns3_gadget_ep_queue(ep, request, gfp_flags);
+> +
+> +	if (ret == 0 && request->zero && request->length &&
+> +	    (request->length % ep->maxpacket == 0)) {
+> +		zlp_request = cdns3_gadget_ep_alloc_request(ep, GFP_ATOMIC);
+> +		zlp_request->buf = priv_dev->zlp_buf;
+> +		zlp_request->length = 0;
+> +
+> +		dev_dbg(&priv_dev->dev, "Queuing ZLP for endpoint: %s\n",
+> +			priv_ep->name);
+> +		ret = __cdns3_gadget_ep_queue(ep, zlp_request, gfp_flags);
+
+Who is going to free this zlp_request?
+
+> +	}
+> +
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_dequeue Remove request from transfer queue
+> + * @ep: endpoint object associated with request
+> + * @request: request object
+> + *
+> + * Returns 0 on success, error code elsewhere
+> + */
+> +int cdns3_gadget_ep_dequeue(struct usb_ep *ep,
+> +			    struct usb_request *request)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	struct usb_request *req, *req_temp;
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	if (!ep || !request || !ep->desc)
+> +		return -EINVAL;
+> +
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+> +	dev_dbg(&priv_dev->dev, "Dequeue from %s\n", ep->name);
+> +
+> +	cdns3_select_ep(priv_dev, ep->desc->bEndpointAddress);
+> +	if (priv_dev->start_gadget)
+> +		ret = cdns3_data_flush(priv_ep);
+> +
+> +	list_for_each_entry_safe(req, req_temp, &priv_ep->request_list, list) {
+> +		if (request == req) {
+> +			cdns3_gadget_giveback(priv_ep,
+> +					      to_cdns3_request(request),
+> +					      -ECONNRESET);
+> +			break;
+> +		}
+> +	}
+> +
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * cdns3_gadget_ep_set_halt Sets/clears stall on selected endpoint
+> + * @ep: endpoint object to set/clear stall on
+> + * @value: 1 for set stall, 0 for clear stall
+> + *
+> + * Returns 0 on success, error code elsewhere
+> + */
+> +int cdns3_gadget_ep_set_halt(struct usb_ep *ep, int value)
+> +{
+> +	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
+> +	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	if (!(priv_ep->flags & EP_ENABLED))
+> +		return -EPERM;
+> +
+> +	/* if actual transfer is pending defer setting stall on this endpoint */
+> +	if ((priv_ep->flags & EP_PENDING_REQUEST) && value) {
+> +		priv_ep->flags |= EP_STALL;
+> +		return 0;
+> +	}
+> +
+> +	dev_dbg(&priv_dev->dev, "Halt endpoint %s\n", priv_ep->name);
+> +
+> +	spin_lock_irqsave(&priv_dev->lock, flags);
+
+How about grabbing the lock before checking for priv->ep->flags?
+
+> +
+> +	cdns3_select_ep(priv_dev, ep->desc->bEndpointAddress);
+> +	if (value) {
+> +		cdns3_ep_stall_flush(priv_ep);
+> +	} else {
+> +		priv_ep->flags &= ~EP_WEDGE;
+> +		writel(EP_CMD_CSTALL | EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
+> +
+> +		/* wait for EPRST cleared */
+> +		ret = cdns3_handshake(&priv_dev->regs->ep_cmd,
+> +				      EP_CMD_EPRST, 0, 100);
+
+if there was an error we shouldn't be clearing the EP_STALL right
+and leave the pending flag?
+
+> +		priv_ep->flags &= ~EP_STALL;
+> +	}
+> +
+> +	priv_ep->flags &= ~EP_PENDING_REQUEST;
+> +	spin_unlock_irqrestore(&priv_dev->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +extern const struct usb_ep_ops cdns3_gadget_ep0_ops;
+> +
+> +static const struct usb_ep_ops cdns3_gadget_ep_ops = {
+> +	.enable = cdns3_gadget_ep_enable,
+> +	.disable = cdns3_gadget_ep_disable,
+> +	.alloc_request = cdns3_gadget_ep_alloc_request,
+> +	.free_request = cdns3_gadget_ep_free_request,
+> +	.queue = cdns3_gadget_ep_queue,
+> +	.dequeue = cdns3_gadget_ep_dequeue,
+> +	.set_halt = cdns3_gadget_ep_set_halt,
+> +	.set_wedge = cdns3_gadget_ep_set_wedge,
+> +};
+> +
+>  /**
+>   * cdns3_gadget_get_frame Returns number of actual ITP frame
+>   * @gadget: gadget object
+> @@ -365,8 +804,7 @@ static int cdns3_init_ep(struct cdns3_device *priv_dev)
+>  		usb_ep_set_maxpacket_limit(&priv_ep->endpoint,
+>  					   ENDPOINT_MAX_PACKET_LIMIT);
+>  		priv_ep->endpoint.max_streams = ENDPOINT_MAX_STREAMS;
+> -		//TODO: Add implementation of cdns3_gadget_ep_ops
+> -		//priv_ep->endpoint.ops = &cdns3_gadget_ep_ops;
+> +		priv_ep->endpoint.ops = &cdns3_gadget_ep_ops;
+>  		if (ep_dir)
+>  			priv_ep->endpoint.caps.dir_in = 1;
+>  		else
+> diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
+> index 3b0d4d2e4831..a4be288b34cb 100644
+> --- a/drivers/usb/cdns3/gadget.h
+> +++ b/drivers/usb/cdns3/gadget.h
+> @@ -1072,4 +1072,7 @@ void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
+>  int cdns3_init_ep0(struct cdns3_device *priv_dev);
+>  void cdns3_ep0_config(struct cdns3_device *priv_dev);
+>  void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
+> +int cdns3_gadget_ep_set_wedge(struct usb_ep *ep);
+> +int cdns3_gadget_ep_set_halt(struct usb_ep *ep, int value);
+> +
+>  #endif /* __LINUX_CDNS3_GADGET */
 > 
 
-Agreed, it should be alongside the "external abort on non-linefetch"
-handler.
-
-I actually encountered another issue when I had a Intel e1000e running
-yesterday. Unfortunately I wasn't able to reproduce the issue, so maybe
-it was just a fluke. It probably would be solved by the additional
-"imprecise external abort" too:
-
-[   37.644300] fec 2188000.ethernet eth0: Link is Down
-[   38.077383] Unhandled fault: imprecise external abort (0x1406) at
-0xb64e8000
-[   38.084638] pgd = ac4709d6
-[   38.087434] [b64e8000] *pgd=00000000
-[   38.091129] Internal error: : 1406 [#1] PREEMPT SMP ARM
-[   38.096508] CPU: 0 PID: 468 Comm: kworker/0:2 Not tainted
-4.19.4-00044-ged7a0cc2ef01-dirty #479
-[   38.105428] Hardware name: Freescale i.MX6 Quad/DualLite (Device
-Tree)
-[   38.112143] Workqueue: events e1000_watchdog_task
-[   38.116993] PC is at e1000e_update_stats+0x68/0xa7c
-[   38.122008] LR is at e1000_watchdog_task+0xe8/0x71c
-[   38.127021] pc : [<c0621238>]    lr : [<c0628d0c>]    psr: 60010013
-[   38.133449] sp : ed185ea0  ip : 00007374  fp : ec83ece4
-[   38.138814] r10: ec71f700  r9 : ec83c500  r8 : ec83c000
-[   38.144180] r7 : ec83c924  r6 : ec83c000  r5 : c1104cc8  r4 :
-ec83c500
-[   38.150875] r3 : f14c4000  r2 : 000003e8  r1 : 00000000  r0 :
-ec83c500
-[   38.157573] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM 
-Segment none
-[   38.164890] Control: 10c5387d  Table: 3d1c004a  DAC: 00000051
-[   38.170789] Process kworker/0:2 (pid: 468, stack limit = 0xbc71b316)
-[   38.177306] Stack: (0xed185ea0 to 0xed186000)
-[   38.181794] 5ea0: ef7a9100 c0619ba3 ec0870e0 ec087068 ec0870e0
-00000000 60010013 c0619ba3
-[   38.190184] 5ec0: ef7a8d00 ec83c54c c1104cc8 ec83e54c ec83c924
-ec83c000 ec83c500 ec71f700
-[   38.198573] 5ee0: ec83ece4 c0628d0c ecbd16c0 c0c0237c ed185f3c
-c0b26de0 ec131c04 c0619ba3
-[   38.206966] 5f00: c1153fe4 ec83c54c ecdcc100 ef7a8d00 ef7a9e00
-00000000 ec83c550 00000000
-[   38.221770] 5f20: ef7a8d00 c0136aec c1103d00 ef7a8d18 ecdcc100
-ef7a8d00 ecdcc114 c1103d00
-[   38.236801] 5f40: ef7a8d18 ffffe000 00000008 c0136d40 ec521c70
-c1176068 c0e4213c ed184000
-[   38.251874] 5f60: ecfecfdc ecfecfc0 ed0db1c0 00000000 ed184000
-ecdcc100 c0136cfc ec0a3ea4
-[   38.267199] 5f80: ecfecfdc c013c810 00000000 ed0db1c0 c013c6c8
-00000000 00000000 00000000
-[   38.282612] 5fa0: 00000000 00000000 00000000 c01010e8 00000000
-00000000 00000000 00000000
-[   38.298080] 5fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[   38.313792] 5fe0: 00000000 00000000 00000000 00000000 00000013
-00000000 00000000 00000000
-[   38.329716] [<c0621238>] (e1000e_update_stats) from [<c0628d0c>]
-(e1000_watchdog_task+0xe8/0x71c)
-[   38.346597] [<c0628d0c>] (e1000_watchdog_task) from [<c0136aec>]
-(process_one_work+0x1f0/0x400)
-[   38.363493] [<c0136aec>] (process_one_work) from [<c0136d40>]
-(worker_thread+0x44/0x584)
-[   38.379844] [<c0136d40>] (worker_thread) from [<c013c810>]
-(kthread+0x148/0x150)
-[   38.395575] [<c013c810>] (kthread) from [<c01010e8>]
-(ret_from_fork+0x14/0x2c)
-[   38.411119] Exception stack(0xed185fb0 to 0xed185ff8)
-[   38.420331] 5fa0:                                     00000000
-00000000 00000000 00000000
-[   38.436662] 5fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[   38.452933] 5fe0: 00000000 00000000 00000000 00000000 00000013
-00000000
-[   38.463661] Code: e590641c e2833901 e5931000 f57ff04f (e280ad9f)
-
---
-Stefan
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
