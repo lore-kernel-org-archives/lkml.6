@@ -2,220 +2,135 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C68EC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAD1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02ADB205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65740205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAMp/7aZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02ADB205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sY3yGXUB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65740205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbeK2Gjq (ORCPT
+        id S1729199AbeK2Gj4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:39:46 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38952 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbeK2Gjq (ORCPT
+        Thu, 29 Nov 2018 01:39:56 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:54380 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeK2Gj4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:39:46 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i6so12012103oia.6;
-        Wed, 28 Nov 2018 11:37:02 -0800 (PST)
+        Thu, 29 Nov 2018 01:39:56 -0500
+Received: by mail-qk1-f202.google.com with SMTP id v74so27360514qkb.21
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 11:37:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=ReO1NxsHQr0nrhx5o7RHDRNgbi14w3THYIVL3jM9psk=;
-        b=HAMp/7aZkfnAlmrcCI7FNUgNuEy+W+HqaS06tmnNJKrh7THuQSBpmIMt4D2dLTCE/d
-         NfxVKboALwoSJFlu1HORgWP+W3zkoQtZnOUdypNodza3IAH8T1B9W+lfob0n8K8Hr6s8
-         rFpR3TC2yYLy0mvDGgxXUx9l0uLTSOMg7eLVlZzrv3tGXa3of45sPwYjSuLtDYlLr3F+
-         kfV1MzVJ27bcMlm51uY3EmGxXBIi1FLh99M8uCe57yuczSfrzF4LJatKwid45pLUfvaU
-         jAYHJPkuXZo51cmfTx3vowIRL2J7/o3oOlw5jG35zyQxTdqEHA6qvAAP1a/T43EZ4GvQ
-         pLew==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=99nVbqfKL8VgOyeZOYLd9fGPS1EwErpNGV1fQd8c1qI=;
+        b=sY3yGXUB7UeexaSMFHiqXwQqWJc1kjASLGdzGosIcyV73/cIl5rC3ujnaaFiogt+qr
+         3UE0kqZrHe4N0ZtFk/g86WTYoPDbzISqGuduMrCxPQwcp5oXsOu032M3QYhSlkD2IzRM
+         TnlBclywIp4pcV6BZG0eZh1pFbgKpOhPIVc6DS8FUrhoeCIJFCt8JEPCwtviX2ht06z/
+         9+mzN2WmSwCSedYDp3xYEWab6D3TeVKlxQSvba8+nnsvOP5NYDb3usBmFA4lHcOxbI2b
+         uFGVzNcSo+M+swI0AtqlEZDDIHixe4xlolsVlF1r81+Naprqiegt/QdNILlqOCQoHtDn
+         JNkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=ReO1NxsHQr0nrhx5o7RHDRNgbi14w3THYIVL3jM9psk=;
-        b=f3tyxrEMI5xhIsL0YPkYyB4EciOStT1RRM+BM9fpLNtR1kTJV+69W5QdY8tL6r01+Y
-         0Q85IPaqlxlrf79ShSgKgI6x7ZzE0jB0nP6bNHfEwgGXfkNTGVCXOJP+5of2DAFcLNW4
-         W9ZODmRCajS20Pk1wOGe9tTVaPlDtu9YutIRFpY0aVzT4111pbaW4Tu/N+xcuOFwGAia
-         vNRIFn6ABgUPq46vWvEA9dtY6GBM11R57vd7yktwnw6wUe1XgRNjdxgBmF97X+N8zPjv
-         TvRKLkgJD4KbL8cWZmCOPRnOs4fFgBiRlWq4u7VIzq+TPTjZbwdKYwDi3uchh/yhDztw
-         zjdQ==
-X-Gm-Message-State: AA+aEWbEqxvk02lBeKESPJIVViY34cw943OgaLqsj5XXT0i8SyEI25Rp
-        GjWsjVprXU4JQg/DD6UkwvriUmNMhe7Bw5dZBaunuHksvhOvXA==
-X-Google-Smtp-Source: AFSGD/V1QzW+mMmdK6/CEmjQc6wFXJ/N5eBdOQbUUiLDUr6vZEOxkWzgxB7gAjVhz/41Eb6bT8z+U5Ib4xl3qd48Eo0=
-X-Received: by 2002:aca:e003:: with SMTP id x3mr14042196oig.39.1543433821246;
- Wed, 28 Nov 2018 11:37:01 -0800 (PST)
-MIME-Version: 1.0
-From:   David CARLIER <devnexen@gmail.com>
-Date:   Wed, 28 Nov 2018 19:36:50 +0000
-Message-ID: <CA+XhMqz7ZaGVNpkrRM-t4h2f9UZVQPjLVB5Txco4bKGRm8k=mA@mail.gmail.com>
-Subject: [PATCH] crypto: use memzero_explicit instead of memset to clear contexts.
-To:     linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=99nVbqfKL8VgOyeZOYLd9fGPS1EwErpNGV1fQd8c1qI=;
+        b=Cprz2kkMuj0sQzIdHotRbOEjlwosj/6ZAF1X+tEe83YGCG5rdyroBnrPyJATyyrloq
+         LrYHgyTHCaoPKcw0JNBZuMKnojlw3iYoROZaoAiUW0NZ+Ys936Ik5p2YiwwYG5cxxCbH
+         nuswvHGEm4RsR+yM6SjxcYU8LymWiEJ/T4H3lOXjE0d6s68Hsp9dIkddpGJOFzif2Ryx
+         IFbW9IVCzbkDP+90nEp+JOmJS5Kl27+JB1W/WbxQZ2j0XSRqBy7qIACyw4/ZJInP/jtR
+         RFVNNtVXfGiSLGfT3uO1nCrtboaRU8byibS8OKc2HLFU29pGgQEVyyC+M8fMm43xGBLL
+         V0Tw==
+X-Gm-Message-State: AA+aEWYpmqV9qgoznVN6nyX7tI+bPGpOD09l+9I/TReZoQkPRW+eaqeg
+        ypilpZ/IHl5nLkFMTDuy/17MbFaYOTVUrARxnGKKWA==
+X-Google-Smtp-Source: AFSGD/VCWycCbDmFp6Z5qNxzgmexxk1/jZS8YbUaoMOmSU6YkTfkM2zG1R/OjWIDtfLq/fQe62iAC1tOjqPaVFw87UApQA==
+X-Received: by 2002:ac8:7244:: with SMTP id l4mr4486112qtp.21.1543433831218;
+ Wed, 28 Nov 2018 11:37:11 -0800 (PST)
+Date:   Wed, 28 Nov 2018 11:36:17 -0800
+Message-Id: <20181128193636.254378-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+Subject: [RFC v3 00/19] kunit: introduce KUnit, the Linux kernel unit testing framework
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
+        shuah@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com, frowand.list@gmail.com,
+        knut.omang@oracle.com, Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There might be a little performance drop but to make sure it stands
-by it comments, we really wipe the whole context after usage.
----
- crypto/chacha20poly1305.c | 3 ++-
- crypto/md5.c              | 2 +-
- crypto/rmd128.c           | 3 ++-
- crypto/rmd160.c           | 3 ++-
- crypto/rmd256.c           | 3 ++-
- crypto/rmd320.c           | 3 ++-
- crypto/sha3_generic.c     | 3 ++-
- 7 files changed, 13 insertions(+), 7 deletions(-)
+This patch set proposes KUnit, a lightweight unit testing and mocking
+framework for the Linux kernel.
 
-diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
-index 600afa99941f..6e93d998109e 100644
---- a/crypto/chacha20poly1305.c
-+++ b/crypto/chacha20poly1305.c
-@@ -19,6 +19,7 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/string.h>
+Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+it does not require installing the kernel on a test machine or in a VM
+and does not require tests to be written in userspace running on a host
+kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+can run several dozen tests in under a second. Currently, the entire
+KUnit test suite for KUnit runs in under a second from the initial
+invocation (build time excluded).
 
- #include "internal.h"
+KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+Googletest/Googlemock for C++. KUnit provides facilities for defining
+unit test cases, grouping related test cases into test suites, providing
+common infrastructure for running tests, mocking, spying, and much more.
 
-@@ -388,7 +389,7 @@ static int poly_genkey(struct aead_request *req)
-        }
+## What's so special about unit testing?
 
-        sg_init_table(creq->src, 1);
--       memset(rctx->key, 0, sizeof(rctx->key));
-+       memzero_explicit(rctx->key, sizeof(rctx->key));
-        sg_set_buf(creq->src, rctx->key, sizeof(rctx->key));
+A unit test is supposed to test a single unit of code in isolation,
+hence the name. There should be no dependencies outside the control of
+the test; this means no external dependencies, which makes tests orders
+of magnitudes faster. Likewise, since there are no external dependencies,
+there are no hoops to jump through to run the tests. Additionally, this
+makes unit tests deterministic: a failing unit test always indicates a
+problem. Finally, because unit tests necessarily have finer granularity,
+they are able to test all code paths easily solving the classic problem
+of difficulty in exercising error handling code.
 
-        chacha_iv(creq->iv, req, 0);
-diff --git a/crypto/md5.c b/crypto/md5.c
-index 94dd78144ba3..00d384e8784c 100644
---- a/crypto/md5.c
-+++ b/crypto/md5.c
-@@ -197,7 +197,7 @@ static int md5_final(struct shash_desc *desc, u8 *out)
-        md5_transform(mctx->hash, mctx->block);
-        cpu_to_le32_array(mctx->hash, sizeof(mctx->hash) / sizeof(u32));
-        memcpy(out, mctx->hash, sizeof(mctx->hash));
--       memset(mctx, 0, sizeof(*mctx));
-+       memzero_explicit(mctx, sizeof(*mctx));
+## Is KUnit trying to replace other testing frameworks for the kernel?
 
-        return 0;
- }
-diff --git a/crypto/rmd128.c b/crypto/rmd128.c
-index 5f4472256e27..5e01cd7130c7 100644
---- a/crypto/rmd128.c
-+++ b/crypto/rmd128.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/mm.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <asm/byteorder.h>
+No. Most existing tests for the Linux kernel are end-to-end tests, which
+have their place. A well tested system has lots of unit tests, a
+reasonable number of integration tests, and some end-to-end tests. KUnit
+is just trying to address the unit test space which is currently not
+being addressed.
 
-@@ -290,7 +291,7 @@ static int rmd128_final(struct shash_desc *desc, u8 *out)
-                dst[i] = cpu_to_le32p(&rctx->state[i]);
+## More information on KUnit
 
-        /* Wipe context */
--       memset(rctx, 0, sizeof(*rctx));
-+       memzero_explicit(rctx, sizeof(*rctx));
+There is a bunch of documentation near the end of this patch set that
+describes how to use KUnit and best practices for writing unit tests.
+For convenience I am hosting the compiled docs here:
+https://google.github.io/kunit-docs/third_party/kernel/docs/
+Additionally for convenience, I have applied these patches to a branch:
+https://kunit.googlesource.com/linux/+/kunit/rfc/4.19/v3
+The repo may be cloned with:
+git clone https://kunit.googlesource.com/linux
+This patchset is on the kunit/rfc/4.19/v3 branch.
 
-        return 0;
- }
-diff --git a/crypto/rmd160.c b/crypto/rmd160.c
-index 737645344d1c..2381d134443c 100644
---- a/crypto/rmd160.c
-+++ b/crypto/rmd160.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/mm.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <asm/byteorder.h>
+## Changes Since Last Version
 
-@@ -334,7 +335,7 @@ static int rmd160_final(struct shash_desc *desc, u8 *out)
-                dst[i] = cpu_to_le32p(&rctx->state[i]);
+ - Changed namespace prefix from `test_*` to `kunit_*` as requested by
+   Shuah.
+ - Started converting/cleaning up the device tree unittest to use KUnit.
+ - Started adding KUnit expectations with custom messages.
 
-        /* Wipe context */
--       memset(rctx, 0, sizeof(*rctx));
-+       memzero_explicit(rctx, sizeof(*rctx));
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
-        return 0;
- }
-diff --git a/crypto/rmd256.c b/crypto/rmd256.c
-index 0e9d30676a01..3db0f6653607 100644
---- a/crypto/rmd256.c
-+++ b/crypto/rmd256.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/mm.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <asm/byteorder.h>
-
-@@ -309,7 +310,7 @@ static int rmd256_final(struct shash_desc *desc, u8 *out)
-                dst[i] = cpu_to_le32p(&rctx->state[i]);
-
-        /* Wipe context */
--       memset(rctx, 0, sizeof(*rctx));
-+       memzero_explicit(rctx, sizeof(*rctx));
-
-        return 0;
- }
-diff --git a/crypto/rmd320.c b/crypto/rmd320.c
-index 3ae1df5bb48c..e0e1a71d0144 100644
---- a/crypto/rmd320.c
-+++ b/crypto/rmd320.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/mm.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <asm/byteorder.h>
-
-@@ -358,7 +359,7 @@ static int rmd320_final(struct shash_desc *desc, u8 *out)
-                dst[i] = cpu_to_le32p(&rctx->state[i]);
-
-        /* Wipe context */
--       memset(rctx, 0, sizeof(*rctx));
-+       memzero_explicit(rctx, sizeof(*rctx));
-
-        return 0;
- }
-diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
-index 7ed98367d4fb..ae30a035d371 100644
---- a/crypto/sha3_generic.c
-+++ b/crypto/sha3_generic.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/types.h>
-+#include <linux/string.h>
- #include <crypto/sha3.h>
- #include <asm/unaligned.h>
-
-@@ -237,7 +238,7 @@ int crypto_sha3_final(struct shash_desc *desc, u8 *out)
-        if (digest_size & 4)
-                put_unaligned_le32(sctx->st[i], (__le32 *)digest);
-
--       memset(sctx, 0, sizeof(*sctx));
-+       memzero_explicit(sctx, sizeof(*sctx));
-        return 0;
- }
- EXPORT_SYMBOL(crypto_sha3_final);
