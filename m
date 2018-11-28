@@ -2,89 +2,161 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1FCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 02:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75EEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 02:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F064920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 02:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8708420851
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 02:19:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5AZRBmJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F064920989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WpI/rw0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8708420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbeK1NP4 (ORCPT
+        id S1727115AbeK1NTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 08:15:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbeK1NP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 08:15:56 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AC2220873;
-        Wed, 28 Nov 2018 02:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543371361;
-        bh=qfGVPgES3/EO5fmOaDcRVNBlKWE6Z7Or5duZ0rSzIlM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=l5AZRBmJhQiVWtUHaHQ1z4S33CbSgJR9QLBBPxuqn5IbKWQblTzzunm946/RJ3A+K
-         +WbIeRYV47Aurf+CTYN+4gQanVgZE6i7AFy05HfnD4zEHb0lbCX2saeNOVhq2uL1s3
-         EUlnyHxdazMVq+KFKTDCGWLW/hwsKwEZg6tZA+sA=
-Date:   Wed, 28 Nov 2018 11:15:58 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v7 09/16] tracing: Add hist trigger snapshot() action
- test case
-Message-Id: <20181128111558.5869fa4be7104314e833a801@kernel.org>
-In-Reply-To: <1543359225.4223.5.camel@kernel.org>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-        <a40dadf6ffa267a1a573b62bb1c9b4db9d91f744.1542221863.git.tom.zanussi@linux.intel.com>
-        <20181126220332.215b461779d1d57f37b46e20@kernel.org>
-        <1543359225.4223.5.camel@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 08:19:22 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33496 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbeK1NTV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 08:19:21 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v1-v6so21992812ljd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 18:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ygFlCY1EQpTTfCFFv8LTZ5QyMxMd89kHU6qEZaPqi1A=;
+        b=WpI/rw0Fyip2/q73U7FELXA7tHr7FPLNI03UKWn9KOx7yYFbEk/NL5+w1lqWQua8D/
+         kGcyMDWOsLERMy0YMZc6Yj1W2Hk3HzDlsQWf+en8AlAq8Bb+15XhVuMmCkfnwXBIh0/P
+         zjDx4yu9PHoc9z0+0gydgaX7ctDhvAAJvh52M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ygFlCY1EQpTTfCFFv8LTZ5QyMxMd89kHU6qEZaPqi1A=;
+        b=RHxBssaliI7/0AxQK2BDfV7BVITzEW5Rf3n2+Jy8SgsZkZbvlyOyndx5pV9AukB1cr
+         oFNK/D9iJwx+G4TVhsk8S5v/HJ5higrojj/pzb7qlZwC6FisDpsqdA+KFlIUAqLaEQ5N
+         oxInZLHimb0cXefECcnxf7/SbitPG1LUlKEFyLNMIGwknNZtrvp8UPO+WkUyBw0E6ewi
+         zRpJQhDyXhJqsBxjU3B5vf/mR5zFjp9X1qFNh8A7Ce0RAuPO8JsEGPrJTU5hDn8rEKgv
+         6Ph4fuT2N9UCCyGf6QanEeNLTHkbplbaD68BcTM7TStmel4KXjoihhZKtBljXV4PlIDq
+         q7rw==
+X-Gm-Message-State: AA+aEWY4PqDcOgGx1rT8Juk2lccUy8vbgIVHMC8kPquzWFPspqwpJg1K
+        tQBghfK2IaMj4Dm8hr/aU6SanLwMr4hzzL5TYu5SUA==
+X-Google-Smtp-Source: AFSGD/VeUIDNXajAEwXRM84SwxJWGQrksU+OcFkREo5PcZeZygwQz4b2sg8B3bxNkmk9aPIvmKUCiXQtDClhPEDsVJ4=
+X-Received: by 2002:a2e:6594:: with SMTP id e20-v6mr23264247ljf.123.1543371565318;
+ Tue, 27 Nov 2018 18:19:25 -0800 (PST)
+MIME-Version: 1.0
+References: <CA+G9fYvgDP2+D2mgqxJJJYm1DTgxbByxjKuVGBFOa-m_fT7Q-Q@mail.gmail.com>
+ <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+In-Reply-To: <CAA93ih1-xpm1P0suT6SNCc_ARvAfyBEwb0-uKFikM5k4CvG8jg@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 28 Nov 2018 07:49:13 +0530
+Message-ID: <CA+G9fYtS+0xNvjov+o8kh-Fp2O7u5ChUd2ystc6PYxVo4n=Yfg@mail.gmail.com>
+Subject: Re: File not found: /sys/kernel/debug/tracing/events/syscalls
+To:     Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>, rostedt@goodmis.org,
+        mingo@redhat.com, mhiramat@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+Hi Masami San,
 
-On Tue, 27 Nov 2018 16:53:45 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
+Thanks for the patch it solved the problem.
 
-> > > +ping $LOCALHOST -c 3
-> > > +nice -n 1 ping $LOCALHOST -c 3
-> > > +
-> > > +echo 0 > /sys/kernel/debug/tracing/events/sched/enable
-> > 
-> > Shouldn't we stop tracing instead of disabling the event?
-> > 
-> 
-> This is just reversing the enable, so should be fine, but I can stop
-> tracing instead if you prefer.
+On Tue, 27 Nov 2018 at 21:41, Masami Hiramatsu
+<masami.hiramatsu@linaro.org> wrote:
+>
+> Hi,
+>
+> I found that the commit 4378a7d4be30 ("arm64: implement syscall
+> wrappers") changed
+> the syscall wrapper function names by adding __arm64_ prefix. So arm64
+> kernel should
+> have its own arch_syscall_match_sym_name().
 
-Oops, maybe we have to check the difference between event enabling and
-trace enabling.
-echo 0 > tracing_on will stop writing ring buffer, but event may continue
-to be called. Does this mean hist will be updated? (and I guess preferrable
-behavior is to stop hist too, isn't it?)
+arm64: ftrace: Fix to enable syscall events on arm64
 
-Thank you,
+From: Masami Hiramatsu <mhiramat@kernel.org>
+
+Since commit 4378a7d4be30 ("arm64: implement syscall wrappers")
+introduced "__arm64_" prefix to all syscall wrapper symbols in
+sys_call_table, syscall tracer can not find corresponding
+metadata from syscall name. In the result, we have no syscall
+ftrace events on arm64 kernel, and some bpf testcases are failed
+on arm64.
+
+To fix this issue, this introduces custom
+arch_syscall_match_sym_name() which skips first 8 bytes when
+comparing the syscall and symbol names.
+
+Fixes: 4378a7d4be30 ("arm64: implement syscall wrappers")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+---
+ arch/arm64/include/asm/ftrace.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrac=
+e.h
+index caa955f10e19..a710f79db442 100644
+--- a/arch/arm64/include/asm/ftrace.h
++++ b/arch/arm64/include/asm/ftrace.h
+@@ -56,6 +56,15 @@ static inline bool
+arch_trace_is_compat_syscall(struct pt_regs *regs)
+ {
+  return is_compat_task();
+ }
++
++#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
++
++static inline bool arch_syscall_match_sym_name(const char *sym,
++       const char *name)
++{
++ /* Since all syscall functions have __arm64_ prefix, we must skip it */
++ return !strcmp(sym + 8, name);
++}
+ #endif /* ifndef __ASSEMBLY__ */
+
+ #endif /* __ASM_FTRACE_H */
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>
+> Thank you,
+>
+> 2018=E5=B9=B411=E6=9C=8828=E6=97=A5(=E6=B0=B4) 0:22 Naresh Kamboju <nares=
+h.kamboju@linaro.org>:
+> >
+> > While debugging the selftests/bpf: get_cgroup_id_user test failure on a=
+rm64
+> > where the test is expecting trace file
+> > /sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id
+> > but this path not enabled after enabling required kernel configuration =
+also.
+> > CONFIG_FTRACE_SYSCALLS=3Dy
+> >
+> > strace output:
+> > open(\"/sys/kernel/debug/tracing/events/syscalls/sys_enter_nanosleep/id=
+\",
+> > O_RDONLY) =3D -1 ENOENT (No such file or directory)
+> >
+> > This problem noticed on Linux mainline kernel version 4.20.0-rc3.
+> >
+> > Best regards
+> > Naresh Kamboju
+>
+>
+>
+> --
+> Masami Hiramatsu
