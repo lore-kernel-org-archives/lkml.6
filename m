@@ -2,216 +2,201 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCB2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A082C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38EA20832
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D1EE214C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:07:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7gc7oj8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38EA20832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fywhEGYX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1EE214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeK2KHC (ORCPT
+        id S1726763AbeK2KKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:07:02 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41781 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeK2KHC (ORCPT
+        Thu, 29 Nov 2018 05:10:46 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33440 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbeK2KKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:07:02 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 70so10158125pgh.8;
-        Wed, 28 Nov 2018 15:03:47 -0800 (PST)
+        Thu, 29 Nov 2018 05:10:45 -0500
+Received: by mail-pl1-f195.google.com with SMTP id z23so8587plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:07:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=3ZGhsJbMYkbir6HEx+MbDMrQMLCtSqV7rw/WRYsxYEM=;
-        b=g7gc7oj8JjuN8jOykKZ1gHs9rsBZ/tdSt1ak4n2As2vz64VjlnlQE0zBj/dIu15lR8
-         hY76YN9TYxCxK1t2sSXzmNbeA7rt+sy9OaXF9xDrto9gS55+Vxns9s1+4346RluLOShI
-         joxG1s+iEm76KhVm8sfjIr8DaXXZtKKDbh5Evnu65FFWukVEIccKp9oBWsJj2gbZy/Cy
-         11AiUD6+fyd9OKN2dokRIRsQiAFwVNy+6s+fudXRZ4ipPfKO0Vpmuw9863t+lX1vmQcV
-         aulnVz8naw3l1WquJxcvFdtjFcU55fSfQMqJNWZnj6JgMD62EuBGp/j/wOFYdaASgwrz
-         ClyA==
+        bh=EqIR3mp4uDaNPdFFcNsqIVSIQrY2TsDavzNLzryRS2c=;
+        b=fywhEGYXB6/+PckTqoUAeXaYP5LceQZk/CzyeVMn236gfHUF/AuA9A/4tiXatZ65/s
+         c4V4TPPJuNnIWeDrFJyyRrVu+PIf9Ywu4G69z7YVon4ZDn7GKMHeHEuwU2O3T1Vr8sl3
+         G+KQFkYtzr40w0zJCrBf74GyHFtSzbaeqgekE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3ZGhsJbMYkbir6HEx+MbDMrQMLCtSqV7rw/WRYsxYEM=;
-        b=LcQQ3zBQr4H9YTZNEB7Fr5txPmti8ItJpPvIm5BjlOSLBdK2yT4AZPa8c4OuS2KIy0
-         2cWwUjKaUQ+raeIcl9ffzhHvK8heoex8tb1+fCpZ/RFf/u4cI6BgRCHjKalF3y1OihZb
-         kokYhLAA29zXeuMsQW9mUbIicbH92PPuAhEikDAeZlYvyuwgyijKUxnoq6vCMvhGe/4q
-         CE5CWrTFyH6KVfOSy6q+2H54ZPZr2g6gMrvlRRLfPON5j90Wza70Z1OsYwoGd4r8eAe0
-         Sx8Zwb/H7cbKy4iy9zrDn8BXuEQ8RmcFQbI8XJW0mfOOzF2KAVFeiIN5zHgb/qRs5JxH
-         0B5w==
-X-Gm-Message-State: AA+aEWYNaiXCf4+xcCAgODTHJF56UwCuc7Ff8bwIxkYPxVufyBsd6fbV
-        7OCS+RA4ScCWjEXx409njUU=
-X-Google-Smtp-Source: AFSGD/U+wMJPpufmlMR55N3001E34Vp8xX9dclJGuLH2EXE542UwOx1Xr5RNtmRTiP/rnuy4BPdO3A==
-X-Received: by 2002:a63:314c:: with SMTP id x73mr35345218pgx.323.1543446226787;
-        Wed, 28 Nov 2018 15:03:46 -0800 (PST)
-Received: from icarus ([2001:268:c0a2:907a:cde3:2b70:e0a8:89ef])
-        by smtp.gmail.com with ESMTPSA id o7sm5066pfb.34.2018.11.28.15.03.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 15:03:45 -0800 (PST)
-Date:   Thu, 29 Nov 2018 08:03:50 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Support Opensource <support.opensource@diasemi.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andreas Klinger <ak@it-klinger.de>, Milo Kim <milo.kim@ti.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kernel-usp@googlegroups.com,
-        Lucas Santos <ilucas.ms@gmail.com>
-Subject: Re: [PATCH] iio: adc: Replace license text w/ SPDX identifier
-Message-ID: <20181128230350.GA3332@icarus>
-References: <20181128175312.9634-1-matheus.bernardino@usp.br>
+        bh=EqIR3mp4uDaNPdFFcNsqIVSIQrY2TsDavzNLzryRS2c=;
+        b=cVAcNp4YNZMxMRl7eo76r8bnNT6MQszZVknLvicScptyWVkIFi8kA66uYmEVb6S7If
+         gaYt3xwglkOxEBDlcKImH4kXkYu59iouP05xVkKhf9vK/QvuxoSVN1lXCq21Os7C2uPN
+         GH4nv4Xp2aM2qBXw3PuXiKStWsETkGIQIgR3UsAcyih6HccT1HJB7zKhYf9yJyem/ZA4
+         R9nIngysMKMvjQ4sXhyP1vrgUsr6H7/eOWoL+1wRPnLjJnisekWrXXeldO8AFyc1PfSo
+         Klo8phHHvaIwfPETG7WXhn81Nf7NTw1R/quX9+MNwAD8TWRIEVDTcxHVvhu8w9yvo3Ko
+         Y1AQ==
+X-Gm-Message-State: AA+aEWapJ3660tw4G1ipph/qjK+gqRgPaQnq9/3LQGQG1GNN20Ulhp3m
+        6KYbz1wwj9OWb7mLNYQtXyy2gA==
+X-Google-Smtp-Source: AFSGD/VzXTbB2hF0WCx4CGN38PDhaCipVcPfQ2U/hx16J9qdLFaBpP4a6rkX7wO7RtfdvRP9JV4b+w==
+X-Received: by 2002:a17:902:7e44:: with SMTP id a4mr38934705pln.338.1543446450717;
+        Wed, 28 Nov 2018 15:07:30 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w10sm7325620pgi.81.2018.11.28.15.07.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 15:07:30 -0800 (PST)
+Date:   Wed, 28 Nov 2018 15:07:27 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Subject: Re: [PATCH] ARM: dts: qcom: msm8974-hammerhead: add WiFi support
+Message-ID: <20181128230727.GC24969@minitux>
+References: <20181104215034.3677-1-masneyb@onstation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181128175312.9634-1-matheus.bernardino@usp.br>
+In-Reply-To: <20181104215034.3677-1-masneyb@onstation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:53:12PM -0200, Matheus Tavares wrote:
-> From: Lucas Santos <ilucas.ms@gmail.com>
+On Sun 04 Nov 13:50 PST 2018, Brian Masney wrote:
+
+> From: Jonathan Marek <jonathan@marek.ca>
 > 
-> This patch removes all license boilerplate texts from the .c and .h
-> files at drivers/iio/adc/ and, instead, adds the proper SPDX license
-> identifiers.
+> This patch adds WiFi support to the LG Nexus 5 (hammerhead) phone.
 > 
-> Signed-off-by: Lucas Santos <ilucas.ms@gmail.com>
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> [masneyb@onstation.org: Enabled wlan_regulator_pin and wlan_sleep_clk_pin]
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
 > ---
->  drivers/iio/adc/ad7266.c             |  3 +--
->  drivers/iio/adc/ad7291.c             |  3 +--
->  drivers/iio/adc/ad7298.c             |  3 +--
->  drivers/iio/adc/ad7766.c             |  3 +--
->  drivers/iio/adc/ad7791.c             |  3 +--
->  drivers/iio/adc/ad7793.c             |  3 +--
->  drivers/iio/adc/ad7887.c             |  3 +--
->  drivers/iio/adc/ad7923.c             |  3 +--
->  drivers/iio/adc/ad799x.c             |  5 +----
->  drivers/iio/adc/ad_sigma_delta.c     |  3 +--
->  drivers/iio/adc/aspeed_adc.c         |  6 +-----
->  drivers/iio/adc/at91-sama5d2_adc.c   | 10 +---------
->  drivers/iio/adc/at91_adc.c           |  3 +--
->  drivers/iio/adc/axp20x_adc.c         |  5 +----
->  drivers/iio/adc/axp288_adc.c         | 13 +------------
->  drivers/iio/adc/bcm_iproc_adc.c      | 13 +------------
->  drivers/iio/adc/berlin2-adc.c        |  5 +----
->  drivers/iio/adc/cc10001_adc.c        |  6 +-----
->  drivers/iio/adc/cpcap-adc.c          | 10 +---------
->  drivers/iio/adc/da9150-gpadc.c       |  6 +-----
->  drivers/iio/adc/dln2-adc.c           |  5 +----
->  drivers/iio/adc/ep93xx_adc.c         |  5 +----
->  drivers/iio/adc/exynos_adc.c         | 11 +----------
->  drivers/iio/adc/fsl-imx25-gcq.c      |  5 +----
->  drivers/iio/adc/hi8435.c             |  6 +-----
->  drivers/iio/adc/hx711.c              |  6 +-----
->  drivers/iio/adc/imx7d_adc.c          |  6 +-----
->  drivers/iio/adc/ina2xx-adc.c         |  7 +------
->  drivers/iio/adc/lp8788_adc.c         |  5 +----
->  drivers/iio/adc/lpc18xx_adc.c        |  5 +----
->  drivers/iio/adc/lpc32xx_adc.c        | 15 +--------------
->  drivers/iio/adc/ltc2471.c            |  3 +--
->  drivers/iio/adc/ltc2485.c            |  5 +----
->  drivers/iio/adc/ltc2497.c            |  3 +--
->  drivers/iio/adc/max1027.c            |  5 +----
->  drivers/iio/adc/max1118.c            |  5 +----
->  drivers/iio/adc/max1363.c            |  5 +----
->  drivers/iio/adc/mcp320x.c            |  5 +----
->  drivers/iio/adc/mcp3422.c            |  6 +-----
->  drivers/iio/adc/men_z188_adc.c       |  5 +----
->  drivers/iio/adc/meson_saradc.c       |  5 +----
->  drivers/iio/adc/mt6577_auxadc.c      | 10 +---------
->  drivers/iio/adc/mxs-lradc-adc.c      | 11 +----------
->  drivers/iio/adc/nau7802.c            |  3 +--
->  drivers/iio/adc/palmas_gpadc.c       |  5 +----
->  drivers/iio/adc/qcom-pm8xxx-xoadc.c  |  1 +
->  drivers/iio/adc/qcom-spmi-iadc.c     | 10 +---------
->  drivers/iio/adc/qcom-spmi-vadc.c     | 10 +---------
->  drivers/iio/adc/rockchip_saradc.c    | 11 +----------
->  drivers/iio/adc/spear_adc.c          |  3 +--
->  drivers/iio/adc/stx104.c             | 10 +---------
->  drivers/iio/adc/sun4i-gpadc-iio.c    |  5 +----
->  drivers/iio/adc/ti-adc081c.c         |  5 +----
->  drivers/iio/adc/ti-adc0832.c         |  5 +----
->  drivers/iio/adc/ti-adc084s021.c      |  5 +----
->  drivers/iio/adc/ti-adc108s102.c      | 10 +---------
->  drivers/iio/adc/ti-adc12138.c        |  5 +----
->  drivers/iio/adc/ti-ads1015.c         |  5 +----
->  drivers/iio/adc/ti-ads8688.c         |  5 +----
->  drivers/iio/adc/ti-tlc4541.c         |  5 +----
->  drivers/iio/adc/ti_am335x_adc.c      | 10 +---------
->  drivers/iio/adc/twl4030-madc.c       | 16 +---------------
->  drivers/iio/adc/twl6030-gpadc.c      | 16 +---------------
->  drivers/iio/adc/vf610_adc.c          | 15 +--------------
->  drivers/iio/adc/viperboard_adc.c     |  7 +------
->  drivers/iio/adc/xilinx-xadc-core.c   |  3 +--
->  drivers/iio/adc/xilinx-xadc-events.c |  3 +--
->  drivers/iio/adc/xilinx-xadc.h        |  3 +--
->  68 files changed, 68 insertions(+), 361 deletions(-)
+>  .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 70 +++++++++++++++++++
+>  1 file changed, 70 insertions(+)
 > 
-> diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
-> index 0662ca199eb0..f9d0aaae836f 100644
-> --- a/drivers/iio/adc/stx104.c
-> +++ b/drivers/iio/adc/stx104.c
-> @@ -1,15 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * IIO driver for the Apex Embedded Systems STX104
->   * Copyright (C) 2016 William Breathitt Gray
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License, version 2, as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> - * General Public License for more details.
->   */
->  #include <linux/bitops.h>
->  #include <linux/device.h>
-
-For stx104.c:
-
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
+> index fe2b5524a679..7fad5a48d4a3 100644
+> --- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
+> +++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
+> @@ -221,6 +221,20 @@
+>  			};
+>  		};
+>  	};
+> +
+> +	vreg_wlan: wlan-regulator {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "wl-reg";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wlan_regulator_pin>;
+> +	};
+>  };
+>  
+>  &soc {
+> @@ -253,6 +267,20 @@
+>  			};
+>  		};
+>  
+> +		sdhc2_pin_a: sdhc2-pin-active {
+> +			clk {
+> +				pins = "sdc2_clk";
+> +				drive-strength = <6>;
+> +				bias-disable;
+> +			};
+> +
+> +			cmd-data {
+> +				pins = "sdc2_cmd", "sdc2_data";
+> +				drive-strength = <6>;
+> +				bias-pull-up;
+> +			};
+> +		};
+> +
+>  		i2c3_pins: i2c3 {
+>  			mux {
+>  				pins = "gpio10", "gpio11";
+> @@ -324,6 +352,32 @@
+>  		pinctrl-0 = <&sdhc1_pin_a>;
+>  	};
+>  
+> +	sdhci@f98a4900 {
+> +		status = "ok";
+> +
+> +		max-frequency = <100000000>;
+> +		bus-width = <4>;
+> +		non-removable;
+> +		vmmc-supply = <&vreg_wlan>;
+> +		vqmmc-supply = <&pm8941_s3>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&sdhc2_pin_a>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		bcrmf@1 {
+> +			compatible = "brcm,bcm4339-fmac", "brcm,bcm4329-fmac";
+> +			reg = <1>;
+> +
+> +			brcm,drive-strength = <10>;
+> +
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&wlan_sleep_clk_pin>;
+> +		};
+> +	};
+> +
+>  	gpio-keys {
+>  		compatible = "gpio-keys";
+>  		input-name = "gpio-keys";
+> @@ -463,6 +517,22 @@
+>  				output-high;
+>  				line-name = "otg-gpio";
+>  			};
+> +
+> +			wlan_sleep_clk_pin: wl-sleep-clk {
+> +				pins = "gpio16";
+> +				function = "func2";
+> +
+> +				output-high;
+> +				power-source = <PM8941_GPIO_S3>;
+> +			};
+> +
+> +			wlan_regulator_pin: wl-reg-active {
+> +				pins = "gpio17";
+> +				function = "normal";
+> +
+> +				bias-disable;
+> +				power-source = <PM8941_GPIO_S3>;
+> +			};
+>  		};
+>  	};
+>  };
+> -- 
+> 2.17.2
+> 
