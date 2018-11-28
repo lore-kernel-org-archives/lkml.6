@@ -2,98 +2,118 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E710CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95423C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D13F2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D13F2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 388F42081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:29:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tyjpPmWJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388F42081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbeK1S0a (ORCPT
+        id S1727533AbeK1S3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:26:30 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:35128 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727275AbeK1S0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:26:30 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id EC2D8CA31E0A67F0E80E;
-        Wed, 28 Nov 2018 15:25:37 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wAS7P3fv006036;
-        Wed, 28 Nov 2018 15:25:03 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018112815252505-13460545 ;
-          Wed, 28 Nov 2018 15:25:25 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     ccaulfie@redhat.com, teigland@redhat.com
-Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] dlm: NULL check before kmem_cache_destroy is not needed
-Date:   Wed, 28 Nov 2018 15:25:00 +0800
-Message-Id: <20181128072500.61269-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Wed, 28 Nov 2018 13:29:38 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53968 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeK1S3i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 13:29:38 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y1so1442534wmi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 23:28:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5dHstrDpJv3Yp1o0c1yK4Vv3iJU5cSAEcnYo0kIJEv4=;
+        b=tyjpPmWJhofn4UorgshkPDDKDX1rr6eWHAbQIYS2EgyV0/eZ10bZqfWUymWvdcA07V
+         a01jqBUWeOMLTlksGK645ngF0foOHIARHf7eNNfq2lCfXOYVP1WXZwLzfjpWU6KqsbrO
+         AgDuJngQ2+ItKjruSNXo46j1IDf9E4wzz6oZXBvpnAnqkEVzCjFZzHDfg/L0L4f+ePiK
+         vMlX1jIb58Q5k5X5kpLZUD3bj5JTVJNLzBvF3q/YF59Jfc6tTklcS8vt0X0hIrohH5Hf
+         1zH5K12QuFcu95m3+aw2ZBSOCEK+9Pi8FbWwVn18Wa7SNHLQbm/5J8xvUIPN02i/mSjF
+         5Bvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5dHstrDpJv3Yp1o0c1yK4Vv3iJU5cSAEcnYo0kIJEv4=;
+        b=RNABtJn+9NajNFejV6POHMAqkXxinemhrsHYpq07RY7cSXo5V5Pb1Tq181llvCeLRO
+         ufVDW0xCdUX7SBw2oISZzMaHqCmg0cMQO53zXITxk7fENnhsEO6F8jS2u7sWCN1WMHZx
+         5c6AtC3vchPRQgs4YCk3L9Z17+o0KLba5aJuXEx4R1uXIhTItkQvpDOw+z9yn9pyEpDW
+         aagmdRiYVqdPRHPhVg8jmkeZOK56rhO712rmlbsFPqN9/Muz/ZPc6IL9RA/Odo46OKK/
+         /m7pZeFAAbRCfgeeNxkHrmb62wYbjJYXBLpxeIH5N9wuZslwOsjAbeXYv2yVZi8BKCWJ
+         jgdw==
+X-Gm-Message-State: AA+aEWa/QiDLtYqkd8W9HJpEsKEaWRSyYFPhHXa0U6IslDJBRbnwjpVm
+        ekVLTtoEn2Mfig0VW8FFMdk=
+X-Google-Smtp-Source: AFSGD/XUzAWvtUmPFk5XAIWUbZqY32L4DFfF0K2neeqKYEZp6tLnm/91vH4hunsx1WMY1qxdjyiHSQ==
+X-Received: by 2002:a7b:c34b:: with SMTP id l11mr1777233wmj.30.1543390136727;
+        Tue, 27 Nov 2018 23:28:56 -0800 (PST)
+Received: from heron.blarg.de (pD9EBF509.dip0.t-ipconnect.de. [217.235.245.9])
+        by smtp.gmail.com with ESMTPSA id c12sm3894519wrs.82.2018.11.27.23.28.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 23:28:55 -0800 (PST)
+From:   Max Kellermann <max.kellermann@gmail.com>
+To:     heiko@sntech.de, linux-rockchip@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, bardliao@realtek.com,
+        oder_chiou@realtek.com, Max Kellermann <max.kellermann@gmail.com>
+Subject: [PATCH] sound/soc/rockchip: add RT5640 codec option
+Date:   Wed, 28 Nov 2018 08:28:52 +0100
+Message-Id: <20181128072852.32760-1-max.kellermann@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-28 15:25:25,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-28 15:24:55
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wAS7P3fv006036
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmem=5Fcache=5Fdestroy(NULL) is safe, so removes NULL check before
-freeing the mem. This patch also fix ifnullfree.cocci warnings.
+The Firefly-RK3399 DeviceTree
+(`arch/arm64/boot/dts/rockchip/rk3399-firefly.dts`) defines a
+`simple-audio-card` device which selects a `realtek,rt5640` codec.
+This codec however is inaccessible in the kernel configuration
+(`SND_SOC_RT5640`) and thus cannot be used.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Christine Caulfield <ccaulfie@redhat.com>
-CC: David Teigland <teigland@redhat.com>
-CC: cluster-devel@redhat.com
-CC: linux-kernel@vger.kernel.org
+This patch adds a new configuration option named
+`SND_SOC_ROCKCHIP_RT5640` which selects `SND_SOC_RT5640` and
+`SND_SIMPLE_CARD`, but does nothing else.
+
+It enables `SND_SIMPLE_CARD`, because that's what the Firefly has.
+I'm not sure if there are Rockchip products which need a different
+sound card driver with RT5640.
+
+Signed-off-by: Max Kellermann <max.kellermann@gmail.com>
 ---
- fs/dlm/memory.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ sound/soc/rockchip/Kconfig | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
-index 7cd24bccd4fe..37be29f21d04 100644
---- a/fs/dlm/memory.c
-+++ b/fs/dlm/memory.c
-@@ -38,10 +38,8 @@ int =5F=5Finit dlm=5Fmemory=5Finit(void)
-=20
- void dlm=5Fmemory=5Fexit(void)
- {
--	if (lkb=5Fcache)
--		kmem=5Fcache=5Fdestroy(lkb=5Fcache);
--	if (rsb=5Fcache)
--		kmem=5Fcache=5Fdestroy(rsb=5Fcache);
-+	kmem=5Fcache=5Fdestroy(lkb=5Fcache);
-+	kmem=5Fcache=5Fdestroy(rsb=5Fcache);
- }
-=20
- char *dlm=5Fallocate=5Flvb(struct dlm=5Fls *ls)
-@@ -86,8 +84,7 @@ void dlm=5Ffree=5Flkb(struct dlm=5Flkb *lkb)
- 		struct dlm=5Fuser=5Fargs *ua;
- 		ua =3D lkb->lkb=5Fua;
- 		if (ua) {
--			if (ua->lksb.sb=5Flvbptr)
--				kfree(ua->lksb.sb=5Flvbptr);
-+			kfree(ua->lksb.sb=5Flvbptr);
- 			kfree(ua);
- 		}
- 	}
---=20
-2.19.1
+diff --git a/sound/soc/rockchip/Kconfig b/sound/soc/rockchip/Kconfig
+index 957046ac6c8c..ac2e27043107 100644
+--- a/sound/soc/rockchip/Kconfig
++++ b/sound/soc/rockchip/Kconfig
+@@ -42,6 +42,16 @@ config SND_SOC_ROCKCHIP_MAX98090
+ 	  Say Y or M here if you want to add support for SoC audio on Rockchip
+ 	  boards using the MAX98090 codec, such as Veyron.
+ 
++config SND_SOC_ROCKCHIP_RT5640
++	tristate "ASoC support for Rockchip boards using a RT5640 codec"
++	depends on SND_SOC_ROCKCHIP
++	select SND_SOC_ROCKCHIP_I2S
++	select SND_SOC_RT5640
++	select SND_SIMPLE_CARD
++	help
++	  Say Y or M here if you want to add support for SoC audio on Rockchip
++	  boards using the RT5640 codec, such as Firefly-RK3399.
++
+ config SND_SOC_ROCKCHIP_RT5645
+ 	tristate "ASoC support for Rockchip boards using a RT5645/RT5650 codec"
+ 	depends on SND_SOC_ROCKCHIP && I2C && GPIOLIB && CLKDEV_LOOKUP
+-- 
+2.19.2
 
