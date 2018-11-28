@@ -2,185 +2,220 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2B1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C68EC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6FB21019
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6FB21019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 02ADB205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:37:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAMp/7aZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02ADB205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbeK2GiR (ORCPT
+        id S1728896AbeK2Gjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:38:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:49286 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbeK2GiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:38:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 512E9A78;
-        Wed, 28 Nov 2018 11:35:33 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DED93F59C;
-        Wed, 28 Nov 2018 11:35:31 -0800 (PST)
-Subject: Re: [PATCH] pci: imx6: support kernels built in Thumb-2 mode
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     hongxing.zhu@nxp.com, l.stach@pengutronix.de,
-        lorenzo.pieralisi@arm.com, andrew.smirnov@gmail.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, leonard.crestez@nxp.com, festevam@gmail.com,
-        linux-arm-kernel@lists.infradead.org, tpiepho@impinj.com
-References: <20181128132554.28139-1-stefan@agner.ch>
- <ff476784-b79e-18bf-5870-4365c8377deb@arm.com>
- <074f80db0eceb76672bca283c5de37b9@agner.ch>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9861493a-6139-ca3e-41a8-e6fe41c2f3a3@arm.com>
-Date:   Wed, 28 Nov 2018 19:35:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 29 Nov 2018 01:39:46 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38952 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeK2Gjq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 01:39:46 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i6so12012103oia.6;
+        Wed, 28 Nov 2018 11:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=ReO1NxsHQr0nrhx5o7RHDRNgbi14w3THYIVL3jM9psk=;
+        b=HAMp/7aZkfnAlmrcCI7FNUgNuEy+W+HqaS06tmnNJKrh7THuQSBpmIMt4D2dLTCE/d
+         NfxVKboALwoSJFlu1HORgWP+W3zkoQtZnOUdypNodza3IAH8T1B9W+lfob0n8K8Hr6s8
+         rFpR3TC2yYLy0mvDGgxXUx9l0uLTSOMg7eLVlZzrv3tGXa3of45sPwYjSuLtDYlLr3F+
+         kfV1MzVJ27bcMlm51uY3EmGxXBIi1FLh99M8uCe57yuczSfrzF4LJatKwid45pLUfvaU
+         jAYHJPkuXZo51cmfTx3vowIRL2J7/o3oOlw5jG35zyQxTdqEHA6qvAAP1a/T43EZ4GvQ
+         pLew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=ReO1NxsHQr0nrhx5o7RHDRNgbi14w3THYIVL3jM9psk=;
+        b=f3tyxrEMI5xhIsL0YPkYyB4EciOStT1RRM+BM9fpLNtR1kTJV+69W5QdY8tL6r01+Y
+         0Q85IPaqlxlrf79ShSgKgI6x7ZzE0jB0nP6bNHfEwgGXfkNTGVCXOJP+5of2DAFcLNW4
+         W9ZODmRCajS20Pk1wOGe9tTVaPlDtu9YutIRFpY0aVzT4111pbaW4Tu/N+xcuOFwGAia
+         vNRIFn6ABgUPq46vWvEA9dtY6GBM11R57vd7yktwnw6wUe1XgRNjdxgBmF97X+N8zPjv
+         TvRKLkgJD4KbL8cWZmCOPRnOs4fFgBiRlWq4u7VIzq+TPTjZbwdKYwDi3uchh/yhDztw
+         zjdQ==
+X-Gm-Message-State: AA+aEWbEqxvk02lBeKESPJIVViY34cw943OgaLqsj5XXT0i8SyEI25Rp
+        GjWsjVprXU4JQg/DD6UkwvriUmNMhe7Bw5dZBaunuHksvhOvXA==
+X-Google-Smtp-Source: AFSGD/V1QzW+mMmdK6/CEmjQc6wFXJ/N5eBdOQbUUiLDUr6vZEOxkWzgxB7gAjVhz/41Eb6bT8z+U5Ib4xl3qd48Eo0=
+X-Received: by 2002:aca:e003:: with SMTP id x3mr14042196oig.39.1543433821246;
+ Wed, 28 Nov 2018 11:37:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <074f80db0eceb76672bca283c5de37b9@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+From:   David CARLIER <devnexen@gmail.com>
+Date:   Wed, 28 Nov 2018 19:36:50 +0000
+Message-ID: <CA+XhMqz7ZaGVNpkrRM-t4h2f9UZVQPjLVB5Txco4bKGRm8k=mA@mail.gmail.com>
+Subject: [PATCH] crypto: use memzero_explicit instead of memset to clear contexts.
+To:     linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/11/2018 17:53, Stefan Agner wrote:
-> On 28.11.2018 17:16, Robin Murphy wrote:
->> Hi Stefan,
->>
->> On 28/11/2018 13:25, Stefan Agner wrote:
->>> Add a fault handler which handles reads in Thumb-2 mode. Install
->>> the appropriate handler depending on which mode the kernel has
->>> been built. This avoids an "Unhandled fault: external abort on
->>> non-linefetch (0x1008) at 0xf0a80000" during boot on a device
->>> with a PCIe switch connected.
->>>
->>> Link: https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>> ---
->>> FWIW, I found this manual helpful to write the code below:
->>> http://hermes.wings.cs.wisc.edu/files/Thumb-2SupplementReferenceManual.pdf#page=43&zoom=100,0,66
->>
->> This one's rather less ancient and even more authoritative ;)
->>
->> https://static.docs.arm.com/ddi0406/cd/DDI0406C_d_armv7ar_arm.pdf
->>
->> (ARMv7 had a few new encodings over and above ARMv6T2, although in
->> fairness I don't think any should be relevant to this specific case)
->>
-> 
-> Thanks, I tried to find the right document on arm.com, but I timed out
-> after 5 minutes or so :-)
-> 
->>> --
->>> Stefan
->>>
->>>    drivers/pci/controller/dwc/pci-imx6.c | 37 ++++++++++++++++++++++++++-
->>>    1 file changed, 36 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
->>> index 69f86234f7c0..683deb74d69f 100644
->>> --- a/drivers/pci/controller/dwc/pci-imx6.c
->>> +++ b/drivers/pci/controller/dwc/pci-imx6.c
->>> @@ -29,6 +29,7 @@
->>>    #include <linux/reset.h>
->>>    #include <linux/pm_domain.h>
->>>    #include <linux/pm_runtime.h>
->>> +#include <asm/opcodes.h>
->>>      #include "pcie-designware.h"
->>>    @@ -299,6 +300,37 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
->>>    	return 1;
->>>    }
->>>    +static int imx6q_pcie_abort_handler_thumb2(unsigned long addr,
->>> +		unsigned int fsr, struct pt_regs *regs)
->>> +{
->>> +	unsigned long pc = instruction_pointer(regs);
->>> +	unsigned long instr = *(unsigned long *)pc;
->>> +	unsigned long thumb2_instr = __mem_to_opcode_thumb16(instr);
->>> +	int reg = thumb2_instr & 7;
->>> +
->>> +	if (!__opcode_is_thumb16(instr & 0x0000ffffUL))
->>> +		return 1;
->>
->> There are plenty of 32-bit Thumb encodings of various LDR/STR
->> variants, and I doubt we can guarantee that the offset, target
->> register, and/or addressing mode for a config space access will
->> *always* suit the (relatively limited) 16-bit ones.
-> 
-> Hm, I guess they should be handled too?
-> 
-> I looked at the code where I had the abort at hand triggered
-> (dw_pcie_read).
+There might be a little performance drop but to make sure it stands
+by it comments, we really wipe the whole context after usage.
+---
+ crypto/chacha20poly1305.c | 3 ++-
+ crypto/md5.c              | 2 +-
+ crypto/rmd128.c           | 3 ++-
+ crypto/rmd160.c           | 3 ++-
+ crypto/rmd256.c           | 3 ++-
+ crypto/rmd320.c           | 3 ++-
+ crypto/sha3_generic.c     | 3 ++-
+ 7 files changed, 13 insertions(+), 7 deletions(-)
 
-For the sake of robustness, I think it makes sense to at least handle 
-all LDR/LDRH/LDRB encodings which might possibly fall out of a 
-read[lwb]() call. Given that we seem to have various versions of this 
-decoding in differing states of completeness, perhaps it's even worth 
-factoring out into some kind of common "Arm PCI synchronous abort handler".
+diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
+index 600afa99941f..6e93d998109e 100644
+--- a/crypto/chacha20poly1305.c
++++ b/crypto/chacha20poly1305.c
+@@ -19,6 +19,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/string.h>
 
->>> +
->>> +	/* Load word/byte and halfword immediate offset */
->>> +	if (((thumb2_instr & 0xe800) == 0x6800) ||
->>> +	    ((thumb2_instr & 0xf800) == 0x8800)) {
->>> +		unsigned long val;
->>> +
->>> +		if (thumb2_instr & 0x1000)
->>> +			val = 0xff;
->>> +		else if (thumb2_instr & 0x8000)
->>> +			val = 0xffff;
->>> +		else
->>> +			val = 0xffffffffUL;
->>> +
->>> +		regs->uregs[reg] = val;
->>> +		regs->ARM_pc += 2;
->>> +		return 0;
->>> +	}
->>
->> What about stores? The existing implementation handles them, so either
->> that's dead code which could perhaps be cleaned up, or they need to be
->> handled here too.
->>
-> 
-> I think the current handler (imx6q_pcie_abort_handler) checks bit 20,
-> which means it must be a load not?
+ #include "internal.h"
 
-Oops, that's just me being dumb - I managed to overlook the pt_regs 
-assignment in the second if() block and thought it was just advancing 
-the PC, so assumed (because I also didn't bother to actually look up the 
-relevant encoding bits) it must be handling stores. Never mind that part 
-then.
+@@ -388,7 +389,7 @@ static int poly_genkey(struct aead_request *req)
+        }
 
->>> +
->>> +	return 1;
->>> +}
->>> +
->>>    static int imx6_pcie_attach_pd(struct device *dev)
->>>    {
->>>    	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
->>> @@ -1069,6 +1101,8 @@ static struct platform_driver imx6_pcie_driver = {
->>>      static int __init imx6_pcie_init(void)
->>>    {
->>> +	bool thumb2 = IS_ENABLED(CONFIG_THUMB2_KERNEL);
->>
->> Can these aborts definitely *only* be triggered by kernel accesses,
->> and never, say, via an mmap() of anything exposed to userspace?
-> 
-> Honestly, I am not very familiar with PCIe, I don't know...
+        sg_init_table(creq->src, 1);
+-       memset(rctx->key, 0, sizeof(rctx->key));
++       memzero_explicit(rctx->key, sizeof(rctx->key));
+        sg_set_buf(creq->src, rctx->key, sizeof(rctx->key));
 
-Yeah, hopefully the linux-pci audience can clear up that one.
+        chacha_iv(creq->iv, req, 0);
+diff --git a/crypto/md5.c b/crypto/md5.c
+index 94dd78144ba3..00d384e8784c 100644
+--- a/crypto/md5.c
++++ b/crypto/md5.c
+@@ -197,7 +197,7 @@ static int md5_final(struct shash_desc *desc, u8 *out)
+        md5_transform(mctx->hash, mctx->block);
+        cpu_to_le32_array(mctx->hash, sizeof(mctx->hash) / sizeof(u32));
+        memcpy(out, mctx->hash, sizeof(mctx->hash));
+-       memset(mctx, 0, sizeof(*mctx));
++       memzero_explicit(mctx, sizeof(*mctx));
 
-I was thinking in terms of whether we might need a combined handler with 
-a runtime "thumb_mode(regs)" check rather than a compile-time decision, 
-but Russell has a good point that just reading the instruction at all is 
-its own can of worms in that case.
+        return 0;
+ }
+diff --git a/crypto/rmd128.c b/crypto/rmd128.c
+index 5f4472256e27..5e01cd7130c7 100644
+--- a/crypto/rmd128.c
++++ b/crypto/rmd128.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
++#include <linux/string.h>
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
 
-Robin.
+@@ -290,7 +291,7 @@ static int rmd128_final(struct shash_desc *desc, u8 *out)
+                dst[i] = cpu_to_le32p(&rctx->state[i]);
+
+        /* Wipe context */
+-       memset(rctx, 0, sizeof(*rctx));
++       memzero_explicit(rctx, sizeof(*rctx));
+
+        return 0;
+ }
+diff --git a/crypto/rmd160.c b/crypto/rmd160.c
+index 737645344d1c..2381d134443c 100644
+--- a/crypto/rmd160.c
++++ b/crypto/rmd160.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
++#include <linux/string.h>
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+
+@@ -334,7 +335,7 @@ static int rmd160_final(struct shash_desc *desc, u8 *out)
+                dst[i] = cpu_to_le32p(&rctx->state[i]);
+
+        /* Wipe context */
+-       memset(rctx, 0, sizeof(*rctx));
++       memzero_explicit(rctx, sizeof(*rctx));
+
+        return 0;
+ }
+diff --git a/crypto/rmd256.c b/crypto/rmd256.c
+index 0e9d30676a01..3db0f6653607 100644
+--- a/crypto/rmd256.c
++++ b/crypto/rmd256.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
++#include <linux/string.h>
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+
+@@ -309,7 +310,7 @@ static int rmd256_final(struct shash_desc *desc, u8 *out)
+                dst[i] = cpu_to_le32p(&rctx->state[i]);
+
+        /* Wipe context */
+-       memset(rctx, 0, sizeof(*rctx));
++       memzero_explicit(rctx, sizeof(*rctx));
+
+        return 0;
+ }
+diff --git a/crypto/rmd320.c b/crypto/rmd320.c
+index 3ae1df5bb48c..e0e1a71d0144 100644
+--- a/crypto/rmd320.c
++++ b/crypto/rmd320.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/mm.h>
++#include <linux/string.h>
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+
+@@ -358,7 +359,7 @@ static int rmd320_final(struct shash_desc *desc, u8 *out)
+                dst[i] = cpu_to_le32p(&rctx->state[i]);
+
+        /* Wipe context */
+-       memset(rctx, 0, sizeof(*rctx));
++       memzero_explicit(rctx, sizeof(*rctx));
+
+        return 0;
+ }
+diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
+index 7ed98367d4fb..ae30a035d371 100644
+--- a/crypto/sha3_generic.c
++++ b/crypto/sha3_generic.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
++#include <linux/string.h>
+ #include <crypto/sha3.h>
+ #include <asm/unaligned.h>
+
+@@ -237,7 +238,7 @@ int crypto_sha3_final(struct shash_desc *desc, u8 *out)
+        if (digest_size & 4)
+                put_unaligned_le32(sctx->st[i], (__le32 *)digest);
+
+-       memset(sctx, 0, sizeof(*sctx));
++       memzero_explicit(sctx, sizeof(*sctx));
+        return 0;
+ }
+ EXPORT_SYMBOL(crypto_sha3_final);
