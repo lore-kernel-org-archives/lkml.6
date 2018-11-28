@@ -2,142 +2,137 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EA7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CCEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06EB12081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 453A120832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 13:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hujK7Uf4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06EB12081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="z6atr7yQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453A120832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeK2Agx (ORCPT
+        id S1728458AbeK2Aps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 19:36:53 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46423 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbeK2Agx (ORCPT
+        Wed, 28 Nov 2018 19:45:48 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40627 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728223AbeK2Aps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:36:53 -0500
-Received: by mail-io1-f68.google.com with SMTP id v10so14325213ios.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:35:12 -0800 (PST)
+        Wed, 28 Nov 2018 19:45:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so10186383pfo.7
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 05:44:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=13S8GW6ail1pyySMV3j2ahSI/y8rsQwLofFeF4iD3KM=;
-        b=hujK7Uf4lkDxVfIZJQEiPwyLyPUNcisAuntI6KMIp7tg5xgro/LKDjvj9TroXYvr7o
-         Z2DSmngix4lNK6xRozWB4JisEfQd0+JGCEPB+keKfy8eOtlS1U+D0hAG0miV1xfZLd0K
-         1KkqAP5SIF4H/nEMvMCTs5yu/N82fwS5AvBTA=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7zDTfHt/ugH4s9MDSR3+6OcGT1VGlctx6MQg0nD7ryE=;
+        b=z6atr7yQ3iFy6c+mjsKbGtJKtoY4INRIDKLn2ctg3Xp5JT6x7ocMzEZ2HPxv9dHQTK
+         iijiZCJLg9jEmNS89Id8ye5JAjUXqQJQr6mGAWvONxa0Zh7vUWCrN4Uf+UeabhKijE/1
+         34E/tod9+3QfnjbAD9gRnVDmsQn5Wt8P2XzRNETPBUeWJsWy4/kqLmPBoILTF8lRVOf6
+         pBSdGhHY0cVZ+BOiI5ZTUD5xjSMICY7sVkTod4fkrIfWxG4hZgYLFockgeTx3eHYpP6T
+         +oKZfOv9sStHO9kpfKBmSnsZE4W/8gxQnwt8rHsHMN9ZdvdQ107GNLbCW62zgksaAg+T
+         /7fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=13S8GW6ail1pyySMV3j2ahSI/y8rsQwLofFeF4iD3KM=;
-        b=kGMmDQnANE9uboPqRinWcSnhAxK/OJ40hNBpw3PqLBkz8DsO6FuEeoTpdJObTmzjgW
-         GnicFGQYQrFQ5QB8Kbo7WUeHjXnH09lH+gSHsb8H2v3AG59swStAyxVYrmrh231qD4jZ
-         z0qinKQXblPPwrdIj8tvhJblKEseaJ5dYZiDg2eNVPLxCwOu9YQEbxnTJbA4n+xb1mUa
-         PiKd42Y3wVpMTHCF4FCMS2QleV10HzdqW9PdtFYhZW4HuXs8WFCfaDUyhlGzeUpiAn4k
-         eaC3tn8CWL3wfXnaELKZKSSomQtD/k91zlCRWYQb/XO/2nlcZrAJZUE1/BGF5PgQgIEU
-         m1+g==
-X-Gm-Message-State: AA+aEWb3Yk9+WJhQmPxvuhvWMoPlgfxBbrchEFaUttlZO23e3W3DDTlV
-        aHBCEEuAT4m8SL6hB2KB3V4bHcul2Py+GxocE8GkIg==
-X-Google-Smtp-Source: AFSGD/UAurFDNXqjf5yzdm39+9IA2KqOVQtXoJAB8UczKFiZYbHKwf4kTHWl9O4633xEmzCJu0Nz3t7yfst3DxTpG3w=
-X-Received: by 2002:a6b:6b0d:: with SMTP id g13mr27228207ioc.18.1543412111911;
- Wed, 28 Nov 2018 05:35:11 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7zDTfHt/ugH4s9MDSR3+6OcGT1VGlctx6MQg0nD7ryE=;
+        b=k24OvjdQZwCu04YvBf72ojzgrSQBXKC7J7hitYXFBwDOhmIUc7zI2ZDRGFRxKhLF2R
+         hfx4YZK6iDx99P+JPNLzCxZ7DZzicDtJMNJg7Eruu5geGiaF6R+lzNhpWyJ8vmlPmUT1
+         0+yNSdlKUQUpEjeOJ6T1YDzhp1Gajr9LzUoBYnSbL8gzGa5+Y9Xr4dqr/Q7XgrzYbiS2
+         PVj02XBjA8z/1EHVNBm+iTZf7/Mn2b4KlLhbwXRt39EYPhPAqdB7Wvam0T5y9KIt6tBz
+         6tTorRVDyFemKI6BTTuNsFhiWUGhxQ6HMx22Eo6HVB7OavQNVkHKzsGwpR6OPCKwXKTm
+         X7ag==
+X-Gm-Message-State: AA+aEWYLJ1IosduP2kdGhaJfDUOK7hJL7aeRB18lyWL2wO39yv79/J+S
+        AdeRB5+N4GZPn4rl/CaMKarJrQ==
+X-Google-Smtp-Source: AFSGD/VpgWFbWqw7HHw4H6IebL4oKrh/k/zhasDsE54IK5/AtyaiHcazONlEr8g8biKk8VA/p/HR1g==
+X-Received: by 2002:a63:441e:: with SMTP id r30mr33671645pga.128.1543412645990;
+        Wed, 28 Nov 2018 05:44:05 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id n22sm14673393pfh.166.2018.11.28.05.44.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 05:44:04 -0800 (PST)
+Subject: Re: [PATCH V12 00/20] block: support multi-page bvec
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7096bc4e-0617-29d0-a90d-ae7caf09a16d@kernel.dk>
+Date:   Wed, 28 Nov 2018 06:44:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
- <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
- <20181128100241.GA2131@hirez.programming.kicks-ass.net> <20181128115336.GB23094@e110439-lin>
- <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
-In-Reply-To: <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 28 Nov 2018 14:35:00 +0100
-Message-ID: <CAKfTPtBS7=C-O4ydz2LLpLG4VfrXoypLD44+C+tp=CyygjiDAQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181126021720.19471-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 at 14:33, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> >
-> > On 28-Nov 11:02, Peter Zijlstra wrote:
-> > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
-> > >
-> > > > Is there anything else that I should do for these patches ?
-> > >
-> > > IIRC, Morten mention they break util_est; Patrick was going to explain.
-> >
-> > I guess the problem is that, once we cross the current capacity,
-> > strictly speaking util_avg does not represent anymore a utilization.
-> >
-> > With the new signal this could happen and we end up storing estimated
-> > utilization samples which will overestimate the task requirements.
-> >
-> > We will have a spike in estimated utilization at next wakeup, since we
-> > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
-> > case we collect multiple samples above the current capacity.
->
-> TBH I don't see how it's different from current implementation with a
-> task that was scheduled on big core and now wakes up on little core.
-> The util_est is overestimated as well.
->
-> But I'm fine with adding your proposal on to on the patchset
-s/on to on/on top of/
+On 11/25/18 7:17 PM, Ming Lei wrote:
+> Hi,
+> 
+> This patchset brings multi-page bvec into block layer:
+> 
+> 1) what is multi-page bvec?
+> 
+> Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
+> which are physically contiguous instead of one single page used in linux
+> kernel for long time.
+> 
+> 2) why is multi-page bvec introduced?
+> 
+> Kent proposed the idea[1] first. 
+> 
+> As system's RAM becomes much bigger than before, and huge page, transparent
+> huge page and memory compaction are widely used, it is a bit easy now
+> to see physically contiguous pages from fs in I/O. On the other hand, from
+> block layer's view, it isn't necessary to store intermediate pages into bvec,
+> and it is enough to just store the physicallly contiguous 'segment' in each
+> io vector.
+> 
+> Also huge pages are being brought to filesystem and swap [2][6], we can
+> do IO on a hugepage each time[3], which requires that one bio can transfer
+> at least one huge page one time. Turns out it isn't flexiable to change
+> BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
+> As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
+> as much bigger, such as 512, which requires at least two 4K pages for holding
+> the bvec table.
 
->
-> >
-> > So, a possible fix could be to avoid storing util_est samples if we
-> > end up with a utilization above the current capacity.
-> >
-> > Something like:
-> >
-> > ----8<---
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index ac855b2f4774..93e0cf5d8a76 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -3661,6 +3661,10 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
-> >         if (!task_sleep)
-> >                 return;
-> >
-> > +       /* Skip samples which do not represent an actual utilization */
-> > +       if (unlikely(task_util(p) > capacity_of(task_cpu(p))))
-> > +               return;
-> > +
-> >         /*
-> >          * If the PELT values haven't changed since enqueue time,
-> >          * skip the util_est update.
-> > ---8<---
-> >
-> > Could that work ?
-> >
-> > Maybe using a new utility function to wrap the new check.
-> >
-> > --
-> > #include <best/regards.h>
-> >
-> > Patrick Bellasi
+I'm pretty happy with this patchset at this point, looks like it just
+needs a respin to address the last comments. My only concern is whether
+it's a good idea to target this for 4.21, or if we should wait until
+4.22. 4.21 has a fairly substantial amount of changes in terms of block
+already, it's not the best timing for something of this magnitude too.
+
+I'm going back and forth on those one a bit. Any concerns with
+pushing this to 4.22?
+
+-- 
+Jens Axboe
+
