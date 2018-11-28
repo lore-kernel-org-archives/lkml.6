@@ -2,152 +2,285 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FFDC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F000BC04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC62F20665
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:42:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V1aJ+AxV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC62F20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id AC8CD2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 00:47:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8CD2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbeK1Lme (ORCPT
+        id S1726773AbeK1Lrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 06:42:34 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45924 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbeK1Lmd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 06:42:33 -0500
-Received: by mail-vs1-f66.google.com with SMTP id v10so14995306vsv.12
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 16:42:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+45M9KX0qCFH4GRr3LXJuBGL7wbqSnB/SCW2DaFwLio=;
-        b=V1aJ+AxV4YmT8c+Cl1E63qPOkyjbzP+hUzo5LeB0xpHwGDgfyS9nHqI3px9ozG7H/A
-         zvdflbVrUM43GxLIm509osV3xhALA5mOc/K6FYqI2ECLqM9RKCGL8JEwRRrrN617P3Hx
-         MB3jyNtKxwrRZGyidkriDoMYO9Go4V7x/54aQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+45M9KX0qCFH4GRr3LXJuBGL7wbqSnB/SCW2DaFwLio=;
-        b=SsokI1lqBMU/IZXfiB4r1Qk8FeIQ5hzJsO3nW0pwMagM60vzWlv+k8r8frJseAyH3J
-         Rs0MYRmu4GA2bM5GWIkSi0J78Crnlr4RV0+FixSFlg8MwMGlbwb3dYExHhcF8i6vsiQS
-         gbV48A8SGr3NA+cllrjXypJHMl6IyOUjqQ8pIfhlXc+uOVDbdxhIzcWq4Wd0Y06BsR04
-         UW8SpBJdp2zy9e0EXlUrBVj5XfjPMs/BEYihP0qR3BsL37ahREbvFdz8XAeneQBMBeJG
-         DHRW6gwI8UgxMDhWFGQA9bGmnwAeURPMC5r4Q1yweb8Tk2F5oUi/MeellVP6oYO9OR49
-         fojA==
-X-Gm-Message-State: AA+aEWZtycsuhviYiGzQIgC4lGTsJU7vKCK8ezBYbBMROH3SgbdQd9Pj
-        RPwYL2RYDCldkvjw0X/UwjY1CQO+F0I=
-X-Google-Smtp-Source: AFSGD/U67o5eLD6Rbg4ytRQ71/wjg88erRO4aOCnAHv7qhybvLDZJ5q7vS9koXC13bSr3BHLM9v/VQ==
-X-Received: by 2002:a67:6002:: with SMTP id u2mr9353150vsb.115.1543365771428;
-        Tue, 27 Nov 2018 16:42:51 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id x132sm1658170vke.52.2018.11.27.16.42.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 16:42:50 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id b74so14981019vsd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 16:42:50 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr12382489vsj.144.1543365769686;
- Tue, 27 Nov 2018 16:42:49 -0800 (PST)
+        Wed, 28 Nov 2018 06:47:36 -0500
+Received: from mga06.intel.com ([134.134.136.31]:35521 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeK1Lrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:47:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 16:47:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
+   d="scan'208";a="94639440"
+Received: from ikonopko-mobl1.ger.corp.intel.com (HELO [10.227.25.68]) ([10.227.25.68])
+  by fmsmga008.fm.intel.com with ESMTP; 27 Nov 2018 16:47:53 -0800
+Subject: Re: [PATCH] lightnvm: remove dma alloc/free helpers
+To:     Javier Gonzalez <javier@cnexlabs.com>,
+        =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Cc:     "javier@javigon.com" <javier@javigon.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1543325972-15136-1-git-send-email-javier@cnexlabs.com>
+ <1543325972-15136-2-git-send-email-javier@cnexlabs.com>
+ <ccb9584d-a262-366b-fe2d-605311c2b593@lightnvm.io>
+ <F94C907C-3729-40A7-8774-B3FD3755F5F6@cnexlabs.com>
+From:   Igor Konopko <igor.j.konopko@intel.com>
+Message-ID: <d9d2c189-3b0d-c038-d592-d0dc6b0bc8ef@intel.com>
+Date:   Wed, 28 Nov 2018 01:47:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181127232331.49628-1-dbasehore@chromium.org>
-In-Reply-To: <20181127232331.49628-1-dbasehore@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 27 Nov 2018 16:42:36 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WJCvt-Ez_F+gTJaLWnOOY2J0fXxgq8vy0ojKoHv+AQ7w@mail.gmail.com>
-Message-ID: <CAD=FV=WJCvt-Ez_F+gTJaLWnOOY2J0fXxgq8vy0ojKoHv+AQ7w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Add 32k clk on rk3399-gru
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, Tony Xie <tony.xie@rock-chips.com>,
-        Chris <zyw@rock-chips.com>, ayaka@soulik.info,
-        "nickey.yang" <nickey.yang@rock-chips.com>,
-        =?UTF-8?B?6YOR6Iic5Lm+?= <zhengsq@rock-chips.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <F94C907C-3729-40A7-8774-B3FD3755F5F6@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Nov 27, 2018 at 3:23 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> This adds the 32k clock to the RK3399 Gru board file. Even though it's
-> not directly used, muxes will end up traversing the entire clk tree on
-> calls to determine_rate if it doesn't exist. This is because the 32k
-> clk is listed as a possible parent on some clks. Since the clk doesn't
-> know about the 32k clk (it was never registered), it triggers a global
-> search for it. This can happen about 40 times per second, which isn't
-> great for power.
-
-I seem to remember Heiko requesting something be added to the commit
-message.  Ah yes, he said:
-
-> That would also be a great part of the commit message, like
-> "...on Gru boards the 32kHz clock gets produced by a Silego oscillator"
-> or so when you move it over to rk3399-gru.dtsi .
-
-Presumably Heiko could add that to the commit message when he applies
-the patch, so maybe wait to see if he wants you to respin it?
 
 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> index ca07f6032200..a07aa4c570c0 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> @@ -14,6 +14,13 @@
->                 stdout-path = "serial2:115200n8";
->         };
->
-> +       ap_rtc_clk: ap-rtc-clk {
-> +               compatible = "fixed-clock";
-> +               clock-frequency = <32768>;
-> +               clock-output-names = "xin32k";
-> +               #clock-cells = <0>;
-> +       };
-> +
->         /*
->          * Power Tree
+On 27.11.2018 15:22, Javier Gonzalez wrote:
+> 
+> 
+>> On 27 Nov 2018, at 15.18, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>>> On 11/27/2018 02:39 PM, Javier González wrote:
+>>> Time has shown that the LightNVM alloc/free dma helpers are merely
+>>> replacements of the native dma_pool operations. Thus, remove them and
+>>> let targets manage the LightNVM dma pool directly.
+>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>> ---
+>>>   drivers/lightnvm/core.c          | 25 +++++++------------------
+>>>   drivers/lightnvm/pblk-core.c     | 10 +++++-----
+>>>   drivers/lightnvm/pblk-read.c     |  3 ++-
+>>>   drivers/lightnvm/pblk-recovery.c |  5 +++--
+>>>   drivers/nvme/host/lightnvm.c     | 16 +---------------
+>>>   include/linux/lightnvm.h         |  8 +-------
+>>>   6 files changed, 19 insertions(+), 48 deletions(-)
+>>> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+>>> index c3650b141a30..8b6ee35e4356 100644
+>>> --- a/drivers/lightnvm/core.c
+>>> +++ b/drivers/lightnvm/core.c
+>>> @@ -641,20 +641,6 @@ void nvm_unregister_tgt_type(struct nvm_tgt_type *tt)
+>>>   }
+>>>   EXPORT_SYMBOL(nvm_unregister_tgt_type);
+>>>   -void *nvm_dev_dma_alloc(struct nvm_dev *dev, gfp_t mem_flags,
+>>> -                            dma_addr_t *dma_handler)
+>>> -{
+>>> -    return dev->ops->dev_dma_alloc(dev, dev->dma_pool, mem_flags,
+>>> -                                dma_handler);
+>>> -}
+>>> -EXPORT_SYMBOL(nvm_dev_dma_alloc);
+>>> -
+>>> -void nvm_dev_dma_free(struct nvm_dev *dev, void *addr, dma_addr_t dma_handler)
+>>> -{
+>>> -    dev->ops->dev_dma_free(dev->dma_pool, addr, dma_handler);
+>>> -}
+>>> -EXPORT_SYMBOL(nvm_dev_dma_free);
+>>> -
+>>>   static struct nvm_dev *nvm_find_nvm_dev(const char *name)
+>>>   {
+>>>       struct nvm_dev *dev;
+>>> @@ -682,7 +668,8 @@ static int nvm_set_rqd_ppalist(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd,
+>>>       }
+>>>         rqd->nr_ppas = nr_ppas;
+>>> -    rqd->ppa_list = nvm_dev_dma_alloc(dev, GFP_KERNEL, &rqd->dma_ppa_list);
+>>> +    rqd->ppa_list = dma_pool_alloc(dev->dma_pool, GFP_KERNEL,
+>>> +                            &rqd->dma_ppa_list);
+>>>       if (!rqd->ppa_list) {
+>>>           pr_err("nvm: failed to allocate dma memory\n");
+>>>           return -ENOMEM;
+>>> @@ -705,10 +692,12 @@ static int nvm_set_rqd_ppalist(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd,
+>>>   static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
+>>>               struct nvm_rq *rqd)
+>>>   {
+>>> +    struct nvm_dev *dev = tgt_dev->parent;
+>>> +
+>>>       if (!rqd->ppa_list)
+>>>           return;
+>>>   -    nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
+>>> +    dma_pool_free(dev->dma_pool, rqd->ppa_list, rqd->dma_ppa_list);
+>>>   }
+>>>     static int nvm_set_flags(struct nvm_geo *geo, struct nvm_rq *rqd)
+>>> @@ -1178,7 +1167,7 @@ void nvm_unregister(struct nvm_dev *dev)
+>>>   }
+>>>   EXPORT_SYMBOL(nvm_unregister);
+>>>   -int nvm_alloc_dma_pool(struct nvm_dev *dev)
+>>> +int nvm_create_dma_pool(struct nvm_dev *dev)
+>>>   {
+>>>       int exp_pool_size;
+>>>   @@ -1195,7 +1184,7 @@ int nvm_alloc_dma_pool(struct nvm_dev *dev)
+>>>         return 0;
+>>>   }
+>>> -EXPORT_SYMBOL(nvm_alloc_dma_pool);
+>>> +EXPORT_SYMBOL(nvm_create_dma_pool);
+>>>     static int __nvm_configure_create(struct nvm_ioctl_create *create)
+>>>   {
+>>> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+>>> index 615817bf97e3..61a2a5330ecf 100644
+>>> --- a/drivers/lightnvm/pblk-core.c
+>>> +++ b/drivers/lightnvm/pblk-core.c
+>>> @@ -242,7 +242,7 @@ int pblk_alloc_rqd_meta(struct pblk *pblk, struct nvm_rq *rqd)
+>>>   {
+>>>       struct nvm_tgt_dev *dev = pblk->dev;
+>>>   -    rqd->meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+>>> +    rqd->meta_list = dma_pool_alloc(dev->parent->dma_pool, GFP_KERNEL,
+>>>                               &rqd->dma_meta_list);
+>>>       if (!rqd->meta_list)
+>>>           return -ENOMEM;
+>>> @@ -261,8 +261,8 @@ void pblk_free_rqd_meta(struct pblk *pblk, struct nvm_rq *rqd)
+>>>       struct nvm_tgt_dev *dev = pblk->dev;
+>>>         if (rqd->meta_list)
+>>> -        nvm_dev_dma_free(dev->parent, rqd->meta_list,
+>>> -                rqd->dma_meta_list);
+>>> +        dma_pool_free(dev->parent->dma_pool, rqd->meta_list,
+>>> +                            rqd->dma_meta_list);
+>>>   }
+>>>     /* Caller must guarantee that the request is a valid type */
+>>> @@ -846,7 +846,7 @@ int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
+>>>       int i, j;
+>>>       int ret;
+>>>   -    meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+>>> +    meta_list = dma_pool_alloc(dev->parent->dma_pool, GFP_KERNEL,
+>>>                               &dma_meta_list);
+>>>       if (!meta_list)
+>>>           return -ENOMEM;
+>>> @@ -925,7 +925,7 @@ int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
+>>>           goto next_rq;
+>>>     free_rqd_dma:
+>>> -    nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+>>> +    dma_pool_free(dev->parent->dma_pool, rqd.meta_list, rqd.dma_meta_list);
+>>>       return ret;
+>>>   }
+>>>   diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+>>> index 32b285cf5846..1576f357c9af 100644
+>>> --- a/drivers/lightnvm/pblk-read.c
+>>> +++ b/drivers/lightnvm/pblk-read.c
+>>> @@ -507,7 +507,8 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+>>>       return NVM_IO_OK;
+>>>     fail_meta_free:
+>>> -    nvm_dev_dma_free(dev->parent, rqd->meta_list, rqd->dma_meta_list);
+>>> +    dma_pool_free(dev->parent->dma_pool, rqd->meta_list,
+>>> +                            rqd->dma_meta_list);
+>>>   fail_rqd_free:
+>>>       pblk_free_rqd(pblk, rqd, PBLK_READ);
+>>>       return ret;
+>>> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+>>> index 65abc043e268..80d5b5bd4ab7 100644
+>>> --- a/drivers/lightnvm/pblk-recovery.c
+>>> +++ b/drivers/lightnvm/pblk-recovery.c
+>>> @@ -472,7 +472,8 @@ static int pblk_recov_l2p_from_oob(struct pblk *pblk, struct pblk_line *line)
+>>>       dma_addr_t dma_ppa_list, dma_meta_list;
+>>>       int ret = 0;
+>>>   -    meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL, &dma_meta_list);
+>>> +    meta_list = dma_pool_alloc(dev->parent->dma_pool, GFP_KERNEL,
+>>> +                                &dma_meta_list);
+>>>       if (!meta_list)
+>>>           return -ENOMEM;
+>>>   @@ -508,7 +509,7 @@ static int pblk_recov_l2p_from_oob(struct pblk *pblk, struct pblk_line *line)
+>>>       mempool_free(rqd, &pblk->r_rq_pool);
+>>>       kfree(data);
+>>>   free_meta_list:
+>>> -    nvm_dev_dma_free(dev->parent, meta_list, dma_meta_list);
+>>> +    dma_pool_free(dev->parent->dma_pool, meta_list, dma_meta_list);
+>>>         return ret;
+>>>   }
+>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>>> index 049425ad8592..dd300ce9983f 100644
+>>> --- a/drivers/nvme/host/lightnvm.c
+>>> +++ b/drivers/nvme/host/lightnvm.c
+>>> @@ -747,18 +747,6 @@ static void nvme_nvm_destroy_dma_pool(void *pool)
+>>>       dma_pool_destroy(dma_pool);
+>>>   }
+>>>   -static void *nvme_nvm_dev_dma_alloc(struct nvm_dev *dev, void *pool,
+>>> -                    gfp_t mem_flags, dma_addr_t *dma_handler)
+>>> -{
+>>> -    return dma_pool_alloc(pool, mem_flags, dma_handler);
+>>> -}
+>>> -
+>>> -static void nvme_nvm_dev_dma_free(void *pool, void *addr,
+>>> -                            dma_addr_t dma_handler)
+>>> -{
+>>> -    dma_pool_free(pool, addr, dma_handler);
+>>> -}
+>>> -
+>>>   static struct nvm_dev_ops nvme_nvm_dev_ops = {
+>>>       .identity        = nvme_nvm_identity,
+>>>   @@ -772,8 +760,6 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
+>>>         .create_dma_pool    = nvme_nvm_create_dma_pool,
+>>>       .destroy_dma_pool    = nvme_nvm_destroy_dma_pool,
+>>> -    .dev_dma_alloc        = nvme_nvm_dev_dma_alloc,
+>>> -    .dev_dma_free        = nvme_nvm_dev_dma_free,
+>>>   };
+>>>     static int nvme_nvm_submit_user_cmd(struct request_queue *q,
+>>> @@ -985,7 +971,7 @@ void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
+>>>           geo->ext = ns->ext;
+>>>       }
+>>>   -    if (nvm_alloc_dma_pool(ndev))
+>>> +    if (nvm_create_dma_pool(ndev))
+>>>           nvm_unregister(ndev);
+>>>   }
+>>>   diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+>>> index fd7b519f3ad2..7ca38b8bf133 100644
+>>> --- a/include/linux/lightnvm.h
+>>> +++ b/include/linux/lightnvm.h
+>>> @@ -94,7 +94,6 @@ typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *, int);
+>>>   typedef void (nvm_destroy_dma_pool_fn)(void *);
+>>>   typedef void *(nvm_dev_dma_alloc_fn)(struct nvm_dev *, void *, gfp_t,
+>>>                                   dma_addr_t *);
+>>> -typedef void (nvm_dev_dma_free_fn)(void *, void*, dma_addr_t);
+>>>     struct nvm_dev_ops {
+>>>       nvm_id_fn        *identity;
+>>> @@ -108,8 +107,6 @@ struct nvm_dev_ops {
+>>>         nvm_create_dma_pool_fn    *create_dma_pool;
+>>>       nvm_destroy_dma_pool_fn    *destroy_dma_pool;
+>>> -    nvm_dev_dma_alloc_fn    *dev_dma_alloc;
+>>> -    nvm_dev_dma_free_fn    *dev_dma_free;
+>>>   };
+>>>     #ifdef CONFIG_NVM
+>>> @@ -669,11 +666,8 @@ struct nvm_tgt_type {
+>>>   extern int nvm_register_tgt_type(struct nvm_tgt_type *);
+>>>   extern void nvm_unregister_tgt_type(struct nvm_tgt_type *);
+>>>   -extern void *nvm_dev_dma_alloc(struct nvm_dev *, gfp_t, dma_addr_t *);
+>>> -extern void nvm_dev_dma_free(struct nvm_dev *, void *, dma_addr_t);
+>>> -
+>>>   extern struct nvm_dev *nvm_alloc_dev(int);
+>>> -extern int nvm_alloc_dma_pool(struct nvm_dev *);
+>>> +extern int nvm_create_dma_pool(struct nvm_dev *);
+>>>   extern int nvm_register(struct nvm_dev *);
+>>>   extern void nvm_unregister(struct nvm_dev *);
+>>>   
+>>
+>> I kindly would like to reject this patch. One reason is that target's should not have direct access to DMA pools and another reason is that the code changes when OCSSD is used over Fabrics. The DMA pool is no longer available and data has to be allocated differently. This code does not belong inside a target.
+> 
+> Ok. I just sent it based on the discussion we had around the dma pools during the review of Igor’s patches. If I remember correctly, you backed this at that time... Anyway, there is no behavior change, so just ignore.
+> 
+> Igor: can you still make the name change on the dma pool creation?
+> 
 
-Really this should be below the power tree, AKA right above
-"gpio-keys".  Convention has typically been that only "special" nodes
-like "chosen" go all the way at the top here.  Then the power tree
-(parents first), then other nodes.
+Sure, I'll change the name of that function together with other 
+suggested changes and will send V4 of my series.
 
-In the Chrome OS tree we had an "/* END REGULATORS */ comment to try
-to separate out the power tree from the rest of the nodes, but I guess
-Heiko didn't like that when this went upstream so now you just have to
-know the convention.  :-P
+Igor
 
-Possibly Heiko would re-sort this for you himself when applying the
-change if he agrees with my understanding of the conventions.
-
-Other than my nits:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Javier.
+> 
