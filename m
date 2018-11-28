@@ -2,134 +2,109 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F723C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1A5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBD842086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1262206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 19:49:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt1cgnh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD842086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VUVZHsFF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1262206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbeK2GvG (ORCPT
+        id S1729158AbeK2GwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:51:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34728 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbeK2GvG (ORCPT
+        Thu, 29 Nov 2018 01:52:10 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35298 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeK2GwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:51:06 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so27583893wrw.1;
-        Wed, 28 Nov 2018 11:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Rm+3IFMRZZUjNCit1zkPfdGXuetxBmlWPZQyJ1wRWHk=;
-        b=Qt1cgnh4OR97x39+ajm5+RuQyODgllRU18xuQc2dhZi3O9n2RQPhxYN1hf9j4+ppKJ
-         llysWR8ccAFQycOQaqcV/ytaTVwxgq5eYcNxgt6ioIcUSitwRx7idACSDXslM87zzA7T
-         fM02fQR+e1GO+Sji5Qxdf9MXOPVo1DCp0SWwi6p4DJQu5lD0x7xlymemdyo/HyrNhqNd
-         ffhCweTpOkP0PAUhzwQF7yqA54ACP18Q4VwcL7qvWrHnlH6p5GJuN3jYXLQR4IYZZsVC
-         NGmErfu1vKi04rzPLoIjRihtcrFrAFENxxHNMiIWVMt3SAKlWllq0AbW4Hdg+P8ZdR8A
-         4XmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rm+3IFMRZZUjNCit1zkPfdGXuetxBmlWPZQyJ1wRWHk=;
-        b=YCePOqlnHjjJwTqyT24ban/l6EODdCDtEtrUknUFoLz+kKQGuYJRJzPYiN1O63Gskj
-         tHUuHAOk/0Icyz/oQE8/uDJgZNKAMUbKzDysFOpdfZtazU+gJACm2HQwXaATUjuoarRQ
-         sPa7rM8AsFoqMhtqKe+X8CzKKm1EIv2UE7Tug2An+5jV/wrZL4nsBPaL4TAVXHhIOFKf
-         ba0qWwZbs2mbDbnAeir0eU9gnGuXQdu7NUNxeHEeWNP6cqg/iIhHWfpBTP3i+TShQCxk
-         WLs4ULCWx83GLV/bzYRew+dp4/7v5HxhyS5raF1sAEzUsg9qCLibkIGZ7M9QMgV2dwgz
-         jmbw==
-X-Gm-Message-State: AA+aEWZGAL3zao73yPRqethQbsb1deiNY0if7UV/dL7+vgeFfsp93FJB
-        lN5P/yhQ/zFKKnrrr2felj4=
-X-Google-Smtp-Source: AFSGD/UkCUiUlMj89XMEIAdOCsfIzCvCoT0snDcdG9zlSLETYLxK7yZbH2UjX1nbbNagc8klFC/6oQ==
-X-Received: by 2002:a5d:5208:: with SMTP id j8mr7415172wrv.188.1543434498134;
-        Wed, 28 Nov 2018 11:48:18 -0800 (PST)
-Received: from localhost (p200300E41F128C00021F3CFFFE37B91B.dip0.t-ipconnect.de. [2003:e4:1f12:8c00:21f:3cff:fe37:b91b])
-        by smtp.gmail.com with ESMTPSA id m80sm3996503wmd.35.2018.11.28.11.48.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 11:48:17 -0800 (PST)
-Date:   Wed, 28 Nov 2018 20:48:27 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 18/21] rtc: tegra: Switch to use %ptR
-Message-ID: <20181128194825.GA23039@mithrandir>
-References: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
- <20181128190537.14074-19-andriy.shevchenko@linux.intel.com>
+        Thu, 29 Nov 2018 01:52:10 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASJiS6J182605;
+        Wed, 28 Nov 2018 19:49:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=vGyt3ctAdDhWLj95mrYwXHTC0z4zzuwkjgF8N7eSOyQ=;
+ b=VUVZHsFFL6YCdUOddH6a+GvjbIV8AmpcZpLXcFcoFajbeoB5KkjQ+ocLmopzb2QQkxqN
+ kUBQlP99WP95IEVJhrFxrFQW5qW3iMRBZalNTW3AgqRmbEmlOv2TS0pW0vJXcTZEzuVQ
+ I7QocHChlqxJee05REk08ZS3RhjOpcw3xVvyOaPCG6MJ72hJlxjWS/OEY0TXo71lxPtZ
+ xavcWmJHv4f3jro+AkYU2I+/FE/KVXc22ubELHdKiWwhFDwP3zQ0yVKOLfUkRFBZpLEP
+ mFVAgXfwprDZRF3XV2T+x8+v9mBQGFAnz+P8p9zyzrFgD6LBU9e+wcIE3oCIAyPG9noh Nw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2nxy9rcawv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 19:49:19 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wASJnEii031302
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 19:49:14 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wASJnD9J020694;
+        Wed, 28 Nov 2018 19:49:14 GMT
+Received: from unbuntlaptop (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 11:49:13 -0800
+Date:   Wed, 28 Nov 2018 22:49:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Michael Straube <straube.linux@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] staging: rtl8188eu: use __func__ in
+ hal8188e_rate_adaptive.c
+Message-ID: <20181128194905.GE3095@unbuntlaptop>
+References: <20181128172906.1694-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181128190537.14074-19-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181128172906.1694-1-straube.linux@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 28, 2018 at 09:05:34PM +0200, Andy Shevchenko wrote:
-> Use %ptR instead of open coded variant to print content of
-> struct rtc_time in human readable format.
->=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Nov 28, 2018 at 06:29:01PM +0100, Michael Straube wrote:
+> Use __func__ instead of hardcoded function names.
+> Reported by checkpatch.
+> 
+> Signed-off-by: Michael Straube <straube.linux@gmail.com>
 > ---
->  drivers/rtc/rtc-tegra.c | 30 +++---------------------------
->  1 file changed, 3 insertions(+), 27 deletions(-)
+>  .../rtl8188eu/hal/hal8188e_rate_adaptive.c    | 36 ++++++++++---------
+>  1 file changed, 20 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
+> index 6dbd7d261f1e..02f423accee8 100644
+> --- a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
+> +++ b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
+> @@ -127,10 +127,10 @@ static int odm_RateDown_8188E(struct odm_dm_struct *dm_odm,
+>  	u8 i;
+>  
+>  	ODM_RT_TRACE(dm_odm, ODM_COMP_RATE_ADAPTIVE,
+> -			ODM_DBG_TRACE, ("=====>odm_RateDown_8188E()\n"));
+> +			ODM_DBG_TRACE, ("=====>%s()\n", __func__));
 
-This changes the format of the date and time, but I think it's better to
-have the standard format than the existing one. Also, the time is only
-printed in debug messages, so nobody should be relying on that specific
-format anyway.
+This printk has no information that you couldn't get using ftrace.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+>  	if (!pRaInfo) {
+>  		ODM_RT_TRACE(dm_odm, ODM_COMP_RATE_ADAPTIVE, ODM_DBG_LOUD,
+> -				("odm_RateDown_8188E(): pRaInfo is NULL\n"));
+> +				("%s(): pRaInfo is NULL\n", __func__));
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
+It pRaInfo is never NULL so this is dead code.  A lot of this trace
+output could just be deleted.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv+8P4ACgkQ3SOs138+
-s6HFqBAAuEVQizdaCbOGmTPoYqQEpRPkzsPDyjvKzfCMKI3voJHl6JhT+6IlN8kq
-Q5m/9IoxRSPmmaDa5LSDeWczgZttUe9nHNkMlgDYJmETEy2ydp5N8faX6XuL73b6
-CivJfiRIfmRWt0n79stFvTqyZYJllIyIzonj0WjflH0QVXww1mk0XoNiXxOszcsP
-D64f2RpdWnTSoULJ+EJlRWuNP8k8K/opFrDGTVsE0vUcsHoklJ0rz230+1FjPzQI
-ZwqJKMWYBeh3R0oPbIdq6GXQsMQDNvI414FDuu1gfYhXSIwAmn7G3csk8TpY4K1Z
-/Lhi37dz/uOVRhqlYchwhQasbjoioNR4pm9tEAswmAqCuOnBmVz/+sFtJ1Kp3Y0E
-1F429hjJNIV96V6Z30a1cb82m3g3RndDqvYEN7J/TQvT1eXEsISsOMecU0PGgYAS
-RDIYRxjNQfYAAmqYTAmH/Yabpl8/uGb4hX/hl9JoO05TMf1rM5pvzqXBeiu7wwvc
-aRtZCbyaoO5eyIze+AJaI6f4Uzxfvemd2eWABtaZTPfJIvTn8wMujnIWu/f6JQIT
-Sgx5RSGoSUqNQbieqmxHTWngNhEjJ24btSZ08LGQjoYYLHFY/yxyT3cjwmM7hJfA
-eUoSD+YQj2QDM/zUSjT1VxCOQKiROkU4gMqWYJ1Osbe+zn27PrU=
-=KJfS
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+regards,
+dan carpenter
