@@ -2,119 +2,82 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7634C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E46C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F0D206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F0D206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CE5320832
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 20:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE5320832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbeK2Hgd (ORCPT
+        id S1726402AbeK2HiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 02:36:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60242 "EHLO mx1.suse.de"
+        Thu, 29 Nov 2018 02:38:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60460 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbeK2Hgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 02:36:33 -0500
+        id S1725799AbeK2HiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 02:38:06 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 999C3AD2C;
-        Wed, 28 Nov 2018 20:18:32 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     David Howells <dhowells@redhat.com>
-Date:   Thu, 29 Nov 2018 07:18:23 +1100
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fscache: fix race between enablement and dropping of object
-In-Reply-To: <10285.1543417950@warthog.procyon.org.uk>
-References: <87r2gd44hu.fsf@notabene.neil.brown.name> <10285.1543417950@warthog.procyon.org.uk>
-Message-ID: <878t1dot0w.fsf@notabene.neil.brown.name>
+        by mx1.suse.de (Postfix) with ESMTP id 44BE6AC24;
+        Wed, 28 Nov 2018 20:35:11 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 21:35:10 +0100
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: use generic DMA mapping code in powerpc V4
+Message-ID: <20181128213510.543259e3@kitsune.suse.cz>
+In-Reply-To: <535776df-dea3-eb26-6bf3-83f225e977df@xenosoft.de>
+References: <20181114082314.8965-1-hch@lst.de>
+        <20181127074253.GB30186@lst.de>
+        <87zhttfonk.fsf@concordia.ellerman.id.au>
+        <535776df-dea3-eb26-6bf3-83f225e977df@xenosoft.de>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Wed, 28 Nov 2018 16:55:30 +0100
+Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
 
-On Wed, Nov 28 2018, David Howells wrote:
+> On 28 November 2018 at 12:05PM, Michael Ellerman wrote:
+> > Nothing specific yet.
+> >
+> > I'm a bit worried it might break one of the many old obscure platforms
+> > we have that aren't well tested.
+> >  
+> Please don't apply the new DMA mapping code if you don't be sure if it 
+> works on all supported PowerPC machines. Is the new DMA mapping code 
+> really necessary? It's not really nice, to rewrote code if the old code 
+> works perfect. We must not forget, that we work for the end users. Does 
+> the end user have advantages with this new code? Is it faster? The old 
+> code works without any problems. 
 
-> NeilBrown <neilb@suse.com> wrote:
->
->> It was observed that a process blocked indefintely in
->> __fscache_read_or_alloc_page(), waiting for FSCACHE_COOKIE_LOOKING_UP
->> to be cleared via fscache_wait_for_deferred_lookup().
->
-> Was there a backtrace for that?
+There is another service provided to the users as well: new code that is
+cleaner and simpler which allows easier bug fixes and new features.
+Without being familiar with the DMA mapping code I cannot really say if
+that's the case here.
 
-Yes.
-PID: 29360  TASK: ffff881ff2ac0f80  CPU: 3   COMMAND: "zsh"
- #0 [ffff881ff43efbf8] schedule at ffffffff815e56f1
- #1 [ffff881ff43efc58] bit_wait at ffffffff815e64ed
- #2 [ffff881ff43efc68] __wait_on_bit at ffffffff815e61b8
- #3 [ffff881ff43efca0] out_of_line_wait_on_bit at ffffffff815e625e
- #4 [ffff881ff43efd08] fscache_wait_for_deferred_lookup at ffffffffa04f2e8f
-[fscache]
- #5 [ffff881ff43efd18] __fscache_read_or_alloc_page at ffffffffa04f2ffe
-[fscache]
- #6 [ffff881ff43efd58] __nfs_readpage_from_fscache at ffffffffa0679668 [nfs]
- #7 [ffff881ff43efd78] nfs_readpage at ffffffffa067092b [nfs]
- #8 [ffff881ff43efda0] generic_file_read_iter at ffffffff81187a73
- #9 [ffff881ff43efe50] nfs_file_read at ffffffffa066544b [nfs]
-#10 [ffff881ff43efe70] __vfs_read at ffffffff811fc756
-#11 [ffff881ff43efee8] vfs_read at ffffffff811fccfa
-#12 [ffff881ff43eff18] sys_read at ffffffff811fda62
-#13 [ffff881ff43eff50] entry_SYSCALL_64_fastpath at ffffffff815e986e
+> I am also worried about this code. How 
+> can I test this new DMA mapping code?
 
-This is in SLES12-SP2 which is based on Linux-4.4
+I suppose if your machine works it works for you.
 
->
->> This leaves a window where something else can set FSCACHE_COOKIE_LOOKING_UP
->
-> Attempting to enable the cookie again would have that effect.
->
->> There is some uncertainty in this analysis, but it seems to be fit the
->> observations.  Adding the wake in this patch will be handled correctly
->> by __fscache_read_or_alloc_page(), as it checks if ->backing_objects
->> is empty again, after waiting.
->
-> That should work.  The read op should just then fail with -ENOBUFS, causing
-> the netfs to issue the read over the network instead.
->
-> I think there's a more elegant solution to be had, but it'll take some thought
-> as to how to achieve it.
+Thanks
 
-Please let me know when you come up with something.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlv++BEACgkQOeye3VZi
-gbllvg/8ClneaZb2Z6t91/2nsysmvPrjyQf9sRFHDeP5YegsBVMuw7OfLgolii6W
-y8Ty3IU5baQ00APyHGHGYeOpGio/bK9q9lNi9FjS0vAvVy6RMFfxYAuP9030oURH
-J9RVnjR687w1S7MiA4S3zF3avfes1xwOK1ZF8XCvVW1hnTNXanYUVo8fOj2Y8rOC
-j3B1Ol2L2aEOUKtInfnCZkiJz6nZyNOH23S8KE2BgP+Wjan+OkzPDHlR4Qtph33k
-OE0NZdTzhzmlI2KCb9AqDHtCgKC/xBxLL0JOMXRVMdbXQKxFA4Y1YAmBjarBpkz6
-FLkKHEseTYzJ4FYW/8WPtlbZxDVAAXmTdvXGh/jcCzpsboxHtMnc6tP8V0Y4VJFs
-+4/TR+hrLiP2ixs013e8KIJXV56h1dL4ovMmhjgMk/dI4KohSh7fus3360s66lt0
-q1pzO9dO1wpAr/asT2C65lp0u99Va3k/6+uxOcfXCiiFtBwiwzG1HyzXWpW30Vvn
-nv6wSlELv+lY0pcCYZlpbsIjjjujrf01mLVg9mHOIK0lBAyZFAfqBjw9gS4YMmV5
-vWLSJFKmKczDxTCElM1nrWWEGnpqkEWVLhxKR0BNims8u4L7jSj3xIM2pPs3770x
-Q3dcZEYiyORVEH4l2ks+1XSwvxf/gsiUOEiMuYzo/4NB8j2l0oI=
-=G0SK
------END PGP SIGNATURE-----
---=-=-=--
+Michal
