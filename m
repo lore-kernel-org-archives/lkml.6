@@ -7,68 +7,69 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D19CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEC4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0CD72082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1EBD2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 06:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ErZwgbyp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CD72082F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bco2TzFW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1EBD2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeK1RTO (ORCPT
+        id S1727426AbeK1RUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 12:19:14 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:37558 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeK1RTO (ORCPT
+        Wed, 28 Nov 2018 12:20:52 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35799 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeK1RUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:19:14 -0500
-Received: by mail-vs1-f65.google.com with SMTP id h18so15357760vsj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:18:43 -0800 (PST)
+        Wed, 28 Nov 2018 12:20:52 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so15364554vsc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:20:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C4D1M8vP77wz6vXP94C/caQl4E0Drf2OblDOXXtprWE=;
-        b=ErZwgbypFMC7LO9EH4yFj1M2Cev9+38UrOoBTxFAKT5aj6pjjYR2i5s930CqR1QL4A
-         rVAJovGCOvWpvq0IUllpEqDPKdu1OQ4nHj4QH51WvDGBj6J/RzmPR8P+fAxAmF55sYl/
-         gqUUQcrosAmJYQrK7JDKBBL/VtRIQUsYoF+As=
+        bh=YaHZfO/qCQH1VESItFAu4BMUvRx9Jd7R3b6gkSc1kzM=;
+        b=Bco2TzFW5PjK3A8u1TZoSS/ASK/Z0SoC6OLCQk1EWhOZgo5tLpQ3Oe2toCjZnqLz5w
+         hpwS9dxRfsOzw2Hd/t196Au5wcca6spQsskvM1cYneP4oLWlLGxe0u2t07wY3zuz29yh
+         PLnpWcYTIg325rhdbHvGFvSIzr3ruECk7mD/k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C4D1M8vP77wz6vXP94C/caQl4E0Drf2OblDOXXtprWE=;
-        b=ScFr1XOEsPiNy0FxyiphcicQtOZzcIDzNIvZ8KqCW9q732wvJRnwIEoi4nF6wyjeks
-         YQ9iCDl6I09RuxlVt7PtBhHfcc07TgFOrBfRBEULZZTCYBUj5/yA9ONAA9NpeBJ9jJF6
-         T23XAXOkDW/hF1GjSbiZULH97Si8DCtFSCyLQR6B+DotdENBJy/gf4CEw92IxFxtQBeE
-         ar5tWUTXdryT6B3GpQKYMsZnJnP/BZUue2jfYenX+4TswWx7QbbY+0M8D0WP2pOFMv6V
-         6P8kvrRZZ+PHHMz+CHr8NmBFipmEVqmQsRe4t/K2gi3a4KJDG00ZMqukNjJr/XoaBC+H
-         msUQ==
-X-Gm-Message-State: AGRZ1gJ3VlOJCAxRmFqanCfrQ0YyQf5HK4es5J3wX9qNq7ksIXObt6TP
-        oQZ2Rt7MmJUoxh1YlWumixwpeISoiN4=
-X-Google-Smtp-Source: AFSGD/XpCKL11vWCEETqARAs/uFGG8vNTKbqwzqp9Q28LT2Zfhh6r9ZXU7WMxP1Nrt+rspGD6jKKnw==
-X-Received: by 2002:a67:f085:: with SMTP id i5mr15163971vsl.198.1543385922626;
-        Tue, 27 Nov 2018 22:18:42 -0800 (PST)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id d7sm1797545vke.12.2018.11.27.22.18.40
+        bh=YaHZfO/qCQH1VESItFAu4BMUvRx9Jd7R3b6gkSc1kzM=;
+        b=gspu92IW9TXbPBsELiZR4MqKnwNAa+Y75STuZE5DS7PJaBnk1RH3enljpGiKidHII7
+         DsePPcnHJ8F2lNs1JdHqwkNOFm8dpOnSEiI/j8sznuoX38ozhrc5OMIsKgDLqxWe4OPZ
+         3KebFKgeYfzBpPe0iM/oSDaS9YbfTpXlAYEtc680YzVLDL2WGGFnumDV7EEIJox9HtHt
+         UVDvoO7MP0cu9/CAKnnPZ5ks4tAPdEP5ZrW7e68OnuBR/I9QoO4r9zUeTQ4PijzMUOIj
+         iAdbbLs2b+Zis2F/f9IR48/lQ9YTxiXuXw0DvZeP6y2JLdNcjBpLAU9IQ6fYkdEoXW34
+         PgaQ==
+X-Gm-Message-State: AGRZ1gLrZ1Y3azRLI7sHUBVVtKX76Nz5gs964aEKfB/78ZipgLVPEEYM
+        p/dQ03wzF9AbHY5FCF+v0G7ecLsDaGM=
+X-Google-Smtp-Source: AJdET5e6LjsaQwYgA/5ak2dZJpvswUfUeuoqSg/5TZ+tt3LvT66Vi0no0Y1ll/3UYiAHk/DtoN+i9w==
+X-Received: by 2002:a67:1346:: with SMTP id 67mr13471218vst.31.1543386020756;
+        Tue, 27 Nov 2018 22:20:20 -0800 (PST)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id k200sm2154798vke.9.2018.11.27.22.20.20
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 22:18:41 -0800 (PST)
-Received: by mail-vs1-f49.google.com with SMTP id t17so15364176vsc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:18:40 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr13663901vsv.20.1543385920244;
- Tue, 27 Nov 2018 22:18:40 -0800 (PST)
+        Tue, 27 Nov 2018 22:20:20 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id v24so8502100uap.13
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 22:20:20 -0800 (PST)
+X-Received: by 2002:ab0:1c12:: with SMTP id a18mr13972201uaj.15.1543385566600;
+ Tue, 27 Nov 2018 22:12:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20181126231159.122298-1-mka@chromium.org> <20181126231159.122298-6-mka@chromium.org>
-In-Reply-To: <20181126231159.122298-6-mka@chromium.org>
+References: <20181126231159.122298-1-mka@chromium.org> <20181126231159.122298-7-mka@chromium.org>
+In-Reply-To: <20181126231159.122298-7-mka@chromium.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 27 Nov 2018 22:18:27 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VXo+cifBpdFm4WoOd6pgtdREvhWCR6QPWR3219kcU8fg@mail.gmail.com>
-Message-ID: <CAD=FV=VXo+cifBpdFm4WoOd6pgtdREvhWCR6QPWR3219kcU8fg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] drm/msm/dsi: 28nm PHY: Get ref clock from the DT
+Date:   Tue, 27 Nov 2018 22:12:34 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VZ+9D8Ho+ncSvgdHAPEX52ocZXFAJQP47FwcwT-VXfLA@mail.gmail.com>
+Message-ID: <CAD=FV=VZ+9D8Ho+ncSvgdHAPEX52ocZXFAJQP47FwcwT-VXfLA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of
+ the DSI PHYs
 To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
@@ -94,33 +95,18 @@ Hi,
 
 On Mon, Nov 26, 2018 at 3:12 PM Matthias Kaehlcke <mka@chromium.org> wrote:
 >
-> Get the ref clock of the PHY from the device tree instead of
-> hardcoding its name and rate.
+> Add 'bi_tcxo' as ref clock for the DSI PHYs, it was previously
+> hardcoded in the PLL 'driver' for the 10nm PHY.
 >
 > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
+> based on "[v4,1/3] arm64: dts: qcom: sdm845: Add dpu to sdm845 dts file"
+>   (https://patchwork.kernel.org/patch/10666253/)
+>
 > Changes in v2:
 > - patch added to the series
 > ---
->  drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c | 29 +++++++++++++++-------
->  1 file changed, 20 insertions(+), 9 deletions(-)
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Generally same feedback as with "28nm 8960 PHY" patch, plus...
-
-
-> @@ -81,6 +80,7 @@ struct dsi_pll_28nm {
->         struct platform_device *pdev;
->         void __iomem *mmio;
->
-> +       struct clk *vco_ref_clk;
->         int vco_delay;
->
->         /* private clocks: */
-> @@ -139,6 +139,7 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->         struct dsi_pll_28nm *pll_28nm = to_pll_28nm(pll);
->         struct device *dev = &pll_28nm->pdev->dev;
->         void __iomem *base = pll_28nm->mmio;
-> +       u64 ref_clk_rate = parent_rate;
-
-Are you sure it's good to stash this in a u64 instead of just using
-the parent_rate directly?
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
