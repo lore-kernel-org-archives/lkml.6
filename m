@@ -2,136 +2,134 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A58C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B067C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9992208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C2EC208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 23:10:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1VDsncN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9992208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H2QjseIx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2EC208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeK2KNL (ORCPT
+        id S1727089AbeK2KNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 05:13:11 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36581 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbeK2KNL (ORCPT
+        Thu, 29 Nov 2018 05:13:24 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37209 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbeK2KNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 05:13:11 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so3426plo.3;
-        Wed, 28 Nov 2018 15:09:55 -0800 (PST)
+        Thu, 29 Nov 2018 05:13:24 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so1137plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 15:10:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uuv9KxIakgeB9blIaIbFKOJLyyLLr5/4cAdRxGVU2XY=;
-        b=U1VDsncNFalpTwqTmPRioqyKlnvsEc+BOUHqxM3bHDHFkKBkOOSXdYEUz0gOGBI6G4
-         mkAH7AvUJTK+LVD0T3Lyx20NoeTbPz0PaFIpTbhdSapEyKjIt+c7TCDNRbkgNWZY2BNq
-         VDUEGbvXtMcqfo2EjHkyFe7wOwZL1BOi9uNmMOjl7qSNQeUOdi4NOcqJUe2Bi/VEYDbm
-         n9UN78ryfe9p7mJUyG/aX/pwF6aa6Qw9PKSz7fdFbf5lt3S90xbLX9Rv7lPrpzdnzMHM
-         c1Ja4tizdhE6rfSClddWFi1WQTq+OaoTc4D5WqJZzzSrybUCc4ZgUmGbwok/PSEq4kFR
-         IJgg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=C/c3G5BmD83tfVWE2NJBrIu3QAeN/dWlRBSxFybPWAU=;
+        b=H2QjseIxovCEEMN9C2MSV7HY1gJ8aO4I5A0DVk3hL4VJGs6XifQAcspu1uncB5xDaK
+         RGxLCjFV9Xis8nepNBS48v+meMXM90MBKvZX+NVALiPH4R2fLJHUwtkz+ZA1F/ARQsU1
+         WInGaBWZMvzz5MbBYaIAj1b3G8JNkE+p8b0lA9rtjEuzdFFteqdTJWhetNiUwxR6nDKV
+         A+wI158BC1u+HlYVOpHs4JHQVRrSEk3Bmk3l0KCBiQvuTkHx/VJ259cPo1fW2MlKws7l
+         IfJbq8NI9msgySBccb1UmLjIMO4gH3ztafmTTBIjS4tU20BtAe4ByUDXkgK0vShoPwU4
+         Wumg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Uuv9KxIakgeB9blIaIbFKOJLyyLLr5/4cAdRxGVU2XY=;
-        b=NDiIWEitRlGSA2JKuF3fegkDhKC6O3+XDVlgXT9PtAYFeW2aYdhRhAX+KCKzkuxsZW
-         8aXQX5mYQhkZeO2S0MvxJmPOdDnDp+4MsmrJHHuE3JQl4jYIUOtLhZDPVzNhaCFqrHrQ
-         yXvJqjXEsvsv4lC1RFWug02vVeNEqlt8W2+qENRS18c1cOEaN9GBK3WakJM47Kyrb+Bm
-         DHMkfjfJ68KJzhjDjTvTSUv0sViyo70lnIveQgWS9Sg32czPcpx5kxDQOVsTOAwQu5mb
-         vFkmBLHwniwfGPzpmqFIbDNudSj2WHzl0L9HhupnWYKwjzxky+oAoAJzQ6BdsbxZLmDa
-         pOMg==
-X-Gm-Message-State: AA+aEWbbLGQkPZmSjsmG/Qbf61o0dHE+Vf/8ctV3cA/FXL1L3aZ7Q92l
-        cTErP6e1svd6YDlBxHelDSA=
-X-Google-Smtp-Source: AFSGD/UulYiOw7pe7cKqfKMF7Vd5zfhcIkMhY1//8x5wxJRYb2QaW3q7SgqxzUHdVWhJH8MOBiXn4Q==
-X-Received: by 2002:a17:902:b282:: with SMTP id u2mr39340421plr.89.1543446595388;
-        Wed, 28 Nov 2018 15:09:55 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id x3sm4073pgt.45.2018.11.28.15.09.53
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=C/c3G5BmD83tfVWE2NJBrIu3QAeN/dWlRBSxFybPWAU=;
+        b=jGZ4sCZ+TrCFX09YViIoaOo00zylav5p3IrXxHIPdedJUsluF0MnZy0b+flB6L7wVv
+         5CxG7GagskxoeucdkS3qW/LNrfMOA8AVDzpuoeO4ZxJbpXbbh52X8WPCG6pKf75EnS65
+         9iTzLpTw/OytzT4XjERugytdt47CWdizBBH/7TV/wkgSCeSfRXTyo0DTn/UEi5wORH3Y
+         6SI8hYeEmg7u9s1LhwWBbItSoUbPus+4OJOAZlxbC2SEW6d5PVCzris5TJo6Z3/KdVnB
+         bKDJI7i38ASBXtXbdRYx2Mj3VrESYVnP5Wepc3C1Q1unv6v0OU8UnJV2Bn6fMJ0as+4c
+         6rzw==
+X-Gm-Message-State: AA+aEWZu3BUESKx23K6V1olJQDG54K4EyKy1I40TRP1QE1GzRrIlC2rl
+        Nvh5CHBKfA372DpwVsEveSCiNQ==
+X-Google-Smtp-Source: AFSGD/X9yYgXggHNpBTfxvpCxd/HR0DNDlnMhcagOGZSqPp9gWklrwVBXXy51HSWGqp901EYvQ/Hiw==
+X-Received: by 2002:a17:902:bc81:: with SMTP id bb1mr19778631plb.223.1543446608265;
+        Wed, 28 Nov 2018 15:10:08 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c12-v6sm10913721pfb.174.2018.11.28.15.10.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 15:09:54 -0800 (PST)
-Date:   Wed, 28 Nov 2018 13:09:51 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH 26/29] x86/fpu: Inline copy_user_to_fpregs_zeroing()
-Message-ID: <20181128230951.prvhc44x4lnpbimw@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <20181128222035.2996-1-bigeasy@linutronix.de>
- <20181128222035.2996-27-bigeasy@linutronix.de>
+        Wed, 28 Nov 2018 15:10:05 -0800 (PST)
+Date:   Wed, 28 Nov 2018 15:10:04 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+In-Reply-To: <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811281504030.231719@chino.kir.corp.google.com>
+References: <20181127062503.GH6163@shao2-debian> <CAHk-=wiq9eTzenOPh9srdB=Y8NcP6NJxh7o8Y5SfSjfqZ20-RA@mail.gmail.com> <20181127205737.GI16136@redhat.com> <87tvk1yjkp.fsf@yhuang-dev.intel.com>
+ <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y56k3mt3i4q3tnwx"
-Content-Disposition: inline
-In-Reply-To: <20181128222035.2996-27-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 28 Nov 2018, Linus Torvalds wrote:
 
---y56k3mt3i4q3tnwx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Tue, Nov 27, 2018 at 7:20 PM Huang, Ying <ying.huang@intel.com> wrote:
+> >
+> > From the above data, for the parent commit 3 processes exited within
+> > 14s, another 3 exited within 100s.  For this commit, the first process
+> > exited at 203s.  That is, this commit makes memory allocation more fair
+> > among processes, so that processes proceeded at more similar speed.  But
+> > this raises system memory footprint too, so triggered much more swap,
+> > thus lower benchmark score.
+> >
+> > In general, memory allocation fairness among processes should be a good
+> > thing.  So I think the report should have been a "performance
+> > improvement" instead of "performance regression".
+> 
+> Hey, when you put it that way...
+> 
+> Let's ignore this issue for now, and see if it shows up in some real
+> workload and people complain.
+> 
 
-On Wed, Nov 28, 2018 at 11:20:32PM +0100, Sebastian Andrzej Siewior wrote:
-> Start refactoring __fpu__restore_sig() by inlining
-> copy_user_to_fpregs_zeroing().
->=20
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Well, I originally complained[*] when the change was first proposed and 
+when the stable backports were proposed[**].  On a fragmented host, the 
+change itself showed a 13.9% access latency regression on Haswell and up 
+to 40% allocation latency regression.  This is more substantial on Naples 
+and Rome.  I also measured similar numbers to this for Haswell.
 
-Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+We are particularly hit hard by this because we have libraries that remap 
+the text segment of binaries to hugepages; hugetlbfs is not widely used so 
+this normally falls back to transparent hugepages.  We mmap(), 
+madvise(MADV_HUGEPAGE), memcpy(), mremap().  We fully accept the latency 
+to do this when the binary starts because the access latency at runtime is 
+so much better.
 
---=20
-Cheers,
-Joey Pabalinas
+With this change, however, we have no userspace workaround other than 
+mbind() to prefer the local node.  On all of our platforms, native sized 
+pages are always a win over remote hugepages and it leaves open the 
+opportunity that we collapse memory into hugepages later by khugepaged if 
+fragmentation is the issue.  mbind() is not viable if the local node is 
+saturated, we are ok with falling back to remote pages of the native page 
+size when the local node is oom; this would result in an oom kill if we 
+used it to retain the old behavior.
 
---y56k3mt3i4q3tnwx
-Content-Type: application/pgp-signature; name="signature.asc"
+Given this severe access and allocation latency regression, we must revert 
+this patch in our own kernel, there is simply no path forward without 
+doing so.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv/ID4ACgkQ2rGdfm9D
-tVLeOA//efh50K2dw5YoK/jk0pjWwe2EgSWV6X5sz5KUZGuyMy4ZyCguUALhQ7JE
-cdysVyQLFPJty7p3uujNJKcN6fMuc/Pw2cEsLO31RdmmRY8EQ90ol/pQSMYMEO5s
-b2yjqSyplBBSYgxwb3TAvRdIxNnkJ1JRAcva0F2VRWmKC6wZByid/rNUk8+UnH09
-hjiwfcZYZ6DsBQ7YlYuFqfIBCFwfewZBV9EWOPvhF7FTcHeyVbin4xOjF7qSXaMS
-hXkFj3Y8+0Qp8VzHPcsQS8FvE9laofpjNIFkaARErF9lPitCq3LmCNXYW1ONNQ3C
-vOlzW+ovGWEKQnHEw9ZXKZunLhqckhbqLb6KspW3m2L02Z67JNynzyhBpt64y5JJ
-7t1VvNcJJEeiaysDVfo/8MdY30hfOo+tVXp8n6VHdElxq4ChfRmdUufxmomboMYL
-qAWPrjMLMpRNQ3GvePIWvg1uW4KJ5hBxmuNiddvNXLFKFgYZWdMTuChsBzZFjdXh
-VW/o5jfG8djSoPp0/73RVu+DHmyc2ZNIBhZl9s2AAyJLwSzu/pUgbqGUcq+A7C6o
-kgOxk4sPda9H7O9RhOLSYcvZATnJfASv+9VV7SPoztsxcnK9JRWPKCKaxfHpmUe1
-j7UIyp+Wrzsftx7/tBkl5LzEWtZJNte4y8RCDCzt2puGIGgo6PA=
-=W5U2
------END PGP SIGNATURE-----
-
---y56k3mt3i4q3tnwx--
+[*] https://marc.info/?l=linux-kernel&m=153868420126775
+[**] https://marc.info/?l=linux-kernel&m=154269994800842
