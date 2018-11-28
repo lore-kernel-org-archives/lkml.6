@@ -2,145 +2,175 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D127C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96596C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9FC82081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:09:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9FC82081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 554282081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 16:10:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VloKSpub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 554282081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeK2DLJ (ORCPT
+        id S1728990AbeK2DMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:11:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727979AbeK2DLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:11:08 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EFCD4308123E;
-        Wed, 28 Nov 2018 16:08:58 +0000 (UTC)
-Received: from treble (ovpn-121-105.rdu2.redhat.com [10.10.121.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BEE991948E;
-        Wed, 28 Nov 2018 16:08:56 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 10:08:49 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Wed, 28 Nov 2018 22:12:37 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48496 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbeK2DMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 22:12:37 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wASG9H21192841;
+        Wed, 28 Nov 2018 16:10:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=HIIkZr31oEk2TrTQTa6H9fLt9liRixVmqY18y4r8FsM=;
+ b=VloKSpubsDr+czfHF1K0ewvsTW1Oz3/lCrcJpXeIqpP6WqUyf/O1dFuWz2qAe3qqHPzI
+ JJ/+blJd5Y4NXlBpAfLvaYhJJQ678bgntOxRhpiv6deRtcRNi7HVIl5Q8e/xmfg4hGb5
+ NO1OVoBFmU3G1DDX1g/eYYoQeby89IJ2E8UEUNCY/EsQEph8EUKK6RrgC++glmcIpIpf
+ qUdc8vZEZ0malPtaGC08361VT7EAWsm0d1br1OBW7ZOxyT+ggn72EEGQa8m1tyim7NNj
+ COwoDSnSEaSwvQS3D7aQJgutiYY43gaConxEtefs0HOmbd3suZJhxaB0RldqyUKPc0rn dw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2nxy9rb4gd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 16:10:06 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wASGA4UD000609
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Nov 2018 16:10:05 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wASGA4Je023052;
+        Wed, 28 Nov 2018 16:10:04 GMT
+Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 08:10:04 -0800
+From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        "H . Peter Anvin " <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
-Message-ID: <20181128160849.epmoto4o5jaxxxol@treble>
-References: <20181018005420.82993-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181018005420.82993-1-namit@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 28 Nov 2018 16:08:59 +0000 (UTC)
+        Namhyung Kim <namhyung@kernel.org>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: [PATCH v3] perf symbols: Cannot disassemble some routines when debuginfo present
+Date:   Wed, 28 Nov 2018 08:35:34 -0800
+Message-Id: <1543422934-1228-1-git-send-email-eric.saint.etienne@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811280142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
-> This RFC introduces indirect call promotion in runtime, which for the
-> matter of simplification (and branding) will be called here "relpolines"
-> (relative call + trampoline). Relpolines are mainly intended as a way
-> of reducing retpoline overheads due to Spectre v2.
-> 
-> Unlike indirect call promotion through profile guided optimization, the
-> proposed approach does not require a profiling stage, works well with
-> modules whose address is unknown and can adapt to changing workloads.
-> 
-> The main idea is simple: for every indirect call, we inject a piece of
-> code with fast- and slow-path calls. The fast path is used if the target
-> matches the expected (hot) target. The slow-path uses a retpoline.
-> During training, the slow-path is set to call a function that saves the
-> call source and target in a hash-table and keep count for call
-> frequency. The most common target is then patched into the hot path.
-> 
-> The patching is done on-the-fly by patching the conditional branch
-> (opcode and offset) that is used to compare the target to the hot
-> target. This allows to direct all cores to the fast-path, while patching
-> the slow-path and vice-versa. Patching follows 2 more rules: (1) Only
-> patch a single byte when the code might be executed by any core. (2)
-> When patching more than one byte, ensure that all cores do not run the
-> to-be-patched-code by preventing this code from being preempted, and
-> using synchronize_sched() after patching the branch that jumps over this
-> code.
-> 
-> Changing all the indirect calls to use relpolines is done using assembly
-> macro magic. There are alternative solutions, but this one is
-> relatively simple and transparent. There is also logic to retrain the
-> software predictor, but the policy it uses may need to be refined.
-> 
-> Eventually the results are not bad (2 VCPU VM, throughput reported):
-> 
-> 		base		relpoline
-> 		----		---------
-> nginx 	22898 		25178 (+10%)
-> redis-ycsb	24523		25486 (+4%)
-> dbench	2144		2103 (+2%)
-> 
-> When retpolines are disabled, and if retraining is off, performance
-> benefits are up to 2% (nginx), but are much less impressive.
+When the kernel is compiled with -ffunction-sections and perf uses the
+kernel debuginfo, perf fails the very first symbol lookup and ends up with
+an hex offset inside [kernel.vmlinux]. It's due to how perf loads the maps.
 
-Hi Nadav,
+Indeed only .text gets loaded by map_groups__find() into al->map.
+Consequently al->map address range encompass the whole kernel image.
+But then map__load() loads many function maps by splitting al->map,
+which reduces al->map range drastically. Very likely the target address is
+then in one of those newly created function maps, so we need to lookup the
+map again to find that new map.
 
-Peter pointed me to these patches during a discussion about retpoline
-profiling.  Personally, I think this is brilliant.  This could help
-networking and filesystem intensive workloads a lot.
+I'm not sure if this issue is only specific to the kernel but at least it
+occurs withe the kernel dso, and when we're not using the kernel debuginfo,
+perf will fallback to using kallsyms and then the first lookup will work.
 
-Some high-level comments:
+The split of .text section happens in dso_process_kernel_symbol() where we
+call map_groups__find_by_name() to find an existing map, but with
+-ffunction-sections and a symbol belonging to a new (function) map, such
+map doesn't exist yet so we end up creating one and adjusting existing maps
+accordingly because adjust_kernel_syms is set there.
 
-- "Relpoline" looks confusingly a lot like "retpoline".  How about
-  "optpoline"?  To avoid confusing myself I will hereafter refer to it
-  as such :-)
+This patch makes sure that the event address we're looking-up is indeed
+within the map we've found, otherwise we lookup another map again.
+Only one extra lookup at most is required for the proper map to be found,
+if it exists.
 
-- Instead of patching one byte at a time, is there a reason why
-  text_poke_bp() can't be used?  That would greatly simplify the
-  patching process, as everything could be patched in a single step.
+Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+---
+ tools/perf/util/event.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
 
-- In many cases, a single direct call may not be sufficient, as there
-  could be for example multiple tasks using different network protocols
-  which need different callbacks for the same call site.
-
-- I'm not sure about the periodic retraining logic, it seems a bit
-  nondeterministic and bursty.
-  
-So I'd propose the following changes:
-
-- In the optpoline, reserve space for multiple (5 or so) comparisons and
-  direct calls.  Maybe the number of reserved cmp/jne/call slots can be
-  tweaked by the caller somehow.  Or maybe it could grow as needed.
-  Starting out, they would just be NOPs.
-
-- Instead of the temporary learning mode, add permanent tracking to
-  detect a direct call "miss" -- i.e., when none of the existing direct
-  calls are applicable and the retpoline will be used.
-
-- In the case of a miss (or N misses), it could trigger a direct call
-  patching operation to be run later (workqueue or syscall exit).  If
-  all the direct call slots are full, it could patch the least recently
-  modified one.  If this causes thrashing (>x changes over y time), it
-  could increase the number of direct call slots using a trampoline.
-  Even if there were several slots, CPU branch prediction would
-  presumably help make it much faster than a basic retpoline.
-
-Thoughts?
-
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index e9c108a..f7cad1a 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1569,9 +1569,58 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
+ 		 * Kernel maps might be changed when loading symbols so loading
+ 		 * must be done prior to using kernel maps.
+ 		 */
+-		if (load_map)
++		if (load_map) {
++			/*
++			 * Note when using -ffunction-sections on the kernel:
++			 *
++			 * Only .text got loaded into al->map at this point.
++			 * Consequently al->map address range encompass the
++			 * whole image.
++			 *
++			 * map__load() will split this map into many function
++			 * maps by shrinking al->map accordingly.
++			 *
++			 * The split happens in dso_process_kernel_symbol()
++			 * where we call map_groups__find_by_name() to find an
++			 * existing map, but with -ffunction-sections and a
++			 * symbol belonging to a new (function) map, such map
++			 * doesn't exist yet so we end up creating one and
++			 * adjusting existing maps accordingly because
++			 * adjust_kernel_syms is set there.
++			 */
++
+ 			map__load(al->map);
+-		al->addr = al->map->map_ip(al->map, al->addr);
++
++			/*
++			 * Note when using -ffunction-sections on the kernel:
++			 *
++			 * Very likely the target address will now be in one of
++			 * the newly created function maps but al->map still
++			 * points to .text which has been drastically shrank by
++			 * the split done in map__load()
++			 */
++			if (al->addr < al->map->start ||
++			    al->addr >= al->map->end) {
++				al->map = map_groups__find(mg, al->addr);
++
++				/*
++				 * map_groups__find() should always find a map
++				 * because the target address was initially
++				 * found in .text which got split by map__load()
++				 * *WITHOUT INTRODUCING ANY GAP*
++				 */
++				WARN_ONCE(al->map == NULL,
++					  "map__load created unexpected gaps!");
++			}
++		}
++
++		/*
++		 * In case the later call to map_groups__find() didn't find a
++		 * suitable map (it should always, but better be safe) we make
++		 * sure that al->map is still valid before deferencing it.
++		 */
++		if (al->map != NULL)
++			al->addr = al->map->map_ip(al->map, al->addr);
+ 	}
+ 
+ 	return al->map;
 -- 
-Josh
+1.8.3.1
+
