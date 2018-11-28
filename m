@@ -2,201 +2,107 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85169C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC06AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F3220645
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F3220645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id B26F3213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 04:38:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ks3AIEQO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26F3213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeK1Pi4 convert rfc822-to-8bit (ORCPT
+        id S1727519AbeK1PjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 10:38:56 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:39092 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727413AbeK1Pi4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 10:38:56 -0500
-X-ASG-Debug-ID: 1543379900-093b7e197b1ceb0001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 2RwIQFazNHIELgjN (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 28 Nov 2018 12:38:20 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Nov 2018 12:37:35 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 28 Nov 2018 12:37:35 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     Kees Cook <keescook@chromium.org>
-CC:     David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
- overwritten by STACK_END_MAGIC
-X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
-Date:   Wed, 28 Nov 2018 04:37:35 +0000
-Message-ID: <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
- <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.159]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 28 Nov 2018 10:39:06 -0500
+Received: from ozlabs.org ([203.11.71.1]:59275 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727218AbeK1PjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 10:39:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 434SbD1vs9z9s1c;
+        Wed, 28 Nov 2018 15:38:48 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543379928;
+        bh=vTtdpWWd2Ukvgfokrh2ifV2FNucxizPHQOIvGK5IJ6I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ks3AIEQOUHqJ/eV8YvxZdwCq/CDrEqDq6eloXmptLqPkNCdBkgv4kEkfS8SDDWHor
+         WAx+itxANF9UdOXYu1zKQ0fGlpVkBjS7W8SQf8yUxoMGAvAgWa/7sQsvPtOP0glqpJ
+         62kvvhPE2GssZcWXXwsu1NAQ+EMVyIqamg04Z9U/N67RLI78DF8CcJ8jj3KS9IySd0
+         NJH9i5vSrkCnWWf++u6zi3jzRjwmfebrP5ECAkFbfUnnpgbNRCQPJl5KFcU0azW1vV
+         dnpBjHvz3DRD2jYgzOJoTVYD0xQq58gxDEUW4eM3ZUYPmJQWHHrtdSvEP2IooS7EqJ
+         vVdvvQ08FuSmA==
+Date:   Wed, 28 Nov 2018 15:38:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: Tree for Nov 27 (scsi/aha1542)
+Message-ID: <20181128153847.08ead1c9@canb.auug.org.au>
+In-Reply-To: <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
+References: <20181127152539.55426063@canb.auug.org.au>
+        <ef9090cf-e86a-7fd0-dfa9-6810eaaf7e65@infradead.org>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1543379900
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4999 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.62582
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/UQWXzwPW6x4LyBoYK=gMBs/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Kees,
+--Sig_/UQWXzwPW6x4LyBoYK=gMBs/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/11/28 6:38, Kees Cook wrote:
-> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
-> <dongsheng.wang@hxt-semitech.com> wrote:
->> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
->> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
->> is not a real task on stack, it's only init_task on init_stack.
->>
->> Commit 0500871f21b2 ("Construct init thread stack in the linker script
->> rather than by union") added this macro and put task_strcut into
->> thread_union. This brings us the following possibilities:
->>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
->>                                             ----- <-- thread_info & stack
->>         N                    N             |     |     --- <-- task
->>                                            |     |    |   |
->>                                             -----      ---
->>
->>                                             ----- <-- stack
->>         N                    Y             |     |     --- <-- task(Including thread_info)
->>                                            |     |    |   |
->>                                             -----      ---
->>
->>                                             ----- <-- stack & task & thread_info
->>         Y                    N             |     |
->>                                            |     |
->>                                             -----
->>
->>                                             ----- <-- stack & task(Including thread_info)
->>         Y                    Y             |     |
->>                                            |     |
->>                                             -----
->> The kernel has handled the first two cases correctly.
->>
->> For the third case:
->> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
->> should never happen, because the task and thread_info will overlap. So
->> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
->>
->> For the fourth case:
->> When task on stack, the end of stack should add a sizeof(task_struct) offset.
->>
->> This patch handled with the third and fourth case.
->>
->> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
->>
->> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
->> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->> ---
->>  arch/Kconfig                     | 1 +
->>  include/linux/sched/task_stack.h | 5 ++++-
->>  2 files changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/Kconfig b/arch/Kconfig
->> index e1e540ffa979..0a2c73e73195 100644
->> --- a/arch/Kconfig
->> +++ b/arch/Kconfig
->> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
->>  # Select if arch init_task must go in the __init_task_data section
->>  config ARCH_TASK_STRUCT_ON_STACK
->>         bool
->> +       depends on THREAD_INFO_IN_TASK || IA64
-> The "IA64" part shouldn't be needed since IA64 already selects it.
+Hi all,
+
+On Tue, 27 Nov 2018 20:14:58 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
 >
-> Since it's selected, it also can't have a depends, IIUC.
+> On 11/26/18 8:25 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20181126:
+> >  =20
+>=20
+> on i386:
+>=20
+> ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
+>=20
+> somewhere in aha1542_interrupt() according to objdump.
 
-Since the IA64 thread_info including task_struct, it doesn't need to
-select THREAD_INFO_IN_TASK.
-So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
-THREAD_INFO.
+Presumably caused by commit
 
->>  # Select if arch has its private alloc_task_struct() function
->>  config ARCH_TASK_STRUCT_ALLOCATOR
->> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
->> index 6a841929073f..624c48defb9e 100644
->> --- a/include/linux/sched/task_stack.h
->> +++ b/include/linux/sched/task_stack.h
->> @@ -7,6 +7,7 @@
->>   */
->>
->>  #include <linux/sched.h>
->> +#include <linux/sched/task.h>
->>  #include <linux/magic.h>
->>
->>  #ifdef CONFIG_THREAD_INFO_IN_TASK
->> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
->>
->>  static inline unsigned long *end_of_stack(const struct task_struct *task)
->>  {
->> -       return task->stack;
->> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
->> +               return task->stack;
->> +       return (unsigned long *)(task + 1);
->>  }
-> This seems like a strange place for the change. It feels more like
-> init_task has been defined incorrectly.
+  1794ef2b150d ("scsi: aha1542: convert to DMA mapping API")
 
-The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
-selected.
-include/asm-generic/vmlinux.lds.h:
-#define INIT_TASK_DATA(align)                        \
-    . = ALIGN(align);                        \
-    __start_init_task = .;                        \
-    init_thread_union = .;                        \
-    init_stack = .;                            \
-    KEEP(*(.data..init_task))                    \
-    KEEP(*(.data..init_thread_info))                \
-    . = __start_init_task + THREAD_SIZE;                \
-    __end_init_task = .;
-
-So we need end_of_stack to offset sizeof(task_struct).
-
+--=20
 Cheers,
-Dongsheng
+Stephen Rothwell
 
+--Sig_/UQWXzwPW6x4LyBoYK=gMBs/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv+G9cACgkQAVBC80lX
+0GznJQgAhVR9Ayj/3/ionZLz8Fdbqjs0Hr2rG5KDRY9cHogF7ZusSUhjOGTMwzZD
+0yc461rVUKyDosMl4sy9zuN0v87dAgTLMoIGRsiPaIQu/jsnqrrEKnALBsc5HDx/
+RbsFqUd04+XWXQkXAUDNxOupxqSumb8e+EkAW/NZcXXVRqOA6cmrUo3Jgnd+IVNO
+NOKUlQ5DJVKl2MKNOd6SUuh4cqPTUBl15gbhLR3wzXLok2D/HbQgUgJrPXC4h/Dp
+WJxWfeK66+77ID9DUywQb5+hIgP5Hhg3JBxUAZpUHH0klEMKmO1gH2pN3xdfEA9P
+8z6d+Xp6Gg9xlT5QzrxLq+tYRVRvAQ==
+=2/vb
+-----END PGP SIGNATURE-----
+
+--Sig_/UQWXzwPW6x4LyBoYK=gMBs/--
