@@ -7,60 +7,57 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567D2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13012C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EC3C208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:26:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EC3C208E7
+	by mail.kernel.org (Postfix) with ESMTP id D8749208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 14:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8749208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeK2B2R (ORCPT
+        id S1728523AbeK2B2m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 20:28:17 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36267 "EHLO
+        Wed, 28 Nov 2018 20:28:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41881 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727726AbeK2B2Q (ORCPT
+        with ESMTP id S1727726AbeK2B2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 20:28:16 -0500
+        Wed, 28 Nov 2018 20:28:41 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEPZUF2322745
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wASEOxXd2322672
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 28 Nov 2018 06:25:35 -0800
+        Wed, 28 Nov 2018 06:24:59 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEPYPF2322741;
-        Wed, 28 Nov 2018 06:25:34 -0800
-Date:   Wed, 28 Nov 2018 06:25:34 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wASEOxcn2322666;
+        Wed, 28 Nov 2018 06:24:59 -0800
+Date:   Wed, 28 Nov 2018 06:24:59 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-321a874a7ef85655e93b3206d0f36b4a6097f948@git.kernel.org>
-Cc:     tglx@linutronix.de, keescook@chromium.org,
-        torvalds@linux-foundation.org, asit.k.mallick@intel.com,
-        david.c.stewart@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, dwmw@amazon.co.uk, gregkh@linuxfoundation.org,
-        thomas.lendacky@amd.com, tim.c.chen@linux.intel.com,
-        luto@kernel.org, longman9394@gmail.com, casey.schaufler@intel.com,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-        peterz@infradead.org, jcm@redhat.com, jkosina@suse.cz,
-        aarcange@redhat.com, arjan@linux.intel.com, hpa@zytor.com,
-        mingo@kernel.org
-Reply-To: aarcange@redhat.com, peterz@infradead.org, jcm@redhat.com,
-          jkosina@suse.cz, hpa@zytor.com, mingo@kernel.org,
-          arjan@linux.intel.com, asit.k.mallick@intel.com,
-          dave.hansen@intel.com, david.c.stewart@intel.com,
-          ak@linux.intel.com, tglx@linutronix.de,
-          torvalds@linux-foundation.org, keescook@chromium.org,
-          thomas.lendacky@amd.com, dwmw@amazon.co.uk,
-          gregkh@linuxfoundation.org, longman9394@gmail.com,
-          luto@kernel.org, tim.c.chen@linux.intel.com,
-          linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-          casey.schaufler@intel.com
-In-Reply-To: <20181125185004.430168326@linutronix.de>
-References: <20181125185004.430168326@linutronix.de>
+Message-ID: <tip-dbe733642e01dd108f71436aaea7b328cb28fd87@git.kernel.org>
+Cc:     keescook@chromium.org, ak@linux.intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, casey.schaufler@intel.com,
+        asit.k.mallick@intel.com, jcm@redhat.com, mingo@kernel.org,
+        dave.hansen@intel.com, gregkh@linuxfoundation.org, luto@kernel.org,
+        aarcange@redhat.com, jkosina@suse.cz,
+        torvalds@linux-foundation.org, longman9394@gmail.com,
+        dwmw@amazon.co.uk, hpa@zytor.com, david.c.stewart@intel.com,
+        arjan@linux.intel.com, jpoimboe@redhat.com, peterz@infradead.org,
+        thomas.lendacky@amd.com, tim.c.chen@linux.intel.com
+Reply-To: david.c.stewart@intel.com, hpa@zytor.com, dwmw@amazon.co.uk,
+          torvalds@linux-foundation.org, longman9394@gmail.com,
+          tim.c.chen@linux.intel.com, thomas.lendacky@amd.com,
+          peterz@infradead.org, arjan@linux.intel.com, jpoimboe@redhat.com,
+          linux-kernel@vger.kernel.org, casey.schaufler@intel.com,
+          asit.k.mallick@intel.com, keescook@chromium.org,
+          tglx@linutronix.de, ak@linux.intel.com, aarcange@redhat.com,
+          jkosina@suse.cz, gregkh@linuxfoundation.org, luto@kernel.org,
+          jcm@redhat.com, mingo@kernel.org, dave.hansen@intel.com
+In-Reply-To: <20181125185004.337452245@linutronix.de>
+References: <20181125185004.337452245@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] sched/smt: Expose sched_smt_present static key
-Git-Commit-ID: 321a874a7ef85655e93b3206d0f36b4a6097f948
+Subject: [tip:x86/pti] x86/Kconfig: Select SCHED_SMT if SMP enabled
+Git-Commit-ID: dbe733642e01dd108f71436aaea7b328cb28fd87
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -74,19 +71,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  321a874a7ef85655e93b3206d0f36b4a6097f948
-Gitweb:     https://git.kernel.org/tip/321a874a7ef85655e93b3206d0f36b4a6097f948
+Commit-ID:  dbe733642e01dd108f71436aaea7b328cb28fd87
+Gitweb:     https://git.kernel.org/tip/dbe733642e01dd108f71436aaea7b328cb28fd87
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Sun, 25 Nov 2018 19:33:38 +0100
+AuthorDate: Sun, 25 Nov 2018 19:33:37 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 28 Nov 2018 11:57:07 +0100
 
-sched/smt: Expose sched_smt_present static key
+x86/Kconfig: Select SCHED_SMT if SMP enabled
 
-Make the scheduler's 'sched_smt_present' static key globaly available, so
-it can be used in the x86 speculation control code.
+CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
+have it configurable. The runtime overhead in the core scheduler code is
+minimal because the actual SMT scheduling parts are conditional on a static
+key.
 
-Provide a query function and a stub for the CONFIG_SMP=n case.
+This allows to expose the scheduler's SMT state static key to the
+speculation control code. Alternatively the scheduler's static key could be
+made always available when CONFIG_SMP is enabled, but that's just adding an
+unused static key to every other architecture for nothing.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -110,56 +112,29 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.430168326@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185004.337452245@linutronix.de
+
 
 ---
- include/linux/sched/smt.h | 18 ++++++++++++++++++
- kernel/sched/sched.h      |  4 +---
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ arch/x86/Kconfig | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/sched/smt.h b/include/linux/sched/smt.h
-new file mode 100644
-index 000000000000..c9e0be514110
---- /dev/null
-+++ b/include/linux/sched/smt.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_SCHED_SMT_H
-+#define _LINUX_SCHED_SMT_H
-+
-+#include <linux/static_key.h>
-+
-+#ifdef CONFIG_SCHED_SMT
-+extern struct static_key_false sched_smt_present;
-+
-+static __always_inline bool sched_smt_active(void)
-+{
-+	return static_branch_likely(&sched_smt_present);
-+}
-+#else
-+static inline bool sched_smt_active(void) { return false; }
-+#endif
-+
-+#endif
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 618577fc9aa8..4e524ab589c9 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -23,6 +23,7 @@
- #include <linux/sched/prio.h>
- #include <linux/sched/rt.h>
- #include <linux/sched/signal.h>
-+#include <linux/sched/smt.h>
- #include <linux/sched/stat.h>
- #include <linux/sched/sysctl.h>
- #include <linux/sched/task.h>
-@@ -936,9 +937,6 @@ static inline int cpu_of(struct rq *rq)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index b5286ad2a982..8689e794a43c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1000,13 +1000,7 @@ config NR_CPUS
+ 	  to the kernel image.
  
+ config SCHED_SMT
+-	bool "SMT (Hyperthreading) scheduler support"
+-	depends on SMP
+-	---help---
+-	  SMT scheduler support improves the CPU scheduler's decision making
+-	  when dealing with Intel Pentium 4 chips with HyperThreading at a
+-	  cost of slightly increased overhead in some places. If unsure say
+-	  N here.
++	def_bool y if SMP
  
- #ifdef CONFIG_SCHED_SMT
--
--extern struct static_key_false sched_smt_present;
--
- extern void __update_idle_core(struct rq *rq);
- 
- static inline void update_idle_core(struct rq *rq)
+ config SCHED_MC
+ 	def_bool y
