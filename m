@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46854C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9E5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BEF21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BEF21479
+	by mail.kernel.org (Postfix) with ESMTP id 0161C2081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 22:21:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0161C2081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeK2JYJ (ORCPT
+        id S1726802AbeK2JYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:24:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33058 "EHLO
+        Thu, 29 Nov 2018 04:24:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33079 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbeK2JYI (ORCPT
+        with ESMTP id S1726752AbeK2JYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:24:08 -0500
+        Thu, 29 Nov 2018 04:24:11 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gS8CW-0001GX-0M; Wed, 28 Nov 2018 23:20:56 +0100
+        id 1gS8CX-0001GX-KQ; Wed, 28 Nov 2018 23:20:58 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 05/29] x86/fpu: add might_fault() to user_insn()
-Date:   Wed, 28 Nov 2018 23:20:11 +0100
-Message-Id: <20181128222035.2996-6-bigeasy@linutronix.de>
+Subject: [PATCH 07/29] x86/fpu: don't export __kernel_fpu_{begin|end}()
+Date:   Wed, 28 Nov 2018 23:20:13 +0100
+Message-Id: <20181128222035.2996-8-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128222035.2996-1-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
@@ -49,28 +49,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Every user of user_insn() passes an user memory pointer to this macro.
+There is one user using __kernel_fpu_begin() and before invoking it, it
+invokes preempt_disable(). So it could invoke kernel_fpu_begin() right
+away. The 32bit version of arch_efi_call_virt_setup() and
+arch_efi_call_virt_teardown() does this already.
 
-Add might_fault() to user_insn() so we can spot users which are using
-this macro in sections where page faulting is not allowed.
+The comment above *kernel_fpu*() claims that before invoking
+__kernel_fpu_begin() preemption should be disabled and that KVM is a
+good example of doing it. Well, KVM doesn't do that since commit
+
+  f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
+
+so it is not an example anymore.
+With EFI gone as the last user of __kernel_fpu_{begin|end}(), it can be
+made static and not exported anymore.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/internal.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/efi.h     |  6 ++----
+ arch/x86/include/asm/fpu/api.h | 16 ++++++----------
+ arch/x86/kernel/fpu/core.c     |  6 ++----
+ 3 files changed, 10 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 69dcdf195b611..978a1633c0698 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -106,6 +106,7 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
- #define user_insn(insn, output, input...)				\
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index eea40d52ca785..45864898f7e50 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -82,8 +82,7 @@ struct efi_scratch {
+ #define arch_efi_call_virt_setup()					\
  ({									\
- 	int err;							\
-+	might_fault();							\
- 	asm volatile(ASM_STAC "\n"					\
- 		     "1:" #insn "\n\t"					\
- 		     "2: " ASM_CLAC "\n"				\
+ 	efi_sync_low_kernel_mappings();					\
+-	preempt_disable();						\
+-	__kernel_fpu_begin();						\
++	kernel_fpu_begin();						\
+ 	firmware_restrict_branch_speculation_start();			\
+ 									\
+ 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
+@@ -99,8 +98,7 @@ struct efi_scratch {
+ 		efi_switch_mm(efi_scratch.prev_mm);			\
+ 									\
+ 	firmware_restrict_branch_speculation_end();			\
+-	__kernel_fpu_end();						\
+-	preempt_enable();						\
++	kernel_fpu_end();						\
+ })
+ 
+ extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned long size,
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index a9caac9d4a729..d6e094c282779 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -12,17 +12,13 @@
+ #define _ASM_X86_FPU_API_H
+ 
+ /*
+- * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
+- * and they don't touch the preempt state on their own.
+- * If you enable preemption after __kernel_fpu_begin(), preempt notifier
+- * should call the __kernel_fpu_end() to prevent the kernel/user FPU
+- * state from getting corrupted. KVM for example uses this model.
+- *
+- * All other cases use kernel_fpu_begin/end() which disable preemption
+- * during kernel FPU usage.
++ * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
++ * disables preemption so be carefull if you intend to use it for long periods
++ * of time.
++ * If you intend to use the FPU in softirq you need to check first with
++ * irq_fpu_usable() if it is possible.
++ * Using the FPU in hardirq is not allowed.
+  */
+-extern void __kernel_fpu_begin(void);
+-extern void __kernel_fpu_end(void);
+ extern void kernel_fpu_begin(void);
+ extern void kernel_fpu_end(void);
+ extern bool irq_fpu_usable(void);
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 2ea85b32421a0..2e5003fef51a9 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
+ }
+ EXPORT_SYMBOL(irq_fpu_usable);
+ 
+-void __kernel_fpu_begin(void)
++static void __kernel_fpu_begin(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
+ 		__cpu_invalidate_fpregs_state();
+ 	}
+ }
+-EXPORT_SYMBOL(__kernel_fpu_begin);
+ 
+-void __kernel_fpu_end(void)
++static void __kernel_fpu_end(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
+ 
+ 	kernel_fpu_enable();
+ }
+-EXPORT_SYMBOL(__kernel_fpu_end);
+ 
+ void kernel_fpu_begin(void)
+ {
 -- 
 2.20.0.rc1
 
