@@ -2,123 +2,85 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A51C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656B1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86DED2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DED2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 21DD32082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 07:51:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AbXKrCT3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DD32082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeK1SvZ (ORCPT
+        id S1727762AbeK1Sv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 13:51:25 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32785 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727268AbeK1SvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 13:51:24 -0500
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 91678C7C568CE;
-        Wed, 28 Nov 2018 07:50:38 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
- 2018 07:50:31 +0000
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <5c4866e4-dee0-730c-f08b-8ea8d00dbd96@huawei.com>
-Date:   Wed, 28 Nov 2018 08:50:26 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 28 Nov 2018 13:51:56 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48976 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbeK1Sv4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Nov 2018 13:51:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EWo+p2SfKgYx4J3NyR2bG5AfZ/V47E8YX3N4K63yArA=; b=AbXKrCT3xlsWVAFQDnGCUFSBm
+        zJ18RBCJ7AZRHlFn/c9DlwLdT9jEL88AM0iKuIPiCU8HsSRalBd2Ydhl2GT1QwXub+ybnLSimIHSR
+        0qkS2YCdPHPx0zzrQr+9prbvYAHBi0X8+cmzDAfv7BmYTfkV87allBG0wWdK1HHv+vevjGblyBFJG
+        HsFkDd4+b4Te4EOvlkebQHLKDc/wLOLWcFZA2yyazTXlZJpu7efjFiqfSo90uY3G0Mo2dorhgGyXE
+        OnaEumr3TshpKHb/9CZGklf8NhdrQabr5vgbo5pa6m0gTrwXsA7d8Gk8+szwzb6oJevH4mh6q1KA+
+        ZYnzLfbwg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRucp-0001BK-6B; Wed, 28 Nov 2018 07:51:11 +0000
+Date:   Tue, 27 Nov 2018 23:51:11 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Allison Henderson <allison.henderson@oracle.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        martin.petersen@oracle.com, shirley.ma@oracle.com,
+        bob.liu@oracle.com
+Subject: Re: [RFC PATCH v1 0/7] Block/XFS: Support alternative mirror device
+ retry
+Message-ID: <20181128075111.GA29388@infradead.org>
+References: <1543376991-5764-1-git-send-email-allison.henderson@oracle.com>
+ <20181128053303.GL6311@dastard>
+ <20181128073722.GB7084@infradead.org>
+ <20181128074613.GP6311@dastard>
 MIME-Version: 1.0
-In-Reply-To: <20181116133851.GB4163@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128074613.GP6311@dastard>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
-> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
->> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
->> for a list of hash algorithms used for event logs and event log digests.
->>
->> However, according to TCG EFI Protocol Specification, these arrays have
->> variable sizes. Setting the array size to zero or 3 does not make any
->> difference, because the parser has to adjust the offset depending on the
->> actual array size to access structure members after the static arrays.
->>
->> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
->> the array size to zero.
->>
->> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
->> event log")
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   include/linux/tpm_eventlog.h | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->> index 20d9da77fc11..3d5d162f09cc 100644
->> --- a/include/linux/tpm_eventlog.h
->> +++ b/include/linux/tpm_eventlog.h
->> @@ -8,7 +8,6 @@
->>   #define TCG_EVENT_NAME_LEN_MAX	255
->>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
->>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
->> -#define TPM2_ACTIVE_PCR_BANKS	3
->>   
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
->> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->>   	u8 spec_errata;
->>   	u8 uintnsize;
->>   	u32 num_algs;
->> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tcg_efi_specid_event_algs digest_sizes[0];
->>   	u8 vendor_info_size;
->>   	u8 vendor_info[0];
->>   } __packed;
->> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->>   	u32 pcr_idx;
->>   	u32 event_type;
->>   	u32 count;
->> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tpm2_digest digests[0];
->>   	struct tcg_event_field event;
->>   } __packed;
->>   
->> -- 
->> 2.17.1
->>
-> 
-> NAK for the same reason as last time.
+On Wed, Nov 28, 2018 at 06:46:13PM +1100, Dave Chinner wrote:
+> Maybe we should be chaining bios for discontig buffers rather than
+> submitting them individually - that keeps the whole chain around
+> until all bios in the chain have completed, right?
 
-No Fixes tag, or Fixes tag without newline?
+No, it doesn't.  It just keeps the head of the chain around.
 
-Roberto
+But we generally submit one buffer per map, only if each map was
+bigger than BIO_MAX_PAGE * PAGE_SIZE we'd submit multiple bios.
+That should always be bigger than our buffer sizes.
+
+We also have the additional problem that a single bio submitted
+by the file system can be split into multiple by the block layer,
+which happens for raid 5 at least, but at least that splitting
+is driven by the drivers make_request function, so it can do
+smarts there.
 
 
-> /Jarkko
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
