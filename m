@@ -2,113 +2,159 @@ Return-Path: <SRS0=rk9P=OH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B981C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90FAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD962081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82C6D2133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 28 Nov 2018 17:36:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpNSzciR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD962081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="MF6pUaz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C6D2133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbeK2Ehy (ORCPT
+        id S1729044AbeK2EjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 28 Nov 2018 23:37:54 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38143 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbeK2Ehy (ORCPT
+        Wed, 28 Nov 2018 23:39:14 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:44914 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbeK2EjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Nov 2018 23:37:54 -0500
-Received: by mail-lj1-f195.google.com with SMTP id c19-v6so24208481lja.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 09:35:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/QuhxiVq/xxyT4idFm0A4A0PmbM8weVG/FM8Lm7YGUQ=;
-        b=SpNSzciRmXPQikMvb/KMmsJ9Kkukvlrhw6IvvgXypHOFxl4aXsk8VNpt8vn1EPMQ4O
-         8MTuCA/0CfVKX7oiv2+OcetGjKoJMnEyUmJyBuULBCcDnwS8eFiCrffWs0OsVV2qyUnX
-         eI20RlTpjE/IiPgubPqIjH+DXDrvs06wGG9wH2CudZ4G3CoayitYJpGzN3kNr1DbPhcG
-         F2rTEOxqGd1c1dEVmdaAR7SPrt3F1TY9lxfvw0CyALHTJAdAH2xbROe0yWYnnUy+3yxt
-         YwXYfoe0r6uTezUNRMkNpEkOFOmTHpE2qm53MsDDFfdZ/Z3w1z+5HaOxq2E3Sd5x/VmT
-         evog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/QuhxiVq/xxyT4idFm0A4A0PmbM8weVG/FM8Lm7YGUQ=;
-        b=ULc7PESC/xdhAfO2rLuKLbpVlYeYxJALf5fqWItELI6LDMe3TjwF9AN9mt1C0CmiFy
-         Q66uyUJk39n937LA7lfHx4Zvc7gz7mqdj+shBXKL0X/es4+ZnZMHBPgrJWQSyeBZOw94
-         D1Y6yNizy8BwmJVgJvp2vVeojLj7ecwbLhFP74GIaA5yhbHB17UzWfkyLWcm0hGheSfo
-         aqGMLNt12RWVy/+j61SkD6hLbey8wPJNj7VB+DqO7AUuEuQVDM+bcyCt+Bd/xuG2ToLA
-         iCx2QLpf+PQJ+UtcvkcjANizRJqphIQgeQFwAYjegtxnHf61hkxqd35yRgZSSGlxLDKI
-         OUYw==
-X-Gm-Message-State: AA+aEWYH3w9Mz8oAqlNsjMe7Xh5nl+Sa0/GqXS2pQ0rJW3U2XQNVZEvy
-        06OAsAQz9n4OrHUWP8czAJgvKYig0M5+tWcbA3A=
-X-Google-Smtp-Source: AJdET5eo9c3wYqeOyeoWRCmdO8/GzOre3em6kYnV4wQrfJ/JUqfpf7H9WmNNSqhjZFJsmzo5WxJZ4+gZQj9Q7pw00eA=
-X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr26285522ljj.61.1543426529224;
- Wed, 28 Nov 2018 09:35:29 -0800 (PST)
+        Wed, 28 Nov 2018 23:39:14 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 45A6C5C076E;
+        Wed, 28 Nov 2018 18:36:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1543426608;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lCormIaApgyqoWyxk8YqZd8bagSbr4GW83eCatAooOI=;
+        b=MF6pUaz9yIN3FXwaCD1LPCSDMQssWxFcvnpYTIFwSr98yGe8FbHQamCAVN8H0V3+qo1nDC
+        DDBo0pgqVdTKr55Uo7BPwlzdCHKPq3e1ciIofHUSEC23r+W47NfZPqV0KlRsnP/JJJbI5E
+        Tis0P2HuE87eQMKFPOie3iDw4p7Ym5s=
 MIME-Version: 1.0
-References: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
-In-Reply-To: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 28 Nov 2018 18:35:18 +0100
-Message-ID: <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
-Subject: Re: [PATCH] Compiler Attributes: move kernel-only attributes into __KERNEL__
-To:     liuxiaozhou@bytedance.com
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 28 Nov 2018 18:36:48 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Leonard Crestez <leonard.crestez@nxp.com>, l.stach@pengutronix.de
+Cc:     lorenzo.pieralisi@arm.com, Trent Piepho <tpiepho@impinj.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-kernel@vger.kernel.org, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, andrew.smirnov@gmail.com,
+        linux-pci@vger.kernel.org, bhelgaas@google.com
+Subject: Re: [PATCH v3 2/2] PCI: imx6: limit DBI register length
+In-Reply-To: <fd07b82d2473d5d7db9826142e79b00a@agner.ch>
+References: <20181120165626.26424-1-stefan@agner.ch>
+ <20181120165626.26424-2-stefan@agner.ch>
+ <581b9548043d5276f6685f534386180fd0673a9a.camel@nxp.com>
+ <1542741198.30311.608.camel@impinj.com>
+ <268e109e1c6b309454bd5a313078894c@agner.ch>
+ <1542749302.30311.624.camel@impinj.com>
+ <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+ <fd07b82d2473d5d7db9826142e79b00a@agner.ch>
+Message-ID: <fd74de3125bf7df8789e83f2e0631157@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaozhou,
+On 28.11.2018 13:19, Stefan Agner wrote:
+> On 21.11.2018 14:47, Leonard Crestez wrote:
+>> On 11/20/2018 11:28 PM, Trent Piepho wrote:
+>>> On Tue, 2018-11-20 at 21:42 +0100, Stefan Agner wrote:
+>>>> On 20.11.2018 20:13, Trent Piepho wrote:
+>>
+>>>>> It also seems to me that this doesn't need to be in the internal pci
+>>>>> config access functions.  The driver shouldn't be reading registers
+>>>>> that don't exist anyway.  It's really about trying to fix sysfs access
+>>>>> to registers that don't exist.  So maybe it should be done there.
+>>>>
+>>>> That was my first approach, see:
+>>>
+>>> Yes, but that just used the pci device id which applies to every IMX
+>>> design.
+>>>
+>>> It's also not totally correct, as it seems real registers after 0x200
+>>> do work on imx6, and that would prevent access to them.
+>>
+>> I see that Lorenzo already accepted the patch in pci/dwc:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/commit/?h=pci/dwc&id=f14eaec153aaebbe940ddd21e4198cc2abc927c2
+>>
+>> My tests show that this series breaks pci cards on 6qdl and I think it
+>> should be reverted until a fix is found. Are you OK with this?
+>>
+>> Fixing might require an entirely different approach.
+> 
+> I tried to reproduce this issue on Apalis iMX6 (i.MX 6Q) with a ath9k
+> PCIe WiFi card, the issue you are seeing did not happen. My lspci looks
+> as follows:
+> 
+> root@ea210c63d739:/# lspci -v
+> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
+> [Normal decode])
+>         Flags: bus master, fast devsel, latency 0, IRQ 255
+>         Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
+>         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
+>         Memory behind bridge: 01100000-011fffff
+>         [virtual] Expansion ROM at 01200000 [disabled] [size=64K]
+>         Capabilities: [40] Power Management version 3
+>         Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+>         Capabilities: [70] Express Root Port (Slot-), MSI 00
+>         Capabilities: [100] Advanced Error Reporting
+>         Capabilities: [140] Virtual Channel
+> lspci: Unable to load libkmod resources: error -12
+> 
+> 01:00.0 Network controller: Qualcomm Atheros AR928X Wireless Network
+> Adapter (PCI-Express) (rev 01)
+>         Subsystem: Foxconn International, Inc. Device e007
+>         Flags: bus master, fast devsel, latency 0, IRQ 312
+>         Memory at 01100000 (64-bit, non-prefetchable) [size=64K]
+>         Capabilities: [40] Power Management version 2
+>         Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit-
+>         Capabilities: [60] Express Legacy Endpoint, MSI 00
+>         Capabilities: [90] MSI-X: Enable- Count=1 Masked-
+>         Capabilities: [100] Advanced Error Reporting
+>         Capabilities: [140] Virtual Channel
+>         Capabilities: [160] Device Serial Number 00-00-00-00-00-00-00-00
+>         Kernel driver in use: ath9k
+> 
+> 
+> I did also setup a WiFi network and transmitted some packages, but I did
+> not get a nobody carred message. Do you have an idea why that might be?
+> 
+> # cat /proc/interrupts
+> ...
+> 312:      10967          0          0          0       GPC 123 Level    
+> ath9k
+> ...
+> 
+> 
+> Your conclusion in this thread seem reasonable, hence reverting the
+> issue does. However, I still would like to reproduce the issue so I can
+> make sure that future patches don't break it :-)
 
-On Wed, Nov 28, 2018 at 3:09 PM Xiaozhou Liu <liuxiaozhou@bytedance.com> wr=
-ote:
->
-> Attributes such as `__gnu_inline' are meant to be used within the
-> kernel. When userspace somehow includes <linux/compiler.h>
-> (eg. tools/bpf), compilation errors would be shown:
->
->         "error: unknown type name =E2=80=98__gnu_inline=E2=80=99"
->
-> So just move these things into __KERNEL__ and the behavior is kept
-> as before.
+Hm, I realized that I need to enable CONFIG_PCIEPORTBUS and set
+ath9k.use_msi=1 to get MSI for that card. However, it seems that ath9k
+does not behave well in that setup. It does get interrupts, and seems to
+work to some degree, but I was not successful in transmitting data over
+WiFi, but that might be an entirly different thing.
 
-That is not exactly correct -- a3f8a30f3f00 moved some attributes to
-another file, moving them into __KERNEL__ (in particular,__gnu_inline
-is).
+However, what I noticed is that when CONFIG_PCIEPORTBUS and
+CONFIG_PCI_MSI is enabled, MSI works but legacy interrupt seem not to
+fire anymore. That is true for ath9k as well as e1000e (using
+e1000e.IntMode=0 to force legacy). Is that a known issue/limitation with
+i.MX 6 PCIe?
 
-The problem is, instead, that __gnu_inline is not anymore defined
-outside __KERNEL__, but something else that uses it is (the inline
-macro definition, if I had to guess).
-
-If your problem is fixed by putting __gnu_inline into __KERNEL__
-again, it means we can simply move the inline definition inside
-__KERNEL__ too. That way, we don't pollute userspace users with macro
-definitions.
-
-Having said that, does someone know whether userspace should have
-access to those attributes (or rather, other code that uses in turn
-those attributes)?
-
-Cheers,
-Miguel
+--
+Stefan
