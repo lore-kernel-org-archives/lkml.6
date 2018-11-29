@@ -2,103 +2,108 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDACC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0401CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291AE20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:47:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 291AE20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BA02720673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:48:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqVKccPi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA02720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732947AbeK3BxX (ORCPT
+        id S1733163AbeK3Bxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:53:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43780 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729275AbeK3BxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:53:22 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CCCE2356D3;
-        Thu, 29 Nov 2018 14:47:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.12])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3883F17D4D;
-        Thu, 29 Nov 2018 14:47:44 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 29 Nov 2018 15:47:46 +0100 (CET)
-Date:   Thu, 29 Nov 2018 15:47:43 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        strace-devel@lists.strace.io
-Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
- ptrace_message
-Message-ID: <20181129144742.GB10645@redhat.com>
-References: <20181128130439.GB28206@altlinux.org>
- <20181128130601.GC28206@altlinux.org>
- <20181128134913.GC30395@redhat.com>
- <20181128140533.GF28206@altlinux.org>
- <20181128142006.GE30395@redhat.com>
- <20181128152346.GG28206@altlinux.org>
- <20181128221125.GA2800@altlinux.org>
+        Thu, 29 Nov 2018 20:53:42 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53885 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731628AbeK3Bb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:28 -0500
+Received: by mail-it1-f193.google.com with SMTP id g85so3786056ita.3;
+        Thu, 29 Nov 2018 06:25:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FfZIvNThYDQ4IjcNKC7Fi3JYmBMBLzaJvVpeqITnlUo=;
+        b=jqVKccPiyYTDdRTZJOVfNOOb3Ky26TJ4HRIc8/n92OFxgtdmGaG0Fxiw2sx4Wb/FGV
+         OEMV66aObSO30+8jZpKZBd5/bP+6QcP2+y5ZeYO/1PIDg2HaC7yKqsev0WjrwgOPjDtS
+         QZl2F0CH3hCIy5hrCL5A+GS7ZLHy/CtYzdaheZVQqqzYEpy/Zng8+qbb2OWFYgDXv9nt
+         t0S1i/VYsxtk0hY68F7cWAan140hPtqYIxnROpzt9CacE/iWRoMUUFcF+ea6fivcrpNT
+         QQ+ZR61QW91r1l87myKv6nJW3EV0/tsZkC441/DgePd6Eo3aSxZ0Sl/Vf1rdsrHTsv5G
+         0Sug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FfZIvNThYDQ4IjcNKC7Fi3JYmBMBLzaJvVpeqITnlUo=;
+        b=oiVQqd1N1sWq61rzasqYn9cHihwM5j/Vrswt/ZDlqg4QFn6PCdbG8eAv2aa4L5FJgh
+         xooadFksJw0nEK6zBifFUHfnD5RIpQAeDJxz8eATHdt1LW+cJ9pJizK3bgVJuT03T25D
+         7kfeotBMfi2OznUYX9p+VJenQdLWShGyZjL9fJBvAIcXiHM2NjGCkyqKGH7dWRvbkJHl
+         tKzRY7haGhkw/gyA1cPe2vCeUeqEs1WGgsNtJ4JNr3nvCFofPK1ZVEP072cNKkEQKwjS
+         zf/XlTKMRkwT6vv5uWj7Bt2ZgCTassmR574WyeR5qX7lrJ+PB1dQXq87SdvH9rjR/XJA
+         6t0A==
+X-Gm-Message-State: AA+aEWbRqxxeYyZ/yMIdnjQN8I06106531yIbE874TD7HKbkY+DGfCiV
+        aoJ6x97XfU445pfJQAb866zYeByPpwzNGs02NFE=
+X-Google-Smtp-Source: AFSGD/W4JtG2zGySOILqdZyPp0TtVdywvWMgwUqdWJqEUJDbyt9D+k6Y9H70tvk0/s1eGx5yJDxFxz/STiKc7rvAfik=
+X-Received: by 2002:a02:3da:: with SMTP id e87mr1309077jae.78.1543501556348;
+ Thu, 29 Nov 2018 06:25:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128221125.GA2800@altlinux.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 14:47:47 +0000 (UTC)
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org> <20181129141429.GA22638@lst.de>
+In-Reply-To: <20181129141429.GA22638@lst.de>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 29 Nov 2018 09:25:43 -0500
+Message-ID: <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     hch@lst.de
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29, Dmitry V. Levin wrote:
+On Thu, Nov 29, 2018 at 9:14 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> 2. Document these values
+> On Thu, Nov 29, 2018 at 07:33:15PM +0530, Vivek Gautam wrote:
+> > dma_map_sg() expects a DMA domain. However, the drm devices
+> > have been traditionally using unmanaged iommu domain which
+> > is non-dma type. Using dma mapping APIs with that domain is bad.
+> >
+> > Replace dma_map_sg() calls with dma_sync_sg_for_device{|cpu}()
+> > to do the cache maintenance.
+>
+> As I told you before:  hell no.  If you spent the slightest amount of
+> actually trying to understand what you are doing here you'd know this
+> can't work.  Just turn on dma debugging and this will blow up in your
+> face.
 
-sure, they should be documented and live in include/uapi/,
+you can tone it down..  we weren't the ones who created the dma/iommu
+mess, we are just trying to find a way to work around it
 
-> chosen to avoid collisions with ptrace_message values
-> set by other ptrace events
+> Either you use the DMA API properly, that is you use it to map and
+> to sync, or you don't use it at all.  Mix and match between iommu
+> APIs and DMA APIs is simply not possible.
 
-this is what I can't understand. But to clarify, I don't really care and
-won't argue.
+I'd *love* nothing more to not use the dma api.. but on arm there is
+no other way to do cache maint.
 
-If an application wants to use PTRACE_GETEVENTMSG to distinguish entry/exit
-(without PTRACE_GET_SYSCALL_INFO) it needs to do wait(status) and check status
-anyway, otherwise PTRACE_GETEVENTMSG is simply pointless (wrt syscall entry/
-exit). So we do not care if PTRACE_EVENTMSG_SYSCALL_ENTRY conflicts with, say,
-SECCOMP_RET_DATA.
-
-> so that PTRACE_GETEVENTMSG users can easily tell
-> whether this new semantics is supported by the kernel or not.
-
-Yes. And how much this can help? Again, an application can trivially detect
-if this feature implemented or not, and it should do this anyway if it wants
-to (try to) use PTRACE_EVENTMSG_SYSCALL_ENTRY/EXIT ?
-
-
-Again, I won't reallly argue. But if you insist that these values must be
-unique then you probably need to add
-
-	BUILD_BUG_ON(PTRACE_EVENTMSG_SYSCALL_ENTRY <= PID_MAX_LIMIT);
-
-?
-
-OK, please forget...
-
-Oleg.
-
+BR,
+-R
