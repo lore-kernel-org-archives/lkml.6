@@ -2,155 +2,66 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A1CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0F2C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C022081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C022081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asix.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id 3B4C120868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:57:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4C120868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeK2R4F (ORCPT
+        id S1727813AbeK2SBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:56:05 -0500
-Received: from asix.com.tw ([210.243.224.51]:45086 "EHLO freebsd2.asix.com.tw"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727560AbeK2R4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:56:05 -0500
-Received: from JACKYCHOU ([10.1.2.56])
-        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPS id wAT6nLbY021291
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 29 Nov 2018 14:49:21 +0800 (CST)
-        (envelope-from jackychou@asix.com.tw)
-Authentication-Results: freebsd2.asix.com.tw; sender-id=permerror header.from=jackychou@asix.com.tw; spf=permerror smtp.mfrom=jackychou@asix.com.tw
-X-Authentication-Warning: freebsd2.asix.com.tw: Host [10.1.2.56] claimed to be JACKYCHOU
-From:   "JackyChou" <jackychou@asix.com.tw>
-To:     <johan@kernel.org>
-Cc:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <louis@asix.com.tw>,
-        <jackychou@asix.com.tw>
-References: <20181129064728.11830-1-jackychou@asix.com.tw>
-In-Reply-To: <20181129064728.11830-1-jackychou@asix.com.tw>
-Subject: [PATCH 1/2] USB: serial: mos7840: Adjust port settings for read and write registers
-Date:   Thu, 29 Nov 2018 14:51:36 +0800
-Message-ID: <005801d487af$f9517a00$ebf46e00$@asix.com.tw>
+        Thu, 29 Nov 2018 13:01:38 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:52918 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbeK2SBi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:01:38 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gSGG9-0006xY-Oc; Thu, 29 Nov 2018 14:57:13 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gSGG7-0004sP-RW; Thu, 29 Nov 2018 14:57:11 +0800
+Date:   Thu, 29 Nov 2018 14:57:11 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: do not free algorithm before using
+Message-ID: <20181129065711.7renu7xnxzp7sr2d@gondor.apana.org.au>
+References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQG8u6aoLP+6LyW/pvQFCmc7tbxgraWV6CDA
-Content-Language: zh-tw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 22, 2018 at 06:00:16PM +0800, Pan Bian wrote:
+> In multiple functions, the algorithm fields are read after its reference
+> is dropped through crypto_mod_put. In this case, the algorithm memory
+> may be freed, resulting in use-after-free bugs. This patch delays the
+> put operation until the algorithm is never used.
+> 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
 
-From: JackyChou <jackychou@asix.com.tw>
+Patch applied.  Thanks!
 
-In the read/write function, set port 2 independently in the 2-port case.
+BTW, this problem exists in almost every other skcipher template,
+e.g., in ctr.  Are you working on a fix for them too?
 
-When setting the offset of port registers, the offset between port 1 and
-other ports is different, so port 1 is set independently.
-Then in the rest of ports, the port 2 between 2-ports case and 4-ports case
-is different, so port 2 in 2-ports case is set independently.
-
-Signed-off-by: JackyChou <jackychou@asix.com.tw>
----
- drivers/usb/serial/mos7840.c | 48 ++++++++++++------------------------
- 1 file changed, 16 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-index 88828b4b8c44..92ab68ef08ab 100644
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -298,15 +298,10 @@ static int mos7840_set_uart_reg(struct usb_serial_port
-*port, __u16 reg,
- 	val = val & 0x00ff;
- 	/* For the UART control registers, the application number need
- 	   to be Or'ed */
--	if (port->serial->num_ports == 4) {
-+	if (port->serial->num_ports == 2 && port->port_number != 0)
-+		val |= ((__u16)port->port_number + 2) << 8;
-+	else
- 		val |= ((__u16)port->port_number + 1) << 8;
--	} else {
--		if (port->port_number == 0) {
--			val |= ((__u16)port->port_number + 1) << 8;
--		} else {
--			val |= ((__u16)port->port_number + 2) << 8;
--		}
--	}
- 	dev_dbg(&port->dev, "%s application number is %x\n", __func__, val);
- 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0), MCS_WRREQ,
- 			       MCS_WR_RTYPE, val, reg, NULL, 0,
-@@ -332,15 +327,10 @@ static int mos7840_get_uart_reg(struct usb_serial_port
-*port, __u16 reg,
- 		return -ENOMEM;
- 
- 	/* Wval  is same as application number */
--	if (port->serial->num_ports == 4) {
-+	if (port->serial->num_ports == 2 && port->port_number != 0)
-+		Wval = ((__u16)port->port_number + 2) << 8;
-+	else
- 		Wval = ((__u16)port->port_number + 1) << 8;
--	} else {
--		if (port->port_number == 0) {
--			Wval = ((__u16)port->port_number + 1) << 8;
--		} else {
--			Wval = ((__u16)port->port_number + 2) << 8;
--		}
--	}
- 	dev_dbg(&port->dev, "%s application number is %x\n", __func__,
-Wval);
- 	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), MCS_RDREQ,
- 			      MCS_RD_RTYPE, Wval, reg, buf,
-VENDOR_READ_LENGTH,
-@@ -2132,22 +2122,16 @@ static int mos7840_port_probe(struct usb_serial_port
-*port)
- 		mos7840_port->SpRegOffset = 0x0;
- 		mos7840_port->ControlRegOffset = 0x1;
- 		mos7840_port->DcrRegOffset = 0x4;
--	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
-4)) {
--		mos7840_port->SpRegOffset = 0x8;
--		mos7840_port->ControlRegOffset = 0x9;
--		mos7840_port->DcrRegOffset = 0x16;
--	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
-2)) {
--		mos7840_port->SpRegOffset = 0xa;
--		mos7840_port->ControlRegOffset = 0xb;
--		mos7840_port->DcrRegOffset = 0x19;
--	} else if ((mos7840_port->port_num == 3) && (serial->num_ports ==
-4)) {
--		mos7840_port->SpRegOffset = 0xa;
--		mos7840_port->ControlRegOffset = 0xb;
--		mos7840_port->DcrRegOffset = 0x19;
--	} else if ((mos7840_port->port_num == 4) && (serial->num_ports ==
-4)) {
--		mos7840_port->SpRegOffset = 0xc;
--		mos7840_port->ControlRegOffset = 0xd;
--		mos7840_port->DcrRegOffset = 0x1c;
-+	} else {
-+		u8 port_offset;
-+
-+		if ((mos7840_port->port_num == 2) && (serial->num_ports ==
-2))
-+			port_offset = 1;
-+		else
-+			port_offset = mos7840_port->port_num - 2;
-+		mos7840_port->SpRegOffset = 0x8 + (2 * port_offset);
-+		mos7840_port->ControlRegOffset = 0x9 + (2 * port_offset);
-+		mos7840_port->DcrRegOffset = 0x16 + (3 * port_offset);
- 	}
- 	mos7840_dump_serial_port(port, mos7840_port);
- 	mos7840_set_port_private(port, mos7840_port);
+Cheers,
 -- 
-2.17.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
