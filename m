@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5BCC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676AAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43234208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFF121104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpNbSeSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43234208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJb4sGOD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFF121104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbeK2RD7 (ORCPT
+        id S1729028AbeK2REC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:03:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:04:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbeK2RD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:03:58 -0500
+        id S1727958AbeK2REB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:04:01 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24FB2208E7;
-        Thu, 29 Nov 2018 05:59:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BF3E21104;
+        Thu, 29 Nov 2018 05:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471187;
-        bh=O5M04tYTFatKT3e5jhk+cF/lPCJnInKJZAjdT0UTuVk=;
+        s=default; t=1543471190;
+        bh=/KySSdHTSOnyrrEm2qnhYq7IdrcvuV0UJNKEcYwKick=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lpNbSeSPhi3OU9ywbSNBWXw+NcUZt6WskkBllgn3iMHcaIyuro2+gXnqv2DznJW4T
-         M3tDn0SwQ2ZiHCtZbtfyhdrCJEDJxyik5kqoyhPIA/1vaYPSjIiItjjCQB3yPT2tjR
-         8bT7KDKkEx63Iwl0FmuoceVMrhA55MyMt2ZLB+ZQ=
+        b=iJb4sGODF+yKyPQVB+J5jVNw1SLt5hRK7OD9mZc7MqtFVN/CZhRZKmP3cesfR4wq6
+         IKDzZOm8apKmb/sXTRbUjwWJ86CW+6QOtUpk8TN3BajE9KiAczujZ9GBmMnb7ROvrN
+         es9PRymXuCZZI9ZmJgnarJStdkvGLmubBViUFDUM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
+Cc:     Juliet Kim <julietk@linux.vnet.ibm.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 48/68] qed: Fix QM getters to always return a valid pq
-Date:   Thu, 29 Nov 2018 00:55:39 -0500
-Message-Id: <20181129055559.159228-48-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 49/68] net/ibmnvic: Fix deadlock problem in reset
+Date:   Thu, 29 Nov 2018 00:55:40 -0500
+Message-Id: <20181129055559.159228-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -53,96 +53,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <denis.bolotin@cavium.com>
+From: Juliet Kim <julietk@linux.vnet.ibm.com>
 
-[ Upstream commit eb62cca9bee842e5b23bd0ddfb1f271ca95e8759 ]
+[ Upstream commit a5681e20b541a507c7d4fd48ae4a4040d32ee1ef ]
 
-The getter callers doesn't know the valid Physical Queues (PQ) values.
-This patch makes sure that a valid PQ will always be returned.
+This patch changes to use rtnl_lock only during a reset to avoid
+deadlock that could occur when a thread operating close is holding
+rtnl_lock and waiting for reset_lock acquired by another thread,
+which is waiting for rtnl_lock in order to set the number of tx/rx
+queues during a reset.
 
-The patch consists of 3 fixes:
+Also, we now setting the number of tx/rx queues during a soft reset
+for failover or LPM events.
 
- - When qed_init_qm_get_idx_from_flags() receives a disabled flag, it
-   returned PQ 0, which can potentially be another function's pq. Verify
-   that flag is enabled, otherwise return default start_pq.
-
- - When qed_init_qm_get_idx_from_flags() receives an unknown flag, it
-   returned NULL and could lead to a segmentation fault. Return default
-   start_pq instead.
-
- - A modulo operation was added to MCOS/VFS PQ getters to make sure the
-   PQ returned is in range of the required flag.
-
-Fixes: b5a9ee7cf3be ("qed: Revise QM cofiguration")
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+Signed-off-by: Juliet Kim <julietk@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 24 +++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 59 +++++++++++-------------------
+ drivers/net/ethernet/ibm/ibmvnic.h |  2 +-
+ 2 files changed, 22 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index d2ead4eb1b9a..2f69ee9221c6 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -484,6 +484,11 @@ static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
- 		goto err;
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 7661064c815b..a646de07cbdc 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1103,20 +1103,15 @@ static int ibmvnic_open(struct net_device *netdev)
+ 		return 0;
  	}
  
-+	if (!(qed_get_pq_flags(p_hwfn) & pq_flags)) {
-+		DP_ERR(p_hwfn, "pq flag 0x%x is not set\n", pq_flags);
-+		goto err;
-+	}
-+
- 	switch (pq_flags) {
- 	case PQ_FLAGS_RLS:
- 		return &qm_info->first_rl_pq;
-@@ -506,8 +511,7 @@ static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
+-	mutex_lock(&adapter->reset_lock);
+-
+ 	if (adapter->state != VNIC_CLOSED) {
+ 		rc = ibmvnic_login(netdev);
+-		if (rc) {
+-			mutex_unlock(&adapter->reset_lock);
++		if (rc)
+ 			return rc;
+-		}
+ 
+ 		rc = init_resources(adapter);
+ 		if (rc) {
+ 			netdev_err(netdev, "failed to initialize resources\n");
+ 			release_resources(adapter);
+-			mutex_unlock(&adapter->reset_lock);
+ 			return rc;
+ 		}
+ 	}
+@@ -1124,8 +1119,6 @@ static int ibmvnic_open(struct net_device *netdev)
+ 	rc = __ibmvnic_open(netdev);
+ 	netif_carrier_on(netdev);
+ 
+-	mutex_unlock(&adapter->reset_lock);
+-
+ 	return rc;
+ }
+ 
+@@ -1269,10 +1262,8 @@ static int ibmvnic_close(struct net_device *netdev)
+ 		return 0;
  	}
  
- err:
--	DP_ERR(p_hwfn, "BAD pq flags %d\n", pq_flags);
--	return NULL;
-+	return &qm_info->start_pq;
+-	mutex_lock(&adapter->reset_lock);
+ 	rc = __ibmvnic_close(netdev);
+ 	ibmvnic_cleanup(netdev);
+-	mutex_unlock(&adapter->reset_lock);
+ 
+ 	return rc;
  }
- 
- /* save pq index in qm info */
-@@ -531,20 +535,32 @@ u16 qed_get_cm_pq_idx_mcos(struct qed_hwfn *p_hwfn, u8 tc)
- {
- 	u8 max_tc = qed_init_qm_get_num_tcs(p_hwfn);
- 
-+	if (max_tc == 0) {
-+		DP_ERR(p_hwfn, "pq with flag 0x%lx do not exist\n",
-+		       PQ_FLAGS_MCOS);
-+		return p_hwfn->qm_info.start_pq;
-+	}
+@@ -1820,20 +1811,15 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+ 				return rc;
+ 		} else if (adapter->req_rx_queues != old_num_rx_queues ||
+ 			   adapter->req_tx_queues != old_num_tx_queues) {
+-			adapter->map_id = 1;
+ 			release_rx_pools(adapter);
+ 			release_tx_pools(adapter);
+-			rc = init_rx_pools(netdev);
+-			if (rc)
+-				return rc;
+-			rc = init_tx_pools(netdev);
+-			if (rc)
+-				return rc;
+-
+ 			release_napi(adapter);
+-			rc = init_napi(adapter);
++			release_vpd_data(adapter);
 +
- 	if (tc > max_tc)
- 		DP_ERR(p_hwfn, "tc %d must be smaller than %d\n", tc, max_tc);
- 
--	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_MCOS) + tc;
-+	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_MCOS) + (tc % max_tc);
- }
- 
- u16 qed_get_cm_pq_idx_vf(struct qed_hwfn *p_hwfn, u16 vf)
- {
- 	u16 max_vf = qed_init_qm_get_num_vfs(p_hwfn);
- 
-+	if (max_vf == 0) {
-+		DP_ERR(p_hwfn, "pq with flag 0x%lx do not exist\n",
-+		       PQ_FLAGS_VFS);
-+		return p_hwfn->qm_info.start_pq;
-+	}
++			rc = init_resources(adapter);
+ 			if (rc)
+ 				return rc;
 +
- 	if (vf > max_vf)
- 		DP_ERR(p_hwfn, "vf %d must be smaller than %d\n", vf, max_vf);
+ 		} else {
+ 			rc = reset_tx_pools(adapter);
+ 			if (rc)
+@@ -1917,17 +1903,8 @@ static int do_hard_reset(struct ibmvnic_adapter *adapter,
+ 		adapter->state = VNIC_PROBED;
+ 		return 0;
+ 	}
+-	/* netif_set_real_num_xx_queues needs to take rtnl lock here
+-	 * unless wait_for_reset is set, in which case the rtnl lock
+-	 * has already been taken before initializing the reset
+-	 */
+-	if (!adapter->wait_for_reset) {
+-		rtnl_lock();
+-		rc = init_resources(adapter);
+-		rtnl_unlock();
+-	} else {
+-		rc = init_resources(adapter);
+-	}
++
++	rc = init_resources(adapter);
+ 	if (rc)
+ 		return rc;
  
--	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_VFS) + vf;
-+	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_VFS) + (vf % max_vf);
+@@ -1986,13 +1963,21 @@ static void __ibmvnic_reset(struct work_struct *work)
+ 	struct ibmvnic_rwi *rwi;
+ 	struct ibmvnic_adapter *adapter;
+ 	struct net_device *netdev;
++	bool we_lock_rtnl = false;
+ 	u32 reset_state;
+ 	int rc = 0;
+ 
+ 	adapter = container_of(work, struct ibmvnic_adapter, ibmvnic_reset);
+ 	netdev = adapter->netdev;
+ 
+-	mutex_lock(&adapter->reset_lock);
++	/* netif_set_real_num_xx_queues needs to take rtnl lock here
++	 * unless wait_for_reset is set, in which case the rtnl lock
++	 * has already been taken before initializing the reset
++	 */
++	if (!adapter->wait_for_reset) {
++		rtnl_lock();
++		we_lock_rtnl = true;
++	}
+ 	reset_state = adapter->state;
+ 
+ 	rwi = get_next_rwi(adapter);
+@@ -2020,12 +2005,11 @@ static void __ibmvnic_reset(struct work_struct *work)
+ 	if (rc) {
+ 		netdev_dbg(adapter->netdev, "Reset failed\n");
+ 		free_all_rwi(adapter);
+-		mutex_unlock(&adapter->reset_lock);
+-		return;
+ 	}
+ 
+ 	adapter->resetting = false;
+-	mutex_unlock(&adapter->reset_lock);
++	if (we_lock_rtnl)
++		rtnl_unlock();
  }
  
- u16 qed_get_cm_pq_idx_ofld_mtc(struct qed_hwfn *p_hwfn, u8 tc)
+ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
+@@ -4709,7 +4693,6 @@ static int ibmvnic_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 
+ 	INIT_WORK(&adapter->ibmvnic_reset, __ibmvnic_reset);
+ 	INIT_LIST_HEAD(&adapter->rwi_list);
+-	mutex_init(&adapter->reset_lock);
+ 	mutex_init(&adapter->rwi_lock);
+ 	adapter->resetting = false;
+ 
+@@ -4781,8 +4764,8 @@ static int ibmvnic_remove(struct vio_dev *dev)
+ 	struct ibmvnic_adapter *adapter = netdev_priv(netdev);
+ 
+ 	adapter->state = VNIC_REMOVING;
+-	unregister_netdev(netdev);
+-	mutex_lock(&adapter->reset_lock);
++	rtnl_lock();
++	unregister_netdevice(netdev);
+ 
+ 	release_resources(adapter);
+ 	release_sub_crqs(adapter, 1);
+@@ -4793,7 +4776,7 @@ static int ibmvnic_remove(struct vio_dev *dev)
+ 
+ 	adapter->state = VNIC_REMOVED;
+ 
+-	mutex_unlock(&adapter->reset_lock);
++	rtnl_unlock();
+ 	device_remove_file(&dev->dev, &dev_attr_failover);
+ 	free_netdev(netdev);
+ 	dev_set_drvdata(&dev->dev, NULL);
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.h b/drivers/net/ethernet/ibm/ibmvnic.h
+index f06eec145ca6..735f481b1870 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.h
++++ b/drivers/net/ethernet/ibm/ibmvnic.h
+@@ -1068,7 +1068,7 @@ struct ibmvnic_adapter {
+ 	struct tasklet_struct tasklet;
+ 	enum vnic_state state;
+ 	enum ibmvnic_reset_reason reset_reason;
+-	struct mutex reset_lock, rwi_lock;
++	struct mutex rwi_lock;
+ 	struct list_head rwi_list;
+ 	struct work_struct ibmvnic_reset;
+ 	bool resetting;
 -- 
 2.17.1
 
