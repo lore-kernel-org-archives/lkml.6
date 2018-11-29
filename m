@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE98C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A22C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E7821104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85AD0208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCe3B8s5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E7821104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsMIDENq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85AD0208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730321AbeK3BWp (ORCPT
+        id S1730333AbeK3BWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44552 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728439AbeK3BWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:44 -0500
+        id S1728439AbeK3BWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCCC5205C9;
-        Thu, 29 Nov 2018 14:17:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E9D8208E7;
+        Thu, 29 Nov 2018 14:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501034;
-        bh=Y71PwOdpSPAl3lmHv+gJDfy6WNSOTwnRdTdtNqRFa+8=;
+        s=default; t=1543501036;
+        bh=b8ccLwZNQzjhK5eTSpUADchdhDFuofXAQc6HB+zjW+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCe3B8s5mc8sohfs1yiWAcH6isCHaaFu58bXcZaPv3CC0JYpWZGHOEHEa3Tx7Qmul
-         3pr2E4luQRn2ZuODFl7MisH59e0JuqzJx0AyZLUC/I0nmcW5G1vtIRQ4QAvd/CuuS/
-         DnH+wkxZSudnIZypXS+R13cvVpqebKioCL+deGWs=
+        b=JsMIDENqOMgOaf7lYqM7N28nG3jMGMiyrOVdFzb6/8v8ictiW8E21Ruce9l4+jTMw
+         XOYwvTlEBMbym/Nw/UItRhKgX4tRUH+8a1S6FGopT4+HIZ09tkEtiH63k4JTjeOTsk
+         aN0ixJhdEawixifmiCMTUwx9Ar/EwNlaqb8i3m7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH 4.4 16/86] ACPICA: AML interpreter: add region addresses in global list during initialization
-Date:   Thu, 29 Nov 2018 15:11:41 +0100
-Message-Id: <20181129140111.213450455@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.4 17/86] usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
+Date:   Thu, 29 Nov 2018 15:11:42 +0100
+Message-Id: <20181129140111.298202802@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -64,46 +62,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
+commit 2f31a67f01a8beb22cae754c53522cb61a005750 upstream.
 
-The table load process omitted adding the operation region address
-range to the global list. This omission is problematic because the OS
-queries the global list to check for address range conflicts before
-deciding which drivers to load. This commit may result in warning
-messages that look like the following:
+USB3 roothub might autosuspend before a plugged USB3 device is detected,
+causing USB3 device enumeration failure.
 
-[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
-[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+USB3 devices don't show up as connected and enabled until USB3 link trainig
+completes. On a fast booting platform with a slow USB3 link training the
+link might reach the connected enabled state just as the bus is suspending.
 
-However, these messages do not signify regressions. It is a result of
-properly adding address ranges within the global address list.
+If this device is discovered first time by the xhci_bus_suspend() routine
+it will be put to U3 suspended state like the other ports which failed to
+suspend earlier.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
-Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Jean Delvare <jdelvare@suse.de>
+The hub thread will notice the connect change and resume the bus,
+moving the port back to U0
+
+This U0 -> U3 -> U0 transition right after being connected seems to be
+too much for some devices, causing them to first go to SS.Inactive state,
+and finally end up stuck in a polling state with reset asserted
+
+Fix this by failing the bus suspend if a port has a connect change or is
+in a polling state in xhci_bus_suspend().
+
+Don't do any port changes until all ports are checked, buffer all port
+changes and only write them in the end if suspend can proceed
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/dsopcode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/host/xhci-hub.c |   60 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 14 deletions(-)
 
---- a/drivers/acpi/acpica/dsopcode.c
-+++ b/drivers/acpi/acpica/dsopcode.c
-@@ -449,6 +449,10 @@ acpi_ds_eval_region_operands(struct acpi
- 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
- 			  obj_desc->region.length));
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1298,13 +1298,16 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 	__le32 __iomem **port_array;
+ 	struct xhci_bus_state *bus_state;
+ 	unsigned long flags;
++	u32 portsc_buf[USB_MAXCHILDREN];
++	bool wake_enabled;
  
-+	status = acpi_ut_add_address_range(obj_desc->region.space_id,
-+					   obj_desc->region.address,
-+					   obj_desc->region.length, node);
+ 	max_ports = xhci_get_ports(hcd, &port_array);
+ 	bus_state = &xhci->bus_state[hcd_index(hcd)];
++	wake_enabled = hcd->self.root_hub->do_remote_wakeup;
+ 
+ 	spin_lock_irqsave(&xhci->lock, flags);
+ 
+-	if (hcd->self.root_hub->do_remote_wakeup) {
++	if (wake_enabled) {
+ 		if (bus_state->resuming_ports ||	/* USB2 */
+ 		    bus_state->port_remote_wakeup) {	/* USB3 */
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+@@ -1312,26 +1315,36 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 			return -EBUSY;
+ 		}
+ 	}
+-
+-	port_index = max_ports;
++	/*
++	 * Prepare ports for suspend, but don't write anything before all ports
++	 * are checked and we know bus suspend can proceed
++	 */
+ 	bus_state->bus_suspended = 0;
++	port_index = max_ports;
+ 	while (port_index--) {
+-		/* suspend the port if the port is not suspended */
+ 		u32 t1, t2;
+-		int slot_id;
+ 
+ 		t1 = readl(port_array[port_index]);
+ 		t2 = xhci_port_state_to_neutral(t1);
++		portsc_buf[port_index] = 0;
+ 
+-		if ((t1 & PORT_PE) && !(t1 & PORT_PLS_MASK)) {
+-			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+-			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+-					port_index + 1);
+-			if (slot_id) {
++		/* Bail out if a USB3 port has a new device in link training */
++		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++			bus_state->bus_suspended = 0;
++			spin_unlock_irqrestore(&xhci->lock, flags);
++			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
++			return -EBUSY;
++		}
 +
- 	/* Now the address and length are valid for this opregion */
++		/* suspend ports in U0, or bail out for new connect changes */
++		if ((t1 & PORT_PE) && (t1 & PORT_PLS_MASK) == XDEV_U0) {
++			if ((t1 & PORT_CSC) && wake_enabled) {
++				bus_state->bus_suspended = 0;
+ 				spin_unlock_irqrestore(&xhci->lock, flags);
+-				xhci_stop_device(xhci, slot_id, 1);
+-				spin_lock_irqsave(&xhci->lock, flags);
++				xhci_dbg(xhci, "Bus suspend bailout, port connect change\n");
++				return -EBUSY;
+ 			}
++			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+ 			t2 &= ~PORT_PLS_MASK;
+ 			t2 |= PORT_LINK_STROBE | XDEV_U3;
+ 			set_bit(port_index, &bus_state->bus_suspended);
+@@ -1340,7 +1353,7 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 		 * including the USB 3.0 roothub, but only if CONFIG_PM
+ 		 * is enabled, so also enable remote wake here.
+ 		 */
+-		if (hcd->self.root_hub->do_remote_wakeup) {
++		if (wake_enabled) {
+ 			if (t1 & PORT_CONNECT) {
+ 				t2 |= PORT_WKOC_E | PORT_WKDISC_E;
+ 				t2 &= ~PORT_WKCONN_E;
+@@ -1353,7 +1366,26 @@ int xhci_bus_suspend(struct usb_hcd *hcd
  
- 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
+ 		t1 = xhci_port_state_to_neutral(t1);
+ 		if (t1 != t2)
+-			writel(t2, port_array[port_index]);
++			portsc_buf[port_index] = t2;
++	}
++
++	/* write port settings, stopping and suspending ports if needed */
++	port_index = max_ports;
++	while (port_index--) {
++		if (!portsc_buf[port_index])
++			continue;
++		if (test_bit(port_index, &bus_state->bus_suspended)) {
++			int slot_id;
++
++			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
++							    port_index + 1);
++			if (slot_id) {
++				spin_unlock_irqrestore(&xhci->lock, flags);
++				xhci_stop_device(xhci, slot_id, 1);
++				spin_lock_irqsave(&xhci->lock, flags);
++			}
++		}
++		writel(portsc_buf[port_index], port_array[port_index]);
+ 	}
+ 	hcd->state = HC_STATE_SUSPENDED;
+ 	bus_state->next_statechange = jiffies + msecs_to_jiffies(10);
 
 
