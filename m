@@ -2,260 +2,208 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A98C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F05EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB7020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB7020834
+	by mail.kernel.org (Postfix) with ESMTP id 006CE20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 006CE20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeK2TPr (ORCPT
+        id S1727624AbeK2TOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:47 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:21291 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 14:14:38 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:4417 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727260AbeK2TPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:05 -0500
+        id S1726641AbeK2TOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:14:38 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4359F403Fmz9vGpD;
-        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 4359DW42jMz9vGlY;
+        Thu, 29 Nov 2018 09:10:03 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id R6pN5htxpPfX; Thu, 29 Nov 2018 09:10:31 +0100 (CET)
+        with ESMTP id UxBklOHiYl0N; Thu, 29 Nov 2018 09:10:03 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F36g5Cz9vGnW;
-        Thu, 29 Nov 2018 09:10:31 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4359DW3V6Sz9vGlV;
+        Thu, 29 Nov 2018 09:10:03 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B8A308B890;
-        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4E6C18B890;
+        Thu, 29 Nov 2018 09:10:04 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id VKOTbAtMbhHV; Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+        with ESMTP id RTNXC_i1oOhJ; Thu, 29 Nov 2018 09:10:04 +0100 (CET)
 Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7693A8B762;
-        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 00C2F8B762;
+        Thu, 29 Nov 2018 09:10:03 +0100 (CET)
 Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 22E0969AEA; Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
-Message-Id: <d25baf2cbf141a79f903ba6596c0e1804e4f7e32.1543478200.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
-References: <cover.1543478199.git.christophe.leroy@c-s.fr>
+        id BA96769B13; Thu, 29 Nov 2018 08:10:03 +0000 (UTC)
+Message-Id: <cover.1543478199.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v8 14/20] powerpc/8xx: Temporarily disable 16k pages and
- hugepages
+Subject: [PATCH v8 00/20] Implement use of HW assistance on TLB table walk on 8xx
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 08:10:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of making use of hardware assistance in TLB handlers,
-this patch temporarily disables 16K pages and hugepages. The reason
-is that when using HW assistance in 4K pages mode, the linux model
-fit with the HW model for 4K pages and 8M pages.
+The purpose of this serie is to implement hardware assistance for TLB table walk
+on the 8xx.
 
-However for 16K pages and 512K mode some additional work is needed
-to get linux model fit with HW model.
-For the 8M pages, they will naturaly come back when we switch to
-HW assistance, without any additional handling.
-In order to keep the following patch smaller, the removal of the
-current special handling for 8M pages gets removed here as well.
+First part prepares for using HW assistance in TLB routines:
+- Trivial fixes:
+	- Remove CONFIG_BOOKE stuff from book3S headers.
+	- Removal of unneeded atomic PTE update requirement for 8xx.
+- move book3s64 page fragment code in a common part for reusing it by the
+8xx as 16k page size mode still uses 4k page tables.
+- Fixing a bug in memcache handling when standard pages and hugepages share
+caches of the same size (see original discussion in https://patchwork.ozlabs.org/patch/957565/)
+- Optimise access to 8xx perf counters (hence reducing number of registers used)
 
-Therefore the 4K pages mode will be implemented first and without
-support for 512k hugepages. Then the 512k hugepages will be brought
-back. And the 16K pages will be implemented in the following step.
+Second part implements HW assistance in TLB routines in the following steps:
+- Disable 16k page size mode and 512k hugepages
+- Switch 4k to HW assistance
+- Bring back 512k hugepages
+- Bring back 16k page size mode.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig           |  2 +-
- arch/powerpc/kernel/head_8xx.S | 74 +++---------------------------------------
- arch/powerpc/mm/tlb_nohash.c   |  6 ----
- 3 files changed, 6 insertions(+), 76 deletions(-)
+Last part cleans up:
+- Take benefit of Miss handler size reduction to regroup related parts
+- Reduce number of registers used in miss handlers, freeing them for future use.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8be31261aec8..ddfccdf004fe 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -689,7 +689,7 @@ config PPC_4K_PAGES
- 
- config PPC_16K_PAGES
- 	bool "16k page size"
--	depends on 44x || PPC_8xx
-+	depends on 44x
- 
- config PPC_64K_PAGES
- 	bool "64k page size"
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index c203defe49a4..01f58b1d9ae7 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -314,7 +314,7 @@ SystemCall:
- InstructionTLBMiss:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
- 	mtspr	SPRN_SPRG_SCRATCH1, r11
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mtspr	SPRN_SPRG_SCRATCH2, r12
- #endif
- 
-@@ -325,10 +325,8 @@ InstructionTLBMiss:
- 	INVALIDATE_ADJACENT_PAGES_CPU15(r11, r10)
- 	/* Only modules will cause ITLB Misses as we always
- 	 * pin the first 8MB of kernel memory */
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
--	mfcr	r12
--#endif
- #ifdef ITLB_MISS_KERNEL
-+	mfcr	r12
- #if defined(SIMPLE_KERNEL_ADDRESS) && defined(CONFIG_PIN_TLB_TEXT)
- 	andis.	r11, r10, 0x8000	/* Address >= 0x80000000 */
- #else
-@@ -360,15 +358,9 @@ InstructionTLBMiss:
- 
- 	/* Extract level 2 index */
- 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
--#ifdef CONFIG_HUGETLB_PAGE
--	mtcr	r11
--	bt-	28, 10f		/* bit 28 = Large page (8M) */
--	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
--#endif
- 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
- 	lwz	r10, 0(r10)	/* Get the pte */
--4:
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mtcr	r12
- #endif
- 	/* Load the MI_TWC with the attributes for this "segment." */
-@@ -393,7 +385,7 @@ InstructionTLBMiss:
- 	/* Restore registers */
- 0:	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- #endif
- 	rfi
-@@ -406,35 +398,12 @@ InstructionTLBMiss:
- 	stw	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- #endif
- 	rfi
- #endif
- 
--#ifdef CONFIG_HUGETLB_PAGE
--10:	/* 8M pages */
--#ifdef CONFIG_PPC_16K_PAGES
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--#else
--	/* Level 2 base */
--	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
--#endif
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--
--20:	/* 512k pages */
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--#endif
--
- 	. = 0x1200
- DataStoreTLBMiss:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
-@@ -472,11 +441,6 @@ DataStoreTLBMiss:
- 	 */
- 	/* Extract level 2 index */
- 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
--#ifdef CONFIG_HUGETLB_PAGE
--	mtcr	r11
--	bt-	28, 10f		/* bit 28 = Large page (8M) */
--	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
--#endif
- 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
- 	lwz	r10, 0(r10)	/* Get the pte */
- 4:
-@@ -534,29 +498,6 @@ DataStoreTLBMiss:
- 	rfi
- #endif
- 
--#ifdef CONFIG_HUGETLB_PAGE
--10:	/* 8M pages */
--	/* Extract level 2 index */
--#ifdef CONFIG_PPC_16K_PAGES
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--#else
--	/* Level 2 base */
--	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
--#endif
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--
--20:	/* 512k pages */
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--#endif
--
- /* This is an instruction TLB error on the MPC8xx.  This could be due
-  * to many reasons, such as executing guarded memory or illegal instruction
-  * addresses.  There is nothing to do but handle a big time error fault.
-@@ -773,12 +714,7 @@ FixupDAR:/* Entry point for dcbx workaround. */
- 
- 	/* concat physical page address(r11) and page offset(r10) */
- 200:
--#ifdef CONFIG_PPC_16K_PAGES
--	rlwinm	r11, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--	rlwimi	r11, r10, 32 - (PAGE_SHIFT_8M - 2), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--#else
- 	rlwinm	r11, r10, 0, ~HUGEPD_SHIFT_MASK
--#endif
- 	lwz	r11, 0(r11)	/* Get the pte */
- 	/* concat physical page address(r11) and page offset(r10) */
- 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT_8M, 31
-diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
-index ae5d568e267f..4f79639e432f 100644
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -97,12 +97,6 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
- 		.shift	= 14,
- 	},
- #endif
--	[MMU_PAGE_512K] = {
--		.shift	= 19,
--	},
--	[MMU_PAGE_8M] = {
--		.shift	= 23,
--	},
- };
- #else
- struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
+Tested successfully on 8xx and 83xx (book3s/32)
+
+Changes in v8:
+ - Moved definitions in pgalloc.h to avoid conflicting with memcache patches.
+ - Included the memcache bugfix serie in this serie to avoid conflicts between the two series when coming to the 512k pages patch.
+ - In the 512k HW assistance patch, reduced the #ifdef mess by using IS_ENABLED(CONFIG_PPC_8xx) instead.
+
+Changes in v7:
+ - Reordered to get trivial and already reviewed patches in front.
+ - Reordered to regroup all HW assistance related patches together.
+ - Rebased on today merge branch (28 Nov)
+ - Added a helper for access to mm_context_t.frag
+ - Reduced the amount of changes in PPC32 to support pte_fragment
+ - Applied pte_fragment to both nohash/32 and book3s/32
+
+Changes in v6:
+ - Droped the part related to handling GUARD attribute at PGD/PMD level.
+ - Moved the commonalisation of page_fragment in the begining (this part has been reviewed by Aneesh)
+ - Rebased on today merge branch (19 Oct)
+
+Changes in v5:
+ - Also avoid useless lock in get_pmd_from_cache()
+ - A new patch to relocate mmu headers in platform specific directories
+ - A new patch to distribute pgtable_t typedefs in platform specific
+   mmu headers instead of the uggly #ifdef
+ - Moved early_pte_alloc_kernel() in platform specific pgalloc
+ - Restricted definition of PTE_FRAG_SIZE and PTE_FRAG_NR to platforms
+   using the pte fragmentation.
+ - arch_exit_mmap() and destroy_pagetable_cache() are now platform specific.
+
+Changes in v4:
+ - Reordered the serie to put at the end the modifications which makes
+   L1 and L2 entries independant.
+ - No modifications to ppc64 ioremap (we still have an opportunity to
+   merge them, for a future patch serie)
+ - 8xx code modified to use patch_site instead of patch_instruction
+   to get a clearer code and avoid object pollution with global symbols
+ - Moved perf counters in first 32kb of memory to optimise access
+ - Split the big bang to HW assistance in several steps:
+   1. Temporarily removes support of 16k pages and 512k hugepages
+   2. Change TLB routines to use HW assistance for 4k pages and 8M hugepages
+   3. Add back support for 512k hugepages
+   4. Add back support for 16k pages (using pte_fragment as page tables are still 4k)
+
+Changes in v3:
+ - Fixed an issue in the 09/14 when CONFIG_PIN_TLB_TEXT was not enabled
+ - Added performance measurement in the 09/14 commit log
+ - Rebased on latest 'powerpc/merge' tree, which conflicted with 13/14
+
+Changes in v2:
+ - Removed the 3 first patchs which have been applied already
+ - Fixed compilation errors reported by Michael
+ - Squashed the commonalisation of ioremap functions into a single patch
+ - Fixed the use of pte_fragment
+ - Added a patch optimising perf counting of TLB misses and instructions
+
+Christophe Leroy (20):
+  powerpc/book3s32: Remove CONFIG_BOOKE dependent code
+  powerpc/8xx: Remove PTE_ATOMIC_UPDATES
+  powerpc/mm: Move pte_fragment_alloc() to a common location
+  powerpc/mm: Avoid useless lock with single page fragments
+  powerpc/mm: move platform specific mmu-xxx.h in platform directories
+  powerpc/mm: Move pgtable_t into platform headers
+  powerpc/mm: add helpers to get/set mm.context->pte_frag
+  powerpc/mm: Extend pte_fragment functionality to PPC32
+  powerpc/mm: enable the use of page table cache of order 0
+  powerpc/mm: replace hugetlb_cache by PGT_CACHE(PTE_T_ORDER)
+  powerpc/mm: fix a warning when a cache is common to PGD and hugepages
+  powerpc/mm: remove unnecessary test in pgtable_cache_init()
+  powerpc/8xx: Move SW perf counters in first 32kb of memory
+  powerpc/8xx: Temporarily disable 16k pages and hugepages
+  powerpc/8xx: Use hardware assistance in TLB handlers
+  powerpc/8xx: Enable 8M hugepage support with HW assistance
+  powerpc/8xx: Enable 512k hugepage support with HW assistance
+  powerpc/8xx: reintroduce 16K pages with HW assistance
+  powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 in TLB Miss handlers
+  powerpc/8xx: regroup TLB handler routines
+
+ arch/powerpc/include/asm/book3s/32/mmu-hash.h      |   5 +
+ arch/powerpc/include/asm/book3s/32/pgalloc.h       |  40 +--
+ arch/powerpc/include/asm/book3s/32/pgtable.h       |  19 +-
+ arch/powerpc/include/asm/book3s/64/mmu.h           |   9 +
+ arch/powerpc/include/asm/book3s/64/pgalloc.h       |   6 +-
+ arch/powerpc/include/asm/hugetlb.h                 |   6 +-
+ arch/powerpc/include/asm/mmu.h                     |  14 +-
+ arch/powerpc/include/asm/mmu_context.h             |   2 +-
+ arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h |   0
+ arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h |   0
+ arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h |   1 +
+ arch/powerpc/include/asm/nohash/32/mmu.h           |  25 ++
+ arch/powerpc/include/asm/nohash/32/pgalloc.h       |  27 +-
+ arch/powerpc/include/asm/nohash/32/pgtable.h       |  27 +-
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h       |   3 -
+ arch/powerpc/include/asm/nohash/64/mmu.h           |  12 +
+ arch/powerpc/include/asm/nohash/64/pgalloc.h       |   5 +-
+ arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h |   0
+ arch/powerpc/include/asm/nohash/mmu.h              |  11 +
+ arch/powerpc/include/asm/nohash/pgtable.h          |   4 +
+ arch/powerpc/include/asm/page.h                    |  14 -
+ arch/powerpc/include/asm/pgtable-types.h           |   4 +
+ arch/powerpc/include/asm/pgtable.h                 |  33 +-
+ arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
+ arch/powerpc/kernel/head_8xx.S                     | 366 ++++++++-------------
+ arch/powerpc/kvm/e500.h                            |   2 +-
+ arch/powerpc/mm/8xx_mmu.c                          |   4 +-
+ arch/powerpc/mm/Makefile                           |   5 +-
+ arch/powerpc/mm/hugetlbpage.c                      |  40 +--
+ arch/powerpc/mm/init-common.c                      |  56 ++--
+ arch/powerpc/mm/mmu_context.c                      |  10 +
+ arch/powerpc/mm/mmu_context_book3s64.c             |  15 -
+ arch/powerpc/mm/mmu_context_nohash.c               |   2 +-
+ arch/powerpc/mm/pgtable-book3s64.c                 |  88 +----
+ arch/powerpc/mm/pgtable-frag.c                     | 119 +++++++
+ arch/powerpc/mm/pgtable_32.c                       |  25 +-
+ 36 files changed, 497 insertions(+), 504 deletions(-)
+ rename arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h (100%)
+ rename arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h (100%)
+ rename arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h (99%)
+ create mode 100644 arch/powerpc/include/asm/nohash/32/mmu.h
+ create mode 100644 arch/powerpc/include/asm/nohash/64/mmu.h
+ rename arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h (100%)
+ create mode 100644 arch/powerpc/include/asm/nohash/mmu.h
+ create mode 100644 arch/powerpc/mm/pgtable-frag.c
+
 -- 
 2.13.3
 
