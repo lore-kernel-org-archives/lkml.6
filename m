@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B95C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B537C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 914332146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 633562145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJ8784UH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 914332146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIA9zmRU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633562145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbeK3Bf4 (ORCPT
+        id S2388774AbeK3Bf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:35:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37976 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:35:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728991AbeK3Bfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:35:55 -0500
+        id S1728991AbeK3Bf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:35:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3912C2145D;
-        Thu, 29 Nov 2018 14:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E6642145D;
+        Thu, 29 Nov 2018 14:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501822;
-        bh=B4sb9X+S5TgnVwWRckFR4ENon+1eK0JZA39+d4J7rqs=;
+        s=default; t=1543501825;
+        bh=6Vr+6NE9nbCE7r6CIjUMeC7knsd25fLZHOhDbVzHSLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJ8784UHgXI+3X3qggNqJYlJCshwr33cub87bpgpPVCkbAi8KuqJfAjypGr5UIiLg
-         cgUaFpwHtwpb4qOo/sDzG4FtbFE2cEYG4O0sJ/gF2k45UA7WoZJdM0HxRrSgHMrbkn
-         7M8ihNpDhv7y4lO4Qkk2AvQApfSbw/0OYLYWQIyQ=
+        b=WIA9zmRUucA6isckVOWQRvACml/5lN/nK+fsjXNr5QZwZiUWPKw9Y1K7XWGGYzFMG
+         B8zQe4waWI2/Ktz8SEwJDRklwSDH37HLb5QzAEaiOsnw8DRld+8z7YAv4HDNa/CCCG
+         8zmpXnkoNm1Q5/YsxBCc2RDOSOGzKZa6k++KG920=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 021/110] gpio: dont free unallocated ida on gpiochip_add_data_with_key() error path
-Date:   Thu, 29 Nov 2018 15:11:52 +0100
-Message-Id: <20181129135922.111070538@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Chen <matt.chen@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 4.19 022/110] iwlwifi: fix wrong WGDS_WIFI_DATA_SIZE
+Date:   Thu, 29 Nov 2018 15:11:53 +0100
+Message-Id: <20181129135922.151284720@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,49 +62,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladimir Zapolskiy <vz@mleia.com>
+From: Matt Chen <matt.chen@intel.com>
 
-commit a05a14049999598a3bb6fab12db6b768a0215522 upstream.
+commit 66e839030fd698586734e017fd55c4f2a89dba0b upstream.
 
-The change corrects the error path in gpiochip_add_data_with_key()
-by avoiding to call ida_simple_remove(), if ida_simple_get() returns
-an error.
+>From coreboot/BIOS:
+Name ("WGDS", Package() {
+ Revision,
+ Package() {
+     DomainType,                         // 0x7:WiFi ==> We miss this one.
+     WgdsWiFiSarDeltaGroup1PowerMax1,    // Group 1 FCC 2400 Max
+     WgdsWiFiSarDeltaGroup1PowerChainA1, // Group 1 FCC 2400 A Offset
+     WgdsWiFiSarDeltaGroup1PowerChainB1, // Group 1 FCC 2400 B Offset
+     WgdsWiFiSarDeltaGroup1PowerMax2,    // Group 1 FCC 5200 Max
+     WgdsWiFiSarDeltaGroup1PowerChainA2, // Group 1 FCC 5200 A Offset
+     WgdsWiFiSarDeltaGroup1PowerChainB2, // Group 1 FCC 5200 B Offset
+     WgdsWiFiSarDeltaGroup2PowerMax1,    // Group 2 EC Jap 2400 Max
+     WgdsWiFiSarDeltaGroup2PowerChainA1, // Group 2 EC Jap 2400 A Offset
+     WgdsWiFiSarDeltaGroup2PowerChainB1, // Group 2 EC Jap 2400 B Offset
+     WgdsWiFiSarDeltaGroup2PowerMax2,    // Group 2 EC Jap 5200 Max
+     WgdsWiFiSarDeltaGroup2PowerChainA2, // Group 2 EC Jap 5200 A Offset
+     WgdsWiFiSarDeltaGroup2PowerChainB2, // Group 2 EC Jap 5200 B Offset
+     WgdsWiFiSarDeltaGroup3PowerMax1,    // Group 3 ROW 2400 Max
+     WgdsWiFiSarDeltaGroup3PowerChainA1, // Group 3 ROW 2400 A Offset
+     WgdsWiFiSarDeltaGroup3PowerChainB1, // Group 3 ROW 2400 B Offset
+     WgdsWiFiSarDeltaGroup3PowerMax2,    // Group 3 ROW 5200 Max
+     WgdsWiFiSarDeltaGroup3PowerChainA2, // Group 3 ROW 5200 A Offset
+     WgdsWiFiSarDeltaGroup3PowerChainB2, // Group 3 ROW 5200 B Offset
+ }
+})
 
-Note that ida_simple_remove()/ida_free() throws a BUG(), if id argument
-is negative, it allows to easily check the correctness of the fix by
-fuzzing the return value from ida_simple_get().
+When read the ACPI data to find out the WGDS, the DATA_SIZE is never
+matched.
+>From the above format, it gives 19 numbers, but our driver is hardcode
+as 18.
+Fix it to pass then can parse the data into our wgds table.
+Then we will see:
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init Sending GEO_TX_POWER_LIMIT
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[0]
+Band[0]: chain A = 68 chain B = 69 max_tx_power = 54
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[0]
+Band[1]: chain A = 48 chain B = 49 max_tx_power = 70
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[1]
+Band[0]: chain A = 51 chain B = 67 max_tx_power = 50
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[1]
+Band[1]: chain A = 69 chain B = 70 max_tx_power = 68
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[2]
+Band[0]: chain A = 49 chain B = 50 max_tx_power = 48
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[2]
+Band[1]: chain A = 52 chain B = 53 max_tx_power = 51
 
-Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
-Cc: stable@vger.kernel.org # v4.6+
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: stable@vger.kernel.org # 4.12+
+Fixes: a6bff3cb19b7 ("iwlwifi: mvm: add GEO_TX_POWER_LIMIT cmd for geographic tx power table")
+Signed-off-by: Matt Chen <matt.chen@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/fw/acpi.h |    4 +++-
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c  |    2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1285,7 +1285,7 @@ int gpiochip_add_data_with_key(struct gp
- 	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
- 	if (!gdev->descs) {
- 		status = -ENOMEM;
--		goto err_free_gdev;
-+		goto err_free_ida;
- 	}
+--- a/drivers/net/wireless/intel/iwlwifi/fw/acpi.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/acpi.h
+@@ -6,6 +6,7 @@
+  * GPL LICENSE SUMMARY
+  *
+  * Copyright(c) 2017        Intel Deutschland GmbH
++ * Copyright(c) 2018        Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -29,6 +30,7 @@
+  * BSD LICENSE
+  *
+  * Copyright(c) 2017        Intel Deutschland GmbH
++ * Copyright(c) 2018        Intel Corporation
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -84,7 +86,7 @@
+ #define ACPI_WRDS_WIFI_DATA_SIZE	(ACPI_SAR_TABLE_SIZE + 2)
+ #define ACPI_EWRD_WIFI_DATA_SIZE	((ACPI_SAR_PROFILE_NUM - 1) * \
+ 					 ACPI_SAR_TABLE_SIZE + 3)
+-#define ACPI_WGDS_WIFI_DATA_SIZE	18
++#define ACPI_WGDS_WIFI_DATA_SIZE	19
+ #define ACPI_WRDD_WIFI_DATA_SIZE	2
+ #define ACPI_SPLC_WIFI_DATA_SIZE	2
  
- 	if (chip->ngpio == 0) {
-@@ -1413,8 +1413,9 @@ err_free_label:
- 	kfree_const(gdev->label);
- err_free_descs:
- 	kfree(gdev->descs);
--err_free_gdev:
-+err_free_ida:
- 	ida_simple_remove(&gpio_ida, gdev->id);
-+err_free_gdev:
- 	/* failures here can mean systems won't boot... */
- 	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
- 	       gdev->base, gdev->base + gdev->ngpio - 1,
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -880,7 +880,7 @@ static int iwl_mvm_sar_geo_init(struct i
+ 	IWL_DEBUG_RADIO(mvm, "Sending GEO_TX_POWER_LIMIT\n");
+ 
+ 	BUILD_BUG_ON(ACPI_NUM_GEO_PROFILES * ACPI_WGDS_NUM_BANDS *
+-		     ACPI_WGDS_TABLE_SIZE !=  ACPI_WGDS_WIFI_DATA_SIZE);
++		     ACPI_WGDS_TABLE_SIZE + 1 !=  ACPI_WGDS_WIFI_DATA_SIZE);
+ 
+ 	BUILD_BUG_ON(ACPI_NUM_GEO_PROFILES > IWL_NUM_GEO_PROFILES);
+ 
 
 
