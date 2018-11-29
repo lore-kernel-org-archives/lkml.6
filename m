@@ -2,429 +2,151 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABCDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F05C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2E420863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oET2Ch7P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2E420863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5413320863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:24:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5413320863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbeK2R1r (ORCPT
+        id S1727956AbeK2R2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:27:47 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43724 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeK2R1q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:27:46 -0500
-Received: by mail-lj1-f194.google.com with SMTP id 83-v6so652082ljf.10;
-        Wed, 28 Nov 2018 22:23:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rs54zgE9SpByj5wztzQb1btYsTLumAwkFU77ybXO9qk=;
-        b=oET2Ch7P8To+2y0NGjVr9LRR1aP70SRBr38UmUiLBvC402J5FSoutihvsMmJ4yHNVS
-         5HTqDWWFbIh1q3fUFOaEVqKZ49yxcOknvA9f+EbifEUmLEzu3X2lkNPPjvJwAVEGnO2R
-         +hk0+PZ/zJQ0MhYU5gI11IeyYOHTGQxStUbvYo2wcy+towLSH2EPa2Zy8PvnIigZ6FvD
-         QT4Zi8DpQFt8nU04W24Ek+4/QQspN098Kyy/GvZuOC3VllkqSwqHs/BOuy5EMSrt3UBJ
-         fB5YP9/BHG86nXWyCqMeqA889cxzJU0DhCVi/jQRtjqJmx1hOTI1p9GEFjF6h7woQZuu
-         fszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rs54zgE9SpByj5wztzQb1btYsTLumAwkFU77ybXO9qk=;
-        b=Sn1XH9UcbkuluXdbcY+6fLEpDrwAAIgCBMYcMhO8UNwfWIf57hWRTvV5ZAqFk16u+v
-         A82BimrtpnOa81MS1nH6qYneaFaQ8SUIq/LDmYWIIKZ5IWRiZ11HyNt9dATwLhRx5fU/
-         jrqJYYPtFFw7zgbhPxIB5EQG/wCQ5Mc6RIfOPNn4rq8Xq9OZwq0+LMyNc7+zJfbn905y
-         ME8eUMCH+ESTR4Pemf2OT+TkA1bihPqyR4QEzKbkh+i8Fz+nXKRtFOiicCdEApi/YX4G
-         r8u39AFdxhu0qHM71nMDEEKhYFICY0Dp7DykmvuKa8UBhk4ffnL/egJyHGEPhzoyOH46
-         AWTA==
-X-Gm-Message-State: AA+aEWa04ocWeCjy6FHXuN2v1WP3/EOjW6L1AANnsTTXpTWh0Of0jxVG
-        7fRMSzN82dk6hEGgyH4+STikUif9JvXWOmUx5R4=
-X-Google-Smtp-Source: AFSGD/WiP40Jzp1tZJ1Mh/2y8yD+ro4YhO0qww3dfLBNUkqG52Ve0dYQpUmzUqbSjAX+PZEimGiO3ccENjejIpUyCBY=
-X-Received: by 2002:a2e:5356:: with SMTP id t22-v6mr184285ljd.26.1543472608768;
- Wed, 28 Nov 2018 22:23:28 -0800 (PST)
+        Thu, 29 Nov 2018 12:28:45 -0500
+Received: from mga07.intel.com ([134.134.136.100]:4622 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727406AbeK2R2p (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:28:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 22:24:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,293,1539673200"; 
+   d="scan'208";a="95626981"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.43]) ([10.239.196.43])
+  by orsmga006.jf.intel.com with ESMTP; 28 Nov 2018 22:24:28 -0800
+Subject: Re: [PATCH v3 0/3] perf report/annotate: Support average IPC and IPC
+ coverage for function
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1543418098-10435-1-git-send-email-yao.jin@linux.intel.com>
+ <20181128101757.GA11280@krava> <20181128101846.GB11280@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <4f05c9c6-f82f-1a23-ce8b-b061d5758400@linux.intel.com>
+Date:   Thu, 29 Nov 2018 14:24:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
- <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org> <84836600-c705-9ac3-297e-bb67a611daca@intel.com>
-In-Reply-To: <84836600-c705-9ac3-297e-bb67a611daca@intel.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 29 Nov 2018 14:22:52 +0800
-Message-ID: <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] mmc: sdhci: add support for using external DMA devices
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        kishon@ti.com, nsekhar@ti.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181128101846.GB11280@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018 at 21:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 12/11/18 9:26 AM, Chunyan Zhang wrote:
-> > Some standard SD host controllers can support both external dma
-> > controllers as well as ADMA/SDMA in which the SD host controller
-> > acts as DMA master. TI's omap controller is the case as an example.
-> >
-> > Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> > the host controller but does not have any support for external DMA
-> > controllers implemented using dmaengine, meaning that custom code is
-> > needed for any systems that use an external DMA controller with SDHCI.
->
-> I still think you probably need to reset the DMA if there are transfer
-> errors - perhaps you could comment on that.  Also there are some comments below.
-
-With regard to "transfer error", do you mean if
-sdhci_external_dma_setup() failed?
-
-Thanks,
-Chunyan
 
 
->
-> >
-> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> > ---
-> >  drivers/mmc/host/Kconfig |  13 ++++
-> >  drivers/mmc/host/sdhci.c | 181 ++++++++++++++++++++++++++++++++++++++++++++++-
-> >  drivers/mmc/host/sdhci.h |   8 +++
-> >  3 files changed, 201 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> > index 1b58739..7bf3eff 100644
-> > --- a/drivers/mmc/host/Kconfig
-> > +++ b/drivers/mmc/host/Kconfig
-> > @@ -977,3 +977,16 @@ config MMC_SDHCI_OMAP
-> >         If you have a controller with this interface, say Y or M here.
-> >
-> >         If unsure, say N.
-> > +
-> > +config MMC_SDHCI_EXTERNAL_DMA
-> > +        bool "Support external DMA in standard SD host controller"
->
-> It would be simpler if the drivers that needed it just selected it e.g.
->
-> config MMC_SDHCI_OMAP
->         tristate "TI SDHCI Controller Support"
->         depends on MMC_SDHCI_PLTFM && OF
->         select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
->
-> > +     depends on MMC_SDHCI
-> > +     depends on DMA_ENGINE
-> > +     help
-> > +       This is an option for using external DMA device via dmaengine
-> > +       framework.
-> > +
-> > +       If you have a controller which support using external DMA device
-> > +       for data transfer, can say Y.
-> > +
-> > +       If unsure, say N.
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 99bdae5..853cc98 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -14,6 +14,7 @@
-> >   */
-> >
-> >  #include <linux/delay.h>
-> > +#include <linux/dmaengine.h>
-> >  #include <linux/ktime.h>
-> >  #include <linux/highmem.h>
-> >  #include <linux/io.h>
-> > @@ -1309,6 +1310,158 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
-> >               del_timer(&host->timer);
-> >  }
-> >
-> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> > +static int sdhci_external_dma_init(struct sdhci_host *host)
-> > +{
-> > +     int ret = 0;
-> > +     struct mmc_host *mmc = host->mmc;
-> > +
-> > +     host->tx_chan = dma_request_chan(mmc->parent, "tx");
-> > +     if (IS_ERR(host->tx_chan)) {
-> > +             ret = PTR_ERR(host->tx_chan);
-> > +             if (ret != -EPROBE_DEFER)
-> > +                     pr_warn("Failed to request TX DMA channel.\n");
-> > +             host->tx_chan = NULL;
-> > +             return ret;
-> > +     }
-> > +
-> > +     host->rx_chan = dma_request_chan(mmc->parent, "rx");
-> > +     if (IS_ERR(host->rx_chan)) {
-> > +             if (host->tx_chan) {
-> > +                     dma_release_channel(host->tx_chan);
-> > +                     host->tx_chan = NULL;
-> > +             }
-> > +
-> > +             ret = PTR_ERR(host->rx_chan);
-> > +             if (ret != -EPROBE_DEFER)
-> > +                     pr_warn("Failed to request RX DMA channel.\n");
-> > +             host->rx_chan = NULL;
-> > +     }
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static inline struct dma_chan *
-> > +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
-> > +{
-> > +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
-> > +}
-> > +
-> > +static int sdhci_external_dma_setup(struct sdhci_host *host,
-> > +                                 struct mmc_command *cmd)
-> > +{
-> > +     int ret = 0, i;
-> > +     struct dma_async_tx_descriptor *desc;
-> > +     struct mmc_data *data = cmd->data;
->
-> cmd->data might be NULL?  Have you tested this?
->
-> > +     struct dma_chan *chan;
-> > +     struct dma_slave_config cfg;
-> > +     dma_cookie_t cookie;
-> > +
-> > +     if (!host->mapbase)
-> > +             return -EINVAL;
-> > +
-> > +     cfg.src_addr = host->mapbase + SDHCI_BUFFER;
-> > +     cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
-> > +     cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> > +     cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> > +     cfg.src_maxburst = data->blksz / 4;
-> > +     cfg.dst_maxburst = data->blksz / 4;
-> > +
-> > +     /* Sanity check: all the SG entries must be aligned by block size. */
-> > +     for (i = 0; i < data->sg_len; i++) {
-> > +             if ((data->sg + i)->length % data->blksz)
-> > +                     return -EINVAL;
-> > +     }
-> > +
-> > +     chan = sdhci_external_dma_channel(host, data);
-> > +
-> > +     ret = dmaengine_slave_config(chan, &cfg);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
-> > +                                    mmc_get_dma_dir(data),
-> > +                                    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-> > +     if (!desc)
-> > +             return -EINVAL;
-> > +
-> > +     desc->callback = NULL;
-> > +     desc->callback_param = NULL;
-> > +
-> > +     cookie = dmaengine_submit(desc);
-> > +     if (cookie < 0)
-> > +             ret = cookie;
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static void sdhci_external_dma_release(struct sdhci_host *host)
-> > +{
-> > +     if (host->tx_chan) {
-> > +             dma_release_channel(host->tx_chan);
-> > +             host->tx_chan = NULL;
-> > +     }
-> > +
-> > +     if (host->rx_chan) {
-> > +             dma_release_channel(host->rx_chan);
-> > +             host->rx_chan = NULL;
-> > +     }
-> > +
-> > +     sdhci_switch_external_dma(host, false);
-> > +}
-> > +
-> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     if (sdhci_external_dma_setup(host, cmd)) {
-> > +             sdhci_external_dma_release(host);
-> > +             pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
-> > +                    mmc_hostname(host->mmc));
-> > +     } else {
-> > +             /* Prepare for using external dma */
-> > +             host->flags |= SDHCI_REQ_USE_DMA;
-> > +     }
-> > +
-> > +     sdhci_prepare_data(host, cmd);
-> > +}
-> > +
-> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     struct dma_chan *chan = sdhci_external_dma_channel(host, cmd->data);
->
-> cmd->data might be NULL?  Have you tested this?
->
-> > +
-> > +     if (cmd->opcode != MMC_SET_BLOCK_COUNT) {
->
-> I would have thought:
->
->         if (cmd->data)
->
-> > +             sdhci_set_timeout(host, cmd);
-> > +             dma_async_issue_pending(chan);
-> > +     }
-> > +}
-> > +#else
-> > +static int sdhci_external_dma_init(struct sdhci_host *host)
-> > +{
-> > +     return 0;
->
-> That should return an error, perhaps -EOPNOTSUPP.
->
-> > +}
-> > +
-> > +static void sdhci_external_dma_release(struct sdhci_host *host)
-> > +{}
-> > +
-> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     /* If SDHCI_EXTDMA not supported, PIO will be used */
->
-> SDHCI_EXTDMA is now MMC_SDHCI_EXTERNAL_DMA
->
-> > +     sdhci_prepare_data(host, cmd);
-> > +}
-> > +
-> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{}
-> > +#endif
-> > +
-> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
-> > +{
-> > +     host->use_external_dma = en;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
-> > +
-> >  void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >  {
-> >       int flags;
-> > @@ -1355,7 +1508,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >               host->data_cmd = cmd;
-> >       }
-> >
-> > -     sdhci_prepare_data(host, cmd);
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_prepare_data(host, cmd);
-> > +     else
-> > +             sdhci_prepare_data(host, cmd);
-> >
-> >       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
-> >
-> > @@ -1397,6 +1553,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >               timeout += 10 * HZ;
-> >       sdhci_mod_timer(host, cmd->mrq, timeout);
-> >
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_pre_transfer(host, cmd);
-> > +
-> >       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdhci_send_command);
-> > @@ -4133,6 +4292,19 @@ int sdhci_setup_host(struct sdhci_host *host)
-> >                       return ret;
-> >       }
-> >
-> > +     if (host->use_external_dma) {
-> > +             ret = sdhci_external_dma_init(host);
-> > +             if (ret == -EPROBE_DEFER)
-> > +                     goto unreg;
-> > +
-> > +             /*
-> > +              * Fall back to use the DMA/PIO integrated in standard SDHCI
-> > +              * instead of external DMA devices.
-> > +              */
-> > +             if (ret)
-> > +                     sdhci_switch_external_dma(host, false);
-> > +     }
-> > +
-> >       return 0;
-> >
-> >  unreg:
-> > @@ -4161,6 +4333,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
-> >               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
-> >                                 host->adma_table_sz, host->align_buffer,
-> >                                 host->align_addr);
-> > +
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_release(host);
-> > +
-> >       host->adma_table = NULL;
-> >       host->align_buffer = NULL;
-> >  }
-> > @@ -4295,6 +4471,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
-> >                                 host->adma_table_sz, host->align_buffer,
-> >                                 host->align_addr);
-> >
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_release(host);
-> > +
-> >       host->adma_table = NULL;
-> >       host->align_buffer = NULL;
-> >  }
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index b001cf4..8e50a97 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -475,6 +475,7 @@ struct sdhci_host {
-> >
-> >       int irq;                /* Device IRQ */
-> >       void __iomem *ioaddr;   /* Mapped address */
-> > +     phys_addr_t mapbase;    /* physical address base */
-> >       char *bounce_buffer;    /* For packing SDMA reads/writes */
-> >       dma_addr_t bounce_addr;
-> >       unsigned int bounce_buffer_size;
-> > @@ -524,6 +525,7 @@ struct sdhci_host {
-> >       bool pending_reset;     /* Cmd/data reset is pending */
-> >       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
-> >       bool v4_mode;           /* Host Version 4 Enable */
-> > +     bool use_external_dma;
-> >
-> >       struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
-> >       struct mmc_command *cmd;        /* Current command */
-> > @@ -552,6 +554,11 @@ struct sdhci_host {
-> >       struct timer_list timer;        /* Timer for timeouts */
-> >       struct timer_list data_timer;   /* Timer for data timeouts */
-> >
-> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> > +     struct dma_chan *rx_chan;
-> > +     struct dma_chan *tx_chan;
-> > +#endif
-> > +
-> >       u32 caps;               /* CAPABILITY_0 */
-> >       u32 caps1;              /* CAPABILITY_1 */
-> >       bool read_caps;         /* Capability flags have been read */
-> > @@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
-> >  void sdhci_end_tuning(struct sdhci_host *host);
-> >  void sdhci_reset_tuning(struct sdhci_host *host);
-> >  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
-> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
-> >
-> >  #endif /* __SDHCI_HW_H */
-> >
->
+On 11/28/2018 6:18 PM, Jiri Olsa wrote:
+> On Wed, Nov 28, 2018 at 11:17:57AM +0100, Jiri Olsa wrote:
+>> On Wed, Nov 28, 2018 at 11:14:55PM +0800, Jin Yao wrote:
+>>> Add supporting of displaying the average IPC and IPC coverage
+>>> percentage per function.
+>>>
+>>> For example,
+>>>
+>>> $ perf record -b ...
+>>> $ perf report -s symbol or
+>>>    perf report -s symbol --stdio
+>>>
+>>> Overhead  Symbol                           IPC   [IPC Coverage]
+>>>    39.60%  [.] __random                     2.30  [ 54.8%]
+>>>    18.02%  [.] main                         0.43  [ 54.3%]
+>>>    14.21%  [.] compute_flag                 2.29  [100.0%]
+>>>    14.16%  [.] rand                         0.36  [100.0%]
+>>>     7.06%  [.] __random_r                   2.57  [ 70.5%]
+>>>     6.85%  [.] rand@plt                     0.00  [  0.0%]
+>>>    ...
+>>>
+>>> $ perf annotate --stdio2
+>>>
+>>> Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
+>>>
+>>>                          Disassembly of section .text:
+>>>
+>>>                          000000000003aac0 <random@@GLIBC_2.2.5>:
+>>>    8.32  3.28              sub    $0x18,%rsp
+>>>          3.28              mov    $0x1,%esi
+>>>          3.28              xor    %eax,%eax
+>>>          3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
+>>>   11.57  3.28     1      ↓ je     20
+>>>                            lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>>>                          ↓ jne    29
+>>>                          ↓ jmp    43
+>>>   11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>>>   ...
+>>>
+>>> v3:
+>>> ---
+>>>      Remove the sortkey "ipc" from command-line. The columns "IPC"
+>>>      and "[IPC Coverage]" are automatically enabled when "symbol"
+>>>      is specified.
+>>>
+>>>      Patch "perf report: Display average IPC and IPC coverage per symbol"
+>>>      is impacted.
+>>>
+>>> v2:
+>>> ---
+>>>    1. Merge in Jiri's patch to support stdio mode
+>>>
+>>>    2. Add a new patch "perf annotate: Create a annotate2 flag
+>>>       in struct symbol" which records if the symbol has been
+>>>       annotated yet.
+>>>
+>>>    3. Minor update such as adding { } for multiline code in 'if'
+>>>       condition.
+>>>
+>>> Jin Yao (3):
+>>>    perf annotate: Compute average IPC and IPC coverage per symbol
+>>>    perf annotate: Create a annotate2 flag in struct symbol
+>>>    perf report: Display average IPC and IPC coverage per symbol
+>>
+>> hi,
+>> I took he liberty and moved the annotation retrieval into
+>> resort phase under progress bar scope. It's currently on top
+>> of my perf/fixes branch, could you please check it?
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+> 
+> commits:
+> 7f3ffdb9783f perf tools: Move symbol annotation to resort
+> e87f7d3c4f10 perf tools: Add perf_evsel__output_resort_cb function
+> 40012b422108 perf tools: Add argument to hists__resort_cb_t callback
+> 
+> jirka
+> 
+
+Hi Jiri,
+
+Thanks for your patches. I have tested with your repo. Now I can see 2 
+progress bars. One is displayed at the events processing phase, the 
+other is displayed at resorting phase.
+
+I have only one concern that is, in my test, much of time is consumed by 
+the event processing phase, for example, 90% of time. Only 10% of time 
+is consumed at resorting phase.
+
+So do we really need the second progress bar?
+
+Thanks
+Jin Yao
