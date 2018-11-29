@@ -2,111 +2,238 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6819FC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C960C64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8FB2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C32EB20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Y8BqipgP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8FB2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Gkp8j68L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32EB20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeK3Kf6 (ORCPT
+        id S1727106AbeK3Kfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:35:58 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:32849 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeK3Kf5 (ORCPT
+        Fri, 30 Nov 2018 05:35:44 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:50484 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbeK3Kfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:35:57 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so1822580plo.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:28:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=sWbxhkFth6vBUM1Snfeosc2LQRu3OThmz1EQOLm+GtE=;
-        b=Y8BqipgP0P8KiOPbWRR0HSv3yNvQns2cREminu0kcCwGBNo31c59pVet7RZ95dB5wa
-         jupLyKSqWXUE73WuMhQmMGZR0Htfz8nzmeEwx/1RswqBfVmHRyjyX7Fv/aJ4bsI4iW0p
-         Qp4PayFkbz9HGnpyJqjMW5R8k4pDpoJF+NOMiykS1yXTSnm3grBJEjRPYS5ZRDxJkpX7
-         8abht64xdiGB7ZrezQ6igmHtw/dsfh6bYRUdZTaaTMrUE0qHh17MOupmmsR4AeBC/C1p
-         NfuSDxaVd+1w7/ja2ZauZvTYyg5ACme+60F8bwalj+lPE3TEfF1bz3G60ty9ckD/gb8r
-         7rzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=sWbxhkFth6vBUM1Snfeosc2LQRu3OThmz1EQOLm+GtE=;
-        b=hWOikzkaFwQ9NKhZPtaoW6mgkjxXLnCtlBrqtPHtGILN3NNdwyueAE9g34nmr9LiMq
-         DtV85BP0UKNk4ijO9BPjtD37R+yg5tpD8vKEXKmLUBZkpc6nVtcCGHVGGd83W4pp0EfB
-         jdCZMhjt0or+2dAb5W/yh2sDkZVsshtmq3bQaixUrv18sqa9LoEOvnQjwThuCmPFh9A/
-         zvGgcIVI6nXdcdllsXkYesinrYBljlrPQxs8DeHSDrGS3feQn11v9vYx3QkIwhVOz3Kf
-         nsL6e8+5p5nITIj3bz44AL2oRn3fq8dDY576CCQazAgvKfX+sk/9NS8TV9HzNH194Ky3
-         JH+w==
-X-Gm-Message-State: AA+aEWZpsXjmscX62v8S87gcVn2Qox5zr/8HQHkTnkUYlFPmE7fQ7Bei
-        X9BF1xZOu9kwuMqiOx9h7ba58A==
-X-Google-Smtp-Source: AFSGD/X3OKi16ppD27/OdLHWtokaOXJm/Xe01KObh0iafGtVGjCVGpxow+wUi5kFnJ5Ua41K+RIFgw==
-X-Received: by 2002:a17:902:7d82:: with SMTP id a2mr3419606plm.163.1543534124838;
-        Thu, 29 Nov 2018 15:28:44 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id z62sm4484115pfl.33.2018.11.29.15.28.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 15:28:44 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: switch CONFIG_PWM_MESON to built-in
-In-Reply-To: <CAFBinCBViZgRrZO16FsRKSGNriSw2_D9+_6ri99_zf++_SuuKg@mail.gmail.com>
-References: <20181114230554.4968-1-martin.blumenstingl@googlemail.com> <7hh8g0d8tg.fsf@baylibre.com> <CAFBinCBViZgRrZO16FsRKSGNriSw2_D9+_6ri99_zf++_SuuKg@mail.gmail.com>
-Date:   Thu, 29 Nov 2018 15:28:42 -0800
-Message-ID: <7hk1kv79at.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 30 Nov 2018 05:35:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1543534111; x=1575070111;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=i7g213jXuExf9WQ9ppjwE4Ycti2qAbTHczLIWdNAD5A=;
+  b=Gkp8j68LYZLPTmH7vVjKtDYVtWTBldQtMxWjbWlhjavOx1BAZNyAgKFL
+   J/mT4poKRXPJ9zDJkaCMHXwJfe20R4iI8Gewh9XWe3NluBYWcMoRiTtb+
+   NEjroVDbr5KQ/B7Jz87adEqt0bgpzv9+hpA2Mklc3Lv+fJtchu6TVK4t0
+   ZC7TBPYd43x0Hkc8XSHcqhcyfe4+tZU4E5rcJheLp1laGPHcLJFcS6k1u
+   6Q4C6fSxUyoBBPi5hryCm5SD/Z6ZQJHQA8rT8m8rNFivoDGEc93seKxqI
+   cLQB41/AKP2e1KG7h0hz6ed2JJd254IenBLB/6l4qPlChA6+ppnL+a8Z5
+   g==;
+X-IronPort-AV: E=Sophos;i="5.56,296,1539619200"; 
+   d="scan'208";a="96644309"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 07:28:31 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 15:11:28 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 29 Nov 2018 15:28:31 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        devicetree@vger.kernel.org,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)), linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RFT PATCH v1 2/4] dt-binding: cpu-topology: Move cpu-map to a common binding.
+Date:   Thu, 29 Nov 2018 15:28:18 -0800
+Message-Id: <1543534100-3654-3-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
+References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+cpu-map binding can be used to described cpu topology for both
+RISC-V & ARM. It makes more sense to move the binding to document
+to a common place.
 
-> Hi Kevin,
->
-> On Thu, Nov 29, 2018 at 1:30 AM Kevin Hilman <khilman@baylibre.com> wrote:
->>
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>
->> > Some Meson8b boards (Odroid-C1, EC-100) use a PWM regulator which is the
->> > voltage supply of the CPU cores (this regulator is typically called
->> > "VCCK").
->> > Now that we are preparing support for CPU frequency scaling on Meson8,
->> > Meson8b and Meson8m2 we should build the pwm-meson driver into the
->> > kernel so we can configure the CPU voltage early in the boot process.
->>
->> Can you explain a little more why the configuration of CPU voltage
->> cannot wait a bit so this could be properly probed?
->
-> I was under the impression that cpufreq-dt would still initialize even
-> if the regulator is not ready yet. however (after reading the code
-> again) this is clearly NOT the case.
+The relevant discussion can be found here.
+https://lkml.org/lkml/2018/11/6/19
 
-Hmm, a quick look at cpufreq-dt suggests that it should -EPROBE_DEFER if
-the regulator isn't ready yet.  Why doesn't that work?
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+ .../{arm/topology.txt => cpu/cpu-topology.txt}     | 81 ++++++++++++++++++----
+ 1 file changed, 67 insertions(+), 14 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (86%)
 
-> there's still a benefit with this change: your Odroid-C1 in your
-> KernelCI lab would also be able to change the CPU frequency (so in
-> case something breaks we could spot it there).
-> will you accept this patch after I updated the description to mention
-> that it's for KernelCI test coverage?
+diff --git a/Documentation/devicetree/bindings/arm/topology.txt b/Documentation/devicetree/bindings/cpu/cpu-topology.txt
+similarity index 86%
+rename from Documentation/devicetree/bindings/arm/topology.txt
+rename to Documentation/devicetree/bindings/cpu/cpu-topology.txt
+index 66848355..1de6fbce 100644
+--- a/Documentation/devicetree/bindings/arm/topology.txt
++++ b/Documentation/devicetree/bindings/cpu/cpu-topology.txt
+@@ -1,12 +1,12 @@
+ ===========================================
+-ARM topology binding description
++CPU topology binding description
+ ===========================================
+ 
+ ===========================================
+ 1 - Introduction
+ ===========================================
+ 
+-In an ARM system, the hierarchy of CPUs is defined through three entities that
++In a SMP system, the hierarchy of CPUs is defined through three entities that
+ are used to describe the layout of physical CPUs in the system:
+ 
+ - socket
+@@ -14,9 +14,6 @@ are used to describe the layout of physical CPUs in the system:
+ - core
+ - thread
+ 
+-The cpu nodes (bindings defined in [1]) represent the devices that
+-correspond to physical CPUs and are to be mapped to the hierarchy levels.
+-
+ The bottom hierarchy level sits at core or thread level depending on whether
+ symmetric multi-threading (SMT) is supported or not.
+ 
+@@ -25,33 +22,37 @@ threads existing in the system and map to the hierarchy level "thread" above.
+ In systems where SMT is not supported "cpu" nodes represent all cores present
+ in the system and map to the hierarchy level "core" above.
+ 
+-ARM topology bindings allow one to associate cpu nodes with hierarchical groups
++CPU topology bindings allow one to associate cpu nodes with hierarchical groups
+ corresponding to the system hierarchy; syntactically they are defined as device
+ tree nodes.
+ 
+-The remainder of this document provides the topology bindings for ARM, based
+-on the Devicetree Specification, available from:
++Currently, only ARM/RISC-V intend to use this cpu topology binding but it may be
++used for any other architecture as well.
+ 
+-https://www.devicetree.org/specifications/
++The remainder of this document provides the topology bindings for ARM/RISC-V, based
++on the Devicetree Specification, available at [4].
++
++The cpu nodes (bindings defined in [1] for ARM or [2] for RISC-V) represent the devices that
++correspond to physical CPUs and are to be mapped to the hierarchy levels.
+ 
+ If not stated otherwise, whenever a reference to a cpu node phandle is made its
+ value must point to a cpu node compliant with the cpu node bindings as
+-documented in [1].
++documented in [1] or [3] for respective ISA.
+ A topology description containing phandles to cpu nodes that are not compliant
+-with bindings standardized in [1] is therefore considered invalid.
++with bindings standardized in [1] or [3] is therefore considered invalid.
+ 
+ ===========================================
+ 2 - cpu-map node
+ ===========================================
+ 
+-The ARM CPU topology is defined within the cpu-map node, which is a direct
++The ARM/RISC-V CPU topology is defined within the cpu-map node, which is a direct
+ child of the cpus node and provides a container where the actual topology
+ nodes are listed.
+ 
+ - cpu-map node
+ 
+-	Usage: Optional - On ARM SMP systems provide CPUs topology to the OS.
+-			  ARM uniprocessor systems do not require a topology
++	Usage: Optional - On SMP systems provide CPUs topology to the OS.
++			  Uniprocessor systems do not require a topology
+ 			  description and therefore should not define a
+ 			  cpu-map node.
+ 
+@@ -494,8 +495,60 @@ cpus {
+ 	};
+ };
+ 
++Example 3: HiFive Unleashed (RISC-V 64 bit, 4 core system)
++
++cpus {
++	#address-cells = <2>;
++	#size-cells = <2>;
++	compatible = "sifive,fu540g", "sifive,fu500";
++	model = "sifive,hifive-unleashed-a00";
++
++	...
++
++	cpu-map {
++		cluster0 {
++			core0 {
++				cpu = <&L12>;
++		 	};
++			core1 {
++				cpu = <&L15>;
++			};
++			core2 {
++				cpu0 = <&L18>;
++			};
++			core3 {
++				cpu0 = <&L21>;
++			};
++		};
++ 	};
++
++	L12: cpu@1 {
++		device_type = "cpu";
++		compatible = "sifive,rocket0", "riscv";
++		reg = <0x1>;
++	}
++
++	L15: cpu@2 {
++		device_type = "cpu";
++		compatible = "sifive,rocket0", "riscv";
++		reg = <0x2>;
++	}
++	L18: cpu@3 {
++		device_type = "cpu";
++		compatible = "sifive,rocket0", "riscv";
++		reg = <0x3>;
++	}
++	L21: cpu@4 {
++		device_type = "cpu";
++		compatible = "sifive,rocket0", "riscv";
++		reg = <0x4>;
++	}
++};
+ ===============================================================================
+ [1] ARM Linux kernel documentation
+     Documentation/devicetree/bindings/arm/cpus.txt
+ [2] Devicetree NUMA binding description
+     Documentation/devicetree/bindings/numa.txt
++[3] RISC-V Linux kernel documentation
++    Documentation/devicetree/bindings/riscv/cpus.txt
++[4] https://www.devicetree.org/specifications/
+-- 
+2.7.4
 
-Possibly, but I'd still rather see the dependencies worked out correctly
-so that this can be module, and cpufreq-dt would defer until it's ready.
-
-Kevin
