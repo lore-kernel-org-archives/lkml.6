@@ -6,168 +6,155 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6912FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62298C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED62208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED62208E7
+	by mail.kernel.org (Postfix) with ESMTP id 32F5E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F5E208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeK3BMe (ORCPT
+        id S1728809AbeK3BMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:12:34 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:35618 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 20:12:38 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:51240 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728744AbeK3BMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:12:34 -0500
+        id S1728466AbeK3BMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:12:38 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 435K8R1QcSz9vGDx;
-        Thu, 29 Nov 2018 15:07:03 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 435K8X0vX5z9vGF3;
+        Thu, 29 Nov 2018 15:07:08 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id hpYJQwH1UVmK; Thu, 29 Nov 2018 15:07:03 +0100 (CET)
+        with ESMTP id SPdzAjVuIv87; Thu, 29 Nov 2018 15:07:07 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 435K8R0sLCz9vGDm;
-        Thu, 29 Nov 2018 15:07:03 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 435K8W6w0Jz9vGDm;
+        Thu, 29 Nov 2018 15:07:07 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 41D2D8B8A0;
-        Thu, 29 Nov 2018 15:07:04 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3C79F8B89E;
+        Thu, 29 Nov 2018 15:07:09 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ALgmijt-w9yZ; Thu, 29 Nov 2018 15:07:04 +0100 (CET)
+        with ESMTP id MEz3m4pADQxH; Thu, 29 Nov 2018 15:07:09 +0100 (CET)
 Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F1EC98B89E;
-        Thu, 29 Nov 2018 15:07:03 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 083ED8B899;
+        Thu, 29 Nov 2018 15:07:09 +0100 (CET)
 Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B7D6C69AE8; Thu, 29 Nov 2018 14:07:03 +0000 (UTC)
-Message-Id: <8861a72c21e819e310cc1e84c402dfbfc1552312.1543499864.git.christophe.leroy@c-s.fr>
+        id BEE7A69AE8; Thu, 29 Nov 2018 14:07:05 +0000 (UTC)
+Message-Id: <894f5c95319a078b9be1568487d6509f1bef44a2.1543499864.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1543499860.git.christophe.leroy@c-s.fr>
 References: <cover.1543499860.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v9 09/20] powerpc/mm: enable the use of page table cache of
- order 0
+Subject: [PATCH v9 10/20] powerpc/mm: replace hugetlb_cache by
+ PGT_CACHE(PTE_T_ORDER)
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 14:07:03 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 14:07:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hugepages uses a cache of order 0. Lets allow page tables
-of order 0 in the common part in order to avoid open coding
-in hugetlb
+Instead of opencoding cache handling for the special case
+of hugepage tables having a single pte_t element, this
+patch makes use of the common pgtable_cache helpers
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/pgalloc.h | 5 +----
- arch/powerpc/include/asm/book3s/64/pgalloc.h | 5 +----
- arch/powerpc/include/asm/nohash/32/pgalloc.h | 5 +----
- arch/powerpc/include/asm/nohash/64/pgalloc.h | 5 +----
- arch/powerpc/mm/init-common.c                | 6 +++---
- 5 files changed, 7 insertions(+), 19 deletions(-)
+ arch/powerpc/include/asm/hugetlb.h |  2 --
+ arch/powerpc/mm/hugetlbpage.c      | 26 +++++++-------------------
+ 2 files changed, 7 insertions(+), 21 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
-index 0f58e5b9dbe7..b5b955eb2fb7 100644
---- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
-@@ -25,10 +25,7 @@
- extern void __bad_pte(pmd_t *pmd);
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 98004262bc87..dfb8bf236586 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -5,8 +5,6 @@
+ #ifdef CONFIG_HUGETLB_PAGE
+ #include <asm/page.h>
  
- extern struct kmem_cache *pgtable_cache[];
--#define PGT_CACHE(shift) ({				\
--			BUG_ON(!(shift));		\
--			pgtable_cache[(shift) - 1];	\
--		})
-+#define PGT_CACHE(shift) pgtable_cache[shift]
+-extern struct kmem_cache *hugepte_cache;
+-
+ #ifdef CONFIG_PPC_BOOK3S_64
  
- static inline pgd_t *pgd_alloc(struct mm_struct *mm)
+ #include <asm/book3s/64/hugetlb.h>
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index 8cf035e68378..c4f1263228b8 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -42,6 +42,8 @@ EXPORT_SYMBOL(HPAGE_SHIFT);
+ 
+ #define hugepd_none(hpd)	(hpd_val(hpd) == 0)
+ 
++#define PTE_T_ORDER	(__builtin_ffs(sizeof(pte_t)) - __builtin_ffs(sizeof(void *)))
++
+ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr, unsigned long sz)
  {
-diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-index f949dd90af9b..4aba625389c4 100644
---- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-@@ -37,10 +37,7 @@ extern struct vmemmap_backing *vmemmap_list;
- #define MAX_PGTABLE_INDEX_SIZE	0xf
+ 	/*
+@@ -61,7 +63,7 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+ 	int num_hugepd;
  
- extern struct kmem_cache *pgtable_cache[];
--#define PGT_CACHE(shift) ({				\
--			BUG_ON(!(shift));		\
--			pgtable_cache[(shift) - 1];	\
--		})
-+#define PGT_CACHE(shift) pgtable_cache[shift]
+ 	if (pshift >= pdshift) {
+-		cachep = hugepte_cache;
++		cachep = PGT_CACHE(PTE_T_ORDER);
+ 		num_hugepd = 1 << (pshift - pdshift);
+ 	} else {
+ 		cachep = PGT_CACHE(pdshift - pshift);
+@@ -264,7 +266,7 @@ static void hugepd_free_rcu_callback(struct rcu_head *head)
+ 	unsigned int i;
  
- extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
- extern pmd_t *pmd_fragment_alloc(struct mm_struct *, unsigned long);
-diff --git a/arch/powerpc/include/asm/nohash/32/pgalloc.h b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-index 7e234582dce5..17963951bdb0 100644
---- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
-@@ -25,10 +25,7 @@
- extern void __bad_pte(pmd_t *pmd);
+ 	for (i = 0; i < batch->index; i++)
+-		kmem_cache_free(hugepte_cache, batch->ptes[i]);
++		kmem_cache_free(PGT_CACHE(PTE_T_ORDER), batch->ptes[i]);
  
- extern struct kmem_cache *pgtable_cache[];
--#define PGT_CACHE(shift) ({				\
--			BUG_ON(!(shift));		\
--			pgtable_cache[(shift) - 1];	\
--		})
-+#define PGT_CACHE(shift) pgtable_cache[shift]
- 
- static inline pgd_t *pgd_alloc(struct mm_struct *mm)
- {
-diff --git a/arch/powerpc/include/asm/nohash/64/pgalloc.h b/arch/powerpc/include/asm/nohash/64/pgalloc.h
-index e2d62d033708..e95eb499a174 100644
---- a/arch/powerpc/include/asm/nohash/64/pgalloc.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgalloc.h
-@@ -36,10 +36,7 @@ extern struct vmemmap_backing *vmemmap_list;
- #define MAX_PGTABLE_INDEX_SIZE	0xf
- 
- extern struct kmem_cache *pgtable_cache[];
--#define PGT_CACHE(shift) ({				\
--			BUG_ON(!(shift));		\
--			pgtable_cache[(shift) - 1];	\
--		})
-+#define PGT_CACHE(shift) pgtable_cache[shift]
- 
- static inline pgd_t *pgd_alloc(struct mm_struct *mm)
- {
-diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
-index 2b656e67f2ea..41190f2b60c2 100644
---- a/arch/powerpc/mm/init-common.c
-+++ b/arch/powerpc/mm/init-common.c
-@@ -40,7 +40,7 @@ static void pmd_ctor(void *addr)
- 	memset(addr, 0, PMD_TABLE_SIZE);
+ 	free_page((unsigned long)batch);
  }
+@@ -277,7 +279,7 @@ static void hugepd_free(struct mmu_gather *tlb, void *hugepte)
  
--struct kmem_cache *pgtable_cache[MAX_PGTABLE_INDEX_SIZE];
-+struct kmem_cache *pgtable_cache[MAX_PGTABLE_INDEX_SIZE + 1];
- EXPORT_SYMBOL_GPL(pgtable_cache);	/* used by kvm_hv module */
- 
- /*
-@@ -71,7 +71,7 @@ void pgtable_cache_add(unsigned shift, void (*ctor)(void *))
- 	 * moment, gcc doesn't seem to recognize is_power_of_2 as a
- 	 * constant expression, so so much for that. */
- 	BUG_ON(!is_power_of_2(minalign));
--	BUG_ON((shift < 1) || (shift > MAX_PGTABLE_INDEX_SIZE));
-+	BUG_ON(shift > MAX_PGTABLE_INDEX_SIZE);
- 
- 	if (PGT_CACHE(shift))
- 		return; /* Already have a cache of this size */
-@@ -83,7 +83,7 @@ void pgtable_cache_add(unsigned shift, void (*ctor)(void *))
- 		panic("Could not allocate pgtable cache for order %d", shift);
- 
- 	kfree(name);
--	pgtable_cache[shift - 1] = new;
-+	pgtable_cache[shift] = new;
- 
- 	pr_debug("Allocated pgtable cache for order %d\n", shift);
+ 	if (atomic_read(&tlb->mm->mm_users) < 2 ||
+ 	    mm_is_thread_local(tlb->mm)) {
+-		kmem_cache_free(hugepte_cache, hugepte);
++		kmem_cache_free(PGT_CACHE(PTE_T_ORDER), hugepte);
+ 		put_cpu_var(hugepd_freelist_cur);
+ 		return;
+ 	}
+@@ -652,7 +654,6 @@ static int __init hugepage_setup_sz(char *str)
  }
+ __setup("hugepagesz=", hugepage_setup_sz);
+ 
+-struct kmem_cache *hugepte_cache;
+ static int __init hugetlbpage_init(void)
+ {
+ 	int psize;
+@@ -702,21 +703,8 @@ static int __init hugetlbpage_init(void)
+ 		if (pdshift > shift)
+ 			pgtable_cache_add(pdshift - shift, NULL);
+ #if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_8xx)
+-		else if (!hugepte_cache) {
+-			/*
+-			 * Create a kmem cache for hugeptes.  The bottom bits in
+-			 * the pte have size information encoded in them, so
+-			 * align them to allow this
+-			 */
+-			hugepte_cache = kmem_cache_create("hugepte-cache",
+-							  sizeof(pte_t),
+-							  HUGEPD_SHIFT_MASK + 1,
+-							  0, NULL);
+-			if (hugepte_cache == NULL)
+-				panic("%s: Unable to create kmem cache "
+-				      "for hugeptes\n", __func__);
+-
+-		}
++		else
++			pgtable_cache_add(PTE_T_ORDER, NULL);
+ #endif
+ 	}
+ 
 -- 
 2.13.3
 
