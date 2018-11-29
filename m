@@ -2,83 +2,95 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7648DC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51820C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4080920868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4080920868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 16EF42145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:55:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e183oMQy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EF42145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730089AbeK3EB3 (ORCPT
+        id S1730112AbeK3EBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:01:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729618AbeK3EB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:01:29 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87E1120989;
-        Thu, 29 Nov 2018 16:55:26 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 11:55:24 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129115524.3fb7d994@gandalf.local.home>
-In-Reply-To: <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
-        <20181126171036.chcbmb35ygpxziub@treble>
-        <20181126175624.bruqfbkngbucpvxr@treble>
-        <20181126200801.GW2113@hirez.programming.kicks-ass.net>
-        <20181126212628.4apztfazichxnt7r@treble>
-        <20181127084330.GX2113@hirez.programming.kicks-ass.net>
-        <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
-        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-        <20181129163342.tp5wlfcyiazwwyoh@treble>
-        <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 29 Nov 2018 23:01:35 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42332 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729618AbeK3EBe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:01:34 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so2616917wrx.9;
+        Thu, 29 Nov 2018 08:55:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8GhSWSWsa2gx7CnePR3wBjVGqId0IKSnMfdxMhmjV7I=;
+        b=e183oMQyGwc4QjJY1crs5GQSC/XL9NjOw1ICfX3HG7sHSfs1SKY9QCuWAwQMNOP0us
+         +hmpkGfeN8eOseK0ZuqPWy/0G20I26oXUp8qLUYDZPgozE1HfkP4CIIakCD2WxnS9tzu
+         8su9gQjoh5cHAOt1k4ZHV+Rdx63Kg6pr5rv9x6lrFJvcAtrsfZyKmiCRXg4EbVax0/Nx
+         2X+Izne3THm5YHCx3R6iV9IPaxLf/Evts1xFkGKZ/ENwhdLwYxbU1+yXasDU3WZyiJta
+         g/ItDcy0/3SeX6kRYDviGkITJYPx3DVSDMZzsO5XFpoQMLcQqmlwmDEwmb/kO3zr8V+7
+         awig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8GhSWSWsa2gx7CnePR3wBjVGqId0IKSnMfdxMhmjV7I=;
+        b=sd0Yo8o2ySwTEFovVsWrDAYVeoLN/XQrfyBWN7CD3IWoKpd7YMYZHhePNgP01DaSai
+         fsq1rmgSrRi4Bvi3O654QJmULtIobZZQC4SzrpDptv9tpQvDZ89j1E3rpdQ44h6/fjQz
+         EH6sBnqsJwmfmXC/CTtDrNKz6f/JeSr9Q1KgeqiVgffoSK39mYedJkIdxVo83TP/qtpI
+         799AXD62/mxrHUKKqf29+qB0ltMNdZO85GuiStUnCt8eYgoHK4qwJzOjfkr40FfY6yfj
+         TXczsrFRreRkgLtxgoLNcxIeH6HRNRza6zJiqVNjTg5eNcmJes881ET8BRQdMvZiv6X9
+         oruQ==
+X-Gm-Message-State: AA+aEWb6u4HY9p0+wC4ZGBm2oAHKCfoK8FDJnhVOWWFrwo8ZusY5Kw62
+        v/ui/yU90ej5BkNX/wuw/QHTK53acmSVVH8L0Io=
+X-Google-Smtp-Source: AFSGD/XwPqSjPTm3izxVSjF3HT42O75wtUvlcwySJxlmKSixU3ZrIDlYma2Va80wTBNXLrPWKPsCbJ1z7BdR9N2lmyc=
+X-Received: by 2002:adf:b783:: with SMTP id s3mr2184512wre.274.1543510532163;
+ Thu, 29 Nov 2018 08:55:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181129135921.231283053@linuxfoundation.org> <20181129135922.602882966@linuxfoundation.org>
+ <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com> <20181129160722.GA31919@kroah.com>
+In-Reply-To: <20181129160722.GA31919@kroah.com>
+From:   Tigran Aivazian <aivazian.tigran@gmail.com>
+Date:   Thu, 29 Nov 2018 16:55:20 +0000
+Message-ID: <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
+Subject: Re: [PATCH 4.19 033/110] bfs: add sanity check at bfs_fill_super()
+To:     gregkh@linuxfoundation.org
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+        torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 08:50:16 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, 29 Nov 2018 at 16:07, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Thu, Nov 29, 2018 at 03:23:00PM +0000, Tigran Aivazian wrote:
+> > Yes, of course I object to it.
+> I can not apply a patch to the stable trees that are not in Linus's tree
+> first.  So there's nothing I can do here with this.
 
-> Instead, I'd suggest:
-> 
->  - just restart the instruction (with the suggested "ptregs->rip --")
-> 
->  - to avoid any "oh, we're not making progress" issues, just fix the
-> instruction yourself to be the right call, by looking it up in the
-> "what needs to be fixed" tables.
+Ok, we can wait until my patch propagates into Linus' tree, but I
+would have thought it would be a waste of your time to apply a patch
+which is waiting to be inevitably superseded by a different one. I can
+see there are 238 PRs at Linus' tree on github and I am very glad that
+I looked into one of them --- it contained a long comment explaining
+that I should NOT do what I was just about to do, i.e. make a PR
+against Linus' tree! :)
 
-So basically this will cause the code to go into a spin while we are
-doing the update, right?
+And, besides, in the email conversation Linus approved my version of
+the patch anyway.
 
--- Steve
+Kind regards,
+Tigran
