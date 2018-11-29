@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C33C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0E1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4914D2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5542145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cblflubp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4914D2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZ7+xKPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5542145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbeK3Bbs (ORCPT
+        id S1733248AbeK3Bbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:31:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59510 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbeK3Bbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:47 -0500
+        id S1729984AbeK3Bbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C8102133F;
-        Thu, 29 Nov 2018 14:26:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E289A2133F;
+        Thu, 29 Nov 2018 14:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501574;
-        bh=iF579ZLJKPdR4kcUUN7lPFPBPsRSC9vTo65Ybmu8CCo=;
+        s=default; t=1543501577;
+        bh=xSPLUkJn3bi8z230iOAkgWsZ8h/tS81BWx3Lk+PbmJs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CblflubpNmEPBZmOBHbZuFSLvdfgV+4cGp8TK+mUpr0YcAjFa+++U1gW58zE5FvgH
-         coSVwGWpj6yUavm4/uprLKB+AaRlThoHeMnyzeKIY1+emIUFjkeklyiutzfCh3bNK/
-         mVToc4+MuviwhTsPrG4sdbwo3hGyYgR1/oAgbep0=
+        b=sZ7+xKPj+aetrwMAhgqywXgrbI+J9yfh9DKH1mto3EtIBdvLF3m3wZoevv1WyLKL/
+         4+ynB1lCXtZdH5WXJl6xKbQqVySnEMc9JpBPbpsKWPLI2htxIwSyUROrNA8fFMRtq0
+         7tUTaTvi8YXAMDT7H1JIUY9QgI7yNp8ECKPIqzhw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.14 018/100] iwlwifi: mvm: dont use SAR Geo if basic SAR is not used
-Date:   Thu, 29 Nov 2018 15:11:48 +0100
-Message-Id: <20181129140100.423622312@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 009/100] usb: dwc3: core: Clean up ULPI device
+Date:   Thu, 29 Nov 2018 15:11:39 +0100
+Message-Id: <20181129140059.735656035@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -61,92 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 5d041c46ccb9b48acc110e214beff5e2789311df upstream.
+commit 08fd9a82fda86529bb2f2af3c2f7cb657b4d3066 upstream.
 
-We can't use SAR Geo if basic SAR is not enabled, since the SAR Geo
-tables define offsets in relation to the basic SAR table in use.
+If dwc3_core_init_mode() fails with deferred probe,
+next probe fails on sysfs with
 
-To fix this, make iwl_mvm_sar_init() return one in case WRDS is not
-available, so we can skip reading WGDS entirely.
+sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/dwc3.0.auto.ulpi'
 
-Fixes: a6bff3cb19b7 ("iwlwifi: mvm: add GEO_TX_POWER_LIMIT cmd for geographic tx power table")
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+To avoid this failure, clean up ULPI device.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |   36 +++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+ drivers/usb/dwc3/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -997,6 +997,11 @@ static int iwl_mvm_sar_get_ewrd_table(st
- 	return -ENOENT;
- }
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1276,6 +1276,7 @@ static int dwc3_probe(struct platform_de
  
-+static int iwl_mvm_sar_get_wgds_table(struct iwl_mvm *mvm)
-+{
-+	return -ENOENT;
-+}
-+
- static int iwl_mvm_sar_geo_init(struct iwl_mvm *mvm)
- {
- 	return 0;
-@@ -1023,8 +1028,11 @@ static int iwl_mvm_sar_init(struct iwl_m
- 		IWL_DEBUG_RADIO(mvm,
- 				"WRDS SAR BIOS table invalid or unavailable. (%d)\n",
- 				ret);
--		/* if not available, don't fail and don't bother with EWRD */
--		return 0;
-+		/*
-+		 * If not available, don't fail and don't bother with EWRD.
-+		 * Return 1 to tell that we can't use WGDS either.
-+		 */
-+		return 1;
- 	}
+ err5:
+ 	dwc3_event_buffers_cleanup(dwc);
++	dwc3_ulpi_exit(dwc);
  
- 	ret = iwl_mvm_sar_get_ewrd_table(mvm);
-@@ -1037,9 +1045,13 @@ static int iwl_mvm_sar_init(struct iwl_m
- 	/* choose profile 1 (WRDS) as default for both chains */
- 	ret = iwl_mvm_sar_select_profile(mvm, 1, 1);
- 
--	/* if we don't have profile 0 from BIOS, just skip it */
-+	/*
-+	 * If we don't have profile 0 from BIOS, just skip it.  This
-+	 * means that SAR Geo will not be enabled either, even if we
-+	 * have other valid profiles.
-+	 */
- 	if (ret == -ENOENT)
--		return 0;
-+		return 1;
- 
- 	return ret;
- }
-@@ -1229,11 +1241,19 @@ int iwl_mvm_up(struct iwl_mvm *mvm)
- 		iwl_mvm_unref(mvm, IWL_MVM_REF_UCODE_DOWN);
- 
- 	ret = iwl_mvm_sar_init(mvm);
--	if (ret)
--		goto error;
-+	if (ret == 0) {
-+		ret = iwl_mvm_sar_geo_init(mvm);
-+	} else if (ret > 0 && !iwl_mvm_sar_get_wgds_table(mvm)) {
-+		/*
-+		 * If basic SAR is not available, we check for WGDS,
-+		 * which should *not* be available either.  If it is
-+		 * available, issue an error, because we can't use SAR
-+		 * Geo without basic SAR.
-+		 */
-+		IWL_ERR(mvm, "BIOS contains WGDS but no WRDS\n");
-+	}
- 
--	ret = iwl_mvm_sar_geo_init(mvm);
--	if (ret)
-+	if (ret < 0)
- 		goto error;
- 
- 	iwl_mvm_leds_sync(mvm);
+ err4:
+ 	dwc3_free_scratch_buffers(dwc);
 
 
