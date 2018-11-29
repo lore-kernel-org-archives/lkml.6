@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633D3C07E85
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C27C18E01
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C5E213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E4B2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J809RAX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C5E213A2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vyz98YEC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E4B2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbeK3ExX (ORCPT
+        id S1730838AbeK3Exb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:53:23 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40690 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730751AbeK3ExX (ORCPT
+        Thu, 29 Nov 2018 23:53:31 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44941 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730751AbeK3Ex3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:53:23 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n18-v6so2522892lji.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:12 -0800 (PST)
+        Thu, 29 Nov 2018 23:53:29 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z13so2088524lfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ugu70vqPSlvoBLQ0yLsWszKKKu9c1+r7G0LXkXDasSo=;
-        b=J809RAX0UkMu+oLMCaHu/7lOJNiEpEYmhO3qRVV9ftWuS4GfGVd+0if+GWha2/5HqE
-         GZmEskLLvfk/z1AJ92479NwriRYoDlF8rcgLIHKVAJsnFrJVsYlsullZUC/H/hI00kkE
-         v0FxvLoWmWM4G0XceCHO1vyL0sm4zfZbOPLvc=
+        bh=wHLi6pu6OM2Azv5/kwu0Ob81t5zQUxyFdokpJxjiCqo=;
+        b=Vyz98YECSi26BpZm6Fp/koCfwpQEh6q8wR8+PqOvcBGBXMSORNNtVp8FIuvTmApdcA
+         spVnS5Ly4vqUn8gMTVIymJbdrSm8Q5GZxfWR3dHMwGi4ZSC/6CFOisGBsLX4Cpc7HN+J
+         /E9X/oXoPnaWxskiSk/Mkicq7TZn5s598XYVM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ugu70vqPSlvoBLQ0yLsWszKKKu9c1+r7G0LXkXDasSo=;
-        b=FRFLmghB/1S59BW1Owuguh41qxTfx2oK9OSG/5l/fwTXdzTpPbFryExCesDOb9bFn0
-         IV4EA85IjZxCnj40Hv05Y/HITaytXkaWn/uK+Egz5c2Sa3ctnhTU/NdpWmx2zivM02xV
-         XvD48NaJFaH1gKwpKGOKJD4UbvHVDDsmYBjStBcpkyRbPF5UMAcoLYo+o53t86Fx3Yvs
-         sjOykpb3rh+BxjQ/vrRj8QcN8VubBKG+rMO7ILX32WiAEKVcMkT2Ty7hWPuG5guGx1Ej
-         AaOtH0H0cT6N5omfMSuQwKkm4EM8QK85wEURP46gPASL61Ey3Qa1HWAs50oTzkyPgsVp
-         Mfdw==
-X-Gm-Message-State: AA+aEWa+kfUTv425xIC37qvfk+FO8wlij6FQVbRF3+sstN5+vdqIQ0Nm
-        IkRxDiaJRG4O+YItiChWqqnV7LZsfjw=
-X-Google-Smtp-Source: AFSGD/UGrlC0yFSw5PotUaeTrNwrutDGPc8atRm/uVrLmAUkuQfNCdn0P/EV8WXivwKFjQxVz0hZDA==
-X-Received: by 2002:a2e:1b47:: with SMTP id b68-v6mr1536355ljb.104.1543513631925;
-        Thu, 29 Nov 2018 09:47:11 -0800 (PST)
+        bh=wHLi6pu6OM2Azv5/kwu0Ob81t5zQUxyFdokpJxjiCqo=;
+        b=ThXCgBVLKIzaIAcxEFhPAOs1thCDRfw04FfGOorC53ieAoABuSkm+3floarEz95so3
+         5/7Du3fVOHrggwcuhdJSCv7KGUOf3Jsp4O3njJqgh1Fb7fcCB1D6xorx5NyeP/Xflr3Y
+         ZvSCvnaCqZQlqoDSYM538vW3IfvYprQNNqaz54s7MHWkc2i2XeO92HtsJtSy7vY0JnCA
+         /e/d7orYd5vNMb+gNTkp1LPUUgZKzMHWJ9tzkMQpSowpfyoBlmbNplFErjxGWgfNSPlT
+         yqF9oSePr+z7qT9HGZlQrq+gdEwEQ7wmFAMzSiBUJSkwXcFkiiH6ANyphr5LlSSxIHHA
+         4eCg==
+X-Gm-Message-State: AA+aEWYCNQ9WAvGqV9kTNxBk1fujuVzkn2Pp4Gfq9o8ziwIpq6iaQFtb
+        /CIT7eksyz/VbdxW6RUBal8pCQ==
+X-Google-Smtp-Source: AFSGD/W7C32Dqw7iLR/IU7LYrqadO8+82qTRlLuRMFSRsZK67JfSbWWo94wTBDjlbA9G3WID43cSSw==
+X-Received: by 2002:a19:f204:: with SMTP id q4mr1713196lfh.133.1543513637387;
+        Thu, 29 Nov 2018 09:47:17 -0800 (PST)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.10
+        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:47:11 -0800 (PST)
+        Thu, 29 Nov 2018 09:47:16 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -72,10 +72,11 @@ Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 02/27] PM / Domains: Add support for CPU devices to genpd
-Date:   Thu, 29 Nov 2018 18:46:35 +0100
-Message-Id: <20181129174700.16585-3-ulf.hansson@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lina Iyer <lina.iyer@linaro.org>
+Subject: [PATCH v10 05/27] dt: psci: Update DT bindings to support hierarchical PSCI states
+Date:   Thu, 29 Nov 2018 18:46:38 +0100
+Message-Id: <20181129174700.16585-6-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129174700.16585-1-ulf.hansson@linaro.org>
 References: <20181129174700.16585-1-ulf.hansson@linaro.org>
@@ -84,203 +85,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable a device belonging to a CPU to be attached to a PM domain managed
-by genpd, let's do a few changes to it, as to make it convenient to manage
-the specifics around CPUs.
+From: Lina Iyer <lina.iyer@linaro.org>
 
-To be able to quickly find out what CPUs that are attached to a genpd,
-which typically becomes useful from a genpd governor as following changes
-is about to show, let's add a cpumask to the struct generic_pm_domain. At
-the point when a CPU device gets attached to a genpd, let's update its
-cpumask. Moreover, let's also propagate changes to the cpumask upwards in
-the topology to the master PM domains. In this way, the cpumask for a genpd
-hierarchically reflects all CPUs attached to the topology below it.
-
-Finally, let's make this an opt-in feature, to avoid having to manage CPUs
-and the cpumask for a genpd that doesn't need it. For that reason, let's
-add a new genpd configuration bit, GENPD_FLAG_CPU_DOMAIN.
+Update DT bindings to represent hierarchical CPU and CPU PM domain idle
+states for PSCI. Also update the PSCI examples to clearly show how
+flattened and hierarchical idle states can be represented in DT.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
 
-Changes in v10:
-	- Don't allocate the cpumask when not used.
-	- Simplify the code that updates the cpumask.
-	- Document the GENPD_FLAG_CPU_DOMAIN.
+Change in V10:
+	- Clarified that the new hierarchical representation is orthogonal to
+	  OS-initiated vs platform-coordinated PSCI CPU suspend mode.
+	- Clarified the representation for "arm,psci-suspend-param" in regards
+	  to the flattened vs hierarchical model.
+	- Added power-domain-names property to the CPU nodes, as to avoid
+	  future churns, if ever multiple power-domains specifiers.
 
 ---
- drivers/base/power/domain.c | 66 ++++++++++++++++++++++++++++++++++++-
- include/linux/pm_domain.h   | 13 ++++++++
- 2 files changed, 78 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/arm/psci.txt          | 166 ++++++++++++++++++
+ 1 file changed, 166 insertions(+)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index e27b91d36a2a..c3ff8e395308 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -20,6 +20,7 @@
- #include <linux/sched.h>
- #include <linux/suspend.h>
- #include <linux/export.h>
-+#include <linux/cpu.h>
+diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+index a2c4f1d52492..e6d3553c8df8 100644
+--- a/Documentation/devicetree/bindings/arm/psci.txt
++++ b/Documentation/devicetree/bindings/arm/psci.txt
+@@ -105,7 +105,173 @@ Case 3: PSCI v0.2 and PSCI v0.1.
+ 		...
+ 	};
  
- #include "power.h"
- 
-@@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
- #define genpd_is_irq_safe(genpd)	(genpd->flags & GENPD_FLAG_IRQ_SAFE)
- #define genpd_is_always_on(genpd)	(genpd->flags & GENPD_FLAG_ALWAYS_ON)
- #define genpd_is_active_wakeup(genpd)	(genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
-+#define genpd_is_cpu_domain(genpd)	(genpd->flags & GENPD_FLAG_CPU_DOMAIN)
- 
- static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
- 		const struct generic_pm_domain *genpd)
-@@ -1377,6 +1379,56 @@ static void genpd_free_dev_data(struct device *dev,
- 	dev_pm_put_subsys_data(dev);
- }
- 
-+static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
-+				   int cpu, bool set, unsigned int depth)
-+{
-+	struct gpd_link *link;
++ARM systems can have multiple cores sometimes in hierarchical arrangement.
++This often, but not always, maps directly to the processor power topology of
++the system. Individual nodes in a topology have their own specific power states
++and can be better represented in DT hierarchically.
 +
-+	if (!genpd_is_cpu_domain(genpd))
-+		return;
++For these cases, the definitions of the idle states for the CPUs and the CPU
++topology, must conform to the domain idle state specification [3]. The domain
++idle states themselves, must be compatible with the defined 'domain-idle-state'
++binding [1], and also need to specify the arm,psci-suspend-param property for
++each idle state.
 +
-+	list_for_each_entry(link, &genpd->slave_links, slave_node) {
-+		struct generic_pm_domain *master = link->master;
++DT allows representing CPUs and CPU idle states in two different ways -
 +
-+		genpd_lock_nested(master, depth + 1);
-+		__genpd_update_cpumask(master, cpu, set, depth + 1);
-+		genpd_unlock(master);
-+	}
++The flattened model as given in Example 1, lists CPU's idle states followed by
++the domain idle state that the CPUs may choose. Note that the idle states are
++all compatible with "arm,idle-state". Additionally, for the domain idle state
++the "arm,psci-suspend-param" represents a superset of the CPU's idle state.
 +
-+	if (set)
-+		cpumask_set_cpu(cpu, genpd->cpus);
-+	else
-+		cpumask_clear_cpu(cpu, genpd->cpus);
-+}
++Example 2 represents the hierarchical model of CPUs and domain idle states.
++CPUs define their domain provider in their psci DT node. The domain controls
++the power to the CPU and possibly other h/w blocks that would enter an idle
++state along with the CPU. The CPU's idle states may therefore be considered as
++the domain's idle states and have the compatible "arm,idle-state". Such domains
++may also be embedded within another domain that may represent common h/w blocks
++between these CPUs. The idle states of the CPU topology shall be represented as
++the domain's idle states. Note that for the domain idle state, the
++"arm,psci-suspend-param" represents idle states hierarchically.
 +
-+static void genpd_update_cpumask(struct generic_pm_domain *genpd,
-+				 struct device *dev, bool set)
-+{
-+	int cpu;
++In PSCI firmware v1.0, the OS-Initiated mode is introduced. However, the
++flattened vs hierarchical DT representation is orthogonal to the OS-Initiated
++vs the platform-coordinated PSCI CPU suspend modes, thus should be considered
++independent of each other.
 +
-+	if (!genpd_is_cpu_domain(genpd))
-+		return;
++The hierarchical representation helps and makes it easy to implement OSI mode
++and OS implementations may choose to mandate it. For the default platform-
++coordinated mode, both representations are viable options.
 +
-+	for_each_possible_cpu(cpu) {
-+		if (get_cpu_device(cpu) == dev) {
-+			__genpd_update_cpumask(genpd, cpu, set, 0);
-+			return;
-+		}
-+	}
-+}
++Example 1: Flattened representation of CPU and domain idle states
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+static void genpd_set_cpumask(struct generic_pm_domain *genpd,
-+			      struct device *dev)
-+{
-+	genpd_update_cpumask(genpd, dev, true);
-+}
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
 +
-+static void genpd_clear_cpumask(struct generic_pm_domain *genpd,
-+				struct device *dev)
-+{
-+	genpd_update_cpumask(genpd, dev, false);
-+}
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
 +
- static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 			    struct gpd_timing_data *td)
- {
-@@ -1398,6 +1450,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 	if (ret)
- 		goto out;
- 
-+	genpd_set_cpumask(genpd, dev);
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
 +
- 	dev_pm_domain_set(dev, &genpd->domain);
- 
- 	genpd->device_count++;
-@@ -1459,6 +1513,7 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
- 	if (genpd->detach_dev)
- 		genpd->detach_dev(genpd, dev);
- 
-+	genpd_clear_cpumask(genpd, dev);
- 	dev_pm_domain_set(dev, NULL);
- 
- 	list_del_init(&pdd->list_node);
-@@ -1686,11 +1741,18 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
- 	if (genpd_is_always_on(genpd) && !genpd_status_on(genpd))
- 		return -EINVAL;
- 
-+	if (genpd_is_cpu_domain(genpd) &&
-+	    !zalloc_cpumask_var(&genpd->cpus, GFP_KERNEL))
-+		return -ENOMEM;
++			CLUSTER_RET: cluster-retention {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000011>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
 +
- 	/* Use only one "off" state if there were no states declared */
- 	if (genpd->state_count == 0) {
- 		ret = genpd_set_default_power_state(genpd);
--		if (ret)
-+		if (ret) {
-+			if (genpd_is_cpu_domain(genpd))
-+				free_cpumask_var(genpd->cpus);
- 			return ret;
-+		}
- 	} else if (!gov) {
- 		pr_warn("%s : no governor for states\n", genpd->name);
- 	}
-@@ -1736,6 +1798,8 @@ static int genpd_remove(struct generic_pm_domain *genpd)
- 	list_del(&genpd->gpd_list_node);
- 	genpd_unlock(genpd);
- 	cancel_work_sync(&genpd->power_off_work);
-+	if (genpd_is_cpu_domain(genpd))
-+		free_cpumask_var(genpd->cpus);
- 	if (genpd->free_state) {
- 		kfree(genpd->states);
- 		genpd->states = NULL;
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index f9e09bd4152c..5a4673605d22 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/notifier.h>
- #include <linux/spinlock.h>
-+#include <linux/cpumask.h>
- 
- /*
-  * Flags to control the behaviour of a genpd.
-@@ -42,11 +43,22 @@
-  * GENPD_FLAG_ACTIVE_WAKEUP:	Instructs genpd to keep the PM domain powered
-  *				on, in case any of its attached devices is used
-  *				in the wakeup path to serve system wakeups.
-+ *
-+ * GENPD_FLAG_CPU_DOMAIN:	Instructs genpd that it should expect to get
-+ *				devices attached, which may belong to CPUs or
-+ *				possibly have subdomains with CPUs attached.
-+ *				This flag enables the genpd backend driver to
-+ *				deploy idle power management support for CPUs
-+ *				and groups of CPUs. Note that, the backend
-+ *				driver must then comply with the so called,
-+ *				last-man-standing algorithm, for the CPUs in the
-+ *				PM domain.
-  */
- #define GENPD_FLAG_PM_CLK	 (1U << 0)
- #define GENPD_FLAG_IRQ_SAFE	 (1U << 1)
- #define GENPD_FLAG_ALWAYS_ON	 (1U << 2)
- #define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3)
-+#define GENPD_FLAG_CPU_DOMAIN	 (1U << 4)
- 
- enum gpd_status {
- 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
-@@ -93,6 +105,7 @@ struct generic_pm_domain {
- 	unsigned int suspended_count;	/* System suspend device counter */
- 	unsigned int prepared_count;	/* Suspend counter of prepared devices */
- 	unsigned int performance_state;	/* Aggregated max performance state */
-+	cpumask_var_t cpus;		/* A cpumask of the attached CPUs */
- 	int (*power_off)(struct generic_pm_domain *domain);
- 	int (*power_on)(struct generic_pm_domain *domain);
- 	unsigned int (*opp_to_performance_state)(struct generic_pm_domain *genpd,
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000031>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++Example 2: Hierarchical representation of CPU and domain idle states
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD0>;
++			power-domain-names = "psci";
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD1>;
++			power-domain-names = "psci";
++		};
++
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
++
++			CLUSTER_RET: cluster-retention {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
++
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++
++		CPU_PD0: cpu-pd0 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CPU_PD1: cpu-pd1 {
++			#power-domain-cells = <0>;
++			domain-idle-states =  <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CLUSTER_PD: cluster-pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
++		};
++	};
++
+ [1] Kernel documentation - ARM idle states bindings
+     Documentation/devicetree/bindings/arm/idle-states.txt
+ [2] Power State Coordination Interface (PSCI) specification
+     http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
++[3]. PM Domains description
++    Documentation/devicetree/bindings/power/power_domain.txt
 -- 
 2.17.1
 
