@@ -2,124 +2,95 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D41C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D351C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 852EF20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 852EF20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 055C52146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:31:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SA4K1Rqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 055C52146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeK3JhY (ORCPT
+        id S1726939AbeK3JiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:37:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbeK3JhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:37:24 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A821811DC;
-        Thu, 29 Nov 2018 22:30:21 +0000 (UTC)
-Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EC9219743;
-        Thu, 29 Nov 2018 22:30:19 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 16:30:17 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129223017.h4fzfo3tkwchnp3t@treble>
-References: <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
- <20181129143853.GO2131@hirez.programming.kicks-ass.net>
- <20181129163342.tp5wlfcyiazwwyoh@treble>
- <20181129164914.GA9027@hirez.programming.kicks-ass.net>
- <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
- <20181129171050.iio53bw67fbiwzud@treble>
- <20181129220148.GD11632@hirez.programming.kicks-ass.net>
- <20181129221446.qb7znvt7zprlbz77@treble>
- <20181129222209.GG11632@hirez.programming.kicks-ass.net>
- <CALCETrW+bU5Bc3ShLfoNN10Wmgt_aSxyOM4BTdSm1WuaOf91qA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALCETrW+bU5Bc3ShLfoNN10Wmgt_aSxyOM4BTdSm1WuaOf91qA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 29 Nov 2018 22:30:21 +0000 (UTC)
+        Fri, 30 Nov 2018 04:38:18 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44091 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbeK3JiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:38:18 -0500
+Received: by mail-ot1-f66.google.com with SMTP id f18so3323719otl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 14:31:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6rPh/rh1j/B5PJ7a0qP/YC8Qynn+4nZWm4wlGneDPew=;
+        b=SA4K1Rqjmg548jntNTLRoJWTKq3auGH3O0bbUEwFmLjcdGOikv0ZlUnK5Kz3EL6PQx
+         ZDTB0lEmh9TCpBCuH9RsDxWA+m2XTjwBOlo8/DplSvwQO69dCeIzD6uD9Osj+syzXh5r
+         7yAbjv9rp9u8Hd7jvGWNyYgkz347Pv4en9oa8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6rPh/rh1j/B5PJ7a0qP/YC8Qynn+4nZWm4wlGneDPew=;
+        b=d7vpjTShZ6s22SDVoNAOosw36uxyF5rv55F53T3V5DfBOaUjaG3C33gWmEMs3RfxQj
+         uSw9xJjmVwbu1Qn0UOQ1Bmxq5iLMkGJmaLSzezX69Pkm7HZOjEVzFHaO0SOVWjWsFwFL
+         1FGbeL/UImGrRpHzcKWpyLvsEFYXomTKN6uU5JbSjxZq8+FHcbImrlhvrIyqL6ya4qEH
+         BCTNo/YmBS+E+wtI1Ji1kMFu/zEIY32iO5EdgWH2GZRvEZYj9qHVVTTxHshL06MGErXi
+         ayU7UsO+5vQjqXtoqDbsM2aLYZWmeiJCorAyLXNEolDa+19X1bJen2HTkU/w8fODyYEJ
+         uVmQ==
+X-Gm-Message-State: AA+aEWYj5hOsk0stvrW9TXNZzQ330R1mrlD07uyPGZ9JWVXvwflCyRAL
+        vLw+hZ/Nd6iBD7ODVtkkqo6Jfw==
+X-Google-Smtp-Source: AFSGD/XaifEk7OzJSHf+bDrVKQP6AM6h20i33Wtmg+FN6+ty/puE1hKccobrja/fPGPA+KouGwMjLw==
+X-Received: by 2002:a9d:6d81:: with SMTP id x1mr1917023otp.17.1543530675368;
+        Thu, 29 Nov 2018 14:31:15 -0800 (PST)
+Received: from localhost ([2600:1700:141:4960:d408:b2c2:72bf:467a])
+        by smtp.gmail.com with ESMTPSA id l20sm1057777otp.47.2018.11.29.14.31.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 14:31:14 -0800 (PST)
+From:   Andy Gross <andy.gross@linaro.org>
+To:     arm@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>
+Subject: [PATCH] MAINTAINERS: Remove unused Qualcomm SoC mailing list
+Date:   Thu, 29 Nov 2018 16:31:06 -0600
+Message-Id: <1543530666-32141-1-git-send-email-andy.gross@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 02:25:33PM -0800, Andy Lutomirski wrote:
-> On Thu, Nov 29, 2018 at 2:22 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Thu, Nov 29, 2018 at 04:14:46PM -0600, Josh Poimboeuf wrote:
-> > > On Thu, Nov 29, 2018 at 11:01:48PM +0100, Peter Zijlstra wrote:
-> > > > On Thu, Nov 29, 2018 at 11:10:50AM -0600, Josh Poimboeuf wrote:
-> > > > > On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
-> > > >
-> > > > > > (like pointing IP at a stub that retpolines to the target by reading
-> > > > > > the function pointer, a la the unoptimizable version), then okay, I
-> > > > > > guess, with only a small amount of grumbling.
-> > > > >
-> > > > > I tried that in v2, but Peter pointed out it's racy:
-> > > > >
-> > > > >   https://lkml.kernel.org/r/20181126160217.GR2113@hirez.programming.kicks-ass.net
-> > > >
-> > > > Ah, but that is because it is a global shared trampoline.
-> > > >
-> > > > Each static_call has it's own trampoline; which currently reads
-> > > > something like:
-> > > >
-> > > >     RETPOLINE_SAFE
-> > > >     JMP *key
-> > > >
-> > > > which you then 'defuse' by writing an UD2 on. _However_, if you write
-> > > > that trampoline like:
-> > > >
-> > > > 1:  RETPOLINE_SAFE
-> > > >     JMP *key
-> > > > 2:  CALL_NOSPEC *key
-> > > >     RET
-> > > >
-> > > > and have the text_poke_bp() handler jump to 2 (a location you'll never
-> > > > reach when you enter at 1), it will in fact work I think. The trampoline
-> > > > is never modified and not shared between different static_call's.
-> > >
-> > > But after returning from the function to the trampoline, how does it
-> > > return from the trampoline to the call site?  At that point there is no
-> > > return address on the stack.
-> >
-> > Oh, right, so that RET don't work. ARGH. Time to go sleep I suppose.
-> 
-> I assume I'm missing something, but can't it just be JMP_NOSPEC *key?
-> The code would call the trampoline just like any other function and,
-> if the alignment is bad, we can skip patching it.  And, if we want the
-> performance back, maybe some day we can find a clean way to patch
-> those misaligned callers, too.
+This patch removes the linux-soc mailing list from the Qualcomm SoC
+entry.  We use the linux-msm and there is no need to have the second
+one and this clears the list for use by others.
 
-Yeah, this is currently the leading contender, though I believe it will
-use a direct jump like the current out-of-line implementation.
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f485597..be25ffe 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1922,7 +1922,6 @@ ARM/QUALCOMM SUPPORT
+ M:	Andy Gross <andy.gross@linaro.org>
+ M:	David Brown <david.brown@linaro.org>
+ L:	linux-arm-msm@vger.kernel.org
+-L:	linux-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/soc/qcom/
+ F:	arch/arm/boot/dts/qcom-*.dts
 -- 
-Josh
+2.7.4
+
