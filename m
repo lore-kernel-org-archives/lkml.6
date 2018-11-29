@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC40C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AADBC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAEE82145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC3E72147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQDSImrJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAEE82145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWgxLQ5i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3E72147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389419AbeK3Bhw (ORCPT
+        id S2389433AbeK3Bhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41014 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389406AbeK3Bhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:51 -0500
+        id S2389406AbeK3Bhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E1042148E;
-        Thu, 29 Nov 2018 14:32:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EAC4213A2;
+        Thu, 29 Nov 2018 14:32:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501937;
-        bh=bfcJBXs7wrFLhyS16YZnO0AylguITDRbUpslJrqkvtg=;
+        s=default; t=1543501939;
+        bh=5D2sBsUvpuB/Q/1VIDe3AlZhGTpt4RQHDLvvPIQwnEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQDSImrJnbC8i0nyS5fupgPY8o+LFOh564YP7rbYBvxiWw8F9ydqING+r3j01GQjz
-         UiTErGFJqEhGkeGzHDOPBXbk+RQefjBuTTgmwHK3IyqQxr0Htujqms91COSMEmmq3A
-         nKO+ywxG7RM+f1NEAWajYbNk1aHvt8YHM4UID2Tc=
+        b=UWgxLQ5icggkw0XN6vD/g6fQ5FcDbZksa9rkemnq+6RjKxrE7DS0zmjLxUb50s2tn
+         QYsmB6ndB8ykX7Zj8XbRmr0Y0t0KwUqo8g1Q+cmEvKD/ybwCXmSzyM2Uy2IuumFLdP
+         T8WSUR6SUiCCNvt77tITRzcGWOTtjGLEujb1SGtc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 103/110] gfs2: Fix iomap buffer head reference counting bug
-Date:   Thu, 29 Nov 2018 15:13:14 +0100
-Message-Id: <20181129135925.407006490@linuxfoundation.org>
+        stable@vger.kernel.org, Marius Hillenbrand <mhillenb@amazon.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH 4.19 104/110] rcu: Make need_resched() respond to urgent RCU-QS needs
+Date:   Thu, 29 Nov 2018 15:13:15 +0100
+Message-Id: <20181129135925.449820048@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,158 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-commit c26b5aa8ef0d46035060fded475e6ab957b9f69f upstream.
+commit 92aa39e9dc77481b90cbef25e547d66cab901496 upstream.
 
-GFS2 passes the inode buffer head (dibh) from gfs2_iomap_begin to
-gfs2_iomap_end in iomap->private.  It sets that private pointer in
-gfs2_iomap_get.  Users of gfs2_iomap_get other than gfs2_iomap_begin
-would have to release iomap->private, but this isn't done correctly,
-leading to a leak of buffer head references.
+The per-CPU rcu_dynticks.rcu_urgent_qs variable communicates an urgent
+need for an RCU quiescent state from the force-quiescent-state processing
+within the grace-period kthread to context switches and to cond_resched().
+Unfortunately, such urgent needs are not communicated to need_resched(),
+which is sometimes used to decide when to invoke cond_resched(), for
+but one example, within the KVM vcpu_run() function.  As of v4.15, this
+can result in synchronize_sched() being delayed by up to ten seconds,
+which can be problematic, to say nothing of annoying.
 
-To fix this, move the code for setting iomap->private from
-gfs2_iomap_get to gfs2_iomap_begin.
+This commit therefore checks rcu_dynticks.rcu_urgent_qs from within
+rcu_check_callbacks(), which is invoked from the scheduling-clock
+interrupt handler.  If the current task is not an idle task and is
+not executing in usermode, a context switch is forced, and either way,
+the rcu_dynticks.rcu_urgent_qs variable is set to false.  If the current
+task is an idle task, then RCU's dyntick-idle code will detect the
+quiescent state, so no further action is required.  Similarly, if the
+task is executing in usermode, other code in rcu_check_callbacks() and
+its called functions will report the corresponding quiescent state.
 
-Fixes: 64bc06bb32 ("gfs2: iomap buffered write support")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Marius Hillenbrand <mhillenb@amazon.de>
+Reported-by: David Woodhouse <dwmw2@infradead.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+[ paulmck: Backported to make patch apply cleanly on older versions. ]
+Tested-by: Marius Hillenbrand <mhillenb@amazon.de>
+Cc: <stable@vger.kernel.org> # 4.12.x - 4.19.x
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- fs/gfs2/bmap.c |   40 +++++++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+ kernel/rcu/tree.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -826,7 +826,7 @@ static int gfs2_iomap_get(struct inode *
- 	ret = gfs2_meta_inode_buffer(ip, &dibh);
- 	if (ret)
- 		goto unlock;
--	iomap->private = dibh;
-+	mp->mp_bh[0] = dibh;
- 
- 	if (gfs2_is_stuffed(ip)) {
- 		if (flags & IOMAP_WRITE) {
-@@ -863,9 +863,6 @@ unstuff:
- 	len = lblock_stop - lblock + 1;
- 	iomap->length = len << inode->i_blkbits;
- 
--	get_bh(dibh);
--	mp->mp_bh[0] = dibh;
--
- 	height = ip->i_height;
- 	while ((lblock + 1) * sdp->sd_sb.sb_bsize > sdp->sd_heightsize[height])
- 		height++;
-@@ -898,8 +895,6 @@ out:
- 	iomap->bdev = inode->i_sb->s_bdev;
- unlock:
- 	up_read(&ip->i_rw_mutex);
--	if (ret && dibh)
--		brelse(dibh);
- 	return ret;
- 
- do_alloc:
-@@ -980,9 +975,9 @@ static void gfs2_iomap_journaled_page_do
- 
- static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
- 				  loff_t length, unsigned flags,
--				  struct iomap *iomap)
-+				  struct iomap *iomap,
-+				  struct metapath *mp)
- {
--	struct metapath mp = { .mp_aheight = 1, };
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	unsigned int data_blocks = 0, ind_blocks = 0, rblocks;
-@@ -996,9 +991,9 @@ static int gfs2_iomap_begin_write(struct
- 	unstuff = gfs2_is_stuffed(ip) &&
- 		  pos + length > gfs2_max_stuffed_size(ip);
- 
--	ret = gfs2_iomap_get(inode, pos, length, flags, iomap, &mp);
-+	ret = gfs2_iomap_get(inode, pos, length, flags, iomap, mp);
- 	if (ret)
--		goto out_release;
-+		goto out_unlock;
- 
- 	alloc_required = unstuff || iomap->type == IOMAP_HOLE;
- 
-@@ -1013,7 +1008,7 @@ static int gfs2_iomap_begin_write(struct
- 
- 		ret = gfs2_quota_lock_check(ip, &ap);
- 		if (ret)
--			goto out_release;
-+			goto out_unlock;
- 
- 		ret = gfs2_inplace_reserve(ip, &ap);
- 		if (ret)
-@@ -1038,17 +1033,15 @@ static int gfs2_iomap_begin_write(struct
- 		ret = gfs2_unstuff_dinode(ip, NULL);
- 		if (ret)
- 			goto out_trans_end;
--		release_metapath(&mp);
--		brelse(iomap->private);
--		iomap->private = NULL;
-+		release_metapath(mp);
- 		ret = gfs2_iomap_get(inode, iomap->offset, iomap->length,
--				     flags, iomap, &mp);
-+				     flags, iomap, mp);
- 		if (ret)
- 			goto out_trans_end;
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2662,6 +2662,15 @@ void rcu_check_callbacks(int user)
+ 		rcu_bh_qs();
  	}
- 
- 	if (iomap->type == IOMAP_HOLE) {
--		ret = gfs2_iomap_alloc(inode, iomap, flags, &mp);
-+		ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
- 		if (ret) {
- 			gfs2_trans_end(sdp);
- 			gfs2_inplace_release(ip);
-@@ -1056,7 +1049,6 @@ static int gfs2_iomap_begin_write(struct
- 			goto out_qunlock;
- 		}
- 	}
--	release_metapath(&mp);
- 	if (!gfs2_is_stuffed(ip) && gfs2_is_jdata(ip))
- 		iomap->page_done = gfs2_iomap_journaled_page_done;
- 	return 0;
-@@ -1069,10 +1061,7 @@ out_trans_fail:
- out_qunlock:
- 	if (alloc_required)
- 		gfs2_quota_unlock(ip);
--out_release:
--	if (iomap->private)
--		brelse(iomap->private);
--	release_metapath(&mp);
-+out_unlock:
- 	gfs2_write_unlock(inode);
- 	return ret;
- }
-@@ -1088,10 +1077,10 @@ static int gfs2_iomap_begin(struct inode
- 
- 	trace_gfs2_iomap_start(ip, pos, length, flags);
- 	if ((flags & IOMAP_WRITE) && !(flags & IOMAP_DIRECT)) {
--		ret = gfs2_iomap_begin_write(inode, pos, length, flags, iomap);
-+		ret = gfs2_iomap_begin_write(inode, pos, length, flags, iomap, &mp);
- 	} else {
- 		ret = gfs2_iomap_get(inode, pos, length, flags, iomap, &mp);
--		release_metapath(&mp);
-+
- 		/*
- 		 * Silently fall back to buffered I/O for stuffed files or if
- 		 * we've hot a hole (see gfs2_file_direct_write).
-@@ -1100,6 +1089,11 @@ static int gfs2_iomap_begin(struct inode
- 		    iomap->type != IOMAP_MAPPED)
- 			ret = -ENOTBLK;
- 	}
-+	if (!ret) {
-+		get_bh(mp.mp_bh[0]);
-+		iomap->private = mp.mp_bh[0];
+ 	rcu_preempt_check_callbacks();
++	/* The load-acquire pairs with the store-release setting to true. */
++	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
++		/* Idle and userspace execution already are quiescent states. */
++		if (!rcu_is_cpu_rrupt_from_idle() && !user) {
++			set_tsk_need_resched(current);
++			set_preempt_need_resched();
++		}
++		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
 +	}
-+	release_metapath(&mp);
- 	trace_gfs2_iomap_end(ip, iomap, ret);
- 	return ret;
- }
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
+ 
 
 
