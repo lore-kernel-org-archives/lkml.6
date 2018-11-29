@@ -2,210 +2,161 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF59C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AB5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14EC221104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XWRWx009"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EC221104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 68EB221104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EB221104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeK3IHm (ORCPT
+        id S1727006AbeK3IHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:07:42 -0500
-Received: from ozlabs.org ([203.11.71.1]:36121 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbeK3IHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:07:41 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 435VKr06BJz9s9m;
-        Fri, 30 Nov 2018 08:00:47 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543525255;
-        bh=2KoCAbOwNJ0IJCcuSLg9h1jMJsQ5xr4lnHXWQSGPowc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XWRWx009jdb051ons/3fbglPO3nxQWcU1WFFPRdAeaTfyEwm+KKeIMuPHE5i+CcdU
-         i5+1Sh4YI064zrWJELjw/8YF5OaVKMFw4Xo5AFOBeIDGsFk4yiWM7scq7gQpGdCbSq
-         56iCJr0r+p6fD8lAQIxSbW7BVW1yMdxHgZi8/5QJkKpfxyLMwlK5oxzL4EBFNhuUl1
-         csH7rFnc0Y+p6mXPI0e9FurClWl8vaHV09eMW0GGU+Uve2ZqgEMZVMP47sHvR9mznO
-         YFnkn0GnQPEzs5CsEDR1qEyCsFEllrBo+ReQ+07a4xHxqm8NsSz+Aje17Q8uKJRLDd
-         +D1tgc/l0QDuw==
-Date:   Fri, 30 Nov 2018 08:00:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>
-Subject: Re: linux-next: Tree for Nov 29 (drm/i915)
-Message-ID: <20181130080042.41d1a926@canb.auug.org.au>
-In-Reply-To: <3b893ae0-9787-e0ca-4aad-c71135c41ce1@infradead.org>
-References: <20181129161257.4d1b872f@canb.auug.org.au>
-        <3b893ae0-9787-e0ca-4aad-c71135c41ce1@infradead.org>
+        Fri, 30 Nov 2018 03:07:46 -0500
+Received: from ucol19pa12.eemsg.mail.mil ([214.24.24.85]:13788 "EHLO
+        ucol19pa12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeK3IHp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 03:07:45 -0500
+X-EEMSG-check-008: 662307853|UCOL19PA12_EEMSG_MP10.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
+   d="scan'208";a="662307853"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by ucol19pa12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 29 Nov 2018 21:01:00 +0000
+X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
+   d="scan'208";a="21166968"
+IronPort-PHdr: =?us-ascii?q?9a23=3A27XcSBXPcd22mQsu9V0BZlmZKy3V8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZRePvqdThVPEFb/W9+hDw7KP9fy4CSpYud6oizMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9uLxi6txndutULioZ+N6g9zQ?=
+ =?us-ascii?q?fErGFVcOpM32NoIlyTnxf45siu+ZNo7jpdtfE8+cNeSKv2Z6s3Q6BWAzQgKG?=
+ =?us-ascii?q?A1+dbktQLfQguV53sTSXsZnxxVCAXY9h76X5Pxsizntuph3SSRIMP7QawoVT?=
+ =?us-ascii?q?mk8qxmUwHjhjsZODEl8WHXks1wg7xdoBK9vBx03orYbJiIOPZiYq/ReNUXSm?=
+ =?us-ascii?q?RbXsZVSidPHIWyYYUSBOYFJOpUsZXxq14IoBCjBwejGfnvxydViHHo06000+?=
+ =?us-ascii?q?cvHw/I0wMvHd0BrHvaoc7pNKoQS+250LXEwDvBYv5QxDzz6JLIchckofyUQL?=
+ =?us-ascii?q?xwbdTeyVEvFwzbiFWbtJHrPzaP2eQJt2iU8ephXv+ohm48tg5xuSOixtssi4?=
+ =?us-ascii?q?bVhoIVzUrI9SNiwIkvP9G4R0l7YcC9HZZWqiqUNJN2T9s/T2xntys20L0LtY?=
+ =?us-ascii?q?OhcCQUx5kr2QTTZ+GBfoOV+BzsTvyRLi19hH99fbK/gAu9/la4x+3nU8m0zE?=
+ =?us-ascii?q?5Kri1YktnQrnwN1wLc6syASvZl4keuwyyP1wHO6uFfO0w0iaraJIIhwr43jJ?=
+ =?us-ascii?q?YTt1jMHjTql0nsia+Wd0Ek9vCp6+ThfLrmuoeRO5J7hwzxKKgjmtGzDf4mPg?=
+ =?us-ascii?q?UBQWSX4/mw2KXm/ULjQbVKivM2krPesJDfPckbvbO2AxRO34Y/6xewEzem0N?=
+ =?us-ascii?q?MCkXkBN1JKYgiLj4fuO1HQOPz4F+uwg0ywkDd3wPDLJrjhApTOLnjHl7fhZq?=
+ =?us-ascii?q?1w61VdyQUt19BQ+Y9bCrAbLPLzR0/7rMbYAQMhMwyo3+bnD81w1p0RWWKIAq?=
+ =?us-ascii?q?6WKqfSvESS5u0xPuaMZJUauCrnJ/c54P7uiGczmUUBcqmxwZsXdHe4E+xhI0?=
+ =?us-ascii?q?WcZnrsmdEBHn0WsQUgV+HqkkONXiNTZ3moQ6Iw/C00CIWjDY3bXICinKSB3D?=
+ =?us-ascii?q?unHp1Rfm1JEV6MEXb2eIWARvgMczmfIsFgkjMaUbiuVpQh2g+1tAPgzLpnNO?=
+ =?us-ascii?q?XU8DUCtZ3/zNh1+/HTlRYq+DxvFcud12GMTmB0n2MOXDI5xqZ/rlFnyleE0K?=
+ =?us-ascii?q?h3nuZUGsBU5/NMSg06L4LTz/RmC9DuXQLMZs+JR0y7QtWiGjwxVsg+w8IKY0?=
+ =?us-ascii?q?pkHtWiiRfD3zC0DLMPi7OLA5k0+LrG33ftP8Z912rG1K45glkiQ8tPM3Cmh6?=
+ =?us-ascii?q?Fm+wjQGYHJiUOZmLiudakHwi7N+3mMzXCUsEFbTgFwS6PFUm4bZkfMqtT5/E?=
+ =?us-ascii?q?zCRae0Cbs7KgtB1dKCKqxSZ93tjFVGQurjOdvHb2KsnWewBBGIxrWCbIrxYG?=
+ =?us-ascii?q?gdwirdB1YekwwJ/naJKxI+BiG/rGLaFjBuEkjvY0z0++lktHy7VlM0zx2Nb0?=
+ =?us-ascii?q?B507q1+xgVheGTSv8K0LIEozoupCtqHFmj29LbEMSApwV/c6VGe98940lI1X?=
+ =?us-ascii?q?jftwNjOpysNadihkQRcw5vpUPhyw13CplckcgttH4q1xR9KaaZ0FNHajOZ0o?=
+ =?us-ascii?q?v9OqPYKmbs5hCjca3W1U/E0NaQ5KgP7O40q1L5vAGmDkAi6Wlo08FJ03uA4Z?=
+ =?us-ascii?q?XHFBcdUJzrXUYz7Bh6p6rXYjMj6IzJ1X1jK7W0viXe1NIuAet2giqnKvJeM6?=
+ =?us-ascii?q?eDD0fJAcAACsSvYLgvmlutaQksJ/Jf7qM4PoWmaq3V9rSsObNbgD++jWlBqL?=
+ =?us-ascii?q?t420aI+js0HvXExL4Z0vqY2U2BTD66g1C/5JOk0btYbC0fSzLsgRPvA5RcM+?=
+ =?us-ascii?q?grJ94G?=
+X-IPAS-Result: =?us-ascii?q?A2AnAQDUUgBc/wHyM5BlHAEBAQQBAQcEAQGBVAQBAQsBg?=
+ =?us-ascii?q?VUFKYE1MyeDeZQhUAEBBoEICCWJHpAgOAGEQAKDMiI3Bg0BAwEBAQEBAQIBb?=
+ =?us-ascii?q?CiCNiQBgmEBAQEBAgEjFUEFCwsYAgImAgJXBg0GAgEBgl4/gXUFCKl0gS+FQ?=
+ =?us-ascii?q?IRvgQuLCxd4gQeBOAyCX4gFglcCiRaCA4RRNFCPNQmRLAYYgVqINIcOmioig?=
+ =?us-ascii?q?VUrCAIYCCEPgyeQeSEDMIEFAQGNPwEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 29 Nov 2018 21:01:00 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wATL0wfi029482;
+        Thu, 29 Nov 2018 16:00:58 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com>
+ <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+ <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
+Date:   Thu, 29 Nov 2018 16:03:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TJS66LrR4lk+lhVP4dLs3+6"; protocol="application/pgp-signature"
+In-Reply-To: <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TJS66LrR4lk+lhVP4dLs3+6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/29/18 2:47 PM, Miklos Szeredi wrote:
+> On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> 
+>> Possibly I misunderstood you, but I don't think we want to copy-up on
+>> permission denial, as that would still allow the mounter to read/write
+>> special files or execute regular files to which it would normally be
+>> denied access, because the copy would inherit the context specified by
+>> the mounter in the context mount case.  It still represents an
+>> escalation of privilege for the mounter.  In contrast, the copy-up on
+>> write behavior does not allow the mounter to do anything it could not do
+>> already (i.e. read from the lower, write to the upper).
+> 
+> Let's get this straight:  when file is copied up, it inherits label
+> from context=, not from label of lower file?
 
-Hi all,
+That's correct.  The overlay inodes are all assigned the label from the 
+context= mount option, and so are any upper inodes created through the 
+overlay.  At least that's my understanding of how it is supposed to 
+work.  The original use case was for containers with the lower dir 
+labeled with a context that is read-only to the container context and 
+using a context that is writable by the container context for the 
+context= mount.
 
-On Thu, 29 Nov 2018 09:09:25 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on i386:
->=20
-> 248 "multiple definition of ...".  E.g.:
->=20
->   LD [M]  drivers/gpu/drm/i915/i915.o
-> ld: drivers/gpu/drm/i915/i915_irq.o: in function `intel_opregion_resume':
-> i915_irq.c:(.text+0x58f0): multiple definition of `intel_opregion_resume'=
-; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
-here
-> ld: drivers/gpu/drm/i915/i915_irq.o: in function `intel_opregion_suspend':
-> i915_irq.c:(.text+0x5900): multiple definition of `intel_opregion_suspend=
-'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
- here
-> ld: drivers/gpu/drm/i915/i915_memcpy.o: in function `intel_opregion_resum=
-e':
-> i915_memcpy.c:(.text+0xa0): multiple definition of `intel_opregion_resume=
-'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined=
- here
-> ld: drivers/gpu/drm/i915/i915_memcpy.o: in function `intel_opregion_suspe=
-nd':
-> i915_memcpy.c:(.text+0xb0): multiple definition of `intel_opregion_suspen=
-d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
-d here
-> ld: drivers/gpu/drm/i915/i915_mm.o: in function `intel_opregion_resume':
-> i915_mm.c:(.text+0x30): multiple definition of `intel_opregion_resume'; d=
-rivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined here
-> ld: drivers/gpu/drm/i915/i915_mm.o: in function `intel_opregion_suspend':
-> i915_mm.c:(.text+0x40): multiple definition of `intel_opregion_suspend'; =
-drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined he=
-re
-> ld: drivers/gpu/drm/i915/i915_params.o: in function `intel_opregion_resum=
-e':
-> i915_params.c:(.text+0x0): multiple definition of `intel_opregion_resume'=
-; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
-here
-> ld: drivers/gpu/drm/i915/i915_params.o: in function `intel_opregion_suspe=
-nd':
-> i915_params.c:(.text+0x10): multiple definition of `intel_opregion_suspen=
-d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
-d here
-> ld: drivers/gpu/drm/i915/i915_pci.o: in function `intel_opregion_resume':
-> i915_pci.c:(.text+0xb0): multiple definition of `intel_opregion_resume'; =
-drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined he=
-re
-> ld: drivers/gpu/drm/i915/i915_pci.o: in function `intel_opregion_suspend':
-> i915_pci.c:(.text+0xc0): multiple definition of `intel_opregion_suspend';=
- drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined h=
-ere
-> ld: drivers/gpu/drm/i915/i915_suspend.o: in function `intel_opregion_resu=
-me':
-> i915_suspend.c:(.text+0x110): multiple definition of `intel_opregion_resu=
-me'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defin=
-ed here
-> ld: drivers/gpu/drm/i915/i915_suspend.o: in function `intel_opregion_susp=
-end':
-> i915_suspend.c:(.text+0x120): multiple definition of `intel_opregion_susp=
-end'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defi=
-ned here
-> ld: drivers/gpu/drm/i915/i915_sysfs.o: in function `intel_opregion_resume=
-':
-> i915_sysfs.c:(.text+0x710): multiple definition of `intel_opregion_resume=
-'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined=
- here
-> ld: drivers/gpu/drm/i915/i915_sysfs.o: in function `intel_opregion_suspen=
-d':
-> i915_sysfs.c:(.text+0x720): multiple definition of `intel_opregion_suspen=
-d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
-d here
-> ld: drivers/gpu/drm/i915/intel_csr.o: in function `intel_opregion_resume':
-> intel_csr.c:(.text+0x3c0): multiple definition of `intel_opregion_resume'=
-; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
-here
-> ld: drivers/gpu/drm/i915/intel_csr.o: in function `intel_opregion_suspend=
-':
-> intel_csr.c:(.text+0x3d0): multiple definition of `intel_opregion_suspend=
-'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
- here
-> ld: drivers/gpu/drm/i915/intel_device_info.o: in function `intel_opregion=
-_resume':
-> intel_device_info.c:(.text+0x14c0): multiple definition of `intel_opregio=
-n_resume'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first=
- defined here
-> ld: drivers/gpu/drm/i915/intel_device_info.o: in function `intel_opregion=
-_suspend':
-> intel_device_info.c:(.text+0x14d0): multiple definition of `intel_opregio=
-n_suspend'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): firs=
-t defined here
-> ld: drivers/gpu/drm/i915/intel_pm.o: in function `intel_opregion_resume':
-> intel_pm.c:(.text+0xad70): multiple definition of `intel_opregion_resume'=
-; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
-here
-> ld: drivers/gpu/drm/i915/intel_pm.o: in function `intel_opregion_suspend':
-> intel_pm.c:(.text+0xad80): multiple definition of `intel_opregion_suspend=
-'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
- here
-> ld: drivers/gpu/drm/i915/intel_runtime_pm.o: in function `intel_opregion_=
-resume':
-> intel_runtime_pm.c:(.text+0x2cb0): multiple definition of `intel_opregion=
-_resume'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first =
-defined here
-> ld: drivers/gpu/drm/i915/intel_runtime_pm.o: in function `intel_opregion_=
-suspend':
-> intel_runtime_pm.c:(.text+0x2cc0): multiple definition of `intel_opregion=
-_suspend'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first=
- defined here
+> Next question: permission to change metadata is tied to permission to
+> open?  Is it possible that open is denied, but metadata can be
+> changed?
 
-Caused by commit
+There is no metadata change occurring here. The overlay, upper, and 
+lower inodes all keep their labels intact for their lifetime (both 
+overlay and upper always have the context= label; upper has whatever its 
+original label was), unless explicitly relabeled by some process.  And 
+when viewed through the overlay, the file always has the label specified 
+via context=, even before the copy-up.
 
-  a950adc6c343 ("drm/i915: Stop calling intel_opregion unregister/register =
-in suspend/resume")
+> DAC model allows this: metadata change is tied to ownership, not mode
+> bits.   And different capability flag.
+> 
+> If the same is true for MAC, then the pre-v4.20-rc1 is already
+> susceptible to the privilege escalation you describe, right?
 
-which forgot the "static inline" on the stub versions ...
+Actually, I guess there wouldn't be a privilege escalation if you 
+checked the mounter's ability to create the new file upon copy-up, and 
+checked the mounter's access to the upper inode label upon the 
+subsequent read, write, or execute access.  Then we'd typically block 
+the ability to create the device file and we'd block the ability to 
+execute files with the label from context=.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TJS66LrR4lk+lhVP4dLs3+6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAU3oACgkQAVBC80lX
-0GwSYwgAjkkv4eH7Qo1GFworz2e3kDt4jrGCWIxmrNyj32oWvvrPgtO8zQQPUFDS
-sFn8ujRom68KXvwoc96zcwnQXhNh152xP+Z29c6irs+dq72539JknOH7TXPx/BvX
-SsZAt/eF/x5WcrdBlM3A/eEhscZ2qJvWrX7A0ww+DFMnkYxEIdkEQU5uazt+2SRI
-Kw5LrDJ+AvzRQIv+Bcd7oejy044nuFM9CO6Uiw7w2qTj6I8+Pww2KbdNMk+2pQJc
-+3T73FV42OvnurxJ1hPTXDPVq4nto/fhZP7BRkuC4fOOFZktVsQBueV8YhIq6//W
-92HgysiLKUQ8l+9cE+WOTP90AxGCmA==
-=iwx2
------END PGP SIGNATURE-----
-
---Sig_/TJS66LrR4lk+lhVP4dLs3+6--
+But copy-up of special files seems undesirable for other reasons (e.g. 
+requiring mounters to be allowed to create device nodes just to permit 
+client's to read/write them, possible implications for nodev/noexec, 
+implications for socket and fifo files).
