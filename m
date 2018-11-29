@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF16C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC572C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99CD2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D94320868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rw9KwYZY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99CD2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw/OS5lu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D94320868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbeK3B0o (ORCPT
+        id S1731604AbeK3B0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730453AbeK3B0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:43 -0500
+        id S1730438AbeK3B0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC6EE205C9;
-        Thu, 29 Nov 2018 14:21:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BC3A205C9;
+        Thu, 29 Nov 2018 14:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501272;
-        bh=iKuvD7zmvPLXYXxQxuv164In8l5Iuk/bePECyuJOR1A=;
+        s=default; t=1543501274;
+        bh=wH37HmzVI8Kdu0aF0jqh5LiwlgeNzIG572BVtt9mXkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rw9KwYZYF+cUUtQwfEdphGrt7wqsGzhS/d+l41pkUk7BbqEpPAvaPPGyXzKUvNBPw
-         FislHV4yPtZR+D42cFGp5hQy7zojE62zMrWdCN0SgRwZD3o6XQt5PmzE7RTiIwFMI3
-         EUmuoSgECgeEC6UT03RR/AYREK+p84D7p5tPmUpc=
+        b=iw/OS5lucSvVdBpBPRGybNnCSuKo6Ge6L23t5GkYv7Ax+vGWBOVEysifehUXZKBK3
+         f9HacyKF3LaVvj2Jzmdqt26KknKXG0/svYo52P/c8qutl6KvCaSX07BA+7aqw75Sw5
+         OYmA1U2Q27J9bAGNXwSAndaugWPhsqBiM2lk6xOc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 05/92] gpio: dont free unallocated ida on gpiochip_add_data_with_key() error path
-Date:   Thu, 29 Nov 2018 15:11:34 +0100
-Message-Id: <20181129140106.922908269@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 4.9 06/92] iwlwifi: mvm: support sta_statistics() even on older firmware
+Date:   Thu, 29 Nov 2018 15:11:35 +0100
+Message-Id: <20181129140107.015307102@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -62,49 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladimir Zapolskiy <vz@mleia.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit a05a14049999598a3bb6fab12db6b768a0215522 upstream.
+commit ec484d03ef0df8d34086b95710e355a259cbe1f2 upstream.
 
-The change corrects the error path in gpiochip_add_data_with_key()
-by avoiding to call ida_simple_remove(), if ida_simple_get() returns
-an error.
+The oldest firmware supported by iwlmvm do support getting
+the average beacon RSSI. Enable the sta_statistics() call
+from mac80211 even on older firmware versions.
 
-Note that ida_simple_remove()/ida_free() throws a BUG(), if id argument
-is negative, it allows to easily check the correctness of the fix by
-fuzzing the return value from ida_simple_get().
-
-Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
-Cc: stable@vger.kernel.org # v4.6+
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 33cef9256342 ("iwlwifi: mvm: support beacon statistics for BSS client")
+Cc: stable@vger.kernel.org # 4.2+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1153,7 +1153,7 @@ int gpiochip_add_data(struct gpio_chip *
- 	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
- 	if (!gdev->descs) {
- 		status = -ENOMEM;
--		goto err_free_gdev;
-+		goto err_free_ida;
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -3976,10 +3976,6 @@ static void iwl_mvm_mac_sta_statistics(s
+ 		sinfo->filled |= BIT(NL80211_STA_INFO_SIGNAL_AVG);
  	}
  
- 	if (chip->ngpio == 0) {
-@@ -1285,8 +1285,9 @@ err_free_label:
- 	kfree(gdev->label);
- err_free_descs:
- 	kfree(gdev->descs);
--err_free_gdev:
-+err_free_ida:
- 	ida_simple_remove(&gpio_ida, gdev->id);
-+err_free_gdev:
- 	/* failures here can mean systems won't boot... */
- 	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
- 	       gdev->base, gdev->base + gdev->ngpio - 1,
+-	if (!fw_has_capa(&mvm->fw->ucode_capa,
+-			 IWL_UCODE_TLV_CAPA_RADIO_BEACON_STATS))
+-		return;
+-
+ 	/* if beacon filtering isn't on mac80211 does it anyway */
+ 	if (!(vif->driver_flags & IEEE80211_VIF_BEACON_FILTER))
+ 		return;
 
 
