@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BB0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66E3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004752081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DE92086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Db/hGDzn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004752081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSKd0wtr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64DE92086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbeK2RJd (ORCPT
+        id S1730406AbeK2RJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:09:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:09:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727695AbeK2RJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:09:32 -0500
+        id S1729309AbeK2RJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:09:37 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E747E2086B;
-        Thu, 29 Nov 2018 06:05:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F3172086B;
+        Thu, 29 Nov 2018 06:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471519;
-        bh=c3218PK7VhrFJUdxxjigRPJn3f/lnwFS4QNtw0hYhtg=;
+        s=default; t=1543471525;
+        bh=lp21ltOEt6Ssk7ovDyGQYa+1iLtgps8eSUkC5bv18JE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Db/hGDznPVHVZejAsNj33LHewtbbTOlm+XP2h/BIk4Oz19p8AKI5Qk4IeyxUw292R
-         SYaTZjUsQYnkWcjAYjE35g6BEjFJA9KsCNHvZtQ+U9ihAf1v7wdPhU81TRZzj2D0wJ
-         nlyGsz9y4FLk+zXMvgMUW25TqM/hs4ZG3R4IfOCs=
+        b=SSKd0wtrrzAX9wZKEuHLQYWK9MRGjbTGIxdrZsGWbVrpggolwi+n/0iQn+eQyll6V
+         /OuPASNfggvGirRBPFgL+zkIt/4WHqdVVSXrSf4qDWNFi5qNa/CwGJxC3IHdAmSZQm
+         UtdfWmlhvhHpC+J1GXXm1ZG22OlcDnBwM3GSp2JM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aya Levin <ayal@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+Cc:     Vincent Chen <vincentc@andestech.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 10/13] net/mlx4: Fix UBSAN warning of signed integer overflow
-Date:   Thu, 29 Nov 2018 01:04:41 -0500
-Message-Id: <20181129060444.160434-10-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 11/13] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
+Date:   Thu, 29 Nov 2018 01:04:42 -0500
+Message-Id: <20181129060444.160434-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060444.160434-1-sashal@kernel.org>
 References: <20181129060444.160434-1-sashal@kernel.org>
@@ -54,45 +52,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aya Levin <ayal@mellanox.com>
+From: Vincent Chen <vincentc@andestech.com>
 
-[ Upstream commit a463146e67c848cbab5ce706d6528281b7cded08 ]
+[ Upstream commit 426a593e641ebf0d9288f0a2fcab644a86820220 ]
 
-UBSAN: Undefined behavior in
-drivers/net/ethernet/mellanox/mlx4/resource_tracker.c:626:29
-signed integer overflow: 1802201963 + 1802201963 cannot be represented
-in type 'int'
+In the original ftmac100_interrupt(), the interrupts are only disabled when
+the condition "netif_running(netdev)" is true. However, this condition
+causes kerenl hang in the following case. When the user requests to
+disable the network device, kernel will clear the bit __LINK_STATE_START
+from the dev->state and then call the driver's ndo_stop function. Network
+device interrupts are not blocked during this process. If an interrupt
+occurs between clearing __LINK_STATE_START and stopping network device,
+kernel cannot disable the interrupts due to the condition
+"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
+continuous interruption of the network device.
 
-The union of res_reserved and res_port_rsvd[MLX4_MAX_PORTS] monitors
-granting of reserved resources. The grant operation is calculated and
-protected, thus both members of the union cannot be negative.  Changed
-type of res_reserved and of res_port_rsvd[MLX4_MAX_PORTS] from signed
-int to unsigned int, allowing large value.
+In order to solve the above problem, the interrupts of the network device
+should always be disabled in the ISR without being restricted by the
+condition "netif_running(netdev)".
 
-Fixes: 5a0d0a6161ae ("mlx4: Structures and init/teardown for VF resource quotas")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+[V2]
+Remove unnecessary curly braces.
+
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mlx4.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/faraday/ftmac100.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index f5fdbd53d052..db40387ffaf6 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@ -537,8 +537,8 @@ struct slave_list {
- struct resource_allocator {
- 	spinlock_t alloc_lock; /* protect quotas */
- 	union {
--		int res_reserved;
--		int res_port_rsvd[MLX4_MAX_PORTS];
-+		unsigned int res_reserved;
-+		unsigned int res_port_rsvd[MLX4_MAX_PORTS];
- 	};
- 	union {
- 		int res_free;
+diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
+index dce5f7b7f772..05e1f923f49e 100644
+--- a/drivers/net/ethernet/faraday/ftmac100.c
++++ b/drivers/net/ethernet/faraday/ftmac100.c
+@@ -865,11 +865,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
+ 	struct net_device *netdev = dev_id;
+ 	struct ftmac100 *priv = netdev_priv(netdev);
+ 
+-	if (likely(netif_running(netdev))) {
+-		/* Disable interrupts for polling */
+-		ftmac100_disable_all_int(priv);
++	/* Disable interrupts for polling */
++	ftmac100_disable_all_int(priv);
++	if (likely(netif_running(netdev)))
+ 		napi_schedule(&priv->napi);
+-	}
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
 2.17.1
 
