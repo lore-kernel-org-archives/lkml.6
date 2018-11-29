@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C3EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4113C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885BD208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D6C21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTHmjsSz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885BD208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHkkYFMt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D6C21104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbeK2RDN (ORCPT
+        id S1728754AbeK2RDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:03:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37254 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:03:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbeK2RDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:03:13 -0500
+        id S1727402AbeK2RDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:03:20 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 016A621019;
-        Thu, 29 Nov 2018 05:58:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58138208E7;
+        Thu, 29 Nov 2018 05:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471142;
-        bh=FLPv6N3d8dgB5oJyDU+vYBVfl41Ct1O16N/X+WZAHrk=;
+        s=default; t=1543471148;
+        bh=uOxZNZa7T7GrHZFmRhyztkpMT+qrp58BkMRmlFZYg0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YTHmjsSzvhAB3winDQs8Fhv58Wb8XTC9rx7yf7LbfijSZUIvtHE892CEzJjo4wBUj
-         bJtg5OGAPs03ysf6QYw/T5OSsTKEgX2QRcgY9b1WhagNwkVSZsEMtbT97LTFDvDdQh
-         YttkpEwAgf6Tj8+FjgtooDL8tWmRyuPIfTlpsmIo=
+        b=JHkkYFMtZBjf9T+Oc9M1SI8vwTJnSVu1RgspKRtyCohVylnfl6QxO0iEn7UGbdIPB
+         b5VsdYZg36W0QGCycV8fV54G/uvX9P3m/ZpB5Aa2xXHSkFqyiz7p5MqzMBoV8Nmp9I
+         UtBfwfK7+WKIclHWAX3ZuTUpfZJV4Z86HFGhn5ns=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Brenda J. Butler" <bjb@mojatatu.com>,
-        Lucas Bates <lucasb@mojatatu.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 36/68] tc-testing: tdc.py: Guard against lack of returncode in executed command
-Date:   Thu, 29 Nov 2018 00:55:27 -0500
-Message-Id: <20181129055559.159228-36-sashal@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 37/68] mtd: rawnand: qcom: Namespace prefix some commands
+Date:   Thu, 29 Nov 2018 00:55:28 -0500
+Message-Id: <20181129055559.159228-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -55,57 +54,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Brenda J. Butler" <bjb@mojatatu.com>
+From: Olof Johansson <olof@lixom.net>
 
-[ Upstream commit c6cecf4ae44e4ce9158ef8806358142c3512cd33 ]
+[ Upstream commit 33bf5519ae5dd356b182a94e3622f42860274a38 ]
 
-Add some defensive coding in case one of the subprocesses created by tdc
-returns nothing. If no object is returned from exec_cmd, then tdc will
-halt with an unhandled exception.
+PAGE_READ is used by RISC-V arch code included through mm headers,
+and it makes sense to bring in a prefix on these in the driver.
 
-Signed-off-by: Brenda J. Butler <bjb@mojatatu.com>
-Signed-off-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
+ #define PAGE_READ   0x2
+In file included from include/linux/memremap.h:7,
+                 from include/linux/mm.h:27,
+                 from include/linux/scatterlist.h:8,
+                 from include/linux/dma-mapping.h:11,
+                 from drivers/mtd/nand/raw/qcom_nandc.c:17:
+arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
+
+Caught by riscv allmodconfig.
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/tc-testing/tdc.py | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/raw/qcom_nandc.c | 32 +++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tdc.py b/tools/testing/selftests/tc-testing/tdc.py
-index 9b3f414ff1e9..7607ba3e3cbe 100755
---- a/tools/testing/selftests/tc-testing/tdc.py
-+++ b/tools/testing/selftests/tc-testing/tdc.py
-@@ -169,6 +169,8 @@ def prepare_env(args, pm, stage, prefix, cmdlist, output = None):
-                   file=sys.stderr)
-             print("\n{} *** Error message: \"{}\"".format(prefix, foutput),
-                   file=sys.stderr)
-+            print("returncode {}; expected {}".format(proc.returncode,
-+                                                      exit_codes))
-             print("\n{} *** Aborting test run.".format(prefix), file=sys.stderr)
-             print("\n\n{} *** stdout ***".format(proc.stdout), file=sys.stderr)
-             print("\n\n{} *** stderr ***".format(proc.stderr), file=sys.stderr)
-@@ -195,12 +197,18 @@ def run_one_test(pm, args, index, tidx):
-         print('-----> execute stage')
-     pm.call_pre_execute()
-     (p, procout) = exec_cmd(args, pm, 'execute', tidx["cmdUnderTest"])
--    exit_code = p.returncode
-+    if p:
-+        exit_code = p.returncode
-+    else:
-+        exit_code = None
-+
-     pm.call_post_execute()
+diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+index d1d470bb32e4..8815f3e2b718 100644
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -151,15 +151,15 @@
+ #define	NAND_VERSION_MINOR_SHIFT	16
  
--    if (exit_code != int(tidx["expExitCode"])):
-+    if (exit_code is None or exit_code != int(tidx["expExitCode"])):
-         result = False
--        print("exit:", exit_code, int(tidx["expExitCode"]))
-+        print("exit: {!r}".format(exit_code))
-+        print("exit: {}".format(int(tidx["expExitCode"])))
-+        #print("exit: {!r} {}".format(exit_code, int(tidx["expExitCode"])))
-         print(procout)
-     else:
-         if args.verbose > 0:
+ /* NAND OP_CMDs */
+-#define	PAGE_READ			0x2
+-#define	PAGE_READ_WITH_ECC		0x3
+-#define	PAGE_READ_WITH_ECC_SPARE	0x4
+-#define	PROGRAM_PAGE			0x6
+-#define	PAGE_PROGRAM_WITH_ECC		0x7
+-#define	PROGRAM_PAGE_SPARE		0x9
+-#define	BLOCK_ERASE			0xa
+-#define	FETCH_ID			0xb
+-#define	RESET_DEVICE			0xd
++#define	OP_PAGE_READ			0x2
++#define	OP_PAGE_READ_WITH_ECC		0x3
++#define	OP_PAGE_READ_WITH_ECC_SPARE	0x4
++#define	OP_PROGRAM_PAGE			0x6
++#define	OP_PAGE_PROGRAM_WITH_ECC	0x7
++#define	OP_PROGRAM_PAGE_SPARE		0x9
++#define	OP_BLOCK_ERASE			0xa
++#define	OP_FETCH_ID			0xb
++#define	OP_RESET_DEVICE			0xd
+ 
+ /* Default Value for NAND_DEV_CMD_VLD */
+ #define NAND_DEV_CMD_VLD_VAL		(READ_START_VLD | WRITE_START_VLD | \
+@@ -692,11 +692,11 @@ static void update_rw_regs(struct qcom_nand_host *host, int num_cw, bool read)
+ 
+ 	if (read) {
+ 		if (host->use_ecc)
+-			cmd = PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
++			cmd = OP_PAGE_READ_WITH_ECC | PAGE_ACC | LAST_PAGE;
+ 		else
+-			cmd = PAGE_READ | PAGE_ACC | LAST_PAGE;
++			cmd = OP_PAGE_READ | PAGE_ACC | LAST_PAGE;
+ 	} else {
+-			cmd = PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
++		cmd = OP_PROGRAM_PAGE | PAGE_ACC | LAST_PAGE;
+ 	}
+ 
+ 	if (host->use_ecc) {
+@@ -1170,7 +1170,7 @@ static int nandc_param(struct qcom_nand_host *host)
+ 	 * in use. we configure the controller to perform a raw read of 512
+ 	 * bytes to read onfi params
+ 	 */
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, PAGE_READ | PAGE_ACC | LAST_PAGE);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_PAGE_READ | PAGE_ACC | LAST_PAGE);
+ 	nandc_set_reg(nandc, NAND_ADDR0, 0);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_DEV0_CFG0, 0 << CW_PER_PAGE
+@@ -1224,7 +1224,7 @@ static int erase_block(struct qcom_nand_host *host, int page_addr)
+ 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ 
+ 	nandc_set_reg(nandc, NAND_FLASH_CMD,
+-		      BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
++		      OP_BLOCK_ERASE | PAGE_ACC | LAST_PAGE);
+ 	nandc_set_reg(nandc, NAND_ADDR0, page_addr);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_DEV0_CFG0,
+@@ -1255,7 +1255,7 @@ static int read_id(struct qcom_nand_host *host, int column)
+ 	if (column == -1)
+ 		return 0;
+ 
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, FETCH_ID);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_FETCH_ID);
+ 	nandc_set_reg(nandc, NAND_ADDR0, column);
+ 	nandc_set_reg(nandc, NAND_ADDR1, 0);
+ 	nandc_set_reg(nandc, NAND_FLASH_CHIP_SELECT,
+@@ -1276,7 +1276,7 @@ static int reset(struct qcom_nand_host *host)
+ 	struct nand_chip *chip = &host->chip;
+ 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+ 
+-	nandc_set_reg(nandc, NAND_FLASH_CMD, RESET_DEVICE);
++	nandc_set_reg(nandc, NAND_FLASH_CMD, OP_RESET_DEVICE);
+ 	nandc_set_reg(nandc, NAND_EXEC_CMD, 1);
+ 
+ 	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
 -- 
 2.17.1
 
