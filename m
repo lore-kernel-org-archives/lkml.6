@@ -2,127 +2,96 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B274C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F8FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999E620863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED7DE20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d0TFVOpo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999E620863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhV33sG6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7DE20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeK3KLs (ORCPT
+        id S1727221AbeK3KME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:11:48 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37015 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbeK3KLs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:11:48 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so3298710lja.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:04:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XMeapazcCq4K2PTu43rTSG3C2FOHd+Oww9LxG20Pe2k=;
-        b=d0TFVOpoJGG9Z//1y5eaJlkSG7j01yWruLJXUnis4VXitO1gsQjvOLzMtoz4sA4UY6
-         5311RXnHx+vQWFJDlUHIkxA8kWU1e/+EHXC63odI6eqTRxsajnzwuplA2Y1sx2FVKTv0
-         75BxUviFTEZtxXbsw4BBSCB8ZQrvFZ8phnD0U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XMeapazcCq4K2PTu43rTSG3C2FOHd+Oww9LxG20Pe2k=;
-        b=JIljjfekTIPgLp6H4K+yJJcsjyc+p4wEtK6Yim+4l88BMMvQKimm84maNPm2kvQsCq
-         efbrksZnuVrEMFg5vcIOppsb1Wko4xsQJ7bMnxskFKja/nKCqfbAWtXGqmJggZyhNClb
-         azaMWX2eOjvQMaYrRTbU6w84UoFp67tu1Lse5SiDwFFVKfYUGqE5JP00U4bqw9C0gzTu
-         yv+/s9J5iNwwxnKwwZWGgDYc2Vv0+cMtPLiTvMs1usTRlolb72Ii+TlfIQ5MV+6uAGTf
-         ghlbjtCueAN1joiFrsVLsgw4peg7jWcl2O7D8UxWr0NHGu/9ylcM+FRcn6wd3EVCd39f
-         aE+Q==
-X-Gm-Message-State: AA+aEWZgUmy/MLuSwOIiYJL1oqLjywZeyg9UVkwPM/iAjRQRKv7mqxmh
-        EFcVU+VTTjGxjvcH5EpaJ1+Hl1/tn0g=
-X-Google-Smtp-Source: AFSGD/UgU69RsuH70AEz9BZrtW6EIYhQgY+r29vnOV13hEbTzqn3Fw/JHmpSWsGcUREwYA1K8+UtEA==
-X-Received: by 2002:a2e:2019:: with SMTP id g25-v6mr2208936ljg.20.1543532678709;
-        Thu, 29 Nov 2018 15:04:38 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id w193sm521488lff.24.2018.11.29.15.04.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 15:04:38 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id p6so2748705lfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:04:37 -0800 (PST)
-X-Received: by 2002:a19:7013:: with SMTP id h19mr2355333lfc.147.1543532677388;
- Thu, 29 Nov 2018 15:04:37 -0800 (PST)
+        Fri, 30 Nov 2018 05:12:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726425AbeK3KME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:12:04 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96ED320863;
+        Thu, 29 Nov 2018 23:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543532697;
+        bh=SnI4YkvoCDWU11Nn81ZU7jCEYMiHp2OTIQ+2Cz5SqOI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UhV33sG6rtPPX7KZOTDFp4Zk5HmOTVF6D0QVl9Jz6A7eeGi9NgeY+nFz6W/QkNMb3
+         r+aX2doE17cVhqRPwoKmTElyafBSxsKfmoYzG7zfuOSzeNtP6cM+YYbbhvIEva+vRs
+         ts4Db/aIW9lChc+RcYTlFacV0VM0pESYEpoSpDcw=
+Date:   Thu, 29 Nov 2018 17:04:54 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Alex_Gagniuc@Dellteam.com, mr.nuke.me@gmail.com,
+        Austin.Bolen@dell.com, keith.busch@intel.com, Shyam.Iyer@dell.com,
+        mika.westerberg@linux.intel.com, okaya@codeaurora.org,
+        rafael.j.wysocki@intel.com, poza@codeaurora.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
+ notification
+Message-ID: <20181129230454.GF178809@google.com>
+References: <20181129000829.14751-1-mr.nuke.me@gmail.com>
+ <20181129173553.GD178809@google.com>
+ <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
+ <20181129191312.6ksdzjv6qojacv4j@wunner.de>
 MIME-Version: 1.0
-References: <20181129121307.12393c57@gandalf.local.home> <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
- <20181129124404.2fe55dd0@gandalf.local.home> <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
- <20181129125857.75c55b96@gandalf.local.home> <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
- <20181129134725.6d86ade6@gandalf.local.home> <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
- <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
- <CALCETrVzFk2Yv8q54Xh6qOb45AKKrQhD5OkAuTsw9HaR3Wvy4Q@mail.gmail.com> <20181129202452.56f4j2wdct6qbaqo@treble>
-In-Reply-To: <20181129202452.56f4j2wdct6qbaqo@treble>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 29 Nov 2018 15:04:20 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiO87jDPP8FZ7EfwfbFNQRdr64Pa+g33do7tKiTFYz8BA@mail.gmail.com>
-Message-ID: <CAHk-=wiO87jDPP8FZ7EfwfbFNQRdr64Pa+g33do7tKiTFYz8BA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129191312.6ksdzjv6qojacv4j@wunner.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:25 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> On Thu, Nov 29, 2018 at 11:27:00AM -0800, Andy Lutomirski wrote:
-> >
-> > I propose a different solution:
-> >
-> > As in this patch set, we have a direct and an indirect version.  The
-> > indirect version remains exactly the same as in this patch set.  The
-> > direct version just only does the patching when all seems well: the
-> > call instruction needs to be 0xe8, and we only do it when the thing
-> > doesn't cross a cache line.  Does that work?  In the rare case where
-> > the compiler generates something other than 0xe8 or crosses a cache
-> > line, then the thing just remains as a call to the out of line jmp
-> > trampoline.  Does that seem reasonable?  It's a very minor change to
-> > the patch set.
->
-> Maybe that would be ok.  If my math is right, we would use the
-> out-of-line version almost 5% of the time due to cache misalignment of
-> the address.
+On Thu, Nov 29, 2018 at 08:13:12PM +0100, Lukas Wunner wrote:
+> On Thu, Nov 29, 2018 at 06:57:37PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> > On 11/29/2018 11:36 AM, Bjorn Helgaas wrote:
+> > > On Wed, Nov 28, 2018 at 06:08:24PM -0600, Alexandru Gagniuc wrote:
+> > >> A warning is generated when a PCIe device is probed with a degraded
+> > >> link, but there was no similar mechanism to warn when the link becomes
+> > >> degraded after probing. The Link Bandwidth Notification provides this
+> > >> mechanism.
+> > >>
+> > >> Use the link bandwidth notification interrupt to detect bandwidth
+> > >> changes, and rescan the bandwidth, looking for the weakest point. This
+> > >> is the same logic used in probe().
+> > > 
+> > > I like the concept of this.  What I don't like is the fact that it's
+> > > tied to pciehp, since I don't think the concept of Link Bandwidth
+> > > Notification is related to hotplug.  So I think we'll only notice this
+> > > for ports that support hotplug.  Maybe it's worth doing it this way
+> > > anyway, even if it could be generalized in the future?
+> > 
+> > That makes sense. At first, I thought that BW notification was tied to 
+> > hotplug, but our PCIe spec writer disagreed with that assertion. I'm 
+> > just not sure where to handle the interrupt otherwise.
+> 
+> I guess the interrupt is shared with hotplug and PME?  In that case write
+> a separate pcie_port_service_driver and request the interrupt with
+> IRQF_SHARED.  Define a new service type in drivers/pci/pcie/portdrv.h.
+> Amend get_port_device_capability() to check for PCI_EXP_LNKCAP_LBNC.
 
-Note that I don't think cache-line alignment is necessarily sufficient.
+I really don't like the port driver design.  I'd rather integrate
+those services more tightly into the PCI core.  But realistically
+that's wishful thinking and may never happen, so this might be the
+most expedient approach.
 
-The I$ fetch from the cacheline can happen in smaller chunks, because
-the bus between the I$ and the instruction decode isn't a full
-cacheline (well, it is _now_ in modern big cores, but it hasn't always
-been).
-
-So even if the cacheline is updated atomically, I could imagine seeing
-a partial fetch from the I$ (old values) and then a second partial
-fetch (new values).
-
-It would be interesting to know what the exact fetch rules are.
-
-             Linus
+Bjorn
