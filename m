@@ -2,134 +2,153 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C778C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171E5C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD2720868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDEEB21019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wvq8fz1k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD2720868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGHNw6WS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDEEB21019
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeK3Aua (ORCPT
+        id S1728255AbeK3Auc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:50:30 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42470 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeK3Aua (ORCPT
+        Thu, 29 Nov 2018 19:50:32 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40716 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbeK3Auc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:50:30 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d19so1937764qtq.9;
-        Thu, 29 Nov 2018 05:45:05 -0800 (PST)
+        Thu, 29 Nov 2018 19:50:32 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p4so1953652wrt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 05:45:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DPE++abUIPinLyz3aCs7KBoJdm0F6D8C2hEgtvtJAp0=;
-        b=Wvq8fz1kZYX/E6oey2g6bYxANsas6kfe6geZ+++CjfglXwGXXopPOa6ObRqQf/ORVM
-         /mOlGK2w7kJFswwpsBtgB/1ss3GBepV62wrLAl1Fn6c3m0w/GaB8Z0AbLyrT54ILKmNd
-         YvZocInX/nzFYQvrS9s5zx7aKSXZgb4gOzlnokUvcfTs7yiNyG6WLM7k4h5ZZgBlKdLv
-         XjZ3v4hWCIZxfWhGtwUaaLnbG7Bk8aP2LKsQQXjYUCXLCk1VK/CC3jhIq8trbZvRx3a/
-         kCqxVeXNDNZRHpb2Hoa3uK6jjwUqFCfDZMWTYGkqi/SBonGZcRlRBIrP5KEdSnM3Xzd6
-         NXJg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=B0QRTCt9y0nVCiZHknMcc5NdE9lCatyyRD51UF2K9c8=;
+        b=aGHNw6WSJbHOKCrQw7KARl7wF0noFNB1GncFwsGg6bc7DmwqQroxqOD8UTucPpeIdy
+         bLCowS9SZIp7Fp0Pkc5SYJbxB0UnXuNLeX/bifiloK8NPVsKv5ihzVctaaZJSpOYUl/T
+         vHfmaLQcLzgxkSfaS7lLxpwClsTNdbc0kCzxvo9QA3PGA2cPrIC/qJ2yGopJZd+819bn
+         foebyEiVS9rZe+LKuYTGp0fa1Y5ExgtR3iJA21iy3t6FxyTXLtX7OxRG3egjV9LwG164
+         PYWfalz2JvST0vd2XPWEosTMcyHygnsMlHPSlaFIatdogHsulpSUoM7gVEPs8sDaaime
+         sy2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DPE++abUIPinLyz3aCs7KBoJdm0F6D8C2hEgtvtJAp0=;
-        b=oqEtTOGu7OlZrWP6dw+wlaKbsyI71iwtCWyMtWiaeWdkY5lkW0I0uxEqr1bFThfNTp
-         okxGnb6Q2AUVT1U2LlEj5DZSzURd6CEohOqRjnx9nQ4JA5dOvgcpL1yEC14uMZ7RGmMK
-         3pqdf172uNs9JNXDw+puoY3fAVxCzhUSX9ete+ln1dgekxCksrVIKBZ6FXmnIsc5YCGG
-         PF7v6y8yVsvqDECz79cKHr+HjZeLZVO0NjQS5st3Z3m6khyKUre/bwTJVW5qVY/zPj9M
-         t913oRYu+w7CWUakWGHvyTXgmosBYLlpZXcaWC/lsyaZmksxXF5TBYZc+niRWSt/l642
-         paxg==
-X-Gm-Message-State: AA+aEWZpeYJ9Mb808rcfMXASYSHLbiuWWCUHWAtadxDrxOvlb0+ST68I
-        MWEVE8JYpYB1vi3I7Viw1UpgJrx7/9pacM0JdiTTU1qD
-X-Google-Smtp-Source: AFSGD/Wlucbkcbr7j05D0M9AuaVWfRj5NUWk+R2ykYkua+SRqHx2nJal7KlgkMIkPSkV9KwNkBCWsq6OsW4LB3t6gic=
-X-Received: by 2002:a0c:c2ce:: with SMTP id c14mr1454068qvi.7.1543499104678;
- Thu, 29 Nov 2018 05:45:04 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B0QRTCt9y0nVCiZHknMcc5NdE9lCatyyRD51UF2K9c8=;
+        b=BTpclN8VZto/rR1MwekdojuQhGIp93c+RpXEG2m9aw4FNlKwdwYZ0/33US3WPsG1Ra
+         Vnk2D5l02fS13bG1uNDRKfsM8JVuEEvKbAhOpFFe1aTKdTZTV4w96mK1cUicCmZatbtX
+         uAmjGHXtL/K/R/vNaD1bUhnEfT2x68eh/Fw5iGFeuumlKK2dwXNI2ysi7u+6b86rWpo1
+         IoMgp1uSul0eC+atMwo+MdiTd9vJZMP5em5TXM+6JZafKYo27dLKO60bcZGDOwZiv768
+         jfRvrYXn3JI+ifx9sBNWap2QxACsztQIZR4s2oy6LoCXWMBuitUeasbmFr1BZkJ5ZDJq
+         CQLg==
+X-Gm-Message-State: AA+aEWaRA0qz0k7ymWsLhSH5Gp946wp6wfmh/o+CWLvWdwIx3j0OtwSL
+        yNf9UZdGV3m0t/L/+15X9Mcv/bgP
+X-Google-Smtp-Source: AFSGD/X7rR/EO7gk8aIak+QpCZ3tnj4DYNV+ebh++SgTsEu84qIkVLPAoXGbJnzeLmChM5qWe8Zn9g==
+X-Received: by 2002:a5d:678b:: with SMTP id v11mr1622059wru.245.1543499106285;
+        Thu, 29 Nov 2018 05:45:06 -0800 (PST)
+Received: from ?IPv6:2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba? ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id d4sm2018679wrp.89.2018.11.29.05.45.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 05:45:05 -0800 (PST)
+Subject: Re: [PATCH] staging: wilc1000: correct inconsistent indenting
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     ajay.kathat@microchip.com, adham.abozaeid@microchip.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20181128181724.25194-1-straube.linux@gmail.com>
+ <d93b32c5861eb5ae552b2ed3fc65c087dc7fa328.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <325d0ffa-85a2-7fcd-30ae-798c0c2c06dc@gmail.com>
+Date:   Thu, 29 Nov 2018 14:45:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181127132508.5501-1-fe@dev.tdt.de> <CAHp75VfFYJQzTv_oe8RKPo03-FLYHy6BkrKaG23svAKtC+jVBg@mail.gmail.com>
- <583ca922b4a877a4b0577994e40ddf5f@dev.tdt.de>
-In-Reply-To: <583ca922b4a877a4b0577994e40ddf5f@dev.tdt.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 29 Nov 2018 15:44:52 +0200
-Message-ID: <CAHp75VcKu4fhP8=NH7fgfSFCh6xdCLWrNLcsHSuWvMcW+irfmA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add device driver for APU2/APU3 GPIOs
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Eckert.Florian@googlemail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d93b32c5861eb5ae552b2ed3fc65c087dc7fa328.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:15 PM Florian Eckert <fe@dev.tdt.de> wrote:
->
-> Hello Andy,
->
-> Thank you very very much for your code review "again" I will update my
-> patch set with your hints.
-> Should I send v6 or should i wait till I get feedback from you about
-> ACPI?
->
-> >>
-> >> Until now it was not possible to get more information to detect the
-> >> MMIO_BASE address from the ACPI subsystem.
-> >
-> > I'm sorry if I already asked, please, remind me where dump of ACPI
-> > tables can be found?
->
-> https://www.spinics.net/lists/kernel/msg2887290.html
+On 11/29/18 7:24 AM, Joe Perches wrote:
+> On Wed, 2018-11-28 at 19:17 +0100, Michael Straube wrote:
+>> Correct inconsistent indenting reported by smatch.
+> []
+>> diff --git a/drivers/staging/wilc1000/wilc_spi.c b/drivers/staging/wilc1000/wilc_spi.c
+> []
+>> @@ -963,7 +963,7 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
+>>   			dev_err(&spi->dev,
+>>   				"Unexpected interrupt(2):j=%d,tmp=%x,mask=%x\n",
+>>   				j, tmp, unknown_mask);
+>> -				happened = 1;
+>> +			happened = 1;s a
+>>   		}
+>>   
+>>   		j++;
+> 
+> Perhaps a little refactoring instead
+> ---
+>   drivers/staging/wilc1000/wilc_spi.c | 12 +++++-------
+>   1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/wilc1000/wilc_spi.c b/drivers/staging/wilc1000/wilc_spi.c
+> index 35ff432587fe..a38ddb1f0a1f 100644
+> --- a/drivers/staging/wilc1000/wilc_spi.c
+> +++ b/drivers/staging/wilc1000/wilc_spi.c
+> @@ -927,7 +927,8 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
+>   	int ret;
+>   	u32 tmp;
+>   	u32 byte_cnt;
+> -	int happened, j;
+> +	bool unexpected_irq;
+> +	int j;
+>   	u32 unknown_mask;
+>   	u32 irq_flags;
+>   	int k = IRG_FLAGS_OFFSET + 5;
+> @@ -947,8 +948,6 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
+>   
+>   	j = 0;
+>   	do {
+> -		happened = 0;
+> -
+>   		wilc_spi_read_reg(wilc, 0x1a90, &irq_flags);
+>   		tmp |= ((irq_flags >> 27) << IRG_FLAGS_OFFSET);
+>   
+> @@ -959,15 +958,14 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
+>   
+>   		unknown_mask = ~((1ul << spi_priv->nint) - 1);
+>   
+> -		if ((tmp >> IRG_FLAGS_OFFSET) & unknown_mask) {
+> +		unexpected_irq = (tmp >> IRG_FLAGS_OFFSET) & unknown_mask;
+> +		if (unexpected_irq)
+>   			dev_err(&spi->dev,
+>   				"Unexpected interrupt(2):j=%d,tmp=%x,mask=%x\n",
+>   				j, tmp, unknown_mask);
+> -				happened = 1;
+> -		}
+>   
+>   		j++;
+> -	} while (happened);
+> +	} while (unexpected_irq);
+>   
+>   	*int_status = tmp;
+>   
+> 
+Hi Joe,
 
-Unfortunately the file had been removed.
+that looks good to me.
+Naming the loop condition unexpected_irq also improves readability.
 
-Btw, is the statement in above email still actual? "...I can fix
-required things."
-
-> > Also would be nice to have the output of `lspci -nk -vv -xxx` on such
-> > platform.
-
-> 00:14.3 0601: 1022:780e (rev 11)
->         Subsystem: 1022:780e
->         Control: I/O+ Mem+ BusMaster+ SpecCycle+ MemWINV- VGASnoop- ParErr-
-> Stepping- SERR- FastB2B- DisINTx-
->         Status: Cap- 66MHz+ UDF- FastB2B- ParErr- DEVSEL=medium >TAbort-
-> <TAbort- <MAbort- >SERR- <PERR- INTx-
->         Latency: 0
-> 00: 22 10 0e 78 0f 00 20 02 11 00 01 06 00 00 80 00
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 20: 00 00 00 00 00 00 00 00 00 00 00 00 22 10 0e 78
-> 30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 40: 04 00 00 00 d5 ff 03 ff 07 ff 20 00 00 00 00 00
-> 50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 60: 00 00 00 00 00 0e 10 00 0e 00 0f 00 00 ff ff ff
-> 70: 67 45 23 00 00 00 00 00 90 00 00 00 05 0a 00 00
-> 80: 08 00 03 a8 00 00 00 00 00 00 00 00 00 00 00 00
-> 90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> a0: 02 00 c1 fe 2f 01 00 00 00 00 00 00 00 00 00 00
-> b0: 00 00 00 00 00 00 00 00 04 00 e9 3d 00 00 00 00
-> c0: 00 00 00 00 00 00 00 00 00 00 00 80 47 10 82 ff
-> d0: 86 ff ff 08 42 00 00 00 00 00 00 00 00 00 00 00
-> e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-Thanks.
-
---
-With Best Regards,
-Andy Shevchenko
+I will send a new patch, thanks.
+Michael
