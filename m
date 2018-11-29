@@ -2,124 +2,246 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864D5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0823C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 339062081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="HkPxJ40N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339062081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id AB52F2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB52F2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeK2Llj (ORCPT
+        id S1727197AbeK2LmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:41:39 -0500
-Received: from mail-eopbgr680042.outbound.protection.outlook.com ([40.107.68.42]:38119
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726788AbeK2Llj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:41:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d012L0aqc2iPnxS/2SdXKN+ylV/FBZsUGgNTKNVpFX0=;
- b=HkPxJ40NwHCI5olpk/2mrxl7UZaSxcpzO6Mc/Hu0H/WEzvIlVlpA/9q0XqI9Cs9YTmvvivufNkBekOZmZAVkU7iwHrZ9W/RgeB5Npe6UEZ4VPCdFvKn8YFB+wxIRQRdXHtjgGyMrjuoeHkrbw8lV9XeDmRu9IfIkLznMwycHzLY=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB5286.namprd05.prod.outlook.com (20.177.126.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.6; Thu, 29 Nov 2018 00:38:07 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1404.008; Thu, 29 Nov 2018
- 00:38:07 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
+        Thu, 29 Nov 2018 06:42:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:25706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbeK2LmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:42:11 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5972E1556B;
+        Thu, 29 Nov 2018 00:38:42 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CBA25604D0;
+        Thu, 29 Nov 2018 00:38:39 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 18:38:37 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
-Thread-Topic: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
-Thread-Index: AQHUetXZ1x6cjbBfk0ugZnU2RuWk66VNksAAgABrugCAAArpgIAA2IoAgACsc4CAAH6KgIAACqQAgBXRgICAABjcAA==
-Date:   Thu, 29 Nov 2018 00:38:07 +0000
-Message-ID: <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
-References: <20181112150215.508-1-namit@vmware.com>
- <20181112150215.508-2-namit@vmware.com> <20181113113000.GB4788@gmail.com>
- <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
- <48577A3F-0F76-4CCA-A959-965344D7259F@vmware.com>
- <7ff5de62-d1df-9a67-1c86-497ce00a4de4@deltatee.com>
- <7072A2D8-30F8-45CB-AB0C-B1BE4A30259A@vmware.com>
- <db8293cf-9abc-e899-8f43-6e42039006d9@deltatee.com>
- <521458D7-A27C-4112-81ED-1974EFE96A76@vmware.com>
- <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
-In-Reply-To: <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB5286;20:C4X23cYD9rPc5I7rwTSaa8kZ7ShkWUBrS/MtkvaWZ2cWKNnmy9DVLY4gbbFDWJQw7DfMxghCsi/hyaKxKy1OAV1Bs3z2HIiJKCAUPjBW0E1vjYp+7N0hrFusWWm8Ci76rBZjNwWjaGg/KEJ/4KLDR+tiNkgSD4eQTO8Xvsjg2tU=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4cb10837-9ed9-44fe-127d-08d65592ee6d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5286;
-x-ms-traffictypediagnostic: BYAPR05MB5286:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-microsoft-antispam-prvs: <BYAPR05MB5286E4561AB4F166968B16B6D0D20@BYAPR05MB5286.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231449)(999002)(944501445)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5286;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5286;
-x-forefront-prvs: 0871917CDA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(376002)(366004)(39860400002)(199004)(189003)(25786009)(53546011)(53936002)(6116002)(11346002)(6916009)(3846002)(6506007)(93886005)(476003)(4326008)(486006)(102836004)(446003)(305945005)(45080400002)(478600001)(36756003)(66066001)(2616005)(76176011)(105586002)(256004)(8676002)(106356001)(33656002)(2906002)(229853002)(186003)(86362001)(7736002)(81156014)(81166006)(6306002)(6512007)(6246003)(54906003)(82746002)(6436002)(97736004)(71190400001)(26005)(5660300001)(8936002)(316002)(966005)(7416002)(4001150100001)(14454004)(68736007)(6486002)(99286004)(83716004)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5286;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: jVn82s7ZPLi4GbTLNxsqgr3F5WxZai24UWwXcxkYM2pO4uFL5FWZ0Cd1eX0YjoAMKn5R/jaleh4iKFDpslpB3HyD/VcPkTxqmuWjWXEhjqcfZVeMwgYHeMoPovo0iG10kfHETnpVT48qJOVtzjT0BBDLVAagTP1f7dLC8qGJxontzf9uS9m54t0OLWkNLBbpfaM4vMjyIZmspgGvOWBC6+sqWlN3GBHCQDzEywsu6UDDkk7ZMXv22j1YlVM+leDGTgOhi1ASDXvjwN8h5ubOUpaVk+f4OtV/SDBrYLk+B82QiVTWS6CSSQpr9gf45ebFCuANJAyxSd9hIhDK7K77ZNfkvaVZ/ajV4LiDb63NnDs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <42B69C23C1F7F84D9B7DD0F4DC845762@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+Message-ID: <20181129003837.6lgxsnhoyipkebmz@treble>
+References: <20181018005420.82993-1-namit@vmware.com>
+ <20181128160849.epmoto4o5jaxxxol@treble>
+ <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cb10837-9ed9-44fe-127d-08d65592ee6d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 00:38:07.1464
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5286
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 29 Nov 2018 00:38:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBOb3YgMjgsIDIwMTgsIGF0IDM6MDkgUE0sIExvZ2FuIEd1bnRob3JwZSA8bG9nYW5nQGRl
-bHRhdGVlLmNvbT4gd3JvdGU6DQo+IA0KPiANCj4gDQo+IE9uIDIwMTgtMTEtMTQgNjo1NyBwLm0u
-LCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4gRXZlbnR1YWxseSwgaWYgeW91IGdldCBhIGZpeCBpbnRv
-IGljZWNjLCB3ZSB3aWxsIG5lZWQgdG8gY2hhbmdlIHRoZQ0KPj4gTWFrZWZpbGUsIGNvbnNpZGVy
-IHRoZSB2ZXJzaW9uIG51bWJlciBhbmQgYWN0IGFjY29yZGluZ2x5Lg0KPiANCj4gSSBnb3QgYSBm
-aXggcHVsbGVkIGludG8gaWNlY2NbMV0gYW5kIGl0IHdvcmtzIHF1aXRlIHdlbGwuIEl0IG91Z2h0
-IHRvIGJlDQo+IGluY2x1ZGVkIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgaWNlY2MuIEFuZCBkaXN0
-Y2MgKHdpdGggcHVtcCBhdCBsZWFzdCkNCj4gaGFzIGEgcGF0Y2ggdG9vLiBJbiBteSBleHBlcmll
-bmNlLCBpY2VjYyBkb2VzIGEgbXVjaCBiZXR0ZXIgam9iDQo+IGRpc3RyaWJ1dGluZyB0aGUga2Vy
-bmVsIGJ1aWxkIHRob3VnaC4NCj4gDQo+IExvZ2FuDQo+IA0KPiBbMV0gaHR0cHM6Ly9uYTAxLnNh
-ZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZnaXRodWIu
-Y29tJTJGaWNlY2MlMkZpY2VjcmVhbSUyRnB1bGwlMkY0MzAmYW1wO2RhdGE9MDIlN0MwMSU3Q25h
-bWl0JTQwdm13YXJlLmNvbSU3QzA0NGQ3OTViZTMwMTQzYWUyNmVmMDhkNjU1ODY5NTNiJTdDYjM5
-MTM4Y2EzY2VlNGI0YWE0ZDZjZDgzZDlkZDYyZjAlN0MwJTdDMCU3QzYzNjc5MDQzMzg4NDIyMjYz
-NSZhbXA7c2RhdGE9NGg3MnlManZPRjI5a2NBQzVDTTdDQjl1a0gzSG9BTE5VZmdLQTYyRTRHcyUz
-RCZhbXA7cmVzZXJ2ZWQ9MA0KDQpUaGFua3MgZm9yIHRha2luZyBjYXJlIG9mIGl0LiBUaGlzIGNo
-YW5nZSBpcyBjZXJ0YWlubHkgc2ltcGxlciBhbmQgY2xlYW5lcg0KdGhhbiB0aGUgb25lIEkgY2Ft
-ZSB3aXRoLg0KDQpTbyB3aGF04oCZcyB5b3VyIHRha2U/IFdvdWxkIHlvdSB0aGluayB0aGlzIHBh
-dGNoIGlzIHN0aWxsIG5lZWRlZD8gU2hvdWxkIGl0DQpvbmx5IGJlIGVuYWJsZWQgYXV0b21hdGlj
-YWxseSBmb3IgZGlzdGNjIGFuZCBub3QgZm9yIGRpc3RjYy1wdW1wPw0KDQo=
+On Wed, Nov 28, 2018 at 07:34:52PM +0000, Nadav Amit wrote:
+> > On Nov 28, 2018, at 8:08 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> > On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
+> >> This RFC introduces indirect call promotion in runtime, which for the
+> >> matter of simplification (and branding) will be called here "relpolines"
+> >> (relative call + trampoline). Relpolines are mainly intended as a way
+> >> of reducing retpoline overheads due to Spectre v2.
+> >> 
+> >> Unlike indirect call promotion through profile guided optimization, the
+> >> proposed approach does not require a profiling stage, works well with
+> >> modules whose address is unknown and can adapt to changing workloads.
+> >> 
+> >> The main idea is simple: for every indirect call, we inject a piece of
+> >> code with fast- and slow-path calls. The fast path is used if the target
+> >> matches the expected (hot) target. The slow-path uses a retpoline.
+> >> During training, the slow-path is set to call a function that saves the
+> >> call source and target in a hash-table and keep count for call
+> >> frequency. The most common target is then patched into the hot path.
+> >> 
+> >> The patching is done on-the-fly by patching the conditional branch
+> >> (opcode and offset) that is used to compare the target to the hot
+> >> target. This allows to direct all cores to the fast-path, while patching
+> >> the slow-path and vice-versa. Patching follows 2 more rules: (1) Only
+> >> patch a single byte when the code might be executed by any core. (2)
+> >> When patching more than one byte, ensure that all cores do not run the
+> >> to-be-patched-code by preventing this code from being preempted, and
+> >> using synchronize_sched() after patching the branch that jumps over this
+> >> code.
+> >> 
+> >> Changing all the indirect calls to use relpolines is done using assembly
+> >> macro magic. There are alternative solutions, but this one is
+> >> relatively simple and transparent. There is also logic to retrain the
+> >> software predictor, but the policy it uses may need to be refined.
+> >> 
+> >> Eventually the results are not bad (2 VCPU VM, throughput reported):
+> >> 
+> >> 		base		relpoline
+> >> 		----		---------
+> >> nginx 	22898 		25178 (+10%)
+> >> redis-ycsb	24523		25486 (+4%)
+> >> dbench	2144		2103 (+2%)
+> >> 
+> >> When retpolines are disabled, and if retraining is off, performance
+> >> benefits are up to 2% (nginx), but are much less impressive.
+> > 
+> > Hi Nadav,
+> > 
+> > Peter pointed me to these patches during a discussion about retpoline
+> > profiling.  Personally, I think this is brilliant.  This could help
+> > networking and filesystem intensive workloads a lot.
+> 
+> Thanks! I was a bit held-back by the relatively limited number of responses.
+
+It is a rather, erm, ambitious idea, maybe they were speechless :-)
+
+> I finished another version two weeks ago, and every day I think: "should it
+> be RFCv2 or v1”, ending up not sending it…
+> 
+> There is one issue that I realized while working on the new version: I’m not
+> sure it is well-defined what an outline retpoline is allowed to do. The
+> indirect branch promotion code can change rflags, which might cause
+> correction issues. In practice, using gcc, it is not a problem.
+
+Callees can clobber flags, so it seems fine to me.
+
+> > Some high-level comments:
+> > 
+> > - "Relpoline" looks confusingly a lot like "retpoline".  How about
+> >  "optpoline"?  To avoid confusing myself I will hereafter refer to it
+> >  as such :-)
+> 
+> Sure. For the academic paper we submitted, we used a much worse name that my
+> colleague came up with. I’m ok with anything other than that name (not
+> mentioned to prevent double-blinding violations). I’ll go with your name.
+> 
+> > - Instead of patching one byte at a time, is there a reason why
+> >  text_poke_bp() can't be used?  That would greatly simplify the
+> >  patching process, as everything could be patched in a single step.
+> 
+> I thought of it and maybe it is somehow possible, but there are several
+> problems, for which I didn’t find a simple solution:
+> 
+> 1. An indirect branch inside the BP handler might be the one we patch
+
+I _think_ nested INT3s should be doable, because they don't use IST.
+Maybe Andy can clarify.
+
+To avoid recursion we'd have to make sure not to use any function
+pointers in do_int3() before or during the call to poke_int3_handler().
+
+Incidentally I'm working on a patch which adds an indirect call to
+poke_int3_handler().  We'd have to disable optolines for that code.
+
+> 2. An indirect branch inside an interrupt or NMI handler might be the
+>    one we patch
+
+But INT3s just use the existing stack, and NMIs support nesting, so I'm
+thinking that should also be doable.  Andy?
+
+> 3. Overall, we need to patch more than a single instruction, and
+>    text_poke_bp() is not suitable
+
+Hm, I suppose that's true.
+
+> > - In many cases, a single direct call may not be sufficient, as there
+> >  could be for example multiple tasks using different network protocols
+> >  which need different callbacks for the same call site.
+> 
+> We want to know during compilation how many targets to use. It is not
+> super-simple to support multiple inlined targets, but it is feasible if you
+> are willing to annotate when multiple targets are needed.
+
+Why would an annotation be needed?  Is there a reason why the 'call'
+macro wouldn't work?
+
+I hate to say it, but another option would be a compiler plugin.
+
+> We have a version which uses outlined indirect branch promotion when
+> there are multiple targets, but it’s not ready for prime time, and the
+> code-cache misses can induce some overheads.
+
+It would be interesting to see some measurements comparing inline and
+out-of-line.  If there were multiple direct call slots then out-of-line
+could have advantages in some cases since it reduces the original
+function's i-cache footprint.  But maybe it wouldn't be worth it.
+
+> > - I'm not sure about the periodic retraining logic, it seems a bit
+> >  nondeterministic and bursty.
+> 
+> I agree. It can be limited to cases in which modules are loaded/removed,
+> or when the user explicitly asks for it to take place.
+> 
+> > 
+> > So I'd propose the following changes:
+> > 
+> > - In the optpoline, reserve space for multiple (5 or so) comparisons and
+> >  direct calls.  Maybe the number of reserved cmp/jne/call slots can be
+> >  tweaked by the caller somehow.  Or maybe it could grow as needed.
+> >  Starting out, they would just be NOPs.
+> > 
+> > - Instead of the temporary learning mode, add permanent tracking to
+> >  detect a direct call "miss" -- i.e., when none of the existing direct
+> >  calls are applicable and the retpoline will be used.
+> > 
+> > - In the case of a miss (or N misses), it could trigger a direct call
+> >  patching operation to be run later (workqueue or syscall exit).  If
+> >  all the direct call slots are full, it could patch the least recently
+> >  modified one.  If this causes thrashing (>x changes over y time), it
+> >  could increase the number of direct call slots using a trampoline.
+> >  Even if there were several slots, CPU branch prediction would
+> >  presumably help make it much faster than a basic retpoline.
+> > 
+> > Thoughts?
+> 
+> I’m ok with these changes in general, although having multiple inline
+> targets is not super-simple. However, there are a few issues:
+> 
+> - There is potentially a negative impact due to code-size increase which
+>   I was worried about.
+
+True.  Though out-of-line could help with that (but it would also have
+downsides of course).
+
+> - I see no reason not to use all the available slots immediately when
+>   we encounter a miss.
+
+Agreed.
+
+> - The order of the branches might be “wrong” (unoptimized) if we do not
+>   do any relearning.
+
+True, though branch prediction would mitigate that to a certain degree.
+Also if the number of slots is reasonably small (which it will probably
+need to be anyway) then it might be good enough.
+
+> - The main question is what to do if we run out of slots and still get
+>   (many?) misses. I presume the right thing is to disable the optpoline
+>   and jump over it to the retpoline.
+
+It may need some experimentation.  You could just try a simple
+round-robin patching scheme.  Possibly only writing after X number of
+misses.  And if that doesn't help, just disable it.  Such a simple
+approach might work well enough in practice.
+
+-- 
+Josh
