@@ -2,406 +2,231 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1023AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDC7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7142081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:25:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7142081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A87020989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:27:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X2VkAwSU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A87020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbeK2U34 (ORCPT
+        id S1726958AbeK2Ubx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:29:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:1618 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbeK2U34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:29:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 01:25:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
-   d="scan'208";a="95686228"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by orsmga006.jf.intel.com with ESMTP; 29 Nov 2018 01:25:08 -0800
-Subject: Re: [PATCH V3 1/3] mmc: sdhci: add support for using external DMA
- devices
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
- <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <cb2cdfb9-f3e6-72cd-2d55-734b08ea3e15@intel.com>
-Date:   Thu, 29 Nov 2018 11:23:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 29 Nov 2018 15:31:53 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60534 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeK2Ubw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 15:31:52 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAT9QJG6116951;
+        Thu, 29 Nov 2018 03:26:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543483579;
+        bh=5b3kQiwWpF2G5Cv//AODzu9l4bNfEwRRwsKpJgE0BGs=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=X2VkAwSUYfxwoddhunpM+33VRiE8Y/48Xsiz7WshX0OjCoMiVQ3VbrVsQQhM+/y/6
+         /L9C2fD8U+j0R8Az1wsv2hNPH5NXPO/RgAJ3aFIooG1NpzBZ00gCvFgNXvhuymau0r
+         AaXW+31eZjGeunvaXkZjK7b6EYxVW+wOX8aLbcF4=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAT9QJtJ126415
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 03:26:19 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
+ Nov 2018 03:26:19 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 29 Nov 2018 03:26:19 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAT9QEO6005908;
+        Thu, 29 Nov 2018 03:26:14 -0600
+Subject: Re: [PATCH 04/16] remoteproc/pru: Add PRU remoteproc driver
+To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-5-git-send-email-rogerq@ti.com>
+ <e63ac3f9-8daf-af84-a200-4c5f40a1a3ed@lechnology.com>
+CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
+        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFFB0B5.6070109@ti.com>
+Date:   Thu, 29 Nov 2018 11:26:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <e63ac3f9-8daf-af84-a200-4c5f40a1a3ed@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/18 8:07 AM, Chunyan Zhang wrote:
-> Some standard SD host controllers can support both external dma
-> controllers as well as ADMA/SDMA in which the SD host controller
-> acts as DMA master. TI's omap controller is the case as an example.
+On 27/11/18 00:32, David Lechner wrote:
+> On 11/26/18 1:52 AM, Roger Quadros wrote:
 > 
-> Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> the host controller but does not have any support for external DMA
-> controllers implemented using dmaengine, meaning that custom code is
-> needed for any systems that use an external DMA controller with SDHCI.
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index ce5d061..88a86cc 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -26,3 +26,4 @@ qcom_wcnss_pil-y            += qcom_wcnss.o
+>>   qcom_wcnss_pil-y            += qcom_wcnss_iris.o
+>>   obj-$(CONFIG_ST_REMOTEPROC)        += st_remoteproc.o
+>>   obj-$(CONFIG_ST_SLIM_REMOTEPROC)    += st_slim_rproc.o
+>> +obj-$(CONFIG_PRUSS_REMOTEPROC)        += pru_rproc.o
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> new file mode 100644
+>> index 0000000..c35f432
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -0,0 +1,392 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PRU-ICSS remoteproc driver for various TI SoCs
+>> + *
+>> + * Copyright (C) 2014-2018 Texas Instruments Incorporated - http://www.ti.com/
+>> + *    Suman Anna <s-anna@ti.com>
+>> + *    Andrew F. Davis <afd@ti.com>
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/remoteproc.h>
 > 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> ---
->  drivers/mmc/host/Kconfig |  14 ++++
->  drivers/mmc/host/sdhci.c | 185 ++++++++++++++++++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci.h |   8 ++
->  3 files changed, 206 insertions(+), 1 deletion(-)
+> alphabetical order?
 > 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 1b58739..4183f43 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -969,6 +969,7 @@ config MMC_SDHCI_XENON
->  config MMC_SDHCI_OMAP
->  	tristate "TI SDHCI Controller Support"
->  	depends on MMC_SDHCI_PLTFM && OF
-> +	select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  support present in TI's DRA7 SOCs. The controller supports
-> @@ -977,3 +978,16 @@ config MMC_SDHCI_OMAP
->  	  If you have a controller with this interface, say Y or M here.
->  
->  	  If unsure, say N.
-> +
-> +config MMC_SDHCI_EXTERNAL_DMA
-> +        bool "Support external DMA in standard SD host controller"
-> +	depends on MMC_SDHCI
-> +	depends on DMA_ENGINE
-> +	help
-> +	  This is an option for using external DMA device via dmaengine
-> +	  framework.
-> +
-> +	  If you have a controller which support using external DMA device
-> +	  for data transfer, can say Y.
-> +
-> +	  If unsure, say N.
+>> +#include <linux/pruss.h>
+>> +
+>> +#include "remoteproc_internal.h"
+> 
+> alphabetical order?
 
-So if you are going to select this, then you don't need the prompt or help
-anymore i.e.
+ok for both.
 
-config MMC_SDHCI_EXTERNAL_DMA
-	bool
-
-
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 99bdae5..ad7cc80 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -14,6 +14,7 @@
->   */
->  
->  #include <linux/delay.h>
-> +#include <linux/dmaengine.h>
->  #include <linux/ktime.h>
->  #include <linux/highmem.h>
->  #include <linux/io.h>
-> @@ -1309,6 +1310,162 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
->  		del_timer(&host->timer);
->  }
->  
-> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> +static int sdhci_external_dma_init(struct sdhci_host *host)
-> +{
-> +	int ret = 0;
-> +	struct mmc_host *mmc = host->mmc;
-> +
-> +	host->tx_chan = dma_request_chan(mmc->parent, "tx");
-> +	if (IS_ERR(host->tx_chan)) {
-> +		ret = PTR_ERR(host->tx_chan);
-> +		if (ret != -EPROBE_DEFER)
-> +			pr_warn("Failed to request TX DMA channel.\n");
-> +		host->tx_chan = NULL;
-> +		return ret;
-> +	}
-> +
-> +	host->rx_chan = dma_request_chan(mmc->parent, "rx");
-> +	if (IS_ERR(host->rx_chan)) {
-> +		if (host->tx_chan) {
-> +			dma_release_channel(host->tx_chan);
-> +			host->tx_chan = NULL;
-> +		}
-> +
-> +		ret = PTR_ERR(host->rx_chan);
-> +		if (ret != -EPROBE_DEFER)
-> +			pr_warn("Failed to request RX DMA channel.\n");
-> +		host->rx_chan = NULL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static inline struct dma_chan *
-> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
-> +{
-> +	return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
-> +}
-> +
-> +static int sdhci_external_dma_setup(struct sdhci_host *host,
-> +				    struct mmc_command *cmd)
-> +{
-> +	int ret, i;
-> +	struct dma_async_tx_descriptor *desc;
-> +	struct mmc_data *data = cmd->data;
-> +	struct dma_chan *chan;
-> +	struct dma_slave_config cfg;
-> +	dma_cookie_t cookie;
-> +
-> +	if (!host->mapbase)
-> +		return -EINVAL;
-> +
-> +	if (!data)
-> +		return 0;
-
-It would read better if the above 2 if-statements were the other way around i.e.
-
-	if (!data)
-		return 0;
-
-	if (!host->mapbase)
-		return -EINVAL;
-
-> +
-> +	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
-> +	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
-> +	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	cfg.src_maxburst = data->blksz / 4;
-> +	cfg.dst_maxburst = data->blksz / 4;
-> +
-> +	/* Sanity check: all the SG entries must be aligned by block size. */
-> +	for (i = 0; i < data->sg_len; i++) {
-> +		if ((data->sg + i)->length % data->blksz)
-> +			return -EINVAL;
-> +	}
-> +
-> +	chan = sdhci_external_dma_channel(host, data);
-> +
-> +	ret = dmaengine_slave_config(chan, &cfg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
-> +				       mmc_get_dma_dir(data),
-> +				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	desc->callback = NULL;
-> +	desc->callback_param = NULL;
-> +
-> +	cookie = dmaengine_submit(desc);
-> +	if (cookie < 0)
-> +		ret = cookie;
-> +
-> +	return ret;
-> +}
-> +
-> +static void sdhci_external_dma_release(struct sdhci_host *host)
-> +{
-> +	if (host->tx_chan) {
-> +		dma_release_channel(host->tx_chan);
-> +		host->tx_chan = NULL;
-> +	}
-> +
-> +	if (host->rx_chan) {
-> +		dma_release_channel(host->rx_chan);
-> +		host->rx_chan = NULL;
-> +	}
-> +
-> +	sdhci_switch_external_dma(host, false);
-> +}
-> +
-> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{
-> +	if (sdhci_external_dma_setup(host, cmd)) {
-> +		sdhci_external_dma_release(host);
-> +		pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
-> +		       mmc_hostname(host->mmc));
-> +	} else {
-> +		/* Prepare for using external dma */
-> +		host->flags |= SDHCI_REQ_USE_DMA;
-> +	}
-> +
-> +	sdhci_prepare_data(host, cmd);
-> +}
-> +
-> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{
-> +	struct dma_chan *chan;
-> +
-> +	if (cmd->opcode != MMC_SET_BLOCK_COUNT && cmd->data) {
-
-MMC_SET_BLOCK_COUNT doesn't have data so that part is not needed
-
-> +		sdhci_set_timeout(host, cmd);
-> +		chan = sdhci_external_dma_channel(host, cmd->data);
-> +		dma_async_issue_pending(chan);
-> +	}
-> +}
-> +#else
-> +static int sdhci_external_dma_init(struct sdhci_host *host)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static void sdhci_external_dma_release(struct sdhci_host *host)
-> +{}
-> +
-> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{
-> +	/* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used */
-> +	sdhci_prepare_data(host, cmd);
-> +}
-> +
-> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{}
-> +#endif
-> +
-> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
-> +{
-> +	host->use_external_dma = en;
-> +}
-> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
-> +
->  void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->  {
->  	int flags;
-> @@ -1355,7 +1512,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->  		host->data_cmd = cmd;
->  	}
->  
-> -	sdhci_prepare_data(host, cmd);
-> +	if (host->use_external_dma)
-> +		sdhci_external_dma_prepare_data(host, cmd);
-> +	else
-> +		sdhci_prepare_data(host, cmd);
->  
->  	sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
->  
-> @@ -1397,6 +1557,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->  		timeout += 10 * HZ;
->  	sdhci_mod_timer(host, cmd->mrq, timeout);
->  
-> +	if (host->use_external_dma)
-> +		sdhci_external_dma_pre_transfer(host, cmd);
-> +
->  	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
->  }
->  EXPORT_SYMBOL_GPL(sdhci_send_command);
-> @@ -4133,6 +4296,19 @@ int sdhci_setup_host(struct sdhci_host *host)
->  			return ret;
->  	}
->  
-> +	if (host->use_external_dma) {
-> +		ret = sdhci_external_dma_init(host);
-> +		if (ret == -EPROBE_DEFER)
-> +			goto unreg;
-> +
-> +		/*
-> +		 * Fall back to use the DMA/PIO integrated in standard SDHCI
-> +		 * instead of external DMA devices.
-> +		 */
-> +		if (ret)
-> +			sdhci_switch_external_dma(host, false);
-> +	}
-> +
->  	return 0;
->  
->  unreg:
-> @@ -4161,6 +4337,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
->  		dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
->  				  host->adma_table_sz, host->align_buffer,
->  				  host->align_addr);
-> +
-> +	if (host->use_external_dma)
-> +		sdhci_external_dma_release(host);
-> +
->  	host->adma_table = NULL;
->  	host->align_buffer = NULL;
->  }
-> @@ -4295,6 +4475,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
->  				  host->adma_table_sz, host->align_buffer,
->  				  host->align_addr);
->  
-> +	if (host->use_external_dma)
-> +		sdhci_external_dma_release(host);
-> +
->  	host->adma_table = NULL;
->  	host->align_buffer = NULL;
->  }
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index b001cf4..8e50a97 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -475,6 +475,7 @@ struct sdhci_host {
->  
->  	int irq;		/* Device IRQ */
->  	void __iomem *ioaddr;	/* Mapped address */
-> +	phys_addr_t mapbase;	/* physical address base */
->  	char *bounce_buffer;	/* For packing SDMA reads/writes */
->  	dma_addr_t bounce_addr;
->  	unsigned int bounce_buffer_size;
-> @@ -524,6 +525,7 @@ struct sdhci_host {
->  	bool pending_reset;	/* Cmd/data reset is pending */
->  	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
->  	bool v4_mode;		/* Host Version 4 Enable */
-> +	bool use_external_dma;
->  
->  	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
->  	struct mmc_command *cmd;	/* Current command */
-> @@ -552,6 +554,11 @@ struct sdhci_host {
->  	struct timer_list timer;	/* Timer for timeouts */
->  	struct timer_list data_timer;	/* Timer for data timeouts */
->  
-> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> +	struct dma_chan	*rx_chan;
-> +	struct dma_chan	*tx_chan;
-> +#endif
-> +
->  	u32 caps;		/* CAPABILITY_0 */
->  	u32 caps1;		/* CAPABILITY_1 */
->  	bool read_caps;		/* Capability flags have been read */
-> @@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
->  void sdhci_end_tuning(struct sdhci_host *host);
->  void sdhci_reset_tuning(struct sdhci_host *host);
->  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
-> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
->  
->  #endif /* __SDHCI_HW_H */
+> 
+>> +#include "pru_rproc.h"
+>> +
+>> +/* PRU_ICSS_PRU_CTRL registers */
+>> +#define PRU_CTRL_CTRL        0x0000
+>> +#define PRU_CTRL_STS        0x0004
+>> +#define PRU_CTRL_WAKEUP_EN    0x0008
+>> +#define PRU_CTRL_CYCLE        0x000C
+>> +#define PRU_CTRL_STALL        0x0010
+>> +#define PRU_CTRL_CTBIR0        0x0020
+>> +#define PRU_CTRL_CTBIR1        0x0024
+>> +#define PRU_CTRL_CTPPR0        0x0028
+>> +#define PRU_CTRL_CTPPR1        0x002C
+>> +
+>> +/* CTRL register bit-fields */
+>> +#define CTRL_CTRL_SOFT_RST_N    BIT(0)
+>> +#define CTRL_CTRL_EN        BIT(1)
+>> +#define CTRL_CTRL_SLEEPING    BIT(2)
+>> +#define CTRL_CTRL_CTR_EN    BIT(3)
+>> +#define CTRL_CTRL_SINGLE_STEP    BIT(8)
+>> +#define CTRL_CTRL_RUNSTATE    BIT(15)
+>> +
+>> +/**
+>> + * enum pru_mem - PRU core memory range identifiers
+>> + */
+>> +enum pru_mem {
+>> +    PRU_MEM_IRAM = 0,
+>> +    PRU_MEM_CTRL,
+>> +    PRU_MEM_DEBUG,
+>> +    PRU_MEM_MAX,
+>> +};
+> 
+> I am finding the name "mem" here to be confusing. I keep thinking
+> these are just RAM regions instead of memory mapped I/O. Maybe call
+> it "iomem" instead of "mem"?
 > 
 
+ok.
+
+> ...
+> 
+>> +static int pru_rproc_set_id(struct pru_rproc *pru)
+>> +{
+>> +    int ret = 0;
+>> +    u32 mask1 = 0x34000;
+>> +    u32 mask2 = 0x38000;
+> 
+> These values are non-obvious and could use some comments. Also,
+> they could be made into constants or macros.
+> 
+
+ok.
+
+>> +
+>> +    if ((pru->mem_regions[0].pa & mask1) == mask1)
+> 
+> how about this instead:
+> 
+>     if ((pru->mem_regions[PRU_MEM_IRAM].pa & 0xfffff) == mask1)
+> 
+> The 0xfffff mask will be important on AM18xx where INTC is at 0x34000,
+> PRU0 IRAM is at 0x38000 and PRU1 IRAM is at 0x3C000.
+> 
+
+I think this approach of figuring out id based on IRAM address is not scalable.
+
+At the moment ID is used for these operations
+
+pruss_cfg_gpimode()
+pruss_cfg_get_gpmux()
+pruss_cfg_set_gpmux()
+
+All of which affect the GPCFG register of the respective PRU.
+
+I think a better approach is to get rid of this ID logic and provide the
+GPCFG syscon address to the PRU node and let the pru driver directly affect the register.
+
+e.g. on am335x
+
+				pru0: pru@4a334000 {
+					compatible = "ti,am3356-pru";
+					...
+					gpcfg = <&pruss_cfg 8>;
+				};
+
+So the API changes from
+
+int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id id, u8 *mux)
+
+to
+
+int pru_rproc_cfg_get_gpmux(struct pru_rproc *pru, u8 *mux)
+
+
+>> +        pru->id = 0;
+>> +    else if ((pru->mem_regions[0].pa & mask2) == mask2)
+>> +        pru->id = 1;
+>> +    else
+>> +        ret = -EINVAL;
+>> +
+>> +    return ret;
+>> +}
+> 
+
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
