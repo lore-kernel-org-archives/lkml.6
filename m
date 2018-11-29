@@ -2,173 +2,206 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2919DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BE5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0FFA20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="t5SmATrT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FFA20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 6436A20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6436A20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbeK3DwC (ORCPT
+        id S1729861AbeK3DwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:52:02 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35568 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729654AbeK3DwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:52:01 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so4665535itp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Q/GbKuFaptQvUEl4Wd84DaujVYfeqvfBlIlbov2Mlak=;
-        b=t5SmATrTqyxoYaOPsWS1isXu69wHi5PApSbmSdcsjVmAIaMTmWEr6sHeeu+QcnvmnM
-         y8AKxeTUhRM157i1hdhz/3qxRIYwBJEHvR3wzmdZ8QKmJkB2J6ayMIVSp6VN4zXcKvL5
-         4nuhxSYvPf92WEuLFnIwtcyOmgdpWOiUUdbD0aBB+siPThe1kGatDIFD5yRiEKMybeLp
-         414LzhDar0l7qSdPOBcBSDL5408aXFERDCAj+jfb7dTdfdHzDu+syi5wL+c47WIe2b0g
-         vPCFTRQWRVAZUUCABSyDZGS6ooTaU+2O9TIGWkppwjV3vViWBb79ED0O4NVJ/DXMdSCc
-         zTUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Q/GbKuFaptQvUEl4Wd84DaujVYfeqvfBlIlbov2Mlak=;
-        b=Lg0bmTYmnCQOc01hzlugGr6SYhkpydztm3B00XZ4sRagJapB9sWUouwP3huOCLqZKc
-         wrn6AijWnMeBcRxYCk+wPJQmTy97A06uh4XtiQ/nbghfysATHwLq0kPuhKTG1Wh0o9H4
-         TSIu+EByMmNtf1ufTAu1KrQDlgPjPTLb0KCLkyrKuiqG6qS6zPw23XGnuliCU18atPfJ
-         OFZ+UG3slo6uZae1pYfC1U1JBnG9Ddz9ICZKYLGaTqdlJsugUXQbUM290Y/mLF0KqMo0
-         CVsThVKmDnUZ2tgb8zOPqQBuHh97KiR/ExJPcopbTg+6+t8yiNQoXNAUGS/GRo9DRC7G
-         3aPA==
-X-Gm-Message-State: AA+aEWa62dHad6tmrzeptTPQFnh9eKGJl9ZmqmmP15OL923bzdGRCVPv
-        GFm8D+5L9BYv525Zm28j7b3BWBCATSt2NYzjX2pG4Q==
-X-Google-Smtp-Source: AFSGD/WRnDKDcgGOsgeEZErKEgs5yDvhgf9+ysbM80udT5JKDQ+ATrra5z8TWOE9+7Jh/+SzWH8Fec6sqqt0ef0ujP4=
-X-Received: by 2002:a02:3d42:: with SMTP id n63mr2027489jan.136.1543509962311;
- Thu, 29 Nov 2018 08:46:02 -0800 (PST)
+        Thu, 29 Nov 2018 22:52:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:39068 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729654AbeK3DwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:52:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6434A78;
+        Thu, 29 Nov 2018 08:46:04 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0168C3F59C;
+        Thu, 29 Nov 2018 08:46:02 -0800 (PST)
+Date:   Thu, 29 Nov 2018 16:46:00 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v6 07/24] arm64: Make PMR part of task context
+Message-ID: <20181129164600.ddr2ja5p7vc3qikb@lakrids.cambridge.arm.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-8-git-send-email-julien.thierry@arm.com>
 MIME-Version: 1.0
-References: <20181113140133.17385-1-brgl@bgdev.pl> <20181113140133.17385-11-brgl@bgdev.pl>
-In-Reply-To: <20181113140133.17385-11-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 29 Nov 2018 17:45:51 +0100
-Message-ID: <CAMRc=MdLSVw11hzzqPLfSyz38uA46+LvobGk3vSNcTvtqnD5XQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/25] net: ethernet: provide nvmem_get_mac_address()
-To:     "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     Kevin Hilman <khilman@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542023835-21446-8-git-send-email-julien.thierry@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 13 lis 2018 o 15:02 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
-):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> We already have of_get_nvmem_mac_address() but some non-DT systems want
-> to read the MAC address from NVMEM too. Implement a generalized routine
-> that takes struct device as argument.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Nov 12, 2018 at 11:56:58AM +0000, Julien Thierry wrote:
+> If ICC_PMR_EL1 is used to mask interrupts, its value should be
+> saved/restored whenever a task is context switched out/in or
+> gets an exception.
+> 
+> Add PMR to the registers to save in the pt_regs struct upon kernel entry,
+> and restore it before ERET. Also, initialize it to a sane value when
+> creating new tasks.
+
+Could you please elaborate on when this matters?
+
+Does this actually matter for context-switch? Can we do that in a
+pseudo-NMI handler?
+
+Or does this only matter for exception entry/return, and not
+context-switch?
+
+Thanks,
+Mark.
+
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Dave Martin <Dave.Martin@arm.com>
 > ---
->  include/linux/etherdevice.h |  1 +
->  net/ethernet/eth.c          | 38 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 39 insertions(+)
->
-> diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
-> index 572e11bb8696..2c0af7b00715 100644
-> --- a/include/linux/etherdevice.h
-> +++ b/include/linux/etherdevice.h
-> @@ -32,6 +32,7 @@
->  struct device;
->  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
->  unsigned char *arch_get_platform_mac_address(void);
-> +int nvmem_get_mac_address(struct device *dev, void *addrbuf);
->  u32 eth_get_headlen(void *data, unsigned int max_len);
->  __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
->  extern const struct header_ops eth_header_ops;
-> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-> index fd8faa0dfa61..df38593d1bb4 100644
-> --- a/net/ethernet/eth.c
-> +++ b/net/ethernet/eth.c
-> @@ -47,6 +47,7 @@
->  #include <linux/inet.h>
->  #include <linux/ip.h>
->  #include <linux/netdevice.h>
-> +#include <linux/nvmem-consumer.h>
->  #include <linux/etherdevice.h>
->  #include <linux/skbuff.h>
->  #include <linux/errno.h>
-> @@ -548,3 +549,40 @@ int eth_platform_get_mac_address(struct device *dev,=
- u8 *mac_addr)
->         return 0;
+>  arch/arm64/include/asm/processor.h |  3 +++
+>  arch/arm64/include/asm/ptrace.h    | 14 +++++++++++---
+>  arch/arm64/kernel/asm-offsets.c    |  1 +
+>  arch/arm64/kernel/entry.S          | 13 +++++++++++++
+>  arch/arm64/kernel/process.c        |  6 ++++++
+>  5 files changed, 34 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index 6b0d4df..b2315ef 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -168,6 +168,9 @@ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
+>  	memset(regs, 0, sizeof(*regs));
+>  	forget_syscall(regs);
+>  	regs->pc = pc;
+> +
+> +	if (system_supports_irq_prio_masking())
+> +		regs->pmr_save = GIC_PRIO_IRQON;
 >  }
->  EXPORT_SYMBOL(eth_platform_get_mac_address);
+>  
+>  static inline void start_thread(struct pt_regs *regs, unsigned long pc,
+> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+> index ce6998c..0ad46f5 100644
+> --- a/arch/arm64/include/asm/ptrace.h
+> +++ b/arch/arm64/include/asm/ptrace.h
+> @@ -19,6 +19,8 @@
+>  #ifndef __ASM_PTRACE_H
+>  #define __ASM_PTRACE_H
+>  
+> +#include <asm/cpufeature.h>
 > +
-> +/**
-> + * Obtain the MAC address from an nvmem cell named 'mac-address' associa=
-ted
-> + * with given device.
-> + *
-> + * @dev:       Device with which the mac-address cell is associated.
-> + * @addrbuf:   Buffer to which the MAC address will be copied on success=
-.
-> + *
-> + * Returns 0 on success or a negative error number on failure.
-> + */
-> +int nvmem_get_mac_address(struct device *dev, void *addrbuf)
-> +{
-> +       struct nvmem_cell *cell;
-> +       const void *mac;
-> +       size_t len;
+>  #include <uapi/asm/ptrace.h>
+>  
+>  /* Current Exception Level values, as contained in CurrentEL */
+> @@ -173,7 +175,8 @@ struct pt_regs {
+>  #endif
+>  
+>  	u64 orig_addr_limit;
+> -	u64 unused;	// maintain 16 byte alignment
+> +	/* Only valid when ARM64_HAS_IRQ_PRIO_MASKING is enabled. */
+> +	u64 pmr_save;
+>  	u64 stackframe[2];
+>  };
+>  
+> @@ -208,8 +211,13 @@ static inline void forget_syscall(struct pt_regs *regs)
+>  #define processor_mode(regs) \
+>  	((regs)->pstate & PSR_MODE_MASK)
+>  
+> -#define interrupts_enabled(regs) \
+> -	(!((regs)->pstate & PSR_I_BIT))
+> +#define irqs_priority_unmasked(regs)					\
+> +	(system_supports_irq_prio_masking() ?				\
+> +		(regs)->pmr_save & GIC_PRIO_STATUS_BIT :		\
+> +		true)
 > +
-> +       cell =3D nvmem_cell_get(dev, "mac-address");
-> +       if (IS_ERR(cell))
-> +               return PTR_ERR(cell);
+> +#define interrupts_enabled(regs)			\
+> +	(!((regs)->pstate & PSR_I_BIT) && irqs_priority_unmasked(regs))
+>  
+>  #define fast_interrupts_enabled(regs) \
+>  	(!((regs)->pstate & PSR_F_BIT))
+> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+> index 323aeb5..bab4122 100644
+> --- a/arch/arm64/kernel/asm-offsets.c
+> +++ b/arch/arm64/kernel/asm-offsets.c
+> @@ -78,6 +78,7 @@ int main(void)
+>    DEFINE(S_ORIG_X0,		offsetof(struct pt_regs, orig_x0));
+>    DEFINE(S_SYSCALLNO,		offsetof(struct pt_regs, syscallno));
+>    DEFINE(S_ORIG_ADDR_LIMIT,	offsetof(struct pt_regs, orig_addr_limit));
+> +  DEFINE(S_PMR_SAVE,		offsetof(struct pt_regs, pmr_save));
+>    DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
+>    DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
+>    BLANK();
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index 039144e..eb8120e 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -249,6 +249,12 @@ alternative_else_nop_endif
+>  	msr	sp_el0, tsk
+>  	.endif
+>  
+> +	/* Save pmr */
+> +alternative_if ARM64_HAS_IRQ_PRIO_MASKING
+> +	mrs_s	x20, SYS_ICC_PMR_EL1
+> +	str	x20, [sp, #S_PMR_SAVE]
+> +alternative_else_nop_endif
 > +
-> +       mac =3D nvmem_cell_read(cell, &len);
-> +       nvmem_cell_put(cell);
+>  	/*
+>  	 * Registers that may be useful after this macro is invoked:
+>  	 *
+> @@ -269,6 +275,13 @@ alternative_else_nop_endif
+>  	/* No need to restore UAO, it will be restored from SPSR_EL1 */
+>  	.endif
+>  
+> +	/* Restore pmr */
+> +alternative_if ARM64_HAS_IRQ_PRIO_MASKING
+> +	ldr	x20, [sp, #S_PMR_SAVE]
+> +	msr_s	SYS_ICC_PMR_EL1, x20
+> +	dsb	sy
+> +alternative_else_nop_endif
 > +
-> +       if (IS_ERR(mac))
-> +               return PTR_ERR(mac);
+>  	ldp	x21, x22, [sp, #S_PC]		// load ELR, SPSR
+>  	.if	\el == 0
+>  	ct_user_enter
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index d9a4c2d..71e8850 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -231,6 +231,9 @@ void __show_regs(struct pt_regs *regs)
+>  
+>  	printk("sp : %016llx\n", sp);
+>  
+> +	if (system_supports_irq_prio_masking())
+> +		printk("pmr_save: %08llx\n", regs->pmr_save);
 > +
-> +       if (len !=3D ETH_ALEN || !is_valid_ether_addr(mac)) {
-> +               kfree(mac);
-> +               return -EINVAL;
-> +       }
+>  	i = top_reg;
+>  
+>  	while (i >= 0) {
+> @@ -362,6 +365,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+>  		if (arm64_get_ssbd_state() == ARM64_SSBD_FORCE_DISABLE)
+>  			childregs->pstate |= PSR_SSBS_BIT;
+>  
+> +		if (system_supports_irq_prio_masking())
+> +			childregs->pmr_save = GIC_PRIO_IRQON;
 > +
-> +       ether_addr_copy(addrbuf, mac);
-> +       kfree(mac);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(nvmem_get_mac_address);
-> --
-> 2.19.1
->
-
-If there are no objections - can patches 10-13 go into the networking
-tree already so that they spend some time in next before the merge
-window?
-
-Best regards,
-Bartosz Golaszewski
+>  		p->thread.cpu_context.x19 = stack_start;
+>  		p->thread.cpu_context.x20 = stk_sz;
+>  	}
+> -- 
+> 1.9.1
+> 
