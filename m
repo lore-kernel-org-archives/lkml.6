@@ -2,497 +2,69 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D78C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86793C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988C321104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZT2+88O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988C321104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5642D2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5642D2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeK3Fhm (ORCPT
+        id S1728847AbeK3Fhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:37:42 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40614 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728651AbeK3Fhl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:37:41 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so2640606lji.7;
-        Thu, 29 Nov 2018 10:31:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=r1rP7t3fVQluGTefZUJ6/8vJ2oF5x5Tqg1Zm5zI6ty4=;
-        b=mZT2+88OY+AJ9CjxHDcH8p2VsQb/WIDNUWfUDaXBim41gX1Dr5RlLQ5FkqryCFrQvg
-         PLE+cp7YkD7c+VinNI5XoyUL1NbhDleIb5qldYY9F566zSszRHR0wtvcSqzeNkqv1lJp
-         90yRD31Nou2BMDY1AGAYbFVhBjnWhJyyNN6SjHeugBPBsZMwSTlZobnMf+o91FROwOkc
-         dOAcLRhItYAZaKV+SwHgMquRII1+u/E3Wx/rlClmcS1pM5NvyOIobPo+bae9MjjeYeJT
-         DZWtKxgiMInzXtPy6URrTNgbp71CZIAFElIT1rGz11XY7wgtQHOTQ4+H01KOwHr7x6uD
-         Kqmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=r1rP7t3fVQluGTefZUJ6/8vJ2oF5x5Tqg1Zm5zI6ty4=;
-        b=Fr6sai5JzqfHClusB7J/8+AUEyUolkBR7eZz9uTv1wyxbdI/IzGC5VRpa8uekMrLvn
-         2XPw5IZLwxVBJzF3T2MoXTIN5P6A4MzVtFWAIYCll8gfB14DAsycMgj4x6XrLWD1HmCE
-         SObKsefgLhy0+4cKAzfeV2l7PZDQOCfntNgUlkh8nGmGqUGhKfh5CW7F6WtKYF9JCsfJ
-         /+YJPsbp+nrYTQ3tNqsPVsIZD8Q5238O9Sg3EquVU65yYxR1wH05F+ZL83CPbDOQKyij
-         Jol+SwfQLmHoJ4IjVXsOUV+VZ1hXbFxGRfEx6rBJske+55R0MKaAmJGUwEdjkMOJfKMm
-         fDzA==
-X-Gm-Message-State: AA+aEWZDLYffwRzjOEsKG0BlmwptR+8HuR94JbefgEADmKBGPNKst3/X
-        8YJ/3c7wQP3g5/OajO6CeAwt8BRR5iTOsUYmkQ==
-X-Google-Smtp-Source: AFSGD/W3SXCDmf3JuvklFIGkt6fvGHcOTYy4h4CEfy9r8ANGNyd8RV9Tx+CBdmSHNrL4Yq6tQj6Kfo+3R3orITe8buY=
-X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr1814173lja.46.1543516280756;
- Thu, 29 Nov 2018 10:31:20 -0800 (PST)
+        Fri, 30 Nov 2018 00:37:52 -0500
+Received: from verein.lst.de ([213.95.11.211]:45479 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728348AbeK3Fhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:37:52 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id B667068BDF; Thu, 29 Nov 2018 19:31:32 +0100 (CET)
+Date:   Thu, 29 Nov 2018 19:31:32 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, robin.murphy@arm.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: remove the ->mapping_error method from dma_map_ops V2
+Message-ID: <20181129183132.GA30281@lst.de>
+References: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com> <20181123065511.GA17856@lst.de> <20181128074117.GA21126@lst.de> <CAHk-=wg5+rXK8dpjkSmK7tuz29VfxVWNEwmTVYB409mmyLkeew@mail.gmail.com> <20181128174545.GJ30658@n2100.armlinux.org.uk> <CAHk-=whnz4Kty6cas11bc2Gh=9zTzeeRS2k=dV9Hfc4B=xnHkQ@mail.gmail.com> <20181128180841.GM30658@n2100.armlinux.org.uk> <CAHk-=whcbiSxSUprsKjVPEdN5-+o8WnTGiKxEV-+HbKNDs=iNA@mail.gmail.com> <20181129162323.GA27068@lst.de> <CAHk-=wi2K7_+dgCbc-sAK9CST5Zh+pOuH7sVT9WW-kqs50HSzQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181031221311.2596-1-longli@linuxonhyperv.com>
- <20181031221311.2596-2-longli@linuxonhyperv.com> <CAKywueRa8Uw_wSk3DUMk_8b=56OPsDv5uOPwqiYVJU19amL3NQ@mail.gmail.com>
- <DM5PR21MB0185F6D521448285371066FECED20@DM5PR21MB0185.namprd21.prod.outlook.com>
-In-Reply-To: <DM5PR21MB0185F6D521448285371066FECED20@DM5PR21MB0185.namprd21.prod.outlook.com>
-From:   Pavel Shilovsky <piastryyy@gmail.com>
-Date:   Thu, 29 Nov 2018 10:31:08 -0800
-Message-ID: <CAKywueSwidw-71FkpLY1w+fzHL6h85qi69uOC-B04GNY6XsZaA@mail.gmail.com>
-Subject: Re: [Patch v4 2/3] CIFS: Add support for direct I/O write
-To:     Long Li <longli@microsoft.com>
-Cc:     Steve French <sfrench@samba.org>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi2K7_+dgCbc-sAK9CST5Zh+pOuH7sVT9WW-kqs50HSzQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D1=81=D1=80, 28 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 18:20, Long =
-Li <longli@microsoft.com>:
->
-> > Subject: Re: [Patch v4 2/3] CIFS: Add support for direct I/O write
-> >
-> > =D1=81=D1=80, 31 =D0=BE=D0=BA=D1=82. 2018 =D0=B3. =D0=B2 15:26, Long Li=
- <longli@linuxonhyperv.com>:
-> > >
-> > > From: Long Li <longli@microsoft.com>
-> > >
-> > > With direct I/O write, user supplied buffers are pinned to the memory
-> > > and data are transferred directly from user buffers to the transport =
-layer.
-> > >
-> > > Change in v3: add support for kernel AIO
-> > >
-> > > Change in v4:
-> > > Refactor common write code to __cifs_writev for direct and non-direct=
- I/O.
-> > > Retry on direct I/O failure.
-> > >
-> > > Signed-off-by: Long Li <longli@microsoft.com>
-> > > ---
-> > >  fs/cifs/cifsfs.h |   1 +
-> > >  fs/cifs/file.c   | 194 +++++++++++++++++++++++++++++++++++++++++++--=
---
-> > --------
-> > >  2 files changed, 154 insertions(+), 41 deletions(-)
-> > >
-> > > diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h index
-> > > 7fba9aa..e9c5103 100644
-> > > --- a/fs/cifs/cifsfs.h
-> > > +++ b/fs/cifs/cifsfs.h
-> > > @@ -105,6 +105,7 @@ extern ssize_t cifs_user_readv(struct kiocb *iocb=
-,
-> > > struct iov_iter *to);  extern ssize_t cifs_direct_readv(struct kiocb
-> > > *iocb, struct iov_iter *to);  extern ssize_t cifs_strict_readv(struct
-> > > kiocb *iocb, struct iov_iter *to);  extern ssize_t
-> > > cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
-> > > +extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_ite=
-r
-> > > +*from);
-> > >  extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_ite=
-r
-> > > *from);  extern int cifs_lock(struct file *, int, struct file_lock *)=
-;
-> > > extern int cifs_fsync(struct file *, loff_t, loff_t, int); diff --git
-> > > a/fs/cifs/file.c b/fs/cifs/file.c index daab878..1a41c04 100644
-> > > --- a/fs/cifs/file.c
-> > > +++ b/fs/cifs/file.c
-> > > @@ -2524,6 +2524,55 @@ wdata_fill_from_iovec(struct cifs_writedata
-> > > *wdata, struct iov_iter *from,  }
-> > >
-> > >  static int
-> > > +cifs_resend_wdata(struct cifs_writedata *wdata, struct list_head
-> > > +*wdata_list, struct cifs_aio_ctx *ctx) {
-> > > +       int wait_retry =3D 0;
-> > > +       unsigned int wsize, credits;
-> > > +       int rc;
-> > > +       struct TCP_Server_Info *server =3D
-> > > +tlink_tcon(wdata->cfile->tlink)->ses->server;
-> > > +
-> > > +       /*
-> > > +        * Try to resend this wdata, waiting for credits up to 3 seco=
-nds.
-> > > +        * Note: we are attempting to resend the whole wdata not in
-> > segments
-> > > +        */
-> > > +       do {
-> > > +               rc =3D server->ops->wait_mtu_credits(server,
-> > > + wdata->bytes, &wsize, &credits);
-> > > +
-> > > +               if (rc)
-> > > +                       break;
-> > > +
-> > > +               if (wsize < wdata->bytes) {
-> > > +                       add_credits_and_wake_if(server, credits, 0);
-> > > +                       msleep(1000);
-> > > +                       wait_retry++;
-> > > +               }
-> > > +       } while (wsize < wdata->bytes && wait_retry < 3);
-> > > +
-> > > +       if (wsize < wdata->bytes) {
-> > > +               rc =3D -EBUSY;
-> > > +               goto out;
-> > > +       }
-> > > +
-> > > +       rc =3D -EAGAIN;
-> > > +       while (rc =3D=3D -EAGAIN)
-> > > +               if (!wdata->cfile->invalidHandle ||
-> > > +                   !(rc =3D cifs_reopen_file(wdata->cfile, false)))
-> > > +                       rc =3D server->ops->async_writev(wdata,
-> > > +
-> > > + cifs_uncached_writedata_release);
-> > > +
-> > > +       if (!rc) {
-> > > +               list_add_tail(&wdata->list, wdata_list);
-> > > +               return 0;
-> > > +       }
-> > > +
-> > > +       add_credits_and_wake_if(server, wdata->credits, 0);
-> > > +out:
-> > > +       kref_put(&wdata->refcount, cifs_uncached_writedata_release);
-> > > +
-> > > +       return rc;
-> > > +}
-> > > +
-> > > +static int
-> > >  cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *fro=
-m,
-> > >                      struct cifsFileInfo *open_file,
-> > >                      struct cifs_sb_info *cifs_sb, struct list_head
-> > > *wdata_list, @@ -2537,6 +2586,8 @@ cifs_write_from_iter(loff_t offset=
-,
-> > size_t len, struct iov_iter *from,
-> > >         loff_t saved_offset =3D offset;
-> > >         pid_t pid;
-> > >         struct TCP_Server_Info *server;
-> > > +       struct page **pagevec;
-> > > +       size_t start;
-> > >
-> > >         if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-> > >                 pid =3D open_file->pid;
-> > > @@ -2553,38 +2604,74 @@ cifs_write_from_iter(loff_t offset, size_t le=
-n,
-> > struct iov_iter *from,
-> > >                 if (rc)
-> > >                         break;
-> > >
-> > > -               nr_pages =3D get_numpages(wsize, len, &cur_len);
-> > > -               wdata =3D cifs_writedata_alloc(nr_pages,
-> > > +               if (ctx->direct_io) {
-> > > +                       cur_len =3D iov_iter_get_pages_alloc(
-> > > +                               from, &pagevec, wsize, &start);
-> > > +                       if (cur_len < 0) {
-> > > +                               cifs_dbg(VFS,
-> > > +                                       "direct_writev couldn't get u=
-ser pages "
-> > > +                                       "(rc=3D%zd) iter type %d iov_=
-offset %zd count"
-> > > +                                       " %zd\n",
-> > > +                                       cur_len, from->type,
-> > > +                                       from->iov_offset, from->count=
-);
-> > > +                               dump_stack();
-> > > +                               break;
-> > > +                       }
-> > > +                       iov_iter_advance(from, cur_len);
-> > > +
-> > > +                       nr_pages =3D (cur_len + start + PAGE_SIZE - 1=
-) /
-> > > + PAGE_SIZE;
-> > > +
-> > > +                       wdata =3D cifs_writedata_direct_alloc(pagevec=
-,
-> > >                                              cifs_uncached_writev_com=
-plete);
-> > > -               if (!wdata) {
-> > > -                       rc =3D -ENOMEM;
-> > > -                       add_credits_and_wake_if(server, credits, 0);
-> > > -                       break;
-> > > -               }
-> > > +                       if (!wdata) {
-> > > +                               rc =3D -ENOMEM;
-> > > +                               add_credits_and_wake_if(server, credi=
-ts, 0);
-> > > +                               break;
-> > > +                       }
-> > >
-> > > -               rc =3D cifs_write_allocate_pages(wdata->pages, nr_pag=
-es);
-> > > -               if (rc) {
-> > > -                       kfree(wdata);
-> > > -                       add_credits_and_wake_if(server, credits, 0);
-> > > -                       break;
-> > > -               }
-> > >
-> > > -               num_pages =3D nr_pages;
-> > > -               rc =3D wdata_fill_from_iovec(wdata, from, &cur_len, &=
-num_pages);
-> > > -               if (rc) {
-> > > -                       for (i =3D 0; i < nr_pages; i++)
-> > > -                               put_page(wdata->pages[i]);
-> > > -                       kfree(wdata);
-> > > -                       add_credits_and_wake_if(server, credits, 0);
-> > > -                       break;
-> > > -               }
-> > > +                       wdata->page_offset =3D start;
-> > > +                       wdata->tailsz =3D
-> > > +                               nr_pages > 1 ?
-> > > +                                       cur_len - (PAGE_SIZE - start)=
- -
-> > > +                                       (nr_pages - 2) * PAGE_SIZE :
-> > > +                                       cur_len;
-> > > +               } else {
-> > > +                       nr_pages =3D get_numpages(wsize, len, &cur_le=
-n);
-> > > +                       wdata =3D cifs_writedata_alloc(nr_pages,
-> > > +                                            cifs_uncached_writev_com=
-plete);
-> > > +                       if (!wdata) {
-> > > +                               rc =3D -ENOMEM;
-> > > +                               add_credits_and_wake_if(server, credi=
-ts, 0);
-> > > +                               break;
-> > > +                       }
-> > >
-> > > -               /*
-> > > -                * Bring nr_pages down to the number of pages we actu=
-ally used,
-> > > -                * and free any pages that we didn't use.
-> > > -                */
-> > > -               for ( ; nr_pages > num_pages; nr_pages--)
-> > > -                       put_page(wdata->pages[nr_pages - 1]);
-> > > +                       rc =3D cifs_write_allocate_pages(wdata->pages=
-, nr_pages);
-> > > +                       if (rc) {
-> > > +                               kfree(wdata);
-> > > +                               add_credits_and_wake_if(server, credi=
-ts, 0);
-> > > +                               break;
-> > > +                       }
-> > > +
-> > > +                       num_pages =3D nr_pages;
-> > > +                       rc =3D wdata_fill_from_iovec(wdata, from, &cu=
-r_len,
-> > &num_pages);
-> > > +                       if (rc) {
-> > > +                               for (i =3D 0; i < nr_pages; i++)
-> > > +                                       put_page(wdata->pages[i]);
-> > > +                               kfree(wdata);
-> > > +                               add_credits_and_wake_if(server, credi=
-ts, 0);
-> > > +                               break;
-> > > +                       }
-> > > +
-> > > +                       /*
-> > > +                        * Bring nr_pages down to the number of pages=
- we actually
-> > used,
-> > > +                        * and free any pages that we didn't use.
-> > > +                        */
-> > > +                       for ( ; nr_pages > num_pages; nr_pages--)
-> > > +                               put_page(wdata->pages[nr_pages - 1]);
-> > > +
-> > > +                       wdata->tailsz =3D cur_len - ((nr_pages - 1) *=
- PAGE_SIZE);
-> > > +               }
-> > >
-> > >                 wdata->sync_mode =3D WB_SYNC_ALL;
-> > >                 wdata->nr_pages =3D nr_pages; @@ -2593,7 +2680,6 @@
-> > > cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from=
-,
-> > >                 wdata->pid =3D pid;
-> > >                 wdata->bytes =3D cur_len;
-> > >                 wdata->pagesz =3D PAGE_SIZE;
-> > > -               wdata->tailsz =3D cur_len - ((nr_pages - 1) * PAGE_SI=
-ZE);
-> > >                 wdata->credits =3D credits;
-> > >                 wdata->ctx =3D ctx;
-> > >                 kref_get(&ctx->refcount); @@ -2668,13 +2754,17 @@
-> > > static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
-> > >                                 INIT_LIST_HEAD(&tmp_list);
-> > >                                 list_del_init(&wdata->list);
-> > >
-> > > -                               iov_iter_advance(&tmp_from,
-> > > +                               if (ctx->direct_io)
-> > > +                                       rc =3D cifs_resend_wdata(wdat=
-a, &tmp_list, ctx);
-> > > +                               else {
-> > > +                                       iov_iter_advance(&tmp_from,
-> > >                                                  wdata->offset -
-> > > ctx->pos);
-> > >
-> > > -                               rc =3D cifs_write_from_iter(wdata->of=
-fset,
-> > > +                                       rc =3D
-> > > + cifs_write_from_iter(wdata->offset,
-> > >                                                 wdata->bytes, &tmp_fr=
-om,
-> > >                                                 ctx->cfile, cifs_sb, =
-&tmp_list,
-> > >                                                 ctx);
-> > > +                               }
-> > >
-> > >                                 list_splice(&tmp_list, &ctx->list);
-> > >
-> > > @@ -2687,8 +2777,9 @@ static void collect_uncached_write_data(struct
-> > cifs_aio_ctx *ctx)
-> > >                 kref_put(&wdata->refcount, cifs_uncached_writedata_re=
-lease);
-> > >         }
-> > >
-> > > -       for (i =3D 0; i < ctx->npages; i++)
-> > > -               put_page(ctx->bv[i].bv_page);
-> > > +       if (!ctx->direct_io)
-> > > +               for (i =3D 0; i < ctx->npages; i++)
-> > > +                       put_page(ctx->bv[i].bv_page);
-> > >
-> > >         cifs_stats_bytes_written(tcon, ctx->total_len);
-> > >         set_bit(CIFS_INO_INVALID_MAPPING,
-> > > &CIFS_I(dentry->d_inode)->flags); @@ -2703,7 +2794,7 @@ static void
-> > collect_uncached_write_data(struct cifs_aio_ctx *ctx)
-> > >                 complete(&ctx->done);
-> > >  }
-> > >
-> > > -ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
-> > > +static ssize_t __cifs_writev(struct kiocb *iocb, struct iov_iter
-> > > +*from, bool direct)
-> > >  {
-> > >         struct file *file =3D iocb->ki_filp;
-> > >         ssize_t total_written =3D 0;
-> > > @@ -2712,13 +2803,18 @@ ssize_t cifs_user_writev(struct kiocb *iocb,
-> > struct iov_iter *from)
-> > >         struct cifs_sb_info *cifs_sb;
-> > >         struct cifs_aio_ctx *ctx;
-> > >         struct iov_iter saved_from =3D *from;
-> > > +       size_t len =3D iov_iter_count(from);
-> > >         int rc;
-> > >
-> > >         /*
-> > > -        * BB - optimize the way when signing is disabled. We can dro=
-p this
-> > > -        * extra memory-to-memory copying and use iovec buffers for
-> > constructing
-> > > -        * write request.
-> > > +        * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
-> > > +        * In this case, fall back to non-direct write function.
-> > > +        * this could be improved by getting pages directly in
-> > > + ITER_KVEC
-> > >          */
-> > > +       if (direct && from->type & ITER_KVEC) {
-> > > +               cifs_dbg(FYI, "use non-direct cifs_writev for kvec I/=
-O\n");
-> > > +               direct =3D false;
-> > > +       }
-> > >
-> > >         rc =3D generic_write_checks(iocb, from);
-> > >         if (rc <=3D 0)
-> > > @@ -2742,10 +2838,16 @@ ssize_t cifs_user_writev(struct kiocb *iocb,
-> > > struct iov_iter *from)
-> > >
-> > >         ctx->pos =3D iocb->ki_pos;
-> > >
-> > > -       rc =3D setup_aio_ctx_iter(ctx, from, WRITE);
-> > > -       if (rc) {
-> > > -               kref_put(&ctx->refcount, cifs_aio_ctx_release);
-> > > -               return rc;
-> > > +       if (direct) {
-> > > +               ctx->direct_io =3D true;
-> > > +               ctx->iter =3D *from;
-> > > +               ctx->len =3D len;
-> > > +       } else {
-> > > +               rc =3D setup_aio_ctx_iter(ctx, from, WRITE);
-> > > +               if (rc) {
-> > > +                       kref_put(&ctx->refcount, cifs_aio_ctx_release=
-);
-> > > +                       return rc;
-> > > +               }
-> > >         }
-> > >
-> > >         /* grab a lock here due to read response handlers can access
-> > > ctx */ @@ -2795,6 +2897,16 @@ ssize_t cifs_user_writev(struct kiocb
-> > *iocb, struct iov_iter *from)
-> > >         return total_written;
-> > >  }
-> > >
-> > > +ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from=
-)
-> > > +{
-> > > +       return __cifs_writev(iocb, from, true); }
-> > > +
-> > > +ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from) =
-{
-> > > +       return __cifs_writev(iocb, from, false); }
-> > > +
-> > >  static ssize_t
-> > >  cifs_writev(struct kiocb *iocb, struct iov_iter *from)  {
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > Did you measure the performance benefit of using O_DIRECT with your
-> > patches for non-RDMA mode?
->
-> Here are some of the results measured on TCP/IP over IPoIB 40G Infiniband=
-. Please note that IPoIB is done in software so it's slower than a 40G Ethe=
-rnet NIC.
->
-> All servers are running 2 X Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz. Te=
-sted on FIO 64k read or write with queue depths 1 or 16. All the tests are =
-running with 1 FIO job, and with "direct=3D1".
->
-> Without direct I/O:
-> read 64k d1     113669KB/s
-> read 64k d16    618428KB/s
-> write 64k d1    134911KB/s
-> write 64k d16   457005KB/s
->
-> With direct I/O:
-> read 64k d1     127134KB/s
-> read 64k d16    714629KB/s
-> write 64k d1    129268KB/s
-> write 64k d16   461054KB/s
->
-> Direct I/O improvement:
-> read 64k d1     11%
-> read 64k d16    15%
-> write 64k d1    -5%
-                      ^^^
-This is strange. Is it consistent across multiple runs?
+On Thu, Nov 29, 2018 at 09:44:05AM -0800, Linus Torvalds wrote:
+> No. Really. If there's no iotlb, then you just mark that one page
+> reserved. It simply doesn't get used. It doesn't mean you suddenly
+> need a swiotlb.
 
-> write 64k d16   1%
+Sure, we could just skip that page entirely based on dma_to_phys.
 
-Good read performance improvements overall and it seems write
-performance results need more investigations.
+> But whatever. It's independent from the patch series under discussion.
+> Make dma_mapping_error() at least return a real error (eg -EINVAL, or
+> whatever is the common error), and we can maybe do this later.
 
---
-Best regards,
-Pavel Shilovsky
+Ok, I'll do that.
+
+> Or, better yet, plan on removing the single-page dma mappign entirely
+> at a later date, and make the issue moot.
+
+What would be the replacement?  Build a S/G list for every single page
+mapping?  Not sure that would create a lot of happy campers..
