@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FD7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C44AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04478214D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D83B52146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gb0lTvfX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04478214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCIDZNdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83B52146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387989AbeK3Bdo (ORCPT
+        id S2388000AbeK3Bds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34498 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbeK3Bdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:43 -0500
+        id S1731863AbeK3Bdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325FA21473;
-        Thu, 29 Nov 2018 14:28:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93DFB213A2;
+        Thu, 29 Nov 2018 14:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501690;
-        bh=YF7GkbkbNkAhewv4vtaO4KwnREJCfij6/lw51DmWa0k=;
+        s=default; t=1543501693;
+        bh=vpvGs1d21MLliqAf5WTTOqDHu2uzmmBQyS6YlZxqm1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gb0lTvfX08kRhid1H6B0tRjZ1zjEmqKsY/vQd7XVys5uTA61B0Nuw8oHJ+0zx4Gee
-         BQMt6bRa/SrvbUczru+u8pMO3BYggrx52TLBlzc7JG85agcEm6mcFeNQZlclDV+Dt1
-         D/4pf2vBN8gRj6yWxg+yKr517noRkxvQoRgHVhtQ=
+        b=HCIDZNdwIcE+VWfs6TY/Vh4AkpCzvJXLU6w6c9Y2+udbMZS1gYeGkdbW9z2xwVOcK
+         lIPKww9ogJTTg79uKAj1MwoBTCLYxp0wX8wuYRFv1cge3bPd8AHfLHzSM9oq2v4jOO
+         UfKOXvg9st0wv6r7jlar/Osb2Aq/k2bVVQ9u3m/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 086/100] ARM: dts: exynos: Fix invalid node referenced by i2c20 alias in Peach Pit and Pi
-Date:   Thu, 29 Nov 2018 15:12:56 +0100
-Message-Id: <20181129140106.234822932@linuxfoundation.org>
+Subject: [PATCH 4.14 087/100] driver core: Move device_links_purge() after bus_remove_device()
+Date:   Thu, 29 Nov 2018 15:12:57 +0100
+Message-Id: <20181129140106.334832162@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,68 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
 
-commit 70c3250ac1374688d7963e562fe58b23f70bcba9 upstream.
+commit 2ec16150179888b81717d1d3ce84e634f4736af2 upstream.
 
-After moving all nodes under "soc" node in commit 5d99cc59a3c6 ("ARM:
-dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc"), the i2c20
-alias in Peach Pit and Peach Pi stopped pointing to proper node:
+The current ordering of code in device_del() triggers a WARN_ON()
+in device_links_purge(), because of an unexpected link status.
 
-    arch/arm/boot/dts/exynos5420-peach-pit.dtb: Warning (alias_paths):
-        /aliases:i2c20: aliases property is not a valid node (/spi@12d40000/cros-ec@0/i2c-tunnel)
-    arch/arm/boot/dts/exynos5800-peach-pi.dtb: Warning (alias_paths):
-        /aliases:i2c20: aliases property is not a valid node (/spi@12d40000/cros-ec@0/i2c-tunnel)
+The device_links_unbind_consumers() call in device_release_driver()
+has to take place before device_links_purge() for the status of all
+links to be correct, so move the device_links_purge() call in
+device_del() after the invocation of bus_remove_device() which calls
+device_release_driver().
 
-Fixes: 5d99cc59a3c6 ("ARM: dts: exynos: Move Exynos5250 and Exynos5420 nodes under soc")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 9ed9895370ae (driver core: Functional dependencies tracking support)
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 ++--
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/base/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -31,7 +31,7 @@
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1973,7 +1973,6 @@ void device_del(struct device *dev)
+ 		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+ 					     BUS_NOTIFY_DEL_DEVICE, dev);
  
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
--		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
-+		i2c20 = &i2c_tunnel;
- 	};
+-	device_links_purge(dev);
+ 	dpm_sysfs_remove(dev);
+ 	if (parent)
+ 		klist_del(&dev->p->knode_parent);
+@@ -2001,6 +2000,7 @@ void device_del(struct device *dev)
+ 	device_pm_remove(dev);
+ 	driver_deferred_probe_del(dev);
+ 	device_remove_properties(dev);
++	device_links_purge(dev);
  
- 	backlight: backlight {
-@@ -952,7 +952,7 @@
- 			samsung,spi-feedback-delay = <1>;
- 		};
- 
--		i2c-tunnel {
-+		i2c_tunnel: i2c-tunnel {
- 			compatible = "google,cros-ec-i2c-tunnel";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -29,7 +29,7 @@
- 
- 	aliases {
- 		/* Assign 20 so we don't get confused w/ builtin ones */
--		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
-+		i2c20 = &i2c_tunnel;
- 	};
- 
- 	backlight: backlight {
-@@ -921,7 +921,7 @@
- 			samsung,spi-feedback-delay = <1>;
- 		};
- 
--		i2c-tunnel {
-+		i2c_tunnel: i2c-tunnel {
- 			compatible = "google,cros-ec-i2c-tunnel";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ 	/* Notify the platform of the removal, in case they
+ 	 * need to do anything...
 
 
