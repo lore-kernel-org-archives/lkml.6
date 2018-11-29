@@ -7,87 +7,88 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3676C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD1FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6473620868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A309C20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRYFpVC/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6473620868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpsRiHjQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A309C20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbeK2RHs (ORCPT
+        id S1727946AbeK2RHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:07:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:07:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbeK2RHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:07:47 -0500
+        id S1729382AbeK2RHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:07:51 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E62220868;
-        Thu, 29 Nov 2018 06:03:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD5BC20834;
+        Thu, 29 Nov 2018 06:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471416;
-        bh=zBY+1cKD2xGOMG5gP1qCuxMdaqsZKXAc7C9D2GTG3CY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WRYFpVC/ol3Jr62SxB0tA4uhB0BvIQG1guAHkx0SU5PNfacPpezbDBdBvUg3Ek8o1
-         J2SgOEUVwlmqzq2wlO7+7TrH0b1Q+8S7gcRrDwQyo3259HClgEhfbOswlCA/u2RA4H
-         vk467fCQB3fcrHY4qZkibe0CG3QOBAj3UA0orQFA=
+        s=default; t=1543471420;
+        bh=8yDP87yKf/LWdMwEI42Wy5eB0hsWdF6vCDlZZPRi04E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lpsRiHjQVb0uqskttwNETKWaBDtrUsEzm/OlpQqI64B7lfgtQX3Taw8gYfWyEKcQj
+         4AdkenCFtPMAKCcucr1lgLqgHFKEvyvUkRlFS9vCLZA8rDNMUxsg7A7/OlsWQBAASI
+         PBomNs9GDyMyjRyToyCMZecA5sMJS7NCuhPsvfJw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 01/18] media: omap3isp: Unregister media device as first
-Date:   Thu, 29 Nov 2018 01:03:13 -0500
-Message-Id: <20181129060331.160224-1-sashal@kernel.org>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.9 02/18] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
+Date:   Thu, 29 Nov 2018 01:03:14 -0500
+Message-Id: <20181129060331.160224-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129060331.160224-1-sashal@kernel.org>
+References: <20181129060331.160224-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-[ Upstream commit 30efae3d789cd0714ef795545a46749236e29558 ]
+[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
 
-While there are issues related to object lifetime management, unregister the
-media device first when the driver is being unbound. This is slightly
-safer.
+When handling page request without pasid event, go to "no_pasid"
+branch instead of "bad_req". Otherwise, a NULL pointer deference
+will happen there.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/omap3isp/isp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 1e98b4845ea1..a21b12c5c085 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -1591,6 +1591,8 @@ static void isp_pm_complete(struct device *dev)
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index f846f0140a9d..7dc2f8d415b6 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -558,7 +558,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
+ 			       iommu->name, ((unsigned long long *)req)[0],
+ 			       ((unsigned long long *)req)[1]);
+-			goto bad_req;
++			goto no_pasid;
+ 		}
  
- static void isp_unregister_entities(struct isp_device *isp)
- {
-+	media_device_unregister(&isp->media_dev);
-+
- 	omap3isp_csi2_unregister_entities(&isp->isp_csi2a);
- 	omap3isp_ccp2_unregister_entities(&isp->isp_ccp2);
- 	omap3isp_ccdc_unregister_entities(&isp->isp_ccdc);
-@@ -1601,7 +1603,6 @@ static void isp_unregister_entities(struct isp_device *isp)
- 	omap3isp_stat_unregister_entities(&isp->isp_hist);
- 
- 	v4l2_device_unregister(&isp->v4l2_dev);
--	media_device_unregister(&isp->media_dev);
- 	media_device_cleanup(&isp->media_dev);
- }
- 
+ 		if (!svm || svm->pasid != req->pasid) {
 -- 
 2.17.1
 
