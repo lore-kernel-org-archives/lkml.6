@@ -2,133 +2,112 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD21FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F46C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E4742082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:45:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4742082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BD7820834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:48:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uv5EWYxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD7820834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeK3CvF (ORCPT
+        id S1728807AbeK3CyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:51:05 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15172 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728363AbeK3CvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:51:05 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 061C188CC4085;
-        Thu, 29 Nov 2018 23:45:14 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Thu, 29 Nov 2018
- 23:45:14 +0800
-Subject: Re: [PATCH 05/10] ARM64: dts: hisilicon: Add all CPUs in cooling maps
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, <arm@kernel.org>
-References: <cover.1542362530.git.viresh.kumar@linaro.org>
- <89bb8c62404aa875d597da89c18852ce81fb9f26.1542362530.git.viresh.kumar@linaro.org>
-CC:     <devicetree@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5C000983.3030609@hisilicon.com>
-Date:   Thu, 29 Nov 2018 15:45:07 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 29 Nov 2018 21:54:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34994 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbeK3CyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:54:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WJfKPk62iR8HjrIDfrOhj1agMZ8cEXyVLMFpR5knzCA=; b=uv5EWYxgH6Ho1XiYHKl5HZfoH
+        IpbUhztiIPNSIUVuWRlFHiIGQ/WCFunkW+RVxG/O3LspwIPzpSlMzAnj9IOC0sUZe2oveDfDeG6K9
+        8lRGsVUjl4OXcToTRpx7evs4OrcNOie9kgjN+4VTrvvSKEs6L7uAlTYtvP4FlJYr3FMqCGyHxLuUI
+        NgIn5zW2c2YotLeZZvjT7kRxITx3q1nooqegTWPSPDCj4GiuY+204B7vw+uzxjVgk++Hqm3x6t7el
+        44ZWlDut51iqOZ2UXRecwirUtOX4if0ovlxI9tUOEzb4EroIZ4f7/aUVY3EQqhHQxbSLkZ44LYFYB
+        89/2Z68lA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSOXy-0004jv-56; Thu, 29 Nov 2018 15:48:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A4E572029FD58; Thu, 29 Nov 2018 16:48:08 +0100 (CET)
+Date:   Thu, 29 Nov 2018 16:48:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 08/28] sched/smt: Make sched_smt_present track topology
+Message-ID: <20181129154808.GT2131@hirez.programming.kicks-ass.net>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185004.246110444@linutronix.de>
+ <20181129144256.GI32259@char.us.oracle.com>
+ <20181129145013.GA32648@char.us.oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <89bb8c62404aa875d597da89c18852ce81fb9f26.1542362530.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129145013.GA32648@char.us.oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
+On Thu, Nov 29, 2018 at 09:50:13AM -0500, Konrad Rzeszutek Wilk wrote:
+> On Thu, Nov 29, 2018 at 09:42:56AM -0500, Konrad Rzeszutek Wilk wrote:
+> > On Sun, Nov 25, 2018 at 07:33:36PM +0100, Thomas Gleixner wrote:
+> > > Currently the 'sched_smt_present' static key is enabled when at CPU bringup
+> > > SMT topology is observed, but it is never disabled. However there is demand
+> > > to also disable the key when the topology changes such that there is no SMT
+> > > present anymore.
+> > > 
+> > > Implement this by making the key count the number of cores that have SMT
+> > > enabled.
+> > > 
+> > > In particular, the SMT topology bits are set before interrrupts are enabled
+> > > and similarly, are cleared after interrupts are disabled for the last time
+> > > and the CPU dies.
+> > 
+> > I see that the number you used is '2', but I thought that there are some
+> > CPUs out there (Knights Landing?) that could have four threads?
 
-On 2018/11/16 10:04, Viresh Kumar wrote:
-> Each CPU can (and does) participate in cooling down the system but the
-> DT only captures a handful of them, normally CPU0, in the cooling maps.
-> Things work by chance currently as under normal circumstances its the
-> first CPU of each cluster which is used by the operating systems to
-> probe the cooling devices. But as soon as this CPU ordering changes and
-> any other CPU is used to bring up the cooling device, we will start
-> seeing failures.
-> 
-> Also the DT is rather incomplete when we list only one CPU in the
-> cooling maps, as the hardware doesn't have any such limitations.
-> 
-> Update cooling maps to include all devices affected by individual trip
-> points.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+This code is generic, Sparc, Power and I think MIPS all have parts with
+SMT8.
 
-Applied to the hisilicon soc dt tree.
-Thanks!
-
-Best Regards,
-Wei
-
-> ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 10 ++++++++--
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  9 ++++++++-
->  2 files changed, 16 insertions(+), 3 deletions(-)
+> > Would it be better to have a generic function that would provide the
+> > amount of threads the platform does expose - and use that instead
+> > of a constant value? 
 > 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index d943a96eedee..20ae40df61d5 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -1118,12 +1118,18 @@
->  					map0 {
->  						trip = <&target>;
->  						contribution = <1024>;
-> -						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->  					};
->  					map1 {
->  						trip = <&target>;
->  						contribution = <512>;
-> -						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->  					};
->  				};
->  			};
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> index 97d5bf2c6ec5..aec9e371c2a7 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-> @@ -893,7 +893,14 @@
->  				cooling-maps {
->  					map0 {
->  						trip = <&target>;
-> -						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +								 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->  					};
->  				};
->  			};
-> 
+> Nevermind - this would work even with 4 threads as we would hit the
+> number '2' before '4' and the key would be turned on/off properly.
 
+Indeed so, 2 is the point where we either have more than 1 sibling, or
+will go back to 1.
