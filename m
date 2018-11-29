@@ -2,159 +2,151 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CB9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19596C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 356D620863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356D620863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C3E312146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ml2JU/Ns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E312146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730241AbeK3ESv (ORCPT
+        id S1730424AbeK3ESx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:18:51 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40706 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728157AbeK3ESu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:18:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24EFEA78;
+        Thu, 29 Nov 2018 23:18:53 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:38282 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728157AbeK3ESx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:18:53 -0500
+Received: by mail-wr1-f47.google.com with SMTP id v13so2678962wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:12:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rDZYnVtWLsDZ/FqO2YF8F2ucRzaosHJ5NrkNw1iiQpo=;
+        b=Ml2JU/Nsm+p9XVR71z8quf3XfYdTK3wh8gdPK7JrBkhEsNfHoBjIbdJMictHV6VIia
+         kOcuJNuVjF0a5mL5I90XlyQhT/iChtysxrNZ01+e97JfECc8RRiUaLUXCpTtmv+FZdoW
+         2cKtnuRV5EBG04O2JWiV94Nmbt6AUKs+F8sns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rDZYnVtWLsDZ/FqO2YF8F2ucRzaosHJ5NrkNw1iiQpo=;
+        b=nbJj8WKGqi1ZcjQTuxdzwDPt2BU7WM/wJJ6LdXLK7zExtmyc4aulGZ5JlCSRtPj1fq
+         oDt4znrMkZ5+1iMVy5E72O1ZaPZ3KPlVoIU3UCW0wEEEAF6qgFmTn/W2+5ja26Q0ajWt
+         tpK1Nxorg8qk6j/I1h6HCLcfywZndfbzsrGIgyXIj4nL/3jYfTk2K47C8DNLbt5JVW2K
+         ONTk21il1avjqRzqrjqUMzOLqKsJ4mlaSra7zBFg0JbJ/kZeVU4g0hV+YMSwgrWUfMJ9
+         /lgxFAhXGM9kJKvBGteH2yFxvwVmP/7+rdF/D2oB5x5E+bakwuPY9pX5bBtf73CCUt52
+         QlFA==
+X-Gm-Message-State: AA+aEWaz3Weg+v04Mf6gQMIKhseXY60xPbHqpAsto1tMEQmRmqC5BosD
+        dZxU/9Q+ttzWCVViiiETxv/yQg==
+X-Google-Smtp-Source: AFSGD/WLspHd9RCIef2tbaSJ9hXUUUXe/4BSL/eZ7lxWsDKjRSiuDtc8stzOOvwqbO0zYGWuI7rdkw==
+X-Received: by 2002:adf:8421:: with SMTP id 30mr2223962wrf.153.1543511567279;
+        Thu, 29 Nov 2018 09:12:47 -0800 (PST)
+Received: from harold.home ([2a01:cb1d:112:6f00:f070:d240:312e:9f99])
+        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.12.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 29 Nov 2018 09:12:46 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3408F3F59C;
-        Thu, 29 Nov 2018 09:12:44 -0800 (PST)
-Date:   Thu, 29 Nov 2018 17:12:32 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, daniel.thompson@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        joel@joelfernandes.org
-Subject: Re: [PATCH v6 03/24] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-Message-ID: <20181129171231.ho5a3hx3ig3skm2x@lakrids.cambridge.arm.com>
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-4-git-send-email-julien.thierry@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        YiFei Zhu <zhuyifei1999@gmail.com>
+Subject: [GIT PULL 00/11] EFI updates
+Date:   Thu, 29 Nov 2018 18:12:19 +0100
+Message-Id: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542023835-21446-4-git-send-email-julien.thierry@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:56:54AM +0000, Julien Thierry wrote:
-> Add a cpufeature indicating whether a cpu supports masking interrupts
-> by priority.
-> 
-> The feature will be properly enabled in a later patch.
-> 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/include/asm/cpucaps.h    |  3 ++-
->  arch/arm64/include/asm/cpufeature.h |  6 ++++++
->  arch/arm64/kernel/cpufeature.c      | 23 +++++++++++++++++++++++
->  3 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> index 6e2d254..f367e5c 100644
-> --- a/arch/arm64/include/asm/cpucaps.h
-> +++ b/arch/arm64/include/asm/cpucaps.h
-> @@ -54,7 +54,8 @@
->  #define ARM64_HAS_CRC32				33
->  #define ARM64_SSBS				34
->  #define ARM64_WORKAROUND_1188873		35
-> +#define ARM64_HAS_IRQ_PRIO_MASKING		36
->  
-> -#define ARM64_NCAPS				36
-> +#define ARM64_NCAPS				37
->  
->  #endif /* __ASM_CPUCAPS_H */
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 7e2ec64..a6e063f 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -514,6 +514,12 @@ static inline bool system_supports_cnp(void)
->  		cpus_have_const_cap(ARM64_HAS_CNP);
->  }
->  
-> +static inline bool system_supports_irq_prio_masking(void)
-> +{
-> +	return IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) &&
-> +	       cpus_have_const_cap(ARM64_HAS_IRQ_PRIO_MASKING);
-> +}
+The following changes since commit 976b489120cdab2b1b3a41ffa14661db43d58190:
 
-This should probably be s/supports/uses/.
+  efi: Prevent GICv3 WARN() by mapping the memreserve table before first use (2018-11-27 13:50:20 +0100)
 
-With that:
+are available in the Git repository at:
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
 
-Mark.
+for you to fetch changes up to 1d29afdbf7ae878a23627ebee81efcd213f11749:
 
-> +
->  #define ARM64_SSBD_UNKNOWN		-1
->  #define ARM64_SSBD_FORCE_DISABLE	0
->  #define ARM64_SSBD_KERNEL		1
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 03a9d96..1b5b553 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1145,6 +1145,14 @@ static void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
->  }
->  #endif /* CONFIG_ARM64_RAS_EXTN */
->  
-> +#ifdef CONFIG_ARM64_PSEUDO_NMI
-> +static bool can_use_gic_priorities(const struct arm64_cpu_capabilities *entry,
-> +				   int scope)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  static const struct arm64_cpu_capabilities arm64_features[] = {
->  	{
->  		.desc = "GIC system register CPU interface",
-> @@ -1368,6 +1376,21 @@ static void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
->  		.cpu_enable = cpu_enable_cnp,
->  	},
->  #endif
-> +#ifdef CONFIG_ARM64_PSEUDO_NMI
-> +	{
-> +		/*
-> +		 * Depends on having GICv3
-> +		 */
-> +		.desc = "IRQ priority masking",
-> +		.capability = ARM64_HAS_IRQ_PRIO_MASKING,
-> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
-> +		.matches = can_use_gic_priorities,
-> +		.sys_reg = SYS_ID_AA64PFR0_EL1,
-> +		.field_pos = ID_AA64PFR0_GIC_SHIFT,
-> +		.sign = FTR_UNSIGNED,
-> +		.min_field_value = 1,
-> +	},
-> +#endif
->  	{},
->  };
->  
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+  efi/x86: earlyprintk - Fix infinite loop on some screen widths (2018-11-28 17:58:42 +0100)
+
+----------------------------------------------------------------
+EFI updates for v4.21:
+- Allocate the E820 buffer before doing the GetMemoryMap/ExitBootServices
+  dance so we don't run out of space (Eric)
+- Clear EFI boot services mappings when freeing the memory (Sai)
+- Harden efivars against callers that invoke it on non-EFI boots (Arend)
+- Reduce the number of memblock reservations resulting from extensive
+  use of the new efi_mem_reserve_persistent() API (Ard)
+- Other assorted fixes and cleanups.
+
+----------------------------------------------------------------
+Ard Biesheuvel (2):
+      efi: permit multiple entries in persistent memreserve data structure
+      efi: reduce the amount of memblock reservations for persistent allocations
+
+Arend van Spriel (1):
+      firmware: efi: add NULL pointer checks in efivars api functions
+
+Eric Snowberg (1):
+      x86/efi: Allocate e820 buffer before calling efi_exit_boot_service
+
+Julien Thierry (2):
+      efi/fdt: Indentation fix
+      efi/fdt: Simplify get_fdt flow
+
+Nathan Chancellor (1):
+      efi/libstub: Disable some warnings for x86{,_64}
+
+Sai Praneeth Prakhya (3):
+      x86/mm/pageattr: Introduce helper function to unmap EFI boot services
+      x86/efi: Unmap EFI boot services code/data regions from efi_pgd
+      x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+
+YiFei Zhu (1):
+      efi/x86: earlyprintk - Fix infinite loop on some screen widths
+
+ arch/x86/boot/compressed/eboot.c        | 65 ++++++++++++++--------
+ arch/x86/include/asm/efi.h              |  2 +
+ arch/x86/include/asm/pgtable_types.h    |  8 ++-
+ arch/x86/mm/pageattr.c                  | 40 ++++++++++++-
+ arch/x86/platform/efi/early_printk.c    |  2 +-
+ arch/x86/platform/efi/efi.c             |  2 +
+ arch/x86/platform/efi/quirks.c          | 25 +++++++++
+ drivers/firmware/efi/efi.c              | 55 +++++++++++++-----
+ drivers/firmware/efi/libstub/Makefile   |  5 +-
+ drivers/firmware/efi/libstub/arm-stub.c |  2 +-
+ drivers/firmware/efi/libstub/fdt.c      | 30 +++++-----
+ drivers/firmware/efi/vars.c             | 99 ++++++++++++++++++++++++++-------
+ include/linux/efi.h                     | 19 +++++--
+ init/main.c                             |  4 --
+ 14 files changed, 269 insertions(+), 89 deletions(-)
