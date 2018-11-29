@@ -2,96 +2,132 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9679C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B5EC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9941920863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9941920863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2511520863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:05:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jFX9I/Bn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2511520863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeK2UJf (ORCPT
+        id S1727532AbeK2UJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:09:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39078 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726565AbeK2UJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:09:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CB232ADBF;
-        Thu, 29 Nov 2018 09:04:52 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 10:04:50 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] fs: Don't open-code lru_to_page
-Message-ID: <20181129090450.GR6923@dhcp22.suse.cz>
-References: <20181129075301.29087-1-nborisov@suse.com>
- <20181129075301.29087-2-nborisov@suse.com>
- <20181129081826.GO6923@dhcp22.suse.cz>
- <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
+        Thu, 29 Nov 2018 15:09:44 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34956 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbeK2UJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 15:09:44 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAT8xNBb000836;
+        Thu, 29 Nov 2018 09:04:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=BSuLx5LjNSkayjfJEBeeB4vpBjbY2AdbwGMwOUrmzYs=;
+ b=jFX9I/BnCp3eaT3w+4cN6eRkcAGnxnE/pnKOadWXCwSJ4HiAN79BJizXtRfukm+qxatn
+ yOUg1st9P3zYXyorO6ONPQtCq5TkHZMF0F8xygC/lLqMU8bUV5+LS389WkhiZz8swFXm
+ Kjj9/rIXY1b8Rk2edXS8Q33qvnX4jeVi2dAbEdrJ5N3V+WkzQYHSBjzWgTHcEpa7fwOk
+ hu8ZdjT3TJaxl6rPNp6ae67YexY+x8qM2jcx0eRMSr87akIK1HOgqeXDnO5/xyypLHST
+ 3IjoZDIGQBNOrlTbLvG+iodPN5WJMqKSFbr04LlGyE9ShXKiAamGgnNSuJnG+PkAAQS9 mA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2nxx2ueyap-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 09:04:02 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAT93x8a010078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 09:04:00 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAT93uL3003235;
+        Thu, 29 Nov 2018 09:03:56 GMT
+Received: from unbuntlaptop (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 01:03:55 -0800
+Date:   Thu, 29 Nov 2018 12:03:40 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Hanjie Lin <hanjie.lin@amlogic.com>
+Cc:     kbuild-all@01.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>
+Subject: Re: [PATCH v6 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
+ controller driver
+Message-ID: <20181129090340.GO3073@unbuntlaptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542876836-191355-3-git-send-email-hanjie.lin@amlogic.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 29-11-18 10:50:08, Nikolay Borisov wrote:
-> 
-> 
-> On 29.11.18 г. 10:18 ч., Michal Hocko wrote:
-> > On Thu 29-11-18 09:52:57, Nikolay Borisov wrote:
-> >> There are a bunch of filesystems which essentially open-code lru_to_page
-> >> helper. Change them to using the helper. No functional changes.
-> > 
-> > I would just squash the two into a single patch. It makes the first one
-> > more obvious. Or is there any reason to have them separate?
-> 
-> No reason, just didn't know how people would react so that's why I chose
-> to send as two separate.
+Hi Yue,
 
-This is a matter of taste I guess. But I usually prefer to have callers
-along with a new helper in a single patch. This is not a new helper
-per-se but doing it the same way seems reasonable to me. Not that I
-would insist of course. You can use my ack for both patch in case you
-decide to leave it as is.
+url:    https://github.com/0day-ci/linux/commits/Hanjie-Lin/dt-bindings-PCI-meson-add-DT-bindings-for-Amlogic-Meson-PCIe-controller/20181122-225955
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
 
-> If I squash them who would be the best person to take them ?
+smatch warnings:
+drivers/pci/controller/dwc/pci-meson.c:171 meson_pcie_get_mem_shared() error: passing non negative 6 to ERR_PTR
 
-Sounds like a mmotm material to me.
--- 
-Michal Hocko
-SUSE Labs
+# https://github.com/0day-ci/linux/commit/c882cdc75e49b6de65cd3d95ebf688272af6b5f9
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout c882cdc75e49b6de65cd3d95ebf688272af6b5f9
+vim +171 drivers/pci/controller/dwc/pci-meson.c
+
+c882cdc75 Yue Wang 2018-11-22  160  
+c882cdc75 Yue Wang 2018-11-22  161  static void __iomem *meson_pcie_get_mem_shared(struct platform_device *pdev,
+c882cdc75 Yue Wang 2018-11-22  162  					       struct meson_pcie *mp,
+c882cdc75 Yue Wang 2018-11-22  163  					       const char *id)
+c882cdc75 Yue Wang 2018-11-22  164  {
+c882cdc75 Yue Wang 2018-11-22  165  	struct device *dev = mp->pci.dev;
+c882cdc75 Yue Wang 2018-11-22  166  	struct resource *res;
+c882cdc75 Yue Wang 2018-11-22  167  
+c882cdc75 Yue Wang 2018-11-22  168  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
+c882cdc75 Yue Wang 2018-11-22  169  	if (!res) {
+c882cdc75 Yue Wang 2018-11-22  170  		dev_err(dev, "No REG resource %s\n", id);
+c882cdc75 Yue Wang 2018-11-22 @171  		return ERR_PTR(ENXIO);
+                                                               ^^^^^
+                                                               -ENXIO
+
+c882cdc75 Yue Wang 2018-11-22  172  	}
+c882cdc75 Yue Wang 2018-11-22  173  
+c882cdc75 Yue Wang 2018-11-22  174  	return devm_ioremap(dev, res->start, resource_size(res));
+c882cdc75 Yue Wang 2018-11-22  175  }
+c882cdc75 Yue Wang 2018-11-22  176  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
