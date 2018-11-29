@@ -2,223 +2,285 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EDEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F73C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F3B213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:26:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hmojGzx+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F3B213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9584721019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:29:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9584721019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbeK3Cch (ORCPT
+        id S1728739AbeK3Ce4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:32:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34015 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728423AbeK3Cch (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:32:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u6-v6so2119349ljd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 07:26:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Fe0bFDF0tnGy1/SpErRomGpN2OMq9bozCOXBR7sqtoI=;
-        b=hmojGzx+wZiLDFrgtDB9szlVGCz98/b8H4YdU5q5NmDrGGKMFTP7O5LoyA3gJSgJ+j
-         I6DdZNMX1fr+ewcEAMare5DBiH6MxW1WxVHtlfq21prLqJO0bcGTE82dvCr8hhgC76tx
-         wfkIXL2petrVIi7SLdTgalhSZlfphat71j8pE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Fe0bFDF0tnGy1/SpErRomGpN2OMq9bozCOXBR7sqtoI=;
-        b=B6liQGV8YNID9dWFeLFwPSUY37vt9mTaTy4OjpiJXpe866jOLTUrQVZEYtdHzyf8/q
-         ENozzTPFNQ5PjvFh+IBkRzKRbBxljyT5LYlOQC6tUZTs/jWUcaYDKhDxDPXjefyigrkB
-         gQSDS17sun0F2+NPMqaxsWJsHXMzmSH6JW1QrgR0/30W6yDUXPkxV87WRlpBcpj9b47c
-         wadsxkPKWad1WK8hT3UZZMUi2XLcpW1lDoZXdTukcBmhUrfkrFG5rPRk1+3QmMRg++5w
-         M62eB2XDtnS09ZlHkzmA7yEgcJuc11Pzwu27vX9z60OUhU4stZH9Vq/Es1IsnfFwLwYr
-         iBPQ==
-X-Gm-Message-State: AA+aEWZo+zzWTmiZpHn1NIdY98YOPuNYnksQnmB7UPd1Ppvfhb0YKz7J
-        8iDFD7gXpGmx10S541wAH6AVsg==
-X-Google-Smtp-Source: AFSGD/VCozSAtQgXqxujHIVFnY5x0huGgEN6STRLMQXPfzcfp+r7r9p8zX5tt3k/8Jdh86iPUKJc7g==
-X-Received: by 2002:a2e:8449:: with SMTP id u9-v6mr1531976ljh.121.1543505210937;
-        Thu, 29 Nov 2018 07:26:50 -0800 (PST)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id y23-v6sm330469ljk.95.2018.11.29.07.26.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 07:26:50 -0800 (PST)
-Date:   Thu, 29 Nov 2018 17:26:48 +0200
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: ti: cpsw: drop vid0
- configuration in dual_mac modey
-Message-ID: <20181129152646.GC23230@khorivan>
-Mail-Followup-To: Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-References: <20181125234626.28474-1-grygorii.strashko@ti.com>
- <20181126162644.GA23230@khorivan>
- <7f2c5e66-3b42-f921-c52d-236f5adc44bf@ti.com>
- <20181126200757.GB23230@khorivan>
- <fcc8efa1-1f19-baa3-872d-5c76a1b7dce0@ti.com>
+        Thu, 29 Nov 2018 21:34:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728128AbeK3Cez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:34:55 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C988A30001EF;
+        Thu, 29 Nov 2018 15:29:10 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8345E608DA;
+        Thu, 29 Nov 2018 15:29:09 +0000 (UTC)
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Yongji Xie <elohimes@gmail.com>
+Cc:     mingo@redhat.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, xieyongji@baidu.com,
+        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
+        nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <2ab06fe3-049e-2bcb-ae10-6ebe487c1820@redhat.com>
+Date:   Thu, 29 Nov 2018 10:29:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
+In-Reply-To: <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fcc8efa1-1f19-baa3-872d-5c76a1b7dce0@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 29 Nov 2018 15:29:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:15:46PM -0600, Grygorii Strashko wrote:
->
->
->On 11/26/18 2:07 PM, Ivan Khoronzhuk wrote:
->> On Mon, Nov 26, 2018 at 12:57:20PM -0600, Grygorii Strashko wrote:
+On 11/29/2018 10:21 AM, Waiman Long wrote:
+> On 11/29/2018 08:12 AM, Peter Zijlstra wrote:
+>> +Cc davidlohr and waiman
+>>
+>> On Thu, Nov 29, 2018 at 08:50:30PM +0800, Yongji Xie wrote:
+>>> From: Xie Yongji <xieyongji@baidu.com>
 >>>
+>>> Our system encountered a problem recently, the khungtaskd detected
+>>> some process hang on mmap_sem. But the odd thing was that one task which
+>>> is not on mmap_sem.wait_list still sleeps in rwsem_down_read_failed().
+>>> Through code inspection, we found a potential bug can lead to this.
 >>>
->>> On 11/26/18 10:26 AM, Ivan Khoronzhuk wrote:
->>>> On Sun, Nov 25, 2018 at 05:46:26PM -0600, Grygorii Strashko wrote:
->>>>> In dual_mac mode CPSW driver uses vid1 and vid2 by default to implement
->>>>> dual mac mode wich are used to configure pvids for each external ports.
->>>>> But, historicaly, it also adds vid0 to ALE table and sets "untag" bits for both
->>>>> ext. ports. As result, it's imposible to use priority tagged packets in
->>>>> dual mac mode.
->>>>>
->>>>> Hence, drop vid0 configuration in dual mac mode as it's not required for dual
->>>>> mac mode functionality and, this way, make it possible to use priority
->>>>> tagged packet in dual mac mode.
->>>> So, now it's enabled to be added via regular ndo.
->>>> I have similar change in mind, but was going to send it after
->>>> mcast/ucast, and - enabling same vlans patch...
->>>>
->>>> 2 things stopped me to add this:
->>>>
->>>> 1) Moving it to be enabled via regular call is Ok, but in dual mac mode
->>>> it causes overlaps, at least while vid deletion. So decided to wait till
->>>> same vlans series is applied.
+>>> Imaging this:
 >>>
->>> TI driver documentation mentions this restriction
->>> "While adding VLAN id to the eth interfaces,
->>> same VLAN id should not be added in both interfaces which will lead to VLAN
->>> forwarding and act as switch"
->> It's not accurate now.
->> This sw bug "acting like a switch" was fixed indirectly in LKML ).
->> And at least for upstream version, not TISDK, desc should be updated,
->> but better do this when it fixed completely and merged with TISDK.
+>>> Thread 1                                  Thread 2
+>>>                                           down_write();
+>>> rwsem_down_read_failed()
+>>>  raw_spin_lock_irq(&sem->wait_lock);
+>>>  list_add_tail(&waiter.list, &wait_list);
+>>>  raw_spin_unlock_irq(&sem->wait_lock);
+>>>                                           __up_write();
+>>>                                            rwsem_wake();
+>>>                                             __rwsem_mark_wake();
+>>>                                              wake_q_add();
+>>>                                              list_del(&waiter->list);
+>>>                                              waiter->task = NULL;
+>>>  while (true) {
+>>>   set_current_state(TASK_UNINTERRUPTIBLE);
+>>>   if (!waiter.task) // true
+>>>       break;
+>>>  }
+>>>  __set_current_state(TASK_RUNNING);
+>>>
+>>> Now Thread 1 is queued in Thread 2's wake_q without sleeping. Then
+>>> Thread 1 call rwsem_down_read_failed() again because Thread 3
+>>> hold the lock, if Thread 3 tries to queue Thread 1 before Thread 2
+>>> do wakeup, it will fail and miss wakeup:
+>>>
+>>> Thread 1                                  Thread 2      Thread 3
+>>>                                                         down_write();
+>>> rwsem_down_read_failed()
+>>>  raw_spin_lock_irq(&sem->wait_lock);
+>>>  list_add_tail(&waiter.list, &wait_list);
+>>>  raw_spin_unlock_irq(&sem->wait_lock);
+>>>                                                         __rwsem_mark_wake();
+>>>                                                          wake_q_add();
+>>>                                           wake_up_q();
+>>>                                                          waiter->task = NULL;
+>>>  while (true) {
+>>>   set_current_state(TASK_UNINTERRUPTIBLE);
+>>>   if (!waiter.task) // false
+>>>       break;
+>>>   schedule();
+>>>  }
+>>>                                                         wake_up_q(&wake_q);
+>>>
+>>> In another word, that means we might issue the wakeup before setting the reader
+>>> waiter to nil. If so, the wakeup may do nothing when it was called before reader
+>>> set task state to TASK_UNINTERRUPTIBLE. Then we would have no chance to wake up
+>>> the reader any more, and cause other writers such as "ps" command stuck on it.
+>>>
+>>> This patch is not verified because we still have no way to reproduce the problem.
+>>> But I'd like to ask for some comments from community firstly.
+>> Urgh; so the case where the cmpxchg() fails because it already has a
+>> wakeup in progress, which then 'violates' our expectation of when the
+>> wakeup happens.
 >>
->> I know about this "written" restriction
->> (for tiSDK, and it's not TRM after all ...),
->> it can be avoided and it's partly avoided now ...
+>> Yes, I think this is real, and worse, I think we need to go audit all
+>> wake_q_add() users and document this behaviour.
+> Yes, I also think this is a valid race scenario that can cause missed
+> wakeup. Actually, I had bug reports of similar symptom of sleeping
+> reader not in a wait queue.  I was puzzled by how that could happen.
+> That clearly is one possible cause of that.
 >
->I'd like to clarify point about supporting same VLANs in dual_mac mode,
->to avoid future misunderstanding, overall: it's *not* supported as
->adding same VLAN to both netdevices will cause unknown unicast packets
->leaking between interfaces and it can't be avoided - hw limitation.
-
-Simple test shows no issues with ucast leaking.
-But for current buggy ucast vlan implementation it's not possible to verify,
-not sure but probably leaking in your case cuased by hidden toggling of
-interface to promisc while added ucast to vlans or other reason or so.
-Anyway I just decided to check specifically ucasts
- (macst as you know are not normal now).
-
-For verification you need to apply ucast fix (including vlans) first:
-https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=vlan_addr_flt_fix
-
-This is generic fix (not sure it will be approved, need try RFC) but implement
-the same as local fix for vlan ucasts:
-https://git.linaro.org/people/ivan.khoronzhuk/tsn_kernel.git/log/?h=ucast_vlan_fix
-
-Any of those are correct. I've used generic one.
-Applied the following scheme:
-
-                     +--------------------------+
-                     | host 74:DA:EA:47:7D:9C   |
-                     +--------------------------+
-
-                        +---------------------+
-			|       am572 evm     |
-                        |    eth0      eth1   |
-                        +----------+----------+
-                        | eth0.400 | eth1.400 |
-                        +----------+----------+
-                            ^          |
-                            |          |  +-----------+
- +-----------------+        |          |  |     PC    |
- | BBB eth0.400    |--------+          +->| Wireshark |
- +-----------------+                      +-----------+
-
-
-1) Configure vlans on am572x evm
- ip link add link eth0 name eth0.400 type vlan id 400
- ip link add link eth1 name eth1.400 type vlan id 400
-
-2) On BBB side:
- # ip link add link eth0 name eth0.400 type vlan id 400
-Send ucast vlan traffic to the am572 evm, vlan ucast address is unreq on am572.
- # ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 74:DA:EA:47:7D:66
- # ./plget -i eth0.400 -t ptpl2 -m tx-lat -n 160 -s 10 -a 18:03:73:66:87:42
-
-3) Observe silence on PC wireshark.
-
-Thus, no see issues with this.
-
-PS: I'm sure in plget tool, you can use your own.
-
 >
->Regarding vid0 - current default configuration of CPSW considers
->vid0/priority tagged packets as - untagged and assigns pvid to any
->such ingress packet inside switch. Hence, P0 (Linux host) egress port
->never modifies packet contents - this behavior is not visible to Linux.
->(EN_VID0_MODE=0, P1_PASS_PRI_TAGGED=0)
-
-I can't verify everything with vlan0 at this moment (not time), just
-shared my thoughts adding a notice it has same possible overlap issues
-(or part of them) after this patch as regular vlans have.
-
->
+>> In the ideal case we'd delay the actual wakeup to the last wake_up_q(),
+>> but I don't think we can easily fix that.
 >>
->> Also, for notice, while you add any of the vlans to any of
->> the ports, vlan0 is added to both of them.....restricted it or not.
->> Thanks to last changes in the driver it's not "acting like a switch"
->> The patch in question enables this in ndo, not me.
->>
->> #ip link add link eth0 name eth0.400 type vlan id 400
->> [� 326.538989] 8021q: 802.1Q VLAN Support v1.8
->> [� 326.543217] 8021q: adding VLAN 0 to HW filter on device eth0
->> [� 326.554645] 8021q: adding VLAN 0 to HW filter on device eth1
->> [� 326.572236] net eth0: Adding vlanid 400 to vlan filter
->>
->> I just propose to extend it later, when it's correct to do.
->> But if no harm (basically no harm, only if someone decides
->> to add vlan0 to both ports and then delete on one of them)
->> , at least you should take this into account.
->>
+>>> Signed-off-by: Xie Yongji <xieyongji@baidu.com>
+>>> Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+>>> ---
+>>>  kernel/locking/rwsem-xadd.c | 11 +++++++++--
+>>>  1 file changed, 9 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+>>> index 09b1800..50d9af6 100644
+>>> --- a/kernel/locking/rwsem-xadd.c
+>>> +++ b/kernel/locking/rwsem-xadd.c
+>>> @@ -198,15 +198,22 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+>>>  		woken++;
+>>>  		tsk = waiter->task;
+>>>  
+>>> -		wake_q_add(wake_q, tsk);
+>>> +		get_task_struct(tsk);
+>>>  		list_del(&waiter->list);
+>>>  		/*
+>>> -		 * Ensure that the last operation is setting the reader
+>>> +		 * Ensure calling get_task_struct() before setting the reader
+>>>  		 * waiter to nil such that rwsem_down_read_failed() cannot
+>>>  		 * race with do_exit() by always holding a reference count
+>>>  		 * to the task to wakeup.
+>>>  		 */
+>>>  		smp_store_release(&waiter->task, NULL);
+>>> +		/*
+>>> +		 * Ensure issuing the wakeup (either by us or someone else)
+>>> +		 * after setting the reader waiter to nil.
+>>> +		 */
+>>> +		wake_q_add(wake_q, tsk);
+>>> +		/* wake_q_add() already take the task ref */
+>>> +		put_task_struct(tsk);
+>>>  	}
+>>>  
+>>>  	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+> I doubt putting wake_q_add() after clearing waiter->task can really fix
+> the problem. The wake_up_q() function happens asynchronous to the
+> detection of NULL waiter->task in __rwsem_down_read_failed_common(). I
+> believe the same scenario may still happen.
 >
+> One possible solution that I can think of is as follows:
 >
->
->-- 
->regards,
->-grygorii
+> diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
+> index 10b19a1..1513cdc 100644
+> --- a/include/linux/sched/wake_q.h
+> +++ b/include/linux/sched/wake_q.h
+> @@ -47,6 +47,14 @@ static inline void wake_q_init(struct wake_q_head *head)
+>         head->lastp = &head->first;
+>  }
+>  
+> +/*
+> + * Return true if the current task is on a wake_q.
+> + */
+> +static inline bool wake_q_pending(void)
+> +{
+> +       return !!current->wake_q.next;
+> +}
+> +
+>  extern void wake_q_add(struct wake_q_head *head,
+>                        struct task_struct *task);
+>  extern void wake_up_q(struct wake_q_head *head);
+> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+> index 3dbe593..b656777 100644
+> --- a/kernel/locking/rwsem-xadd.c
+> +++ b/kernel/locking/rwsem-xadd.c
+> @@ -269,7 +269,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+>         /* wait to be given the lock */
+>         while (true) {
+>                 set_current_state(state);
+> -               if (!waiter.task)
+> +               if (!smp_load_acquire(&waiter.task))
+>                         break;
+>                 if (signal_pending_state(state, current)) {
+>                         raw_spin_lock_irq(&sem->wait_lock);
+> @@ -282,6 +282,15 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+>         }
+>  
+>         __set_current_state(TASK_RUNNING);
+> +
+> +       /*
+> +        * If waiter is still queuing in a wake_q somewhere, we have to wait
+> +        * until the wake_up_q() process is complete as the memory of the
+> +        * waiter structure will no longer be valid when we return.
+> +        */
 
--- 
-Regards,
-Ivan Khoronzhuk
+Sorry, the comment is wrong. I should say something like
+/*
+ * If we are still queuing in a wake_q somewhere, we have to wait until
+the wake_up_q() function is complete to prevent against concurrent
+wake_q operation.
+ */
+> +       while (wake_q_pending())
+> +               cpu_relax();
+> +
+>         return sem;
+>  out_nolock:
+>         list_del(&waiter.list);
+>
+>
+Cheers,
+Longman
+
