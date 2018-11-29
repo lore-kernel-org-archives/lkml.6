@@ -2,102 +2,305 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80746C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04A4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F2DA2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F2DA2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CAFA20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:17:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAFA20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbeK2WVl (ORCPT
+        id S1728037AbeK2WWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:21:41 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40122 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeK2WVl (ORCPT
+        Thu, 29 Nov 2018 17:22:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53434 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727020AbeK2WWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:21:41 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k12so1469970qtf.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 03:16:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YlcC0aGHswOfoNMeGr5j2xZjAIH275T4vL4O229VZj4=;
-        b=KsSQKCZ3IwbprbGUmUxEYn0x9Qgp/V1O6tFsePc77AqfLxBTAkWYC70LeHj8qGR9G2
-         BWVnwVlxWN4S807rsG7S2QG6wI6I+Tx7woDT6XeS5AsA5K+h9g6pzc/KSb4ubuMEJVcq
-         uuMPFADOyyX0rVunF4++Y3dXZf4wIUE/EeMNMeNu/mpqxFxkKJDWs/uP946MvIb0DRvF
-         650biIh6zIjuLbozF7MZeGR0QP4tdGEg2pxOphfZSX7xxVjKhV2WuCLN5uV8stQ7iVf3
-         19gDGvbN1mB3AiFizWOq4JYEFh/3lf+2Z2gyaMz8MIgEa8tgbkXtBJSFhHEYJniyeHpO
-         pp1g==
-X-Gm-Message-State: AA+aEWb3YHEKhic226p9IxofHiZlFacEdYJdVl7+YnokkTGtRd7NJtCw
-        lFkKqv/EiuImQGge3gttPBXRLNu+xDL5OKyp22c5bw==
-X-Google-Smtp-Source: AFSGD/Uzi/YIF0dBfG3jMaiSxCmXT0gRUV/TBQWQd9X1ws7DThaXwkxHkW4nldo85ak5RNiKlZU4DAUSY7UTL/XP6go=
-X-Received: by 2002:ac8:101a:: with SMTP id z26mr923663qti.184.1543490200087;
- Thu, 29 Nov 2018 03:16:40 -0800 (PST)
+        Thu, 29 Nov 2018 17:22:41 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATBDdXY150590
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:17:39 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p2dtm3sx8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:17:39 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 29 Nov 2018 11:17:37 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 29 Nov 2018 11:17:29 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATBHS7F59637764
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 11:17:28 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 044EC11C04C;
+        Thu, 29 Nov 2018 11:17:28 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0E8911C069;
+        Thu, 29 Nov 2018 11:17:25 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.213])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 29 Nov 2018 11:17:25 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 13:17:24 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] fs: Don't open-code lru_to_page
+References: <20181129075301.29087-1-nborisov@suse.com>
+ <20181129075301.29087-2-nborisov@suse.com>
+ <20181129081826.GO6923@dhcp22.suse.cz>
+ <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
 MIME-Version: 1.0
-References: <20181121201622.20815-1-lyude@redhat.com> <20181128034720.GB21318@jelly>
-In-Reply-To: <20181128034720.GB21318@jelly>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Thu, 29 Nov 2018 12:16:29 +0100
-Message-ID: <CAO-hwJKLaM=RgfdR_c_MF_rCdJ=CPrbFRRST4KYb6czqsAORBA@mail.gmail.com>
-Subject: Re: [PATCH] Input: synaptics - Add PNP ID for ThinkPad P50 to SMBus
-To:     Peter Hutterer <peter.hutterer@who-t.net>
-Cc:     Lyude Paul <lyude@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
-        edvard.holst@gmail.com, arkadiusz.hiler@intel.com,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18112911-4275-0000-0000-000002E88203
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112911-4276-0000-0000-000037F5C617
+Message-Id: <20181129111723.GD9315@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811290098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 4:47 AM Peter Hutterer <peter.hutterer@who-t.net> wrote:
->
-> On Wed, Nov 21, 2018 at 03:16:20PM -0500, Lyude Paul wrote:
-> > Noticed the other day the trackpoint felt different on my P50, then
-> > realized it was because rmi4 wasn't loading for this machine
-> > automatically. Suspend/resume, hibernate, and everything else seem to
-> > work perfectly fine on here.
-> >
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
->
-> Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
+On Thu, Nov 29, 2018 at 10:50:08AM +0200, Nikolay Borisov wrote:
+> 
+> 
+> On 29.11.18 г. 10:18 ч., Michal Hocko wrote:
+> > On Thu 29-11-18 09:52:57, Nikolay Borisov wrote:
+> >> There are a bunch of filesystems which essentially open-code lru_to_page
+> >> helper. Change them to using the helper. No functional changes.
+> > 
+> > I would just squash the two into a single patch. It makes the first one
+> > more obvious. Or is there any reason to have them separate?
+> 
+> No reason, just didn't know how people would react so that's why I chose
+> to send as two separate.
 
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+I'm with Michal on this, a single patch seems better here.
+Yet, for either way:
 
-Cheers,
-Benjamin
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+ 
+> If I squash them who would be the best person to take them ?
+> 
+> > 
+> >> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+> > 
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > 
+> >> ---
+> >>
+> >> Since this is a mostly mechanical change I've actually batched all of them in 
+> >> a single patch. 
+> >>
+> >>  fs/afs/file.c        | 5 +++--
+> >>  fs/btrfs/extent_io.c | 2 +-
+> >>  fs/ceph/addr.c       | 5 ++---
+> >>  fs/cifs/file.c       | 3 ++-
+> >>  fs/ext4/readpage.c   | 2 +-
+> >>  fs/ocfs2/aops.c      | 3 ++-
+> >>  fs/orangefs/inode.c  | 2 +-
+> >>  mm/swap.c            | 2 +-
+> >>  8 files changed, 13 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> >> index d6bc3f5d784b..323ae9912203 100644
+> >> --- a/fs/afs/file.c
+> >> +++ b/fs/afs/file.c
+> >> @@ -17,6 +17,7 @@
+> >>  #include <linux/writeback.h>
+> >>  #include <linux/gfp.h>
+> >>  #include <linux/task_io_accounting_ops.h>
+> >> +#include <linux/mm.h>
+> >>  #include "internal.h"
+> >>  
+> >>  static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
+> >> @@ -441,7 +442,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
+> >>  	/* Count the number of contiguous pages at the front of the list.  Note
+> >>  	 * that the list goes prev-wards rather than next-wards.
+> >>  	 */
+> >> -	first = list_entry(pages->prev, struct page, lru);
+> >> +	first = lru_to_page(pages);
+> >>  	index = first->index + 1;
+> >>  	n = 1;
+> >>  	for (p = first->lru.prev; p != pages; p = p->prev) {
+> >> @@ -473,7 +474,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
+> >>  	 * page at the end of the file.
+> >>  	 */
+> >>  	do {
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  		list_del(&page->lru);
+> >>  		index = page->index;
+> >>  		if (add_to_page_cache_lru(page, mapping, index,
+> >> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> >> index 19f4b8fd654f..8332c5f4b1c3 100644
+> >> --- a/fs/btrfs/extent_io.c
+> >> +++ b/fs/btrfs/extent_io.c
+> >> @@ -4104,7 +4104,7 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
+> >>  	u64 prev_em_start = (u64)-1;
+> >>  
+> >>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  
+> >>  		prefetchw(&page->flags);
+> >>  		list_del(&page->lru);
+> >> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> >> index 8eade7a993c1..5d0c05e288cc 100644
+> >> --- a/fs/ceph/addr.c
+> >> +++ b/fs/ceph/addr.c
+> >> @@ -306,7 +306,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+> >>  	struct ceph_osd_client *osdc =
+> >>  		&ceph_inode_to_client(inode)->client->osdc;
+> >>  	struct ceph_inode_info *ci = ceph_inode(inode);
+> >> -	struct page *page = list_entry(page_list->prev, struct page, lru);
+> >> +	struct page *page = lru_to_page(page_list);
+> >>  	struct ceph_vino vino;
+> >>  	struct ceph_osd_request *req;
+> >>  	u64 off;
+> >> @@ -333,8 +333,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+> >>  			if (got)
+> >>  				ceph_put_cap_refs(ci, got);
+> >>  			while (!list_empty(page_list)) {
+> >> -				page = list_entry(page_list->prev,
+> >> -						  struct page, lru);
+> >> +				page = lru_to_page(page_list);
+> >>  				list_del(&page->lru);
+> >>  				put_page(page);
+> >>  			}
+> >> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> >> index 74c33d5fafc8..b16a4d887d17 100644
+> >> --- a/fs/cifs/file.c
+> >> +++ b/fs/cifs/file.c
+> >> @@ -33,6 +33,7 @@
+> >>  #include <linux/mount.h>
+> >>  #include <linux/slab.h>
+> >>  #include <linux/swap.h>
+> >> +#include <linux/mm.h>
+> >>  #include <asm/div64.h>
+> >>  #include "cifsfs.h"
+> >>  #include "cifspdu.h"
+> >> @@ -3975,7 +3976,7 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
+> >>  
+> >>  	INIT_LIST_HEAD(tmplist);
+> >>  
+> >> -	page = list_entry(page_list->prev, struct page, lru);
+> >> +	page = lru_to_page(page_list);
+> >>  
+> >>  	/*
+> >>  	 * Lock the page and put it in the cache. Since no one else
+> >> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> >> index f461d75ac049..6aa282ee455a 100644
+> >> --- a/fs/ext4/readpage.c
+> >> +++ b/fs/ext4/readpage.c
+> >> @@ -128,7 +128,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >>  
+> >>  		prefetchw(&page->flags);
+> >>  		if (pages) {
+> >> -			page = list_entry(pages->prev, struct page, lru);
+> >> +			page = lru_to_page(pages);
+> >>  			list_del(&page->lru);
+> >>  			if (add_to_page_cache_lru(page, mapping, page->index,
+> >>  				  readahead_gfp_mask(mapping)))
+> >> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+> >> index eb1ce30412dc..832c1759a09a 100644
+> >> --- a/fs/ocfs2/aops.c
+> >> +++ b/fs/ocfs2/aops.c
+> >> @@ -30,6 +30,7 @@
+> >>  #include <linux/quotaops.h>
+> >>  #include <linux/blkdev.h>
+> >>  #include <linux/uio.h>
+> >> +#include <linux/mm.h>
+> >>  
+> >>  #include <cluster/masklog.h>
+> >>  
+> >> @@ -397,7 +398,7 @@ static int ocfs2_readpages(struct file *filp, struct address_space *mapping,
+> >>  	 * Check whether a remote node truncated this file - we just
+> >>  	 * drop out in that case as it's not worth handling here.
+> >>  	 */
+> >> -	last = list_entry(pages->prev, struct page, lru);
+> >> +	last = lru_to_page(pages);
+> >>  	start = (loff_t)last->index << PAGE_SHIFT;
+> >>  	if (start >= i_size_read(inode))
+> >>  		goto out_unlock;
+> >> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> >> index fe53381b26b1..f038235c64bd 100644
+> >> --- a/fs/orangefs/inode.c
+> >> +++ b/fs/orangefs/inode.c
+> >> @@ -77,7 +77,7 @@ static int orangefs_readpages(struct file *file,
+> >>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+> >>  		struct page *page;
+> >>  
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  		list_del(&page->lru);
+> >>  		if (!add_to_page_cache(page,
+> >>  				       mapping,
+> >> diff --git a/mm/swap.c b/mm/swap.c
+> >> index aa483719922e..20b9e9d99652 100644
+> >> --- a/mm/swap.c
+> >> +++ b/mm/swap.c
+> >> @@ -126,7 +126,7 @@ void put_pages_list(struct list_head *pages)
+> >>  	while (!list_empty(pages)) {
+> >>  		struct page *victim;
+> >>  
+> >> -		victim = list_entry(pages->prev, struct page, lru);
+> >> +		victim = lru_to_page(pages);
+> >>  		list_del(&victim->lru);
+> >>  		put_page(victim);
+> >>  	}
+> >> -- 
+> >> 2.17.1
+> > 
+> 
 
->
-> Cheers,
->    Peter
->
-> > ---
-> >  drivers/input/mouse/synaptics.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-> > index 5e85f3cca867..c42813d50591 100644
-> > --- a/drivers/input/mouse/synaptics.c
-> > +++ b/drivers/input/mouse/synaptics.c
-> > @@ -170,6 +170,7 @@ static const char * const smbus_pnp_ids[] = {
-> >       "LEN0048", /* X1 Carbon 3 */
-> >       "LEN0046", /* X250 */
-> >       "LEN004a", /* W541 */
-> > +     "LEN005b", /* P50 */
-> >       "LEN0071", /* T480 */
-> >       "LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
-> >       "LEN0073", /* X1 Carbon G5 (Elantech) */
-> > --
-> > 2.19.1
-> >
+-- 
+Sincerely yours,
+Mike.
+
