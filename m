@@ -2,397 +2,108 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB916C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91235C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8692420834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5639720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:36:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/hAneef"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8692420834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F9tXbxBk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5639720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeK2RkA (ORCPT
+        id S1728012AbeK2RlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:40:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727568AbeK2Rjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:39:35 -0500
-Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7B8D208E7;
-        Thu, 29 Nov 2018 06:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543473318;
-        bh=6ngZ75HOvNpYMUxcCaTAMp134Xo3eN1ka2ey7hsFhu8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C/hAneefli2NYe9gh1EFaDbhd724Ea46Dp+xT/jcld+nj6pdJqhdTSOOD7sknu+4j
-         sCS69e1r8bvfdFFRXpFFt8HEaxKNNyMDVh+Kt6zzkKuNxAQiI83vTQ+Uyjff8IBYdh
-         qQOPUg24RG/ZhkgPk2UFXmXavl+kPqgggKRXHvzU=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-crypto@vger.kernel.org
-Cc:     Paul Crowley <paulcrowley@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] crypto: arm64/chacha20 - refactor to allow varying number of rounds
-Date:   Wed, 28 Nov 2018 22:34:21 -0800
-Message-Id: <20181129063422.24307-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129063422.24307-1-ebiggers@kernel.org>
-References: <20181129063422.24307-1-ebiggers@kernel.org>
+        Thu, 29 Nov 2018 12:41:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39992 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727666AbeK2RlG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:41:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so635062wrt.7
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 22:36:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YV9hfzTpUgAyUx8Nm7ThXxiskRUw8Zxkk0mellNLqOk=;
+        b=F9tXbxBkn92Q4HFrUMZtBEb6/fIHm/Il0Waxh/sl/Bn9hQzfQOW5wc4Tq3e4d0mA04
+         7PqcP0879t0Fb/glJXNLPAQ0JL3FHMO1fwcTbGAmv6Y+WAZ6khnwfrh3KIs/rOLwBr2Q
+         yOrKuxwTe+UKK6o2AMo2U3sKFjyvRyEJRS0gY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YV9hfzTpUgAyUx8Nm7ThXxiskRUw8Zxkk0mellNLqOk=;
+        b=A77A5Z0TxJzSj2qfBqRtrvOe63h4KI/Mgewzz/KzS2JIP96YbQmBpKr1dV8zPk2OA0
+         /XPqW+O9hnLux0eD1noTebkUnQ1jdcueq9SVAOIVivbY/LAUXs7ZGJMbsQWc4NLsPQGu
+         EJBMFl3hdr4QWl9oQFopBDQG9zdZ8Q417nTKj3gQa7uk5YrFvHvOpb26sJsaUsoXlpH6
+         WpJV7VbU/0tCbyts7K82u2IUDJ4pMpfCZHrl4dYtsX/GQ5Tq+JQnOetTWV9FuemXY+P9
+         KHLtczC//RbSGS9Xm3LTMO6KxN2wsEV39T+MXm8Ydlj7MtHxCI1JV98S15Q0BwLrsw+B
+         6juw==
+X-Gm-Message-State: AA+aEWauqfR5/LvOD7qbmftCj9RH5TEBY3zFBrS6THsnjUwMIb/ADA04
+        R0Z5pr+mNks/VVBviUPc7DKFbG9nIx3lIY4HCy9bxg==
+X-Google-Smtp-Source: AFSGD/UXdx2B12PMklgbK1k80jRCW8ghJDawzP365y9jZxQn2shyj+chDU0odFmQYiMmmo2f1TWrm9muWmqDrCeSjYs=
+X-Received: by 2002:adf:ee4e:: with SMTP id w14mr252780wro.112.1543473408278;
+ Wed, 28 Nov 2018 22:36:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1542082418-16675-1-git-send-email-srinath.mannam@broadcom.com>
+In-Reply-To: <1542082418-16675-1-git-send-email-srinath.mannam@broadcom.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Thu, 29 Nov 2018 12:06:37 +0530
+Message-ID: <CABe79T7zfW5vz2S8hKWD4t8DW=uH_UkAXq1r2AyuZ+t=QZ-fQQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Stingray usb phy driver support
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Tejun Heo <tj@kernel.org>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hi Vijay,
 
-In preparation for adding XChaCha12 support, rename/refactor the ARM64
-NEON implementation of ChaCha20 to support different numbers of rounds.
+Could you please help to review and provide your comments to this
+patch series when you have time?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- arch/arm64/crypto/Makefile                    |  4 +-
- ...hacha20-neon-core.S => chacha-neon-core.S} | 45 ++++++++-------
- ...hacha20-neon-glue.c => chacha-neon-glue.c} | 57 ++++++++++---------
- 3 files changed, 57 insertions(+), 49 deletions(-)
- rename arch/arm64/crypto/{chacha20-neon-core.S => chacha-neon-core.S} (94%)
- rename arch/arm64/crypto/{chacha20-neon-glue.c => chacha-neon-glue.c} (71%)
+Thank you,
+Regards,
+Srinath.
 
-diff --git a/arch/arm64/crypto/Makefile b/arch/arm64/crypto/Makefile
-index 125dbb10a93ed..a4ffd9fe32650 100644
---- a/arch/arm64/crypto/Makefile
-+++ b/arch/arm64/crypto/Makefile
-@@ -50,8 +50,8 @@ sha256-arm64-y := sha256-glue.o sha256-core.o
- obj-$(CONFIG_CRYPTO_SHA512_ARM64) += sha512-arm64.o
- sha512-arm64-y := sha512-glue.o sha512-core.o
- 
--obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha20-neon.o
--chacha20-neon-y := chacha20-neon-core.o chacha20-neon-glue.o
-+obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha-neon.o
-+chacha-neon-y := chacha-neon-core.o chacha-neon-glue.o
- 
- obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) += nhpoly1305-neon.o
- nhpoly1305-neon-y := nh-neon-core.o nhpoly1305-neon-glue.o
-diff --git a/arch/arm64/crypto/chacha20-neon-core.S b/arch/arm64/crypto/chacha-neon-core.S
-similarity index 94%
-rename from arch/arm64/crypto/chacha20-neon-core.S
-rename to arch/arm64/crypto/chacha-neon-core.S
-index 378850505c0ae..75b4e06cee79f 100644
---- a/arch/arm64/crypto/chacha20-neon-core.S
-+++ b/arch/arm64/crypto/chacha-neon-core.S
-@@ -1,5 +1,5 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, arm64 NEON functions
-+ * ChaCha/XChaCha NEON helper functions
-  *
-  * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
-  *
-@@ -24,17 +24,18 @@
- 	.align		6
- 
- /*
-- * chacha20_permute - permute one block
-+ * chacha_permute - permute one block
-  *
-  * Permute one 64-byte block where the state matrix is stored in the four NEON
-  * registers v0-v3.  It performs matrix operations on four words in parallel,
-  * but requires shuffling to rearrange the words after each round.
-  *
-- * Clobbers: x3, x10, v4, v12
-+ * The round count is given in w3.
-+ *
-+ * Clobbers: w3, x10, v4, v12
-  */
--chacha20_permute:
-+chacha_permute:
- 
--	mov		x3, #10
- 	adr		x10, ROT8
- 	ld1		{v12.4s}, [x10]
- 
-@@ -97,16 +98,17 @@ chacha20_permute:
- 	// x3 = shuffle32(x3, MASK(0, 3, 2, 1))
- 	ext		v3.16b, v3.16b, v3.16b, #4
- 
--	subs		x3, x3, #1
-+	subs		w3, w3, #2
- 	b.ne		.Ldoubleround
- 
- 	ret
--ENDPROC(chacha20_permute)
-+ENDPROC(chacha_permute)
- 
--ENTRY(chacha20_block_xor_neon)
-+ENTRY(chacha_block_xor_neon)
- 	// x0: Input state matrix, s
- 	// x1: 1 data block output, o
- 	// x2: 1 data block input, i
-+	// w3: nrounds
- 
- 	mov		x9, lr
- 
-@@ -114,7 +116,7 @@ ENTRY(chacha20_block_xor_neon)
- 	ld1		{v0.4s-v3.4s}, [x0]
- 	ld1		{v8.4s-v11.4s}, [x0]
- 
--	bl		chacha20_permute
-+	bl		chacha_permute
- 
- 	ld1		{v4.16b-v7.16b}, [x2]
- 
-@@ -137,39 +139,42 @@ ENTRY(chacha20_block_xor_neon)
- 	st1		{v0.16b-v3.16b}, [x1]
- 
- 	ret		x9
--ENDPROC(chacha20_block_xor_neon)
-+ENDPROC(chacha_block_xor_neon)
- 
--ENTRY(hchacha20_block_neon)
-+ENTRY(hchacha_block_neon)
- 	// x0: Input state matrix, s
- 	// x1: output (8 32-bit words)
-+	// w2: nrounds
- 	mov		x9, lr
- 
- 	ld1		{v0.4s-v3.4s}, [x0]
- 
--	bl		chacha20_permute
-+	mov		w3, w2
-+	bl		chacha_permute
- 
- 	st1		{v0.16b}, [x1], #16
- 	st1		{v3.16b}, [x1]
- 
- 	ret		x9
--ENDPROC(hchacha20_block_neon)
-+ENDPROC(hchacha_block_neon)
- 
- 	.align		6
--ENTRY(chacha20_4block_xor_neon)
-+ENTRY(chacha_4block_xor_neon)
- 	// x0: Input state matrix, s
- 	// x1: 4 data blocks output, o
- 	// x2: 4 data blocks input, i
-+	// w3: nrounds
- 
- 	//
--	// This function encrypts four consecutive ChaCha20 blocks by loading
-+	// This function encrypts four consecutive ChaCha blocks by loading
- 	// the state matrix in NEON registers four times. The algorithm performs
- 	// each operation on the corresponding word of each state matrix, hence
- 	// requires no word shuffling. For final XORing step we transpose the
- 	// matrix by interleaving 32- and then 64-bit words, which allows us to
- 	// do XOR in NEON registers.
- 	//
--	adr		x3, CTRINC		// ... and ROT8
--	ld1		{v30.4s-v31.4s}, [x3]
-+	adr		x9, CTRINC		// ... and ROT8
-+	ld1		{v30.4s-v31.4s}, [x9]
- 
- 	// x0..15[0-3] = s0..3[0..3]
- 	mov		x4, x0
-@@ -181,8 +186,6 @@ ENTRY(chacha20_4block_xor_neon)
- 	// x12 += counter values 0-3
- 	add		v12.4s, v12.4s, v30.4s
- 
--	mov		x3, #10
--
- .Ldoubleround4:
- 	// x0 += x4, x12 = rotl32(x12 ^ x0, 16)
- 	// x1 += x5, x13 = rotl32(x13 ^ x1, 16)
-@@ -356,7 +359,7 @@ ENTRY(chacha20_4block_xor_neon)
- 	sri		v7.4s, v18.4s, #25
- 	sri		v4.4s, v19.4s, #25
- 
--	subs		x3, x3, #1
-+	subs		w3, w3, #2
- 	b.ne		.Ldoubleround4
- 
- 	ld4r		{v16.4s-v19.4s}, [x0], #16
-@@ -470,7 +473,7 @@ ENTRY(chacha20_4block_xor_neon)
- 	st1		{v28.16b-v31.16b}, [x1]
- 
- 	ret
--ENDPROC(chacha20_4block_xor_neon)
-+ENDPROC(chacha_4block_xor_neon)
- 
- CTRINC:	.word		0, 1, 2, 3
- ROT8:	.word		0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
-diff --git a/arch/arm64/crypto/chacha20-neon-glue.c b/arch/arm64/crypto/chacha-neon-glue.c
-similarity index 71%
-rename from arch/arm64/crypto/chacha20-neon-glue.c
-rename to arch/arm64/crypto/chacha-neon-glue.c
-index a5b9cbc0c4de4..4d992029b9121 100644
---- a/arch/arm64/crypto/chacha20-neon-glue.c
-+++ b/arch/arm64/crypto/chacha-neon-glue.c
-@@ -1,5 +1,6 @@
- /*
-- * ChaCha20 256-bit cipher algorithm, RFC7539, arm64 NEON functions
-+ * ARM NEON accelerated ChaCha and XChaCha stream ciphers,
-+ * including ChaCha20 (RFC7539)
-  *
-  * Copyright (C) 2016 - 2017 Linaro, Ltd. <ard.biesheuvel@linaro.org>
-  *
-@@ -28,18 +29,20 @@
- #include <asm/neon.h>
- #include <asm/simd.h>
- 
--asmlinkage void chacha20_block_xor_neon(u32 *state, u8 *dst, const u8 *src);
--asmlinkage void chacha20_4block_xor_neon(u32 *state, u8 *dst, const u8 *src);
--asmlinkage void hchacha20_block_neon(const u32 *state, u32 *out);
-+asmlinkage void chacha_block_xor_neon(u32 *state, u8 *dst, const u8 *src,
-+				      int nrounds);
-+asmlinkage void chacha_4block_xor_neon(u32 *state, u8 *dst, const u8 *src,
-+				       int nrounds);
-+asmlinkage void hchacha_block_neon(const u32 *state, u32 *out, int nrounds);
- 
--static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
--			    unsigned int bytes)
-+static void chacha_doneon(u32 *state, u8 *dst, const u8 *src,
-+			  unsigned int bytes, int nrounds)
- {
- 	u8 buf[CHACHA_BLOCK_SIZE];
- 
- 	while (bytes >= CHACHA_BLOCK_SIZE * 4) {
- 		kernel_neon_begin();
--		chacha20_4block_xor_neon(state, dst, src);
-+		chacha_4block_xor_neon(state, dst, src, nrounds);
- 		kernel_neon_end();
- 		bytes -= CHACHA_BLOCK_SIZE * 4;
- 		src += CHACHA_BLOCK_SIZE * 4;
-@@ -52,7 +55,7 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
- 
- 	kernel_neon_begin();
- 	while (bytes >= CHACHA_BLOCK_SIZE) {
--		chacha20_block_xor_neon(state, dst, src);
-+		chacha_block_xor_neon(state, dst, src, nrounds);
- 		bytes -= CHACHA_BLOCK_SIZE;
- 		src += CHACHA_BLOCK_SIZE;
- 		dst += CHACHA_BLOCK_SIZE;
-@@ -60,14 +63,14 @@ static void chacha20_doneon(u32 *state, u8 *dst, const u8 *src,
- 	}
- 	if (bytes) {
- 		memcpy(buf, src, bytes);
--		chacha20_block_xor_neon(state, buf, buf);
-+		chacha_block_xor_neon(state, buf, buf, nrounds);
- 		memcpy(dst, buf, bytes);
- 	}
- 	kernel_neon_end();
- }
- 
--static int chacha20_neon_stream_xor(struct skcipher_request *req,
--				    struct chacha_ctx *ctx, u8 *iv)
-+static int chacha_neon_stream_xor(struct skcipher_request *req,
-+				  struct chacha_ctx *ctx, u8 *iv)
- {
- 	struct skcipher_walk walk;
- 	u32 state[16];
-@@ -83,15 +86,15 @@ static int chacha20_neon_stream_xor(struct skcipher_request *req,
- 		if (nbytes < walk.total)
- 			nbytes = round_down(nbytes, walk.stride);
- 
--		chacha20_doneon(state, walk.dst.virt.addr, walk.src.virt.addr,
--				nbytes);
-+		chacha_doneon(state, walk.dst.virt.addr, walk.src.virt.addr,
-+			      nbytes, ctx->nrounds);
- 		err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
- 	}
- 
- 	return err;
- }
- 
--static int chacha20_neon(struct skcipher_request *req)
-+static int chacha_neon(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-@@ -99,10 +102,10 @@ static int chacha20_neon(struct skcipher_request *req)
- 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !may_use_simd())
- 		return crypto_chacha_crypt(req);
- 
--	return chacha20_neon_stream_xor(req, ctx, req->iv);
-+	return chacha_neon_stream_xor(req, ctx, req->iv);
- }
- 
--static int xchacha20_neon(struct skcipher_request *req)
-+static int xchacha_neon(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
-@@ -116,12 +119,13 @@ static int xchacha20_neon(struct skcipher_request *req)
- 	crypto_chacha_init(state, ctx, req->iv);
- 
- 	kernel_neon_begin();
--	hchacha20_block_neon(state, subctx.key);
-+	hchacha_block_neon(state, subctx.key, ctx->nrounds);
- 	kernel_neon_end();
-+	subctx.nrounds = ctx->nrounds;
- 
- 	memcpy(&real_iv[0], req->iv + 24, 8);
- 	memcpy(&real_iv[8], req->iv + 16, 8);
--	return chacha20_neon_stream_xor(req, &subctx, real_iv);
-+	return chacha_neon_stream_xor(req, &subctx, real_iv);
- }
- 
- static struct skcipher_alg algs[] = {
-@@ -139,8 +143,8 @@ static struct skcipher_alg algs[] = {
- 		.chunksize		= CHACHA_BLOCK_SIZE,
- 		.walksize		= 4 * CHACHA_BLOCK_SIZE,
- 		.setkey			= crypto_chacha20_setkey,
--		.encrypt		= chacha20_neon,
--		.decrypt		= chacha20_neon,
-+		.encrypt		= chacha_neon,
-+		.decrypt		= chacha_neon,
- 	}, {
- 		.base.cra_name		= "xchacha20",
- 		.base.cra_driver_name	= "xchacha20-neon",
-@@ -155,12 +159,12 @@ static struct skcipher_alg algs[] = {
- 		.chunksize		= CHACHA_BLOCK_SIZE,
- 		.walksize		= 4 * CHACHA_BLOCK_SIZE,
- 		.setkey			= crypto_chacha20_setkey,
--		.encrypt		= xchacha20_neon,
--		.decrypt		= xchacha20_neon,
-+		.encrypt		= xchacha_neon,
-+		.decrypt		= xchacha_neon,
- 	}
- };
- 
--static int __init chacha20_simd_mod_init(void)
-+static int __init chacha_simd_mod_init(void)
- {
- 	if (!(elf_hwcap & HWCAP_ASIMD))
- 		return -ENODEV;
-@@ -168,14 +172,15 @@ static int __init chacha20_simd_mod_init(void)
- 	return crypto_register_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
--static void __exit chacha20_simd_mod_fini(void)
-+static void __exit chacha_simd_mod_fini(void)
- {
- 	crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
- }
- 
--module_init(chacha20_simd_mod_init);
--module_exit(chacha20_simd_mod_fini);
-+module_init(chacha_simd_mod_init);
-+module_exit(chacha_simd_mod_fini);
- 
-+MODULE_DESCRIPTION("ChaCha and XChaCha stream ciphers (NEON accelerated)");
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS_CRYPTO("chacha20");
--- 
-2.19.2
-
+On Tue, Nov 13, 2018 at 9:43 AM Srinath Mannam
+<srinath.mannam@broadcom.com> wrote:
+>
+> These patches add stingray usb phy driver and its
+> corresponding DT nodes with documentation.
+>
+> All patches are based on Linux-4.19.
+>
+> Srinath Mannam (3):
+>   dt-bindings: phy: Add binding document for stingray usb phy
+>   phy: sr-usb: Add stingray usb phy driver
+>   arm64: dts: Add USB DT nodes for Stingray SoC
+>
+>  .../bindings/phy/brcm,stingray-usb-phy.txt         |  62 ++++
+>  .../boot/dts/broadcom/stingray/stingray-usb.dtsi   |  95 ++++++
+>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   1 +
+>  drivers/phy/broadcom/Kconfig                       |  11 +
+>  drivers/phy/broadcom/Makefile                      |   1 +
+>  drivers/phy/broadcom/phy-bcm-sr-usb.c              | 367 +++++++++++++++++++++
+>  6 files changed, 537 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi
+>  create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
+>
+> --
+> 2.7.4
+>
