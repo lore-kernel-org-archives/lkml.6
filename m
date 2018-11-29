@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020F5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD21FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68E2213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:44:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68E2213A2
+	by mail.kernel.org (Postfix) with ESMTP id 9E4742082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:45:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4742082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeK3Cuh (ORCPT
+        id S1728918AbeK3CvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:50:37 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39793 "EHLO huawei.com"
+        Thu, 29 Nov 2018 21:51:05 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15172 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728363AbeK3Cug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:50:36 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 348668AB5E2B5;
-        Thu, 29 Nov 2018 23:44:47 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Thu, 29 Nov 2018
- 23:44:47 +0800
-Subject: Re: [PATCH 04/10] arm64: dts: hi3660: Add missing cooling device
- properties for CPUs
+        id S1728363AbeK3CvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:51:05 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 061C188CC4085;
+        Thu, 29 Nov 2018 23:45:14 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Thu, 29 Nov 2018
+ 23:45:14 +0800
+Subject: Re: [PATCH 05/10] ARM64: dts: hisilicon: Add all CPUs in cooling maps
 To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>, <arm@kernel.org>
 References: <cover.1542362530.git.viresh.kumar@linaro.org>
- <042e5e647a7b54f4322024f1b3e286b6b6d69175.1542362530.git.viresh.kumar@linaro.org>
+ <89bb8c62404aa875d597da89c18852ce81fb9f26.1542362530.git.viresh.kumar@linaro.org>
 CC:     <devicetree@vger.kernel.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5C000967.7070103@hisilicon.com>
-Date:   Thu, 29 Nov 2018 15:44:39 +0000
+Message-ID: <5C000983.3030609@hisilicon.com>
+Date:   Thu, 29 Nov 2018 15:45:07 +0000
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
  Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <042e5e647a7b54f4322024f1b3e286b6b6d69175.1542362530.git.viresh.kumar@linaro.org>
+In-Reply-To: <89bb8c62404aa875d597da89c18852ce81fb9f26.1542362530.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.202.226.42]
@@ -59,15 +58,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Viresh,
 
 On 2018/11/16 10:04, Viresh Kumar wrote:
-> The cooling device properties, like "#cooling-cells" and
-> "dynamic-power-coefficient", should either be present for all the CPUs
-> of a cluster or none. If these are present only for a subset of CPUs of
-> a cluster then things will start falling apart as soon as the CPUs are
-> brought online in a different order. For example, this will happen
-> because the operating system looks for such properties in the CPU node
-> it is trying to bring up, so that it can register a cooling device.
+> Each CPU can (and does) participate in cooling down the system but the
+> DT only captures a handful of them, normally CPU0, in the cooling maps.
+> Things work by chance currently as under normal circumstances its the
+> first CPU of each cluster which is used by the operating systems to
+> probe the cooling devices. But as soon as this CPU ordering changes and
+> any other CPU is used to bring up the cooling device, we will start
+> seeing failures.
 > 
-> Add such missing properties.
+> Also the DT is rather incomplete when we list only one CPU in the
+> cooling maps, as the hardware doesn't have any such limitations.
+> 
+> Update cooling maps to include all devices affected by individual trip
+> points.
 > 
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
@@ -78,60 +81,54 @@ Best Regards,
 Wei
 
 > ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 10 ++++++++--
+>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi |  9 ++++++++-
+>  2 files changed, 16 insertions(+), 3 deletions(-)
 > 
 > diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index f432b0a88c65..d943a96eedee 100644
+> index d943a96eedee..20ae40df61d5 100644
 > --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
 > +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -79,6 +79,7 @@
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		cpu2: cpu@2 {
-> @@ -91,6 +92,7 @@
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		cpu3: cpu@3 {
-> @@ -103,6 +105,7 @@
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		cpu4: cpu@100 {
-> @@ -129,6 +132,7 @@
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		cpu6: cpu@102 {
-> @@ -141,6 +145,7 @@
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		cpu7: cpu@103 {
-> @@ -153,6 +158,7 @@
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> +			#cooling-cells = <2>;
->  		};
->  
->  		idle-states {
+> @@ -1118,12 +1118,18 @@
+>  					map0 {
+>  						trip = <&target>;
+>  						contribution = <1024>;
+> -						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>  					};
+>  					map1 {
+>  						trip = <&target>;
+>  						contribution = <512>;
+> -						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>  					};
+>  				};
+>  			};
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> index 97d5bf2c6ec5..aec9e371c2a7 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+> @@ -893,7 +893,14 @@
+>  				cooling-maps {
+>  					map0 {
+>  						trip = <&target>;
+> -						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +								 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+>  					};
+>  				};
+>  			};
 > 
 
