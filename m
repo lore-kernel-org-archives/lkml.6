@@ -2,223 +2,129 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAFEC04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB01C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF9F206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF9F206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CDF8B206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF8B206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbeK2Wif (ORCPT
+        id S1728007AbeK2Wii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:38:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:60882 "EHLO foss.arm.com"
+        Thu, 29 Nov 2018 17:38:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48402 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726870AbeK2Wif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:38:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C58EA78;
-        Thu, 29 Nov 2018 03:33:31 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE3983F5AF;
-        Thu, 29 Nov 2018 03:33:29 -0800 (PST)
-Date:   Thu, 29 Nov 2018 11:33:24 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     honghui.zhang@mediatek.com
-Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
-        devicetree@vger.kernel.org, youlin.pei@mediatek.com,
-        jianjun.wang@mediatek.com
-Subject: Re: [PATCH v2] PCI: mediatek: Use
- devm_of_pci_get_host_bridge_resources() to parse DT
-Message-ID: <20181129113324.GA27228@e107981-ln.cambridge.arm.com>
-References: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
+        id S1726736AbeK2Wih (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 17:38:37 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58A609FDDE;
+        Thu, 29 Nov 2018 11:33:34 +0000 (UTC)
+Received: from krava (unknown [10.43.17.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 59B5A6012C;
+        Thu, 29 Nov 2018 11:33:32 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 12:33:30 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v4 0/4] perf report/annotate: Support average IPC and IPC
+ coverage for function
+Message-ID: <20181129113330.GE25884@krava>
+References: <1543505978-19808-1-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543505978-19808-1-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 29 Nov 2018 11:33:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:56:55AM +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
+On Thu, Nov 29, 2018 at 11:39:34PM +0800, Jin Yao wrote:
+> Add supporting of displaying the average IPC and IPC coverage
+> percentage per function.
 > 
-> Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
-> DT parser.
+> For example,
 > 
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> $ perf record -b ...
+> $ perf report -s symbol or
+>   perf report -s symbol --stdio
+> 
+> Overhead  Symbol                           IPC   [IPC Coverage]
+>   39.60%  [.] __random                     2.30  [ 54.8%]
+>   18.02%  [.] main                         0.43  [ 54.3%]
+>   14.21%  [.] compute_flag                 2.29  [100.0%]
+>   14.16%  [.] rand                         0.36  [100.0%]
+>    7.06%  [.] __random_r                   2.57  [ 70.5%]
+>    6.85%  [.] rand@plt                     0.00  [  0.0%]
+>   ...
+> 
+> $ perf annotate --stdio2
+> 
+> Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
+> 
+>                         Disassembly of section .text:
+> 
+>                         000000000003aac0 <random@@GLIBC_2.2.5>:
+>   8.32  3.28              sub    $0x18,%rsp
+>         3.28              mov    $0x1,%esi
+>         3.28              xor    %eax,%eax
+>         3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
+>  11.57  3.28     1      ↓ je     20
+>                           lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>                         ↓ jne    29
+>                         ↓ jmp    43
+>  11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+>  ...
+> 
+> v4:
 > ---
->  drivers/pci/controller/pcie-mediatek.c | 98 +++++++++-------------------------
->  1 file changed, 24 insertions(+), 74 deletions(-)
+>     Add a new patch "perf report: Documentation average IPC and IPC coverage"
+>     to explain the new columns "IPC" and "IPC Coverage".
 > 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index 2a1f97c..0590a93 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -197,11 +197,7 @@ struct mtk_pcie_port {
->   * @dev: pointer to PCIe device
->   * @base: IO mapped register base
->   * @free_ck: free-run reference clock
-> - * @io: IO resource
-> - * @pio: PIO resource
->   * @mem: non-prefetchable memory resource
-> - * @busn: bus range
-> - * @offset: IO / Memory offset
->   * @ports: pointer to PCIe port information
->   * @soc: pointer to SoC-dependent operations
->   */
-> @@ -210,14 +206,7 @@ struct mtk_pcie {
->  	void __iomem *base;
->  	struct clk *free_ck;
->  
-> -	struct resource io;
-> -	struct resource pio;
->  	struct resource mem;
-> -	struct resource busn;
-> -	struct {
-> -		resource_size_t mem;
-> -		resource_size_t io;
-> -	} offset;
->  	struct list_head ports;
->  	const struct mtk_pcie_soc *soc;
->  };
-> @@ -1045,55 +1034,43 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
->  	struct device_node *node = dev->of_node, *child;
-> -	struct of_pci_range_parser parser;
-> -	struct of_pci_range range;
-> -	struct resource res;
->  	struct mtk_pcie_port *port, *tmp;
-> +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> +	struct list_head *windows = &host->windows;
-> +	struct resource_entry *win, *tmp_win;
-> +	resource_size_t io_base;
->  	int err;
->  
-> -	if (of_pci_range_parser_init(&parser, node)) {
-> -		dev_err(dev, "missing \"ranges\" property\n");
-> -		return -EINVAL;
-> -	}
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    windows, &io_base);
-> +	if (err)
-> +		return err;
->  
-> -	for_each_of_pci_range(&parser, &range) {
-> -		err = of_pci_range_to_resource(&range, node, &res);
-> -		if (err < 0)
-> -			return err;
-> +	err = devm_request_pci_bus_resources(dev, windows);
-> +	if (err < 0)
-> +		return err;
->  
-> -		switch (res.flags & IORESOURCE_TYPE_BITS) {
-> +	/* Get the I/O and memory ranges from DT */
-> +	resource_list_for_each_entry_safe(win, tmp_win, windows) {
-> +		switch (resource_type(win->res)) {
->  		case IORESOURCE_IO:
-> -			pcie->offset.io = res.start - range.pci_addr;
-> -
-> -			memcpy(&pcie->pio, &res, sizeof(res));
-> -			pcie->pio.name = node->full_name;
-> -
-> -			pcie->io.start = range.cpu_addr;
-> -			pcie->io.end = range.cpu_addr + range.size - 1;
-> -			pcie->io.flags = IORESOURCE_MEM;
-> -			pcie->io.name = "I/O";
-> -
-> -			memcpy(&res, &pcie->io, sizeof(res));
-> +			err = devm_pci_remap_iospace(dev, win->res, io_base);
-> +			if (err) {
-> +				dev_warn(dev, "error %d: failed to map resource %pR\n",
-> +					 err, win->res);
-> +				resource_list_destroy_entry(win);
-> +			}
->  			break;
-> -
->  		case IORESOURCE_MEM:
-> -			pcie->offset.mem = res.start - range.pci_addr;
-> -
-> -			memcpy(&pcie->mem, &res, sizeof(res));
-> +			memcpy(&pcie->mem, win->res, sizeof(*win->res));
->  			pcie->mem.name = "non-prefetchable";
->  			break;
-> +		case IORESOURCE_BUS:
-> +			host->busnr = win->res->start;
-> +			break;
->  		}
->  	}
->  
-> -	err = of_pci_parse_bus_range(node, &pcie->busn);
-> -	if (err < 0) {
-> -		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
-> -		pcie->busn.name = node->name;
-> -		pcie->busn.start = 0;
-> -		pcie->busn.end = 0xff;
-> -		pcie->busn.flags = IORESOURCE_BUS;
-> -	}
-> -
->  	for_each_available_child_of_node(node, child) {
->  		int slot;
->  
-> @@ -1125,28 +1102,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
->  	return 0;
->  }
->  
-> -static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
-> -{
-> -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> -	struct list_head *windows = &host->windows;
-> -	struct device *dev = pcie->dev;
-> -	int err;
-> -
-> -	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
-> -	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
-> -	pci_add_resource(windows, &pcie->busn);
-> -
-> -	err = devm_request_pci_bus_resources(dev, windows);
-> -	if (err < 0)
-> -		return err;
-> -
-> -	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
-> -	if (err < 0)
-> -		return err;
-> -
-> -	return 0;
-> -}
-> -
->  static int mtk_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1169,11 +1124,6 @@ static int mtk_pcie_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> -	err = mtk_pcie_request_resources(pcie);
-> -	if (err)
-> -		goto put_resources;
-> -
-> -	host->busnr = pcie->busn.start;
->  	host->dev.parent = pcie->dev;
->  	host->ops = pcie->soc->ops;
->  	host->map_irq = of_irq_parse_and_map_pci;
+>     Other patches are not changed.
+> 
+> v3:
+> ---
+>     Remove the sortkey "ipc" from command-line. The columns "IPC"
+>     and "[IPC Coverage]" are automatically enabled when "symbol"
+>     is specified.
+> 
+>     Patch "perf report: Display average IPC and IPC coverage per symbol"
+>     is impacted.
+> 
+> v2:
+> ---
+>   1. Merge in Jiri's patch to support stdio mode
+> 
+>   2. Add a new patch "perf annotate: Create a annotate2 flag
+>      in struct symbol" which records if the symbol has been
+>      annotated yet.
+> 
+>   3. Minor update such as adding { } for multiline code in 'if'
+>      condition.
+> 
+> Jin Yao (4):
+>   perf annotate: Compute average IPC and IPC coverage per symbol
+>   perf annotate: Create a annotate2 flag in struct symbol
+>   perf report: Display average IPC and IPC coverage per symbol
+>   perf report: Documentation average IPC and IPC coverage
 
-I would prefer having all the host initialization carried out in a
-single function. I appreciate you may need to reintroduce a temporary
-busnumber value or reshuffle the code to do that, sorry for asking to
-change it again but I do not want to see the struct pci_host_bridge
-variables initialization scattered around, it is confusing.
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-Thanks,
-Lorenzo
+thanks,
+jirka
