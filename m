@@ -2,83 +2,96 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B42EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F130C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041B520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041B520673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F92B20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hLTgQoY8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F92B20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387869AbeK3Bt6 convert rfc822-to-8bit (ORCPT
+        id S2388230AbeK3BsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:49:58 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46308 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732641AbeK3Bt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:49:58 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 52C3A20D0E; Thu, 29 Nov 2018 15:44:21 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C993920E00;
-        Thu, 29 Nov 2018 15:43:14 +0100 (CET)
-Date:   Thu, 29 Nov 2018 15:43:14 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 01/25] nvmem: add new config option
-Message-ID: <20181129154314.1d3cd914@bbrezillon>
-In-Reply-To: <CAMRc=Md4PbYDhmBNx5Rk5F9OZw2Om3D6F21iV6za-+dq0NshYw@mail.gmail.com>
-References: <20181113140133.17385-1-brgl@bgdev.pl>
-        <20181113140133.17385-2-brgl@bgdev.pl>
-        <CAMRc=MeRJ60gcYz00C828PBqnEdC-9onOKOadfackdzHiC1WOA@mail.gmail.com>
-        <b8f08722-d3d5-6ddf-5845-15eb5079094c@linaro.org>
-        <CAMRc=Md4PbYDhmBNx5Rk5F9OZw2Om3D6F21iV6za-+dq0NshYw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Thu, 29 Nov 2018 20:48:13 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54047 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387859AbeK3BsM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:48:12 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y1so2515339wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9n/ARJW/vSmYLj9SN9ylrpC2sSqXn0Twlo1KGmkMWjs=;
+        b=hLTgQoY83RBkMaaP/tR14xrQ/lPHNfDhWvsXJ30I2GLHvV7saAx3mwi42WCQ/A84u/
+         Eb74CKqZ2TYZQ/GMBt6rXV7CRi5vhNTWf8TOxyb7zNRGZU7Mlr84ms2HAnYEkMTyJTWC
+         8/s67zA33tDhVkIqtQnVxrCDaiUZx+RQprgBE8aPUciTbe9GqZcko3cwp7J2BA+fLRv5
+         bmQhk8r8+aAFNnxvuSUAJRVrUC2MJthgfzqUobnyG6perggGaV/9DblHCFblnTiQotcX
+         QzzKWjlCP41ABCkR5zU3Uz71I72HzZJ+ct05xY7W55W/rlXOdEivyY8NWI/zjiWJGtJb
+         3odA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9n/ARJW/vSmYLj9SN9ylrpC2sSqXn0Twlo1KGmkMWjs=;
+        b=dED2b59lJbm0tft83bLbfelhp4Grq9jBVuKYeWXliAKX8aP2C9cm1qRC7xJx5AKDmV
+         KpHT8FQJXMcE5GaOAh3Q1+oqQk4B/PjUoI6mqiVE+iKNFeRj6f4bKxyctw6bmGPlEYfw
+         Lcitj5eP4agouvGIp5TNGO7ucTmBvuKUlHLYHJ9mfyAIe+Arc0jiDn9XGF/wvAlEz4BE
+         kaJJcsGMVGzjJyV6bmp6IJApQdz05dnfPuWizQzDGPXyPla3YYaHsK/nWYv15gS+Vi9s
+         LOlaCtAYa/5NQpzMQD0juUDEGaDYkxMLnFzaLGhI8Z6PMYKwigDRqQNwoVG+2wf36MAc
+         DN8Q==
+X-Gm-Message-State: AA+aEWbh935Ejt0yNamZvHlIRxobfGeqhd4F6moW2d8dScV6BzBTldOc
+        fkzlc3metZUOFLg29QOAI7yR3A==
+X-Google-Smtp-Source: AFSGD/U3okb+iei+DGsPUSGRGazLgPdyEJ3srOlg+o/iokaBATlaJ51mX3Byg18L22aHgjt6mVngnw==
+X-Received: by 2002:a1c:8bd0:: with SMTP id n199mr2095358wmd.104.1543502556074;
+        Thu, 29 Nov 2018 06:42:36 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id t131sm875406wmt.1.2018.11.29.06.42.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 29 Nov 2018 06:42:35 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     davem@davemloft.net, ebiggers@kernel.org,
+        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v5 02/11] crypto: CRYPTO_STATS should depend on CRYPTO_USER
+Date:   Thu, 29 Nov 2018 14:42:17 +0000
+Message-Id: <1543502546-23870-3-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
+References: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 15:35:58 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+CRYPTO_STATS is using CRYPTO_USER stuff, so it should depends on it.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> czw., 29 lis 2018 o 15:32 Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> napisał(a):
-> >
-> >  
-> > >
-> > > Hi Srinivas,
-> > >
-> > > if there are no objections - can you Ack this patch for Greg to pick
-> > > up into char-misc?  
-> >
-> > Patch is fine for me. I normally send all the nvmem patches just before rc5.
-> >
-> > --srini  
-> > >
-> > > Bart
-> > >  
-> 
-> Boris, are you fine with Srinivas sending the MTD patch as well so
-> that they stay together?
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index b6376d5d973e..5994d0fa7a78 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -1865,6 +1865,7 @@ config CRYPTO_USER_API_AEAD
+ 
+ config CRYPTO_STATS
+ 	bool "Crypto usage statistics for User-space"
++	depends on CRYPTO_USER
+ 	help
+ 	  This option enables the gathering of crypto stats.
+ 	  This will collect:
+-- 
+2.18.1
 
-Yes, I'll just need an immutable branch/tag in case we have conflicting
-changes in the MTD tree.
