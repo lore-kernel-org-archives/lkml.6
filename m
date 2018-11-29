@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7BFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0099AC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6199620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6199620834
+	by mail.kernel.org (Postfix) with ESMTP id B39742145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39742145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeK2TVf (ORCPT
+        id S1728027AbeK2TVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:21:35 -0500
+        Thu, 29 Nov 2018 14:21:37 -0500
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:27144 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727490AbeK2TVf (ORCPT
+        with ESMTP id S1727885AbeK2TVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:21:35 -0500
+        Thu, 29 Nov 2018 14:21:36 -0500
 X-IronPort-AV: E=Sophos;i="5.56,293,1539619200"; 
-   d="scan'208";a="48821863"
+   d="scan'208";a="48821864"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 29 Nov 2018 16:17:02 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id C2E6C4B7349C;
-        Thu, 29 Nov 2018 16:17:00 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id AE6534B7348C;
+        Thu, 29 Nov 2018 16:16:58 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:17:06 +0800
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:17:04 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v12 5/5] x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
-Date:   Thu, 29 Nov 2018 16:16:31 +0800
-Message-ID: <20181129081631.11139-6-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v12 4/5] x86/boot: Parse SRAT table from RSDP and store immovable memory
+Date:   Thu, 29 Nov 2018 16:16:30 +0800
+Message-ID: <20181129081631.11139-5-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
 References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: C2E6C4B7349C.AA972
+X-yoursite-MailScanner-ID: AE6534B7348C.A7CA7
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,147 +57,244 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KASLR may randomly choose some positions which are located in movable
-memory regions. This will break memory hotplug feature and make the
-movable memory chosen by KASLR practically immovable.
+To fix the conflict between KASLR and memory-hotremove, SRAT table
+should be parsed by RSDP pointer, then find the immovable
+memory regions and store them in an array called immovable_mem[].
+The array called immovable_mem[] will extern to KASLR, then
+KASLR will avoid to extract kernel to these regions.
 
-The solution is to limit KASLR to choose memory regions in immovable
-node according to SRAT tables.
-If CONFIG_EARLY_PARSE_RSDP is enabled, walk through the SRAT memory
-tables and store those immovable memory regions so that KASLR can get
-where to choose for randomization.
-
-Also, rename process_mem_region() as __process_mem_region() and name new
-function as process_mem_region().
+Add 'CONFIG_EARLY_PARSE_RSDP' which depends on RANDOMIZE_BASE &&
+MEMORY_HOTREMOVE, cause only when both KASLR and memory-hotremove
+are enabled, RSDP needs to be parsed in compressed period.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/kaslr.c | 75 +++++++++++++++++++++++++++-----
- 1 file changed, 64 insertions(+), 11 deletions(-)
+ arch/x86/Kconfig                  |  10 +++
+ arch/x86/boot/compressed/Makefile |   2 +
+ arch/x86/boot/compressed/acpitb.c | 125 ++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/kaslr.c  |   4 -
+ arch/x86/boot/compressed/misc.h   |  20 +++++
+ 5 files changed, 157 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index b251572e77af..f0c30e3ddcb4 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -97,6 +97,11 @@ static bool memmap_too_large;
- /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
- static unsigned long long mem_limit = ULLONG_MAX;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index a29d49ef4d56..bc775968557b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2146,6 +2146,16 @@ config X86_NEED_RELOCS
+ 	def_bool y
+ 	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
  
-+#ifdef CONFIG_MEMORY_HOTREMOVE
-+/* Store the immovable memory regions */
-+extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
-+#endif
++config CONFIG_EARLY_PARSE_RSDP
++	bool "Parse RSDP pointer on compressed period for KASLR"
++	def_bool n
++	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
++	help
++	  This option parses RSDP pointer in compressed period. Works
++	  for KASLR to get memory information by SRAT table and choose
++	  immovable memory to extract kernel.
++	  Say Y if you want to use both KASLR and memory-hotremove.
 +
+ config PHYSICAL_ALIGN
+ 	hex "Alignment value to which kernel should be aligned"
+ 	default "0x200000"
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 466f66c8a7f8..4cbfb58bf083 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -84,6 +84,8 @@ ifdef CONFIG_X86_64
+ 	vmlinux-objs-y += $(obj)/pgtable_64.o
+ endif
  
- enum mem_avoid_index {
- 	MEM_AVOID_ZO_RANGE = 0,
-@@ -413,6 +418,9 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
- 	/* Mark the memmap regions we need to avoid */
- 	handle_mem_options();
- 
-+	/* Mark the immovable regions we need to choose */
-+	get_immovable_mem();
++vmlinux-objs-$(CONFIG_EARLY_PARSE_RSDP) += $(obj)/acpitb.o
 +
- #ifdef CONFIG_X86_VERBOSE_BOOTUP
- 	/* Make sure video RAM can be used. */
- 	add_identity_map(0, PMD_SIZE);
-@@ -568,9 +576,9 @@ static unsigned long slots_fetch_random(void)
- 	return 0;
- }
+ $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
  
--static void process_mem_region(struct mem_vector *entry,
--			       unsigned long minimum,
--			       unsigned long image_size)
-+static void __process_mem_region(struct mem_vector *entry,
-+				 unsigned long minimum,
-+				 unsigned long image_size)
- {
- 	struct mem_vector region, overlap;
- 	unsigned long start_orig, end;
-@@ -646,6 +654,57 @@ static void process_mem_region(struct mem_vector *entry,
+ vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+index 82d27c4b8978..023b33d0cd3b 100644
+--- a/arch/x86/boot/compressed/acpitb.c
++++ b/arch/x86/boot/compressed/acpitb.c
+@@ -195,3 +195,128 @@ static acpi_physical_address bios_get_rsdp_addr(void)
+ 		return (acpi_physical_address)address;
  	}
  }
- 
-+static bool process_mem_region(struct mem_vector *region,
-+			       unsigned long long minimum,
-+			       unsigned long long image_size)
++
++/* Used to determine RSDP table, based on acpi_os_get_root_pointer(). */
++static acpi_physical_address get_rsdp_addr(void)
 +{
-+	int i;
-+	/*
-+	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-+	 * walk all the regions, so use region directly.
-+	 */
-+	if (!num_immovable_mem) {
-+		__process_mem_region(region, minimum, image_size);
++	acpi_physical_address pa = 0;
 +
-+		if (slot_area_index == MAX_SLOT_AREA) {
-+			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+			return 1;
-+		}
-+		return 0;
-+	}
++	pa = get_acpi_rsdp();
 +
-+#ifdef CONFIG_EARLY_PARSE_RSDP
-+	/*
-+	 * If immovable memory found, filter the intersection between
-+	 * immovable memory and region to __process_mem_region().
-+	 * Otherwise, go on old code.
-+	 */
-+	for (i = 0; i < num_immovable_mem; i++) {
-+		struct mem_vector entry;
-+		unsigned long long start, end, entry_end, region_end;
++	if (!pa)
++		pa = efi_get_rsdp_addr();
 +
-+		if (!mem_overlaps(region, &immovable_mem[i]))
-+			continue;
++	if (!pa)
++		pa = bios_get_rsdp_addr();
 +
-+		start = immovable_mem[i].start;
-+		end = start + immovable_mem[i].size;
-+		region_end = region->start + region->size;
-+
-+		entry.start = clamp(region->start, start, end);
-+		entry_end = clamp(region_end, start, end);
-+		entry.size = entry_end - entry.start;
-+
-+		__process_mem_region(&entry, minimum, image_size);
-+
-+		if (slot_area_index == MAX_SLOT_AREA) {
-+			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-+			return 1;
-+		}
-+	}
-+	return 0;
-+#endif
++	return pa;
 +}
 +
- #ifdef CONFIG_EFI
- /*
-  * Returns true if mirror region found (and must have been processed
-@@ -711,11 +770,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
++/* Compute SRAT table from RSDP. */
++static struct acpi_table_header *get_acpi_srat_table(void)
++{
++	acpi_physical_address acpi_table;
++	acpi_physical_address root_table;
++	struct acpi_table_header *header;
++	struct acpi_table_rsdp *rsdp;
++	int num_entries;
++	char arg[10];
++	u8 *entry;
++	u32 size;
++	u32 len;
++
++	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
++	if (!rsdp)
++		return NULL;
++
++	/* Get RSDT or XSDT from RSDP. */
++	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
++	    !strncmp(arg, "rsdt", 4)) &&
++	    rsdp->xsdt_physical_address &&
++	    rsdp->revision > 1) {
++		root_table = rsdp->xsdt_physical_address;
++		size = ACPI_XSDT_ENTRY_SIZE;
++	} else {
++		root_table = rsdp->rsdt_physical_address;
++		size = ACPI_RSDT_ENTRY_SIZE;
++	}
++
++	/* Get ACPI root table from RSDT or XSDT.*/
++	header = (struct acpi_table_header *)root_table;
++	if (!header)
++		return NULL;
++
++	len = header->length;
++	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
++	if (num_entries > MAX_ACPI_SIG)
++		return NULL;
++
++	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
++
++	while (num_entries--) {
++		u64 address64;
++
++		if (size == ACPI_RSDT_ENTRY_SIZE)
++			acpi_table = ((acpi_physical_address)
++				      (*ACPI_CAST_PTR(u32, entry)));
++		else {
++			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
++			acpi_table = (acpi_physical_address) address64;
++		}
++
++		if (acpi_table) {
++			header = (struct acpi_table_header *)acpi_table;
++
++			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
++				return header;
++		}
++		entry += size;
++	}
++	return NULL;
++}
++
++/*
++ * According to ACPI table, filter the immovable memory regions
++ * and store them in immovable_mem[].
++ */
++void get_immovable_mem(void)
++{
++	struct acpi_table_header *table_header;
++	struct acpi_subtable_header *table;
++	struct acpi_srat_mem_affinity *ma;
++	unsigned long table_end;
++	char arg[10];
++	int i = 0;
++
++	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
++	    !strncmp(arg, "off", 3))
++		return;
++
++	table_header = get_acpi_srat_table();
++	if (!table_header)
++		return;
++
++	table_end = (unsigned long)table_header + table_header->length;
++	table = (struct acpi_subtable_header *)
++		((unsigned long)table_header + sizeof(struct acpi_table_srat));
++
++	while (((unsigned long)table) +
++		       sizeof(struct acpi_subtable_header) < table_end) {
++		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
++			ma = (struct acpi_srat_mem_affinity *)table;
++			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
++				immovable_mem[i].start = ma->base_address;
++				immovable_mem[i].size = ma->length;
++				i++;
++			}
++
++			if (i >= MAX_NUMNODES*2) {
++				debug_putstr("Too many immovable memory regions, aborting.\n");
++				return;
++			}
++		}
++		table = (struct acpi_subtable_header *)
++			((unsigned long)table + table->length);
++	}
++	num_immovable_mem = i;
++}
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 9ed9709d9947..b251572e77af 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+ #define KASLR_COMPRESSED_BOOT
+ #include "../../lib/kaslr.c"
  
- 		region.start = md->phys_addr;
- 		region.size = md->num_pages << EFI_PAGE_SHIFT;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- 	return true;
- }
-@@ -742,11 +798,8 @@ static void process_e820_entries(unsigned long minimum,
- 			continue;
- 		region.start = entry->addr;
- 		region.size = entry->size;
--		process_mem_region(&region, minimum, image_size);
--		if (slot_area_index == MAX_SLOT_AREA) {
--			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
-+		if (process_mem_region(&region, minimum, image_size))
- 			break;
--		}
- 	}
- }
+-struct mem_vector {
+-	unsigned long long start;
+-	unsigned long long size;
+-};
  
+ /* Only supporting at most 4 unusable memmap regions with kaslr */
+ #define MAX_MEMMAP_REGIONS	4
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index 809c31effa4b..d94e2a419c13 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+ 			    unsigned long *output,
+ 			    unsigned long output_size,
+ 			    unsigned long *virt_addr);
++struct mem_vector {
++	unsigned long long start;
++	unsigned long long size;
++};
++
+ /* cpuflags.c */
+ bool has_cpuflag(int flag);
+ #else
+@@ -118,5 +123,20 @@ void set_sev_encryption_mask(void);
+ #endif
+ 
+ /* acpitb.c */
++#ifdef CONFIG_RANDOMIZE_BASE
++/* Store the amount of immovable memory regions */
++int num_immovable_mem;
++#endif
++
++#ifdef CONFIG_EARLY_PARSE_RSDP
++void get_immovable_mem(void);
++/* There are 72 kinds of ACPI_SIG in head file of ACPI. */
++#define MAX_ACPI_SIG	72
++#else
++static void get_immovable_mem(void)
++{
++}
++#endif
++
+ #define BOOT_STRING
+ extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
 -- 
 2.19.1
 
