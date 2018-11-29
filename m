@@ -2,431 +2,638 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EF8C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CA0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A528C20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2UMeJF3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A528C20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B6122081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:45:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6122081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbeK2UuT (ORCPT
+        id S1728128AbeK2Ut6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:50:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45736 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbeK2UuS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:50:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so1117416ljd.12;
-        Thu, 29 Nov 2018 01:45:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oovNVnIXpTMAnZJ4NrWD40D+L9iYQnHpPPAXmh7i76I=;
-        b=I2UMeJF3ifID78VmMVIKDAuHwfKCKnZvoK0RqMEY/osN3704XENab/+Fl0teDY7Vch
-         /Dbqbva3d1VgUAuw2eL5rSv5ced+2WwFxRDnfzcyJFdO9oOhR4d1CYeaL7jB7yjIn1zk
-         5YvZECoo/Mahd1kPIbygOPqZLTrIrdoP7MfY71dxXajFhQacJEy3609dZaUlL949+kno
-         vf5mZtH53u5y7AkxbwtOjoZvTMc20G93MOU6Un6ylRRuWsChrx9nYziIdDWnvhB5eUdb
-         1KevA2LkgnC/mK5GRGfQ8HdTdw2AciWnYFDyC0IB5bgq0zmAVxkN7KsBUQ+9GpItUqJn
-         KTvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oovNVnIXpTMAnZJ4NrWD40D+L9iYQnHpPPAXmh7i76I=;
-        b=PhohL6tmCHPf+6un10w0s5P4mxmeHLFjAIUF8ohJ8Y/Oh6rvDihOU0wsKXHMBfoEJV
-         CjvIkAC3AwDPMUWQxKF78K/uFYRdLpviUXNEmy3MiACIGLoemKJFOVWOnGFPfihXU6wO
-         2oKvIfgiGEsRr/dl60q+hAZdpt4j9tf5wM/UIzH0j5NtfgT7gIyMZwkxbOmBFbgOViTT
-         xwzu2yzWvfPIo0Xzpba0Qbcv6tO66ZzLJwQ9hAdEA6xd4kRve+pNmGesPtiKs+b5Kvas
-         rjygJMKMLCeqYFhau6+sPlwMt4RrhYGzaEERF43Hrg2QIVjkrKMy1CssbEkJFLZUaVvT
-         S8wg==
-X-Gm-Message-State: AA+aEWaHYG7A4gQyKoah4mtFW+9mrcznkpY/X5NvBEEIQ5D4S8zCoEZB
-        64kbA2JlJTZHk4OI6UgvSZL0H2d0MT6/SJiO5DE33xKo
-X-Google-Smtp-Source: AFSGD/Wif5BEjACPk0M89oK+FJfs7Z7VoM9c8+MV/vgcAjlrIVE41FBqxqRbYH9KRLYxm5WgdoojrFvo2SS3jcSsgcs=
-X-Received: by 2002:a2e:8989:: with SMTP id c9-v6mr611775lji.124.1543484729046;
- Thu, 29 Nov 2018 01:45:29 -0800 (PST)
-MIME-Version: 1.0
-References: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
- <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org> <cb2cdfb9-f3e6-72cd-2d55-734b08ea3e15@intel.com>
-In-Reply-To: <cb2cdfb9-f3e6-72cd-2d55-734b08ea3e15@intel.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 29 Nov 2018 17:44:52 +0800
-Message-ID: <CAAfSe-tw-pEdFBTjeGBQD03QdNMkdnHdf8=2J01Qczf54yJ9CA@mail.gmail.com>
-Subject: Re: [PATCH V3 1/3] mmc: sdhci: add support for using external DMA devices
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, faiz_abbas@ti.com,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        kishon@ti.com, nsekhar@ti.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Nov 2018 15:49:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48112 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727325AbeK2Ut5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 15:49:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5730DAD47;
+        Thu, 29 Nov 2018 09:45:09 +0000 (UTC)
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>, Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v14 07/11] livepatch: Add atomic replace
+Date:   Thu, 29 Nov 2018 10:44:27 +0100
+Message-Id: <20181129094431.7801-8-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20181129094431.7801-1-pmladek@suse.com>
+References: <20181129094431.7801-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 at 17:25, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 29/11/18 8:07 AM, Chunyan Zhang wrote:
-> > Some standard SD host controllers can support both external dma
-> > controllers as well as ADMA/SDMA in which the SD host controller
-> > acts as DMA master. TI's omap controller is the case as an example.
-> >
-> > Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> > the host controller but does not have any support for external DMA
-> > controllers implemented using dmaengine, meaning that custom code is
-> > needed for any systems that use an external DMA controller with SDHCI.
-> >
-> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> > ---
-> >  drivers/mmc/host/Kconfig |  14 ++++
-> >  drivers/mmc/host/sdhci.c | 185 ++++++++++++++++++++++++++++++++++++++++++++++-
-> >  drivers/mmc/host/sdhci.h |   8 ++
-> >  3 files changed, 206 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> > index 1b58739..4183f43 100644
-> > --- a/drivers/mmc/host/Kconfig
-> > +++ b/drivers/mmc/host/Kconfig
-> > @@ -969,6 +969,7 @@ config MMC_SDHCI_XENON
-> >  config MMC_SDHCI_OMAP
-> >       tristate "TI SDHCI Controller Support"
-> >       depends on MMC_SDHCI_PLTFM && OF
-> > +     select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
-> >       help
-> >         This selects the Secure Digital Host Controller Interface (SDHCI)
-> >         support present in TI's DRA7 SOCs. The controller supports
-> > @@ -977,3 +978,16 @@ config MMC_SDHCI_OMAP
-> >         If you have a controller with this interface, say Y or M here.
-> >
-> >         If unsure, say N.
-> > +
-> > +config MMC_SDHCI_EXTERNAL_DMA
-> > +        bool "Support external DMA in standard SD host controller"
-> > +     depends on MMC_SDHCI
-> > +     depends on DMA_ENGINE
-> > +     help
-> > +       This is an option for using external DMA device via dmaengine
-> > +       framework.
-> > +
-> > +       If you have a controller which support using external DMA device
-> > +       for data transfer, can say Y.
-> > +
-> > +       If unsure, say N.
->
-> So if you are going to select this, then you don't need the prompt or help
-> anymore i.e.
->
-> config MMC_SDHCI_EXTERNAL_DMA
->         bool
->
->
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 99bdae5..ad7cc80 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -14,6 +14,7 @@
-> >   */
-> >
-> >  #include <linux/delay.h>
-> > +#include <linux/dmaengine.h>
-> >  #include <linux/ktime.h>
-> >  #include <linux/highmem.h>
-> >  #include <linux/io.h>
-> > @@ -1309,6 +1310,162 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
-> >               del_timer(&host->timer);
-> >  }
-> >
-> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> > +static int sdhci_external_dma_init(struct sdhci_host *host)
-> > +{
-> > +     int ret = 0;
-> > +     struct mmc_host *mmc = host->mmc;
-> > +
-> > +     host->tx_chan = dma_request_chan(mmc->parent, "tx");
-> > +     if (IS_ERR(host->tx_chan)) {
-> > +             ret = PTR_ERR(host->tx_chan);
-> > +             if (ret != -EPROBE_DEFER)
-> > +                     pr_warn("Failed to request TX DMA channel.\n");
-> > +             host->tx_chan = NULL;
-> > +             return ret;
-> > +     }
-> > +
-> > +     host->rx_chan = dma_request_chan(mmc->parent, "rx");
-> > +     if (IS_ERR(host->rx_chan)) {
-> > +             if (host->tx_chan) {
-> > +                     dma_release_channel(host->tx_chan);
-> > +                     host->tx_chan = NULL;
-> > +             }
-> > +
-> > +             ret = PTR_ERR(host->rx_chan);
-> > +             if (ret != -EPROBE_DEFER)
-> > +                     pr_warn("Failed to request RX DMA channel.\n");
-> > +             host->rx_chan = NULL;
-> > +     }
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static inline struct dma_chan *
-> > +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
-> > +{
-> > +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
-> > +}
-> > +
-> > +static int sdhci_external_dma_setup(struct sdhci_host *host,
-> > +                                 struct mmc_command *cmd)
-> > +{
-> > +     int ret, i;
-> > +     struct dma_async_tx_descriptor *desc;
-> > +     struct mmc_data *data = cmd->data;
-> > +     struct dma_chan *chan;
-> > +     struct dma_slave_config cfg;
-> > +     dma_cookie_t cookie;
-> > +
-> > +     if (!host->mapbase)
-> > +             return -EINVAL;
-> > +
-> > +     if (!data)
-> > +             return 0;
->
-> It would read better if the above 2 if-statements were the other way around i.e.
->
->         if (!data)
->                 return 0;
->
->         if (!host->mapbase)
->                 return -EINVAL;
->
+From: Jason Baron <jbaron@akamai.com>
 
-Ok.
+Sometimes we would like to revert a particular fix. Currently, this
+is not easy because we want to keep all other fixes active and we
+could revert only the last applied patch.
 
-> > +
-> > +     cfg.src_addr = host->mapbase + SDHCI_BUFFER;
-> > +     cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
-> > +     cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> > +     cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> > +     cfg.src_maxburst = data->blksz / 4;
-> > +     cfg.dst_maxburst = data->blksz / 4;
-> > +
-> > +     /* Sanity check: all the SG entries must be aligned by block size. */
-> > +     for (i = 0; i < data->sg_len; i++) {
-> > +             if ((data->sg + i)->length % data->blksz)
-> > +                     return -EINVAL;
-> > +     }
-> > +
-> > +     chan = sdhci_external_dma_channel(host, data);
-> > +
-> > +     ret = dmaengine_slave_config(chan, &cfg);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
-> > +                                    mmc_get_dma_dir(data),
-> > +                                    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-> > +     if (!desc)
-> > +             return -EINVAL;
-> > +
-> > +     desc->callback = NULL;
-> > +     desc->callback_param = NULL;
-> > +
-> > +     cookie = dmaengine_submit(desc);
-> > +     if (cookie < 0)
-> > +             ret = cookie;
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static void sdhci_external_dma_release(struct sdhci_host *host)
-> > +{
-> > +     if (host->tx_chan) {
-> > +             dma_release_channel(host->tx_chan);
-> > +             host->tx_chan = NULL;
-> > +     }
-> > +
-> > +     if (host->rx_chan) {
-> > +             dma_release_channel(host->rx_chan);
-> > +             host->rx_chan = NULL;
-> > +     }
-> > +
-> > +     sdhci_switch_external_dma(host, false);
-> > +}
-> > +
-> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     if (sdhci_external_dma_setup(host, cmd)) {
-> > +             sdhci_external_dma_release(host);
-> > +             pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
-> > +                    mmc_hostname(host->mmc));
-> > +     } else {
-> > +             /* Prepare for using external dma */
-> > +             host->flags |= SDHCI_REQ_USE_DMA;
-> > +     }
-> > +
-> > +     sdhci_prepare_data(host, cmd);
-> > +}
-> > +
-> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     struct dma_chan *chan;
-> > +
-> > +     if (cmd->opcode != MMC_SET_BLOCK_COUNT && cmd->data) {
->
-> MMC_SET_BLOCK_COUNT doesn't have data so that part is not needed
+One solution would be to apply new patch that implemented all
+the reverted functions like in the original code. It would work
+as expected but there will be unnecessary redirections. In addition,
+it would also require knowing which functions need to be reverted at
+build time.
 
-Didn't get you here.
-This is for other packets except MMC_SET_BLOCK_COUNT.
+Another problem is when there are many patches that touch the same
+functions. There might be dependencies between patches that are
+not enforced on the kernel side. Also it might be pretty hard to
+actually prepare the patch and ensure compatibility with the other
+patches.
 
->
-> > +             sdhci_set_timeout(host, cmd);
-> > +             chan = sdhci_external_dma_channel(host, cmd->data);
-> > +             dma_async_issue_pending(chan);
-> > +     }
-> > +}
-> > +#else
-> > +static int sdhci_external_dma_init(struct sdhci_host *host)
-> > +{
-> > +     return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static void sdhci_external_dma_release(struct sdhci_host *host)
-> > +{}
-> > +
-> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{
-> > +     /* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used */
-> > +     sdhci_prepare_data(host, cmd);
-> > +}
-> > +
-> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> > +                                         struct mmc_command *cmd)
-> > +{}
-> > +#endif
-> > +
-> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
-> > +{
-> > +     host->use_external_dma = en;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
-> > +
-> >  void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >  {
-> >       int flags;
-> > @@ -1355,7 +1512,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >               host->data_cmd = cmd;
-> >       }
-> >
-> > -     sdhci_prepare_data(host, cmd);
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_prepare_data(host, cmd);
-> > +     else
-> > +             sdhci_prepare_data(host, cmd);
-> >
-> >       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
-> >
-> > @@ -1397,6 +1557,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
-> >               timeout += 10 * HZ;
-> >       sdhci_mod_timer(host, cmd->mrq, timeout);
-> >
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_pre_transfer(host, cmd);
-> > +
-> >       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdhci_send_command);
-> > @@ -4133,6 +4296,19 @@ int sdhci_setup_host(struct sdhci_host *host)
-> >                       return ret;
-> >       }
-> >
-> > +     if (host->use_external_dma) {
-> > +             ret = sdhci_external_dma_init(host);
-> > +             if (ret == -EPROBE_DEFER)
-> > +                     goto unreg;
-> > +
-> > +             /*
-> > +              * Fall back to use the DMA/PIO integrated in standard SDHCI
-> > +              * instead of external DMA devices.
-> > +              */
-> > +             if (ret)
-> > +                     sdhci_switch_external_dma(host, false);
-> > +     }
-> > +
-> >       return 0;
-> >
-> >  unreg:
-> > @@ -4161,6 +4337,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
-> >               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
-> >                                 host->adma_table_sz, host->align_buffer,
-> >                                 host->align_addr);
-> > +
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_release(host);
-> > +
-> >       host->adma_table = NULL;
-> >       host->align_buffer = NULL;
-> >  }
-> > @@ -4295,6 +4475,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
-> >                                 host->adma_table_sz, host->align_buffer,
-> >                                 host->align_addr);
-> >
-> > +     if (host->use_external_dma)
-> > +             sdhci_external_dma_release(host);
-> > +
-> >       host->adma_table = NULL;
-> >       host->align_buffer = NULL;
-> >  }
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index b001cf4..8e50a97 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -475,6 +475,7 @@ struct sdhci_host {
-> >
-> >       int irq;                /* Device IRQ */
-> >       void __iomem *ioaddr;   /* Mapped address */
-> > +     phys_addr_t mapbase;    /* physical address base */
-> >       char *bounce_buffer;    /* For packing SDMA reads/writes */
-> >       dma_addr_t bounce_addr;
-> >       unsigned int bounce_buffer_size;
-> > @@ -524,6 +525,7 @@ struct sdhci_host {
-> >       bool pending_reset;     /* Cmd/data reset is pending */
-> >       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
-> >       bool v4_mode;           /* Host Version 4 Enable */
-> > +     bool use_external_dma;
-> >
-> >       struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
-> >       struct mmc_command *cmd;        /* Current command */
-> > @@ -552,6 +554,11 @@ struct sdhci_host {
-> >       struct timer_list timer;        /* Timer for timeouts */
-> >       struct timer_list data_timer;   /* Timer for data timeouts */
-> >
-> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
-> > +     struct dma_chan *rx_chan;
-> > +     struct dma_chan *tx_chan;
-> > +#endif
-> > +
-> >       u32 caps;               /* CAPABILITY_0 */
-> >       u32 caps1;              /* CAPABILITY_1 */
-> >       bool read_caps;         /* Capability flags have been read */
-> > @@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
-> >  void sdhci_end_tuning(struct sdhci_host *host);
-> >  void sdhci_reset_tuning(struct sdhci_host *host);
-> >  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
-> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
-> >
-> >  #endif /* __SDHCI_HW_H */
-> >
->
+Atomic replace && cumulative patches:
+
+A better solution would be to create cumulative patch and say that
+it replaces all older ones.
+
+This patch adds a new "replace" flag to struct klp_patch. When it is
+enabled, a set of 'nop' klp_func will be dynamically created for all
+functions that are already being patched but that will no longer be
+modified by the new patch. They are used as a new target during
+the patch transition.
+
+The idea is to handle Nops' structures like the static ones. When
+the dynamic structures are allocated, we initialize all values that
+are normally statically defined.
+
+The only exception is "new_func" in struct klp_func. It has to point
+to the original function and the address is known only when the object
+(module) is loaded. Note that we really need to set it. The address is
+used, for example, in klp_check_stack_func().
+
+Nevertheless we still need to distinguish the dynamically allocated
+structures in some operations. For this, we add "nop" flag into
+struct klp_func and "dynamic" flag into struct klp_object. They
+need special handling in the following situations:
+
+  + The structures are added into the lists of objects and functions
+    immediately. In fact, the lists were created for this purpose.
+
+  + The address of the original function is known only when the patched
+    object (module) is loaded. Therefore it is copied later in
+    klp_init_object_loaded().
+
+  + The ftrace handler must not set PC to func->new_func. It would cause
+    infinite loop because the address points back to the beginning of
+    the original function.
+
+  + The various free() functions must free the structure itself.
+
+Note that other ways to detect the dynamic structures are not considered
+safe. For example, even the statically defined struct klp_object might
+include empty funcs array. It might be there just to run some callbacks.
+
+Special callbacks handling:
+
+The callbacks from the replaced patches are _not_ called by intention.
+It would be pretty hard to define a reasonable semantic and implement it.
+
+It might even be counter-productive. The new patch is cumulative. It is
+supposed to include most of the changes from older patches. In most cases,
+it will not want to call pre_unpatch() post_unpatch() callbacks from
+the replaced patches. It would disable/break things for no good reasons.
+Also it should be easier to handle various scenarios in a single script
+in the new patch than think about interactions caused by running many
+scripts from older patches. Not to say that the old scripts even would
+not expect to be called in this situation.
+
+Removing replaced patches:
+
+One nice effect of the cumulative patches is that the code from the
+older patches is no longer used. Therefore the replaced patches can
+be removed. It has several advantages:
+
+  + Nops' structs will not longer be necessary and might be removed.
+    This would save memory, restore performance (no ftrace handler),
+    allow clear view on what is really patched.
+
+  + Disabling the patch will cause using the original code everywhere.
+    Therefore the livepatch callbacks could handle only one scenario.
+    Note that the complication is already complex enough when the patch
+    gets enabled. It is currently solved by calling callbacks only from
+    the new cumulative patch.
+
+  + The state is clean in both the sysfs interface and lsmod. The modules
+    with the replaced livepatches might even get removed from the system.
+
+Some people actually expected this behavior from the beginning. After all
+a cumulative patch is supposed to "completely" replace an existing one.
+It is like when a new version of an application replaces an older one.
+
+This patch does the first step. It removes the replaced patches from
+the list of patches. It is safe. The consistency model ensures that
+they are not longer used. By other words, each process works only with
+the structures from klp_transition_patch.
+
+The removal is done by a special function. It combines actions done by
+__disable_patch() and klp_complete_transition(). But it is a fast
+track without all the transaction-related stuff.
+
+Signed-off-by: Jason Baron <jbaron@akamai.com>
+[pmladek@suse.com: Split, reuse existing code, simplified]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Miroslav Benes <mbenes@suse.cz>
+---
+ Documentation/livepatch/livepatch.txt |  33 ++++-
+ include/linux/livepatch.h             |   6 +
+ kernel/livepatch/core.c               | 221 +++++++++++++++++++++++++++++++++-
+ kernel/livepatch/core.h               |   1 +
+ kernel/livepatch/patch.c              |   8 ++
+ kernel/livepatch/transition.c         |   3 +
+ 6 files changed, 264 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
+index d849af312576..ba6e83a08209 100644
+--- a/Documentation/livepatch/livepatch.txt
++++ b/Documentation/livepatch/livepatch.txt
+@@ -15,8 +15,9 @@ Table of Contents:
+ 5. Livepatch life-cycle
+    5.1. Loading
+    5.2. Enabling
+-   5.3. Disabling
+-   5.4. Removing
++   5.3. Replacing
++   5.4. Disabling
++   5.5. Removing
+ 6. Sysfs
+ 7. Limitations
+ 
+@@ -300,8 +301,12 @@ into three levels:
+ 5. Livepatch life-cycle
+ =======================
+ 
+-Livepatching can be described by four basic operations:
+-loading, enabling, disabling, removing.
++Livepatching can be described by five basic operations:
++loading, enabling, replacing, disabling, removing.
++
++Where the replacing and the disabling operations are mutually
++exclusive. They have the same result for the given patch but
++not for the system.
+ 
+ 
+ 5.1. Loading
+@@ -347,7 +352,23 @@ to '0'.
+     the "Consistency model" section.
+ 
+ 
+-5.3. Disabling
++5.3. Replacing
++--------------
++
++All enabled patches might get replaced by a cumulative patch that
++has the .replace flag set.
++
++Once the new patch is enabled and the 'transition" finishes then
++all the functions (struct klp_func) associated with the replaced
++patches are removed from the corresponding struct klp_ops. Also
++the ftrace handler is unregistered and the struct klp_ops is
++freed when the related function is not modified by the new patch
++and func_stack list becomes empty.
++
++See Documentation/livepatch/cumulative-patches.txt for more details.
++
++
++5.4. Disabling
+ --------------
+ 
+ Enabled patches might get disabled by writing '0' to
+@@ -372,7 +393,7 @@ Note that patches must be disabled in exactly the reverse order in which
+ they were enabled. It makes the problem and the implementation much easier.
+ 
+ 
+-5.4. Removing
++5.5. Removing
+ -------------
+ 
+ Module removal is only safe when there are no users of the underlying
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index 662e4cf664b8..a44bc730cc47 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -48,6 +48,7 @@
+  * @old_size:	size of the old function
+  * @new_size:	size of the new function
+  * @kobj_alive: @kobj has been added and needs freeing
++ * @nop:        temporary patch to use the original code again; dyn. allocated
+  * @patched:	the func has been added to the klp_ops list
+  * @transition:	the func is currently being applied or reverted
+  *
+@@ -86,6 +87,7 @@ struct klp_func {
+ 	struct list_head stack_node;
+ 	unsigned long old_size, new_size;
+ 	bool kobj_alive;
++	bool nop;
+ 	bool patched;
+ 	bool transition;
+ };
+@@ -125,6 +127,7 @@ struct klp_callbacks {
+  * @mod:	kernel module associated with the patched object
+  *		(NULL for vmlinux)
+  * @kobj_alive: @kobj has been added and needs freeing
++ * @dynamic:    temporary object for nop functions; dynamically allocated
+  * @patched:	the object's funcs have been added to the klp_ops list
+  */
+ struct klp_object {
+@@ -139,6 +142,7 @@ struct klp_object {
+ 	struct list_head node;
+ 	struct module *mod;
+ 	bool kobj_alive;
++	bool dynamic;
+ 	bool patched;
+ };
+ 
+@@ -146,6 +150,7 @@ struct klp_object {
+  * struct klp_patch - patch structure for live patching
+  * @mod:	reference to the live patch module
+  * @objs:	object entries for kernel objects to be patched
++ * @replace:	replace all already registered patches
+  * @list:	list node for global list of registered patches
+  * @kobj:	kobject for sysfs resources
+  * @obj_list:	dynamic list of the object entries
+@@ -159,6 +164,7 @@ struct klp_patch {
+ 	/* external */
+ 	struct module *mod;
+ 	struct klp_object *objs;
++	bool replace;
+ 
+ 	/* internal */
+ 	struct list_head list;
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index c48f34272473..7092d288cfa6 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -88,6 +88,40 @@ static bool klp_initialized(void)
+ 	return !!klp_root_kobj;
+ }
+ 
++static struct klp_func *klp_find_func(struct klp_object *obj,
++				      struct klp_func *old_func)
++{
++	struct klp_func *func;
++
++	klp_for_each_func(obj, func) {
++		if ((strcmp(old_func->old_name, func->old_name) == 0) &&
++		    (old_func->old_sympos == func->old_sympos)) {
++			return func;
++		}
++	}
++
++	return NULL;
++}
++
++static struct klp_object *klp_find_object(struct klp_patch *patch,
++					  struct klp_object *old_obj)
++{
++	struct klp_object *obj;
++
++	klp_for_each_object(patch, obj) {
++		if (klp_is_module(old_obj)) {
++			if (klp_is_module(obj) &&
++			    strcmp(old_obj->name, obj->name) == 0) {
++				return obj;
++			}
++		} else if (!klp_is_module(obj)) {
++			return obj;
++		}
++	}
++
++	return NULL;
++}
++
+ struct klp_find_arg {
+ 	const char *objname;
+ 	const char *name;
+@@ -415,6 +449,124 @@ static struct attribute *klp_patch_attrs[] = {
+ 	NULL
+ };
+ 
++/*
++ * Dynamically allocated objects and functions.
++ */
++static void klp_free_object_dynamic(struct klp_object *obj)
++{
++	kfree(obj->name);
++	kfree(obj);
++}
++
++static struct klp_object *klp_alloc_object_dynamic(const char *name)
++{
++	struct klp_object *obj;
++
++	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
++	if (!obj)
++		return NULL;
++
++	if (name) {
++		obj->name = kstrdup(name, GFP_KERNEL);
++		if (!obj->name) {
++			kfree(obj);
++			return NULL;
++		}
++	}
++
++	INIT_LIST_HEAD(&obj->func_list);
++	obj->dynamic = true;
++
++	return obj;
++}
++
++static void klp_free_func_nop(struct klp_func *func)
++{
++	kfree(func->old_name);
++	kfree(func);
++}
++
++static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
++					   struct klp_object *obj)
++{
++	struct klp_func *func;
++
++	func = kzalloc(sizeof(*func), GFP_KERNEL);
++	if (!func)
++		return NULL;
++
++	if (old_func->old_name) {
++		func->old_name = kstrdup(old_func->old_name, GFP_KERNEL);
++		if (!func->old_name) {
++			kfree(func);
++			return NULL;
++		}
++	}
++
++	/*
++	 * func->new_func is same as func->old_func. These addresses are
++	 * set when the object is loaded, see klp_init_object_loaded().
++	 */
++	func->old_sympos = old_func->old_sympos;
++	func->nop = true;
++
++	return func;
++}
++
++static int klp_add_object_nops(struct klp_patch *patch,
++			       struct klp_object *old_obj)
++{
++	struct klp_object *obj;
++	struct klp_func *func, *old_func;
++
++	obj = klp_find_object(patch, old_obj);
++
++	if (!obj) {
++		obj = klp_alloc_object_dynamic(old_obj->name);
++		if (!obj)
++			return -ENOMEM;
++
++		list_add_tail(&obj->node, &patch->obj_list);
++	}
++
++	klp_for_each_func(old_obj, old_func) {
++		func = klp_find_func(obj, old_func);
++		if (func)
++			continue;
++
++		func = klp_alloc_func_nop(old_func, obj);
++		if (!func)
++			return -ENOMEM;
++
++		list_add_tail(&func->node, &obj->func_list);
++	}
++
++	return 0;
++}
++
++/*
++ * Add 'nop' functions which simply return to the caller to run
++ * the original function. The 'nop' functions are added to a
++ * patch to facilitate a 'replace' mode.
++ */
++static int klp_add_nops(struct klp_patch *patch)
++{
++	struct klp_patch *old_patch;
++	struct klp_object *old_obj;
++
++	list_for_each_entry(old_patch, &klp_patches, list) {
++		klp_for_each_object(old_patch, old_obj) {
++			int err;
++
++			err = klp_add_object_nops(patch, old_obj);
++			if (err)
++				return err;
++		}
++	}
++
++	return 0;
++}
++
+ static void klp_kobj_release_patch(struct kobject *kobj)
+ {
+ 	struct klp_patch *patch;
+@@ -431,6 +583,12 @@ static struct kobj_type klp_ktype_patch = {
+ 
+ static void klp_kobj_release_object(struct kobject *kobj)
+ {
++	struct klp_object *obj;
++
++	obj = container_of(kobj, struct klp_object, kobj);
++
++	if (obj->dynamic)
++		klp_free_object_dynamic(obj);
+ }
+ 
+ static struct kobj_type klp_ktype_object = {
+@@ -440,6 +598,12 @@ static struct kobj_type klp_ktype_object = {
+ 
+ static void klp_kobj_release_func(struct kobject *kobj)
+ {
++	struct klp_func *func;
++
++	func = container_of(kobj, struct klp_func, kobj);
++
++	if (func->nop)
++		klp_free_func_nop(func);
+ }
+ 
+ static struct kobj_type klp_ktype_func = {
+@@ -456,6 +620,8 @@ static void klp_free_funcs(struct klp_object *obj)
+ 		if (func->kobj_alive) {
+ 			func->kobj_alive = false;
+ 			kobject_put(&func->kobj);
++		} else if (func->nop) {
++			klp_free_func_nop(func);
+ 		}
+ 	}
+ }
+@@ -467,8 +633,12 @@ static void klp_free_object_loaded(struct klp_object *obj)
+ 
+ 	obj->mod = NULL;
+ 
+-	klp_for_each_func(obj, func)
++	klp_for_each_func(obj, func) {
+ 		func->old_func = NULL;
++
++		if (func->nop)
++			func->new_func = NULL;
++	}
+ }
+ 
+ static void klp_free_objects(struct klp_patch *patch)
+@@ -482,6 +652,8 @@ static void klp_free_objects(struct klp_patch *patch)
+ 		if (obj->kobj_alive) {
+ 			obj->kobj_alive = false;
+ 			kobject_put(&obj->kobj);
++		} else if (obj->dynamic) {
++			klp_free_object_dynamic(obj);
+ 		}
+ 	}
+ }
+@@ -545,7 +717,14 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+ {
+ 	int ret;
+ 
+-	if (!func->old_name || !func->new_func)
++	if (!func->old_name)
++		return -EINVAL;
++
++	/*
++	 * NOPs get the address later. The patched module must be loaded,
++	 * see klp_init_object_loaded().
++	 */
++	if (!func->new_func && !func->nop)
+ 		return -EINVAL;
+ 
+ 	if (strlen(func->old_name) >= KSYM_NAME_LEN)
+@@ -607,6 +786,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+ 			return -ENOENT;
+ 		}
+ 
++		if (func->nop)
++			func->new_func = func->old_func;
++
+ 		ret = kallsyms_lookup_size_offset((unsigned long)func->new_func,
+ 						  &func->new_size, NULL);
+ 		if (!ret) {
+@@ -700,6 +882,12 @@ static int klp_init_patch(struct klp_patch *patch)
+ 		return ret;
+ 	patch->kobj_alive = true;
+ 
++	if (patch->replace) {
++		ret = klp_add_nops(patch);
++		if (ret)
++			return ret;
++	}
++
+ 	klp_for_each_object(patch, obj) {
+ 		ret = klp_init_object(patch, obj);
+ 		if (ret)
+@@ -872,6 +1060,35 @@ int klp_enable_patch(struct klp_patch *patch)
+ EXPORT_SYMBOL_GPL(klp_enable_patch);
+ 
+ /*
++ * This function removes replaced patches.
++ *
++ * We could be pretty aggressive here. It is called in the situation where
++ * these structures are no longer accessible. All functions are redirected
++ * by the klp_transition_patch. They use either a new code or they are in
++ * the original code because of the special nop function patches.
++ *
++ * The only exception is when the transition was forced. In this case,
++ * klp_ftrace_handler() might still see the replaced patch on the stack.
++ * Fortunately, it is carefully designed to work with removed functions
++ * thanks to RCU. We only have to keep the patches on the system. Also
++ * this is handled transparently by patch->module_put.
++ */
++void klp_discard_replaced_patches(struct klp_patch *new_patch)
++{
++	struct klp_patch *old_patch, *tmp_patch;
++
++	list_for_each_entry_safe(old_patch, tmp_patch, &klp_patches, list) {
++		if (old_patch == new_patch)
++			return;
++
++		old_patch->enabled = false;
++		klp_unpatch_objects(old_patch);
++		klp_free_patch_start(old_patch);
++		schedule_work(&old_patch->free_work);
++	}
++}
++
++/*
+  * Remove parts of patches that touch a given kernel module. The list of
+  * patches processed might be limited. When limit is NULL, all patches
+  * will be handled.
+diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
+index d4eefc520c08..f6a853adcc00 100644
+--- a/kernel/livepatch/core.h
++++ b/kernel/livepatch/core.h
+@@ -8,6 +8,7 @@ extern struct mutex klp_mutex;
+ extern struct list_head klp_patches;
+ 
+ void klp_free_patch_start(struct klp_patch *patch);
++void klp_discard_replaced_patches(struct klp_patch *new_patch);
+ 
+ static inline bool klp_is_object_loaded(struct klp_object *obj)
+ {
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 130002eaadb8..fe27709d13ea 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -118,7 +118,15 @@ static void notrace klp_ftrace_handler(unsigned long ip,
+ 		}
+ 	}
+ 
++	/*
++	 * NOPs are used to replace existing patches with original code.
++	 * Do nothing! Setting pc would cause an infinite loop.
++	 */
++	if (func->nop)
++		goto unlock;
++
+ 	klp_arch_set_pc(regs, (unsigned long)func->new_func);
++
+ unlock:
+ 	preempt_enable_notrace();
+ }
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index 34d7a3308fde..aee073c8293b 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -85,6 +85,9 @@ static void klp_complete_transition(void)
+ 		 klp_transition_patch->mod->name,
+ 		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
+ 
++	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED)
++		klp_discard_replaced_patches(klp_transition_patch);
++
+ 	if (klp_target_state == KLP_UNPATCHED) {
+ 		/*
+ 		 * All tasks have transitioned to KLP_UNPATCHED so we can now
+-- 
+2.13.7
+
