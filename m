@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F40C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D2DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7ADE21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD22205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="omt9yv/A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7ADE21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkE57SGN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD22205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeK3BYm (ORCPT
+        id S1731008AbeK3BYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:24:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729808AbeK3BYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:24:41 -0500
+        id S1729808AbeK3BYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:24:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D023205C9;
-        Thu, 29 Nov 2018 14:19:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8411921019;
+        Thu, 29 Nov 2018 14:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501150;
-        bh=jXpokSshEgJRKszjxI6Q2jcGvvCCxUOCrUt9Fcf0DbM=;
+        s=default; t=1543501153;
+        bh=mz7T1iGKLSvrpIrQ2I0Zwx5yzdqg0LwDFRSHIXT47A8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=omt9yv/A720fpvOmIkwH/EXlcWmv5N5iHDKtLmSPab/rkgJDLE8VVrndrDc3vaXHs
-         0Jcx1i9a+vAyKrw0+ZlvGUmx5c4TXSagfL+PNQ6BQ+i15FANSephFwZN9Kk6v0JIOM
-         mjZ2gYiqO3sUsV+6uosc08XzO/JHRHkWMILZb36I=
+        b=SkE57SGNOI+9h9/dcIAYqUo9xvdGWO+zzS9JXD9+uyhABFwN86ffSZrrdW+Qq2c2o
+         2QQLLfJpx2TKoWQNzBJBFL9V7HQFB79N6v55TuozRzAr+bSVurEszkdxx4zwwUuC2/
+         6uUQSQD2Kaoveu3I5Ugtt8lgLQ8kAGKYqsqIANjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Francis Therien <frtherien@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 36/86] Input: xpad - use LED API when identifying wireless controllers
-Date:   Thu, 29 Nov 2018 15:12:01 +0100
-Message-Id: <20181129140113.104788905@linuxfoundation.org>
+Subject: [PATCH 4.4 63/86] Input: xpad - add PDP device id 0x02a4
+Date:   Thu, 29 Nov 2018 15:12:28 +0100
+Message-Id: <20181129140115.265817275@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,32 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d9be398afb2c3333716324352d062c50112e4e86 ]
+[ Upstream commit c6c848572f4da0e34ffe0a35364b4db871e13e42 ]
 
-When lighting up the segment identifying wireless controller, Instead of
-sending command directly to the controller, let's do it via LED API (usinf
-led_set_brightness) so that LED object state is in sync with controller
-state and we'll light up the correct segment on resume as well.
+Adds support for a PDP Xbox One controller with device ID
+(0x06ef:0x02a4). The Product string for this device is "PDP Wired
+Controller for Xbox One - Stealth Series | Phantom Black".
 
+Signed-off-by: Francis Therien <frtherien@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 0caced4a68cc..c3a38804cdc0 100644
+index d88d3e0f59fb..298581b0f6c1 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -1142,7 +1142,7 @@ static void xpad_send_led_command(struct usb_xpad *xpad, int command)
-  */
- static void xpad_identify_controller(struct usb_xpad *xpad)
- {
--	xpad_send_led_command(xpad, (xpad->pad_nr % 4) + 2);
-+	led_set_brightness(&xpad->led->led_cdev, (xpad->pad_nr % 4) + 2);
- }
+@@ -230,6 +230,7 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x021f, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+@@ -478,7 +479,8 @@ static const u8 xboxone_hori_init[] = {
  
- static void xpad_led_set(struct led_classdev *led_cdev,
+ /*
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init1[] = {
+ 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
+@@ -486,7 +488,8 @@ static const u8 xboxone_pdp_init1[] = {
+ 
+ /*
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init2[] = {
+ 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
+@@ -524,6 +527,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
+ 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
 -- 
 2.17.1
 
