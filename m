@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D39DC07E85
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1888C04EBA
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74B020863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B629120863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uc4XkjOY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74B020863
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j7gRNaTR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B629120863
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730552AbeK3ETB (ORCPT
+        id S1730576AbeK3ETD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:19:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37026 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730479AbeK3ES7 (ORCPT
+        Thu, 29 Nov 2018 23:19:03 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53164 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730504AbeK3ETC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:18:59 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j10so2682184wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:12:53 -0800 (PST)
+        Thu, 29 Nov 2018 23:19:02 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r11-v6so3066032wmb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:12:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Waq/8fI6AT262jsKSvQj9K7UesrlRkejH4UAHjKMNCA=;
-        b=Uc4XkjOYHS6lq4IwDZn/uFWPGv7LiKhYHci8x235j3KyPlfRryVOQpYtC8dqYYOxcF
-         T+jA1CSFiVwdadzUlxL+FPcGO/KUX2ReQPr3CTMogoETBAIgYuMdz3H25fARNHYpxk2f
-         Y2S7AjhdFVPn3xDHr7QAqc+XLdVX3qy/R0dRA=
+        bh=otiyS0qoWsuunniYKJ1BwM1dERK1qmd7Q4dc5cs0rtA=;
+        b=j7gRNaTRiQ5ED0EKIyqB5OZVqFlopVcjKBcwU7WVTKKDNPA+l+hh3yBjmBd0+ZXCNM
+         rrR87AZhWnRlTg+jbZzCsdue9gXmLeHFBz40pmpno3bSdRjQOP9NLqdYERHBNX+HXkOf
+         MIllGYKc+Lfp3mnThSgb2dqkpQADtQc7ybq/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Waq/8fI6AT262jsKSvQj9K7UesrlRkejH4UAHjKMNCA=;
-        b=P9maF3lDEkzc7iHwFsKis2DukFh/tR0whnzQ7gCy6jeeil0uy36g6GIFMFPV9P4TAG
-         G1himr2cj1Kqsu4w5/n6JvNAOFcVrQDyHdx/YMi7ULQcRAxt7Ns18QuTuHkaKWthYWnw
-         QG5eXIO2bLeXvJLgdPwi7eYgCx+tAmHdO0nzIp2zSmgAK2l4+ceBCq9h+isZu2XitgcK
-         7o9lhIYeVY2ygi0PzOg6apPmY9YB3iCNLtGTauG/Q4eA2Gy7gEKR5hUC9cvAhM+aPgLi
-         XGmrpPgCeFI1npE2t1P0RLGnYxyH1jVZnVTSPP72KdMs35XdV3T8GBOdvgHnIrXVdv5v
-         lusA==
-X-Gm-Message-State: AA+aEWZS2YS08AU5zEczVjp5pFR3NxLV0WdTsJHH8BAkoByA2lWmFqOr
-        gGOjCpEMrON5S+zIdHVE0bv2AQ==
-X-Google-Smtp-Source: AFSGD/U0k8oe7h2NJgR/LFD+jPCPu2HUE3Ret5egBlb5zfKLEHBfnMycPs28v+cFJGfbwmHbl8Akjg==
-X-Received: by 2002:adf:a50c:: with SMTP id i12mr2053360wrb.220.1543511573188;
-        Thu, 29 Nov 2018 09:12:53 -0800 (PST)
+        bh=otiyS0qoWsuunniYKJ1BwM1dERK1qmd7Q4dc5cs0rtA=;
+        b=mJv/13dWVSKnArL7bClPWzGs4ZQBAyBIklvLD0gnn/Hxaf702l9g7p4mCKaMeEyfKE
+         PWCNyWFCavJ9ci8bP1grqDFRNUXApA4d0M7v6Z+vmqf/UXgTrp8qy+bpHrZa1smraN0A
+         TqPVVkZgxFCIqCzQ0tlHY4+C+bIkb7Dp4y0wkWKgsO+7SSqPY5Dfu9h2XEYpoaUdpMUP
+         FKAG5hMDkZ+6qac9CgdQe6dxMxhuXVoP5P4Kggg4KKvQsufId+f4S1zTPqZNvMcfXY+k
+         pBen166m5VssZPWMnySfuSikqMrOnVSWjWvrqd+C8I5hhQoBDI+Ekf33dZom/EHHNQ+0
+         LnrQ==
+X-Gm-Message-State: AA+aEWa6l26ZZMq2RjThiCnCoJmsfXONmQY44943iNsC5Y+TgIq4k3YL
+        keCm6F1qFfR3HHWevuOvHqC9sw==
+X-Google-Smtp-Source: AFSGD/X9sZ+l7hRJl8EcXE4hw/so3sLUTXZ7G/IkKMEe20rFr3fp2Xd+HIW2CP+mFbINTlfLyxFJsQ==
+X-Received: by 2002:a1c:6a01:: with SMTP id f1mr2608832wmc.17.1543511576404;
+        Thu, 29 Nov 2018 09:12:56 -0800 (PST)
 Received: from harold.home ([2a01:cb1d:112:6f00:f070:d240:312e:9f99])
-        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.12.51
+        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.12.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:12:51 -0800 (PST)
+        Thu, 29 Nov 2018 09:12:55 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -76,9 +76,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Sedat Dilek <sedat.dilek@gmail.com>,
         YiFei Zhu <zhuyifei1999@gmail.com>
-Subject: [PATCH 03/11] efi/fdt: Simplify get_fdt flow
-Date:   Thu, 29 Nov 2018 18:12:22 +0100
-Message-Id: <20181129171230.18699-4-ard.biesheuvel@linaro.org>
+Subject: [PATCH 05/11] x86/efi: Unmap EFI boot services code/data regions from efi_pgd
+Date:   Thu, 29 Nov 2018 18:12:24 +0100
+Message-Id: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
 References: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
@@ -89,62 +89,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julien Thierry <julien.thierry@arm.com>
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 
-Reorganize get_fdt lookup loop, clearly showing that:
-- Nothing is done for table entries that do not have fdt_guid
-- Once an entry with fdt_guid is found, break out of the loop
+efi_free_boot_services(), as the name suggests, frees EFI boot services
+code/data regions but forgets to unmap these regions from efi_pgd. This
+means that any code that's running in efi_pgd address space (e.g:
+any EFI runtime service) would still be able to access these regions but
+the contents of these regions would have long been over written by
+someone else. So, it's important to unmap these regions. Hence,
+introduce efi_unmap_pages() to unmap these regions from efi_pgd.
 
-No functional changes.
+After unmapping EFI boot services code/data regions, any illegal access
+by buggy firmware to these regions would result in page fault which will
+be handled by EFI specific fault handler.
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ arch/x86/platform/efi/quirks.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-index a3614f9b5f75..0dc7b4987cc2 100644
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -370,23 +370,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
- {
- 	efi_guid_t fdt_guid = DEVICE_TREE_GUID;
- 	efi_config_table_t *tables;
--	void *fdt;
- 	int i;
- 
--	tables = (efi_config_table_t *) sys_table->tables;
--	fdt = NULL;
-+	tables = (efi_config_table_t *)sys_table->tables;
- 
- 	for (i = 0; i < sys_table->nr_tables; i++) {
--		if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
--			fdt = (void *) tables[i].table;
--			if (fdt_check_header(fdt) != 0) {
--				pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
--				return NULL;
--			}
--			*fdt_size = fdt_totalsize(fdt);
--			break;
-+		void *fdt;
-+
-+		if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
-+			continue;
-+
-+		fdt = (void *)tables[i].table;
-+		if (fdt_check_header(fdt) != 0) {
-+			pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
-+			return NULL;
- 		}
-+		*fdt_size = fdt_totalsize(fdt);
-+		return fdt;
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 95e77a667ba5..09e811b9da26 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -369,6 +369,24 @@ void __init efi_reserve_boot_services(void)
  	}
- 
--	return fdt;
-+	return NULL;
  }
+ 
++/*
++ * Apart from having VA mappings for EFI boot services code/data regions,
++ * (duplicate) 1:1 mappings were also created as a quirk for buggy firmware. So,
++ * unmap both 1:1 and VA mappings.
++ */
++static void __init efi_unmap_pages(efi_memory_desc_t *md)
++{
++	pgd_t *pgd = efi_mm.pgd;
++	u64 pa = md->phys_addr;
++	u64 va = md->virt_addr;
++
++	if (kernel_unmap_pages_in_pgd(pgd, pa, md->num_pages))
++		pr_err("Failed to unmap 1:1 mapping for 0x%llx\n", pa);
++
++	if (kernel_unmap_pages_in_pgd(pgd, va, md->num_pages))
++		pr_err("Failed to unmap VA mapping for 0x%llx\n", va);
++}
++
+ void __init efi_free_boot_services(void)
+ {
+ 	phys_addr_t new_phys, new_size;
+@@ -393,6 +411,13 @@ void __init efi_free_boot_services(void)
+ 			continue;
+ 		}
+ 
++		/*
++		 * Before calling set_virtual_address_map(), EFI boot services
++		 * code/data regions were mapped as a quirk for buggy firmware.
++		 * Unmap them from efi_pgd before freeing them up.
++		 */
++		efi_unmap_pages(md);
++
+ 		/*
+ 		 * Nasty quirk: if all sub-1MB memory is used for boot
+ 		 * services, we can get here without having allocated the
 -- 
 2.19.1
 
