@@ -2,61 +2,61 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29AFC04EBA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FB3C43441
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9CE214C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF502148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fz2hiKsm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9CE214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1LsSzg0j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF502148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388346AbeK3Ben (ORCPT
+        id S2388333AbeK3Ben (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 29 Nov 2018 20:34:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36108 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:36044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728870AbeK3Ben (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:43 -0500
+        id S1731995AbeK3Bel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:34:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 249D421479;
-        Thu, 29 Nov 2018 14:29:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0D682145D;
+        Thu, 29 Nov 2018 14:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501750;
-        bh=o+SLZwRx/MvWf+pex+E/Ad+fOVYSu50M7DkzHdZfuIE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fz2hiKsmqWRqblwWzzKyNWIgLBHn9HRQlEGLfbXZ+1zT0623czwMO6aqgSX2hPETW
-         01Frv25jQJiAPwQYxOw0srMrFfyRqSpbrQKp+Dw4PJkXiDIkv7Ak1qosLuD6/E6FUM
-         wPlF1LoeESAg1SWoRFhFy3Tg7TTlGBZW7IY6tIAs=
+        s=default; t=1543501748;
+        bh=ZZVsx0aYFaUG3YMcTpoIojw5vntPXuttn7/DKvenhb0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1LsSzg0js3jVTXWvcF5xUmoQN58FV7SUp3cHnEjmfC/xAvfJvVPgi2Aec8UnhSdQR
+         q0sVNdEssBn/H8Czg2p7WSuyAeoqV63q6oCtOfHfzIVFy08nRbEcG/pbQpHALjQ615
+         scq2dDDLqHcKZrkD/qrz+rKvff09LcV89eBXQ1ck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Amit Shah <aams@amazon.com>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.19 018/110] Documentation/security-bugs: Postpone fix publication in exceptional cases
-Date:   Thu, 29 Nov 2018 15:11:49 +0100
-Message-Id: <20181129135921.984767872@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.19 000/110] 4.19.6-stable review
+Date:   Thu, 29 Nov 2018 15:11:31 +0100
+Message-Id: <20181129135921.231283053@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
-References: <20181129135921.231283053@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.6-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.19.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.19.6-rc1
+X-KernelTest-Deadline: 2018-12-01T13:59+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,96 +64,485 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.19.6 release.
+There are 110 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Dec  1 13:58:54 UTC 2018.
+Anything received after that time might be too late.
 
-From: Will Deacon <will.deacon@arm.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.6-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+and the diffstat can be found below.
 
-commit 544b03da39e2d7b4961d3163976ed4bfb1fac509 upstream.
+thanks,
 
-At the request of the reporter, the Linux kernel security team offers to
-postpone the publishing of a fix for up to 5 business days from the date
-of a report.
+greg k-h
 
-While it is generally undesirable to keep a fix private after it has
-been developed, this short window is intended to allow distributions to
-package the fix into their kernel builds and permits early inclusion of
-the security team in the case of a co-ordinated disclosure with other
-parties. Unfortunately, discussions with major Linux distributions and
-cloud providers has revealed that 5 business days is not sufficient to
-achieve either of these two goals.
+-------------
+Pseudo-Shortlog of commits:
 
-As an example, cloud providers need to roll out KVM security fixes to a
-global fleet of hosts with sufficient early ramp-up and monitoring. An
-end-to-end timeline of less than two weeks dramatically cuts into the
-amount of early validation and increases the chance of guest-visible
-regressions.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.19.6-rc1
 
-The consequence of this timeline mismatch is that security issues are
-commonly fixed without the involvement of the Linux kernel security team
-and are instead analysed and addressed by an ad-hoc group of developers
-across companies contributing to Linux. In some cases, mainline (and
-therefore the official stable kernels) can be left to languish for
-extended periods of time. This undermines the Linux kernel security
-process and puts upstream developers in a difficult position should they
-find themselves involved with an undisclosed security problem that they
-are unable to report due to restrictions from their employer.
+Hugues Fruchet <hugues.fruchet@st.com>
+    media: ov5640: fix auto controls values when switching to manual mode
 
-To accommodate the needs of these users of the Linux kernel and
-encourage them to engage with the Linux security team when security
-issues are first uncovered, extend the maximum period for which fixes
-may be delayed to 7 calendar days, or 14 calendar days in exceptional
-cases, where the logistics of QA and large scale rollouts specifically
-need to be accommodated. This brings parity with the linux-distros@
-maximum embargo period of 14 calendar days.
+Hugues Fruchet <hugues.fruchet@st.com>
+    media: ov5640: fix wrong binning value in exposure calculation
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Amit Shah <aams@amazon.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
-Co-developed-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hugues Fruchet <hugues.fruchet@st.com>
+    media: ov5640: fix auto gain & exposure when changing mode
 
----
- Documentation/admin-guide/security-bugs.rst |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Hugues Fruchet <hugues.fruchet@st.com>
+    media: ov5640: fix exposure regression
 
---- a/Documentation/admin-guide/security-bugs.rst
-+++ b/Documentation/admin-guide/security-bugs.rst
-@@ -32,16 +32,17 @@ Disclosure and embargoed information
- The security list is not a disclosure channel.  For that, see Coordination
- below.
- 
--Once a robust fix has been developed, our preference is to release the
--fix in a timely fashion, treating it no differently than any of the other
--thousands of changes and fixes the Linux kernel project releases every
--month.
-+Once a robust fix has been developed, the release process starts.  Fixes
-+for publicly known bugs are released immediately.
- 
--However, at the request of the reporter, we will postpone releasing the
--fix for up to 5 business days after the date of the report or after the
--embargo has lifted; whichever comes first.  The only exception to that
--rule is if the bug is publicly known, in which case the preference is to
--release the fix as soon as it's available.
-+Although our preference is to release fixes for publicly undisclosed bugs
-+as soon as they become available, this may be postponed at the request of
-+the reporter or an affected party for up to 7 calendar days from the start
-+of the release process, with an exceptional extension to 14 calendar days
-+if it is agreed that the criticality of the bug requires more time.  The
-+only valid reason for deferring the publication of a fix is to accommodate
-+the logistics of QA and large scale rollouts which require release
-+coordination.
- 
- Whilst embargoed information may be shared with trusted individuals in
- order to develop a fix, such information will not be published alongside
+Jacopo Mondi <jacopo@jmondi.org>
+    media: ov5640: Fix timings setup code
+
+Jacopo Mondi <jacopo@jmondi.org>
+    media: ov5640: Re-work MIPI startup sequence
+
+Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+    rcu: Make need_resched() respond to urgent RCU-QS needs
+
+Andreas Gruenbacher <agruenba@redhat.com>
+    gfs2: Fix iomap buffer head reference counting bug
+
+Greg Kroah-Hartman <greg@kroah.com>
+    tty: wipe buffer if not echoing data
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    tty: wipe buffer.
+
+Sebastien Boisvert <sebhtml@videotron.qc.ca>
+    include/linux/pfn_t.h: force '~' to be parsed as an unary operator
+
+Matthew Wilcox <willy@infradead.org>
+    dax: Avoid losing wakeup in dax_lock_mapping_entry
+
+Michal Hocko <mhocko@suse.com>
+    mm, page_alloc: check for max order in hot path
+
+Yufen Yu <yuyufen@huawei.com>
+    tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
+
+Michal Hocko <mhocko@suse.com>
+    mm, memory_hotplug: check zone_movable in has_unmovable_pages
+
+Vitaly Wool <vitalywool@gmail.com>
+    z3fold: fix possible reclaim races
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    efi/arm: Revert deferred unmap of early memmap mapping
+
+Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+    powerpc/numa: Suppress "VPHN is not supported" messages
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4: Fix an Oops during delegation callbacks
+
+Prarit Bhargava <prarit@redhat.com>
+    kdb: Use strscpy with destination buffer size
+
+Philip Yang <Philip.Yang@amd.com>
+    drm/amdgpu: fix bug with IH ring setup
+
+Olof Johansson <olof@lixom.net>
+    RISC-V: Silence some module warnings on 32-bit
+
+David Abdurachmanov <david.abdurachmanov@gmail.com>
+    riscv: add missing vdso_install target
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    SUNRPC: Fix a bogus get/put in generic_key_to_expire()
+
+Hannes Reinecke <hare@suse.com>
+    block: copy ioprio in __bio_clone_fast() and bounce
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ARM: spectre-v2: per-CPU vtables to work around big.Little systems
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ARM: add PROC_VTABLE and PROC_TABLE macros
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ARM: clean up per-processor check_bugs method call
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ARM: make lookup_processor_type() non-__init
+
+Kan Liang <kan.liang@linux.intel.com>
+    perf/x86/intel/uncore: Add more IMC PCI IDs for KabyLake and CoffeeLake CPUs
+
+Patrick Bellasi <patrick.bellasi@arm.com>
+    sched/fair: Fix cpu_util_wake() for 'execl' type workloads
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/io: Fix the IO workarounds code to work with Radix
+
+Jens Axboe <axboe@kernel.dk>
+    floppy: fix race condition in __floppy_read_block_0()
+
+Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    crypto: simd - correctly take reqsize of wrapped skcipher into account
+
+Xulin Sun <xulin.sun@windriver.com>
+    rtc: pcf2127: fix a kmemleak caused in pcf2127_i2c_gather_write
+
+Hans de Goede <hdegoede@redhat.com>
+    rtc: cmos: Do not export alarm rtc_ops when we do not support alarms
+
+Anson Huang <anson.huang@nxp.com>
+    cpufreq: imx6q: add return value check for voltage scale
+
+Scott Wood <oss@buserror.net>
+    KVM: PPC: Move and undef TRACE_INCLUDE_PATH/FILE
+
+YueHaibing <yuehaibing@huawei.com>
+    scsi: hisi_sas: Remove set but not used variable 'dq_list'
+
+Arnd Bergmann <arnd@arndb.de>
+    scsi: lpfc: fix remoteport access
+
+Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+    tools/testing/nvdimm: Fix the array size for dimm devices.
+
+Jerome Brunet <jbrunet@baylibre.com>
+    pinctrl: meson: fix meson8b ao pull register bits
+
+Jerome Brunet <jbrunet@baylibre.com>
+    pinctrl: meson: fix meson8 ao pull register bits
+
+Jerome Brunet <jbrunet@baylibre.com>
+    pinctrl: meson: fix gxl ao pull register bits
+
+Jerome Brunet <jbrunet@baylibre.com>
+    pinctrl: meson: fix gxbb ao pull register bits
+
+Jerome Brunet <jbrunet@baylibre.com>
+    pinctrl: meson: fix pinconf bias disable
+
+Amir Goldstein <amir73il@gmail.com>
+    fanotify: fix handling of events on child sub-directory
+
+Amir Goldstein <amir73il@gmail.com>
+    fsnotify: generalize handling of extra event flags
+
+Michael J. Ruhl <michael.j.ruhl@intel.com>
+    IB/hfi1: Eliminate races in the SDMA send error path
+
+Erik Schmauss <erik.schmauss@intel.com>
+    ACPICA: AML interpreter: add region addresses in global list during initialization
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: flexcan: remove not needed struct flexcan_priv::tx_mb and struct flexcan_priv::tx_mb_idx
+
+Alexander Stein <alexander.stein@systec-electronic.com>
+    can: flexcan: Always use last mailbox for TX
+
+Lukas Wunner <lukas@wunner.de>
+    can: hi311x: Use level-triggered interrupt
+
+Oliver Hartkopp <socketcan@hartkopp.net>
+    can: raw: check for CAN FD capable netdev in raw_sendmsg()
+
+Oleksij Rempel <o.rempel@pengutronix.de>
+    can: flexcan: handle tx-complete CAN frames via rx-offload infrastructure
+
+Oleksij Rempel <o.rempel@pengutronix.de>
+    can: flexcan: use can_rx_offload_queue_sorted() for flexcan_irq_bus_*()
+
+Oleksij Rempel <o.rempel@pengutronix.de>
+    can: rx-offload: rename can_rx_offload_irq_queue_err_skb() to can_rx_offload_queue_tail()
+
+Oleksij Rempel <o.rempel@pengutronix.de>
+    can: rx-offload: introduce can_rx_offload_get_echo_skb() and can_rx_offload_queue_sorted() functions
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): Don't crash the kernel if can_priv::echo_skb is accessed out of bounds
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): replace struct can_frame by canfd_frame to access frame length
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: can_get_echo_skb(): factor out non sending code to __can_get_echo_skb()
+
+Pankaj Bansal <pankaj.bansal@nxp.com>
+    can: flexcan: Unlock the MB unconditionally
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/ast: Remove existing framebuffers before loading driver
+
+Y.C. Chen <yc_chen@aspeedtech.com>
+    drm/ast: fixed cursor may disappear sometimes
+
+Y.C. Chen <yc_chen@aspeedtech.com>
+    drm/ast: change resolution may cause screen blurred
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915: Disable LP3 watermarks on all SNB machines
+
+Felix Kuehling <Felix.Kuehling@amd.com>
+    drm/amdgpu: Fix oops when pp_funcs->switch_power_profile is unset
+
+Boris Brezillon <boris.brezillon@bootlin.com>
+    drm/vc4: Set ->legacy_cursor_update to false when doing non-async updates
+
+Takashi Iwai <tiwai@suse.de>
+    drm/amdgpu: Add missing firmware entry for HAINAN
+
+Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+    drm/fb-helper: Blacklist writeback when adding connectors to fbdev
+
+Eric Dumazet <edumazet@google.com>
+    tcp: do not release socket ownership in tcp_close()
+
+Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+    mm/memory.c: recheck page table entry with page table lock held
+
+Dmitry Vyukov <dvyukov@google.com>
+    mm: don't warn about large allocations for slab
+
+Eric Dumazet <edumazet@google.com>
+    llc: do not use sk_eat_skb()
+
+Andrew Price <anprice@redhat.com>
+    gfs2: Don't leave s_fs_info pointing to freed memory in init_sbd
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: clear the transport of some out_chunk_list chunks in sctp_assoc_rm_peer
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    bfs: add sanity check at bfs_fill_super()
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: synaptics - avoid using uninitialized variable when probing
+
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+    selinux: Add __GFP_NOWARN to allocation at str_read()
+
+Dominique Martinet <dominique.martinet@cea.fr>
+    v9fs_dir_readdir: fix double-free on p9stat_read error
+
+Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+    tools/power/cpupower: fix compilation with STATIC=true
+
+Keerthy <j-keerthy@ti.com>
+    opp: ti-opp-supply: Correct the supply in _get_optimal_vdd_voltage call
+
+Keerthy <j-keerthy@ti.com>
+    opp: ti-opp-supply: Dynamically update u_volt_min
+
+Rafał Miłecki <rafal@milecki.pl>
+    brcmfmac: fix reporting support for 160 MHz channels
+
+Luca Coelho <luciano.coelho@intel.com>
+    iwlwifi: mvm: don't use SAR Geo if basic SAR is not used
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: fix regulatory domain update when the firmware starts
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: support sta_statistics() even on older firmware
+
+Matt Chen <matt.chen@intel.com>
+    iwlwifi: fix wrong WGDS_WIFI_DATA_SIZE
+
+Vladimir Zapolskiy <vz@mleia.com>
+    gpio: don't free unallocated ida on gpiochip_add_data_with_key() error path
+
+Adrian Hunter <adrian.hunter@intel.com>
+    mmc: sdhci-pci: Workaround GLK firmware failing to restore the tuning value
+
+Rajat Jain <rajatja@google.com>
+    mmc: sdhci-pci: Try "cd" for card-detect lookup before using NULL
+
+Will Deacon <will.deacon@arm.com>
+    Documentation/security-bugs: Postpone fix publication in exceptional cases
+
+Will Deacon <will.deacon@arm.com>
+    Documentation/security-bugs: Clarify treatment of embargoed information
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    MAINTAINERS: Add Sasha as a stable branch maintainer
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: oss: Use kvzalloc() for local buffer allocations
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
+
+Cherian, George <George.Cherian@cavium.com>
+    xhci: Add quirk to workaround the errata seen on Cavium Thunder-X2 Soc
+
+Aaron Ma <aaron.ma@canonical.com>
+    usb: xhci: fix timeout for transition from RExit to U0
+
+Aaron Ma <aaron.ma@canonical.com>
+    usb: xhci: fix uninitialized completion when USB3 port got wrong status
+
+Sandeep Singh <sandeep.singh@amd.com>
+    xhci: Add check for invalid byte size error when UAS devices are connected.
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: handle port status events for removed USB3 hcd
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: Fix leaking USB3 shared_hcd at xhci removal
+
+Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+    usb: dwc3: Fix NULL pointer exception in dwc3_pci_remove()
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    usb: dwc3: core: Clean up ULPI device
+
+Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+    usb: dwc3: gadget: Properly check last unaligned/zero chain TRB
+
+Felipe Balbi <felipe.balbi@linux.intel.com>
+    usb: dwc3: gadget: fix ISOC TRB type on unaligned transfers
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    usb: core: Fix hub port connection events lost
+
+Alistair Strachan <astrachan@google.com>
+    efi/libstub: arm: support building with clang
+
+Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+    HID: steam: remove input device when a hid client is running.
+
+
+-------------
+
+Diffstat:
+
+ Documentation/admin-guide/security-bugs.rst        |  48 ++--
+ .../devicetree/bindings/net/can/holt_hi311x.txt    |   2 +-
+ MAINTAINERS                                        |   1 +
+ Makefile                                           |   4 +-
+ arch/arm/include/asm/proc-fns.h                    |  61 ++++-
+ arch/arm/kernel/bugs.c                             |   4 +-
+ arch/arm/kernel/head-common.S                      |   6 +-
+ arch/arm/kernel/setup.c                            |   9 +-
+ arch/arm/kernel/smp.c                              |  31 +++
+ arch/arm/mm/proc-v7-bugs.c                         |  17 +-
+ arch/powerpc/include/asm/io.h                      |  20 +-
+ arch/powerpc/kvm/trace.h                           |   8 +-
+ arch/powerpc/kvm/trace_booke.h                     |   9 +-
+ arch/powerpc/kvm/trace_hv.h                        |   9 +-
+ arch/powerpc/kvm/trace_pr.h                        |   9 +-
+ arch/powerpc/mm/numa.c                             |   2 +-
+ arch/riscv/Makefile                                |   4 +
+ arch/riscv/kernel/module.c                         |  12 +-
+ arch/x86/events/intel/uncore_snb.c                 | 115 ++++++++-
+ block/bio.c                                        |   1 +
+ block/bounce.c                                     |   1 +
+ crypto/simd.c                                      |   5 +-
+ drivers/acpi/acpica/dsopcode.c                     |   4 +
+ drivers/block/floppy.c                             |   3 +-
+ drivers/cpufreq/imx6q-cpufreq.c                    |   7 +-
+ drivers/firmware/efi/arm-init.c                    |   4 +
+ drivers/firmware/efi/arm-runtime.c                 |   2 +-
+ drivers/firmware/efi/libstub/Makefile              |   3 +-
+ drivers/firmware/efi/memmap.c                      |   3 +
+ drivers/gpio/gpiolib.c                             |   5 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c         |   7 +-
+ drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c              |   1 +
+ drivers/gpu/drm/amd/amdgpu/vega10_ih.c             |   2 +-
+ drivers/gpu/drm/ast/ast_drv.c                      |  21 ++
+ drivers/gpu/drm/ast/ast_mode.c                     |   3 +-
+ drivers/gpu/drm/drm_fb_helper.c                    |   3 +
+ drivers/gpu/drm/i915/intel_pm.c                    |  41 +++-
+ drivers/gpu/drm/vc4/vc4_kms.c                      |   6 +
+ drivers/hid/hid-steam.c                            | 154 +++++++-----
+ drivers/infiniband/hw/hfi1/user_sdma.c             |  87 +++----
+ drivers/infiniband/hw/hfi1/user_sdma.h             |   3 -
+ drivers/input/mouse/synaptics.c                    |   4 +-
+ drivers/media/i2c/ov5640.c                         | 263 +++++++++++++--------
+ drivers/mmc/host/sdhci-pci-core.c                  |  86 ++++++-
+ drivers/net/can/dev.c                              |  48 +++-
+ drivers/net/can/flexcan.c                          | 108 +++++----
+ drivers/net/can/rx-offload.c                       |  51 +++-
+ drivers/net/can/spi/hi311x.c                       |   2 +-
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c         |   3 +-
+ drivers/net/wireless/intel/iwlwifi/fw/acpi.h       |   4 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  38 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |  12 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c       |   5 +-
+ drivers/opp/ti-opp-supply.c                        |   5 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson.c              |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c             |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c            |   2 +-
+ drivers/rtc/rtc-cmos.c                             |  16 +-
+ drivers/rtc/rtc-pcf2127.c                          |   3 +
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c             |   2 -
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c             |   2 -
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c             |   2 -
+ drivers/scsi/lpfc/lpfc_debugfs.c                   |   2 +
+ drivers/tty/n_tty.c                                |  20 +-
+ drivers/tty/tty_buffer.c                           |   6 +-
+ drivers/usb/core/hub.c                             |   4 +-
+ drivers/usb/dwc3/core.c                            |   1 +
+ drivers/usb/dwc3/dwc3-pci.c                        |   4 +-
+ drivers/usb/dwc3/gadget.c                          |   8 +-
+ drivers/usb/host/xhci-histb.c                      |   6 +-
+ drivers/usb/host/xhci-hub.c                        |  66 ++++--
+ drivers/usb/host/xhci-mtk.c                        |   6 +-
+ drivers/usb/host/xhci-pci.c                        |   6 +
+ drivers/usb/host/xhci-plat.c                       |   6 +-
+ drivers/usb/host/xhci-ring.c                       |  45 +++-
+ drivers/usb/host/xhci-tegra.c                      |   1 +
+ drivers/usb/host/xhci.c                            |   2 -
+ drivers/usb/host/xhci.h                            |   3 +-
+ fs/9p/vfs_dir.c                                    |  11 -
+ fs/bfs/inode.c                                     |   9 +-
+ fs/dax.c                                           |   7 +-
+ fs/gfs2/bmap.c                                     |  40 ++--
+ fs/gfs2/ops_fstype.c                               |   2 +-
+ fs/nfs/callback_proc.c                             |   4 +-
+ fs/nfs/delegation.c                                |  11 +-
+ fs/notify/fanotify/fanotify.c                      |  10 +-
+ fs/notify/fsnotify.c                               |  15 +-
+ include/linux/can/dev.h                            |   1 +
+ include/linux/can/rx-offload.h                     |   7 +-
+ include/linux/fsnotify_backend.h                   |   9 +-
+ include/linux/pfn_t.h                              |   2 +-
+ include/net/sock.h                                 |   1 +
+ kernel/debug/kdb/kdb_io.c                          |  15 +-
+ kernel/debug/kdb/kdb_private.h                     |   2 +-
+ kernel/debug/kdb/kdb_support.c                     |  10 +-
+ kernel/rcu/tree.c                                  |   9 +
+ kernel/sched/fair.c                                |  62 +++--
+ mm/memory.c                                        |  34 ++-
+ mm/page_alloc.c                                    |  28 ++-
+ mm/shmem.c                                         |   4 +-
+ mm/slab.c                                          |   4 +
+ mm/slab_common.c                                   |  12 +-
+ mm/z3fold.c                                        | 101 +++++---
+ net/can/raw.c                                      |  15 +-
+ net/core/sock.c                                    |   2 +-
+ net/ipv4/tcp.c                                     |  11 +-
+ net/llc/af_llc.c                                   |  11 +-
+ net/sctp/associola.c                               |  10 +-
+ net/sunrpc/auth_generic.c                          |   8 +-
+ security/selinux/ss/policydb.c                     |   2 +-
+ sound/core/oss/pcm_oss.c                           |   6 +-
+ sound/core/oss/pcm_plugin.c                        |   6 +-
+ tools/power/cpupower/bench/Makefile                |   2 +-
+ tools/power/cpupower/lib/cpufreq.c                 |   2 +-
+ tools/power/cpupower/lib/cpuidle.c                 |   2 +-
+ tools/power/cpupower/lib/cpupower.c                |   4 +-
+ tools/power/cpupower/lib/cpupower_intern.h         |   2 +-
+ tools/testing/nvdimm/test/nfit.c                   |   8 +-
+ 120 files changed, 1435 insertions(+), 653 deletions(-)
 
 
