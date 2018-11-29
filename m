@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF93C41538
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0342AC07E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782DD21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B829C21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:48:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HC6R7vkB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782DD21104
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bvcYZ3GH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B829C21104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731013AbeK3Exr (ORCPT
+        id S1731240AbeK3Eyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:53:47 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33102 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730941AbeK3Exq (ORCPT
+        Thu, 29 Nov 2018 23:54:44 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36419 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731069AbeK3Exz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:53:46 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v1-v6so2548698ljd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:35 -0800 (PST)
+        Thu, 29 Nov 2018 23:53:55 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g11-v6so2541498ljk.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RtdXqoS3gVAQPCLor+MB+aJuhRHlqOlmuJfNLhUnBd0=;
-        b=HC6R7vkBxIVeReHiAW/l7VN+GiG5KttIpTe0k0AqV1hXefU42ypirVgAKNl6NVij5H
-         txPNau3G5O/NCT/MuPS2rUKWtErXXmXXxcxlO5t0f/UEPJlhLfvbS7G+VZYr4xUJL7tJ
-         ay4ymuPR6i7iB28pio0Hym1SmYgxxpasGofW8=
+        bh=j+EEeIQ8OjgKMk3l12109V9jWSNPdJq8ZcmjQ3ZkaQ8=;
+        b=bvcYZ3GHOuNglPJo4PiEY9K7KfzwSQGeJ4tmewO/g/Yu3xWHquRm0tnoluQCIN8Gnb
+         AjHWuHuSFdoKAwmZlQ+e2qP+HemBxddn0JGzfNKjQDsQr5Ab5t+zKWM5A1nR8dCKa2iZ
+         ssMiBbaqHyQvPJYCg8Ipl6Gluutr4BDnX/nmw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RtdXqoS3gVAQPCLor+MB+aJuhRHlqOlmuJfNLhUnBd0=;
-        b=E0ONDlymoU6czMHtIHAKf8sjf2A373Ze1nr6HW4Xe+DbrVsggvq+j2sidkd5DEDa9G
-         Mo4Q0I0SZao7+ygRreV2eRDDdnngb6UY937GZmYXm00cE0AEmJZDJ8P6YztYMAliz6FO
-         vUIa691XhRjYiGht/p+8+NaNlZfb++zoXksxRJ/9+Tt3/0Jun4QhT4HyEEsaLINK+q0Q
-         Dnptbq7QgDl+4KyzeSnsRNhO/kJzIJQFAr2XwEe5UrPENHsajcW7S/LuO2jZoJeg6Gqj
-         eigly/0KjIHh9p+F5pjNK+bbwKu3VBsRkQY9bNhtBQRPSaOlCWmDXDBCchWlW0oOF1eT
-         9jfA==
-X-Gm-Message-State: AA+aEWaNjQRpBwOCNcoDYcU5yXSsbj3zhT5diJqD701J6AdQ1N7GJsrC
-        47wf/F2b5KophNKY9uKu7q2eEg==
-X-Google-Smtp-Source: AFSGD/UoOMLd8KL9ke7+41ey3VhAhq3w0txzumISXYpr0GGW8iXSuRUe08J7o+7bUUEIF8A7rc1LPA==
-X-Received: by 2002:a2e:1241:: with SMTP id t62-v6mr1548248lje.171.1543513654558;
-        Thu, 29 Nov 2018 09:47:34 -0800 (PST)
+        bh=j+EEeIQ8OjgKMk3l12109V9jWSNPdJq8ZcmjQ3ZkaQ8=;
+        b=CuTV4f7kwcLl81XyGft0j6CPGoLESXrfeAV4n4RgepZ+GvZssgthcpoadOGv+BC9w0
+         dtR0uxVnUmta43iuUaoYJkxG5UDnn/Wxw+XaXwIrW+aOghVOHY7PHSVx0mHj3H3KbJpp
+         ks9AoriyIKTr9ar/yhSvbYEr+DDkPLs3/SUu6CXHf9u/S0IiOUNezMNC26L003XDfL2r
+         +2WJfd+qJrUkKAQWgTm7hs9gEngilcRn+RyScuqY92pKQsI5zyLT9pwV3jAyfCKUyZwK
+         a1v/8uiHmPGBJS4q5m6m5+kuebTMfAZAefK5fwkZ4lJGzMPczTIFAxsNL4osTmbrFL5k
+         EsOw==
+X-Gm-Message-State: AA+aEWaHsRWP2NMBmHFn+QH1bPdhFU4gLxh64d777GqTzxmWdmvLUYaF
+        NWvgPHuHuC3c1DAYdpavW9hjXA==
+X-Google-Smtp-Source: AFSGD/UGOq9K9BxR66pfI/HJC8oYOClHD0rw9Tx1kGcB89/sYAmm9Q3eO+0KlfFRBTfNVzRUVMCVOA==
+X-Received: by 2002:a2e:91d1:: with SMTP id u17-v6mr1720629ljg.160.1543513663478;
+        Thu, 29 Nov 2018 09:47:43 -0800 (PST)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.33
+        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:47:33 -0800 (PST)
+        Thu, 29 Nov 2018 09:47:42 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -73,9 +73,9 @@ Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 15/27] drivers: firmware: psci: Announce support for OS initiated suspend mode
-Date:   Thu, 29 Nov 2018 18:46:48 +0100
-Message-Id: <20181129174700.16585-16-ulf.hansson@linaro.org>
+Subject: [PATCH v10 20/27] drivers: firmware: psci: Introduce psci_dt_topology_init()
+Date:   Thu, 29 Nov 2018 18:46:53 +0100
+Message-Id: <20181129174700.16585-21-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129174700.16585-1-ulf.hansson@linaro.org>
 References: <20181129174700.16585-1-ulf.hansson@linaro.org>
@@ -84,13 +84,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PSCI firmware v1.0+, supports two different modes for CPU_SUSPEND. The
-Platform Coordinated mode, which is the default and mandatory mode, while
-support for the OS initiated mode is optional.
+To be able to initiate the PM domain data structures, let's export a new
+init function, psci_dt_topology_init() and make it call
+psci_dt_init_pm_domains(). Following changes to the ARM64 code, invokes
+this new init function.
 
-This change introduces initial support for the OS initiated mode, in way
-that it adds the related PSCI bits from the spec and prints a message in
-the log to inform whether the mode is supported by the PSCI FW.
+At first glance, it may seem like feasible idea to hook into the existing
+psci_dt_init() function, instead of adding yet another init function for
+PSCI. However, this doesn't work because psci_dt_init() is called early in
+the boot sequence, which means allocating dynamic data structures isn't yet
+possible.
+
+Moreover, additional following changes need to understand whether the
+hierarchical PM domain topology has been successfully initialized,
+therefore let's store the result from the initialization attempt into an
+internal PSCI flag.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
@@ -98,78 +106,67 @@ Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v10:
-	- None.
+	- Simplified patch, by moving PSCI OSI related changes out into other
+	  more appropriate patches.
+	- Add a flag to store the result of the PM domain initialization.
+	- Updated and clarified changelog.
 
 ---
- drivers/firmware/psci/psci.c | 21 ++++++++++++++++++++-
- include/uapi/linux/psci.h    |  5 +++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/firmware/psci/psci.c | 18 ++++++++++++++++++
+ include/linux/psci.h         |  2 ++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index 6bfa47cbd174..4f0cbc95e41b 100644
+index 19af2093151b..5b481e91ccab 100644
 --- a/drivers/firmware/psci/psci.c
 +++ b/drivers/firmware/psci/psci.c
-@@ -95,6 +95,11 @@ static inline bool psci_has_ext_power_state(void)
- 				PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK;
- }
+@@ -91,6 +91,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
  
-+static inline bool psci_has_osi_support(void)
-+{
-+	return psci_cpu_suspend_feature & PSCI_1_0_OS_INITIATED;
-+}
-+
- static inline bool psci_power_state_loses_context(u32 state)
+ static DEFINE_PER_CPU(u32, domain_state);
+ static u32 psci_cpu_suspend_feature;
++static bool psci_dt_topology;
+ 
+ u32 psci_get_domain_state(void)
  {
- 	const u32 mask = psci_has_ext_power_state() ?
-@@ -659,10 +664,24 @@ static int __init psci_0_1_init(struct device_node *np)
- 	return 0;
+@@ -741,6 +742,23 @@ int __init psci_dt_init(void)
+ 	return ret;
  }
  
-+static int __init psci_1_0_init(struct device_node *np)
++int __init psci_dt_topology_init(void)
 +{
-+	int err;
++	struct device_node *np;
++	int ret;
 +
-+	err = psci_0_2_init(np);
-+	if (err)
-+		return err;
++	np = of_find_matching_node_and_match(NULL, psci_of_match, NULL);
++	if (!np)
++		return -ENODEV;
 +
-+	if (psci_has_osi_support())
-+		pr_info("OSI mode supported.\n");
++	/* Initialize the CPU PM domains based on topology described in DT. */
++	ret = psci_dt_init_pm_domains(np);
++	psci_dt_topology = ret > 0;
 +
-+	return 0;
++	of_node_put(np);
++	return ret;
 +}
 +
- static const struct of_device_id psci_of_match[] __initconst = {
- 	{ .compatible = "arm,psci",	.data = psci_0_1_init},
- 	{ .compatible = "arm,psci-0.2",	.data = psci_0_2_init},
--	{ .compatible = "arm,psci-1.0",	.data = psci_0_2_init},
-+	{ .compatible = "arm,psci-1.0",	.data = psci_1_0_init},
- 	{},
- };
+ #ifdef CONFIG_ACPI
+ /*
+  * We use PSCI 0.2+ when ACPI is deployed on ARM64 and it's
+diff --git a/include/linux/psci.h b/include/linux/psci.h
+index 4f29a3bff379..16beccccbbcc 100644
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -55,8 +55,10 @@ extern struct psci_operations psci_ops;
  
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index b3bcabe380da..581f72085c33 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -49,6 +49,7 @@
+ #if defined(CONFIG_ARM_PSCI_FW)
+ int __init psci_dt_init(void);
++int __init psci_dt_topology_init(void);
+ #else
+ static inline int psci_dt_init(void) { return 0; }
++static inline int psci_dt_topology_init(void) { return 0; }
+ #endif
  
- #define PSCI_1_0_FN_PSCI_FEATURES		PSCI_0_2_FN(10)
- #define PSCI_1_0_FN_SYSTEM_SUSPEND		PSCI_0_2_FN(14)
-+#define PSCI_1_0_FN_SET_SUSPEND_MODE		PSCI_0_2_FN(15)
- 
- #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
- 
-@@ -97,6 +98,10 @@
- #define PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK	\
- 			(0x1 << PSCI_1_0_FEATURES_CPU_SUSPEND_PF_SHIFT)
- 
-+#define PSCI_1_0_OS_INITIATED			BIT(0)
-+#define PSCI_1_0_SUSPEND_MODE_PC		0
-+#define PSCI_1_0_SUSPEND_MODE_OSI		1
-+
- /* PSCI return values (inclusive of all PSCI versions) */
- #define PSCI_RET_SUCCESS			0
- #define PSCI_RET_NOT_SUPPORTED			-1
+ #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
 -- 
 2.17.1
 
