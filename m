@@ -3,144 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A96C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8971AC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D020420868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D020420868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B1520868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B1520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeK3Fzu (ORCPT
+        id S1726702AbeK3Fz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:55:50 -0500
-Received: from mga11.intel.com ([192.55.52.93]:49907 "EHLO mga11.intel.com"
+        Fri, 30 Nov 2018 00:55:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38384 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbeK3Fzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:55:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 10:49:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,295,1539673200"; 
-   d="scan'208";a="105100910"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga003.jf.intel.com with ESMTP; 29 Nov 2018 10:49:27 -0800
-Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 29 Nov 2018 10:49:27 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
- ORSMSX157.amr.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0415.000;
- Thu, 29 Nov 2018 10:49:27 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "mhiramat@kernel.org" <mhiramat@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: =?utf-8?B?UmU6IFtQQVRDSCAwLzJdIERvbuKAmXQgbGVhdmUgZXhlY3V0YWJsZSBUTEIg?=
- =?utf-8?Q?entries_to_freed_pages?=
-Thread-Topic: =?utf-8?B?W1BBVENIIDAvMl0gRG9u4oCZdCBsZWF2ZSBleGVjdXRhYmxlIFRMQiBlbnRy?=
- =?utf-8?Q?ies_to_freed_pages?=
-Thread-Index: AQHUhrIVkhHK3mFZqUKwcYacb8ZEzaVnUhsAgABPsIA=
-Date:   Thu, 29 Nov 2018 18:49:26 +0000
-Message-ID: <4cddc2ba36ba3b6d528556207b8d4592209797ea.camel@intel.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
-         <20181129230616.f017059a093841dbaa4b82e6@kernel.org>
-In-Reply-To: <20181129230616.f017059a093841dbaa4b82e6@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.128]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A76C5CD0E9CE5E488A3D2C4CFA24D87C@intel.com>
-Content-Transfer-Encoding: base64
+        id S1725877AbeK3Fz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:55:58 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EA5181DE1;
+        Thu, 29 Nov 2018 18:49:36 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 38E166E3E3;
+        Thu, 29 Nov 2018 18:49:35 +0000 (UTC)
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <20181129134449.GH2149@hirez.programming.kicks-ass.net>
+ <20181129184329.ftxhtpgx4rwzoh6y@linux-r8p5>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <7c147c9d-5f1f-072d-b5ad-6cea4e4ecced@redhat.com>
+Date:   Thu, 29 Nov 2018 13:49:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181129184329.ftxhtpgx4rwzoh6y@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 29 Nov 2018 18:49:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTExLTI5IGF0IDIzOjA2ICswOTAwLCBNYXNhbWkgSGlyYW1hdHN1IHdyb3Rl
-Og0KPiBPbiBUdWUsIDI3IE5vdiAyMDE4IDE2OjA3OjUyIC0wODAwDQo+IFJpY2sgRWRnZWNvbWJl
-IDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4gd3JvdGU6DQo+IA0KPiA+IFNvbWV0aW1lcyB3
-aGVuIG1lbW9yeSBpcyBmcmVlZCB2aWEgdGhlIG1vZHVsZSBzdWJzeXN0ZW0sIGFuIGV4ZWN1dGFi
-bGUNCj4gPiBwZXJtaXNzaW9uZWQgVExCIGVudHJ5IGNhbiByZW1haW4gdG8gYSBmcmVlZCBwYWdl
-LiBJZiB0aGUgcGFnZSBpcyByZS11c2VkIHRvDQo+ID4gYmFjayBhbiBhZGRyZXNzIHRoYXQgd2ls
-bCByZWNlaXZlIGRhdGEgZnJvbSB1c2Vyc3BhY2UsIGl0IGNhbiByZXN1bHQgaW4gdXNlcg0KPiA+
-IGRhdGEgYmVpbmcgbWFwcGVkIGFzIGV4ZWN1dGFibGUgaW4gdGhlIGtlcm5lbC4gVGhlIHJvb3Qg
-b2YgdGhpcyBiZWhhdmlvciBpcw0KPiA+IHZmcmVlIGxhemlseSBmbHVzaGluZyB0aGUgVExCLCBi
-dXQgbm90IGxhemlseSBmcmVlaW5nIHRoZSB1bmRlcmx5aW5nIHBhZ2VzLiANCj4gDQo+IEdvb2Qg
-Y2F0Y2ghDQo+IA0KPiA+IA0KPiA+IFRoZXJlIGFyZSBzb3J0IG9mIHRocmVlIGNhdGVnb3JpZXMg
-b2YgdGhpcyB3aGljaCBzaG93IHVwIGFjcm9zcyBtb2R1bGVzLA0KPiA+IGJwZiwNCj4gPiBrcHJv
-YmVzIGFuZCBmdHJhY2U6DQo+IA0KPiBGb3IgeDg2LTY0IGtwcm9iZSwgaXQgc2V0cyB0aGUgcGFn
-ZSBOWCBhbmQgYWZ0ZXIgdGhhdCBSVywgYW5kIHRoZW4gcmVsZWFzZQ0KPiB2aWEgbW9kdWxlX21l
-bWZyZWUuIFNvIEknbSBub3Qgc3VyZSBpdCByZWFsbHkgaGFwcGVucyBvbiBrcHJvYmVzLiAoT2Yg
-Y291cnNlDQo+IHRoZSBkZWZhdWx0IG1lbW9yeSBhbGxvY2F0b3IgaXMgc2ltcGxlciBzbyBpdCBt
-YXkgaGFwcGVuIG9uIG90aGVyIGFyY2hzKSBCdXQNCj4gaW50ZXJlc3RpbmcgZml4ZXMuDQpZZXMs
-IEkgdGhpbmsgeW91IGFyZSByaWdodCwgaXQgc2hvdWxkIG5vdCBsZWF2ZSBhbiBleGVjdXRhYmxl
-IFRMQiBlbnRyeSBpbiB0aGlzDQpjYXNlLiBGdHJhY2UgYWN0dWFsbHkgZG9lcyB0aGlzIG9uIHg4
-NiBhcyB3ZWxsLg0KDQpJcyB0aGVyZSBzb21lIG90aGVyIHJlYXNvbiBmb3IgY2FsbGluZyBzZXRf
-bWVtb3J5X254IHRoYXQgc2hvdWxkIGFwcGx5IGVsc2V3aGVyZQ0KZm9yIG1vZHVsZSB1c2Vycz8g
-T3IgY291bGQgaXQgYmUgcmVtb3ZlZCBpbiB0aGUgY2FzZSBvZiB0aGlzIHBhdGNoIHRvIGNlbnRy
-YWxpemUNCnRoZSBiZWhhdmlvcj8NCg0KVGhhbmtzLA0KDQpSaWNrDQoNCj4gVGhhbmsgeW91LA0K
-PiANCj4gDQo+ID4gDQo+ID4gMS4gV2hlbiBleGVjdXRhYmxlIG1lbW9yeSBpcyB0b3VjaGVkIGFu
-ZCB0aGVuIGltbWVkaWF0bHkgZnJlZWQNCj4gPiANCj4gPiAgICBUaGlzIHNob3dzIHVwIGluIGEg
-Y291cGxlIGVycm9yIGNvbmRpdGlvbnMgaW4gdGhlIG1vZHVsZSBsb2FkZXIgYW5kIEJQRg0KPiA+
-IEpJVA0KPiA+ICAgIGNvbXBpbGVyLg0KPiA+IA0KPiA+IDIuIFdoZW4gZXhlY3V0YWJsZSBtZW1v
-cnkgaXMgc2V0IHRvIFJXIHJpZ2h0IGJlZm9yZSBiZWluZyBmcmVlZA0KPiA+IA0KPiA+ICAgIElu
-IHRoaXMgY2FzZSAob24geDg2IGFuZCBwcm9iYWJseSBvdGhlcnMpIHRoZXJlIHdpbGwgYmUgYSBU
-TEIgZmx1c2ggd2hlbg0KPiA+IGl0cw0KPiA+ICAgIHNldCB0byBSVyBhbmQgc28gc2luY2UgdGhl
-IHBhZ2VzIGFyZSBub3QgdG91Y2hlZCBiZXR3ZWVuIHNldHRpbmcgdGhlDQo+ID4gICAgZmx1c2gg
-YW5kIHRoZSBmcmVlLCBpdCBzaG91bGQgbm90IGJlIGluIHRoZSBUTEIgaW4gbW9zdCBjYXNlcy4g
-U28gdGhpcw0KPiA+ICAgIGNhdGVnb3J5IGlzIG5vdCBhcyBiaWcgb2YgYSBjb25jZXJuLiBIb3dl
-dmVyLCB0ZWNoaW5pY2FsbHkgdGhlcmUgaXMgc3RpbGwNCj4gPiBhDQo+ID4gICAgcmFjZSB3aGVy
-ZSBhbiBhdHRhY2tlciBjb3VsZCB0cnkgdG8ga2VlcCBpdCBhbGl2ZSBmb3IgYSBzaG9ydCB3aW5k
-b3cgd2l0aA0KPiA+IGENCj4gPiAgICB3ZWxsIHRpbWVkIG91dC1vZi1ib3VuZCByZWFkIG9yIHNw
-ZWN1bGF0aXZlIHJlYWQsIHNvIGlkZWFsbHkgdGhpcyBjb3VsZA0KPiA+IGJlDQo+ID4gICAgYmxv
-Y2tlZCBhcyB3ZWxsLg0KPiA+IA0KPiA+IDMuIFdoZW4gZXhlY3V0YWJsZSBtZW1vcnkgaXMgZnJl
-ZWQgaW4gYW4gaW50ZXJydXB0DQo+ID4gDQo+ID4gICAgQXQgbGVhc3Qgb25lIGV4YW1wbGUgb2Yg
-dGhpcyBpcyB0aGUgZnJlZWluZyBvZiBpbml0IHNlY3Rpb25zIGluIHRoZQ0KPiA+IG1vZHVsZQ0K
-PiA+ICAgIGxvYWRlci4gU2luY2Ugdm1hbGxvYyByZXVzZXMgdGhlIGFsbG9jYXRpb24gZm9yIHRo
-ZSB3b3JrIHF1ZXVlIGxpbmtlZA0KPiA+IGxpc3QNCj4gPiAgICBub2RlIGZvciB0aGUgZGVmZXJy
-ZWQgZnJlZXMsIHRoZSBtZW1vcnkgYWN0dWFsbHkgZ2V0cyB0b3VjaGVkIGFzIHBhcnQgb2YNCj4g
-PiB0aGUNCj4gPiAgICB2ZnJlZSBvcGVyYXRpb24gYW5kIHNvIHJldHVybnMgdG8gdGhlIFRMQiBl
-dmVuIGFmdGVyIHRoZSBmbHVzaCBmcm9tDQo+ID4gcmVzZXR0aW5nDQo+ID4gICAgdGhlIHBlcm1p
-c3Npb25zLg0KPiA+IA0KPiA+IEkgaGF2ZSBvbmx5IGFjdHVhbGx5IHRlc3RlZCBjYXRlZ29yeSAx
-LCBhbmQgaWRlbnRpZmllZCAyIGFuZCAzIGp1c3QgZnJvbQ0KPiA+IHJlYWRpbmcNCj4gPiB0aGUg
-Y29kZS4NCj4gPiANCj4gPiBUbyBjYXRjaCBhbGwgb2YgdGhlc2UsIG1vZHVsZV9hbGxvYyBmb3Ig
-eDg2IGlzIGNoYW5nZWQgdG8gdXNlIGEgbmV3IGZsYWcNCj4gPiB0aGF0DQo+ID4gaW5zdHJ1Y3Rz
-IHRoZSB1bm1hcCBvcGVyYXRpb24gdG8gZmx1c2ggdGhlIFRMQiBiZWZvcmUgZnJlZWluZyB0aGUg
-cGFnZXMuDQo+ID4gDQo+ID4gSWYgdGhpcyBzb2x1dGlvbiBzZWVtcyBnb29kIEkgY2FuIHBsdWcg
-dGhlIGZsYWcgaW4gZm9yIG90aGVyIGFyY2hpdGVjdHVyZXMNCj4gPiB0aGF0DQo+ID4gZGVmaW5l
-IFBBR0VfS0VSTkVMX0VYRUMuDQo+ID4gDQo+ID4gDQo+ID4gUmljayBFZGdlY29tYmUgKDIpOg0K
-PiA+ICAgdm1hbGxvYzogTmV3IGZsYWcgZm9yIGZsdXNoIGJlZm9yZSByZWxlYXNpbmcgcGFnZXMN
-Cj4gPiAgIHg4Ni9tb2R1bGVzOiBNYWtlIHg4NiBhbGxvY3MgdG8gZmx1c2ggd2hlbiBmcmVlDQo+
-ID4gDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9tb2R1bGUuYyB8ICA0ICsrLS0NCj4gPiAgaW5jbHVk
-ZS9saW51eC92bWFsbG9jLmggIHwgIDEgKw0KPiA+ICBtbS92bWFsbG9jLmMgICAgICAgICAgICAg
-fCAxMyArKysrKysrKysrKy0tDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygr
-KSwgNCBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiAtLSANCj4gPiAyLjE3LjENCj4gPiANCj4gDQo+
-IA0K
+On 11/29/2018 01:43 PM, Davidlohr Bueso wrote:
+> On Thu, 29 Nov 2018, Peter Zijlstra wrote:
+>
+>> On Thu, Nov 29, 2018 at 02:12:32PM +0100, Peter Zijlstra wrote:
+>>> Yes, I think this is real, and worse, I think we need to go audit all
+>>> wake_q_add() users and document this behaviour.
+>>>
+>>> In the ideal case we'd delay the actual wakeup to the last wake_up_q(),
+>>> but I don't think we can easily fix that.
+>>
+>> See commit: 1d0dcb3ad9d3 ("futex: Implement lockless wakeups"), I think
+>> that introduces the exact same bug.
+>>
+>> Something like the below perhaps, altough this pattern seems to want a
+>> wake_a_add() variant that already assumes get_task_struct().
+>
+> So I was looking at ways to avoid the redundant reference counting,
+> but given how wake_q_add() and wake_up_q() are so loose I can't
+> see how to avoid it -- we hold reference across the calls to maintain
+> valid mem.
+>
+> For example, wake_q will grab reference iff the cmpxchg succeeds,
+> likewise it will enter the wakeup loop in wake_up_q(), and there is no
+> awareness of which caller had the failed cmpxchg because another wakup
+> was in progress.
+>
+
+I think it will be useful to make wake_q_add() to return the status of
+wake_q insertion so that we can respond appropriately if it fails.
+
+> And yes, afaict all wake_q users suffer from the same issue, so we have
+> to move the wake_q_add() after the condition, while explicitly doing
+> the task ref counting.
+
+How about adding two helpers - wake_q_enter(), wake_q_exit() that can
+hide all the reference counting?
+
+Thanks,
+Longman
