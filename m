@@ -2,110 +2,95 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C34C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B09CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C04C920834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CAFF2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:20:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZXvRdEw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C04C920834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wH7Ulaht"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAFF2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeK2QXs (ORCPT
+        id S1727758AbeK2QY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 11:23:48 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45333 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbeK2QXs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 11:23:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v6so488482wrr.12;
-        Wed, 28 Nov 2018 21:19:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ZdpE7dkW/esKVLRUSp7JVB/TU1KEaTJ5l3wXcbA+go=;
-        b=kZXvRdEwUVrw2BRr1J7hoebammNHZzLDkraAFAAdGvjN8JSe8BPRFjlr1pEBdf528r
-         2jSdV6Thn2PxYmV9fm9Xs3EcGIOHirdBe5LPCQeETIdOGUlzL6x3ywaXdiHVqoD7srej
-         QVYKqSV7M9cB56nmPB3zSIa/hF9RHG5q5MxyxVsgPg6Ff6E4getucwrjK+EcIY71Owat
-         RGTOLdyPJ2Ncumtq5/DVfzGe9idOPprSQfz1oMgQrgKZPC72oga6DJNWT3ihFxAped3A
-         bhboBxOFrDw8S03rHpdfoDNDvq0VgyKtq1YCrbTGvVsSRh83LRP6gT8Nl3ZxvSZ2Fp6k
-         G66Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ZdpE7dkW/esKVLRUSp7JVB/TU1KEaTJ5l3wXcbA+go=;
-        b=X67Kia23vYYhyrc6Gnbj4BgcLP4L0G8+T8TeCR2KeaF145qbvjTj+4WXg0S0DaEyUQ
-         yq9uxcXoYM1y2edSyfrxBcXyLnqRMdyjzOlma/Cvvp2lM2LOqRypLEYMjywbVK1cF3WQ
-         UjCyTcV/rSWiA87A48dV3hjTDOetam20f/K/W4TM77LiVc9BWjiPMjn2T2dRqL0k2/VA
-         1k1vfs4rU/lbtVu6hmeyyO0A5O14Smq4Ea+ROjxtupRjUThGKYMtqFmXfd9JSg2lvpqF
-         JWcrPRt5ngnGhJkgqPNI50iCwFlY42PsaagKr9SVWEKI+kMwzyXuLF77NTNYVW42Zi2M
-         26rg==
-X-Gm-Message-State: AA+aEWbmE3HMUnzm75ihVc2QduZd+AsfvdayShJjDqYpEgeeWtjs1vSB
-        gIZ0BMu+pWaEQbwj309yylk=
-X-Google-Smtp-Source: AFSGD/Xlb4QPHIXvuy/RRSUxGALAx4CXlZDfheycpSFuuqHbSHhcUBHs3oo9faaWWzPXmbFlXaSHjQ==
-X-Received: by 2002:adf:8b83:: with SMTP id o3mr69071wra.81.1543468781703;
-        Wed, 28 Nov 2018 21:19:41 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id w9sm756205wme.47.2018.11.28.21.19.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 21:19:41 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Dmitry Bezrukov <dmitry.bezrukov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] net: usb: aqc111: Properly initialize wol_cfg in aqc111_suspend
-Date:   Wed, 28 Nov 2018 22:18:09 -0700
-Message-Id: <20181129051808.30015-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.0.rc1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Nov 2018 11:24:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727406AbeK2QY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 11:24:58 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 349422081C;
+        Thu, 29 Nov 2018 05:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543468853;
+        bh=S1V9F1pz8mjf5zZG63pmQg2nLq0ARO5egYpy4YDWMJM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wH7Ulahtxs3jkwp9Bo9S89S0SAGFXgbUDSLiA8Q8lXSLJwCg2v+5CE1ndVQDexPSf
+         jtFYYjeerXwkheR6v9pNeFxkuNo4y1TUS5jVPjq1wuXDAUfuQsV5bNbaa/YWSSyPNQ
+         co4jVqoIpOibPJjuicEJOUURff5NFBE9+WY4dREI=
+Date:   Thu, 29 Nov 2018 14:20:49 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 00/12] tracing: Unifying dynamic event interface
+Message-Id: <20181129142049.9404dcc0f74d65c9c129d13c@kernel.org>
+In-Reply-To: <ff8ca3062cad3747a664e6888790cc3c58e24c7e.camel@linux.intel.com>
+References: <154140838606.17322.15294184388075458777.stgit@devbox>
+        <20181128163101.d86844338bcba3fc3b0580f1@kernel.org>
+        <ff8ca3062cad3747a664e6888790cc3c58e24c7e.camel@linux.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Hi Tom,
 
-drivers/net/usb/aqc111.c:1326:37: warning: suggest braces around
-initialization of subobject [-Wmissing-braces]
-                struct aqc111_wol_cfg wol_cfg = { 0 };
-                                                  ^
-                                                  {}
-1 warning generated.
+On Wed, 28 Nov 2018 17:42:22 -0600
+Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
 
-Add another set of braces to initialize the char subobjects as well.
+> Hi Masami,
+> 
+> On Wed, 2018-11-28 at 16:31 +0900, Masami Hiramatsu wrote:
+> > Ping?
+> > 
+> > Hi Tom,
+> > 
+> > This series, especially [09/12] tracing: Remove unneeded
+> > synth_event_mutex
+> > will effect your current working series. Please tell me your opinion.
+> > 
+> 
+> Sorry for the delay in reviewing this - I completely forgot about it in
+> my inbox.
+> 
+> It's all very nice, and the mutex updates along with the dyn_event
+> management make that part of the code much cleaner, thanks!
+> 
+> In any case, you can have my
+> 
+> Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> Tested-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Fixes: e58ba4544c77 ("net: usb: aqc111: Add support for wake on LAN by MAGIC packet")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/net/usb/aqc111.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
+And as I pointed, synth_event_mutex is removed by this series, it may
+affect your hist trigger series too. 
 
-diff --git a/drivers/net/usb/aqc111.c b/drivers/net/usb/aqc111.c
-index f69d566bd523..1c2db1191073 100644
---- a/drivers/net/usb/aqc111.c
-+++ b/drivers/net/usb/aqc111.c
-@@ -1323,7 +1323,7 @@ static int aqc111_suspend(struct usb_interface *intf, pm_message_t message)
- 			      1, 1, &reg8);
- 
- 	if (aqc111_data->wol_flags) {
--		struct aqc111_wol_cfg wol_cfg = { 0 };
-+		struct aqc111_wol_cfg wol_cfg = { { 0 } };
- 
- 		aqc111_data->phy_cfg |= AQ_WOL;
- 		ether_addr_copy(wol_cfg.hw_addr, dev->net->dev_addr);
+Thanks,
+
+
 -- 
-2.20.0.rc1
-
+Masami Hiramatsu <mhiramat@kernel.org>
