@@ -2,94 +2,87 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CD9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1896CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5DB20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5DB20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DE05D20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE05D20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbeK3Dik (ORCPT
+        id S1729467AbeK3Dir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:38:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38992 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 22:38:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49971 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729064AbeK3Dij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:38:39 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729216AbeK3Dii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:38:38 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 450D820863;
+        by mx1.redhat.com (Postfix) with ESMTPS id 51694356F6;
         Thu, 29 Nov 2018 16:32:42 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 11:32:40 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        Tom Zanussi <zanussi@kernel.org>, linux-kernel@vger.kernel.org,
-        Daniel =?UTF-8?B?RMOt?= =?UTF-8?B?YXo=?= 
-        <daniel.diaz@linaro.org>
-Subject: Re: [PATCH] sefltests/ftrace: Use /bin/echo for output with options
-Message-ID: <20181129113240.163cbfa9@gandalf.local.home>
-In-Reply-To: <154350406317.4422.7595059658374071660.stgit@devbox>
-References: <20181129235407.9788e718a4ae7830f9e5d225@kernel.org>
-        <154350406317.4422.7595059658374071660.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Received: from jlaw-desktop.bos.csb (wlan-196-240.bos.redhat.com [10.16.196.240])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AF4E601B9;
+        Thu, 29 Nov 2018 16:32:40 +0000 (UTC)
+Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
+ counter to prevent trace corruption
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+References: <20181122002801.501220343@goodmis.org>
+ <20181128203931.ym2rkya7a6agzzy3@redhat.com>
+ <20181128160021.09acd1af@gandalf.local.home>
+ <20181128222936.74da7f54@vmware.local.home>
+ <20181128232430.425f8b12@vmware.local.home>
+ <044db9c0-a937-252f-b9e6-e4060bca3b0d@redhat.com>
+ <20181129111708.766f35d6@gandalf.local.home>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <11879829-4827-8eda-7cb8-ddcfdc404120@redhat.com>
+Date:   Thu, 29 Nov 2018 11:32:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181129111708.766f35d6@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 16:32:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 00:07:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> Use /bin/echo for console output with options like non
-> newline (-n) and/or backslash escape (-e).
+On 11/29/2018 11:17 AM, Steven Rostedt wrote:
+> On Thu, 29 Nov 2018 10:08:55 -0500
+> Joe Lawrence <joe.lawrence@redhat.com> wrote:
 > 
-> Tom Zanussi reported that when he tested ftracetest, it
-> shows "-e" and "-n" options on the console, since a system
-> which uses dash as the alias of /bin/sh, uses dash built-in
-> echo command which doesn't accept "-e".
+>> With the "take 2" patch, I only see smp_irq_work_interrupt() graph when
+>> the graph_function is in progress..  for example:
 > 
-> To avoid this issue, use /bin/echo instead of echo for
-> the output with options.
+> In other words it works :-)
 > 
-> Fixes: 8f381ac4d321 ("selftests/ftrace: Add color to the PASS / FAIL results")
-> Link: http://lkml.kernel.org/r/cover.1542221862.git.tom.zanussi@linux.intel.com
-> Reported-by: Tom Zanussi <zanussi@kernel.org>
-> Suggested-by: Tom Zanussi <zanussi@kernel.org>
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  tools/testing/selftests/ftrace/ftracetest |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Can I get a Tested-by from you?
 > 
-> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> index 75244db70331..ba670b452bdb 100755
-> --- a/tools/testing/selftests/ftrace/ftracetest
-> +++ b/tools/testing/selftests/ftrace/ftracetest
-> @@ -173,8 +173,8 @@ strip_esc() {
->  }
->  
->  prlog() { # messages
-> -  echo -e "$@"
-> -  [ "$LOG_FILE" ] && echo -e "$@" | strip_esc >> $LOG_FILE
-> +  /bin/echo -e "$@"
-> +  [ "$LOG_FILE" ] && /bin/echo -e "$@" | strip_esc >> $LOG_FILE
->  }
->  catlog() { #file
->    cat $1
 
-I'm fine with this change but I wonder if we should have a $ECHO that
-is defined to something that can be overwritten if need be.
+Yup, thanks for fixing!
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
 
--- Steve
+-- Joe
