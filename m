@@ -2,144 +2,95 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4F4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDCAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 492BC2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:12:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CDB2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:13:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="noOOovSe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492BC2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGW8cI6B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CDB2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeK3JTo (ORCPT
+        id S1726778AbeK3JUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:19:44 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46093 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeK3JTn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:19:43 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so1200262uap.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 14:12:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UlF+FE3QTGVYbK2iC+cpaRNKT7/QyQS/1YiJabKOFRs=;
-        b=noOOovSe1gq4q2eHcmzs6TxxTLYPpiY+FXNs2polTgVXBV77qwAig7HdYZI2F2kTm0
-         qgfceP61Gs8foh+GBfwBEMRctPGCnVoXyL8WUSVjtpHdAvHoFW4mhFLuu7bz/tKBClF+
-         V/b8r1w2xqhoENP2IxK5740k1jlQaQD2rW9/s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UlF+FE3QTGVYbK2iC+cpaRNKT7/QyQS/1YiJabKOFRs=;
-        b=IH8O46wAtQA8jTNMa/3+XJwm1nYCijum7Ikt7LZnFQRzVQKaXCa2w7WZMlsAsjuTk4
-         92EnF0yBjJr7RVS9zdFHFiujnkKqs2ZLGh/49Mj5S8zUcAJJFoiKMhNC5zwy3axQ048S
-         uqg8C4zgbuftpG+CtKwKHjo7wN1ikaT+2WGVkRXCnaG57/YeQ39a5AqRdFjf33/HmNe7
-         jUTTu7GCkpS3x+8XiB/z4Yn9g3twwqrE+g5KUa4lNEStFEbmZcQdmC83io4rzDqc9NSq
-         Bo817UoqXEWevUxAO8ZzL1PYClRT2xo3P9YYjxY2B6vRLfK4vwntSygHrq3A0mIT0nAU
-         n0XQ==
-X-Gm-Message-State: AA+aEWa7s0h7qR1FQXEbFrINBxE828cdR/2T1V63MW2zvTqUSKACL6vX
-        B4a+2zm51PQb3/j3juX4b4lW9CXhxM8=
-X-Google-Smtp-Source: AFSGD/VakA2wduLjXLN63yxjADB8esy2EFz95rb0Mj/QE+egb2h+HehJDFBMjetffmJiLVkd3b1vjw==
-X-Received: by 2002:a9f:3703:: with SMTP id z3mr1477840uad.86.1543529564494;
-        Thu, 29 Nov 2018 14:12:44 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 2sm875781vsd.13.2018.11.29.14.12.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 14:12:44 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id n7so1209244uao.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 14:12:43 -0800 (PST)
-X-Received: by 2002:ab0:1c12:: with SMTP id a18mr1380356uaj.15.1543529562133;
- Thu, 29 Nov 2018 14:12:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128235459.180940-1-ryandcase@chromium.org>
-In-Reply-To: <20181128235459.180940-1-ryandcase@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 29 Nov 2018 14:12:30 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VTkM+mWZX4jS96E0JdpYpW40q_EkGPfvLxWKW==e+JMw@mail.gmail.com>
-Message-ID: <CAD=FV=VTkM+mWZX4jS96E0JdpYpW40q_EkGPfvLxWKW==e+JMw@mail.gmail.com>
-Subject: Re: [PATCH v2] tty: serial: qcom_geni_serial: Fix softlock
-To:     ryandcase@chromium.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Evan Green <evgreen@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Nov 2018 04:20:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbeK3JUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:20:10 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D9C2145D;
+        Thu, 29 Nov 2018 22:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543529592;
+        bh=AgMlONgVYeT/0apqrzf5OGDaDt6Gba6MEhi+gGjOvGM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XGW8cI6Bl8yrix9pPxGUSNMKSuJoNMRI2xg1cWcAdr1tgBADofj/d6tRKMs54+d1T
+         ZyCVx4mhKmT+y6g1CEfY6g+iAj3V5oU7hsISbyuG2/APYQply8PfCDvx5nIabS35pg
+         MIBmcFHYfxbjp4rHAYuiJEFDjIBdX0Qa08VU51O0=
+Date:   Fri, 30 Nov 2018 07:13:09 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: ftrace: Fix to enable syscall events on arm64
+Message-Id: <20181130071309.dfa552d2bcd7283788e5563e@kernel.org>
+In-Reply-To: <20181129165329.GC22027@arrakis.emea.arm.com>
+References: <20181128195921.GA32668@arm.com>
+        <154346997347.21404.9819884326251206341.stgit@devbox>
+        <20181129165329.GC22027@arrakis.emea.arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 29 Nov 2018 16:53:30 +0000
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-On Wed, Nov 28, 2018 at 3:55 PM Ryan Case <ryandcase@chromium.org> wrote:
-> @@ -465,9 +470,19 @@ static void qcom_geni_serial_console_write(struct console *co, const char *s,
->                 }
->                 writel_relaxed(M_CMD_CANCEL_EN, uport->membase +
->                                                         SE_GENI_M_IRQ_CLEAR);
-> +       } else if ((geni_status & M_GENI_CMD_ACTIVE) && !port->tx_remaining) {
-> +               /*
-> +                * It seems we can interrupt existing transfers unless all data
+> On Thu, Nov 29, 2018 at 02:39:33PM +0900, Masami Hiramatsu wrote:
+> > Since commit 4378a7d4be30 ("arm64: implement syscall wrappers")
+> > introduced "__arm64_" prefix to all syscall wrapper symbols in
+> > sys_call_table, syscall tracer can not find corresponding
+> > metadata from syscall name. In the result, we have no syscall
+> > ftrace events on arm64 kernel, and some bpf testcases are failed
+> > on arm64.
+> > 
+> > To fix this issue, this introduces custom
+> > arch_syscall_match_sym_name() which skips first 8 bytes when
+> > comparing the syscall and symbol names.
+> > 
+> > Fixes: 4378a7d4be30 ("arm64: implement syscall wrappers")
+> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Cc: stable@vger.kernel.org
+> 
+> Queued for 4.20. Thanks.
 
-s/It seems we can interrupt/It seems we can't interrupt/
+Thank you Catalin!
 
-
-> +static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
-> +               bool active)
->  {
->         struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
->         struct circ_buf *xmit = &uport->state->xmit;
->         size_t avail;
->         size_t remaining;
-> +       size_t pending;
->         int i;
->         u32 status;
->         unsigned int chunk;
->         int tail;
-> -       u32 irq_en;
->
-> -       chunk = uart_circ_chars_pending(xmit);
->         status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
-> -       /* Both FIFO and framework buffer are drained */
-> -       if (!chunk && !status) {
-> +
-> +       /* Complete the current tx command before taking newly added data */
-> +       if (active)
-> +               pending = port->tx_remaining;
-
-I almost feel like this should be:
-
-if (port->tx_remaining)
-  pending = port->tx_remaining
-
-I could imagine active being false but "port->tx_remaining" being
-non-zero if we happened to take a long time to handle the interrupt
-for some reason.  Presumably you could simulator this and see what
-breaks.  I think what would happen would be "pending" will be larger
-than you expect and you could write a few extra bytes into the FIFO
-causing it to go beyond the length of the transfer you setup.  ...so I
-guess you'd drop some bytes?
+> 
+> -- 
+> Catalin
 
 
-If it's somehow important for "pending" to be 0 still when we're
-active but port->tx_remaining is non-zero, then I guess you could also
-write it as:
-
-if (active || port->tx_remaining)
-  pending = port->tx_remaining
-
-
-Maybe I'm misunderstanding though.
-
-
--Doug
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
