@@ -2,314 +2,120 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DD1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B79F20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B79F20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 545C820868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:10:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2DFgB/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545C820868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbeK3COi (ORCPT
+        id S1729230AbeK3CPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:14:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46024 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728406AbeK3COh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:14:37 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5562030001DF;
-        Thu, 29 Nov 2018 15:08:57 +0000 (UTC)
-Received: from jlaw-desktop.bos.csb (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E08BA4388;
-        Thu, 29 Nov 2018 15:08:55 +0000 (UTC)
-Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
- counter to prevent trace corruption
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-References: <20181122002801.501220343@goodmis.org>
- <20181128203931.ym2rkya7a6agzzy3@redhat.com>
- <20181128160021.09acd1af@gandalf.local.home>
- <20181128222936.74da7f54@vmware.local.home>
- <20181128232430.425f8b12@vmware.local.home>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Organization: Red Hat
-Message-ID: <044db9c0-a937-252f-b9e6-e4060bca3b0d@redhat.com>
-Date:   Thu, 29 Nov 2018 10:08:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 29 Nov 2018 21:15:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:32813 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729040AbeK3CPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:15:41 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i20so2059224otl.0;
+        Thu, 29 Nov 2018 07:10:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=njDPO7eRcKSKwnJmQxEb1ParYuJ6CzGy5clgzweirns=;
+        b=T2DFgB/u8vSQS25IznOOS02AiKOYCrs6xwGpEE7yfDY/etx21pK+hYPGZ/q3kwS/pt
+         kJfCbXrnCu53i9l1BStKi02HmcnPhQDVJNc9Dh0SY4XwiJUmR8QpqIxEkB4tKX2CqwU4
+         b6oDUx/WOVNv6YbYPQa1RB1fKDKGuJWWbP5oc5kiHYJD9wyG4s1UUwexqWX3Hzfg0F+d
+         sm1Q4fYfcCpONuQ8o/U+A7754mQYWLWF8QL3/ZDHBkaPN4KBPUvBkUqS/gNHMiqh0UBE
+         zP9CvjtDZ2lR3zF1GXOpBcQClo81LyQJhzE0YBgCYzXqCjWxsrJG+hrWKVnF9ia8tCBP
+         yFlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=njDPO7eRcKSKwnJmQxEb1ParYuJ6CzGy5clgzweirns=;
+        b=bZISmXKBf0xAKUHy+2JOPGAp3el/zsTo2BPTVhO7AogJ5U8cOH3QZjIWHFUGQMV5vG
+         rAAjFIGJ4GaboKU4+njFkfROUnacnIsdDSC/97pH2PfWc8o2xolxtpZg0Dfphya1dABZ
+         zA09rZTGJna0lo5J/IpzPbtoOMScAUdLEdAWix8d+/xSlcerUUh6Pjmr16xSvz8UnACT
+         7LqXaajebIrWmyASWbFDypXDUjiDUovSgkbckFLPOZx8QpCcgKqjma+C2dhrPKs97d/O
+         lQBtfalWAG7mmkyBm2lmeBNrNNIV/JchzjKU/YHRjgJa5N8EW1wLhB0Plplt3EUO/dYB
+         cZ3w==
+X-Gm-Message-State: AA+aEWZW0w3RUXwy7e9mijj/crUt78KhtdoElMzkYPHs3a9fhCGFYkBJ
+        k2kY9YqYAv3WJMmsyzc+G1yZOdI/
+X-Google-Smtp-Source: AFSGD/UQLOq24jnh+EEdScueK43TCZ0cOZRRsYcjXVJCZ8iSx4is57A1qceznZ7AGWOEBg1S1mDQMg==
+X-Received: by 2002:a9d:401:: with SMTP id 1mr1096008otc.78.1543504201181;
+        Thu, 29 Nov 2018 07:10:01 -0800 (PST)
+Received: from [192.168.1.103] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id k130sm606858oia.47.2018.11.29.07.09.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 07:10:00 -0800 (PST)
+Subject: Re: [PATCH] rtl818x: fix potential use after free
+To:     Pan Bian <bianpan2016@163.com>,
+        Herton Ronaldo Krzesinski <herton@canonical.com>,
+        Hin-Tak Leung <htl10@users.sourceforge.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1543488490-101743-1-git-send-email-bianpan2016@163.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <984166c8-bf7a-33f0-f5c5-269ee14f420a@lwfinger.net>
+Date:   Thu, 29 Nov 2018 09:09:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181128232430.425f8b12@vmware.local.home>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1543488490-101743-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 29 Nov 2018 15:08:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/2018 11:24 PM, Steven Rostedt wrote:
-> On Wed, 28 Nov 2018 22:29:36 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On 11/29/18 4:48 AM, Pan Bian wrote:
+> entry is released via usb_put_urb just after calling usb_submit_urb.
+> However, entry is used if the submission fails, resulting in a use after
+> free bug. The patch fixes this.
 > 
->> Does this patch fix it for you?
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> ---
+>   drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Take 2. I realized that the reason for the interrupts being traced is
-> because it is more likely to interrupt when the depth is already 0,
-> setting it to 1 causing the interrupt to think it's already in a
-> function  that wants to be traced (when that wasn't decided yet).
-> 
-> The fix uses a bit that gets set when we want to trace (and will trace
-> till that bit is cleared). That bit gets cleared on the return
-> function when depth is zero. But if we are tracing something in a
-> interrupt that happened to interrupt the beginning of a function that
-> already set the depth to 0, then we need to clear the bit at depth of 1
-> not zero (and 2 if we want to trace a function that interrupted a
-> softirq, that interrupted a start of normal function. and 3 if we want
-> to trace an NMI function that had the very unlikely case of
-> interrupting a start of a interrupt function, that interrupted the
-> start of a softirq function, that interrupted a start of a normal
-> context function!).
-> 
-> If that happens then we will continue to trace functions when we don't
-> want to. To solve that, I need to record the depth (0-3) when the bit
-> is set, and clear it when the return function is at that same depth
-> (0-3).
-> 
-> -- Steve
-> 
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index 3b8c0e24ab30..447bd96ee658 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -512,12 +512,44 @@ enum {
->   * can only be modified by current, we can reuse trace_recursion.
->   */
->  	TRACE_IRQ_BIT,
-> +
-> +	/* Set if the function is in the set_graph_function file */
-> +	TRACE_GRAPH_BIT,
-> +
-> +	/*
-> +	 * In the very unlikely case that an interrupt came in
-> +	 * at a start of graph tracing, and we want to trace
-> +	 * the function in that interrupt, the depth can be greater
-> +	 * than zero, because of the preempted start of a previous
-> +	 * trace. In an even more unlikely case, depth could be 2
-> +	 * if a softirq interrupted the start of graph tracing,
-> +	 * followed by an interrupt preempting a start of graph
-> +	 * tracing in the softirq, and depth can even be 3
-> +	 * if an NMI came in at the start of an interrupt function
-> +	 * that preempted a softirq start of a function that
-> +	 * preempted normal context!!!! Luckily, it can't be
-> +	 * greater than 3, so the next two bits are a mask
-> +	 * of what the depth is when we set TRACE_GRAPH_BIT
-> +	 */
-> +
-> +	TRACE_GRAPH_DEPTH_START_BIT,
-> +	TRACE_GRAPH_DEPTH_END_BIT,
->  };
->  
->  #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
->  #define trace_recursion_clear(bit)	do { (current)->trace_recursion &= ~(1<<(bit)); } while (0)
->  #define trace_recursion_test(bit)	((current)->trace_recursion & (1<<(bit)))
->  
-> +#define trace_recursion_depth() \
-> +	(((current)->trace_recursion >> TRACE_GRAPH_DEPTH_START_BIT) & 3)
-> +#define trace_recursion_set_depth(depth) \
-> +	do {								\
-> +		current->trace_recursion &=				\
-> +			~(3 << TRACE_GRAPH_DEPTH_START_BIT);		\
-> +		current->trace_recursion |=				\
-> +			((depth) & 3) << TRACE_GRAPH_DEPTH_START_BIT;	\
-> +	} while (0)
-> +
->  #define TRACE_CONTEXT_BITS	4
->  
->  #define TRACE_FTRACE_START	TRACE_FTRACE_BIT
-> @@ -843,8 +875,9 @@ extern void __trace_graph_return(struct trace_array *tr,
->  extern struct ftrace_hash *ftrace_graph_hash;
->  extern struct ftrace_hash *ftrace_graph_notrace_hash;
->  
-> -static inline int ftrace_graph_addr(unsigned long addr)
-> +static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
->  {
-> +	unsigned long addr = trace->func;
->  	int ret = 0;
->  
->  	preempt_disable_notrace();
-> @@ -855,6 +888,14 @@ static inline int ftrace_graph_addr(unsigned long addr)
->  	}
->  
->  	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
-> +
-> +		/*
-> +		 * This needs to be cleared on the return functions
-> +		 * when the depth is zero.
-> +		 */
-> +		trace_recursion_set(TRACE_GRAPH_BIT);
-> +		trace_recursion_set_depth(trace->depth);
-> +
->  		/*
->  		 * If no irqs are to be traced, but a set_graph_function
->  		 * is set, and called by an interrupt handler, we still
-> @@ -872,6 +913,13 @@ static inline int ftrace_graph_addr(unsigned long addr)
->  	return ret;
->  }
->  
-> +static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
-> +{
-> +	if (trace_recursion_test(TRACE_GRAPH_BIT) &&
-> +	    trace->depth == trace_recursion_depth())
-> +		trace_recursion_clear(TRACE_GRAPH_BIT);
-> +}
-> +
->  static inline int ftrace_graph_notrace_addr(unsigned long addr)
->  {
->  	int ret = 0;
-> @@ -885,7 +933,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
->  	return ret;
->  }
->  #else
-> -static inline int ftrace_graph_addr(unsigned long addr)
-> +static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
->  {
->  	return 1;
->  }
-> @@ -894,6 +942,8 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
->  {
->  	return 0;
->  }
-> +static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
-> +{ }
->  #endif /* CONFIG_DYNAMIC_FTRACE */
->  
->  extern unsigned int fgraph_max_depth;
-> @@ -901,7 +951,8 @@ extern unsigned int fgraph_max_depth;
->  static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
->  {
->  	/* trace it when it is-nested-in or is a function enabled. */
-> -	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
-> +	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
-> +		 ftrace_graph_addr(trace)) ||
->  		(trace->depth < 0) ||
->  		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
->  }
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-> index 2561460d7baf..086af4f5c3e8 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -509,6 +509,8 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
->  	int cpu;
->  	int pc;
->  
-> +	ftrace_graph_addr_finish(trace);
-> +
->  	local_irq_save(flags);
->  	cpu = raw_smp_processor_id();
->  	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
-> @@ -532,6 +534,8 @@ void set_graph_array(struct trace_array *tr)
->  
->  static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
->  {
-> +	ftrace_graph_addr_finish(trace);
-> +
->  	if (tracing_thresh &&
->  	    (trace->rettime - trace->calltime < tracing_thresh))
->  		return;
-> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-> index b7357f9f82a3..98ea6d28df15 100644
-> --- a/kernel/trace/trace_irqsoff.c
-> +++ b/kernel/trace/trace_irqsoff.c
-> @@ -208,6 +208,8 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
->  	unsigned long flags;
->  	int pc;
->  
-> +	ftrace_graph_addr_finish(trace);
-> +
->  	if (!func_prolog_dec(tr, &data, &flags))
->  		return;
->  
-> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-> index a86b303e6c67..7d04b9890755 100644
-> --- a/kernel/trace/trace_sched_wakeup.c
-> +++ b/kernel/trace/trace_sched_wakeup.c
-> @@ -270,6 +270,8 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
->  	unsigned long flags;
->  	int pc;
->  
-> +	ftrace_graph_addr_finish(trace);
-> +
->  	if (!func_prolog_preempt_disable(tr, &data, &pc))
->  		return;
->  
-> 
+> diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> index cec3778..1a2ea8b 100644
+> --- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> +++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> @@ -444,12 +444,13 @@ static int rtl8187_init_urbs(struct ieee80211_hw *dev)
+>   		skb_queue_tail(&priv->rx_queue, skb);
+>   		usb_anchor_urb(entry, &priv->anchored);
+>   		ret = usb_submit_urb(entry, GFP_KERNEL);
+> -		usb_put_urb(entry);
+>   		if (ret) {
+>   			skb_unlink(skb, &priv->rx_queue);
+>   			usb_unanchor_urb(entry);
+> +			usb_put_urb(entry);
+>   			goto err;
+>   		}
+> +		usb_put_urb(entry);
+>   	}
+>   	return ret;
 
-With the "take 2" patch, I only see smp_irq_work_interrupt() graph when
-the graph_function is in progress..  for example:
+Good catch.
 
- 3)               |  cmdline_proc_show() {
- 3)   ==========> |
- 3)               |    smp_irq_work_interrupt() {
- 3)               |      irq_enter() {
- 3)               |        rcu_irq_enter() {
- 3)   0.141 us    |          rcu_dynticks_curr_cpu_in_eqs();
- 3)   0.589 us    |        }
- 3)   0.877 us    |      }
- 3)               |      __wake_up() {
- 3)               |        __wake_up_common_lock() {
- 3)   0.122 us    |          _raw_spin_lock_irqsave();
- 3)               |          __wake_up_common() {
- 3)               |            autoremove_wake_function() {
- 3)               |              default_wake_function() {
- 3)               |                try_to_wake_up() {
- 3)   0.209 us    |                  _raw_spin_lock_irqsave();
- 3)               |                  select_task_rq_fair() {
- 3)               |                    select_idle_sibling() {
- 3)   0.140 us    |                      available_idle_cpu();
- 3)   0.408 us    |                    }
- 3)   0.711 us    |                  }
- 3)               |                  native_smp_send_reschedule() {
- 3)   4.298 us    |                    x2apic_send_IPI();
- 3)   4.574 us    |                  }
- 3)   0.144 us    |                  _raw_spin_unlock_irqrestore();
- 3)   6.677 us    |                }
- 3)   6.915 us    |              }
- 3)   7.182 us    |            }
- 3)   7.620 us    |          }
- 3)   0.132 us    |          _raw_spin_unlock_irqrestore();
- 3)   8.401 us    |        }
- 3)   9.066 us    |      }
- 3)               |      irq_exit() {
- 3)   0.128 us    |        idle_cpu();
- 3)               |        rcu_irq_exit() {
- 3)   0.122 us    |          rcu_dynticks_curr_cpu_in_eqs();
- 3) + 10.598 us   |        }
- 3) + 11.128 us   |      }
- 3) + 22.075 us   |    }
- 3)   <========== |
- 3)   0.414 us    |    seq_puts();
- 3)   0.128 us    |    seq_putc();
- 3) + 29.040 us   |  }
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 
--- Joe
+Thanks,
+Larry
+
