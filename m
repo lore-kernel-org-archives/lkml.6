@@ -2,68 +2,109 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB0AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415A0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5082145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:53:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtgX4N4Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5082145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E92A21019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E92A21019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbeK3JAF (ORCPT
+        id S1726772AbeK3JAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:00:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40632 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 04:00:50 -0500
+Received: from mga12.intel.com ([192.55.52.136]:56530 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeK3JAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:00:05 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B087F21019;
-        Thu, 29 Nov 2018 21:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543528392;
-        bh=DDsEsUVR0mi/NXo7wJUn/+RkolkAFvJLZqQzLztUorA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=CtgX4N4Yay+NNywiwifwUSQ7F5PmD/eeIm0DyfsYqD9IYAxiPA7TElJ8ZR98quQs7
-         6JMai34WOvo5vDA1TomBX4nFRR5LXA98pYQ1WXuXKwwKTWs8JMYkcNAs0Ug+NicTWL
-         S7helIFeeXxLEaSBXtcnLskFhH41/MC1aWTi89fw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181128183702.231609-1-sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20181128183702.231609-1-sboyd@kernel.org>
-Message-ID: <154352839199.88331.15535776216408804452@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: renesas: Mark rza2_cpg_clk_register static
-Date:   Thu, 29 Nov 2018 13:53:11 -0800
+        id S1726344AbeK3JAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:00:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 13:53:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,296,1539673200"; 
+   d="scan'208";a="94227712"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga007.jf.intel.com with ESMTP; 29 Nov 2018 13:53:57 -0800
+Message-ID: <53173cf971f5fbd33d744a1734dda87cb66c4206.camel@linux.intel.com>
+Subject: Re: [driver-core PATCH v7 2/9] driver core: Establish clear order
+ of operations for deferred probe and remove
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        jiangshanlai@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Brown, Len" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        zwisler@kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        bvanassche@acm.org
+Date:   Thu, 29 Nov 2018 13:53:57 -0800
+In-Reply-To: <CAPcyv4j2w6ygzuP-vEKPk6NGLCEB6FcKTVFQkUqr3HC471xJsg@mail.gmail.com>
+References: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
+         <154345153672.18040.3771035148218843351.stgit@ahduyck-desk1.amr.corp.intel.com>
+         <CAPcyv4gMswOJ3VTaY6P7f=iG_jNBKZyynn22CLrEBB13Fq-8vQ@mail.gmail.com>
+         <a5b33ae899fc4131abf0f26af33a6c6b7f462431.camel@linux.intel.com>
+         <CAPcyv4j2w6ygzuP-vEKPk6NGLCEB6FcKTVFQkUqr3HC471xJsg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2018-11-28 10:37:02)
-> This is only used in this file, so mark it static to silence a sparse
-> warning.
-> =
+On Thu, 2018-11-29 at 10:55 -0800, Dan Williams wrote:
+> On Thu, Nov 29, 2018 at 10:07 AM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+> > 
+> > On Wed, 2018-11-28 at 17:57 -0800, Dan Williams wrote:
+> 
+> [..]
+> > > I think the flag should be named "cancel" and set it in the
+> > > device_del() path. Otherwise this is encoding code flow state in the
+> > > struct rather than device-state that the code needs to comprehend.
+> > 
+> > Instead of "cancel" what would you think of "dead"? In my mind once we
+> > call device_del we are essentially working with a dead device object so
+> > that might make more sense in terms of a state rather than "cancel"
+> > which doesn't really tell us what should be canceled.
+> 
+> That sounds good to me.
+> 
+> > Looking over the code I could probably set it before we start calling
+> > the notifiers for BUS_NOTIFY_DEL_DEVICE. The only thing I am not sure
+> > about is if we would need to add any sort of synchronization primitives
+> > around it.
+> > 
+> 
+> I think it needs to be something like a barrier:
+> 
+>     dev->dead;
+>     device_lock();
+>     device_unlock();
+> 
+> ...where you can be sure that anyone after that device_unlock() has
+> acted on dev->dead, or will see dev->dead.
 
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+Actually what I think I will do is set dev->dead to true with the
+device lock held at the start of device_del. So something like:
+	device_lock();
+	dev->dead = true;
+	device_unlock();
 
-Applied to clk-next
+It seems like that would probably make the most sense and be consistent
+with the handling of other bits such as dev->offline. It means adding
+one more call to device_lock/unlock but it guarantees that the update
+behavior is consistent with the other bitfields near it and that we
+cannot have an asynchronous probe routine trying to run while we are
+tearing out the bus/class/sysfs from underneath the device.
 
