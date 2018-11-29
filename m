@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BF9C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF50C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 074DB2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E916021019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rv7ac6/W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074DB2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JepuNSyZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E916021019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731174AbeK3BZK (ORCPT
+        id S1731187AbeK3BZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48434 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbeK3BZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:10 -0500
+        id S1729806AbeK3BZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D650521019;
-        Thu, 29 Nov 2018 14:19:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 436C9205C9;
+        Thu, 29 Nov 2018 14:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501179;
-        bh=UQSFbdo1boEXjfX9VkeGS+7z+Lr02sIHR1PZdeJwwXc=;
+        s=default; t=1543501181;
+        bh=croHeKjKpyUxh+VnwS1NDWjhEXXJc+2QpLrDaGz9wcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rv7ac6/WTBIwUmZoxCKzdl94esOXXTk5Mk2I4OAzn8V0h7c67u/AST6WTw96/egaU
-         9NUvd6z15Nq4TQmVC138Z3pU3l77gbYNrCFQ6j6RWBktNpswpAxZbNkURVD1kNxTVb
-         gqx+lAHxU73myrw3mCrstPQGZ7vtbOQd0GSw2MM8=
+        b=JepuNSyZquMYtqNXSFccdv36PaauT9bB79IkXGf+jEgIKhX+I+i7Subml2wUrdklU
+         OztTQrDi7gxadMEJpNjAu5Pxa0C0w/xC7ptXrlVK/7GBpxwvEqDi8Ps9hhxGh4MbU6
+         MltYxSU/6LXauJ2fN71qDkr0/AFMakXiUkKSOQuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Silvan Jegen <s.jegen@gmail.com>,
+        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
+        Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 39/86] Input: xpad - add Mad Catz FightStick TE 2 VID/PID
-Date:   Thu, 29 Nov 2018 15:12:04 +0100
-Message-Id: <20181129140113.378637633@linuxfoundation.org>
+Subject: [PATCH 4.4 40/86] Input: xpad - prevent spurious input from wired Xbox 360 controllers
+Date:   Thu, 29 Nov 2018 15:12:05 +0100
+Message-Id: <20181129140113.493836828@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,57 +64,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d63b0f0c0f19dc8687387ead5a28148dcad1a4b9 ]
+[ Upstream commit 1ff5fa3c6732f08e01ae12f12286d4728c9e4d86 ]
 
-This adds the VID/PID combination for the Xbox One version of the Mad
-Catz FightStick TE 2.
+After initially connecting a wired Xbox 360 controller or sending it
+a command to change LEDs, a status/response packet is interpreted as
+controller input. This causes the state of buttons represented in
+byte 2 of the controller data packet to be incorrect until the next
+valid input packet. Wireless Xbox 360 controllers are not affected.
 
-The functionality that this provides is about on par with what the
-Windows drivers for the stick manage to deliver.
+Writing a new value to the LED device while holding the Start button
+and running jstest is sufficient to reproduce this bug. An event will
+come through with the Start button released.
 
-What works:
-- Digital stick
-- 6 main buttons
-- Xbox button
-- The two buttons on the back
-- The locking buttons (preventing accidental Xbox button press)
+Xboxdrv also won't attempt to read controller input from a packet
+where byte 0 is non-zero. It also checks that byte 1 is 0x14, but
+that value differs between wired and wireless controllers and this
+code is shared by both. I think just checking byte 0 is enough to
+eliminate unwanted packets.
 
-What doesn't work:
-- Two of the main buttons (don't work on Windows either)
-- The "Haptic" button setting does not have an effect (not sure if it
-  works on Windows)
+The following are some examples of 3-byte status packets I saw:
+01 03 02
+02 03 00
+03 03 03
+08 03 00
 
-I added the MAP_TRIGGERS_TO_BUTTONS option but in my (limited) testing
-there was no practical difference with or without. The FightStick does
-not have triggers though so adding it makes sense.
-
-Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/input/joystick/xpad.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index cd1de2851f1d..5f47e062cada 100644
+index 5f47e062cada..a49be8bc5819 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -153,6 +153,7 @@ static const struct xpad_device {
- 	{ 0x0738, 0x4728, "Mad Catz Street Fighter IV FightPad", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
- 	{ 0x0738, 0x4738, "Mad Catz Wired Xbox 360 Controller (SFIV)", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
- 	{ 0x0738, 0x4740, "Mad Catz Beat Pad", 0, XTYPE_XBOX360 },
-+	{ 0x0738, 0x4a01, "Mad Catz FightStick TE 2", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOXONE },
- 	{ 0x0738, 0x6040, "Mad Catz Beat Pad Pro", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX },
- 	{ 0x0738, 0xb726, "Mad Catz Xbox controller - MW2", 0, XTYPE_XBOX360 },
- 	{ 0x0738, 0xbeef, "Mad Catz JOYTECH NEO SE Advanced GamePad", XTYPE_XBOX360 },
-@@ -305,6 +306,7 @@ static struct usb_device_id xpad_table[] = {
- 	XPAD_XBOX360_VENDOR(0x046d),		/* Logitech X-Box 360 style controllers */
- 	XPAD_XBOX360_VENDOR(0x0738),		/* Mad Catz X-Box 360 controllers */
- 	{ USB_DEVICE(0x0738, 0x4540) },		/* Mad Catz Beat Pad */
-+	XPAD_XBOXONE_VENDOR(0x0738),		/* Mad Catz FightStick TE 2 */
- 	XPAD_XBOX360_VENDOR(0x0e6f),		/* 0x0e6f X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
- 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
+@@ -459,6 +459,10 @@ static void xpad_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *d
+ static void xpad360_process_packet(struct usb_xpad *xpad, struct input_dev *dev,
+ 				   u16 cmd, unsigned char *data)
+ {
++	/* valid pad data */
++	if (data[0] != 0x00)
++		return;
++
+ 	/* digital pad */
+ 	if (xpad->mapping & MAP_DPAD_TO_BUTTONS) {
+ 		/* dpad as buttons (left, right, up, down) */
 -- 
 2.17.1
 
