@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3ABC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C4C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A685D20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 643D920868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nn5S/NfT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A685D20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zQWnk6RV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643D920868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbeK3B0j (ORCPT
+        id S1731582AbeK3B0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50784 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730509AbeK3B0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:38 -0500
+        id S1730509AbeK3B0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2BE920868;
-        Thu, 29 Nov 2018 14:21:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48B6D213A2;
+        Thu, 29 Nov 2018 14:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501267;
-        bh=hSaiE+dQSKV7kIRS2TB1lTqdEroUIQgJWUp/Fj+gjO4=;
+        s=default; t=1543501269;
+        bh=/FDYHQJXejVMd2UXeJwYfmAzrScdofrP2tUl+Xe8EPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nn5S/NfTwo4fhRtAVfslcVuE77R8FtDdDPKLeJEdA1Aa8o4DAk5NMPOB7byVo8OGo
-         LpKo1erKnQkyXnKNn0oLksYndJ+9O81cz8JOXqB7xJmoT5CBsBFWr5kxgQ+aQ2bk2O
-         Fp0KX3mCn5GQPlOt/it19j4o1i8tZE6+dpXnRBWU=
+        b=zQWnk6RVLmPdONCInAQvZPlPVd2rgyWAcWbZ8S84j+9dI1NM3zLhEAmfYZ5GPpChM
+         bDVjwuR/fH22/UQ4QJqCOcvjKzyry53z04rkUoFBVoggCPr7/bcKZTgGDn+MEVXGpY
+         WrPc54RIiUjhRGD7Ej4dHWh/nATMT1txpYnJPh7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.9 03/92] usb: xhci: fix timeout for transition from RExit to U0
-Date:   Thu, 29 Nov 2018 15:11:32 +0100
-Message-Id: <20181129140106.775387034@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 04/92] MAINTAINERS: Add Sasha as a stable branch maintainer
+Date:   Thu, 29 Nov 2018 15:11:33 +0100
+Message-Id: <20181129140106.835123109@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -62,56 +61,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit a5baeaeabcca3244782a9b6382ebab6f8a58f583 upstream.
+commit cb5d21946d2a2f4687c482ab4604af1d29dac35a upstream.
 
-This definition is used by msecs_to_jiffies in milliseconds.
-According to the comments, max rexit timeout should be 20ms.
-Align with the comments to properly calculate the delay.
+Sasha has somehow been convinced into helping me with the stable kernel
+maintenance.  Codify this slip in good judgement before he realizes what
+he really signed up for :)
 
-Verified on Sunrise Point-LP and Cannon Lake.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c |    4 ++--
- drivers/usb/host/xhci.h     |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -814,7 +814,7 @@ static u32 xhci_get_port_status(struct u
- 			time_left = wait_for_completion_timeout(
- 					&bus_state->rexit_done[wIndex],
- 					msecs_to_jiffies(
--						XHCI_MAX_REXIT_TIMEOUT));
-+						XHCI_MAX_REXIT_TIMEOUT_MS));
- 			spin_lock_irqsave(&xhci->lock, flags);
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11469,6 +11469,7 @@ F:	arch/alpha/kernel/srm_env.c
  
- 			if (time_left) {
-@@ -828,7 +828,7 @@ static u32 xhci_get_port_status(struct u
- 			} else {
- 				int port_status = readl(port_array[wIndex]);
- 				xhci_warn(xhci, "Port resume took longer than %i msec, port status = 0x%x\n",
--						XHCI_MAX_REXIT_TIMEOUT,
-+						XHCI_MAX_REXIT_TIMEOUT_MS,
- 						port_status);
- 				status |= USB_PORT_STAT_SUSPEND;
- 				clear_bit(wIndex, &bus_state->rexit_ports);
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1509,7 +1509,7 @@ struct xhci_bus_state {
-  * It can take up to 20 ms to transition from RExit to U0 on the
-  * Intel Lynx Point LP xHCI host.
-  */
--#define	XHCI_MAX_REXIT_TIMEOUT	(20 * 1000)
-+#define	XHCI_MAX_REXIT_TIMEOUT_MS	20
- 
- static inline unsigned int hcd_index(struct usb_hcd *hcd)
- {
+ STABLE BRANCH
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
++M:	Sasha Levin <sashal@kernel.org>
+ L:	stable@vger.kernel.org
+ S:	Supported
+ F:	Documentation/stable_kernel_rules.txt
 
 
