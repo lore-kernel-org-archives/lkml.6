@@ -2,144 +2,89 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 956BDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F42C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5BF2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F5372081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:55:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g72ZEyC0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5BF2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DssgENGH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5372081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbeK2X7l (ORCPT
+        id S1728310AbeK3AA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:59:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbeK2X7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:59:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31748206B6;
-        Thu, 29 Nov 2018 12:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543496064;
-        bh=zsZbA1BR9cK35c+T8yt9NSY2FW8dQDhji0uYyId4s6s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g72ZEyC02p9iiV1CZCAMh9DnGLOdJEaA1WZnDxu0jGxaNW+5d8TpWFaCFkGgvjE/t
-         OTAUAsOLP/o+e+qxwi6MIOPmEBm62EUx8NDHqNzBD1ReVW7VCkkU9Y2hF1yk4vNKhS
-         6eV9HJxEnyVxZDUtfw6d8JCFziNa9nO7bwyOcNWY=
-Date:   Thu, 29 Nov 2018 13:54:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stefan Schmidt <stefan@datenfreihafen.org>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Florian Westphal <fw@strlen.de>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 4.9 50/71] inet: frags: use rhashtables for reassembly
- units
-Message-ID: <20181129125422.GO3149@kroah.com>
-References: <20181016170539.315587743@linuxfoundation.org>
- <20181016170541.874459615@linuxfoundation.org>
- <62bd748b-20a8-d021-7b3b-32146df8beb8@datenfreihafen.org>
+        Thu, 29 Nov 2018 19:00:29 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:57454 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeK3AA3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:00:29 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6B82324E20DE;
+        Thu, 29 Nov 2018 04:55:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543496113; bh=TJG/pkvYmKC3+WfVyuU6/fUipnUzKKjO0ChtQRgB5b4=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=DssgENGH+uomJimmWsjMUXM11+TiqljYsyFF22M5BvQWGpu/q3FsyGJXp2y6V3vv3
+         F2Jh+/5mztPx44gmZz+RfYMfANeWr5grN1ndVqkv0fR7QwxxDRr9EoqTNo+rMfwGrx
+         Jrnahy/K/85diQscDQo4qGy/DmsN0r0HLbxEEuWBH7D6Kev9dJnq+ucr+AA5K8nIVt
+         KO/ruGy4Uf51WdBtv+Eln27E9m4F/DLgq5wD2U0LAu3yOpbrMUGE19O15U1olv+oUh
+         tOhUBPnsLlRxcua13S5AjXCN4v31uhzky5r6RXTRl0KQsGEz8WIJQa3ehFrtzqAslE
+         dz69XNAQ35LlQ==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 5F5E338C0;
+        Thu, 29 Nov 2018 04:55:13 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 04:55:13 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 29 Nov 2018 13:55:11 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     Jose Abreu <jose.abreu@synopsys.com>
+CC:     Vitor Soares <vitor.soares@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        "Vineet Gupta" <vineet.gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: io.h: Implement reads{x}()/writes{x}()
+Thread-Topic: [PATCH] ARC: io.h: Implement reads{x}()/writes{x}()
+Thread-Index: AQHUh+EKJZ77V6pHnEeowo0MFqE/DaVmpP6A
+Date:   Thu, 29 Nov 2018 12:55:10 +0000
+Message-ID: <09e6afb585a62b23e33297b1c0979703ca9fab8c.camel@synopsys.com>
+References: <bdcc49c9eab45bda6815b1419590943e603d8dc2.1543484040.git.joabreu@synopsys.com>
+In-Reply-To: <bdcc49c9eab45bda6815b1419590943e603d8dc2.1543484040.git.joabreu@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+x-originating-ip: [10.225.15.88]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8F300D3F1C3BFE4AB083D694B1E7C1EF@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62bd748b-20a8-d021-7b3b-32146df8beb8@datenfreihafen.org>
-User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 03:39:47PM +0200, Stefan Schmidt wrote:
-> Hello Greg.
-> 
-> [Hope I am not to late for this]
-> 
-> On 16/10/2018 19:09, Greg Kroah-Hartman wrote:
-> > 4.9-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Eric Dumazet <edumazet@google.com>
-> > 
-> > Some applications still rely on IP fragmentation, and to be fair linux
-> > reassembly unit is not working under any serious load.
-> > 
-> > It uses static hash tables of 1024 buckets, and up to 128 items per bucket (!!!)
-> > 
-> > A work queue is supposed to garbage collect items when host is under memory
-> > pressure, and doing a hash rebuild, changing seed used in hash computations.
-> > 
-> > This work queue blocks softirqs for up to 25 ms when doing a hash rebuild,
-> > occurring every 5 seconds if host is under fire.
-> > 
-> > Then there is the problem of sharing this hash table for all netns.
-> > 
-> > It is time to switch to rhashtables, and allocate one of them per netns
-> > to speedup netns dismantle, since this is a critical metric these days.
-> > 
-> > Lookup is now using RCU. A followup patch will even remove
-> > the refcount hold/release left from prior implementation and save
-> > a couple of atomic operations.
-> > 
-> > Before this patch, 16 cpus (16 RX queue NIC) could not handle more
-> > than 1 Mpps frags DDOS.
-> > 
-> > After the patch, I reach 9 Mpps without any tuning, and can use up to 2GB
-> > of storage for the fragments (exact number depends on frags being evicted
-> > after timeout)
-> > 
-> > $ grep FRAG /proc/net/sockstat
-> > FRAG: inuse 1966916 memory 2140004608
-> > 
-> > A followup patch will change the limits for 64bit arches.
-> > 
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: Florian Westphal <fw@strlen.de>
-> > Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-> > Cc: Alexander Aring <alex.aring@gmail.com>
-> > Cc: Stefan Schmidt <stefan@osg.samsung.com>
-> > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > (cherry picked from commit 648700f76b03b7e8149d13cc2bdb3355035258a9)
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  Documentation/networking/ip-sysctl.txt  |    7 
-> >  include/net/inet_frag.h                 |   81 +++----
-> >  include/net/ipv6.h                      |   16 -
-> >  net/ieee802154/6lowpan/6lowpan_i.h      |   26 --
-> >  net/ieee802154/6lowpan/reassembly.c     |   91 +++-----
-> >  net/ipv4/inet_fragment.c                |  349 ++++++--------------------------
-> >  net/ipv4/ip_fragment.c                  |  112 ++++------
-> >  net/ipv6/netfilter/nf_conntrack_reasm.c |   51 +---
-> >  net/ipv6/reassembly.c                   |  110 ++++------
-> >  9 files changed, 267 insertions(+), 576 deletions(-)
-> > 
-> 
-> When this patch hit master a while back we had to address a regression
-> in the ieee802514 6lowpan layer. It seems this fix is missing in the
-> backport series (only looking at your patchset here, no the full tree).
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=f18fa5de5ba7f1d6650951502bb96a6e4715a948
-> 
-> I would appreciate if you could pull this into this series as well.
-
-Now queued up for 4.14 and 4.9 as well, thanks.
-
-greg k-h
+SGkgSm9zZSwNCg0KT24gVGh1LCAyMDE4LTExLTI5IGF0IDEyOjQyICswMDAwLCBKb3NlIEFicmV1
+IHdyb3RlOg0KPiBTb21lIEFSQyBDUFUncyBkbyBub3Qgc3VwcG9ydCB1bmFsaWduZWQgbG9hZHMv
+c3RvcmVzLiBDdXJyZW50bHksIGdlbmVyaWMNCj4gaW1wbGVtZW50YXRpb24gb2YgcmVhZHN7Yi93
+L2x9KCkvd3JpdGVze2Ivdy9sfSgpIGlzIGJlaW5nIHVzZWQgd2l0aCBBUkMuDQo+IFRoaXMgY2Fu
+IGxlYWQgdG8gbWlzZnVuY3Rpb24gb2Ygc29tZSBkcml2ZXJzIGFzIGdlbmVyaWMgZnVuY3Rpb25z
+IGRvIGENCj4gcGxhaW4gZGVyZWZlcmVuY2Ugb2YgYSBwb2ludGVyIHRoYXQgY2FuIGJlIHVuYWxp
+Z25lZC4NCj4gDQo+IExldCdzIHVzZSB7Z2V0L3B1dH1fdW5hbGlnbmVkKCkgaGVscGVyIGluc3Rl
+YWQgb2YgcGxhaW4gZGVyZWZlcmVuY2Ugb2YNCj4gcG9pbnRlciBpbiBvcmRlciB0byBmaXggdGhp
+cy4NCj4gDQo+IFdlIGRvIG5vdCBpbXBsZW1lbnQgcmVhZHNxKCkvd3JpdGVzcSgpIGFzIHdlIGFz
+c3VtZSB0aGF0IG9ubHkgSFMgaXMgYQ0KPiA2NCBCaXQgQ1BVIGFuZCB0aGF0IGl0IHN1cHBvcnRz
+IHVuYWxpZ25lZCBsb2Fkcy9zdG9yZXMuDQoNClBscyBub3RlIHRoYXQgQVJDIEhTIGlzIHN0aWxs
+IG9ubHkgMzItYml0IGNvcmUgYXQgbGVhc3QgYXMgb2YgdG9kYXkuDQoNCi1BbGV4ZXkNCg==
