@@ -2,135 +2,197 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C987CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98672C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93CE42082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:11:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93CE42082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+	by mail.kernel.org (Postfix) with ESMTP id 6249D213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:11:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6249D213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbeK3FRc (ORCPT
+        id S1727423AbeK3FRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:17:32 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:59482 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeK3FRc (ORCPT
+        Fri, 30 Nov 2018 00:17:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44112 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725928AbeK3FRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:17:32 -0500
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id A381F67A862;
-        Thu, 29 Nov 2018 19:11:11 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 29 Nov
- 2018 19:11:11 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Thu, 29 Nov 2018 19:11:11 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
-Thread-Topic: [PATCH] mtd: nand: Fix memory allocation in nanddev_bbt_init()
-Thread-Index: AQHUhiUV+bbi1IymHUOKrtHQUP0AvaVlM7kAgAAEGQCAAAHSgIAABNkAgAACZQCAAb/fAA==
-Date:   Thu, 29 Nov 2018 18:11:11 +0000
-Message-ID: <fa05e203-430c-6ec4-55e9-a7f9f548e481@kontron.de>
-References: <1543304637-27308-1-git-send-email-frieder.schrempf@kontron.de>
- <20181128154104.577d5923@bbrezillon>
- <7634bb45-6167-31e8-e169-b5c9bf7e2fc5@kontron.de>
- <20181128160215.45e5162e@bbrezillon>
- <b7adc960-c81d-19c6-2122-cd6781b64a17@kontron.de>
- <20181128162810.597a7fd3@bbrezillon>
-In-Reply-To: <20181128162810.597a7fd3@bbrezillon>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <00599B8BC25BF4498569457C99E642F7@snt-world.com>
-Content-Transfer-Encoding: base64
+        Fri, 30 Nov 2018 00:17:40 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATI4Kur119629
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 13:11:25 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p2jn57tqu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 13:11:25 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 29 Nov 2018 18:11:22 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 29 Nov 2018 18:11:18 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATIBHMa50725060
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 18:11:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFF69A4053;
+        Thu, 29 Nov 2018 18:11:17 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDE26A4051;
+        Thu, 29 Nov 2018 18:11:16 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.201])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 29 Nov 2018 18:11:16 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 20:11:15 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Qian Cai <cai@gmx.us>
+Cc:     akpm@linux-foundation.org, catalin.marinas@arm.com,
+        mhocko@suse.com, rppt@linux.ibm.com, aryabinin@virtuozzo.com,
+        glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/memblock: skip kmemleak for kasan_init()
+References: <1543442925-17794-1-git-send-email-cai@gmx.us>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: A381F67A862.ADA5D
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543442925-17794-1-git-send-email-cai@gmx.us>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18112918-0028-0000-0000-000003237AE3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112918-0029-0000-0000-000023DF8CC5
+Message-Id: <20181129181114.GB4295@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811290149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjguMTEuMTggMTY6MjgsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24gV2VkLCAyOCBO
-b3YgMjAxOCAxNToxOTozNyArMDAwMA0KPiBTY2hyZW1wZiBGcmllZGVyIDxmcmllZGVyLnNjaHJl
-bXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPiANCj4+IE9uIDI4LjExLjE4IDE2OjAyLCBCb3JpcyBC
-cmV6aWxsb24gd3JvdGU6DQo+Pj4gT24gV2VkLCAyOCBOb3YgMjAxOCAxNDo1NTo0NSArMDAwMA0K
-Pj4+IFNjaHJlbXBmIEZyaWVkZXIgPGZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4gd3JvdGU6
-DQo+Pj4gICAgDQo+Pj4+IEhpIEJvcmlzLA0KPj4+Pg0KPj4+PiBPbiAyOC4xMS4xOCAxNTo0MSwg
-Qm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPj4+Pj4gT24gVHVlLCAyNyBOb3YgMjAxOCAwNzo0NDo1
-MiArMDAwMA0KPj4+Pj4gU2NocmVtcGYgRnJpZWRlciA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9u
-LmRlPiB3cm90ZToNCj4+Pj4+ICAgICAgIA0KPj4+Pj4+IEZpeCB0aGUgc2l6ZSBvZiB0aGUgYnVm
-ZmVyIGFsbG9jYXRlZCB0byBzdG9yZSB0aGUgaW4tbWVtb3J5IEJCVC4NCj4+Pj4+PiBUaGlzIGJ1
-ZyB3YXMgcHJldmlvdXNseSBoaWRkZW4gYnkgYSBkaWZmZXJlbnQgYnVnLCB0aGF0IHdhcyBmaXhl
-ZCBpbg0KPj4+Pj4+IGQwOTgwOTNiYTA2ZS4NCj4+Pj4+Pg0KPj4+Pj4+IEZpeGVzOiA5YzM3MzZh
-M2RlMjEgKCJtdGQ6IG5hbmQ6IEFkZCBjb3JlIGluZnJhc3RydWN0dXJlIHRvIGRlYWwgd2l0aCBO
-QU5EIGRldmljZXMiKQ0KPj4+Pj4+IENjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4NCj4+Pj4+
-PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRy
-b24uZGU+DQo+Pj4+Pg0KPj4+Pj4gTG9va3MgbGlrZSB5b3VyIEZyb20gaGVhZGVyIGRvZXMgbm90
-IG1hdGNoIHRoZSBTb0IgdGFnDQo+Pj4+PiAoJ0ZyaWVkZXIgU2NocmVtcGYnIHZzICdTY2hyZW1w
-ZiBGcmllZGVyJykgYW5kIGNoZWNrcGF0Y2ggZG9lcyBub3QgbGlrZQ0KPj4+Pj4gdGhhdC4gSSds
-bCBmaXggaXQgd2hlbiBhcHBseWluZywgYnV0IG1heWJlIHlvdSBzaG91bGQgZml4DQo+Pj4+PiB5
-b3VyIC5naXRjb25maWcgdG8gbWFrZSB0aGVtIG1hdGNoLg0KPj4+Pg0KPj4+PiBBY3R1YWxseSB0
-aGUgRnJvbSBoZWFkZXIgaW4gbXkgbG9jYWwgcGF0Y2ggaXMgY29ycmVjdCAoPGZpcnN0IG5hbWU+
-DQo+Pj4+IDxsYXN0IG5hbWU+LCBGcmllZGVyIFNjaHJlbXBmKSBhcyBpdCBjb21lcyBmcm9tIG15
-IGdpdCBjb25maWcuIEJ1dCBzaW5jZQ0KPj4+PiBvdXIgY29tcGFueSB3YXMgcmVuYW1lZCBhbmQg
-b3VyIG1haWwgc2VydmVycyB3ZXJlIHRyYW5zZmVycmVkLCBvdXINCj4+Pj4gZS1tYWlscyBhcmUg
-c2VudCB3aXRoIEZyb209PGxhc3QgbmFtZT4gPGZpcnN0IG5hbWU+Lg0KPj4+Pg0KPj4+PiBJdCBz
-ZWVtcyBsaWtlIGdpdCBzZW5kLWVtYWlsIG9yIHBhdGNod29yayBvciB3aGF0ZXZlciB1c2VzIHRo
-ZQ0KPj4+PiBpbmZvcm1hdGlvbiBmcm9tIHRoZSBlLW1haWwgaGVhZGVyIGluc3RlYWQgb2Ygd2hh
-dCBpcyBpbiB0aGUgcGF0Y2guDQo+Pj4+DQo+Pj4+IEkgd2lsbCB0cnkgdG8gcmFpc2UgdGhpcyBp
-c3N1ZSB3aXRoIG91ciBJVCBkZXBhcnRtZW50IGFzIHRoaXMgd291bGQgYmUNCj4+Pj4gYmVzdCBm
-aXhlZCBvbiB0aGVpciBzaWRlLg0KPj4+DQo+Pj4gVGhlcmUncyBhbm90aGVyIHNvbHV0aW9uOiBt
-YWtlIGdpdCBzZW5kLWVtYWlsIGFkZCBhIEZyb20gaGVhZGVyIGluIHRoZQ0KPj4+IG1lc3NhZ2Ug
-Ym9keS4NCj4+Pg0KPj4+IGdpdCBjb25maWcgLS1nbG9iYWwgc2VuZGVtYWlsLmZyb20gIlNjaHJl
-bXBmIEZyaWVkZXIgPGZyaWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4iDQo+Pg0KPj4gSSBkb24n
-dCBnZXQgaXQuIEhvdyB3b3VsZCB0aGF0IGNoYW5nZSB0aGluZ3M/IE15IEZyb20gc3RpbGwgd291
-bGRuJ3QNCj4+IG1hdGNoIG15IFNvQiB0YWdzLg0KPiANCj4gV2hlbiB0aGVyZSdzIGEgRnJvbSBs
-aW5lIGluIHRoZSBtZXNzYWdlIEJvZHksIGdpdCBhbSB3aWxsIHVzZSB0aGlzIG9uZQ0KPiBpbnN0
-ZWFkIG9mIHRoZSBvbmUgaW4gdGhlIGhlYWRlciBzZWN0aW9uLg0KDQpPaywgbm93IEkgZ290IGl0
-LiBJIGRpZG4ndCBrbm93IHRoYXQgZ2l0IHNlbmQtZW1haWwgYWRkcyB0aGUgRnJvbSB0YWcgaW4g
-DQp0aGUgYm9keSBpZiBzZW5kZW1haWwuZnJvbSBkaWZmZXJzIGZyb20gdGhlIGF1dGhvciwgYnV0
-IHRoYXQgbWFrZXMgc2Vuc2UgDQppbmRlZWQuDQoNCkkganVzdCBjaGVja2VkIGFuZCB3aXRoIG15
-IG9sZCBtYWlsIHNldHVwLCB0aGUgU01UUCBzZXJ2ZXIgd2FzIA0KcmVzcGVjdGluZyBteSBzZW5k
-ZXIgYWRkcmVzcyBmcm9tIHRoZSBjbGllbnQgKHNlbmQtZW1haWwsIHRodW5kZXJiaXJkKS4NCg0K
-VGhlIG5ldyBzZXR1cCB1c2VzIERhdk1haWwgR2F0ZXdheSB0byBzZW5kIHZpYSB0aGUgY29tcGFu
-aWVzIEV4Y2hhbmdlIA0Kc2VydmVyIGFuZCBpdCBqdXN0IGlnbm9yZXMgbXkgc2VuZGVyIGZyb20g
-dGhlIGNsaWVudCBhbmQgc2VuZHMgd2l0aCB0aGUgDQpyZXZlcnNlZCBuYW1lIGFzIHN0b3JlZCBp
-biB0aGUgRXhjaGFuZ2Ugc2VydmVyLg0KDQpJIGRvbid0IGxpa2Ugc2VuZGluZyBtYWlsIHdpdGgg
-cmV2ZXJzZWQgbmFtZXMgKHBlb3BsZSBzdGFydCBjYWxsaW5nIG1lIA0KYnkgbXkgbGFzdCBuYW1l
-KSwgYnV0IHVzaW5nIGEgZGlmZmVyZW50IFNNVFAgc2VydmVyIHdvdWxkIGxpa2VseSBjYXVzZSAN
-CnRyb3VibGUgd2l0aCBzb21lIHJlY2lwaWVudHMgdXNpbmcgU1BGIGZvciBzcGFtIGRldGVjdGlv
-bi4NCg0KU28gSSBndWVzcyBJIGhhdmUgdG8gY29udmluY2Ugb3VyIElUIHRvIGNoYW5nZSB0aGUg
-bmFtZXMsIGlmIGV2ZW4gDQpwb3NzaWJsZS4uLg0KT2gsIHdoeSBkbyBzdWNoIHNtYWxsIHRoaW5n
-cyBhbHdheXMgY2F1c2Ugc28gbXVjaCB0cm91YmxlPw==
+On Wed, Nov 28, 2018 at 05:08:45PM -0500, Qian Cai wrote:
+> Kmemleak does not play well with KASAN (tested on both HPE Apollo 70 and
+> Huawei TaiShan 2280 aarch64 servers).
+> 
+> After calling start_kernel()->setup_arch()->kasan_init(), kmemleak early
+> log buffer went from something like 280 to 260000 which caused kmemleak
+> disabled and crash dump memory reservation failed. The multitude of
+> kmemleak_alloc() calls is from nested loops while KASAN is setting up
+> full memory mappings, so let early kmemleak allocations skip those
+> memblock_alloc_internal() calls came from kasan_init() given that those
+> early KASAN memory mappings should not reference to other memory.
+> Hence, no kmemleak false positives.
+> 
+> kasan_init
+>   kasan_map_populate [1]
+>     kasan_pgd_populate [2]
+>       kasan_pud_populate [3]
+>         kasan_pmd_populate [4]
+>           kasan_pte_populate [5]
+>             kasan_alloc_zeroed_page
+>               memblock_alloc_try_nid
+>                 memblock_alloc_internal
+>                   kmemleak_alloc
+> 
+> [1] for_each_memblock(memory, reg)
+> [2] while (pgdp++, addr = next, addr != end)
+> [3] while (pudp++, addr = next, addr != end && pud_none(READ_ONCE(*pudp)))
+> [4] while (pmdp++, addr = next, addr != end && pmd_none(READ_ONCE(*pmdp)))
+> [5] while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)))
+> 
+> Signed-off-by: Qian Cai <cai@gmx.us>
+
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com> # memblock parts
+
+> ---
+> 
+> Changes since v1:
+> * only skip memblock_alloc_internal() calls came from kasan_int().
+> 
+>  arch/arm64/mm/kasan_init.c |  2 +-
+>  include/linux/memblock.h   |  1 +
+>  mm/memblock.c              | 19 +++++++++++--------
+>  3 files changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+> index 63527e5..fcb2ca3 100644
+> --- a/arch/arm64/mm/kasan_init.c
+> +++ b/arch/arm64/mm/kasan_init.c
+> @@ -39,7 +39,7 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int node)
+>  {
+>  	void *p = memblock_alloc_try_nid(PAGE_SIZE, PAGE_SIZE,
+>  					      __pa(MAX_DMA_ADDRESS),
+> -					      MEMBLOCK_ALLOC_ACCESSIBLE, node);
+> +					      MEMBLOCK_ALLOC_KASAN, node);
+>  	return __pa(p);
+>  }
+> 
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index aee299a..3ef3086 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -320,6 +320,7 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
+>  /* Flags for memblock allocation APIs */
+>  #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
+>  #define MEMBLOCK_ALLOC_ACCESSIBLE	0
+> +#define MEMBLOCK_ALLOC_KASAN		1
+> 
+>  /* We are using top down, so it is safe to use 0 here */
+>  #define MEMBLOCK_LOW_LIMIT 0
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 9a2d5ae..abb9f7f 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -262,7 +262,8 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>  	phys_addr_t kernel_end, ret;
+> 
+>  	/* pump up @end */
+> -	if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
+> +	if (end == MEMBLOCK_ALLOC_ACCESSIBLE ||
+> +	    end == MEMBLOCK_ALLOC_KASAN)
+>  		end = memblock.current_limit;
+> 
+>  	/* avoid allocating the first page */
+> @@ -1412,13 +1413,15 @@ static void * __init memblock_alloc_internal(
+>  done:
+>  	ptr = phys_to_virt(alloc);
+> 
+> -	/*
+> -	 * The min_count is set to 0 so that bootmem allocated blocks
+> -	 * are never reported as leaks. This is because many of these blocks
+> -	 * are only referred via the physical address which is not
+> -	 * looked up by kmemleak.
+> -	 */
+> -	kmemleak_alloc(ptr, size, 0, 0);
+> +	/* Skip kmemleak for kasan_init() due to high volume. */
+> +	if (max_addr != MEMBLOCK_ALLOC_KASAN)
+> +		/*
+> +		 * The min_count is set to 0 so that bootmem allocated
+> +		 * blocks are never reported as leaks. This is because many
+> +		 * of these blocks are only referred via the physical
+> +		 * address which is not looked up by kmemleak.
+> +		 */
+> +		kmemleak_alloc(ptr, size, 0, 0);
+> 
+>  	return ptr;
+>  }
+> -- 
+> 1.8.3.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
