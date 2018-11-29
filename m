@@ -7,53 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0239C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D813EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8646213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B5342147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eolR8L6W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8646213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/ySmz+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5342147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388014AbeK3Bdt (ORCPT
+        id S2388028AbeK3Bdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34622 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731925AbeK3Bds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:48 -0500
+        id S1731925AbeK3Bdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D17382145D;
-        Thu, 29 Nov 2018 14:28:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60BD12146D;
+        Thu, 29 Nov 2018 14:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501695;
-        bh=ONtAe6aUfrZ7Zr2CyZPEHSkDvC8UE5LuBhFAMeQiEus=;
+        s=default; t=1543501697;
+        bh=pG6BnRcIqDOzpYjNRatk9I4SMvpquxEvPVItHqEZqio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eolR8L6Wa1KwcdECbfzvSHEk3TLWCsL8fFjwrpYDEjK8ZnBY5fJ6fsYVNlWgW+m7U
-         0mmfKi3VvKSXHAF1xV6dNs7BhCwM5I0AKGCqUSqGxe2RFU3B2maxubJ8L6xfsp3eUH
-         ZOqZKBLJbcc0xMFipNrzWQOeuHiscSeYuYTi8ADc=
+        b=K/ySmz+20QBF1fulzYxzTy0M0rsk6ft6yGMFzq/0yTdQ+nE0LCTMrLhQzswhBdcpw
+         jV3nJOaP/K3dq8aS7pycNC8KhEMZtv+j9Tn5Fjnta/zq6NgvmX7/XliAOr+Xl3AksM
+         oqiyWR5JN+Nta+R5Nxvceja9ANrmY8c8AorqV2bY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastien Boisvert <sebhtml@videotron.qc.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Elenie Godzaridis <arangradient@gmail.com>,
-        stable@vger.kerenl.org, Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 088/100] include/linux/pfn_t.h: force ~ to be parsed as an unary operator
-Date:   Thu, 29 Nov 2018 15:12:58 +0100
-Message-Id: <20181129140106.419461294@linuxfoundation.org>
+        stable@vger.kernel.org, aszlig <aszlig@nix.build>,
+        Milan Broz <gmazyland@gmail.com>,
+        Daniel Zatovic <daniel.zatovic@gmail.com>,
+        Willy Tarreau <w@1wt.eu>
+Subject: [PATCH 4.14 089/100] tty: wipe buffer.
+Date:   Thu, 29 Nov 2018 15:12:59 +0100
+Message-Id: <20181129140106.504209905@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -71,70 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastien Boisvert <sebhtml@videotron.qc.ca>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 4d54954a197175c0dcb3c82af0c0740d0c5f827a upstream.
+commit c9a8e5fce009e3c601a43c49ea9dbcb25d1ffac5 upstream.
 
-Tracing the event "fs_dax:dax_pmd_insert_mapping" with perf produces this
-warning:
+After we are done with the tty buffer, zero it out.
 
-      [fs_dax:dax_pmd_insert_mapping] unknown op '~'
-
-It is printed in process_op (tools/lib/traceevent/event-parse.c) because
-'~' is parsed as a binary operator.
-
-perf reads the format of fs_dax:dax_pmd_insert_mapping ("print fmt") from
-/sys/kernel/debug/tracing/events/fs_dax/dax_pmd_insert_mapping/format .
-
-The format contains:
-
-~(((u64) ~(~(((1UL) << 12)-1)))
-         ^
-         \ interpreted as a binary operator by process_op().
-
-This part is generated in the declaration of the event class
-dax_pmd_insert_mapping_class in include/trace/events/fs_dax.h :
-
-		__print_flags_u64(__entry->pfn_val & PFN_FLAGS_MASK, "|",
-			PFN_FLAGS_TRACE),
-
-This patch adds a pair of parentheses in the declaration of PFN_FLAGS_MASK
-to make sure that '~' is parsed as a unary operator by perf.
-
-The part of the format that was problematic is now:
-
-~(((u64) (~(~(((1UL) << 12)-1))))
-
-Now, all the '~' are parsed as unary operators.
-
-Link: http://lkml.kernel.org/r/20181021145939.8760-1-sebhtml@videotron.qc.ca
-Signed-off-by: Sebastien Boisvert <sebhtml@videotron.qc.ca>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ross Zwisler <zwisler@kernel.org>
-Cc: Elenie Godzaridis <arangradient@gmail.com>
-Cc: <stable@vger.kerenl.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: aszlig <aszlig@nix.build>
+Tested-by: Milan Broz <gmazyland@gmail.com>
+Tested-by: Daniel Zatovic <daniel.zatovic@gmail.com>
+Tested-by: aszlig <aszlig@nix.build>
+Cc: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/pfn_t.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/tty_buffer.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/linux/pfn_t.h
-+++ b/include/linux/pfn_t.h
-@@ -10,7 +10,7 @@
-  * PFN_DEV - pfn is not covered by system memmap by default
-  * PFN_MAP - pfn has a dynamic page mapping established by a device driver
-  */
--#define PFN_FLAGS_MASK (((u64) ~PAGE_MASK) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
-+#define PFN_FLAGS_MASK (((u64) (~PAGE_MASK)) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
- #define PFN_SG_CHAIN (1ULL << (BITS_PER_LONG_LONG - 1))
- #define PFN_SG_LAST (1ULL << (BITS_PER_LONG_LONG - 2))
- #define PFN_DEV (1ULL << (BITS_PER_LONG_LONG - 3))
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -467,11 +467,15 @@ receive_buf(struct tty_port *port, struc
+ {
+ 	unsigned char *p = char_buf_ptr(head, head->read);
+ 	char	      *f = NULL;
++	int n;
+ 
+ 	if (~head->flags & TTYB_NORMAL)
+ 		f = flag_buf_ptr(head, head->read);
+ 
+-	return port->client_ops->receive_buf(port, p, f, count);
++	n = port->client_ops->receive_buf(port, p, f, count);
++	if (n > 0)
++		memset(p, 0, n);
++	return n;
+ }
+ 
+ /**
 
 
