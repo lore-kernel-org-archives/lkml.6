@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2908C04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE46C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB1642146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56F82146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vUzP+FBk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1642146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3GRrrhs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56F82146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387562AbeK3Bce (ORCPT
+        id S2387575AbeK3Bch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:32:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60824 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:32:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731824AbeK3Bcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:32:33 -0500
+        id S1731824AbeK3Bcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:32:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 540482146F;
-        Thu, 29 Nov 2018 14:27:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B684D2145D;
+        Thu, 29 Nov 2018 14:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501620;
-        bh=DIT76QPjqZGbv9Dakrn651RZWEiz5GMz9g/DDLC2Adk=;
+        s=default; t=1543501623;
+        bh=7NOd1hMWgwEE+mFTcMuToxVqPnwEMDXLJoPZzdb9Z6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vUzP+FBkNaMD+c9BSTn6maSANZToLI8EQWFJ490ZX5dBgD3u62bfmnrJ9xTf/55H+
-         fEQMILymrI1Flfb05cCYCHpKLsdX6sKehhX6CdIwTa+AUaDYlFDo329ZgyE202mvIb
-         x47u+4OmOXp+a3qcODJv4Z4JOHAgj93FucCzRMn8=
+        b=f3GRrrhsMA6E7PXIEi72KW0fxpXnhUaazWg0cfX6vnigi1ZwgppJbalP2NeAcYS/D
+         Lcnq4Z00neHcbTDxjBY8BsrA37WTlSJeyNXY7k5CLGXmQigbYOuJzrJN0Ow2fwx9J5
+         TywBjosZAnbpzl6kQBgC5wNB5Z8wGMCJ6lzU3VUo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 072/100] xhci: Add quirk to workaround the errata seen on Cavium Thunder-X2 Soc
-Date:   Thu, 29 Nov 2018 15:12:42 +0100
-Message-Id: <20181129140105.045294545@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 073/100] mtd: rawnand: atmel: fix OF child-node lookup
+Date:   Thu, 29 Nov 2018 15:12:43 +0100
+Message-Id: <20181129140105.114424159@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,111 +65,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cherian, George <George.Cherian@cavium.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 11644a7659529730eaf2f166efaabe7c3dc7af8c upstream.
+commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
 
-Implement workaround for ThunderX2 Errata-129 (documented in
-CN99XX Known Issues" available at Cavium support site).
-As per ThunderX2errata-129, USB 2 device may come up as USB 1
-if a connection to a USB 1 device is followed by another connection to
-a USB 2 device, the link will come up as USB 1 for the USB 2 device.
+Use the new of_get_compatible_child() helper to lookup the nfc child
+node instead of using of_find_compatible_node(), which searches the
+entire tree from a given start node and thus can return an unrelated
+(i.e. non-child) node.
 
-Resolution: Reset the PHY after the USB 1 device is disconnected.
-The PHY reset sequence is done using private registers in XHCI register
-space. After the PHY is reset we check for the PLL lock status and retry
-the operation if it fails. From our tests, retrying 4 times is sufficient.
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the node of the device being probed).
 
-Add a new quirk flag XHCI_RESET_PLL_ON_DISCONNECT to invoke the workaround
-in handle_xhci_port_status().
+While at it, also fix a related nfc-node reference leak.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: George Cherian <george.cherian@cavium.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+Cc: stable <stable@vger.kernel.org>     # 4.11
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Josh Wu <rainyfeeling@outlook.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-pci.c  |    5 +++++
- drivers/usb/host/xhci-ring.c |   35 ++++++++++++++++++++++++++++++++++-
- drivers/usb/host/xhci.h      |    1 +
- 3 files changed, 40 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/atmel/nand-controller.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -236,6 +236,11 @@ static void xhci_pci_quirks(struct devic
- 	if (pdev->vendor == PCI_VENDOR_ID_TI && pdev->device == 0x8241)
- 		xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_7;
+--- a/drivers/mtd/nand/atmel/nand-controller.c
++++ b/drivers/mtd/nand/atmel/nand-controller.c
+@@ -2077,8 +2077,7 @@ atmel_hsmc_nand_controller_legacy_init(s
+ 	int ret;
  
-+	if ((pdev->vendor == PCI_VENDOR_ID_BROADCOM ||
-+	     pdev->vendor == PCI_VENDOR_ID_CAVIUM) &&
-+	     pdev->device == 0x9026)
-+		xhci->quirks |= XHCI_RESET_PLL_ON_DISCONNECT;
-+
- 	if (xhci->quirks & XHCI_RESET_ON_RESUME)
- 		xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
- 				"QUIRK: Resetting on resume");
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1568,6 +1568,35 @@ static void handle_device_notification(s
- 		usb_wakeup_notification(udev->parent, udev->portnum);
- }
- 
-+/*
-+ * Quirk hanlder for errata seen on Cavium ThunderX2 processor XHCI
-+ * Controller.
-+ * As per ThunderX2errata-129 USB 2 device may come up as USB 1
-+ * If a connection to a USB 1 device is followed by another connection
-+ * to a USB 2 device.
-+ *
-+ * Reset the PHY after the USB device is disconnected if device speed
-+ * is less than HCD_USB3.
-+ * Retry the reset sequence max of 4 times checking the PLL lock status.
-+ *
-+ */
-+static void xhci_cavium_reset_phy_quirk(struct xhci_hcd *xhci)
-+{
-+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
-+	u32 pll_lock_check;
-+	u32 retry_count = 4;
-+
-+	do {
-+		/* Assert PHY reset */
-+		writel(0x6F, hcd->regs + 0x1048);
-+		udelay(10);
-+		/* De-assert the PHY reset */
-+		writel(0x7F, hcd->regs + 0x1048);
-+		udelay(200);
-+		pll_lock_check = readl(hcd->regs + 0x1070);
-+	} while (!(pll_lock_check & 0x1) && --retry_count);
-+}
-+
- static void handle_port_status(struct xhci_hcd *xhci,
- 		union xhci_trb *event)
- {
-@@ -1725,9 +1754,13 @@ static void handle_port_status(struct xh
- 		goto cleanup;
+ 	nand_np = dev->of_node;
+-	nfc_np = of_find_compatible_node(dev->of_node, NULL,
+-					 "atmel,sama5d3-nfc");
++	nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+ 	if (!nfc_np) {
+ 		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
+ 		return -ENODEV;
+@@ -2492,15 +2491,19 @@ static int atmel_nand_controller_probe(s
  	}
  
--	if (hcd->speed < HCD_USB3)
-+	if (hcd->speed < HCD_USB3) {
- 		xhci_test_and_clear_bit(xhci, port_array, faked_port_index,
- 					PORT_PLC);
-+		if ((xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT) &&
-+		    (portsc & PORT_CSC) && !(portsc & PORT_CONNECT))
-+			xhci_cavium_reset_phy_quirk(xhci);
-+	}
+ 	if (caps->legacy_of_bindings) {
++		struct device_node *nfc_node;
+ 		u32 ale_offs = 21;
  
- cleanup:
- 	/* Update event ring dequeue pointer before dropping the lock */
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1838,6 +1838,7 @@ struct xhci_hcd {
- #define XHCI_HW_LPM_DISABLE	BIT_ULL(29)
- #define XHCI_SUSPEND_DELAY	BIT_ULL(30)
- #define XHCI_INTEL_USB_ROLE_SW	BIT_ULL(31)
-+#define XHCI_RESET_PLL_ON_DISCONNECT	BIT_ULL(34)
+ 		/*
+ 		 * If we are parsing legacy DT props and the DT contains a
+ 		 * valid NFC node, forward the request to the sama5 logic.
+ 		 */
+-		if (of_find_compatible_node(pdev->dev.of_node, NULL,
+-					    "atmel,sama5d3-nfc"))
++		nfc_node = of_get_compatible_child(pdev->dev.of_node,
++						   "atmel,sama5d3-nfc");
++		if (nfc_node) {
+ 			caps = &atmel_sama5_nand_caps;
++			of_node_put(nfc_node);
++		}
  
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
+ 		/*
+ 		 * Even if the compatible says we are dealing with an
 
 
