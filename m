@@ -2,107 +2,93 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBEBC04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E06BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 756DD2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 638A620868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1ztXljT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756DD2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLbfcmis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638A620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeK2RA0 (ORCPT
+        id S1728059AbeK2RAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:00:26 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36193 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbeK2RAZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:00:25 -0500
-Received: by mail-io1-f66.google.com with SMTP id m19so618105ioh.3;
-        Wed, 28 Nov 2018 21:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v/PZuBQYJ5T8N0KQkJXbf6ozyCLnd9UblNtdD32Qm8U=;
-        b=W1ztXljTFsViPOzN3HEXY1zuL/RbJk/1WKL7nkWVO7XtKwYZG6rjmAy7TyuBJxPvwf
-         2USYEKeBg2bgwmN3r3mtSXkexJDfWpf65tOcLmCV0u4vTJCtmtZW2u5OjwYRk/8mpjAh
-         KDFkkOt/wR0gtpCH4VIqwyOyrDK965R42V6LUxMDMUu6ooIiyfKHxEIAkij/haAHr+pF
-         /jRVl/dya/Jm6AiucfpQ819ZoEuowpK7DPjvhyCuuiLOMfRZ1Oy+pqPDFqVNW5SPrPO6
-         OQ/80xslzEdpBzqH1TRLc1ow4FCMh0xIEtsgVW0HFd0Qz+nJQ//cPHwp6ATo6rOShNNL
-         oncQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v/PZuBQYJ5T8N0KQkJXbf6ozyCLnd9UblNtdD32Qm8U=;
-        b=mmw/SIGI7GqTANi8Qb/MAd84CkGTTdk98P4WVizFi9tDND+mRDKM8fDmODWwGmB8tM
-         +N8YIQ41ZRyl/zUNBpy3jV2JfqbkKMADB9EpGm6tjmDX7JL9lsOOVmZ83vTxx3GAA9Sx
-         liw3V4+PBcImFh2XqUPEhL7w4fjUsMjFzdqfgRQ6WmfT6knX/2qG/v45100QZ1WYNQqg
-         lEHHCtt7Fw2fGg0TJinz+Xsx+GUEXFSEA5bZ89L5c/uKvT4JCQ90jDNjcXpBBLZjfGC4
-         +t9OdUPVhvN46xL/REo7nFldbDu/3qZM0yCetETjknXDONxv02auJ2WxZM2PHVWPvz6j
-         bA1w==
-X-Gm-Message-State: AA+aEWZrkLOOp9gldg2/8twMvtolWnDWFfdzvV28ARwqfxem1oq6D2k+
-        OzVDLD6Or8ARm7wrYNnyKGL5JZVMQEoqSxynDypRVpBUFQU=
-X-Google-Smtp-Source: AFSGD/WVjYzd3Qdrmnz9Ep3yinpTwTryV8d1fQ1aFzYtNJUfgw0diiWpqYtcYqQc6xlBSJzsBJr4lJVX73ELW+whAco=
-X-Received: by 2002:a5e:8b46:: with SMTP id z6mr132134iom.7.1543470974704;
- Wed, 28 Nov 2018 21:56:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181123150600.27445-1-tiny.windzz@gmail.com> <154344291239.88331.14159206270303255502@swboyd.mtv.corp.google.com>
- <154344317086.88331.8296424241716107824@swboyd.mtv.corp.google.com>
-In-Reply-To: <154344317086.88331.8296424241716107824@swboyd.mtv.corp.google.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 29 Nov 2018 13:56:29 +0800
-Message-ID: <CAEExFWtOR9JVdVnp_S6NHJypX_C=bhZueXq4QmzHL4Pu9+5SMw@mail.gmail.com>
-Subject: Re: [PATCH] clk: nomadik: Change to use DEFINE_SHOW_ATTRIBUTE macro
-To:     sboyd@kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Nov 2018 12:00:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727024AbeK2RAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:00:30 -0500
+Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFC4220834;
+        Thu, 29 Nov 2018 05:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543470979;
+        bh=smf5XjAgkIYsbzkbYrgtmHf7aE4LoKlNroMYrwV6kkQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jLbfcmisAzOX6fRyy92FFqwJp/I8GB4DV0Sa9HL096+19zwcolP6FGgp76yKQjGpd
+         ybJVFG0N4v/1CdH0pk5SbMsdZ1gJduVXBTGxopvtZ8bO/97VwRJZK8ngarbjJhG3EF
+         pAmAlNBxuoOMyU+pgOQ8NXXghpgNTvnvq49Lxrms=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.19 05/68] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
+Date:   Thu, 29 Nov 2018 00:54:56 -0500
+Message-Id: <20181129055559.159228-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
+References: <20181129055559.159228-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 6:12 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Stephen Boyd (2018-11-28 14:08:32)
-> > Quoting Yangtao Li (2018-11-23 07:06:00)
-> > > Use macro to simplify the code.
-> > >
-> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > > ---
-> >
-> > Applied to clk-next
-> >
->
-> Except this doesn't compile. I fixed it, but please actually compile
-> your patches before sending next time.
-Sorry, I will pay attention next time.
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-MBR,
-Yangtao
->
-> diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-> index e331634d34df..a95aa96f4a68 100644
-> --- a/drivers/clk/clk-nomadik.c
-> +++ b/drivers/clk/clk-nomadik.c
-> @@ -455,7 +455,7 @@ static const char * const src_clk_names[] = {
->         "RNGCCLK   ",
->  };
->
-> -static int nomadik_src_clk_show(struct seq_file *s, void *what)
-> +static int nomadik_src_clk_debugfs_show(struct seq_file *s, void *what)
->  {
->         int i;
->         u32 src_pcksr0 = readl(src_base + SRC_PCKSR0);
+[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
+
+When handling page request without pasid event, go to "no_pasid"
+branch instead of "bad_req". Otherwise, a NULL pointer deference
+will happen there.
+
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/iommu/intel-svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 4a03e5090952..188f4eaed6e5 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -596,7 +596,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
+ 			       iommu->name, ((unsigned long long *)req)[0],
+ 			       ((unsigned long long *)req)[1]);
+-			goto bad_req;
++			goto no_pasid;
+ 		}
+ 
+ 		if (!svm || svm->pasid != req->pasid) {
+-- 
+2.17.1
+
