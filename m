@@ -2,231 +2,138 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDC7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F00C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A87020989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:27:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A68520868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X2VkAwSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A87020989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IzKb82lX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A68520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeK2Ubx (ORCPT
+        id S1726946AbeK2Udq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:31:53 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60534 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbeK2Ubw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:31:52 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAT9QJG6116951;
-        Thu, 29 Nov 2018 03:26:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543483579;
-        bh=5b3kQiwWpF2G5Cv//AODzu9l4bNfEwRRwsKpJgE0BGs=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=X2VkAwSUYfxwoddhunpM+33VRiE8Y/48Xsiz7WshX0OjCoMiVQ3VbrVsQQhM+/y/6
-         /L9C2fD8U+j0R8Az1wsv2hNPH5NXPO/RgAJ3aFIooG1NpzBZ00gCvFgNXvhuymau0r
-         AaXW+31eZjGeunvaXkZjK7b6EYxVW+wOX8aLbcF4=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAT9QJtJ126415
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 03:26:19 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
- Nov 2018 03:26:19 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 29 Nov 2018 03:26:19 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAT9QEO6005908;
-        Thu, 29 Nov 2018 03:26:14 -0600
-Subject: Re: [PATCH 04/16] remoteproc/pru: Add PRU remoteproc driver
-To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-5-git-send-email-rogerq@ti.com>
- <e63ac3f9-8daf-af84-a200-4c5f40a1a3ed@lechnology.com>
-CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BFFB0B5.6070109@ti.com>
-Date:   Thu, 29 Nov 2018 11:26:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 29 Nov 2018 15:33:46 -0500
+Received: from mail-eopbgr60050.outbound.protection.outlook.com ([40.107.6.50]:2224
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726565AbeK2Udq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 15:33:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y91WBRarPZ5lWIZo7sRzb3vQQPZgjIqHF5yPYfFNGA0=;
+ b=IzKb82lX2iNf6LA1LRUO55l5ZohWJLw7vqmuUXg/bBzV3VdP/b1cTYsh7cSqxYjCrorWxWu4Ax086zt2GBPShL5LjS28votnkEe4m2OrOKzqgbhzBWCoOMktGdP0Go8k9UAAHs9l5cF5lHBY+EnLKgxfkmQG86vSaUdbr8vxBMo=
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
+ AM6PR0402MB3560.eurprd04.prod.outlook.com (52.133.19.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Thu, 29 Nov 2018 09:28:58 +0000
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::c46b:915c:7a03:123d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::c46b:915c:7a03:123d%3]) with mapi id 15.20.1339.032; Thu, 29 Nov 2018
+ 09:28:58 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v14 0/5] Add i.MX8MQ clock driver
+Thread-Topic: [PATCH v14 0/5] Add i.MX8MQ clock driver
+Thread-Index: AQHUh8XkjJZ90goyKEOyM2phufHHyg==
+Date:   Thu, 29 Nov 2018 09:28:32 +0000
+Message-ID: <1543483640-4585-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR06CA0032.eurprd06.prod.outlook.com
+ (2603:10a6:20b:14::45) To AM6PR0402MB3654.eurprd04.prod.outlook.com
+ (2603:10a6:209:19::17)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3560;6:DHNf4i0MZFXWTGjD/Ss78TzNop/ayJS460VVEbHWSLcRJxUJUENVaFLZNxw9SsEDafKbIJT9S+UZ2M6/W4HhnF/SVIi7lHoZGiVRRpRfropmhrMPovq4dIBMMc2rmZBN74hVmkJGhB84xDD4ZyVPK+dSftXSf/s8NwBxDL8L+6IEPvYS5O+JULdlIkVMBr8kjFA4teTE4Fib3oyetvgbWpJ1M1ef5ZUdHfym+kLP0DEqIX59tuPA6AjjXhDB4GFt09WTBUbXvsHje7Dv112W0uIwItAkkE8pNO9cn1m5PCb1uhzK+RuiFN8chrBI77yKTzS9/D5WfmejM0M8J22NuVQbr8QK3tsiGb/7GOaP61NVOU/GKvliwn+mb8cfL94fM+wsV0z1HmIU62SFNYdmD+vGgeC4R6QMqxATAoLfmwX03P9FNtMkL5BDUqN3XjtPnx+3gMJMwFYg8/wbIOzjuw==;5:eBhi8YQjBw+XhgwQqrU0zxuxrPWNa6iWTfcQIq7tmdeySCZsJLPQNXuDsZWvUPgWMRPWDxsriYVjWxnZevSQguCT/9jCjHeHNjRCxLZ1ci9VvK4ARvxOHMgKqeRuYZQI24q2K9MNOajXrCPiIj0/LfKo9V8DApTB/D3EFpc89E8=;7:uEgO70zZt+mkSdHb9/EAH8ulxvBgDY73GzdQ3dA8x3dX8CI7/gvyuTwn3+2sq0+zHQoZDoHdFJ7rB72ljMWocN4GXaQLpGwSIXZyj5vN5WxAwxztJpmC7g7WLI0NlGBcVB8U04veYKbSBaX413OXNg==
+x-ms-office365-filtering-correlation-id: c8414fbf-04ec-4507-a0af-08d655dd0749
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3560;
+x-ms-traffictypediagnostic: AM6PR0402MB3560:
+x-microsoft-antispam-prvs: <AM6PR0402MB3560D4B51C1F620A5CE377CDF6D20@AM6PR0402MB3560.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231453)(999002)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3560;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3560;
+x-forefront-prvs: 0871917CDA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(4326008)(105586002)(6486002)(26005)(478600001)(966005)(97736004)(106356001)(3846002)(14454004)(44832011)(2906002)(2616005)(5660300001)(71200400001)(7416002)(71190400001)(316002)(66066001)(486006)(6506007)(81156014)(305945005)(7736002)(6436002)(25786009)(36756003)(81166006)(14444005)(6116002)(8936002)(110136005)(256004)(8676002)(476003)(6666004)(102836004)(54906003)(6512007)(6306002)(68736007)(99286004)(52116002)(186003)(386003)(86362001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3560;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dq6qaRjKdV+Pi0uzyersP73ZmmJ6+mEnalIr4ph1yxV0YPYLvAFj7yiOOEvoURyWKFfFOfYCaaW6jJ+cUqDnHZVTPRNPf4lL9qDvZ5/38Vr1tv6+IBNxrxmVkkWVhX2q5sbODecg7cp6jsFB1/prFiwvslikP1uxnmakCm8ZwzmDX9dgYi3ltb/2R1KWx4Ct5QAB1IyHU8p3EsPS6I3XuLcjW09tnwlhnI+ZxU98MlRevL2iI4DNLe2vcJyvHmAxrU6ke3kp6zFWvbNxY9SA+V/9he1Rmib6JpwNiO05CUqsVN5CfZ4Q+baFzlOvew3udAkMCRdaze7O4fE+FH6fl8kl4j22NgUC5vV5yizhz6I=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <e63ac3f9-8daf-af84-a200-4c5f40a1a3ed@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8414fbf-04ec-4507-a0af-08d655dd0749
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 09:28:32.3215
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3560
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/11/18 00:32, David Lechner wrote:
-> On 11/26/18 1:52 AM, Roger Quadros wrote:
-> 
->> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->> index ce5d061..88a86cc 100644
->> --- a/drivers/remoteproc/Makefile
->> +++ b/drivers/remoteproc/Makefile
->> @@ -26,3 +26,4 @@ qcom_wcnss_pil-y            += qcom_wcnss.o
->>   qcom_wcnss_pil-y            += qcom_wcnss_iris.o
->>   obj-$(CONFIG_ST_REMOTEPROC)        += st_remoteproc.o
->>   obj-$(CONFIG_ST_SLIM_REMOTEPROC)    += st_slim_rproc.o
->> +obj-$(CONFIG_PRUSS_REMOTEPROC)        += pru_rproc.o
->> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->> new file mode 100644
->> index 0000000..c35f432
->> --- /dev/null
->> +++ b/drivers/remoteproc/pru_rproc.c
->> @@ -0,0 +1,392 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PRU-ICSS remoteproc driver for various TI SoCs
->> + *
->> + * Copyright (C) 2014-2018 Texas Instruments Incorporated - http://www.ti.com/
->> + *    Suman Anna <s-anna@ti.com>
->> + *    Andrew F. Davis <afd@ti.com>
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/remoteproc.h>
-> 
-> alphabetical order?
-> 
->> +#include <linux/pruss.h>
->> +
->> +#include "remoteproc_internal.h"
-> 
-> alphabetical order?
+Here is a link to the 13th version:
+https://lkml.org/lkml/2018/11/13/1020
 
-ok for both.
+Changes since v13:
+ * included changes suggested by Stephen Boyd
 
-> 
->> +#include "pru_rproc.h"
->> +
->> +/* PRU_ICSS_PRU_CTRL registers */
->> +#define PRU_CTRL_CTRL        0x0000
->> +#define PRU_CTRL_STS        0x0004
->> +#define PRU_CTRL_WAKEUP_EN    0x0008
->> +#define PRU_CTRL_CYCLE        0x000C
->> +#define PRU_CTRL_STALL        0x0010
->> +#define PRU_CTRL_CTBIR0        0x0020
->> +#define PRU_CTRL_CTBIR1        0x0024
->> +#define PRU_CTRL_CTPPR0        0x0028
->> +#define PRU_CTRL_CTPPR1        0x002C
->> +
->> +/* CTRL register bit-fields */
->> +#define CTRL_CTRL_SOFT_RST_N    BIT(0)
->> +#define CTRL_CTRL_EN        BIT(1)
->> +#define CTRL_CTRL_SLEEPING    BIT(2)
->> +#define CTRL_CTRL_CTR_EN    BIT(3)
->> +#define CTRL_CTRL_SINGLE_STEP    BIT(8)
->> +#define CTRL_CTRL_RUNSTATE    BIT(15)
->> +
->> +/**
->> + * enum pru_mem - PRU core memory range identifiers
->> + */
->> +enum pru_mem {
->> +    PRU_MEM_IRAM = 0,
->> +    PRU_MEM_CTRL,
->> +    PRU_MEM_DEBUG,
->> +    PRU_MEM_MAX,
->> +};
-> 
-> I am finding the name "mem" here to be confusing. I keep thinking
-> these are just RAM regions instead of memory mapped I/O. Maybe call
-> it "iomem" instead of "mem"?
-> 
+Abel Vesa (2):
+  clk: imx: Add imx composite clock
+  clk: imx: Add clock driver for i.MX8MQ CCM
 
-ok.
+Lucas Stach (3):
+  dt-bindings: Add binding for i.MX8MQ CCM
+  clk: imx: Add fractional PLL output clock
+  clk: imx: Add SCCG PLL type
 
-> ...
-> 
->> +static int pru_rproc_set_id(struct pru_rproc *pru)
->> +{
->> +    int ret = 0;
->> +    u32 mask1 = 0x34000;
->> +    u32 mask2 = 0x38000;
-> 
-> These values are non-obvious and could use some comments. Also,
-> they could be made into constants or macros.
-> 
+ .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-composite-8m.c                 | 178 +++++++
+ drivers/clk/imx/clk-frac-pll.c                     | 223 ++++++++
+ drivers/clk/imx/clk-imx8mq.c                       | 589 +++++++++++++++++=
+++++
+ drivers/clk/imx/clk-sccg-pll.c                     | 256 +++++++++
+ drivers/clk/imx/clk.h                              |  64 +++
+ include/dt-bindings/clock/imx8mq-clock.h           | 395 ++++++++++++++
+ 8 files changed, 1730 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
+t
+ create mode 100644 drivers/clk/imx/clk-composite-8m.c
+ create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ create mode 100644 drivers/clk/imx/clk-imx8mq.c
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
 
-ok.
+--=20
+2.7.4
 
->> +
->> +    if ((pru->mem_regions[0].pa & mask1) == mask1)
-> 
-> how about this instead:
-> 
->     if ((pru->mem_regions[PRU_MEM_IRAM].pa & 0xfffff) == mask1)
-> 
-> The 0xfffff mask will be important on AM18xx where INTC is at 0x34000,
-> PRU0 IRAM is at 0x38000 and PRU1 IRAM is at 0x3C000.
-> 
-
-I think this approach of figuring out id based on IRAM address is not scalable.
-
-At the moment ID is used for these operations
-
-pruss_cfg_gpimode()
-pruss_cfg_get_gpmux()
-pruss_cfg_set_gpmux()
-
-All of which affect the GPCFG register of the respective PRU.
-
-I think a better approach is to get rid of this ID logic and provide the
-GPCFG syscon address to the PRU node and let the pru driver directly affect the register.
-
-e.g. on am335x
-
-				pru0: pru@4a334000 {
-					compatible = "ti,am3356-pru";
-					...
-					gpcfg = <&pruss_cfg 8>;
-				};
-
-So the API changes from
-
-int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id id, u8 *mux)
-
-to
-
-int pru_rproc_cfg_get_gpmux(struct pru_rproc *pru, u8 *mux)
-
-
->> +        pru->id = 0;
->> +    else if ((pru->mem_regions[0].pa & mask2) == mask2)
->> +        pru->id = 1;
->> +    else
->> +        ret = -EINVAL;
->> +
->> +    return ret;
->> +}
-> 
-
-cheers,
--roger
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
