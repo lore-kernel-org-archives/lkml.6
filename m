@@ -2,107 +2,105 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F48AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F065C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CAD20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2B5205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:07:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9F7iiLg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CAD20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EG5gUh1H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2B5205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeK3ALf (ORCPT
+        id S1728387AbeK3AMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:11:35 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35775 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeK3ALf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:11:35 -0500
-Received: by mail-ed1-f66.google.com with SMTP id x30so1845579edx.2;
-        Thu, 29 Nov 2018 05:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9dPqh7sQWNVlicSeJTrzhY27+r1Wf9lpCmbyW/pZ7cM=;
-        b=d9F7iiLgsIioXzeqIDqd5VQ8brg05ybh13BJlJTy5Ef/ISjI2/JXPWeH0EM0a9zSuo
-         htFXmO2OdqDK5myWGXECnxVa0IxDmeRGjgM7E37Ykpdzf32p5T2GnG/s5x2M/75SOc69
-         /KR/cCBfRzFMw1kUOLG6o4mZ2Q8asNG1lQFpBbWPG23xWZYJlNqSPf9rkH+Ui3hoOa7p
-         sIbrnjrZ8SIhsuPkOedNbrUM0bOlj2LXWgYlL7oAMHHYOnFVARRz7kmlvY8Oom3byh3/
-         y5EezvPDJMO2OJwQ5FKqiBIN/x3u63ihkiZM9LHB2Xbb0hDG4S8j0IKlElR7Rah7jNZ3
-         i5yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9dPqh7sQWNVlicSeJTrzhY27+r1Wf9lpCmbyW/pZ7cM=;
-        b=Y9lXllKSnx9eNOhElqnOfbINywSk09onEUCwIlXymcmcwjYXyEQlIMp9uP2cor8Wuk
-         rfep2KZEbtRKkgkoV3DPLkGAePaYjFf3SiFLcZQH/aaDLPNlwvWb5/fIQTvI2B+AdkW/
-         gk4c/bbTXNegQBwfdmJOHVUIBlnXO8QoSDz/90p/q74WAzXPslD3pIAKi7/+LZiyXPEi
-         bxDvbRty2yO+QecOpvUpSDJCfQC2k3JuSKLmbkhKuSqR2G81QZEjouWsmnJQcmVDx9qf
-         kyN6rBdu9lKZxgUYpmvDGITb/2UiYJJf5RmPeKWtzZA357v7jfdROnZ5gs6Iq9zW8OUx
-         bUhQ==
-X-Gm-Message-State: AA+aEWZDHTXJuGbWEctTLLhXoimeKTwgFDkAtPcdThX511AbCCRWapGV
-        6FmdOcrVeMI0VZDnhNb53a12HuLcr8bLXudqsmo=
-X-Google-Smtp-Source: AFSGD/Ve7blfYp9yT9bjXbdNNdEO5q9YpBnREg1cXcDBxrhjFVVb8JS1Bx8AE8WBP7n8B7rw67pwQR7y5t/nJgfEDhY=
-X-Received: by 2002:aa7:dd16:: with SMTP id i22mr1616616edv.182.1543496775606;
- Thu, 29 Nov 2018 05:06:15 -0800 (PST)
+        Thu, 29 Nov 2018 19:12:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43702 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727040AbeK3AMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:12:45 -0500
+Received: from nazgul.tnic (x59cc8ba7.dyn.telefonica.de [89.204.139.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D17F11EC078A;
+        Thu, 29 Nov 2018 14:07:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543496845;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=mrr4udWC5AWSesai7D93uCElVvO536RVjWPQpvZg0D4=;
+        b=EG5gUh1HPTQKiPHnAXUHn9ywHZeT+Kgww7jo1Pj+xQma4WoBhrnmSiOLOztGY6i16sNkwy
+        E9DgO3KHPTuCUTWfEgiDVyxlimUefXOwarwypdLcBnOOJtp0BmPGbQJ+EvXuVT/sJ/zDEY
+        Aynna9TkvrLvzVKjb3orCFCp75tZ9kk=
+Date:   Thu, 29 Nov 2018 14:07:18 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, rguenther@suse.de, matz@suse.de,
+        gcc@gcc.gnu.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+        Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-sparse@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
+Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
+Message-ID: <20181129130718.GA3070@nazgul.tnic>
+References: <20181003213100.189959-1-namit@vmware.com>
+ <20181007091805.GA30687@zn.tnic>
+ <20181007132228.GJ29268@gate.crashing.org>
+ <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de>
+ <20181008073128.GL29268@gate.crashing.org>
+ <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
+ <20181009145330.GT29268@gate.crashing.org>
+ <CAK7LNARmrdtyE7JRAdJH_zbfvD_cej+TGLh+5KfT20o538KUcA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181125234315.28313-1-grygorii.strashko@ti.com> <20181126022711.GD32164@lunn.ch>
-In-Reply-To: <20181126022711.GD32164@lunn.ch>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 29 Nov 2018 13:05:47 +0000
-Message-ID: <CA+V-a8veO--4+hazkm=MAekbQrA+-JUNVjWKW13_0354iUwgKQ@mail.gmail.com>
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: allow to configure min tx packet size
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARmrdtyE7JRAdJH_zbfvD_cej+TGLh+5KfT20o538KUcA@mail.gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Thu, Nov 29, 2018 at 08:46:34PM +0900, Masahiro Yamada wrote:
+> But, I'd like to ask if x86 people want to keep this macros.s approach.
+> Revert 77b0bf55bc675 right now
+> assuming the compiler will eventually solve the issue?
 
-On Mon, Nov 26, 2018 at 2:27 AM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Sun, Nov 25, 2018 at 05:43:15PM -0600, Grygorii Strashko wrote:
-> > For proper VLAN packets forwarding CPSW driver uses min tx packet size of
-> > 64bytes (VLAN_ETH_ZLEN, excluding ETH_FCS) which was corrected by
-> > commit 9421c9015047 ("net: ethernet: ti: cpsw: fix min eth packet size").
-> >
-> > Unfortunately, this breaks some industrial automation protocols, as
-> > reported by TI customers [1], which can work only with min TX packet size
-> > from 60 byte (ecluding FCS).
->
-> Hi Grygorii
->
-> excluding...
->
-> > Hence, introduce module boot parameter "tx_packet_min" to allow configure
-> > min TX packet size at boot time.
->
-> Module parameters are generally not liked.
->
-> What actually happens here with this lower limit? Does the hardware
-> send runt packets? Does the protocol actually require runt packets?
->
-Yes it does send runt packets,  and also get Rx align errors. you can
-find the ethtool dump at [1].
+Yap, considering how elegant the compiler solution is and how much
+problems this macros-in-asm thing causes, I think we should patch
+out the latter and wait for gcc9. I mean, the savings are not so
+mind-blowing to have to deal with the fallout.
 
-[1] https://e2e.ti.com/support/processors/f/791/t/719557?Linux-AM5728-EtherCAT-packets-dropped
+But this is just my opinion.
 
-Cheers,
---Prabhakar Lad
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
