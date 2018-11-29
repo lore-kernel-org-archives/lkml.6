@@ -2,137 +2,300 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 871B2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4B7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3972081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2oHwCZpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3972081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A70B206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:13:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A70B206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeK2XSX (ORCPT
+        id S1728220AbeK2XTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:18:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41110 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 18:19:04 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:33496 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbeK2XSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:18:23 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C434206B6;
-        Thu, 29 Nov 2018 12:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543493592;
-        bh=RtKnbO7RK0QYezqdykxZgmhI+qNzqPBll/IYGbQQ3qk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2oHwCZpE0A/L21MNuJ4Qh/cK6KYxdGUuTGKDqKGM+6B2jmZZ0ScP51Vf8SckGfNxA
-         pC8hC6g4vEmDEWQsRmqqG3IaeAETgjm6Y7hPrchwwjUFsDNNsWGMTAWYHltxpRWgl5
-         PaXogG7aMkggQ3bmMIgZ60UHRNl7DD1G59EzFRN0=
-Date:   Thu, 29 Nov 2018 13:13:10 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
- license identifier
-Message-ID: <20181129121310.GB25319@kroah.com>
-References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
- <20181127144333.GA11004@kroah.com>
- <8ae3a984-b4d4-f2eb-4aaa-b460441fa403@huawei.com>
- <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
- <20181129121110.GA25319@kroah.com>
+        id S1726949AbeK2XTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:19:04 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 435Gdq5N2bz9vGxw;
+        Thu, 29 Nov 2018 13:13:51 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id giIkI2mDZBGc; Thu, 29 Nov 2018 13:13:51 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 435Gdq4XRSz9vGxv;
+        Thu, 29 Nov 2018 13:13:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 599638B89B;
+        Thu, 29 Nov 2018 13:13:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id uf5I-XjPAPlH; Thu, 29 Nov 2018 13:13:52 +0100 (CET)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6BFD38B899;
+        Thu, 29 Nov 2018 13:13:51 +0100 (CET)
+Subject: Re: [PATCH v3] powerpc/mm: add exec protection on powerpc 603
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+References: <62fcfb8435c2f801d820eff469fd01e68c1b107d.1543425412.git.christophe.leroy@c-s.fr>
+Message-ID: <83dcb200-94f3-f211-685a-28f53d468bfe@c-s.fr>
+Date:   Thu, 29 Nov 2018 13:13:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129121110.GA25319@kroah.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <62fcfb8435c2f801d820eff469fd01e68c1b107d.1543425412.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:11:10PM +0100, Greg KH wrote:
-> On Thu, Nov 29, 2018 at 11:52:39AM +0000, John Garry wrote:
-> > On 27/11/2018 15:23, John Garry wrote:
-> > > On 27/11/2018 14:43, Greg KH wrote:
-> > > 
-> > > Hi Greg,
-> > > 
-> > > > On Tue, Nov 27, 2018 at 10:15:32PM +0800, John Garry wrote:
-> > > > > Currently sas_task.c has no license specifier, so add SPDX license
-> > > > > identifier for GPL-2.0+.
-> > > > > 
-> > > > > As mentioned in commit b24413180f56 ("License cleanup: add SPDX GPL-2.0
-> > > > > license identifier to files with no license"), files with no license in
-> > > > > the kernel are under default kernel license.
-> > > > 
-> > > > The default is GPLv2, not v2+.
-> > > 
-> > > So sas_task.c should be v2.
-> > 
-> > Hi Greg,
-> > 
-> > I also note that currently we have an inconsistency in license of
-> > sas_init.c:
-> > 
-> > /*
-> >  * Serial Attached SCSI (SAS) Transport Layer initialization
-> >  *
-> >  * Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
-> >  * Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
-> >  *
-> >  * This file is licensed under GPLv2.
-> >  *
-> >  * This program is free software; you can redistribute it and/or
-> >  * modify it under the terms of the GNU General Public License as
-> >  * published by the Free Software Foundation; either version 2 of the
-> >  * License, or (at your option) any later version.
-> >  *
-> >  * This program is distributed in the hope that it will be useful, but
-> >  * WITHOUT ANY WARRANTY; without even the implied warranty of
-> >  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> >  * General Public License for more details.
-> >  *
-> >  * You should have received a copy of the GNU General Public License
-> >  * along with this program; if not, write to the Free Software
-> >  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-> >  * USA
-> >  *
-> >  */
-> > 
-> > ...
-> > 
-> > MODULE_AUTHOR("Luben Tuikov <luben_tuikov@adaptec.com>");
-> > MODULE_DESCRIPTION("SAS Transport Layer");
-> > MODULE_LICENSE("GPL v2");
-> > 
-> > So the license specifies v2+ but module license states v2.
-> > 
-> > I could not find a docment for guidance on this. I also note that making
-> > sas_task.c v2 would mean mixing v2 and v2+ into the module.
-> 
-> This is not the only file in the kernel with this problem.
-> 
-> For now, we have been trusting the "written text" lines over the
-> MODULE_LICENSE() lines, as that seems to be the proper way forward.
-> 
-> > I did find an example of someone changing the license:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/i2c/busses/i2c-designware-slave.c?h=v4.20-rc4&id=15c566fcff9cc7b8fd64461d6ee6fd1bc665b444
-> > 
-> 
-> Yup, not good, that should be fixed.
 
-I take it back, the changelog for the patch explains what is happening
-here, the people involved were paying attention.
 
-greg k-h
+Le 28/11/2018 à 18:21, Christophe Leroy a écrit :
+> The 603 doesn't have a HASH table, TLB misses are handled by
+> software. It is then possible to generate page fault when
+> _PAGE_EXEC is not set like in nohash/32.
+> 
+> There is one "reserved" PTE bit available, this patch uses
+> it for _PAGE_EXEC.
+> 
+> In order to support it, set_pte_filter() and
+> set_access_flags_filter() are made common, and the handling
+> is made dependent on MMU_FTR_HPTE_TABLE
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+
+> ---
+>   v3: Included the _PAGE_EXEC flag in the existing test in TLB handler, no additional insns.
+> 
+>   v2: Amended commit log and removed #ifdef in pagetable dump
+> 
+>   arch/powerpc/include/asm/book3s/32/hash.h      |  1 +
+>   arch/powerpc/include/asm/book3s/32/pgtable.h   | 18 +++++++++---------
+>   arch/powerpc/include/asm/cputable.h            |  8 ++++----
+>   arch/powerpc/kernel/head_32.S                  |  2 +-
+>   arch/powerpc/mm/dump_linuxpagetables-generic.c |  2 --
+>   arch/powerpc/mm/pgtable.c                      | 20 +++++++++++---------
+>   6 files changed, 26 insertions(+), 25 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/book3s/32/hash.h b/arch/powerpc/include/asm/book3s/32/hash.h
+> index f2892c7ab73e..2a0a467d2985 100644
+> --- a/arch/powerpc/include/asm/book3s/32/hash.h
+> +++ b/arch/powerpc/include/asm/book3s/32/hash.h
+> @@ -26,6 +26,7 @@
+>   #define _PAGE_WRITETHRU	0x040	/* W: cache write-through */
+>   #define _PAGE_DIRTY	0x080	/* C: page changed */
+>   #define _PAGE_ACCESSED	0x100	/* R: page referenced */
+> +#define _PAGE_EXEC	0x200	/* software: exec allowed */
+>   #define _PAGE_RW	0x400	/* software: user write access allowed */
+>   #define _PAGE_SPECIAL	0x800	/* software: Special page */
+>   
+> diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+> index b849b45429d5..6accf3e686af 100644
+> --- a/arch/powerpc/include/asm/book3s/32/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+> @@ -10,9 +10,9 @@
+>   /* And here we include common definitions */
+>   
+>   #define _PAGE_KERNEL_RO		0
+> -#define _PAGE_KERNEL_ROX	0
+> +#define _PAGE_KERNEL_ROX	(_PAGE_EXEC)
+>   #define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
+> -#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW)
+> +#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
+>   
+>   #define _PAGE_HPTEFLAGS _PAGE_HASHPTE
+>   
+> @@ -66,11 +66,11 @@ static inline bool pte_user(pte_t pte)
+>    */
+>   #define PAGE_NONE	__pgprot(_PAGE_BASE)
+>   #define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
+> -#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
+> +#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
+>   #define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
+> -#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
+> +#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+>   #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
+> -#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
+> +#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+>   
+>   /* Permission masks used for kernel mappings */
+>   #define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
+> @@ -318,7 +318,7 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+>   					   int psize)
+>   {
+>   	unsigned long set = pte_val(entry) &
+> -		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW);
+> +		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
+>   
+>   	pte_update(ptep, 0, set);
+>   
+> @@ -384,7 +384,7 @@ static inline int pte_dirty(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_DIRTY);
+>   static inline int pte_young(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_ACCESSED); }
+>   static inline int pte_special(pte_t pte)	{ return !!(pte_val(pte) & _PAGE_SPECIAL); }
+>   static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
+> -static inline bool pte_exec(pte_t pte)		{ return true; }
+> +static inline bool pte_exec(pte_t pte)		{ return pte_val(pte) & _PAGE_EXEC; }
+>   
+>   static inline int pte_present(pte_t pte)
+>   {
+> @@ -451,7 +451,7 @@ static inline pte_t pte_wrprotect(pte_t pte)
+>   
+>   static inline pte_t pte_exprotect(pte_t pte)
+>   {
+> -	return pte;
+> +	return __pte(pte_val(pte) & ~_PAGE_EXEC);
+>   }
+>   
+>   static inline pte_t pte_mkclean(pte_t pte)
+> @@ -466,7 +466,7 @@ static inline pte_t pte_mkold(pte_t pte)
+>   
+>   static inline pte_t pte_mkexec(pte_t pte)
+>   {
+> -	return pte;
+> +	return __pte(pte_val(pte) | _PAGE_EXEC);
+>   }
+>   
+>   static inline pte_t pte_mkpte(pte_t pte)
+> diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
+> index 29f49a35d6ee..a0395ccbbe9e 100644
+> --- a/arch/powerpc/include/asm/cputable.h
+> +++ b/arch/powerpc/include/asm/cputable.h
+> @@ -296,7 +296,7 @@ static inline void cpu_feature_keys_init(void) { }
+>   #define CPU_FTRS_PPC601	(CPU_FTR_COMMON | CPU_FTR_601 | \
+>   	CPU_FTR_COHERENT_ICACHE | CPU_FTR_UNIFIED_ID_CACHE | CPU_FTR_USE_RTC)
+>   #define CPU_FTRS_603	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
+> -	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE)
+> +	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE | CPU_FTR_NOEXECUTE)
+>   #define CPU_FTRS_604	(CPU_FTR_COMMON | CPU_FTR_PPC_LE)
+>   #define CPU_FTRS_740_NOTAU	(CPU_FTR_COMMON | \
+>   	    CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_L2CR | \
+> @@ -367,15 +367,15 @@ static inline void cpu_feature_keys_init(void) { }
+>   	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_L2CR | CPU_FTR_ALTIVEC_COMP | \
+>   	    CPU_FTR_SPEC7450 | CPU_FTR_NAP_DISABLE_L2_PR | \
+>   	    CPU_FTR_PPC_LE | CPU_FTR_NEED_PAIRED_STWCX)
+> -#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE)
+> +#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_NOEXECUTE)
+>   #define CPU_FTRS_G2_LE	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
+>   	    CPU_FTR_MAYBE_CAN_NAP)
+>   #define CPU_FTRS_E300	(CPU_FTR_MAYBE_CAN_DOZE | \
+>   	    CPU_FTR_MAYBE_CAN_NAP | \
+> -	    CPU_FTR_COMMON)
+> +	    CPU_FTR_COMMON  | CPU_FTR_NOEXECUTE)
+>   #define CPU_FTRS_E300C2	(CPU_FTR_MAYBE_CAN_DOZE | \
+>   	    CPU_FTR_MAYBE_CAN_NAP | \
+> -	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE)
+> +	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE  | CPU_FTR_NOEXECUTE)
+>   #define CPU_FTRS_CLASSIC32	(CPU_FTR_COMMON)
+>   #define CPU_FTRS_8XX	(CPU_FTR_NOEXECUTE)
+>   #define CPU_FTRS_40X	(CPU_FTR_NODSISRALIGN | CPU_FTR_NOEXECUTE)
+> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+> index 118c3b216e60..479017f6a992 100644
+> --- a/arch/powerpc/kernel/head_32.S
+> +++ b/arch/powerpc/kernel/head_32.S
+> @@ -499,7 +499,7 @@ InstructionTLBMiss:
+>   	lis	r1,PAGE_OFFSET@h		/* check if kernel address */
+>   	cmplw	0,r1,r3
+>   	mfspr	r2,SPRN_SPRG_THREAD
+> -	li	r1,_PAGE_USER|_PAGE_PRESENT /* low addresses tested as user */
+> +	li	r1,_PAGE_USER|_PAGE_PRESENT|_PAGE_EXEC /* low addresses tested as user */
+>   	lwz	r2,PGDIR(r2)
+>   	bge-	112f
+>   	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
+> diff --git a/arch/powerpc/mm/dump_linuxpagetables-generic.c b/arch/powerpc/mm/dump_linuxpagetables-generic.c
+> index 1e3829ec1348..3fe98a0974c6 100644
+> --- a/arch/powerpc/mm/dump_linuxpagetables-generic.c
+> +++ b/arch/powerpc/mm/dump_linuxpagetables-generic.c
+> @@ -21,13 +21,11 @@ static const struct flag_info flag_array[] = {
+>   		.set	= "rw",
+>   		.clear	= "r ",
+>   	}, {
+> -#ifndef CONFIG_PPC_BOOK3S_32
+>   		.mask	= _PAGE_EXEC,
+>   		.val	= _PAGE_EXEC,
+>   		.set	= " X ",
+>   		.clear	= "   ",
+>   	}, {
+> -#endif
+>   		.mask	= _PAGE_PRESENT,
+>   		.val	= _PAGE_PRESENT,
+>   		.set	= "present",
+> diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+> index 1e33dccbd176..d3d61d29b4f1 100644
+> --- a/arch/powerpc/mm/pgtable.c
+> +++ b/arch/powerpc/mm/pgtable.c
+> @@ -74,7 +74,7 @@ static struct page *maybe_pte_to_page(pte_t pte)
+>    * support falls into the same category.
+>    */
+>   
+> -static pte_t set_pte_filter(pte_t pte)
+> +static pte_t set_pte_filter_hash(pte_t pte)
+>   {
+>   	if (radix_enabled())
+>   		return pte;
+> @@ -93,14 +93,12 @@ static pte_t set_pte_filter(pte_t pte)
+>   	return pte;
+>   }
+>   
+> -static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+> -				     int dirty)
+> -{
+> -	return pte;
+> -}
+> -
+>   #else /* CONFIG_PPC_BOOK3S */
+>   
+> +static pte_t set_pte_filter_hash(pte_t pte) { return pte; }
+> +
+> +#endif /* CONFIG_PPC_BOOK3S */
+> +
+>   /* Embedded type MMU with HW exec support. This is a bit more complicated
+>    * as we don't have two bits to spare for _PAGE_EXEC and _PAGE_HWEXEC so
+>    * instead we "filter out" the exec permission for non clean pages.
+> @@ -109,6 +107,9 @@ static pte_t set_pte_filter(pte_t pte)
+>   {
+>   	struct page *pg;
+>   
+> +	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
+> +		return set_pte_filter_hash(pte);
+> +
+>   	/* No exec permission in the first place, move on */
+>   	if (!pte_exec(pte) || !pte_looks_normal(pte))
+>   		return pte;
+> @@ -138,6 +139,9 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+>   {
+>   	struct page *pg;
+>   
+> +	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
+> +		return pte;
+> +
+>   	/* So here, we only care about exec faults, as we use them
+>   	 * to recover lost _PAGE_EXEC and perform I$/D$ coherency
+>   	 * if necessary. Also if _PAGE_EXEC is already set, same deal,
+> @@ -172,8 +176,6 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+>   	return pte_mkexec(pte);
+>   }
+>   
+> -#endif /* CONFIG_PPC_BOOK3S */
+> -
+>   /*
+>    * set_pte stores a linux PTE into the linux page table.
+>    */
+> 
