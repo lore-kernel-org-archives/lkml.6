@@ -2,104 +2,98 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4168DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359E1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E2F2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB9972081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:54:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3wCoVWt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E2F2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cHlO1igJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9972081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeK2N5V (ORCPT
+        id S1727448AbeK2N5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 08:57:21 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:32814 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbeK2N5V (ORCPT
+        Thu, 29 Nov 2018 08:57:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:45034 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbeK2N5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 08:57:21 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so266155plo.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 18:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SFU1lUq2SC/xP0cpSKqjgisCKeyMbH4QUfp+Cb3/n8U=;
-        b=P3wCoVWtmXhJ4fU+eLVU/+9a57UfgLrhXK4PikAPuSTvRmt+s35kZ+coY69V0Ci1Qe
-         zz1DRjUpel8kaNRR9QJXHLkaxoscDDZe6OWV6H8nkf8fWMYMz+Ti/Tkpgg46GXq009mE
-         uTZJUeaRd5fWGgT0Hg4vQbGGf0zxq3IWPXQ190K5IRLKneHNSgZ71htbKzOFpbGFj+5U
-         JUDIWYjc3f8V2Us0o3mvWtYGxbzVfMzvgKvkT6SqmSAIIO+YQ7uDO1wFgw/JCLpnVoVn
-         0pM4Hq3kL7rpCMNDZsWrP14fdKSh4GAqGfFo5QrOmeDh6mYkEMVUiMPjgl7qXG6ou5y2
-         cmMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SFU1lUq2SC/xP0cpSKqjgisCKeyMbH4QUfp+Cb3/n8U=;
-        b=sD5fphym2PzD6jNSG2sIg6FwpTwtIh66tFf/XGmxwB1f8OOIxvfzt9xQ41TucahGO6
-         o+0koGA1KwNVtXFTOW3MKfRJPYOO8fWr7Sgh1KYc/z986oVZW7u/rheQk92txsKGl5XE
-         SW4KWWEIWvhp+c47x0t7/mkxUQM9pPVemHeImVwA/jqg+aiC103pxfIhawpgGNvMa5VS
-         PSmCLtxuB5oBHhMKiuWdjBktlPg0HrwOowcomgReBhNpPdYz5RrS1Ig0idJvpJp3qxxr
-         AJGmiy5UYT6awkVP6XEAQzs8KMzdQ3O0ybtKwI+fV2Rn9rl9kj0MrBYXOlvSOnHwNi+J
-         EPnw==
-X-Gm-Message-State: AA+aEWaxCZPSAUAXL3KfpsBAlwv7JOzq5waRjG94ph6NBQ21MqW0JaGu
-        srall3Zy7b3VbUPn/GJFPaU=
-X-Google-Smtp-Source: AFSGD/VGI8yJQ0EiiVwSOeYW/71KrrHgGQgDluQ1zJJ46DuauovrpHg8UWI+riiBKivjtUz+TVCVeQ==
-X-Received: by 2002:a17:902:33c1:: with SMTP id b59mr4499985plc.220.1543460012702;
-        Wed, 28 Nov 2018 18:53:32 -0800 (PST)
-Received: from localhost ([175.223.15.27])
-        by smtp.gmail.com with ESMTPSA id 78sm419704pft.184.2018.11.28.18.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 18:53:31 -0800 (PST)
-Date:   Thu, 29 Nov 2018 11:53:28 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     linux@armlinux.org.uk, broonie@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com
-Subject: Re: [PATCH v2] mm/zsmalloc.c: Fix zsmalloc 32-bit PAE support
-Message-ID: <20181129025328.GE6379@jagdpanzerIV>
-References: <20181025134344.GZ30658@n2100.armlinux.org.uk>
- <20181121001150.405-1-rafael.tinoco@linaro.org>
- <91776bf8-0d12-1cc4-1ffb-ca3c486aeb0b@linaro.org>
- <93b0cce5-4ceb-14ab-5987-af54f15958f2@linaro.org>
+        Thu, 29 Nov 2018 08:57:48 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAT2igin091542;
+        Thu, 29 Nov 2018 02:52:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=vz3VseW+/4s+WL5xBi4PVwTPWx9H2J+92nRwZRXNjCE=;
+ b=cHlO1igJ8soGxLU7bGAw+FWPxFdIXXNwjDDN2BN6EF/sq21Q58+S5uM98gBSdTvabSnx
+ 6XVHkNkUpu9wqcX+wWmmZiUH9YZwAceKwtd6kDVr8fM0WDocuEixH4W6omLlike0p6VT
+ KK/jCow3JK4vJlO3jiJ0FLHs8Vmn5m+AIaGu9ZgvGr53gY7SfTHv/R1SQ9tV4XjcwkBC
+ YqMGfH5zPo+ArABev3Uf0PAAljGyYo5fWLlAdDFIe/eKbGnsuP9wSAIstWeZfGesF5PW
+ U6/VRPa/jlUYz0m4ab32xsGfZRtPQhnKDSu9N5ITZn4ng+0o7kO2u3yFmDotjeAhsLiG Eg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2nxxkqnph7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 02:52:43 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAT2qgAK013093
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 02:52:42 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAT2qfcK008898;
+        Thu, 29 Nov 2018 02:52:41 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Nov 2018 18:52:41 -0800
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 41/41] scsi: xen-scsifront: mark expected switch fall-through
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+        <00c2a9d45e39fb294f4995b07a9b7547206c3085.1543374820.git.gustavo@embeddedor.com>
+Date:   Wed, 28 Nov 2018 21:52:38 -0500
+In-Reply-To: <00c2a9d45e39fb294f4995b07a9b7547206c3085.1543374820.git.gustavo@embeddedor.com>
+        (Gustavo A. R. Silva's message of "Tue, 27 Nov 2018 22:34:35 -0600")
+Message-ID: <yq1tvk0y4qx.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93b0cce5-4ceb-14ab-5987-af54f15958f2@linaro.org>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=613
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/27/18 18:33), Rafael David Tinoco wrote:
-> On 11/20/18 10:18 PM, Rafael David Tinoco wrote:
-> > 
-> > Russell,
-> > 
-> > I have tried to place MAX_POSSIBLE_PHYSMEM_BITS in the best available
-> > header for each architecture, considering different paging levels, PAE
-> > existence, and existing similar definitions. Also, I have only
-> > considered those architectures already having "sparsemem.h" header.
-> > 
-> > Would you mind reviewing it ?
-> 
-> Should I re-send the this v2 (as v3) with complete list of
-> get_maintainer.pl ? I was in doubt because I'm touching headers from
-> several archs and I'm not sure who, if it is accepted, would merge it.
 
-Yes, resending and Cc-ing archs' maintainers if the right thing to do.
-It's also possible that they will ask to split the patch and do a
-per-arch change.
+Gustavo A.,
 
-	-ss
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Notice that, in this particular case, I replaced
+> "Missed the backend's Closing state -- fallthrough" with
+> "fall through - Missed the backend's Closing state", which
+> contains the "fall through" annotation at the beginnig of
+> the code comment, which is what GCC is expecting to find.
+
+Applied to 4.21/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
