@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AADBC04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095A7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC3E72147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B54952147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWgxLQ5i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3E72147C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFDgkBlb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54952147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389433AbeK3Bhx (ORCPT
+        id S2389448AbeK3Bh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41082 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389406AbeK3Bhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:53 -0500
+        id S2389406AbeK3Bh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EAC4213A2;
-        Thu, 29 Nov 2018 14:32:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D27BE21479;
+        Thu, 29 Nov 2018 14:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501939;
-        bh=5D2sBsUvpuB/Q/1VIDe3AlZhGTpt4RQHDLvvPIQwnEY=;
+        s=default; t=1543501942;
+        bh=lPVPcL/QJTQbkkpZIyPwTv4QscPQp/NmjhqwtclEh7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UWgxLQ5icggkw0XN6vD/g6fQ5FcDbZksa9rkemnq+6RjKxrE7DS0zmjLxUb50s2tn
-         QYsmB6ndB8ykX7Zj8XbRmr0Y0t0KwUqo8g1Q+cmEvKD/ybwCXmSzyM2Uy2IuumFLdP
-         T8WSUR6SUiCCNvt77tITRzcGWOTtjGLEujb1SGtc=
+        b=jFDgkBlbzmmMLll2ny64aR5PFyiuFqkIUbM8/7QEZzhyCbZwVYLuSAe2U5zbXOQTn
+         CoWnJR+E1X403c2LxQ7fFEDihwhPsxK9QLj71XkPIhP8NVVTtFysAXmzuxCgmJQnBK
+         E0sr2g1kzXeEZCkavdKN0jCk3C1LZCoVirYTDRHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marius Hillenbrand <mhillenb@amazon.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH 4.19 104/110] rcu: Make need_resched() respond to urgent RCU-QS needs
-Date:   Thu, 29 Nov 2018 15:13:15 +0100
-Message-Id: <20181129135925.449820048@linuxfoundation.org>
+        stable@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Adam Ford <aford173@gmail.com>
+Subject: [PATCH 4.19 105/110] media: ov5640: Re-work MIPI startup sequence
+Date:   Thu, 29 Nov 2018 15:13:16 +0100
+Message-Id: <20181129135925.496805464@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -64,59 +65,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+From: Jacopo Mondi <jacopo@jmondi.org>
 
-commit 92aa39e9dc77481b90cbef25e547d66cab901496 upstream.
+commit aa4bb8b8838ffcc776a79f49a4d7476b82405349 upstream.
 
-The per-CPU rcu_dynticks.rcu_urgent_qs variable communicates an urgent
-need for an RCU quiescent state from the force-quiescent-state processing
-within the grace-period kthread to context switches and to cond_resched().
-Unfortunately, such urgent needs are not communicated to need_resched(),
-which is sometimes used to decide when to invoke cond_resched(), for
-but one example, within the KVM vcpu_run() function.  As of v4.15, this
-can result in synchronize_sched() being delayed by up to ten seconds,
-which can be problematic, to say nothing of annoying.
+Rework the MIPI interface startup sequence with the following changes:
 
-This commit therefore checks rcu_dynticks.rcu_urgent_qs from within
-rcu_check_callbacks(), which is invoked from the scheduling-clock
-interrupt handler.  If the current task is not an idle task and is
-not executing in usermode, a context switch is forced, and either way,
-the rcu_dynticks.rcu_urgent_qs variable is set to false.  If the current
-task is an idle task, then RCU's dyntick-idle code will detect the
-quiescent state, so no further action is required.  Similarly, if the
-task is executing in usermode, other code in rcu_check_callbacks() and
-its called functions will report the corresponding quiescent state.
+- Remove MIPI bus initialization from the initial settings blob
+- At set_power(1) time power up MIPI Tx/Rx and set data and clock lanes in
+  LP11 during 'sleep' and 'idle' with MIPI clock in non-continuous mode.
+- At s_stream time enable/disable the MIPI interface output.
+- Restore default settings at set_power(0) time.
 
-Reported-by: Marius Hillenbrand <mhillenb@amazon.de>
-Reported-by: David Woodhouse <dwmw2@infradead.org>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Backported to make patch apply cleanly on older versions. ]
-Tested-by: Marius Hillenbrand <mhillenb@amazon.de>
-Cc: <stable@vger.kernel.org> # 4.12.x - 4.19.x
+Before this commit the sensor MIPI interface was initialized with settings
+that require a start/stop sequence at power-up time in order to force lanes
+into LP11 state, as they were initialized in LP00 when in 'sleep mode',
+which is assumed to be the sensor manual definition for the D-PHY defined
+stop mode.
+
+The stream start/stop was performed by enabling disabling clock gating,
+and had the side effect to change the lanes sleep mode configuration when
+stream was stopped.
+
+Clock gating/ungating:
+-       ret = ov5640_mod_reg(sensor, OV5640_REG_MIPI_CTRL00, BIT(5),
+-                            on ? 0 : BIT(5));
+-       if (ret)
+
+Set lanes in LP11 when in 'sleep mode':
+-       ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT00,
+-                              on ? 0x00 : 0x70);
+
+This commit fixes an issue reported by Jagan Teki on i.MX6 platforms that
+prevents the host interface from powering up correctly:
+https://lkml.org/lkml/2018/6/1/38
+
+It also improves MIPI capture operations stability on my testing platform
+where MIPI capture often failed and returned all-purple frames.
+
+Fixes: f22996db44e2 ("media: ov5640: add support of DVP parallel interface")
+
+Tested-by: Steve Longerbeam <slongerbeam@gmail.com> (i.MX6q SabreSD, CSI-2)
+Tested-by: Loic Poulain <loic.poulain@linaro.org> (Dragonboard-410c, CSI-2)
+Reported-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/rcu/tree.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/media/i2c/ov5640.c |   99 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 79 insertions(+), 20 deletions(-)
 
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2662,6 +2662,15 @@ void rcu_check_callbacks(int user)
- 		rcu_bh_qs();
- 	}
- 	rcu_preempt_check_callbacks();
-+	/* The load-acquire pairs with the store-release setting to true. */
-+	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
-+		/* Idle and userspace execution already are quiescent states. */
-+		if (!rcu_is_cpu_rrupt_from_idle() && !user) {
-+			set_tsk_need_resched(current);
-+			set_preempt_need_resched();
-+		}
-+		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
-+	}
- 	if (rcu_pending())
- 		invoke_rcu_core();
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -288,10 +288,10 @@ static const struct reg_value ov5640_ini
+ 	{0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+ 	{0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x3000, 0x00, 0, 0},
+ 	{0x3002, 0x1c, 0, 0}, {0x3004, 0xff, 0, 0}, {0x3006, 0xc3, 0, 0},
+-	{0x300e, 0x45, 0, 0}, {0x302e, 0x08, 0, 0}, {0x4300, 0x3f, 0, 0},
++	{0x302e, 0x08, 0, 0}, {0x4300, 0x3f, 0, 0},
+ 	{0x501f, 0x00, 0, 0}, {0x4713, 0x03, 0, 0}, {0x4407, 0x04, 0, 0},
+ 	{0x440e, 0x00, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+-	{0x4837, 0x0a, 0, 0}, {0x4800, 0x04, 0, 0}, {0x3824, 0x02, 0, 0},
++	{0x4837, 0x0a, 0, 0}, {0x3824, 0x02, 0, 0},
+ 	{0x5000, 0xa7, 0, 0}, {0x5001, 0xa3, 0, 0}, {0x5180, 0xff, 0, 0},
+ 	{0x5181, 0xf2, 0, 0}, {0x5182, 0x00, 0, 0}, {0x5183, 0x14, 0, 0},
+ 	{0x5184, 0x25, 0, 0}, {0x5185, 0x24, 0, 0}, {0x5186, 0x09, 0, 0},
+@@ -1104,12 +1104,25 @@ static int ov5640_set_stream_mipi(struct
+ {
+ 	int ret;
  
+-	ret = ov5640_mod_reg(sensor, OV5640_REG_MIPI_CTRL00, BIT(5),
+-			     on ? 0 : BIT(5));
+-	if (ret)
+-		return ret;
+-	ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT00,
+-			       on ? 0x00 : 0x70);
++	/*
++	 * Enable/disable the MIPI interface
++	 *
++	 * 0x300e = on ? 0x45 : 0x40
++	 *
++	 * FIXME: the sensor manual (version 2.03) reports
++	 * [7:5] = 000  : 1 data lane mode
++	 * [7:5] = 001  : 2 data lanes mode
++	 * But this settings do not work, while the following ones
++	 * have been validated for 2 data lanes mode.
++	 *
++	 * [7:5] = 010	: 2 data lanes mode
++	 * [4] = 0	: Power up MIPI HS Tx
++	 * [3] = 0	: Power up MIPI LS Rx
++	 * [2] = 1/0	: MIPI interface enable/disable
++	 * [1:0] = 01/00: FIXME: 'debug'
++	 */
++	ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00,
++			       on ? 0x45 : 0x40);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1790,23 +1803,69 @@ static int ov5640_set_power(struct ov564
+ 		if (ret)
+ 			goto power_off;
+ 
++		/* We're done here for DVP bus, while CSI-2 needs setup. */
++		if (sensor->ep.bus_type != V4L2_MBUS_CSI2)
++			return 0;
++
++		/*
++		 * Power up MIPI HS Tx and LS Rx; 2 data lanes mode
++		 *
++		 * 0x300e = 0x40
++		 * [7:5] = 010	: 2 data lanes mode (see FIXME note in
++		 *		  "ov5640_set_stream_mipi()")
++		 * [4] = 0	: Power up MIPI HS Tx
++		 * [3] = 0	: Power up MIPI LS Rx
++		 * [2] = 0	: MIPI interface disabled
++		 */
++		ret = ov5640_write_reg(sensor,
++				       OV5640_REG_IO_MIPI_CTRL00, 0x40);
++		if (ret)
++			goto power_off;
++
++		/*
++		 * Gate clock and set LP11 in 'no packets mode' (idle)
++		 *
++		 * 0x4800 = 0x24
++		 * [5] = 1	: Gate clock when 'no packets'
++		 * [2] = 1	: MIPI bus in LP11 when 'no packets'
++		 */
++		ret = ov5640_write_reg(sensor,
++				       OV5640_REG_MIPI_CTRL00, 0x24);
++		if (ret)
++			goto power_off;
++
++		/*
++		 * Set data lanes and clock in LP11 when 'sleeping'
++		 *
++		 * 0x3019 = 0x70
++		 * [6] = 1	: MIPI data lane 2 in LP11 when 'sleeping'
++		 * [5] = 1	: MIPI data lane 1 in LP11 when 'sleeping'
++		 * [4] = 1	: MIPI clock lane in LP11 when 'sleeping'
++		 */
++		ret = ov5640_write_reg(sensor,
++				       OV5640_REG_PAD_OUTPUT00, 0x70);
++		if (ret)
++			goto power_off;
++
++		/* Give lanes some time to coax into LP11 state. */
++		usleep_range(500, 1000);
++
++	} else {
+ 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2) {
+-			/*
+-			 * start streaming briefly followed by stream off in
+-			 * order to coax the clock lane into LP-11 state.
+-			 */
+-			ret = ov5640_set_stream_mipi(sensor, true);
+-			if (ret)
+-				goto power_off;
+-			usleep_range(1000, 2000);
+-			ret = ov5640_set_stream_mipi(sensor, false);
+-			if (ret)
+-				goto power_off;
++			/* Reset MIPI bus settings to their default values. */
++			ov5640_write_reg(sensor,
++					 OV5640_REG_IO_MIPI_CTRL00, 0x58);
++			ov5640_write_reg(sensor,
++					 OV5640_REG_MIPI_CTRL00, 0x04);
++			ov5640_write_reg(sensor,
++					 OV5640_REG_PAD_OUTPUT00, 0x00);
+ 		}
+ 
+-		return 0;
++		ov5640_set_power_off(sensor);
+ 	}
+ 
++	return 0;
++
+ power_off:
+ 	ov5640_set_power_off(sensor);
+ 	return ret;
 
 
