@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E601C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8520A21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 561B8208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:01:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="inE60iz/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8520A21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+r8rSUZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561B8208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbeK2RFy (ORCPT
+        id S1729449AbeK2RF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:05:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41456 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:05:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbeK2RFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:05:53 -0500
+        id S1727767AbeK2RF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:05:56 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D0FD2133F;
-        Thu, 29 Nov 2018 06:01:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98AE0208E7;
+        Thu, 29 Nov 2018 06:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471301;
-        bh=HvvEv4+yf9qW7q14mpvet3O/vqfG3j8yAPtGUvsnC0c=;
+        s=default; t=1543471304;
+        bh=1KZFw299N0UFOy1YqLakSuJxDBgMvXzqCU4yIlFHTz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=inE60iz/qS0dadPqZcudV/a8nPGKSQAEI4cPbFWn6wMc2wElTWj6lMW3kNWj+EYYM
-         oBzmn06+LgsOIpButNaljZnQz0007cpUaBr6xKHVUXQc/XOaT+LZ7uwBCxiisd7OCG
-         w2WQ0HWwsv1DN1aRQ+V+S/h1f7lKM/SvM63Psiic=
+        b=U+r8rSUZSuJ0f96n8eszNF2yafVns9eewbnl/GIJJVlk2xAgzFB4Gd8tlyujWL0Oq
+         vs9CXBOVqr1VLj9s5GLEw6ue4+fG/1iya1GhQC3Ea+4Bx+5UC4paY6h0QXg6cj9mhg
+         HQOz8n8HUzkbJqrSK1Pb1XalqU1chmTP7X6fsfbA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 06/35] test_firmware: fix error return getting clobbered
-Date:   Thu, 29 Nov 2018 01:00:40 -0500
-Message-Id: <20181129060110.159878-6-sashal@kernel.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/35] HID: input: Ignore battery reported by Symbol DS4308
+Date:   Thu, 29 Nov 2018 01:00:41 -0500
+Message-Id: <20181129060110.159878-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060110.159878-1-sashal@kernel.org>
 References: <20181129060110.159878-1-sashal@kernel.org>
@@ -53,37 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Benson Leung <bleung@chromium.org>
 
-[ Upstream commit 8bb0a88600f0267cfcc245d34f8c4abe8c282713 ]
+[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
 
-In the case where eq->fw->size > PAGE_SIZE the error return rc
-is being set to EINVAL however this is being overwritten to
-rc = req->fw->size because the error exit path via label 'out' is
-not being taken.  Fix this by adding the jump to the error exit
-path 'out'.
+The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
+which does not have a battery, but reports one anyway that always has
+capacity 2.
 
-Detected by CoverityScan, CID#1453465 ("Unused value")
+Let's apply the IGNORE quirk to prevent it from being treated like a
+power supply so that userspaces don't get confused that this
+accessory is almost out of power and warn the user that they need to charge
+their wired barcode scanner.
 
-Fixes: c92316bf8e94 ("test_firmware: add batched firmware tests")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
+
+Signed-off-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/test_firmware.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-ids.h   | 1 +
+ drivers/hid/hid-input.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index e7008688769b..71d371f97138 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -838,6 +838,7 @@ static ssize_t read_firmware_show(struct device *dev,
- 	if (req->fw->size > PAGE_SIZE) {
- 		pr_err("Testing interface must use PAGE_SIZE firmware for now\n");
- 		rc = -EINVAL;
-+		goto out;
- 	}
- 	memcpy(buf, req->fw->data, req->fw->size);
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 3fc8c0d67592..87904d2adadb 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1001,6 +1001,7 @@
+ #define USB_VENDOR_ID_SYMBOL		0x05e0
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
++#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
+ 
+ #define USB_VENDOR_ID_SYNAPTICS		0x06cb
+ #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index bb984cc9753b..d146a9b545ee 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
+ 		USB_DEVICE_ID_ELECOM_BM084),
+ 	  HID_BATTERY_QUIRK_IGNORE },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
++		USB_DEVICE_ID_SYMBOL_SCANNER_3),
++	  HID_BATTERY_QUIRK_IGNORE },
+ 	{}
+ };
  
 -- 
 2.17.1
