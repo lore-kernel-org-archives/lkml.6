@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305DBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B53C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB48D2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29CD72133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QO5ORNsd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB48D2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ry06Y+OR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CD72133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbeK2REy (ORCPT
+        id S1729238AbeK2RE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:04:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39764 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:04:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbeK2REx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:04:53 -0500
+        id S1728013AbeK2RE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:04:57 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B5C721104;
-        Thu, 29 Nov 2018 06:00:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66441213A2;
+        Thu, 29 Nov 2018 06:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471242;
-        bh=o1zBCJFnDGEf/mD/Zl1nFABTbvIqlrhJN3D305sI+nI=;
+        s=default; t=1543471246;
+        bh=7hpmEqVv55ABWE4GjC7XfnAzjZIF9tDpMaVuDcwSe2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QO5ORNsd0q2cEvfKJRwEdTQskLTbWqXHcjwM+txGDDaNNMlEV3A2CtaF501QgMMX6
-         8jRvziO4d3K9XIuqOQ8tEMko9dbACITBWKXfIbEDM9pP4fVsoJ2rQhnlkcgZ4jfqWS
-         Y3IjX2/TaNMLnQVuRihCNxyM/TnTHk/WQS4gCLYA=
+        b=Ry06Y+ORV9OJ5mCWcoo2wyH1Cw/CDApGXzMZWofhrgXrVa8zj/JDy7pyW2/EnUr0K
+         MmKj9EodiUaeZH1QVwoyh9oBT1Yv6NeU95RDdkWAE27Y6iSWKhJmDDUu5mXiOY5L5T
+         TGuD4NACHy+8mr4TU34ikTPu4uPknlYz5Bc2CrKA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 61/68] ibmvnic: Fix RX queue buffer cleanup
-Date:   Thu, 29 Nov 2018 00:55:52 -0500
-Message-Id: <20181129055559.159228-61-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 62/68] ibmvnic: Update driver queues after change in ring size support
+Date:   Thu, 29 Nov 2018 00:55:53 -0500
+Message-Id: <20181129055559.159228-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -56,33 +56,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit b7cdec3d699db2e5985ad39de0f25d3b6111928e ]
+[ Upstream commit 5bf032ef08e6a110edc1e3bfb3c66a208fb55125 ]
 
-The wrong index is used when cleaning up RX buffer objects during release
-of RX queues. Update to use the correct index counter.
+During device reset, queue memory is not being updated to accommodate
+changes in ring buffer sizes supported by backing hardware. Track
+any differences in ring buffer sizes following the reset and update
+queue memory when possible.
 
 Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index a646de07cbdc..f1d4d7a1278b 100644
+index f1d4d7a1278b..5ab21a1b5444 100644
 --- a/drivers/net/ethernet/ibm/ibmvnic.c
 +++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -485,8 +485,8 @@ static void release_rx_pools(struct ibmvnic_adapter *adapter)
+@@ -1737,6 +1737,7 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+ 		    struct ibmvnic_rwi *rwi, u32 reset_state)
+ {
+ 	u64 old_num_rx_queues, old_num_tx_queues;
++	u64 old_num_rx_slots, old_num_tx_slots;
+ 	struct net_device *netdev = adapter->netdev;
+ 	int i, rc;
  
- 		for (j = 0; j < rx_pool->size; j++) {
- 			if (rx_pool->rx_buff[j].skb) {
--				dev_kfree_skb_any(rx_pool->rx_buff[i].skb);
--				rx_pool->rx_buff[i].skb = NULL;
-+				dev_kfree_skb_any(rx_pool->rx_buff[j].skb);
-+				rx_pool->rx_buff[j].skb = NULL;
- 			}
- 		}
+@@ -1748,6 +1749,8 @@ static int do_reset(struct ibmvnic_adapter *adapter,
  
+ 	old_num_rx_queues = adapter->req_rx_queues;
+ 	old_num_tx_queues = adapter->req_tx_queues;
++	old_num_rx_slots = adapter->req_rx_add_entries_per_subcrq;
++	old_num_tx_slots = adapter->req_tx_entries_per_subcrq;
+ 
+ 	ibmvnic_cleanup(netdev);
+ 
+@@ -1810,7 +1813,11 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+ 			if (rc)
+ 				return rc;
+ 		} else if (adapter->req_rx_queues != old_num_rx_queues ||
+-			   adapter->req_tx_queues != old_num_tx_queues) {
++			   adapter->req_tx_queues != old_num_tx_queues ||
++			   adapter->req_rx_add_entries_per_subcrq !=
++							old_num_rx_slots ||
++			   adapter->req_tx_entries_per_subcrq !=
++							old_num_tx_slots) {
+ 			release_rx_pools(adapter);
+ 			release_tx_pools(adapter);
+ 			release_napi(adapter);
 -- 
 2.17.1
 
