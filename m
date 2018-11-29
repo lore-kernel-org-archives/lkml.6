@@ -2,101 +2,148 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2400DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F47C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED715213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:36:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED715213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ABF0D2082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:37:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGlUSo/S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF0D2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbeK3GnP convert rfc822-to-8bit (ORCPT
+        id S1726652AbeK3Gnd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:43:15 -0500
-Received: from mga07.intel.com ([134.134.136.100]:21521 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeK3GnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:43:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 11:36:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,295,1539673200"; 
-   d="scan'208";a="95903904"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by orsmga006.jf.intel.com with ESMTP; 29 Nov 2018 11:36:42 -0800
-Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
- ORSMSX109.amr.corp.intel.com (10.22.240.7) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 29 Nov 2018 11:36:41 -0800
-Received: from orsmsx122.amr.corp.intel.com ([169.254.11.147]) by
- ORSMSX156.amr.corp.intel.com ([169.254.8.146]) with mapi id 14.03.0415.000;
- Thu, 29 Nov 2018 11:36:41 -0800
-From:   "Schmauss, Erik" <erik.schmauss@intel.com>
-To:     Jean Delvare <jdelvare@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Jean-Marc Lenoir <archlinux@jihemel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
-Subject: RE: [PATCH 4.14 044/100] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-Thread-Topic: [PATCH 4.14 044/100] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-Thread-Index: AQHUh+9yZ89du/4JL0qQiMsR1dgxa6VnWpEAgAAEbID//7sFAIAAjbmAgAADlID//3pzkA==
-Date:   Thu, 29 Nov 2018 19:36:40 +0000
-Message-ID: <CF6A88132359CE47947DB4C6E1709ED53C551B2B@ORSMSX122.amr.corp.intel.com>
-References: <20181129140058.768942700@linuxfoundation.org>
-        <20181129140102.870510957@linuxfoundation.org>
-        <1543502726.10991.13.camel@suse.de>     <20181129150115.GA22451@kroah.com>
-        <CF6A88132359CE47947DB4C6E1709ED53C551AF7@ORSMSX122.amr.corp.intel.com>
-        <20181129192136.GA13749@kroah.com> <20181129203425.63544638@endymion>
-In-Reply-To: <20181129203425.63544638@endymion>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 30 Nov 2018 01:43:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37542 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeK3Gnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:43:33 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so1544483plr.4;
+        Thu, 29 Nov 2018 11:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/vhBMAZb13TEvrf9BZ9cG6Oojk1dBIPBT4c6VDw/Hls=;
+        b=bGlUSo/S+nIXDBU5INlAzNcphr3fi5yTaCsNHyW4tvWogNLDQIOtbvPn1SgNAAqbsv
+         fM9O9bMxM4mLoy9hKWzwcmeDDZndSGsyADKuQtiywRqSqFpdX2JReSQIpVHUStDPi3Kb
+         qSzsB5RPh4luo53CgihdndujLqYaLnbXijM/rp3tr1lKlo3ZvAeny8rXlChUj2hxjhj9
+         322Gld/pIOzOanpai+OjCon41SG7aRUq7u1RKW0B3nSn97PUJiE9LkNhiYdGZc3/Xt3t
+         SSQ3SseHGH8/7s82bmx9cWoX1e633ukxh2lYoqT3isBSFXrFi1bgTNEaCZnau7e9/GJd
+         67pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/vhBMAZb13TEvrf9BZ9cG6Oojk1dBIPBT4c6VDw/Hls=;
+        b=st2wCie3p2Rz3SnfqLGQc8cFmKwQ9IDmofeNOCPnIjc7RugQjnGYFIs6IZYqp6HNb0
+         FHKEzyxnvSjIyzTZg02gZL959AVr4R/l3tWOcH18+uPHa0BBd7dRoCH6CA2gJccv8tL6
+         oUot5hM+toi+qREGxTSvos/Mjmwxo3lIh6W2ZoHLnYbL+4/nEpSka1Qrk3LxPqBkGa4I
+         +EFOcWW2Xic75engUehqsTB3mo6845CaC3Jjb085y/odE35hDLW96WjU/CcgXeesazTH
+         pVRKeUzXqEasCatl3QMl0Kx5pJFl3d8Wp1wLXSmonRQox3Ru1GtyZffRHWYPfcWXa7nP
+         xnAQ==
+X-Gm-Message-State: AA+aEWawuPuYoiTF2eNjDLOAUq2gLwxK3oNvAYYzsC5AwXj5Kv5f6g27
+        ol3gXrDa+hCUO+aRj/Mass8QVXv2p0I=
+X-Google-Smtp-Source: AFSGD/UwNWOdlYOw/efEZp6btB4UnIYy5iFtoXVu5hJVXnm5oJXfwYAdzphVZr/a0RJazSDFwTInWQ==
+X-Received: by 2002:a17:902:4124:: with SMTP id e33mr2747816pld.236.1543520222126;
+        Thu, 29 Nov 2018 11:37:02 -0800 (PST)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id u70sm6910343pfa.176.2018.11.29.11.37.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 11:37:01 -0800 (PST)
+Date:   Thu, 29 Nov 2018 11:36:59 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rui.zhang@intel.com, vincent.guittot@linaro.org,
+        john.stultz@linaro.org,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] thermal/drivers/hisi: Fix bad initialization
+Message-ID: <20181129193658.GA6844@localhost.localdomain>
+References: <1543516016-28186-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543516016-28186-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Jean Delvare [mailto:jdelvare@suse.de]
-> Sent: Thursday, November 29, 2018 11:34 AM
-> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Schmauss, Erik <erik.schmauss@intel.com>; linux-
-> kernel@vger.kernel.org; stable@vger.kernel.org; Jean-Marc Lenoir
-> <archlinux@jihemel.com>; Wysocki, Rafael J <rafael.j.wysocki@intel.com>
-> Subject: Re: [PATCH 4.14 044/100] ACPICA: AML interpreter: add region
-> addresses in global list during initialization
+On Thu, Nov 29, 2018 at 07:26:56PM +0100, Daniel Lezcano wrote:
+> Without this patch, the thermal driver on hi6220 and hi3660 is broken.
 > 
-> On Thu, 29 Nov 2018 20:21:37 +0100, Greg Kroah-Hartman wrote:
-> > On Thu, Nov 29, 2018 at 06:56:40PM +0000, Schmauss, Erik wrote:
-> > > This should only apply to 4.17 or later. I unintentionally put all
-> > > applicable so please drop this for all 4.16 or earlier. I've learned
-> > > my lesson and I'll put the correct tags from now on :-)
-> >
-> > Ok, now dropped from 4.14, thanks.
+> That is due because part of the posted patchset was merged but a small
+> change in the DT was dropped.
 > 
-> Should be dropped from 4.9 and 4.4 too... if it was not clear.
-
-Yes, it should,
-
-Thanks,
-Erik
+> The hi6220 and hi3660 do not have an interrupt name in the DT, so
+> finding interrupt by name fails.
 > 
-> Thanks,
-> --
-> Jean Delvare
-> SUSE L3 Support
+> In addition, the hi3660 only defines one thermal zone in the DT and we
+> are trying to register two sensors assuming we have two thermal zones
+> in the DT.
+> 
+> Fix this by adding a couple of line of code to add back compatibility
+> with older DT and change the sensors number to 1 for the hi3660.
+
+Is this a case of adding dt versioning for those nodes?
+
+> 
+> Fixes: 2cffaeff083f (thermal/drivers/hisi: Use platform_get_irq_byname)
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/hisi_thermal.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+> index c4111a9..3ab0e63 100644
+> --- a/drivers/thermal/hisi_thermal.c
+> +++ b/drivers/thermal/hisi_thermal.c
+> @@ -424,7 +424,7 @@ static int hi3660_thermal_probe(struct hisi_thermal_data *data)
+>  	struct platform_device *pdev = data->pdev;
+>  	struct device *dev = &pdev->dev;
+>  
+> -	data->nr_sensors = 2;
+> +	data->nr_sensors = 1;
+
+For bisectability (heh.. is that even a word?), would you please send
+one fix per patch?
+
+>  
+>  	data->sensor = devm_kzalloc(dev, sizeof(*data->sensor) *
+>  				    data->nr_sensors, GFP_KERNEL);
+> @@ -590,8 +590,13 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+>  		}
+>  
+>  		ret = platform_get_irq_byname(pdev, sensor->irq_name);
+> -		if (ret < 0)
+> -			return ret;
+> +		if (ret <= 0) {
+
+Maybe a simple <  is enough? reading it seams awkward. From a glance, I
+dont think platform_get_irq* ever returns 0.
+
+> +			ret = platform_get_irq(pdev, 0);
+> +			if (ret <=  0) {
+
+Same here.
+
+> +				dev_err(dev, "Failed get interrupt: %d\n", ret);
+> +				return ret;
+> +			}
+> +		}
+>  
+>  		ret = devm_request_threaded_irq(dev, ret, NULL,
+>  						hisi_thermal_alarm_irq_thread,
+> -- 
+> 2.7.4
+> 
