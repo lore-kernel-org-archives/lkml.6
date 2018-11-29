@@ -2,93 +2,77 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45BFC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F05C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7E62145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:55:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJY2VxSK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7E62145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6249E213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6249E213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbeK3DAu (ORCPT
+        id S1729118AbeK3DBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:00:50 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41276 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728583AbeK3DAt (ORCPT
+        Thu, 29 Nov 2018 22:01:50 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:54631 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbeK3DBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:00:49 -0500
-Received: by mail-qt1-f193.google.com with SMTP id d18so2465929qto.8;
-        Thu, 29 Nov 2018 07:55:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=04/qz8pdLsU4owCgN/+S4NzXW745Zs/GT+VihcKn1BQ=;
-        b=CJY2VxSK69Lg9Fxe33/Pl6m98z94gClHNtHo3zML+d7D+WHR3JBPoca+2RE1SniLgc
-         GFXFXftY39J0B2i5o7xanPFKCGwwHmyGnwtLBVr1iUDPP9aKOqX6trn+dHjVIJk8Lwf7
-         M9l/DBz/LFKcvMrtjq/c4KMBgdUzfwd/K3MCG8PRWV5cCZZgRIEVOXFx/DAqxelqpiMv
-         uQ1heHDh/155GWT8oN8ZK8pdWBQ957IdVyxn8+fZODsOGAoJBxjPv20If7s95a60PN8p
-         KJVcFSicEDJK4NkGAwBpBwaUBrZ09gU/Qzi23EgUuiUUdIzADQcJK15dRNNp16Ope25A
-         9aCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=04/qz8pdLsU4owCgN/+S4NzXW745Zs/GT+VihcKn1BQ=;
-        b=EVbqcXPOwrJ8S9O7Qsi+kFGdBgBlH5f3WgzTMOjGGjzblj3XMB75YbX5NBMmOlQDVg
-         fNagy967CP6rYGYJ+gSe93tjm7DM2LDWtNeHKFii2H/gqKW52Fa9FAiRTX7s5HHDhQCr
-         In9dzHOPwfwgnFtggQYMtwf4J+Co3E247iCWnqTmTzf0QM1V5/J7+e0H/q7Nxu2FA0N2
-         cNQy1+bPBaxz4HKYH4H/O4nd/SpOMdEKsZoCWy0JTuVYCZcPAjoppNtAqmjbwKo6MRFm
-         OYadjFqSG3Q7JiOPJybfRodWntrQ+R3IPyx2KVcz2i1CgYKyEHPS5f8xUxc5Mh1zKw2d
-         wKdw==
-X-Gm-Message-State: AA+aEWYog04mP4JmpiTRLTKOz947M6oswO5/fLp43yBZuyK2kv915XkQ
-        uquEbCn7YRVAQ2YJevnazgc=
-X-Google-Smtp-Source: AFSGD/W4BRgfGQKgu7dKivTw+AmrediSAO8cSafg0/HO1LUZxagar+D5t9Zaso+pwHQkqf6B8iURWQ==
-X-Received: by 2002:ac8:1add:: with SMTP id h29mr1884607qtk.258.1543506899825;
-        Thu, 29 Nov 2018 07:54:59 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:c5f4])
-        by smtp.gmail.com with ESMTPSA id k6sm1805946qkk.60.2018.11.29.07.54.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 07:54:59 -0800 (PST)
-Date:   Thu, 29 Nov 2018 07:54:56 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] blkcg: remove bio_disassociate_task()
-Message-ID: <20181129155456.GF2509588@devbig004.ftw2.facebook.com>
-References: <20181126211946.77067-1-dennis@kernel.org>
- <20181126211946.77067-12-dennis@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126211946.77067-12-dennis@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 29 Nov 2018 22:01:49 -0500
+Received: from office.codethink.co.uk ([148.252.241.226] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1gSOfU-0006EJ-59; Thu, 29 Nov 2018 15:55:56 +0000
+Message-ID: <1543506955.2867.10.camel@codethink.co.uk>
+Subject: Re: [PATCH 1/3] bpf/verifier: Log instruction patching when verbose
+ logging is enabled
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 29 Nov 2018 15:55:55 +0000
+In-Reply-To: <b1d395a1-076a-054d-09ae-9d9242b1c29a@iogearbox.net>
+References: <20181123183356.5q4bu47zpj5wdufb@xylophone.i.decadent.org.uk>
+         <20181123183455.qjokyt6zpa2yck6s@xylophone.i.decadent.org.uk>
+         <b1d395a1-076a-054d-09ae-9d9242b1c29a@iogearbox.net>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:19:44PM -0500, Dennis Zhou wrote:
-> Now that a bio only holds a blkg reference, so clean up is simply
-> putting back that reference. Remove bio_disassociate_task() as it just
-> calls bio_disassociate_blkg() and call the latter directly.
+On Fri, 2018-11-23 at 21:10 +0100, Daniel Borkmann wrote:
+> On 11/23/2018 07:34 PM, Ben Hutchings wrote:
+> > User-space does not have access to the patched eBPF code, but we
+> > need to be able to test that patches are being applied.  Therefore
+> > log distinct messages for each case that requires patching.
 > 
-> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> Thanks for the patches, Ben! Above is actually not the case, e.g. privileged
+> admin can use something like 'bpftool prog dump xlated id <id>' and then the
+> BPF insns are dumped to user space for the program /after/ the verification,
+> so the rewrites can then be seen.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Oh that's good.
 
-Thanks.
+> test_verifier temporarily drops caps to
+> load and run the unprivileged cases, but we can extend the test suite to
+> retrieve and check the final insns after that happened. I think this would be
+> a nice extension to the test suite for cases like these and would also provide
+> better insight than verbose() statement saying that something has been
+> patched (but not the actual result of it).
+
+Agreed; I'll look into doing this instead.
+
+Ben.
 
 -- 
-tejun
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
