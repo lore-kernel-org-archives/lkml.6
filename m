@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A40A7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E2BC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B367213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0599F213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2gT6Ckdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B367213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="drUHtXjN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0599F213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732471AbeK3B33 (ORCPT
+        id S1732487AbeK3B3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:29:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730150AbeK3B31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:29:27 -0500
+        id S1732472AbeK3B33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 186CC205C9;
-        Thu, 29 Nov 2018 14:23:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C53521104;
+        Thu, 29 Nov 2018 14:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501435;
-        bh=KN8hxaIFzkBr89gqtihj1rAuMgtAlFI7O5ztYo+R1tc=;
+        s=default; t=1543501437;
+        bh=tpCxkAUeRc0dv3fAL9VAv+KTk/a2CSSi9ZmweOMu6Xc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2gT6CkdqFFFYBi3TrPMnHqdy10F/Icy+j5F9WpVSbwmrygzVmdOY4g2PkV4ltSJrZ
-         AH4L1A4r+dDL3A8U3KEoOJXkSmtnmM/1c2gDzRrhMKlCoeF9bT05sT6HomAsa+Up83
-         DgE4mKAPXCZlzxyj0GWa/nV3S4rdEdoCQoPIitk4=
+        b=drUHtXjNCui1P6DWuf5gTtnVJLXnggNn5+1PRZdf0GBaOFWQ1yHSVJJq9EDzRvM/h
+         cvelqu8sfowV/DdT6Y6dey7+OKaEwdiObznhxSbK/K8fmJADa339ay8VU9UMyRIBuK
+         KOOq5Fy1ix0oIOQQ5Tu7Mcs60hQgKo1G0zleJ/HM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
         Aditya Kali <adityakali@google.com>
-Subject: [PATCH 4.9 88/92] Revert "evm: Translate user/group ids relative to s_user_ns when computing HMAC"
-Date:   Thu, 29 Nov 2018 15:12:57 +0100
-Message-Id: <20181129140113.878468514@linuxfoundation.org>
+Subject: [PATCH 4.9 89/92] ima: always measure and audit files in policy
+Date:   Thu, 29 Nov 2018 15:12:58 +0100
+Message-Id: <20181129140113.954940411@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,51 +63,188 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-commit 19339c251607a3defc7f089511ce8561936fee45 upstream.
+commit f3cc6b25dcc5616f0d5c720009b2ac66f97df2ff upstream.
 
-This reverts commit 0b3c9761d1e405514a551ed24d3ea89aea26ce14.
+All files matching a "measure" rule must be included in the IMA
+measurement list, even when the file hash cannot be calculated.
+Similarly, all files matching an "audit" rule must be audited, even when
+the file hash can not be calculated.
 
-Seth Forshee <seth.forshee@canonical.com> writes:
-> All right, I think 0b3c9761d1e405514a551ed24d3ea89aea26ce14 should be
-> reverted then. EVM is a machine-local integrity mechanism, and so it
-> makes sense that the signature would be based on the kernel's notion of
-> the uid and not the filesystem's.
+The file data hash field contained in the IMA measurement list template
+data will contain 0's instead of the actual file hash digest.
 
-I added a commment explaining why the EVM hmac needs to be in the
-kernel's notion of uid and gid, not the filesystems to prevent
-remounting the filesystem and gaining unwaranted trust in files.
+Note:
+In general, adding, deleting or in anyway changing which files are
+included in the IMA measurement list is not a good idea, as it might
+result in not being able to unseal trusted keys sealed to a specific
+TPM PCR value.  This patch not only adds file measurements that were
+not previously measured, but specifies that the file hash value for
+these files will be 0's.
 
-Acked-by: Seth Forshee <seth.forshee@canonical.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+As the IMA measurement list ordering is not consistent from one boot
+to the next, it is unlikely that anyone is sealing keys based on the
+IMA measurement list.  Remote attestation servers should be able to
+process these new measurement records, but might complain about
+these unknown records.
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Reviewed-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
 Cc: Aditya Kali <adityakali@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/integrity/evm/evm_crypto.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima_api.c    |   69 ++++++++++++++++++++++--------------
+ security/integrity/ima/ima_crypto.c |   10 +++++
+ security/integrity/ima/ima_main.c   |    9 ++--
+ 3 files changed, 57 insertions(+), 31 deletions(-)
 
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -152,8 +152,16 @@ static void hmac_add_misc(struct shash_d
- 	memset(&hmac_misc, 0, sizeof(hmac_misc));
- 	hmac_misc.ino = inode->i_ino;
- 	hmac_misc.generation = inode->i_generation;
--	hmac_misc.uid = from_kuid(inode->i_sb->s_user_ns, inode->i_uid);
--	hmac_misc.gid = from_kgid(inode->i_sb->s_user_ns, inode->i_gid);
-+	/* The hmac uid and gid must be encoded in the initial user
-+	 * namespace (not the filesystems user namespace) as encoding
-+	 * them in the filesystems user namespace allows an attack
-+	 * where first they are written in an unprivileged fuse mount
-+	 * of a filesystem and then the system is tricked to mount the
-+	 * filesystem for real on next boot and trust it because
-+	 * everything is signed.
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -198,42 +198,59 @@ int ima_collect_measurement(struct integ
+ 	struct inode *inode = file_inode(file);
+ 	const char *filename = file->f_path.dentry->d_name.name;
+ 	int result = 0;
++	int length;
++	void *tmpbuf;
++	u64 i_version;
+ 	struct {
+ 		struct ima_digest_data hdr;
+ 		char digest[IMA_MAX_DIGEST_SIZE];
+ 	} hash;
+ 
+-	if (!(iint->flags & IMA_COLLECTED)) {
+-		u64 i_version = file_inode(file)->i_version;
++	if (iint->flags & IMA_COLLECTED)
++		goto out;
+ 
+-		if (file->f_flags & O_DIRECT) {
+-			audit_cause = "failed(directio)";
+-			result = -EACCES;
+-			goto out;
+-		}
+-
+-		hash.hdr.algo = algo;
+-
+-		result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+-			ima_calc_buffer_hash(buf, size, &hash.hdr);
+-		if (!result) {
+-			int length = sizeof(hash.hdr) + hash.hdr.length;
+-			void *tmpbuf = krealloc(iint->ima_hash, length,
+-						GFP_NOFS);
+-			if (tmpbuf) {
+-				iint->ima_hash = tmpbuf;
+-				memcpy(iint->ima_hash, &hash, length);
+-				iint->version = i_version;
+-				iint->flags |= IMA_COLLECTED;
+-			} else
+-				result = -ENOMEM;
+-		}
++	/*
++	 * Dectecting file change is based on i_version. On filesystems
++	 * which do not support i_version, support is limited to an initial
++	 * measurement/appraisal/audit.
 +	 */
-+	hmac_misc.uid = from_kuid(&init_user_ns, inode->i_uid);
-+	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
- 	hmac_misc.mode = inode->i_mode;
- 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
- 	if (evm_hmac_attrs & EVM_ATTR_FSUUID)
++	i_version = file_inode(file)->i_version;
++	hash.hdr.algo = algo;
++
++	/* Initialize hash digest to 0's in case of failure */
++	memset(&hash.digest, 0, sizeof(hash.digest));
++
++	if (buf)
++		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
++	else
++		result = ima_calc_file_hash(file, &hash.hdr);
++
++	if (result && result != -EBADF && result != -EINVAL)
++		goto out;
++
++	length = sizeof(hash.hdr) + hash.hdr.length;
++	tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
++	if (!tmpbuf) {
++		result = -ENOMEM;
++		goto out;
+ 	}
++
++	iint->ima_hash = tmpbuf;
++	memcpy(iint->ima_hash, &hash, length);
++	iint->version = i_version;
++
++	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
++	if (!result)
++		iint->flags |= IMA_COLLECTED;
+ out:
+-	if (result)
++	if (result) {
++		if (file->f_flags & O_DIRECT)
++			audit_cause = "failed(directio)";
++
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+ 				    filename, "collect_data", audit_cause,
+ 				    result, 0);
++	}
+ 	return result;
+ }
+ 
+@@ -277,7 +294,7 @@ void ima_store_measurement(struct integr
+ 	}
+ 
+ 	result = ima_store_template(entry, violation, inode, filename, pcr);
+-	if (!result || result == -EEXIST) {
++	if ((!result || result == -EEXIST) && !(file->f_flags & O_DIRECT)) {
+ 		iint->flags |= IMA_MEASURED;
+ 		iint->measured_pcrs |= (0x1 << pcr);
+ 	}
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -443,6 +443,16 @@ int ima_calc_file_hash(struct file *file
+ 	loff_t i_size;
+ 	int rc;
+ 
++	/*
++	 * For consistency, fail file's opened with the O_DIRECT flag on
++	 * filesystems mounted with/without DAX option.
++	 */
++	if (file->f_flags & O_DIRECT) {
++		hash->length = hash_digest_size[ima_hash_algo];
++		hash->algo = ima_hash_algo;
++		return -EINVAL;
++	}
++
+ 	i_size = i_size_read(file_inode(file));
+ 
+ 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -242,11 +242,8 @@ static int process_measurement(struct fi
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+ 	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+-	if (rc != 0) {
+-		if (file->f_flags & O_DIRECT)
+-			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
++	if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+ 		goto out_digsig;
+-	}
+ 
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+@@ -254,12 +251,14 @@ static int process_measurement(struct fi
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+-	if (action & IMA_APPRAISE_SUBMASK)
++	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+ 					      xattr_value, xattr_len, opened);
+ 	if (action & IMA_AUDIT)
+ 		ima_audit_measurement(iint, pathname);
+ 
++	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
++		rc = 0;
+ out_digsig:
+ 	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
+ 	     !(iint->flags & IMA_NEW_FILE))
 
 
