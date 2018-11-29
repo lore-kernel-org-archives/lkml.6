@@ -2,90 +2,140 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1271AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4C5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1CC206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:30:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="K1vJ+KOc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1CC206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id BADEA206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:32:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADEA206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeK2Ldt (ORCPT
+        id S1727137AbeK2Lfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:33:49 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33307 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeK2Ldt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:33:49 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so103403pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:30:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=j7VEJMdNX3hizvEBqZU8Msuu6SpXqlrBimcD91WS/2s=;
-        b=K1vJ+KOcNUijDNowf0VDfHgSXs0HZOm0prHNAXFEa63i0EgdZMR+uHsR+pySBjU/A9
-         ZRQkhphJ2KtNN9+HnDYZBnggOf+zid33EmKVU/dcoby3sO1ptxshq99dKh8LznEiMG8a
-         ziOkAsz9XrBIqtM4M2ybvogGlYQiRNtjdJZAVAuzL3r2TzeeGiCZLXH409ZK8Rf8aeOK
-         r/VJ51udWmcXdL1iAjQ0bZPRvjh4sCYumJ84qZXfOkPIXgLaUSFEtGxKUrOUvsYCPHbo
-         7tM3aR0evmJb2t9B1B4vCFhyCR68bZvhlp2D6mBjp3GCbvpphrUMxPOCnHHicGutxegs
-         dJsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=j7VEJMdNX3hizvEBqZU8Msuu6SpXqlrBimcD91WS/2s=;
-        b=kfOmnJUWb8VoFt6qs740j7uM5PGuhAAjDVDvQQaZC9UkxiHObM3Sa8MLNM3w2JN7Yy
-         QNSsaoEpcHJeoEbJjwkIv2CNGqg6YWq17PL6ntH34GyOF0DoV6yqlePnN9RNbVEM4n+Y
-         kSfCgPn9m2fYEzSjnfacb7LiuGVrXK6JNF280i0A1HUVFicFtxhxSRzjpdvVWP1EPg6Y
-         jvTDPJRFDZ8+/Rw4eQvRdFm6RWb97/so1ZBFHXMWpdqjrl/1Q1P0JsKIWOnTU9EjeLIo
-         O8lFU86i47hxwjgSkUed/64i8WO6Pi0Sfas/hOG1LFuvCzQ04BvMDT8CApZT+05QToDe
-         I6VA==
-X-Gm-Message-State: AA+aEWap5GuVV3duAZR8hSeFww0PaRsPmxqy9w4gEOqnB0RKILQNtirs
-        8IgJaKR4ToVhixDAzz02FmSZvaTlRH4=
-X-Google-Smtp-Source: AFSGD/UhBRGnde3309CukOWscSE8Gpa9u1XGuEY/1aBAbLQ1QEXq+LtUqTODeDCPBxq3dL2NakStRQ==
-X-Received: by 2002:a63:c00b:: with SMTP id h11mr35746159pgg.429.1543451421268;
-        Wed, 28 Nov 2018 16:30:21 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id 184sm151695pfe.106.2018.11.28.16.30.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:30:20 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: switch CONFIG_PWM_MESON to built-in
-In-Reply-To: <20181114230554.4968-1-martin.blumenstingl@googlemail.com>
-References: <20181114230554.4968-1-martin.blumenstingl@googlemail.com>
-Date:   Wed, 28 Nov 2018 16:30:19 -0800
-Message-ID: <7hh8g0d8tg.fsf@baylibre.com>
+        Thu, 29 Nov 2018 06:35:34 -0500
+Received: from mga02.intel.com ([134.134.136.20]:1726 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbeK2Lfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:35:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 16:32:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,292,1539673200"; 
+   d="scan'208";a="96427113"
+Received: from ahduyck-desk1.jf.intel.com (HELO ahduyck-desk1.amr.corp.intel.com) ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 28 Nov 2018 16:32:06 -0800
+Subject: [driver-core PATCH v7 0/9] Add NUMA aware async_schedule calls
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, bvanassche@acm.org,
+        alexander.h.duyck@linux.intel.com
+Date:   Wed, 28 Nov 2018 16:32:06 -0800
+Message-ID: <154345118835.18040.17186161872550839244.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+This patch set provides functionality that will help to improve the
+locality of the async_schedule calls used to provide deferred
+initialization.
 
-> Some Meson8b boards (Odroid-C1, EC-100) use a PWM regulator which is the
-> voltage supply of the CPU cores (this regulator is typically called
-> "VCCK").
-> Now that we are preparing support for CPU frequency scaling on Meson8,
-> Meson8b and Meson8m2 we should build the pwm-meson driver into the
-> kernel so we can configure the CPU voltage early in the boot process.
+This patch set originally started out focused on just the one call to
+async_schedule_domain in the nvdimm tree that was being used to defer the
+device_add call however after doing some digging I realized the scope of
+this was much broader than I had originally planned. As such I went
+through and reworked the underlying infrastructure down to replacing the
+queue_work call itself with a function of my own and opted to try and
+provide a NUMA aware solution that would work for a broader audience.
 
-Can you explain a little more why the configuration of CPU voltage
-cannot wait a bit so this could be properly probed?
+In addition I have added several tweaks and/or clean-ups to the front of the
+patch set. Patches 1 through 4 address a number of issues that actually were
+causing the existing async_schedule calls to not show the performance that
+they could due to either not scaling on a per device basis, or due to issues
+that could result in a potential deadlock. For example, patch 4 addresses the
+fact that we were calling async_schedule once per driver instead of once
+per device, and as a result we would have still ended up with devices
+being probed on a non-local node without addressing this first.
 
-Kevin
+RFC->v1:
+    Dropped nvdimm patch to submit later.
+        It relies on code in libnvdimm development tree.
+    Simplified queue_work_near to just convert node into a CPU.
+    Split up drivers core and PM core patches.
+v1->v2:
+    Renamed queue_work_near to queue_work_node
+    Added WARN_ON_ONCE if we use queue_work_node with per-cpu workqueue
+v2->v3:
+    Added Acked-by for queue_work_node patch
+    Continued rename from _near to _node to be consistent with queue_work_node
+        Renamed async_schedule_near_domain to async_schedule_node_domain
+        Renamed async_schedule_near to async_schedule_node
+    Added kerneldoc for new async_schedule_XXX functions
+    Updated patch description for patch 4 to include data on potential gains
+v3->v4
+    Added patch to consolidate use of need_parent_lock
+    Make asynchronous driver probing explicit about use of drvdata
+v4->v5
+    Added patch to move async_synchronize_full to address deadlock
+    Added bit async_probe to act as mutex for probe/remove calls
+    Added back nvdimm patch as code it relies on is now in Linus's tree
+    Incorporated review comments on parent & device locking consolidation
+    Rebased on latest linux-next
+v5->v6:
+    Drop the "This patch" or "This change" from start of patch descriptions.
+    Drop unnecessary parenthesis in first patch
+    Use same wording for "selecting a CPU" in comments added in first patch
+    Added kernel documentation for async_probe member of device
+    Fixed up comments for async_schedule calls in patch 2
+    Moved code related setting async driver out of device.h and into dd.c
+    Added Reviewed-by for several patches
+v6->v7:
+    Fixed typo which had kernel doc refer to "lock" when I meant "unlock"
+    Dropped "bool X:1" to "u8 X:1" from patch description
+    Added async_driver to device_private structure to store driver
+    Dropped unecessary code shuffle from async_probe patch
+    Reordered patches to move fixes up to front
+    Added Reviewed-by for several patches
+    Updated cover page and patch descriptions throughout the set
+
+---
+
+Alexander Duyck (9):
+      driver core: Move async_synchronize_full call
+      driver core: Establish clear order of operations for deferred probe and remove
+      device core: Consolidate locking and unlocking of parent and device
+      driver core: Probe devices asynchronously instead of the driver
+      workqueue: Provide queue_work_node to queue work near a given NUMA node
+      async: Add support for queueing on specific NUMA node
+      driver core: Attach devices on CPU local to device node
+      PM core: Use new async_schedule_dev command
+      libnvdimm: Schedule device registration on node local to the device
+
+
+ drivers/base/base.h       |    4 +
+ drivers/base/bus.c        |   46 ++---------
+ drivers/base/dd.c         |  182 +++++++++++++++++++++++++++++++++++++++------
+ drivers/base/power/main.c |   12 +--
+ drivers/nvdimm/bus.c      |   11 ++-
+ include/linux/async.h     |   82 ++++++++++++++++++++
+ include/linux/device.h    |    3 +
+ include/linux/workqueue.h |    2 
+ kernel/async.c            |   53 +++++++------
+ kernel/workqueue.c        |   84 +++++++++++++++++++++
+ 10 files changed, 380 insertions(+), 99 deletions(-)
+
+--
