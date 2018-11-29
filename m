@@ -2,97 +2,225 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B61AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E9BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BC1720863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62FDE20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMjuABIi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC1720863
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9R0U0Q2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FDE20863
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbeK3Ehy (ORCPT
+        id S1730436AbeK3Ei6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:37:54 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34101 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728535AbeK3Ehy (ORCPT
+        Thu, 29 Nov 2018 23:38:58 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33243 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728255AbeK3Ei5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:37:54 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y185so6881071wmd.1;
-        Thu, 29 Nov 2018 09:31:46 -0800 (PST)
+        Thu, 29 Nov 2018 23:38:57 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o89so1555933qko.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:32:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xqD7o4MHZv+Oi4/Hfici0afEYbeABMQC9kEIregTpVA=;
-        b=OMjuABIiID5UzhcPfTqNecQZQZxByiORVEv3roioLhWwwTkmlqyt/R6YKt9bol2psb
-         WDOEbXcLcr2nBEqGhj9hlWPY/u9P0TgQYwmi4ITv4J1gLw+b2qk8bV5FJdj8N7+4rd6p
-         1G/HBL08HRCmH/hO6uZ1rG9VtdopMUSGeV/e7335YfZkRfqAtXTut0/4yD8F5C0KmZT8
-         JsFDHDY9pOTWYzVXOTVMHSGMOKM+IjFXScMcIQWey/QaDpmxw8dtJLXuhOsM4GcQXcb5
-         2jfuvc7acXSmEiaP2pY7kTRxZzu1M8w7KK4fVmo3yACigrdXf4bUjF+c8m4vQ4R4AgvT
-         HN5g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PUeBlSazp8q7PH7NS5jeXi8v+2rFYAsXlS74SjDLeWI=;
+        b=C9R0U0Q2IneniGIGY/LSCG1iMl7VpPDd+SAGjqz8CqhJMmgSXgd2lYgfnSFdB6p6V8
+         noeolGwhl19qefSLPh0LhbFYUqmWT9KqoWWr7f0ywgvLjtBtZfK50DvJqw9p+zfcpjyc
+         tcd2RWPTpAE9I/F1axwHLGOln2nUDWST/oQbv8qatlKFYRQqtchf2nU5KizmFnN5CHW0
+         u2I0HBmFyQOZE3qXe7uZYnb+guP5rEeqx60tCg992zTf8C+eSIylq+uFMo8KA4KFF5EK
+         qS4dduFHQuNI3rxzuQ5b28wzu6jfIzNTrTvTadsasE0cYo3VLxC1Cf3IK++M7uO++Gme
+         wdNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xqD7o4MHZv+Oi4/Hfici0afEYbeABMQC9kEIregTpVA=;
-        b=QLby4MLF9t7IFjG/QmyyF+/sSoC0I5KlH6JYCh0GhyR/7dgtLi9kAQzz/IY78426Pk
-         eaxhBcIDL68MpulkRXhs47nRR246/cXNvqpOG9DHRFo4zJscqBdCByZ/bCA7rcSS1RAk
-         B3a5oQ7+mm9rjmhbUVLOb0ZYAlqeRV6GfM9LBLBApMADKR1GKy45Mu26OpwF+UFlzvEo
-         WSk2ez7091wzF3tXvZzD50MZ5onDkXsJUXV5Ia+wJ0kk/lCTQXg7XFcy2xQQWqhxONhg
-         YIzYVebGRzyDFAqI3M/Nc7taQrFBV7XwMIJkTYoWp3J5rFpFAE1bmVba3Thg1/qQMQeX
-         /Pzw==
-X-Gm-Message-State: AA+aEWbF5v96rN8ZCU6/YXCie5BPxqmdFgHsSOLPldQeg9jIpE3qpEo4
-        IojdI5+GjgWfTi/N2qr1kMgcO1GbTrQ1ZaUrTcE=
-X-Google-Smtp-Source: AFSGD/W/ILjvUhLCm7TyP/emaq6DJw8chRLN5JUp0zN+kOBtEHS8Fh9oPcMyi2c5DXJOiSMguM/fMbwHJUhxCYBSl9g=
-X-Received: by 2002:a1c:af07:: with SMTP id y7mr2428645wme.94.1543512705394;
- Thu, 29 Nov 2018 09:31:45 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PUeBlSazp8q7PH7NS5jeXi8v+2rFYAsXlS74SjDLeWI=;
+        b=Mdvb2EM3rT3nV2XuSv/GkKy/jDJrLT5Y+Sb9GZmWHg8x8fmrjCNcE3BURfaXJ7SOVo
+         aFDCW+hMTtkTHVAyuKuniXEnsLzaWADeGLcBVm/pCbPZmmPPtvQCfcY3wh9kIBktO8oI
+         v3KedG8/JjwURsv7s5FYhqeGT8T4IGlu81JD5Y9osCsFHGri1CEwy3nPgP4BrQgGldSm
+         L2Glr/NhbQ9R7kB39nCE97wFm7RA+rq8PFpKpaLdC7TgameBEI4V9GjPXMOgDfK24/Zg
+         TuT5nuc60YsUYT5nyfiffqcEYy20vQxE9XVYa9EwmAFkqfa6URqgBYxYDlGwphkqjPuU
+         CcBw==
+X-Gm-Message-State: AA+aEWZAgEOBm+juuD2NanJ8CQEVA8UQ1U4E02I49hRGg0hEMMgcRbU6
+        z0rJnLRZLK/SmF9cyA2KZA==
+X-Google-Smtp-Source: AFSGD/Wel2wFQhhR5RcQ6gat25n6IUDPFGg62Ux4asNDLHtBiEMtdEnfUqeKzeZho6opn4y4nBImnw==
+X-Received: by 2002:a37:c891:: with SMTP id t17mr2110182qkl.31.1543512769409;
+        Thu, 29 Nov 2018 09:32:49 -0800 (PST)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id q15sm1356721qkl.81.2018.11.29.09.32.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 09:32:49 -0800 (PST)
+Date:   Thu, 29 Nov 2018 12:32:46 -0500
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v12 0/5] x86/boot/KASLR: Parse ACPI table and limit KASLR
+ to choosing immovable memory
+Message-ID: <20181129173245.etpt52om2b5qpdeq@gabell>
+References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-References: <20181129135921.231283053@linuxfoundation.org> <20181129135922.602882966@linuxfoundation.org>
- <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com>
- <20181129160722.GA31919@kroah.com> <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
- <20181129171038.GA4651@kroah.com>
-In-Reply-To: <20181129171038.GA4651@kroah.com>
-From:   Tigran Aivazian <aivazian.tigran@gmail.com>
-Date:   Thu, 29 Nov 2018 17:31:33 +0000
-Message-ID: <CAK+_RLk4cxamNasZyvLRunR23CTR-fASvF3=Ryt9WGeFoBVtqQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 033/110] bfs: add sanity check at bfs_fill_super()
-To:     gregkh@linuxfoundation.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-        torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 at 17:10, Greg KH <gregkh@linuxfoundation.org> wrote:
-> Your patch has to apply on top of the existing one, so there's not an
-> issue here.
-> And might as well fix it now, as I can never count on a "future" patch
-> getting merged.
+Hi Chao,
 
-It is already fixed, i.e. it applies cleanly against the existing
-(i.e. 4.19.5) kernel. What I meant is that, there is little or no
-point in applying a short-lived patch as there is no conceivable
-reason that it can become a long-lived one.
+Thank you for your continued working.
 
-Whatever else may have changed (all for the better of course) in the
-past 20 years in Linux kernel development, I presume the basic
-fundamental fact that no patch is accepted if the relevant maintainer
-has objections to it is still intact. And I am both the author and the
-maintainer of the BFS filesystem.
+Could you please build your patches before sending?
+Your patches depend on the following kconfig,
+so please build them under the config combination.
 
-Kind regards,
-Tigran
+RANDOMIZE_BASE
+MEMORY_HOTREMOVE
+EARLY_PARSE_RSDP
+KEXEC
+EFI
+
+Thanks,
+Masa
+
+On Thu, Nov 29, 2018 at 04:16:26PM +0800, Chao Fan wrote:
+> ***Background:
+> People reported that KASLR may randomly choose some positions
+> which are located in movable memory regions. This will break memory
+> hotplug feature and make the movable memory chosen by KASLR can't be
+> removed.
+> 
+> ***Solutions:
+> Get the information of memory hot-remove, then KASLR will know the
+> right regions. Information about memory hot-remove is in ACPI
+> tables, which will be parsed after start_kernel(), so that KASLR
+> can't get the information.
+> 
+> Somebody suggest to add a kernel parameter to specify the
+> immovable memory so that limit KASLR in these regions. Then I make
+> a patchset. After several versions, Ingo gave a suggestion:
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+> Follow Ingo's suggestion, imitate the ACPI code to parse the ACPI
+> tables, so that the kaslr can get necessary memory information in
+> ACPI tables.
+> I think ACPI code is an independent part, so imitate the codes
+> and functions to 'compressed/' directory, so that kaslr won't
+> influence the initialization of ACPI.
+> 
+> PATCH 1/5 Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+> PATCH 2/5 Add efi_get_rsdp_addr() to find RSDP from EFI table when
+>           booting from EFI.
+> PATCH 3/5 Add bios_get_rsdp_addr() to search RSDP in memory when EFI
+>           table not found.
+> PATCH 4/5 Compute SRAT table from RSDP and walk SRAT table to store
+>           the immovable memory regions.
+> PATCH 5/5 Calculate the intersection between memory regions from e820/efi
+>           memory table and immovable memory regions. Limit KASLR to
+>           choosing these regions for randomization.
+> 
+> v1->v2:
+>  -  Simplify some code.
+> Follow Baoquan He's suggestion:
+>  - Reuse the head file of acpi code.
+> 
+> v2->v3:
+>  - Test in more conditions, so remove the 'RFC' tag.
+>  - Change some comments.
+> 
+> v3->v4:
+> Follow Thomas Gleixner's suggetsion:
+>  - Put the whole efi related function into #define CONFIG_EFI and return
+>    false in the other stub.
+> 
+> v4->v5:
+> Follow Dou Liyang's suggestion:
+>  - Add more comments about some functions based on kernel code.
+>  - Change some typo in comments.
+>  - Clean useless variable.
+>  - Add check for the boundary of array.
+>  - Add check for 'movable_node' parameter
+> 
+> v5->v6:
+> Follow Baoquan He's suggestion:
+>  - Change some log.
+>  - Add the check for acpi_rsdp
+>  - Change some code logical to make code clear
+> 
+> v6->v7:
+> Follow Rafael's suggestion:
+>  - Add more comments and patch log.
+> Follow test robot's suggestion:
+>  - Add "static" tag for function
+> 
+> v7-v8:
+> Follow Kees Cook's suggestion:
+>  - Use mem_overlaps() to check memory region.
+>  - Use #ifdef in the definition of function.
+> 
+> v8-v9:
+> Follow Boris' suggestion:
+>  - Change code style.
+>  - Splite PATCH 1/3 to more path.
+>  - Introduce some new function
+>  - Use existing function to rework some code
+> Follow Masayoshi's suggetion:
+>  - Make code more readable
+> 
+> v9->v10:
+> Follow Baoquan's suggestion:
+>  - Change some log
+>  - Merge last two patch together.
+> 
+> v10->v11:
+> Follow Boris' suggestion:
+>  - Link kstrtoull() instead of copying it.
+>  - Drop the useless wrapped function.
+> 
+> v11->v12:
+> Follow Boris' suggestion:
+>  - Change patch log and code comments.
+>  - Add 'CONFIG_EARLY_PARSE_RSDP' to make code easy to read
+>  - Put strtoull() to misc.c
+> Follow Masa's suggestion:
+>  - Remove the detection for 'movable_node'
+>  - Change the code logical about cmdline_find_option()
+> 
+> Any comments will be welcome.
+> 
+> 
+> Chao Fan (5):
+>   x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+>   x86/boot: Add efi_get_rsdp_addr() to find RSDP from EFI table
+>   x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
+>   x86/boot: Parse SRAT table from RSDP and store immovable memory
+>   x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
+> 
+>  arch/x86/Kconfig                  |  10 +
+>  arch/x86/boot/compressed/Makefile |   2 +
+>  arch/x86/boot/compressed/acpitb.c | 322 ++++++++++++++++++++++++++++++
+>  arch/x86/boot/compressed/kaslr.c  |  79 ++++++--
+>  arch/x86/boot/compressed/misc.c   |   5 +
+>  arch/x86/boot/compressed/misc.h   |  24 +++
+>  lib/kstrtox.c                     |   5 +
+>  7 files changed, 432 insertions(+), 15 deletions(-)
+>  create mode 100644 arch/x86/boot/compressed/acpitb.c
+> 
+> -- 
+> 2.19.1
+> 
+> 
+> 
