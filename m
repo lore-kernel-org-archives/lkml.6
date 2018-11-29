@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE43C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FB7C64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F30C2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E81020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dGtLMlP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F30C2146F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mHPZL/rh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E81020673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeK3KQE (ORCPT
+        id S1727486AbeK3KQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:16:04 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46433 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeK3KQD (ORCPT
+        Fri, 30 Nov 2018 05:16:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44804 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbeK3KQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:16:03 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so1596304pgp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:54 -0800 (PST)
+        Fri, 30 Nov 2018 05:16:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so1596165pgr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nIeLl3OW3lj4zGgU4HrhVDDzANdcxPOOLFi2e91J6rM=;
-        b=dGtLMlP9p8dUzxsg3KStPPy0xWZIduBa0s2Fl6OjyLse+0VB+mCqhLztK2ZlWhaKtU
-         CbO2MLgm6Vb+ZVcSd+BeDp2mHXpN8BSPDCSk8RsR2H3ibEGM2Vnfehj12MOlVpemWyQA
-         +YbYh/Ah1QvhV1MC1pAYYk2Qb0fr0XvQbRrCw=
+        bh=2klnBPLZef60qy5uM5/LdXKrX1GqPbSTQ0lUDrVthn8=;
+        b=mHPZL/rhOCEwdiyDQ59TWR1YHjYbDDEwUfWxGbqG5PgOn4MBTvsGu8trn9Jk0/6sc3
+         B7ERdsGvNcrbFrsBgDumPfoN8vsKzW0/QnE4OG65rCzvj1O/0NZ4sOP7efoZ0GYQ1Zo5
+         i7RL2+YMW9PDjnqnXRJwQjy5z5ho4Y9Wx69Hg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nIeLl3OW3lj4zGgU4HrhVDDzANdcxPOOLFi2e91J6rM=;
-        b=FM5ldlhDLAyQuDvcUeGzR3q/0WLwfOe8pQ3rqB4F96GydnA3+2Uil6cDuUr9jqgF4Z
-         8N/JtINb9z5Psbsp1kJSVZ4jRKVww22aVlW6SgvpSv4WKGKnj4HcTcsRSGxaxUPOcxYt
-         GFFAWzt4rZJeA8oryBYk7Zmgb57vwkSK89jVFLl9T3KeitocYhr9hDbezF0BjCQTBrHA
-         U4bq8fDshfkRW2HpvZViBsHKeX2y2VNme1m6eH+6bxsziALv1GT0wua86e4cQlbSCzOV
-         25Y/ffzXo+yhp3pRLLdch8Q+zJxKnkvx75eO/yHCSeYY/8iTBAcN5g8BzW+fgqlc1QiE
-         2wow==
-X-Gm-Message-State: AA+aEWYyG0TJ5/WrFOSv+fVqZ5S+JXXMAkkSZ5l3j1I/scHgvkgNTrrx
-        xSamYMr7FfLNcnH6BrxCAD+ukGf1wlDGpg==
-X-Google-Smtp-Source: AFSGD/W7+yhrLpxeowWoelePr/LczTF44MIMX7NZnCXHuFVcnIBLzXhMIPJ9OGkObfX2lPnaQlhVPg==
-X-Received: by 2002:a62:3687:: with SMTP id d129-v6mr3348704pfa.56.1543532934021;
-        Thu, 29 Nov 2018 15:08:54 -0800 (PST)
+        bh=2klnBPLZef60qy5uM5/LdXKrX1GqPbSTQ0lUDrVthn8=;
+        b=MuICCMgPRfg6tKPiKp58v70zAeZnAkqlommv3LmxN57hhZtGDyRBP1CxmXa/Yr3Pjv
+         QT6DbM11YaNhfQWs7YemOK80CgYP3tajcG5OGlUZesJB4geuETe36haD1/IeMM3Isfzh
+         pdKv/6b3YSCZstDmFvQjqIlQyHWRpmxjh7l0fPOxMaVsIP0yL9Y/OWeqlMd5Xb2Odrry
+         k34lXG/WhVzlRPlEhyvF6hmfsVneGY7lmFydD/0QBGg3CRjXTXK369CJ3liRzzjTFW5O
+         9HRX2WIuzH0057YZWhIbbT/0sZq9EU0GH034CnOt1U+hNFqx2hMcECiNPU97JWMqKHyI
+         C56w==
+X-Gm-Message-State: AA+aEWY1wMm2drjsBStK2PCI7G0uBBIrNE3Dxgty9rXI7dB0cPjicvbJ
+        rshyMVEFNtHvVYr+GKmGl3dAAg==
+X-Google-Smtp-Source: AFSGD/Wt8n3o93xbSSnnQ0XhuZLLM8eNxwCNM1EOp27fqh4LNsIRiyXHA4Ul6ubwc1uBxfksVjC0ow==
+X-Received: by 2002:a63:5664:: with SMTP id g36mr2839081pgm.313.1543532935960;
+        Thu, 29 Nov 2018 15:08:55 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id q1sm4131385pfb.96.2018.11.29.15.08.51
+        by smtp.gmail.com with ESMTPSA id d16sm3456633pgj.21.2018.11.29.15.08.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 29 Nov 2018 15:08:51 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -62,9 +62,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH -next v2 03/12] pstore: Remove needless lock during console writes
-Date:   Thu, 29 Nov 2018 15:08:32 -0800
-Message-Id: <20181129230841.29955-4-keescook@chromium.org>
+Subject: [PATCH -next v2 02/12] pstore: Do not use crash buffer for decompression
+Date:   Thu, 29 Nov 2018 15:08:31 -0800
+Message-Id: <20181129230841.29955-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129230841.29955-1-keescook@chromium.org>
 References: <20181129230841.29955-1-keescook@chromium.org>
@@ -73,58 +73,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the console writer does not use the preallocated crash dump buffer
-any more, there is no reason to perform locking around it.
+The pre-allocated compression buffer used for crash dumping was also
+being used for decompression. This isn't technically safe, since it's
+possible the kernel may attempt a crashdump while pstore is populating the
+pstore filesystem (and performing decompression). Instead, just allocate
+a separate buffer for decompression. Correctness is preferred over
+performance here.
 
-Fixes: 70ad35db3321 ("pstore: Convert console write to use ->write_buf")
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- fs/pstore/platform.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+ fs/pstore/platform.c | 56 ++++++++++++++++++++------------------------
+ 1 file changed, 25 insertions(+), 31 deletions(-)
 
 diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 8b6028948cf3..a75756c48e10 100644
+index b821054ca3ed..8b6028948cf3 100644
 --- a/fs/pstore/platform.c
 +++ b/fs/pstore/platform.c
-@@ -462,31 +462,14 @@ static void pstore_unregister_kmsg(void)
- #ifdef CONFIG_PSTORE_CONSOLE
- static void pstore_console_write(struct console *con, const char *s, unsigned c)
- {
--	const char *e = s + c;
-+	struct pstore_record record;
- 
--	while (s < e) {
--		struct pstore_record record;
--		unsigned long flags;
--
--		pstore_record_init(&record, psinfo);
--		record.type = PSTORE_TYPE_CONSOLE;
--
--		if (c > psinfo->bufsize)
--			c = psinfo->bufsize;
-+	pstore_record_init(&record, psinfo);
-+	record.type = PSTORE_TYPE_CONSOLE;
- 
--		if (oops_in_progress) {
--			if (!spin_trylock_irqsave(&psinfo->buf_lock, flags))
--				break;
--		} else {
--			spin_lock_irqsave(&psinfo->buf_lock, flags);
--		}
--		record.buf = (char *)s;
--		record.size = c;
--		psinfo->write(&record);
--		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
--		s += c;
--		c = e - s;
--	}
-+	record.buf = (char *)s;
-+	record.size = c;
-+	psinfo->write(&record);
+@@ -258,20 +258,6 @@ static int pstore_compress(const void *in, void *out,
+ 	return outlen;
  }
  
- static struct console pstore_console = {
+-static int pstore_decompress(void *in, void *out,
+-			     unsigned int inlen, unsigned int outlen)
+-{
+-	int ret;
+-
+-	ret = crypto_comp_decompress(tfm, in, inlen, out, &outlen);
+-	if (ret) {
+-		pr_err("crypto_comp_decompress failed, ret = %d!\n", ret);
+-		return ret;
+-	}
+-
+-	return outlen;
+-}
+-
+ static void allocate_buf_for_compression(void)
+ {
+ 	struct crypto_comp *ctx;
+@@ -656,8 +642,9 @@ EXPORT_SYMBOL_GPL(pstore_unregister);
+ 
+ static void decompress_record(struct pstore_record *record)
+ {
++	int ret;
+ 	int unzipped_len;
+-	char *decompressed;
++	char *unzipped, *workspace;
+ 
+ 	if (!record->compressed)
+ 		return;
+@@ -668,35 +655,42 @@ static void decompress_record(struct pstore_record *record)
+ 		return;
+ 	}
+ 
+-	/* No compression method has created the common buffer. */
++	/* Missing compression buffer means compression was not initialized. */
+ 	if (!big_oops_buf) {
+-		pr_warn("no decompression buffer allocated\n");
++		pr_warn("no decompression method initialized!\n");
+ 		return;
+ 	}
+ 
+-	unzipped_len = pstore_decompress(record->buf, big_oops_buf,
+-					 record->size, big_oops_buf_sz);
+-	if (unzipped_len <= 0) {
+-		pr_err("decompression failed: %d\n", unzipped_len);
++	/* Allocate enough space to hold max decompression and ECC. */
++	unzipped_len = big_oops_buf_sz;
++	workspace = kmalloc(unzipped_len + record->ecc_notice_size,
++			    GFP_KERNEL);
++	if (!workspace)
+ 		return;
+-	}
+ 
+-	/* Build new buffer for decompressed contents. */
+-	decompressed = kmalloc(unzipped_len + record->ecc_notice_size,
+-			       GFP_KERNEL);
+-	if (!decompressed) {
+-		pr_err("decompression ran out of memory\n");
++	/* After decompression "unzipped_len" is almost certainly smaller. */
++	ret = crypto_comp_decompress(tfm, record->buf, record->size,
++					  workspace, &unzipped_len);
++	if (ret) {
++		pr_err("crypto_comp_decompress failed, ret = %d!\n", ret);
++		kfree(workspace);
+ 		return;
+ 	}
+-	memcpy(decompressed, big_oops_buf, unzipped_len);
+ 
+ 	/* Append ECC notice to decompressed buffer. */
+-	memcpy(decompressed + unzipped_len, record->buf + record->size,
++	memcpy(workspace + unzipped_len, record->buf + record->size,
+ 	       record->ecc_notice_size);
+ 
+-	/* Swap out compresed contents with decompressed contents. */
++	/* Copy decompressed contents into an minimum-sized allocation. */
++	unzipped = kmemdup(workspace, unzipped_len + record->ecc_notice_size,
++			   GFP_KERNEL);
++	kfree(workspace);
++	if (!unzipped)
++		return;
++
++	/* Swap out compressed contents with decompressed contents. */
+ 	kfree(record->buf);
+-	record->buf = decompressed;
++	record->buf = unzipped;
+ 	record->size = unzipped_len;
+ 	record->compressed = false;
+ }
 -- 
 2.17.1
 
