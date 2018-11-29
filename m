@@ -2,102 +2,140 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C265C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A964BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D1220863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 686EB20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:09:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uVGLzwLT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D1220863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Oh275gsx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686EB20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730356AbeK3EOn (ORCPT
+        id S1730382AbeK3EPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:14:43 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47190 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729157AbeK3EOn (ORCPT
+        Thu, 29 Nov 2018 23:15:22 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44268 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728444AbeK3EPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:14:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=w8oLPHASfULKC4/0yHJ7+XAK/WtkONNK6Ir9MvPeIW4=; b=uVGLzwLTStGRiXMQFgiEINH81
-        bSJ97lqoEWbSQPlTMwWvspsJ4OXn7lCGYhoE/PsfKjmPZfoNeJ5dD+FtxbK0iqfRivcvw8FNko6Ba
-        MRpiDHkVXpv0OiYSYR8izHHU9DH1+PVyMN5dLvsQNaQEwUMxSbLQf/t1KkzwjCrqX8ygJ4HoRJOQ/
-        7z5pjF40JaSX6d0Kdsd54bo9gEPzFRlShUhzWPBVi90XrRdnZdRaOYuALDjweYDFI0R7qzbv6eFMS
-        DMUR0/KbCWKfRdS14cbmG1nOV/6sotpT//i6ypoGqh83bETOZKQgx4kCi9T4UEiTCzVy6p2hFinzC
-        0e0565BEw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSPmy-000338-Ri; Thu, 29 Nov 2018 17:07:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5528A2029FD58; Thu, 29 Nov 2018 18:07:42 +0100 (CET)
-Date:   Thu, 29 Nov 2018 18:07:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129170742.GC9027@hirez.programming.kicks-ass.net>
-References: <20181126200801.GW2113@hirez.programming.kicks-ass.net>
- <20181126212628.4apztfazichxnt7r@treble>
- <20181127084330.GX2113@hirez.programming.kicks-ass.net>
- <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
- <20181129094210.GC2131@hirez.programming.kicks-ass.net>
- <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
- <20181129143853.GO2131@hirez.programming.kicks-ass.net>
- <20181129163342.tp5wlfcyiazwwyoh@treble>
- <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
- <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+        Thu, 29 Nov 2018 23:15:22 -0500
+Received: by mail-io1-f66.google.com with SMTP id r200so2143212iod.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mX3m/T7ZX+mlVgtePqOj42Qe2cGFFbsZREFTxdeAi1o=;
+        b=Oh275gsxoxffS1JgnRR6gNrfXnng7aLPXN0YpHc8HTxpBdiJWFIcvZxqCJ8gIhnVxZ
+         /o8CuDrbyJGY31B1ootx0SFxGRY0srPTWiaRbDCuJboQNTHBb61qHafYkEykujSFK38B
+         THKnXZNqz5B+6+9toZy/sFxKv3B26Dd+KIlEM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mX3m/T7ZX+mlVgtePqOj42Qe2cGFFbsZREFTxdeAi1o=;
+        b=pemAuLMT6xGo571As4urWm32YtY4DXVOqfwGCuHw1k6xJiuuYwmScqlnAwlMDYTp/p
+         wV+iBf8KtT+FpuQB8Xbr7+NLB8MVhKQnDDn7buM5993n1YOCdlfA1VoHH/zyqARqwmbz
+         t1i7yGlASftJ0776vW2QqZ3u6+YKm58BmPFJRulrZP0ZHFqPpw8bIDnewJsnGPuVLtai
+         UYIAKZR0OE9duPMiaXw/v0cfiaiUSdEuWROlhUB5WOj7LEPfAzx0kmda+9N53Dz/9Iej
+         Fz0Ul1wtqnnlHydxse5oRbarKj5J2+XoxJRICEkNEyNc7WYPuFLdGrR47zk7u8Bo2XeC
+         qYmg==
+X-Gm-Message-State: AA+aEWY7ccPvcxk0+vuFy8HmO3vRngoYaoFXNeEx0oF9CWWt4rSaTwak
+        Ue/YNYGof13/DWZDN80+lRx9B4VYsU4O1R2AKidMeg==
+X-Google-Smtp-Source: AFSGD/VrXWkdTnD42gk1y3QQ64qC/Hm/yisMPc74MrONr+ki1tQNNzQQHlH2+nUuwvSzJnIZitSJmEPIfVPj3+M6CYM=
+X-Received: by 2002:a6b:4001:: with SMTP id k1mr2057711ioa.34.1543511357463;
+ Thu, 29 Nov 2018 09:09:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
+ <20181129155758.GC26537@lst.de> <20181129162807.GL21184@phenom.ffwll.local> <20181129165715.GA27786@lst.de>
+In-Reply-To: <20181129165715.GA27786@lst.de>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Thu, 29 Nov 2018 18:09:05 +0100
+Message-ID: <CAKMK7uECLeTbEjG6=unWZSKakpiYkmBVbCEKKY2xv=vVjF-pBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Clark, Rob" <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>, vivek.gautam@codeaurora.org,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 09:02:23AM -0800, Andy Lutomirski wrote:
-> > On Nov 29, 2018, at 8:50 AM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Nov 29, 2018 at 5:57 PM Christoph Hellwig <hch@lst.de> wrote:
+> On Thu, Nov 29, 2018 at 05:28:07PM +0100, Daniel Vetter wrote:
+> > Just spend a bit of time reading through the implementations already
+> > merged. Is the struct device *dev parameter actually needed anywhere?
+> > dma-api definitely needs it, because we need that to pick the right iommu.
+> > But for cache management from what I've seen the target device doesn't
+> > matter, all the target specific stuff will be handled by the iommu.
+>
+> It looks like only mips every uses the dev argument, and even there
+> the function it passes dev to ignores it.  So it could probably be removed.
+>
+> >
+> > Dropping the dev parameter would make this a perfect fit for coherency
+> > management of buffers used by multiple devices. Right now there's all
+> > kinds of nasty tricks for that use cases needed to avoid redundant
+> > flushes.
+>
+> Note that one thing I'd like to avoid is exposing these funtions directly
+> to drivers, as that will get us into all kinds of abuses.
 
-> > So no. Do *not* try to change %rsp on the stack in the bp handler.
-> > Instead, I'd suggest:
-> > 
-> > - just restart the instruction (with the suggested "ptregs->rip --")
-> > 
-> > - to avoid any "oh, we're not making progress" issues, just fix the
-> > instruction yourself to be the right call, by looking it up in the
-> > "what needs to be fixed" tables.
-> > 
-> > No?
+What kind of abuse do you expect? It could very well be that gpu folks
+call that "standard use case" ... At least on x86 with the i915 driver
+we pretty much rely on architectural guarantees for how cache flushes
+work very much. Down to userspace doing the cache flushing for
+mappings the kernel has set up.
 
-> Or do you think we can avoid the IPI while the int3 is there?
+> So I'd much prefer if we could have iommu APIs wrapping these that are
+> specific to actual uses cases that we understand well.
+>
+> As for the buffer sharing: at least for the DMA API side I want to
+> move the current buffer sharing users away from dma_alloc_coherent
+> (and coherent dma_alloc_attrs users) and the remapping done in there
+> required for non-coherent architectures.  Instead I'd like to allocate
+> plain old pages, and then just dma map them for each device separately,
+> with DMA_ATTR_SKIP_CPU_SYNC passed for all but the first user to map
+> or last user to unmap.  On the iommu side it could probably work
+> similar.
 
-I'm thinking Linus is suggesting the #BP handler does the text write too
-(as a competing store) and then sync_core() and restarts.
+I think this is what's often done. Except then there's also the issue
+of how to get at the cma allocator if your device needs something
+contiguous. There's a lot of that still going on in graphics/media.
+-Daniel
 
-But I think that is broken, because then there is no telling what the
-other CPUs will observe.
+> I have done some preliminary work on this, and want to get it into this
+> merge window, but there is a few other bits I need to sort out first.
+>
+> > -Daniel
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+> ---end quoted text---
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
