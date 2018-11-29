@@ -2,254 +2,128 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EEEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C37C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4631420868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:24:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4631420868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4234D2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:27:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="jvQPIite";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rFJJX/At"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4234D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeK2P2d (ORCPT
+        id S1727624AbeK2Pb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 10:28:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbeK2P2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 10:28:33 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5044E2081B;
-        Thu, 29 Nov 2018 04:24:32 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 23:24:30 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
- counter to prevent trace corruption
-Message-ID: <20181128232430.425f8b12@vmware.local.home>
-In-Reply-To: <20181128222936.74da7f54@vmware.local.home>
-References: <20181122002801.501220343@goodmis.org>
-        <20181128203931.ym2rkya7a6agzzy3@redhat.com>
-        <20181128160021.09acd1af@gandalf.local.home>
-        <20181128222936.74da7f54@vmware.local.home>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 29 Nov 2018 10:31:27 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43523 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727359AbeK2Pb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 10:31:27 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 806E021DC1;
+        Wed, 28 Nov 2018 23:27:27 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 28 Nov 2018 23:27:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=XV5JpaL2jPItNOMznNTOzEyGffK
+        mwCsnsa74Gk+KUMo=; b=jvQPIitetgm8Cu05cUbXO5h1Ztm6s96/02z9EqNjCH/
+        Nj7wIJ+f5idoAi1CDehCl0XS5YycgwlgsEz24sV3sr9pVZVlteVEZvHpeIgCelOB
+        m1a1n5W59KqkHSEFvfjmL98tpqD5racj3IT1Zfh5Ot8RYlpVS4S7IryvzZxLMgk6
+        UO80yORctZ67/b7M5u1L53bFaNagOScnmTJv95aI91NHz/XOtVBXzVvQFdHJN8bz
+        f1kMcI5ugpWU7AoRoqBeOSyCrBzW7L+0/lqrcn54Pbanvx1XRM34jlr5yj7zzzcS
+        LmMkpcSBs9VNpChuau3gviRTOur7oQefv4TBjAeITcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=XV5Jpa
+        L2jPItNOMznNTOzEyGffKmwCsnsa74Gk+KUMo=; b=rFJJX/AtPO7WV0HdiDssk6
+        8ve7KG4hI9wS/fyv/b67xgAhCw6JV9Bmpjaq0qk3TVqAglnjsWiLH0N+eYnjlL/l
+        X1rHUQZxidbRBVph3yTsIURFV2493R4cCUaHGxkN60of8yhNIjcrR/7FKYC8/Ea7
+        cvqW/wfYzqLyjxz/fkUDg99tvV+UBo/YrFwQQbpmiIr6w0TZRgCvPytFd1V8mmkz
+        dM5AWUNLl2ceIjq865ghMMgVtxdde5wH8ODUesQhlIfv7sthLvaOSm7/9yfLAA7a
+        C/EvZ0nzYIvDm+MGwXtK7lbHcg9zNxPsvtnY3GFFMDZP5Dn62TbHfZedOoZJSLVg
+        ==
+X-ME-Sender: <xms:rmr_W1UhI_PN8eFQDdcenKUhAAFjzTtHdkQ3XrLmA6KCW4hdPsP3BQ>
+X-ME-Proxy: <xmx:rmr_W6oADQynOYS95Eke-hw3Agg_Z75Q3uLsbl9VguhYQbZB2L32Sg>
+    <xmx:rmr_W1CEuhnsqifp5KqEDghvKnZfVNnpn4xgXkGxh66lyefrvNtk-Q>
+    <xmx:rmr_WzrHxSMaO8JYgERClhJe_27SUKW2Q78czdzGnzgYo224UD1YKA>
+    <xmx:rmr_W4AE4WgfNJ5aLk6zAMPuBNbzmZ9b5JzrJ-UVQfNShjvh4XsEiQ>
+    <xmx:rmr_W2WKoKQf4tCQEHpAGJXb2jsnQEbAkl3k0dYn9hlyM8m6Thnotg>
+    <xmx:r2r_W2H-B2sZASDHSizuZkYUhdkBN1ctmiw6SMfbwoGpeEJJfih_bw>
+Received: from jelly (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
+        by mail.messagingengine.com (Postfix) with ESMTPA id EF34910409;
+        Wed, 28 Nov 2018 23:27:23 -0500 (EST)
+Date:   Thu, 29 Nov 2018 14:27:22 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Harry Cutts <hcutts@chromium.org>
+Cc:     linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>, jikos@kernel.org,
+        torvalds@linux-foundation.org,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>,
+        linux-kernel@vger.kernel.org, benjamin.tissoires@redhat.com
+Subject: Re: [PATCH 0/8] HID: MS and Logitech high-resolution scroll wheel
+ support
+Message-ID: <20181129042722.GA5872@jelly>
+References: <20181122063409.15816-1-peter.hutterer@who-t.net>
+ <CA+jURcuGGRtyeRXfLK0Or=hDG6KJ1z9eAS8DAuH12-QTNpgs0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+jURcuGGRtyeRXfLK0Or=hDG6KJ1z9eAS8DAuH12-QTNpgs0w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 22:29:36 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Nov 28, 2018 at 03:22:14PM -0800, Harry Cutts wrote:
+> On Wed, 21 Nov 2018 at 22:34, Peter Hutterer <peter.hutterer@who-t.net> wrote:
+> > [snip]
+> > Devices tested:
+> > - Microsoft Comfort Optical Mouse 3000
+> > - Microsoft Sculpt Ergonomic Mouse
+> > - Microsoft Surface mouse
+> > - Logitech MX Anywhere 2S
+> >
+> > The following devices were tested for the HID feature and didn't have it:
+> > - Logitech G500s, G303
+> > - Roccat Kone XTD
+> > - all the cheap Lenovo, HP, Dell, Logitech USB mice that come with a
+> >   workstation that I could find in the local office
+> > - Etekcity something something
+> > - Razer Imperator
+> > - Microsoft Classic IntelliMouse
+> > - Microsoft Surface Mobile Mouse
+> 
+> I just tested the patches with the Microsoft Comfort Optical Mouse
+> 3000. I also tested with the Microsoft Surface Precision mouse [0],
+> and like the Surface Mobile mouse it didn't seem to report the HID
+> feature (at least, it was only reporting REL_WHEEL_HI_RES changes of
+> 120 in evtest).
 
-> Does this patch fix it for you?
+IIRC that's the same mouse benjamin has and it does have the HID feature, it
+just ends up reporting the same number of clicks anyway so there's no
+visible effect. Which in itself is a good sign for the patch series, I
+guess ;)
 
-Take 2. I realized that the reason for the interrupts being traced is
-because it is more likely to interrupt when the depth is already 0,
-setting it to 1 causing the interrupt to think it's already in a
-function  that wants to be traced (when that wasn't decided yet).
+> For the series:
+> Acked-by: Harry Cutts <hcutts@chromium.org>
+> Verified-by: Harry Cutts <hcutts@chromium.org>
 
-The fix uses a bit that gets set when we want to trace (and will trace
-till that bit is cleared). That bit gets cleared on the return
-function when depth is zero. But if we are tracing something in a
-interrupt that happened to interrupt the beginning of a function that
-already set the depth to 0, then we need to clear the bit at depth of 1
-not zero (and 2 if we want to trace a function that interrupted a
-softirq, that interrupted a start of normal function. and 3 if we want
-to trace an NMI function that had the very unlikely case of
-interrupting a start of a interrupt function, that interrupted the
-start of a softirq function, that interrupted a start of a normal
-context function!).
+thanks, much appreciated.
 
-If that happens then we will continue to trace functions when we don't
-want to. To solve that, I need to record the depth (0-3) when the bit
-is set, and clear it when the return function is at that same depth
-(0-3).
+Cheers,
+   Peter
 
--- Steve
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3b8c0e24ab30..447bd96ee658 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -512,12 +512,44 @@ enum {
-  * can only be modified by current, we can reuse trace_recursion.
-  */
- 	TRACE_IRQ_BIT,
-+
-+	/* Set if the function is in the set_graph_function file */
-+	TRACE_GRAPH_BIT,
-+
-+	/*
-+	 * In the very unlikely case that an interrupt came in
-+	 * at a start of graph tracing, and we want to trace
-+	 * the function in that interrupt, the depth can be greater
-+	 * than zero, because of the preempted start of a previous
-+	 * trace. In an even more unlikely case, depth could be 2
-+	 * if a softirq interrupted the start of graph tracing,
-+	 * followed by an interrupt preempting a start of graph
-+	 * tracing in the softirq, and depth can even be 3
-+	 * if an NMI came in at the start of an interrupt function
-+	 * that preempted a softirq start of a function that
-+	 * preempted normal context!!!! Luckily, it can't be
-+	 * greater than 3, so the next two bits are a mask
-+	 * of what the depth is when we set TRACE_GRAPH_BIT
-+	 */
-+
-+	TRACE_GRAPH_DEPTH_START_BIT,
-+	TRACE_GRAPH_DEPTH_END_BIT,
- };
- 
- #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
- #define trace_recursion_clear(bit)	do { (current)->trace_recursion &= ~(1<<(bit)); } while (0)
- #define trace_recursion_test(bit)	((current)->trace_recursion & (1<<(bit)))
- 
-+#define trace_recursion_depth() \
-+	(((current)->trace_recursion >> TRACE_GRAPH_DEPTH_START_BIT) & 3)
-+#define trace_recursion_set_depth(depth) \
-+	do {								\
-+		current->trace_recursion &=				\
-+			~(3 << TRACE_GRAPH_DEPTH_START_BIT);		\
-+		current->trace_recursion |=				\
-+			((depth) & 3) << TRACE_GRAPH_DEPTH_START_BIT;	\
-+	} while (0)
-+
- #define TRACE_CONTEXT_BITS	4
- 
- #define TRACE_FTRACE_START	TRACE_FTRACE_BIT
-@@ -843,8 +875,9 @@ extern void __trace_graph_return(struct trace_array *tr,
- extern struct ftrace_hash *ftrace_graph_hash;
- extern struct ftrace_hash *ftrace_graph_notrace_hash;
- 
--static inline int ftrace_graph_addr(unsigned long addr)
-+static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- {
-+	unsigned long addr = trace->func;
- 	int ret = 0;
- 
- 	preempt_disable_notrace();
-@@ -855,6 +888,14 @@ static inline int ftrace_graph_addr(unsigned long addr)
- 	}
- 
- 	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
-+
-+		/*
-+		 * This needs to be cleared on the return functions
-+		 * when the depth is zero.
-+		 */
-+		trace_recursion_set(TRACE_GRAPH_BIT);
-+		trace_recursion_set_depth(trace->depth);
-+
- 		/*
- 		 * If no irqs are to be traced, but a set_graph_function
- 		 * is set, and called by an interrupt handler, we still
-@@ -872,6 +913,13 @@ static inline int ftrace_graph_addr(unsigned long addr)
- 	return ret;
- }
- 
-+static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
-+{
-+	if (trace_recursion_test(TRACE_GRAPH_BIT) &&
-+	    trace->depth == trace_recursion_depth())
-+		trace_recursion_clear(TRACE_GRAPH_BIT);
-+}
-+
- static inline int ftrace_graph_notrace_addr(unsigned long addr)
- {
- 	int ret = 0;
-@@ -885,7 +933,7 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
- 	return ret;
- }
- #else
--static inline int ftrace_graph_addr(unsigned long addr)
-+static inline int ftrace_graph_addr(struct ftrace_graph_ent *trace)
- {
- 	return 1;
- }
-@@ -894,6 +942,8 @@ static inline int ftrace_graph_notrace_addr(unsigned long addr)
- {
- 	return 0;
- }
-+static inline void ftrace_graph_addr_finish(struct ftrace_graph_ret *trace)
-+{ }
- #endif /* CONFIG_DYNAMIC_FTRACE */
- 
- extern unsigned int fgraph_max_depth;
-@@ -901,7 +951,8 @@ extern unsigned int fgraph_max_depth;
- static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
- {
- 	/* trace it when it is-nested-in or is a function enabled. */
--	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
-+	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
-+		 ftrace_graph_addr(trace)) ||
- 		(trace->depth < 0) ||
- 		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
- }
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 2561460d7baf..086af4f5c3e8 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -509,6 +509,8 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
- 	int cpu;
- 	int pc;
- 
-+	ftrace_graph_addr_finish(trace);
-+
- 	local_irq_save(flags);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
-@@ -532,6 +534,8 @@ void set_graph_array(struct trace_array *tr)
- 
- static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
- {
-+	ftrace_graph_addr_finish(trace);
-+
- 	if (tracing_thresh &&
- 	    (trace->rettime - trace->calltime < tracing_thresh))
- 		return;
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index b7357f9f82a3..98ea6d28df15 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -208,6 +208,8 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
- 	unsigned long flags;
- 	int pc;
- 
-+	ftrace_graph_addr_finish(trace);
-+
- 	if (!func_prolog_dec(tr, &data, &flags))
- 		return;
- 
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index a86b303e6c67..7d04b9890755 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -270,6 +270,8 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
- 	unsigned long flags;
- 	int pc;
- 
-+	ftrace_graph_addr_finish(trace);
-+
- 	if (!func_prolog_preempt_disable(tr, &data, &pc))
- 		return;
- 
+> Harry Cutts
+> Chrome OS Touch/Input team
+> 
+> [0]: https://microsoft.com/en-us/p/surface-precision-mouse/8qc5p0d8ddjt
