@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21043C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04A7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C81208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A218205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OllmcYSq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C81208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTBJduIt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A218205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbeK3B2V (ORCPT
+        id S1732115AbeK3B2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:28:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53866 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:28:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbeK3B2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:28:21 -0500
+        id S1731095AbeK3B2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:28:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72DF9205C9;
-        Thu, 29 Nov 2018 14:22:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D632F20868;
+        Thu, 29 Nov 2018 14:22:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501368;
-        bh=aoAFvs9ynJb8wrJeTkUnAXkKFRLYvWGGbheiTJIgozg=;
+        s=default; t=1543501371;
+        bh=QlH+fDVh7MLntMkuOFQFCTP+fuVExXkgWF9b5l7Z9Yg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OllmcYSqIOBfGtUgNtc+TUhU1H+jyciNgiCZ9ugqV0REm84vWTbbZkn0B9ktJIBU2
-         3xjOVcRq/ZpSbO2M9D4xrZP1tLJY9AvnO6h+IdquxloxxztCw+Z9wYlemgOkvD13EL
-         SgdmLgK79OZ7ZoHNCUZIeAJTayt/y9m8xBRIUSP0=
+        b=qTBJduItwjLYx36edYROKF01F6UGHVk35pFYQDfc6bEEdEGNhzxdSxmd314EdYMQb
+         ZPoiPxpThoxymZ/UXWQPwYJSeLcE0VSTTpb/UBnd8bfmcvxkN/422UJgp5CO+6f9yM
+         cKQMogHl0+mnJsLCIxHol2g23IdRq3ZW0cMFePXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mitko Haralanov <mitko.haralanov@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 26/92] IB/hfi1: Eliminate races in the SDMA send error path
-Date:   Thu, 29 Nov 2018 15:11:55 +0100
-Message-Id: <20181129140108.503467848@linuxfoundation.org>
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.9 27/92] usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
+Date:   Thu, 29 Nov 2018 15:11:56 +0100
+Message-Id: <20181129140108.588489552@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -66,290 +62,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit a0e0cb82804a6a21d9067022c2dfdf80d11da429 upstream.
+commit 2f31a67f01a8beb22cae754c53522cb61a005750 upstream.
 
-pq_update() can only be called in two places: from the completion
-function when the complete (npkts) sequence of packets has been
-submitted and processed, or from setup function if a subset of the
-packets were submitted (i.e. the error path).
+USB3 roothub might autosuspend before a plugged USB3 device is detected,
+causing USB3 device enumeration failure.
 
-Currently both paths can call pq_update() if an error occurrs.  This
-race will cause the n_req value to go negative, hanging file_close(),
-or cause a crash by freeing the txlist more than once.
+USB3 devices don't show up as connected and enabled until USB3 link trainig
+completes. On a fast booting platform with a slow USB3 link training the
+link might reach the connected enabled state just as the bus is suspending.
 
-Several variables are used to determine SDMA send state.  Most of
-these are unnecessary, and have code inspectible races between the
-setup function and the completion function, in both the send path and
-the error path.
+If this device is discovered first time by the xhci_bus_suspend() routine
+it will be put to U3 suspended state like the other ports which failed to
+suspend earlier.
 
-The request 'status' value can be set by the setup or by the
-completion function.  This is code inspectibly racy.  Since the status
-is not needed in the completion code or by the caller it has been
-removed.
+The hub thread will notice the connect change and resume the bus,
+moving the port back to U0
 
-The request 'done' value races between usage by the setup and the
-completion function.  The completion function does not need this.
-When the number of processed packets matches npkts, it is done.
+This U0 -> U3 -> U0 transition right after being connected seems to be
+too much for some devices, causing them to first go to SS.Inactive state,
+and finally end up stuck in a polling state with reset asserted
 
-The 'has_error' value races between usage of the setup and the
-completion function.  This can cause incorrect error handling and leave
-the n_req in an incorrect value (i.e. negative).
+Fix this by failing the bus suspend if a port has a connect change or is
+in a polling state in xhci_bus_suspend().
 
-Simplify the code by removing all of the unneeded state checks and
-variables.
+Don't do any port changes until all ports are checked, buffer all port
+changes and only write them in the end if suspend can proceed
 
-Clean up iovs node when it is freed.
-
-Eliminate race conditions in the error path:
-
-If all packets are submitted, the completion handler will set the
-completion status correctly (ok or aborted).
-
-If all packets are not submitted, the caller must wait until the
-submitted packets have completed, and then set the completion status.
-
-These two change eliminate the race condition in the error path.
-
-Reviewed-by: Mitko Haralanov <mitko.haralanov@intel.com>
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/user_sdma.c |  104 +++++++++++++--------------------
- 1 file changed, 44 insertions(+), 60 deletions(-)
+ drivers/usb/host/xhci-hub.c |   60 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 14 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/user_sdma.c
-+++ b/drivers/infiniband/hw/hfi1/user_sdma.c
-@@ -148,11 +148,8 @@ MODULE_PARM_DESC(sdma_comp_size, "Size o
- #define TXREQ_FLAGS_REQ_LAST_PKT BIT(0)
- 
- /* SDMA request flag bits */
--#define SDMA_REQ_FOR_THREAD 1
--#define SDMA_REQ_SEND_DONE  2
--#define SDMA_REQ_HAVE_AHG   3
--#define SDMA_REQ_HAS_ERROR  4
--#define SDMA_REQ_DONE_ERROR 5
-+#define SDMA_REQ_HAVE_AHG   1
-+#define SDMA_REQ_HAS_ERROR  2
- 
- #define SDMA_PKT_Q_INACTIVE BIT(0)
- #define SDMA_PKT_Q_ACTIVE   BIT(1)
-@@ -252,8 +249,6 @@ struct user_sdma_request {
- 	u64 seqsubmitted;
- 	struct list_head txps;
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1322,13 +1322,16 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 	__le32 __iomem **port_array;
+ 	struct xhci_bus_state *bus_state;
  	unsigned long flags;
--	/* status of the last txreq completed */
--	int status;
- };
++	u32 portsc_buf[USB_MAXCHILDREN];
++	bool wake_enabled;
  
- /*
-@@ -546,7 +541,6 @@ int hfi1_user_sdma_process_request(struc
- 	struct sdma_req_info info;
- 	struct user_sdma_request *req;
- 	u8 opcode, sc, vl;
--	int req_queued = 0;
- 	u16 dlid;
- 	u32 selector;
+ 	max_ports = xhci_get_ports(hcd, &port_array);
+ 	bus_state = &xhci->bus_state[hcd_index(hcd)];
++	wake_enabled = hcd->self.root_hub->do_remote_wakeup;
  
-@@ -611,11 +605,13 @@ int hfi1_user_sdma_process_request(struc
- 	req->data_iovs = req_iovcnt(info.ctrl) - 1; /* subtract header vector */
- 	req->pq = pq;
- 	req->cq = cq;
--	req->status = -1;
- 	INIT_LIST_HEAD(&req->txps);
+ 	spin_lock_irqsave(&xhci->lock, flags);
  
- 	memcpy(&req->info, &info, sizeof(info));
- 
-+	/* The request is initialized, count it */
-+	atomic_inc(&pq->n_reqs);
-+
- 	if (req_opcode(info.ctrl) == EXPECTED) {
- 		/* expected must have a TID info and at least one data vector */
- 		if (req->data_iovs < 2) {
-@@ -704,7 +700,7 @@ int hfi1_user_sdma_process_request(struc
- 		memcpy(&req->iovs[i].iov, iovec + idx++, sizeof(struct iovec));
- 		ret = pin_vector_pages(req, &req->iovs[i]);
- 		if (ret) {
--			req->status = ret;
-+			req->data_iovs = i;
- 			goto free_req;
+-	if (hcd->self.root_hub->do_remote_wakeup) {
++	if (wake_enabled) {
+ 		if (bus_state->resuming_ports ||	/* USB2 */
+ 		    bus_state->port_remote_wakeup) {	/* USB3 */
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+@@ -1336,26 +1339,36 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 			return -EBUSY;
  		}
- 		req->data_len += req->iovs[i].iov.iov_len;
-@@ -772,14 +768,10 @@ int hfi1_user_sdma_process_request(struc
  	}
- 
- 	set_comp_state(pq, cq, info.comp_idx, QUEUED, 0);
--	atomic_inc(&pq->n_reqs);
--	req_queued = 1;
- 	/* Send the first N packets in the request to buy us some time */
- 	ret = user_sdma_send_pkts(req, pcount);
--	if (unlikely(ret < 0 && ret != -EBUSY)) {
--		req->status = ret;
-+	if (unlikely(ret < 0 && ret != -EBUSY))
- 		goto free_req;
--	}
- 
- 	/*
- 	 * It is possible that the SDMA engine would have processed all the
-@@ -796,17 +788,11 @@ int hfi1_user_sdma_process_request(struc
- 	 * request have been submitted to the SDMA engine. However, it
- 	 * will not wait for send completions.
- 	 */
--	while (!test_bit(SDMA_REQ_SEND_DONE, &req->flags)) {
-+	while (req->seqsubmitted != req->info.npkts) {
- 		ret = user_sdma_send_pkts(req, pcount);
- 		if (ret < 0) {
--			if (ret != -EBUSY) {
--				req->status = ret;
--				set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
--				if (ACCESS_ONCE(req->seqcomp) ==
--				    req->seqsubmitted - 1)
--					goto free_req;
--				return ret;
--			}
-+			if (ret != -EBUSY)
-+				goto free_req;
- 			wait_event_interruptible_timeout(
- 				pq->busy.wait_dma,
- 				(pq->state == SDMA_PKT_Q_ACTIVE),
-@@ -817,10 +803,19 @@ int hfi1_user_sdma_process_request(struc
- 	*count += idx;
- 	return 0;
- free_req:
--	user_sdma_free_request(req, true);
--	if (req_queued)
+-
+-	port_index = max_ports;
 +	/*
-+	 * If the submitted seqsubmitted == npkts, the completion routine
-+	 * controls the final state.  If sequbmitted < npkts, wait for any
-+	 * outstanding packets to finish before cleaning up.
++	 * Prepare ports for suspend, but don't write anything before all ports
++	 * are checked and we know bus suspend can proceed
 +	 */
-+	if (req->seqsubmitted < req->info.npkts) {
-+		if (req->seqsubmitted)
-+			wait_event(pq->busy.wait_dma,
-+				   (req->seqcomp == req->seqsubmitted - 1));
-+		user_sdma_free_request(req, true);
- 		pq_update(pq);
--	set_comp_state(pq, cq, info.comp_idx, ERROR, req->status);
-+		set_comp_state(pq, cq, info.comp_idx, ERROR, ret);
-+	}
- 	return ret;
- }
+ 	bus_state->bus_suspended = 0;
++	port_index = max_ports;
+ 	while (port_index--) {
+-		/* suspend the port if the port is not suspended */
+ 		u32 t1, t2;
+-		int slot_id;
  
-@@ -903,10 +898,8 @@ static int user_sdma_send_pkts(struct us
- 	pq = req->pq;
+ 		t1 = readl(port_array[port_index]);
+ 		t2 = xhci_port_state_to_neutral(t1);
++		portsc_buf[port_index] = 0;
  
- 	/* If tx completion has reported an error, we are done. */
--	if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags)) {
--		set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
-+	if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags))
- 		return -EFAULT;
--	}
- 
- 	/*
- 	 * Check if we might have sent the entire request already
-@@ -929,10 +922,8 @@ static int user_sdma_send_pkts(struct us
- 		 * with errors. If so, we are not going to process any
- 		 * more packets from this request.
+-		if ((t1 & PORT_PE) && !(t1 & PORT_PLS_MASK)) {
+-			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+-			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+-					port_index + 1);
+-			if (slot_id) {
++		/* Bail out if a USB3 port has a new device in link training */
++		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++			bus_state->bus_suspended = 0;
++			spin_unlock_irqrestore(&xhci->lock, flags);
++			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
++			return -EBUSY;
++		}
++
++		/* suspend ports in U0, or bail out for new connect changes */
++		if ((t1 & PORT_PE) && (t1 & PORT_PLS_MASK) == XDEV_U0) {
++			if ((t1 & PORT_CSC) && wake_enabled) {
++				bus_state->bus_suspended = 0;
+ 				spin_unlock_irqrestore(&xhci->lock, flags);
+-				xhci_stop_device(xhci, slot_id, 1);
+-				spin_lock_irqsave(&xhci->lock, flags);
++				xhci_dbg(xhci, "Bus suspend bailout, port connect change\n");
++				return -EBUSY;
+ 			}
++			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+ 			t2 &= ~PORT_PLS_MASK;
+ 			t2 |= PORT_LINK_STROBE | XDEV_U3;
+ 			set_bit(port_index, &bus_state->bus_suspended);
+@@ -1364,7 +1377,7 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 		 * including the USB 3.0 roothub, but only if CONFIG_PM
+ 		 * is enabled, so also enable remote wake here.
  		 */
--		if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags)) {
--			set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
-+		if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags))
- 			return -EFAULT;
--		}
+-		if (hcd->self.root_hub->do_remote_wakeup) {
++		if (wake_enabled) {
+ 			if (t1 & PORT_CONNECT) {
+ 				t2 |= PORT_WKOC_E | PORT_WKDISC_E;
+ 				t2 &= ~PORT_WKCONN_E;
+@@ -1377,7 +1390,26 @@ int xhci_bus_suspend(struct usb_hcd *hcd
  
- 		tx = kmem_cache_alloc(pq->txreq_cache, GFP_KERNEL);
- 		if (!tx)
-@@ -1090,7 +1081,6 @@ dosend:
- 	ret = sdma_send_txlist(req->sde, &pq->busy, &req->txps, &count);
- 	req->seqsubmitted += count;
- 	if (req->seqsubmitted == req->info.npkts) {
--		set_bit(SDMA_REQ_SEND_DONE, &req->flags);
- 		/*
- 		 * The txreq has already been submitted to the HW queue
- 		 * so we can free the AHG entry now. Corruption will not
-@@ -1489,11 +1479,15 @@ static int set_txreq_header_ahg(struct u
- 	return diff;
- }
- 
--/*
-- * SDMA tx request completion callback. Called when the SDMA progress
-- * state machine gets notification that the SDMA descriptors for this
-- * tx request have been processed by the DMA engine. Called in
-- * interrupt context.
-+/**
-+ * user_sdma_txreq_cb() - SDMA tx request completion callback.
-+ * @txreq: valid sdma tx request
-+ * @status: success/failure of request
-+ *
-+ * Called when the SDMA progress state machine gets notification that
-+ * the SDMA descriptors for this tx request have been processed by the
-+ * DMA engine. Called in interrupt context.
-+ * Only do work on completed sequences.
-  */
- static void user_sdma_txreq_cb(struct sdma_txreq *txreq, int status)
- {
-@@ -1502,7 +1496,7 @@ static void user_sdma_txreq_cb(struct sd
- 	struct user_sdma_request *req;
- 	struct hfi1_user_sdma_pkt_q *pq;
- 	struct hfi1_user_sdma_comp_q *cq;
--	u16 idx;
-+	enum hfi1_sdma_comp_state state = COMPLETE;
- 
- 	if (!tx->req)
- 		return;
-@@ -1515,31 +1509,19 @@ static void user_sdma_txreq_cb(struct sd
- 		SDMA_DBG(req, "SDMA completion with error %d",
- 			 status);
- 		set_bit(SDMA_REQ_HAS_ERROR, &req->flags);
-+		state = ERROR;
+ 		t1 = xhci_port_state_to_neutral(t1);
+ 		if (t1 != t2)
+-			writel(t2, port_array[port_index]);
++			portsc_buf[port_index] = t2;
++	}
++
++	/* write port settings, stopping and suspending ports if needed */
++	port_index = max_ports;
++	while (port_index--) {
++		if (!portsc_buf[port_index])
++			continue;
++		if (test_bit(port_index, &bus_state->bus_suspended)) {
++			int slot_id;
++
++			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
++							    port_index + 1);
++			if (slot_id) {
++				spin_unlock_irqrestore(&xhci->lock, flags);
++				xhci_stop_device(xhci, slot_id, 1);
++				spin_lock_irqsave(&xhci->lock, flags);
++			}
++		}
++		writel(portsc_buf[port_index], port_array[port_index]);
  	}
- 
- 	req->seqcomp = tx->seqnum;
- 	kmem_cache_free(pq->txreq_cache, tx);
--	tx = NULL;
- 
--	idx = req->info.comp_idx;
--	if (req->status == -1 && status == SDMA_TXREQ_S_OK) {
--		if (req->seqcomp == req->info.npkts - 1) {
--			req->status = 0;
--			user_sdma_free_request(req, false);
--			pq_update(pq);
--			set_comp_state(pq, cq, idx, COMPLETE, 0);
--		}
--	} else {
--		if (status != SDMA_TXREQ_S_OK)
--			req->status = status;
--		if (req->seqcomp == (ACCESS_ONCE(req->seqsubmitted) - 1) &&
--		    (test_bit(SDMA_REQ_SEND_DONE, &req->flags) ||
--		     test_bit(SDMA_REQ_DONE_ERROR, &req->flags))) {
--			user_sdma_free_request(req, false);
--			pq_update(pq);
--			set_comp_state(pq, cq, idx, ERROR, req->status);
--		}
--	}
-+	/* sequence isn't complete?  We are done */
-+	if (req->seqcomp != req->info.npkts - 1)
-+		return;
-+
-+	user_sdma_free_request(req, false);
-+	set_comp_state(pq, cq, req->info.comp_idx, state, status);
-+	pq_update(pq);
- }
- 
- static inline void pq_update(struct hfi1_user_sdma_pkt_q *pq)
-@@ -1572,6 +1554,8 @@ static void user_sdma_free_request(struc
- 			if (!node)
- 				continue;
- 
-+			req->iovs[i].node = NULL;
-+
- 			if (unpin)
- 				hfi1_mmu_rb_remove(req->pq->handler,
- 						   &node->rb);
+ 	hcd->state = HC_STATE_SUSPENDED;
+ 	bus_state->next_statechange = jiffies + msecs_to_jiffies(10);
 
 
