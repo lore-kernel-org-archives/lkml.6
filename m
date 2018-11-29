@@ -1,135 +1,130 @@
 Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8979AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB620C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AEE2206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F56620832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLysX9pa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AEE2206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oBl84pv5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F56620832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeK2M7j (ORCPT
+        id S1727485AbeK2M7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:59:39 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36652 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeK2M7i (ORCPT
+        Thu, 29 Nov 2018 07:59:41 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36538 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbeK2M7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:59:38 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so190668plo.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:55:59 -0800 (PST)
+        Thu, 29 Nov 2018 07:59:40 -0500
+Received: by mail-io1-f67.google.com with SMTP id m19so274229ioh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:56:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qr2QPBN9+M8D2nnxo3IU9qM3RYncx0uOQsj+iud9jRI=;
-        b=YLysX9paHUXy9XjK+BSv7kTipiJz4t6JthFPfNa8Pyyk293p+zn2LwBa3eqaYlALcA
-         AisYSGvMDHzhs3ymlSkl7vcJ6SbeHUTrRbkJDWyL7zn9WOk+ZCQkAZfunEK4fZi54lhs
-         EiVkuD3NH0e+85QhIaNOzFlTJDC6gVyOkZ/bgh5tDWuHdKABXjrDzZz7aMJEVzQuXCgz
-         hIw+/dXOeluBiGRBGsbccXZG6g6XamJjnlmWYFhyHkc/L2Ol2WMCy0s/sW+ucxNY4Vot
-         Vz2QNztID/g0VqSXmIMkWdAEg0O9tNxMZTRM3wYd2fRC9HeDH9TbrFbvxvBW7l8TuSiw
-         I0iQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0xlLEq1ulY6epJsDII+p9Ka0heaTLS34lV6yWaj1F0M=;
+        b=oBl84pv5w64W2C8h9mgHrMCVD/c6fzTAcMScHg9WWy2Va1E9IhyNb8dOdm0G9E6/d/
+         l3QX2Z+L6Wj/BpoGKDhqtyJsirVeTCf6hUt0AnBiXpTlYmaRKOVSJZRMVD1s7qMtLemV
+         dAZpUr+Oo0VZs5+GRGQ19L1e5OxVYSgKNdyq4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qr2QPBN9+M8D2nnxo3IU9qM3RYncx0uOQsj+iud9jRI=;
-        b=qvWrEVWIsvfyayYuqY6DudZBBG+vX1o3VjI3E0WmK6c+bagfHeSvk4TiXrLARy/BU7
-         QnmeDwjgyazFnBYaNA16ZGY4c6//fYZp5Sz9Ytla7M+N377bzNskTHUvqNC0TkxXKie7
-         y+yPqx3peNq7YOFeeaHPeorNAxUP73rTdFXqTTdwZUZExhhD9MGi+jlL/9cH6XDZNa5P
-         mnE5seZm5+k3A3Pdq+HZQuUAcSm7MiYARqwFmw8ZqLwViynNoqLiu0kmgHs7fck1Fmt4
-         AzYdjvAdg87p30/5oqUvcoikAyVnXD8TTSSI+tgWKMn3g6421DbSWewiF5zpN3nrHdpm
-         5dHw==
-X-Gm-Message-State: AA+aEWZlDiI9yIljEXJm5RhTFs4jE3i1nFVk6v/XrICuym5wUIPGDoOg
-        E8NgIg73+/AUjYkoyF1wxGvoiSLFcBE=
-X-Google-Smtp-Source: AFSGD/X7XuXujziPs7H8ReoekbVfE1/vLjQLJThUbUdYvycDZ+yR1aqaOM4NQITvGsMT94AoyIO6ug==
-X-Received: by 2002:a17:902:d905:: with SMTP id c5mr38400712plz.43.1543456558844;
-        Wed, 28 Nov 2018 17:55:58 -0800 (PST)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id t87sm325524pfk.122.2018.11.28.17.55.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 17:55:57 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:55:54 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH v3 7/7] zram: writeback throttle
-Message-ID: <20181129015554.GC77327@google.com>
-References: <20181127055429.251614-1-minchan@kernel.org>
- <20181127055429.251614-8-minchan@kernel.org>
- <20181128154141.d67b70957bc4833d9f0d6635@linux-foundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0xlLEq1ulY6epJsDII+p9Ka0heaTLS34lV6yWaj1F0M=;
+        b=lPUMj5PF/0DFpmbIVxS1uEM5BcWqTxE3qNGVYv5jWBXSsLPxxcdeQgIaFobf85zSjt
+         OO2BqulrPOC6BWan4HdmAZmAqSx7Aa2lPcaUQ4RmoclcxuPqQJayoLljYCeMYA2PgCSi
+         bA8sAV1iJQeJXQx7JKRejzKdd80QlvMVvJ5eDcwkimr75S6quQ2p308GZxvtsX6jhtOs
+         DBI6f9y7obQJBpJVqQNJcLQDoPXTD5gn0nFrnYjiQJlM5LULWyA1TWX9Efj6tJ7Yfzin
+         +lqJU9EZCtJ/64K8NKR0Qy0IbcxpMRpb1VLhBawZZncy7RG+wgy08FB6ce4FKh65IUH/
+         PYIQ==
+X-Gm-Message-State: AA+aEWZj2HkIJVZxcu98HPVICEVDt9LH0/Jz8DanNRB5cQRAqt1aSjw0
+        WfQf/GgS5XyzcVVvG9G6Bk6JlnaFx7Ym8JSDbO2k8A==
+X-Google-Smtp-Source: AFSGD/WXnEvV3tdzp6rgGT+XZxQRCkrAz+12iXHLs2IC3vVyErSo5N4S2D9AJKGiDP71C4TRzLRnskun5RK0SDHd+x0=
+X-Received: by 2002:a6b:c948:: with SMTP id z69mr21312734iof.161.1543456560336;
+ Wed, 28 Nov 2018 17:56:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128154141.d67b70957bc4833d9f0d6635@linux-foundation.org>
-User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
+References: <20181128031926.7157-1-ryans.lee@maximintegrated.com>
+ <20181128094955.GG6828@sirena.org.uk> <DM6PR11MB3131E267C1EDF9254BC7D313E7D10@DM6PR11MB3131.namprd11.prod.outlook.com>
+In-Reply-To: <DM6PR11MB3131E267C1EDF9254BC7D313E7D10@DM6PR11MB3131.namprd11.prod.outlook.com>
+From:   Grant Grundler <grundler@chromium.org>
+Date:   Wed, 28 Nov 2018 17:55:48 -0800
+Message-ID: <CANEJEGse1DGQE6K=sn=bfJuQW=-gM6zps+kvKd8y=yzXjrsTZQ@mail.gmail.com>
+Subject: Re: [PATCH V2] ASoC: max98373: Added max98373_reset for stable amp reset
+To:     RyanS.Lee@maximintegrated.com
+Cc:     broonie@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        perex@perex.cz, tiwai@suse.com,
+        Grant Grundler <grundler@chromium.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Benson Leung <bleung@chromium.org>,
+        alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>,
+        ryan.lee.maxim@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:41:41PM -0800, Andrew Morton wrote:
-> On Tue, 27 Nov 2018 14:54:29 +0900 Minchan Kim <minchan@kernel.org> wrote:
-> 
-> > On small memory system, there are lots of write IO so if we use
-> > flash device as swap, there would be serious flash wearout.
-> > To overcome the problem, system developers need to design write
-> > limitation strategy to guarantee flash health for entire product life.
-> > 
-> > This patch creates a new konb "writeback_limit" on zram. With that,
-> > if current writeback IO count(/sys/block/zramX/io_stat) excceds
+On Wed, Nov 28, 2018 at 9:07 AM Ryan Lee <RyanS.Lee@maximintegrated.com> wrote:
+>
+> >-----Original Message-----
+> >From: Mark Brown <broonie@kernel.org>
+> >Sent: Wednesday, November 28, 2018 1:50 AM
+> >To: Ryan Lee <RyanS.Lee@maximintegrated.com>
+> >Cc: Liam Girdwood <lgirdwood@gmail.com>; Jaroslav Kysela
+> ><perex@perex.cz>; Takashi Iwai <tiwai@suse.com>; Grant Grundler
+> ><grundler@chromium.org>; Kuninori Morimoto
+> ><kuninori.morimoto.gx@renesas.com>; Benson Leung
+> ><bleung@chromium.org>; alsa-devel@alsa-project.org; linux-
+> >kernel@vger.kernel.org; ryan.lee.maxim@gmail.com
+> >Subject: Re: [PATCH V2] ASoC: max98373: Added max98373_reset for stable
+> >amp reset
+> >
+> >On Wed, Nov 28, 2018 at 03:20:16AM +0000, Ryan Lee wrote:
+> >> Signed-off-by: Ryan Lee <ryans.lee@maximintegrated.com>
+> >> ---
+> >
+> >Not seeing a changelog here like I asked for :(
+>
+> Actually I added changelog as below. Do you mean this is not sufficient?
 
-						   bd_stat
-		
-> > the limitation, zram stops further writeback until admin can reset
-> > the limit.
-> 
-> I'm not really understanding this.  Does this only refer to suspending
-> the idle page writeback feature?  Not all zram writeback, surely?
+The text is probably sufficient but not in a format that Mark can
+directly apply.
+Please take a quick look at Documentation/process/submitting-patches.rst.
 
-It aims for all zram writeback.
+Mark wants the "commit message" to be before the '---' line. So move
+the "Changes:" text up to become the commit message and drop the
+"Changes" line. That should explain why this commit is needed and
+include the S-o-B line.
 
-> 
-> I don't think the documentation gives an administrator sufficient
-> information to effectively use the feature.  Some additional discussion
-> would help.  What sort of values should it be set to and why?
-> 
-> And what is the default setting?  And why?
+cheers,
+grant
 
-Default setting is 0 so there is no limitation because we couldn't
-expect user's workload of zram.
-
-> 
-> And the limit isn't persistent across reboots which makes me wonder
-> whether the overall feature is particularly valuable?
-
-Good point.
-Keeping the value in persisten across reboot is userspace's role.
-
-I will add this for admin
-"
-You could know how many of write happens since the system boot
-via /sys/block/zramX/bd_stat's bd_writes.
-If your backing device has wearout concern, you could limit the
-writing via /sys/block/zramX/writeback_limit.
-
-For instance, if the vaule you read bd_writes is 200, you could
-set 300 to writeback_limit so upcomding 100 write be only allowed.
-If you set the writeback_limit to lower value than current
-bd_writes's value, zram allow further writeback without limit.
-
-The value will reset when your system reboot so keeping how many
-write happn until now across reboot is user's job.
-"
-
+>
+> Changes since v1 : Removed unusual repeat for amp software reset and verification.
+>                    Amp software reset will be performed once and it repeats verification maximum 3 times if it is failed.
+>                    Wait 10ms before every verification trial. Maximum 30ms delay will be applied to wait AMP idle state.
+>
+> >
+> >> Changes : Created max98373_reset function to minimize code duplication.
+> >>           Changed regmap_write to regmap_update_bits. Other bits except LSB
+> >need to be masked.
+> >>           Added reset verification step to make sure software reset is completed
+> >well. Software reset is done in 10ms in normal case.
+> >>           Revision ID is available when the amp is in the idle state which means
+> >software reset is completed.
+> >>           Software reset will be performed maximum 3 times to avoid amp reset
+> >failure. Generally it is done in the first trial.
+> >>           sleep time after software reset is increased + 30ms for every retrial.
+> >Maximum possible msleep time is 100 ms (initial 10 ms + 30 ms * 3 times).
+> >
+> >This looks like it's supposed to be a changelog but it isn't one?
