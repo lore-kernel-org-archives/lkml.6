@@ -2,181 +2,85 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D858C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211C92086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:29:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211C92086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id EB5FA206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:31:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5FA206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeK2Odd (ORCPT
+        id S1727619AbeK2OfM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 09:33:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38740 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 09:35:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44458 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbeK2Odd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 09:33:33 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727120AbeK2OfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 09:35:12 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BA45206B6;
-        Thu, 29 Nov 2018 03:29:38 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 22:29:36 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
- counter to prevent trace corruption
-Message-ID: <20181128222936.74da7f54@vmware.local.home>
-In-Reply-To: <20181128160021.09acd1af@gandalf.local.home>
-References: <20181122002801.501220343@goodmis.org>
-        <20181128203931.ym2rkya7a6agzzy3@redhat.com>
-        <20181128160021.09acd1af@gandalf.local.home>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AACD307DAC1;
+        Thu, 29 Nov 2018 03:31:19 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 48CA94531;
+        Thu, 29 Nov 2018 03:30:51 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 11:30:47 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Mike Snitzer <snitzer@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V12 00/20] block: support multi-page bvec
+Message-ID: <20181129033046.GE23390@ming.t460p>
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+ <7096bc4e-0617-29d0-a90d-ae7caf09a16d@kernel.dk>
+ <20181129012959.GC23249@ming.t460p>
+ <1983a2f5-07be-4102-fedc-54e2ad2e16dc@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1983a2f5-07be-4102-fedc-54e2ad2e16dc@kernel.dk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 29 Nov 2018 03:31:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 16:00:21 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Wed, 28 Nov 2018 15:39:31 -0500
-> Joe Lawrence <joe.lawrence@redhat.com> wrote:
+On Wed, Nov 28, 2018 at 07:20:51PM -0700, Jens Axboe wrote:
+> On 11/28/18 6:30 PM, Ming Lei wrote:
+> >> I'm going back and forth on those one a bit. Any concerns with
+> >> pushing this to 4.22?
+> > 
+> > My only one concern is about the warning of
+> > "blk_cloned_rq_check_limits: over max segments limit" on dm multipath,
+> > and seems Ewan and Mike is waiting for this fix.
 > 
-> > Hi Steve,
-> > 
-> > With your ftrace/urgent branch linked above, if I try a quick
-> > function_graph test like the following:
-> > 
-> >   SYSFS=/sys/kernel/debug/tracing
-> > 
-> >   echo 0 > "$SYSFS/tracing_on"
-> >   echo cmdline_proc_show > "$SYSFS/set_graph_function"
-> >   echo function_graph > "$SYSFS/current_tracer"
-> >   echo 1 > "$SYSFS/tracing_on"
-> > 
-> > I see a bunch of scheduler interrupt functions in the trace/trace_pipe
-> > without even invoking cmdline_proc_show().
-> > 
-> > This tests works as expected with Linux 4.20-rc3 though:
-> > 
-> >   % cat /sys/kernel/debug/tracing/trace_pipe
-> >    2)               |  cmdline_proc_show() {
-> >    2)   0.320 us    |    seq_puts();
-> >    2)   0.030 us    |    seq_putc();
-> >    2)   1.352 us    |  }
-> > 
-> > Operator error, or did the patchset break something?  
-> 
-> Nope, that does seem to be a bug :-/
->
+> Not familiar with this issue, can you post a link to it? I'd be fine
+> working around anything until 4.22, it's not going to be a new issue.
 
-Does this patch fix it for you?
+https://marc.info/?t=153303425700002&r=1&w=2
 
--- Steve
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3b8c0e24ab30..1c8f4aa7020e 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -512,6 +512,9 @@ enum {
-  * can only be modified by current, we can reuse trace_recursion.
-  */
- 	TRACE_IRQ_BIT,
-+
-+	/* Set if the function is in the set_graph_function file */
-+	TRACE_GRAPH_BIT,
- };
- 
- #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
-@@ -855,6 +858,8 @@ static inline int ftrace_graph_addr(unsigned long addr)
- 	}
- 
- 	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
-+
-+		trace_recursion_set(TRACE_GRAPH_BIT);
- 		/*
- 		 * If no irqs are to be traced, but a set_graph_function
- 		 * is set, and called by an interrupt handler, we still
-@@ -901,7 +906,8 @@ extern unsigned int fgraph_max_depth;
- static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
- {
- 	/* trace it when it is-nested-in or is a function enabled. */
--	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
-+	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
-+		 ftrace_graph_addr(trace->func)) ||
- 		(trace->depth < 0) ||
- 		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
- }
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 2561460d7baf..69fbb6225637 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -509,6 +509,9 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
- 	int cpu;
- 	int pc;
- 
-+	if (!trace->depth)
-+		trace_recursion_clear(TRACE_GRAPH_BIT);
-+
- 	local_irq_save(flags);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
-@@ -532,6 +535,8 @@ void set_graph_array(struct trace_array *tr)
- 
- static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
- {
-+	if (!trace->depth)
-+		trace_recursion_clear(TRACE_GRAPH_BIT);
- 	if (tracing_thresh &&
- 	    (trace->rettime - trace->calltime < tracing_thresh))
- 		return;
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index b7357f9f82a3..b20bf076ce7f 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -208,6 +208,9 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
- 	unsigned long flags;
- 	int pc;
- 
-+	if (!trace->depth)
-+		trace_recursion_clear(TRACE_GRAPH_BIT);
-+
- 	if (!func_prolog_dec(tr, &data, &flags))
- 		return;
- 
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index a86b303e6c67..069867f4eae6 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -270,6 +270,9 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
- 	unsigned long flags;
- 	int pc;
- 
-+	if (!trace->depth)
-+		trace_recursion_clear(TRACE_GRAPH_BIT);
-+
- 	if (!func_prolog_preempt_disable(tr, &data, &pc))
- 		return;
- 
+thanks,
+Ming
