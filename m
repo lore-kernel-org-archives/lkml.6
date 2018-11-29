@@ -2,106 +2,328 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AB6C04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F9AC28CF8
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300472145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:49:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300472145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DC9D521104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEOSQK3L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9D521104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeK3E4H convert rfc822-to-8bit (ORCPT
+        id S1730889AbeK3Exg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:56:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730817AbeK3E4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:56:06 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 857D1213A2;
-        Thu, 29 Nov 2018 17:49:54 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 12:49:52 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129124952.70b0385c@gandalf.local.home>
-In-Reply-To: <666E3CE2-CD96-4271-8F9C-614F96D24F26@amacapital.net>
-References: <20181126200801.GW2113@hirez.programming.kicks-ass.net>
-        <20181126212628.4apztfazichxnt7r@treble>
-        <20181127084330.GX2113@hirez.programming.kicks-ass.net>
-        <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
-        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-        <20181129163342.tp5wlfcyiazwwyoh@treble>
-        <20181129164914.GA9027@hirez.programming.kicks-ass.net>
-        <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
-        <20181129171539.GD9027@hirez.programming.kicks-ass.net>
-        <20181129122000.7fb4fb04@gandalf.local.home>
-        <20181129122156.782e739e@gandalf.local.home>
-        <666E3CE2-CD96-4271-8F9C-614F96D24F26@amacapital.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Thu, 29 Nov 2018 23:53:36 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37567 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730843AbeK3Exg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:53:36 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e5-v6so2541950lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2+/Zg5CnveDZt6Y9DJWaO1vjEPhkATmRTkbujkSrrhk=;
+        b=iEOSQK3L6vH/uOYYq+9t3pvIzAUY7UHAKzKIcFHnTZJEOxlNO/oikkLhR4EVwmumAc
+         IR1XEudU9idovUSdmo1vxpLNMJEHWCjwyfFGtbZ0CeTN9dbq/4hh3UC4Wc9zpBltMazF
+         G0dFliU25cJCtVXS/hBWoMX5uPYpX9qscltpU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2+/Zg5CnveDZt6Y9DJWaO1vjEPhkATmRTkbujkSrrhk=;
+        b=eBrmQic0eUD3lFB+roKAvoqOaFCMydejY6OFT2Y9WWl+yDk1BJY00LdVgeYonQxiBq
+         Tm0gj8F8fubgJnIyeER9ukisDUflrV4xY8hEgJJ/CLr1UylSjVUi7Fx3pMkxCyK/KuTz
+         /N4o5C4XDktiLz91CMy9EqAjwql1u/aBtKylKBSwCGKl3iKAm3/Orp53ZTtUCpfHvw/i
+         pe5Ctze6sXIg1u6Be8Ntprxwu+gNEfCSgAUK36/FkBEh6hNI7w8+N7i81neOIQ8bynG9
+         GAD0wdUDybl9wMSLbq5XdBVGDIk/qteSy0to1lH6dTjYeDG9Ix3LDXGDi2sEpAY6NBNo
+         AZ/A==
+X-Gm-Message-State: AA+aEWbOZyhGse5kF1HE7j9wP5zQhIITpeoIr0+j+vhTFBhkOtCfb090
+        sJUvlqqhCRdDzUbYg4vAxgCorw==
+X-Google-Smtp-Source: AFSGD/Xvkon2TF8iGxwU58DFFLy/SGEybzfzgTkfgjGfzUCOI7vqWKeP0Zb6u3Yyoq4tmsx3lkVgMA==
+X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr1886895ljj.18.1543513642839;
+        Thu, 29 Nov 2018 09:47:22 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 09:47:22 -0800 (PST)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Subject: [PATCH v10 08/27] ARM/ARM64: cpuidle: Let back-end init ops take the driver as input
+Date:   Thu, 29 Nov 2018 18:46:41 +0100
+Message-Id: <20181129174700.16585-9-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129174700.16585-1-ulf.hansson@linaro.org>
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 09:41:33 -0800
-Andy Lutomirski <luto@amacapital.net> wrote:
+To allow arch back-end init ops to operate on the cpuidle driver for the
+corresponding CPU, let's pass along a pointer to the struct cpuidle_driver*
+and forward it the relevant layers of callbacks for ARM/ARM64.
 
-> > On Nov 29, 2018, at 9:21 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > On Thu, 29 Nov 2018 12:20:00 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> >   
-> >> r8 = return address
-> >> r9 = function to call
-> >>   
-> > 
-> > Bad example, r8 and r9 are args, but r10 and r11 are available.
-> > 
-> > -- Steve
-> >   
-> >>    push r8
-> >>    jmp *r9
-> >> 
-> >> Then have the regs->ip point to that trampoline.  
-> 
-> Cute. That’ll need ORC annotations and some kind of retpoline to replace the indirect jump, though.
->
+Following changes for the PSCI firmware driver starts making use of this.
 
-Do we really need to worry about retpoline here?
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-I'm not fully up on all the current vulnerabilities, but can this
-really be taken advantage of when it only happens in the transition of
-changing a static call with the small chance of one of those calls
-triggering the break point?
+Changes in v10:
+	- New patch!
 
-If someone can take advantage of that, I almost think they deserve
-cracking my box ;-)
+I am seeking an ack from relevant maintainers. Please ping me if you need
+further information about the hole series.
 
--- Steve
+Thanks!
+Ulf Hanssson
+
+---
+ arch/arm/include/asm/cpuidle.h   | 4 ++--
+ arch/arm/kernel/cpuidle.c        | 5 +++--
+ arch/arm64/include/asm/cpu_ops.h | 4 +++-
+ arch/arm64/include/asm/cpuidle.h | 6 ++++--
+ arch/arm64/kernel/cpuidle.c      | 6 +++---
+ drivers/cpuidle/cpuidle-arm.c    | 2 +-
+ drivers/firmware/psci.c          | 7 ++++---
+ drivers/soc/qcom/spm.c           | 3 ++-
+ include/linux/psci.h             | 4 +++-
+ 9 files changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/include/asm/cpuidle.h b/arch/arm/include/asm/cpuidle.h
+index 6b2ff7243b4b..bee0a7847733 100644
+--- a/arch/arm/include/asm/cpuidle.h
++++ b/arch/arm/include/asm/cpuidle.h
+@@ -32,7 +32,7 @@ struct device_node;
+ 
+ struct cpuidle_ops {
+ 	int (*suspend)(unsigned long arg);
+-	int (*init)(struct device_node *, int cpu);
++	int (*init)(struct cpuidle_driver *, struct device_node *, int cpu);
+ };
+ 
+ struct of_cpuidle_method {
+@@ -47,6 +47,6 @@ struct of_cpuidle_method {
+ 
+ extern int arm_cpuidle_suspend(int index);
+ 
+-extern int arm_cpuidle_init(int cpu);
++extern int arm_cpuidle_init(struct cpuidle_driver *drv, int cpu);
+ 
+ #endif
+diff --git a/arch/arm/kernel/cpuidle.c b/arch/arm/kernel/cpuidle.c
+index fda5579123a8..43778c9b373d 100644
+--- a/arch/arm/kernel/cpuidle.c
++++ b/arch/arm/kernel/cpuidle.c
+@@ -122,6 +122,7 @@ static int __init arm_cpuidle_read_ops(struct device_node *dn, int cpu)
+ 
+ /**
+  * arm_cpuidle_init() - Initialize cpuidle_ops for a specific cpu
++ * @drv: the drv to be initialized
+  * @cpu: the cpu to be initialized
+  *
+  * Initialize the cpuidle ops with the device for the cpu and then call
+@@ -137,7 +138,7 @@ static int __init arm_cpuidle_read_ops(struct device_node *dn, int cpu)
+  *  -ENXIO if the HW reports a failure or a misconfiguration,
+  *  -ENOMEM if the HW report an memory allocation failure 
+  */
+-int __init arm_cpuidle_init(int cpu)
++int __init arm_cpuidle_init(struct cpuidle_driver *drv, int cpu)
+ {
+ 	struct device_node *cpu_node = of_cpu_device_node_get(cpu);
+ 	int ret;
+@@ -147,7 +148,7 @@ int __init arm_cpuidle_init(int cpu)
+ 
+ 	ret = arm_cpuidle_read_ops(cpu_node, cpu);
+ 	if (!ret)
+-		ret = cpuidle_ops[cpu].init(cpu_node, cpu);
++		ret = cpuidle_ops[cpu].init(drv, cpu_node, cpu);
+ 
+ 	of_node_put(cpu_node);
+ 
+diff --git a/arch/arm64/include/asm/cpu_ops.h b/arch/arm64/include/asm/cpu_ops.h
+index 8f03446cf89f..8db870c29f1b 100644
+--- a/arch/arm64/include/asm/cpu_ops.h
++++ b/arch/arm64/include/asm/cpu_ops.h
+@@ -19,6 +19,8 @@
+ #include <linux/init.h>
+ #include <linux/threads.h>
+ 
++struct cpuidle_driver;
++
+ /**
+  * struct cpu_operations - Callback operations for hotplugging CPUs.
+  *
+@@ -58,7 +60,7 @@ struct cpu_operations {
+ 	int		(*cpu_kill)(unsigned int cpu);
+ #endif
+ #ifdef CONFIG_CPU_IDLE
+-	int		(*cpu_init_idle)(unsigned int);
++	int		(*cpu_init_idle)(struct cpuidle_driver *, unsigned int);
+ 	int		(*cpu_suspend)(unsigned long);
+ #endif
+ };
+diff --git a/arch/arm64/include/asm/cpuidle.h b/arch/arm64/include/asm/cpuidle.h
+index 3c5ddb429ea2..3fd3efb61649 100644
+--- a/arch/arm64/include/asm/cpuidle.h
++++ b/arch/arm64/include/asm/cpuidle.h
+@@ -4,11 +4,13 @@
+ 
+ #include <asm/proc-fns.h>
+ 
++struct cpuidle_driver;
++
+ #ifdef CONFIG_CPU_IDLE
+-extern int arm_cpuidle_init(unsigned int cpu);
++extern int arm_cpuidle_init(struct cpuidle_driver *drv, unsigned int cpu);
+ extern int arm_cpuidle_suspend(int index);
+ #else
+-static inline int arm_cpuidle_init(unsigned int cpu)
++static inline int arm_cpuidle_init(struct cpuidle_driver *drv, unsigned int cpu)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/arch/arm64/kernel/cpuidle.c b/arch/arm64/kernel/cpuidle.c
+index f2d13810daa8..aaf9dc5cb87a 100644
+--- a/arch/arm64/kernel/cpuidle.c
++++ b/arch/arm64/kernel/cpuidle.c
+@@ -18,13 +18,13 @@
+ #include <asm/cpuidle.h>
+ #include <asm/cpu_ops.h>
+ 
+-int arm_cpuidle_init(unsigned int cpu)
++int arm_cpuidle_init(struct cpuidle_driver *drv, unsigned int cpu)
+ {
+ 	int ret = -EOPNOTSUPP;
+ 
+ 	if (cpu_ops[cpu] && cpu_ops[cpu]->cpu_suspend &&
+ 			cpu_ops[cpu]->cpu_init_idle)
+-		ret = cpu_ops[cpu]->cpu_init_idle(cpu);
++		ret = cpu_ops[cpu]->cpu_init_idle(drv, cpu);
+ 
+ 	return ret;
+ }
+@@ -51,7 +51,7 @@ int arm_cpuidle_suspend(int index)
+ 
+ int acpi_processor_ffh_lpi_probe(unsigned int cpu)
+ {
+-	return arm_cpuidle_init(cpu);
++	return arm_cpuidle_init(NULL, cpu);
+ }
+ 
+ int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)
+diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
+index 3a407a3ef22b..39413973b21d 100644
+--- a/drivers/cpuidle/cpuidle-arm.c
++++ b/drivers/cpuidle/cpuidle-arm.c
+@@ -106,7 +106,7 @@ static int __init arm_idle_init_cpu(int cpu)
+ 	 * Call arch CPU operations in order to initialize
+ 	 * idle states suspend back-end specific data
+ 	 */
+-	ret = arm_cpuidle_init(cpu);
++	ret = arm_cpuidle_init(drv, cpu);
+ 
+ 	/*
+ 	 * Allow the initialization to continue for other CPUs, if the reported
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index c80ec1d03274..878c4dcf0118 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -270,7 +270,8 @@ static int __init psci_features(u32 psci_func_id)
+ #ifdef CONFIG_CPU_IDLE
+ static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+ 
+-static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
++static int psci_dt_cpu_init_idle(struct cpuidle_driver *drv,
++			struct device_node *cpu_node, int cpu)
+ {
+ 	int i, ret, count = 0;
+ 	u32 *psci_states;
+@@ -371,7 +372,7 @@ static int __maybe_unused psci_acpi_cpu_init_idle(unsigned int cpu)
+ }
+ #endif
+ 
+-int psci_cpu_init_idle(unsigned int cpu)
++int psci_cpu_init_idle(struct cpuidle_driver *drv, unsigned int cpu)
+ {
+ 	struct device_node *cpu_node;
+ 	int ret;
+@@ -390,7 +391,7 @@ int psci_cpu_init_idle(unsigned int cpu)
+ 	if (!cpu_node)
+ 		return -ENODEV;
+ 
+-	ret = psci_dt_cpu_init_idle(cpu_node, cpu);
++	ret = psci_dt_cpu_init_idle(drv, cpu_node, cpu);
+ 
+ 	of_node_put(cpu_node);
+ 
+diff --git a/drivers/soc/qcom/spm.c b/drivers/soc/qcom/spm.c
+index 53807e839664..6e967f0a8608 100644
+--- a/drivers/soc/qcom/spm.c
++++ b/drivers/soc/qcom/spm.c
+@@ -208,7 +208,8 @@ static const struct of_device_id qcom_idle_state_match[] __initconst = {
+ 	{ },
+ };
+ 
+-static int __init qcom_cpuidle_init(struct device_node *cpu_node, int cpu)
++static int __init qcom_cpuidle_init(struct cpuidle_driver *drv,
++			struct device_node *cpu_node, int cpu)
+ {
+ 	const struct of_device_id *match_id;
+ 	struct device_node *state_node;
+diff --git a/include/linux/psci.h b/include/linux/psci.h
+index 8b1b3b5935ab..4f29a3bff379 100644
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -20,9 +20,11 @@
+ #define PSCI_POWER_STATE_TYPE_STANDBY		0
+ #define PSCI_POWER_STATE_TYPE_POWER_DOWN	1
+ 
++struct cpuidle_driver;
++
+ bool psci_tos_resident_on(int cpu);
+ 
+-int psci_cpu_init_idle(unsigned int cpu);
++int psci_cpu_init_idle(struct cpuidle_driver *drv, unsigned int cpu);
+ int psci_cpu_suspend_enter(unsigned long index);
+ 
+ enum psci_conduit {
+-- 
+2.17.1
+
