@@ -2,124 +2,102 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2860AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C265C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB7F213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB7F213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id D5D1220863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:08:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uVGLzwLT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D1220863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbeK3ENS (ORCPT
+        id S1730356AbeK3EOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:13:18 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:56760 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729682AbeK3ENS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:13:18 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gSPmJ-0004a6-3X; Thu, 29 Nov 2018 10:07:04 -0700
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <154275556908.76910.8966087090637564219.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154275558526.76910.7535251937849268605.stgit@dwillia2-desk3.amr.corp.intel.com>
- <6875ca04-a36a-89ae-825b-f629ab011d47@deltatee.com>
- <CAPcyv4i9QXsX9Rjz9E3gi643LQbSzaO_+iFLqLS+QO-GmrS0Eg@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <14d6413c-b002-c152-5016-7ed659c08c24@deltatee.com>
-Date:   Thu, 29 Nov 2018 10:06:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 29 Nov 2018 23:14:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47190 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729157AbeK3EOn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:14:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=w8oLPHASfULKC4/0yHJ7+XAK/WtkONNK6Ir9MvPeIW4=; b=uVGLzwLTStGRiXMQFgiEINH81
+        bSJ97lqoEWbSQPlTMwWvspsJ4OXn7lCGYhoE/PsfKjmPZfoNeJ5dD+FtxbK0iqfRivcvw8FNko6Ba
+        MRpiDHkVXpv0OiYSYR8izHHU9DH1+PVyMN5dLvsQNaQEwUMxSbLQf/t1KkzwjCrqX8ygJ4HoRJOQ/
+        7z5pjF40JaSX6d0Kdsd54bo9gEPzFRlShUhzWPBVi90XrRdnZdRaOYuALDjweYDFI0R7qzbv6eFMS
+        DMUR0/KbCWKfRdS14cbmG1nOV/6sotpT//i6ypoGqh83bETOZKQgx4kCi9T4UEiTCzVy6p2hFinzC
+        0e0565BEw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSPmy-000338-Ri; Thu, 29 Nov 2018 17:07:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5528A2029FD58; Thu, 29 Nov 2018 18:07:42 +0100 (CET)
+Date:   Thu, 29 Nov 2018 18:07:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
+        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
+        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
+        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129170742.GC9027@hirez.programming.kicks-ass.net>
+References: <20181126200801.GW2113@hirez.programming.kicks-ass.net>
+ <20181126212628.4apztfazichxnt7r@treble>
+ <20181127084330.GX2113@hirez.programming.kicks-ass.net>
+ <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+ <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+ <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+ <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
+ <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4i9QXsX9Rjz9E3gi643LQbSzaO_+iFLqLS+QO-GmrS0Eg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, hch@lst.de, jglisse@redhat.com, stable@vger.kernel.org, akpm@linux-foundation.org, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v8 3/7] mm, devm_memremap_pages: Fix shutdown handling
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 29, 2018 at 09:02:23AM -0800, Andy Lutomirski wrote:
+> > On Nov 29, 2018, at 8:50 AM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
+> > So no. Do *not* try to change %rsp on the stack in the bp handler.
+> > Instead, I'd suggest:
+> > 
+> > - just restart the instruction (with the suggested "ptregs->rip --")
+> > 
+> > - to avoid any "oh, we're not making progress" issues, just fix the
+> > instruction yourself to be the right call, by looking it up in the
+> > "what needs to be fixed" tables.
+> > 
+> > No?
 
-On 2018-11-28 8:10 p.m., Dan Williams wrote:
-> Yes, please send a proper patch. 
+> Or do you think we can avoid the IPI while the int3 is there?
 
-Ok, I'll send one shortly.
+I'm thinking Linus is suggesting the #BP handler does the text write too
+(as a competing store) and then sync_core() and restarts.
 
-> Although, I'm still not sure I see
-> the problem with the order of the percpu-ref kill. It's likely more
-> efficient to put the kill after the put_page() loop because the
-> percpu-ref will still be in "fast" per-cpu mode, but the kernel panic
-> should not be possible as long as their is a wait_for_completion()
-> before the exit, unless something else is wrong.
-
-The series of events looks something like this:
-
-1) Some p2pdma user calls pci_alloc_p2pmem() to get some memory to DMA
-to taking a reference to the pgmap.
-2) Another process unbinds the underlying p2pdma driver and the devm
-chain starts to unwind.
-3) devm_memremap_pages_release() is called and it kills the reference
-and drop's it's last reference.
-4) arch_remove_memory() is called which will remove all the struct pages.
-5) We eventually get to pci_p2pdma_release() where we wait for the
-completion indicating all the pages have been freed.
-6) The user in (1) tries to use the page that has been removed,
-typically by calling pci_p2pdma_map_sg(), but the page doesn't exist so
-the kernel panics.
-
-So we really need the wait in (5) to occur before (4) but after (3) so
-that the pages continue to exist until the last reference is dropped.
-
-> Certainly you can't move the wait_for_completion() into your ->kill()
-> callback without switching the ordering, but I'm not on board with
-> that change until I understand a bit more about why you think
-> device-dax might be broken?
-> 
-> I took a look at the p2pdma shutdown path and the:
-> 
->         if (percpu_ref_is_dying(ref))
->                 return;
-> ...looks fishy. If multiple agents can overlap their requests for the
-> same range why not track that simply as additional refs? Could it be
-> the crash that you are seeing is a result of mis-accounting when it is
-> safe to assume the page allocation can be freed?
-
-Yeah, someone else mentioned the same thing during review but if I
-remove it, there can be a double kill() on a hypothetical driver that
-might call pci_p2pdma_add_resource() twice. The issue is we only have
-one percpu_ref per device not one per range/BAR.
-
-Though, now that I look at it, the current change in question will be
-wrong if there are two devm_memremap_pages_release()s to call. Both need
-to drop their references before we can wait_for_completion() ;(. I guess
-I need multiple percpu_refs or more complex changes to
-devm_memremap_pages_release().
-
-Thanks
-
-Logan
-
+But I think that is broken, because then there is no telling what the
+other CPUs will observe.
