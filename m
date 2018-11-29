@@ -6,95 +6,175 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B398C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9F8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 414942082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 414942082F
+	by mail.kernel.org (Postfix) with ESMTP id B16CF2082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16CF2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbeK3GG5 (ORCPT
+        id S1727011AbeK3GHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:06:57 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:41292 "EHLO pegase1.c-s.fr"
+        Fri, 30 Nov 2018 01:07:04 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10070 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbeK3GG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:06:57 -0500
+        id S1725928AbeK3GHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:07:03 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 435Rg42Rhqz9v0PJ;
-        Thu, 29 Nov 2018 20:00:32 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 435RgC17yjz9v11h;
+        Thu, 29 Nov 2018 20:00:39 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ltWX6nawdJ_q; Thu, 29 Nov 2018 20:00:32 +0100 (CET)
+        with ESMTP id BqJt7_E1hwEC; Thu, 29 Nov 2018 20:00:39 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 435Rg41whsz9v0P2;
-        Thu, 29 Nov 2018 20:00:32 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 435RgC0Wt5z9v11Q;
+        Thu, 29 Nov 2018 20:00:39 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9AA748B904;
-        Thu, 29 Nov 2018 20:00:30 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0421C8B929;
+        Thu, 29 Nov 2018 20:00:37 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id DBej8uk7M8BC; Thu, 29 Nov 2018 20:00:30 +0100 (CET)
+        with ESMTP id jzY3gZ_jl8WY; Thu, 29 Nov 2018 20:00:36 +0100 (CET)
 Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D37518B8C9;
-        Thu, 29 Nov 2018 20:00:22 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 56B638B8F8;
+        Thu, 29 Nov 2018 20:00:24 +0100 (CET)
 Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 701E369B59; Thu, 29 Nov 2018 19:00:22 +0000 (UTC)
-Message-Id: <4f49328bc6c1dd35b1af638aa8ffb17c668d026e.1543517818.git.christophe.leroy@c-s.fr>
+        id 7461B69B5A; Thu, 29 Nov 2018 19:00:24 +0000 (UTC)
+Message-Id: <43cde6255c890f944700accf8769e73786794342.1543517818.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1543517818.git.christophe.leroy@c-s.fr>
 References: <cover.1543517818.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v1 06/13] powerpc/mm/32s: use _PAGE_EXEC in setbat()
+Subject: [PATCH v1 07/13] powerpc/mm/32s: add setibat() clearibat() and
+ update_bats()
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 19:00:22 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 19:00:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not set IBAT when setbat() is called without _PAGE_EXEC
+setibat() and clearibat() allows to manipulate IBATs independently
+of DBATs.
+
+update_bats() allows to update bats after init. This is done
+with MMU off.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/mm/ppc_mmu_32.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/powerpc/include/asm/book3s/32/mmu-hash.h |  2 ++
+ arch/powerpc/kernel/head_32.S                 | 35 +++++++++++++++++++++++++++
+ arch/powerpc/mm/ppc_mmu_32.c                  | 32 ++++++++++++++++++++++++
+ 3 files changed, 69 insertions(+)
 
+diff --git a/arch/powerpc/include/asm/book3s/32/mmu-hash.h b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
+index e38c91388c40..b4ccb832d4fb 100644
+--- a/arch/powerpc/include/asm/book3s/32/mmu-hash.h
++++ b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
+@@ -83,6 +83,8 @@ typedef struct {
+ 	unsigned long vdso_base;
+ } mm_context_t;
+ 
++void update_bats(void);
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ /* We happily ignore the smaller BATs on 601, we don't actually use
+diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+index d1c39b5ccfd6..0f4c72ebb151 100644
+--- a/arch/powerpc/kernel/head_32.S
++++ b/arch/powerpc/kernel/head_32.S
+@@ -1101,6 +1101,41 @@ BEGIN_MMU_FTR_SECTION
+ END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
+ 	blr
+ 
++_ENTRY(update_bats)
++	lis	r4, 1f@h
++	ori	r4, r4, 1f@l
++	tophys(r4, r4)
++	mfmsr	r6
++	mflr	r7
++	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR)
++	rlwinm	r0, r6, 0, ~MSR_RI
++	rlwinm	r0, r0, 0, ~MSR_EE
++	mtmsr	r0
++	mtspr	SPRN_SRR0, r4
++	mtspr	SPRN_SRR1, r3
++	SYNC
++	RFI
++1:	bl	clear_bats
++	lis	r3, BATS@ha
++	addi	r3, r3, BATS@l
++	tophys(r3, r3)
++	LOAD_BAT(0, r3, r4, r5)
++	LOAD_BAT(1, r3, r4, r5)
++	LOAD_BAT(2, r3, r4, r5)
++	LOAD_BAT(3, r3, r4, r5)
++BEGIN_MMU_FTR_SECTION
++	LOAD_BAT(4, r3, r4, r5)
++	LOAD_BAT(5, r3, r4, r5)
++	LOAD_BAT(6, r3, r4, r5)
++	LOAD_BAT(7, r3, r4, r5)
++END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
++	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR | MSR_RI)
++	mtmsr	r3
++	mtspr	SPRN_SRR0, r7
++	mtspr	SPRN_SRR1, r6
++	SYNC
++	RFI
++
+ flush_tlbs:
+ 	lis	r10, 0x40
+ 1:	addic.	r10, r10, -0x1000
 diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index 61c10ee00ba2..1078095d9407 100644
+index 1078095d9407..58dd71686707 100644
 --- a/arch/powerpc/mm/ppc_mmu_32.c
 +++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -130,6 +130,7 @@ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
-  * Set up one of the I/D BAT (block address translation) register pairs.
-  * The parameters are not checked; in particular size must be a power
-  * of 2 between 128k and 256M.
-+ * On 603+, only set IBAT when _PAGE_EXEC is set
-  */
- void __init setbat(int index, unsigned long virt, phys_addr_t phys,
- 		   unsigned int size, pgprot_t prot)
-@@ -156,11 +157,12 @@ void __init setbat(int index, unsigned long virt, phys_addr_t phys,
- 			bat[1].batu |= 1; 	/* Vp = 1 */
- 		if (flags & _PAGE_GUARDED) {
- 			/* G bit must be zero in IBATs */
--			bat[0].batu = bat[0].batl = 0;
--		} else {
--			/* make IBAT same as DBAT */
--			bat[0] = bat[1];
-+			flags &= ~_PAGE_EXEC;
- 		}
-+		if (flags & _PAGE_EXEC)
-+			bat[0] = bat[1];
-+		else
-+			bat[0].batu = bat[0].batl = 0;
- 	} else {
- 		/* 601 cpu */
- 		if (bl > BL_8M)
+@@ -105,6 +105,38 @@ static unsigned int block_size(unsigned long base, unsigned long top)
+ 	return min3(max_size, 1U << base_shift, 1U << block_shift);
+ }
+ 
++/*
++ * Set up one of the IBAT (block address translation) register pairs.
++ * The parameters are not checked; in particular size must be a power
++ * of 2 between 128k and 256M.
++ * Only for 603+ ...
++ */
++static void setibat(int index, unsigned long virt, phys_addr_t phys,
++		    unsigned int size, pgprot_t prot)
++{
++	unsigned int bl = (size >> 17) - 1;
++	int wimgxpp;
++	struct ppc_bat *bat = BATS[index];
++	unsigned long flags = pgprot_val(prot);
++
++	if (!cpu_has_feature(CPU_FTR_NEED_COHERENT))
++		flags &= ~_PAGE_COHERENT;
++
++	wimgxpp = (flags & _PAGE_COHERENT) | (_PAGE_EXEC ? BPP_RX : BPP_XX);
++	bat[0].batu = virt | (bl << 2) | 2; /* Vs=1, Vp=0 */
++	bat[0].batl = BAT_PHYS_ADDR(phys) | wimgxpp;
++	if (flags & _PAGE_USER)
++		bat[0].batu |= 1;	/* Vp = 1 */
++}
++
++static void clearibat(int index)
++{
++	struct ppc_bat *bat = BATS[index];
++
++	bat[0].batu = 0;
++	bat[0].batl = 0;
++}
++
+ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
+ {
+ 	int idx;
 -- 
 2.13.3
 
