@@ -2,45 +2,53 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD94C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D858C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DAF5206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DAF5206B6
+	by mail.kernel.org (Postfix) with ESMTP id 211C92086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211C92086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeK2O2c (ORCPT
+        id S1727565AbeK2Odd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 09:28:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37610 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 09:33:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbeK2O2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 09:28:32 -0500
+        id S1727022AbeK2Odd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 09:33:33 -0500
 Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82A472086B;
-        Thu, 29 Nov 2018 03:24:38 +0000 (UTC)
-Date:   Wed, 28 Nov 2018 22:24:36 -0500
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BA45206B6;
+        Thu, 29 Nov 2018 03:29:38 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 22:29:36 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] kernel/trace: fix watchdog soft lockup
-Message-ID: <20181128222436.2d29ca9a@vmware.local.home>
-In-Reply-To: <CAK8P3a1tONAdbfncqzEYW_Q8LOrprez+8fYsCTTK9+d+O1Mc3w@mail.gmail.com>
-References: <20181128081334.18408-1-anders.roxell@linaro.org>
-        <20181128090903.7a27ae58@gandalf.local.home>
-        <CAK8P3a1tONAdbfncqzEYW_Q8LOrprez+8fYsCTTK9+d+O1Mc3w@mail.gmail.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
+ counter to prevent trace corruption
+Message-ID: <20181128222936.74da7f54@vmware.local.home>
+In-Reply-To: <20181128160021.09acd1af@gandalf.local.home>
+References: <20181122002801.501220343@goodmis.org>
+        <20181128203931.ym2rkya7a6agzzy3@redhat.com>
+        <20181128160021.09acd1af@gandalf.local.home>
 X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,135 +58,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 23:24:26 +0100
-Arnd Bergmann <arnd@arndb.de> wrote:
+On Wed, 28 Nov 2018 16:00:21 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Wed, Nov 28, 2018 at 3:09 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Wed, 28 Nov 2018 09:13:34 +0100
-> > Anders Roxell <anders.roxell@linaro.org> wrote:
-> >  
-> > > When building a allmodconfig kernel for arm64 and boot that in qemu,
-> > > CONFIG_FTRACE_STARTUP_TEST gets enabled and that takes time so the
-> > > watchdog expires and prints out a message like this:
-> > > 'watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]'
-> > > Each time the function ftrace_replace_code gets called it stays in that
-> > > functions loop for 41424 times.
-> > > Rework so that function cond_resched() gets called in the
-> > > ftrace_replace_code loop.
-> > >
-> > > Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > > ---
-> > >  kernel/trace/ftrace.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > > index 5b4f73e4fd56..3f456921dedf 100644
-> > > --- a/kernel/trace/ftrace.c
-> > > +++ b/kernel/trace/ftrace.c
-> > > @@ -2426,6 +2426,10 @@ void __weak ftrace_replace_code(int enable)
-> > >
-> > >       do_for_each_ftrace_rec(pg, rec) {
-> > >
-> > > +             /* This loop can take minutes when sanitizers are enabled, so
-> > > +              * lets make sure we allow RCU processing.
-> > > +              */
-> > > +             cond_resched();
-> > >               if (rec->flags & FTRACE_FL_DISABLED)
-> > >                       continue;
-> > >  
-> >
-> > NACK.  On some architectures this code is run from stop machine. We
-> > can't call cond_resched() because it may be called with interrupts
-> > disabled.
-> >
-> > This is a weak function. If arm64 has special needs, just copy it in
-> > the arm64 code.  
+> On Wed, 28 Nov 2018 15:39:31 -0500
+> Joe Lawrence <joe.lawrence@redhat.com> wrote:
 > 
-> I think it's currently broken on all architectures that don't already
-> override it, the problem being that the function is simply too
-> expensive when all debug options are enabled.
+> > Hi Steve,
+> > 
+> > With your ftrace/urgent branch linked above, if I try a quick
+> > function_graph test like the following:
+> > 
+> >   SYSFS=/sys/kernel/debug/tracing
+> > 
+> >   echo 0 > "$SYSFS/tracing_on"
+> >   echo cmdline_proc_show > "$SYSFS/set_graph_function"
+> >   echo function_graph > "$SYSFS/current_tracer"
+> >   echo 1 > "$SYSFS/tracing_on"
+> > 
+> > I see a bunch of scheduler interrupt functions in the trace/trace_pipe
+> > without even invoking cmdline_proc_show().
+> > 
+> > This tests works as expected with Linux 4.20-rc3 though:
+> > 
+> >   % cat /sys/kernel/debug/tracing/trace_pipe
+> >    2)               |  cmdline_proc_show() {
+> >    2)   0.320 us    |    seq_puts();
+> >    2)   0.030 us    |    seq_putc();
+> >    2)   1.352 us    |  }
+> > 
+> > Operator error, or did the patchset break something?  
+> 
+> Nope, that does seem to be a bug :-/
+>
 
-Would it be possible to add something like touch_nmi_watchdog()?
-
-> 
-> In an ARM64 allmodconfig kernel, there are 41424 records
-> that we iterate through several times. In an earlier version of the
-> test, the cond_resched() was only in the loop in
-> init_trace_selftests(), and I think that is safe and should /mostly/
-> solve the problem, so maybe Anders can submit that version again.
-> 
-> However, at least trace_selftest_ops() still takes half a minute
-> to complete in qemu, and that triggers the softlockup watchdog.
-> trace_selftest_ops() calls ftrace_replace_code() four or five times.
-
-And I don't have a problem with adding cond_resched() there. I'm
-concerned about adding it where it can be called with interrupts and/or
-preemption disabled.
-
-> 
-> Here is the excerpt with printk times from one of Anders' tests:
-> 
-> [    8.350607] Running postponed tracer tests:
-> [    8.356045] Testing tracer function:
-> [   18.932077] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   27.454205] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   27.462594] PASSED
-> [   27.462954] Testing dynamic ftrace:
-> [   28.510903] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   28.746934] PASSED
-> [   28.747469] Testing dynamic ftrace ops #1:
-> [   32.488427] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   32.501864] (1 0 1 0 0)
-> [   32.502041] (1 1 2 0 0)
-> [   50.213914] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   50.219736] (2 1 3 0 1066085)
-> [   50.220077] (2 2 4 0 1066100)
-> [   60.580678] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   60.758019] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   60.910501] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   60.918354] PASSED
-> [   60.919672] Testing dynamic ftrace ops #2:
-> [   64.680222] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   64.843430] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   81.247068] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   81.250895] (1 0 1 1033119 0)
-> [   81.251186] (1 1 2 1033134 0)
-> [   81.343168] (2 1 3 1 3732)
-> [   81.344492] (2 2 4 118 3849)
-> [   89.837665] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   89.844371] PASSED
-> [   89.844719] Testing ftrace recursion:
-> [   90.890373] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   91.042146] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   91.048475] PASSED
-> [   91.048806] Testing ftrace recursion safe:
-> [   92.091174] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   92.242403] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   92.249119] PASSED
-> [   92.249470] Testing ftrace regs(no arch support):
-> [   93.293605] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   93.444942] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [   93.451738] PASSED
-> [   93.452300] Testing tracer nop: PASSED
-> [   93.453288] Testing tracer irqsoff:
-> [  104.486368] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [  112.918828] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [  112.925809] PASSED
-> [  112.926435] Testing tracer function_graph:
-> [  123.303248] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [  132.599763] ../kernel/trace/ftrace.c:2441, loop_counter: 41424
-> [  132.607614] PASSED
-> 
-> In particular, the test_probe3 in trace_selftest_ops() takes
-> around 20 seconds, or 482 microseconds per loop iteration
-> in ftrace_replace_code().
-> Do you think there is another bug that makes it slower than
-> expected, or is that a reasonable time that it could take?
-
-Well, if you are doing it under qemu and with all the debug options
-set, I could expect it to take that long.
+Does this patch fix it for you?
 
 -- Steve
+
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 3b8c0e24ab30..1c8f4aa7020e 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -512,6 +512,9 @@ enum {
+  * can only be modified by current, we can reuse trace_recursion.
+  */
+ 	TRACE_IRQ_BIT,
++
++	/* Set if the function is in the set_graph_function file */
++	TRACE_GRAPH_BIT,
+ };
+ 
+ #define trace_recursion_set(bit)	do { (current)->trace_recursion |= (1<<(bit)); } while (0)
+@@ -855,6 +858,8 @@ static inline int ftrace_graph_addr(unsigned long addr)
+ 	}
+ 
+ 	if (ftrace_lookup_ip(ftrace_graph_hash, addr)) {
++
++		trace_recursion_set(TRACE_GRAPH_BIT);
+ 		/*
+ 		 * If no irqs are to be traced, but a set_graph_function
+ 		 * is set, and called by an interrupt handler, we still
+@@ -901,7 +906,8 @@ extern unsigned int fgraph_max_depth;
+ static inline bool ftrace_graph_ignore_func(struct ftrace_graph_ent *trace)
+ {
+ 	/* trace it when it is-nested-in or is a function enabled. */
+-	return !(trace->depth || ftrace_graph_addr(trace->func)) ||
++	return !(trace_recursion_test(TRACE_GRAPH_BIT) ||
++		 ftrace_graph_addr(trace->func)) ||
+ 		(trace->depth < 0) ||
+ 		(fgraph_max_depth && trace->depth >= fgraph_max_depth);
+ }
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 2561460d7baf..69fbb6225637 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -509,6 +509,9 @@ void trace_graph_return(struct ftrace_graph_ret *trace)
+ 	int cpu;
+ 	int pc;
+ 
++	if (!trace->depth)
++		trace_recursion_clear(TRACE_GRAPH_BIT);
++
+ 	local_irq_save(flags);
+ 	cpu = raw_smp_processor_id();
+ 	data = per_cpu_ptr(tr->trace_buffer.data, cpu);
+@@ -532,6 +535,8 @@ void set_graph_array(struct trace_array *tr)
+ 
+ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
+ {
++	if (!trace->depth)
++		trace_recursion_clear(TRACE_GRAPH_BIT);
+ 	if (tracing_thresh &&
+ 	    (trace->rettime - trace->calltime < tracing_thresh))
+ 		return;
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index b7357f9f82a3..b20bf076ce7f 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -208,6 +208,9 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	if (!trace->depth)
++		trace_recursion_clear(TRACE_GRAPH_BIT);
++
+ 	if (!func_prolog_dec(tr, &data, &flags))
+ 		return;
+ 
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index a86b303e6c67..069867f4eae6 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -270,6 +270,9 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace)
+ 	unsigned long flags;
+ 	int pc;
+ 
++	if (!trace->depth)
++		trace_recursion_clear(TRACE_GRAPH_BIT);
++
+ 	if (!func_prolog_preempt_disable(tr, &data, &pc))
+ 		return;
+ 
