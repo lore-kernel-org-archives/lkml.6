@@ -2,170 +2,168 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B10C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FBCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA7020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiHZmoCe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA7020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 97E862081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:51:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E862081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeK2Xzu (ORCPT
+        id S1728310AbeK2X44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:55:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35564 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbeK2Xzt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:55:49 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so977645pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 04:50:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ND9ZMiFSs7gvb+oNn4AdICkUx/3oAt1Y/vutGLYwcH4=;
-        b=GiHZmoCeUOvh+Ct/FMVj+KG2u4GTk6Mn6spQbmiuO6aQpiTZkM5n+M+/MKzgLSHpyw
-         NauwfrpiS9V3tFLnZIFOPY+GkBratWag8FChqpsdPEE/hBl6ZKTDOTp/n2W0YsKo9p5t
-         vAfC6rIbn/Gw1Yywll8P32WPGqdC+wSD/CyjJbSoIEKY7Inj4CgtPp5QVqYxxkh3slJR
-         PwKwa8cKMGFD1zJxuQXGu2/+2D4KbVULJvIkaGZcx5ffoTMhZYEAjW3aHEDTR0vJZrAJ
-         MA267UuQgWy5Waq4Bzl7wgDQhnHt3+JG1d/RmoG8tx19CwHCZF1YjUSvV+iecQOOyk46
-         V7zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ND9ZMiFSs7gvb+oNn4AdICkUx/3oAt1Y/vutGLYwcH4=;
-        b=a0Rs5/PhqZVdNqWUQHWV1cfcWgjTpf72u0uTR1nQPX/g1J5p9yUnJCQLQwnQiTy1Z3
-         /p62k6j8nqPrxLEkWZ2SHC9UNzKV79Lny4kLw/DEeaB2TuXNVNAx8CTFL19SqfCaPdU/
-         vhLk7cl+qX+yX9H8JbrNZsZd1Mc8T7wt3SVIZdI+uVs07tRSTQaqtZA5GD1KyayDdcO7
-         XG18W5RXGN6dIJO6wcDBrCtgqe9xzwnjlHfEwTS81eno9jlre/HfW4fKen3AQt/UUdj4
-         rhpr9P1un5YkaJAf08O23ArDorTcLrkOz0lKItrklN2lowCJ0Ji+stZCU/vQUc+wSzsz
-         CsxQ==
-X-Gm-Message-State: AA+aEWaGEhwOJaYeN0OlTFkQQB9KpHszxlC2fXj2yi54AuJ5waAEUeoq
-        a4jIjYgr05YsZurnYSxx6SQ=
-X-Google-Smtp-Source: AFSGD/UHkUP+zw7ZHo4Nr1L3aq/IfE03IP3vAkb0BOkF1JzTiju9rNtXSYM2bee2Kyfv2Mo67Eaarg==
-X-Received: by 2002:a63:d818:: with SMTP id b24mr1116272pgh.174.1543495833760;
-        Thu, 29 Nov 2018 04:50:33 -0800 (PST)
-Received: from localhost ([101.93.171.187])
-        by smtp.gmail.com with ESMTPSA id n186sm5287399pfn.137.2018.11.29.04.50.32
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 29 Nov 2018 04:50:33 -0800 (PST)
-From:   Yongji Xie <elohimes@gmail.com>
-X-Google-Original-From: Yongji Xie <xieyongji@baidu.com>
-To:     peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com
-Cc:     linux-kernel@vger.kernel.org, xieyongji@baidu.com,
-        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
-        nixun@baidu.com, lilin24@baidu.com
-Subject: [RFC] locking/rwsem: Avoid issuing wakeup before setting the reader waiter to nil
-Date:   Thu, 29 Nov 2018 20:50:30 +0800
-Message-Id: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 29 Nov 2018 18:56:56 -0500
+Received: from mga12.intel.com ([192.55.52.136]:61844 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727787AbeK2X44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:56:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 04:51:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
+   d="asc'?scan'208";a="278767462"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.97])
+  by orsmga005.jf.intel.com with ESMTP; 29 Nov 2018 04:51:36 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Johan Hovold <johan@kernel.org>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Roger Quadros <rogerq@ti.com>
+Cc:     "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar\@gmail.com" <v.anuragkumar@gmail.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
+Subject: RE: [PATCH V6 01/10] usb: gadget: udc: Add timer for stream capable endpoints
+In-Reply-To: <BL0PR02MB563317DEAFAD7C06B52FC23DA7D10@BL0PR02MB5633.namprd02.prod.outlook.com>
+References: <1539436498-24892-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1539436498-24892-2-git-send-email-anurag.kumar.vulisha@xilinx.com> <87k1lfiwx3.fsf@linux.intel.com> <BL0PR02MB563317DEAFAD7C06B52FC23DA7D10@BL0PR02MB5633.namprd02.prod.outlook.com>
+Date:   Thu, 29 Nov 2018 14:51:32 +0200
+Message-ID: <87h8g0yrl7.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xie Yongji <xieyongji@baidu.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Our system encountered a problem recently, the khungtaskd detected
-some process hang on mmap_sem. But the odd thing was that one task which
-is not on mmap_sem.wait_list still sleeps in rwsem_down_read_failed().
-Through code inspection, we found a potential bug can lead to this.
 
-Imaging this:
+Hi,
 
-Thread 1                                  Thread 2
-                                          down_write();
-rwsem_down_read_failed()
- raw_spin_lock_irq(&sem->wait_lock);
- list_add_tail(&waiter.list, &wait_list);
- raw_spin_unlock_irq(&sem->wait_lock);
-                                          __up_write();
-                                           rwsem_wake();
-                                            __rwsem_mark_wake();
-                                             wake_q_add();
-                                             list_del(&waiter->list);
-                                             waiter->task = NULL;
- while (true) {
-  set_current_state(TASK_UNINTERRUPTIBLE);
-  if (!waiter.task) // true
-      break;
- }
- __set_current_state(TASK_RUNNING);
+Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+>>> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/cor=
+e.c
+>>> index af88b48..41cc23b 100644
+>>> --- a/drivers/usb/gadget/udc/core.c
+>>> +++ b/drivers/usb/gadget/udc/core.c
+>>> @@ -52,6 +52,24 @@ static int udc_bind_to_driver(struct usb_udc *udc,
+>>>  /* -------------------------------------------------------------------=
+------ */
+>>>
+>>>  /**
+>>> + * usb_ep_stream_timeout - callback function for endpoint stream timeo=
+ut timer
+>>> + * @arg: pointer to struct timer_list
+>>> + *
+>>> + * This function gets called only when bulk streams are enabled in the=
+ endpoint
+>>> + * and only after ep->stream_timeout_timer has expired. The timer gets=
+ expired
+>>> + * only when the gadget controller failed to find a valid stream event=
+ for this
+>>> + * endpoint. On timer expiry, this function calls the endpoint-specifi=
+c timeout
+>>> + * handler registered to endpoint ops->stream_timeout API.
+>>> + */
+>>> +static void usb_ep_stream_timeout(struct timer_list *arg)
+>>> +{
+>>> +	struct usb_ep *ep =3D from_timer(ep, arg, stream_timeout_timer);
+>>> +
+>>> +	if (ep->stream_capable && ep->ops->stream_timeout)
+>>
+>>why is the timer only for stream endpoints? What if we want to run this
+>>on non-stream capable eps?
+>>
+>
+> I have seen this issue only with stream capable eps between PRIME &
+> EPRDY. But this issue can potentially occur with non-stream endpoints
+> also. Will remove this stream capable checks in next series of patch.
 
-Now Thread 1 is queued in Thread 2's wake_q without sleeping. Then
-Thread 1 call rwsem_down_read_failed() again because Thread 3
-hold the lock, if Thread 3 tries to queue Thread 1 before Thread 2
-do wakeup, it will fail and miss wakeup:
+you're adding support for transfer timeouts, which some gadgets may want
+regardless of endpoint type. One use is to correct cases of streams
+going out of sync.
 
-Thread 1                                  Thread 2      Thread 3
-                                                        down_write();
-rwsem_down_read_failed()
- raw_spin_lock_irq(&sem->wait_lock);
- list_add_tail(&waiter.list, &wait_list);
- raw_spin_unlock_irq(&sem->wait_lock);
-                                                        __rwsem_mark_wake();
-                                                         wake_q_add();
-                                          wake_up_q();
-                                                         waiter->task = NULL;
- while (true) {
-  set_current_state(TASK_UNINTERRUPTIBLE);
-  if (!waiter.task) // false
-      break;
-  schedule();
- }
-                                                        wake_up_q(&wake_q);
+>>> +		ep->ops->stream_timeout(ep);
+>>
+>>you don't ned an extra operation here, ep_dequeue should be enough.
+>>
+>
+> I think issuing ep_dequeue() would be more trickier than calling ep->ops-=
+>stream_timeout().
+> This is because, every gadget driver has their own way of handling ep_deq=
+ueue. Some
+> drivers (like dwc3) may sleep for an event (wait_event_lock_irq) in the e=
+p_dequeue routine.
 
-In another word, that means we might issue the wakeup before setting the reader
-waiter to nil. If so, the wakeup may do nothing when it was called before reader
-set task state to TASK_UNINTERRUPTIBLE. Then we would have no chance to wake up
-the reader any more, and cause other writers such as "ps" command stuck on it.
+not anymore. There's, now, a requirement that ->dequeue can be called
+from any context.
 
-This patch is not verified because we still have no way to reproduce the problem.
-But I'd like to ask for some comments from community firstly.
+> Since we are calling ep_dequeue from timer timeout callback which is in s=
+oftirq context,
+> sleeping or waiting for an event would hang the system. Also adding ep->o=
+ps->stream_timeout()
+> would make the gadget drivers handle the issue in better way based on the=
+ir implementation.
 
-Signed-off-by: Xie Yongji <xieyongji@baidu.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
----
- kernel/locking/rwsem-xadd.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+no problems
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 09b1800..50d9af6 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -198,15 +198,22 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		woken++;
- 		tsk = waiter->task;
- 
--		wake_q_add(wake_q, tsk);
-+		get_task_struct(tsk);
- 		list_del(&waiter->list);
- 		/*
--		 * Ensure that the last operation is setting the reader
-+		 * Ensure calling get_task_struct() before setting the reader
- 		 * waiter to nil such that rwsem_down_read_failed() cannot
- 		 * race with do_exit() by always holding a reference count
- 		 * to the task to wakeup.
- 		 */
- 		smp_store_release(&waiter->task, NULL);
-+		/*
-+		 * Ensure issuing the wakeup (either by us or someone else)
-+		 * after setting the reader waiter to nil.
-+		 */
-+		wake_q_add(wake_q, tsk);
-+		/* wake_q_add() already take the task ref */
-+		put_task_struct(tsk);
- 	}
- 
- 	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
--- 
-2.2.3
+> Another advantage is the drivers which doesn't have this timeout issue do=
+esn't have to register the
+> timeout handler and can avoid the logic of deleting the timer for every r=
+equest. So, I think
+> ep->ops->stream_timeout() would be better than having a generic handler w=
+hich does
+> ep_dequeue() & ep_queue(). Please provide your suggestion on this impleme=
+ntation.
 
+call ep_dequeue()
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlv/4NQACgkQzL64meEa
+mQaiwA//Ue5yvbElCDJQo5PRqexmbMqcB2q3FcIJOPsHk2SOEqgtT9v6CA9MtDdR
+1EzvCRZM2GzvjysWShCP4555joiMWhMfBYKU/Va1y9ZCwXFLvzKdmdZzQlsNmQU2
+9tkTkCzvbB9j5oK1WlcjKidQ+Xz3s3ccymayA3n7ZYw1/G27vliPfVPc8p7KMwor
+50i19EyyPsSNF2D3QPbnknvdZqGoLs1k1tuyYJfmxvr5n0nBV4vqsJ4lpvcqQBox
+Jp/Uu5V3/jkcrQFbQiipJRCvrSGxLSeP437K8X6KqQlOlQNrkxHHQTzDOgBGAQf7
+ZkocFmTzlIsNUHszEnsln9RhjcRyvk19sIPkKLIpxgawRCxrOBIWAw+ujBm2gpIX
+5B60bNspRCQAt4Hc1jDKi1a8yyaqt0JbIGhLkz/d6rFlg54UdT5eweHydwyDTCFv
+btYRJOcZ9iP6zQZlHFN5osVztBGy3ppMAwqxtJGWRPN4TIq0qUKBqroGLfjx3Er+
+l7vcAnJoiDI6vL4IgS/wksiHx1OXVpoZNP5SmHNCxfMZQ2REIOnQ4Z/c6rmvPM4f
+AWJ5tE58UoQaNQ/5W5jRDLgDWZSTUv6b7ihzAp8CPWBHPtZjWHSK6aWmqn1p5G9H
+fG8+rd2J8P6T1PQgTVS/RLKFX98wa+O8G3X3lPp8F+xMH4ntylg=
+=fe1M
+-----END PGP SIGNATURE-----
+--=-=-=--
