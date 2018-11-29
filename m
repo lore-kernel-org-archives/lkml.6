@@ -2,99 +2,87 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C4FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC0FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8ACF2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03F7722419
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:06:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bzhuhDnB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8ACF2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nygxx1lS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F7722419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeK3JKj (ORCPT
+        id S1726551AbeK3JM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:10:39 -0500
-Received: from ozlabs.org ([203.11.71.1]:52893 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeK3JKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:10:39 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 435WkN60KHz9s8r;
-        Fri, 30 Nov 2018 09:03:40 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543529021;
-        bh=5HBcPYHnyqFFOSXQbmQ2vfX7vVWQc9ADgC4LfLmIPgk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bzhuhDnB8Yz1Ya5pGMHSYRpBzh0viLdt+9ajRY4xpViMKINtaSjAyzSZbAZ5A95d+
-         m3JniwSfrEySvjVDjlnm2XMdIRVLfDcW9vyZgTm8Mhu3cpAQ89IGC7noeJg40eZSGx
-         PrOiEdtEoBOqbYkzvo9LcYFu5M17naL/5hvYroPQad1jRsuAPlv7IBymTx2OlfQ8ky
-         iTqrbYyqzP42nScuRW78Gb+oEw5f1ciCYS+D0Mh30ZWbcFMT6DBI4cAWji4jR26icw
-         +9KDX/swNfy5nYmgT37iwjjd74tsoTiFqul1mGbfDEhNhhvJ9xKMmKay+Cdb4hZnfp
-         1XxPQRH20UckQ==
-Date:   Fri, 30 Nov 2018 09:03:25 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: linux-next: build failure after merge of the clk tree
-Message-ID: <20181130090325.7526140e@canb.auug.org.au>
+        Fri, 30 Nov 2018 04:12:56 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54590 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbeK3JMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:12:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sQcchp0v1AdgV+xp04HannO5gduWeCP2b+Ww1xRMirI=; b=Nygxx1lSjsLaJNjNkpyw9sg6I
+        Mnq7rhNeYIHhjx0a00imKIsE8nfG1cn3JQGenCB8cUdZlV3YPUrenw5ru7Ltrkli3jDK3K3l+efC4
+        lFBobCoF+JuuVDT/MgUB6AMne2zVou2wy4Fh425OwQHAXc9ixLTbFGw5NtaKj/BzwocgDbLYW1tVG
+        +YdmRiGUgTrPSLhbovYJ/cp2+DPlWssyhZrlZdmWxakWAAGaPeEOSRCxm/2dw7t1zY4GB4jbzSGuM
+        YE/nttJ6YivxJ3gKApzTLeHyamY2QF5b/9Wpe7jESVsAfuLB8FzkZD3Q9I/yJgXSMQYQa6g1yh6oE
+        jWfvRaW5A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSURO-0005xR-5b; Thu, 29 Nov 2018 22:05:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C8F6D2029FD58; Thu, 29 Nov 2018 23:05:44 +0100 (CET)
+Date:   Thu, 29 Nov 2018 23:05:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Yongji Xie <elohimes@gmail.com>,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181129220544.GE11632@hirez.programming.kicks-ass.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+ <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+ <20181129183103.GA4952@arm.com>
+ <f991af45-2131-ad75-94cd-2c8548266a9e@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5w=Bnuv=9s_CopRFLzS.c2B"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f991af45-2131-ad75-94cd-2c8548266a9e@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 29, 2018 at 01:34:05PM -0500, Waiman Long wrote:
 
-Hi all,
+> That will certainly work for x86. However, I am not sure if that will be
+> optimal for arm and powerpc.
 
-After merging the clk tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+	smp_mb__before_atomic()
+	cmpxchg_relaxed()
 
-arm-linux-gnueabi-ld: drivers/clk/imx/clk-frac-pll.o: in function `clk_pll_=
-round_rate':
-clk-frac-pll.c:(.text+0x50): undefined reference to `__aeabi_uldivmod'
+works. Also see pv_kick_node()'s commit:
 
-Caused by commit
+  34d54f3d6917 ("locking/pvqspinlock: Relax cmpxchg's to improve performance on some architectures")
 
-  9fd680d0fafd ("clk: imx: add fractional PLL output clock")
-
-I have used the clk tree from next-20181129 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAYi0ACgkQAVBC80lX
-0GzI8gf9HFn6FEGZpfjlEjDmk9VAO8pqSde850yQIoTNZYdOj0DPUgaGiAPHVccR
-0uU7I5yWMiBfuCpp3OWesfMiDjhb98Wj8sxqbqHljjY8M7kWSn6BHwIYStQuyuyO
-DUzHuxPtxRfGEFtcbj2ApZU/2Up8Hec1uEVNLs0JTo5I0Wm89QRG4v22Vm794oau
-/rsZNfhGj+0W+mPGvBYZLTvq2V3kxrzxmV1POoTpqbH8MS/uxJoEUj1ZuVD7WjBL
-/sFM4UusrMlausFGC0qU+nia1EFvfHIrETFqamzfCoHvDfJPPyKeLyNmmn2z8ciZ
-lph8ZRTAwmm1tol495g2vOqZLgzEnw==
-=5mU8
------END PGP SIGNATURE-----
-
---Sig_/5w=Bnuv=9s_CopRFLzS.c2B--
+you might know the author of that :-)
