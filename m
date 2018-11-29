@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F084AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65553C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A5421019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CFB221104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z3h529/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A5421019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zh6l6yS/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFB221104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbeK3BTo (ORCPT
+        id S1729111AbeK3BTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:19:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40402 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:19:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728198AbeK3BTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:19:44 -0500
+        id S1728198AbeK3BTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:19:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13D1E2133F;
-        Thu, 29 Nov 2018 14:14:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79B1C208E7;
+        Thu, 29 Nov 2018 14:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500854;
-        bh=FZrHP36zVQwXvID7WNb606qsnT1+C3/nJfGj8anvTqs=;
+        s=default; t=1543500856;
+        bh=KXjsSbcaILZE7AuSfoXyyuP3oG4dpxFHZTllPS2ZW4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z3h529/RW4++cOghuSk3jTmAvsnmSTziPpJ2HsEYBQIazfVEn8xyc34+wyu/vMszJ
-         LltCRilEI7BVQltPoU/xPoFQQMwe7vF+tBB1irUpDR9IUvj5jbhAw6ujwyKTtIwQSt
-         YJTzKpYmjhf1nzM2G3ZnqNsrYwOU3e8USYF1kDOw=
+        b=zh6l6yS/TzB1T+l5TnnLAs8n6ON7VSQWD8feYK88TGpOGf5XXO6OfcOKNsSG7TXCr
+         Fb2hwLEloDmLvS61EnPh4Og9vv81uHu+WnSJWhgh18K2KuknF16tasDNLTLyMqdaBs
+         qVSlfjQGKgbu+GD1K7w8Cxw62DssKLeveLN6g1Cs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dario Scarpa <dario.scarpa@duskzone.it>,
-        Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 25/83] Input: xpad - fix Razer Atrox Arcade Stick button mapping
-Date:   Thu, 29 Nov 2018 15:11:43 +0100
-Message-Id: <20181129140139.446802582@linuxfoundation.org>
+Subject: [PATCH 3.18 26/83] Input: xpad - clarify LED enumeration
+Date:   Thu, 29 Nov 2018 15:11:44 +0100
+Message-Id: <20181129140139.484218666@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -64,33 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 470446ecef213b17b2c01df9879102948d77f999 ]
+[ Upstream commit 1f6f02b728eef0d937d5138ae60dbf8fbd045f3e ]
 
-The "Razer Atrox Arcade Stick" features 10 buttons, and two of them (LT/RT)
-don't work properly.  Change its definition in xpad_device[] (mapping
-field) to fix.
+Rename led_no -> pad_nr: the number stored there is not the LED number - it
+gets translated later on to a LED number in xpad_identify_controller;
 
-Signed-off-by: Dario Scarpa <dario.scarpa@duskzone.it>
 Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 7657cf4f08d9..e9a2e2d89772 100644
+index e9a2e2d89772..60ebd78a49a6 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -206,7 +206,7 @@ static const struct xpad_device {
- 	{ 0x1bad, 0xf900, "Harmonix Xbox 360 Controller", 0, XTYPE_XBOX360 },
- 	{ 0x1bad, 0xf901, "Gamestop Xbox 360 Controller", 0, XTYPE_XBOX360 },
- 	{ 0x1bad, 0xf903, "Tron Xbox 360 controller", 0, XTYPE_XBOX360 },
--	{ 0x24c6, 0x5000, "Razer Atrox Arcade Stick", 0, XTYPE_XBOX360 },
-+	{ 0x24c6, 0x5000, "Razer Atrox Arcade Stick", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
- 	{ 0x24c6, 0x5300, "PowerA MINI PROEX Controller", 0, XTYPE_XBOX360 },
- 	{ 0x24c6, 0x5303, "Xbox Airflo wired controller", 0, XTYPE_XBOX360 },
- 	{ 0x24c6, 0x5500, "Hori XBOX 360 EX 2 with Turbo", 0, XTYPE_XBOX360 },
+@@ -347,7 +347,7 @@ struct usb_xpad {
+ 
+ 	int mapping;			/* map d-pad to buttons or to axes */
+ 	int xtype;			/* type of xbox device */
+-	unsigned long led_no;		/* led to lit on xbox360 controllers */
++	unsigned long pad_nr;		/* the order x360 pads were attached */
+ };
+ 
+ /*
+@@ -359,7 +359,6 @@ struct usb_xpad {
+  *	The used report descriptor was taken from ITO Takayukis website:
+  *	 http://euc.jp/periphs/xbox-controller.ja.html
+  */
+-
+ static void xpad_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *data)
+ {
+ 	struct input_dev *dev = xpad->dev;
+@@ -508,7 +507,6 @@ static void xpad_identify_controller(struct usb_xpad *xpad);
+  * 01.1 - Pad state (Bytes 4+) valid
+  *
+  */
+-
+ static void xpad360w_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *data)
+ {
+ 	/* Presence change */
+@@ -893,6 +891,7 @@ struct xpad_led {
+ };
+ 
+ /**
++ * set the LEDs on Xbox360 / Wireless Controllers
+  * @param command
+  *  0: off
+  *  1: all blink, then previous setting
+@@ -945,10 +944,13 @@ static void xpad_send_led_command(struct usb_xpad *xpad, int command)
+ 	mutex_unlock(&xpad->odata_mutex);
+ }
+ 
++/*
++ * Light up the segment corresponding to the pad number on
++ * Xbox 360 Controllers.
++ */
+ static void xpad_identify_controller(struct usb_xpad *xpad)
+ {
+-	/* Light up the segment corresponding to controller number */
+-	xpad_send_led_command(xpad, (xpad->led_no % 4) + 2);
++	xpad_send_led_command(xpad, (xpad->pad_nr % 4) + 2);
+ }
+ 
+ static void xpad_led_set(struct led_classdev *led_cdev,
+@@ -974,9 +976,9 @@ static int xpad_led_probe(struct usb_xpad *xpad)
+ 	if (!led)
+ 		return -ENOMEM;
+ 
+-	xpad->led_no = atomic_inc_return(&led_seq);
++	xpad->pad_nr = atomic_inc_return(&led_seq);
+ 
+-	snprintf(led->name, sizeof(led->name), "xpad%lu", xpad->led_no);
++	snprintf(led->name, sizeof(led->name), "xpad%lu", xpad->pad_nr);
+ 	led->xpad = xpad;
+ 
+ 	led_cdev = &led->led_cdev;
 -- 
 2.17.1
 
