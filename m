@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095E1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28E4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52E22133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA7F52133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJWGzMRC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52E22133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSXuRafu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA7F52133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731631AbeK3B0v (ORCPT
+        id S1731643AbeK3B0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51186 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730438AbeK3B0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:50 -0500
+        id S1730438AbeK3B0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 014C2205C9;
-        Thu, 29 Nov 2018 14:21:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CFDD20868;
+        Thu, 29 Nov 2018 14:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501279;
-        bh=i2c453BkqByqdKsslx0kSw6HFyN/JBlP6jTZYHE6X4M=;
+        s=default; t=1543501281;
+        bh=WIGtJCGaFUTkiEpGVONbfFgyu1yIVcjdZkqTiidNVLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mJWGzMRCXsLFDk1BPzItEN/dvRSf+up0Luscd+q8EBQY0PlJKS2CKiSrky6fOKbAM
-         87LU+RWQfLPVAor73RUt4W94U02tCdZvyqIzSwSj+C20CV5WRpazGVYndfIO0a7gFg
-         88jCeNoDidbmVMbDqI7sJxgQ2mE7apnWx6g80SNQ=
+        b=WSXuRafuoLG4I2QurisDjIPCD4FB4+7/vWz9ttOP7j3qsOg6SqpeAGGGCU17xmX2R
+         zn6nIGPcGYvEgTTflvThIZaFH3WlOrztPqf/Mys8HV55xBGwRt3J3mVmF0fMwxG2D7
+         W01tnIBGZZwdQYlQrmVb4pIw9HCiCsaCKzrpP+no=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 08/92] brcmfmac: fix reporting support for 160 MHz channels
-Date:   Thu, 29 Nov 2018 15:11:37 +0100
-Message-Id: <20181129140107.166272173@linuxfoundation.org>
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Thomas Renninger <trenn@suse.de>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.9 09/92] tools/power/cpupower: fix compilation with STATIC=true
+Date:   Thu, 29 Nov 2018 15:11:38 +0100
+Message-Id: <20181129140107.241470845@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -62,38 +63,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-commit d1fe6ad6f6bd61c84788d3a7b11e459a439c6169 upstream.
+commit 9de9aa45e9bd67232e000cca42ceb134b8ae51b6 upstream.
 
-Driver can report IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160MHZ so it's
-important to provide valid & complete info about supported bands for
-each channel. By default no support for 160 MHz should be assumed unless
-firmware reports it for a given channel later.
+Rename duplicate sysfs_read_file into cpupower_read_sysfs and fix linking.
 
-This fixes info passed to the userspace. Without that change userspace
-could try to use invalid channel and fail to start an interface.
-
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-Cc: stable@vger.kernel.org
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Thomas Renninger <trenn@suse.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/power/cpupower/bench/Makefile        |    2 +-
+ tools/power/cpupower/lib/cpufreq.c         |    2 +-
+ tools/power/cpupower/lib/cpuidle.c         |    2 +-
+ tools/power/cpupower/lib/cpupower.c        |    4 ++--
+ tools/power/cpupower/lib/cpupower_intern.h |    2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -5990,7 +5990,8 @@ static int brcmf_construct_chaninfo(stru
- 			 * for subsequent chanspecs.
- 			 */
- 			channel->flags = IEEE80211_CHAN_NO_HT40 |
--					 IEEE80211_CHAN_NO_80MHZ;
-+					 IEEE80211_CHAN_NO_80MHZ |
-+					 IEEE80211_CHAN_NO_160MHZ;
- 			ch.bw = BRCMU_CHAN_BW_20;
- 			cfg->d11inf.encchspec(&ch);
- 			chaninfo = ch.chspec;
+--- a/tools/power/cpupower/bench/Makefile
++++ b/tools/power/cpupower/bench/Makefile
+@@ -8,7 +8,7 @@ endif
+ ifeq ($(strip $(STATIC)),true)
+ LIBS = -L../ -L$(OUTPUT) -lm
+ OBJS = $(OUTPUT)main.o $(OUTPUT)parse.o $(OUTPUT)system.o $(OUTPUT)benchmark.o \
+-       $(OUTPUT)../lib/cpufreq.o $(OUTPUT)../lib/sysfs.o
++       $(OUTPUT)../lib/cpufreq.o $(OUTPUT)../lib/cpupower.o
+ else
+ LIBS = -L../ -L$(OUTPUT) -lm -lcpupower
+ OBJS = $(OUTPUT)main.o $(OUTPUT)parse.o $(OUTPUT)system.o $(OUTPUT)benchmark.o
+--- a/tools/power/cpupower/lib/cpufreq.c
++++ b/tools/power/cpupower/lib/cpufreq.c
+@@ -28,7 +28,7 @@ static unsigned int sysfs_cpufreq_read_f
+ 
+ 	snprintf(path, sizeof(path), PATH_TO_CPU "cpu%u/cpufreq/%s",
+ 			 cpu, fname);
+-	return sysfs_read_file(path, buf, buflen);
++	return cpupower_read_sysfs(path, buf, buflen);
+ }
+ 
+ /* helper function to write a new value to a /sys file */
+--- a/tools/power/cpupower/lib/cpuidle.c
++++ b/tools/power/cpupower/lib/cpuidle.c
+@@ -319,7 +319,7 @@ static unsigned int sysfs_cpuidle_read_f
+ 
+ 	snprintf(path, sizeof(path), PATH_TO_CPU "cpuidle/%s", fname);
+ 
+-	return sysfs_read_file(path, buf, buflen);
++	return cpupower_read_sysfs(path, buf, buflen);
+ }
+ 
+ 
+--- a/tools/power/cpupower/lib/cpupower.c
++++ b/tools/power/cpupower/lib/cpupower.c
+@@ -15,7 +15,7 @@
+ #include "cpupower.h"
+ #include "cpupower_intern.h"
+ 
+-unsigned int sysfs_read_file(const char *path, char *buf, size_t buflen)
++unsigned int cpupower_read_sysfs(const char *path, char *buf, size_t buflen)
+ {
+ 	int fd;
+ 	ssize_t numread;
+@@ -95,7 +95,7 @@ static int sysfs_topology_read_file(unsi
+ 
+ 	snprintf(path, sizeof(path), PATH_TO_CPU "cpu%u/topology/%s",
+ 			 cpu, fname);
+-	if (sysfs_read_file(path, linebuf, MAX_LINE_LEN) == 0)
++	if (cpupower_read_sysfs(path, linebuf, MAX_LINE_LEN) == 0)
+ 		return -1;
+ 	*result = strtol(linebuf, &endp, 0);
+ 	if (endp == linebuf || errno == ERANGE)
+--- a/tools/power/cpupower/lib/cpupower_intern.h
++++ b/tools/power/cpupower/lib/cpupower_intern.h
+@@ -2,4 +2,4 @@
+ #define MAX_LINE_LEN 4096
+ #define SYSFS_PATH_MAX 255
+ 
+-unsigned int sysfs_read_file(const char *path, char *buf, size_t buflen);
++unsigned int cpupower_read_sysfs(const char *path, char *buf, size_t buflen);
 
 
