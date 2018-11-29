@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D48EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1B1C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFDE213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A0B2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0TGRopl1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFDE213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nppbqTyz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A0B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389287AbeK3Bh2 (ORCPT
+        id S2389301AbeK3Bha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbeK3Bh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:27 -0500
+        id S1732374AbeK3Bh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BE65213A2;
-        Thu, 29 Nov 2018 14:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75ED42146D;
+        Thu, 29 Nov 2018 14:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501913;
-        bh=7P5G6jWQ/LMhDsCD/UQAmfqcOV6mCEA0MKl9hY2ARxI=;
+        s=default; t=1543501915;
+        bh=/gUOVOCnyxNBnG5ybZo4a7SuuMnh6OUg4AAERSJpUi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0TGRopl1cq9/FGNztrSiXlTuFsQwnLf/GwBQnuqlNrq2uxtmRxIQtybirT8soRkaK
-         n3Ttsy9SVyPT9z0SfEa0qlE4YDfgMpUY7dv+XJoxG6mwmY68u+k79HDlcKX3SZ5bEA
-         snruS900tFiG+on5yxvJbgv37LlI/zlTT/ZPuf10=
+        b=nppbqTyzrOxisNxjsgAb0k0istEqdtRZgQPezLmGpumjhxsYNGwIFjooPXNz+Kwuj
+         8BtjyHh3cq50tl6Cx9Q1rDv9521xT/Tihsti9WWC3FzJpDdhV7zqc7018WmG+bQ1FD
+         9LRi9Fmumi5WQPhlhGRovblU0pX7kc4wfTgSGMHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 059/110] can: flexcan: Always use last mailbox for TX
-Date:   Thu, 29 Nov 2018 15:12:30 +0100
-Message-Id: <20181129135923.648208772@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 060/110] can: flexcan: remove not needed struct flexcan_priv::tx_mb and struct flexcan_priv::tx_mb_idx
+Date:   Thu, 29 Nov 2018 15:12:31 +0100
+Message-Id: <20181129135923.685914110@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,192 +61,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Stein <alexander.stein@systec-electronic.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit cbffaf7aa09edbaea2bc7dc440c945297095e2fd upstream.
+commit e05237f9da42ee52e73acea0bb082d788e111229 upstream.
 
-Essentially this patch moves the TX mailbox to position 63, regardless
-of timestamp based offloading or RX FIFO. So mainly the iflag register
-usage regarding TX has changed. The rest is consolidating RX FIFO and
-timestamp offloading as they now use both the same TX mailbox.
+The previous patch changes the TX path to always use the last mailbox
+regardless of the used offload scheme (rx-fifo or timestamp based). This
+means members "tx_mb" and "tx_mb_idx" of the struct flexcan_priv don't
+depend on the offload scheme, so replace them by compile time constants.
 
-The reason is a very annoying behavior regarding sending RTR frames when
-_not_ using RX FIFO:
-
-If a TX mailbox sent a RTR frame it becomes a RX mailbox. For that
-reason flexcan_irq disables the TX mailbox again. But if during the time
-the RTR was sent and the TX mailbox is disabled a new CAN frames is
-received, it is lost without notice. The reason is that so-called
-"Move-in" process starts from the lowest mailbox which happen to be a TX
-mailbox set to EMPTY.
-
-Steps to reproduce (I used an imx7d):
-1. generate regular bursts of messages
-2. send a RTR from flexcan with higher priority than burst messages every
-   1ms, e.g. cangen -I 0x100 -L 0 -g 1 -R can0
-3. notice a lost message without notification after some seconds
-
-When running an iperf in parallel this problem is occurring even more
-frequently. Using filters is not possible as at least one single CAN-ID
-is allowed. Handling the TX MB during RX is also not possible as there
-is no race-free disable of RX MB.
-
-There is still a slight window when the described problem can occur. But
-for that all RX MB must be in use which is essentially next to an
-overrun. Still there will be no indication if it ever occurs.
-
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/flexcan.c |   67 ++++++++++++++++++++++------------------------
- 1 file changed, 33 insertions(+), 34 deletions(-)
+ drivers/net/can/flexcan.c |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
 --- a/drivers/net/can/flexcan.c
 +++ b/drivers/net/can/flexcan.c
-@@ -135,13 +135,12 @@
+@@ -258,9 +258,7 @@ struct flexcan_priv {
+ 	struct can_rx_offload offload;
  
- /* FLEXCAN interrupt flag register (IFLAG) bits */
- /* Errata ERR005829 step7: Reserve first valid MB */
--#define FLEXCAN_TX_MB_RESERVED_OFF_FIFO	8
--#define FLEXCAN_TX_MB_OFF_FIFO		9
-+#define FLEXCAN_TX_MB_RESERVED_OFF_FIFO		8
- #define FLEXCAN_TX_MB_RESERVED_OFF_TIMESTAMP	0
--#define FLEXCAN_TX_MB_OFF_TIMESTAMP		1
--#define FLEXCAN_RX_MB_OFF_TIMESTAMP_FIRST	(FLEXCAN_TX_MB_OFF_TIMESTAMP + 1)
--#define FLEXCAN_RX_MB_OFF_TIMESTAMP_LAST	63
--#define FLEXCAN_IFLAG_MB(x)		BIT(x)
-+#define FLEXCAN_TX_MB				63
-+#define FLEXCAN_RX_MB_OFF_TIMESTAMP_FIRST	(FLEXCAN_TX_MB_RESERVED_OFF_TIMESTAMP + 1)
-+#define FLEXCAN_RX_MB_OFF_TIMESTAMP_LAST	(FLEXCAN_TX_MB - 1)
-+#define FLEXCAN_IFLAG_MB(x)		BIT(x & 0x1f)
- #define FLEXCAN_IFLAG_RX_FIFO_OVERFLOW	BIT(7)
- #define FLEXCAN_IFLAG_RX_FIFO_WARN	BIT(6)
- #define FLEXCAN_IFLAG_RX_FIFO_AVAILABLE	BIT(5)
-@@ -745,9 +744,9 @@ static inline u64 flexcan_read_reg_iflag
- 	struct flexcan_regs __iomem *regs = priv->regs;
- 	u32 iflag1, iflag2;
+ 	struct flexcan_regs __iomem *regs;
+-	struct flexcan_mb __iomem *tx_mb;
+ 	struct flexcan_mb __iomem *tx_mb_reserved;
+-	u8 tx_mb_idx;
+ 	u32 reg_ctrl_default;
+ 	u32 reg_imask1_default;
+ 	u32 reg_imask2_default;
+@@ -514,6 +512,7 @@ static int flexcan_get_berr_counter(cons
+ static netdev_tx_t flexcan_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	const struct flexcan_priv *priv = netdev_priv(dev);
++	struct flexcan_regs __iomem *regs = priv->regs;
+ 	struct can_frame *cf = (struct can_frame *)skb->data;
+ 	u32 can_id;
+ 	u32 data;
+@@ -536,17 +535,17 @@ static netdev_tx_t flexcan_start_xmit(st
  
--	iflag2 = priv->read(&regs->iflag2) & priv->reg_imask2_default;
--	iflag1 = priv->read(&regs->iflag1) & priv->reg_imask1_default &
-+	iflag2 = priv->read(&regs->iflag2) & priv->reg_imask2_default &
- 		~FLEXCAN_IFLAG_MB(priv->tx_mb_idx);
-+	iflag1 = priv->read(&regs->iflag1) & priv->reg_imask1_default;
- 
- 	return (u64)iflag2 << 32 | iflag1;
- }
-@@ -759,11 +758,9 @@ static irqreturn_t flexcan_irq(int irq,
- 	struct flexcan_priv *priv = netdev_priv(dev);
- 	struct flexcan_regs __iomem *regs = priv->regs;
- 	irqreturn_t handled = IRQ_NONE;
--	u32 reg_iflag1, reg_esr;
-+	u32 reg_iflag2, reg_esr;
- 	enum can_state last_state = priv->can.state;
- 
--	reg_iflag1 = priv->read(&regs->iflag1);
--
- 	/* reception interrupt */
- 	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP) {
- 		u64 reg_iflag;
-@@ -777,6 +774,9 @@ static irqreturn_t flexcan_irq(int irq,
- 				break;
- 		}
- 	} else {
-+		u32 reg_iflag1;
-+
-+		reg_iflag1 = priv->read(&regs->iflag1);
- 		if (reg_iflag1 & FLEXCAN_IFLAG_RX_FIFO_AVAILABLE) {
- 			handled = IRQ_HANDLED;
- 			can_rx_offload_irq_offload_fifo(&priv->offload);
-@@ -792,8 +792,10 @@ static irqreturn_t flexcan_irq(int irq,
- 		}
+ 	if (cf->can_dlc > 0) {
+ 		data = be32_to_cpup((__be32 *)&cf->data[0]);
+-		priv->write(data, &priv->tx_mb->data[0]);
++		priv->write(data, &regs->mb[FLEXCAN_TX_MB].data[0]);
+ 	}
+ 	if (cf->can_dlc > 4) {
+ 		data = be32_to_cpup((__be32 *)&cf->data[4]);
+-		priv->write(data, &priv->tx_mb->data[1]);
++		priv->write(data, &regs->mb[FLEXCAN_TX_MB].data[1]);
  	}
  
-+	reg_iflag2 = priv->read(&regs->iflag2);
-+
+ 	can_put_echo_skb(skb, dev, 0);
+ 
+-	priv->write(can_id, &priv->tx_mb->can_id);
+-	priv->write(ctrl, &priv->tx_mb->can_ctrl);
++	priv->write(can_id, &regs->mb[FLEXCAN_TX_MB].can_id);
++	priv->write(ctrl, &regs->mb[FLEXCAN_TX_MB].can_ctrl);
+ 
+ 	/* Errata ERR005829 step8:
+ 	 * Write twice INACTIVE(0x8) code to first MB.
+@@ -745,7 +744,7 @@ static inline u64 flexcan_read_reg_iflag
+ 	u32 iflag1, iflag2;
+ 
+ 	iflag2 = priv->read(&regs->iflag2) & priv->reg_imask2_default &
+-		~FLEXCAN_IFLAG_MB(priv->tx_mb_idx);
++		~FLEXCAN_IFLAG_MB(FLEXCAN_TX_MB);
+ 	iflag1 = priv->read(&regs->iflag1) & priv->reg_imask1_default;
+ 
+ 	return (u64)iflag2 << 32 | iflag1;
+@@ -795,7 +794,7 @@ static irqreturn_t flexcan_irq(int irq,
+ 	reg_iflag2 = priv->read(&regs->iflag2);
+ 
  	/* transmission complete interrupt */
--	if (reg_iflag1 & FLEXCAN_IFLAG_MB(priv->tx_mb_idx)) {
-+	if (reg_iflag2 & FLEXCAN_IFLAG_MB(priv->tx_mb_idx)) {
+-	if (reg_iflag2 & FLEXCAN_IFLAG_MB(priv->tx_mb_idx)) {
++	if (reg_iflag2 & FLEXCAN_IFLAG_MB(FLEXCAN_TX_MB)) {
  		u32 reg_ctrl = priv->read(&regs->mb[FLEXCAN_TX_MB].can_ctrl);
  
  		handled = IRQ_HANDLED;
-@@ -805,7 +807,7 @@ static irqreturn_t flexcan_irq(int irq,
+@@ -806,8 +805,8 @@ static irqreturn_t flexcan_irq(int irq,
+ 
  		/* after sending a RTR frame MB is in RX mode */
  		priv->write(FLEXCAN_MB_CODE_TX_INACTIVE,
- 			    &priv->tx_mb->can_ctrl);
--		priv->write(FLEXCAN_IFLAG_MB(priv->tx_mb_idx), &regs->iflag1);
-+		priv->write(FLEXCAN_IFLAG_MB(priv->tx_mb_idx), &regs->iflag2);
+-			    &priv->tx_mb->can_ctrl);
+-		priv->write(FLEXCAN_IFLAG_MB(priv->tx_mb_idx), &regs->iflag2);
++			    &regs->mb[FLEXCAN_TX_MB].can_ctrl);
++		priv->write(FLEXCAN_IFLAG_MB(FLEXCAN_TX_MB), &regs->iflag2);
  		netif_wake_queue(dev);
  	}
  
-@@ -947,15 +949,13 @@ static int flexcan_chip_start(struct net
+@@ -949,7 +948,7 @@ static int flexcan_chip_start(struct net
  	reg_mcr &= ~FLEXCAN_MCR_MAXMB(0xff);
  	reg_mcr |= FLEXCAN_MCR_FRZ | FLEXCAN_MCR_HALT | FLEXCAN_MCR_SUPV |
  		FLEXCAN_MCR_WRN_EN | FLEXCAN_MCR_SRX_DIS | FLEXCAN_MCR_IRMQ |
--		FLEXCAN_MCR_IDAM_C;
-+		FLEXCAN_MCR_IDAM_C | FLEXCAN_MCR_MAXMB(priv->tx_mb_idx);
+-		FLEXCAN_MCR_IDAM_C | FLEXCAN_MCR_MAXMB(priv->tx_mb_idx);
++		FLEXCAN_MCR_IDAM_C | FLEXCAN_MCR_MAXMB(FLEXCAN_TX_MB);
  
--	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP) {
-+	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP)
+ 	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP)
  		reg_mcr &= ~FLEXCAN_MCR_FEN;
--		reg_mcr |= FLEXCAN_MCR_MAXMB(priv->offload.mb_last);
--	} else {
--		reg_mcr |= FLEXCAN_MCR_FEN |
--			FLEXCAN_MCR_MAXMB(priv->tx_mb_idx);
--	}
-+	else
-+		reg_mcr |= FLEXCAN_MCR_FEN;
-+
- 	netdev_dbg(dev, "%s: writing mcr=0x%08x", __func__, reg_mcr);
- 	priv->write(reg_mcr, &regs->mcr);
+@@ -1017,7 +1016,7 @@ static int flexcan_chip_start(struct net
  
-@@ -998,16 +998,17 @@ static int flexcan_chip_start(struct net
- 		priv->write(reg_ctrl2, &regs->ctrl2);
- 	}
+ 	/* mark TX mailbox as INACTIVE */
+ 	priv->write(FLEXCAN_MB_CODE_TX_INACTIVE,
+-		    &priv->tx_mb->can_ctrl);
++		    &regs->mb[FLEXCAN_TX_MB].can_ctrl);
  
--	/* clear and invalidate all mailboxes first */
--	for (i = priv->tx_mb_idx; i < ARRAY_SIZE(regs->mb); i++) {
--		priv->write(FLEXCAN_MB_CODE_RX_INACTIVE,
--			    &regs->mb[i].can_ctrl);
--	}
--
- 	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP) {
--		for (i = priv->offload.mb_first; i <= priv->offload.mb_last; i++)
-+		for (i = priv->offload.mb_first; i <= priv->offload.mb_last; i++) {
- 			priv->write(FLEXCAN_MB_CODE_RX_EMPTY,
- 				    &regs->mb[i].can_ctrl);
-+		}
-+	} else {
-+		/* clear and invalidate unused mailboxes first */
-+		for (i = FLEXCAN_TX_MB_RESERVED_OFF_FIFO; i <= ARRAY_SIZE(regs->mb); i++) {
-+			priv->write(FLEXCAN_MB_CODE_RX_INACTIVE,
-+				    &regs->mb[i].can_ctrl);
-+		}
- 	}
- 
- 	/* Errata ERR005829: mark first TX mailbox as INACTIVE */
-@@ -1371,17 +1372,15 @@ static int flexcan_probe(struct platform
- 	priv->devtype_data = devtype_data;
- 	priv->reg_xceiver = reg_xceiver;
- 
--	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP) {
--		priv->tx_mb_idx = FLEXCAN_TX_MB_OFF_TIMESTAMP;
-+	if (priv->devtype_data->quirks & FLEXCAN_QUIRK_USE_OFF_TIMESTAMP)
+ 	/* acceptance mask/acceptance code (accept everything) */
+ 	priv->write(0x0, &regs->rxgmask);
+@@ -1376,11 +1375,9 @@ static int flexcan_probe(struct platform
  		priv->tx_mb_reserved = &regs->mb[FLEXCAN_TX_MB_RESERVED_OFF_TIMESTAMP];
--	} else {
--		priv->tx_mb_idx = FLEXCAN_TX_MB_OFF_FIFO;
-+	else
+ 	else
  		priv->tx_mb_reserved = &regs->mb[FLEXCAN_TX_MB_RESERVED_OFF_FIFO];
--	}
-+	priv->tx_mb_idx = FLEXCAN_TX_MB;
- 	priv->tx_mb = &regs->mb[priv->tx_mb_idx];
+-	priv->tx_mb_idx = FLEXCAN_TX_MB;
+-	priv->tx_mb = &regs->mb[priv->tx_mb_idx];
  
--	priv->reg_imask1_default = FLEXCAN_IFLAG_MB(priv->tx_mb_idx);
--	priv->reg_imask2_default = 0;
-+	priv->reg_imask1_default = 0;
-+	priv->reg_imask2_default = FLEXCAN_IFLAG_MB(priv->tx_mb_idx);
+ 	priv->reg_imask1_default = 0;
+-	priv->reg_imask2_default = FLEXCAN_IFLAG_MB(priv->tx_mb_idx);
++	priv->reg_imask2_default = FLEXCAN_IFLAG_MB(FLEXCAN_TX_MB);
  
  	priv->offload.mailbox_read = flexcan_mailbox_read;
  
