@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFC5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B898CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8339D2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 737772133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sr3i2TrC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8339D2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNcD/7k2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737772133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbeK3BWH (ORCPT
+        id S1730098AbeK3BWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43684 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728561AbeK3BWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:06 -0500
+        id S1730082AbeK3BWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54DEB213A2;
-        Thu, 29 Nov 2018 14:16:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B61D22133F;
+        Thu, 29 Nov 2018 14:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500995;
-        bh=hNz+/3d1JQjH83++0LA7vQ7Ycusa9q29THYanaOpfUY=;
+        s=default; t=1543500998;
+        bh=BPetHOdyzaTZ5IM6xsYtmpR4O1xALzBJoI+i7H76mbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sr3i2TrCQ1d4cB8pcO1tanR2xiI19IeYeKe60mnFGZ+266zasUtpBOmNbrcyivs2z
-         N7lpQnNIgjtcxyFPNET6TVAo7rs9WXaLs9PY6Eav/mBw2Rz0QT+unLj9jkaYPARdvv
-         2jvSTQZcPzRbRg+WD26LSUwD5/PWxhe+cGNuD250=
+        b=TNcD/7k2hsX0Q3neCZ15qDyIt+i+1NCsD1uIMJNyTjh1TlsxBDAZYqk0qEQJdU6L0
+         CQfzCJ9dCmwGrUQ8I3YLZQoWjRE276byT09/922W18ssZ5/ezhr5kVxGfOpCI6oF4D
+         sm5zmxw9cqEY3dKx4K1EHR/Qusz01icoXl1g1fU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Lee <flibitijibibo@gmail.com>,
+        stable@vger.kernel.org, Enno Boland <gottox@voidlinux.eu>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 72/83] Input: xpad - add GPD Win 2 Controller USB IDs
-Date:   Thu, 29 Nov 2018 15:12:30 +0100
-Message-Id: <20181129140142.083572570@linuxfoundation.org>
+Subject: [PATCH 3.18 73/83] Input: xpad - fix GPD Win 2 controller name
+Date:   Thu, 29 Nov 2018 15:12:31 +0100
+Message-Id: <20181129140142.148642863@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -63,40 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c1ba08390a8bb13c927e699330896adc15b78205 ]
+[ Upstream commit dd6bee81c942c0ea01030da9356026afb88f9d18 ]
 
-GPD Win 2 Website: http://www.gpd.hk/gpdwin2.asp
+This fixes using the controller with SDL2.
 
-Tested on a unit from the first production run sent to Indiegogo backers
+SDL2 has a naive algorithm to apply the correct settings to a controller.
+For X-Box compatible controllers it expects that the controller name
+contains a variation of a 'XBOX'-string.
 
-Signed-off-by: Ethan Lee <flibitijibibo@gmail.com>
+This patch changes the identifier to contain "X-Box" as substring.  Tested
+with Steam and C-Dogs-SDL which both detect the controller properly after
+adding this patch.
+
+Fixes: c1ba08390a8b ("Input: xpad - add GPD Win 2 Controller USB IDs")
 Cc: stable@vger.kernel.org
+Signed-off-by: Enno Boland <gottox@voidlinux.eu>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/input/joystick/xpad.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 5bf85c43e6d9..66cc37b41113 100644
+index 66cc37b41113..69b44aebaf01 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -128,6 +128,7 @@ static const struct xpad_device {
+@@ -128,7 +128,7 @@ static const struct xpad_device {
  	u8 mapping;
  	u8 xtype;
  } xpad_device[] = {
-+	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
+-	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
++	{ 0x0079, 0x18d4, "GPD Win 2 X-Box Controller", 0, XTYPE_XBOX360 },
  	{ 0x044f, 0x0f00, "Thrustmaster Wheel", 0, XTYPE_XBOX },
  	{ 0x044f, 0x0f03, "Thrustmaster Wheel", 0, XTYPE_XBOX },
  	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
-@@ -414,6 +415,7 @@ static const signed short xpad_abs_triggers[] = {
- 
- static const struct usb_device_id xpad_table[] = {
- 	{ USB_INTERFACE_INFO('X', 'B', 0) },	/* X-Box USB-IF not approved class */
-+	XPAD_XBOX360_VENDOR(0x0079),		/* GPD Win 2 Controller */
- 	XPAD_XBOX360_VENDOR(0x044f),		/* Thrustmaster X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x045e),		/* Microsoft X-Box 360 controllers */
- 	XPAD_XBOXONE_VENDOR(0x045e),		/* Microsoft X-Box One controllers */
 -- 
 2.17.1
 
