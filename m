@@ -2,120 +2,123 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7719C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545C820868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:10:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2DFgB/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545C820868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id 8481D20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8481D20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbeK3CPm (ORCPT
+        id S1728549AbeK3CSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:15:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:32813 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbeK3CPl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:15:41 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i20so2059224otl.0;
-        Thu, 29 Nov 2018 07:10:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=njDPO7eRcKSKwnJmQxEb1ParYuJ6CzGy5clgzweirns=;
-        b=T2DFgB/u8vSQS25IznOOS02AiKOYCrs6xwGpEE7yfDY/etx21pK+hYPGZ/q3kwS/pt
-         kJfCbXrnCu53i9l1BStKi02HmcnPhQDVJNc9Dh0SY4XwiJUmR8QpqIxEkB4tKX2CqwU4
-         b6oDUx/WOVNv6YbYPQa1RB1fKDKGuJWWbP5oc5kiHYJD9wyG4s1UUwexqWX3Hzfg0F+d
-         sm1Q4fYfcCpONuQ8o/U+A7754mQYWLWF8QL3/ZDHBkaPN4KBPUvBkUqS/gNHMiqh0UBE
-         zP9CvjtDZ2lR3zF1GXOpBcQClo81LyQJhzE0YBgCYzXqCjWxsrJG+hrWKVnF9ia8tCBP
-         yFlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=njDPO7eRcKSKwnJmQxEb1ParYuJ6CzGy5clgzweirns=;
-        b=bZISmXKBf0xAKUHy+2JOPGAp3el/zsTo2BPTVhO7AogJ5U8cOH3QZjIWHFUGQMV5vG
-         rAAjFIGJ4GaboKU4+njFkfROUnacnIsdDSC/97pH2PfWc8o2xolxtpZg0Dfphya1dABZ
-         zA09rZTGJna0lo5J/IpzPbtoOMScAUdLEdAWix8d+/xSlcerUUh6Pjmr16xSvz8UnACT
-         7LqXaajebIrWmyASWbFDypXDUjiDUovSgkbckFLPOZx8QpCcgKqjma+C2dhrPKs97d/O
-         lQBtfalWAG7mmkyBm2lmeBNrNNIV/JchzjKU/YHRjgJa5N8EW1wLhB0Plplt3EUO/dYB
-         cZ3w==
-X-Gm-Message-State: AA+aEWZW0w3RUXwy7e9mijj/crUt78KhtdoElMzkYPHs3a9fhCGFYkBJ
-        k2kY9YqYAv3WJMmsyzc+G1yZOdI/
-X-Google-Smtp-Source: AFSGD/UQLOq24jnh+EEdScueK43TCZ0cOZRRsYcjXVJCZ8iSx4is57A1qceznZ7AGWOEBg1S1mDQMg==
-X-Received: by 2002:a9d:401:: with SMTP id 1mr1096008otc.78.1543504201181;
-        Thu, 29 Nov 2018 07:10:01 -0800 (PST)
-Received: from [192.168.1.103] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id k130sm606858oia.47.2018.11.29.07.09.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 07:10:00 -0800 (PST)
-Subject: Re: [PATCH] rtl818x: fix potential use after free
-To:     Pan Bian <bianpan2016@163.com>,
-        Herton Ronaldo Krzesinski <herton@canonical.com>,
-        Hin-Tak Leung <htl10@users.sourceforge.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1543488490-101743-1-git-send-email-bianpan2016@163.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <984166c8-bf7a-33f0-f5c5-269ee14f420a@lwfinger.net>
-Date:   Thu, 29 Nov 2018 09:09:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <1543488490-101743-1-git-send-email-bianpan2016@163.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Nov 2018 21:18:51 -0500
+Received: from mout.gmx.net ([212.227.17.20]:42131 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728157AbeK3CSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:18:51 -0500
+Received: from qcai.nay.com ([66.187.233.206]) by mail.gmx.com (mrgmx101
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0MaW7Z-1gmXRw459d-00K6sN; Thu, 29
+ Nov 2018 16:13:06 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
+Subject: [PATCH] drivers/base: kmemleak ignore a known leak
+Date:   Thu, 29 Nov 2018 10:12:37 -0500
+Message-Id: <1543504357-4873-1-git-send-email-cai@gmx.us>
+X-Mailer: git-send-email 1.8.3.1
+X-Provags-ID: V03:K1:lnnftETvPtCtJnA/059mpJB2L/kI83crxipHbJH63jnTVKe8pLK
+ f1JHDHmPaeSLcBzQYDuoB45I2tju5sZ1Pp2P8gMJJ7vG1zRf3WjNO3KmTc218C8b16kuN1M
+ h2oyeaqT1pS/YL0dMrq3X1uCZvK1FnaM/xyquk1UuWAzrBwaQtFh5TNyQFH6AenMnkOt6NV
+ RGFBCuQBDBYEJaXhxgr7A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cy93LiFgKpE=:C0GhFTmMKLvCtPfn2qK1MU
+ +b+E9rpqfTKvAExoVjsoHSWH3MgdDHtOQ7ARc22RkCIWlO3JOQl6L/IO6nGB6oCxEwnjVKWdw
+ 0r4elhFpm9tWR4P1t78rN3DYJwUwDhVFybXh9H+Wo68rxGr2t+kLR4YeU7NJd8USfa/UNSm2s
+ GA46lDdK6T01tkLm67tRXhadpomN8sBjOeJke/0heWEF+xz9F4+62eIWK1AIGS0H2hOJm5IUl
+ nZth81oZRQT4RRMhfnAo61XNNsv+VZ+8wtD3u9AHN9yybbmuhn2TcKUUOpIl8ULi5ZymsfV09
+ 2eWsvAmUI8hAh9OdHQqscjPZWnIsUdbxn4uMtz7/VeTfYmpqGsJ5tAlHdo2/R9T1r09F1FZkD
+ 0D/olvdMWCCh64DN5F4AgSmRmYbdiHwwhU11nrlYxH3BG/nfM6HYwigJLg2dwAl80k6vjVneO
+ qf77UYWu+dxT+0sqiSwdzLLiiZy6xGDIZ11XavU5bwJLO2jNgTvHjVjYzBo7enkB62VGC6VAW
+ pob1764LAGzBSBZxqF950WZdV+auuj0pCgnyLW+5soVw4zhebaHRiB5mzTvm5RxHZZlqdSx/Z
+ lEj5cjJf9cHZ+8EXmfv5psddzPvHdewvjRNkFkjMbyFO21DL8RhVm1bfOB0cp3zyeb+ii7h/M
+ PHERgf7mBze15ZIOfA5cTphUc+dGwdZNB2nshwVHpcHXhXz+Prk0qiTlZu/n8eCpx4TGe8pcL
+ 2sv4c7DIfL9lXGroIKWy9ZxaNsWi9bDSL/hlNLXJYebTCQjp/9v+LQxTCN1H7xO9ePbbxxHgS
+ rsSpcSCCs6WBr4Fooetd/XpCnONDcrGOiusay86xaCT2xxfJVOAyZ7dtxfVMKgwWiSgYgdo7q
+ K3NV7NMvHDzdfZ/NE71vb3dOq8GckoQ0s4PDDSvSw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 4:48 AM, Pan Bian wrote:
-> entry is released via usb_put_urb just after calling usb_submit_urb.
-> However, entry is used if the submission fails, resulting in a use after
-> free bug. The patch fixes this.
-> 
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
-> ---
->   drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-> index cec3778..1a2ea8b 100644
-> --- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-> +++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-> @@ -444,12 +444,13 @@ static int rtl8187_init_urbs(struct ieee80211_hw *dev)
->   		skb_queue_tail(&priv->rx_queue, skb);
->   		usb_anchor_urb(entry, &priv->anchored);
->   		ret = usb_submit_urb(entry, GFP_KERNEL);
-> -		usb_put_urb(entry);
->   		if (ret) {
->   			skb_unlink(skb, &priv->rx_queue);
->   			usb_unanchor_urb(entry);
-> +			usb_put_urb(entry);
->   			goto err;
->   		}
-> +		usb_put_urb(entry);
->   	}
->   	return ret;
+unreferenced object 0xffff808ec6dc5a80 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294938063 (age 2560.530s)
+  hex dump (first 32 bytes):
+    ff ff ff ff 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
+    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
+  backtrace:
+    [<00000000476dcf8c>] kmem_cache_alloc_trace+0x430/0x500
+    [<000000004f708d37>] platform_device_register_full+0xbc/0x1e8
+    [<000000006c2a7ec7>] acpi_create_platform_device+0x370/0x450
+    [<00000000ef135642>] acpi_default_enumeration+0x34/0x78
+    [<000000003bd9a052>] acpi_bus_attach+0x2dc/0x3e0
+    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
+    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
+    [<000000002968643e>] acpi_bus_scan+0xb0/0x110
+    [<0000000010dd0bd7>] acpi_scan_init+0x1a8/0x410
+    [<00000000965b3c5a>] acpi_init+0x408/0x49c
+    [<00000000ed4b9fe2>] do_one_initcall+0x178/0x7f4
+    [<00000000a5ac5a74>] kernel_init_freeable+0x9d4/0xa9c
+    [<0000000070ea6c15>] kernel_init+0x18/0x138
+    [<00000000fb8fff06>] ret_from_fork+0x10/0x1c
+    [<0000000041273a0d>] 0xffffffffffffffff
 
-Good catch.
+Then, faddr2line pointed out this line,
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+/*
+ * This memory isn't freed when the device is put,
+ * I don't have a nice idea for that though.  Conceptually
+ * dma_mask in struct device should not be a pointer.
+ * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+ */
+pdev->dev.dma_mask =
+	kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
 
-Thanks,
-Larry
+Since this leak has been existed for more than 8-year now and it does not
+reference other part of the memory, let kmemleak ignore it, so users don't
+need to waste time reporting this in the future.
+
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ drivers/base/platform.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 41b91af..3e1587d 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -26,6 +26,7 @@
+ #include <linux/clk/clk-conf.h>
+ #include <linux/limits.h>
+ #include <linux/property.h>
++#include <linux/kmemleak.h>
+ 
+ #include "base.h"
+ #include "power/power.h"
+@@ -525,6 +526,8 @@ struct platform_device *platform_device_register_full(
+ 		if (!pdev->dev.dma_mask)
+ 			goto err;
+ 
++		kmemleak_ignore(pdev->dev.dma_mask);
++
+ 		*pdev->dev.dma_mask = pdevinfo->dma_mask;
+ 		pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
+ 	}
+-- 
+1.8.3.1
 
