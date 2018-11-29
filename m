@@ -3,107 +3,259 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85B0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A98C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8910320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8910320834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCB7020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB7020834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbeK2TPc (ORCPT
+        id S1728479AbeK2TPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57006 "EHLO mx1.redhat.com"
+        Thu, 29 Nov 2018 14:15:47 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:21291 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbeK2TPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:31 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51B9231256A7;
-        Thu, 29 Nov 2018 08:11:00 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE3161084;
-        Thu, 29 Nov 2018 08:10:33 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, x86@kernel.org,
-        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
-        bhe@redhat.com
-Subject: [PATCH 2/2 v8] x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
-Date:   Thu, 29 Nov 2018 16:09:56 +0800
-Message-Id: <20181129080956.20776-3-lijiang@redhat.com>
-In-Reply-To: <20181129080956.20776-1-lijiang@redhat.com>
-References: <20181129080956.20776-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 29 Nov 2018 08:11:00 +0000 (UTC)
+        id S1727260AbeK2TPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:15:05 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4359F403Fmz9vGpD;
+        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id R6pN5htxpPfX; Thu, 29 Nov 2018 09:10:31 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F36g5Cz9vGnW;
+        Thu, 29 Nov 2018 09:10:31 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B8A308B890;
+        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VKOTbAtMbhHV; Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7693A8B762;
+        Thu, 29 Nov 2018 09:10:32 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 22E0969AEA; Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
+Message-Id: <d25baf2cbf141a79f903ba6596c0e1804e4f7e32.1543478200.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
+References: <cover.1543478199.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v8 14/20] powerpc/8xx: Temporarily disable 16k pages and
+ hugepages
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present, when use the kexec_file_load syscall to load the kernel image
-and initramfs(for example: kexec -s -p xxx), kernel does not pass the e820
-reserved ranges to the second kernel, which might cause two problems:
+In preparation of making use of hardware assistance in TLB handlers,
+this patch temporarily disables 16K pages and hugepages. The reason
+is that when using HW assistance in 4K pages mode, the linux model
+fit with the HW model for 4K pages and 8M pages.
 
-The first one is the MMCONFIG issue. The basic problem is that this device
-is in PCI segment 1 and the kernel PCI probing can not find it without all
-the e820 I/O reservations being present in the e820 table. And the kdump
-kernel does not have those reservations because the kexec command does not
-pass the I/O reservation via the "memmap=xxx" command line option. (This
-problem does not show up for other vendors, as SGI is apparently the
-actually fails for everyone, but devices in segment 0 are then found by
-some legacy lookup method.) The workaround for this is to pass the I/O
-reserved regions to the kdump kernel.
+However for 16K pages and 512K mode some additional work is needed
+to get linux model fit with HW model.
+For the 8M pages, they will naturaly come back when we switch to
+HW assistance, without any additional handling.
+In order to keep the following patch smaller, the removal of the
+current special handling for 8M pages gets removed here as well.
 
-MMCONFIG(aka ECAM) space is described in the ACPI MCFG table. If you don't
-have ECAM: (a) PCI devices won't work at all on non-x86 systems that use
-only ECAM for config access, (b) you won't be albe to access devices on
-non-0 segments, (c) you won't be able to access extended config space(
-address 0x100-0xffff), which means none of the Extended Capabilities will
-be available(AER, ACS, ATS, etc). [Bjorn's comment]
+Therefore the 4K pages mode will be implemented first and without
+support for 512k hugepages. Then the 512k hugepages will be brought
+back. And the 16K pages will be implemented in the following step.
 
-The second issue is that the SME kdump kernel doesn't work without the
-e820 reserved ranges. When SME is active in kdump kernel, actually, those
-reserved regions are still decrypted, but because those reserved ranges are
-not present at all in kdump kernel e820 table, those reserved regions are
-considered as encrypted, it goes wrong.
-
-The e820 reserved range is useful in kdump kernel, so it is necessary to
-pass the e820 reserved ranges to kdump kernel.
-
-Suggested-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/x86/kernel/crash.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/Kconfig           |  2 +-
+ arch/powerpc/kernel/head_8xx.S | 74 +++---------------------------------------
+ arch/powerpc/mm/tlb_nohash.c   |  6 ----
+ 3 files changed, 6 insertions(+), 76 deletions(-)
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index f631a3f15587..5354a84f1684 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -380,6 +380,12 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
- 			memmap_entry_callback);
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 8be31261aec8..ddfccdf004fe 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -689,7 +689,7 @@ config PPC_4K_PAGES
  
-+	/* Add e820 reserved ranges */
-+	cmd.type = E820_TYPE_RESERVED;
-+	flags = IORESOURCE_MEM;
-+	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
-+			   memmap_entry_callback);
-+
- 	/* Add crashk_low_res region */
- 	if (crashk_low_res.end) {
- 		ei.addr = crashk_low_res.start;
+ config PPC_16K_PAGES
+ 	bool "16k page size"
+-	depends on 44x || PPC_8xx
++	depends on 44x
+ 
+ config PPC_64K_PAGES
+ 	bool "64k page size"
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index c203defe49a4..01f58b1d9ae7 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -314,7 +314,7 @@ SystemCall:
+ InstructionTLBMiss:
+ 	mtspr	SPRN_SPRG_SCRATCH0, r10
+ 	mtspr	SPRN_SPRG_SCRATCH1, r11
+-#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
++#ifdef ITLB_MISS_KERNEL
+ 	mtspr	SPRN_SPRG_SCRATCH2, r12
+ #endif
+ 
+@@ -325,10 +325,8 @@ InstructionTLBMiss:
+ 	INVALIDATE_ADJACENT_PAGES_CPU15(r11, r10)
+ 	/* Only modules will cause ITLB Misses as we always
+ 	 * pin the first 8MB of kernel memory */
+-#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
+-	mfcr	r12
+-#endif
+ #ifdef ITLB_MISS_KERNEL
++	mfcr	r12
+ #if defined(SIMPLE_KERNEL_ADDRESS) && defined(CONFIG_PIN_TLB_TEXT)
+ 	andis.	r11, r10, 0x8000	/* Address >= 0x80000000 */
+ #else
+@@ -360,15 +358,9 @@ InstructionTLBMiss:
+ 
+ 	/* Extract level 2 index */
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+-#ifdef CONFIG_HUGETLB_PAGE
+-	mtcr	r11
+-	bt-	28, 10f		/* bit 28 = Large page (8M) */
+-	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+-#endif
+ 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
+ 	lwz	r10, 0(r10)	/* Get the pte */
+-4:
+-#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
++#ifdef ITLB_MISS_KERNEL
+ 	mtcr	r12
+ #endif
+ 	/* Load the MI_TWC with the attributes for this "segment." */
+@@ -393,7 +385,7 @@ InstructionTLBMiss:
+ 	/* Restore registers */
+ 0:	mfspr	r10, SPRN_SPRG_SCRATCH0
+ 	mfspr	r11, SPRN_SPRG_SCRATCH1
+-#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
++#ifdef ITLB_MISS_KERNEL
+ 	mfspr	r12, SPRN_SPRG_SCRATCH2
+ #endif
+ 	rfi
+@@ -406,35 +398,12 @@ InstructionTLBMiss:
+ 	stw	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
+ 	mfspr	r10, SPRN_SPRG_SCRATCH0
+ 	mfspr	r11, SPRN_SPRG_SCRATCH1
+-#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
++#ifdef ITLB_MISS_KERNEL
+ 	mfspr	r12, SPRN_SPRG_SCRATCH2
+ #endif
+ 	rfi
+ #endif
+ 
+-#ifdef CONFIG_HUGETLB_PAGE
+-10:	/* 8M pages */
+-#ifdef CONFIG_PPC_16K_PAGES
+-	/* Extract level 2 index */
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
+-	/* Add level 2 base */
+-	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
+-#else
+-	/* Level 2 base */
+-	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
+-#endif
+-	lwz	r10, 0(r10)	/* Get the pte */
+-	b	4b
+-
+-20:	/* 512k pages */
+-	/* Extract level 2 index */
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
+-	/* Add level 2 base */
+-	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
+-	lwz	r10, 0(r10)	/* Get the pte */
+-	b	4b
+-#endif
+-
+ 	. = 0x1200
+ DataStoreTLBMiss:
+ 	mtspr	SPRN_SPRG_SCRATCH0, r10
+@@ -472,11 +441,6 @@ DataStoreTLBMiss:
+ 	 */
+ 	/* Extract level 2 index */
+ 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+-#ifdef CONFIG_HUGETLB_PAGE
+-	mtcr	r11
+-	bt-	28, 10f		/* bit 28 = Large page (8M) */
+-	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
+-#endif
+ 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
+ 	lwz	r10, 0(r10)	/* Get the pte */
+ 4:
+@@ -534,29 +498,6 @@ DataStoreTLBMiss:
+ 	rfi
+ #endif
+ 
+-#ifdef CONFIG_HUGETLB_PAGE
+-10:	/* 8M pages */
+-	/* Extract level 2 index */
+-#ifdef CONFIG_PPC_16K_PAGES
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
+-	/* Add level 2 base */
+-	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
+-#else
+-	/* Level 2 base */
+-	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
+-#endif
+-	lwz	r10, 0(r10)	/* Get the pte */
+-	b	4b
+-
+-20:	/* 512k pages */
+-	/* Extract level 2 index */
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
+-	/* Add level 2 base */
+-	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
+-	lwz	r10, 0(r10)	/* Get the pte */
+-	b	4b
+-#endif
+-
+ /* This is an instruction TLB error on the MPC8xx.  This could be due
+  * to many reasons, such as executing guarded memory or illegal instruction
+  * addresses.  There is nothing to do but handle a big time error fault.
+@@ -773,12 +714,7 @@ FixupDAR:/* Entry point for dcbx workaround. */
+ 
+ 	/* concat physical page address(r11) and page offset(r10) */
+ 200:
+-#ifdef CONFIG_PPC_16K_PAGES
+-	rlwinm	r11, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
+-	rlwimi	r11, r10, 32 - (PAGE_SHIFT_8M - 2), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
+-#else
+ 	rlwinm	r11, r10, 0, ~HUGEPD_SHIFT_MASK
+-#endif
+ 	lwz	r11, 0(r11)	/* Get the pte */
+ 	/* concat physical page address(r11) and page offset(r10) */
+ 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT_8M, 31
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index ae5d568e267f..4f79639e432f 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -97,12 +97,6 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
+ 		.shift	= 14,
+ 	},
+ #endif
+-	[MMU_PAGE_512K] = {
+-		.shift	= 19,
+-	},
+-	[MMU_PAGE_8M] = {
+-		.shift	= 23,
+-	},
+ };
+ #else
+ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
 -- 
-2.17.1
+2.13.3
 
