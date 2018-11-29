@@ -2,64 +2,106 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B3DC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0FCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8544B205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:18:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8544B205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2F4AD20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4AD20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeK2TXO (ORCPT
+        id S1727546AbeK2TdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:23:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726780AbeK2TXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:23:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 024BFAEA3;
-        Thu, 29 Nov 2018 08:18:40 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 09:18:39 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Jessica Yu <jeyu@kernel.org>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] module: make it clearer when we're handling kallsyms
- symbols vs exported symbols
-In-Reply-To: <20181123164104.6054-1-jeyu@kernel.org>
-Message-ID: <alpine.LSU.2.21.1811290917310.21084@pobox.suse.cz>
-References: <20181123164104.6054-1-jeyu@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 29 Nov 2018 14:33:23 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:53032 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbeK2TdW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:33:22 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gSHgl-0008SO-9o; Thu, 29 Nov 2018 16:28:47 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gSHgj-00057z-Fs; Thu, 29 Nov 2018 16:28:45 +0800
+Date:   Thu, 29 Nov 2018 16:28:45 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     David CARLIER <devnexen@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] crypto: use memzero_explicit instead of memset to clear
+ contexts.
+Message-ID: <20181129082845.r3lakg6ckvnkklp7@gondor.apana.org.au>
+References: <CA+XhMqz7ZaGVNpkrRM-t4h2f9UZVQPjLVB5Txco4bKGRm8k=mA@mail.gmail.com>
+ <20181129064913.wbudlexjzszpa7dq@gondor.apana.org.au>
+ <CA+XhMqzw9pqFw30QD=XpFTAqu+t1v5q24ODR+zynZQJJrS9xZw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+XhMqzw9pqFw30QD=XpFTAqu+t1v5q24ODR+zynZQJJrS9xZw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Jessica Yu wrote:
+On Thu, Nov 29, 2018 at 06:59:50AM +0000, David CARLIER wrote:
+> Meant regardless how the kernel is compiled (ie optimisation level),
+> the contexts are guaranteed to be wiped because of the memory fences
+> used.
 
-> The module loader internally works with both exported symbols
-> represented as struct kernel_symbol, as well as Elf symbols from a
-> module's symbol table. It's hard to distinguish sometimes which type of
-> symbol we're handling given that some helper function names are not
-> consistent or helpful. Take get_ksymbol() for instance - are we
-> looking for an exported symbol or a kallsyms symbol here? Or symname()
-> and kernel_symbol_name() - which function handles an exported symbol and
-> which one an Elf symbol?
-> 
-> Clean up and unify the function naming scheme a bit to make it clear
-> which kind of symbol we're handling. This change only affects static
-> functions internal to the module loader.
-> 
-> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Please avoid top-posting.
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+> On Thu, 29 Nov 2018 at 06:49, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> >
+> > On Wed, Nov 28, 2018 at 07:36:50PM +0000, David CARLIER wrote:
+> > > There might be a little performance drop but to make sure it stands
+> > > by it comments, we really wipe the whole context after usage.
+> > > ---
+> > >  crypto/chacha20poly1305.c | 3 ++-
+> > >  crypto/md5.c              | 2 +-
+> > >  crypto/rmd128.c           | 3 ++-
+> > >  crypto/rmd160.c           | 3 ++-
+> > >  crypto/rmd256.c           | 3 ++-
+> > >  crypto/rmd320.c           | 3 ++-
+> > >  crypto/sha3_generic.c     | 3 ++-
+> > >  7 files changed, 13 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/crypto/chacha20poly1305.c b/crypto/chacha20poly1305.c
+> > > index 600afa99941f..6e93d998109e 100644
+> > > --- a/crypto/chacha20poly1305.c
+> > > +++ b/crypto/chacha20poly1305.c
+> > > @@ -19,6 +19,7 @@
+> > >  #include <linux/init.h>
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/module.h>
+> > > +#include <linux/string.h>
+> > >
+> > >  #include "internal.h"
+> > >
+> > > @@ -388,7 +389,7 @@ static int poly_genkey(struct aead_request *req)
+> > >         }
+> > >
+> > >         sg_init_table(creq->src, 1);
+> > > -       memset(rctx->key, 0, sizeof(rctx->key));
+> > > +       memzero_explicit(rctx->key, sizeof(rctx->key));
+> >
+> > Please explain the purpose of this patch.  As it stands this
+> > makes no sense.
 
-M
+memzero_explicit is really only useful for stack memory.  You need
+to explain why it makes sense to use it in this context.  For
+example, by providing an example of a miscompile or how it is
+even possible for this to happen.
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
