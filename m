@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E107C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0381EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 099F22081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA551214E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yqq5FD6u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 099F22081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nusnpdmp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA551214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbeK2RKL (ORCPT
+        id S1730519AbeK2RKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:10:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:10:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbeK2RKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:10:10 -0500
+        id S1729229AbeK2RKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:10:16 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A59542081C;
-        Thu, 29 Nov 2018 06:05:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 970EF2081C;
+        Thu, 29 Nov 2018 06:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471558;
-        bh=WXlxGjDzASJ3zjCk88xXjMruHzcQow7tc+v5tyIR6go=;
+        s=default; t=1543471565;
+        bh=FNKG8awkgaCvMxhswswVlhSQ7kvQYbzDfMMQ5zsIIKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yqq5FD6ut+leSJPi0C8e44aJHqw60xW0giTSuTfBSHKmcLbqtOn4CfD6t56Tt0OYJ
-         YLN4VtaQ++lV6uJocCf9xkbhyjk2m5DNAuWL0dYq/n8W5SFePaWB6eqXKskE4bBAWk
-         zm7QOhYHaBwbx6leAUY63Utd5WUEG5oeqlmC1GD0=
+        b=NusnpdmptdbaFua4wlaSGgsMJa8WXgs9Zu6pZ0jC81fmBNybhBtFn9RZXKSM6OaXi
+         CHwmVAfceodUH971J6CeY++Wm9uX2DQPhicyPBfOZMeIdlmpOBAiBQ+e/iMW3L4ntl
+         ZHKvXHjFjh8A7mHwqZVErt9y/EAVf7y8O6fCcFLY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vincent Chen <vincentc@andestech.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 5/6] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
-Date:   Thu, 29 Nov 2018 01:05:34 -0500
-Message-Id: <20181129060535.160592-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 6/6] net: amd: add missing of_node_put()
+Date:   Thu, 29 Nov 2018 01:05:35 -0500
+Message-Id: <20181129060535.160592-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060535.160592-1-sashal@kernel.org>
 References: <20181129060535.160592-1-sashal@kernel.org>
@@ -53,54 +53,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Chen <vincentc@andestech.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 426a593e641ebf0d9288f0a2fcab644a86820220 ]
+[ Upstream commit c44c749d3b6fdfca39002e7e48e03fe9f9fe37a3 ]
 
-In the original ftmac100_interrupt(), the interrupts are only disabled when
-the condition "netif_running(netdev)" is true. However, this condition
-causes kerenl hang in the following case. When the user requests to
-disable the network device, kernel will clear the bit __LINK_STATE_START
-from the dev->state and then call the driver's ndo_stop function. Network
-device interrupts are not blocked during this process. If an interrupt
-occurs between clearing __LINK_STATE_START and stopping network device,
-kernel cannot disable the interrupts due to the condition
-"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
-continuous interruption of the network device.
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place doesn't do that, so fix it.
 
-In order to solve the above problem, the interrupts of the network device
-should always be disabled in the ISR without being restricted by the
-condition "netif_running(netdev)".
-
-[V2]
-Remove unnecessary curly braces.
-
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/faraday/ftmac100.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/amd/sunlance.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
-index 4ff1adc6bfca..9a0703f2da9a 100644
---- a/drivers/net/ethernet/faraday/ftmac100.c
-+++ b/drivers/net/ethernet/faraday/ftmac100.c
-@@ -865,11 +865,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
- 	struct net_device *netdev = dev_id;
- 	struct ftmac100 *priv = netdev_priv(netdev);
+diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
+index 5e4273b7aa27..2bac37b9b4d3 100644
+--- a/drivers/net/ethernet/amd/sunlance.c
++++ b/drivers/net/ethernet/amd/sunlance.c
+@@ -1419,7 +1419,7 @@ static int sparc_lance_probe_one(struct platform_device *op,
  
--	if (likely(netif_running(netdev))) {
--		/* Disable interrupts for polling */
--		ftmac100_disable_all_int(priv);
-+	/* Disable interrupts for polling */
-+	ftmac100_disable_all_int(priv);
-+	if (likely(netif_running(netdev)))
- 		napi_schedule(&priv->napi);
--	}
+ 			prop = of_get_property(nd, "tpe-link-test?", NULL);
+ 			if (!prop)
+-				goto no_link_test;
++				goto node_put;
  
- 	return IRQ_HANDLED;
- }
+ 			if (strcmp(prop, "true")) {
+ 				printk(KERN_NOTICE "SunLance: warning: overriding option "
+@@ -1428,6 +1428,8 @@ static int sparc_lance_probe_one(struct platform_device *op,
+ 				       "to ecd@skynet.be\n");
+ 				auxio_set_lte(AUXIO_LTE_ON);
+ 			}
++node_put:
++			of_node_put(nd);
+ no_link_test:
+ 			lp->auto_select = 1;
+ 			lp->tpe = 0;
 -- 
 2.17.1
 
