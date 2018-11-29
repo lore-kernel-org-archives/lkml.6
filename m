@@ -2,250 +2,100 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095A7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79FAC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54952147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A990421479
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFDgkBlb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54952147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lh+KkjOW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A990421479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389448AbeK3Bh4 (ORCPT
+        id S2389461AbeK3Bh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 29 Nov 2018 20:37:58 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44578 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389434AbeK3Bh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Nov 2018 20:37:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389406AbeK3Bh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D27BE21479;
-        Thu, 29 Nov 2018 14:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501942;
-        bh=lPVPcL/QJTQbkkpZIyPwTv4QscPQp/NmjhqwtclEh7Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jFDgkBlbzmmMLll2ny64aR5PFyiuFqkIUbM8/7QEZzhyCbZwVYLuSAe2U5zbXOQTn
-         CoWnJR+E1X403c2LxQ7fFEDihwhPsxK9QLj71XkPIhP8NVVTtFysAXmzuxCgmJQnBK
-         E0sr2g1kzXeEZCkavdKN0jCk3C1LZCoVirYTDRHI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH 4.19 105/110] media: ov5640: Re-work MIPI startup sequence
-Date:   Thu, 29 Nov 2018 15:13:16 +0100
-Message-Id: <20181129135925.496805464@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
-References: <20181129135921.231283053@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: by mail-wr1-f67.google.com with SMTP id z5so2106278wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:32:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tHrKSnc7J5qK0yIWFzgy4Ix1kkOX9LQDjsBQSyxBRjg=;
+        b=Lh+KkjOW332DXgkl/9gAxBUJYmxG0bDGu89sCapf8NeMVV4rCE7k06ZX89y46fQiUW
+         UTXHDG1LPeGU0/tM37gTx5vX6sQvwdycT1fqdKmb4V1LmnBcEFuTgNcmjngThMjhXEs+
+         C2cioifZniO/gQ6ua1uA8dYhAhiPsBfFaGx0M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tHrKSnc7J5qK0yIWFzgy4Ix1kkOX9LQDjsBQSyxBRjg=;
+        b=Z+BhJbwq1DaoS9bkPi2q5j1sEZ2Pfvf+En4HAgaw7bg0sOruEhNREJAeJGEcHSZp+k
+         5/6AiiMHv2Oan/Wd+un9qE5z9Xpu9lzLY887rIKmty8lzH+oAexFUVrfUcBzVWlnFIsg
+         AX/WZn2+h4tXJG0UXiYq0TN46BbiW1PA4SUCzSNkT9V2ll1wiUJCVDE104K/pklz3ME6
+         9IfOvNAtWTI0RAtDuxahM23nhOkZrXez04696qaJCMWfynjlENSAd+RfBnoTrOGsQNug
+         cIuQ+pavXg6ypXyKJMaNPagUa/gC2xahCVFato2Jr5F11f3rW4FSeZ4ThpWJfB6xmCul
+         CZ1w==
+X-Gm-Message-State: AA+aEWaUfN3cqUezt766Q+hFJPcHfxijSzc1VNHcVLgjiOfhFTImRHL5
+        WLzAWnzYVs6UbtWikIDi3OvaKQ==
+X-Google-Smtp-Source: AFSGD/WFv1BmOkoj/lK8MWTDcy58DXLkQEBeDogc1WvXULs7FLFrPxWkvd6gCK4HyDuardeFSeZ/iw==
+X-Received: by 2002:adf:e18d:: with SMTP id k13mr1692981wri.36.1543501942012;
+        Thu, 29 Nov 2018 06:32:22 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id e8-v6sm4816656wmf.22.2018.11.29.06.32.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 06:32:21 -0800 (PST)
+Subject: Re: [PATCH v2 01/25] nvmem: add new config option
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20181113140133.17385-1-brgl@bgdev.pl>
+ <20181113140133.17385-2-brgl@bgdev.pl>
+ <CAMRc=MeRJ60gcYz00C828PBqnEdC-9onOKOadfackdzHiC1WOA@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <b8f08722-d3d5-6ddf-5845-15eb5079094c@linaro.org>
+Date:   Thu, 29 Nov 2018 14:32:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeRJ60gcYz00C828PBqnEdC-9onOKOadfackdzHiC1WOA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+> 
+> Hi Srinivas,
+> 
+> if there are no objections - can you Ack this patch for Greg to pick
+> up into char-misc?
 
-From: Jacopo Mondi <jacopo@jmondi.org>
+Patch is fine for me. I normally send all the nvmem patches just before rc5.
 
-commit aa4bb8b8838ffcc776a79f49a4d7476b82405349 upstream.
-
-Rework the MIPI interface startup sequence with the following changes:
-
-- Remove MIPI bus initialization from the initial settings blob
-- At set_power(1) time power up MIPI Tx/Rx and set data and clock lanes in
-  LP11 during 'sleep' and 'idle' with MIPI clock in non-continuous mode.
-- At s_stream time enable/disable the MIPI interface output.
-- Restore default settings at set_power(0) time.
-
-Before this commit the sensor MIPI interface was initialized with settings
-that require a start/stop sequence at power-up time in order to force lanes
-into LP11 state, as they were initialized in LP00 when in 'sleep mode',
-which is assumed to be the sensor manual definition for the D-PHY defined
-stop mode.
-
-The stream start/stop was performed by enabling disabling clock gating,
-and had the side effect to change the lanes sleep mode configuration when
-stream was stopped.
-
-Clock gating/ungating:
--       ret = ov5640_mod_reg(sensor, OV5640_REG_MIPI_CTRL00, BIT(5),
--                            on ? 0 : BIT(5));
--       if (ret)
-
-Set lanes in LP11 when in 'sleep mode':
--       ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT00,
--                              on ? 0x00 : 0x70);
-
-This commit fixes an issue reported by Jagan Teki on i.MX6 platforms that
-prevents the host interface from powering up correctly:
-https://lkml.org/lkml/2018/6/1/38
-
-It also improves MIPI capture operations stability on my testing platform
-where MIPI capture often failed and returned all-purple frames.
-
-Fixes: f22996db44e2 ("media: ov5640: add support of DVP parallel interface")
-
-Tested-by: Steve Longerbeam <slongerbeam@gmail.com> (i.MX6q SabreSD, CSI-2)
-Tested-by: Loic Poulain <loic.poulain@linaro.org> (Dragonboard-410c, CSI-2)
-Reported-by: Jagan Teki <jagan@amarulasolutions.com>
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/media/i2c/ov5640.c |   99 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 79 insertions(+), 20 deletions(-)
-
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -288,10 +288,10 @@ static const struct reg_value ov5640_ini
- 	{0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
- 	{0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x3000, 0x00, 0, 0},
- 	{0x3002, 0x1c, 0, 0}, {0x3004, 0xff, 0, 0}, {0x3006, 0xc3, 0, 0},
--	{0x300e, 0x45, 0, 0}, {0x302e, 0x08, 0, 0}, {0x4300, 0x3f, 0, 0},
-+	{0x302e, 0x08, 0, 0}, {0x4300, 0x3f, 0, 0},
- 	{0x501f, 0x00, 0, 0}, {0x4713, 0x03, 0, 0}, {0x4407, 0x04, 0, 0},
- 	{0x440e, 0x00, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
--	{0x4837, 0x0a, 0, 0}, {0x4800, 0x04, 0, 0}, {0x3824, 0x02, 0, 0},
-+	{0x4837, 0x0a, 0, 0}, {0x3824, 0x02, 0, 0},
- 	{0x5000, 0xa7, 0, 0}, {0x5001, 0xa3, 0, 0}, {0x5180, 0xff, 0, 0},
- 	{0x5181, 0xf2, 0, 0}, {0x5182, 0x00, 0, 0}, {0x5183, 0x14, 0, 0},
- 	{0x5184, 0x25, 0, 0}, {0x5185, 0x24, 0, 0}, {0x5186, 0x09, 0, 0},
-@@ -1104,12 +1104,25 @@ static int ov5640_set_stream_mipi(struct
- {
- 	int ret;
- 
--	ret = ov5640_mod_reg(sensor, OV5640_REG_MIPI_CTRL00, BIT(5),
--			     on ? 0 : BIT(5));
--	if (ret)
--		return ret;
--	ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT00,
--			       on ? 0x00 : 0x70);
-+	/*
-+	 * Enable/disable the MIPI interface
-+	 *
-+	 * 0x300e = on ? 0x45 : 0x40
-+	 *
-+	 * FIXME: the sensor manual (version 2.03) reports
-+	 * [7:5] = 000  : 1 data lane mode
-+	 * [7:5] = 001  : 2 data lanes mode
-+	 * But this settings do not work, while the following ones
-+	 * have been validated for 2 data lanes mode.
-+	 *
-+	 * [7:5] = 010	: 2 data lanes mode
-+	 * [4] = 0	: Power up MIPI HS Tx
-+	 * [3] = 0	: Power up MIPI LS Rx
-+	 * [2] = 1/0	: MIPI interface enable/disable
-+	 * [1:0] = 01/00: FIXME: 'debug'
-+	 */
-+	ret = ov5640_write_reg(sensor, OV5640_REG_IO_MIPI_CTRL00,
-+			       on ? 0x45 : 0x40);
- 	if (ret)
- 		return ret;
- 
-@@ -1790,23 +1803,69 @@ static int ov5640_set_power(struct ov564
- 		if (ret)
- 			goto power_off;
- 
-+		/* We're done here for DVP bus, while CSI-2 needs setup. */
-+		if (sensor->ep.bus_type != V4L2_MBUS_CSI2)
-+			return 0;
-+
-+		/*
-+		 * Power up MIPI HS Tx and LS Rx; 2 data lanes mode
-+		 *
-+		 * 0x300e = 0x40
-+		 * [7:5] = 010	: 2 data lanes mode (see FIXME note in
-+		 *		  "ov5640_set_stream_mipi()")
-+		 * [4] = 0	: Power up MIPI HS Tx
-+		 * [3] = 0	: Power up MIPI LS Rx
-+		 * [2] = 0	: MIPI interface disabled
-+		 */
-+		ret = ov5640_write_reg(sensor,
-+				       OV5640_REG_IO_MIPI_CTRL00, 0x40);
-+		if (ret)
-+			goto power_off;
-+
-+		/*
-+		 * Gate clock and set LP11 in 'no packets mode' (idle)
-+		 *
-+		 * 0x4800 = 0x24
-+		 * [5] = 1	: Gate clock when 'no packets'
-+		 * [2] = 1	: MIPI bus in LP11 when 'no packets'
-+		 */
-+		ret = ov5640_write_reg(sensor,
-+				       OV5640_REG_MIPI_CTRL00, 0x24);
-+		if (ret)
-+			goto power_off;
-+
-+		/*
-+		 * Set data lanes and clock in LP11 when 'sleeping'
-+		 *
-+		 * 0x3019 = 0x70
-+		 * [6] = 1	: MIPI data lane 2 in LP11 when 'sleeping'
-+		 * [5] = 1	: MIPI data lane 1 in LP11 when 'sleeping'
-+		 * [4] = 1	: MIPI clock lane in LP11 when 'sleeping'
-+		 */
-+		ret = ov5640_write_reg(sensor,
-+				       OV5640_REG_PAD_OUTPUT00, 0x70);
-+		if (ret)
-+			goto power_off;
-+
-+		/* Give lanes some time to coax into LP11 state. */
-+		usleep_range(500, 1000);
-+
-+	} else {
- 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2) {
--			/*
--			 * start streaming briefly followed by stream off in
--			 * order to coax the clock lane into LP-11 state.
--			 */
--			ret = ov5640_set_stream_mipi(sensor, true);
--			if (ret)
--				goto power_off;
--			usleep_range(1000, 2000);
--			ret = ov5640_set_stream_mipi(sensor, false);
--			if (ret)
--				goto power_off;
-+			/* Reset MIPI bus settings to their default values. */
-+			ov5640_write_reg(sensor,
-+					 OV5640_REG_IO_MIPI_CTRL00, 0x58);
-+			ov5640_write_reg(sensor,
-+					 OV5640_REG_MIPI_CTRL00, 0x04);
-+			ov5640_write_reg(sensor,
-+					 OV5640_REG_PAD_OUTPUT00, 0x00);
- 		}
- 
--		return 0;
-+		ov5640_set_power_off(sensor);
- 	}
- 
-+	return 0;
-+
- power_off:
- 	ov5640_set_power_off(sensor);
- 	return ret;
-
-
+--srini
+> 
+> Bart
+> 
