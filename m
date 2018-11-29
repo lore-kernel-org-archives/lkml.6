@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342C3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF49C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FB52146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487B12146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xrh95Vsq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FB52146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3DboS14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487B12146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388579AbeK3BfY (ORCPT
+        id S2388592AbeK3Bf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:35:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37230 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:35:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728961AbeK3BfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:35:24 -0500
+        id S1728961AbeK3Bf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:35:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA1272145D;
-        Thu, 29 Nov 2018 14:29:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 388452145D;
+        Thu, 29 Nov 2018 14:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501791;
-        bh=w+vtz/i15iEYsrNv+t3JYQjq7dDNcKcVoW8wE8nOC3s=;
+        s=default; t=1543501793;
+        bh=2wVTB3HEqjxgN62mX+fPjlfCcX9BzTYZncKP8I2w+qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xrh95VsqDj1gUlU8Nt+e/BhpAdVYxXyTw/4QwpEs2pGL5Slo5OJXlp/QhYh7zcGKU
-         N3R2I6ELgrtxm8Obw5qAEjsxVVKtf3t3dKz153fKNq99oRkuBKIUYiqxxpukLkkyuH
-         EIjOJVs1hR3mzEXb20VSFOnUxFY5I7+VYJchIxtE=
+        b=H3DboS14YzYiDhCPE7sa2ZTMCF8CYHk7uVIIH45F3STjWzwhdS8rOUmTQiZg9a8FX
+         uXF+ybk+seQ+uqb0ory3M1Fe/mm8HfytPGIMvgcqDlNDXD3XaLwLOuN2vnT00dflm0
+         HFfldR4CzG+J50LbU+DRrAZQ0pxaFCVE4Sg4Jar4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.19 042/110] drm/vc4: Set ->legacy_cursor_update to false when doing non-async updates
-Date:   Thu, 29 Nov 2018 15:12:13 +0100
-Message-Id: <20181129135922.963599466@linuxfoundation.org>
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 043/110] drm/amdgpu: Fix oops when pp_funcs->switch_power_profile is unset
+Date:   Thu, 29 Nov 2018 15:12:14 +0100
+Message-Id: <20181129135923.011397798@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,43 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Felix Kuehling <Felix.Kuehling@amd.com>
 
-commit fcc86cb45d38ca2f24bcea9c29c7f4742041caed upstream.
+commit 919a52fc4ca137c871f295224507fa3401e08472 upstream.
 
-drm_atomic_helper_setup_commit() auto-completes commit->flip_done when
-state->legacy_cursor_update is true, but we know for sure that we want
-a sync update when we call drm_atomic_helper_setup_commit() from
-vc4_atomic_commit().
+On Vega20 and other pre-production GPUs, powerplay is not enabled yet.
+Check for NULL pointers before calling pp_funcs function pointers.
 
-Explicitly set state->legacy_cursor_update to false to prevent this
-auto-completion.
+Also affects Kaveri.
 
-Fixes: 184d3cf4f738 ("drm/vc4: Use wait_for_flip_done() instead of wait_for_vblanks()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181115105852.9844-2-boris.brezillon@bootlin.com
+CC: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_kms.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -216,6 +216,12 @@ static int vc4_atomic_commit(struct drm_
- 		return 0;
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
+@@ -496,8 +496,11 @@ void amdgpu_amdkfd_set_compute_idle(stru
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)kgd;
  
-+	/* We know for sure we don't want an async update here. Set
-+	 * state->legacy_cursor_update to false to prevent
-+	 * drm_atomic_helper_setup_commit() from auto-completing
-+	 * commit->flip_done.
-+	 */
-+	state->legacy_cursor_update = false;
- 	ret = drm_atomic_helper_setup_commit(state, nonblock);
- 	if (ret)
- 		return ret;
+-	amdgpu_dpm_switch_power_profile(adev,
+-					PP_SMC_POWER_PROFILE_COMPUTE, !idle);
++	if (adev->powerplay.pp_funcs &&
++	    adev->powerplay.pp_funcs->switch_power_profile)
++		amdgpu_dpm_switch_power_profile(adev,
++						PP_SMC_POWER_PROFILE_COMPUTE,
++						!idle);
+ }
+ 
+ bool amdgpu_amdkfd_is_kfd_vmid(struct amdgpu_device *adev, u32 vmid)
 
 
