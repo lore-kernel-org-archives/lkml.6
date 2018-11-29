@@ -2,585 +2,187 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771B3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D767FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 289982081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:33:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xJp6QeCT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289982081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A4F722081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:34:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F722081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeK2ViV (ORCPT
+        id S1727837AbeK2Vjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:38:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726823AbeK2ViU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:38:20 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8158C2081C;
-        Thu, 29 Nov 2018 10:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543487606;
-        bh=Cj4gMh1ksViepKElLq9UjejEEJ1BR04h+Cf11KBwM4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xJp6QeCTSYbUF/KcJA0Z7Xc5GASMgAOsJEDajDj1Bk+YAWFMDHoYufAKk11xYdLhQ
-         mzA/Dx24nqmSXwTE01JGvi48m7gTzNRNrxB05IOm6A0tFmrolRBdQWK/RlT4V/PfBv
-         WBoiW949hV4Ri9G89aUhSVahrSmCmv7d+io0jCls=
-Date:   Thu, 29 Nov 2018 11:33:23 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mitch Harder <mitch.harder@sabayonlinux.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 4.14 117/126] net: sk_buff rbnode reorg
-Message-ID: <20181129103323.GD20297@kroah.com>
-References: <20180917211703.481236999@linuxfoundation.org>
- <20180917211711.665799911@linuxfoundation.org>
- <CAKcLGm9+Juyf894=UcwCoDg+zzJ=zQeoryzhG0s7GdiAbjLaiQ@mail.gmail.com>
+        Thu, 29 Nov 2018 16:39:32 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:36124 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726780AbeK2Vjc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 16:39:32 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1A7D272CC59;
+        Thu, 29 Nov 2018 13:34:37 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 055077CC6A7; Thu, 29 Nov 2018 13:34:36 +0300 (MSK)
+Date:   Thu, 29 Nov 2018 13:34:36 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, strace-devel@lists.strace.io
+Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
+ ptrace_message
+Message-ID: <20181129103436.GA11547@altlinux.org>
+References: <20181128130439.GB28206@altlinux.org>
+ <20181128130601.GC28206@altlinux.org>
+ <20181128134913.GC30395@redhat.com>
+ <20181128140533.GF28206@altlinux.org>
+ <20181128142006.GE30395@redhat.com>
+ <20181128152346.GG28206@altlinux.org>
+ <20181128221125.GA2800@altlinux.org>
+ <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
 Content-Disposition: inline
-In-Reply-To: <CAKcLGm9+Juyf894=UcwCoDg+zzJ=zQeoryzhG0s7GdiAbjLaiQ@mail.gmail.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 03:13:56PM -0500, Mitch Harder wrote:
-> On Mon, Sep 17, 2018 at 5:42 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> >
-> > ------------------
-> >
-> > From: Eric Dumazet <edumazet@google.com>
-> >
-> > commit bffa72cf7f9df842f0016ba03586039296b4caaf upstream
-> >
-> > skb->rbnode shares space with skb->next, skb->prev and skb->tstamp
-> >
-> > Current uses (TCP receive ofo queue and netem) need to save/restore
-> > tstamp, while skb->dev is either NULL (TCP) or a constant for a given
-> > queue (netem).
-> >
-> > Since we plan using an RB tree for TCP retransmit queue to speedup SACK
-> > processing with large BDP, this patch exchanges skb->dev and
-> > skb->tstamp.
-> >
-> > This saves some overhead in both TCP and netem.
-> >
-> > v2: removes the swtstamp field from struct tcp_skb_cb
-> >
-> > Signed-off-by: Eric Dumazet <edumazet@google.com>
-> > Cc: Soheil Hassas Yeganeh <soheil@google.com>
-> > Cc: Wei Wang <weiwan@google.com>
-> > Cc: Willem de Bruijn <willemb@google.com>
-> > Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-> > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  include/linux/skbuff.h                  |   24 ++--
-> >  include/net/inet_frag.h                 |    3
-> >  net/ipv4/inet_fragment.c                |   14 +-
-> >  net/ipv4/ip_fragment.c                  |  182 +++++++++++++++++---------------
-> >  net/ipv6/netfilter/nf_conntrack_reasm.c |    1
-> >  net/ipv6/reassembly.c                   |    1
-> >  6 files changed, 128 insertions(+), 97 deletions(-)
-> >
-> > --- a/include/linux/skbuff.h
-> > +++ b/include/linux/skbuff.h
-> > @@ -663,23 +663,27 @@ struct sk_buff {
-> >                         struct sk_buff          *prev;
-> >
-> >                         union {
-> > -                               ktime_t         tstamp;
-> > -                               u64             skb_mstamp;
-> > +                               struct net_device       *dev;
-> > +                               /* Some protocols might use this space to store information,
-> > +                                * while device pointer would be NULL.
-> > +                                * UDP receive path is one user.
-> > +                                */
-> > +                               unsigned long           dev_scratch;
-> >                         };
-> >                 };
-> > -               struct rb_node  rbnode; /* used in netem & tcp stack */
-> > +               struct rb_node          rbnode; /* used in netem, ip4 defrag, and tcp stack */
-> > +               struct list_head        list;
-> >         };
-> > -       struct sock             *sk;
-> >
-> >         union {
-> > -               struct net_device       *dev;
-> > -               /* Some protocols might use this space to store information,
-> > -                * while device pointer would be NULL.
-> > -                * UDP receive path is one user.
-> > -                */
-> > -               unsigned long           dev_scratch;
-> > +               struct sock             *sk;
-> >                 int                     ip_defrag_offset;
-> >         };
-> > +
-> > +       union {
-> > +               ktime_t         tstamp;
-> > +               u64             skb_mstamp;
-> > +       };
-> >         /*
-> >          * This is the control buffer. It is free to use for every
-> >          * layer. Please put your private variables there. If you
-> > --- a/include/net/inet_frag.h
-> > +++ b/include/net/inet_frag.h
-> > @@ -75,7 +75,8 @@ struct inet_frag_queue {
-> >         struct timer_list       timer;
-> >         spinlock_t              lock;
-> >         refcount_t              refcnt;
-> > -       struct sk_buff          *fragments;
-> > +       struct sk_buff          *fragments;  /* Used in IPv6. */
-> > +       struct rb_root          rb_fragments; /* Used in IPv4. */
-> >         struct sk_buff          *fragments_tail;
-> >         ktime_t                 stamp;
-> >         int                     len;
-> > --- a/net/ipv4/inet_fragment.c
-> > +++ b/net/ipv4/inet_fragment.c
-> > @@ -136,12 +136,16 @@ void inet_frag_destroy(struct inet_frag_
-> >         fp = q->fragments;
-> >         nf = q->net;
-> >         f = nf->f;
-> > -       while (fp) {
-> > -               struct sk_buff *xp = fp->next;
-> > +       if (fp) {
-> > +               do {
-> > +                       struct sk_buff *xp = fp->next;
-> >
-> > -               sum_truesize += fp->truesize;
-> > -               kfree_skb(fp);
-> > -               fp = xp;
-> > +                       sum_truesize += fp->truesize;
-> > +                       kfree_skb(fp);
-> > +                       fp = xp;
-> > +               } while (fp);
-> > +       } else {
-> > +               sum_truesize = skb_rbtree_purge(&q->rb_fragments);
-> >         }
-> >         sum = sum_truesize + f->qsize;
-> >
-> > --- a/net/ipv4/ip_fragment.c
-> > +++ b/net/ipv4/ip_fragment.c
-> > @@ -136,7 +136,7 @@ static void ip_expire(struct timer_list
-> >  {
-> >         struct inet_frag_queue *frag = from_timer(frag, t, timer);
-> >         const struct iphdr *iph;
-> > -       struct sk_buff *head;
-> > +       struct sk_buff *head = NULL;
-> >         struct net *net;
-> >         struct ipq *qp;
-> >         int err;
-> > @@ -152,14 +152,31 @@ static void ip_expire(struct timer_list
-> >
-> >         ipq_kill(qp);
-> >         __IP_INC_STATS(net, IPSTATS_MIB_REASMFAILS);
-> > -
-> > -       head = qp->q.fragments;
-> > -
-> >         __IP_INC_STATS(net, IPSTATS_MIB_REASMTIMEOUT);
-> >
-> > -       if (!(qp->q.flags & INET_FRAG_FIRST_IN) || !head)
-> > +       if (!qp->q.flags & INET_FRAG_FIRST_IN)
-> >                 goto out;
-> >
-> > +       /* sk_buff::dev and sk_buff::rbnode are unionized. So we
-> > +        * pull the head out of the tree in order to be able to
-> > +        * deal with head->dev.
-> > +        */
-> > +       if (qp->q.fragments) {
-> > +               head = qp->q.fragments;
-> > +               qp->q.fragments = head->next;
-> > +       } else {
-> > +               head = skb_rb_first(&qp->q.rb_fragments);
-> > +               if (!head)
-> > +                       goto out;
-> > +               rb_erase(&head->rbnode, &qp->q.rb_fragments);
-> > +               memset(&head->rbnode, 0, sizeof(head->rbnode));
-> > +               barrier();
-> > +       }
-> > +       if (head == qp->q.fragments_tail)
-> > +               qp->q.fragments_tail = NULL;
-> > +
-> > +       sub_frag_mem_limit(qp->q.net, head->truesize);
-> > +
-> >         head->dev = dev_get_by_index_rcu(net, qp->iif);
-> >         if (!head->dev)
-> >                 goto out;
-> > @@ -179,16 +196,16 @@ static void ip_expire(struct timer_list
-> >             (skb_rtable(head)->rt_type != RTN_LOCAL))
-> >                 goto out;
-> >
-> > -       skb_get(head);
-> >         spin_unlock(&qp->q.lock);
-> >         icmp_send(head, ICMP_TIME_EXCEEDED, ICMP_EXC_FRAGTIME, 0);
-> > -       kfree_skb(head);
-> >         goto out_rcu_unlock;
-> >
-> >  out:
-> >         spin_unlock(&qp->q.lock);
-> >  out_rcu_unlock:
-> >         rcu_read_unlock();
-> > +       if (head)
-> > +               kfree_skb(head);
-> >         ipq_put(qp);
-> >  }
-> >
-> > @@ -231,7 +248,7 @@ static int ip_frag_too_far(struct ipq *q
-> >         end = atomic_inc_return(&peer->rid);
-> >         qp->rid = end;
-> >
-> > -       rc = qp->q.fragments && (end - start) > max;
-> > +       rc = qp->q.fragments_tail && (end - start) > max;
-> >
-> >         if (rc) {
-> >                 struct net *net;
-> > @@ -245,7 +262,6 @@ static int ip_frag_too_far(struct ipq *q
-> >
-> >  static int ip_frag_reinit(struct ipq *qp)
-> >  {
-> > -       struct sk_buff *fp;
-> >         unsigned int sum_truesize = 0;
-> >
-> >         if (!mod_timer(&qp->q.timer, jiffies + qp->q.net->timeout)) {
-> > @@ -253,20 +269,14 @@ static int ip_frag_reinit(struct ipq *qp
-> >                 return -ETIMEDOUT;
-> >         }
-> >
-> > -       fp = qp->q.fragments;
-> > -       do {
-> > -               struct sk_buff *xp = fp->next;
-> > -
-> > -               sum_truesize += fp->truesize;
-> > -               kfree_skb(fp);
-> > -               fp = xp;
-> > -       } while (fp);
-> > +       sum_truesize = skb_rbtree_purge(&qp->q.rb_fragments);
-> >         sub_frag_mem_limit(qp->q.net, sum_truesize);
-> >
-> >         qp->q.flags = 0;
-> >         qp->q.len = 0;
-> >         qp->q.meat = 0;
-> >         qp->q.fragments = NULL;
-> > +       qp->q.rb_fragments = RB_ROOT;
-> >         qp->q.fragments_tail = NULL;
-> >         qp->iif = 0;
-> >         qp->ecn = 0;
-> > @@ -278,7 +288,8 @@ static int ip_frag_reinit(struct ipq *qp
-> >  static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
-> >  {
-> >         struct net *net = container_of(qp->q.net, struct net, ipv4.frags);
-> > -       struct sk_buff *prev, *next;
-> > +       struct rb_node **rbn, *parent;
-> > +       struct sk_buff *skb1;
-> >         struct net_device *dev;
-> >         unsigned int fragsize;
-> >         int flags, offset;
-> > @@ -341,58 +352,58 @@ static int ip_frag_queue(struct ipq *qp,
-> >         if (err)
-> >                 goto err;
-> >
-> > -       /* Find out which fragments are in front and at the back of us
-> > -        * in the chain of fragments so far.  We must know where to put
-> > -        * this fragment, right?
-> > -        */
-> > -       prev = qp->q.fragments_tail;
-> > -       if (!prev || prev->ip_defrag_offset < offset) {
-> > -               next = NULL;
-> > -               goto found;
-> > -       }
-> > -       prev = NULL;
-> > -       for (next = qp->q.fragments; next != NULL; next = next->next) {
-> > -               if (next->ip_defrag_offset >= offset)
-> > -                       break;  /* bingo! */
-> > -               prev = next;
-> > -       }
-> > +       /* Note : skb->rbnode and skb->dev share the same location. */
-> > +       dev = skb->dev;
-> > +       /* Makes sure compiler wont do silly aliasing games */
-> > +       barrier();
-> >
-> > -found:
-> >         /* RFC5722, Section 4, amended by Errata ID : 3089
-> >          *                          When reassembling an IPv6 datagram, if
-> >          *   one or more its constituent fragments is determined to be an
-> >          *   overlapping fragment, the entire datagram (and any constituent
-> >          *   fragments) MUST be silently discarded.
-> >          *
-> > -        * We do the same here for IPv4.
-> > +        * We do the same here for IPv4 (and increment an snmp counter).
-> >          */
-> >
-> > -       /* Is there an overlap with the previous fragment? */
-> > -       if (prev &&
-> > -           (prev->ip_defrag_offset + prev->len) > offset)
-> > -               goto discard_qp;
-> > -
-> > -       /* Is there an overlap with the next fragment? */
-> > -       if (next && next->ip_defrag_offset < end)
-> > -               goto discard_qp;
-> > +       /* Find out where to put this fragment.  */
-> > +       skb1 = qp->q.fragments_tail;
-> > +       if (!skb1) {
-> > +               /* This is the first fragment we've received. */
-> > +               rb_link_node(&skb->rbnode, NULL, &qp->q.rb_fragments.rb_node);
-> > +               qp->q.fragments_tail = skb;
-> > +       } else if ((skb1->ip_defrag_offset + skb1->len) < end) {
-> > +               /* This is the common/special case: skb goes to the end. */
-> > +               /* Detect and discard overlaps. */
-> > +               if (offset < (skb1->ip_defrag_offset + skb1->len))
-> > +                       goto discard_qp;
-> > +               /* Insert after skb1. */
-> > +               rb_link_node(&skb->rbnode, &skb1->rbnode, &skb1->rbnode.rb_right);
-> > +               qp->q.fragments_tail = skb;
-> > +       } else {
-> > +               /* Binary search. Note that skb can become the first fragment, but
-> > +                * not the last (covered above). */
-> > +               rbn = &qp->q.rb_fragments.rb_node;
-> > +               do {
-> > +                       parent = *rbn;
-> > +                       skb1 = rb_to_skb(parent);
-> > +                       if (end <= skb1->ip_defrag_offset)
-> > +                               rbn = &parent->rb_left;
-> > +                       else if (offset >= skb1->ip_defrag_offset + skb1->len)
-> > +                               rbn = &parent->rb_right;
-> > +                       else /* Found an overlap with skb1. */
-> > +                               goto discard_qp;
-> > +               } while (*rbn);
-> > +               /* Here we have parent properly set, and rbn pointing to
-> > +                * one of its NULL left/right children. Insert skb. */
-> > +               rb_link_node(&skb->rbnode, parent, rbn);
-> > +       }
-> > +       rb_insert_color(&skb->rbnode, &qp->q.rb_fragments);
-> >
-> > -       /* Note : skb->ip_defrag_offset and skb->dev share the same location */
-> > -       dev = skb->dev;
-> >         if (dev)
-> >                 qp->iif = dev->ifindex;
-> > -       /* Makes sure compiler wont do silly aliasing games */
-> > -       barrier();
-> >         skb->ip_defrag_offset = offset;
-> >
-> > -       /* Insert this fragment in the chain of fragments. */
-> > -       skb->next = next;
-> > -       if (!next)
-> > -               qp->q.fragments_tail = skb;
-> > -       if (prev)
-> > -               prev->next = skb;
-> > -       else
-> > -               qp->q.fragments = skb;
-> > -
-> >         qp->q.stamp = skb->tstamp;
-> >         qp->q.meat += skb->len;
-> >         qp->ecn |= ecn;
-> > @@ -414,7 +425,7 @@ found:
-> >                 unsigned long orefdst = skb->_skb_refdst;
-> >
-> >                 skb->_skb_refdst = 0UL;
-> > -               err = ip_frag_reasm(qp, prev, dev);
-> > +               err = ip_frag_reasm(qp, skb, dev);
-> >                 skb->_skb_refdst = orefdst;
-> >                 return err;
-> >         }
-> > @@ -431,15 +442,15 @@ err:
-> >         return err;
-> >  }
-> >
-> > -
-> >  /* Build a new IP datagram from all its fragments. */
-> > -
-> > -static int ip_frag_reasm(struct ipq *qp, struct sk_buff *prev,
-> > +static int ip_frag_reasm(struct ipq *qp, struct sk_buff *skb,
-> >                          struct net_device *dev)
-> >  {
-> >         struct net *net = container_of(qp->q.net, struct net, ipv4.frags);
-> >         struct iphdr *iph;
-> > -       struct sk_buff *fp, *head = qp->q.fragments;
-> > +       struct sk_buff *fp, *head = skb_rb_first(&qp->q.rb_fragments);
-> > +       struct sk_buff **nextp; /* To build frag_list. */
-> > +       struct rb_node *rbn;
-> >         int len;
-> >         int ihlen;
-> >         int err;
-> > @@ -453,25 +464,20 @@ static int ip_frag_reasm(struct ipq *qp,
-> >                 goto out_fail;
-> >         }
-> >         /* Make the one we just received the head. */
-> > -       if (prev) {
-> > -               head = prev->next;
-> > -               fp = skb_clone(head, GFP_ATOMIC);
-> > +       if (head != skb) {
-> > +               fp = skb_clone(skb, GFP_ATOMIC);
-> >                 if (!fp)
-> >                         goto out_nomem;
-> > -
-> > -               fp->next = head->next;
-> > -               if (!fp->next)
-> > +               rb_replace_node(&skb->rbnode, &fp->rbnode, &qp->q.rb_fragments);
-> > +               if (qp->q.fragments_tail == skb)
-> >                         qp->q.fragments_tail = fp;
-> > -               prev->next = fp;
-> > -
-> > -               skb_morph(head, qp->q.fragments);
-> > -               head->next = qp->q.fragments->next;
-> > -
-> > -               consume_skb(qp->q.fragments);
-> > -               qp->q.fragments = head;
-> > +               skb_morph(skb, head);
-> > +               rb_replace_node(&head->rbnode, &skb->rbnode,
-> > +                               &qp->q.rb_fragments);
-> > +               consume_skb(head);
-> > +               head = skb;
-> >         }
-> >
-> > -       WARN_ON(!head);
-> >         WARN_ON(head->ip_defrag_offset != 0);
-> >
-> >         /* Allocate a new buffer for the datagram. */
-> > @@ -496,24 +502,35 @@ static int ip_frag_reasm(struct ipq *qp,
-> >                 clone = alloc_skb(0, GFP_ATOMIC);
-> >                 if (!clone)
-> >                         goto out_nomem;
-> > -               clone->next = head->next;
-> > -               head->next = clone;
-> >                 skb_shinfo(clone)->frag_list = skb_shinfo(head)->frag_list;
-> >                 skb_frag_list_init(head);
-> >                 for (i = 0; i < skb_shinfo(head)->nr_frags; i++)
-> >                         plen += skb_frag_size(&skb_shinfo(head)->frags[i]);
-> >                 clone->len = clone->data_len = head->data_len - plen;
-> > -               head->data_len -= clone->len;
-> > -               head->len -= clone->len;
-> > +               skb->truesize += clone->truesize;
-> >                 clone->csum = 0;bffa72cf7f9df
-> >                 clone->ip_summed = head->ip_summed;
-> >                 add_frag_mem_limit(qp->q.net, clone->truesize);
-> > +               skb_shinfo(head)->frag_list = clone;
-> > +               nextp = &clone->next;
-> > +       } else {
-> > +               nextp = &skb_shinfo(head)->frag_list;
-> >         }
-> >
-> > -       skb_shinfo(head)->frag_list = head->next;
-> >         skb_push(head, head->data - skb_network_header(head));
-> >
-> > -       for (fp=head->next; fp; fp = fp->next) {
-> > +       /* Traverse the tree in order, to build frag_list. */
-> > +       rbn = rb_next(&head->rbnode);
-> > +       rb_erase(&head->rbnode, &qp->q.rb_fragments);
-> > +       while (rbn) {
-> > +               struct rb_node *rbnext = rb_next(rbn);
-> > +               fp = rb_to_skb(rbn);
-> > +               rb_erase(rbn, &qp->q.rb_fragments);
-> > +               rbn = rbnext;
-> > +               *nextp = fp;
-> > +               nextp = &fp->next;
-> > +               fp->prev = NULL;
-> > +               memset(&fp->rbnode, 0, sizeof(fp->rbnode));
-> >                 head->data_len += fp->len;
-> >                 head->len += fp->len;
-> >                 if (head->ip_summed != fp->ip_summed)
-> > @@ -524,7 +541,9 @@ static int ip_frag_reasm(struct ipq *qp,
-> >         }
-> >         sub_frag_mem_limit(qp->q.net, head->truesize);
-> >
-> > +       *nextp = NULL;
-> >         head->next = NULL;
-> > +       head->prev = NULL;
-> >         head->dev = dev;
-> >         head->tstamp = qp->q.stamp;
-> >         IPCB(head)->frag_max_size = max(qp->max_df_size, qp->q.max_size);
-> > @@ -552,6 +571,7 @@ static int ip_frag_reasm(struct ipq *qp,
-> >
-> >         __IP_INC_STATS(net, IPSTATS_MIB_REASMOKS);
-> >         qp->q.fragments = NULL;
-> > +       qp->q.rb_fragments = RB_ROOT;
-> >         qp->q.fragments_tail = NULL;
-> >         return 0;
-> >
-> > --- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-> > +++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-> > @@ -471,6 +471,7 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
-> >                                           head->csum);
-> >
-> >         fq->q.fragments = NULL;
-> > +       fq->q.rb_fragments = RB_ROOT;
-> >         fq->q.fragments_tail = NULL;
-> >
-> >         return true;
-> > --- a/net/ipv6/reassembly.c
-> > +++ b/net/ipv6/reassembly.c
-> > @@ -472,6 +472,7 @@ static int ip6_frag_reasm(struct frag_qu
-> >         __IP6_INC_STATS(net, __in6_dev_get(dev), IPSTATS_MIB_REASMOKS);
-> >         rcu_read_unlock();
-> >         fq->q.fragments = NULL;
-> > +       fq->q.rb_fragments = RB_ROOT;
-> >         fq->q.fragments_tail = NULL;
-> >         return 1;
-> >
-> >
-> >
-> 
-> I'm getting a kernel panic on the >=4.14.71 stable kernels, and I've
-> isolated the problem back to this patch.
-> 
-> My 4.18.11 kernel seems to be OK.
-> 
-> Whenever I inject a delay into the interface with iproute2 tools, I get a panic.
-> 
-> Example command:
-> tc qdisc add dev eth0 root netem delay 35ms
-> 
-> The RIP is pointing at netif_skb_features+0x31/0x230
-> 
-> My efforts to get a transmittable copy of the panic have been thwarted.
-> 
-> There's some confusion between this patch and the upstream patch
-> refered to in the commit message
-> 
-> The upstream commit patches net/sched/sch_netem.c which isn't even
-> touched in this commit.
-> 
-> Althought the commit messages are the same, the two patches seem to
-> have a different purpose.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/net/sched?id=bffa72cf7f9df842f0016ba03586039296b4caaf
-> 
-> The commit message seems more relavant to this patch.
-> 
-> The upstream commit bffa72cf7f9df842f0016ba03586039296b4caaf has not
-> yet been applied to the stable tree.
-> 
-> I decided to roll the dice, and apply the upstream patch
-> bffa72cf7f9df842f0016ba03586039296b4caaf (it's been in the main kernel
-> tree just over a year).
-> 
-> When I manually patch my 4.14.74 kernel with
-> bffa72cf7f9df842f0016ba03586039296b4caaf, my panic seems to be solved.
 
-That is odd, as this commit is in the 4.14.71 kernel release, so it
-should not be able to be applied to 4.14.74.
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If something still needs to be done here for the 4.14.y kernel tree,
-please let me know.
+On Wed, Nov 28, 2018 at 03:17:49PM -0800, Andy Lutomirski wrote:
+> On Wed, Nov 28, 2018 at 2:11 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
+> >
+> > On Wed, Nov 28, 2018 at 06:23:46PM +0300, Dmitry V. Levin wrote:
+> > > On Wed, Nov 28, 2018 at 03:20:06PM +0100, Oleg Nesterov wrote:
+> > > > On 11/28, Dmitry V. Levin wrote:
+> > > > > On Wed, Nov 28, 2018 at 02:49:14PM +0100, Oleg Nesterov wrote:
+> > > > > > On 11/28, Dmitry V. Levin wrote:
+> > > > > > >
+> > > > > > > +/*
+> > > > > > > + * These values are stored in task->ptrace_message by traceh=
+ook_report_syscall_*
+> > > > > > > + * to describe current syscall-stop.
+> > > > > > > + *
+> > > > > > > + * Values for these constants are chosen so that they do not=
+ appear
+> > > > > > > + * in task->ptrace_message by other means.
+> > > > > > > + */
+> > > > > > > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY        0x80000000U
+> > > > > > > +#define PTRACE_EVENTMSG_SYSCALL_EXIT 0x90000000U
+> > > > > >
+> > > > > > Again, I do not really understand the comment... Why should we =
+care about
+> > > > > > "do not appear in task->ptrace_message by other means" ?
+> > > > > >
+> > > > > > 2/2 should detect ptrace_report_syscall() case correctly, so we=
+ can use any
+> > > > > > numbers, say, 1 and 2?
+> > > > > >
+> > > > > > If debugger does PTRACE_GETEVENTMSG it should know how to inter=
+pet the value
+> > > > > > anyway after wait(status).
+> > > > >
+> > > > > Given that without this patch the value returned by PTRACE_GETEVE=
+NTMSG
+> > > > > during syscall stop is undefined, we need two different ptrace_me=
+ssage
+> > > > > values that cannot be set by other ptrace events to enable reliab=
+le
+> > > > > identification of syscall-enter-stop and syscall-exit-stop in use=
+rspace:
+> > > > > if we make PTRACE_GETEVENTMSG return 0 or any other value routine=
+ly set by
+> > > > > other ptrace events, it would be hard for userspace to find out w=
+hether
+> > > > > the kernel implements new semantics or not.
+> > > >
+> > > > Hmm, why? Debugger can just do ptrace(PTRACE_GET_SYSCALL_INFO, NULL=
+), if it
+> > > > returns EIO then it is not implemented?
+> > >
+> > > The debugger that uses PTRACE_GET_SYSCALL_INFO does not need to call
+> > > PTRACE_GETEVENTMSG for syscall stops.
+> > > My concern here is the PTRACE_GETEVENTMSG interface itself.  If we use
+> > > ptrace_message to implement PTRACE_GET_SYSCALL_INFO and expose
+> > > PTRACE_EVENTMSG_SYSCALL_{ENTRY,EXIT} for regular PTRACE_GETEVENTMSG u=
+sers,
+> > > it should have clear semantics.
+> >
+> > Since our implementation of PTRACE_GET_SYSCALL_INFO uses ptrace_message
+> > to distinguish syscall-enter-stop from syscall-exit-stop, we could choo=
+se
+> > one of the following approaches:
+> >
+> > 1. Do not document the values saved into ptrace_message during syscall
+> > stops (and exposed via PTRACE_GETEVENTMSG) as a part of ptrace API,
+> > leaving the value returned by PTRACE_GETEVENTMSG during syscall stops
+> > as undefined.
+> >
+> > 2. Document these values chosen to avoid collisions with ptrace_message=
+ values
+> > set by other ptrace events so that PTRACE_GETEVENTMSG users can easily =
+tell
+> > whether this new semantics is supported by the kernel or not.
+>=20
+> I don't like any of this at all.  Can we please choose a sensible API
+> design and let the API drive the implementation instead of vice versa?
 
-thanks,
+What are your concerns?  Do you see something wrong in exposing this
+information via PTRACE_GETEVENTMSG?
 
-greg k-h
+Anyway, can we agree on the PTRACE_GET_SYSCALL_INFO API, please?
+
+>  ISTM the correct solution is to add some new state to task_struct for
+> this.
+>=20
+> If we're concerned about making task_struct bigger, I have a
+> half-finished patch to factor all the ptrace tracee state into a
+> separate struct.
+
+This is refactoring of the kernel - a thing userspace people are not
+the best equipped to do.  This part should rather be sorted out by kernel
+people.
+
+
+--=20
+ldv
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJb/8C8AAoJEAVFT+BVnCUIurcQAL/2HRQmF9Kp0QjlXLZaNXnZ
+fUtK8nt3YH+JAs9JzDKlueo9cpiS5raMzi3bP4ZFm7lJoEVG/Rje7mih1sy7G6Ll
+p5MG6swSBCnZtU5L9iP/VVvWqCxV2o97WGBTNNb8FF1SdSs30M0SRmpWXa10Whf2
+Zn15q+YaphfIQcyZKQ+iW9U9hlfg6JHUqz0KCRTVANc0NSclP4kE5AZqVEm7h8s5
+QVoLU7aKvdwVtb07FESrLAApKFCk6FMTJk4T6jLVFE1bQihzqDw0DRGYHJk4P9op
+/fEPO/y/kl4BEoifoJBbech0lFbxZUrfpZnmCW3DtmcHIanMD8pvSlbozITajKSQ
+zbd2+sxrg95le2YW6D4MGdA6FoDBNz46OWsl8uvICOQz5N7uArEU+SNfihUoLjAa
+QkceNlp/e1IO3/sh3eU2ErdEs54dJmmDXVUkjhg26pDRj6beVFC4mSVlaE2Spqa0
+G4UdgugeODXN3X5o9zEI57vkxKDVlqlcK5XqqBbbDh1Plesj4jc+l7Xt1rW0m6Hi
+/UuApDFG57n/hEVH3HkonZudGs3wF4ccsgtX7csAh4Bx28WStyE2KOxHvhD74gV4
+DJQ+bX3I9GvDSjfI4TWjNcE3+WFNosXDvvD7shTHVCcCKaHGAoJ23PdOvLBdkBC3
+r8eb9XdMYUvi/Jd/gy2N
+=9ekh
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
