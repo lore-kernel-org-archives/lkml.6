@@ -2,130 +2,107 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D54C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685A3C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E846C2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:37:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="AH8aHR0j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E846C2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 3465320868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3465320868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeK3AnG (ORCPT
+        id S1728348AbeK3Arl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:43:06 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37664 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeK3AnG (ORCPT
+        Thu, 29 Nov 2018 19:47:41 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:19505 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbeK3Arl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:43:06 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so1056379plr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 05:37:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=HSFFE4InofskcPnoYlMIpt76PX9UGREOZkKdoLtdHuo=;
-        b=AH8aHR0jpxYb5A7HENw7GHAofIvCf09v1jIZxVYaPigq2HRNAIh5otVC7EgJTmSBd8
-         vWLi4yS8+yREKYt/yB8SyQ7G0jBdNGD54BZcIwh9foQKoGPWYJNAY+Pk31y2lMlMSt3o
-         ODLKyQIMAjDaloehVpuGOK7ol+DOGIEEFYk6tR7ISOfoWz89rjvz5ixId/GmIMXRtdtX
-         rne5PkdInltzzp5+EbSuP0euxbiR5zfoF9aDo11eoHkyeR63KU473+Qjjl3C2GVsGfi/
-         sU5Qq6GkZIHl4UwGvY6jexeN6Kd9aQmKdWBdCHOJKC3np0I2cQhnDGkZEo1iBJsgUWhU
-         Gygg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=HSFFE4InofskcPnoYlMIpt76PX9UGREOZkKdoLtdHuo=;
-        b=YU+6YhriQ9Ol/ktok+pane7dlD0e2o8kUQXaDxPa77sBjZ9v8K15gg0rqBTJuAfEq1
-         1WtqthAMQ7D/V6dfp6Z5SJX/poBb00QUGC1oo8IAQdajg0EoPrexBbhfQVuoCxJe3tJw
-         6V+Xj9tp1DJWFtJ6LAmg2OR+DqpVPFJuxX8cU7HTjiie/1mObgV75TMvuy+/2UAbPQGo
-         1IK8dK4orzTHNzupdowpMKMITDeQrFiQPANExUWTZEpKLcrKLPPP01VpYQyWhkoA98ZA
-         8jFaHB9Ba8ErLSjDOp9YW90aA08/p3yGVioU5lRO4C9w+4Lhe8GKAkMuKVdWPgJO3JvR
-         CySQ==
-X-Gm-Message-State: AA+aEWb3J7B0XmcXQzUXEqvHvonwOPuVDcKBqGdxfbpSZcVUDoFZXh8P
-        ENdnjmyhwjYa1MU2WKBiDMdjQw==
-X-Google-Smtp-Source: AFSGD/VBsCpUJnV5aeETAGSWMNC3zgISW6Q6ZMLVrzQeSyB2FU+Y29gh7qngpvJEKfZnCnoK2JWPDg==
-X-Received: by 2002:a17:902:f44:: with SMTP id 62mr1547386ply.38.1543498662404;
-        Thu, 29 Nov 2018 05:37:42 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:8014:9f93:fece:fe5e? ([2601:646:c200:7429:8014:9f93:fece:fe5e])
-        by smtp.gmail.com with ESMTPSA id g65sm12664459pfa.63.2018.11.29.05.37.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 05:37:40 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call implementation for x86-64
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-Date:   Thu, 29 Nov 2018 05:37:39 -0800
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-References: <cover.1543200841.git.jpoimboe@redhat.com> <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com> <20181126160217.GR2113@hirez.programming.kicks-ass.net> <20181126171036.chcbmb35ygpxziub@treble> <20181126175624.bruqfbkngbucpvxr@treble> <20181126200801.GW2113@hirez.programming.kicks-ass.net> <20181126212628.4apztfazichxnt7r@treble> <20181127084330.GX2113@hirez.programming.kicks-ass.net> <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com> <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
+        Thu, 29 Nov 2018 19:47:41 -0500
+Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 29 Nov 2018
+ 21:42:20 +0800
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 0/2] clk: meson-g12a: Add EE clock controller driver
+Date:   Thu, 29 Nov 2018 21:41:55 +0800
+Message-ID: <1543498917-98605-1-git-send-email-jian.hu@amlogic.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.25]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes since v4 at[5]
+-add bypass clock "g12a_ee_core" from DT
+-fix Kconfig description
+-change g12a_mpll0_div/g12a_mpll1_div/g12a_mpll2_div/g12a_mpll3_div 
+ clock's parent name as fixed_pll_dco
+-drop CLK_SET_RATE_PARENT flag for pll clock
+-drop CLK_GET_RATE_NOCACHE flag for pll_dco clock
+-delete usless note
+-enable G12A clock driver
 
+Changes since v3 at[4]
+-add fixed clocks clk_regmap definition
 
-> On Nov 29, 2018, at 1:42 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->=20
-> On Wed, Nov 28, 2018 at 10:05:54PM -0800, Andy Lutomirski wrote:
->=20
->>>> +static void static_call_bp_handler(struct pt_regs *regs, void *_data)
->>>> +{
->>>> +    struct static_call_bp_data *data =3D _data;
->>>> +
->>>> +    /*
->>>> +     * For inline static calls, push the return address on the stack s=
-o the
->>>> +     * "called" function will return to the location immediately after=
- the
->>>> +     * call site.
->>>> +     *
->>>> +     * NOTE: This code will need to be revisited when kernel CET gets
->>>> +     *       implemented.
->>>> +     */
->>>> +    if (data->ret) {
->>>> +        regs->sp -=3D sizeof(long);
->>>> +        *(unsigned long *)regs->sp =3D data->ret;
->>>> +    }
->>=20
->> You can=E2=80=99t do this.  Depending on the alignment of the old RSP, wh=
-ich
->> is not guaranteed, this overwrites regs->cs.  IRET goes boom.
->=20
-> I don't get it; can you spell that out?
->=20
-> The way I understand it is that we're at a location where a "E8 - Near
-> CALL" instruction should be, and thus RSP should be the regular kernel
-> stack, and the above simply does "PUSH ret", which is what that CALL
-> would've done too.
->=20
+Changes since v2 at[2]
+-fix fixed clocks's descriptions
+-fix alignment
+-add enable bit for plls base on [3] patches
+-add fixed clock gate bit
 
-int3 isn=E2=80=99t IST anymore, so the int3 instruction conditionally subtra=
-cts 8 from RSP and then pushes SS, etc. So my email was obviously wrong wrt =E2=
-=80=9Ccs=E2=80=9D, but you=E2=80=99re still potentially overwriting the int3=
- IRET frame.=
+Changes since v1 at[1]
+-fix typo of 'Everything'.
+-change the word 'AmLogic' to 'Amlogic'
+-squash patch 1 and 2.
+-delete usless message of "Trying obsolete regs".
+-delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
+-rebase on top of the "next/drivers" branch, and add g12a clock patch.
+-add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
+ g12a_sd_emmc_c_clk0_sel.
+
+[1]https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
+[2]https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
+[3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+[4]https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
+[5]https://lkml.kernel.org/r/1541511349-121152-1-git-send-email-jian.hu@amlogic.com
+
+Jian Hu (2):
+  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+  clk: meson-g12a: Add EE Clock controller driver
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
+ arch/arm64/Kconfig.platforms                       |    1 +
+ drivers/clk/meson/Kconfig                          |    8 +
+ drivers/clk/meson/Makefile                         |    1 +
+ drivers/clk/meson/g12a.c                           | 1185 ++++++++++++++++++++
+ drivers/clk/meson/g12a.h                           |  130 +++
+ include/dt-bindings/clock/g12a-clkc.h              |   93 ++
+ 7 files changed, 1419 insertions(+)
+ create mode 100644 drivers/clk/meson/g12a.c
+ create mode 100644 drivers/clk/meson/g12a.h
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+
+-- 
+1.9.1
+
