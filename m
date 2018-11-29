@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C1AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A36DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CEF420868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F65A205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="03ubk/WZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CEF420868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HL+7N80/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F65A205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbeK3BZu (ORCPT
+        id S1731323AbeK3BZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49284 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728855AbeK3BZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:49 -0500
+        id S1728855AbeK3BZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1767221104;
-        Thu, 29 Nov 2018 14:20:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70103205C9;
+        Thu, 29 Nov 2018 14:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501218;
-        bh=Nwv9qocssiA0aoc4xrEVIPkHqJ0vnFMNzbQWaOZeObk=;
+        s=default; t=1543501220;
+        bh=35bDtTHkNOuH9vtegi14pWJJgSx1PrHTgLBhMKpaHqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=03ubk/WZ2OULzf+97zG8cHrz0kwRFgqovbZ0l8zIz+IXmnzWIt2oRdC3/NxPZ+Z7Q
-         VRulJ6wGxeeV5jaJXue3BnhAmg7Hnxs6TYRlMvmzN7/Dxum4zgw9n24OOXeMIy53n8
-         7GC4IvFRu0YSCVznqGpPgtsfr0kpz0E6Q2/TXiAE=
+        b=HL+7N80/W4KEBhS99eRmLf1QObdGJ+5cm5zjiA3vvkvQ3uwuVUDtC3yBQwYWoQM1O
+         sA7vWEP+RlbxrAoJGKLtBUcNuFoEdWo9eDTFc/oD2dIHkRETF+g2cNqoAi/TObqk60
+         5YM08cQUK5flStXjQtJn65JAKMFcrcmor8JcUs5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Subhash Jadavani <subhashj@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 75/86] scsi: ufs: fix race between clock gating and devfreq scaling work
-Date:   Thu, 29 Nov 2018 15:12:40 +0100
-Message-Id: <20181129140115.951351091@linuxfoundation.org>
+Subject: [PATCH 4.4 76/86] scsi: ufshcd: release resources if probe fails
+Date:   Thu, 29 Nov 2018 15:12:41 +0100
+Message-Id: <20181129140116.004356968@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -66,76 +66,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Subhash Jadavani <subhashj@codeaurora.org>
 
-commit 30fc33f1ef475480dc5bea4fe1bda84b003b992c upstream.
+commit afa3dfd42d205b106787476647735aa1de1a5d02 upstream.
 
-UFS devfreq clock scaling work may require clocks to be ON if it need to
-execute some UFS commands hence it may request for clock hold before
-issuing the command. But if UFS clock gating work is already running in
-parallel, ungate work would end up waiting for the clock gating work to
-finish and as clock gating work would also wait for the clock scaling
-work to finish, we would enter in deadlock state. Here is the call trace
-during this deadlock state:
-
-Workqueue: devfreq_wq devfreq_monitor
-	__switch_to
-	__schedule
-	schedule
-	schedule_timeout
-	wait_for_common
-	wait_for_completion
-	flush_work
-	ufshcd_hold
-	ufshcd_send_uic_cmd
-	ufshcd_dme_get_attr
-	ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div
-	ufs_qcom_clk_scale_notify
-	ufshcd_scale_clks
-	ufshcd_devfreq_target
-	update_devfreq
-	devfreq_monitor
-	process_one_work
-	worker_thread
-	kthread
-	ret_from_fork
-
-Workqueue: events ufshcd_gate_work
-	__switch_to
-	__schedule
-	schedule
-	schedule_preempt_disabled
-	__mutex_lock_slowpath
-	mutex_lock
-	devfreq_monitor_suspend
-	devfreq_simple_ondemand_handler
-	devfreq_suspend_device
-	ufshcd_gate_work
-	process_one_work
-	worker_thread
-	kthread
-	ret_from_fork
-
-Workqueue: events ufshcd_ungate_work
-	__switch_to
-	__schedule
-	schedule
-	schedule_timeout
-	wait_for_common
-	wait_for_completion
-	flush_work
-	__cancel_work_timer
-	cancel_delayed_work_sync
-	ufshcd_ungate_work
-	process_one_work
-	worker_thread
-	kthread
-	ret_from_fork
-
-This change fixes this deadlock by doing this in devfreq work (devfreq_wq):
-Try cancelling clock gating work. If we are able to cancel gating work
-or it wasn't scheduled, hold the clock reference count until scaling is
-in progress. If gate work is already running in parallel, let's skip
-the frequecy scaling at this time and it will be retried once next scaling
-window expires.
+If ufshcd pltfrm/pci driver's probe fails for some reason then ensure
+that scsi host is released to avoid memory leak but managed memory
+allocations (via devm_* calls) need not to be freed explicitly on probe
+failure as memory allocated with these functions is automatically freed
+on driver detach.
 
 Reviewed-by: Sahitya Tummala <stummala@codeaurora.org>
 Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
@@ -144,58 +81,68 @@ Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/scsi/ufs/ufshcd-pci.c    |    2 ++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |    5 +----
+ drivers/scsi/ufs/ufshcd.c        |    3 ---
+ 3 files changed, 3 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -5511,15 +5511,47 @@ static int ufshcd_devfreq_target(struct
- {
- 	int err = 0;
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	bool release_clk_hold = false;
-+	unsigned long irq_flags;
- 
- 	if (!ufshcd_is_clkscaling_enabled(hba))
- 		return -EINVAL;
- 
-+	spin_lock_irqsave(hba->host->host_lock, irq_flags);
-+	if (ufshcd_eh_in_progress(hba)) {
-+		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		return 0;
-+	}
-+
-+	if (ufshcd_is_clkgating_allowed(hba) &&
-+	    (hba->clk_gating.state != CLKS_ON)) {
-+		if (cancel_delayed_work(&hba->clk_gating.gate_work)) {
-+			/* hold the vote until the scaling work is completed */
-+			hba->clk_gating.active_reqs++;
-+			release_clk_hold = true;
-+			hba->clk_gating.state = CLKS_ON;
-+		} else {
-+			/*
-+			 * Clock gating work seems to be running in parallel
-+			 * hence skip scaling work to avoid deadlock between
-+			 * current scaling work and gating work.
-+			 */
-+			spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+			return 0;
-+		}
-+	}
-+	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+
- 	if (*freq == UINT_MAX)
- 		err = ufshcd_scale_clks(hba, true);
- 	else if (*freq == 0)
- 		err = ufshcd_scale_clks(hba, false);
- 
-+	spin_lock_irqsave(hba->host->host_lock, irq_flags);
-+	if (release_clk_hold)
-+		__ufshcd_release(hba);
-+	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+
- 	return err;
+--- a/drivers/scsi/ufs/ufshcd-pci.c
++++ b/drivers/scsi/ufs/ufshcd-pci.c
+@@ -104,6 +104,7 @@ static void ufshcd_pci_remove(struct pci
+ 	pm_runtime_forbid(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	ufshcd_remove(hba);
++	ufshcd_dealloc_host(hba);
  }
  
+ /**
+@@ -147,6 +148,7 @@ ufshcd_pci_probe(struct pci_dev *pdev, c
+ 	err = ufshcd_init(hba, mmio_base, pdev->irq);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Initialization failed\n");
++		ufshcd_dealloc_host(hba);
+ 		return err;
+ 	}
+ 
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -161,7 +161,7 @@ static int ufshcd_populate_vreg(struct d
+ 	if (ret) {
+ 		dev_err(dev, "%s: unable to find %s err %d\n",
+ 				__func__, prop_name, ret);
+-		goto out_free;
++		goto out;
+ 	}
+ 
+ 	vreg->min_uA = 0;
+@@ -183,9 +183,6 @@ static int ufshcd_populate_vreg(struct d
+ 
+ 	goto out;
+ 
+-out_free:
+-	devm_kfree(dev, vreg);
+-	vreg = NULL;
+ out:
+ 	if (!ret)
+ 		*out_vreg = vreg;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5385,8 +5385,6 @@ void ufshcd_remove(struct ufs_hba *hba)
+ 	ufshcd_disable_intr(hba, hba->intr_mask);
+ 	ufshcd_hba_stop(hba);
+ 
+-	scsi_host_put(hba->host);
+-
+ 	ufshcd_exit_clk_gating(hba);
+ 	if (ufshcd_is_clkscaling_enabled(hba))
+ 		devfreq_remove_device(hba->devfreq);
+@@ -5733,7 +5731,6 @@ exit_gating:
+ 	ufshcd_exit_clk_gating(hba);
+ out_disable:
+ 	hba->is_irq_enabled = false;
+-	scsi_host_put(host);
+ 	ufshcd_hba_exit(hba);
+ out_error:
+ 	return err;
 
 
