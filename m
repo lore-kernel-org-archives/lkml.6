@@ -3,259 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27C7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77A7C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49C921019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49C921019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id A94DA2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94DA2133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbeK3BMp (ORCPT
+        id S1728926AbeK3BMr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:12:45 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:54038 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 20:12:47 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:53116 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728810AbeK3BMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:12:44 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 435K8d36f5z9vGDx;
-        Thu, 29 Nov 2018 15:07:13 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id IlDJTt94-uQG; Thu, 29 Nov 2018 15:07:13 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 435K8d1cvGz9vGDm;
-        Thu, 29 Nov 2018 15:07:13 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 756768B89E;
-        Thu, 29 Nov 2018 15:07:14 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 7_a1AQVb5AQf; Thu, 29 Nov 2018 15:07:14 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A8BA8B899;
-        Thu, 29 Nov 2018 15:07:14 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id D647F69AE8; Thu, 29 Nov 2018 14:07:13 +0000 (UTC)
-Message-Id: <a16697297f3c1b25188942dcfef77771d00e57ef.1543499865.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1543499860.git.christophe.leroy@c-s.fr>
-References: <cover.1543499860.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v9 14/20] powerpc/8xx: Temporarily disable 16k pages and
- hugepages
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 14:07:13 +0000 (UTC)
+        id S1728857AbeK3BMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:12:46 -0500
+Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gSMyK-0003fP-3z; Thu, 29 Nov 2018 15:07:16 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     sre@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mdf@kernel.org
+Subject: Re: [PATCH v2] power: supply: bq24190_charger: add support for bq24196 variant
+Date:   Thu, 29 Nov 2018 15:07:15 +0100
+Message-ID: <2186433.S1hFpfxTzA@phil>
+In-Reply-To: <20181113124753.29948-1-heiko@sntech.de>
+References: <20181113124753.29948-1-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of making use of hardware assistance in TLB handlers,
-this patch temporarily disables 16K pages and hugepages. The reason
-is that when using HW assistance in 4K pages mode, the linux model
-fit with the HW model for 4K pages and 8M pages.
+Hi Sebastian,
 
-However for 16K pages and 512K mode some additional work is needed
-to get linux model fit with HW model.
-For the 8M pages, they will naturaly come back when we switch to
-HW assistance, without any additional handling.
-In order to keep the following patch smaller, the removal of the
-current special handling for 8M pages gets removed here as well.
+Am Dienstag, 13. November 2018, 13:47:53 CET schrieb Heiko Stuebner:
+> From: Heiko Stuebner <heiko.stuebner@bq.com>
+> 
+> The bq24196 is another variant of the bq24190 charger ic.
+> Its register set is identical to the bq24192 and it even reuses
+> the same part number (0x5).
+> 
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
 
-Therefore the 4K pages mode will be implemented first and without
-support for 512k hugepages. Then the 512k hugepages will be brought
-back. And the 16K pages will be implemented in the following step.
+any opinion on the underlying bq24192 and this bq24196 support?
+It's a month now for Brian's patches and 2 weeks for my small bq24196
+addition, so it would be cool to know if there needs to be done more
+to get it included.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig           |  2 +-
- arch/powerpc/kernel/head_8xx.S | 74 +++---------------------------------------
- arch/powerpc/mm/tlb_nohash.c   |  6 ----
- 3 files changed, 6 insertions(+), 76 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8be31261aec8..ddfccdf004fe 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -689,7 +689,7 @@ config PPC_4K_PAGES
- 
- config PPC_16K_PAGES
- 	bool "16k page size"
--	depends on 44x || PPC_8xx
-+	depends on 44x
- 
- config PPC_64K_PAGES
- 	bool "64k page size"
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index c203defe49a4..01f58b1d9ae7 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -314,7 +314,7 @@ SystemCall:
- InstructionTLBMiss:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
- 	mtspr	SPRN_SPRG_SCRATCH1, r11
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mtspr	SPRN_SPRG_SCRATCH2, r12
- #endif
- 
-@@ -325,10 +325,8 @@ InstructionTLBMiss:
- 	INVALIDATE_ADJACENT_PAGES_CPU15(r11, r10)
- 	/* Only modules will cause ITLB Misses as we always
- 	 * pin the first 8MB of kernel memory */
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
--	mfcr	r12
--#endif
- #ifdef ITLB_MISS_KERNEL
-+	mfcr	r12
- #if defined(SIMPLE_KERNEL_ADDRESS) && defined(CONFIG_PIN_TLB_TEXT)
- 	andis.	r11, r10, 0x8000	/* Address >= 0x80000000 */
- #else
-@@ -360,15 +358,9 @@ InstructionTLBMiss:
- 
- 	/* Extract level 2 index */
- 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
--#ifdef CONFIG_HUGETLB_PAGE
--	mtcr	r11
--	bt-	28, 10f		/* bit 28 = Large page (8M) */
--	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
--#endif
- 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
- 	lwz	r10, 0(r10)	/* Get the pte */
--4:
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mtcr	r12
- #endif
- 	/* Load the MI_TWC with the attributes for this "segment." */
-@@ -393,7 +385,7 @@ InstructionTLBMiss:
- 	/* Restore registers */
- 0:	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- #endif
- 	rfi
-@@ -406,35 +398,12 @@ InstructionTLBMiss:
- 	stw	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
--#if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
-+#ifdef ITLB_MISS_KERNEL
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- #endif
- 	rfi
- #endif
- 
--#ifdef CONFIG_HUGETLB_PAGE
--10:	/* 8M pages */
--#ifdef CONFIG_PPC_16K_PAGES
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--#else
--	/* Level 2 base */
--	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
--#endif
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--
--20:	/* 512k pages */
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--#endif
--
- 	. = 0x1200
- DataStoreTLBMiss:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
-@@ -472,11 +441,6 @@ DataStoreTLBMiss:
- 	 */
- 	/* Extract level 2 index */
- 	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
--#ifdef CONFIG_HUGETLB_PAGE
--	mtcr	r11
--	bt-	28, 10f		/* bit 28 = Large page (8M) */
--	bt-	29, 20f		/* bit 29 = Large page (8M or 512k) */
--#endif
- 	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
- 	lwz	r10, 0(r10)	/* Get the pte */
- 4:
-@@ -534,29 +498,6 @@ DataStoreTLBMiss:
- 	rfi
- #endif
- 
--#ifdef CONFIG_HUGETLB_PAGE
--10:	/* 8M pages */
--	/* Extract level 2 index */
--#ifdef CONFIG_PPC_16K_PAGES
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_8M - PAGE_SHIFT), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--#else
--	/* Level 2 base */
--	rlwinm	r10, r11, 0, ~HUGEPD_SHIFT_MASK
--#endif
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--
--20:	/* 512k pages */
--	/* Extract level 2 index */
--	rlwinm	r10, r10, 32 - (PAGE_SHIFT_512K - PAGE_SHIFT), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
--	/* Add level 2 base */
--	rlwimi	r10, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
--	lwz	r10, 0(r10)	/* Get the pte */
--	b	4b
--#endif
--
- /* This is an instruction TLB error on the MPC8xx.  This could be due
-  * to many reasons, such as executing guarded memory or illegal instruction
-  * addresses.  There is nothing to do but handle a big time error fault.
-@@ -773,12 +714,7 @@ FixupDAR:/* Entry point for dcbx workaround. */
- 
- 	/* concat physical page address(r11) and page offset(r10) */
- 200:
--#ifdef CONFIG_PPC_16K_PAGES
--	rlwinm	r11, r11, 0, 0, 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1) - 1
--	rlwimi	r11, r10, 32 - (PAGE_SHIFT_8M - 2), 32 + PAGE_SHIFT_8M - (PAGE_SHIFT << 1), 29
--#else
- 	rlwinm	r11, r10, 0, ~HUGEPD_SHIFT_MASK
--#endif
- 	lwz	r11, 0(r11)	/* Get the pte */
- 	/* concat physical page address(r11) and page offset(r10) */
- 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT_8M, 31
-diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
-index ae5d568e267f..4f79639e432f 100644
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -97,12 +97,6 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
- 		.shift	= 14,
- 	},
- #endif
--	[MMU_PAGE_512K] = {
--		.shift	= 19,
--	},
--	[MMU_PAGE_8M] = {
--		.shift	= 23,
--	},
- };
- #else
- struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
--- 
-2.13.3
+Thanks
+Heiko
+
+> ---
+> This should go on top of the bq24192 support patches from Brian Masney /
+> Jonathan Marek [0]
+> 
+> [0] https://patchwork.kernel.org/patch/10663409/
+> 
+> changes in v2:
+> - add missing compatible to dt-binding
+> 
+>  Documentation/devicetree/bindings/power/supply/bq24190.txt | 1 +
+>  drivers/power/supply/bq24190_charger.c                     | 4 +++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/bq24190.txt b/Documentation/devicetree/bindings/power/supply/bq24190.txt
+> index c8ac028bd3c7..ffe2be408bb6 100644
+> --- a/Documentation/devicetree/bindings/power/supply/bq24190.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/bq24190.txt
+> @@ -5,6 +5,7 @@ Required properties:
+>      * "ti,bq24190"
+>      * "ti,bq24192"
+>      * "ti,bq24192i"
+> +    * "ti,bq24196"
+>  - reg: integer, I2C address of the charger.
+>  - interrupts[-extended]: configuration for charger INT pin.
+>  
+> diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
+> index 4e64e6ac95c5..effa7c3c21e6 100644
+> --- a/drivers/power/supply/bq24190_charger.c
+> +++ b/drivers/power/supply/bq24190_charger.c
+> @@ -143,7 +143,7 @@
+>  #define BQ24190_REG_VPRS_PN_MASK		(BIT(5) | BIT(4) | BIT(3))
+>  #define BQ24190_REG_VPRS_PN_SHIFT		3
+>  #define BQ24190_REG_VPRS_PN_24190			0x4
+> -#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193 */
+> +#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193, 24196 */
+>  #define BQ24190_REG_VPRS_PN_24192I			0x3
+>  #define BQ24190_REG_VPRS_TS_PROFILE_MASK	BIT(2)
+>  #define BQ24190_REG_VPRS_TS_PROFILE_SHIFT	2
+> @@ -1973,6 +1973,7 @@ static const struct i2c_device_id bq24190_i2c_ids[] = {
+>  	{ "bq24190" },
+>  	{ "bq24192" },
+>  	{ "bq24192i" },
+> +	{ "bq24196" },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
+> @@ -1982,6 +1983,7 @@ static const struct of_device_id bq24190_of_match[] = {
+>  	{ .compatible = "ti,bq24190", },
+>  	{ .compatible = "ti,bq24192", },
+>  	{ .compatible = "ti,bq24192i", },
+> +	{ .compatible = "ti,bq24196", },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, bq24190_of_match);
+> 
+
+
+
 
