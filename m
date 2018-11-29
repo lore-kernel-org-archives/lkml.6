@@ -6,65 +6,75 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86793C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE09C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5642D2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:31:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5642D2146D
+	by mail.kernel.org (Postfix) with ESMTP id CC2D321104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:33:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2D321104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbeK3Fhw (ORCPT
+        id S1728883AbeK3Fjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:37:52 -0500
-Received: from verein.lst.de ([213.95.11.211]:45479 "EHLO newverein.lst.de"
+        Fri, 30 Nov 2018 00:39:54 -0500
+Received: from verein.lst.de ([213.95.11.211]:45492 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbeK3Fhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:37:52 -0500
+        id S1725928AbeK3Fjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:39:54 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B667068BDF; Thu, 29 Nov 2018 19:31:32 +0100 (CET)
-Date:   Thu, 29 Nov 2018 19:31:32 +0100
+        id 8723468BDF; Thu, 29 Nov 2018 19:33:34 +0100 (CET)
+Date:   Thu, 29 Nov 2018 19:33:34 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org, robin.murphy@arm.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-Message-ID: <20181129183132.GA30281@lst.de>
-References: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com> <20181123065511.GA17856@lst.de> <20181128074117.GA21126@lst.de> <CAHk-=wg5+rXK8dpjkSmK7tuz29VfxVWNEwmTVYB409mmyLkeew@mail.gmail.com> <20181128174545.GJ30658@n2100.armlinux.org.uk> <CAHk-=whnz4Kty6cas11bc2Gh=9zTzeeRS2k=dV9Hfc4B=xnHkQ@mail.gmail.com> <20181128180841.GM30658@n2100.armlinux.org.uk> <CAHk-=whcbiSxSUprsKjVPEdN5-+o8WnTGiKxEV-+HbKNDs=iNA@mail.gmail.com> <20181129162323.GA27068@lst.de> <CAHk-=wi2K7_+dgCbc-sAK9CST5Zh+pOuH7sVT9WW-kqs50HSzQ@mail.gmail.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Christoph Hellwig <hch@lst.de>, "Clark, Rob" <robdclark@gmail.com>,
+        Dave Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>, vivek.gautam@codeaurora.org,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+Message-ID: <20181129183334.GB30281@lst.de>
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org> <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com> <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com> <20181129155758.GC26537@lst.de> <20181129162807.GL21184@phenom.ffwll.local> <20181129165715.GA27786@lst.de> <CAKMK7uECLeTbEjG6=unWZSKakpiYkmBVbCEKKY2xv=vVjF-pBQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wi2K7_+dgCbc-sAK9CST5Zh+pOuH7sVT9WW-kqs50HSzQ@mail.gmail.com>
+In-Reply-To: <CAKMK7uECLeTbEjG6=unWZSKakpiYkmBVbCEKKY2xv=vVjF-pBQ@mail.gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 09:44:05AM -0800, Linus Torvalds wrote:
-> No. Really. If there's no iotlb, then you just mark that one page
-> reserved. It simply doesn't get used. It doesn't mean you suddenly
-> need a swiotlb.
+On Thu, Nov 29, 2018 at 06:09:05PM +0100, Daniel Vetter wrote:
+> What kind of abuse do you expect? It could very well be that gpu folks
+> call that "standard use case" ... At least on x86 with the i915 driver
+> we pretty much rely on architectural guarantees for how cache flushes
+> work very much. Down to userspace doing the cache flushing for
+> mappings the kernel has set up.
 
-Sure, we could just skip that page entirely based on dma_to_phys.
+Mostly the usual bypasses of the DMA API because people know better
+(and with that I don't mean low-level IOMMU API users, but "creative"
+direct mappings).
 
-> But whatever. It's independent from the patch series under discussion.
-> Make dma_mapping_error() at least return a real error (eg -EINVAL, or
-> whatever is the common error), and we can maybe do this later.
+> > As for the buffer sharing: at least for the DMA API side I want to
+> > move the current buffer sharing users away from dma_alloc_coherent
+> > (and coherent dma_alloc_attrs users) and the remapping done in there
+> > required for non-coherent architectures.  Instead I'd like to allocate
+> > plain old pages, and then just dma map them for each device separately,
+> > with DMA_ATTR_SKIP_CPU_SYNC passed for all but the first user to map
+> > or last user to unmap.  On the iommu side it could probably work
+> > similar.
+> 
+> I think this is what's often done. Except then there's also the issue
+> of how to get at the cma allocator if your device needs something
+> contiguous. There's a lot of that still going on in graphics/media.
 
-Ok, I'll do that.
-
-> Or, better yet, plan on removing the single-page dma mappign entirely
-> at a later date, and make the issue moot.
-
-What would be the replacement?  Build a S/G list for every single page
-mapping?  Not sure that would create a lot of happy campers..
+Being able to dip into CMA and mayb iommu coalescing if we want to
+get fancy is indeed the only reason for this API.  If we just wanted
+to map pages we could already do that now with just a little bit
+of boilerplate code (and quite a few drivers do - just adding this
+new API will remove tons of code).
