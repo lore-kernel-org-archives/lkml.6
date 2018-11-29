@@ -2,104 +2,124 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A248C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864D5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06169206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 339062081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:38:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="rDzDTkc1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06169206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="HkPxJ40N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339062081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeK2Lid (ORCPT
+        id S1727160AbeK2Llj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:38:33 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45912 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbeK2Lid (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:38:33 -0500
-Received: by mail-pf1-f196.google.com with SMTP id g62so81750pfd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=hndcEIZvQSPxo331N4IP2E3Cu/Bllx4uMSSHcVyGMbs=;
-        b=rDzDTkc1rqdCDn021yXemMAI/PGfBc4LcVeeCp451EsSqOr62YTwKA9Lg8zpiZ41cn
-         uXgys0veMOi+lUCpcSVzvg7S5pT1M1vz8MudcGr3ynYUH8xkpThiBZMXFaGyo1Mvc3CE
-         wpn3yf1AtbSo+xDwf5eWtvqPJTe8tRD+KInbOFl8s54WCrozRCK/iuQtppIABAJ+A5N+
-         1Jpk25n/gPAutYwmPJYLMDwd03c+pu2J05jWCUFLC2v0ULCjwFdJBy0dhSTM3lWu9lDX
-         uEmmphxwU8JT/VxQhgw09FMdXclbWFH/7d+1GkS3PbPzuhpf1mOlTzbLP+EBQ69BNP+j
-         3S6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=hndcEIZvQSPxo331N4IP2E3Cu/Bllx4uMSSHcVyGMbs=;
-        b=GWdItbg5CQ+nqXZj5BE0d4WF4rXWx/dpyV2HaS3zHbTf/e4tzsDEFPVWzzPt6l6Tl/
-         NbWFrAuPD2VyrAIJVebdiB660bGfSmjYuP86fvEfkmNDKgmbVnvThyIVDC+l8MV7I69M
-         lTMXzlFVyl5li0su88Pb7QtKYa/wygm+xSQ+nv0mYRnEKvhJsKldrtAeQcdsR+IB0QK5
-         9/PRJvMRj4cnJA4WcXCjW+vj98fh4kjeBqFnxUQXSk4P5gXfcH0JLVsTVeHZYZaNthyY
-         YSK8Gr4KDADBUftJFfzrDmMSyHwv3KiBvm+7S3+OKE5/xHBeb+QNwUPGodvIpq0/maiE
-         fwTQ==
-X-Gm-Message-State: AA+aEWZvrFVXhAgfrFjav1l+3mduMBVTmqSvp03CSZ0lk0f2gEr7ERL2
-        RG2MYD9pEXub/4NhnZlVGCnNwg==
-X-Google-Smtp-Source: AJdET5eNbymMWRP6oVFgUZR7KcmYlW27zVjbx/sq+Jk0CfYWqYxj+BXqPviuj0HAmUvdZFsoQW4DqA==
-X-Received: by 2002:a63:4e15:: with SMTP id c21mr35208834pgb.50.1543451704773;
-        Wed, 28 Nov 2018 16:35:04 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id t13sm127956pgr.42.2018.11.28.16.35.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:35:04 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Carlo Caione <carlo@caione.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] ARM64: dts: amlogic: Add all CPUs in cooling maps
-In-Reply-To: <2778d0d4813cc56be851719846afecbab5f2e657.1542362530.git.viresh.kumar@linaro.org>
-References: <cover.1542362530.git.viresh.kumar@linaro.org> <2778d0d4813cc56be851719846afecbab5f2e657.1542362530.git.viresh.kumar@linaro.org>
-Date:   Wed, 28 Nov 2018 16:35:03 -0800
-Message-ID: <7hd0qod8lk.fsf@baylibre.com>
+        Thu, 29 Nov 2018 06:41:39 -0500
+Received: from mail-eopbgr680042.outbound.protection.outlook.com ([40.107.68.42]:38119
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726788AbeK2Llj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:41:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d012L0aqc2iPnxS/2SdXKN+ylV/FBZsUGgNTKNVpFX0=;
+ b=HkPxJ40NwHCI5olpk/2mrxl7UZaSxcpzO6Mc/Hu0H/WEzvIlVlpA/9q0XqI9Cs9YTmvvivufNkBekOZmZAVkU7iwHrZ9W/RgeB5Npe6UEZ4VPCdFvKn8YFB+wxIRQRdXHtjgGyMrjuoeHkrbw8lV9XeDmRu9IfIkLznMwycHzLY=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5286.namprd05.prod.outlook.com (20.177.126.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.6; Thu, 29 Nov 2018 00:38:07 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1404.008; Thu, 29 Nov 2018
+ 00:38:07 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+CC:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
+Thread-Topic: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
+Thread-Index: AQHUetXZ1x6cjbBfk0ugZnU2RuWk66VNksAAgABrugCAAArpgIAA2IoAgACsc4CAAH6KgIAACqQAgBXRgICAABjcAA==
+Date:   Thu, 29 Nov 2018 00:38:07 +0000
+Message-ID: <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
+References: <20181112150215.508-1-namit@vmware.com>
+ <20181112150215.508-2-namit@vmware.com> <20181113113000.GB4788@gmail.com>
+ <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
+ <48577A3F-0F76-4CCA-A959-965344D7259F@vmware.com>
+ <7ff5de62-d1df-9a67-1c86-497ce00a4de4@deltatee.com>
+ <7072A2D8-30F8-45CB-AB0C-B1BE4A30259A@vmware.com>
+ <db8293cf-9abc-e899-8f43-6e42039006d9@deltatee.com>
+ <521458D7-A27C-4112-81ED-1974EFE96A76@vmware.com>
+ <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
+In-Reply-To: <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5286;20:C4X23cYD9rPc5I7rwTSaa8kZ7ShkWUBrS/MtkvaWZ2cWKNnmy9DVLY4gbbFDWJQw7DfMxghCsi/hyaKxKy1OAV1Bs3z2HIiJKCAUPjBW0E1vjYp+7N0hrFusWWm8Ci76rBZjNwWjaGg/KEJ/4KLDR+tiNkgSD4eQTO8Xvsjg2tU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4cb10837-9ed9-44fe-127d-08d65592ee6d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5286;
+x-ms-traffictypediagnostic: BYAPR05MB5286:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-microsoft-antispam-prvs: <BYAPR05MB5286E4561AB4F166968B16B6D0D20@BYAPR05MB5286.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231449)(999002)(944501445)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5286;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5286;
+x-forefront-prvs: 0871917CDA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(376002)(366004)(39860400002)(199004)(189003)(25786009)(53546011)(53936002)(6116002)(11346002)(6916009)(3846002)(6506007)(93886005)(476003)(4326008)(486006)(102836004)(446003)(305945005)(45080400002)(478600001)(36756003)(66066001)(2616005)(76176011)(105586002)(256004)(8676002)(106356001)(33656002)(2906002)(229853002)(186003)(86362001)(7736002)(81156014)(81166006)(6306002)(6512007)(6246003)(54906003)(82746002)(6436002)(97736004)(71190400001)(26005)(5660300001)(8936002)(316002)(966005)(7416002)(4001150100001)(14454004)(68736007)(6486002)(99286004)(83716004)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5286;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: jVn82s7ZPLi4GbTLNxsqgr3F5WxZai24UWwXcxkYM2pO4uFL5FWZ0Cd1eX0YjoAMKn5R/jaleh4iKFDpslpB3HyD/VcPkTxqmuWjWXEhjqcfZVeMwgYHeMoPovo0iG10kfHETnpVT48qJOVtzjT0BBDLVAagTP1f7dLC8qGJxontzf9uS9m54t0OLWkNLBbpfaM4vMjyIZmspgGvOWBC6+sqWlN3GBHCQDzEywsu6UDDkk7ZMXv22j1YlVM+leDGTgOhi1ASDXvjwN8h5ubOUpaVk+f4OtV/SDBrYLk+B82QiVTWS6CSSQpr9gf45ebFCuANJAyxSd9hIhDK7K77ZNfkvaVZ/ajV4LiDb63NnDs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <42B69C23C1F7F84D9B7DD0F4DC845762@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cb10837-9ed9-44fe-127d-08d65592ee6d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 00:38:07.1464
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5286
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
-
-> Each CPU can (and does) participate in cooling down the system but the
-> DT only captures a handful of them, normally CPU0, in the cooling maps.
-> Things work by chance currently as under normal circumstances its the
-> first CPU of each cluster which is used by the operating systems to
-> probe the cooling devices. But as soon as this CPU ordering changes and
-> any other CPU is used to bring up the cooling device, we will start
-> seeing failures.
->
-> Also the DT is rather incomplete when we list only one CPU in the
-> cooling maps, as the hardware doesn't have any such limitations.
->
-> Update cooling maps to include all devices affected by individual trip
-> points.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Queued for v4.21,
-
-Thanks!
-
-Kevin
+PiBPbiBOb3YgMjgsIDIwMTgsIGF0IDM6MDkgUE0sIExvZ2FuIEd1bnRob3JwZSA8bG9nYW5nQGRl
+bHRhdGVlLmNvbT4gd3JvdGU6DQo+IA0KPiANCj4gDQo+IE9uIDIwMTgtMTEtMTQgNjo1NyBwLm0u
+LCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4gRXZlbnR1YWxseSwgaWYgeW91IGdldCBhIGZpeCBpbnRv
+IGljZWNjLCB3ZSB3aWxsIG5lZWQgdG8gY2hhbmdlIHRoZQ0KPj4gTWFrZWZpbGUsIGNvbnNpZGVy
+IHRoZSB2ZXJzaW9uIG51bWJlciBhbmQgYWN0IGFjY29yZGluZ2x5Lg0KPiANCj4gSSBnb3QgYSBm
+aXggcHVsbGVkIGludG8gaWNlY2NbMV0gYW5kIGl0IHdvcmtzIHF1aXRlIHdlbGwuIEl0IG91Z2h0
+IHRvIGJlDQo+IGluY2x1ZGVkIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgaWNlY2MuIEFuZCBkaXN0
+Y2MgKHdpdGggcHVtcCBhdCBsZWFzdCkNCj4gaGFzIGEgcGF0Y2ggdG9vLiBJbiBteSBleHBlcmll
+bmNlLCBpY2VjYyBkb2VzIGEgbXVjaCBiZXR0ZXIgam9iDQo+IGRpc3RyaWJ1dGluZyB0aGUga2Vy
+bmVsIGJ1aWxkIHRob3VnaC4NCj4gDQo+IExvZ2FuDQo+IA0KPiBbMV0gaHR0cHM6Ly9uYTAxLnNh
+ZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZnaXRodWIu
+Y29tJTJGaWNlY2MlMkZpY2VjcmVhbSUyRnB1bGwlMkY0MzAmYW1wO2RhdGE9MDIlN0MwMSU3Q25h
+bWl0JTQwdm13YXJlLmNvbSU3QzA0NGQ3OTViZTMwMTQzYWUyNmVmMDhkNjU1ODY5NTNiJTdDYjM5
+MTM4Y2EzY2VlNGI0YWE0ZDZjZDgzZDlkZDYyZjAlN0MwJTdDMCU3QzYzNjc5MDQzMzg4NDIyMjYz
+NSZhbXA7c2RhdGE9NGg3MnlManZPRjI5a2NBQzVDTTdDQjl1a0gzSG9BTE5VZmdLQTYyRTRHcyUz
+RCZhbXA7cmVzZXJ2ZWQ9MA0KDQpUaGFua3MgZm9yIHRha2luZyBjYXJlIG9mIGl0LiBUaGlzIGNo
+YW5nZSBpcyBjZXJ0YWlubHkgc2ltcGxlciBhbmQgY2xlYW5lcg0KdGhhbiB0aGUgb25lIEkgY2Ft
+ZSB3aXRoLg0KDQpTbyB3aGF04oCZcyB5b3VyIHRha2U/IFdvdWxkIHlvdSB0aGluayB0aGlzIHBh
+dGNoIGlzIHN0aWxsIG5lZWRlZD8gU2hvdWxkIGl0DQpvbmx5IGJlIGVuYWJsZWQgYXV0b21hdGlj
+YWxseSBmb3IgZGlzdGNjIGFuZCBub3QgZm9yIGRpc3RjYy1wdW1wPw0KDQo=
