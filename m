@@ -2,138 +2,176 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DAAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD81C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC90D20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F72121019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:39:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qgZTqvqK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC90D20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="1nKLpbyD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F72121019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeK3Fow (ORCPT
+        id S1727715AbeK3FqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:44:52 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45771 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbeK3Fov (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:44:51 -0500
-Received: by mail-oi1-f196.google.com with SMTP id b141so2481887oii.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 10:38:32 -0800 (PST)
+        Fri, 30 Nov 2018 00:46:08 -0500
+Received: from mail-eopbgr700044.outbound.protection.outlook.com ([40.107.70.44]:40928
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726678AbeK3Fpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:45:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3o/XV/7Qgfz2I/5HYzE6SUWlIujyWkkEJZU7j4BGDX8=;
-        b=qgZTqvqKHID23mlYFPSrATE3lAjZ8t9ENyxnn8QFjaeLLjbYQoINA6aboERYwaYPng
-         E8SmP+rOPkumPOVtA3KRouVCAni9kFsz7ezP/EPB/A7rgZOa1udAFkvxp4AE4FTLWcQB
-         fD1aNSHlPJ2h2h8miuzSL84jdE7A/B02c1OqTyQ2a6vEguzGJJB3U63Dy6auqqVBS5oI
-         H1ZDjzUmv9F8h++6g/C/E4DOZB+65aWrMFjrBKgU7o1QMTkxBXRL+zfpCYCVTXFMKMm8
-         GpT/x/VocALpYGElUcLpmmirpO0yMozolQvKNbh04SkZ74F5NE5caTgJk53avdl36PqY
-         64Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3o/XV/7Qgfz2I/5HYzE6SUWlIujyWkkEJZU7j4BGDX8=;
-        b=JJg48cECF9915OvGnVXSr1itSseEKlYNyxh0MVF0IpcrN5XAcsUA1uqYGcHDuUpEOr
-         EREn/eHttNBPIUtvIz1cb/K/kghOUQuFJpiz17CpCUNqxTLwom2LD48kkpXNRW7Aj3bd
-         FBSBrMgcAw9C/eqiCDOUyxd/F8dCebnzNxwvkIu8SUB2NPBd0Z3J97CA8+aBO4m1ixwc
-         CfT7Q/0qZ/WfR/2JUcJBa+ux81iiTiiqRwUvat711S5W8H6wgONx/8XpEYkQk//+VVjg
-         96JFfwgpc/tsoRTB8JCPQokZcMBX2aYSg+9MTgIUA2f6iS8q2eQsno2gXMmHDKICEYmG
-         Qt1g==
-X-Gm-Message-State: AA+aEWb7lJli26p8N+yKPmmZtFTvLJwbIV8lYJYwk74imKBW09QozGMi
-        fsusTqV39EdDT7OACQqW+Q/l6b0kA2CONZb7y0kT5A==
-X-Google-Smtp-Source: AFSGD/UcMnIMoNHVTlocwZGKTkTJok0FjEBUKGn1/LlZTpf4du+Ku08i/jl0hhXUvjNRIGygWUwggcepnbGCPr8dr2o=
-X-Received: by 2002:aca:3785:: with SMTP id e127-v6mr1563478oia.147.1543516712174;
- Thu, 29 Nov 2018 10:38:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128104350.31902-1-linus.walleij@linaro.org>
-In-Reply-To: <20181128104350.31902-1-linus.walleij@linaro.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 29 Nov 2018 19:38:20 +0100
-Message-ID: <CAMpxmJUsAccSKELNxn6DEWO6_3aCbzM=hZyaXUCr30S0-Eh0mA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Regulator ena_gpiod fixups
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        ckeepax@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yL4dMCrlLxQWd9qfec52vKPRJMMM4mBrW4bgGvTMzt8=;
+ b=1nKLpbyDl8wARu9v34MNOzT4xOds2vVkD2muV1dHhtAmK64g8SV0ZQqcgul6++JlglRbbJomc3inti/QkxOg8tFF5wa6WRwrQZ9eAKhgFVkq6idrI7KEiep9U+sz24FrlSXCzO+ZQ2BWICfc85vuevhhe9t1jpwejjl0Gh2vaSw=
+Received: from BN7PR12MB2788.namprd12.prod.outlook.com (20.176.178.148) by
+ BN7PR12MB2675.namprd12.prod.outlook.com (20.176.176.93) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.18; Thu, 29 Nov 2018 18:39:16 +0000
+Received: from BN7PR12MB2788.namprd12.prod.outlook.com
+ ([fe80::a9c9:3985:7269:594c]) by BN7PR12MB2788.namprd12.prod.outlook.com
+ ([fe80::a9c9:3985:7269:594c%2]) with mapi id 15.20.1339.032; Thu, 29 Nov 2018
+ 18:39:16 +0000
+From:   "Allen, John" <John.Allen@amd.com>
+To:     "linux-firmware@kernel.org" <linux-firmware@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "Allen, John" <John.Allen@amd.com>
+Subject: [PATCH] linux-firmware: Update AMD cpu microcode
+Thread-Topic: [PATCH] linux-firmware: Update AMD cpu microcode
+Thread-Index: AQHUiBLU2LDI2aMVTEKvI4GcVRIxbQ==
+Date:   Thu, 29 Nov 2018 18:39:16 +0000
+Message-ID: <20181129183805.14808-1-john.allen@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR0102CA0006.prod.exchangelabs.com (2603:10b6:805:1::19)
+ To BN7PR12MB2788.namprd12.prod.outlook.com (2603:10b6:408:32::20)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=John.Allen@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2675;20:5s3xEEzehKvE6vjl4DbZaR752ZbWaexJt2avY8ATSz3rph4+XZCFZ+zPMrGAqauAbo6b/kTte9os0nBlNMybf28JJ7MyHe5GqmIv7M57vv+SwSfc8NFffTdYbaFivsbyC7zwMp3/B1muz7SBk1V6tdULvRGr+YwGVQZSqnIX/Otg1wvEAWO9OZgRgrAxk3XC4r6w308K7Wk62wA585CxW8AecuUgOlR2Yep5xBMNUrdgWLd/ACpeefERzmjsM5TY
+x-ms-office365-filtering-correlation-id: d3b166f1-d075-4e61-12b6-08d65629f71c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2675;
+x-ms-traffictypediagnostic: BN7PR12MB2675:
+x-microsoft-antispam-prvs: <BN7PR12MB26758C18D830D9244028E4F69AD20@BN7PR12MB2675.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(3231453)(999002)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN7PR12MB2675;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2675;
+x-forefront-prvs: 0871917CDA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(346002)(366004)(199004)(189003)(97736004)(81156014)(72206003)(36756003)(105586002)(106356001)(2906002)(68736007)(25786009)(4326008)(256004)(14444005)(478600001)(14454004)(53936002)(6436002)(6512007)(486006)(54906003)(316002)(71190400001)(5640700003)(2616005)(476003)(71200400001)(3846002)(6116002)(26005)(186003)(7736002)(305945005)(1076002)(4001150100001)(386003)(102836004)(99286004)(6506007)(2351001)(5660300001)(8676002)(52116002)(66066001)(8936002)(15650500001)(6486002)(2501003)(575784001)(86362001)(81166006)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2675;H:BN7PR12MB2788.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: c5u+T8H56iVWH/n4Kf3E3EjXlUpL1EasW5w7YVuRPSG2+iqAa+R4jIhonUhK/qiOaPTIopciwJ1igpkcaYwc2hcHh3Q88tW8jxhHenIjzflym4AmhbQSU6wDZ+7WNWCzpbNlUwMJQVnBRWW0Lt4uhYpqXgDy7ZLIhxdSMOYvQ8T35oBYf1QebOe0D+avtsM8ujs73noKxhfgDUZAiWuHQ3N+TZO4z9wwrIPK8UAsG6ZixlxxkJ/5ROGH0K2vXoGFNpey91cITAgQpx3EADbNhaJ0Iagprk3bbC0rmQbAh6EehOjqodJ/g5gPv1sq0ToakDNbuqgfY3GEEmuFDycFCZe9tT3vTl97krxdS8mrwsQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3b166f1-d075-4e61-12b6-08d65629f71c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 18:39:16.1151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 28 lis 2018 o 11:43 Linus Walleij <linus.walleij@linaro.org> napi=
-sa=C5=82(a):
->
-> We noticed a refcounting fight between the kernel device
-> core devm_* and the regulator core refcounting, pertaining
-> to enable GPIOd:s that may be shared between multiple
-> regulators.
->
-> Fix this with a series that hand it all over to the
-> regulator core and remove any devm_* stuff pertaining
-> to these GPIOs.
->
-> This includes a patch to gpiolib to make gpiod_get_from_node()
-> available. Just go ahead and apply this to the regulator
-> tree.
->
-> If these need to go for fixes or not is up to the
-> regulator maintainer, but all commits have a proper
-> Fixes: tag in case they would. I have noted in the
-> four last commits that the gpiolib patch is a
-> prerequisite.
->
-> Linus Walleij (10):
->   regulator: fixed: Let core handle GPIO descriptor
->   regulator: lm363x: Let core handle GPIO descriptor
->   regulator: lp8788-ldo: Let core handle GPIO descriptor
->   regulator: max8952: Let core handle GPIO descriptor
->   regulator: max8973: Let core handle GPIO descriptor
->   gpio: Export gpiod_get_from_of_node()
->   regulator: da9211: Let core handle GPIO descriptors
->   regulator: max77686: Let core handle GPIO descriptor
->   regulator: s5m8767: Let core handle GPIO descriptors
->   regulator: tps65090: Let core handle GPIO descriptors
->
->  drivers/gpio/gpiolib.h                 |  6 -----
->  drivers/regulator/da9211-regulator.c   |  4 +--
->  drivers/regulator/fixed.c              |  4 ++-
->  drivers/regulator/lm363x-regulator.c   |  8 ++++--
->  drivers/regulator/lp8788-ldo.c         |  4 ++-
->  drivers/regulator/max77686-regulator.c |  3 +--
->  drivers/regulator/max8952.c            |  8 +++---
->  drivers/regulator/max8973-regulator.c  | 12 ++++++---
->  drivers/regulator/s5m8767.c            | 37 ++++++++++++++++++--------
->  drivers/regulator/tps65090-regulator.c | 10 +++----
->  include/linux/gpio/consumer.h          | 13 +++++++++
->  11 files changed, 72 insertions(+), 37 deletions(-)
->
-> --
-> 2.19.1
->
+* Update AMD cpu microcode for processor family 17h
 
-I'm wondering if instead of using the non-devm variants of
-gpiod_get_*() routines, we shouldn't provide helpers in the regulator
-framework that would be named accordingly, for example:
-regulator_gpiod_get_optional() etc. even if all they do is call the
-relevant gpiolib function. Those helpers could then be documented as
-passing the control over GPIO lines over to the regulator subsystem.
+Key Name        =3D AMD Microcode Signing Key (for signing microcode contai=
+ner files only)
+Key ID          =3D F328AE73
+Key Fingerprint =3D FC7C 6C50 5DAF CC14 7183 57CA E4BE 5339 F328 AE73
 
-The reason for that is that most driver developers will automatically
-use devm functions whenever available and having a single non-devm
-function without any comment used in a driver normally using devres
-looks like a bug. Expect people sending "fixes" in a couple months.
+Signed-off-by: John Allen <john.allen@amd.com>
+---
+ WHENCE                                 |   2 +-
+ amd-ucode/microcode_amd_fam17h.bin     | Bin 3364 -> 6476 bytes
+ amd-ucode/microcode_amd_fam17h.bin.asc |  21 +++++++++++++--------
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
-Bart
+diff --git a/WHENCE b/WHENCE
+index 31b0b74..8761ef0 100644
+--- a/WHENCE
++++ b/WHENCE
+@@ -3239,7 +3239,7 @@ Version: 2018-05-24
+ File: amd-ucode/microcode_amd_fam16h.bin
+ Version: 2014-10-28
+ File: amd-ucode/microcode_amd_fam17h.bin
+-Version: 2018-05-15
++Version: 2018-11-28
+=20
+ License: Redistributable. See LICENSE.amd-ucode for details
+=20
+diff --git a/amd-ucode/microcode_amd_fam17h.bin b/amd-ucode/microcode_amd_f=
+am17h.bin
+index 8e6f4c181c32206dfac82c1f0025b2fd6b72495a..8ba3c612e10188a4572ce6b59fa=
+754ceb58c5d0c 100644
+GIT binary patch
+delta 693
+zcmZ1?b;d~3#n+Jm1Pp*!h`#~E1OuT428Jdie$&Rz**x`(K)D7U1_lWQ1vc&`1`ZaW
+zDrC?E<%cz!T(RvqE>ziRA@Fps{YguXfH22P%k-Y~a_1db`epO8zjy4Xu&UL@h)sWa
+zHP4PoO!%uqf=3D$WG<mcx3_5Sy_3yZsUXzAVT+;+U&@5H~ut#1^*NE^O-QJ=3D{sQnP7K
+zg5+YcFqw~%H!?k6IXzdZ>Gu)*Z0i{C=3Dmz^WxiS@X(YT8C*;4Kc+e_E0Jl?TbuX>AC
+zfY|d^<FB`ZHR2fRy5i4SJ5AMHnHm0M)$#4qr6=3DxVO|0YUd41q)>dH%}QZG0Q7cVLN
+zw6HvC^Rx>#vEGID*Yk_Gg08JhEjX!Vx2AAwyUZ_H-<X@uJNK6g|7WW2FuUg<<a_7s
+zS^xG$QqNcT|7jP_Ial^=3D^AScCCJj&+b)_8P`I~!z=3DfB=3D$&K>28IPVqkas5>1;rj5r
+zjdQM{Esw4m1H<GG%tze088|c;c-1Q2@p3RY%wb$`rA56(L??d*g92NFC{IAeYc3{+
+zcf1*@3_MZ`{{3ZbkdX<f5MbbVA|s<v0gi+@^$frW+Wea(lX0>LhsWkMYzmB%Q`kHv
+zpJDglP+;It5$TDjm>k0)p|Oigh(S<+L!p63qhdch2ZO>KrUeY`>Macm^moAcf8>Q2
+zCNJUen8d3BL@JxPfUc5ZT;RyS!2og%h_4_6)CK}ToBP{@7&b?6PGDlZJNYH|YA%p{
+z4LlJQ|Kumn<FWH_oTk7cVw1nZo`Iu9L`Jznn^QxPK}HI$U7M4ML4b{8!4#eppd7?S
+WKs_xCF#$6e7!(*pcmixdsSf}k8slaF
+
+delta 147
+zcmX?Ov_z`j#n+Jm1SSBn0)GOC2?h!Y3=3DE9?iBKMp4P-L%7a;gRrVxJvoG%1q3L^0Z
+ffqWq(^Mn!@7=3D)4Jg@N)6{0&?{5(+kI&gKCCEBy@@
+
+diff --git a/amd-ucode/microcode_amd_fam17h.bin.asc b/amd-ucode/microcode_a=
+md_fam17h.bin.asc
+index 4d513eb..9822944 100644
+--- a/amd-ucode/microcode_amd_fam17h.bin.asc
++++ b/amd-ucode/microcode_amd_fam17h.bin.asc
+@@ -1,11 +1,16 @@
+ -----BEGIN PGP SIGNATURE-----
+-Version: GnuPG v1
+=20
+-iQEcBAABAgAGBQJa+7YMAAoJEOS+UznzKK5zGvIH/jDlOORyc1hk1rubB1Txh3C7
+-yq7BJwaMotOHZqNzCHuIAGCSCuUrN/HJ465deJXGuRFDbl+Ywt/AHKBMN4RglyO6
+-JoM2zZwkgVpLzqJyNwedzGpAxPT/dT1daDDWRyd66cz98iEVNlYS4Wc92aXteYdq
+-qzxidXi1MmN8+Iycl7L5MYV12jysrssIYmiVe974Rb9y+84tJVCohAONl/N6m9PX
+-VJuW6d5uch3NNLVo4ZFZIx53E3JiyB4nI0JU2C2dj4S7XDP5T17kxBvUNwbgtxBV
+-xdTuT6ITu7bGxderze3iPkkAzCgemgLF+sKFbXLDnnHch3YfFMWskuE4TEwMAZU=3D
+-=3DAe/7
++iQIzBAABCgAdFiEE15J9K0GJJtx9xI6sDKS4vABH4PkFAlv/CfcACgkQDKS4vABH
++4PksAhAAmfYROlv/xzR1iPxbxPLo9Cz9rv3iYwqAw8WD4Uum5KJHvkdyvofFWnPF
++FdH/wB3F6BniA/HxKHw4NoyhiKSqTcSl/RgKPwoSOFxBBUQQZdlkl1w5ta1mwiCu
++iSDP2+pdbjZmAKhH+GDkixZiECz8J9+oR8SM+VsWI6DopTIymc9mQaOSLV0iPJgX
++tc8wAw+X9LkpnfSuLGyzg/jHzHa9KWl4ki13ii6h46bdavxVHY39JTCa/Bg2wSXE
++zM3JFuJdRJJZrJaxcou/USa8l6lZS38x6OgThh3Rqf6O3vlJEpS4HSLB2yqJoDEj
++GUvoiJTiZLPXM7NT3/t+/lSk2bOHG6h0KqIUda41ZdtksWThgCs+WZmepyXn4StY
++sOyYMzBP2EqvHaA/FnYeezq5fCHVVLel7SggT8HZg9eYqQO+6rnOcXzuM39v1wm/
++GM+M4KYzLiHi9+1nVO2MByik21+QMc3EjTxEzyWd95+VzAT2kxxlkZ5cD8cTAfnB
++ysFNrd1jSBK5MeYBmjUkjTL9xy71rZjGWI61XU5G66h6Vu2XryCkBq/vA35rLnZB
++GBxq6ZpxdSAD96fdHEJuAaNX0ZvcWyNhvzJHe1dOPmeMHB/+gw1j1j4cUGNhkZ6C
++okTEcOKwmfOs8soZmkdJvoi/cwzVjy1nvZSkasQ8NfIhOgHZdMw=3D
++=3DFqUC
+ -----END PGP SIGNATURE-----
+--=20
+2.17.1
+
