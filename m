@@ -2,140 +2,134 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC289C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4CCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9E02081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:05:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9E02081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 22660206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="cm9A//JQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22660206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeK2XKI (ORCPT
+        id S1728137AbeK2XLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:10:08 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32788 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726187AbeK2XKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:10:07 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id F1F0A8D430A06;
-        Thu, 29 Nov 2018 12:04:50 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 29 Nov
- 2018 12:04:44 +0000
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
-Message-ID: <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
-Date:   Thu, 29 Nov 2018 13:04:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 29 Nov 2018 18:11:10 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:35653 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeK2XLK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:11:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1543493157;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=1d8dDcOXQakLxZx9h0WPUGsP4J980v3eg/KbaQPeYXs=;
+        b=cm9A//JQKJHrXqu0KhPlcMk8A7BWlRST3BvZAgOJjCbdl1YkF5tz2KLGqLjrBdUdDJ
+        vqA9f2/k/e7PUOjkQRBIUK+XdDDpc38u9iTpTHtQK46EjgAYrkgG3iW2nSk38cqtW6fo
+        li9rD5Xbk0agE2vrS498+GYCvKm2Eud8203Dq2pS6dgGTu92VgJwXn6iV6Lt2I9cRaDm
+        zhZQgwFxwskHA9pOAjaMXH18d4vXsWEHWt7GlSSc/zqm7S1OlsSqVAnOw9TBVJ4T/w87
+        4nJIP3hdEHNpkJ3+oo0JnEMMt5LrPc25BlldvNgvP8PeAJeLoOnRPcvf65BJgdI0nhFK
+        2qtA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkIi451DZe29TrPMHVmP0k4v8Fd"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:750c:580c:e34a:e81]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uATC5NBiB
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 29 Nov 2018 13:05:23 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de>
+ <87zhttfonk.fsf@concordia.ellerman.id.au>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+Date:   Thu, 29 Nov 2018 13:05:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <87zhttfonk.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/2018 1:17 PM, Roberto Sassu wrote:
-> On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
->> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
->>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static 
->>> arrays
->>> for a list of hash algorithms used for event logs and event log digests.
->>>
->>> However, according to TCG EFI Protocol Specification, these arrays have
->>> variable sizes. Setting the array size to zero or 3 does not make any
->>> difference, because the parser has to adjust the offset depending on the
->>> actual array size to access structure members after the static arrays.
->>>
->>> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and 
->>> sets
->>> the array size to zero.
->>>
->>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
->>> event log")
->>>
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>> ---
->>>   include/linux/tpm_eventlog.h | 5 ++---
->>>   1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->>> index 20d9da77fc11..3d5d162f09cc 100644
->>> --- a/include/linux/tpm_eventlog.h
->>> +++ b/include/linux/tpm_eventlog.h
->>> @@ -8,7 +8,6 @@
->>>   #define TCG_EVENT_NAME_LEN_MAX    255
->>>   #define MAX_TEXT_EVENT        1000    /* Max event string length */
->>>   #define ACPI_TCPA_SIG        "TCPA"    /* 0x41504354 /'TCPA' */
->>> -#define TPM2_ACTIVE_PCR_BANKS    3
->>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
->>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->>>       u8 spec_errata;
->>>       u8 uintnsize;
->>>       u32 num_algs;
->>> -    struct tcg_efi_specid_event_algs 
->>> digest_sizes[TPM2_ACTIVE_PCR_BANKS];
->>> +    struct tcg_efi_specid_event_algs digest_sizes[0];
->>>       u8 vendor_info_size;
->>>       u8 vendor_info[0];
->>>   } __packed;
->>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->>>       u32 pcr_idx;
->>>       u32 event_type;
->>>       u32 count;
->>> -    struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
->>> +    struct tpm2_digest digests[0];
->>>       struct tcg_event_field event;
->>>   } __packed;
->>> -- 
->>> 2.17.1
->>>
->>
->> NAK for the same reason as last time.
-> 
-> I added this comment to include/linux/tpm_eventlog.h:
-> 
-> /*
->   * http://www.trustedcomputinggroup.org/tcg-efi-protocol-specification/
->   *
->   * Set the size of 'digest_sizes' and 'digests', members of 
-> tcg_efi_specid_event
->   * and tcg_pcr_event2, to zero. Structures with variable-sized arrays 
-> placed
->   * midway are not suitable for type casting.
->   */
-> 
+On 28 November 2018 at 12:05PM, Michael Ellerman wrote:
+> Christoph Hellwig <hch@lst.de> writes:
+>
+>> Any comments?  I'd like to at least get the ball moving on the easy
+>> bits.
+> Nothing specific yet.
+>
+> I'm a bit worried it might break one of the many old obscure platforms
+> we have that aren't well tested.
+>
+> There's not much we can do about that, but I'll just try and test it on
+> everything I can find.
+>
+> Is the plan that you take these via the dma-mapping tree or that they go
+> via powerpc?
+>
+> cheers
+>
+Hi All,
 
-If this comment is ok, I will send a new version of the patch set.
+I compiled a test kernel from the following Git today.
 
-Roberto
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.4
 
+Command: git clone git://git.infradead.org/users/hch/misc.git -b 
+powerpc-dma.4 a
 
->> /Jarkko
->>
-> 
+Unfortunately I get some DMA error messages and the PASEMI ethernet 
+doesn't work anymore.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+[  367.627623] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627631] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627639] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627647] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627655] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.627686] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.628418] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.628505] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.628592] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.629324] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.629417] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.629495] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+[  367.629589] pci 0000:00:1a.0: dma_direct_map_page: overflow 
+0x000000026bcb5002+110 of device mask ffffffff bus mask 0
+
+[  430.424732]pasemi_mac: rcmdsta error: 0x04ef3001
+
+I tested this kernel with the Nemo board (CPU: PWRficient PA6T-1682M). 
+The PASEMI ethernet works with the RC4 of kernel 4.20.
+
+Cheers,
+Christian
