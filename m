@@ -6,117 +6,59 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBEAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D5FC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3476213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3476213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 305BD213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305BD213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbeK3GXT (ORCPT
+        id S1726425AbeK3GXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 30 Nov 2018 01:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbeK3GXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:23:18 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99AA421104;
-        Thu, 29 Nov 2018 19:16:49 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 14:16:48 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129141648.6ef944a9@gandalf.local.home>
-In-Reply-To: <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
-        <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
-        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-        <20181129163342.tp5wlfcyiazwwyoh@treble>
-        <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
-        <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
-        <20181129121307.12393c57@gandalf.local.home>
-        <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
-        <20181129124404.2fe55dd0@gandalf.local.home>
-        <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
-        <20181129125857.75c55b96@gandalf.local.home>
-        <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
-        <20181129134725.6d86ade6@gandalf.local.home>
-        <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: from shards.monkeyblade.net ([23.128.96.9]:60662 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbeK3GXT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:23:19 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A259B14F0D007;
+        Thu, 29 Nov 2018 11:16:51 -0800 (PST)
+Date:   Thu, 29 Nov 2018 11:16:50 -0800 (PST)
+Message-Id: <20181129.111650.1439505511260881528.davem@davemloft.net>
+To:     brgl@bgdev.pl
+Cc:     f.fainelli@gmail.com, andrew@lunn.ch, khilman@kernel.org,
+        nicolas.ferre@microchip.com, grygorii.strashko@ti.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org, bgolaszewski@baylibre.com,
+        nsekhar@ti.com
+Subject: Re: [PATCH v2 10/25] net: ethernet: provide nvmem_get_mac_address()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAMRc=MdLSVw11hzzqPLfSyz38uA46+LvobGk3vSNcTvtqnD5XQ@mail.gmail.com>
+References: <20181113140133.17385-1-brgl@bgdev.pl>
+        <20181113140133.17385-11-brgl@bgdev.pl>
+        <CAMRc=MdLSVw11hzzqPLfSyz38uA46+LvobGk3vSNcTvtqnD5XQ@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 29 Nov 2018 11:16:52 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 10:58:40 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 29 Nov 2018 17:45:51 +0100
 
-> On Thu, Nov 29, 2018 at 10:47 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > Note, we do have a bit of control at what is getting called. The patch
-> > set requires that the callers are wrapped in macros. We should not
-> > allow just any random callers (like from asm).  
-> 
-> Actually, I'd argue that asm is often more controlled than C code.
-> 
-> Right now you can do odd things if you really want to, and have the
-> compiler generate indirect calls to those wrapper functions.
-> 
-> For example, I can easily imagine a pre-retpoline compiler turning
-> 
->      if (cond)
->         fn1(a,b)
->      else
->        fn2(a,b);
-> 
-> into a function pointer conditional
-> 
->     (cond ? fn1 : fn2)(a,b);
+> If there are no objections - can patches 10-13 go into the networking
+> tree already so that they spend some time in next before the merge
+> window?
 
-If we are worried about such a construct, wouldn't a compiler barrier
-before and after the static_call solve that?
-
-	barrier();
-	static_call(func...);
-	barrier();
-
-It should also stop tail calls too.
-
-> 
-> and honestly, the way "static_call()" works now, can you guarantee
-> that the call-site doesn't end up doing that, and calling the
-> trampoline function for two different static calls from one indirect
-> call?
-> 
-> See what I'm talking about? Saying "callers are wrapped in macros"
-> doesn't actually protect you from the compiler doing things like that.
-> 
-> In contrast, if the call was wrapped in an inline asm, we'd *know* the
-> compiler couldn't turn a "call wrapper(%rip)" into anything else.
-
-But then we need to implement all numbers of parameters.
-
--- Steve
+Please submit them as a separate series, clearly targetted at the
+net-next tree.
