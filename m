@@ -2,87 +2,94 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B135C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1DCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41492082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:35:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WBTUN4tr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41492082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 640F3213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640F3213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeK3ClU (ORCPT
+        id S1728693AbeK3Crg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:41:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52184 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeK3ClU (ORCPT
+        Thu, 29 Nov 2018 21:47:36 -0500
+Received: from nov-007-i650.relay.mailchannels.net ([46.232.183.204]:41163
+        "EHLO nov-007-i650.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728363AbeK3Crg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:41:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=e/44OweujBTvsgHnwuyRm5zM9pAVKO0ArllTpHzSSnY=; b=WBTUN4tr+UwG/Uu1TdcA6EXtB
-        1SexAHzTOo6IHXwRoNpktwGRotJJPQ+nktW7ZZ3ZlWlPU2CxGgWFw0jglyB69v8MKeKGbZAUIWDr7
-        B9Ltg1JwIKAgXQjTXfifR6nPTKOiK91cktOzbNfhnEMpbdzMBac2cek8fe170kkhcceRi0IKJzrhV
-        4uJHWJ5WWeDjLBQX/MuthriwtUSClk/mewyYK3shH02aWAgLRCc6TCKJR/fmFppzTw0wSwzGadjak
-        2cZo6fB3VhH0CicQct4Yq2rq0CiDzkPBzHYWIjgPDmwrGsmclkupBkKncdjRaZ9zWa/6aXSzfWeDv
-        R3c5ykUPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSOLf-0000Cf-PZ; Thu, 29 Nov 2018 15:35:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2CE7F2029FD58; Thu, 29 Nov 2018 16:35:26 +0100 (CET)
-Date:   Thu, 29 Nov 2018 16:35:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Kyle Huey <me@kylehuey.com>, Kan Liang <kan.liang@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Robert O'Callahan <robert@ocallahan.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
+        Thu, 29 Nov 2018 21:47:36 -0500
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id CAB052EC0015;
+        Thu, 29 Nov 2018 15:41:44 +0000 (UTC)
+Received: from srv17.tophost.ch (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTPA id 529D42EC0021;
+        Thu, 29 Nov 2018 15:41:41 +0000 (UTC)
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.15.2);
+        Thu, 29 Nov 2018 15:41:44 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Quick-Industry: 72ad060b459b633a_1543506104574_420126914
+X-MC-Loop-Signature: 1543506104574:355923777
+X-MC-Ingress-Time: 1543506104573
+Received: from [148.252.241.226] (port=55628 helo=jx1y.guest.codethink.co.uk)
+        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <j@bitron.ch>)
+        id 1gSORf-00Gxrx-8y; Thu, 29 Nov 2018 16:41:39 +0100
+Message-ID: <f55261dbc41544363b4348820f67fb01c6d7aaec.camel@bitron.ch>
+Subject: Re: [PATCH] prctl: add PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
+From:   =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
+To:     Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
-Message-ID: <20181129153526.GR2131@hirez.programming.kicks-ass.net>
-References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
- <20181120194129.GC13936@tassilo.jf.intel.com>
- <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
- <20181120201144.GD13936@tassilo.jf.intel.com>
- <20181120221642.GE2131@hirez.programming.kicks-ass.net>
- <20181120222549.GA2149@hirez.programming.kicks-ass.net>
- <20181120223854.GH13936@tassilo.jf.intel.com>
- <20181121081420.GF2131@hirez.programming.kicks-ass.net>
- <CAP045AqRs4+F5rNKXLYHeuvLCvzd9U=eZY0X0NnHXxz3qk9TUw@mail.gmail.com>
- <20181127233615.GY13936@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127233615.GY13936@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 29 Nov 2018 15:41:38 +0000
+In-Reply-To: <20181129123409.GA10645@redhat.com>
+References: <20181127225408.7553-1-j@bitron.ch>
+         <20181127225408.7553-2-j@bitron.ch> <20181128144230.GG30395@redhat.com>
+         <87r2f5gr9g.fsf@xmission.com> <20181129123409.GA10645@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-AuthUser: juerg@bitron.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 03:36:15PM -0800, Andi Kleen wrote:
-> > It does seem that FREEZE_PERFMON_ON_PMI (misnamed as it is) is of
-> > rather limited use (or even negative, in our case) to a counter that's
-> > already restricted to ring 3.
-> 
-> It's much faster. The PMI cost goes down dramatically.
+Hi Oleg,
 
-faster doesn't mean much when its broken.
+Thanks for the review.
+
+On Thu, 2018-11-29 at 13:34 +0100, Oleg Nesterov wrote:
+> To me it would be more clean to call walk_process_tree(kill_descendant_visitor)
+> unconditionally in find_new_reaper() right before "if (has_child_subreaper)", but
+> then we will need to shift read_lock(tasklist) from walk_process_tree().
+
+Yes, that's the reason why I added the call before the tasklist lock.
+Let me know if you want me to move the read lock from
+walk_process_tree() to PR_SET_CHILD_SUBREAPER (the only caller)
+instead.
+
+> So I think the patch is mostly fine, the only problem I can see is that
+> PR_SET_KILL_DESCENDANTS_ON_EXIT can race with PR_SET_CHILD_SUBREAPER, they both
+> need to update the bits in the same word.
+
+Good point. I'll make it a regular bool instead of a bitfield for v2,
+unless you have another approach in mind to fix this.
+
+Jürg
+
