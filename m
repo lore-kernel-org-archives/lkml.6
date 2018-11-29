@@ -2,133 +2,104 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FC3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5ADC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC8B2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1876E20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x1Fs4Kl8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC8B2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iriT1DhT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1876E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbeK2X5r (ORCPT
+        id S1728290AbeK2X6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:57:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbeK2X5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:57:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E31C2081B;
-        Thu, 29 Nov 2018 12:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543495950;
-        bh=pTVyMW9MrPqEeTVDA2O58XcFU6dvc5oBhc7sxWjIq0s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=x1Fs4Kl8AaUI0QD+oM6dwNP2U95tTI6s261ejCW2d02+6D8H/suO23x1LRkr70DGP
-         VylsMkN0Dy4mDHHv+KNpNF0ydCmjuv+ku6Cs3Zv+qn+YtyT+BxofjSrOIKaSlA3TfL
-         N2VeoZEqAnlYxzGQScG8rdX4z5Ki+NZk2N630gTI=
-Date:   Thu, 29 Nov 2018 13:52:28 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: hide incomplete nr_indirectly_reclaimable in
- /proc/zoneinfo
-Message-ID: <20181129125228.GN3149@kroah.com>
-References: <20181030174649.16778-1-guro@fb.com>
+        Thu, 29 Nov 2018 18:58:55 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:57404 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbeK2X6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:58:54 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id EA17C24E0B36;
+        Thu, 29 Nov 2018 04:53:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543496018; bh=PuCfmfY4tvjiz/t7rBqpzaa3FzVztjAU/rfpwNVOpkc=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
+        b=iriT1DhTJMIZZOgwgXvGCqgpDnourjXY35/uSAPBRp4qXGsc/Oslz97b6npX/mY6e
+         XksWgNkZprlH2+tI9aELOhwpcKCANiNxzQjDOb8yIaCqJh/lHZIvbTNcOPc+XRe2rZ
+         qxzapRGuvAcHyVuMYOCKYXsFlS5rfevMfqiLzKueLzJVHE+2vnfugh4UMOnlhpoCEh
+         GGC5Q3UC5VujxXgFMJ/SF5JmBY4MVwSxc4cHilulrgwTGeOXtwO+NBF4/4aT1AkhNy
+         2W9FtLcO4qpbSxb2NmEMMUYAopeJXLkUMvu6x3zf5IYhKN7gky6d8n5L0oiAsiD7OL
+         frL0Sh03IQ3zw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CAF375A4D;
+        Thu, 29 Nov 2018 04:53:38 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 04:53:38 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 13:53:36 +0100
+Received: from [10.0.2.15] (10.107.19.26) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 29 Nov
+ 2018 13:53:36 +0100
+Subject: Re: [PATCH] ARC: io.h: Implement reads{x}()/writes{x}()
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <bdcc49c9eab45bda6815b1419590943e603d8dc2.1543484040.git.joabreu@synopsys.com>
+ <f634eb3e39284e48923552a0c21562c6@AcuMS.aculab.com>
+CC:     Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        "Vitor Soares" <vitor.soares@synopsys.com>
+From:   Jose Abreu <jose.abreu@synopsys.com>
+Message-ID: <2d58c25b-60d0-4616-d2d2-ea490a7261f5@synopsys.com>
+Date:   Thu, 29 Nov 2018 12:53:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030174649.16778-1-guro@fb.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <f634eb3e39284e48923552a0c21562c6@AcuMS.aculab.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.26]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 05:48:25PM +0000, Roman Gushchin wrote:
-> Yongqin reported that /proc/zoneinfo format is broken in 4.14
-> due to commit 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable
-> in /proc/vmstat")
-> 
-> Node 0, zone      DMA
->   per-node stats
->       nr_inactive_anon 403
->       nr_active_anon 89123
->       nr_inactive_file 128887
->       nr_active_file 47377
->       nr_unevictable 2053
->       nr_slab_reclaimable 7510
->       nr_slab_unreclaimable 10775
->       nr_isolated_anon 0
->       nr_isolated_file 0
->       <...>
->       nr_vmscan_write 0
->       nr_vmscan_immediate_reclaim 0
->       nr_dirtied   6022
->       nr_written   5985
->                    74240
->       ^^^^^^^^^^
->   pages free     131656
-> 
-> The problem is caused by the nr_indirectly_reclaimable counter,
-> which is hidden from the /proc/vmstat, but not from the
-> /proc/zoneinfo. Let's fix this inconsistency and hide the
-> counter from /proc/zoneinfo exactly as from /proc/vmstat.
-> 
-> BTW, in 4.19+ the counter has been renamed and exported by
-> the commit b29940c1abd7 ("mm: rename and change semantics of
-> nr_indirectly_reclaimable_bytes"), so there is no such a problem
-> anymore.
-> 
-> Cc: <stable@vger.kernel.org> # 4.14.x-4.18.x
-> Fixes: 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable in /proc/vmstat")
-> Reported-by: Yongqin Liu <yongqin.liu@linaro.org>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  mm/vmstat.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 527ae727d547..6389e876c7a7 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1500,6 +1500,10 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
->  	if (is_zone_first_populated(pgdat, zone)) {
->  		seq_printf(m, "\n  per-node stats");
->  		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
-> +			/* Skip hidden vmstat items. */
-> +			if (*vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
-> +					 NR_VM_NUMA_STAT_ITEMS] == '\0')
-> +				continue;
->  			seq_printf(m, "\n      %-12s %lu",
->  				vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
->  				NR_VM_NUMA_STAT_ITEMS],
-> -- 
-> 2.17.2
-> 
+On 29-11-2018 12:47, David Laight wrote:
+> From: Jose Abreu
+>> Sent: 29 November 2018 12:42
+>>
+>> Some ARC CPU's do not support unaligned loads/stores. Currently, generic
+>> implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
+>> This can lead to misfunction of some drivers as generic functions do a
+>> plain dereference of a pointer that can be unaligned.
+>>
+>> Let's use {get/put}_unaligned() helper instead of plain dereference of
+>> pointer in order to fix this.
+> Is it worth adding a check for the pointer being aligned?
 
-I do not see this patch in Linus's tree, do you?
+We could but then we would need to know which CPU version is
+currently running because some ARC processors support unaligned
+accesses.
 
-If not, what am I supposed to do with this?
+Thanks and Best Regards,
+Jose Miguel Abreu
 
-confused,
+>
+> 	David
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+>
 
-greg k-h
