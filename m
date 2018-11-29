@@ -2,151 +2,92 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DACFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3676C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA51320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6473620868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwYdphV9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA51320834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRYFpVC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6473620868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729918AbeK2RHl (ORCPT
+        id S1729929AbeK2RHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:07:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45236 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbeK2RHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:07:41 -0500
+        id S1728407AbeK2RHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:07:47 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1156D20834;
-        Thu, 29 Nov 2018 06:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E62220868;
+        Thu, 29 Nov 2018 06:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471409;
-        bh=UpqP+tG/2Ivei2QnWmCAlDnMkRz2CT8Xtfc31b/6hJA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YwYdphV9sw3ccGs8sC20Mx+NG7/HBEj2Do1ZGbkQeAVR9Sr8nrw6NhRXlzIoTkUVF
-         5Oe40T5FLMkRYgYD86tcCQZ1pXUa92VrESytmY6l2M7C3EM0mb6IkrEVoqoqvQroUR
-         1u/YtwUf+EVEcElcLDe/VlooMLtiVSGB725GWHes=
+        s=default; t=1543471416;
+        bh=zBY+1cKD2xGOMG5gP1qCuxMdaqsZKXAc7C9D2GTG3CY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WRYFpVC/ol3Jr62SxB0tA4uhB0BvIQG1guAHkx0SU5PNfacPpezbDBdBvUg3Ek8o1
+         J2SgOEUVwlmqzq2wlO7+7TrH0b1Q+8S7gcRrDwQyo3259HClgEhfbOswlCA/u2RA4H
+         vk467fCQB3fcrHY4qZkibe0CG3QOBAj3UA0orQFA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 35/35] net: thunderx: set tso_hdrs pointer to NULL in nicvf_free_snd_queue
-Date:   Thu, 29 Nov 2018 01:01:09 -0500
-Message-Id: <20181129060110.159878-35-sashal@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 01/18] media: omap3isp: Unregister media device as first
+Date:   Thu, 29 Nov 2018 01:03:13 -0500
+Message-Id: <20181129060331.160224-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181129060110.159878-1-sashal@kernel.org>
-References: <20181129060110.159878-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit ef2a7cf1d8831535b8991459567b385661eb4a36 ]
+[ Upstream commit 30efae3d789cd0714ef795545a46749236e29558 ]
 
-Reset snd_queue tso_hdrs pointer to NULL in nicvf_free_snd_queue routine
-since it is used to check if tso dma descriptor queue has been previously
-allocated. The issue can be triggered with the following reproducer:
+While there are issues related to object lifetime management, unregister the
+media device first when the driver is being unbound. This is slightly
+safer.
 
-$ip link set dev enP2p1s0v0 xdpdrv obj xdp_dummy.o
-$ip link set dev enP2p1s0v0 xdpdrv off
-
-[  341.467649] WARNING: CPU: 74 PID: 2158 at mm/vmalloc.c:1511 __vunmap+0x98/0xe0
-[  341.515010] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
-[  341.521874] pstate: 60400005 (nZCv daif +PAN -UAO)
-[  341.526654] pc : __vunmap+0x98/0xe0
-[  341.530132] lr : __vunmap+0x98/0xe0
-[  341.533609] sp : ffff00001c5db860
-[  341.536913] x29: ffff00001c5db860 x28: 0000000000020000
-[  341.542214] x27: ffff810feb5090b0 x26: ffff000017e57000
-[  341.547515] x25: 0000000000000000 x24: 00000000fbd00000
-[  341.552816] x23: 0000000000000000 x22: ffff810feb5090b0
-[  341.558117] x21: 0000000000000000 x20: 0000000000000000
-[  341.563418] x19: ffff000017e57000 x18: 0000000000000000
-[  341.568719] x17: 0000000000000000 x16: 0000000000000000
-[  341.574020] x15: 0000000000000010 x14: ffffffffffffffff
-[  341.579321] x13: ffff00008985eb27 x12: ffff00000985eb2f
-[  341.584622] x11: ffff0000096b3000 x10: ffff00001c5db510
-[  341.589923] x9 : 00000000ffffffd0 x8 : ffff0000086868e8
-[  341.595224] x7 : 3430303030303030 x6 : 00000000000006ef
-[  341.600525] x5 : 00000000003fffff x4 : 0000000000000000
-[  341.605825] x3 : 0000000000000000 x2 : ffffffffffffffff
-[  341.611126] x1 : ffff0000096b3728 x0 : 0000000000000038
-[  341.616428] Call trace:
-[  341.618866]  __vunmap+0x98/0xe0
-[  341.621997]  vunmap+0x3c/0x50
-[  341.624961]  arch_dma_free+0x68/0xa0
-[  341.628534]  dma_direct_free+0x50/0x80
-[  341.632285]  nicvf_free_resources+0x160/0x2d8 [nicvf]
-[  341.637327]  nicvf_config_data_transfer+0x174/0x5e8 [nicvf]
-[  341.642890]  nicvf_stop+0x298/0x340 [nicvf]
-[  341.647066]  __dev_close_many+0x9c/0x108
-[  341.650977]  dev_close_many+0xa4/0x158
-[  341.654720]  rollback_registered_many+0x140/0x530
-[  341.659414]  rollback_registered+0x54/0x80
-[  341.663499]  unregister_netdevice_queue+0x9c/0xe8
-[  341.668192]  unregister_netdev+0x28/0x38
-[  341.672106]  nicvf_remove+0xa4/0xa8 [nicvf]
-[  341.676280]  nicvf_shutdown+0x20/0x30 [nicvf]
-[  341.680630]  pci_device_shutdown+0x44/0x88
-[  341.684720]  device_shutdown+0x144/0x250
-[  341.688640]  kernel_restart_prepare+0x44/0x50
-[  341.692986]  kernel_restart+0x20/0x68
-[  341.696638]  __se_sys_reboot+0x210/0x238
-[  341.700550]  __arm64_sys_reboot+0x24/0x30
-[  341.704555]  el0_svc_handler+0x94/0x110
-[  341.708382]  el0_svc+0x8/0xc
-[  341.711252] ---[ end trace 3f4019c8439959c9 ]---
-[  341.715874] page:ffff7e0003ef4000 count:0 mapcount:0 mapping:0000000000000000 index:0x4
-[  341.723872] flags: 0x1fffe000000000()
-[  341.727527] raw: 001fffe000000000 ffff7e0003f1a008 ffff7e0003ef4048 0000000000000000
-[  341.735263] raw: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-[  341.742994] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-
-where xdp_dummy.c is a simple bpf program that forwards the incoming
-frames to the network stack (available here:
-https://github.com/altoor/xdp_walkthrough_examples/blob/master/sample_1/xdp_dummy.c)
-
-Fixes: 05c773f52b96 ("net: thunderx: Add basic XDP support")
-Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/thunder/nicvf_queues.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/omap3isp/isp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-index a3d12dbde95b..09494e1c77c5 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-@@ -585,10 +585,12 @@ static void nicvf_free_snd_queue(struct nicvf *nic, struct snd_queue *sq)
- 	if (!sq->dmem.base)
- 		return;
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index 1e98b4845ea1..a21b12c5c085 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -1591,6 +1591,8 @@ static void isp_pm_complete(struct device *dev)
  
--	if (sq->tso_hdrs)
-+	if (sq->tso_hdrs) {
- 		dma_free_coherent(&nic->pdev->dev,
- 				  sq->dmem.q_len * TSO_HEADER_SIZE,
- 				  sq->tso_hdrs, sq->tso_hdrs_phys);
-+		sq->tso_hdrs = NULL;
-+	}
+ static void isp_unregister_entities(struct isp_device *isp)
+ {
++	media_device_unregister(&isp->media_dev);
++
+ 	omap3isp_csi2_unregister_entities(&isp->isp_csi2a);
+ 	omap3isp_ccp2_unregister_entities(&isp->isp_ccp2);
+ 	omap3isp_ccdc_unregister_entities(&isp->isp_ccdc);
+@@ -1601,7 +1603,6 @@ static void isp_unregister_entities(struct isp_device *isp)
+ 	omap3isp_stat_unregister_entities(&isp->isp_hist);
  
- 	/* Free pending skbs in the queue */
- 	smp_rmb();
+ 	v4l2_device_unregister(&isp->v4l2_dev);
+-	media_device_unregister(&isp->media_dev);
+ 	media_device_cleanup(&isp->media_dev);
+ }
+ 
 -- 
 2.17.1
 
