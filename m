@@ -2,234 +2,190 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2FBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A4CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 660CF21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:53:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660CF21019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7877B21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:55:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFCis8lQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7877B21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeK2S6N (ORCPT
+        id S1727260AbeK2TAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:58:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55904 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726651AbeK2S6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:58:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 03A41AEA3;
-        Thu, 29 Nov 2018 07:53:40 +0000 (UTC)
-From:   Nikolay Borisov <nborisov@suse.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Nikolay Borisov <nborisov@suse.com>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-mm@kvack.org
-Subject: [PATCH 2/2] fs: Don't open-code lru_to_page
-Date:   Thu, 29 Nov 2018 09:52:57 +0200
-Message-Id: <20181129075301.29087-2-nborisov@suse.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181129075301.29087-1-nborisov@suse.com>
-References: <20181129075301.29087-1-nborisov@suse.com>
+        Thu, 29 Nov 2018 14:00:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726651AbeK2TAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:00:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80B3921019;
+        Thu, 29 Nov 2018 07:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543478133;
+        bh=R7auYQg71xHjDFZ4Zv9gjcwY/G+V87/rMADENJ83w9Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vFCis8lQLN+/QMAVEeoBqWFy9v3y8wplGSLMXuCuvzH8dKeAcsQR2xmQjFyj1Mu0C
+         k89VRRENfxsYZv8webyPOPA1VaZ8McB73B+4cKhExO8TQQeIbqW5MIFmCC1Q6KreBJ
+         6C8HRqXaEI3q+bP/xnxSDkdcLLp6K/VkBcx3bPBU=
+Date:   Thu, 29 Nov 2018 08:55:30 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <groeck@google.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH v3 8/8] mfd: cros_ec: add a dev_release empty method.
+Message-ID: <20181129075530.GH12347@kroah.com>
+References: <20181127121849.23975-1-enric.balletbo@collabora.com>
+ <20181127121849.23975-9-enric.balletbo@collabora.com>
+ <CABXOdTeL6ZC4mfGdU52bkz3-5g-EUL7wMvd-nDjmeBHWM2XSuA@mail.gmail.com>
+ <20181127175219.GA30900@kroah.com>
+ <CABXOdTehDNf_8DHjua6BTJ-_AA6wcfcis1DPFS5=93sEh-6LQA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABXOdTehDNf_8DHjua6BTJ-_AA6wcfcis1DPFS5=93sEh-6LQA@mail.gmail.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a bunch of filesystems which essentially open-code lru_to_page
-helper. Change them to using the helper. No functional changes.
+On Wed, Nov 28, 2018 at 05:17:22PM -0800, Guenter Roeck wrote:
+> Hi Greg,
+> 
+> On Tue, Nov 27, 2018 at 9:52 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Nov 27, 2018 at 09:29:38AM -0800, Guenter Roeck wrote:
+> > > Hi Enric,
+> > >
+> > > On Tue, Nov 27, 2018 at 4:19 AM Enric Balletbo i Serra
+> > > <enric.balletbo@collabora.com> wrote:
+> > > >
+> > > > Devices are required to provide a release method. This patch fixes the
+> > > > following WARN():
+> > > >
+> > > > [   47.218707] ------------[ cut here ]------------
+> > > > [   47.223901] Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
+> > > > [   47.234430] WARNING: CPU: 0 PID: 3585 at drivers/base/core.c:895 device_release+0x80/0x90
+> > > > [   47.243560] Modules linked in: btusb btrtl btintel btbcm bluetooth ecdh_generic [...]
+> > > > [   47.323851] CPU: 0 PID: 3585 Comm: rmmod Not tainted 4.20.0-rc2+ #29
+> > > > [   47.330947] Hardware name: Google Kevin (DT)
+> > > > [   47.335714] pstate: 40000005 (nZcv daif -PAN -UAO)
+> > > > [   47.341063] pc : device_release+0x80/0x90
+> > > > [   47.345537] lr : device_release+0x80/0x90
+> > > > [   47.350001] sp : ffff00000b17bc70
+> > > > [   47.353698] x29: ffff00000b17bc70 x28: ffff8000e48e9a80
+> > > > [   47.359629] x27: 0000000000000000 x26: 0000000000000000
+> > > > [   47.365561] x25: 0000000056000000 x24: 0000000000000015
+> > > > [   47.371492] x23: ffff8000f0248060 x22: ffff000000b700a0
+> > > > [   47.377414] x21: ffff8000edf56100 x20: ffff8000edd13028
+> > > > [   47.383346] x19: ffff8000edd13018 x18: 0000000000000095
+> > > > [   47.389278] x17: 0000000000000000 x16: 0000000000000000
+> > > > [   47.395209] x15: 0000000000000400 x14: 0000000000000400
+> > > > [   47.401131] x13: 00000000000001a7 x12: 0000000000000000
+> > > > [   47.407053] x11: 0000000000000001 x10: 0000000000000960
+> > > > [   47.412976] x9 : ffff00000b17b9b0 x8 : ffff8000e48ea440
+> > > > [   47.418898] x7 : ffff8000ee9090c0 x6 : ffff8000f7d0b0b8
+> > > > [   47.424830] x5 : ffff8000f7d0b0b8 x4 : 0000000000000000
+> > > > [   47.430752] x3 : ffff8000f7d11e68 x2 : ffff8000e48e9a80
+> > > > [   47.436674] x1 : 37d859939c964800 x0 : 0000000000000000
+> > > > [   47.442597] Call trace:
+> > > > [   47.445324]  device_release+0x80/0x90
+> > > > [   47.449414]  kobject_put+0x74/0xe8
+> > > > [   47.453210]  device_unregister+0x20/0x30
+> > > > [   47.457592]  ec_device_remove+0x34/0x48 [cros_ec_dev]
+> > > > [   47.463233]  platform_drv_remove+0x28/0x48
+> > > > [   47.467805]  device_release_driver_internal+0x1a8/0x240
+> > > > [   47.473630]  driver_detach+0x40/0x80
+> > > > [   47.477609]  bus_remove_driver+0x54/0xa8
+> > > > [   47.481986]  driver_unregister+0x2c/0x58
+> > > > [   47.486355]  platform_driver_unregister+0x10/0x18
+> > > > [   47.491599]  cros_ec_dev_exit+0x1c/0x258 [cros_ec_dev]
+> > > > [   47.497338]  __arm64_sys_delete_module+0x16c/0x1f8
+> > > > [   47.502689]  el0_svc_common+0x84/0xd8
+> > > > [   47.506776]  el0_svc_handler+0x2c/0x80
+> > > > [   47.510960]  el0_svc+0x8/0xc
+> > > > [   47.514171] ---[ end trace 9087279fc8c03450 ]---
+> > > >
+> > > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > > ---
+> > > >
+> > > > Changes in v3: None
+> > > > Changes in v2:
+> > > > - Fix WARN when unloading. This is new in these series.
+> > > >
+> > > >  drivers/mfd/cros_ec_dev.c | 5 +++++
+> > > >  1 file changed, 5 insertions(+)
+> > > >
+> > > > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> > > > index 1ba98a32715e..cdb941c6db98 100644
+> > > > --- a/drivers/mfd/cros_ec_dev.c
+> > > > +++ b/drivers/mfd/cros_ec_dev.c
+> > > > @@ -35,9 +35,14 @@
+> > > >  #define CROS_MAX_DEV 128
+> > > >  static int ec_major;
+> > > >
+> > > > +static void cros_ec_dev_release(struct device *dev)
+> > > > +{
+> > > > +}
+> >
+> > Yeah, as part of the in-kernel documentation, I now get to make fun of
+> > you in public!
+> >
+> > You did read the documentation, right?
+> >
+> 
+> To be fair, the problem is difficult to understand. Maybe it is easy
+> for you, but that is not true for everyone, including me. Remember the
+> block discussion we just had ? As for the in-kernel documentation,
+> maybe there is a comprehensive explanation someone, one that clueless
+> people like me can understand, but all I found was
+> 
+> "If a bus driver unregisters a device, it should not immediately free
+>   it. It should instead wait for the driver model core to call the
+>   device's release method, then free the bus-specific object.
+>   (There may be other code that is currently referencing the device
+>   structure, and it would be rude to free the device while that is
+>   happening)"
+> 
+> Does that apply to mfd devices ? What other code may that be that
+> accesses the structure ? What else does it mean, or in other words,
+> what other cleanup code besides releasing the data structure needs to
+> reside in the release function ?
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
----
+To quote Documentation/kobject.txt:
+	One important point cannot be overstated: every kobject must
+	have a release() method, and the kobject must persist (in a
+	consistent state) until that method is called. If these
+	constraints are not met, the code is flawed.  Note that the
+	kernel will warn you if you forget to provide a release()
+	method.  Do not try to get rid of this warning by providing an
+	"empty" release function; you will be mocked mercilessly by the
+	kobject maintainer if you attempt this.
 
-Since this is a mostly mechanical change I've actually batched all of them in 
-a single patch. 
+The fact that you couldn't even find this means that it probably is in
+the wrong place, but then, where is the "right" place for where everyone
+can see it?  Should I refer to this file in the kernel error message?
 
- fs/afs/file.c        | 5 +++--
- fs/btrfs/extent_io.c | 2 +-
- fs/ceph/addr.c       | 5 ++---
- fs/cifs/file.c       | 3 ++-
- fs/ext4/readpage.c   | 2 +-
- fs/ocfs2/aops.c      | 3 ++-
- fs/orangefs/inode.c  | 2 +-
- mm/swap.c            | 2 +-
- 8 files changed, 13 insertions(+), 11 deletions(-)
+That file also should answer your other questions about lifetime rules
+of kobjects, which is really the same thing as 'struct device' here.  If
+not, please let me know and I can fix it up.
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index d6bc3f5d784b..323ae9912203 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -17,6 +17,7 @@
- #include <linux/writeback.h>
- #include <linux/gfp.h>
- #include <linux/task_io_accounting_ops.h>
-+#include <linux/mm.h>
- #include "internal.h"
- 
- static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
-@@ -441,7 +442,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	/* Count the number of contiguous pages at the front of the list.  Note
- 	 * that the list goes prev-wards rather than next-wards.
- 	 */
--	first = list_entry(pages->prev, struct page, lru);
-+	first = lru_to_page(pages);
- 	index = first->index + 1;
- 	n = 1;
- 	for (p = first->lru.prev; p != pages; p = p->prev) {
-@@ -473,7 +474,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	 * page at the end of the file.
- 	 */
- 	do {
--		page = list_entry(pages->prev, struct page, lru);
-+		page = lru_to_page(pages);
- 		list_del(&page->lru);
- 		index = page->index;
- 		if (add_to_page_cache_lru(page, mapping, index,
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 19f4b8fd654f..8332c5f4b1c3 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4104,7 +4104,7 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
- 	u64 prev_em_start = (u64)-1;
- 
- 	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
--		page = list_entry(pages->prev, struct page, lru);
-+		page = lru_to_page(pages);
- 
- 		prefetchw(&page->flags);
- 		list_del(&page->lru);
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 8eade7a993c1..5d0c05e288cc 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -306,7 +306,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
- 	struct ceph_osd_client *osdc =
- 		&ceph_inode_to_client(inode)->client->osdc;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct page *page = list_entry(page_list->prev, struct page, lru);
-+	struct page *page = lru_to_page(page_list);
- 	struct ceph_vino vino;
- 	struct ceph_osd_request *req;
- 	u64 off;
-@@ -333,8 +333,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
- 			if (got)
- 				ceph_put_cap_refs(ci, got);
- 			while (!list_empty(page_list)) {
--				page = list_entry(page_list->prev,
--						  struct page, lru);
-+				page = lru_to_page(page_list);
- 				list_del(&page->lru);
- 				put_page(page);
- 			}
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 74c33d5fafc8..b16a4d887d17 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -33,6 +33,7 @@
- #include <linux/mount.h>
- #include <linux/slab.h>
- #include <linux/swap.h>
-+#include <linux/mm.h>
- #include <asm/div64.h>
- #include "cifsfs.h"
- #include "cifspdu.h"
-@@ -3975,7 +3976,7 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
- 
- 	INIT_LIST_HEAD(tmplist);
- 
--	page = list_entry(page_list->prev, struct page, lru);
-+	page = lru_to_page(page_list);
- 
- 	/*
- 	 * Lock the page and put it in the cache. Since no one else
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index f461d75ac049..6aa282ee455a 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -128,7 +128,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 
- 		prefetchw(&page->flags);
- 		if (pages) {
--			page = list_entry(pages->prev, struct page, lru);
-+			page = lru_to_page(pages);
- 			list_del(&page->lru);
- 			if (add_to_page_cache_lru(page, mapping, page->index,
- 				  readahead_gfp_mask(mapping)))
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index eb1ce30412dc..832c1759a09a 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -30,6 +30,7 @@
- #include <linux/quotaops.h>
- #include <linux/blkdev.h>
- #include <linux/uio.h>
-+#include <linux/mm.h>
- 
- #include <cluster/masklog.h>
- 
-@@ -397,7 +398,7 @@ static int ocfs2_readpages(struct file *filp, struct address_space *mapping,
- 	 * Check whether a remote node truncated this file - we just
- 	 * drop out in that case as it's not worth handling here.
- 	 */
--	last = list_entry(pages->prev, struct page, lru);
-+	last = lru_to_page(pages);
- 	start = (loff_t)last->index << PAGE_SHIFT;
- 	if (start >= i_size_read(inode))
- 		goto out_unlock;
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index fe53381b26b1..f038235c64bd 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -77,7 +77,7 @@ static int orangefs_readpages(struct file *file,
- 	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
- 		struct page *page;
- 
--		page = list_entry(pages->prev, struct page, lru);
-+		page = lru_to_page(pages);
- 		list_del(&page->lru);
- 		if (!add_to_page_cache(page,
- 				       mapping,
-diff --git a/mm/swap.c b/mm/swap.c
-index aa483719922e..20b9e9d99652 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -126,7 +126,7 @@ void put_pages_list(struct list_head *pages)
- 	while (!list_empty(pages)) {
- 		struct page *victim;
- 
--		victim = list_entry(pages->prev, struct page, lru);
-+		victim = lru_to_page(pages);
- 		list_del(&victim->lru);
- 		put_page(victim);
- 	}
--- 
-2.17.1
+thanks,
 
+greg k-h
