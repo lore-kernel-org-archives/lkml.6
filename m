@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4869C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19CDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A9F2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A7282133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqmJFibJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A9F2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Y8zNuJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7282133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732867AbeK3Baj (ORCPT
+        id S1732879AbeK3Bam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:30:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57766 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:30:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732853AbeK3Bai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:30:38 -0500
+        id S1731565AbeK3Bal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:30:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9A8F205C9;
-        Thu, 29 Nov 2018 14:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44C0221104;
+        Thu, 29 Nov 2018 14:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501506;
-        bh=Vv2cPjs+cqncFpXmftdLT9pw5iIF72SfvWopc8RzXWU=;
+        s=default; t=1543501508;
+        bh=T8Bo6BrfFCLcSLYGmeeAUFtpW9oRrRPInnaKMXJAsIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqmJFibJ/cZms8x7z3yO5RTGcLoV1+Ty7TOMKaWXBzFFqANF7Ir1wxaZXnzHdJOHH
-         JZrJrjp3YS7xeY0K7orJkc9HkGYYmyko5dfpQoIZWso2eeyJ/0CDQIsO7Px4zDET/u
-         Swv/ZJdLnhpvxt0FOWDRuoTKzvpPrjLNt05WZ6Ow=
+        b=0Y8zNuJBAhfAlk3doI2p4uwCP+Pc4AJ/dZQ2ci5K6T2zD5zzf4wKnANgae3ykktJl
+         tq+TB6FvJ/KAjkmfvpWJGnxdeSCuBYbMMVyUM39UvdYt28EGcbb+nHd7lh1niNVbWp
+         mXNyG9JfeTi6AGxIh38FGdiO+W0TlrImkHo377Q4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+dcb8b3587445007f5808@syzkaller.appspotmail.com,
-        Andrew Price <anprice@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 4.14 026/100] gfs2: Dont leave s_fs_info pointing to freed memory in init_sbd
-Date:   Thu, 29 Nov 2018 15:11:56 +0100
-Message-Id: <20181129140100.989374861@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 027/100] llc: do not use sk_eat_skb()
+Date:   Thu, 29 Nov 2018 15:11:57 +0100
+Message-Id: <20181129140101.065734859@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,40 +63,164 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Price <anprice@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 4c62bd9cea7bcf10292f7e4c57a2bca332942697 upstream.
+commit 604d415e2bd642b7e02c80e719e0396b9d4a77a6 upstream.
 
-When alloc_percpu() fails, sdp gets freed but sb->s_fs_info still points
-to the same address. Move the assignment after that error check so that
-s_fs_info can only point to a valid sdp or NULL, which is checked for
-later in the error path, in gfs2_kill_super().
+syzkaller triggered a use-after-free [1], caused by a combination of
+skb_get() in llc_conn_state_process() and usage of sk_eat_skb()
 
-Reported-by: syzbot+dcb8b3587445007f5808@syzkaller.appspotmail.com
-Signed-off-by: Andrew Price <anprice@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+sk_eat_skb() is assuming the skb about to be freed is only used by
+the current thread. TCP/DCCP stacks enforce this because current
+thread holds the socket lock.
+
+llc_conn_state_process() wants to make sure skb does not disappear,
+and holds a reference on the skb it manipulates. But as soon as this
+skb is added to socket receive queue, another thread can consume it.
+
+This means that llc must use regular skb_unlink() and kfree_skb()
+so that both producer and consumer can safely work on the same skb.
+
+[1]
+BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:43 [inline]
+BUG: KASAN: use-after-free in skb_unref include/linux/skbuff.h:967 [inline]
+BUG: KASAN: use-after-free in kfree_skb+0xb7/0x580 net/core/skbuff.c:655
+Read of size 4 at addr ffff8801d1f6fba4 by task ksoftirqd/1/18
+
+CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.19.0-rc8+ #295
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
+ print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+ kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+ atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+ refcount_read include/linux/refcount.h:43 [inline]
+ skb_unref include/linux/skbuff.h:967 [inline]
+ kfree_skb+0xb7/0x580 net/core/skbuff.c:655
+ llc_sap_state_process+0x9b/0x550 net/llc/llc_sap.c:224
+ llc_sap_rcv+0x156/0x1f0 net/llc/llc_sap.c:297
+ llc_sap_handler+0x65e/0xf80 net/llc/llc_sap.c:438
+ llc_rcv+0x79e/0xe20 net/llc/llc_input.c:208
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
+ process_backlog+0x218/0x6f0 net/core/dev.c:5829
+ napi_poll net/core/dev.c:6249 [inline]
+ net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
+ __do_softirq+0x30c/0xb03 kernel/softirq.c:292
+ run_ksoftirqd+0x94/0x100 kernel/softirq.c:653
+ smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
+ kthread+0x35a/0x420 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+Allocated by task 18:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+ kmem_cache_alloc_node+0x144/0x730 mm/slab.c:3644
+ __alloc_skb+0x119/0x770 net/core/skbuff.c:193
+ alloc_skb include/linux/skbuff.h:995 [inline]
+ llc_alloc_frame+0xbc/0x370 net/llc/llc_sap.c:54
+ llc_station_ac_send_xid_r net/llc/llc_station.c:52 [inline]
+ llc_station_rcv+0x1dc/0x1420 net/llc/llc_station.c:111
+ llc_rcv+0xc32/0xe20 net/llc/llc_input.c:220
+ __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
+ __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
+ process_backlog+0x218/0x6f0 net/core/dev.c:5829
+ napi_poll net/core/dev.c:6249 [inline]
+ net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
+ __do_softirq+0x30c/0xb03 kernel/softirq.c:292
+
+Freed by task 16383:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+ set_track mm/kasan/kasan.c:460 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+ __cache_free mm/slab.c:3498 [inline]
+ kmem_cache_free+0x83/0x290 mm/slab.c:3756
+ kfree_skbmem+0x154/0x230 net/core/skbuff.c:582
+ __kfree_skb+0x1d/0x20 net/core/skbuff.c:642
+ sk_eat_skb include/net/sock.h:2366 [inline]
+ llc_ui_recvmsg+0xec2/0x1610 net/llc/af_llc.c:882
+ sock_recvmsg_nosec net/socket.c:794 [inline]
+ sock_recvmsg+0xd0/0x110 net/socket.c:801
+ ___sys_recvmsg+0x2b6/0x680 net/socket.c:2278
+ __sys_recvmmsg+0x303/0xb90 net/socket.c:2390
+ do_sys_recvmmsg+0x181/0x1a0 net/socket.c:2466
+ __do_sys_recvmmsg net/socket.c:2484 [inline]
+ __se_sys_recvmmsg net/socket.c:2480 [inline]
+ __x64_sys_recvmmsg+0xbe/0x150 net/socket.c:2480
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d1f6fac0
+ which belongs to the cache skbuff_head_cache of size 232
+The buggy address is located 228 bytes inside of
+ 232-byte region [ffff8801d1f6fac0, ffff8801d1f6fba8)
+The buggy address belongs to the page:
+page:ffffea000747dbc0 count:1 mapcount:0 mapping:ffff8801d9be7680 index:0xffff8801d1f6fe80
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0007346e88 ffffea000705b108 ffff8801d9be7680
+raw: ffff8801d1f6fe80 ffff8801d1f6f0c0 000000010000000b 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801d1f6fa80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+ ffff8801d1f6fb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8801d1f6fb80: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
+                               ^
+ ffff8801d1f6fc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8801d1f6fc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/ops_fstype.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/llc/af_llc.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -72,13 +72,13 @@ static struct gfs2_sbd *init_sbd(struct
- 	if (!sdp)
- 		return NULL;
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -730,7 +730,6 @@ static int llc_ui_recvmsg(struct socket
+ 	struct sk_buff *skb = NULL;
+ 	struct sock *sk = sock->sk;
+ 	struct llc_sock *llc = llc_sk(sk);
+-	unsigned long cpu_flags;
+ 	size_t copied = 0;
+ 	u32 peek_seq = 0;
+ 	u32 *seq, skb_len;
+@@ -855,9 +854,8 @@ static int llc_ui_recvmsg(struct socket
+ 			goto copy_uaddr;
  
--	sb->s_fs_info = sdp;
- 	sdp->sd_vfs = sb;
- 	sdp->sd_lkstats = alloc_percpu(struct gfs2_pcpu_lkstats);
- 	if (!sdp->sd_lkstats) {
- 		kfree(sdp);
- 		return NULL;
+ 		if (!(flags & MSG_PEEK)) {
+-			spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
+-			sk_eat_skb(sk, skb);
+-			spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
++			skb_unlink(skb, &sk->sk_receive_queue);
++			kfree_skb(skb);
+ 			*seq = 0;
+ 		}
+ 
+@@ -878,9 +876,8 @@ copy_uaddr:
+ 		llc_cmsg_rcv(msg, skb);
+ 
+ 	if (!(flags & MSG_PEEK)) {
+-		spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
+-		sk_eat_skb(sk, skb);
+-		spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
++		skb_unlink(skb, &sk->sk_receive_queue);
++		kfree_skb(skb);
+ 		*seq = 0;
  	}
-+	sb->s_fs_info = sdp;
  
- 	set_bit(SDF_NOJOURNALID, &sdp->sd_flags);
- 	gfs2_tune_init(&sdp->sd_tune);
 
 
