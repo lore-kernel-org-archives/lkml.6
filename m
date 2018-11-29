@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB64C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF96AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB6F20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:30:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB6F20863
+	by mail.kernel.org (Postfix) with ESMTP id BFE0A20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:30:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE0A20863
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeK2ReS (ORCPT
+        id S1727885AbeK2ReU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:34:18 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:61597 "EHLO
+        Thu, 29 Nov 2018 12:34:20 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:4047 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727666AbeK2ReS (ORCPT
+        with ESMTP id S1727688AbeK2ReT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:34:18 -0500
-X-UUID: 1cc5854510834d2bb3d4b10b5318c1d2-20181129
-X-UUID: 1cc5854510834d2bb3d4b10b5318c1d2-20181129
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        Thu, 29 Nov 2018 12:34:19 -0500
+X-UUID: 1043b3710d1c406aae6201923993d259-20181129
+X-UUID: 1043b3710d1c406aae6201923993d259-20181129
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
         (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 135440106; Thu, 29 Nov 2018 14:29:58 +0800
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 354107526; Thu, 29 Nov 2018 14:29:58 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 29 Nov 2018 14:29:56 +0800
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 29 Nov 2018 14:29:57 +0800
 Received: from mtkslt306.mediatek.inc (10.21.14.136) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 29 Nov 2018 14:29:56 +0800
+ Transport; Thu, 29 Nov 2018 14:29:57 +0800
 From:   Ryder Lee <ryder.lee@mediatek.com>
 To:     Marek Vasut <marek.vasut@gmail.com>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -45,11 +45,13 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [RESEND PATCH 1/4] dt-bindings: mtd: mtk-quadspi: update bindings for MT7629 SoC
-Date:   Thu, 29 Nov 2018 14:29:53 +0800
-Message-ID: <235ade9c5cda19fb0c9356913e3f56ad86600f59.1543472168.git.ryder.lee@mediatek.com>
+        Guochun Mao <guochun.mao@mediatek.com>
+Subject: [RESEND PATCH 2/4] mtd: spi-nor: mtk-quadspi: use ofpart for parsing partitions
+Date:   Thu, 29 Nov 2018 14:29:54 +0800
+Message-ID: <6cca6844f426d4ad4e7c878420b363cfb34499aa.1543472168.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <235ade9c5cda19fb0c9356913e3f56ad86600f59.1543472168.git.ryder.lee@mediatek.com>
+References: <235ade9c5cda19fb0c9356913e3f56ad86600f59.1543472168.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -58,31 +60,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This updates bindings for the MT7629 SPI-NOR controller.
+From: Guochun Mao <guochun.mao@mediatek.com>
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Replace mtd_device_register with mtd_device_parse_register for
+parsing partitions and add ofpart support.
+
+Signed-off-by: Guochun Mao <guochun.mao@mediatek.com>
+Tested-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- Documentation/devicetree/bindings/mtd/mtk-quadspi.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mtd/spi-nor/mtk-quadspi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mtd/mtk-quadspi.txt b/Documentation/devicetree/bindings/mtd/mtk-quadspi.txt
-index 56d3668..a12e3b5 100644
---- a/Documentation/devicetree/bindings/mtd/mtk-quadspi.txt
-+++ b/Documentation/devicetree/bindings/mtd/mtk-quadspi.txt
-@@ -1,4 +1,4 @@
--* Serial NOR flash controller for MTK MT81xx (and similar)
-+* Serial NOR flash controller for MediaTek SoCs
+diff --git a/drivers/mtd/spi-nor/mtk-quadspi.c b/drivers/mtd/spi-nor/mtk-quadspi.c
+index 5442993..2278677 100644
+--- a/drivers/mtd/spi-nor/mtk-quadspi.c
++++ b/drivers/mtd/spi-nor/mtk-quadspi.c
+@@ -118,6 +118,8 @@ struct mtk_nor {
+ 	struct clk *nor_clk;
+ };
  
- Required properties:
- - compatible: 	  For mt8173, compatible should be "mediatek,mt8173-nor",
-@@ -10,6 +10,7 @@ Required properties:
- 		  "mediatek,mt2712-nor", "mediatek,mt8173-nor"
- 		  "mediatek,mt7622-nor", "mediatek,mt8173-nor"
- 		  "mediatek,mt7623-nor", "mediatek,mt8173-nor"
-+		  "mediatek,mt7629-nor", "mediatek,mt8173-nor"
- 		  "mediatek,mt8173-nor"
- - reg: 		  physical base address and length of the controller's register
- - clocks: 	  the phandle of the clocks needed by the nor controller
++static const char * const probes[] = { "ofpart", NULL };
++
+ static void mtk_nor_set_read_mode(struct mtk_nor *mtk_nor)
+ {
+ 	struct spi_nor *nor = &mtk_nor->nor;
+@@ -457,7 +459,7 @@ static int mtk_nor_init(struct mtk_nor *mtk_nor,
+ 	if (ret)
+ 		return ret;
+ 
+-	return mtd_device_register(&nor->mtd, NULL, 0);
++	return mtd_device_parse_register(&nor->mtd, probes, NULL, NULL, 0);
+ }
+ 
+ static int mtk_nor_drv_probe(struct platform_device *pdev)
 -- 
 1.9.1
 
