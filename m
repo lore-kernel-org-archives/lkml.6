@@ -2,85 +2,121 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48707C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBEAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED9821104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED9821104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id F3476213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:16:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3476213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbeK3GTl (ORCPT
+        id S1726310AbeK3GXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:19:41 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:55365 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbeK3GTl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:19:41 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        Fri, 30 Nov 2018 01:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbeK3GXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:23:18 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 036C5300002BE;
-        Thu, 29 Nov 2018 20:13:13 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id CA771105765; Thu, 29 Nov 2018 20:13:12 +0100 (CET)
-Date:   Thu, 29 Nov 2018 20:13:12 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Alex_Gagniuc@Dellteam.com
-Cc:     helgaas@kernel.org, mr.nuke.me@gmail.com, Austin.Bolen@dell.com,
-        keith.busch@intel.com, Shyam.Iyer@dell.com,
-        mika.westerberg@linux.intel.com, okaya@codeaurora.org,
-        rafael.j.wysocki@intel.com, poza@codeaurora.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
- notification
-Message-ID: <20181129191312.6ksdzjv6qojacv4j@wunner.de>
-References: <20181129000829.14751-1-mr.nuke.me@gmail.com>
- <20181129173553.GD178809@google.com>
- <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99AA421104;
+        Thu, 29 Nov 2018 19:16:49 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 14:16:48 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
+        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
+        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
+        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129141648.6ef944a9@gandalf.local.home>
+In-Reply-To: <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
+References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
+        <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+        <20181129163342.tp5wlfcyiazwwyoh@treble>
+        <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
+        <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+        <20181129121307.12393c57@gandalf.local.home>
+        <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
+        <20181129124404.2fe55dd0@gandalf.local.home>
+        <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
+        <20181129125857.75c55b96@gandalf.local.home>
+        <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
+        <20181129134725.6d86ade6@gandalf.local.home>
+        <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 06:57:37PM +0000, Alex_Gagniuc@Dellteam.com wrote:
-> On 11/29/2018 11:36 AM, Bjorn Helgaas wrote:
-> > On Wed, Nov 28, 2018 at 06:08:24PM -0600, Alexandru Gagniuc wrote:
-> >> A warning is generated when a PCIe device is probed with a degraded
-> >> link, but there was no similar mechanism to warn when the link becomes
-> >> degraded after probing. The Link Bandwidth Notification provides this
-> >> mechanism.
-> >>
-> >> Use the link bandwidth notification interrupt to detect bandwidth
-> >> changes, and rescan the bandwidth, looking for the weakest point. This
-> >> is the same logic used in probe().
-> > 
-> > I like the concept of this.  What I don't like is the fact that it's
-> > tied to pciehp, since I don't think the concept of Link Bandwidth
-> > Notification is related to hotplug.  So I think we'll only notice this
-> > for ports that support hotplug.  Maybe it's worth doing it this way
-> > anyway, even if it could be generalized in the future?
+On Thu, 29 Nov 2018 10:58:40 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Thu, Nov 29, 2018 at 10:47 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > Note, we do have a bit of control at what is getting called. The patch
+> > set requires that the callers are wrapped in macros. We should not
+> > allow just any random callers (like from asm).  
 > 
-> That makes sense. At first, I thought that BW notification was tied to 
-> hotplug, but our PCIe spec writer disagreed with that assertion. I'm 
-> just not sure where to handle the interrupt otherwise.
+> Actually, I'd argue that asm is often more controlled than C code.
+> 
+> Right now you can do odd things if you really want to, and have the
+> compiler generate indirect calls to those wrapper functions.
+> 
+> For example, I can easily imagine a pre-retpoline compiler turning
+> 
+>      if (cond)
+>         fn1(a,b)
+>      else
+>        fn2(a,b);
+> 
+> into a function pointer conditional
+> 
+>     (cond ? fn1 : fn2)(a,b);
 
-I guess the interrupt is shared with hotplug and PME?  In that case write
-a separate pcie_port_service_driver and request the interrupt with
-IRQF_SHARED.  Define a new service type in drivers/pci/pcie/portdrv.h.
-Amend get_port_device_capability() to check for PCI_EXP_LNKCAP_LBNC.
+If we are worried about such a construct, wouldn't a compiler barrier
+before and after the static_call solve that?
 
-Thanks,
+	barrier();
+	static_call(func...);
+	barrier();
 
-Lukas
+It should also stop tail calls too.
+
+> 
+> and honestly, the way "static_call()" works now, can you guarantee
+> that the call-site doesn't end up doing that, and calling the
+> trampoline function for two different static calls from one indirect
+> call?
+> 
+> See what I'm talking about? Saying "callers are wrapped in macros"
+> doesn't actually protect you from the compiler doing things like that.
+> 
+> In contrast, if the call was wrapped in an inline asm, we'd *know* the
+> compiler couldn't turn a "call wrapper(%rip)" into anything else.
+
+But then we need to implement all numbers of parameters.
+
+-- Steve
