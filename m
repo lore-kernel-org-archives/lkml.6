@@ -2,107 +2,165 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170C1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FBCC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6DB92081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:02:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VnEyX0CF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DB92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id C74AB20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74AB20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeK2WHZ (ORCPT
+        id S1727981AbeK2WJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:07:25 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39975 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbeK2WHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:07:25 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q26so1744749wmf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 03:02:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=M5G5wxj4I12myWfzJCN4MSkONDDbyUEFBq/6Ntuz/QA=;
-        b=VnEyX0CFtnzTkmfAwwGOJFbLgLC7olQs74OYsk4CGMEwq+RwnFeL4KU15+rwdPxhFX
-         Xlj6Xr2VG6r91lDhzpSUYGeSZXBv8OJ+w0GKHsImttcuYddj4Rr2Ry+ysSnLj6+Fs8Hx
-         omfXdqZ2dUqhLIS0fGz0VGazeD+Rr27IkUWKhloCUCbZCy6MXn0WBHVYZPfTvSBg+Ba0
-         4x6wqxYbiYKuDFCSBRz9p9h4VUP8FREPGzoQMeBealX+kYJubVmbl4XJQbtlR+LPqpG/
-         WkScHLsE66TjyUTANk0Rm2OYCA2kk98CB/8AV8e+R72cWmEAGm2I7pgnf+DXz95rZtG4
-         TLlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=M5G5wxj4I12myWfzJCN4MSkONDDbyUEFBq/6Ntuz/QA=;
-        b=GQvhWO7JvzC8KOInL/O2FcYiOo1XTIdAdyXkmyz1fiTlC7PttWEec78loVdB1v3U+j
-         ML1R4nz0RERpPfm8J/H1sfIZMmhAD3i/zvl+7WHs+JcLGhh/HKEfoLCjLu/GIMLnA7Cs
-         gBbNaXsxP17mAE1zjj7nLVHsBvIvnEfjs3UMpWrrygSyUU0B2eh/7RIEw0uKjE7K1idc
-         SnC7O3zFH10opXqHDUVRmFXtUTx+/v8mmAMG1vhxQee3Zs9WoeNcpATbMeNFenPDBDaI
-         WyQ1F5FYjRrTG0zt2qoaQS7dz540R8tJJF9wlPqpqYv4+6OEuqGq/W0u/Ttqs7ADAb/p
-         eRgA==
-X-Gm-Message-State: AA+aEWYQdpVSjcWuqFqWzq1wrPds1s6TI63Jc1DYL5Izv6PWJeJ/Rzjd
-        yePcpI8lHQA02r+9o29Ta87xqA==
-X-Google-Smtp-Source: AFSGD/Wq9Q5zi7Pb80veLGexIklkZz0oSazkg6E2810legJItmqRiVSsv0K3wH6/gTsOlQMvuaFY0Q==
-X-Received: by 2002:a1c:5702:: with SMTP id l2mr1390536wmb.31.1543489345602;
-        Thu, 29 Nov 2018 03:02:25 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id x136sm1727048wme.0.2018.11.29.03.02.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 03:02:24 -0800 (PST)
-Message-ID: <8a6a204b28523e5a181f9e85dda18fade76a26a3.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] i2c: meson: add support for Meson G12A SoC i2c
- controller
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jian Hu <jian.hu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Thu, 29 Nov 2018 12:02:22 +0100
-In-Reply-To: <1543489197-183181-1-git-send-email-jian.hu@amlogic.com>
-References: <1543489197-183181-1-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Nov 2018 17:09:09 -0500
+Received: from mga14.intel.com ([192.55.52.115]:11203 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbeK2WJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 17:09:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 03:04:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
+   d="scan'208";a="93945988"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 29 Nov 2018 03:04:05 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 047A618E; Thu, 29 Nov 2018 13:04:04 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Joe Perches <joe@perches.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v5 00/21] lib, rtc: Print rtc_time via %ptR[dt][r]
+Date:   Thu, 29 Nov 2018 12:59:37 +0200
+Message-Id: <20181129105956.25933-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-29 at 18:59 +0800, Jian Hu wrote:
-> 1)Add G12A SoC i2c compatible string in dt-bindings.
-> 2)Add compatible and data for G12A I2C controller driver.
-> 
-> Jian Hu (2):
->   dt-bindings: i2c: meson: add Meson G12A SoC i2c compatible string
->   i2c: meson: add support for Meson G12A SoC I2C controller
+At some point I have noticed too many users of struct rtc_time that
+printing its content field by field.
 
-Looks to me that the g12a is compatible with the axg. What is the point of
-adding this new compatible string ?
+In this series I introduce %ptR[dt][r] specifier to make life a bit
+easier.
 
-> 
->  Documentation/devicetree/bindings/i2c/i2c-meson.txt | 1 +
->  drivers/i2c/busses/i2c-meson.c                      | 5 +++++
->  2 files changed, 6 insertions(+)
-> 
+There are still users of detailed output of the struct rtc_time, but we
+can introduce an additional extension for them in the future if needed,
+otherwise they might be converted to the proposed output format.
 
+Some of the changes slightly modify the output. In those cases we are on
+the safe side since they are pure debug. Nevertheless I tried to leave
+numbers to be the same or quite close: in some cases year was printed
++1900, though month was left in the range [0,11] instead of [1,12].
+
+I didn't compile everything there, though I did a basic smoke test on
+some x86 hardware. So, I rely on kbuild test robot as well :-)
+
+Most of the users currently are RTC drivers, thus the patch series is
+assumed to go via RTC tree.
+
+Cc: Petr Mladek <pmladek@suse.com>
+
+Changelog v5:
+- remove leftover from pointer() comment in vsprintf.c
+- fix indentation in rtc-proc.c
+- fix patch 1 as suggested by Joe and Alexandre
+- add Thierry's Ab tag
+- update Alexandre's email and Cc to Petr
+
+Changelog v4:
+- drop mention of PRINTK_PEXT_TIMEDATE (Joe)
+- drop deprecated validation (Alexandre)
+- add patch 1 to fix compilation warning (may be applied independently)
+
+Changelog v3:
+- no one supported configuration option for new extension, so it's dropped
+- amend documentation (Geert)
+- optimize flags checking (Geert)
+- drop patch against non-existing anymore drivers
+  (due to massive architectures removal)
+- rebase on top of recent linux-next
+
+Changelog v2:
+- split out lib/vsprintf changes to separate series
+- build it optionally depending on introduced PRINTK_PEXT_TIMEDATE
+- for now support only struct rtc_time
+- make an additional letter for different time representations
+- make above letter capital to reduce confusion on %ptr vs. %ptR
+- drop kdb patch since it's a candidate for time64_t support
+
+Andy Shevchenko (21):
+  nvmem: Move nvmem_type_str array to its only user
+  lib/vsprintf: Print time and date in human readable format via %pt
+  rtc: Switch to use %ptR
+  rtc: at91rm9200: Switch to use %ptR
+  rtc: at91sam9: Switch to use %ptR
+  rtc: m41t80: Switch to use %ptR
+  rtc: m48t59: Switch to use %ptR
+  rtc: mcp795: Switch to use %ptR
+  rtc: pcf50633: Switch to use %ptR
+  rtc: pic32: Switch to use %ptR
+  rtc: pm8xxx: Switch to use %ptR
+  rtc: puv3: Switch to use %ptR
+  rtc: rk808: Switch to use %ptR
+  rtc: rx6110: Switch to use %ptR
+  rtc: rx8025: Switch to use %ptR
+  rtc: s3c: Switch to use %ptR
+  rtc: s5m: Switch to use %ptR
+  rtc: tegra: Switch to use %ptR
+  Input: hp_sdc_rtc - Switch to use %ptR
+  m68k/mac: Switch to use %ptR
+  PM: Switch to use %ptR
+
+ Documentation/core-api/printk-formats.rst |  18 ++++
+ arch/m68k/mac/misc.c                      |   8 +-
+ drivers/base/power/trace.c                |   4 +-
+ drivers/char/rtc.c                        |   7 +-
+ drivers/input/misc/hp_sdc_rtc.c           |   8 +-
+ drivers/nvmem/core.c                      |   7 ++
+ drivers/rtc/hctosys.c                     |   8 +-
+ drivers/rtc/interface.c                   |   8 +-
+ drivers/rtc/rtc-at91rm9200.c              |  15 +--
+ drivers/rtc/rtc-at91sam9.c                |  16 +---
+ drivers/rtc/rtc-m41t80.c                  |   6 +-
+ drivers/rtc/rtc-m48t59.c                  |   8 +-
+ drivers/rtc/rtc-mcp795.c                  |  18 ++--
+ drivers/rtc/rtc-pcf50633.c                |   8 +-
+ drivers/rtc/rtc-pic32.c                   |  18 +---
+ drivers/rtc/rtc-pm8xxx.c                  |  16 +---
+ drivers/rtc/rtc-proc.c                    |  36 +------
+ drivers/rtc/rtc-puv3.c                    |  18 +---
+ drivers/rtc/rtc-rk808.c                   |  20 ++--
+ drivers/rtc/rtc-rx6110.c                  |  12 +--
+ drivers/rtc/rtc-rx8025.c                  |  19 +---
+ drivers/rtc/rtc-s3c.c                     |  20 +---
+ drivers/rtc/rtc-s5m.c                     |  27 ++----
+ drivers/rtc/rtc-sysfs.c                   |  16 ++--
+ drivers/rtc/rtc-tegra.c                   |  30 +-----
+ include/linux/nvmem-provider.h            |   7 --
+ lib/test_printf.c                         |   6 ++
+ lib/vsprintf.c                            | 111 ++++++++++++++++++++++
+ 28 files changed, 224 insertions(+), 271 deletions(-)
+
+--
+2.19.2
 
