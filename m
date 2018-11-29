@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58198C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0757C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 102242145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B7D22146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/2RXDDi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102242145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mV3GLq0+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7D22146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732398AbeK3B3O (ORCPT
+        id S1732409AbeK3B3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:29:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731250AbeK3B3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:29:13 -0500
+        id S1728693AbeK3B3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6576205C9;
-        Thu, 29 Nov 2018 14:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED766213A2;
+        Thu, 29 Nov 2018 14:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501421;
-        bh=vgNjUOhjL5ZJ9pTV9PWuDsAe44lkfx3uW1GVjTuAPgE=;
+        s=default; t=1543501423;
+        bh=cQgmg0kfKx1jKdzBJOfG1ZsMIDka3SCVBMwDSncxVBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/2RXDDiHc43CbR6bD9W48/wtaXxFvc2zqDtOaoIzquDspKpEi019/eChfpIjNOx9
-         /OG5QVrpYtlBpBAilYgAH/TGlFE96kUkfvijZ9XoG/zOD2p68EanK8l8MPktF9E+7l
-         xA4LyR41GZPb3XCuzRBWcJOyNCaIAVQT8R2Yh1Gs=
+        b=mV3GLq0+Bm5wTtc1a/66o3IUqQqLqzlH57aPI865aDatcgHf+H/Asw2EnZp9NzioV
+         g1akCS09MWfpONsUNCxYzCYjOFPtNkDV3Krn/GiDljy/EuqbRixGAIXZzEIoiT4olh
+         b9ECvQ+XYL3gtO7Ar/H0IO4RslFHfKH2D5MFPg0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@osdl.org>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Solar Designer <solar@openwall.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 83/92] sched/core: Allow __sched_setscheduler() in interrupts when PI is not used
-Date:   Thu, 29 Nov 2018 15:12:52 +0100
-Message-Id: <20181129140113.332024968@linuxfoundation.org>
+        Loic <hackurx@opensec.fr>
+Subject: [PATCH 4.9 84/92] namei: allow restricted O_CREAT of FIFOs and regular files
+Date:   Thu, 29 Nov 2018 15:12:53 +0100
+Message-Id: <20181129140113.433177659@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -68,62 +69,233 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 
-commit 896bbb2522587e3b8eb2a0d204d43ccc1042a00d upstream.
+commit 30aba6656f61ed44cba445a3c0d38b296fa9e8f5 upstream.
 
-When priority inheritance was added back in 2.6.18 to sched_setscheduler(), it
-added a path to taking an rt-mutex wait_lock, which is not IRQ safe. As PI
-is not a common occurrence, lockdep will likely never trigger if
-sched_setscheduler was called from interrupt context. A BUG_ON() was added
-to trigger if __sched_setscheduler() was ever called from interrupt context
-because there was a possibility to take the wait_lock.
+Disallows open of FIFOs or regular files not owned by the user in world
+writable sticky directories, unless the owner is the same as that of the
+directory or the file is opened without the O_CREAT flag.  The purpose
+is to make data spoofing attacks harder.  This protection can be turned
+on and off separately for FIFOs and regular files via sysctl, just like
+the symlinks/hardlinks protection.  This patch is based on Openwall's
+"HARDEN_FIFO" feature by Solar Designer.
 
-Today the wait_lock is irq safe, but the path to taking it in
-sched_setscheduler() is the same as the path to taking it from normal
-context. The wait_lock is taken with raw_spin_lock_irq() and released with
-raw_spin_unlock_irq() which will indiscriminately enable interrupts,
-which would be bad in interrupt context.
+This is a brief list of old vulnerabilities that could have been prevented
+by this feature, some of them even allow for privilege escalation:
 
-The problem is that normalize_rt_tasks, which is called by triggering the
-sysrq nice-all-RT-tasks was changed to call __sched_setscheduler(), and this
-is done from interrupt context!
+CVE-2000-1134
+CVE-2007-3852
+CVE-2008-0525
+CVE-2009-0416
+CVE-2011-4834
+CVE-2015-1838
+CVE-2015-7442
+CVE-2016-7489
 
-Now __sched_setscheduler() takes a "pi" parameter that is used to know if
-the priority inheritance should be called or not. As the BUG_ON() only cares
-about calling the PI code, it should only bug if called from interrupt
-context with the "pi" parameter set to true.
+This list is not meant to be complete.  It's difficult to track down all
+vulnerabilities of this kind because they were often reported without any
+mention of this particular attack vector.  In fact, before
+hardlinks/symlinks restrictions, fifos/regular files weren't the favorite
+vehicle to exploit them.
 
-Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@osdl.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: dbc7f069b93a ("sched: Use replace normalize_task() with __sched_setscheduler()")
-Link: http://lkml.kernel.org/r/20170308124654.10e598f2@gandalf.local.home
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[s.mesoraca16@gmail.com: fix bug reported by Dan Carpenter]
+  Link: https://lkml.kernel.org/r/20180426081456.GA7060@mwanda
+  Link: http://lkml.kernel.org/r/1524829819-11275-1-git-send-email-s.mesoraca16@gmail.com
+[keescook@chromium.org: drop pr_warn_ratelimited() in favor of audit changes in the future]
+[keescook@chromium.org: adjust commit subjet]
+Link: http://lkml.kernel.org/r/20180416175918.GA13494@beast
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Solar Designer <solar@openwall.com>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Loic <hackurx@opensec.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- kernel/sched/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/sysctl/fs.txt |   36 +++++++++++++++++++++++++++++
+ fs/namei.c                  |   53 +++++++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h          |    2 +
+ kernel/sysctl.c             |   18 ++++++++++++++
+ 4 files changed, 106 insertions(+), 3 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4087,8 +4087,8 @@ static int __sched_setscheduler(struct t
- 	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
- 	struct rq *rq;
+--- a/Documentation/sysctl/fs.txt
++++ b/Documentation/sysctl/fs.txt
+@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/
+ - overflowgid
+ - pipe-user-pages-hard
+ - pipe-user-pages-soft
++- protected_fifos
+ - protected_hardlinks
++- protected_regular
+ - protected_symlinks
+ - suid_dumpable
+ - super-max
+@@ -182,6 +184,24 @@ applied.
  
--	/* may grab non-irq protected spin_locks */
--	BUG_ON(in_interrupt());
-+	/* The pi code expects interrupts enabled */
-+	BUG_ON(pi && in_interrupt());
- recheck:
- 	/* double check policy once rq lock held */
- 	if (policy < 0) {
+ ==============================================================
+ 
++protected_fifos:
++
++The intent of this protection is to avoid unintentional writes to
++an attacker-controlled FIFO, where a program expected to create a regular
++file.
++
++When set to "0", writing to FIFOs is unrestricted.
++
++When set to "1" don't allow O_CREAT open on FIFOs that we don't own
++in world writable sticky directories, unless they are owned by the
++owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++This protection is based on the restrictions in Openwall.
++
++==============================================================
++
+ protected_hardlinks:
+ 
+ A long-standing class of security issues is the hardlink-based
+@@ -202,6 +222,22 @@ This protection is based on the restrict
+ 
+ ==============================================================
+ 
++protected_regular:
++
++This protection is similar to protected_fifos, but it
++avoids writes to an attacker-controlled regular file, where a program
++expected to create one.
++
++When set to "0", writing to regular files is unrestricted.
++
++When set to "1" don't allow O_CREAT open on regular files that we
++don't own in world writable sticky directories, unless they are
++owned by the owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++==============================================================
++
+ protected_symlinks:
+ 
+ A long-standing class of security issues is the symlink-based
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -892,6 +892,8 @@ static inline void put_link(struct namei
+ 
+ int sysctl_protected_symlinks __read_mostly = 0;
+ int sysctl_protected_hardlinks __read_mostly = 0;
++int sysctl_protected_fifos __read_mostly;
++int sysctl_protected_regular __read_mostly;
+ 
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+@@ -1005,6 +1007,45 @@ static int may_linkat(struct path *link)
+ 	return -EPERM;
+ }
+ 
++/**
++ * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
++ *			  should be allowed, or not, on files that already
++ *			  exist.
++ * @dir: the sticky parent directory
++ * @inode: the inode of the file to open
++ *
++ * Block an O_CREAT open of a FIFO (or a regular file) when:
++ *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
++ *   - the file already exists
++ *   - we are in a sticky directory
++ *   - we don't own the file
++ *   - the owner of the directory doesn't own the file
++ *   - the directory is world writable
++ * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
++ * the directory doesn't have to be world writable: being group writable will
++ * be enough.
++ *
++ * Returns 0 if the open is allowed, -ve on error.
++ */
++static int may_create_in_sticky(struct dentry * const dir,
++				struct inode * const inode)
++{
++	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
++	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
++	    likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
++	    uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
++	    uid_eq(current_fsuid(), inode->i_uid))
++		return 0;
++
++	if (likely(dir->d_inode->i_mode & 0002) ||
++	    (dir->d_inode->i_mode & 0020 &&
++	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
++	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
++		return -EACCES;
++	}
++	return 0;
++}
++
+ static __always_inline
+ const char *get_link(struct nameidata *nd)
+ {
+@@ -3356,9 +3397,15 @@ finish_open:
+ 	if (error)
+ 		return error;
+ 	audit_inode(nd->name, nd->path.dentry, 0);
+-	error = -EISDIR;
+-	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
+-		goto out;
++	if (open_flag & O_CREAT) {
++		error = -EISDIR;
++		if (d_is_dir(nd->path.dentry))
++			goto out;
++		error = may_create_in_sticky(dir,
++					     d_backing_inode(nd->path.dentry));
++		if (unlikely(error))
++			goto out;
++	}
+ 	error = -ENOTDIR;
+ 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
+ 		goto out;
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -69,6 +69,8 @@ extern struct inodes_stat_t inodes_stat;
+ extern int leases_enable, lease_break_time;
+ extern int sysctl_protected_symlinks;
+ extern int sysctl_protected_hardlinks;
++extern int sysctl_protected_fifos;
++extern int sysctl_protected_regular;
+ 
+ struct buffer_head;
+ typedef int (get_block_t)(struct inode *inode, sector_t iblock,
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1795,6 +1795,24 @@ static struct ctl_table fs_table[] = {
+ 		.extra2		= &one,
+ 	},
+ 	{
++		.procname	= "protected_fifos",
++		.data		= &sysctl_protected_fifos,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
++		.procname	= "protected_regular",
++		.data		= &sysctl_protected_regular,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
+ 		.procname	= "suid_dumpable",
+ 		.data		= &suid_dumpable,
+ 		.maxlen		= sizeof(int),
 
 
