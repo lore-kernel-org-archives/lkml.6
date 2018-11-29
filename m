@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDBDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A08DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C880A21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C280721104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2HhtnRE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C880A21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lov0+5bR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C280721104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbeK2RCw (ORCPT
+        id S1728625AbeK2RC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:02:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36716 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:02:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727956AbeK2RCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:02:51 -0500
+        id S1727758AbeK2RCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:02:55 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F63421019;
-        Thu, 29 Nov 2018 05:58:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC495208E7;
+        Thu, 29 Nov 2018 05:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471120;
-        bh=OFYPob6l+Aob+ZT88a/46mIZrx2rZjKF3oqoYT1elvo=;
+        s=default; t=1543471124;
+        bh=+XO14ihzRVM/XboJX+OFIqFhXyUqziYTBPbMXH0OJfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X2HhtnREqr9n0/dsy87RjoZ4Zy+UI7e+o+K0ro3icQRn3pkNRli2qR1BGu8wnTd7G
-         WIM1R0bP7gbCAZm+45rpbhqIIchHXovZEAuuVe/diuCzPLsyrAiOBu2QtLXXldlDIH
-         lmQAi9SdDSZbOTnBY+tq+iySbYy4F7KA/uHU4rmA=
+        b=lov0+5bRf8Y9pswkAgJbI61VGvqKPH82vP7LeLP1h271WjWhTuUO5U36ylO0DI50B
+         wTJQemJtD4P4pSiT9ijFJsNeLga/TnYhXWhun8Dlm2kj4FcqeRGwL/EWo1Rs7JTj1a
+         HI4VwoMzdM/FVM9vDOxc24yjP51U1od5Ew/8i0rE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aya Levin <ayal@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Kalderon <michal.kalderon@cavium.com>,
+        Denis Bolotin <denis.bolotin@cavium.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 31/68] net/mlx4: Fix UBSAN warning of signed integer overflow
-Date:   Thu, 29 Nov 2018 00:55:22 -0500
-Message-Id: <20181129055559.159228-31-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 32/68]  drivers/net/ethernet/qlogic/qed/qed_rdma.h: fix typo
+Date:   Thu, 29 Nov 2018 00:55:23 -0500
+Message-Id: <20181129055559.159228-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -54,45 +55,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aya Levin <ayal@mellanox.com>
+From: Andrew Morton <akpm@linux-foundation.org>
 
-[ Upstream commit a463146e67c848cbab5ce706d6528281b7cded08 ]
+[ Upstream commit a97b9565338350d70d8d971c4ee6f0d4fa967418 ]
 
-UBSAN: Undefined behavior in
-drivers/net/ethernet/mellanox/mlx4/resource_tracker.c:626:29
-signed integer overflow: 1802201963 + 1802201963 cannot be represented
-in type 'int'
+Add missing semicolon.
 
-The union of res_reserved and res_port_rsvd[MLX4_MAX_PORTS] monitors
-granting of reserved resources. The grant operation is calculated and
-protected, thus both members of the union cannot be negative.  Changed
-type of res_reserved and of res_port_rsvd[MLX4_MAX_PORTS] from signed
-int to unsigned int, allowing large value.
-
-Fixes: 5a0d0a6161ae ("mlx4: Structures and init/teardown for VF resource quotas")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Fixes: 291d57f67d244973 ("qed: Fix rdma_info structure allocation")
+Cc: Michal Kalderon <michal.kalderon@cavium.com>
+Cc: Denis Bolotin <denis.bolotin@cavium.com>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/mlx4.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_rdma.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4.h b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-index ebcd2778eeb3..23f1b5b512c2 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4.h
-@@ -540,8 +540,8 @@ struct slave_list {
- struct resource_allocator {
- 	spinlock_t alloc_lock; /* protect quotas */
- 	union {
--		int res_reserved;
--		int res_port_rsvd[MLX4_MAX_PORTS];
-+		unsigned int res_reserved;
-+		unsigned int res_port_rsvd[MLX4_MAX_PORTS];
- 	};
- 	union {
- 		int res_free;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.h b/drivers/net/ethernet/qlogic/qed/qed_rdma.h
+index 50d609c0e108..3689fe3e5935 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_rdma.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.h
+@@ -183,7 +183,7 @@ void qed_rdma_info_free(struct qed_hwfn *p_hwfn);
+ static inline void qed_rdma_dpm_conf(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt) {}
+ static inline void qed_rdma_dpm_bar(struct qed_hwfn *p_hwfn,
+ 				    struct qed_ptt *p_ptt) {}
+-static inline int qed_rdma_info_alloc(struct qed_hwfn *p_hwfn) {return -EINVAL}
++static inline int qed_rdma_info_alloc(struct qed_hwfn *p_hwfn) {return -EINVAL;}
+ static inline void qed_rdma_info_free(struct qed_hwfn *p_hwfn) {}
+ #endif
+ 
 -- 
 2.17.1
 
