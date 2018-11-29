@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24171C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1663CC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB312146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02DF2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZ3YuUUL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB312146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2uN1ddg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02DF2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbeK3BfQ (ORCPT
+        id S2388543AbeK3BfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:35:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36986 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732084AbeK3BfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:35:15 -0500
+        id S1732084AbeK3BfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:35:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5043E213A2;
-        Thu, 29 Nov 2018 14:29:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFD0E2145D;
+        Thu, 29 Nov 2018 14:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501781;
-        bh=DPNQt4b2xnF/ZcTxtD0p0W5Ao6uYzH2Wd/MmOawZTcs=;
+        s=default; t=1543501784;
+        bh=ZhzySiFIYX6tshaWm4nfsKaRrLL1fNRtJl+4tnAihL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gZ3YuUULoNopZc8R74dhsQ9j+FoU4ZFd5kbASZGqc4Ozbqym19KG2eHRtuZCjkRNv
-         8cZRzdN+5dF2JPZThYtzS45WYONx7P+4z8xbEmaA5zFYCmB8WJ7FcXZM3pUweJJdbW
-         qQMad5xG0NtbUQEDy8es+BH+0IsocnbCyEnXEwAY=
+        b=B2uN1ddgM+mZ0N6Ig368Ni8LXUC0fBWkDEJeVupq12/yTM4UUzZkvm8FBuQ010ywN
+         B3yGVIDhG7jqFw975d+J9RsiyDLY6nx+3sQwtJk0stlYy4v/7S7edT/1GTzFy10dF3
+         ce4rFMnNRC7Q/PAUZpuvunPDbeSBmBHjSemji5Jg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Ido Schimmel <idosch@idosch.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 038/110] mm/memory.c: recheck page table entry with page table lock held
-Date:   Thu, 29 Nov 2018 15:12:09 +0100
-Message-Id: <20181129135922.805189806@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 039/110] tcp: do not release socket ownership in tcp_close()
+Date:   Thu, 29 Nov 2018 15:12:10 +0100
+Message-Id: <20181129135922.842586184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -68,84 +63,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit ff09d7ec9786be4ad7589aa987d7dc66e2dd9160 upstream.
+commit 8873c064d1de579ea23412a6d3eee972593f142b upstream.
 
-We clear the pte temporarily during read/modify/write update of the pte.
-If we take a page fault while the pte is cleared, the application can get
-SIGBUS.  One such case is with remap_pfn_range without a backing
-vm_ops->fault callback.  do_fault will return SIGBUS in that case.
+syzkaller was able to hit the WARN_ON(sock_owned_by_user(sk));
+in tcp_close()
 
-cpu 0		 				cpu1
-mprotect()
-ptep_modify_prot_start()/pte cleared.
-.
-.						page fault.
-.
-.
-prep_modify_prot_commit()
+While a socket is being closed, it is very possible other
+threads find it in rtnetlink dump.
 
-Fix this by taking page table lock and rechecking for pte_none.
+tcp_get_info() will acquire the socket lock for a short amount
+of time (slow = lock_sock_fast(sk)/unlock_sock_fast(sk, slow);),
+enough to trigger the warning.
 
-[aneesh.kumar@linux.ibm.com: fix crash observed with syzkaller run]
-  Link: http://lkml.kernel.org/r/87va6bwlfg.fsf@linux.ibm.com
-Link: http://lkml.kernel.org/r/20180926031858.9692-1-aneesh.kumar@linux.ibm.com
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Ido Schimmel <idosch@idosch.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 67db3e4bfbc9 ("tcp: no longer hold ehash lock while calling tcp_get_info()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory.c |   34 ++++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+ include/net/sock.h |    1 +
+ net/core/sock.c    |    2 +-
+ net/ipv4/tcp.c     |   11 +++--------
+ 3 files changed, 5 insertions(+), 9 deletions(-)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3745,10 +3745,36 @@ static vm_fault_t do_fault(struct vm_fau
- 	struct vm_area_struct *vma = vmf->vma;
- 	vm_fault_t ret;
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1491,6 +1491,7 @@ static inline void lock_sock(struct sock
+ 	lock_sock_nested(sk, 0);
+ }
  
--	/* The VMA was not fully populated on mmap() or missing VM_DONTEXPAND */
--	if (!vma->vm_ops->fault)
--		ret = VM_FAULT_SIGBUS;
--	else if (!(vmf->flags & FAULT_FLAG_WRITE))
-+	/*
-+	 * The VMA was not fully populated on mmap() or missing VM_DONTEXPAND
-+	 */
-+	if (!vma->vm_ops->fault) {
-+		/*
-+		 * If we find a migration pmd entry or a none pmd entry, which
-+		 * should never happen, return SIGBUS
-+		 */
-+		if (unlikely(!pmd_present(*vmf->pmd)))
-+			ret = VM_FAULT_SIGBUS;
-+		else {
-+			vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm,
-+						       vmf->pmd,
-+						       vmf->address,
-+						       &vmf->ptl);
-+			/*
-+			 * Make sure this is not a temporary clearing of pte
-+			 * by holding ptl and checking again. A R/M/W update
-+			 * of pte involves: take ptl, clearing the pte so that
-+			 * we don't have concurrent modification by hardware
-+			 * followed by an update.
-+			 */
-+			if (unlikely(pte_none(*vmf->pte)))
-+				ret = VM_FAULT_SIGBUS;
-+			else
-+				ret = VM_FAULT_NOPAGE;
-+
-+			pte_unmap_unlock(vmf->pte, vmf->ptl);
-+		}
-+	} else if (!(vmf->flags & FAULT_FLAG_WRITE))
- 		ret = do_read_fault(vmf);
- 	else if (!(vma->vm_flags & VM_SHARED))
- 		ret = do_cow_fault(vmf);
++void __release_sock(struct sock *sk);
+ void release_sock(struct sock *sk);
+ 
+ /* BH context may only use the following locking interface. */
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2317,7 +2317,7 @@ static void __lock_sock(struct sock *sk)
+ 	finish_wait(&sk->sk_lock.wq, &wait);
+ }
+ 
+-static void __release_sock(struct sock *sk)
++void __release_sock(struct sock *sk)
+ 	__releases(&sk->sk_lock.slock)
+ 	__acquires(&sk->sk_lock.slock)
+ {
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2403,16 +2403,10 @@ adjudge_to_death:
+ 	sock_hold(sk);
+ 	sock_orphan(sk);
+ 
+-	/* It is the last release_sock in its life. It will remove backlog. */
+-	release_sock(sk);
+-
+-
+-	/* Now socket is owned by kernel and we acquire BH lock
+-	 *  to finish close. No need to check for user refs.
+-	 */
+ 	local_bh_disable();
+ 	bh_lock_sock(sk);
+-	WARN_ON(sock_owned_by_user(sk));
++	/* remove backlog if any, without releasing ownership. */
++	__release_sock(sk);
+ 
+ 	percpu_counter_inc(sk->sk_prot->orphan_count);
+ 
+@@ -2481,6 +2475,7 @@ adjudge_to_death:
+ out:
+ 	bh_unlock_sock(sk);
+ 	local_bh_enable();
++	release_sock(sk);
+ 	sock_put(sk);
+ }
+ EXPORT_SYMBOL(tcp_close);
 
 
