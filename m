@@ -2,50 +2,51 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0BBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF44C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C753E2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D661720868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdU0HyZb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C753E2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y6/jrdPK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D661720868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731666AbeK3B27 (ORCPT
+        id S1732341AbeK3B3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:28:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54984 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731250AbeK3B26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:28:58 -0500
+        id S1731250AbeK3B3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E837205C9;
-        Thu, 29 Nov 2018 14:23:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5A8720868;
+        Thu, 29 Nov 2018 14:23:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501407;
-        bh=1OxV2c4OMrcFLn75qhChJy5oiQS8V+t9oPWJ5Y2x9b8=;
+        s=default; t=1543501409;
+        bh=k07/7/bUu09zucTCmsI/UJaRIuqSLYoJQJvo1JtXWuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JdU0HyZbTvg5d74TfwMKOTG8jgzVVqiypIXzrc+Bsqkylg0wLUTyu+uurrGY/FPnN
-         ZxLCsN3gCh9bIgcYREh+Y7cVT65L997M0WaJ66ZdNFocdoLKSqIyoqLQXuEr890wNg
-         jtg0seijN/lCzDLPHOpcRaYf78xColx5CQS7TBV0=
+        b=y6/jrdPKkkmj0/qB7DM4eIp2GTROnWkekFTHurYTo/ilb3oIkd0opv7GRcv1yPlJu
+         nrvVDZCr7tS12mb24nVfjaI6cUYX0DlpU+SAQWR34RYd6y01A8ZZPqQmOxFc9qVhXX
+         jSk0vnrJy2pFa3l5q/L/o2Fc6mM6Kc+ZzyP+4HPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 60/92] Input: xpad - constify usb_device_id
-Date:   Thu, 29 Nov 2018 15:12:29 +0100
-Message-Id: <20181129140111.191225468@linuxfoundation.org>
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 78/92] scsi: ufshcd: release resources if probe fails
+Date:   Thu, 29 Nov 2018 15:12:47 +0100
+Message-Id: <20181129140112.828314507@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,34 +64,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 94aef061c796d3d47f1a2eed41e651ffaaade402 ]
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-usb_device_id are not supposed to change at runtime. All functions
-working with usb_device_id provided by <linux/usb.h> work with
-const usb_device_id. So mark the non-const structs as const.
+commit afa3dfd42d205b106787476647735aa1de1a5d02 upstream.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If ufshcd pltfrm/pci driver's probe fails for some reason then ensure
+that scsi host is released to avoid memory leak but managed memory
+allocations (via devm_* calls) need not to be freed explicitly on probe
+failure as memory allocated with these functions is automatically freed
+on driver detach.
+
+Reviewed-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd-pci.c    |    2 ++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |    5 +----
+ drivers/scsi/ufs/ufshcd.c        |    3 ---
+ 3 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 298a6ba51411..2578a7677040 100644
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -408,7 +408,7 @@ static const signed short xpad_abs_triggers[] = {
- #define XPAD_XBOXONE_VENDOR(vend) \
- 	{ XPAD_XBOXONE_VENDOR_PROTOCOL(vend, 208) }
+--- a/drivers/scsi/ufs/ufshcd-pci.c
++++ b/drivers/scsi/ufs/ufshcd-pci.c
+@@ -104,6 +104,7 @@ static void ufshcd_pci_remove(struct pci
+ 	pm_runtime_forbid(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	ufshcd_remove(hba);
++	ufshcd_dealloc_host(hba);
+ }
  
--static struct usb_device_id xpad_table[] = {
-+static const struct usb_device_id xpad_table[] = {
- 	{ USB_INTERFACE_INFO('X', 'B', 0) },	/* X-Box USB-IF not approved class */
- 	XPAD_XBOX360_VENDOR(0x044f),		/* Thrustmaster X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x045e),		/* Microsoft X-Box 360 controllers */
--- 
-2.17.1
-
+ /**
+@@ -147,6 +148,7 @@ ufshcd_pci_probe(struct pci_dev *pdev, c
+ 	err = ufshcd_init(hba, mmio_base, pdev->irq);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Initialization failed\n");
++		ufshcd_dealloc_host(hba);
+ 		return err;
+ 	}
+ 
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -163,7 +163,7 @@ static int ufshcd_populate_vreg(struct d
+ 	if (ret) {
+ 		dev_err(dev, "%s: unable to find %s err %d\n",
+ 				__func__, prop_name, ret);
+-		goto out_free;
++		goto out;
+ 	}
+ 
+ 	vreg->min_uA = 0;
+@@ -185,9 +185,6 @@ static int ufshcd_populate_vreg(struct d
+ 
+ 	goto out;
+ 
+-out_free:
+-	devm_kfree(dev, vreg);
+-	vreg = NULL;
+ out:
+ 	if (!ret)
+ 		*out_vreg = vreg;
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6507,8 +6507,6 @@ void ufshcd_remove(struct ufs_hba *hba)
+ 	ufshcd_disable_intr(hba, hba->intr_mask);
+ 	ufshcd_hba_stop(hba, true);
+ 
+-	scsi_host_put(hba->host);
+-
+ 	ufshcd_exit_clk_gating(hba);
+ 	if (ufshcd_is_clkscaling_enabled(hba))
+ 		devfreq_remove_device(hba->devfreq);
+@@ -6876,7 +6874,6 @@ exit_gating:
+ 	ufshcd_exit_clk_gating(hba);
+ out_disable:
+ 	hba->is_irq_enabled = false;
+-	scsi_host_put(host);
+ 	ufshcd_hba_exit(hba);
+ out_error:
+ 	return err;
 
 
