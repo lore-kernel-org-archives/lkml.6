@@ -2,50 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9253DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AD4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A1F208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACFB208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGhK44gN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A1F208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvRc9TPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACFB208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbeK3BVG (ORCPT
+        id S1729699AbeK3BVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42274 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728241AbeK3BVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:21:05 -0500
+        id S1728241AbeK3BVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:21:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FCB3208E7;
-        Thu, 29 Nov 2018 14:15:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BDA0205C9;
+        Thu, 29 Nov 2018 14:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500935;
-        bh=e9NJlbHe/xhdbyY7v9w+45TkH3HG/M47KHi95nwDxOE=;
+        s=default; t=1543500937;
+        bh=743jY6vW/66zzUPcV4UAEkIJv9L5M+a+PLNriG4S8kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sGhK44gNkqpCszfibdOtLyoUIYzpseMjTnEKAawk1CzpjB+PYaYTsiji5gQDZUfxI
-         5sYe3fQJ214RhHIewCpXQJhLwGT9o2eY248rLTRz/TP5q+MU3DkDm7+BgH2HK8Ktgt
-         HOjbyZgSUCM3+PdlxrtEuuU4/hNo2Aybxo3FT0nU=
+        b=lvRc9TPj2Wwig3ymWBX6ko4EySqw5Wz76L47jUeVtfRo2cazXwo42BSlvItU4pPbe
+         8qefPR/kNDYcxfHda79QnOFcZZ6uz9a+t4bgVhIpMx+IpgAgkGib1tLlXFlRf/XbTI
+         KwO6UZfCYPnbN2718jNE5WKYoXxKc4uOyR0BrEdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 58/83] Input: xpad - restore LED state after device resume
-Date:   Thu, 29 Nov 2018 15:12:16 +0100
-Message-Id: <20181129140140.948151230@linuxfoundation.org>
+Subject: [PATCH 3.18 59/83] Input: xpad - support some quirky Xbox One pads
+Date:   Thu, 29 Nov 2018 15:12:17 +0100
+Message-Id: <20181129140141.024740292@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -63,51 +63,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a1fbf5bbef025b4844162b3b8868888003a7ee9c ]
+[ Upstream commit 81093c9848a781b85163d06de92ef8f84528cf6a ]
 
-Set the LED_CORE_SUSPENDRESUME flag on our LED device so the
-LED state will be automatically restored by LED core on resume.
+There are several quirky Xbox One pads that depend on initialization
+packets that the Microsoft pads don't require. To deal with these,
+I've added a mechanism for issuing device-specific initialization
+packets using a VID/PID-based quirks list.
 
-Since Xbox One pads stop flashing only when reinitialized, we'll
-send them the initialization packet so they calm down too.
+For the initial set of init quirks, I have added quirk handling from
+Valve's Steam Link xpad driver[0] and the 360Controller project[1] for
+macOS to enable some new pads to work properly.
+
+This should enable full functionality on the following quirky pads:
+0x0e6f:0x0165 - Titanfall 2 gamepad (previously fully non-functional)
+0x0f0d:0x0067 - Hori Horipad (analog sticks previously non-functional)
+0x24c6:0x541a - PowerA Xbox One pad (previously fully non-functional)
+0x24c6:0x542a - PowerA Xbox One pad (previously fully non-functional)
+0x24c6:0x543a - PowerA Xbox One pad (previously fully non-functional)
+
+[0]: https://github.com/ValveSoftware/steamlink-sdk/blob/master/kernel/drivers/input/joystick/xpad.c
+[1]: https://github.com/360Controller/360Controller
 
 Signed-off-by: Cameron Gutman <aicommander@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 114 ++++++++++++++++++++++++++++++----
+ 1 file changed, 101 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 14da79ead653..153b1ee13e03 100644
+index 153b1ee13e03..df83fdc6c0e7 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -1213,6 +1213,7 @@ static int xpad_led_probe(struct usb_xpad *xpad)
- 	led_cdev = &led->led_cdev;
- 	led_cdev->name = led->name;
- 	led_cdev->brightness_set = xpad_led_set;
-+	led_cdev->flags = LED_CORE_SUSPENDRESUME;
+@@ -339,6 +339,64 @@ static struct usb_device_id xpad_table[] = {
  
- 	error = led_classdev_register(&xpad->udev->dev, led_cdev);
- 	if (error)
-@@ -1689,8 +1690,16 @@ static int xpad_resume(struct usb_interface *intf)
- 		retval = xpad360w_start_input(xpad);
- 	} else {
- 		mutex_lock(&input->mutex);
--		if (input->users)
-+		if (input->users) {
- 			retval = xpad_start_input(xpad);
-+		} else if (xpad->xtype == XTYPE_XBOXONE) {
-+			/*
-+			 * Even if there are no users, we'll send Xbox One pads
-+			 * the startup sequence so they don't sit there and
-+			 * blink until somebody opens the input device again.
-+			 */
-+			retval = xpad_start_xbox_one(xpad);
-+		}
- 		mutex_unlock(&input->mutex);
- 	}
+ MODULE_DEVICE_TABLE(usb, xpad_table);
  
++struct xboxone_init_packet {
++	u16 idVendor;
++	u16 idProduct;
++	const u8 *data;
++	u8 len;
++};
++
++#define XBOXONE_INIT_PKT(_vid, _pid, _data)		\
++	{						\
++		.idVendor	= (_vid),		\
++		.idProduct	= (_pid),		\
++		.data		= (_data),		\
++		.len		= ARRAY_SIZE(_data),	\
++	}
++
++
++/*
++ * This packet is required for all Xbox One pads with 2015
++ * or later firmware installed (or present from the factory).
++ */
++static const u8 xboxone_fw2015_init[] = {
++	0x05, 0x20, 0x00, 0x01, 0x00
++};
++
++/*
++ * This packet is required for the Titanfall 2 Xbox One pads
++ * (0x0e6f:0x0165) to finish initialization and for Hori pads
++ * (0x0f0d:0x0067) to make the analog sticks work.
++ */
++static const u8 xboxone_hori_init[] = {
++	0x01, 0x20, 0x00, 0x09, 0x00, 0x04, 0x20, 0x3a,
++	0x00, 0x00, 0x00, 0x80, 0x00
++};
++
++/*
++ * A rumble packet is required for some PowerA pads to start
++ * sending input reports. One of those pads is (0x24c6:0x543a).
++ */
++static const u8 xboxone_zerorumble_init[] = {
++	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00
++};
++
++/*
++ * This specifies the selection of init packets that a gamepad
++ * will be sent on init *and* the order in which they will be
++ * sent. The correct sequence number will be added when the
++ * packet is going to be sent.
++ */
++static const struct xboxone_init_packet xboxone_init_packets[] = {
++	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
++	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
++	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_zerorumble_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_zerorumble_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_zerorumble_init),
++};
++
+ struct xpad_output_packet {
+ 	u8 data[XPAD_PKT_LEN];
+ 	u8 len;
+@@ -375,6 +433,7 @@ struct usb_xpad {
+ 
+ 	struct xpad_output_packet out_packets[XPAD_NUM_OUT_PACKETS];
+ 	int last_out_packet;
++	int init_seq;
+ 
+ #if defined(CONFIG_JOYSTICK_XPAD_LEDS)
+ 	struct xpad_led *led;
+@@ -749,12 +808,48 @@ exit:
+ 			__func__, retval);
+ }
+ 
++/* Callers must hold xpad->odata_lock spinlock */
++static bool xpad_prepare_next_init_packet(struct usb_xpad *xpad)
++{
++	const struct xboxone_init_packet *init_packet;
++
++	if (xpad->xtype != XTYPE_XBOXONE)
++		return false;
++
++	/* Perform initialization sequence for Xbox One pads that require it */
++	while (xpad->init_seq < ARRAY_SIZE(xboxone_init_packets)) {
++		init_packet = &xboxone_init_packets[xpad->init_seq++];
++
++		if (init_packet->idVendor != 0 &&
++		    init_packet->idVendor != xpad->dev->id.vendor)
++			continue;
++
++		if (init_packet->idProduct != 0 &&
++		    init_packet->idProduct != xpad->dev->id.product)
++			continue;
++
++		/* This packet applies to our device, so prepare to send it */
++		memcpy(xpad->odata, init_packet->data, init_packet->len);
++		xpad->irq_out->transfer_buffer_length = init_packet->len;
++
++		/* Update packet with current sequence number */
++		xpad->odata[2] = xpad->odata_serial++;
++		return true;
++	}
++
++	return false;
++}
++
+ /* Callers must hold xpad->odata_lock spinlock */
+ static bool xpad_prepare_next_out_packet(struct usb_xpad *xpad)
+ {
+ 	struct xpad_output_packet *pkt, *packet = NULL;
+ 	int i;
+ 
++	/* We may have init packets to send before we can send user commands */
++	if (xpad_prepare_next_init_packet(xpad))
++		return true;
++
+ 	for (i = 0; i < XPAD_NUM_OUT_PACKETS; i++) {
+ 		if (++xpad->last_out_packet >= XPAD_NUM_OUT_PACKETS)
+ 			xpad->last_out_packet = 0;
+@@ -940,24 +1035,17 @@ static int xpad_inquiry_pad_presence(struct usb_xpad *xpad)
+ 
+ static int xpad_start_xbox_one(struct usb_xpad *xpad)
+ {
+-	struct xpad_output_packet *packet =
+-			&xpad->out_packets[XPAD_OUT_CMD_IDX];
+ 	unsigned long flags;
+ 	int retval;
+ 
+ 	spin_lock_irqsave(&xpad->odata_lock, flags);
+ 
+-	/* Xbox one controller needs to be initialized. */
+-	packet->data[0] = 0x05;
+-	packet->data[1] = 0x20;
+-	packet->data[2] = xpad->odata_serial++; /* packet serial */
+-	packet->data[3] = 0x01; /* rumble bit enable?  */
+-	packet->data[4] = 0x00;
+-	packet->len = 5;
+-	packet->pending = true;
+-
+-	/* Reset the sequence so we send out start packet first */
+-	xpad->last_out_packet = -1;
++	/*
++	 * Begin the init sequence by attempting to send a packet.
++	 * We will cycle through the init packet sequence before
++	 * sending any packets from the output ring.
++	 */
++	xpad->init_seq = 0;
+ 	retval = xpad_try_sending_next_out_packet(xpad);
+ 
+ 	spin_unlock_irqrestore(&xpad->odata_lock, flags);
 -- 
 2.17.1
 
