@@ -2,187 +2,124 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D767FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D11C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F722081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F722081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id CD69320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:37:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jfQ1yvZ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD69320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeK2Vjc (ORCPT
+        id S1727760AbeK2Vmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:39:32 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36124 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbeK2Vjc (ORCPT
+        Thu, 29 Nov 2018 16:42:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41514 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbeK2Vmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:39:32 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1A7D272CC59;
-        Thu, 29 Nov 2018 13:34:37 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 055077CC6A7; Thu, 29 Nov 2018 13:34:36 +0300 (MSK)
-Date:   Thu, 29 Nov 2018 13:34:36 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, strace-devel@lists.strace.io
-Subject: Re: [PATCH v4 1/2] ptrace: save the type of syscall-stop in
- ptrace_message
-Message-ID: <20181129103436.GA11547@altlinux.org>
-References: <20181128130439.GB28206@altlinux.org>
- <20181128130601.GC28206@altlinux.org>
- <20181128134913.GC30395@redhat.com>
- <20181128140533.GF28206@altlinux.org>
- <20181128142006.GE30395@redhat.com>
- <20181128152346.GG28206@altlinux.org>
- <20181128221125.GA2800@altlinux.org>
- <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
+        Thu, 29 Nov 2018 16:42:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0Z+JkfOx+eta1HptoWLBsSRC9nN6dWveZk0kYBWi1FI=; b=jfQ1yvZ6y9eOvYPcecNVaOsBJ
+        Q6Ptp+V3RLuS/4RLSnxTDz0P0deZJWsiP1Tq987dz554e7SKqiIW5NNSVgZC8qlDDTe7Ehq8Mfpd4
+        yEbZCDIvj1bYmUer4fYQrHE9/xBe8vc/OZvGbn2Ra3xZ8YAU3mxBEKrnHF5D0E+wQW9tzoQaKd+UI
+        XUQns+qGvf8U70LmoB2Hb/7jRtVfCsIix3AvaHEkzSqMpknD7QgG0tCZOWbvGIsYhl/SH5RQmHqFV
+        aLodyGM6Cn1da1e4ku81RxvlxuPUTRKLqRJSxAVm483f31hJsInxH8n25xUxJO3tlmj0j8e9/lqQr
+        dvgQj7eGQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSJhU-0006Yw-6J; Thu, 29 Nov 2018 10:37:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89B802029FD58; Thu, 29 Nov 2018 11:37:38 +0100 (CET)
+Date:   Thu, 29 Nov 2018 11:37:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/27] locking/lockdep: Free lock classes that are no
+ longer in use
+Message-ID: <20181129103738.GG2131@hirez.programming.kicks-ass.net>
+References: <20181128234325.110011-1-bvanassche@acm.org>
+ <20181128234325.110011-21-bvanassche@acm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVjMorQDsJzQGaREEB5_7B24ApWSoNQfRd3K3QNSGAyEA@mail.gmail.com>
+In-Reply-To: <20181128234325.110011-21-bvanassche@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 28, 2018 at 03:43:18PM -0800, Bart Van Assche wrote:
+> +/* Must be called with the graph lock held. */
+> +static void remove_class_from_lock_chain(struct lock_chain *chain,
+> +					 struct lock_class *class)
+> +{
+> +	u64 chain_key;
+> +	int i;
+> +
+> +	for (i = chain->base; i < chain->base + chain->depth; i++) {
+> +		if (chain_hlocks[i] != class - lock_classes)
+> +			continue;
+> +		if (--chain->depth == 0)
+> +			break;
+> +		memmove(&chain_hlocks[i], &chain_hlocks[i + 1],
+> +			(chain->base + chain->depth - i) *
+> +			sizeof(chain_hlocks[0]));
+> +		/*
+> +		 * Each lock class occurs at most once in a
+> +		 * lock chain so once we found a match we can
+> +		 * break out of this loop.
+> +		 */
+> +		break;
+> +	}
+> +	/*
+> +	 * Note: calling hlist_del_rcu() from inside a
+> +	 * hlist_for_each_entry_rcu() loop is safe.
+> +	 */
+> +	if (chain->depth == 0) {
+> +		/* To do: decrease chain count. See also inc_chains(). */
+> +		hlist_del_rcu(&chain->entry);
+> +		return;
+> +	}
+> +	chain_key = 0;
+> +	for (i = chain->base; i < chain->base + chain->depth; i++)
+> +		chain_key = iterate_chain_key(chain_key, chain_hlocks[i] + 1);
+> +	if (chain->chain_key == chain_key)
+> +		return;
+> +	hlist_del_rcu(&chain->entry);
+> +	chain->chain_key = chain_key;
+> +	hlist_add_head_rcu(&chain->entry, chainhashentry(chain_key));
+> +}
+> +
+> +/* Must be called with the graph lock held. */
+> +static void remove_class_from_lock_chains(struct lock_class *class)
+> +{
+> +	struct lock_chain *chain;
+> +	struct hlist_head *head;
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
+> +		head = chainhash_table + i;
+> +		hlist_for_each_entry_rcu(chain, head, entry) {
+> +			remove_class_from_lock_chain(chain, class);
+> +		}
+> +	}
+> +}
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+*shudder*, I suppose that is the reason I never went there.
 
-On Wed, Nov 28, 2018 at 03:17:49PM -0800, Andy Lutomirski wrote:
-> On Wed, Nov 28, 2018 at 2:11 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> >
-> > On Wed, Nov 28, 2018 at 06:23:46PM +0300, Dmitry V. Levin wrote:
-> > > On Wed, Nov 28, 2018 at 03:20:06PM +0100, Oleg Nesterov wrote:
-> > > > On 11/28, Dmitry V. Levin wrote:
-> > > > > On Wed, Nov 28, 2018 at 02:49:14PM +0100, Oleg Nesterov wrote:
-> > > > > > On 11/28, Dmitry V. Levin wrote:
-> > > > > > >
-> > > > > > > +/*
-> > > > > > > + * These values are stored in task->ptrace_message by traceh=
-ook_report_syscall_*
-> > > > > > > + * to describe current syscall-stop.
-> > > > > > > + *
-> > > > > > > + * Values for these constants are chosen so that they do not=
- appear
-> > > > > > > + * in task->ptrace_message by other means.
-> > > > > > > + */
-> > > > > > > +#define PTRACE_EVENTMSG_SYSCALL_ENTRY        0x80000000U
-> > > > > > > +#define PTRACE_EVENTMSG_SYSCALL_EXIT 0x90000000U
-> > > > > >
-> > > > > > Again, I do not really understand the comment... Why should we =
-care about
-> > > > > > "do not appear in task->ptrace_message by other means" ?
-> > > > > >
-> > > > > > 2/2 should detect ptrace_report_syscall() case correctly, so we=
- can use any
-> > > > > > numbers, say, 1 and 2?
-> > > > > >
-> > > > > > If debugger does PTRACE_GETEVENTMSG it should know how to inter=
-pet the value
-> > > > > > anyway after wait(status).
-> > > > >
-> > > > > Given that without this patch the value returned by PTRACE_GETEVE=
-NTMSG
-> > > > > during syscall stop is undefined, we need two different ptrace_me=
-ssage
-> > > > > values that cannot be set by other ptrace events to enable reliab=
-le
-> > > > > identification of syscall-enter-stop and syscall-exit-stop in use=
-rspace:
-> > > > > if we make PTRACE_GETEVENTMSG return 0 or any other value routine=
-ly set by
-> > > > > other ptrace events, it would be hard for userspace to find out w=
-hether
-> > > > > the kernel implements new semantics or not.
-> > > >
-> > > > Hmm, why? Debugger can just do ptrace(PTRACE_GET_SYSCALL_INFO, NULL=
-), if it
-> > > > returns EIO then it is not implemented?
-> > >
-> > > The debugger that uses PTRACE_GET_SYSCALL_INFO does not need to call
-> > > PTRACE_GETEVENTMSG for syscall stops.
-> > > My concern here is the PTRACE_GETEVENTMSG interface itself.  If we use
-> > > ptrace_message to implement PTRACE_GET_SYSCALL_INFO and expose
-> > > PTRACE_EVENTMSG_SYSCALL_{ENTRY,EXIT} for regular PTRACE_GETEVENTMSG u=
-sers,
-> > > it should have clear semantics.
-> >
-> > Since our implementation of PTRACE_GET_SYSCALL_INFO uses ptrace_message
-> > to distinguish syscall-enter-stop from syscall-exit-stop, we could choo=
-se
-> > one of the following approaches:
-> >
-> > 1. Do not document the values saved into ptrace_message during syscall
-> > stops (and exposed via PTRACE_GETEVENTMSG) as a part of ptrace API,
-> > leaving the value returned by PTRACE_GETEVENTMSG during syscall stops
-> > as undefined.
-> >
-> > 2. Document these values chosen to avoid collisions with ptrace_message=
- values
-> > set by other ptrace events so that PTRACE_GETEVENTMSG users can easily =
-tell
-> > whether this new semantics is supported by the kernel or not.
->=20
-> I don't like any of this at all.  Can we please choose a sensible API
-> design and let the API drive the implementation instead of vice versa?
-
-What are your concerns?  Do you see something wrong in exposing this
-information via PTRACE_GETEVENTMSG?
-
-Anyway, can we agree on the PTRACE_GET_SYSCALL_INFO API, please?
-
->  ISTM the correct solution is to add some new state to task_struct for
-> this.
->=20
-> If we're concerned about making task_struct bigger, I have a
-> half-finished patch to factor all the ptrace tracee state into a
-> separate struct.
-
-This is refactoring of the kernel - a thing userspace people are not
-the best equipped to do.  This part should rather be sorted out by kernel
-people.
-
-
---=20
-ldv
-
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb/8C8AAoJEAVFT+BVnCUIurcQAL/2HRQmF9Kp0QjlXLZaNXnZ
-fUtK8nt3YH+JAs9JzDKlueo9cpiS5raMzi3bP4ZFm7lJoEVG/Rje7mih1sy7G6Ll
-p5MG6swSBCnZtU5L9iP/VVvWqCxV2o97WGBTNNb8FF1SdSs30M0SRmpWXa10Whf2
-Zn15q+YaphfIQcyZKQ+iW9U9hlfg6JHUqz0KCRTVANc0NSclP4kE5AZqVEm7h8s5
-QVoLU7aKvdwVtb07FESrLAApKFCk6FMTJk4T6jLVFE1bQihzqDw0DRGYHJk4P9op
-/fEPO/y/kl4BEoifoJBbech0lFbxZUrfpZnmCW3DtmcHIanMD8pvSlbozITajKSQ
-zbd2+sxrg95le2YW6D4MGdA6FoDBNz46OWsl8uvICOQz5N7uArEU+SNfihUoLjAa
-QkceNlp/e1IO3/sh3eU2ErdEs54dJmmDXVUkjhg26pDRj6beVFC4mSVlaE2Spqa0
-G4UdgugeODXN3X5o9zEI57vkxKDVlqlcK5XqqBbbDh1Plesj4jc+l7Xt1rW0m6Hi
-/UuApDFG57n/hEVH3HkonZudGs3wF4ccsgtX7csAh4Bx28WStyE2KOxHvhD74gV4
-DJQ+bX3I9GvDSjfI4TWjNcE3+WFNosXDvvD7shTHVCcCKaHGAoJ23PdOvLBdkBC3
-r8eb9XdMYUvi/Jd/gy2N
-=9ekh
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+I suoppose that if you don't do this too often it doesn't matter it is
+horribly epxneisve.
