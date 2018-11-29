@@ -2,108 +2,100 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81656C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09F4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1947B2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:16:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rj4X92PM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1947B2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7648C2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:18:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7648C2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeK3AVg (ORCPT
+        id S1728407AbeK3AXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:21:36 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45506 "EHLO mail.skyhub.de"
+        Thu, 29 Nov 2018 19:23:54 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:52936 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbeK3AVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:21:35 -0500
-Received: from nazgul.tnic (x59cc8ba7.dyn.telefonica.de [89.204.139.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 933A91EC0229;
-        Thu, 29 Nov 2018 14:16:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543497373;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=wr8LD+Yv+Y32DEAvvwYXroxVcIpBozte/dthFQw+ZSk=;
-        b=Rj4X92PMriBHkAbzWfr6E+8dgtH+CMGT6NQ2IQaZMHdkMqEp2Q5ex6BUaXruL8UGJgCblo
-        1iKQ6NTmwW/1Jx7BthTnEJTp3lMVzPr0LSKU958NBQYt5vTA5ZCRDtWp76eWrZ3J9vC7Uu
-        bEJmE6wyN+kLb0r6VQGWupAK7Wgmu5s=
-Date:   Thu, 29 Nov 2018 14:16:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Richard Biener <rguenther@suse.de>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, matz@suse.de, gcc@gcc.gnu.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-Message-ID: <20181129131611.GC3070@nazgul.tnic>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181007091805.GA30687@zn.tnic>
- <20181007132228.GJ29268@gate.crashing.org>
- <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de>
- <20181008073128.GL29268@gate.crashing.org>
- <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org>
- <CAK7LNARmrdtyE7JRAdJH_zbfvD_cej+TGLh+5KfT20o538KUcA@mail.gmail.com>
- <20181129130718.GA3070@nazgul.tnic>
- <alpine.LSU.2.20.1811291408400.1827@zhemvz.fhfr.qr>
+        id S1728160AbeK3AXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:23:54 -0500
+Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gSMCi-0003Ql-47; Thu, 29 Nov 2018 14:18:04 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Matheus Tavares <matheus.bernardino@usp.br>,
+        Milo Kim <milo.kim@ti.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel-usp@googlegroups.com,
+        Lucas Santos <ilucas.ms@gmail.com>
+Subject: Re: [PATCH] iio: adc: Replace license text w/ SPDX identifier
+Date:   Thu, 29 Nov 2018 14:18:03 +0100
+Message-ID: <3999722.Y4omgby9AG@phil>
+In-Reply-To: <20181128175312.9634-1-matheus.bernardino@usp.br>
+References: <20181128175312.9634-1-matheus.bernardino@usp.br>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.20.1811291408400.1827@zhemvz.fhfr.qr>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 02:09:25PM +0100, Richard Biener wrote:
-> I'd be not opposed to backporting the asm inline support.
-
-Even better! :-)
-
-> Of course we still have to be happy with it and install the patch ;)
+Am Mittwoch, 28. November 2018, 18:53:12 CET schrieb Matheus Tavares:
+> From: Lucas Santos <ilucas.ms@gmail.com>
 > 
-> Are you (kernel folks) happy with asm inline ()?
+> This patch removes all license boilerplate texts from the .c and .h
+> files at drivers/iio/adc/ and, instead, adds the proper SPDX license
+> identifiers.
+> 
+> Signed-off-by: Lucas Santos <ilucas.ms@gmail.com>
+> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> ---
 
-Yes, I think we are:
+> diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip_saradc.c
+> index 1f98566d5b3c..234c6df348ce 100644
+> --- a/drivers/iio/adc/rockchip_saradc.c
+> +++ b/drivers/iio/adc/rockchip_saradc.c
+> @@ -1,16 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * Rockchip Successive Approximation Register (SAR) A/D Converter
+>   * Copyright (C) 2014 ROCKCHIP, Inc.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+>   */
+>  
+>  #include <linux/module.h>
 
-https://lkml.kernel.org/r/20181031125526.GA13219@hirez.programming.kicks-ass.net
+For the Rockchip-part
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-Thx.
 
--- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
