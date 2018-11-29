@@ -2,91 +2,162 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9806AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E6AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CBE20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CBE20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 94D4D20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D4D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbeK2Sck (ORCPT
+        id S1727132AbeK2Sh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:32:40 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:55968 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726580AbeK2Sck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:32:40 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2A63E42B2C91D7C29CD1;
-        Thu, 29 Nov 2018 15:28:14 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wAT7S4IN064378;
-        Thu, 29 Nov 2018 15:28:04 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018112915283431-13671033 ;
-          Thu, 29 Nov 2018 15:28:34 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     sameo@linux.intel.com
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH] NFC: fdp: Fix signedness bug in fdp_nci_send_patch
-Date:   Thu, 29 Nov 2018 15:28:00 +0800
-Message-Id: <20181129072800.7569-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Thu, 29 Nov 2018 13:37:28 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:55688 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeK2Sh2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:37:28 -0500
+Received: by mail-it1-f198.google.com with SMTP id j3so1709716itf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 23:33:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=fQMvDfQiwRtQ7uTrWTt1+SPSV5dr2RS2vLMekVVYf44=;
+        b=SufpPA3xofOClOCaftH/j5qrTjJVewQBL7aVS+XqMdmwXeQIjYl7upASdSZE4O/Hkd
+         uogRjj2719l0Mb3/Pqo+rJ+eL6NmzZbiuIqBFaAUNMiKTjiBDbPeH3OqmG5i6CB5xMP9
+         dUDEr7NGIVidzN3HPBPx0tv8gQfXSyy3qxT73f7oVKObIe2li86tUep3P7zzk4016gPN
+         pfaNDKglYbbmYNeQp5qERwvAYV/7oNsHonyEmj0rv7gxC3p360fB75efwJ3150SS2c8i
+         oZqczk60GE3/mzDanDfKxQ41IPFg0AneAPwDJbi2juk31Z2UVwm2o7crxKiUUZS3wdkP
+         F1XA==
+X-Gm-Message-State: AA+aEWYH/hYLP3muFf9sqUDLZQmGLxmjaYEPjiMHw7VCh54qPx3jJZGf
+        Moj+R/PXzr8JZ/doIQ868r+oJvnRSlHlJHGWcSMmqoK9mJRu
+X-Google-Smtp-Source: AFSGD/Vd9qquhrFvgkTnfCIhWMZmtZJ3YaExIgth0i+yu6Jgw/lo9gIAAZt2Qx2TQGMw5UVWwr0BkfTigvHKRF3lKRpV/Figyw8m
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-29 15:28:34,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-29 15:27:52
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wAT7S4IN064378
+X-Received: by 2002:a5d:9801:: with SMTP id a1mr276616iol.31.1543476782582;
+ Wed, 28 Nov 2018 23:33:02 -0800 (PST)
+Date:   Wed, 28 Nov 2018 23:33:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005852b8057bc8b123@google.com>
+Subject: invalid opcode in close_fs_devices
+From:   syzbot <syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the error handling for the call to
-nci=5Fconn=5Fmax=5Fdata=5Fpkt=5Fpayload=5Fsize() doesn't work
-because *max=5Fsize* is of type u8 (8 bits, unsigned),
-which makes it impossible for it to hold a value less
-than 0.
+Hello,
 
-Fix this by changing the type of variable *max=5Fsize*
-to s16 (16 bits, signed).
+syzbot found the following crash on:
 
-since conn=5Finfo->max=5Fpkt=5Fpayload=5Flen is of type u8,
-so s16 is enough.
+HEAD commit:    ef78e5ec9214 ia64: export node_distance function
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1514f733400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=cabf977d00d3db1fdc37
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Samuel Ortiz <sameo@linux.intel.com>
-CC: linux-wireless@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com
+
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 6312 Comm: syz-executor4 Not tainted 4.20.0-rc4+ #132
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
+RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
+Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 85  
+bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 7b 85  
+8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
+RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
+RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
+RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
+RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
+R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
+FS:  00007fc6d31a2700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000400200 CR3: 00000001d3b95000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  close_fs_devices fs/btrfs/volumes.c:1095 [inline]
+  btrfs_close_devices+0xa1/0x210 fs/btrfs/volumes.c:1081
+  btrfs_mount_root+0x13d2/0x1d70 fs/btrfs/super.c:1619
+  mount_fs+0xae/0x31d fs/super.c:1261
+  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+  vfs_kern_mount+0x40/0x60 fs/namespace.c:951
+  btrfs_mount+0x4a3/0x2136 fs/btrfs/super.c:1670
+  mount_fs+0xae/0x31d fs/super.c:1261
+  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+  vfs_kern_mount fs/namespace.c:951 [inline]
+  do_new_mount fs/namespace.c:2469 [inline]
+  do_mount+0x581/0x31f0 fs/namespace.c:2801
+  ksys_mount+0x12d/0x140 fs/namespace.c:3017
+  __do_sys_mount fs/namespace.c:3031 [inline]
+  __se_sys_mount fs/namespace.c:3028 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459fda
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d 89 fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 5a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007fc6d31a1a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fc6d31a1b30 RCX: 0000000000459fda
+RDX: 00007fc6d31a1ad0 RSI: 0000000020000740 RDI: 00007fc6d31a1af0
+RBP: 0000000020000740 R08: 00007fc6d31a1b30 R09: 00007fc6d31a1ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000004
+R13: 0000000000000000 R14: 00000000004d8ef0 R15: 0000000000000003
+Modules linked in:
+kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop1' (0000000014e46057): kobject_uevent_env
+kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+---[ end trace 260d74aed8afc1e0 ]---
+RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
+RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
+Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 85  
+bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 7b 85  
+8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
+RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
+RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
+RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
+RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
+R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
+FS:  00007fc6d31a2700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004dc418 CR3: 00000001d3b95000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- drivers/nfc/fdp/fdp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
-index d5784a47fc13..d9203e2468fd 100644
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -192,7 +192,7 @@ static int fdp=5Fnci=5Fsend=5Fpatch(struct nci=5Fdev *n=
-dev, u8 conn=5Fid, u8 type)
- 	const struct firmware *fw;
- 	struct sk=5Fbuff *skb;
- 	unsigned long len;
--	u8 max=5Fsize, payload=5Fsize;
-+	s16 max=5Fsize, payload=5Fsize;
- 	int rc =3D 0;
-=20
- 	if ((type =3D=3D NCI=5FPATCH=5FTYPE=5FOTP && !info->otp=5Fpatch) ||
---=20
-2.19.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
