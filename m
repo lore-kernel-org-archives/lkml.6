@@ -2,48 +2,54 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27A3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94603C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC76A21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CE6C2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VB16uYhA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC76A21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uM6fnSkn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE6C2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbeK3B10 (ORCPT
+        id S1731830AbeK3B12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52334 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731803AbeK3B1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:25 -0500
+        id S1731803AbeK3B11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A71E92146D;
-        Thu, 29 Nov 2018 14:21:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A4CE2133F;
+        Thu, 29 Nov 2018 14:21:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501314;
-        bh=bNdOeOi/QBW0PV8Ipr/QDZxkDnXmb7mqApBvhdGdru8=;
+        s=default; t=1543501316;
+        bh=d5+5rQ2/UH/0cHKNouv2AQJ2Arn1amlJln61Mw73vi0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VB16uYhAtqVIiTcJelaaOEGlB9b4sfATSd3z+2nliB45a4+nvSgS7DJh1//AzKv9M
-         PAdiPV5Z0JR+u5o/8hTRDaiB/8q7sSRdiIIeMMKilOjDg9G82UZ6NZ6+wwwoeThiUL
-         /EK7QzFJF6LTv/IqQNNWpB7/IJq/uTLyPmBK2nFg=
+        b=uM6fnSknmlqY9hXt1u6ZjhASVyuczoU3uIUW+6/jcywYprOrLLacc7FKtCuSaEG4D
+         weVTbniyU4Q2KNjLL12jZDBG24sj/tsCLXiryY/8S41qrLl+KWlnZNh/JgueJALZzY
+         doPLkF2u0ZaCqUDHrt/WmuphzXVz+QjcSC/OVSwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.9 22/92] can: dev: __can_get_echo_skb(): Dont crash the kernel if can_priv::echo_skb is accessed out of bounds
-Date:   Thu, 29 Nov 2018 15:11:51 +0100
-Message-Id: <20181129140108.138246702@linuxfoundation.org>
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 40/92] tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
+Date:   Thu, 29 Nov 2018 15:12:09 +0100
+Message-Id: <20181129140109.501467635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -61,36 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+[ Upstream commit 1a413646931cb14442065cfc17561e50f5b5bb44 ]
 
-commit e7a6994d043a1e31d5b17706a22ce33d2a3e4cdc upstream.
+Other filesystems such as ext4, f2fs and ubifs all return ENXIO when
+lseek (SEEK_DATA or SEEK_HOLE) requests a negative offset.
 
-If the "struct can_priv::echo_skb" is accessed out of bounds would lead
-to a kernel crash. Better print a sensible warning message instead and
-try to recover.
+man 2 lseek says
 
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+:      EINVAL whence  is  not  valid.   Or: the resulting file offset would be
+:             negative, or beyond the end of a seekable device.
+:
+:      ENXIO  whence is SEEK_DATA or SEEK_HOLE, and the file offset is  beyond
+:             the end of the file.
 
+Make tmpfs return ENXIO under these circumstances as well.  After this,
+tmpfs also passes xfstests's generic/448.
+
+[akpm@linux-foundation.org: rewrite changelog]
+Link: http://lkml.kernel.org/r/1540434176-14349-1-git-send-email-yuyufen@huawei.com
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/dev.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ mm/shmem.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -457,7 +457,11 @@ struct sk_buff *__can_get_echo_skb(struc
- {
- 	struct can_priv *priv = netdev_priv(dev);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4b5cca167baf..358a92be43eb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2414,9 +2414,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ 	inode_lock(inode);
+ 	/* We're holding i_mutex so we can access i_size directly */
  
--	BUG_ON(idx >= priv->echo_skb_max);
-+	if (idx >= priv->echo_skb_max) {
-+		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
-+			   __func__, idx, priv->echo_skb_max);
-+		return NULL;
-+	}
- 
- 	if (priv->echo_skb[idx]) {
- 		/* Using "struct canfd_frame::len" for the frame
+-	if (offset < 0)
+-		offset = -EINVAL;
+-	else if (offset >= inode->i_size)
++	if (offset < 0 || offset >= inode->i_size)
+ 		offset = -ENXIO;
+ 	else {
+ 		start = offset >> PAGE_SHIFT;
+-- 
+2.17.1
+
 
 
