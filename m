@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2035C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF52FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885C3208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70F321104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhjNb1/7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885C3208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOJl+GmB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70F321104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbeK3BVd (ORCPT
+        id S1729863AbeK3BVg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:21:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42894 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729040AbeK3BVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:21:32 -0500
+        id S1729040AbeK3BVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:21:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9847C21019;
-        Thu, 29 Nov 2018 14:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03388205C9;
+        Thu, 29 Nov 2018 14:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500962;
-        bh=+pEJRQhcEX4YnxatuZ7hziT45BsHbetQVUmzJ/gXcGs=;
+        s=default; t=1543500964;
+        bh=DLkyp2BE9akL+8QGcaiLyVaBLvKJENSTy+WxVyoPWUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZhjNb1/7kRu4eI2K9/lXhKyKgRDUbprmwW/5VF9ltfKd1J3TZ6+tpGxUxHWOWgfDG
-         rpPBQOak/H6v1EhwmBzyAuAcmRaORFvY0kunwYTtrdemMkT1z8YdMJOWyhjY46/5a8
-         zW/uVXeeh3K/nyXzJNUDNU8JF6WrXpschYsPhxD0=
+        b=IOJl+GmBpqEm1aiC6UR72ZNwccyYBYQghOWLi6b2b9ylAHuScBE7MJmLO6jv9qzRP
+         tnK7euKsGtc5WysvEUBReZRqx8Fva/nbd1M2QOaZzHe7OY3j7dgIWjKgvhDR6NGPZR
+         Uu4d0BexPPFVbGGX232BtQhE+a8rV0aG53EWx7Wg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Furneaux <mark@furneaux.ca>,
-        Cameron Gutman <aicommander@gmail.com>,
+        stable@vger.kernel.org, Francis Therien <frtherien@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 68/83] Input: xpad - add support for PDP Xbox One controllers
-Date:   Thu, 29 Nov 2018 15:12:26 +0100
-Message-Id: <20181129140141.676781256@linuxfoundation.org>
+Subject: [PATCH 3.18 69/83] Input: xpad - add PDP device id 0x02a4
+Date:   Thu, 29 Nov 2018 15:12:27 +0100
+Message-Id: <20181129140141.737915047@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -64,63 +63,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e5c9c6a885fad00aa559b49d8fc23a60e290824e ]
+[ Upstream commit c6c848572f4da0e34ffe0a35364b4db871e13e42 ]
 
-Adds support for the current lineup of Xbox One controllers from PDP
-(Performance Designed Products). These controllers are very picky with
-their initialization sequence and require an additional 2 packets before
-they send any input reports.
+Adds support for a PDP Xbox One controller with device ID
+(0x06ef:0x02a4). The Product string for this device is "PDP Wired
+Controller for Xbox One - Stealth Series | Phantom Black".
 
-Signed-off-by: Mark Furneaux <mark@furneaux.ca>
-Reviewed-by: Cameron Gutman <aicommander@gmail.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Francis Therien <frtherien@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/input/joystick/xpad.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index d86e59515b9c..d88d3e0f59fb 100644
+index d88d3e0f59fb..298581b0f6c1 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -229,6 +229,7 @@ static const struct xpad_device {
- 	{ 0x0e6f, 0x0213, "Afterglow Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+@@ -230,6 +230,7 @@ static const struct xpad_device {
  	{ 0x0e6f, 0x021f, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
  	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
-+	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
  	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
  	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
  	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
-@@ -475,6 +476,22 @@ static const u8 xboxone_hori_init[] = {
- 	0x00, 0x00, 0x00, 0x80, 0x00
- };
+@@ -478,7 +479,8 @@ static const u8 xboxone_hori_init[] = {
  
-+/*
-+ * This packet is required for some of the PDP pads to start
-+ * sending input reports. One of those pads is (0x0e6f:0x02ab).
-+ */
-+static const u8 xboxone_pdp_init1[] = {
-+	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
-+};
-+
-+/*
-+ * This packet is required for some of the PDP pads to start
-+ * sending input reports. One of those pads is (0x0e6f:0x02ab).
-+ */
-+static const u8 xboxone_pdp_init2[] = {
-+	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
-+};
-+
  /*
-  * A specific rumble packet is required for some PowerA pads to start
-  * sending input reports. One of those pads is (0x24c6:0x543a).
-@@ -505,6 +522,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
- 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init1[] = {
+ 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
+@@ -486,7 +488,8 @@ static const u8 xboxone_pdp_init1[] = {
+ 
+ /*
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init2[] = {
+ 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
+@@ -524,6 +527,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
  	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
  	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
  	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
  	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
