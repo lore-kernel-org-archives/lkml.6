@@ -6,82 +6,134 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B541C04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E37FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1B3208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1B3208E7
+	by mail.kernel.org (Postfix) with ESMTP id 4A694208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A694208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbeK2TPJ (ORCPT
+        id S1728395AbeK2TPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:09 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:2993 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 14:15:12 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:40090 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbeK2TPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:08 -0500
+        id S1727391AbeK2TPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:15:11 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4359F76j0Jz9vGnx;
-        Thu, 29 Nov 2018 09:10:35 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 4359FB0058z9vGpG;
+        Thu, 29 Nov 2018 09:10:38 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id REu9D7YQwBKu; Thu, 29 Nov 2018 09:10:35 +0100 (CET)
+        with ESMTP id cLhJIE9RtZXO; Thu, 29 Nov 2018 09:10:37 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F76F9Gz9vGnW;
-        Thu, 29 Nov 2018 09:10:35 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F96cgFz9vGnW;
+        Thu, 29 Nov 2018 09:10:37 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B03D08B890;
-        Thu, 29 Nov 2018 09:10:36 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C343C8B890;
+        Thu, 29 Nov 2018 09:10:38 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ihfUIQaC0NS4; Thu, 29 Nov 2018 09:10:36 +0100 (CET)
+        with ESMTP id w_j-zok4fp9k; Thu, 29 Nov 2018 09:10:38 +0100 (CET)
 Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8F55E8B762;
-        Thu, 29 Nov 2018 09:10:36 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 968BA8B762;
+        Thu, 29 Nov 2018 09:10:38 +0100 (CET)
 Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 3D4C569AEA; Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
-Message-Id: <118fde6f571cd1a6abfa2ad762b4abe3250c637b.1543478200.git.christophe.leroy@c-s.fr>
+        id 4159B69AEA; Thu, 29 Nov 2018 08:10:38 +0000 (UTC)
+Message-Id: <00b47f8f30643550d38d21a7180cf3c8d918a012.1543478200.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
 References: <cover.1543478199.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v8 16/20] powerpc/8xx: Enable 8M hugepage support with HW
+Subject: [PATCH v8 17/20] powerpc/8xx: Enable 512k hugepage support with HW
  assistance
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 08:10:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HW assistance naturally supports 8M huge pages without
-further modifications.
+For using 512k pages with hardware assistance, the PTEs have to be spread
+every 128 bytes in the L2 table.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/mm/tlb_nohash.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/include/asm/hugetlb.h |  4 +++-
+ arch/powerpc/mm/hugetlbpage.c      | 10 +++++++++-
+ arch/powerpc/mm/tlb_nohash.c       |  3 +++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index dfb8bf236586..62a0ca02ca7d 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -74,7 +74,9 @@ static inline pte_t *hugepte_offset(hugepd_t hpd, unsigned long addr,
+ 	unsigned long idx = 0;
+ 
+ 	pte_t *dir = hugepd_page(hpd);
+-#ifndef CONFIG_PPC_FSL_BOOK3E
++#ifdef CONFIG_PPC_8xx
++	idx = (addr & ((1UL << pdshift) - 1)) >> PAGE_SHIFT;
++#elif !defined(CONFIG_PPC_FSL_BOOK3E)
+ 	idx = (addr & ((1UL << pdshift) - 1)) >> hugepd_shift(hpd);
+ #endif
+ 
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index bc97874d7c74..5f22f1d399b3 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -65,6 +65,9 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+ 	if (pshift >= pdshift) {
+ 		cachep = PGT_CACHE(PTE_T_ORDER);
+ 		num_hugepd = 1 << (pshift - pdshift);
++	} else if (IS_ENABLED(CONFIG_PPC_8xx)) {
++		cachep = PGT_CACHE(PTE_SHIFT);
++		num_hugepd = 1;
+ 	} else {
+ 		cachep = PGT_CACHE(pdshift - pshift);
+ 		num_hugepd = 1;
+@@ -331,6 +334,9 @@ static void free_hugepd_range(struct mmu_gather *tlb, hugepd_t *hpdp, int pdshif
+ 
+ 	if (shift >= pdshift)
+ 		hugepd_free(tlb, hugepte);
++	else if (IS_ENABLED(CONFIG_PPC_8xx))
++		pgtable_free_tlb(tlb, hugepte,
++				 get_hugepd_cache_index(PTE_SHIFT));
+ 	else
+ 		pgtable_free_tlb(tlb, hugepte,
+ 				 get_hugepd_cache_index(pdshift - shift));
+@@ -700,7 +706,9 @@ static int __init hugetlbpage_init(void)
+ 		 * if we have pdshift and shift value same, we don't
+ 		 * use pgt cache for hugepd.
+ 		 */
+-		if (pdshift > shift)
++		if (pdshift > shift && IS_ENABLED(CONFIG_PPC_8xx))
++			pgtable_cache_add(PTE_SHIFT);
++		else if (pdshift > shift)
+ 			pgtable_cache_add(pdshift - shift);
+ #if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_8xx)
+ 		else
 diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
-index 4f79639e432f..8ad7aab150b7 100644
+index 8ad7aab150b7..ae5d568e267f 100644
 --- a/arch/powerpc/mm/tlb_nohash.c
 +++ b/arch/powerpc/mm/tlb_nohash.c
 @@ -97,6 +97,9 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
  		.shift	= 14,
  	},
  #endif
-+	[MMU_PAGE_8M] = {
-+		.shift	= 23,
++	[MMU_PAGE_512K] = {
++		.shift	= 19,
 +	},
- };
- #else
- struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
+ 	[MMU_PAGE_8M] = {
+ 		.shift	= 23,
+ 	},
 -- 
 2.13.3
 
