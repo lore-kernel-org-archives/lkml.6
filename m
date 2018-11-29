@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2374BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BACC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6D3213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A03D2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1LxJAwU7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6D3213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2aQXQ5+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A03D2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733110AbeK3BbV (ORCPT
+        id S1733123AbeK3BbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:31:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58808 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:31:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731628AbeK3BbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:20 -0500
+        id S1731628AbeK3BbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BA4721104;
-        Thu, 29 Nov 2018 14:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 673252133F;
+        Thu, 29 Nov 2018 14:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501547;
-        bh=nPGeBt17VuCWQ8jd9ctbNa+G+Fq2W/FMhEmpbefUAtc=;
+        s=default; t=1543501549;
+        bh=RPblNFY2qCdYDMrUeWLcczh9DYrdJok0ptvumGJ7H/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1LxJAwU7u4s9ck2zTpjK/nDHlo89AHP+M/ZAy839nkf5qTAo23uf+QpdOl88j7USL
-         jBccD1NeXJlWUoFw1sWpKuXLlpUDF4K54scriqolBSBFraCRwQH+h0NCW094yBb9WL
-         WuKWxih5duoNzUE43o0lbYwQJqgeOzOGfVuuXKRU=
+        b=g2aQXQ5+wSARpRK4kIqJ8LTQvsVeByNPqM5sbIJbPDfAJ9NIVpIPJj9Dd8AzsX2ev
+         BnNr9oSQeQEg3XHwHpFvuU0XrwIkn+ucEtDK+WAnyGgyEzdK0mzaIYd+xRsqV5Y+rZ
+         rylg7pVrfwTUSwMVpNRiA4pQTJ9hE0K2/YY59or8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+        stable@vger.kernel.org, Oliver Hartkopp <socketcan@hartkopp.net>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 041/100] can: rx-offload: rename can_rx_offload_irq_queue_err_skb() to can_rx_offload_queue_tail()
-Date:   Thu, 29 Nov 2018 15:12:11 +0100
-Message-Id: <20181129140102.284955336@linuxfoundation.org>
+Subject: [PATCH 4.14 042/100] can: raw: check for CAN FD capable netdev in raw_sendmsg()
+Date:   Thu, 29 Nov 2018 15:12:12 +0100
+Message-Id: <20181129140102.440259394@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,75 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 4530ec36bb1e0d24f41c33229694adacda3d5d89 upstream.
+commit a43608fa77213ad5ac5f75994254b9f65d57cfa0 upstream.
 
-This function has nothing todo with error.
+When the socket is CAN FD enabled it can handle CAN FD frame
+transmissions.  Add an additional check in raw_sendmsg() as a CAN2.0 CAN
+driver (non CAN FD) should never see a CAN FD frame. Due to the commonly
+used can_dropped_invalid_skb() function the CAN 2.0 driver would drop
+that CAN FD frame anyway - but with this patch the user gets a proper
+-EINVAL return code.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/flexcan.c      |    4 ++--
- drivers/net/can/rx-offload.c   |    5 +++--
- include/linux/can/rx-offload.h |    3 ++-
- 3 files changed, 7 insertions(+), 5 deletions(-)
+ net/can/raw.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -599,7 +599,7 @@ static void flexcan_irq_bus_err(struct n
- 	if (tx_errors)
- 		dev->stats.tx_errors++;
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -745,18 +745,19 @@ static int raw_sendmsg(struct socket *so
+ 	} else
+ 		ifindex = ro->ifindex;
  
--	can_rx_offload_irq_queue_err_skb(&priv->offload, skb);
-+	can_rx_offload_queue_tail(&priv->offload, skb);
- }
+-	if (ro->fd_frames) {
++	dev = dev_get_by_index(sock_net(sk), ifindex);
++	if (!dev)
++		return -ENXIO;
++
++	err = -EINVAL;
++	if (ro->fd_frames && dev->mtu == CANFD_MTU) {
+ 		if (unlikely(size != CANFD_MTU && size != CAN_MTU))
+-			return -EINVAL;
++			goto put_dev;
+ 	} else {
+ 		if (unlikely(size != CAN_MTU))
+-			return -EINVAL;
++			goto put_dev;
+ 	}
  
- static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
-@@ -639,7 +639,7 @@ static void flexcan_irq_state(struct net
- 	if (unlikely(new_state == CAN_STATE_BUS_OFF))
- 		can_bus_off(dev);
- 
--	can_rx_offload_irq_queue_err_skb(&priv->offload, skb);
-+	can_rx_offload_queue_tail(&priv->offload, skb);
- }
- 
- static inline struct flexcan_priv *rx_offload_to_priv(struct can_rx_offload *offload)
---- a/drivers/net/can/rx-offload.c
-+++ b/drivers/net/can/rx-offload.c
-@@ -255,7 +255,8 @@ unsigned int can_rx_offload_get_echo_skb
- }
- EXPORT_SYMBOL_GPL(can_rx_offload_get_echo_skb);
- 
--int can_rx_offload_irq_queue_err_skb(struct can_rx_offload *offload, struct sk_buff *skb)
-+int can_rx_offload_queue_tail(struct can_rx_offload *offload,
-+			      struct sk_buff *skb)
- {
- 	if (skb_queue_len(&offload->skb_queue) >
- 	    offload->skb_queue_len_max)
-@@ -266,7 +267,7 @@ int can_rx_offload_irq_queue_err_skb(str
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(can_rx_offload_irq_queue_err_skb);
-+EXPORT_SYMBOL_GPL(can_rx_offload_queue_tail);
- 
- static int can_rx_offload_init_queue(struct net_device *dev, struct can_rx_offload *offload, unsigned int weight)
- {
---- a/include/linux/can/rx-offload.h
-+++ b/include/linux/can/rx-offload.h
-@@ -45,7 +45,8 @@ int can_rx_offload_queue_sorted(struct c
- 				struct sk_buff *skb, u32 timestamp);
- unsigned int can_rx_offload_get_echo_skb(struct can_rx_offload *offload,
- 					 unsigned int idx, u32 timestamp);
--int can_rx_offload_irq_queue_err_skb(struct can_rx_offload *offload, struct sk_buff *skb);
-+int can_rx_offload_queue_tail(struct can_rx_offload *offload,
-+			      struct sk_buff *skb);
- void can_rx_offload_reset(struct can_rx_offload *offload);
- void can_rx_offload_del(struct can_rx_offload *offload);
- void can_rx_offload_enable(struct can_rx_offload *offload);
+-	dev = dev_get_by_index(sock_net(sk), ifindex);
+-	if (!dev)
+-		return -ENXIO;
+-
+ 	skb = sock_alloc_send_skb(sk, size + sizeof(struct can_skb_priv),
+ 				  msg->msg_flags & MSG_DONTWAIT, &err);
+ 	if (!skb)
 
 
