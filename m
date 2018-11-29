@@ -2,149 +2,210 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46533C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF59C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B7E20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EC221104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O99qaLbD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B7E20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XWRWx009"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EC221104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeK3IGa (ORCPT
+        id S1726970AbeK3IHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:06:30 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39742 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeK3IG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:06:29 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i6so2877696oia.6;
-        Thu, 29 Nov 2018 12:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YjLIHyl46Y1925E5LQa1fhTz2lS4zWuFowCBuzUz7sE=;
-        b=O99qaLbDZlnVwwWCtPZ+ztMPAiiDh1eTXCQw/0OGu7Hv17fVxAEZNxiuHUF5Rn0AAn
-         WJfmigNxAhARe6FThnlS+83B6HWC0SiOyxFgFNi3gPQT5HALDKmlPVaZh2S+050/+YGf
-         2IjEDI+P0hxjWFBpIL45+n/mEsByEMwchFXbhCX7yKWJegK/evL5JjRwMTfZ7gii6bcz
-         MD/lc5VCCa5P13x01+Mx80qD7jW6R8Qws2vXN0DwrEBukjBsuEnV7YRW3me33cwDDgWc
-         cWvZV/V1zXnJQrn9/VUyd8Qp6pGbZY9re2ZN0xihP18MEQw2Fzka+dagptWOGFuegOfQ
-         n3fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YjLIHyl46Y1925E5LQa1fhTz2lS4zWuFowCBuzUz7sE=;
-        b=KADF1qwV1XsaIODafru8PlgKsr8ZFRiomONfJ4ffYQDqKSxxVf4hmDhPTBY049u+3Q
-         zzUJRA3eFJMzSvkEfFg/lS+SWys1hUeFhDQxv8XoZ3DT7D50B+U97/xxm2vuu++vW+cQ
-         r/yTJu78ZhLhywq7I4av94de66v8muL52exBA7yFomXVA/MScths0lUOR4W4oCwXHlDj
-         xBHqM92vSjtIb/nu5gAFg2DZhLg0z7GuYwwWUyRlUIYLRiyq36LNiM4g1CbUneHoQA3c
-         n82g2Wz2TJca4PXQ19DyuC2QShnx6pHepE9qLPiRP7GxxtNaFtLkhSkdKsEhoHa5Wbf2
-         fcsQ==
-X-Gm-Message-State: AA+aEWZFJsAGD7zUv4zhhW1Va0zL+iT6oW9nm7uPMpJEe7swkEaNDjuE
-        0zc7TrXD4BIHMW8Otf7LeH0uHiiotOscU8MWT7f7d4T7
-X-Google-Smtp-Source: AFSGD/XrGvCniSMZsQ6nwTJzq9ls2wvhZoMejUUtnTF+y+jDz2YmYt+VaI14kpd2A6qaMRqd+IMNhLoa4kCIwjQXx1o=
-X-Received: by 2002:aca:db04:: with SMTP id s4mr1686748oig.248.1543525185885;
- Thu, 29 Nov 2018 12:59:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20181121150709.6030-1-TheSven73@googlemail.com>
- <20181121150709.6030-7-TheSven73@googlemail.com> <20181126220804.GA23069@bogus>
- <CAGngYiWBBe7P80ASQJnS8woe6SKLgNUmqKxOHMeyV1fGSCpY_w@mail.gmail.com> <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 29 Nov 2018 15:59:34 -0500
-Message-ID: <CAGngYiXFag-C9-0XvGxVVWs5AxL2qn0UhU2W1Ds9LE+BJYgvDQ@mail.gmail.com>
-Subject: Re: [PATCH anybus v4 6/7] dt-bindings: anybuss-host: document
- devicetree binding
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sven Van Asbroeck <svendev@arcx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-        john.garry@huawei.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Fri, 30 Nov 2018 03:07:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:36121 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbeK3IHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 03:07:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 435VKr06BJz9s9m;
+        Fri, 30 Nov 2018 08:00:47 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543525255;
+        bh=2KoCAbOwNJ0IJCcuSLg9h1jMJsQ5xr4lnHXWQSGPowc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XWRWx009jdb051ons/3fbglPO3nxQWcU1WFFPRdAeaTfyEwm+KKeIMuPHE5i+CcdU
+         i5+1Sh4YI064zrWJELjw/8YF5OaVKMFw4Xo5AFOBeIDGsFk4yiWM7scq7gQpGdCbSq
+         56iCJr0r+p6fD8lAQIxSbW7BVW1yMdxHgZi8/5QJkKpfxyLMwlK5oxzL4EBFNhuUl1
+         csH7rFnc0Y+p6mXPI0e9FurClWl8vaHV09eMW0GGU+Uve2ZqgEMZVMP47sHvR9mznO
+         YFnkn0GnQPEzs5CsEDR1qEyCsFEllrBo+ReQ+07a4xHxqm8NsSz+Aje17Q8uKJRLDd
+         +D1tgc/l0QDuw==
+Date:   Fri, 30 Nov 2018 08:00:42 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>
+Subject: Re: linux-next: Tree for Nov 29 (drm/i915)
+Message-ID: <20181130080042.41d1a926@canb.auug.org.au>
+In-Reply-To: <3b893ae0-9787-e0ca-4aad-c71135c41ce1@infradead.org>
+References: <20181129161257.4d1b872f@canb.auug.org.au>
+        <3b893ae0-9787-e0ca-4aad-c71135c41ce1@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TJS66LrR4lk+lhVP4dLs3+6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob,
+--Sig_/TJS66LrR4lk+lhVP4dLs3+6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Eliminating the 'compatible' property for the anybus gives me an interesting
-devicetree problem.
+Hi all,
 
-The imx-weim code naively loops through all subnodes, applying timing settings
-to the CS in the first reg entry.
-In the example below, WEIM CS0 is programmed with the settings in
-fsl,weim-cs-timing, because the CS part of reg is 0:
+On Thu, 29 Nov 2018 09:09:25 -0800 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> on i386:
+>=20
+> 248 "multiple definition of ...".  E.g.:
+>=20
+>   LD [M]  drivers/gpu/drm/i915/i915.o
+> ld: drivers/gpu/drm/i915/i915_irq.o: in function `intel_opregion_resume':
+> i915_irq.c:(.text+0x58f0): multiple definition of `intel_opregion_resume'=
+; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
+here
+> ld: drivers/gpu/drm/i915/i915_irq.o: in function `intel_opregion_suspend':
+> i915_irq.c:(.text+0x5900): multiple definition of `intel_opregion_suspend=
+'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
+ here
+> ld: drivers/gpu/drm/i915/i915_memcpy.o: in function `intel_opregion_resum=
+e':
+> i915_memcpy.c:(.text+0xa0): multiple definition of `intel_opregion_resume=
+'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined=
+ here
+> ld: drivers/gpu/drm/i915/i915_memcpy.o: in function `intel_opregion_suspe=
+nd':
+> i915_memcpy.c:(.text+0xb0): multiple definition of `intel_opregion_suspen=
+d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
+d here
+> ld: drivers/gpu/drm/i915/i915_mm.o: in function `intel_opregion_resume':
+> i915_mm.c:(.text+0x30): multiple definition of `intel_opregion_resume'; d=
+rivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined here
+> ld: drivers/gpu/drm/i915/i915_mm.o: in function `intel_opregion_suspend':
+> i915_mm.c:(.text+0x40): multiple definition of `intel_opregion_suspend'; =
+drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined he=
+re
+> ld: drivers/gpu/drm/i915/i915_params.o: in function `intel_opregion_resum=
+e':
+> i915_params.c:(.text+0x0): multiple definition of `intel_opregion_resume'=
+; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
+here
+> ld: drivers/gpu/drm/i915/i915_params.o: in function `intel_opregion_suspe=
+nd':
+> i915_params.c:(.text+0x10): multiple definition of `intel_opregion_suspen=
+d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
+d here
+> ld: drivers/gpu/drm/i915/i915_pci.o: in function `intel_opregion_resume':
+> i915_pci.c:(.text+0xb0): multiple definition of `intel_opregion_resume'; =
+drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined he=
+re
+> ld: drivers/gpu/drm/i915/i915_pci.o: in function `intel_opregion_suspend':
+> i915_pci.c:(.text+0xc0): multiple definition of `intel_opregion_suspend';=
+ drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined h=
+ere
+> ld: drivers/gpu/drm/i915/i915_suspend.o: in function `intel_opregion_resu=
+me':
+> i915_suspend.c:(.text+0x110): multiple definition of `intel_opregion_resu=
+me'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defin=
+ed here
+> ld: drivers/gpu/drm/i915/i915_suspend.o: in function `intel_opregion_susp=
+end':
+> i915_suspend.c:(.text+0x120): multiple definition of `intel_opregion_susp=
+end'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defi=
+ned here
+> ld: drivers/gpu/drm/i915/i915_sysfs.o: in function `intel_opregion_resume=
+':
+> i915_sysfs.c:(.text+0x710): multiple definition of `intel_opregion_resume=
+'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined=
+ here
+> ld: drivers/gpu/drm/i915/i915_sysfs.o: in function `intel_opregion_suspen=
+d':
+> i915_sysfs.c:(.text+0x720): multiple definition of `intel_opregion_suspen=
+d'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first define=
+d here
+> ld: drivers/gpu/drm/i915/intel_csr.o: in function `intel_opregion_resume':
+> intel_csr.c:(.text+0x3c0): multiple definition of `intel_opregion_resume'=
+; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
+here
+> ld: drivers/gpu/drm/i915/intel_csr.o: in function `intel_opregion_suspend=
+':
+> intel_csr.c:(.text+0x3d0): multiple definition of `intel_opregion_suspend=
+'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
+ here
+> ld: drivers/gpu/drm/i915/intel_device_info.o: in function `intel_opregion=
+_resume':
+> intel_device_info.c:(.text+0x14c0): multiple definition of `intel_opregio=
+n_resume'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first=
+ defined here
+> ld: drivers/gpu/drm/i915/intel_device_info.o: in function `intel_opregion=
+_suspend':
+> intel_device_info.c:(.text+0x14d0): multiple definition of `intel_opregio=
+n_suspend'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): firs=
+t defined here
+> ld: drivers/gpu/drm/i915/intel_pm.o: in function `intel_opregion_resume':
+> intel_pm.c:(.text+0xad70): multiple definition of `intel_opregion_resume'=
+; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first defined =
+here
+> ld: drivers/gpu/drm/i915/intel_pm.o: in function `intel_opregion_suspend':
+> intel_pm.c:(.text+0xad80): multiple definition of `intel_opregion_suspend=
+'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first defined=
+ here
+> ld: drivers/gpu/drm/i915/intel_runtime_pm.o: in function `intel_opregion_=
+resume':
+> intel_runtime_pm.c:(.text+0x2cb0): multiple definition of `intel_opregion=
+_resume'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d40): first =
+defined here
+> ld: drivers/gpu/drm/i915/intel_runtime_pm.o: in function `intel_opregion_=
+suspend':
+> intel_runtime_pm.c:(.text+0x2cc0): multiple definition of `intel_opregion=
+_suspend'; drivers/gpu/drm/i915/i915_drv.o:i915_drv.c:(.text+0x2d50): first=
+ defined here
 
+Caused by commit
 
-weim: weim@21b8000 {
-        compatible = "fsl,imx6q-weim";
-        reg = <0x021b8000 0x4000>;
-        clocks = <&clks 196>;
-        #address-cells = <2>;
-        #size-cells = <1>;
-        ranges = <0 0 0x08000000 0x08000000>;
-        fsl,weim-cs-gpr = <&gpr>;
+  a950adc6c343 ("drm/i915: Stop calling intel_opregion unregister/register =
+in suspend/resume")
 
-        nor@0,0 {
-                compatible = "cfi-flash";
-                reg = <0 0 0x02000000>;
-                #address-cells = <1>;
-                #size-cells = <1>;
-                bank-width = <2>;
-                fsl,weim-cs-timing = <0x00620081 0x00000001 0x1c022000
-                                0x0000c000 0x1404a38e 0x00000000>;
-        };
-};
+which forgot the "static inline" on the stub versions ...
 
-The problem is that my 'anybus controller' hardware spans chip selects.
-It requires access to various memory areas. In the example below, CS1
-will not be programmed with timing settings:
+--=20
+Cheers,
+Stephen Rothwell
 
-weim {
-        controller@0 {
-                compatible = "arcx,anybus-controller";
-                reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
-                fsl,weim-cs-timing = ...;
-        };
-};
+--Sig_/TJS66LrR4lk+lhVP4dLs3+6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I've coped with this in the past by creating a 'dummy' subnode, without a
-compatible property. But it's ugly:
+-----BEGIN PGP SIGNATURE-----
 
-weim {
-        controller@0 {
-                compatible = "arcx,anybus-controller";
-                reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
-                fsl,weim-cs-timing = ...;
-        };
-        dummy@1 { /* this works ! */
-                reg = <1 0 0>;
-                fsl,weim-cs-timing = ...;
-        };
-};
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwAU3oACgkQAVBC80lX
+0GwSYwgAjkkv4eH7Qo1GFworz2e3kDt4jrGCWIxmrNyj32oWvvrPgtO8zQQPUFDS
+sFn8ujRom68KXvwoc96zcwnQXhNh152xP+Z29c6irs+dq72539JknOH7TXPx/BvX
+SsZAt/eF/x5WcrdBlM3A/eEhscZ2qJvWrX7A0ww+DFMnkYxEIdkEQU5uazt+2SRI
+Kw5LrDJ+AvzRQIv+Bcd7oejy044nuFM9CO6Uiw7w2qTj6I8+Pww2KbdNMk+2pQJc
++3T73FV42OvnurxJ1hPTXDPVq4nto/fhZP7BRkuC4fOOFZktVsQBueV8YhIq6//W
+92HgysiLKUQ8l+9cE+WOTP90AxGCmA==
+=iwx2
+-----END PGP SIGNATURE-----
 
-Is there a better way? I've looked and looked, but can't find anything that's
-similar.
-
-Or should I extend the imx-weim driver to cope?
+--Sig_/TJS66LrR4lk+lhVP4dLs3+6--
