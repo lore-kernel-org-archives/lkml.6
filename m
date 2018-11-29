@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEC5C04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DACFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1094B208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8030213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Defe+poH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1094B208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQOo9aky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8030213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbeK2RGy (ORCPT
+        id S1729775AbeK2RG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:06:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43662 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:06:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728676AbeK2RGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:06:53 -0500
+        id S1728459AbeK2RG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:06:56 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE9CA208E7;
-        Thu, 29 Nov 2018 06:02:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF04C213A2;
+        Thu, 29 Nov 2018 06:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471361;
-        bh=7hB/fQWnrxUIZF1wXIhlwcDgAuRDzmO5WaXsP5JrqjI=;
+        s=default; t=1543471365;
+        bh=Y2DGkWayWdKe5u1caSXSPraCZVXWFyu9URYJEP3L+Lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Defe+poHmZ42XsgHZzm+51lFF9KY0STfz0rKnAWVIStrwOyLRA/PtwoloAqIt17Pu
-         ibULrTtdl1/J6+M+19xoaZC1Gbz1SgAiIs72X7Pk+FhCnr25gZ4GSv+VPTM9cn63Bk
-         mhXzeFCIRKFkGVyNEg1a69kX+L8he6gPwM6D0Czg=
+        b=EQOo9akyJSzPu06aQHvTLW/GlZtT1V6ObTwR/gCaUioSiodG44WisJf9p1oFGY2Gw
+         1Vf/Eh8430IFlgxFVq82x7gAYDOrubQJoJqTcHIrvgEg44jK8cPlvXVrHkylvta4w1
+         +eSLAIeJkraW2HPTc9gDTiPnLyvbsFnauEZ2QXaA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/35] qed: Fix QM getters to always return a valid pq
-Date:   Thu, 29 Nov 2018 01:00:58 -0500
-Message-Id: <20181129060110.159878-24-sashal@kernel.org>
+Cc:     Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout beyond EOF
+Date:   Thu, 29 Nov 2018 01:00:59 -0500
+Message-Id: <20181129060110.159878-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060110.159878-1-sashal@kernel.org>
 References: <20181129060110.159878-1-sashal@kernel.org>
@@ -54,96 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <denis.bolotin@cavium.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-[ Upstream commit eb62cca9bee842e5b23bd0ddfb1f271ca95e8759 ]
+[ Upstream commit b450672fb66b4a991a5b55ee24209ac7ae7690ce ]
 
-The getter callers doesn't know the valid Physical Queues (PQ) values.
-This patch makes sure that a valid PQ will always be returned.
+If we are doing sub-block dio that extends EOF, we need to zero
+the unused tail of the block to initialise the data in it it. If we
+do not zero the tail of the block, then an immediate mmap read of
+the EOF block will expose stale data beyond EOF to userspace. Found
+with fsx running sub-block DIO sizes vs MAPREAD/MAPWRITE operations.
 
-The patch consists of 3 fixes:
+Fix this by detecting if the end of the DIO write is beyond EOF
+and zeroing the tail if necessary.
 
- - When qed_init_qm_get_idx_from_flags() receives a disabled flag, it
-   returned PQ 0, which can potentially be another function's pq. Verify
-   that flag is enabled, otherwise return default start_pq.
-
- - When qed_init_qm_get_idx_from_flags() receives an unknown flag, it
-   returned NULL and could lead to a segmentation fault. Return default
-   start_pq instead.
-
- - A modulo operation was added to MCOS/VFS PQ getters to make sure the
-   PQ returned is in range of the required flag.
-
-Fixes: b5a9ee7cf3be ("qed: Revise QM cofiguration")
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 24 +++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ fs/iomap.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index a51cd1028ecb..16953c4ebd71 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -446,6 +446,11 @@ static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
- 		goto err;
- 	}
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 8f7673a69273..407efdae3978 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -940,7 +940,14 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		dio->submit.cookie = submit_bio(bio);
+ 	} while (nr_pages);
  
-+	if (!(qed_get_pq_flags(p_hwfn) & pq_flags)) {
-+		DP_ERR(p_hwfn, "pq flag 0x%x is not set\n", pq_flags);
-+		goto err;
-+	}
-+
- 	switch (pq_flags) {
- 	case PQ_FLAGS_RLS:
- 		return &qm_info->first_rl_pq;
-@@ -468,8 +473,7 @@ static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
- 	}
- 
- err:
--	DP_ERR(p_hwfn, "BAD pq flags %d\n", pq_flags);
--	return NULL;
-+	return &qm_info->start_pq;
- }
- 
- /* save pq index in qm info */
-@@ -493,20 +497,32 @@ u16 qed_get_cm_pq_idx_mcos(struct qed_hwfn *p_hwfn, u8 tc)
- {
- 	u8 max_tc = qed_init_qm_get_num_tcs(p_hwfn);
- 
-+	if (max_tc == 0) {
-+		DP_ERR(p_hwfn, "pq with flag 0x%lx do not exist\n",
-+		       PQ_FLAGS_MCOS);
-+		return p_hwfn->qm_info.start_pq;
-+	}
-+
- 	if (tc > max_tc)
- 		DP_ERR(p_hwfn, "tc %d must be smaller than %d\n", tc, max_tc);
- 
--	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_MCOS) + tc;
-+	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_MCOS) + (tc % max_tc);
- }
- 
- u16 qed_get_cm_pq_idx_vf(struct qed_hwfn *p_hwfn, u16 vf)
- {
- 	u16 max_vf = qed_init_qm_get_num_vfs(p_hwfn);
- 
-+	if (max_vf == 0) {
-+		DP_ERR(p_hwfn, "pq with flag 0x%lx do not exist\n",
-+		       PQ_FLAGS_VFS);
-+		return p_hwfn->qm_info.start_pq;
-+	}
-+
- 	if (vf > max_vf)
- 		DP_ERR(p_hwfn, "vf %d must be smaller than %d\n", vf, max_vf);
- 
--	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_VFS) + vf;
-+	return qed_get_cm_pq_idx(p_hwfn, PQ_FLAGS_VFS) + (vf % max_vf);
- }
- 
- u16 qed_get_cm_pq_idx_rl(struct qed_hwfn *p_hwfn, u8 rl)
+-	if (need_zeroout) {
++	/*
++	 * We need to zeroout the tail of a sub-block write if the extent type
++	 * requires zeroing or the write extends beyond EOF. If we don't zero
++	 * the block tail in the latter case, we can expose stale data via mmap
++	 * reads of the EOF block.
++	 */
++	if (need_zeroout ||
++	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
+ 		/* zero out from the end of the write to the end of the block */
+ 		pad = pos & (fs_block_size - 1);
+ 		if (pad)
 -- 
 2.17.1
 
