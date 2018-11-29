@@ -2,49 +2,49 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1311C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6904FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B44192146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3294E213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zpGyDgDR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44192146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0XHsHx7K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3294E213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388864AbeK3BgN (ORCPT
+        id S2388878AbeK3BgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:36:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38454 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388288AbeK3BgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:36:12 -0500
+        id S2388288AbeK3BgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:36:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1157B2146D;
-        Thu, 29 Nov 2018 14:30:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 781942146D;
+        Thu, 29 Nov 2018 14:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501839;
-        bh=9YuLFtH4iJ5jvMI1LylK1xbOIh5NUDK9xjc5blcQeyM=;
+        s=default; t=1543501841;
+        bh=NmwN7OLb5hPJCztU4RpgnHKGI1wXmt9Iyh8GHXhRPBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zpGyDgDR4yd62sN5SAc86ZAbGC5uJN1KbF66THvh1XOV/DZ/wQ2lysPrxzn7HIhjV
-         jHunSnbwNr0OFczGVT7bNG0Xmbk4M5ltCfyjs7YGxM7pZygINlfFhSCMbE0VB0JE8Q
-         0RdFLe2tmYEGKW37/3rzVAjGh5M65IhNu8rE1DE4=
+        b=0XHsHx7KRxIphTI0j7LxPrfl3BfE68OGWykhIffRFSP4Lxc8sIogxbCy1e6IiwY2B
+         EGeZ+3PVDUEHp9TJLoPTLw26OG03K7y33YNIwdchBIOKWVW3AYw5ivCHxm1YQcLYhI
+         83Ii/eYbfmg0eaITEl7bcBzOYN3PNiZuz7Zn8RhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 055/110] can: flexcan: use can_rx_offload_queue_sorted() for flexcan_irq_bus_*()
-Date:   Thu, 29 Nov 2018 15:12:26 +0100
-Message-Id: <20181129135923.487469738@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 064/110] fanotify: fix handling of events on child sub-directory
+Date:   Thu, 29 Nov 2018 15:12:35 +0100
+Message-Id: <20181129135923.838481094@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,70 +62,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit d788905f68fd4714c82936f6f7f1d3644d7ae7ef upstream.
+commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
 
-Currently, in case of bus error, driver will generate error message and put
-in the tail of the message queue. To avoid confusions, this change should
-place the bus related messages in proper order.
+When an event is reported on a sub-directory and the parent inode has
+a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
+fsnotify() even if the event type is not in the parent mark mask
+(e.g. FS_OPEN).
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Further more, if that event happened on a mount or a filesystem with
+a mount/sb mark that does have that event type in their mask, the "on
+child" event will be reported on the mount/sb mark.  That is not
+desired, because user will get a duplicate event for the same action.
+
+Note that the event reported on the victim inode is never merged with
+the event reported on the parent inode, because of the check in
+should_merge(): old_fsn->inode == new_fsn->inode.
+
+Fix this by looking for a match of an actual event type (i.e. not just
+FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
+event to group if event type is only found on mount/sb marks.
+
+[backport hint: The bug seems to have always been in fanotify, but this
+                patch will only apply cleanly to v4.19.y]
+
+Cc: <stable@vger.kernel.org> # v4.19
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+[amir: backport to v4.19]
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/flexcan.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify.c |   10 +++++-----
+ fs/notify/fsnotify.c          |    8 ++++++--
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -563,9 +563,13 @@ static netdev_tx_t flexcan_start_xmit(st
- static void flexcan_irq_bus_err(struct net_device *dev, u32 reg_esr)
- {
- 	struct flexcan_priv *priv = netdev_priv(dev);
-+	struct flexcan_regs __iomem *regs = priv->regs;
- 	struct sk_buff *skb;
- 	struct can_frame *cf;
- 	bool rx_errors = false, tx_errors = false;
-+	u32 timestamp;
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -115,12 +115,12 @@ static bool fanotify_should_send_event(s
+ 			continue;
+ 		mark = iter_info->marks[type];
+ 		/*
+-		 * if the event is for a child and this inode doesn't care about
+-		 * events on the child, don't send it!
++		 * If the event is for a child and this mark doesn't care about
++		 * events on a child, don't send it!
+ 		 */
+-		if (type == FSNOTIFY_OBJ_TYPE_INODE &&
+-		    (event_mask & FS_EVENT_ON_CHILD) &&
+-		    !(mark->mask & FS_EVENT_ON_CHILD))
++		if (event_mask & FS_EVENT_ON_CHILD &&
++		    (type != FSNOTIFY_OBJ_TYPE_INODE ||
++		     !(mark->mask & FS_EVENT_ON_CHILD)))
+ 			continue;
+ 
+ 		marks_mask |= mark->mask;
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -161,9 +161,9 @@ int __fsnotify_parent(const struct path
+ 	parent = dget_parent(dentry);
+ 	p_inode = parent->d_inode;
+ 
+-	if (unlikely(!fsnotify_inode_watches_children(p_inode)))
++	if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
+ 		__fsnotify_update_child_dentry_flags(p_inode);
+-	else if (p_inode->i_fsnotify_mask & mask) {
++	} else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
+ 		struct name_snapshot name;
+ 
+ 		/* we are notifying a parent so come up with the new mask which
+@@ -331,6 +331,10 @@ int fsnotify(struct inode *to_tell, __u3
+ 	else
+ 		mnt = NULL;
+ 
++	/* An event "on child" is not intended for a mount mark */
++	if (mask & FS_EVENT_ON_CHILD)
++		mnt = NULL;
 +
-+	timestamp = priv->read(&regs->timer) << 16;
- 
- 	skb = alloc_can_err_skb(dev, &cf);
- 	if (unlikely(!skb))
-@@ -612,17 +616,21 @@ static void flexcan_irq_bus_err(struct n
- 	if (tx_errors)
- 		dev->stats.tx_errors++;
- 
--	can_rx_offload_queue_tail(&priv->offload, skb);
-+	can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
- }
- 
- static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
- {
- 	struct flexcan_priv *priv = netdev_priv(dev);
-+	struct flexcan_regs __iomem *regs = priv->regs;
- 	struct sk_buff *skb;
- 	struct can_frame *cf;
- 	enum can_state new_state, rx_state, tx_state;
- 	int flt;
- 	struct can_berr_counter bec;
-+	u32 timestamp;
-+
-+	timestamp = priv->read(&regs->timer) << 16;
- 
- 	flt = reg_esr & FLEXCAN_ESR_FLT_CONF_MASK;
- 	if (likely(flt == FLEXCAN_ESR_FLT_CONF_ACTIVE)) {
-@@ -652,7 +660,7 @@ static void flexcan_irq_state(struct net
- 	if (unlikely(new_state == CAN_STATE_BUS_OFF))
- 		can_bus_off(dev);
- 
--	can_rx_offload_queue_tail(&priv->offload, skb);
-+	can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
- }
- 
- static inline struct flexcan_priv *rx_offload_to_priv(struct can_rx_offload *offload)
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
+ 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
 
 
