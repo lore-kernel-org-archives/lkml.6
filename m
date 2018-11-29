@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F02C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F38C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D3B02145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C7B32146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpSuzS0A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D3B02145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="POchH8CM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7B32146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389092AbeK3Bgu (ORCPT
+        id S2389106AbeK3Bgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:36:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:36:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389059AbeK3Bgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:36:47 -0500
+        id S2389059AbeK3Bgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:36:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B58A32145D;
-        Thu, 29 Nov 2018 14:31:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79384213A2;
+        Thu, 29 Nov 2018 14:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501874;
-        bh=AZFx8sEXbdXqld8v8Q/Ni1z/uzfifQfN8bcoC7rE25c=;
+        s=default; t=1543501878;
+        bh=rmqAyoeu50LNsP64IPKXqJ5i+MI3T9Cjpnh0DrdzJLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IpSuzS0AgZtEfjFo+CpZCf7uOyypNaql9maFaC+D55rRGY+uWd7CIf0GbJgmi0Ilx
-         wfAxXUDZc2uDlGheQ6eHBXXWibEkmEA7XSCwkLZ9zHulzFYQostEn2NHJhGeg1RCHj
-         LYJH4eu1gANh6JV6PGHIZ0mL29rfieLRotJDAPns=
+        b=POchH8CMe6kF2IqX24WXnrgKrT1wVfW/AzUgmv93rfFVviTg9jRp9Cul7w/A9dKsD
+         01jRZGViryOvgGOIFVd2WmsJodATubR0VzROGTnQAwCNkAKskZQRgGvut2jRSpYZ+0
+         nKKj5T/S9un84tnm0fs5zJtxZxrrqLTTk9sbnkKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xulin Sun <xulin.sun@windriver.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/110] rtc: pcf2127: fix a kmemleak caused in pcf2127_i2c_gather_write
-Date:   Thu, 29 Nov 2018 15:12:47 +0100
-Message-Id: <20181129135924.322300259@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 078/110] floppy: fix race condition in __floppy_read_block_0()
+Date:   Thu, 29 Nov 2018 15:12:49 +0100
+Message-Id: <20181129135924.402279911@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,53 +62,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9bde0afb7a906f1dabdba37162551565740b862d ]
+[ Upstream commit de7b75d82f70c5469675b99ad632983c50b6f7e7 ]
 
-pcf2127_i2c_gather_write() allocates memory as local variable
-for i2c_master_send(), after finishing the master transfer,
-the allocated memory should be freed. The kmemleak is reported:
+LKP recently reported a hang at bootup in the floppy code:
 
-unreferenced object 0xffff80231e7dba80 (size 64):
-  comm "hwclock", pid 27762, jiffies 4296880075 (age 356.944s)
-  hex dump (first 32 bytes):
-    03 00 12 03 19 02 11 13 00 80 98 18 00 00 ff ff ................
-    00 50 00 00 00 00 00 00 02 00 00 00 00 00 00 00 .P..............
-  backtrace:
-    [<ffff000008221398>] create_object+0xf8/0x278
-    [<ffff000008a96264>] kmemleak_alloc+0x74/0xa0
-    [<ffff00000821070c>] __kmalloc+0x1ac/0x348
-    [<ffff0000087ed1dc>] pcf2127_i2c_gather_write+0x54/0xf8
-    [<ffff0000085fd9d4>] _regmap_raw_write+0x464/0x850
-    [<ffff0000085fe3f4>] regmap_bulk_write+0x1a4/0x348
-    [<ffff0000087ed32c>] pcf2127_rtc_set_time+0xac/0xe8
-    [<ffff0000087eaad8>] rtc_set_time+0x80/0x138
-    [<ffff0000087ebfb0>] rtc_dev_ioctl+0x398/0x610
-    [<ffff00000823f2c0>] do_vfs_ioctl+0xb0/0x848
-    [<ffff00000823fae4>] SyS_ioctl+0x8c/0xa8
-    [<ffff000008083ac0>] el0_svc_naked+0x34/0x38
-    [<ffffffffffffffff>] 0xffffffffffffffff
+[  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
+[  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
+[  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  245.682181] mount           D 6372   580      1 0x00000004
+[  245.683023] Call Trace:
+[  245.683425]  __schedule+0x2df/0x570
+[  245.683975]  schedule+0x2d/0x80
+[  245.684476]  schedule_timeout+0x19d/0x330
+[  245.685090]  ? wait_for_common+0xa5/0x170
+[  245.685735]  wait_for_common+0xac/0x170
+[  245.686339]  ? do_sched_yield+0x90/0x90
+[  245.686935]  wait_for_completion+0x12/0x20
+[  245.687571]  __floppy_read_block_0+0xfb/0x150
+[  245.688244]  ? floppy_resume+0x40/0x40
+[  245.688844]  floppy_revalidate+0x20f/0x240
+[  245.689486]  check_disk_change+0x43/0x60
+[  245.690087]  floppy_open+0x1ea/0x360
+[  245.690653]  __blkdev_get+0xb4/0x4d0
+[  245.691212]  ? blkdev_get+0x1db/0x370
+[  245.691777]  blkdev_get+0x1f3/0x370
+[  245.692351]  ? path_put+0x15/0x20
+[  245.692871]  ? lookup_bdev+0x4b/0x90
+[  245.693539]  blkdev_get_by_path+0x3d/0x80
+[  245.694165]  mount_bdev+0x2a/0x190
+[  245.694695]  squashfs_mount+0x10/0x20
+[  245.695271]  ? squashfs_alloc_inode+0x30/0x30
+[  245.695960]  mount_fs+0xf/0x90
+[  245.696451]  vfs_kern_mount+0x43/0x130
+[  245.697036]  do_mount+0x187/0xc40
+[  245.697563]  ? memdup_user+0x28/0x50
+[  245.698124]  ksys_mount+0x60/0xc0
+[  245.698639]  sys_mount+0x19/0x20
+[  245.699167]  do_int80_syscall_32+0x61/0x130
+[  245.699813]  entry_INT80_32+0xc7/0xc7
 
-Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+showing that we never complete that read request. The reason is that
+the completion setup is racy - it initializes the completion event
+AFTER submitting the IO, which means that the IO could complete
+before/during the init. If it does, we are passing garbage to
+complete() and we may sleep forever waiting for the event to
+occur.
+
+Fixes: 7b7b68bba5ef ("floppy: bail out in open() if drive is not responding to block0 read")
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-pcf2127.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/block/floppy.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-index 9f99a0966550..7cb786d76e3c 100644
---- a/drivers/rtc/rtc-pcf2127.c
-+++ b/drivers/rtc/rtc-pcf2127.c
-@@ -303,6 +303,9 @@ static int pcf2127_i2c_gather_write(void *context,
- 	memcpy(buf + 1, val, val_size);
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index f2b6f4da1034..fdabd0b74492 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -4151,10 +4151,11 @@ static int __floppy_read_block_0(struct block_device *bdev, int drive)
+ 	bio.bi_end_io = floppy_rb0_cb;
+ 	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
  
- 	ret = i2c_master_send(client, buf, val_size + 1);
++	init_completion(&cbdata.complete);
 +
-+	kfree(buf);
-+
- 	if (ret != val_size + 1)
- 		return ret < 0 ? ret : -EIO;
+ 	submit_bio(&bio);
+ 	process_fd_request();
  
+-	init_completion(&cbdata.complete);
+ 	wait_for_completion(&cbdata.complete);
+ 
+ 	__free_page(page);
 -- 
 2.17.1
 
