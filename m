@@ -2,49 +2,51 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6904FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E86C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3294E213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6D74213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0XHsHx7K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3294E213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4VnAA4Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D74213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388878AbeK3BgQ (ORCPT
+        id S2388891AbeK3BgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:36:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:36:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388288AbeK3BgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:36:15 -0500
+        id S2388288AbeK3BgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:36:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 781942146D;
-        Thu, 29 Nov 2018 14:30:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDBF0213A2;
+        Thu, 29 Nov 2018 14:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501841;
-        bh=NmwN7OLb5hPJCztU4RpgnHKGI1wXmt9Iyh8GHXhRPBg=;
+        s=default; t=1543501844;
+        bh=WGOdbdODmIqUefV1fob7eKqZrMot0i4SRBn4v41BZ6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0XHsHx7KRxIphTI0j7LxPrfl3BfE68OGWykhIffRFSP4Lxc8sIogxbCy1e6IiwY2B
-         EGeZ+3PVDUEHp9TJLoPTLw26OG03K7y33YNIwdchBIOKWVW3AYw5ivCHxm1YQcLYhI
-         83Ii/eYbfmg0eaITEl7bcBzOYN3PNiZuz7Zn8RhM=
+        b=r4VnAA4YRPnIr5FC4N3xjzvIIBbXFEakDypC3h0pEwTVo9xG02n36A9QGSdwy/fgc
+         7u+Cuw+UY9UTNrRiUcZn7EfJbyvC0Xo/dhA5x+nx7GuK8+LSkgOt1+pFturrnwkt6S
+         V7P16lbzmVSGQtpF59EVCKJXFEI6mhveR78bDWPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.19 064/110] fanotify: fix handling of events on child sub-directory
-Date:   Thu, 29 Nov 2018 15:12:35 +0100
-Message-Id: <20181129135923.838481094@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 065/110] pinctrl: meson: fix pinconf bias disable
+Date:   Thu, 29 Nov 2018 15:12:36 +0100
+Message-Id: <20181129135923.881035539@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,87 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+[ Upstream commit e39f9dd8206ad66992ac0e6218ef1ba746f2cce9 ]
 
-commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
+If a bias is enabled on a pin of an Amlogic SoC, calling .pin_config_set()
+with PIN_CONFIG_BIAS_DISABLE will not disable the bias. Instead it will
+force a pull-down bias on the pin.
 
-When an event is reported on a sub-directory and the parent inode has
-a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
-fsnotify() even if the event type is not in the parent mark mask
-(e.g. FS_OPEN).
+Instead of the pull type register bank, the driver should access the pull
+enable register bank.
 
-Further more, if that event happened on a mount or a filesystem with
-a mount/sb mark that does have that event type in their mask, the "on
-child" event will be reported on the mount/sb mark.  That is not
-desired, because user will get a duplicate event for the same action.
-
-Note that the event reported on the victim inode is never merged with
-the event reported on the parent inode, because of the check in
-should_merge(): old_fsn->inode == new_fsn->inode.
-
-Fix this by looking for a match of an actual event type (i.e. not just
-FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
-event to group if event type is only found on mount/sb marks.
-
-[backport hint: The bug seems to have always been in fanotify, but this
-                patch will only apply cleanly to v4.19.y]
-
-Cc: <stable@vger.kernel.org> # v4.19
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-[amir: backport to v4.19]
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/notify/fanotify/fanotify.c |   10 +++++-----
- fs/notify/fsnotify.c          |    8 ++++++--
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -115,12 +115,12 @@ static bool fanotify_should_send_event(s
- 			continue;
- 		mark = iter_info->marks[type];
- 		/*
--		 * if the event is for a child and this inode doesn't care about
--		 * events on the child, don't send it!
-+		 * If the event is for a child and this mark doesn't care about
-+		 * events on a child, don't send it!
- 		 */
--		if (type == FSNOTIFY_OBJ_TYPE_INODE &&
--		    (event_mask & FS_EVENT_ON_CHILD) &&
--		    !(mark->mask & FS_EVENT_ON_CHILD))
-+		if (event_mask & FS_EVENT_ON_CHILD &&
-+		    (type != FSNOTIFY_OBJ_TYPE_INODE ||
-+		     !(mark->mask & FS_EVENT_ON_CHILD)))
- 			continue;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 29a458da78db..4f3ab18636a3 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -192,7 +192,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+ 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
  
- 		marks_mask |= mark->mask;
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -161,9 +161,9 @@ int __fsnotify_parent(const struct path
- 	parent = dget_parent(dentry);
- 	p_inode = parent->d_inode;
- 
--	if (unlikely(!fsnotify_inode_watches_children(p_inode)))
-+	if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
- 		__fsnotify_update_child_dentry_flags(p_inode);
--	else if (p_inode->i_fsnotify_mask & mask) {
-+	} else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
- 		struct name_snapshot name;
- 
- 		/* we are notifying a parent so come up with the new mask which
-@@ -331,6 +331,10 @@ int fsnotify(struct inode *to_tell, __u3
- 	else
- 		mnt = NULL;
- 
-+	/* An event "on child" is not intended for a mount mark */
-+	if (mask & FS_EVENT_ON_CHILD)
-+		mnt = NULL;
-+
- 	/*
- 	 * Optimization: srcu_read_lock() has a memory barrier which can
- 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
+ 			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+-			ret = regmap_update_bits(pc->reg_pull, reg,
++			ret = regmap_update_bits(pc->reg_pullen, reg,
+ 						 BIT(bit), 0);
+ 			if (ret)
+ 				return ret;
+-- 
+2.17.1
+
 
 
