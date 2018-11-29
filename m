@@ -7,88 +7,97 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E06BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B5FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 638A620868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC2212086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLbfcmis"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638A620868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmwfTLGi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2212086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeK2RAa (ORCPT
+        id S1728083AbeK2RAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:00:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33784 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:00:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbeK2RAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:00:30 -0500
+        id S1727024AbeK2RAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:00:40 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC4220834;
-        Thu, 29 Nov 2018 05:56:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE2C020834;
+        Thu, 29 Nov 2018 05:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543470979;
-        bh=smf5XjAgkIYsbzkbYrgtmHf7aE4LoKlNroMYrwV6kkQ=;
+        s=default; t=1543470989;
+        bh=jY7+2yB08jE8HxtxUtg+NxWiQ/iXK6M0A3+UFF+CLmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jLbfcmisAzOX6fRyy92FFqwJp/I8GB4DV0Sa9HL096+19zwcolP6FGgp76yKQjGpd
-         ybJVFG0N4v/1CdH0pk5SbMsdZ1gJduVXBTGxopvtZ8bO/97VwRJZK8ngarbjJhG3EF
-         pAmAlNBxuoOMyU+pgOQ8NXXghpgNTvnvq49Lxrms=
+        b=AmwfTLGiuffGpk5emj5n5zyvS/U9odvo2eBmTpuumOpWxJbtDkiG4KJdnxhqQep9U
+         7d5W9JlrsoGnrH3eZfBw2dZ3EG4dS4xL6cIMQP74S8ghBigQhp7OHFG5AVypQKhDty
+         QIKra76IUDQfEV3PqY4b1ndKnylnfg7hI4FuY3jg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
+Cc:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 05/68] iommu/vt-d: Fix NULL pointer dereference in prq_event_thread()
-Date:   Thu, 29 Nov 2018 00:54:56 -0500
-Message-Id: <20181129055559.159228-5-sashal@kernel.org>
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 06/68] brcmutil: really fix decoding channel info for 160 MHz bandwidth
+Date:   Thu, 29 Nov 2018 00:54:57 -0500
+Message-Id: <20181129055559.159228-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-[ Upstream commit 19ed3e2dd8549c1a34914e8dad01b64e7837645a ]
+[ Upstream commit 3401d42c7ea2d064d15c66698ff8eb96553179ce ]
 
-When handling page request without pasid event, go to "no_pasid"
-branch instead of "bad_req". Otherwise, a NULL pointer deference
-will happen there.
+Previous commit /adding/ support for 160 MHz chanspecs was incomplete.
+It didn't set bandwidth info and didn't extract control channel info. As
+the result it was also using uninitialized "sb" var.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Fixes: a222a7f0bb6c9 'iommu/vt-d: Implement page request handling'
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+This change has been tested for two chanspecs found to be reported by
+some devices/firmwares:
+1) 60/160 (0xee32)
+   Before: chnum:50 control_ch_num:36
+    After: chnum:50 control_ch_num:60
+2) 120/160 (0xed72)
+   Before: chnum:114 control_ch_num:100
+    After: chnum:114 control_ch_num:120
+
+Fixes: 330994e8e8ec ("brcmfmac: fix for proper support of 160MHz bandwidth")
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 4a03e5090952..188f4eaed6e5 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -596,7 +596,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
- 			       iommu->name, ((unsigned long long *)req)[0],
- 			       ((unsigned long long *)req)[1]);
--			goto bad_req;
-+			goto no_pasid;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+index e7584b842dce..eb5db94f5745 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
+@@ -193,6 +193,9 @@ static void brcmu_d11ac_decchspec(struct brcmu_chan *ch)
  		}
- 
- 		if (!svm || svm->pasid != req->pasid) {
+ 		break;
+ 	case BRCMU_CHSPEC_D11AC_BW_160:
++		ch->bw = BRCMU_CHAN_BW_160;
++		ch->sb = brcmu_maskget16(ch->chspec, BRCMU_CHSPEC_D11AC_SB_MASK,
++					 BRCMU_CHSPEC_D11AC_SB_SHIFT);
+ 		switch (ch->sb) {
+ 		case BRCMU_CHAN_SB_LLL:
+ 			ch->control_ch_num -= CH_70MHZ_APART;
 -- 
 2.17.1
 
