@@ -2,104 +2,145 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECEAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A96C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE1920868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:48:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+o1KrXd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE1920868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D020420868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:49:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D020420868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbeK3Fyt (ORCPT
+        id S1726654AbeK3Fzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:54:49 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:33803 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeK3Fyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:54:49 -0500
-Received: by mail-it1-f194.google.com with SMTP id x124so8118716itd.1;
-        Thu, 29 Nov 2018 10:48:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uvjZP6sODa1JrTBOtvu8z7J0VX8KAt3vb7MIKHMy7O0=;
-        b=F+o1KrXdybS/F2N20oAo/hhNYaqsKzEgnnhTKChjDYwWY3IikGFv9CBQcLrkbZleRi
-         Q+LDvPfKkThLtaHa+UqfkQ6iyDiG9Wr5R80/p2kjWDcafIb0+zq1W+Kq4rpT3lvkISNQ
-         1/r1TDOW/h6zcUZXpmovMWZC4SZ1t16c7VVqFlbVSF9DIowRSyFWw6h91MCs19XiFigr
-         hdhuHYtQzRqlK0kdB35Ut2KT3NyM1ubztm3KgZbz7QJKDs8KoIXhEGxkzX1ItQnOrLpt
-         3DJaeyArEofrTGOSeYu/Lg75Ytn9lRSa7qep0fOmiJIr5U5Cooqon3aLf56jmLkJH+Rw
-         kyiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uvjZP6sODa1JrTBOtvu8z7J0VX8KAt3vb7MIKHMy7O0=;
-        b=uR6tHQ7PS/LGERbDG/PTp0clWZ1SExie440U/QKSUAJSmdkgIenQ15LKie4M9/DoZ1
-         o9UpkvUWPa980dbX7ymJ2WFJIjVBuLNp0i2jXbwbBCgoGaE4HDiIPDd28TC3E27jqEJJ
-         mgGxz2q5/R7DyaOlGCRj411PERe16JI4wtCidFKJ1Wjq3TnIC6TkdPUSjG9uaS+gq/7o
-         aLkbafxRX7i9gQEqp6QFyJ/6fboEtFk8Ysl6LkqbLEWWpOMLM5VLuZFCYKrW8un16bTj
-         SDRqvOniqStbwnxS+y6ttwcNwtjGAjdw05aMEusq2RKRLoFUFAZgfMAEPyC8rN6ek+yh
-         Hqyg==
-X-Gm-Message-State: AA+aEWYCwbB/zJefMVywTkTimaT5BykhfrKbLedZY/vvWiCS8v+O3rGe
-        6MxAFbNb9qhNtZIj4r7t09kS9ybYiBCvDSdio4w=
-X-Google-Smtp-Source: AFSGD/XiaXWvVgQe0zNEAfWkz6nJvc9ZbSfto/1QrMzIcmwSuOYVEj/H3JTmURIilKUUrpNONFmhH0xMwzSA+p/SFsc=
-X-Received: by 2002:a24:d84:: with SMTP id 126-v6mr2662618itx.163.1543517307231;
- Thu, 29 Nov 2018 10:48:27 -0800 (PST)
+        Fri, 30 Nov 2018 00:55:50 -0500
+Received: from mga11.intel.com ([192.55.52.93]:49907 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbeK3Fzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:55:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 10:49:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,295,1539673200"; 
+   d="scan'208";a="105100910"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by orsmga003.jf.intel.com with ESMTP; 29 Nov 2018 10:49:27 -0800
+Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 29 Nov 2018 10:49:27 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
+ ORSMSX157.amr.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0415.000;
+ Thu, 29 Nov 2018 10:49:27 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "mhiramat@kernel.org" <mhiramat@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: =?utf-8?B?UmU6IFtQQVRDSCAwLzJdIERvbuKAmXQgbGVhdmUgZXhlY3V0YWJsZSBUTEIg?=
+ =?utf-8?Q?entries_to_freed_pages?=
+Thread-Topic: =?utf-8?B?W1BBVENIIDAvMl0gRG9u4oCZdCBsZWF2ZSBleGVjdXRhYmxlIFRMQiBlbnRy?=
+ =?utf-8?Q?ies_to_freed_pages?=
+Thread-Index: AQHUhrIVkhHK3mFZqUKwcYacb8ZEzaVnUhsAgABPsIA=
+Date:   Thu, 29 Nov 2018 18:49:26 +0000
+Message-ID: <4cddc2ba36ba3b6d528556207b8d4592209797ea.camel@intel.com>
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+         <20181129230616.f017059a093841dbaa4b82e6@kernel.org>
+In-Reply-To: <20181129230616.f017059a093841dbaa4b82e6@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.128]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A76C5CD0E9CE5E488A3D2C4CFA24D87C@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
- <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
- <CAF6AEGu65Vvzpy6K7eF+Kk4YdYBPEKFX5ct8GxG0pw-KNwM5eA@mail.gmail.com> <20181129155418.GB26537@lst.de>
-In-Reply-To: <20181129155418.GB26537@lst.de>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 29 Nov 2018 13:48:15 -0500
-Message-ID: <CAF6AEGufdp5jRtUZ_+VRQg3ZXH36hNHvbWZQeJDArp8N5SZ3Lg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-To:     hch@lst.de
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:54 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Thu, Nov 29, 2018 at 09:42:50AM -0500, Rob Clark wrote:
-> > Maybe the thing we need to do is just implement a blacklist of
-> > compatible strings for devices which should skip the automatic
-> > iommu/dma hookup.  Maybe a bit ugly, but it would also solve a problem
-> > preventing us from enabling per-process pagetables for a5xx (where we
-> > need to control the domain/context-bank that is allocated by the dma
-> > api).
->
-> You can detach from the dma map attachment using arm_iommu_detach_device,
-> which a few drm drivers do, but I don't think this is the problem.
-
-I think even with detach, we wouldn't end up with the context-bank
-that the gpu firmware was hard-coded to expect, and so it would
-overwrite the incorrect page table address register.  (I could be
-mis-remembering that, Jordan spent more time looking at that.  But it
-was something along those lines.)
-
-BR,
--R
+T24gVGh1LCAyMDE4LTExLTI5IGF0IDIzOjA2ICswOTAwLCBNYXNhbWkgSGlyYW1hdHN1IHdyb3Rl
+Og0KPiBPbiBUdWUsIDI3IE5vdiAyMDE4IDE2OjA3OjUyIC0wODAwDQo+IFJpY2sgRWRnZWNvbWJl
+IDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4gd3JvdGU6DQo+IA0KPiA+IFNvbWV0aW1lcyB3
+aGVuIG1lbW9yeSBpcyBmcmVlZCB2aWEgdGhlIG1vZHVsZSBzdWJzeXN0ZW0sIGFuIGV4ZWN1dGFi
+bGUNCj4gPiBwZXJtaXNzaW9uZWQgVExCIGVudHJ5IGNhbiByZW1haW4gdG8gYSBmcmVlZCBwYWdl
+LiBJZiB0aGUgcGFnZSBpcyByZS11c2VkIHRvDQo+ID4gYmFjayBhbiBhZGRyZXNzIHRoYXQgd2ls
+bCByZWNlaXZlIGRhdGEgZnJvbSB1c2Vyc3BhY2UsIGl0IGNhbiByZXN1bHQgaW4gdXNlcg0KPiA+
+IGRhdGEgYmVpbmcgbWFwcGVkIGFzIGV4ZWN1dGFibGUgaW4gdGhlIGtlcm5lbC4gVGhlIHJvb3Qg
+b2YgdGhpcyBiZWhhdmlvciBpcw0KPiA+IHZmcmVlIGxhemlseSBmbHVzaGluZyB0aGUgVExCLCBi
+dXQgbm90IGxhemlseSBmcmVlaW5nIHRoZSB1bmRlcmx5aW5nIHBhZ2VzLiANCj4gDQo+IEdvb2Qg
+Y2F0Y2ghDQo+IA0KPiA+IA0KPiA+IFRoZXJlIGFyZSBzb3J0IG9mIHRocmVlIGNhdGVnb3JpZXMg
+b2YgdGhpcyB3aGljaCBzaG93IHVwIGFjcm9zcyBtb2R1bGVzLA0KPiA+IGJwZiwNCj4gPiBrcHJv
+YmVzIGFuZCBmdHJhY2U6DQo+IA0KPiBGb3IgeDg2LTY0IGtwcm9iZSwgaXQgc2V0cyB0aGUgcGFn
+ZSBOWCBhbmQgYWZ0ZXIgdGhhdCBSVywgYW5kIHRoZW4gcmVsZWFzZQ0KPiB2aWEgbW9kdWxlX21l
+bWZyZWUuIFNvIEknbSBub3Qgc3VyZSBpdCByZWFsbHkgaGFwcGVucyBvbiBrcHJvYmVzLiAoT2Yg
+Y291cnNlDQo+IHRoZSBkZWZhdWx0IG1lbW9yeSBhbGxvY2F0b3IgaXMgc2ltcGxlciBzbyBpdCBt
+YXkgaGFwcGVuIG9uIG90aGVyIGFyY2hzKSBCdXQNCj4gaW50ZXJlc3RpbmcgZml4ZXMuDQpZZXMs
+IEkgdGhpbmsgeW91IGFyZSByaWdodCwgaXQgc2hvdWxkIG5vdCBsZWF2ZSBhbiBleGVjdXRhYmxl
+IFRMQiBlbnRyeSBpbiB0aGlzDQpjYXNlLiBGdHJhY2UgYWN0dWFsbHkgZG9lcyB0aGlzIG9uIHg4
+NiBhcyB3ZWxsLg0KDQpJcyB0aGVyZSBzb21lIG90aGVyIHJlYXNvbiBmb3IgY2FsbGluZyBzZXRf
+bWVtb3J5X254IHRoYXQgc2hvdWxkIGFwcGx5IGVsc2V3aGVyZQ0KZm9yIG1vZHVsZSB1c2Vycz8g
+T3IgY291bGQgaXQgYmUgcmVtb3ZlZCBpbiB0aGUgY2FzZSBvZiB0aGlzIHBhdGNoIHRvIGNlbnRy
+YWxpemUNCnRoZSBiZWhhdmlvcj8NCg0KVGhhbmtzLA0KDQpSaWNrDQoNCj4gVGhhbmsgeW91LA0K
+PiANCj4gDQo+ID4gDQo+ID4gMS4gV2hlbiBleGVjdXRhYmxlIG1lbW9yeSBpcyB0b3VjaGVkIGFu
+ZCB0aGVuIGltbWVkaWF0bHkgZnJlZWQNCj4gPiANCj4gPiAgICBUaGlzIHNob3dzIHVwIGluIGEg
+Y291cGxlIGVycm9yIGNvbmRpdGlvbnMgaW4gdGhlIG1vZHVsZSBsb2FkZXIgYW5kIEJQRg0KPiA+
+IEpJVA0KPiA+ICAgIGNvbXBpbGVyLg0KPiA+IA0KPiA+IDIuIFdoZW4gZXhlY3V0YWJsZSBtZW1v
+cnkgaXMgc2V0IHRvIFJXIHJpZ2h0IGJlZm9yZSBiZWluZyBmcmVlZA0KPiA+IA0KPiA+ICAgIElu
+IHRoaXMgY2FzZSAob24geDg2IGFuZCBwcm9iYWJseSBvdGhlcnMpIHRoZXJlIHdpbGwgYmUgYSBU
+TEIgZmx1c2ggd2hlbg0KPiA+IGl0cw0KPiA+ICAgIHNldCB0byBSVyBhbmQgc28gc2luY2UgdGhl
+IHBhZ2VzIGFyZSBub3QgdG91Y2hlZCBiZXR3ZWVuIHNldHRpbmcgdGhlDQo+ID4gICAgZmx1c2gg
+YW5kIHRoZSBmcmVlLCBpdCBzaG91bGQgbm90IGJlIGluIHRoZSBUTEIgaW4gbW9zdCBjYXNlcy4g
+U28gdGhpcw0KPiA+ICAgIGNhdGVnb3J5IGlzIG5vdCBhcyBiaWcgb2YgYSBjb25jZXJuLiBIb3dl
+dmVyLCB0ZWNoaW5pY2FsbHkgdGhlcmUgaXMgc3RpbGwNCj4gPiBhDQo+ID4gICAgcmFjZSB3aGVy
+ZSBhbiBhdHRhY2tlciBjb3VsZCB0cnkgdG8ga2VlcCBpdCBhbGl2ZSBmb3IgYSBzaG9ydCB3aW5k
+b3cgd2l0aA0KPiA+IGENCj4gPiAgICB3ZWxsIHRpbWVkIG91dC1vZi1ib3VuZCByZWFkIG9yIHNw
+ZWN1bGF0aXZlIHJlYWQsIHNvIGlkZWFsbHkgdGhpcyBjb3VsZA0KPiA+IGJlDQo+ID4gICAgYmxv
+Y2tlZCBhcyB3ZWxsLg0KPiA+IA0KPiA+IDMuIFdoZW4gZXhlY3V0YWJsZSBtZW1vcnkgaXMgZnJl
+ZWQgaW4gYW4gaW50ZXJydXB0DQo+ID4gDQo+ID4gICAgQXQgbGVhc3Qgb25lIGV4YW1wbGUgb2Yg
+dGhpcyBpcyB0aGUgZnJlZWluZyBvZiBpbml0IHNlY3Rpb25zIGluIHRoZQ0KPiA+IG1vZHVsZQ0K
+PiA+ICAgIGxvYWRlci4gU2luY2Ugdm1hbGxvYyByZXVzZXMgdGhlIGFsbG9jYXRpb24gZm9yIHRo
+ZSB3b3JrIHF1ZXVlIGxpbmtlZA0KPiA+IGxpc3QNCj4gPiAgICBub2RlIGZvciB0aGUgZGVmZXJy
+ZWQgZnJlZXMsIHRoZSBtZW1vcnkgYWN0dWFsbHkgZ2V0cyB0b3VjaGVkIGFzIHBhcnQgb2YNCj4g
+PiB0aGUNCj4gPiAgICB2ZnJlZSBvcGVyYXRpb24gYW5kIHNvIHJldHVybnMgdG8gdGhlIFRMQiBl
+dmVuIGFmdGVyIHRoZSBmbHVzaCBmcm9tDQo+ID4gcmVzZXR0aW5nDQo+ID4gICAgdGhlIHBlcm1p
+c3Npb25zLg0KPiA+IA0KPiA+IEkgaGF2ZSBvbmx5IGFjdHVhbGx5IHRlc3RlZCBjYXRlZ29yeSAx
+LCBhbmQgaWRlbnRpZmllZCAyIGFuZCAzIGp1c3QgZnJvbQ0KPiA+IHJlYWRpbmcNCj4gPiB0aGUg
+Y29kZS4NCj4gPiANCj4gPiBUbyBjYXRjaCBhbGwgb2YgdGhlc2UsIG1vZHVsZV9hbGxvYyBmb3Ig
+eDg2IGlzIGNoYW5nZWQgdG8gdXNlIGEgbmV3IGZsYWcNCj4gPiB0aGF0DQo+ID4gaW5zdHJ1Y3Rz
+IHRoZSB1bm1hcCBvcGVyYXRpb24gdG8gZmx1c2ggdGhlIFRMQiBiZWZvcmUgZnJlZWluZyB0aGUg
+cGFnZXMuDQo+ID4gDQo+ID4gSWYgdGhpcyBzb2x1dGlvbiBzZWVtcyBnb29kIEkgY2FuIHBsdWcg
+dGhlIGZsYWcgaW4gZm9yIG90aGVyIGFyY2hpdGVjdHVyZXMNCj4gPiB0aGF0DQo+ID4gZGVmaW5l
+IFBBR0VfS0VSTkVMX0VYRUMuDQo+ID4gDQo+ID4gDQo+ID4gUmljayBFZGdlY29tYmUgKDIpOg0K
+PiA+ICAgdm1hbGxvYzogTmV3IGZsYWcgZm9yIGZsdXNoIGJlZm9yZSByZWxlYXNpbmcgcGFnZXMN
+Cj4gPiAgIHg4Ni9tb2R1bGVzOiBNYWtlIHg4NiBhbGxvY3MgdG8gZmx1c2ggd2hlbiBmcmVlDQo+
+ID4gDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9tb2R1bGUuYyB8ICA0ICsrLS0NCj4gPiAgaW5jbHVk
+ZS9saW51eC92bWFsbG9jLmggIHwgIDEgKw0KPiA+ICBtbS92bWFsbG9jLmMgICAgICAgICAgICAg
+fCAxMyArKysrKysrKysrKy0tDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygr
+KSwgNCBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiAtLSANCj4gPiAyLjE3LjENCj4gPiANCj4gDQo+
+IA0K
