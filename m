@@ -2,113 +2,124 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4744C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF89C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB3420673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:39:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB3420673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CDF0C20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:39:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF0C20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeK2Tnl (ORCPT
+        id S1727514AbeK2ToE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:43:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35614 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726780AbeK2Tnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:43:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25AFBAD33;
-        Thu, 29 Nov 2018 08:39:04 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 09:39:03 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: remove pte_lock_deinit()
-Message-ID: <20181129083903.GP6923@dhcp22.suse.cz>
-References: <20181128235525.58780-1-yuzhao@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128235525.58780-1-yuzhao@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Nov 2018 14:44:04 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34349 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726766AbeK2ToE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:44:04 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3801C20CFC; Thu, 29 Nov 2018 09:39:26 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E380220CFA;
+        Thu, 29 Nov 2018 09:39:15 +0100 (CET)
+Message-ID: <41b39e603db7eb068dd9f4542d37c1f5f07ba1c0.camel@bootlin.com>
+Subject: Re: [PATCH] media: v4l: Fix MPEG-2 slice Intra DC Precision
+ validation
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Jonas Karlman <jonas@kwiboo.se>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Date:   Thu, 29 Nov 2018 09:39:15 +0100
+In-Reply-To: <AM0PR03MB46764B5CB90B17825C56DFFFACD60@AM0PR03MB4676.eurprd03.prod.outlook.com>
+References: <AM0PR03MB46764B5CB90B17825C56DFFFACD60@AM0PR03MB4676.eurprd03.prod.outlook.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-SweGNEz9sQH5vT+vZWq+"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 28-11-18 16:55:25, Yu Zhao wrote:
-> Pagetable page doesn't touch page->mapping or have any used field
-> that overlaps with it. No need to clear mapping in dtor. In fact,
-> doing so might mask problems that otherwise would be detected by
-> bad_page().
 
-yes the layour of the structure has changed since Hugh introduced the
-pte lock split
+--=-SweGNEz9sQH5vT+vZWq+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
+Hi,
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+On Sun, 2018-11-25 at 15:21 +0000, Jonas Karlman wrote:
+> intra_dc_precision is a 2-bit integer [1]
+> allow use of all valid options, 8 - 11 bits precision
+>=20
+> [1] ISO/IEC 13818-2 Table 6-13
+
+Thanks for this patch, this is definitely a mistake from my side here!
+
+> Fixes: c27bb30e7b6d ("media: v4l: Add definitions for MPEG-2 slice format=
+ and metadata")
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+
+Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Cheers,
+
+Paul
 
 > ---
->  include/linux/mm.h | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 5411de93a363..7c8f4fc9244e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1900,13 +1900,6 @@ static inline bool ptlock_init(struct page *page)
->  	return true;
->  }
->  
-> -/* Reset page->mapping so free_pages_check won't complain. */
-> -static inline void pte_lock_deinit(struct page *page)
-> -{
-> -	page->mapping = NULL;
-> -	ptlock_free(page);
-> -}
-> -
->  #else	/* !USE_SPLIT_PTE_PTLOCKS */
->  /*
->   * We use mm->page_table_lock to guard all pagetable pages of the mm.
-> @@ -1917,7 +1910,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
->  }
->  static inline void ptlock_cache_init(void) {}
->  static inline bool ptlock_init(struct page *page) { return true; }
-> -static inline void pte_lock_deinit(struct page *page) {}
-> +static inline void ptlock_free(struct page *page) {}
->  #endif /* USE_SPLIT_PTE_PTLOCKS */
->  
->  static inline void pgtable_init(void)
-> @@ -1937,7 +1930,7 @@ static inline bool pgtable_page_ctor(struct page *page)
->  
->  static inline void pgtable_page_dtor(struct page *page)
->  {
-> -	pte_lock_deinit(page);
-> +	ptlock_free(page);
->  	__ClearPageTable(page);
->  	dec_zone_page_state(page, NR_PAGETABLE);
->  }
-> -- 
-> 2.20.0.rc1.387.gf8505762e3-goog
-> 
+>=20
+>  drivers/media/v4l2-core/v4l2-ctrls.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-co=
+re/v4l2-ctrls.c
+> index 5f2b033a7a42..129a986fa7e1 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -1636,7 +1636,8 @@ static int std_validate(const struct v4l2_ctrl *ctr=
+l, u32 idx,
+>  		switch (p_mpeg2_slice_params->picture.intra_dc_precision) {
+>  		case 0: /* 8 bits */
+>  		case 1: /* 9 bits */
+> -		case 11: /* 11 bits */
+> +		case 2: /* 10 bits */
+> +		case 3: /* 11 bits */
+>  			break;
+>  		default:
+>  			return -EINVAL;
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
 
--- 
-Michal Hocko
-SUSE Labs
+--=-SweGNEz9sQH5vT+vZWq+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlv/pbMACgkQ3cLmz3+f
+v9HFqwf6AzYrrKCqzWqu/baN/TlCE+TCB06su234j89/QHoZENfQ59dEY3I79YuN
+IY0abi7RMz5QD1pR5Zouks+NRsvwTQMYiO2y15XSUCrAJaG9xl4ZcUB43kvtAIkK
+2HS6PgMAxmuT1NbIQ5VLtrAisbZIf2g4jQULUwMuf+a5DY0S4X7PFqHMLFCeSjBl
+VamoR9IzwURP+04qULVAOoKsu12dH6+fo2PS4FG4AK/rnh8/hhcgq9+XC9l7aNfN
+8Af9iUBTycB+jstbX5i8uMtMGHOGHlSm2VBQ620Ha6jKImhWwCzPeLMslU6mXV48
+EQTlGFc5AYg1CgMERzjo/QDibApEDQ==
+=Axt0
+-----END PGP SIGNATURE-----
+
+--=-SweGNEz9sQH5vT+vZWq+--
+
