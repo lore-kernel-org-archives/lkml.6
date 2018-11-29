@@ -2,106 +2,122 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5162AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30137C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CFB321019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:54:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5MmcUkM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CFB321019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F18132146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:54:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18132146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbeK3B7u (ORCPT
+        id S1732282AbeK3B7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 29 Nov 2018 20:59:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56374 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729179AbeK3B7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Nov 2018 20:59:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728695AbeK3B7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:59:49 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBDBD2081C;
-        Thu, 29 Nov 2018 14:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543503251;
-        bh=SOnfUg8Afozf0gJNbA3EygZAhxj/J434lkZ2jrg0fHs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p5MmcUkMfbSLhA3VLSkj/nOdyZfncf5vhJGihbPQzbXrSHas+PH3y6UEGfNKoByrW
-         3MRucbLkgnmBKL0C+QdSwKEPO01u6/9g5YarGZ3vCwIObChI/bjuypkwYp6FCajtpV
-         rjjhAdQ0A9oUQVTtCphpc/FiQBm/1q5r/Wszq+FM=
-Date:   Thu, 29 Nov 2018 23:54:07 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange
- additions
-Message-Id: <20181129235407.9788e718a4ae7830f9e5d225@kernel.org>
-In-Reply-To: <20181129225225.00ab1709c79f63c8e08b49c7@kernel.org>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-        <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
-        <1543267288.2529.25.camel@kernel.org>
-        <20181129225225.00ab1709c79f63c8e08b49c7@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 908FEAFB4;
+        Thu, 29 Nov 2018 14:54:11 +0000 (UTC)
+Subject: Re: [PATCH] mm: hide incomplete nr_indirectly_reclaimable in
+ /proc/zoneinfo
+To:     Greg KH <gregkh@linuxfoundation.org>, Roman Gushchin <guro@fb.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20181030174649.16778-1-guro@fb.com>
+ <20181129125228.GN3149@kroah.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <a4495506-2dcf-922a-1b77-e915214dd041@suse.cz>
+Date:   Thu, 29 Nov 2018 15:54:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181129125228.GN3149@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 22:52:25 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On 11/29/18 1:52 PM, Greg KH wrote:
+> On Tue, Oct 30, 2018 at 05:48:25PM +0000, Roman Gushchin wrote:
+>> BTW, in 4.19+ the counter has been renamed and exported by
+>> the commit b29940c1abd7 ("mm: rename and change semantics of
+>> nr_indirectly_reclaimable_bytes"), so there is no such a problem
+>> anymore.
+>>
+>> Cc: <stable@vger.kernel.org> # 4.14.x-4.18.x
+>> Fixes: 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable in /proc/vmstat")
 
+...
 
-> > For that system, I'm using Gnome terminal 3.24.2 and GNU bash, version
-> > 4.4.12(1)-release (x86_64-pc-linux-gnu) (Ubuntu 17.10).
-> > 
-> > If I change 'echo' to '/bin/echo' in e.g. prlog() it works fine, so it
-> > must be the inbuilt bash echo that's not doing the right thing.  I
-> > thought it might be the xpg_echo option, but 'shopt -s xpg_echo'
-> > doesn't have any effect.
-> > 
-> > I also tried on a Fedora 28 system (GNOME terminal 3.28.2, GNU bash,
-> > version 4.4.23(1)-release (x86_64-redhat-linux-gnu), and it worked
-> > fine.
-> > 
-> > Also, tried a Ubuntu 18.04.1 system (GNOME Terminal 3.28.1, GNU bash,
-> > version 4.4.19(1)-release (x86_64-pc-linux-gnu) and in that case the
-> > colors worked fine, but still got the '-e -n' and newlines in the
-> > output:
-> > 
-> > -e -n [28] (instance)  event trigger - test histogram modifiers
-> > -e 	[PASS]
-> > -e -n [29] (instance)  event trigger - test histogram trigger
-> > -e 	[PASS]
-> > 
-> > Again, substituting '/bin/echo' in prlog() fixed things in this case
-> > too.   I guess the builtin bash 'echo' can't be relied on..
+> I do not see this patch in Linus's tree, do you?
 > 
-> OK, then we should use /bin/echo for avoiding this issue.
+> If not, what am I supposed to do with this?
 
+Yeah it wasn't probably clear enough, but this is stable-only patch, as
+upstream avoided the (then-unknown) problem in 4.19 as part of a far
+more intrusive series. As I've said in my previous reply to this thread,
+I don't think we can backport that series to stable (e.g. it introduces
+a set of new kmalloc caches that will suddenly appear in /proc/slabinfo)
+so I think this is a case for exception from the stable rules.
 
-Ah, I found that usually ubuntu system use "dash" instead of
-"bash" for the alias of "sh", and its builtin echo command doesn't
-accept "-e". So if the first option is "-e", it treats all arguments
-are output string, including -e.
+Vlastimil
 
-Anyway, still using /bin/echo is the best solution.
+> confused,
+> 
+> greg k-h
+> 
 
-Thank you,
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
