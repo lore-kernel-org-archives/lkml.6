@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB81EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED64C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 872A52081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B4B20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g+t3zy6I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872A52081B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyZuAv09"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B4B20863
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbeK2TtF (ORCPT
+        id S1727834AbeK2TtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:49:05 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44293 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeK2TtE (ORCPT
+        Thu, 29 Nov 2018 14:49:13 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43398 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbeK2TtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:49:04 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u6so662716pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 00:44:28 -0800 (PST)
+        Thu, 29 Nov 2018 14:49:12 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so665408pfk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 00:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=O1oTkPJ6qrXNeDh6ydGScbRxC5yjbuUQ1NYPCDxj/lM=;
-        b=g+t3zy6I97eqy6vXR1JgC0qJ4uRNIfYaFSMilJh7FKjhFf3VZoYJBep1Skw2y6+tFM
-         /+sIUg2r6S1/A01sJd17/FZYr8Egc3yVztjJO2hk2hAChZr/hiZfsO4109BRiqCybxA+
-         Est1cQyutH3gwPgABQBC+uWQjGrLSm5lqGJEs=
+        bh=Iv3uvd/8GGpDFirXpjc3vER/MPei2h7zauZi6b90c1I=;
+        b=jyZuAv09R6wijhBx9CK8mWoJ/ds5+UaXk0SmycM1FGvtME0bSWiyv9p42kQkxvkKdU
+         b/7gCyXULIQGwXHa4VLiiDGJKA/2veIT3gCZMJAdqG/1n64cBAv0r5LeIa5u8nN3XWRh
+         opXksls1QzpBh5GYymLTvsPg3OXeSEAU6Avy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=O1oTkPJ6qrXNeDh6ydGScbRxC5yjbuUQ1NYPCDxj/lM=;
-        b=RQX+juAYxa1T+di6q5HA8V6co2mARQ2GSb++Wo5FdP55kXN15F0UqGD/hRgMrYTNeN
-         hMuFG7aXwm5SQAJJpn7/BqkuK2hnBO1EIdu5dgKv4kYGWI1TXjqztjTM94BIg4V8j1m/
-         e4Fby5C16X1ueuXOJzpge0exZVLOe72UxMGzONiKzpwcU7WGSSrAgvlg0VXeC2WAxjpU
-         OzW7SPXqASe4ofwTyqyuxKBtkxQYSqKMFhYGw80EHbo7Ex8MINhOF8aquOi/Q1UtDjNK
-         1cBNw96KWWGW4j1EBB2lowtqKO2+3u+wdG+N0X2YeWdsO1Ws5YU0TjRwg6DSA4ijA5Gy
-         bThw==
-X-Gm-Message-State: AA+aEWYu59A38heCmAvvbouxu5Xxr1t3AI5ORip6+VeqrR5GiBjT1qSH
-        lDQLEx9FvYs+VMxwfzhwJphzPg==
-X-Google-Smtp-Source: AFSGD/UECveWtMxOKiCQHDFoCzdBFt592KuxWOFfs5ClJ08kAUVtenkqlNepJc2UujYJKmv+TN2pVA==
-X-Received: by 2002:a63:6c48:: with SMTP id h69mr456110pgc.139.1543481068123;
-        Thu, 29 Nov 2018 00:44:28 -0800 (PST)
+        bh=Iv3uvd/8GGpDFirXpjc3vER/MPei2h7zauZi6b90c1I=;
+        b=q6xkluziU3qIWsuU/7M711fZoSSw8qbAVSyAuveU99YYkO+as701Wbeo6SxWckLy/6
+         dikjYFPJksAxxlp+AxfehP/ilujHd7sOaPJ/Pw8DBth02atmTLcYqc6N31zXgjDime3r
+         drbL0xoiOYxzNLpYOuAj4P8CHVJ84gEg2IDIwUsVTYEl+RVebA1YPsvlyq0Y1iPuaaMc
+         aJeHWd7rkthfPUqlwfT6AaNKvJQz+On7kMC+iXJ+8sVULo5SQiy9vOGHc61crg0cRpod
+         w4O5FK+XntWPv3P8JDruDsSWq2YaImH2HD013nkgtF7GHjXV8sZXJJJ0RsXG+6Eqf90v
+         USsg==
+X-Gm-Message-State: AA+aEWbXeDBl1VbfmNAA7E+8EEAyAgAh+vKro2ICe8YBaaXtJzywmSEP
+        hN23QPB0b6fQURcplrNKIQ6twQ==
+X-Google-Smtp-Source: AFSGD/WecOi4KwCj1EosXDPIFemodkFYvt7KtNafsrO+6UFtfmQ0Dpcb0Lai1VX0TBHfqnE9pSrmuA==
+X-Received: by 2002:a63:200e:: with SMTP id g14mr475762pgg.235.1543481075482;
+        Thu, 29 Nov 2018 00:44:35 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 73-v6sm2322683pfl.142.2018.11.29.00.44.21
+        by smtp.gmail.com with ESMTPSA id 73-v6sm2322683pfl.142.2018.11.29.00.44.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 29 Nov 2018 00:44:27 -0800 (PST)
+        Thu, 29 Nov 2018 00:44:34 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
@@ -67,9 +67,9 @@ Cc:     y2038@lists.linaro.org, arnd@arndb.de,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         deepa.kernel@gmail.com, marcin.juszkiewicz@linaro.org,
         firoz.khan@linaro.org
-Subject: [PATCH v3 2/6] mips: remove unused macros
-Date:   Thu, 29 Nov 2018 14:13:32 +0530
-Message-Id: <1543481016-18500-3-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v3 3/6] mips: add +1 to __NR_syscalls in uapi header
+Date:   Thu, 29 Nov 2018 14:13:33 +0530
+Message-Id: <1543481016-18500-4-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
 References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
@@ -78,52 +78,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove NR_syscalls from asm/unistd.h as there is no
-users to use NR_syscalls macro in mips kernel.
+All other architectures are hold a value for __NR_syscalls will
+be equal to the last system call number +1.
 
-MAX_SYSCALL_NO can also remove as there is commit
-2957c9e61ee9 ("[MIPS] IRIX: Goodbye and thanks for
-all the fish"), eight years ago.
+But in mips architecture, __NR_syscalls hold the value equal to
+total number of system exits in the architecture. One of the
+patch in this patch series will genarate uapi header files.
+
+In order to make the implementation common across all architect-
+ures, add +1 to __NR_syscalls, which will be equal to the last
+system call number +1.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/mips/include/asm/unistd.h | 8 --------
- arch/mips/kernel/scall32-o32.S | 3 ---
- 2 files changed, 11 deletions(-)
+ arch/mips/include/uapi/asm/unistd.h | 12 ++++++------
+ arch/mips/kernel/ftrace.c           |  6 +++---
+ arch/mips/kernel/scall32-o32.S      |  4 ++--
+ arch/mips/kernel/scall64-64.S       |  2 +-
+ arch/mips/kernel/scall64-n32.S      |  4 ++--
+ arch/mips/kernel/scall64-o32.S      |  6 +++---
+ 6 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/mips/include/asm/unistd.h b/arch/mips/include/asm/unistd.h
-index c68b8ae..d7ee846 100644
---- a/arch/mips/include/asm/unistd.h
-+++ b/arch/mips/include/asm/unistd.h
-@@ -14,14 +14,6 @@
+diff --git a/arch/mips/include/uapi/asm/unistd.h b/arch/mips/include/uapi/asm/unistd.h
+index 6914be5..dac1335 100644
+--- a/arch/mips/include/uapi/asm/unistd.h
++++ b/arch/mips/include/uapi/asm/unistd.h
+@@ -392,7 +392,7 @@
+ #define __NR_io_pgetevents		(__NR_Linux + 368)
  
- #include <uapi/asm/unistd.h>
+ #ifdef __KERNEL__
+-#define __NR_syscalls			368
++#define __NR_syscalls			369
+ #endif
  
--#ifdef CONFIG_MIPS32_N32
--#define NR_syscalls  (__NR_N32_Linux + __NR_N32_Linux_syscalls)
--#elif defined(CONFIG_64BIT)
--#define NR_syscalls  (__NR_64_Linux + __NR_64_Linux_syscalls)
--#else
--#define NR_syscalls  (__NR_O32_Linux + __NR_O32_Linux_syscalls)
--#endif
--
- #ifndef __ASSEMBLY__
+ /*
+@@ -403,7 +403,7 @@
+ #endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
  
- #define __ARCH_WANT_NEW_STAT
+ #define __NR_O32_Linux			4000
+-#define __NR_O32_Linux_syscalls		368
++#define __NR_O32_Linux_syscalls		369
+ 
+ #if _MIPS_SIM == _MIPS_SIM_ABI64
+ 
+@@ -742,7 +742,7 @@
+ #define __NR_io_pgetevents		(__NR_Linux + 328)
+ 
+ #ifdef __KERNEL__
+-#define __NR_syscalls			328
++#define __NR_syscalls			329
+ #endif
+ 
+ /*
+@@ -753,7 +753,7 @@
+ #endif /* _MIPS_SIM == _MIPS_SIM_ABI64 */
+ 
+ #define __NR_64_Linux			5000
+-#define __NR_64_Linux_syscalls		328
++#define __NR_64_Linux_syscalls		329
+ 
+ #if _MIPS_SIM == _MIPS_SIM_NABI32
+ 
+@@ -1096,7 +1096,7 @@
+ #define __NR_io_pgetevents		(__NR_Linux + 332)
+ 
+ #ifdef __KERNEL__
+-#define __NR_syscalls			332
++#define __NR_syscalls			333
+ #endif
+ 
+ /*
+@@ -1107,6 +1107,6 @@
+ #endif /* _MIPS_SIM == _MIPS_SIM_NABI32 */
+ 
+ #define __NR_N32_Linux			6000
+-#define __NR_N32_Linux_syscalls		332
++#define __NR_N32_Linux_syscalls		333
+ 
+ #endif /* _UAPI_ASM_UNISTD_H */
+diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
+index 7f3dfdb..f32caaf 100644
+--- a/arch/mips/kernel/ftrace.c
++++ b/arch/mips/kernel/ftrace.c
+@@ -410,13 +410,13 @@ unsigned long __init arch_syscall_addr(int nr)
+ unsigned long __init arch_syscall_addr(int nr)
+ {
+ #ifdef CONFIG_MIPS32_N32
+-	if (nr >= __NR_N32_Linux && nr <= __NR_N32_Linux + __NR_N32_Linux_syscalls)
++	if (nr >= __NR_N32_Linux && nr < __NR_N32_Linux + __NR_N32_Linux_syscalls)
+ 		return (unsigned long)sysn32_call_table[nr - __NR_N32_Linux];
+ #endif
+-	if (nr >= __NR_64_Linux  && nr <= __NR_64_Linux + __NR_64_Linux_syscalls)
++	if (nr >= __NR_64_Linux  && nr < __NR_64_Linux + __NR_64_Linux_syscalls)
+ 		return (unsigned long)sys_call_table[nr - __NR_64_Linux];
+ #ifdef CONFIG_MIPS32_O32
+-	if (nr >= __NR_O32_Linux && nr <= __NR_O32_Linux + __NR_O32_Linux_syscalls)
++	if (nr >= __NR_O32_Linux && nr < __NR_O32_Linux + __NR_O32_Linux_syscalls)
+ 		return (unsigned long)sys32_call_table[nr - __NR_O32_Linux];
+ #endif
+ 
 diff --git a/arch/mips/kernel/scall32-o32.S b/arch/mips/kernel/scall32-o32.S
-index 91d3c8c..fea6edb 100644
+index fea6edb..10f6367 100644
 --- a/arch/mips/kernel/scall32-o32.S
 +++ b/arch/mips/kernel/scall32-o32.S
-@@ -22,9 +22,6 @@
- #include <asm/war.h>
- #include <asm/asm-offsets.h>
+@@ -86,7 +86,7 @@ loads_done:
+ 	bnez	t0, syscall_trace_entry # -> yes
+ syscall_common:
+ 	subu	v0, v0, __NR_O32_Linux	# check syscall number
+-	sltiu	t0, v0, __NR_O32_Linux_syscalls + 1
++	sltiu	t0, v0, __NR_O32_Linux_syscalls
+ 	beqz	t0, illegal_syscall
  
--/* Highest syscall used of any syscall flavour */
--#define MAX_SYSCALL_NO	__NR_O32_Linux + __NR_O32_Linux_syscalls
--
- 	.align	5
- NESTED(handle_sys, PT_SIZE, sp)
- 	.set	noat
+ 	sll	t0, v0, 2
+@@ -182,7 +182,7 @@ illegal_syscall:
+ 
+ 	LEAF(sys_syscall)
+ 	subu	t0, a0, __NR_O32_Linux	# check syscall number
+-	sltiu	v0, t0, __NR_O32_Linux_syscalls + 1
++	sltiu	v0, t0, __NR_O32_Linux_syscalls
+ 	beqz	t0, einval		# do not recurse
+ 	sll	t1, t0, 2
+ 	beqz	v0, einval
+diff --git a/arch/mips/kernel/scall64-64.S b/arch/mips/kernel/scall64-64.S
+index 358d959..0b67fed 100644
+--- a/arch/mips/kernel/scall64-64.S
++++ b/arch/mips/kernel/scall64-64.S
+@@ -54,7 +54,7 @@ NESTED(handle_sys64, PT_SIZE, sp)
+ 
+ syscall_common:
+ 	dsubu	t2, v0, __NR_64_Linux
+-	sltiu   t0, t2, __NR_64_Linux_syscalls + 1
++	sltiu   t0, t2, __NR_64_Linux_syscalls
+ 	beqz	t0, illegal_syscall
+ 
+ 	dsll	t0, t2, 3		# offset into table
+diff --git a/arch/mips/kernel/scall64-n32.S b/arch/mips/kernel/scall64-n32.S
+index c65eaac..6468546 100644
+--- a/arch/mips/kernel/scall64-n32.S
++++ b/arch/mips/kernel/scall64-n32.S
+@@ -33,7 +33,7 @@ NESTED(handle_sysn32, PT_SIZE, sp)
+ #endif
+ 
+ 	dsubu	t0, v0, __NR_N32_Linux	# check syscall number
+-	sltiu	t0, t0, __NR_N32_Linux_syscalls + 1
++	sltiu	t0, t0, __NR_N32_Linux_syscalls
+ 
+ #ifndef CONFIG_MIPS32_O32
+ 	ld	t1, PT_EPC(sp)		# skip syscall on return
+@@ -87,7 +87,7 @@ n32_syscall_trace_entry:
+ 	ld	a5, PT_R9(sp)
+ 
+ 	dsubu	t2, v0, __NR_N32_Linux	# check (new) syscall number
+-	sltiu   t0, t2, __NR_N32_Linux_syscalls + 1
++	sltiu   t0, t2, __NR_N32_Linux_syscalls
+ 	beqz	t0, not_n32_scall
+ 
+ 	j	syscall_common
+diff --git a/arch/mips/kernel/scall64-o32.S b/arch/mips/kernel/scall64-o32.S
+index 73913f0..eb53d8ea 100644
+--- a/arch/mips/kernel/scall64-o32.S
++++ b/arch/mips/kernel/scall64-o32.S
+@@ -34,7 +34,7 @@ NESTED(handle_sys, PT_SIZE, sp)
+ 	ld	t1, PT_EPC(sp)		# skip syscall on return
+ 
+ 	dsubu	t0, v0, __NR_O32_Linux	# check syscall number
+-	sltiu	t0, t0, __NR_O32_Linux_syscalls + 1
++	sltiu	t0, t0, __NR_O32_Linux_syscalls
+ 	daddiu	t1, 4			# skip to next instruction
+ 	sd	t1, PT_EPC(sp)
+ 	beqz	t0, not_o32_scall
+@@ -144,7 +144,7 @@ trace_a_syscall:
+ 	ld	a7, PT_R11(sp)		# For indirect syscalls
+ 
+ 	dsubu	t0, v0, __NR_O32_Linux	# check (new) syscall number
+-	sltiu	t0, t0, __NR_O32_Linux_syscalls + 1
++	sltiu	t0, t0, __NR_O32_Linux_syscalls
+ 	beqz	t0, not_o32_scall
+ 
+ 	j	syscall_common
+@@ -193,7 +193,7 @@ not_o32_scall:
+ 
+ LEAF(sys32_syscall)
+ 	subu	t0, a0, __NR_O32_Linux	# check syscall number
+-	sltiu	v0, t0, __NR_O32_Linux_syscalls + 1
++	sltiu	v0, t0, __NR_O32_Linux_syscalls
+ 	beqz	t0, einval		# do not recurse
+ 	dsll	t1, t0, 3
+ 	beqz	v0, einval
 -- 
 1.9.1
 
