@@ -2,118 +2,238 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713A0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54345C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BE420863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a0evLdla"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BE420863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 25E3E20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E3E20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbeK3A5E (ORCPT
+        id S1728384AbeK3A5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:57:04 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57498 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeK3A5E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:57:04 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATDnTZn194140;
-        Thu, 29 Nov 2018 13:51:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=lZIasuT6Y6xpvBsQWZEcTUxxsQfR5vQV9qb6Ra4P6Es=;
- b=a0evLdlazr4iLg2S5BaeRdPQm77yxEolv4LlyfscmKPMsmEc4IUW+76imUBGB+py7M3t
- tNflNQb3zJruWz0DAmTI6AlDuoGBRl1adQdvP+S0QazgnBxruo3lmccJzFVNeemWtNT8
- Tiu/j7CR3YGzlf18d6mZb7FHAFB5VRkQpQgubnf8QkzLh7bmdSuCF6VllcZ7XqUumfM8
- GUZ1azMxn1KHn+Fa3CcQx/n/kvu68bQVayaJw/i8LTI4kAPCLaMV+YPog7FLMAW4TgRO
- Y3vi7Kr4OcOqQASnx85U9sP/hnUWRFHJ/yYVmGZwC2eQreeoBOnApwgrcwYUZp4DDPxj Yg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2nxy9rg7ve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Nov 2018 13:51:34 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wATDpX85030498
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Nov 2018 13:51:33 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wATDpWnt031913;
-        Thu, 29 Nov 2018 13:51:32 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Nov 2018 05:51:32 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] hugetlbfs: Call VM_BUG_ON_PAGE earlier in free_huge_page
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <1543491843-23438-1-git-send-email-nic_w@163.com>
-Date:   Thu, 29 Nov 2018 06:51:28 -0700
-Cc:     mike.kravetz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, nic_w@163.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <0B408D50-D101-4457-B779-5951DEE0435A@oracle.com>
-References: <1543491843-23438-1-git-send-email-nic_w@163.com>
-To:     Yongkai Wu <nic.wuyk@gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811290117
+        Thu, 29 Nov 2018 19:57:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55766 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726949AbeK3A5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:57:12 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 10F7C3002887;
+        Thu, 29 Nov 2018 13:51:47 +0000 (UTC)
+Received: from shodan.usersys.redhat.com (unknown [10.43.17.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 99CF25C7A0;
+        Thu, 29 Nov 2018 13:51:46 +0000 (UTC)
+Received: by shodan.usersys.redhat.com (Postfix, from userid 1000)
+        id E74F52C136D; Thu, 29 Nov 2018 14:51:45 +0100 (CET)
+From:   Artem Savkov <asavkov@redhat.com>
+To:     x86@kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH] x86/tools/relocs: fix big section header tables
+Date:   Thu, 29 Nov 2018 14:51:33 +0100
+Message-Id: <20181129135133.31369-1-asavkov@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 29 Nov 2018 13:51:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+In case when the number of entries in the section header table is larger
+then or equal to SHN_LORESERVE the size of the table is held in the sh_size
+member of the initial entry in section header table instead of e_shnum.
+Same with the string table index which is located in sh_link instead of
+e_shstrndx.
 
-> On Nov 29, 2018, at 4:44 AM, Yongkai Wu <nic.wuyk@gmail.com> wrote:
-> 
-> A stack trace was triggered by VM_BUG_ON_PAGE(page_mapcount(page),
-> page) in free_huge_page().  Unfortunately, the page->mapping field
-> was set to NULL before this test.  This made it more difficult to
-> determine the root cause of the problem.
-> 
-> Move the VM_BUG_ON_PAGE tests earlier in the function so that if
-> they do trigger more information is present in the page struct.
-> 
-> Signed-off-by: Yongkai Wu <nic_w@163.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
-> mm/hugetlb.c | 5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 7f2a28a..14ef274 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1248,10 +1248,11 @@ void free_huge_page(struct page *page)
-> 		(struct hugepage_subpool *)page_private(page);
-> 	bool restore_reserve;
-> 
-> -	set_page_private(page, 0);
-> -	page->mapping = NULL;
-> 	VM_BUG_ON_PAGE(page_count(page), page);
-> 	VM_BUG_ON_PAGE(page_mapcount(page), page);
-> +
-> +	set_page_private(page, 0);
-> +	page->mapping = NULL;
-> 	restore_reserve = PagePrivate(page);
-> 	ClearPagePrivate(page);
-> 
-> -- 
-> 1.8.3.1
-> 
+This case is easily reproducible with KCFLAGS="-ffunction-sections",
+bzImage build fails with "String table index out of bounds" error.
+
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+---
+ arch/x86/tools/relocs.c | 58 +++++++++++++++++++++++++++++------------
+ 1 file changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index b629f6992d9f..5275ea0a0d13 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -11,7 +11,9 @@
+ #define Elf_Shdr		ElfW(Shdr)
+ #define Elf_Sym			ElfW(Sym)
+ 
+-static Elf_Ehdr ehdr;
++static Elf_Ehdr	ehdr;
++static unsigned long	shnum;
++static unsigned int	shstrndx;
+ 
+ struct relocs {
+ 	uint32_t	*offset;
+@@ -241,9 +243,9 @@ static const char *sec_name(unsigned shndx)
+ {
+ 	const char *sec_strtab;
+ 	const char *name;
+-	sec_strtab = secs[ehdr.e_shstrndx].strtab;
++	sec_strtab = secs[shstrndx].strtab;
+ 	name = "<noname>";
+-	if (shndx < ehdr.e_shnum) {
++	if (shndx < shnum) {
+ 		name = sec_strtab + secs[shndx].shdr.sh_name;
+ 	}
+ 	else if (shndx == SHN_ABS) {
+@@ -271,7 +273,7 @@ static const char *sym_name(const char *sym_strtab, Elf_Sym *sym)
+ static Elf_Sym *sym_lookup(const char *symname)
+ {
+ 	int i;
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		long nsyms;
+ 		char *strtab;
+@@ -366,6 +368,9 @@ static void read_ehdr(FILE *fp)
+ 	ehdr.e_shnum     = elf_half_to_cpu(ehdr.e_shnum);
+ 	ehdr.e_shstrndx  = elf_half_to_cpu(ehdr.e_shstrndx);
+ 
++	shnum = ehdr.e_shnum;
++	shstrndx = ehdr.e_shstrndx;
++
+ 	if ((ehdr.e_type != ET_EXEC) && (ehdr.e_type != ET_DYN)) {
+ 		die("Unsupported ELF header type\n");
+ 	}
+@@ -384,7 +389,26 @@ static void read_ehdr(FILE *fp)
+ 	if (ehdr.e_shentsize != sizeof(Elf_Shdr)) {
+ 		die("Bad section header entry\n");
+ 	}
+-	if (ehdr.e_shstrndx >= ehdr.e_shnum) {
++
++	if (shnum == SHN_UNDEF || shstrndx == SHN_XINDEX) {
++		Elf_Shdr shdr;
++
++		if (fseek(fp, ehdr.e_shoff, SEEK_SET) < 0)
++			die("Seek to %d failed: %s\n",
++				ehdr.e_shoff, strerror(errno));
++
++		if (fread(&shdr, sizeof(shdr), 1, fp) != 1)
++			die("Cannot read initial ELF section header: %s\n",
++			    strerror(errno));
++
++		if (shnum == SHN_UNDEF)
++			shnum = elf_xword_to_cpu(shdr.sh_size);
++
++		if (shstrndx == SHN_XINDEX)
++			shstrndx = elf_word_to_cpu(shdr.sh_link);
++	}
++
++	if (shstrndx >= shnum) {
+ 		die("String table index out of bounds\n");
+ 	}
+ }
+@@ -394,20 +418,20 @@ static void read_shdrs(FILE *fp)
+ 	int i;
+ 	Elf_Shdr shdr;
+ 
+-	secs = calloc(ehdr.e_shnum, sizeof(struct section));
++	secs = calloc(shnum, sizeof(struct section));
+ 	if (!secs) {
+ 		die("Unable to allocate %d section headers\n",
+-		    ehdr.e_shnum);
++		    shnum);
+ 	}
+ 	if (fseek(fp, ehdr.e_shoff, SEEK_SET) < 0) {
+ 		die("Seek to %d failed: %s\n",
+ 			ehdr.e_shoff, strerror(errno));
+ 	}
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		if (fread(&shdr, sizeof(shdr), 1, fp) != 1)
+ 			die("Cannot read ELF section headers %d/%d: %s\n",
+-			    i, ehdr.e_shnum, strerror(errno));
++			    i, shnum, strerror(errno));
+ 		sec->shdr.sh_name      = elf_word_to_cpu(shdr.sh_name);
+ 		sec->shdr.sh_type      = elf_word_to_cpu(shdr.sh_type);
+ 		sec->shdr.sh_flags     = elf_xword_to_cpu(shdr.sh_flags);
+@@ -418,7 +442,7 @@ static void read_shdrs(FILE *fp)
+ 		sec->shdr.sh_info      = elf_word_to_cpu(shdr.sh_info);
+ 		sec->shdr.sh_addralign = elf_xword_to_cpu(shdr.sh_addralign);
+ 		sec->shdr.sh_entsize   = elf_xword_to_cpu(shdr.sh_entsize);
+-		if (sec->shdr.sh_link < ehdr.e_shnum)
++		if (sec->shdr.sh_link < shnum)
+ 			sec->link = &secs[sec->shdr.sh_link];
+ 	}
+ 
+@@ -427,7 +451,7 @@ static void read_shdrs(FILE *fp)
+ static void read_strtabs(FILE *fp)
+ {
+ 	int i;
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		if (sec->shdr.sh_type != SHT_STRTAB) {
+ 			continue;
+@@ -452,7 +476,7 @@ static void read_strtabs(FILE *fp)
+ static void read_symtabs(FILE *fp)
+ {
+ 	int i,j;
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		if (sec->shdr.sh_type != SHT_SYMTAB) {
+ 			continue;
+@@ -485,7 +509,7 @@ static void read_symtabs(FILE *fp)
+ static void read_relocs(FILE *fp)
+ {
+ 	int i,j;
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		if (sec->shdr.sh_type != SHT_REL_TYPE) {
+ 			continue;
+@@ -528,7 +552,7 @@ static void print_absolute_symbols(void)
+ 
+ 	printf("Absolute symbols\n");
+ 	printf(" Num:    Value Size  Type       Bind        Visibility  Name\n");
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		char *sym_strtab;
+ 		int j;
+@@ -566,7 +590,7 @@ static void print_absolute_relocs(void)
+ 	else
+ 		format = "%08"PRIx32" %08"PRIx32" %10s %08"PRIx32"  %s\n";
+ 
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		struct section *sec = &secs[i];
+ 		struct section *sec_applies, *sec_symtab;
+ 		char *sym_strtab;
+@@ -650,7 +674,7 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+ {
+ 	int i;
+ 	/* Walk through the relocations */
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		char *sym_strtab;
+ 		Elf_Sym *sh_symtab;
+ 		struct section *sec_applies, *sec_symtab;
+@@ -706,7 +730,7 @@ static Elf_Addr per_cpu_load_addr;
+ static void percpu_init(void)
+ {
+ 	int i;
+-	for (i = 0; i < ehdr.e_shnum; i++) {
++	for (i = 0; i < shnum; i++) {
+ 		ElfW(Sym) *sym;
+ 		if (strcmp(sec_name(i), ".data..percpu"))
+ 			continue;
+-- 
+2.19.1
 
