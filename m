@@ -2,143 +2,103 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F21C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C56C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 209D921104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:28:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIWAcqiB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209D921104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A00F21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A00F21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeK3Fes (ORCPT
+        id S1728606AbeK3FhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:34:48 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41849 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbeK3Fes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:34:48 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so2889945wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 10:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X/oAfxVh33z/9f0TA7f+7Si/guQ97abxNA8LBq6hbZs=;
-        b=MIWAcqiBfBm2Ur47/GYn9qo223rJBI8kj6F8YU4xbqeWEpERxnFjJuC/bA7/IXfXFR
-         c9BCZFM3C8PHzEO2bqJgCx5o8oSrd1wqz3BmErYXkHRG2bEOi80T24p5oEE5kCZ3iorZ
-         +IMEyNUu27HYcJdLTFXzEzjQjE+DimCn/GZps=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X/oAfxVh33z/9f0TA7f+7Si/guQ97abxNA8LBq6hbZs=;
-        b=mUutmAuTHK58o5whg2tXrvfbr2DQ74OJoMlTH1G2KaFwQMn7Ok8tyauZFpuhxrpQAu
-         qbr4aH9iHrR+bZIvHjBkww0OQg7yNUeCOfyYlqyMtgEUi8yfEFet9PPsISgVWuSUre3u
-         m7eWNltLC7lZR3ARbk10dyOMXpdeuhITrFFUjdrdqGUZ4HxtHe+q6gRWzODCdFcb4BVH
-         dJ5T50fm+pwJK8exW4U45EuC2n4ICEjg+nm6HTygPiceOlAj2Snuc3zMlHbnB0jtIX7I
-         1TPb+qvLUafJZ6diyPD8D1eV3BvRGxTx6G+HEG9JK3M0a1+6nrb93g7Ycp1waDOtdinH
-         e6NQ==
-X-Gm-Message-State: AA+aEWbnB0G/ciZzs1+pCTmYKnPfwNmjjqN26c44lmTylPOh647ZC+Ee
-        PTuvmgsprQxG5UZdsumpm6Nrl6eN0No=
-X-Google-Smtp-Source: AFSGD/URTlGPQOLqzYCLV+S/RcI1knJeBrHHA0cpXxzV2bJCLtmijXl09FOfpZcK3Ws4ronJ7nJkWg==
-X-Received: by 2002:adf:a14d:: with SMTP id r13mr2273075wrr.169.1543516109875;
-        Thu, 29 Nov 2018 10:28:29 -0800 (PST)
-Received: from [192.168.0.40] (183.250.136.77.rev.sfr.net. [77.136.250.183])
-        by smtp.googlemail.com with ESMTPSA id v5sm2824610wrn.71.2018.11.29.10.28.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 10:28:29 -0800 (PST)
-Subject: Re: [PATCH] thermal/drivers/hisi: Fix bad initialization
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     edubezval@gmail.com, rui.zhang@intel.com
-Cc:     vincent.guittot@linaro.org, john.stultz@linaro.org,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1543516016-28186-1-git-send-email-daniel.lezcano@linaro.org>
-Message-ID: <835c09ee-17e1-cfdb-842b-f5f2d977689a@linaro.org>
-Date:   Thu, 29 Nov 2018 19:28:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 30 Nov 2018 00:37:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43086 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728348AbeK3FhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:37:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4560A80D;
+        Thu, 29 Nov 2018 10:30:45 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 141FF3F575;
+        Thu, 29 Nov 2018 10:30:45 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 8F4971AE0FD4; Thu, 29 Nov 2018 18:31:03 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 18:31:03 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, xieyongji@baidu.com,
+        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
+        nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181129183103.GA4952@arm.com>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+ <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1543516016-28186-1-git-send-email-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 29, 2018 at 01:26:34PM -0500, Waiman Long wrote:
+> On 11/29/2018 01:08 PM, Peter Zijlstra wrote:
+> > Hmm, I think we're missing a barrier in wake_q_add(); when cmpxchg()
+> > fails we still need an smp_mb().
+> >
+> > Something like so.
+> >
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 3d87a28da378..69def558edf6 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -400,6 +400,13 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+> >  {
+> >  	struct wake_q_node *node = &task->wake_q;
+> >  
+> > +	/*
+> > +	 * Ensure, that when the below cmpxchg() fails, the corresponding
+> > +	 * wake_up_q() will observe our prior state.
+> > +	 *
+> > +	 * Pairs with the smp_mb() from wake_up_q()'s wake_up_process().
+> > +	 */
+> > +	smp_mb();
+> >  	/*
+> >  	 * Atomically grab the task, if ->wake_q is !nil already it means
+> >  	 * its already queued (either by us or someone else) and will get the
+> > @@ -408,7 +415,7 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+> >  	 * This cmpxchg() executes a full barrier, which pairs with the full
+> >  	 * barrier executed by the wakeup in wake_up_q().
+> >  	 */
+> > -	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
+> > +	if (cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL))
+> >  		return;
+> >  
+> >  	get_task_struct(task);
+> 
+> That can be costly for x86 which will now have 2 locked instructions.
+> Should we introduce a kind of special cmpxchg (e.g. cmpxchg_mb) that
+> will guarantee a memory barrier whether the operation fails or not?
 
-Sorry typo in Vincent's email address, fixed now.
+I thought smp_mb__before_atomic() was designed for this sort of thing?
 
-On 29/11/2018 19:26, Daniel Lezcano wrote:
-> Without this patch, the thermal driver on hi6220 and hi3660 is broken.
-> 
-> That is due because part of the posted patchset was merged but a small
-> change in the DT was dropped.
-> 
-> The hi6220 and hi3660 do not have an interrupt name in the DT, so
-> finding interrupt by name fails.
-> 
-> In addition, the hi3660 only defines one thermal zone in the DT and we
-> are trying to register two sensors assuming we have two thermal zones
-> in the DT.
-> 
-> Fix this by adding a couple of line of code to add back compatibility
-> with older DT and change the sensors number to 1 for the hi3660.
-> 
-> Fixes: 2cffaeff083f (thermal/drivers/hisi: Use platform_get_irq_byname)
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/hisi_thermal.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-> index c4111a9..3ab0e63 100644
-> --- a/drivers/thermal/hisi_thermal.c
-> +++ b/drivers/thermal/hisi_thermal.c
-> @@ -424,7 +424,7 @@ static int hi3660_thermal_probe(struct hisi_thermal_data *data)
->  	struct platform_device *pdev = data->pdev;
->  	struct device *dev = &pdev->dev;
->  
-> -	data->nr_sensors = 2;
-> +	data->nr_sensors = 1;
->  
->  	data->sensor = devm_kzalloc(dev, sizeof(*data->sensor) *
->  				    data->nr_sensors, GFP_KERNEL);
-> @@ -590,8 +590,13 @@ static int hisi_thermal_probe(struct platform_device *pdev)
->  		}
->  
->  		ret = platform_get_irq_byname(pdev, sensor->irq_name);
-> -		if (ret < 0)
-> -			return ret;
-> +		if (ret <= 0) {
-> +			ret = platform_get_irq(pdev, 0);
-> +			if (ret <=  0) {
-> +				dev_err(dev, "Failed get interrupt: %d\n", ret);
-> +				return ret;
-> +			}
-> +		}
->  
->  		ret = devm_request_threaded_irq(dev, ret, NULL,
->  						hisi_thermal_alarm_irq_thread,
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Will
