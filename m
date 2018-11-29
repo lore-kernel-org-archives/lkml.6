@@ -2,123 +2,169 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE16C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756A0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A982081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 04:46:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBHCV+dF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A982081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 36FF42081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:12:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FF42081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeK2PuM (ORCPT
+        id S1727677AbeK2QQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 10:50:12 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39277 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbeK2PuM (ORCPT
+        Thu, 29 Nov 2018 11:16:18 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56438 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeK2QQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 10:50:12 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c72so397581pfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 20:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/R74h8rp78HGLdw2BWKROW5d8ewk9KsmzZ8gDi4rZyY=;
-        b=eBHCV+dFXATz8mdv6TqJ97LFjzJLg7rAl+0bZj2Y2d9rDQpyjRaOGsz+ZboXrb5ITI
-         PSLmVEvOcYyy9P78j2ufTApVxMgMV1vriUgoioGWe2dvikIHIPTfA5GfJGaHu1TjVHjl
-         QgCVO4rYCqlrUpXGB2l1jHb4SCkmsZtFNdcTJMdNP2tKNIHuVSnhnktLu1IYwqZwycFT
-         nqDfd7h2WjrfzDCJpPK/gtZo2PkjLdEum3p94e/l0s05gI7V1nPp8gd6HLz5AQjAe5vm
-         SenH5hjt6eqb8isY9CaBSx/s/ef5Pb2Ho1NCvGotPUy2UwqqEUTsAFm541L/hN928fbH
-         5QgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/R74h8rp78HGLdw2BWKROW5d8ewk9KsmzZ8gDi4rZyY=;
-        b=Xj8Y7FweBzrczoHEELcalQbdnO0uVgd+wOybAwXgLNFY7wkSajDJMBrnfrKeZres8O
-         VecVO3t88x2TqECOatsRkoqppNh2DupwoYzi3ccFeYciMCqPR8XEzXKepk2ZoCPSyckS
-         WtIupN4Ivx26GshTNgS9+7Iqgu19dSNnGlqg5AIxO3Zrk/4nZRXINK7TFYVyU1QLckzJ
-         i0igvKH3+HuCTeGn/vCGCuQ5QuTW7HESHHK5PoQjtdUr0hCkL+ofKqeuaq/8Icr1CfC4
-         qnPGbKCDT5Sbo5G8kmMagI8bkOcuqr2y7mtfc/jfnNowZyvI0OLnTEwM4QhyXxBbwpcm
-         QOYA==
-X-Gm-Message-State: AA+aEWZrkkNMM96/in38s+zw5zSPDioYJIgahfSIdtmfm8zxnIGDNUo3
-        OpJHfeaC8Jh3gdqmOTS+SA2P/JKR
-X-Google-Smtp-Source: AFSGD/XJ6r5toV3fbwPBevAnIJ3fvBVH9pAB1mqBk3b7/jJXZQcqn0B+XLkdlaf+ipjMxR2wcIIJTQ==
-X-Received: by 2002:a65:5a8e:: with SMTP id c14mr15390pgt.137.1543466770745;
-        Wed, 28 Nov 2018 20:46:10 -0800 (PST)
-Received: from localhost ([175.223.15.27])
-        by smtp.gmail.com with ESMTPSA id v76sm950544pfj.145.2018.11.28.20.46.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 20:46:09 -0800 (PST)
-Date:   Thu, 29 Nov 2018 13:46:06 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Dave Rodgman <dave.rodgman@arm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
-        "markus@oberhumer.com" <markus@oberhumer.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>,
-        "sonnyrao@google.com" <sonnyrao@google.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 0/7] lib/lzo: performance improvements
-Message-ID: <20181129044606.GI6379@jagdpanzerIV>
-References: <20181127161913.23863-1-dave.rodgman@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127161913.23863-1-dave.rodgman@arm.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+        Thu, 29 Nov 2018 11:16:18 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40EE6868;
+        Thu, 29 Nov 2018 05:12:13 +0000 (UTC)
+Date:   Wed, 28 Nov 2018 21:12:12 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Daniel Walker <danielwa@cisco.com>
+Cc:     Daniel Walker <dwalker@fifo99.com>, xe-linux-external@cisco.com,
+        Maksym Kokhan <maksym.kokhan@globallogic.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] add generic builtin command line
+Message-Id: <20181128211212.060295fb9055e403d0060e7a@linux-foundation.org>
+In-Reply-To: <20181109173433.1271-1-danielwa@cisco.com>
+References: <20181109173433.1271-1-danielwa@cisco.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/27/18 16:19), Dave Rodgman wrote:
-> > Right. The number is data dependent. Not all swapped out pages can be
-> > compressed; compressed pages that end up being >= zs_huge_class_size() are
-> > considered incompressible and stored as it.
-> > 
-> > I'd say that on my setups around 50-60% of pages are incompressible.
-> 
-> So, just to give a bit more detail: the test setup was a Samsung
-> Chromebook Pro, cycling through 80 tabs in Chrome. With lzo-rle, only
-> 5% of pages increased in size, and 90% of pages compress to 75% of
-> original size (or better). Mean compression ratio was 41%. Importantly
-> for lzo-rle, there are a lot of low-entropy pages where it can do well:
-> in total about 20% of the data is zeros forming part of a run of 4 or
-> more bytes.
-> 
-> As a quick summary of the impact of these patches on bigger chunks of
-> data, I've compared the performance of four different variants of lzo
-> on two large (~40 MB) files. The numbers show round-trip throughput
-> in MB/s:
-> 
-> Variant         | Low-entropy | High-entropy
-> Current lzo     |  242        | 157
-> Arm opts        |  290        | 159
-> RLE             |  876        | 151
-> Arm opts + RLE  | 1150        | 181
-> 
-> So both the Arm optimisations (8,16-byte copy & CTZ patches), and the
-> RLE implementation make a significant contribution to the overall
-> performance uplift.
+On Fri,  9 Nov 2018 09:34:31 -0800 Daniel Walker <danielwa@cisco.com> wrote:
 
-Cool!
+> This code allows architectures to use a generic builtin command line.
+> The state of the builtin command line options across architecture is
+> diverse. On x86 and mips they have pretty much the same code and the
+> code prepends the builtin command line onto the boot loader provided
+> one. On powerpc there is only a builtin override and nothing else.
+> 
+> The code in this commit unifies the mips and x86 code into a generic
+> header file under the CONFIG_GENERIC_CMDLINE option. When this
+> option is enabled the architecture can call the cmdline_add_builtin()
+> to add the builtin command line.
 
-	-ss
+I'm not sure what's happened to this and I haven't seen the other two
+patches but...
+
+> [maksym.kokhan@globallogic.com: fix cmdline_add_builtin() macro]
+> Cc: Daniel Walker <dwalker@fifo99.com>
+> Cc: Daniel Walker <danielwa@cisco.com>
+> Cc: xe-linux-external@cisco.com
+> Signed-off-by: Daniel Walker <danielwa@cisco.com>
+> Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
+
+Two SOB's is nice, but some reviews and acks would be nicer.
+
+> --- /dev/null
+> +++ b/include/linux/cmdline.h
+> @@ -0,0 +1,79 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_CMDLINE_H
+> +#define _LINUX_CMDLINE_H
+> +
+> +/*
+> + *
+> + * Copyright (C) 2015. Cisco Systems, Inc.
+> + *
+> + * Generic Append/Prepend cmdline support.
+> + */
+> +
+> +#if defined(CONFIG_GENERIC_CMDLINE) && defined(CONFIG_CMDLINE_BOOL)
+> +
+> +#ifndef CONFIG_CMDLINE_OVERRIDE
+> +/*
+> + * This function will append or prepend a builtin command line to the command
+> + * line provided by the bootloader. Kconfig options can be used to alter
+> + * the behavior of this builtin command line.
+> + * @dest: The destination of the final appended/prepended string
+> + * @src: The starting string or NULL if there isn't one.
+> + * @tmp: temporary space used for prepending
+> + * @length: the maximum length of the strings above.
+> + */
+> +static inline void
+> +_cmdline_add_builtin(char *dest, char *src, char *tmp, unsigned long length)
+> +{
+> +	if (src != dest && src != NULL) {
+> +		strlcpy(dest, " ", length);
+> +		strlcat(dest, src, length);
+> +	}
+> +
+> +	strlcat(dest, " ", length);
+> +
+> +	if (sizeof(CONFIG_CMDLINE_APPEND) > 1)
+> +		strlcat(dest, CONFIG_CMDLINE_APPEND, length);
+> +
+> +	/*
+> +	 * You need to convert you old style CONFIG_CMDLINE to use
+
+"your"
+
+> +	 * the prepend, or append defines. Some architectures use one
+
+"one and"
+
+> +	 * some use the other. You need to figure out which ones is
+
+"one"
+
+> +	 * right for your situation. I would recommend prepending
+> +	 * because it's the safest (i.e. CONFIG_CMDLINE_PREPEND).
+> +	 */
+> +	BUILD_BUG_ON(sizeof(CONFIG_CMDLINE) != 1);
+> +
+> +	if (sizeof(CONFIG_CMDLINE_PREPEND) > 1) {
+> +		strlcpy(tmp, CONFIG_CMDLINE_PREPEND, length);
+> +		strlcat(tmp, " ", length);
+> +		strlcat(tmp, dest, length);
+> +		strlcpy(dest, tmp, length);
+> +	}
+> +}
+
+And... holy cow.  Does this monster really need to be inlined?
+
+> +#define cmdline_add_builtin(dest, src, length)				    \
+> +{									    \
+> +	if (sizeof(CONFIG_CMDLINE_PREPEND) > 1) {			    \
+> +		static char cmdline_tmp_space[length] __initdata;	    \
+> +		_cmdline_add_builtin(dest, src, cmdline_tmp_space, length); \
+> +	} else {							    \
+> +		_cmdline_add_builtin(dest, src, NULL, length);		    \
+> +	}								    \
+> +}
+
+And this will generate __initdata storage at each invocation site.  Can
+it be redone in real, non-inlined C?
+
+> +#else
+> +#define cmdline_add_builtin(dest, src, length)				   \
+> +{									   \
+> +	strlcpy(dest, CONFIG_CMDLINE_PREPEND " " CONFIG_CMDLINE_APPEND,    \
+> +		length);						   \
+> +}
+> +#endif /* !CONFIG_CMDLINE_OVERRIDE */
+> +
+> +#else
+> +#define cmdline_add_builtin(dest, src, length) { \
+> +	if (src != NULL)						   \
+> +		strlcpy(dest, src, length);				   \
+> +}
+> +#endif /* CONFIG_GENERIC_CMDLINE */
+> +
+> +
+> +#endif /* _LINUX_CMDLINE_H */
+
