@@ -2,473 +2,332 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1789FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80694C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FBC20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 251F32081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="a/dxkmTt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FBC20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="d9IHjwih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251F32081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeK3AGr (ORCPT
+        id S1728355AbeK3AIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:06:47 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39240 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeK3AGr (ORCPT
+        Thu, 29 Nov 2018 19:08:17 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44035 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbeK3AIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:06:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so1813512wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 05:01:28 -0800 (PST)
+        Thu, 29 Nov 2018 19:08:17 -0500
+Received: by mail-oi1-f193.google.com with SMTP id m6so1494027oig.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 05:02:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=usp-br.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wGkZ2ogt+Z+KYncZ0tSHcjw5kr4Xyy4ocirZNjlVp5A=;
-        b=a/dxkmTtoqxjz330PD9IpdU8bc9lYoXqSCfpcre1gnZo30rYGv/Nl+SxCUW+5yZ+RK
-         yFOiP6USdammRmsiYZ+/c91BrdBKvDtJNx1rTDPsy2zBnAmtwKi3fXRGjAzglyF3LgXO
-         aXUB94ege067kmz7SDpgJ4MVQP5bG9xSMJff4=
+        bh=1TRE0XbA+esqrNr022qj/Xn9ZNvg2QjrOaEqJxkNLvM=;
+        b=d9IHjwihnNrxX9SHNpaqm20H47Gp5L5wFqc7rXGvqmGWpllu8w+thz0ntZhUY0FN8C
+         Sf6auzc6zw5jPqbPNEO0vt6mvcfRMLrvvIlNF9YLe59Qbl2Gu0wE4+jS55ybsj0CtUwG
+         BvPXqcgZ8fgmnMgRxqM6XOpjraP4L1uoSiRZSqL71npT5X08T2t4y3pxPC/CrV/ddPEj
+         rp6K9j/q2igWvSLNM5u/eBdUxOg9s2ht3WDgM3M+Zitx0rklgRlRbhWAopRx4/G/L/+/
+         v2WVI4lR7NdHZ3fF5fyRp/vxksH+FSN+28eJcgnA9VKEAiW5WUMz97gPGvu/6YoK1okh
+         99AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wGkZ2ogt+Z+KYncZ0tSHcjw5kr4Xyy4ocirZNjlVp5A=;
-        b=gtLPmMQ1tVslN5gevYvrWvJJ5f5iooo3oNZ3/kKvLltE0RkYoSd0URnJQHwjcv4Xu8
-         klfAUm25/0Y4xvfxksueVQnXuXzhekQD/dU6JCbqgt0sY1laQ9J+XpZa+KISR0KtCl3+
-         pwncE4DehWxrR6580JQKP3XvgKgXnp4/UfCHo4oVQuMM0gzVbpGbxSEe5JcIK8fCJi92
-         eLp7bpqc8PHx/VKuieG/u/hn7+BaD/sTR3WFeuyp3ZMyWlWeBBUPeKntY1/+sClVfZq6
-         bnQcuECVJ6Lrr1mLiIZMTSDDxhLNQhdBgnbQIXchpPfLOagM4wfYoPLgydxG9wcnSZ3U
-         bx3w==
-X-Gm-Message-State: AA+aEWYPvqRVRbDQwvKB6h3y7Jz5YSFLur26TLMhRQloe3jEAlt67w19
-        DRpKsDcPZuM8HzoN6mPR/MdWY8w38m+MHMdyYOZGe1pa
-X-Google-Smtp-Source: AFSGD/XxB6wLCK5ikh7LVg+BBIq1mBO1AXxJes70HjURu4YgUe1xOgckKEpxJBf6o4sbIrY1NBuoG25p366K39hOIPk=
-X-Received: by 2002:a5d:4e4a:: with SMTP id r10mr1457092wrt.54.1543496487611;
- Thu, 29 Nov 2018 05:01:27 -0800 (PST)
+        bh=1TRE0XbA+esqrNr022qj/Xn9ZNvg2QjrOaEqJxkNLvM=;
+        b=nMqUXE6iNSzh+YueFVi0JhNHtzo5V9T3T1hLHSot8KfMOXuahclBBPx1Kxbh3VJM7g
+         kOHYGRVIixw8XAS53hBHD+g9q/+uUIgKfV88c9s1LeoflPJz3eKHDx7wqun95So3o5zf
+         xap+pIosq/Lm/JdZqwswiB+pZyVhfh2JjyXVexDw/8KCBf7Kes5E8GaQgr2LPtjdRBIM
+         vJiESkKXl/k6kP4zAsu6fPoIyy9y+H+31GO5PYRf6GkuXfz2/m1YuKqrWPrqR6r730dU
+         OoDipT4+etA9D90U5By8orYJG4g2Pqfiv3l2PuG9o40MacApudCpgoRSI7AOkul52WO1
+         JtRA==
+X-Gm-Message-State: AA+aEWaiQkenYi49R7Bdy1IuZlrAarJP821h9TiSJK7+h/TGyDyos407
+        x+auPM1geqx8WyGY8oBu8t9OagdX5F3KmW+H9y/KFA==
+X-Google-Smtp-Source: AFSGD/U2eOxh/ZCLNABCLLFCi9/+cMXVJwoDxaWlTcAbNcFIwoe9Mu4go/YGdE+/TPivAHDtkEhgCX7Uqo7twXSN9bk=
+X-Received: by 2002:aca:32d7:: with SMTP id y206mr735529oiy.151.1543496578355;
+ Thu, 29 Nov 2018 05:02:58 -0800 (PST)
 MIME-Version: 1.0
-References: <1542082418-16675-1-git-send-email-srinath.mannam@broadcom.com>
- <1542082418-16675-3-git-send-email-srinath.mannam@broadcom.com> <b626bff7-9228-b53f-b16a-7f6fb1f27100@ti.com>
-In-Reply-To: <b626bff7-9228-b53f-b16a-7f6fb1f27100@ti.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 29 Nov 2018 18:31:16 +0530
-Message-ID: <CABe79T4r-20DmQoHX5HXFU0O7KXid=JuhKVtA7+yzkrb4vafkA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] phy: sr-usb: Add stingray usb phy driver
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com
+References: <cover.1543428366.git.giuliano.belinassi@usp.br>
+ <231cbc909b892a0ebe172460d34e9eeb9cfa3003.1543428366.git.giuliano.belinassi@usp.br>
+ <1543490289.11186.22.camel@analog.com>
+In-Reply-To: <1543490289.11186.22.camel@analog.com>
+From:   Giuliano Augusto Faulin Belinassi <giuliano.belinassi@usp.br>
+Date:   Thu, 29 Nov 2018 11:02:46 -0200
+Message-ID: <CAEFO=4AQe0B0inmE=w2T+xaFkKgPwnHLP7XkT30TjFV_AEKGbg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] staging: iio: ad7780: Add gain & filter gpio support
+To:     StefanSerban.Popa@analog.com
+Cc:     alexandru.Ardelean@analog.com, lars@metafoo.de, knaack.h@gmx.de,
+        jic23@kernel.org, Michael.Hennerich@analog.com,
+        Renato Geh <renatogeh@gmail.com>, giuliano.belinassi@gmail.com,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        kernel-usp@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+Hi
 
-Thank you for review.. Please find my answers below in line.
-
-
-On Thu, Nov 29, 2018 at 3:55 PM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+On Thu, Nov 29, 2018 at 9:18 AM Popa, Stefan Serban
+<StefanSerban.Popa@analog.com> wrote:
 >
-> Hi,
->
-> On 13/11/18 9:43 AM, Srinath Mannam wrote:
-> > This driver supports all versions of stingray SS and HS
-> > USB phys.
-> > In version 1 is combo phy contain both SS and HS phys
-> > in a common IO space.
-> > In version 2 a single HS phy.
-> > These phys support both xHCI host driver and
-> > BDC Broadcom device controller driver.
+> On Mi, 2018-11-28 at 16:15 -0200, Giuliano Belinassi wrote:
+> > Previously, the AD7780 driver only supported gpio for the 'powerdown'
+> > pin. This commit adds suppport for the 'gain' and 'filter' pin.
 > >
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
 > > ---
-> >  drivers/phy/broadcom/Kconfig          |  11 +
-> >  drivers/phy/broadcom/Makefile         |   1 +
-> >  drivers/phy/broadcom/phy-bcm-sr-usb.c | 367 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 379 insertions(+)
-> >  create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
-> >
-> > diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
-> > index 8786a96..c1e4dd5 100644
-> > --- a/drivers/phy/broadcom/Kconfig
-> > +++ b/drivers/phy/broadcom/Kconfig
-> > @@ -10,6 +10,17 @@ config PHY_CYGNUS_PCIE
-> >         Enable this to support the Broadcom Cygnus PCIe PHY.
-> >         If unsure, say N.
-> >
-> > +config PHY_BCM_SR_USB
-> > +     tristate "Broadcom Stingray USB PHY driver"
-> > +     depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
-> > +     select GENERIC_PHY
-> > +     default ARCH_BCM_IPROC
-> > +     help
-> > +       Enable this to support the Broadcom Stingray USB PHY
-> > +       driver. It supports all versions of Superspeed and
-> > +       Highspeed PHYs.
-> > +       If unsure, say N.
-> > +
-> >  config BCM_KONA_USB2_PHY
-> >       tristate "Broadcom Kona USB2 PHY Driver"
-> >       depends on HAS_IOMEM
-> > diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
-> > index 0f60184..f453c7d 100644
-> > --- a/drivers/phy/broadcom/Makefile
-> > +++ b/drivers/phy/broadcom/Makefile
-> > @@ -11,3 +11,4 @@ obj-$(CONFIG_PHY_BRCM_USB)          += phy-brcm-usb-dvr.o
-> >  phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
-> >
-> >  obj-$(CONFIG_PHY_BCM_SR_PCIE)                += phy-bcm-sr-pcie.o
-> > +obj-$(CONFIG_PHY_BCM_SR_USB)         += phy-bcm-sr-usb.o
-> > diff --git a/drivers/phy/broadcom/phy-bcm-sr-usb.c b/drivers/phy/broadcom/phy-bcm-sr-usb.c
-> > new file mode 100644
-> > index 0000000..99de49f
-> > --- /dev/null
-> > +++ b/drivers/phy/broadcom/phy-bcm-sr-usb.c
-> > @@ -0,0 +1,367 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2016-2018 Broadcom
-> > + */
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +enum bcm_usb_phy_version {
-> > +     BCM_USB_PHY_V1,
-> > +     BCM_USB_PHY_V2,
-> > +};
-> > +
-> > +enum bcm_usb_phy_reg {
-> > +     PLL_NDIV_FRAC,
-> > +     PLL_NDIV_INT,
-> > +     PLL_CTRL,
-> > +     PHY_CTRL,
-> > +     PHY_PLL_CTRL,
-> > +};
-> > +
-> > +/* USB PHY registers */
-> > +
-> > +static const u8 bcm_usb_u3phy_v1[] = {
-> > +     [PLL_CTRL]              = 0x18,
-> > +     [PHY_CTRL]              = 0x14,
-> > +};
-> > +
-> > +static const u8 bcm_usb_u2phy_v1[] = {
-> > +     [PLL_NDIV_FRAC] = 0x04,
-> > +     [PLL_NDIV_INT]  = 0x08,
-> > +     [PLL_CTRL]      = 0x0c,
-> > +     [PHY_CTRL]      = 0x10,
-> > +};
-> > +
-> > +#define HSPLL_NDIV_INT_VAL   0x13
-> > +#define HSPLL_NDIV_FRAC_VAL  0x1005
-> > +
-> > +static const u8 bcm_usb_u2phy_v2[] = {
-> > +     [PLL_NDIV_FRAC] = 0x0,
-> > +     [PLL_NDIV_INT]  = 0x4,
-> > +     [PLL_CTRL]      = 0x8,
-> > +     [PHY_CTRL]      = 0xc,
-> > +};
-> > +
-> > +enum pll_ctrl_bits {
-> > +     PLL_RESETB,
-> > +     SSPLL_SUSPEND_EN,
-> > +     PLL_SEQ_START,
-> > +     PLL_LOCK,
-> > +     PLL_PDIV,
-> > +};
-> > +
-> > +static const u8 u3pll_ctrl[] = {
-> > +     [PLL_RESETB]            = 0,
-> > +     [SSPLL_SUSPEND_EN]      = 1,
-> > +     [PLL_SEQ_START]         = 2,
-> > +     [PLL_LOCK]              = 3,
-> > +};
-> > +
-> > +#define HSPLL_PDIV_MASK              0xF
-> > +#define HSPLL_PDIV_VAL               0x1
-> > +
-> > +static const u8 u2pll_ctrl[] = {
-> > +     [PLL_PDIV]      = 1,
-> > +     [PLL_RESETB]    = 5,
-> > +     [PLL_LOCK]      = 6,
-> > +};
-> > +
-> > +enum bcm_usb_phy_ctrl_bits {
-> > +     CORERDY,
-> > +     AFE_LDO_PWRDWNB,
-> > +     AFE_PLL_PWRDWNB,
-> > +     AFE_BG_PWRDWNB,
-> > +     PHY_ISO,
-> > +     PHY_RESETB,
-> > +     PHY_PCTL,
-> > +};
-> > +
-> > +#define PHY_PCTL_MASK        0xffff
-> > +/*
-> > + * 0x0806 of PCTL_VAL has below bits set
-> > + * BIT-8 : refclk divider 1
-> > + * BIT-3:2: device mode; mode is not effect
-> > + * BIT-1: soft reset active low
-> > + */
-> > +#define HSPHY_PCTL_VAL       0x0806
-> > +#define SSPHY_PCTL_VAL       0x0006
-> > +
-> > +static const u8 u3phy_ctrl[] = {
-> > +     [PHY_RESETB]    = 1,
-> > +     [PHY_PCTL]      = 2,
-> > +};
-> > +
-> > +static const u8 u2phy_ctrl[] = {
-> > +     [CORERDY]               = 0,
-> > +     [AFE_LDO_PWRDWNB]       = 1,
-> > +     [AFE_PLL_PWRDWNB]       = 2,
-> > +     [AFE_BG_PWRDWNB]        = 3,
-> > +     [PHY_ISO]               = 4,
-> > +     [PHY_RESETB]            = 5,
-> > +     [PHY_PCTL]              = 6,
-> > +};
-> > +
-> > +struct bcm_usb_phy_cfg {
-> > +     uint32_t type;
-> > +     uint32_t ver;
-> > +     void __iomem *regs;
-> > +     struct phy *phy;
-> > +     const u8 *offset;
-> > +};
-> > +
-> > +#define PLL_LOCK_RETRY_COUNT 1000
-> > +
-> > +enum bcm_usb_phy_type {
-> > +     USB_HS_PHY,
-> > +     USB_SS_PHY,
-> > +};
-> > +
-> > +static inline void bcm_usb_reg32_clrbits(void __iomem *addr, uint32_t clear)
-> > +{
-> > +     writel(readl(addr) & ~clear, addr);
-> > +}
-> > +
-> > +static inline void bcm_usb_reg32_setbits(void __iomem *addr, uint32_t set)
-> > +{
-> > +     writel(readl(addr) | set, addr);
-> > +}
-> > +
-> > +static int bcm_usb_pll_lock_check(void __iomem *addr, u32 bit)
-> > +{
-> > +     int retry;
-> > +     u32 rd_data;
-> > +
-> > +     retry = PLL_LOCK_RETRY_COUNT;
-> > +     do {
-> > +             rd_data = readl(addr);
-> > +             if (rd_data & bit)
-> > +                     return 0;
-> > +             udelay(1);
-> > +     } while (--retry > 0);
-> > +
-> > +     pr_err("%s: FAIL\n", __func__);
-> > +     return -ETIMEDOUT;
-> > +}
-> > +
-> > +static int bcm_usb_ss_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
-> > +{
-> > +     int ret = 0;
-> > +     void __iomem *regs = phy_cfg->regs;
-> > +     const u8 *offset;
-> > +     u32 rd_data;
-> > +
-> > +     offset = phy_cfg->offset;
-> > +
-> > +     /* Set pctl with mode and soft reset */
-> > +     rd_data = readl(regs + offset[PHY_CTRL]);
-> > +     rd_data &= ~(PHY_PCTL_MASK << u3phy_ctrl[PHY_PCTL]);
-> > +     rd_data |= (SSPHY_PCTL_VAL << u3phy_ctrl[PHY_PCTL]);
-> > +     writel(rd_data, regs + offset[PHY_CTRL]);
-> > +
-> > +     bcm_usb_reg32_clrbits(regs + offset[PLL_CTRL],
-> > +                           BIT(u3pll_ctrl[SSPLL_SUSPEND_EN]));
-> > +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-> > +                           BIT(u3pll_ctrl[PLL_SEQ_START]));
-> > +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-> > +                           BIT(u3pll_ctrl[PLL_RESETB]));
-> > +
-> > +     msleep(30);
-> > +
-> > +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
-> > +                                  BIT(u3pll_ctrl[PLL_LOCK]));
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int bcm_usb_hs_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
-> > +{
-> > +     int ret = 0;
-> > +     void __iomem *regs = phy_cfg->regs;
-> > +     const u8 *offset;
-> > +     u32 rd_data;
-> > +
-> > +     offset = phy_cfg->offset;
-> > +
-> > +     writel(HSPLL_NDIV_INT_VAL, regs + offset[PLL_NDIV_INT]);
-> > +     writel(HSPLL_NDIV_FRAC_VAL, regs + offset[PLL_NDIV_FRAC]);
-> > +
-> > +     rd_data = readl(regs + offset[PLL_CTRL]);
-> > +     rd_data &= ~(HSPLL_PDIV_MASK << u2pll_ctrl[PLL_PDIV]);
-> > +     rd_data |= (HSPLL_PDIV_VAL << u2pll_ctrl[PLL_PDIV]);
-> > +     writel(rd_data, regs + offset[PLL_CTRL]);
-> > +
-> > +     /* Set Core Ready high */
-> > +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-> > +                           BIT(u2phy_ctrl[CORERDY]));
-> > +
-> > +     msleep(100);
-> > +
-> > +     bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-> > +                           BIT(u2pll_ctrl[PLL_RESETB]));
-> > +     bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-> > +                           BIT(u2phy_ctrl[PHY_RESETB]));
-> > +
-> > +
-> > +     rd_data = readl(regs + offset[PHY_CTRL]);
-> > +     rd_data &= ~(PHY_PCTL_MASK << u2phy_ctrl[PHY_PCTL]);
-> > +     rd_data |= (HSPHY_PCTL_VAL << u2phy_ctrl[PHY_PCTL]);
-> > +     writel(rd_data, regs + offset[PHY_CTRL]);
-> > +
-> > +     ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
-> > +                                  BIT(u2pll_ctrl[PLL_LOCK]));
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int bcm_usb_phy_reset(struct phy *phy)
-> > +{
-> > +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
-> > +     void __iomem *regs = phy_cfg->regs;
-> > +     const u8 *offset;
-> > +
-> > +     offset = phy_cfg->offset;
-> > +
-> > +     if (phy_cfg->type == USB_HS_PHY) {
-> > +             bcm_usb_reg32_clrbits(regs + offset[PHY_CTRL],
-> > +                                   BIT(u2phy_ctrl[CORERDY]));
-> > +             bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-> > +                                   BIT(u2phy_ctrl[CORERDY]));
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int bcm_usb_phy_init(struct phy *phy)
-> > +{
-> > +     struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
-> > +
-> > +     if (phy_cfg->type == USB_SS_PHY)
-> > +             bcm_usb_ss_phy_init(phy_cfg);
-> > +     if (phy_cfg->type == USB_HS_PHY)
-> > +             bcm_usb_hs_phy_init(phy_cfg);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static struct phy_ops sr_phy_ops = {
-> > +     .init           = bcm_usb_phy_init,
-> > +     .reset          = bcm_usb_phy_reset,
-> > +     .owner          = THIS_MODULE,
-> > +};
-> > +
-> > +static int bcm_usb_phy_create(struct device *dev, struct device_node *node,
-> > +                          void __iomem *regs, uint32_t version)
-> > +{
-> > +     struct bcm_usb_phy_cfg *phy_cfg;
-> > +     struct phy_provider *phy_provider;
-> > +
-> > +     phy_cfg = devm_kzalloc(dev, sizeof(struct bcm_usb_phy_cfg), GFP_KERNEL);
-> > +     if (!phy_cfg)
-> > +             return -ENOMEM;
-> > +
-> > +     phy_cfg->regs = regs;
+> > Changes in v2:
+> >     - Now this patch is part of the patchset that aims to remove ad7780
+> > out of staging. https://marc.info/?l=linux-iio&m=154282349808890&w=2
+> >     - Also, now it reads voltage and filter values from the userspace
+> > instead of gpio pin states.
 >
-> Are there any registers shared by all the PHYs?
-No registers shared between phys. All phys have same type of registers
-but at different address offset.
-In the same way few bits in registers are same but at different
-position in registers.
-> > +     phy_cfg->ver = version;
+> Hello,
+> Please see bellow.
+>
+> >
+> >  drivers/staging/iio/adc/ad7780.c       | 78 ++++++++++++++++++++++++--
+> >  include/linux/iio/adc/ad_sigma_delta.h |  5 ++
+> >  2 files changed, 79 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/staging/iio/adc/ad7780.c
+> > b/drivers/staging/iio/adc/ad7780.c
+> > index c4a85789c2db..05979a79fda3 100644
+> > --- a/drivers/staging/iio/adc/ad7780.c
+> > +++ b/drivers/staging/iio/adc/ad7780.c
+> > @@ -39,6 +39,12 @@
+> >  #define AD7170_PATTERN               (AD7780_PAT0 | AD7170_PAT2)
+> >  #define AD7170_PATTERN_MASK  (AD7780_PAT0 | AD7780_PAT1 |
+> > AD7170_PAT2)
+> >
+> > +#define AD7780_GAIN_GPIO     0
+> > +#define AD7780_FILTER_GPIO   1
 > > +
-> > +     if (phy_cfg->ver == BCM_USB_PHY_V1) {
-> > +             unsigned int id;
+> > +#define AD7780_GAIN_MIDPOINT 64
+> > +#define AD7780_FILTER_MIDPOINT       13350
 > > +
-> > +             if (of_property_read_u32(node, "reg", &id)) {
-> > +                     dev_err(dev, "missing reg property in node %s\n",
-> > +                             node->name);
+> >  struct ad7780_chip_info {
+> >       struct iio_chan_spec    channel;
+> >       unsigned int            pattern_mask;
+> > @@ -50,6 +56,8 @@ struct ad7780_state {
+> >       const struct ad7780_chip_info   *chip_info;
+> >       struct regulator                *reg;
+> >       struct gpio_desc                *powerdown_gpio;
+> > +     struct gpio_desc                *gain_gpio;
+> > +     struct gpio_desc                *filter_gpio;
+> >       unsigned int    gain;
+> >
+> >       struct ad_sigma_delta sd;
+> > @@ -115,18 +123,65 @@ static int ad7780_read_raw(struct iio_dev
+> > *indio_dev,
+> >       return -EINVAL;
+> >  }
+> >
+> > +static int ad7780_write_raw(struct iio_dev *indio_dev,
+> > +                         struct iio_chan_spec const *chan,
+> > +                         int val,
+> > +                         int val2,
+> > +                         long m)
+> > +{
+> > +     struct ad7780_state *st = iio_priv(indio_dev);
+> > +     const struct ad7780_chip_info *chip_info = st->chip_info;
+> > +     int uvref, gain;
+> > +     unsigned int full_scale;
+> > +
+> > +     if (!chip_info->is_ad778x)
+> > +             return 0;
+> > +
+> > +     switch (m) {
+> > +     case IIO_CHAN_INFO_SCALE:
+> > +             if (val != 0)
 > > +                     return -EINVAL;
-> > +             }
 > > +
-> > +             if (id == 0) {
-> > +                     phy_cfg->offset = bcm_usb_u2phy_v1;
+> > +             uvref = regulator_get_voltage(st->reg);
 >
-> The reg space can come from the dt itself.
-This driver supports two different phys. one is combo phy which has
-both USB3 and USB2 phy.
-other is single phy it has only USB2 phy.
-So that, from DT we passed address of either combo phy address or
-single phy address.
-In combo phy, USB3 phy and USB2 phy registers are at different offsets
-from the base address passed through DT.
-> > +                     phy_cfg->type = USB_HS_PHY;
-> > +             } else if (id == 1) {
-> > +                     phy_cfg->offset = bcm_usb_u3phy_v1;
-> > +                     phy_cfg->type = USB_SS_PHY;
-> > +             } else {
-> > +                     return -ENODEV;
-> > +             }
-> > +     } else if (phy_cfg->ver == BCM_USB_PHY_V2) {
-> > +             phy_cfg->offset = bcm_usb_u2phy_v2;
-> > +             phy_cfg->type = USB_HS_PHY;
-> > +     }
-> > +
-> > +     phy_cfg->phy = devm_phy_create(dev, node, &sr_phy_ops);
-> > +     if (IS_ERR(phy_cfg->phy))
-> > +             return PTR_ERR(phy_cfg->phy);
-> > +
-> > +     phy_set_drvdata(phy_cfg->phy, phy_cfg);
-> > +     phy_provider = devm_of_phy_provider_register(&phy_cfg->phy->dev,
-> > +                                                  of_phy_simple_xlate);
-> > +     if (IS_ERR(phy_provider)) {
-> > +             dev_err(dev, "Failed to register phy provider\n");
-> > +             return PTR_ERR(phy_provider);
-> > +     }
->
-> No need for a separate PHY provider.
-Could you please provide more details?
-I thought to get phy device in the upper layer we need to register
-provider. can we skip this?
-In this driver, combo phy provides two usb ports to host controller,
-so that I need to add separate phandlers
-in host controller DT node and need to create two separate phy
-devices. also phy_init and reset handlers need
-to call for both phy devices separately.
->
-> Thanks
-> Kishon
+> regulator_get_voltage() has already been called in the probe function and
+> the result is stored in st->int_vref_mv.
 
-Thank you.
-Regards,
-Srinath.
+This was removed in commit  9eae69ddbc4717a0bd702eddac76c7848773bf71
+because the value was not being updated. But I agree if the vref
+voltage is not going to change at all after the initialization, then
+this value should be kept in memory.
+
+> My suggestion would be to use a local vref variable declared as unsigned
+> int. It is my fault that I haven't explained correctly in the previous
+> email, but you need to multiply vref_mv with 1000000LL in order to get the
+> right precision: vref = st->int_vref_mv * 1000000LL. Afterwards you will be
+> able to perform the divisions.
+
+Thanks for this info! :-)
+Shouldn't we store this in uV (microVolts)? This will yield a more
+accurate result after the multiplication.
+
+> > +
+> > +             if (uvref < 0)
+> > +                     return uvref;
+> > +
+> > +             full_scale = 1 << (chip_info->channel.scan_type.realbits
+> > - 1);
+> > +             gain = DIV_ROUND_CLOSEST(uvref, full_scale);
+> > +             gain = DIV_ROUND_CLOSEST(gain, val2);
+> > +
+> > +             gpiod_set_value(st->gain_gpio, gain <
+> > AD7780_GAIN_MIDPOINT ? 0 : 1);
+>
+> Once the gain is set, you can store it in st->gain variable.
+
+Yes, we forgot it.
+
+>
+> > +     case IIO_CHAN_INFO_SAMP_FREQ:
+> > +             if (val2 != 0)
+> > +                     return -EINVAL;
+> > +
+> > +             gpiod_set_value(st->filter_gpio, val <
+> > AD7780_FILTER_MIDPOINT ? 0 : 1);
+>
+> This is probably fine, although I am not a big fan of the ternary operator.
+> A simple if else statement would do. However, I don't feel strongly about
+> it, so feel free to disagree.
+>
+> > +     break;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
+> >                                    unsigned int raw_sample)
+> >  {
+> >       struct ad7780_state *st = ad_sigma_delta_to_ad7780(sigma_delta);
+> >       const struct ad7780_chip_info *chip_info = st->chip_info;
+> > +     int val;
+> >
+> >       if ((raw_sample & AD7780_ERR) ||
+> >           ((raw_sample & chip_info->pattern_mask) != chip_info-
+> > >pattern))
+> >               return -EIO;
+> >
+> >       if (chip_info->is_ad778x) {
+> > -             if (raw_sample & AD7780_GAIN)
+> > +             val = raw_sample & AD7780_GAIN;
+> > +
+> > +             if (val != gpiod_get_value(st->gain_gpio))
+> > +                     return -EIO;
+>
+> It is not obvious to me what is the point of this check. Maybe you can add
+> a comment?
+
+It seems to be a redundancy check. It is getting the 32-bits
+raw_output, getting the bit that represents the GAIN value and
+checking if the pin is set accordingly (see Figure 22 of datasheet,
+page 13). Is this correct? If yes we add a comment explaining this.
+
+>
+> > +
+> > +             if (val)
+> >                       st->gain = 1;
+> >               else
+> >                       st->gain = 128;
+>
+> Do we still need this? I am not convinced.
+No, I don't think so. Thanks for pointing this out :-)
+
+>
+> > @@ -141,18 +196,20 @@ static const struct ad_sigma_delta_info
+> > ad7780_sigma_delta_info = {
+> >       .has_registers = false,
+> >  };
+> >
+> > -#define AD7780_CHANNEL(bits, wordsize) \
+> > +#define AD7170_CHANNEL(bits, wordsize) \
+> >       AD_SD_CHANNEL_NO_SAMP_FREQ(1, 0, 0, bits, 32, wordsize - bits)
+> > +#define AD7780_CHANNEL(bits, wordsize) \
+> > +     AD_SD_CHANNEL_GAIN_FILTER(1, 0, 0, bits, 32, wordsize - bits)
+> >
+> >  static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+> >       [ID_AD7170] = {
+> > -             .channel = AD7780_CHANNEL(12, 24),
+> > +             .channel = AD7170_CHANNEL(12, 24),
+> >               .pattern = AD7170_PATTERN,
+> >               .pattern_mask = AD7170_PATTERN_MASK,
+> >               .is_ad778x = false,
+> >       },
+> >       [ID_AD7171] = {
+> > -             .channel = AD7780_CHANNEL(16, 24),
+> > +             .channel = AD7170_CHANNEL(16, 24),
+> >               .pattern = AD7170_PATTERN,
+> >               .pattern_mask = AD7170_PATTERN_MASK,
+> >               .is_ad778x = false,
+> > @@ -173,6 +230,7 @@ static const struct ad7780_chip_info
+> > ad7780_chip_info_tbl[] = {
+> >
+> >  static const struct iio_info ad7780_info = {
+> >       .read_raw = ad7780_read_raw,
+> > +     .write_raw = ad7780_write_raw,
+> >  };
+> >
+> >  static int ad7780_probe(struct spi_device *spi)
+> > @@ -222,6 +280,18 @@ static int ad7780_probe(struct spi_device *spi)
+> >               goto error_disable_reg;
+> >       }
+> >
+> > +     if (st->chip_info->is_ad778x) {
+> > +             st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
+> > +                                                     "gain",
+> > +                                                     GPIOD_OUT_HIGH);
+> > +             if (IS_ERR(st->gain_gpio)) {
+>
+> if the GPIO is optional, then we should continue in case of -ENODEV.
+>
+> Shouldn't we have a devm_gpiod_get_optional() call also for filter_gpio?
+>
+> > +                     ret = PTR_ERR(st->gain_gpio);
+> > +                     dev_err(&spi->dev, "Failed to request gain GPIO:
+> > %d\n",
+> > +                             ret);
+> > +                     goto error_disable_reg;
+> > +             }
+> > +     }
+> > +
+> >       ret = ad_sd_setup_buffer_and_trigger(indio_dev);
+> >       if (ret)
+> >               goto error_disable_reg;
+> > diff --git a/include/linux/iio/adc/ad_sigma_delta.h
+> > b/include/linux/iio/adc/ad_sigma_delta.h
+> > index 730ead1a46df..6cadab6fd5fd 100644
+> > --- a/include/linux/iio/adc/ad_sigma_delta.h
+> > +++ b/include/linux/iio/adc/ad_sigma_delta.h
+> > @@ -173,6 +173,11 @@ int ad_sd_validate_trigger(struct iio_dev
+> > *indio_dev, struct iio_trigger *trig);
+> >       __AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
+> >               _storagebits, _shift, NULL, IIO_VOLTAGE, 0)
+> >
+> > +#define AD_SD_CHANNEL_GAIN_FILTER(_si, _channel, _address, _bits, \
+> > +     _storagebits, _shift) \
+> > +     __AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
+> > +             _storagebits, _shift, NULL, IIO_VOLTAGE,
+> > BIT(IIO_CHAN_INFO_RAW))
+> > +
+> >  #define AD_SD_TEMP_CHANNEL(_si, _address, _bits, _storagebits, _shift) \
+> >       __AD_SD_CHANNEL(_si, 0, -1, _address, _bits, \
+> >               _storagebits, _shift, NULL, IIO_TEMP, \
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
+> To post to this group, send email to kernel-usp@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/1543490289.11186.22.camel%40analog.com.
+> For more options, visit https://groups.google.com/d/optout.
