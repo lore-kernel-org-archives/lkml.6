@@ -2,153 +2,119 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171E5C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA006C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDEEB21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF21820868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:45:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGHNw6WS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDEEB21019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qsBgEKca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF21820868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbeK3Auc (ORCPT
+        id S1728333AbeK3AvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:50:32 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40716 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeK3Auc (ORCPT
+        Thu, 29 Nov 2018 19:51:06 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42714 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbeK3AvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:50:32 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so1953652wrt.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 05:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B0QRTCt9y0nVCiZHknMcc5NdE9lCatyyRD51UF2K9c8=;
-        b=aGHNw6WSJbHOKCrQw7KARl7wF0noFNB1GncFwsGg6bc7DmwqQroxqOD8UTucPpeIdy
-         bLCowS9SZIp7Fp0Pkc5SYJbxB0UnXuNLeX/bifiloK8NPVsKv5ihzVctaaZJSpOYUl/T
-         vHfmaLQcLzgxkSfaS7lLxpwClsTNdbc0kCzxvo9QA3PGA2cPrIC/qJ2yGopJZd+819bn
-         foebyEiVS9rZe+LKuYTGp0fa1Y5ExgtR3iJA21iy3t6FxyTXLtX7OxRG3egjV9LwG164
-         PYWfalz2JvST0vd2XPWEosTMcyHygnsMlHPSlaFIatdogHsulpSUoM7gVEPs8sDaaime
-         sy2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B0QRTCt9y0nVCiZHknMcc5NdE9lCatyyRD51UF2K9c8=;
-        b=BTpclN8VZto/rR1MwekdojuQhGIp93c+RpXEG2m9aw4FNlKwdwYZ0/33US3WPsG1Ra
-         Vnk2D5l02fS13bG1uNDRKfsM8JVuEEvKbAhOpFFe1aTKdTZTV4w96mK1cUicCmZatbtX
-         uAmjGHXtL/K/R/vNaD1bUhnEfT2x68eh/Fw5iGFeuumlKK2dwXNI2ysi7u+6b86rWpo1
-         IoMgp1uSul0eC+atMwo+MdiTd9vJZMP5em5TXM+6JZafKYo27dLKO60bcZGDOwZiv768
-         jfRvrYXn3JI+ifx9sBNWap2QxACsztQIZR4s2oy6LoCXWMBuitUeasbmFr1BZkJ5ZDJq
-         CQLg==
-X-Gm-Message-State: AA+aEWaRA0qz0k7ymWsLhSH5Gp946wp6wfmh/o+CWLvWdwIx3j0OtwSL
-        yNf9UZdGV3m0t/L/+15X9Mcv/bgP
-X-Google-Smtp-Source: AFSGD/X7rR/EO7gk8aIak+QpCZ3tnj4DYNV+ebh++SgTsEu84qIkVLPAoXGbJnzeLmChM5qWe8Zn9g==
-X-Received: by 2002:a5d:678b:: with SMTP id v11mr1622059wru.245.1543499106285;
-        Thu, 29 Nov 2018 05:45:06 -0800 (PST)
-Received: from ?IPv6:2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba? ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id d4sm2018679wrp.89.2018.11.29.05.45.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 05:45:05 -0800 (PST)
-Subject: Re: [PATCH] staging: wilc1000: correct inconsistent indenting
-To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
-Cc:     ajay.kathat@microchip.com, adham.abozaeid@microchip.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20181128181724.25194-1-straube.linux@gmail.com>
- <d93b32c5861eb5ae552b2ed3fc65c087dc7fa328.camel@perches.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <325d0ffa-85a2-7fcd-30ae-798c0c2c06dc@gmail.com>
-Date:   Thu, 29 Nov 2018 14:45:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 29 Nov 2018 19:51:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mGWhneo6rPiu3VVJlPWlpF6WY1PKLe+0ArpEk0GVBI0=; b=qsBgEKca9TjNxSqtN9hsJrk+O
+        xcj3zvqvh1mdsA0ZqV7GRZat0Ms/q3Lm/M9JhIRnatwMLCnY/zoXk7JsjPbaI2L3Ck3k/crgBPR+K
+        Qle7HDJRsnP9FOfl5lQvJEkET5xbZkd81/heb6aA4QHlhIo7IaWhcsQSd6R7qUE0HH4BQPC+Q32Oj
+        So85tFbWozNtZAwgd7FWwhcAh7N1wk8v1RWxQMYYrXY5KsvBIHtsujcVCcVAdYHcWSq8og1NCbXFN
+        pJdorQto0c9PPRsU2I9uqSyMQ+cG5POtDEJQmOu4E/SC8F8uFfy1lRAnEep3SLa3ejNQdu313piM/
+        2qLvio9Mg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSMdB-0000CL-II; Thu, 29 Nov 2018 13:45:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9C22B2029FD58; Thu, 29 Nov 2018 14:44:49 +0100 (CET)
+Date:   Thu, 29 Nov 2018 14:44:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yongji Xie <elohimes@gmail.com>
+Cc:     mingo@redhat.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, xieyongji@baidu.com,
+        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
+        nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181129134449.GH2149@hirez.programming.kicks-ass.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <d93b32c5861eb5ae552b2ed3fc65c087dc7fa328.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 7:24 AM, Joe Perches wrote:
-> On Wed, 2018-11-28 at 19:17 +0100, Michael Straube wrote:
->> Correct inconsistent indenting reported by smatch.
-> []
->> diff --git a/drivers/staging/wilc1000/wilc_spi.c b/drivers/staging/wilc1000/wilc_spi.c
-> []
->> @@ -963,7 +963,7 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
->>   			dev_err(&spi->dev,
->>   				"Unexpected interrupt(2):j=%d,tmp=%x,mask=%x\n",
->>   				j, tmp, unknown_mask);
->> -				happened = 1;
->> +			happened = 1;s a
->>   		}
->>   
->>   		j++;
+On Thu, Nov 29, 2018 at 02:12:32PM +0100, Peter Zijlstra wrote:
 > 
-> Perhaps a little refactoring instead
-> ---
->   drivers/staging/wilc1000/wilc_spi.c | 12 +++++-------
->   1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/wilc_spi.c b/drivers/staging/wilc1000/wilc_spi.c
-> index 35ff432587fe..a38ddb1f0a1f 100644
-> --- a/drivers/staging/wilc1000/wilc_spi.c
-> +++ b/drivers/staging/wilc1000/wilc_spi.c
-> @@ -927,7 +927,8 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
->   	int ret;
->   	u32 tmp;
->   	u32 byte_cnt;
-> -	int happened, j;
-> +	bool unexpected_irq;
-> +	int j;
->   	u32 unknown_mask;
->   	u32 irq_flags;
->   	int k = IRG_FLAGS_OFFSET + 5;
-> @@ -947,8 +948,6 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
->   
->   	j = 0;
->   	do {
-> -		happened = 0;
-> -
->   		wilc_spi_read_reg(wilc, 0x1a90, &irq_flags);
->   		tmp |= ((irq_flags >> 27) << IRG_FLAGS_OFFSET);
->   
-> @@ -959,15 +958,14 @@ static int wilc_spi_read_int(struct wilc *wilc, u32 *int_status)
->   
->   		unknown_mask = ~((1ul << spi_priv->nint) - 1);
->   
-> -		if ((tmp >> IRG_FLAGS_OFFSET) & unknown_mask) {
-> +		unexpected_irq = (tmp >> IRG_FLAGS_OFFSET) & unknown_mask;
-> +		if (unexpected_irq)
->   			dev_err(&spi->dev,
->   				"Unexpected interrupt(2):j=%d,tmp=%x,mask=%x\n",
->   				j, tmp, unknown_mask);
-> -				happened = 1;
-> -		}
->   
->   		j++;
-> -	} while (happened);
-> +	} while (unexpected_irq);
->   
->   	*int_status = tmp;
->   
-> 
-Hi Joe,
+> +Cc davidlohr and waiman
 
-that looks good to me.
-Naming the loop condition unexpected_irq also improves readability.
+> Urgh; so the case where the cmpxchg() fails because it already has a
+> wakeup in progress, which then 'violates' our expectation of when the
+> wakeup happens.
+> 
+> Yes, I think this is real, and worse, I think we need to go audit all
+> wake_q_add() users and document this behaviour.
+> 
+> In the ideal case we'd delay the actual wakeup to the last wake_up_q(),
+> but I don't think we can easily fix that.
 
-I will send a new patch, thanks.
-Michael
+See commit: 1d0dcb3ad9d3 ("futex: Implement lockless wakeups"), I think
+that introduces the exact same bug.
+
+Something like the below perhaps, altough this pattern seems to want a
+wake_a_add() variant that already assumes get_task_struct().
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index f423f9b6577e..d14971f6ed3d 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1387,11 +1387,7 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	if (WARN(q->pi_state || q->rt_waiter, "refusing to wake PI futex\n"))
+ 		return;
+ 
+-	/*
+-	 * Queue the task for later wakeup for after we've released
+-	 * the hb->lock. wake_q_add() grabs reference to p.
+-	 */
+-	wake_q_add(wake_q, p);
++	get_task_struct(p);
+ 	__unqueue_futex(q);
+ 	/*
+ 	 * The waiting task can free the futex_q as soon as q->lock_ptr = NULL
+@@ -1401,6 +1397,13 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	 * plist_del in __unqueue_futex().
+ 	 */
+ 	smp_store_release(&q->lock_ptr, NULL);
++
++	/*
++	 * Queue the task for later wakeup for after we've released
++	 * the hb->lock. wake_q_add() grabs reference to p.
++	 */
++	wake_q_add(wake_q, p);
++	put_task_struct(p);
+ }
+ 
+ /*
