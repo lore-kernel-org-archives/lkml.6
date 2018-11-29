@@ -6,157 +6,109 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AB5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECD2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68EB221104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:01:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EB221104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
+	by mail.kernel.org (Postfix) with ESMTP id F1A6920868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:02:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A6920868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbeK3IHq (ORCPT
+        id S1726848AbeK3IJR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:07:46 -0500
-Received: from ucol19pa12.eemsg.mail.mil ([214.24.24.85]:13788 "EHLO
-        ucol19pa12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeK3IHp (ORCPT
+        Fri, 30 Nov 2018 03:09:17 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42464 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbeK3IJR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:07:45 -0500
-X-EEMSG-check-008: 662307853|UCOL19PA12_EEMSG_MP10.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
-   d="scan'208";a="662307853"
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by ucol19pa12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 29 Nov 2018 21:01:00 +0000
-X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
-   d="scan'208";a="21166968"
-IronPort-PHdr: =?us-ascii?q?9a23=3A27XcSBXPcd22mQsu9V0BZlmZKy3V8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYZRePvqdThVPEFb/W9+hDw7KP9fy4CSpYud6oizMrSNR0TR?=
- =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
- =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9uLxi6txndutULioZ+N6g9zQ?=
- =?us-ascii?q?fErGFVcOpM32NoIlyTnxf45siu+ZNo7jpdtfE8+cNeSKv2Z6s3Q6BWAzQgKG?=
- =?us-ascii?q?A1+dbktQLfQguV53sTSXsZnxxVCAXY9h76X5Pxsizntuph3SSRIMP7QawoVT?=
- =?us-ascii?q?mk8qxmUwHjhjsZODEl8WHXks1wg7xdoBK9vBx03orYbJiIOPZiYq/ReNUXSm?=
- =?us-ascii?q?RbXsZVSidPHIWyYYUSBOYFJOpUsZXxq14IoBCjBwejGfnvxydViHHo06000+?=
- =?us-ascii?q?cvHw/I0wMvHd0BrHvaoc7pNKoQS+250LXEwDvBYv5QxDzz6JLIchckofyUQL?=
- =?us-ascii?q?xwbdTeyVEvFwzbiFWbtJHrPzaP2eQJt2iU8ephXv+ohm48tg5xuSOixtssi4?=
- =?us-ascii?q?bVhoIVzUrI9SNiwIkvP9G4R0l7YcC9HZZWqiqUNJN2T9s/T2xntys20L0LtY?=
- =?us-ascii?q?OhcCQUx5kr2QTTZ+GBfoOV+BzsTvyRLi19hH99fbK/gAu9/la4x+3nU8m0zE?=
- =?us-ascii?q?5Kri1YktnQrnwN1wLc6syASvZl4keuwyyP1wHO6uFfO0w0iaraJIIhwr43jJ?=
- =?us-ascii?q?YTt1jMHjTql0nsia+Wd0Ek9vCp6+ThfLrmuoeRO5J7hwzxKKgjmtGzDf4mPg?=
- =?us-ascii?q?UBQWSX4/mw2KXm/ULjQbVKivM2krPesJDfPckbvbO2AxRO34Y/6xewEzem0N?=
- =?us-ascii?q?MCkXkBN1JKYgiLj4fuO1HQOPz4F+uwg0ywkDd3wPDLJrjhApTOLnjHl7fhZq?=
- =?us-ascii?q?1w61VdyQUt19BQ+Y9bCrAbLPLzR0/7rMbYAQMhMwyo3+bnD81w1p0RWWKIAq?=
- =?us-ascii?q?6WKqfSvESS5u0xPuaMZJUauCrnJ/c54P7uiGczmUUBcqmxwZsXdHe4E+xhI0?=
- =?us-ascii?q?WcZnrsmdEBHn0WsQUgV+HqkkONXiNTZ3moQ6Iw/C00CIWjDY3bXICinKSB3D?=
- =?us-ascii?q?unHp1Rfm1JEV6MEXb2eIWARvgMczmfIsFgkjMaUbiuVpQh2g+1tAPgzLpnNO?=
- =?us-ascii?q?XU8DUCtZ3/zNh1+/HTlRYq+DxvFcud12GMTmB0n2MOXDI5xqZ/rlFnyleE0K?=
- =?us-ascii?q?h3nuZUGsBU5/NMSg06L4LTz/RmC9DuXQLMZs+JR0y7QtWiGjwxVsg+w8IKY0?=
- =?us-ascii?q?pkHtWiiRfD3zC0DLMPi7OLA5k0+LrG33ftP8Z912rG1K45glkiQ8tPM3Cmh6?=
- =?us-ascii?q?Fm+wjQGYHJiUOZmLiudakHwi7N+3mMzXCUsEFbTgFwS6PFUm4bZkfMqtT5/E?=
- =?us-ascii?q?zCRae0Cbs7KgtB1dKCKqxSZ93tjFVGQurjOdvHb2KsnWewBBGIxrWCbIrxYG?=
- =?us-ascii?q?gdwirdB1YekwwJ/naJKxI+BiG/rGLaFjBuEkjvY0z0++lktHy7VlM0zx2Nb0?=
- =?us-ascii?q?B507q1+xgVheGTSv8K0LIEozoupCtqHFmj29LbEMSApwV/c6VGe98940lI1X?=
- =?us-ascii?q?jftwNjOpysNadihkQRcw5vpUPhyw13CplckcgttH4q1xR9KaaZ0FNHajOZ0o?=
- =?us-ascii?q?v9OqPYKmbs5hCjca3W1U/E0NaQ5KgP7O40q1L5vAGmDkAi6Wlo08FJ03uA4Z?=
- =?us-ascii?q?XHFBcdUJzrXUYz7Bh6p6rXYjMj6IzJ1X1jK7W0viXe1NIuAet2giqnKvJeM6?=
- =?us-ascii?q?eDD0fJAcAACsSvYLgvmlutaQksJ/Jf7qM4PoWmaq3V9rSsObNbgD++jWlBqL?=
- =?us-ascii?q?t420aI+js0HvXExL4Z0vqY2U2BTD66g1C/5JOk0btYbC0fSzLsgRPvA5RcM+?=
- =?us-ascii?q?grJ94G?=
-X-IPAS-Result: =?us-ascii?q?A2AnAQDUUgBc/wHyM5BlHAEBAQQBAQcEAQGBVAQBAQsBg?=
- =?us-ascii?q?VUFKYE1MyeDeZQhUAEBBoEICCWJHpAgOAGEQAKDMiI3Bg0BAwEBAQEBAQIBb?=
- =?us-ascii?q?CiCNiQBgmEBAQEBAgEjFUEFCwsYAgImAgJXBg0GAgEBgl4/gXUFCKl0gS+FQ?=
- =?us-ascii?q?IRvgQuLCxd4gQeBOAyCX4gFglcCiRaCA4RRNFCPNQmRLAYYgVqINIcOmioig?=
- =?us-ascii?q?VUrCAIYCCEPgyeQeSEDMIEFAQGNPwEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 29 Nov 2018 21:01:00 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wATL0wfi029482;
-        Thu, 29 Nov 2018 16:00:58 -0500
-Subject: Re: overlayfs access checks on underlying layers
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
- <20181127210542.GA2599@redhat.com>
- <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
- <20181128170302.GA12405@redhat.com>
- <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
- <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
- <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
-Date:   Thu, 29 Nov 2018 16:03:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 30 Nov 2018 03:09:17 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d19so3618347qtq.9;
+        Thu, 29 Nov 2018 13:02:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GBd+z/mwxXYuThLSf+B4xpvms0GbzaZ6e4I+CTFDcDg=;
+        b=n3LWW8rLLlj81QOIHIC63u922xtEsPljOKTGVNtyCO6qhO8Sz47jHmfmedzUGB3LX3
+         ayZHV0efkZe94ImTgX4b6Z6EzmyAeizbdhzcApJSprb+mW5T4bP0k8YdkFKeNCLGL8BP
+         OzRJswZkd1J2SMf/p91KJpaYMh8BCLaPOfLdQ3coZ8dFjYBoV+btPmiVJYMcYugj+XtB
+         fanL+ndcdOuWKfZbVjpXgBXm6EKthJKM8mocmX+/rH0ODSbG+byjhv5GLA8AraXi3lqZ
+         E//i80s2BvtlSS48OxtLshFzK/UvWm/mczfJHz4GdIzpO4zsgMOYcy+i0QsFqtJWbFVQ
+         3M5w==
+X-Gm-Message-State: AA+aEWa3/zYeS4viF0oSt/I/uHPM3vRv4BYo0rwDC0NIv70rOy5jePrt
+        zxFC8z2Y8UQheNKv3+Snq1Wto2fauI6Lm3Ho6eM=
+X-Google-Smtp-Source: AFSGD/VEcAsb8VMvtTvzAud5UEWOuPcmYbwPQE+ZhJvyvmEf4JE07FbJ8h3oVrkcyhWytKqV1+baplZQlR6kc2AQSUY=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr3021100qte.212.1543525352322;
+ Thu, 29 Nov 2018 13:02:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net> <993B98AC-51DF-4131-AF7F-7DA2A7F485F1@brauner.io>
+ <CALCETrWnQNMQcCmFZrftVVYgAMW6DT3gyxvVb_v9_enUCUkHiw@mail.gmail.com>
+ <20181129195551.woe2bl3z3yaysqb6@brauner.io> <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+In-Reply-To: <6E21165F-2C76-4877-ABD9-0C86D55FD6AA@amacapital.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 29 Nov 2018 22:02:13 +0100
+Message-ID: <CAK8P3a2i9DFaS9-3A9V_pKwFfwVR0bDqgLosmivge3Cx2VyiuQ@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     christian@brauner.io, Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>, cyphar@cyphar.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>, linux-man@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 2:47 PM, Miklos Szeredi wrote:
-> On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> 
->> Possibly I misunderstood you, but I don't think we want to copy-up on
->> permission denial, as that would still allow the mounter to read/write
->> special files or execute regular files to which it would normally be
->> denied access, because the copy would inherit the context specified by
->> the mounter in the context mount case.  It still represents an
->> escalation of privilege for the mounter.  In contrast, the copy-up on
->> write behavior does not allow the mounter to do anything it could not do
->> already (i.e. read from the lower, write to the upper).
-> 
-> Let's get this straight:  when file is copied up, it inherits label
-> from context=, not from label of lower file?
+On Thu, Nov 29, 2018 at 9:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> > On Nov 29, 2018, at 11:55 AM, Christian Brauner <christian@brauner.io> wrote:
+> >> On Thu, Nov 29, 2018 at 11:22:58AM -0800, Andy Lutomirski wrote:
+> >>> On Thu, Nov 29, 2018 at 11:17 AM Christian Brauner <christian@brauner.io> wrote:
+> >>>> On November 30, 2018 5:54:18 AM GMT+13:00, Andy Lutomirski <luto@amacapital.net> wrote:
+> >>
+> >> The #1 fix would add a copy_siginfo_from_user64() or similar.
+> >
+> > Thanks very much! That all helped a bunch already! I'll try to go the
+> > copy_siginfo_from_user64() way first and see if I can make this work. If
+> > we do this I would however only want to use it for the new syscall first
+> > and not change all other signal syscalls over to it too. I'd rather keep
+> > this patchset focussed and small and do such conversions caused by the
+> > new approach later. Does that sound reasonable?
+>
+> Absolutely. I don’t think we can change old syscalls — the ABI is set in stone.
+> But for new syscalls, I think the always-64-bit behavior makes sense.
 
-That's correct.  The overlay inodes are all assigned the label from the 
-context= mount option, and so are any upper inodes created through the 
-overlay.  At least that's my understanding of how it is supposed to 
-work.  The original use case was for containers with the lower dir 
-labeled with a context that is read-only to the container context and 
-using a context that is writable by the container context for the 
-context= mount.
+It looks like we already have a 'struct signalfd_siginfo' that is defined in a
+sane architecture-independent way, so I'd suggest we use that.
 
-> Next question: permission to change metadata is tied to permission to
-> open?  Is it possible that open is denied, but metadata can be
-> changed?
+We may then also want to make sure that any system call that takes a
+siginfo has a replacement that takes a signalfd_siginfo, and that this
+replacement can be used to implement the old version purely in
+user space.
 
-There is no metadata change occurring here. The overlay, upper, and 
-lower inodes all keep their labels intact for their lifetime (both 
-overlay and upper always have the context= label; upper has whatever its 
-original label was), unless explicitly relabeled by some process.  And 
-when viewed through the overlay, the file always has the label specified 
-via context=, even before the copy-up.
+Is the current procfd_signal() proposal (under whichever name) sufficient
+to correctly implement both sys_rt_sigqueueinfo() and sys_rt_tgsigqueueinfo()?
+Can we implement sys_rt_sigtimedwait() based on signalfd()?
+If yes, that would leave waitid(), which already needs a replacement
+for y2038, and that should then also return a signalfd_siginfo.
+My current preference for waitid() would be to do a version that
+closely resembles the current interface, but takes a signalfd_siginfo
+and a __kernel_timespec based rusage replacement (possibly
+two of them to let us map wait6), but does not operate on procfd or
+take a signal mask. That would require yet another syscall, but I
+don't think I can do that before we want to have the set of y2038
+safe syscalls.
 
-> DAC model allows this: metadata change is tied to ownership, not mode
-> bits.   And different capability flag.
-> 
-> If the same is true for MAC, then the pre-v4.20-rc1 is already
-> susceptible to the privilege escalation you describe, right?
-
-Actually, I guess there wouldn't be a privilege escalation if you 
-checked the mounter's ability to create the new file upon copy-up, and 
-checked the mounter's access to the upper inode label upon the 
-subsequent read, write, or execute access.  Then we'd typically block 
-the ability to create the device file and we'd block the ability to 
-execute files with the label from context=.
-
-But copy-up of special files seems undesirable for other reasons (e.g. 
-requiring mounters to be allowed to create device nodes just to permit 
-client's to read/write them, possible implications for nodev/noexec, 
-implications for socket and fifo files).
+       Arnd
