@@ -2,113 +2,172 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F75C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B0FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0285820673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A89C20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LNmgepoN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0285820673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IyJ3205x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A89C20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388004AbeK3Btk (ORCPT
+        id S2388268AbeK3BsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:49:40 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43913 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387910AbeK3Bti (ORCPT
+        Thu, 29 Nov 2018 20:48:14 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45409 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387897AbeK3BsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:49:38 -0500
-Received: by mail-io1-f66.google.com with SMTP id g8so1730869iop.10
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:44:03 -0800 (PST)
+        Thu, 29 Nov 2018 20:48:11 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v6so2135727wrr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:42:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xtP/0UQTRbEGOB413kDSGEnCVvA72PfoDC03K2Vf8hc=;
-        b=LNmgepoNtkIqJ4emeW2Ee30TrKufeP64dVRIkTcBmc1aG6vC/eX5omP3q8ZLLwMsuQ
-         8prre5DuDbWmT+FQC4H1GGg5KOdvFFrzAWPLjtoLYeV0hPZgZHqjfosFN8Dtur2v7wnA
-         IDZQMS13TNrfshODKb/zvPUuTnHZtxRC2Mmd4=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=q3QS62MIFQUBTNlO2qw4Vk0ELQhTshDx1aMv2RLYuQY=;
+        b=IyJ3205xUDfFNU3DlmFXPimwCE2QVSZBSqX2XTXIInIrw8uVZ8zr3SLPoJdqjTBzq5
+         BYuJyuSru64u4HLrY/t3nF9/UHKJGSnfYnL1K/5MZlPa7J77FWJu/79701CU9fWq+l3Z
+         3tLizTyqOwucUiVyp7Ak/WaE+72gCRJ5iHegwkrqpiIP2YBp/W+iPaKx1rXWO4zaObw0
+         YQMLsTqWhS6u8Mp1kQAbbK7DMsg0AyuTiniRfjO7w8TfdmyXXxLfkeXS0AIXo0cxgtGJ
+         JuZuZofT7kySqlR94fmrdH6Qtzbyqj+w8eJbezpIgCE11SUQ5WjMLzoUxUgmMzm7DLei
+         /zKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xtP/0UQTRbEGOB413kDSGEnCVvA72PfoDC03K2Vf8hc=;
-        b=JImfJuVfJssphoTcI6Aizn9OKZh31E9V/DX5lF3Zu4V1Nc+PW6RpKeYLYZ8/8T+4AR
-         FQcMJ1L58xxbkXhsF/d78a/mw4IMTHz15dfUUIN1FfsTOpDmQ6ncTJd8jEVaYq2oS+7G
-         uXahLbE7+X5VyVC0PtXlogeG0kstz+TUDi7HLHuoN2Py3BhJ/RoHAwdc1tHyqek6pmzx
-         Q8HTE1UU8rKl8WfSE3k04u6JpenGzlDNSYQE1u6oMtL3TjMF9l9PyFe0CuP4LWkv/xc1
-         WhPcmipGO+IqZ/18oOpkFN/++afZRFAUz1NKuLVqllzooEX1TksSVRWu6CeS/UgsPwg8
-         WGTw==
-X-Gm-Message-State: AA+aEWa1kBSpbONZtrUJJ0DtLtY8YteFJDCa3osveByzoUJeRFYxWbAZ
-        ey+2qQJDXpUW8l0RqbHyaViRXHfcZVA0pMmib+qvcg==
-X-Google-Smtp-Source: AFSGD/VLG1mIzRbyHq4FR9izecMVvcnpv6Kv4tfDeIEdiTzAM3mGsSpsOZhwKkt3mvITpABuGY5+nyK0zsKrJOvKd0s=
-X-Received: by 2002:a5d:959a:: with SMTP id a26mr1432213ioo.278.1543502642608;
- Thu, 29 Nov 2018 06:44:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
- <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
-In-Reply-To: <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 29 Nov 2018 15:43:50 +0100
-Message-ID: <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-To:     "Clark, Rob" <robdclark@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Dave Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>, vivek.gautam@codeaurora.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=q3QS62MIFQUBTNlO2qw4Vk0ELQhTshDx1aMv2RLYuQY=;
+        b=AtO142wAoKBF8VevvySldMdpgdYwesH3EhH+Yqb9NhZqjRX+vstjrLcEiYb6FEJHlu
+         TnlKd5GRMbjZA2JE5i7WckQSsH05x+KJ28AqPUioFhvCOZKmRYrh9P3tHEzFAG1EKoOh
+         9HGBfmgC09yI/OddE0gsC/hc3b/HeS0WL5QpZCLGMfLE2wMR/4lD0Xb9076loLAKl+h+
+         6p6RLYrXahe2fOd7feK46rW5BzEdBL4H5OSySCA/e3mNhSSphj4TpwjjMqE4FXYUoZJp
+         APmNbSaRRL826WDD3Cc+Clqa6uWfnkiAmr14IEFc0XUCv2ECDv/OL9bTqY+GLF85RkuS
+         OBdA==
+X-Gm-Message-State: AA+aEWZnFkFI7uCShw4dosoQtKAibG8Jmo4MAllwtjnWKmEyq8r4lG0C
+        P7czbaUi/1fhLL19OIp03xmagw==
+X-Google-Smtp-Source: AFSGD/XSZWeEkj9cDssrxWHmjPfR7TPB1L1ed0sNxePNRTyQ3vadDNRpZ6ff3GVTZeWA24dn9uZYdA==
+X-Received: by 2002:adf:a28d:: with SMTP id s13mr1782539wra.100.1543502555033;
+        Thu, 29 Nov 2018 06:42:35 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id t131sm875406wmt.1.2018.11.29.06.42.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 29 Nov 2018 06:42:34 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     davem@davemloft.net, ebiggers@kernel.org,
+        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v5 01/11] crypto: crypto_user_stat: made crypto_user_stat optional
+Date:   Thu, 29 Nov 2018 14:42:16 +0000
+Message-Id: <1543502546-23870-2-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
+References: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 3:26 PM Rob Clark <robdclark@gmail.com> wrote:
->
-> On Thu, Nov 29, 2018 at 9:14 AM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > On Thu, Nov 29, 2018 at 07:33:15PM +0530, Vivek Gautam wrote:
-> > > dma_map_sg() expects a DMA domain. However, the drm devices
-> > > have been traditionally using unmanaged iommu domain which
-> > > is non-dma type. Using dma mapping APIs with that domain is bad.
-> > >
-> > > Replace dma_map_sg() calls with dma_sync_sg_for_device{|cpu}()
-> > > to do the cache maintenance.
-> >
-> > As I told you before:  hell no.  If you spent the slightest amount of
-> > actually trying to understand what you are doing here you'd know this
-> > can't work.  Just turn on dma debugging and this will blow up in your
-> > face.
->
-> you can tone it down..  we weren't the ones who created the dma/iommu
-> mess, we are just trying to find a way to work around it
->
-> > Either you use the DMA API properly, that is you use it to map and
-> > to sync, or you don't use it at all.  Mix and match between iommu
-> > APIs and DMA APIs is simply not possible.
->
-> I'd *love* nothing more to not use the dma api.. but on arm there is
-> no other way to do cache maint.
+Even if CRYPTO_STATS is set to n, some part of CRYPTO_STATS are
+compiled.
+This patch made all part of crypto_user_stat uncompiled in that case.
 
-Yeah we had patches to add manual cache management code to drm, so we
-don't have to abuse the dma streaming api anymore. Got shouted down.
-Abusing the dma streaming api also gets shouted down. It's a gpu, any
-idea of these drivers actually being platform independent is out of
-the window from the start anyway, so we're ok with tying this to
-platforms.
--Daniel
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ crypto/Makefile                      |  3 ++-
+ crypto/algapi.c                      |  2 ++
+ include/crypto/internal/cryptouser.h | 17 +++++++++++++++++
+ include/linux/crypto.h               |  2 ++
+ 4 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/crypto/Makefile b/crypto/Makefile
+index 5e789dc2d4fd..799ed5e94606 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -54,7 +54,8 @@ cryptomgr-y := algboss.o testmgr.o
+ 
+ obj-$(CONFIG_CRYPTO_MANAGER2) += cryptomgr.o
+ obj-$(CONFIG_CRYPTO_USER) += crypto_user.o
+-crypto_user-y := crypto_user_base.o crypto_user_stat.o
++crypto_user-y := crypto_user_base.o
++crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
+ obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
+ obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
+ obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index 2545c5f89c4c..f5396c88e8cd 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -258,6 +258,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+ 	list_add(&alg->cra_list, &crypto_alg_list);
+ 	list_add(&larval->alg.cra_list, &crypto_alg_list);
+ 
++#ifdef CONFIG_CRYPTO_STATS
+ 	atomic_set(&alg->encrypt_cnt, 0);
+ 	atomic_set(&alg->decrypt_cnt, 0);
+ 	atomic64_set(&alg->encrypt_tlen, 0);
+@@ -265,6 +266,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+ 	atomic_set(&alg->verify_cnt, 0);
+ 	atomic_set(&alg->cipher_err_cnt, 0);
+ 	atomic_set(&alg->sign_cnt, 0);
++#endif
+ 
+ out:
+ 	return larval;
+diff --git a/include/crypto/internal/cryptouser.h b/include/crypto/internal/cryptouser.h
+index 8db299c25566..3492ab42eefb 100644
+--- a/include/crypto/internal/cryptouser.h
++++ b/include/crypto/internal/cryptouser.h
+@@ -3,6 +3,23 @@
+ 
+ struct crypto_alg *crypto_alg_match(struct crypto_user_alg *p, int exact);
+ 
++#ifdef CONFIG_CRYPTO_STATS
+ int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb);
+ int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs);
+ int crypto_dump_reportstat_done(struct netlink_callback *cb);
++#else
++static int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
++{
++	return -ENOTSUPP;
++}
++
++static int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs)
++{
++	return -ENOTSUPP;
++}
++
++static int crypto_dump_reportstat_done(struct netlink_callback *cb)
++{
++	return -ENOTSUPP;
++}
++#endif
+diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+index 3634ad6fe202..3e05053b8d57 100644
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -515,6 +515,7 @@ struct crypto_alg {
+ 	
+ 	struct module *cra_module;
+ 
++#ifdef CONFIG_CRYPTO_STATS
+ 	union {
+ 		atomic_t encrypt_cnt;
+ 		atomic_t compress_cnt;
+@@ -552,6 +553,7 @@ struct crypto_alg {
+ 		atomic_t compute_shared_secret_cnt;
+ 	};
+ 	atomic_t sign_cnt;
++#endif /* CONFIG_CRYPTO_STATS */
+ 
+ } CRYPTO_MINALIGN_ATTR;
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.18.1
+
