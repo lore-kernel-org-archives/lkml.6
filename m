@@ -2,130 +2,93 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F89C04EB9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C185AC04EBA
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4492146F
+	by mail.kernel.org (Postfix) with ESMTP id 858A821473
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:29:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jFyJHtWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4492146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858A821473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbeK3Ifu (ORCPT
+        id S1726901AbeK3Ig2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:35:50 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:46386 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbeK3Ift (ORCPT
+        Fri, 30 Nov 2018 03:36:28 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17381 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726216AbeK3Ig2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:35:49 -0500
-Received: by mail-yw1-f65.google.com with SMTP id t13so1389652ywe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 13:29:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BfRtaPAGLSKj7E0VQz83F2G7yyR84/9dPeB/jw6eg5M=;
-        b=jFyJHtWUt/TGeBW1BaDEmYgRqnb/3U/6dg9SkC9+Xgib6EzMhaD4bGn3ZOCtcLOWgT
-         +RPXqUaJb2akDKH3JaFczgGjtGFBP9UEMxyJKL++eaK2kVn3MbjblxAa44xyS33nlu5x
-         0YGXQeiS1SIX51frQyjIzWBzL7v+fMQuCPDoA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BfRtaPAGLSKj7E0VQz83F2G7yyR84/9dPeB/jw6eg5M=;
-        b=So4dUUq0JEOzRhw874tZoqQMDyprxKzWH/pndeesPrJ6HsKaVFwuSpbza7mLl/tT6d
-         YrLq3KLNJupKJVn9trv0s15O0t+qGMRqOpNQhV/pondDpVW2PeJnGsgOXbU0M9Sp8c6H
-         eJddjbUZlj0qIGVanhno47UpaEPyUWynfsyWmLVn0s7XP809otISYXrYfDLnmOI5glXu
-         GYm2gwxXwAOtPnVo3Fam6a3MaGvry3X5YNG3j2P+H5aQZJG4qZ1cTp1gj7zWOaKkDEKD
-         xJ0wyYJnlUB0htJLbXGnNV0th98S3CaUbqXRCs7R9u4t24diXuTveusuOLDDAGjPNd6D
-         L0/g==
-X-Gm-Message-State: AA+aEWZDUs+sjgsOmH2H7G87CYEom2yexKe9lBpj6JFfcjPDAEFNiTN7
-        WXwzOuH++RUSdOXFONTKyRoZPe6zs4Q=
-X-Google-Smtp-Source: AFSGD/UmI6vGNTa7zfw7D5e+XJtPZ+weB5PBN8PgDzVTFwesroq6v8TKhyJicWLJr8qGgKDPzKHtaw==
-X-Received: by 2002:a81:af58:: with SMTP id x24mr3260207ywj.362.1543526941056;
-        Thu, 29 Nov 2018 13:29:01 -0800 (PST)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id v191sm847512ywc.102.2018.11.29.13.28.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 13:29:00 -0800 (PST)
-Received: by mail-yw1-f48.google.com with SMTP id g75so1414715ywb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 13:28:59 -0800 (PST)
-X-Received: by 2002:a81:2890:: with SMTP id o138mr3306151ywo.168.1543526939594;
- Thu, 29 Nov 2018 13:28:59 -0800 (PST)
+        Fri, 30 Nov 2018 03:36:28 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wATLTaCh001701;
+        Thu, 29 Nov 2018 22:29:36 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nxvnb6geu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 29 Nov 2018 22:29:36 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6CAED468;
+        Thu, 29 Nov 2018 22:29:05 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A3FA65981;
+        Thu, 29 Nov 2018 21:29:34 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 29 Nov
+ 2018 22:29:34 +0100
+Received: from localhost (10.129.6.191) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 29 Nov 2018 22:29:34
+ +0100
+From:   Loic Pallardy <loic.pallardy@st.com>
+To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
+        <s-anna@ti.com>, Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 0/7] remoteproc: Fixes for memoy carveout management
+Date:   Thu, 29 Nov 2018 22:29:21 +0100
+Message-ID: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20181119154334.18265-1-tiny.windzz@gmail.com> <c9c572ed-05a1-cec9-97e9-2b66cb58afcc@intel.com>
- <CAGXu5jJuHQOi3C7_xH7Fo2H-=EmzKkwAPWmWPOUNb0WWMTLnJQ@mail.gmail.com> <dd78fa9f-f27c-1579-1bc3-0b63acf54672@intel.com>
-In-Reply-To: <dd78fa9f-f27c-1579-1bc3-0b63acf54672@intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 29 Nov 2018 13:28:48 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLk7tQDXWdvvYFeVoqmFwQp4yF6vv+AfTjJqXoaGFx8OA@mail.gmail.com>
-Message-ID: <CAGXu5jLk7tQDXWdvvYFeVoqmFwQp4yF6vv+AfTjJqXoaGFx8OA@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm/dump_pagetables: Change to use DEFINE_SHOW_ATTRIBUTE
- macro
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.129.6.191]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_13:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 10:45 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 11/27/18 2:50 PM, Kees Cook wrote:
-> > On Mon, Nov 19, 2018 at 9:06 AM, Dave Hansen <dave.hansen@intel.com> wrote:
-> >> On 11/19/18 7:43 AM, Yangtao Li wrote:
-> >>> -static const struct file_operations ptdump_curusr_fops = {
-> >>> -     .owner          = THIS_MODULE,
-> >>> -     .open           = ptdump_open_curusr,
-> >>> -     .read           = seq_read,
-> >>> -     .llseek         = seq_lseek,
-> >>> -     .release        = single_release,
-> >>> -};
-> >>> +DEFINE_SHOW_ATTRIBUTE(ptdump_curusr);
-> >>
-> >> FWIW, I rather dislike this conversion and the DEFINE_SHOW_ATTRIBUTE()
-> >> approach in general.  It makes it basically impossible to go from
-> >> ptdump_curusr to ptdump_open_curusr without opening up the macro and
-> >> reverse-engineering it.
-> >>
-> >> My test is that for these macros to be sane, I need to be able to find
-> >> "ptdump_open_curusr" by grepping for "ptdump_curusr".  This fails the test.
-> >
-> > Er, "ptdump_curusr" matches the generated name "ptdump_curusr_show",
-> > is that what you mean?
->
-> Ahh, I also missed some of the renames to make this OK, like:
->
-> > -static int ptdump_show_efi(struct seq_file *m, void *v)
-> > +static int ptdump_efi_show(struct seq_file *m, void *v)
->
-> I thought there was some macro magic going on that screwed the names up.
->
-> This looks fine to me.
->
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+These patches fix the comments sent on remoteproc mailing
+list after acceptation of memory carveout patch series [1].
 
-Cool, thanks!
+In few words, series corrects:
+- memory carveout allocation for rproc without iommu
+- rproc_da_to_va and trace buffer access to take into account
+  late carveout allocation
+- resource table cast by adding warning messages
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Regards,
+Loic
 
-Ingo, can you toss this in -tip please?
+[1] https://lkml.org/lkml/2018/7/27/612
+
+Loic Pallardy (7):
+  remoteproc: correct rproc_mem_entry_init() comments
+  remoteproc: fix rproc_da_to_va in case of unallocated carveout
+  remoteproc: fix rproc_alloc_carveout() bad variable cast
+  remoteproc: add warning on resource table cast
+  remoteproc: fix rproc_alloc_carveout() for rproc with iommu domain
+  remoteproc: fix trace buffer va initialization
+  remoteproc: fix rproc_check_carveout_da() returned error and comments
+
+ drivers/remoteproc/remoteproc_core.c     | 91 +++++++++++++++++++-------------
+ drivers/remoteproc/remoteproc_debugfs.c  | 21 ++++++--
+ drivers/remoteproc/remoteproc_internal.h |  9 +++-
+ 3 files changed, 78 insertions(+), 43 deletions(-)
 
 -- 
-Kees Cook
+2.7.4
+
