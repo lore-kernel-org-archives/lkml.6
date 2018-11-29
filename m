@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DF4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0D5C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CB4721473
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71ACA2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkm6qhyI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB4721473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQNlQn3a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71ACA2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387915AbeK3Bdf (ORCPT
+        id S2387929AbeK3Bdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34244 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbeK3Bde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:34 -0500
+        id S1731863AbeK3Bdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BF0A213A2;
-        Thu, 29 Nov 2018 14:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 053262146F;
+        Thu, 29 Nov 2018 14:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501681;
-        bh=tS0ISHNod2Ix81Y3wVApC5b2chR0tzJyaxSoMFzwNEc=;
+        s=default; t=1543501683;
+        bh=VeJhln5BaFrTyM52AcfpJPxraKeVe1VgHt+O4YH24no=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nkm6qhyIke21ggs0dGQ+IPfXRuhy8iMN3fXHRPuVVzy3B/r3ra8EXA1R7AhwJxW+q
-         YEBKaJ/VtEr/g/EE+BKZvFpTV88BN5wZG5hGOd2yfIlpbgsBhGukSWXdNynHH6Fruk
-         niVewFpX9Cj08HyQ2Mk2oXDowYk4DUDDuOsErHh8=
+        b=kQNlQn3avXdrEf65bTZqUM4mj7sfldC8QPKfZXlF2TzpOg697mxr0LrroIzjKM++Z
+         QeDsI3qGF9CijNiHQLDGFRxRghm0aJ/95sPSnz1l6gIANhRPEGgM4FL2HSBDxdr0cL
+         N525gy/EtZlroeXvq7CqgnsPlmKSEQDUA85TKBuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        stable@vger.kernel.org,
         Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
-        Mikhail Kurinnoi <viewizard@viewizard.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Aditya Kali <adityakali@google.com>
-Subject: [PATCH 4.14 098/100] EVM: Add support for portable signature format
-Date:   Thu, 29 Nov 2018 15:13:08 +0100
-Message-Id: <20181129140107.212855023@linuxfoundation.org>
+Subject: [PATCH 4.14 099/100] ima: re-introduce own integrity cache lock
+Date:   Thu, 29 Nov 2018 15:13:09 +0100
+Message-Id: <20181129140107.307639899@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -65,331 +64,358 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Garrett <mjg59@google.com>
+From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
 
-commit 50b977481fce90aa5fbda55e330b9d722733e358 upstream.
+commit 0d73a55208e94fc9fb6deaeea61438cd3280d4c0 upstream.
 
-The EVM signature includes the inode number and (optionally) the
-filesystem UUID, making it impractical to ship EVM signatures in
-packages. This patch adds a new portable format intended to allow
-distributions to include EVM signatures. It is identical to the existing
-format but hardcodes the inode and generation numbers to 0 and does not
-include the filesystem UUID even if the kernel is configured to do so.
+Before IMA appraisal was introduced, IMA was using own integrity cache
+lock along with i_mutex. process_measurement and ima_file_free took
+the iint->mutex first and then the i_mutex, while setxattr, chmod and
+chown took the locks in reverse order. To resolve the potential deadlock,
+i_mutex was moved to protect entire IMA functionality and the redundant
+iint->mutex was eliminated.
 
-Removing the inode means that the metadata and signature from one file
-could be copied to another file without invalidating it. This is avoided
-by ensuring that an IMA xattr is present during EVM validation.
+Solution was based on the assumption that filesystem code does not take
+i_mutex further. But when file is opened with O_DIRECT flag, direct-io
+implementation takes i_mutex and produces deadlock. Furthermore, certain
+other filesystem operations, such as llseek, also take i_mutex.
 
-Portable signatures are intended to be immutable - ie, they will never
-be transformed into HMACs.
+More recently some filesystems have replaced their filesystem specific
+lock with the global i_rwsem to read a file.  As a result, when IMA
+attempts to calculate the file hash, reading the file attempts to take
+the i_rwsem again.
 
-Based on earlier work by Dmitry Kasatkin and Mikhail Kurinnoi.
+To resolve O_DIRECT related deadlock problem, this patch re-introduces
+iint->mutex. But to eliminate the original chmod() related deadlock
+problem, this patch eliminates the requirement for chmod hooks to take
+the iint->mutex by introducing additional atomic iint->attr_flags to
+indicate calling of the hooks. The allowed locking order is to take
+the iint->mutex first and then the i_rwsem.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-Cc: Mikhail Kurinnoi <viewizard@viewizard.com>
+Original flags were cleared in chmod(), setxattr() or removwxattr()
+hooks and tested when file was closed or opened again. New atomic flags
+are set or cleared in those hooks and tested to clear iint->flags on
+close or on open.
+
+Atomic flags are following:
+* IMA_CHANGE_ATTR - indicates that chATTR() was called (chmod, chown,
+  chgrp) and file attributes have changed. On file open, it causes IMA
+  to clear iint->flags to re-evaluate policy and perform IMA functions
+  again.
+* IMA_CHANGE_XATTR - indicates that setxattr or removexattr was called
+  and extended attributes have changed. On file open, it causes IMA to
+  clear iint->flags IMA_DONE_MASK to re-appraise.
+* IMA_UPDATE_XATTR - indicates that security.ima needs to be updated.
+  It is cleared if file policy changes and no update is needed.
+* IMA_DIGSIG - indicates that file security.ima has signature and file
+  security.ima must not update to file has on file close.
+* IMA_MUST_MEASURE - indicates the file is in the measurement policy.
+
+Fixes: Commit 6552321831dc ("xfs: remove i_iolock and use i_rwsem in
+the VFS inode instead")
+
+Signed-off-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Aditya Kali <adityakali@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/integrity.h             |    1 
- security/integrity/evm/evm.h          |    2 
- security/integrity/evm/evm_crypto.c   |   75 +++++++++++++++++++++++++++++-----
- security/integrity/evm/evm_main.c     |   29 ++++++++-----
- security/integrity/ima/ima_appraise.c |    4 +
- security/integrity/integrity.h        |    2 
- 6 files changed, 92 insertions(+), 21 deletions(-)
+ security/integrity/iint.c             |    2 
+ security/integrity/ima/ima_appraise.c |   27 ++++++-------
+ security/integrity/ima/ima_main.c     |   70 +++++++++++++++++++++++-----------
+ security/integrity/integrity.h        |   18 ++++++--
+ 4 files changed, 77 insertions(+), 40 deletions(-)
 
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -14,6 +14,7 @@
- 
- enum integrity_status {
- 	INTEGRITY_PASS = 0,
-+	INTEGRITY_PASS_IMMUTABLE,
- 	INTEGRITY_FAIL,
- 	INTEGRITY_NOLABEL,
- 	INTEGRITY_NOXATTRS,
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -48,7 +48,7 @@ int evm_calc_hmac(struct dentry *dentry,
- 		  size_t req_xattr_value_len, char *digest);
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value,
--		  size_t req_xattr_value_len, char *digest);
-+		  size_t req_xattr_value_len, char type, char *digest);
- int evm_init_hmac(struct inode *inode, const struct xattr *xattr,
- 		  char *hmac_val);
- int evm_init_secfs(void);
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -139,7 +139,7 @@ out:
-  * protection.)
-  */
- static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
--			  char *digest)
-+			  char type, char *digest)
- {
- 	struct h_misc {
- 		unsigned long ino;
-@@ -150,8 +150,13 @@ static void hmac_add_misc(struct shash_d
- 	} hmac_misc;
- 
- 	memset(&hmac_misc, 0, sizeof(hmac_misc));
--	hmac_misc.ino = inode->i_ino;
--	hmac_misc.generation = inode->i_generation;
-+	/* Don't include the inode or generation number in portable
-+	 * signatures
-+	 */
-+	if (type != EVM_XATTR_PORTABLE_DIGSIG) {
-+		hmac_misc.ino = inode->i_ino;
-+		hmac_misc.generation = inode->i_generation;
-+	}
- 	/* The hmac uid and gid must be encoded in the initial user
- 	 * namespace (not the filesystems user namespace) as encoding
- 	 * them in the filesystems user namespace allows an attack
-@@ -164,7 +169,8 @@ static void hmac_add_misc(struct shash_d
- 	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
- 	hmac_misc.mode = inode->i_mode;
- 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
--	if (evm_hmac_attrs & EVM_ATTR_FSUUID)
-+	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
-+	    type != EVM_XATTR_PORTABLE_DIGSIG)
- 		crypto_shash_update(desc, &inode->i_sb->s_uuid.b[0],
- 				    sizeof(inode->i_sb->s_uuid));
- 	crypto_shash_final(desc, digest);
-@@ -190,6 +196,7 @@ static int evm_calc_hmac_or_hash(struct
- 	char *xattr_value = NULL;
- 	int error;
- 	int size;
-+	bool ima_present = false;
- 
- 	if (!(inode->i_opflags & IOP_XATTR))
- 		return -EOPNOTSUPP;
-@@ -200,11 +207,18 @@ static int evm_calc_hmac_or_hash(struct
- 
- 	error = -ENODATA;
- 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
-+		bool is_ima = false;
-+
-+		if (strcmp(*xattrname, XATTR_NAME_IMA) == 0)
-+			is_ima = true;
-+
- 		if ((req_xattr_name && req_xattr_value)
- 		    && !strcmp(*xattrname, req_xattr_name)) {
- 			error = 0;
- 			crypto_shash_update(desc, (const u8 *)req_xattr_value,
- 					     req_xattr_value_len);
-+			if (is_ima)
-+				ima_present = true;
- 			continue;
- 		}
- 		size = vfs_getxattr_alloc(dentry, *xattrname,
-@@ -219,9 +233,14 @@ static int evm_calc_hmac_or_hash(struct
- 		error = 0;
- 		xattr_size = size;
- 		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
-+		if (is_ima)
-+			ima_present = true;
- 	}
--	hmac_add_misc(desc, inode, digest);
-+	hmac_add_misc(desc, inode, type, digest);
- 
-+	/* Portable EVM signatures must include an IMA hash */
-+	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
-+		return -EPERM;
- out:
- 	kfree(xattr_value);
- 	kfree(desc);
-@@ -233,17 +252,45 @@ int evm_calc_hmac(struct dentry *dentry,
- 		  char *digest)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--				req_xattr_value_len, EVM_XATTR_HMAC, digest);
-+			       req_xattr_value_len, EVM_XATTR_HMAC, digest);
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -155,12 +155,14 @@ static void init_once(void *foo)
+ 	memset(iint, 0, sizeof(*iint));
+ 	iint->version = 0;
+ 	iint->flags = 0UL;
++	iint->atomic_flags = 0;
+ 	iint->ima_file_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
+ 	iint->ima_read_status = INTEGRITY_UNKNOWN;
+ 	iint->evm_status = INTEGRITY_UNKNOWN;
+ 	iint->measured_pcrs = 0;
++	mutex_init(&iint->mutex);
  }
  
- int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
- 		  const char *req_xattr_value, size_t req_xattr_value_len,
--		  char *digest)
-+		  char type, char *digest)
- {
- 	return evm_calc_hmac_or_hash(dentry, req_xattr_name, req_xattr_value,
--				req_xattr_value_len, IMA_XATTR_DIGEST, digest);
-+				     req_xattr_value_len, type, digest);
-+}
-+
-+static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
-+{
-+	const struct evm_ima_xattr_data *xattr_data = NULL;
-+	struct integrity_iint_cache *iint;
-+	int rc = 0;
-+
-+	iint = integrity_iint_find(inode);
-+	if (iint && (iint->flags & EVM_IMMUTABLE_DIGSIG))
-+		return 1;
-+
-+	/* Do this the hard way */
-+	rc = vfs_getxattr_alloc(dentry, XATTR_NAME_EVM, (char **)&xattr_data, 0,
-+				GFP_NOFS);
-+	if (rc <= 0) {
-+		if (rc == -ENODATA)
-+			return 0;
-+		return rc;
-+	}
-+	if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG)
-+		rc = 1;
-+	else
-+		rc = 0;
-+
-+	kfree(xattr_data);
-+	return rc;
- }
- 
-+
- /*
-  * Calculate the hmac and update security.evm xattr
-  *
-@@ -256,6 +303,16 @@ int evm_update_evmxattr(struct dentry *d
- 	struct evm_ima_xattr_data xattr_data;
- 	int rc = 0;
- 
-+	/*
-+	 * Don't permit any transformation of the EVM xattr if the signature
-+	 * is of an immutable type
-+	 */
-+	rc = evm_is_immutable(dentry, inode);
-+	if (rc < 0)
-+		return rc;
-+	if (rc)
-+		return -EPERM;
-+
- 	rc = evm_calc_hmac(dentry, xattr_name, xattr_value,
- 			   xattr_value_len, xattr_data.digest);
- 	if (rc == 0) {
-@@ -281,7 +338,7 @@ int evm_init_hmac(struct inode *inode, c
- 	}
- 
- 	crypto_shash_update(desc, lsm_xattr->value, lsm_xattr->value_len);
--	hmac_add_misc(desc, inode, hmac_val);
-+	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
- 	kfree(desc);
- 	return 0;
- }
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -31,7 +31,7 @@
- int evm_initialized;
- 
- static char *integrity_status_msg[] = {
--	"pass", "fail", "no_label", "no_xattrs", "unknown"
-+	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
- };
- char *evm_hmac = "hmac(sha1)";
- char *evm_hash = "sha1";
-@@ -120,7 +120,8 @@ static enum integrity_status evm_verify_
- 	enum integrity_status evm_status = INTEGRITY_PASS;
- 	int rc, xattr_len;
- 
--	if (iint && iint->evm_status == INTEGRITY_PASS)
-+	if (iint && (iint->evm_status == INTEGRITY_PASS ||
-+		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
- 		return iint->evm_status;
- 
- 	/* if status is not PASS, try to check again - against -ENOMEM */
-@@ -161,22 +162,26 @@ static enum integrity_status evm_verify_
- 			rc = -EINVAL;
- 		break;
- 	case EVM_IMA_XATTR_DIGSIG:
-+	case EVM_XATTR_PORTABLE_DIGSIG:
- 		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
--				xattr_value_len, calc.digest);
-+				   xattr_value_len, xattr_data->type,
-+				   calc.digest);
- 		if (rc)
- 			break;
- 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
- 					(const char *)xattr_data, xattr_len,
- 					calc.digest, sizeof(calc.digest));
- 		if (!rc) {
--			/* Replace RSA with HMAC if not mounted readonly and
--			 * not immutable
--			 */
--			if (!IS_RDONLY(d_backing_inode(dentry)) &&
--			    !IS_IMMUTABLE(d_backing_inode(dentry)))
-+			if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG) {
-+				if (iint)
-+					iint->flags |= EVM_IMMUTABLE_DIGSIG;
-+				evm_status = INTEGRITY_PASS_IMMUTABLE;
-+			} else if (!IS_RDONLY(d_backing_inode(dentry)) &&
-+				   !IS_IMMUTABLE(d_backing_inode(dentry))) {
- 				evm_update_evmxattr(dentry, xattr_name,
- 						    xattr_value,
- 						    xattr_value_len);
-+			}
- 		}
- 		break;
- 	default:
-@@ -277,7 +282,7 @@ static enum integrity_status evm_verify_
-  * affect security.evm.  An interesting side affect of writing posix xattr
-  * acls is their modifying of the i_mode, which is included in security.evm.
-  * For posix xattr acls only, permit security.evm, even if it currently
-- * doesn't exist, to be updated.
-+ * doesn't exist, to be updated unless the EVM signature is immutable.
-  */
- static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
- 			     const void *xattr_value, size_t xattr_value_len)
-@@ -345,7 +350,8 @@ int evm_inode_setxattr(struct dentry *de
- 	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
- 		if (!xattr_value_len)
- 			return -EINVAL;
--		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG)
-+		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG &&
-+		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
- 			return -EPERM;
- 	}
- 	return evm_protect_xattr(dentry, xattr_name, xattr_value,
-@@ -422,6 +428,9 @@ void evm_inode_post_removexattr(struct d
- /**
-  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
-  * @dentry: pointer to the affected dentry
-+ *
-+ * Permit update of file attributes when files have a valid EVM signature,
-+ * except in the case of them having an immutable portable signature.
-  */
- int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
- {
+ static int __init integrity_iintcache_init(void)
 --- a/security/integrity/ima/ima_appraise.c
 +++ b/security/integrity/ima/ima_appraise.c
-@@ -230,7 +230,9 @@ int ima_appraise_measurement(enum ima_ho
+@@ -251,6 +251,7 @@ int ima_appraise_measurement(enum ima_ho
+ 			status = INTEGRITY_FAIL;
+ 			break;
+ 		}
++		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+ 		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+ 				iint->ima_hash->length)
+ 			/* xattr length may be longer. md5 hash in previous
+@@ -269,7 +270,7 @@ int ima_appraise_measurement(enum ima_ho
+ 		status = INTEGRITY_PASS;
+ 		break;
+ 	case EVM_IMA_XATTR_DIGSIG:
+-		iint->flags |= IMA_DIGSIG;
++		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+ 					     (const char *)xattr_value, rc,
+ 					     iint->ima_hash->digest,
+@@ -320,7 +321,7 @@ void ima_update_xattr(struct integrity_i
+ 	int rc = 0;
+ 
+ 	/* do not collect and update hash for digital signatures */
+-	if (iint->flags & IMA_DIGSIG)
++	if (test_bit(IMA_DIGSIG, &iint->atomic_flags))
+ 		return;
+ 
+ 	if (iint->ima_file_status != INTEGRITY_PASS)
+@@ -330,7 +331,9 @@ void ima_update_xattr(struct integrity_i
+ 	if (rc < 0)
+ 		return;
+ 
++	inode_lock(file_inode(file));
+ 	ima_fix_xattr(dentry, iint);
++	inode_unlock(file_inode(file));
+ }
+ 
+ /**
+@@ -353,16 +356,14 @@ void ima_inode_post_setattr(struct dentr
+ 		return;
+ 
+ 	must_appraise = ima_must_appraise(inode, MAY_ACCESS, POST_SETATTR);
++	if (!must_appraise)
++		__vfs_removexattr(dentry, XATTR_NAME_IMA);
+ 	iint = integrity_iint_find(inode);
+ 	if (iint) {
+-		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
+-				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
+-				 IMA_ACTION_RULE_FLAGS);
+-		if (must_appraise)
+-			iint->flags |= IMA_APPRAISE;
++		set_bit(IMA_CHANGE_ATTR, &iint->atomic_flags);
++		if (!must_appraise)
++			clear_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+ 	}
+-	if (!must_appraise)
+-		__vfs_removexattr(dentry, XATTR_NAME_IMA);
+ }
+ 
+ /*
+@@ -391,12 +392,12 @@ static void ima_reset_appraise_flags(str
+ 	iint = integrity_iint_find(inode);
+ 	if (!iint)
+ 		return;
+-
+-	iint->flags &= ~IMA_DONE_MASK;
+ 	iint->measured_pcrs = 0;
++	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
+ 	if (digsig)
+-		iint->flags |= IMA_DIGSIG;
+-	return;
++		set_bit(IMA_DIGSIG, &iint->atomic_flags);
++	else
++		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+ }
+ 
+ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -99,10 +99,13 @@ static void ima_rdwr_violation_check(str
+ 			if (!iint)
+ 				iint = integrity_iint_find(inode);
+ 			/* IMA_MEASURE is set from reader side */
+-			if (iint && (iint->flags & IMA_MEASURE))
++			if (iint && test_bit(IMA_MUST_MEASURE,
++						&iint->atomic_flags))
+ 				send_tomtou = true;
+ 		}
+ 	} else {
++		if (must_measure)
++			set_bit(IMA_MUST_MEASURE, &iint->atomic_flags);
+ 		if ((atomic_read(&inode->i_writecount) > 0) && must_measure)
+ 			send_writers = true;
+ 	}
+@@ -124,21 +127,24 @@ static void ima_check_last_writer(struct
+ 				  struct inode *inode, struct file *file)
+ {
+ 	fmode_t mode = file->f_mode;
++	bool update;
+ 
+ 	if (!(mode & FMODE_WRITE))
+ 		return;
+ 
+-	inode_lock(inode);
++	mutex_lock(&iint->mutex);
+ 	if (atomic_read(&inode->i_writecount) == 1) {
++		update = test_and_clear_bit(IMA_UPDATE_XATTR,
++					    &iint->atomic_flags);
+ 		if ((iint->version != inode->i_version) ||
+ 		    (iint->flags & IMA_NEW_FILE)) {
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+-			if (iint->flags & IMA_APPRAISE)
++			if (update)
+ 				ima_update_xattr(iint, file);
+ 		}
+ 	}
+-	inode_unlock(inode);
++	mutex_unlock(&iint->mutex);
+ }
+ 
+ /**
+@@ -171,7 +177,7 @@ static int process_measurement(struct fi
+ 	char *pathbuf = NULL;
+ 	char filename[NAME_MAX];
+ 	const char *pathname = NULL;
+-	int rc = -ENOMEM, action, must_appraise;
++	int rc = 0, action, must_appraise = 0;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+ 	int xattr_len = 0;
+@@ -202,17 +208,31 @@ static int process_measurement(struct fi
+ 	if (action) {
+ 		iint = integrity_inode_get(inode);
+ 		if (!iint)
+-			goto out;
++			rc = -ENOMEM;
  	}
  
- 	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
--	if ((status != INTEGRITY_PASS) && (status != INTEGRITY_UNKNOWN)) {
-+	if ((status != INTEGRITY_PASS) &&
-+	    (status != INTEGRITY_PASS_IMMUTABLE) &&
-+	    (status != INTEGRITY_UNKNOWN)) {
- 		if ((status == INTEGRITY_NOLABEL)
- 		    || (status == INTEGRITY_NOXATTRS))
- 			cause = "missing-HMAC";
+-	if (violation_check) {
++	if (!rc && violation_check)
+ 		ima_rdwr_violation_check(file, iint, action & IMA_MEASURE,
+ 					 &pathbuf, &pathname);
+-		if (!action) {
+-			rc = 0;
+-			goto out_free;
+-		}
+-	}
++
++	inode_unlock(inode);
++
++	if (rc)
++		goto out;
++	if (!action)
++		goto out;
++
++	mutex_lock(&iint->mutex);
++
++	if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
++		/* reset appraisal flags if ima_inode_post_setattr was called */
++		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
++				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
++				 IMA_ACTION_FLAGS);
++
++	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags))
++		/* reset all flags if ima_inode_setxattr was called */
++		iint->flags &= ~IMA_DONE_MASK;
+ 
+ 	/* Determine if already appraised/measured based on bitmask
+ 	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
+@@ -230,7 +250,7 @@ static int process_measurement(struct fi
+ 	if (!action) {
+ 		if (must_appraise)
+ 			rc = ima_get_cache_status(iint, func);
+-		goto out_digsig;
++		goto out_locked;
+ 	}
+ 
+ 	template_desc = ima_template_desc_current();
+@@ -243,7 +263,7 @@ static int process_measurement(struct fi
+ 
+ 	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+ 	if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+-		goto out_digsig;
++		goto out_locked;
+ 
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+@@ -251,26 +271,32 @@ static int process_measurement(struct fi
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+-	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
++	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
++		inode_lock(inode);
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+ 					      xattr_value, xattr_len, opened);
++		inode_unlock(inode);
++	}
+ 	if (action & IMA_AUDIT)
+ 		ima_audit_measurement(iint, pathname);
+ 
+ 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+ 		rc = 0;
+-out_digsig:
+-	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
++out_locked:
++	if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
+ 	     !(iint->flags & IMA_NEW_FILE))
+ 		rc = -EACCES;
++	mutex_unlock(&iint->mutex);
+ 	kfree(xattr_value);
+-out_free:
++out:
+ 	if (pathbuf)
+ 		__putname(pathbuf);
+-out:
+-	inode_unlock(inode);
+-	if ((rc && must_appraise) && (ima_appraise & IMA_APPRAISE_ENFORCE))
+-		return -EACCES;
++	if (must_appraise) {
++		if (rc && (ima_appraise & IMA_APPRAISE_ENFORCE))
++			return -EACCES;
++		if (file->f_mode & FMODE_WRITE)
++			set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
++	}
+ 	return 0;
+ }
+ 
 --- a/security/integrity/integrity.h
 +++ b/security/integrity/integrity.h
-@@ -33,6 +33,7 @@
- #define IMA_DIGSIG_REQUIRED	0x02000000
- #define IMA_PERMIT_DIRECTIO	0x04000000
- #define IMA_NEW_FILE		0x08000000
-+#define EVM_IMMUTABLE_DIGSIG	0x10000000
+@@ -29,11 +29,10 @@
+ /* iint cache flags */
+ #define IMA_ACTION_FLAGS	0xff000000
+ #define IMA_ACTION_RULE_FLAGS	0x06000000
+-#define IMA_DIGSIG		0x01000000
+-#define IMA_DIGSIG_REQUIRED	0x02000000
+-#define IMA_PERMIT_DIRECTIO	0x04000000
+-#define IMA_NEW_FILE		0x08000000
+-#define EVM_IMMUTABLE_DIGSIG	0x10000000
++#define IMA_DIGSIG_REQUIRED	0x01000000
++#define IMA_PERMIT_DIRECTIO	0x02000000
++#define IMA_NEW_FILE		0x04000000
++#define EVM_IMMUTABLE_DIGSIG	0x08000000
  
  #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
  				 IMA_APPRAISE_SUBMASK)
-@@ -58,6 +59,7 @@ enum evm_ima_xattr_type {
- 	EVM_XATTR_HMAC,
- 	EVM_IMA_XATTR_DIGSIG,
- 	IMA_XATTR_DIGEST_NG,
-+	EVM_XATTR_PORTABLE_DIGSIG,
- 	IMA_XATTR_LAST
- };
+@@ -54,6 +53,13 @@
+ #define IMA_APPRAISED_SUBMASK	(IMA_FILE_APPRAISED | IMA_MMAP_APPRAISED | \
+ 				 IMA_BPRM_APPRAISED | IMA_READ_APPRAISED)
  
++/* iint cache atomic_flags */
++#define IMA_CHANGE_XATTR	0
++#define IMA_UPDATE_XATTR	1
++#define IMA_CHANGE_ATTR		2
++#define IMA_DIGSIG		3
++#define IMA_MUST_MEASURE	4
++
+ enum evm_ima_xattr_type {
+ 	IMA_XATTR_DIGEST = 0x01,
+ 	EVM_XATTR_HMAC,
+@@ -102,10 +108,12 @@ struct signature_v2_hdr {
+ /* integrity data associated with an inode */
+ struct integrity_iint_cache {
+ 	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
++	struct mutex mutex;	/* protects: version, flags, digest */
+ 	struct inode *inode;	/* back pointer to inode in question */
+ 	u64 version;		/* track inode changes */
+ 	unsigned long flags;
+ 	unsigned long measured_pcrs;
++	unsigned long atomic_flags;
+ 	enum integrity_status ima_file_status:4;
+ 	enum integrity_status ima_mmap_status:4;
+ 	enum integrity_status ima_bprm_status:4;
 
 
