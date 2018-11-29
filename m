@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D168C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939A8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC89208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 581E3213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w36Iq2b3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC89208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEInSoE8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581E3213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbeK2RDn (ORCPT
+        id S1728908AbeK2RDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:03:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37996 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:03:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727402AbeK2RDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:03:43 -0500
+        id S1728107AbeK2RDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:03:49 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34D1E2133F;
-        Thu, 29 Nov 2018 05:59:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7679208E7;
+        Thu, 29 Nov 2018 05:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471172;
-        bh=Ozd8dWv+OCN2JTGITZ4hb9dRT7C1D/Sh0cxtqMAH/CE=;
+        s=default; t=1543471178;
+        bh=d7AhfFqGKeZ/TmQbfHuzHJDRaBMdTbRlYBhLjoOYAFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w36Iq2b3/b2W/OzA4cBJGmTFsiE/5ABD4E5nmg9BbWtlwE1D8Gr/NelSOc/Ab4HP0
-         JuhwdwGWWHsaSvxVkl3PswJT2XsmT9G/Dvojkn6GOM4QXdd17Rc6f434+t4gvK+NNT
-         kjf7THjTi3fd7GVNY488KdwxXnzviMxiWYqaEyT8=
+        b=WEInSoE8bEWki86wxNzG9hnxT20mCg+9q1TQk5KUHA9fg4t2ZGNcfSWUzScCAqQrk
+         AGrtOuyFlis+VuzrHSbdhoyYVHyyQpD/sEzQlSIWthYHMZu11vrCYSUuL9Vc/T9TYu
+         Jt59mU99aTSctPOqQ4Y4P6Vc6DAx7Qf1IQFeo2sg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 44/68] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-Date:   Thu, 29 Nov 2018 00:55:35 -0500
-Message-Id: <20181129055559.159228-44-sashal@kernel.org>
+Cc:     Arthur Kiyanovski <akiyano@amazon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 45/68] net: ena: fix crash during failed resume from hibernation
+Date:   Thu, 29 Nov 2018 00:55:36 -0500
+Message-Id: <20181129055559.159228-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -52,76 +52,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit a6a66f80c85e8e20573ca03fabf32445954a88d5 ]
+[ Upstream commit e76ad21d070f79e566ac46ce0b0584c3c93e1b43 ]
 
-The current Cadence QSPI driver caused a kernel panic sporadically
-when writing to QSPI. The problem was caused by writing more bytes
-than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[   11.202044] Unable to handle kernel paging request at virtual address bffd3000
-[   11.209254] pgd = e463054d
-[   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-[   11.218202] Internal error: Oops: 7 [#1] SMP ARM
-[   11.222797] Modules linked in:
-[   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
-[   11.235796] Hardware name: Altera SOCFPGA Arria10
-[   11.240487] PC is at __raw_writesl+0x70/0xd4
-[   11.244741] LR is at cqspi_write+0x1a0/0x2cc
-</snip>
-On a page boundary limit the number of bytes copied from the tx buffer
-to remain within the page.
+During resume from hibernation if ena_restore_device fails,
+ena_com_dev_reset() is called, and uses the readless read mechanism,
+which was already destroyed by the call to
+ena_com_mmio_reg_read_request_destroy(). This causes a NULL pointer
+reference.
 
-This patch uses a temporary buffer to hold the 4 bytes to write and then
-copies only the bytes required from the tx buffer.
+In this commit we switch the call order of the above two functions
+to avoid this crash.
 
-Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: d7703ddbd7c9 ("net: ena: fix rare bug when failed restart/resume is followed by driver removal")
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 6e9cbd1a0b6d..0806c7a81c0f 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -644,9 +644,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 		ndelay(cqspi->wr_delay);
- 
- 	while (remaining > 0) {
-+		size_t write_words, mod_bytes;
-+
- 		write_bytes = remaining > page_size ? page_size : remaining;
--		iowrite32_rep(cqspi->ahb_base, txbuf,
--			      DIV_ROUND_UP(write_bytes, 4));
-+		write_words = write_bytes / 4;
-+		mod_bytes = write_bytes % 4;
-+		/* Write 4 bytes at a time then single bytes. */
-+		if (write_words) {
-+			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
-+			txbuf += (write_words * 4);
-+		}
-+		if (mod_bytes) {
-+			unsigned int temp = 0xFFFFFFFF;
-+
-+			memcpy(&temp, txbuf, mod_bytes);
-+			iowrite32(temp, cqspi->ahb_base);
-+			txbuf += mod_bytes;
-+		}
- 
- 		if (!wait_for_completion_timeout(&cqspi->transfer_complete,
- 					msecs_to_jiffies(CQSPI_TIMEOUT_MS))) {
-@@ -655,7 +669,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 			goto failwr;
- 		}
- 
--		txbuf += write_bytes;
- 		remaining -= write_bytes;
- 
- 		if (remaining > 0)
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index d906293ce07d..4b73131a0f20 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2627,8 +2627,8 @@ static int ena_restore_device(struct ena_adapter *adapter)
+ 	ena_com_abort_admin_commands(ena_dev);
+ 	ena_com_wait_for_abort_completion(ena_dev);
+ 	ena_com_admin_destroy(ena_dev);
+-	ena_com_mmio_reg_read_request_destroy(ena_dev);
+ 	ena_com_dev_reset(ena_dev, ENA_REGS_RESET_DRIVER_INVALID_STATE);
++	ena_com_mmio_reg_read_request_destroy(ena_dev);
+ err:
+ 	clear_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags);
+ 	clear_bit(ENA_FLAG_ONGOING_RESET, &adapter->flags);
 -- 
 2.17.1
 
