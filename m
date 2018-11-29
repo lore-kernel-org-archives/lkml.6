@@ -2,70 +2,82 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6F1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E702EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1335214C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:58:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1335214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 9EF14213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:00:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF14213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbeK3DDu (ORCPT
+        id S1728888AbeK3DGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:03:50 -0500
-Received: from verein.lst.de ([213.95.11.211]:44335 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728363AbeK3DDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:03:49 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id C519168B02; Thu, 29 Nov 2018 16:57:58 +0100 (CET)
-Date:   Thu, 29 Nov 2018 16:57:58 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     "Clark, Rob" <robdclark@gmail.com>, Christoph Hellwig <hch@lst.de>,
-        Dave Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>, vivek.gautam@codeaurora.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-Message-ID: <20181129155758.GC26537@lst.de>
-References: <20181129140315.28476-1-vivek.gautam@codeaurora.org> <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com> <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
+        Thu, 29 Nov 2018 22:06:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37986 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728272AbeK3DGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:06:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF086A78;
+        Thu, 29 Nov 2018 08:00:47 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 928C83F59C;
+        Thu, 29 Nov 2018 08:00:47 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 161241AE0FA2; Thu, 29 Nov 2018 16:01:06 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 16:01:06 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm_spe: handle devm_kasprintf() failure
+Message-ID: <20181129160105.GA4546@arm.com>
+References: <1543404287-3946-1-git-send-email-hofrat@osadl.org>
+ <20181129121432.2ntsfhp2s43gyvfx@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181129121432.2ntsfhp2s43gyvfx@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:43:50PM +0100, Daniel Vetter wrote:
-> Yeah we had patches to add manual cache management code to drm, so we
-> don't have to abuse the dma streaming api anymore. Got shouted down.
-> Abusing the dma streaming api also gets shouted down. It's a gpu, any
-> idea of these drivers actually being platform independent is out of
-> the window from the start anyway, so we're ok with tying this to
-> platforms.
+On Thu, Nov 29, 2018 at 12:14:32PM +0000, Mark Rutland wrote:
+> On Wed, Nov 28, 2018 at 12:24:47PM +0100, Nicholas Mc Guire wrote:
+> > diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> > index 54ec278..f1ea00c 100644
+> > --- a/drivers/perf/arm_spe_pmu.c
+> > +++ b/drivers/perf/arm_spe_pmu.c
+> > @@ -927,6 +927,11 @@ static int arm_spe_pmu_perf_init(struct arm_spe_pmu *spe_pmu)
+> >  
+> >  	idx = atomic_inc_return(&pmu_idx);
+> >  	name = devm_kasprintf(dev, GFP_KERNEL, "%s_%d", PMUNAME, idx);
+> > +	if (!name) {
+> > +		dev_err(dev, "Allocation of name failed\n");
+> > +		return -ENOMEM;
+> > +	}
+> 
+> In the other dev_err() messages, we use the form "failed to ...", e.g.
+> 
+> 	"failed to get IRQ (%d)\n"
+> 	"failed to get PPI partition (%d)\n
+> 	"failed to allocate spe_pmu\n"
+> 
+> ... so for consistency could you please change the string to:
+> 
+> 	"failed to allocate spe_pmu name\n"
+> 
+> With that, feel free to add:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-Manual or not the iommu API is missing APIs for cache management,
-which makes it kinda surprising it actually ever worked for non-coherent
-devices.
+Thanks, I've queued this for 4.21 with a tweaked error message.
 
-And fortunately while some people spent the last year ot two bickering
-about the situation others actually did work, and we now have a
-generic arch_sync_dma_for_device/arch_sync_dma_for_cpu kernel-internal
-API.  This is only used for DMA API internals so far, and explicitly
-not intended for direct driver use, but it would be perfect as the
-backend for iommu API cache maintainance functions.  It exists on all
-but two architectures on mainline.  Out of those powerpc is in the works,
-only arm32 will need some major help.
+Will
