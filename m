@@ -2,148 +2,97 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F399FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B61AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35BD20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35BD20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BC1720863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:31:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMjuABIi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC1720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbeK3EhY (ORCPT
+        id S1730403AbeK3Ehy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:37:24 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42898 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728535AbeK3EhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:37:24 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 73E8392566EA;
-        Fri, 30 Nov 2018 01:31:13 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 30 Nov 2018
- 01:31:07 +0800
-Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
- license identifier
-To:     James Bottomley <jejb@linux.vnet.ibm.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
- <20181127144333.GA11004@kroah.com>
- <8ae3a984-b4d4-f2eb-4aaa-b460441fa403@huawei.com>
- <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
- <1543506541.2881.16.camel@linux.vnet.ibm.com>
-CC:     <martin.petersen@oracle.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <44dc28ee-ad2e-d87d-c2d5-7beb2cf6108e@huawei.com>
-Date:   Thu, 29 Nov 2018 17:31:02 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Thu, 29 Nov 2018 23:37:54 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34101 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728535AbeK3Ehy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:37:54 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so6881071wmd.1;
+        Thu, 29 Nov 2018 09:31:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xqD7o4MHZv+Oi4/Hfici0afEYbeABMQC9kEIregTpVA=;
+        b=OMjuABIiID5UzhcPfTqNecQZQZxByiORVEv3roioLhWwwTkmlqyt/R6YKt9bol2psb
+         WDOEbXcLcr2nBEqGhj9hlWPY/u9P0TgQYwmi4ITv4J1gLw+b2qk8bV5FJdj8N7+4rd6p
+         1G/HBL08HRCmH/hO6uZ1rG9VtdopMUSGeV/e7335YfZkRfqAtXTut0/4yD8F5C0KmZT8
+         JsFDHDY9pOTWYzVXOTVMHSGMOKM+IjFXScMcIQWey/QaDpmxw8dtJLXuhOsM4GcQXcb5
+         2jfuvc7acXSmEiaP2pY7kTRxZzu1M8w7KK4fVmo3yACigrdXf4bUjF+c8m4vQ4R4AgvT
+         HN5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xqD7o4MHZv+Oi4/Hfici0afEYbeABMQC9kEIregTpVA=;
+        b=QLby4MLF9t7IFjG/QmyyF+/sSoC0I5KlH6JYCh0GhyR/7dgtLi9kAQzz/IY78426Pk
+         eaxhBcIDL68MpulkRXhs47nRR246/cXNvqpOG9DHRFo4zJscqBdCByZ/bCA7rcSS1RAk
+         B3a5oQ7+mm9rjmhbUVLOb0ZYAlqeRV6GfM9LBLBApMADKR1GKy45Mu26OpwF+UFlzvEo
+         WSk2ez7091wzF3tXvZzD50MZ5onDkXsJUXV5Ia+wJ0kk/lCTQXg7XFcy2xQQWqhxONhg
+         YIzYVebGRzyDFAqI3M/Nc7taQrFBV7XwMIJkTYoWp3J5rFpFAE1bmVba3Thg1/qQMQeX
+         /Pzw==
+X-Gm-Message-State: AA+aEWbF5v96rN8ZCU6/YXCie5BPxqmdFgHsSOLPldQeg9jIpE3qpEo4
+        IojdI5+GjgWfTi/N2qr1kMgcO1GbTrQ1ZaUrTcE=
+X-Google-Smtp-Source: AFSGD/W/ILjvUhLCm7TyP/emaq6DJw8chRLN5JUp0zN+kOBtEHS8Fh9oPcMyi2c5DXJOiSMguM/fMbwHJUhxCYBSl9g=
+X-Received: by 2002:a1c:af07:: with SMTP id y7mr2428645wme.94.1543512705394;
+ Thu, 29 Nov 2018 09:31:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1543506541.2881.16.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+References: <20181129135921.231283053@linuxfoundation.org> <20181129135922.602882966@linuxfoundation.org>
+ <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com>
+ <20181129160722.GA31919@kroah.com> <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
+ <20181129171038.GA4651@kroah.com>
+In-Reply-To: <20181129171038.GA4651@kroah.com>
+From:   Tigran Aivazian <aivazian.tigran@gmail.com>
+Date:   Thu, 29 Nov 2018 17:31:33 +0000
+Message-ID: <CAK+_RLk4cxamNasZyvLRunR23CTR-fASvF3=Ryt9WGeFoBVtqQ@mail.gmail.com>
+Subject: Re: [PATCH 4.19 033/110] bfs: add sanity check at bfs_fill_super()
+To:     gregkh@linuxfoundation.org
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
+        torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 15:49, James Bottomley wrote:
-> On Thu, 2018-11-29 at 11:52 +0000, John Garry wrote:
-> [...]
->> Hi Greg,
->>
->> I also note that currently we have an inconsistency in license of
->> sas_init.c:
->>
->> /*
->>   * Serial Attached SCSI (SAS) Transport Layer initialization
->>   *
->>   * Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
->>   * Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
->>   *
->>   * This file is licensed under GPLv2.
->>   *
->>   * This program is free software; you can redistribute it and/or
->>   * modify it under the terms of the GNU General Public License as
->>   * published by the Free Software Foundation; either version 2 of
->> the
->>   * License, or (at your option) any later version.
->>   *
->>   * This program is distributed in the hope that it will be useful,
->> but
->>   * WITHOUT ANY WARRANTY; without even the implied warranty of
->>   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
->>   * General Public License for more details.
->>   *
->>   * You should have received a copy of the GNU General Public License
->>   * along with this program; if not, write to the Free Software
->>   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-
->> 1307
->>   * USA
->>   *
->>   */
->>
->> ...
->>
->> MODULE_AUTHOR("Luben Tuikov <luben_tuikov@adaptec.com>");
->> MODULE_DESCRIPTION("SAS Transport Layer");
->> MODULE_LICENSE("GPL v2");
->>
->> So the license specifies v2+ but module license states v2.
->>
->> I could not find a docment for guidance on this. I also note that
->> making sas_task.c v2 would mean mixing v2 and v2+ into the module.
->
-> The point here is to get help.  There are three pieces of evidence in
-> the file one for v2+ and two for v2.  So you can look in the git tree
-> to when it was actually contributed:
->
-> commit 2908d778ab3e244900c310974e1fc1c69066e450
-> Author: James Bottomley <James.Bottomley@SteelEye.com>
-> Date:   Tue Aug 29 09:22:51 2006 -0500
->
->     [SCSI] aic94xx: new driver
->
-> and if you ask the original contributor he can tell you the original
-> intent was v2 only.If you want to modify all the files in libsas and
-> aic9xxx to have that SPDX tag.
+On Thu, 29 Nov 2018 at 17:10, Greg KH <gregkh@linuxfoundation.org> wrote:
+> Your patch has to apply on top of the existing one, so there's not an
+> issue here.
+> And might as well fix it now, as I can never count on a "future" patch
+> getting merged.
 
-Right, so that would involve modifying the licenses of the currently v2+ 
-libsas files. aic9xx source files are v2 already.
+It is already fixed, i.e. it applies cleanly against the existing
+(i.e. 4.19.5) kernel. What I meant is that, there is little or no
+point in applying a short-lived patch as there is no conceivable
+reason that it can become a long-lived one.
 
->
->> At this point I'm reluctant to touch this in case I mess up, but
->> there  is still the missing license in sas_task.c .
->
-> Again, the tree will tell you.  In this case it's
->
-> commit 366ca51f30de1cbb5b356c70b7bb22051c558e41
-> Author: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Date:   Fri Jan 18 10:47:01 2008 -0600
->
->     [SCSI] libsas: abstract STP task status into a function
->
-> So that file is a direct extraction from an existing v2 only file in
-> aic9xxx, so it's licence is also v2 only.
+Whatever else may have changed (all for the better of course) in the
+past 20 years in Linux kernel development, I presume the basic
+fundamental fact that no patch is accepted if the relevant maintainer
+has objections to it is still intact. And I am both the author and the
+maintainer of the BFS filesystem.
 
-ok
-
-Thanks,
-John
-
->
-> James
->
->
-> .
->
-
-
+Kind regards,
+Tigran
