@@ -2,158 +2,223 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F6CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAFEC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1FAA20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:26:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nqPnO4xy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1FAA20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id DFF9F206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:33:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF9F206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbeK2Wbv (ORCPT
+        id S1727728AbeK2Wif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:31:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38817 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbeK2Wbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:31:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so1514484wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 03:26:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=P1M6pMruorGrh/6hd7Kh77sByxeMonsKeMZXMHpoQ6s=;
-        b=nqPnO4xyD5Pvolc80LLGrweQjfgTSCS8W/HjbF4TVirBvnzVYXo7db/jQRx7L2XI58
-         OrTLNQz/aZpgSyZgQEy21i8+Fi+4vswI35DJrNQvlsn0n+ZNvSVS8WAHyGp8tmfQPpgW
-         8QNLPD3dA91mqFwFmokfR1IKnh8truA5fgDF2PqBJykvUHJO97mveXYBYB+QpSKISipX
-         TxQY8YMAbfMbZy7T8GYlGyQmfOg78knIfBzZ8vxaKQv3HDT0uA777mTjkfX8/ve4mh38
-         pxi1MxmOtcFAP8iOKUBGl2qr6uWGbjhdC9OxF760sQ9/lRfHAHDEk8JVA4MwGpxJofe+
-         MwPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=P1M6pMruorGrh/6hd7Kh77sByxeMonsKeMZXMHpoQ6s=;
-        b=re/ICRIUHiRq005f/NDGqeaBuIleNNJpvm9vTuCvQ1CzHaQnB74CDdakVH9IaefKWv
-         eIBjHUzE61wpZ45DVdGj7QS4YCnbepBtaliRySQtLFiLeQ1Z4I+gboigf+h5OHxH3U2h
-         SnNmOjpa/08WyoNj/waZolvyUlf+x4qIdJJPlH3/vBOUJPRvuxxiRLRVvIDHP28naSiV
-         6jkuxXqTWKYdhsuytVrL9dW4O9LCf11J/dFIuZqF02iQqz+B05cmWXBsYzEhjhzC9z34
-         jnMkITk5Ws6zVd0GVxdjzCLDzjwuDILpWKeFjboUJmAhAg/XxxCPgiiA47FqHJaLjcIx
-         mXuA==
-X-Gm-Message-State: AA+aEWbN2m/5YNK3ccFMnzglp8JvEbovssan37sd8CYSLZd/o88i3avV
-        XpJZHuThftyXmm1seHEoe6boug==
-X-Google-Smtp-Source: AFSGD/W6ikS6JOIV7F6zZLhlhtUq9SgrNRg4e0I2Q4o2I9htbEacJ1F0R1fhyA9u4I6V7yoJ1HbVxw==
-X-Received: by 2002:a5d:6889:: with SMTP id h9mr1070074wru.222.1543490807273;
-        Thu, 29 Nov 2018 03:26:47 -0800 (PST)
-Received: from ?IPv6:2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67? ([2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67])
-        by smtp.gmail.com with ESMTPSA id v133sm2295529wmd.4.2018.11.29.03.26.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 03:26:46 -0800 (PST)
-Subject: Re: [PATCH 2/2] i2c: meson: add support for Meson G12A SoC I2C
- controller
-To:     Jian Hu <jian.hu@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1543489197-183181-1-git-send-email-jian.hu@amlogic.com>
- <1543489197-183181-3-git-send-email-jian.hu@amlogic.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <865b607c-8419-9c9e-0a00-018e87adf8de@baylibre.com>
-Date:   Thu, 29 Nov 2018 12:26:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 29 Nov 2018 17:38:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:60882 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726870AbeK2Wif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 17:38:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C58EA78;
+        Thu, 29 Nov 2018 03:33:31 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE3983F5AF;
+        Thu, 29 Nov 2018 03:33:29 -0800 (PST)
+Date:   Thu, 29 Nov 2018 11:33:24 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        devicetree@vger.kernel.org, youlin.pei@mediatek.com,
+        jianjun.wang@mediatek.com
+Subject: Re: [PATCH v2] PCI: mediatek: Use
+ devm_of_pci_get_host_bridge_resources() to parse DT
+Message-ID: <20181129113324.GA27228@e107981-ln.cambridge.arm.com>
+References: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1543489197-183181-3-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 11:59, Jian Hu wrote:
-> Add compatible and data for G12A I2C controller.
+On Thu, Nov 08, 2018 at 10:56:55AM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
 > 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
+> DT parser.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
 > ---
->  drivers/i2c/busses/i2c-meson.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/pci/controller/pcie-mediatek.c | 98 +++++++++-------------------------
+>  1 file changed, 24 insertions(+), 74 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-meson.c b/drivers/i2c/busses/i2c-meson.c
-> index 90f5d04..b86eed7 100644
-> --- a/drivers/i2c/busses/i2c-meson.c
-> +++ b/drivers/i2c/busses/i2c-meson.c
-> @@ -462,10 +462,15 @@ static int meson_i2c_remove(struct platform_device *pdev)
->  	.div_factor = 3,
->  };
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 2a1f97c..0590a93 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -197,11 +197,7 @@ struct mtk_pcie_port {
+>   * @dev: pointer to PCIe device
+>   * @base: IO mapped register base
+>   * @free_ck: free-run reference clock
+> - * @io: IO resource
+> - * @pio: PIO resource
+>   * @mem: non-prefetchable memory resource
+> - * @busn: bus range
+> - * @offset: IO / Memory offset
+>   * @ports: pointer to PCIe port information
+>   * @soc: pointer to SoC-dependent operations
+>   */
+> @@ -210,14 +206,7 @@ struct mtk_pcie {
+>  	void __iomem *base;
+>  	struct clk *free_ck;
 >  
-> +static const struct meson_i2c_data i2c_g12a_data = {
-> +	.div_factor = 3,
-
-Especially if the div_factor is the same as AXG.
-
-If you have some other fixes for G12a in the pipe, you will add the new compatible and meson_i2c_data later,
-for the div_factor, simply use the axg struct and compatible.
-
-Neil
-
-> +};
-> +
->  static const struct of_device_id meson_i2c_match[] = {
->  	{ .compatible = "amlogic,meson6-i2c", .data = &i2c_meson6_data },
->  	{ .compatible = "amlogic,meson-gxbb-i2c", .data = &i2c_gxbb_data },
->  	{ .compatible = "amlogic,meson-axg-i2c", .data = &i2c_axg_data },
-> +	{ .compatible = "amlogic,meson-g12a-i2c", .data = &i2c_g12a_data },
->  	{},
+> -	struct resource io;
+> -	struct resource pio;
+>  	struct resource mem;
+> -	struct resource busn;
+> -	struct {
+> -		resource_size_t mem;
+> -		resource_size_t io;
+> -	} offset;
+>  	struct list_head ports;
+>  	const struct mtk_pcie_soc *soc;
 >  };
+> @@ -1045,55 +1034,43 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->dev;
+>  	struct device_node *node = dev->of_node, *child;
+> -	struct of_pci_range_parser parser;
+> -	struct of_pci_range range;
+> -	struct resource res;
+>  	struct mtk_pcie_port *port, *tmp;
+> +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> +	struct list_head *windows = &host->windows;
+> +	struct resource_entry *win, *tmp_win;
+> +	resource_size_t io_base;
+>  	int err;
 >  
-> 
+> -	if (of_pci_range_parser_init(&parser, node)) {
+> -		dev_err(dev, "missing \"ranges\" property\n");
+> -		return -EINVAL;
+> -	}
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    windows, &io_base);
+> +	if (err)
+> +		return err;
+>  
+> -	for_each_of_pci_range(&parser, &range) {
+> -		err = of_pci_range_to_resource(&range, node, &res);
+> -		if (err < 0)
+> -			return err;
+> +	err = devm_request_pci_bus_resources(dev, windows);
+> +	if (err < 0)
+> +		return err;
+>  
+> -		switch (res.flags & IORESOURCE_TYPE_BITS) {
+> +	/* Get the I/O and memory ranges from DT */
+> +	resource_list_for_each_entry_safe(win, tmp_win, windows) {
+> +		switch (resource_type(win->res)) {
+>  		case IORESOURCE_IO:
+> -			pcie->offset.io = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->pio, &res, sizeof(res));
+> -			pcie->pio.name = node->full_name;
+> -
+> -			pcie->io.start = range.cpu_addr;
+> -			pcie->io.end = range.cpu_addr + range.size - 1;
+> -			pcie->io.flags = IORESOURCE_MEM;
+> -			pcie->io.name = "I/O";
+> -
+> -			memcpy(&res, &pcie->io, sizeof(res));
+> +			err = devm_pci_remap_iospace(dev, win->res, io_base);
+> +			if (err) {
+> +				dev_warn(dev, "error %d: failed to map resource %pR\n",
+> +					 err, win->res);
+> +				resource_list_destroy_entry(win);
+> +			}
+>  			break;
+> -
+>  		case IORESOURCE_MEM:
+> -			pcie->offset.mem = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->mem, &res, sizeof(res));
+> +			memcpy(&pcie->mem, win->res, sizeof(*win->res));
+>  			pcie->mem.name = "non-prefetchable";
+>  			break;
+> +		case IORESOURCE_BUS:
+> +			host->busnr = win->res->start;
+> +			break;
+>  		}
+>  	}
+>  
+> -	err = of_pci_parse_bus_range(node, &pcie->busn);
+> -	if (err < 0) {
+> -		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
+> -		pcie->busn.name = node->name;
+> -		pcie->busn.start = 0;
+> -		pcie->busn.end = 0xff;
+> -		pcie->busn.flags = IORESOURCE_BUS;
+> -	}
+> -
+>  	for_each_available_child_of_node(node, child) {
+>  		int slot;
+>  
+> @@ -1125,28 +1102,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+> -{
+> -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> -	struct list_head *windows = &host->windows;
+> -	struct device *dev = pcie->dev;
+> -	int err;
+> -
+> -	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
+> -	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
+> -	pci_add_resource(windows, &pcie->busn);
+> -
+> -	err = devm_request_pci_bus_resources(dev, windows);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	return 0;
+> -}
+> -
+>  static int mtk_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1169,11 +1124,6 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
+>  
+> -	err = mtk_pcie_request_resources(pcie);
+> -	if (err)
+> -		goto put_resources;
+> -
+> -	host->busnr = pcie->busn.start;
+>  	host->dev.parent = pcie->dev;
+>  	host->ops = pcie->soc->ops;
+>  	host->map_irq = of_irq_parse_and_map_pci;
 
+I would prefer having all the host initialization carried out in a
+single function. I appreciate you may need to reintroduce a temporary
+busnumber value or reshuffle the code to do that, sorry for asking to
+change it again but I do not want to see the struct pci_host_bridge
+variables initialization scattered around, it is confusing.
+
+Thanks,
+Lorenzo
