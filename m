@@ -2,63 +2,48 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E91C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB83C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBD821479
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 947B42146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xOJzClJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EBD821479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1wSxhGNF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 947B42146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389005AbeK3Bi0 (ORCPT
+        id S2389629AbeK3Bi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:38:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41982 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:38:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732483AbeK3Bi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:38:26 -0500
+        id S1732483AbeK3Bi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:38:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0CAF2146F;
-        Thu, 29 Nov 2018 14:32:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 313B5213A2;
+        Thu, 29 Nov 2018 14:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501972;
-        bh=CRvYvr0ky5Q9ddCjBDiJfYjtcNw0U/cJVzw5KhyEmbA=;
+        s=default; t=1543501974;
+        bh=5GTV/uNPYmmzougMSUCYronxFxCFZbx7OGYHxGKfpa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xOJzClJIX9h+Whv7qw/aGf+mvPOu6eZUHRKNM+RsfKgmchg4yBRV4cVCbMXymJLll
-         lOgPAAlmPMyzdq65XYITD0eAspRaIsa1wi0n8bYmGRKlGwPCMY2oYfowLibK60P9OA
-         a3lsQFTspXKYHoPc7agaIxQb8Po/nNHee7uCMqDk=
+        b=1wSxhGNFNgRm8Hqq12/94xw2bwLHa2IFLRIgfY7oTprB+oYVsoPxh0P3ZR267d92n
+         19qS+aPz2j11sUUvjWNGuILlFeqlMAndI+onQT/h6kxwmte/+7W4Epj+3Iz95pIdUk
+         HPawS7zBVGv5DLRAi6fAL2sLSmfcfMYBLgtYGzfc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Kyungtae Kim <kt0755@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Aaron Lu <aaron.lu@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Byoungyoung Lee <lifeasageek@gmail.com>,
-        "Dae R. Jeong" <threeearcat@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 098/110] mm, page_alloc: check for max order in hot path
-Date:   Thu, 29 Nov 2018 15:13:09 +0100
-Message-Id: <20181129135925.208128460@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 4.19 099/110] dax: Avoid losing wakeup in dax_lock_mapping_entry
+Date:   Thu, 29 Nov 2018 15:13:10 +0100
+Message-Id: <20181129135925.248125334@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -76,135 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c63ae43ba53bc432b414fd73dd5f4b01fcb1ab43 ]
+From: Matthew Wilcox <willy@infradead.org>
 
-Konstantin has noticed that kvmalloc might trigger the following
-warning:
+commit 25bbe21bf427a81b8e3ccd480ea0e1d940256156 upstream.
 
-  WARNING: CPU: 0 PID: 6676 at mm/vmstat.c:986 __fragmentation_index+0x54/0x60
-  [...]
-  Call Trace:
-   fragmentation_index+0x76/0x90
-   compaction_suitable+0x4f/0xf0
-   shrink_node+0x295/0x310
-   node_reclaim+0x205/0x250
-   get_page_from_freelist+0x649/0xad0
-   __alloc_pages_nodemask+0x12a/0x2a0
-   kmalloc_large_node+0x47/0x90
-   __kmalloc_node+0x22b/0x2e0
-   kvmalloc_node+0x3e/0x70
-   xt_alloc_table_info+0x3a/0x80 [x_tables]
-   do_ip6t_set_ctl+0xcd/0x1c0 [ip6_tables]
-   nf_setsockopt+0x44/0x60
-   SyS_setsockopt+0x6f/0xc0
-   do_syscall_64+0x67/0x120
-   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+After calling get_unlocked_entry(), you have to call
+put_unlocked_entry() to avoid subsequent waiters losing wakeups.
 
-the problem is that we only check for an out of bound order in the slow
-path and the node reclaim might happen from the fast path already.  This
-is fixable by making sure that kvmalloc doesn't ever use kmalloc for
-requests that are larger than KMALLOC_MAX_SIZE but this also shows that
-the code is rather fragile.  A recent UBSAN report just underlines that
-by the following report
+Fixes: c2a7d2a11552 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  UBSAN: Undefined behaviour in mm/page_alloc.c:3117:19
-  shift exponent 51 is too large for 32-bit type 'int'
-  CPU: 0 PID: 6520 Comm: syz-executor1 Not tainted 4.19.0-rc2 #1
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-  Call Trace:
-   __dump_stack lib/dump_stack.c:77 [inline]
-   dump_stack+0xd2/0x148 lib/dump_stack.c:113
-   ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
-   __ubsan_handle_shift_out_of_bounds+0x2b6/0x30b lib/ubsan.c:425
-   __zone_watermark_ok+0x2c7/0x400 mm/page_alloc.c:3117
-   zone_watermark_fast mm/page_alloc.c:3216 [inline]
-   get_page_from_freelist+0xc49/0x44c0 mm/page_alloc.c:3300
-   __alloc_pages_nodemask+0x21e/0x640 mm/page_alloc.c:4370
-   alloc_pages_current+0xcc/0x210 mm/mempolicy.c:2093
-   alloc_pages include/linux/gfp.h:509 [inline]
-   __get_free_pages+0x12/0x60 mm/page_alloc.c:4414
-   dma_mem_alloc+0x36/0x50 arch/x86/include/asm/floppy.h:156
-   raw_cmd_copyin drivers/block/floppy.c:3159 [inline]
-   raw_cmd_ioctl drivers/block/floppy.c:3206 [inline]
-   fd_locked_ioctl+0xa00/0x2c10 drivers/block/floppy.c:3544
-   fd_ioctl+0x40/0x60 drivers/block/floppy.c:3571
-   __blkdev_driver_ioctl block/ioctl.c:303 [inline]
-   blkdev_ioctl+0xb3c/0x1a30 block/ioctl.c:601
-   block_ioctl+0x105/0x150 fs/block_dev.c:1883
-   vfs_ioctl fs/ioctl.c:46 [inline]
-   do_vfs_ioctl+0x1c0/0x1150 fs/ioctl.c:687
-   ksys_ioctl+0x9e/0xb0 fs/ioctl.c:702
-   __do_sys_ioctl fs/ioctl.c:709 [inline]
-   __se_sys_ioctl fs/ioctl.c:707 [inline]
-   __x64_sys_ioctl+0x7e/0xc0 fs/ioctl.c:707
-   do_syscall_64+0xc4/0x510 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Note that this is not a kvmalloc path.  It is just that the fast path
-really depends on having sanitzed order as well.  Therefore move the
-order check to the fast path.
-
-Link: http://lkml.kernel.org/r/20181113094305.GM15120@dhcp22.suse.cz
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Aaron Lu <aaron.lu@intel.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Byoungyoung Lee <lifeasageek@gmail.com>
-Cc: "Dae R. Jeong" <threeearcat@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_alloc.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ fs/dax.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3a4065312938..b721631d78ab 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4055,17 +4055,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	unsigned int cpuset_mems_cookie;
- 	int reserve_flags;
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -217,6 +217,9 @@ static inline void *unlock_slot(struct a
+ 	return (void *)entry;
+ }
  
--	/*
--	 * In the slowpath, we sanity check order to avoid ever trying to
--	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
--	 * be using allocators in order of preference for an area that is
--	 * too large.
--	 */
--	if (order >= MAX_ORDER) {
--		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
--		return NULL;
--	}
--
- 	/*
- 	 * We also sanity check to catch abuse of atomic reserves being used by
- 	 * callers that are not in atomic context.
-@@ -4359,6 +4348,15 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
- 	struct alloc_context ac = { };
- 
-+	/*
-+	 * There are several places where we assume that the order value is sane
-+	 * so bail out early if the request is out of bound.
-+	 */
-+	if (unlikely(order >= MAX_ORDER)) {
-+		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
-+		return NULL;
-+	}
++static void put_unlocked_mapping_entry(struct address_space *mapping,
++				       pgoff_t index, void *entry);
 +
- 	gfp_mask &= gfp_allowed_mask;
- 	alloc_mask = gfp_mask;
- 	if (!prepare_alloc_pages(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
--- 
-2.17.1
-
+ /*
+  * Lookup entry in radix tree, wait for it to become unlocked if it is
+  * exceptional entry and return it. The caller must call
+@@ -256,8 +259,10 @@ static void *__get_unlocked_mapping_entr
+ 		revalidate = wait_fn();
+ 		finish_wait(wq, &ewait.wait);
+ 		xa_lock_irq(&mapping->i_pages);
+-		if (revalidate)
++		if (revalidate) {
++			put_unlocked_mapping_entry(mapping, index, entry);
+ 			return ERR_PTR(-EAGAIN);
++		}
+ 	}
+ }
+ 
 
 
