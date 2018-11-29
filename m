@@ -2,91 +2,167 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB3DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67C9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47FB0206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F423208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="A6GzpSgR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FB0206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZxa50Tb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F423208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbeK2LXv (ORCPT
+        id S1727137AbeK2LX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:23:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37379 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbeK2LXv (ORCPT
+        Thu, 29 Nov 2018 06:23:56 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:32863 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbeK2LX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:23:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y126so82590pfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:20:25 -0800 (PST)
+        Thu, 29 Nov 2018 06:23:56 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so182937qtp.0;
+        Wed, 28 Nov 2018 16:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=IetqlkRlwQX9wKmz0tyh6rhafOaqs3BGAufReuO5NyE=;
-        b=A6GzpSgRf4S4P9Z0xTmupwFRSMpns2zYEEZI6TeMdDdh8TN65zI55e59veeHbsBB9P
-         vGFNUQbJJ+SbJF5A+UmzW+W85awZJ/hdJOa+sgVfTIL6CAQAUDwO79TLu0jPJpK48hbp
-         EoioyD7zS6EJa4dfkhPiSePxKWyeJk65tWML/gCnvwyD5GDT2/OqXxiiCRHoX6SPk0hi
-         TpTKqiM71sHbiOtm86l+lTxuLmbrT3BUiQHkLAgjToXKhVXY+5WFtrMerp9B9zGd19L2
-         xIgzadC1OUDFeR1tHctUEhLHEtARf4maOcZlTcHs+wQjKpNMoMNZl92Uy43lSZzkQFDN
-         6K7A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2WDk9I4R2UQTMIPoqUt9uHnpJM1NWRv6jGUDTj14jyE=;
+        b=HZxa50TbQhQJXonPrrYEqnm+LVuAGfE1LexIWO1TLlqU7vsPduESyzV/4H2aVds8zV
+         orF9Vi70Rt4zRi7uVy8Su6uxsULqUw4MRLECQqvRHvMW2TnNPgZVheDXL3FfQuJWf1aq
+         BA1kUErRK7ehYb20jS3852M7LCfQxEIQpZRd6fyCHcvwqb5LpiXG5ehsXu5ptcUjDqvO
+         0aIaVVO9gkDm7mkfDKd29kYrk716MuDwc3xaH/zmRGyqoeDT3HQA8i2Z8Em+Ph809Fzc
+         aIkxGXDvpJT+CHspeRn0uOZ8+DVXom2nEpxCwVLvGjZWPyja2oLINA+ImTPgewsZEH2V
+         A+1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=IetqlkRlwQX9wKmz0tyh6rhafOaqs3BGAufReuO5NyE=;
-        b=YBkl4Srsrdu5iupJi48MMYM8HSSOifcU4PiQ9n9dJjv0EF/oJY0DdhrNES0ZP5pXMo
-         9rMWkFhnN/i3YwOPPhBuHmND6CIdmczofUw8mjIi043XQDgJ3w8fBQvt7qRYBznsa5KX
-         W7uTu8ynxYXmo8tLWg72uXgPocNK2aMa6NixYbtOobL/UkZks4wrmeVw8SJgVKYBtxc2
-         NOcBvLq8S9Av61HqwWOZAIlY3O6dVoWIBPEuDNd6pqn5Hb3U3L5FDaczzHTuHE+4Rg7H
-         K2riwInGYIeX44Rpts4ogScZTULfeHTrTRJDRNiJazsxyNwpp9what8BtUxopFnLw81G
-         WoXQ==
-X-Gm-Message-State: AA+aEWY/zi9OCygEDAM5npvMls2aOQMiHK/YqxHv9n0F3eLJg+HiAFNQ
-        iA06KTXdYaT88m0ys+UOSyUfdQ==
-X-Google-Smtp-Source: AFSGD/VZ903W1s507lfDleLFFyuGltqcXgEoOiiAcVbi+tkn6s2ZWb42M0FLLrS9zonddNZwH7iLjw==
-X-Received: by 2002:a62:9fd9:: with SMTP id v86mr17445431pfk.191.1543450824960;
-        Wed, 28 Nov 2018 16:20:24 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id i189-v6sm157144pfc.16.2018.11.28.16.20.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:20:23 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 0/2] arm64: dts: meson: add Libretech aml-s805x-ac support
-In-Reply-To: <20181116151539.18501-1-jbrunet@baylibre.com>
-References: <20181116151539.18501-1-jbrunet@baylibre.com>
-Date:   Wed, 28 Nov 2018 16:20:22 -0800
-Message-ID: <7hlg5cd9a1.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2WDk9I4R2UQTMIPoqUt9uHnpJM1NWRv6jGUDTj14jyE=;
+        b=Ci73fuBvjfHQaFjS2ePuU5CIarVjD6jqgdeDb3oOniMbOm20rUtghi2XqdRFm1hz2n
+         /lZFsQ1zEcmn6lzvOncInbG36zKvnml9mX+tJbBwwaREfxp1gjUV/N9NWw8rrAA3sTAA
+         8kCr9rRwtUF//UY8P69IKWHBbSHl2r4gv9wtrWzvN8/i2AYkVjavl7QVfxuRQRGq1Fo1
+         ESyQu/zWl0yrCirtrpcEn62WoYJSG/PNdzu7Bwmj3MbsL67xyvzgVbVzxzxbUTpdO3cT
+         iBHkz+cHkKhco77nbNXlof8Stcqsenw94S04x2HPy1TLeA3mzNH5yiIVhybJB+I7wJlO
+         dmNw==
+X-Gm-Message-State: AA+aEWZ3HNax6mYgRw1k3B+ng9uh8GNXyQ4piEFVQi73QeBIx/iNsNZ+
+        nzWyR1ikX8/75RFEMgxTQChMdanLXYA5Mdu6k6I=
+X-Google-Smtp-Source: AFSGD/X7KgvEsvAPyUM2F+w5imj1B3aIPc08nLSj7AnQSrmTBH06pmlbxdO7XNFBQ17AOwqVO2D062XYT5+B+uk5Ws4=
+X-Received: by 2002:a0c:d80f:: with SMTP id h15mr37735977qvj.228.1543450829657;
+ Wed, 28 Nov 2018 16:20:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CANWdNRAD2XBnztZN760mOX+LfXY_uAvsRqEnkTJnqwrZCBK92w@mail.gmail.com>
+ <20181127133054.GE15747@kernel.org> <CANWdNRDdSMeQ1RHpHMoG7-aRVjufG79jyrZqYqho2_3gX3hrfw@mail.gmail.com>
+ <20181128130438.GB31608@kernel.org>
+In-Reply-To: <20181128130438.GB31608@kernel.org>
+From:   Ivan Babrou <ibobrik@gmail.com>
+Date:   Wed, 28 Nov 2018 16:20:03 -0800
+Message-ID: <CANWdNRBxserM6h_u1WNXgW0qiBzoAWM433aU-RT4+WGmZ=wPmQ@mail.gmail.com>
+Subject: Re: eBPF program symbols in perf top
+To:     arnaldo.melo@gmail.com
+Cc:     linux-perf-users@vger.kernel.org, daniel@iogearbox.net,
+        ast@kernel.org, davem@davemloft.net, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
-
-> This patchset adds support for the libretech aml-s805x-ac, aka 'La Frite'
+On Wed, Nov 28, 2018 at 5:04 AM Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
 >
-> Changes since v1: [0]
->  * Update gpio line names to align on Neil's recent series [1]
->  * (really) fix typo in comment
+> Em Tue, Nov 27, 2018 at 11:41:19PM -0800, Ivan Babrou escreveu:
+> > Hey Arnaldo,
+> >
+> > Thanks for the quick response. I've tried your patch and it works as
+> > expected with perf top.
+>
+> Ok, I'll add the patch to my perf/core branch with your Reported-by and
+> Tested-by, is that ok with you?
 
-Queued for v4.21 (branch: v4.21/dt64),
+Sounds good to me.
 
-Thanks!
+> > What are the reasons for not giving kallsyms precedence at this moment?
+>
+> The use of vmlinux for these things predates having many of the code
+> modifications that are performed in a live kernel these days, also
+> pre-dates eBPF, etc, etc, so using vmlinux, when found, was better
+> because ELF symtabs are more expressive, kallsyms have just the start of
+> a symbol, for instance, etc.
+>
+> Having that said, with the advent of things like Intel PT, etc using
+> /proc/kcore + /proc/kallsyms became a requirement, there is even code to
+> stash copies of those in ~/.debug/ for post processing (off-site using
+> 'perf archive' even, etc).
+>
+> I _think_ that switch to using /proc/kallsyms as default now is becoming
+> a requirement, just haven't thought thru all possible implications of
+> doing that.
 
-Kevin
+I'm looking forward to having it enabled by default, also happy to apply
+a patch and start using it internally when you have it.
+
+> I don't recall if there is a way to set kallsyms precedence in
+> ~/.perfconfig, have to look at that.
+>
+> - Arnaldo
+>
+> > On Tue, Nov 27, 2018 at 5:30 AM Arnaldo Carvalho de Melo
+> > <arnaldo.melo@gmail.com> wrote:
+> > >
+> > > Em Mon, Nov 26, 2018 at 04:21:15PM -0800, Ivan Babrou escreveu:
+> > > > It's possible to see eBPF programs in "perf report" and "perf script"
+> > > > started with "--kallsyms=/proc/kallsyms", if net.core.bpf_jit_kallsyms
+> > > > sysctl is set to 1. However, it's not possible to pass "--kallsyms" to
+> > > > "perf top".
+> > >
+> > >
+> > > So, the first step, I think, is to check if having 'perf top
+> > > --kallsyms=..." would help, i.e. to check the patch that introduced
+> > > '--kallsyms' to 'perf report' and see if that would be difficult to have
+> > > the same functionality in 'perf top', the cset where it is introduced
+> > > is:
+> > >
+> > >   b226a5a72901b ("perf report: Allow user to specify path to kallsyms file"
+> > >
+> > > Below is the resulting patch, can you please check if with that you get
+> > > the result you want? We can then go from there to some simplification,
+> > > perhaps give precedence to kallsyms.
+> > >
+> > > diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
+> > > index 808b664343c9..44d89fb9c788 100644
+> > > --- a/tools/perf/Documentation/perf-top.txt
+> > > +++ b/tools/perf/Documentation/perf-top.txt
+> > > @@ -70,6 +70,9 @@ Default is to monitor all CPUS.
+> > >  --ignore-vmlinux::
+> > >         Ignore vmlinux files.
+> > >
+> > > +--kallsyms=<file>::
+> > > +       kallsyms pathname
+> > > +
+> > >  -m <pages>::
+> > >  --mmap-pages=<pages>::
+> > >         Number of mmap data pages (must be a power of two) or size
+> > > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> > > index aa0c73e57924..1252d1759064 100644
+> > > --- a/tools/perf/builtin-top.c
+> > > +++ b/tools/perf/builtin-top.c
+> > > @@ -1289,6 +1289,8 @@ int cmd_top(int argc, const char **argv)
+> > >                    "file", "vmlinux pathname"),
+> > >         OPT_BOOLEAN(0, "ignore-vmlinux", &symbol_conf.ignore_vmlinux,
+> > >                     "don't load vmlinux even if found"),
+> > > +       OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
+> > > +                  "file", "kallsyms pathname"),
+> > >         OPT_BOOLEAN('K', "hide_kernel_symbols", &top.hide_kernel_symbols,
+> > >                     "hide kernel symbols"),
+> > >         OPT_CALLBACK('m', "mmap-pages", &opts->mmap_pages, "pages",
+>
+> --
+>
+> - Arnaldo
