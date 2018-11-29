@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D861C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A020C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BFE208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 226B420868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHoWcZny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BFE208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yUwXZ9+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226B420868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731287AbeK3BZq (ORCPT
+        id S1731300AbeK3BZr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729581AbeK3BZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:46 -0500
+        id S1729806AbeK3BZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20630205C9;
-        Thu, 29 Nov 2018 14:20:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A89A220868;
+        Thu, 29 Nov 2018 14:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501211;
-        bh=26CZvhp+/rDYpfjhDmsOft+/LfZue39dMMfnoX+OH/I=;
+        s=default; t=1543501216;
+        bh=L7mBtZQTKwdfLiC8MbkQAatAtYV5kkbn5565OAKjgc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uHoWcZnykEMOIFTikExja3kSUPjk4Bsx3O8/BGCFnQ4r+U6JiN+301yRx+3PgZNcu
-         CJbPA1fFVEhol0fJkSWv+sead26y2z7Xl3GPPoU/+WKAmXME/BmOm6qAP5Pi+8St+N
-         MpBHDncjvzq0mS85iJ7y/Xoahq7c49zx8W8uOil8=
+        b=yUwXZ9+1NHinp7/GqMFVMzi1sCscQ2czeKPWZI+u0eqoZjQydMRdVP9Efo9mTrxhJ
+         vrfPs6DSCzO8OyV8bo3vejHhQY8SZrj816oal3WCLoJNnWCsc6hULttSKaLvTbZv+9
+         iM/C/R5PVM9h88jqLvHnx7N+ce9Uypzd12VIv1PY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
-        "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.4 86/86] drm/ast: Remove existing framebuffers before loading driver
-Date:   Thu, 29 Nov 2018 15:12:51 +0100
-Message-Id: <20181129140116.579543061@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.4 74/86] scsi: ufshcd: Fix race between clk scaling and ungate work
+Date:   Thu, 29 Nov 2018 15:12:39 +0100
+Message-Id: <20181129140115.897979142@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -64,63 +65,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-commit 5478ad10e7850ce3d8b7056db05ddfa3c9ddad9a upstream.
+commit f2a785ac23125fa0774327d39e837e45cf28fe92 upstream.
 
-If vesafb attaches to the AST device, it configures the framebuffer memory
-for uncached access by default. When ast.ko later tries to attach itself to
-the device, it wants to use write-combining on the framebuffer memory, but
-vesefb's existing configuration for uncached access takes precedence. This
-results in reduced performance.
+The ungate work turns on the clock before it exits hibern8, if the link
+was put in hibern8 during clock gating work.  There occurs a race
+condition when clock scaling work calls ufshcd_hold() to make sure low
+power states cannot be entered, but that returns by checking only
+whether the clocks are on.  This causes the clock scaling work to issue
+UIC commands when the link is in hibern8 causing failures. Make sure we
+exit hibern8 state before returning from ufshcd_hold().
 
-Removing the framebuffer's configuration before loding the AST driver fixes
-the problem. Other DRM drivers already contain equivalent code.
+Callstacks for race condition:
 
-Link: https://bugzilla.opensuse.org/show_bug.cgi?id=1112963
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: <stable@vger.kernel.org>
-Tested-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Tested-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+ ufshcd_scale_gear
+ ufshcd_devfreq_scale
+ ufshcd_devfreq_target
+ update_devfreq
+ devfreq_monitor
+ process_one_work
+ worker_thread
+ kthread
+ ret_from_fork
+
+ ufshcd_uic_hibern8_exit
+ ufshcd_ungate_work
+ process_one_work
+ worker_thread
+ kthread
+ ret_from_fork
+
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_drv.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/scsi/ufs/ufshcd.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -60,8 +60,29 @@ static const struct pci_device_id pciidl
- 
- MODULE_DEVICE_TABLE(pci, pciidlist);
- 
-+static void ast_kick_out_firmware_fb(struct pci_dev *pdev)
-+{
-+	struct apertures_struct *ap;
-+	bool primary = false;
-+
-+	ap = alloc_apertures(1);
-+	if (!ap)
-+		return;
-+
-+	ap->ranges[0].base = pci_resource_start(pdev, 0);
-+	ap->ranges[0].size = pci_resource_len(pdev, 0);
-+
-+#ifdef CONFIG_X86
-+	primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
-+#endif
-+	remove_conflicting_framebuffers(ap, "astdrmfb", primary);
-+	kfree(ap);
-+}
-+
- static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
-+	ast_kick_out_firmware_fb(pdev);
-+
- 	return drm_get_pci_dev(pdev, ent, &driver);
- }
- 
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -585,6 +585,21 @@ int ufshcd_hold(struct ufs_hba *hba, boo
+ start:
+ 	switch (hba->clk_gating.state) {
+ 	case CLKS_ON:
++		/*
++		 * Wait for the ungate work to complete if in progress.
++		 * Though the clocks may be in ON state, the link could
++		 * still be in hibner8 state if hibern8 is allowed
++		 * during clock gating.
++		 * Make sure we exit hibern8 state also in addition to
++		 * clocks being ON.
++		 */
++		if (ufshcd_can_hibern8_during_gating(hba) &&
++		    ufshcd_is_link_hibern8(hba)) {
++			spin_unlock_irqrestore(hba->host->host_lock, flags);
++			flush_work(&hba->clk_gating.ungate_work);
++			spin_lock_irqsave(hba->host->host_lock, flags);
++			goto start;
++		}
+ 		break;
+ 	case REQ_CLKS_OFF:
+ 		if (cancel_delayed_work(&hba->clk_gating.gate_work)) {
 
 
