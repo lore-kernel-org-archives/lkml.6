@@ -2,118 +2,145 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66DCC04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1779EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3DF7206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DF7206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D25AF2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:11:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkoIHLgv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25AF2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbeK2XPd (ORCPT
+        id S1728179AbeK2XQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:15:33 -0500
-Received: from icp-osb-irony-out3.external.iinet.net.au ([203.59.1.153]:11413
-        "EHLO icp-osb-irony-out3.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726683AbeK2XPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:15:33 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AEAABX1v9b/zXSMGcNWBoBAQEBAQI?=
- =?us-ascii?q?BAQEBBwIBAQEBgVIEAQEBAQsBgmmBKYN5lGwBAQEBAQEGgQgtfIgiiS2Ed4F?=
- =?us-ascii?q?6MIRJAoNTNQgNAQMBAQEBAQECgQmFSQEBAQMjFUEQCw0LAgImAgJXBgEMBgI?=
- =?us-ascii?q?BAYMdAYF0HKUjcIEvGoQTAYEShGgFgQuBc4kveIEHgREngjY1iAWCVwKPapA?=
- =?us-ascii?q?5CAGGfoouHol8A4cdLIhMhF+MPQOCCDMaCCgIgyeLHIVRYI4/AQE?=
-X-IPAS-Result: =?us-ascii?q?A2AEAABX1v9b/zXSMGcNWBoBAQEBAQIBAQEBBwIBAQEBg?=
- =?us-ascii?q?VIEAQEBAQsBgmmBKYN5lGwBAQEBAQEGgQgtfIgiiS2Ed4F6MIRJAoNTNQgNA?=
- =?us-ascii?q?QMBAQEBAQECgQmFSQEBAQMjFUEQCw0LAgImAgJXBgEMBgIBAYMdAYF0HKUjc?=
- =?us-ascii?q?IEvGoQTAYEShGgFgQuBc4kveIEHgREngjY1iAWCVwKPapA5CAGGfoouHol8A?=
- =?us-ascii?q?4cdLIhMhF+MPQOCCDMaCCgIgyeLHIVRYI4/AQE?=
-X-IronPort-AV: E=Sophos;i="5.56,294,1539619200"; 
-   d="scan'208";a="129484610"
-Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
-  by icp-osb-irony-out3.iinet.net.au with ESMTP; 29 Nov 2018 20:10:21 +0800
-Subject: Re: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
-To:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
- <20181116145937.27660-4-phil.edworthy@renesas.com>
- <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
- <TY1PR01MB1769821858C257F94E9470BAF5D20@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <c1fe6ac5-b1f0-b11b-68c8-6178eca55123@linux-m68k.org>
-Date:   Thu, 29 Nov 2018 22:10:19 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 29 Nov 2018 18:16:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727312AbeK2XQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:16:22 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68101206B6;
+        Thu, 29 Nov 2018 12:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543493472;
+        bh=ZJ/i0uy6CenIPOzxSHNEO/qn/PnsupFE4VMF/gaMEwQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PkoIHLgvqNh/ESIQo5CBWEDCevaIziUwkqJvBS4O4oLGMrcvhNtGmWdFWe5+NoU/+
+         32GUI6697dCscJrFwduu3Qx3PmYNnY7PRLvLNkb1WiAI7t4i/o/QzEUHA3drFAv6s7
+         262ndxpDV3j/pg94PenRZbqBntv6HbEwp9tCQXHQ=
+Date:   Thu, 29 Nov 2018 13:11:10 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
+ license identifier
+Message-ID: <20181129121110.GA25319@kroah.com>
+References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
+ <20181127144333.GA11004@kroah.com>
+ <8ae3a984-b4d4-f2eb-4aaa-b460441fa403@huawei.com>
+ <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB1769821858C257F94E9470BAF5D20@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
-
-On 29/11/18 10:02 pm, Phil Edworthy wrote:
-> On 29 November 2018 11:55, Greg Ungerer wrote:
->> On 17/11/18 12:59 am, Phil Edworthy wrote:
->>> clk_get_optional() returns NULL if not found instead of -ENOENT,
->>> otherwise the behaviour is the same as clk_get().
->>>
->>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
->>
->> Acked-by: Greg Ungerer <gerg@@linux-m68k.org>
->>
->> Looks good. Do you want me to take this in the m68knommu git tree?
->> Or is the whole series going through some other tree?
-> This patch is no longer needed as I found a better way to implement this:
-> [PATCH v8] clk: Add (devm_)clk_get_optional() functions
-> https://patchwork.kernel.org/patch/10690437/
+On Thu, Nov 29, 2018 at 11:52:39AM +0000, John Garry wrote:
+> On 27/11/2018 15:23, John Garry wrote:
+> > On 27/11/2018 14:43, Greg KH wrote:
+> > 
+> > Hi Greg,
+> > 
+> > > On Tue, Nov 27, 2018 at 10:15:32PM +0800, John Garry wrote:
+> > > > Currently sas_task.c has no license specifier, so add SPDX license
+> > > > identifier for GPL-2.0+.
+> > > > 
+> > > > As mentioned in commit b24413180f56 ("License cleanup: add SPDX GPL-2.0
+> > > > license identifier to files with no license"), files with no license in
+> > > > the kernel are under default kernel license.
+> > > 
+> > > The default is GPLv2, not v2+.
+> > 
+> > So sas_task.c should be v2.
 > 
-> Apologies for any confusion,
+> Hi Greg,
+> 
+> I also note that currently we have an inconsistency in license of
+> sas_init.c:
+> 
+> /*
+>  * Serial Attached SCSI (SAS) Transport Layer initialization
+>  *
+>  * Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
+>  * Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
+>  *
+>  * This file is licensed under GPLv2.
+>  *
+>  * This program is free software; you can redistribute it and/or
+>  * modify it under the terms of the GNU General Public License as
+>  * published by the Free Software Foundation; either version 2 of the
+>  * License, or (at your option) any later version.
+>  *
+>  * This program is distributed in the hope that it will be useful, but
+>  * WITHOUT ANY WARRANTY; without even the implied warranty of
+>  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>  * General Public License for more details.
+>  *
+>  * You should have received a copy of the GNU General Public License
+>  * along with this program; if not, write to the Free Software
+>  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+>  * USA
+>  *
+>  */
+> 
+> ...
+> 
+> MODULE_AUTHOR("Luben Tuikov <luben_tuikov@adaptec.com>");
+> MODULE_DESCRIPTION("SAS Transport Layer");
+> MODULE_LICENSE("GPL v2");
+> 
+> So the license specifies v2+ but module license states v2.
+> 
+> I could not find a docment for guidance on this. I also note that making
+> sas_task.c v2 would mean mixing v2 and v2+ into the module.
 
-No problem, I'll just drop it then.
+This is not the only file in the kernel with this problem.
 
-Regards
-Greg
+For now, we have been trusting the "written text" lines over the
+MODULE_LICENSE() lines, as that seems to be the proper way forward.
 
+> I did find an example of someone changing the license:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/i2c/busses/i2c-designware-slave.c?h=v4.20-rc4&id=15c566fcff9cc7b8fd64461d6ee6fd1bc665b444
+> 
 
->>> ---
->>>    arch/m68k/coldfire/clk.c | 11 +++++++++++
->>>    1 file changed, 11 insertions(+)
->>>
->>> diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c index
->>> 7bc666e482eb..b221cabc7f54 100644
->>> --- a/arch/m68k/coldfire/clk.c
->>> +++ b/arch/m68k/coldfire/clk.c
->>> @@ -87,6 +87,17 @@ struct clk *clk_get(struct device *dev, const char *id)
->>>    }
->>>    EXPORT_SYMBOL(clk_get);
->>>
->>> +struct clk *clk_get_optional(struct device *dev, const char *id) {
->>> +	struct clk *clk = clk_get(dev, id);
->>> +
->>> +	if (clk == ERR_PTR(-ENOENT))
->>> +		clk = NULL;
->>> +
->>> +	return clk;
->>> +}
->>> +EXPORT_SYMBOL(clk_get_optional);
->>> +
->>>    int clk_enable(struct clk *clk)
->>>    {
->>>    	unsigned long flags;
->>>
+Yup, not good, that should be fixed.
+
+> Then someone changes the module license (but same company):
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/sh/rcar/core.c?h=v4.20-rc4&id=1e0edd4deadbbacd3b35179c233efa26624ab2af
+
+That should be fine, the text says the correct one.
+
+> At this point I'm reluctant to touch this in case I mess up, but there is
+> still the missing license in sas_task.c .
+
+Don't touch things like this unless you know _EXACTLY_ what you are
+doing...
+
+good luck!
+
+greg k-h
