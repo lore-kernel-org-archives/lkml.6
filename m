@@ -2,105 +2,164 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF0AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AA4C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C642082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOyh5re3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C642082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 724822082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724822082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbeK3BXO (ORCPT
+        id S1730828AbeK3CHx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:23:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730472AbeK3BXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:23:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AADAA213A2;
-        Thu, 29 Nov 2018 14:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501063;
-        bh=046qrkwSxj/ReP8zayER/SC5qpOjWYyjFzSEuibCxgc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oOyh5re3jhmpdbw3uAQNw/uJDZqUk7supOdn5G0JI1ZLL9D+XS/3nAH62TgSTre+1
-         KtdCS7lSQ0JSbIokNYunuU2Rmp0zgO5aU5dcY2z/BkGIE6QI2kbNLabcADf6+jEiTg
-         HF6oeGMcdYBMBOVNhvYQyVbqqMuOYP/ZI4BgoZ1c=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 27/86] net: bcmgenet: fix OF child-node lookup
-Date:   Thu, 29 Nov 2018 15:11:52 +0100
-Message-Id: <20181129140112.123660865@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
-References: <20181129140109.832117862@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 29 Nov 2018 21:07:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:35004 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbeK3CHw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:07:52 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gSNpS-0008Nl-Ao; Thu, 29 Nov 2018 16:02:10 +0100
+Date:   Thu, 29 Nov 2018 16:02:10 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 07/29 v2] x86/fpu: don't export __kernel_fpu_{begin|end}()
+Message-ID: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
+References: <20181128222035.2996-1-bigeasy@linutronix.de>
+ <20181128222035.2996-8-bigeasy@linutronix.de>
+ <da61c2af8aab3348d6fb09889b5531bec7e2f842.camel@surriel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <da61c2af8aab3348d6fb09889b5531bec7e2f842.camel@surriel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+There is one user using __kernel_fpu_begin() and before invoking it, it
+invokes preempt_disable(). So it could invoke kernel_fpu_begin() right
+away. The 32bit version of arch_efi_call_virt_setup() and
+arch_efi_call_virt_teardown() does this already.
 
-------------------
+The comment above *kernel_fpu*() claims that before invoking
+__kernel_fpu_begin() preemption should be disabled and that KVM is a
+good example of doing it. Well, KVM doesn't do that since commit
 
-[ Upstream commit d397dbe606120a1ea1b11b0020c3f7a3852da5ac ]
+  f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
 
-Use the new of_get_compatible_child() helper to lookup the mdio child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+so it is not an example anymore.
+With EFI gone as the last user of __kernel_fpu_{begin|end}(), it can be
+made static and not exported anymore.
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
-
-Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: David S. Miller <davem@davemloft.net>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/net/ethernet/broadcom/genet/bcmmii.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1…v2: `carefull' -> `careful'
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 4c73feca4842..0565efad6e6e 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -491,7 +491,7 @@ static int bcmgenet_mii_of_init(struct bcmgenet_priv *priv)
- 	if (!compat)
- 		return -ENOMEM;
+ arch/x86/include/asm/efi.h     |  6 ++----
+ arch/x86/include/asm/fpu/api.h | 16 ++++++----------
+ arch/x86/kernel/fpu/core.c     |  6 ++----
+ 3 files changed, 10 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index eea40d52ca785..45864898f7e50 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -82,8 +82,7 @@ struct efi_scratch {
+ #define arch_efi_call_virt_setup()					\
+ ({									\
+ 	efi_sync_low_kernel_mappings();					\
+-	preempt_disable();						\
+-	__kernel_fpu_begin();						\
++	kernel_fpu_begin();						\
+ 	firmware_restrict_branch_speculation_start();			\
+ 									\
+ 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
+@@ -99,8 +98,7 @@ struct efi_scratch {
+ 		efi_switch_mm(efi_scratch.prev_mm);			\
+ 									\
+ 	firmware_restrict_branch_speculation_end();			\
+-	__kernel_fpu_end();						\
+-	preempt_enable();						\
++	kernel_fpu_end();						\
+ })
  
--	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
-+	priv->mdio_dn = of_get_compatible_child(dn, compat);
- 	kfree(compat);
- 	if (!priv->mdio_dn) {
- 		dev_err(kdev, "unable to find MDIO bus node\n");
+ extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned long size,
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index a9caac9d4a729..e368d8d94ca68 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -12,17 +12,13 @@
+ #define _ASM_X86_FPU_API_H
+ 
+ /*
+- * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
+- * and they don't touch the preempt state on their own.
+- * If you enable preemption after __kernel_fpu_begin(), preempt notifier
+- * should call the __kernel_fpu_end() to prevent the kernel/user FPU
+- * state from getting corrupted. KVM for example uses this model.
+- *
+- * All other cases use kernel_fpu_begin/end() which disable preemption
+- * during kernel FPU usage.
++ * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
++ * disables preemption so be careful if you intend to use it for long periods
++ * of time.
++ * If you intend to use the FPU in softirq you need to check first with
++ * irq_fpu_usable() if it is possible.
++ * Using the FPU in hardirq is not allowed.
+  */
+-extern void __kernel_fpu_begin(void);
+-extern void __kernel_fpu_end(void);
+ extern void kernel_fpu_begin(void);
+ extern void kernel_fpu_end(void);
+ extern bool irq_fpu_usable(void);
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 2ea85b32421a0..2e5003fef51a9 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
+ }
+ EXPORT_SYMBOL(irq_fpu_usable);
+ 
+-void __kernel_fpu_begin(void)
++static void __kernel_fpu_begin(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
+ 		__cpu_invalidate_fpregs_state();
+ 	}
+ }
+-EXPORT_SYMBOL(__kernel_fpu_begin);
+ 
+-void __kernel_fpu_end(void)
++static void __kernel_fpu_end(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
+ 
+ 	kernel_fpu_enable();
+ }
+-EXPORT_SYMBOL(__kernel_fpu_end);
+ 
+ void kernel_fpu_begin(void)
+ {
 -- 
-2.17.1
-
-
+2.20.0.rc1
 
