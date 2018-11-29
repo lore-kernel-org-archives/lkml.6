@@ -3,123 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144B6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9806AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D994420834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D994420834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 28CBE20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CBE20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeK2S0c (ORCPT
+        id S1726841AbeK2Sck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:26:32 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:41460 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbeK2S0c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:26:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 7C8E51858D;
-        Thu, 29 Nov 2018 08:22:07 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id t_YEQCFZJLeI; Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 5880218403;
-        Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 470731E079;
-        Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AEBF1E078;
-        Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from XBOX04.axis.com (xbox04.axis.com [10.0.5.18])
-        by thoth.se.axis.com (Postfix) with ESMTP id 2EF0D730;
-        Thu, 29 Nov 2018 08:22:06 +0100 (CET)
-Received: from lnxsofieka1.se.axis.com (10.0.5.60) by XBOX04.axis.com
- (10.0.5.18) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Thu, 29 Nov 2018
- 08:22:05 +0100
-From:   niklas.morberg@axis.com, Carlsson@axis.com
-CC:     <niklasc@axis.com>, Lars-Peter Clausen <lars@metafoo.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: adau1761: Ensure DSP_RUN and DSP_ENABLE are disabled
-Date:   Thu, 29 Nov 2018 08:21:44 +0100
-Message-ID: <20181129072144.16208-1-niklasc@axis.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 29 Nov 2018 13:32:40 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:55968 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726580AbeK2Sck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:32:40 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 2A63E42B2C91D7C29CD1;
+        Thu, 29 Nov 2018 15:28:14 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAT7S4IN064378;
+        Thu, 29 Nov 2018 15:28:04 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018112915283431-13671033 ;
+          Thu, 29 Nov 2018 15:28:34 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     sameo@linux.intel.com
+Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] NFC: fdp: Fix signedness bug in fdp_nci_send_patch
+Date:   Thu, 29 Nov 2018 15:28:00 +0800
+Message-Id: <20181129072800.7569-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: XBOX02.axis.com (10.0.5.16) To XBOX04.axis.com (10.0.5.18)
-X-TM-AS-GCONF: 00
-To:     unlisted-recipients:; (no To-header on input)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-29 15:28:34,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-29 15:27:52
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wAT7S4IN064378
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Carlsson <niklasc@axis.com>
+Currently, the error handling for the call to
+nci=5Fconn=5Fmax=5Fdata=5Fpkt=5Fpayload=5Fsize() doesn't work
+because *max=5Fsize* is of type u8 (8 bits, unsigned),
+which makes it impossible for it to hold a value less
+than 0.
 
-DSP_RUN and DSP_ENABLE needs to be disabled during FW load. This is not
-a problem after power-cycling but for soft reboots.
+Fix this by changing the type of variable *max=5Fsize*
+to s16 (16 bits, signed).
 
-Signed-off-by: Niklas Carlsson <niklasc@axis.com>
+since conn=5Finfo->max=5Fpkt=5Fpayload=5Flen is of type u8,
+so s16 is enough.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Samuel Ortiz <sameo@linux.intel.com>
+CC: linux-wireless@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 ---
- sound/soc/codecs/adau1761.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ drivers/nfc/fdp/fdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/adau1761.c b/sound/soc/codecs/adau1761.c
-index bef3e9e74c26..3075c13bcbbc 100644
---- a/sound/soc/codecs/adau1761.c
-+++ b/sound/soc/codecs/adau1761.c
-@@ -460,8 +460,35 @@ static int adau1761_set_bias_level(struct snd_soc_component *component,
- 		regmap_update_bits(adau->regmap, ADAU17X1_CLOCK_CONTROL,
- 			ADAU17X1_CLOCK_CONTROL_SYSCLK_EN,
- 			ADAU17X1_CLOCK_CONTROL_SYSCLK_EN);
--		if (snd_soc_component_get_bias_level(component) == SND_SOC_BIAS_OFF)
-+		if (snd_soc_component_get_bias_level(component) ==
-+		    SND_SOC_BIAS_OFF) {
-+			/*
-+			 * When going OFF -> STANDBY, the device can be in two
-+			 * states:
-+			 * 1) Power-cycled and reset
-+			 * 2) Soft reboot
-+			 * In the case of soft reboot, we need to sync the HW
-+			 * registers even if our regmap reports default values.
-+			 * Marking the cache as dirty ensures that both cases
-+			 * are handled.
-+			 */
-+			regcache_mark_dirty(adau->regmap);
- 			regcache_sync(adau->regmap);
-+			/*
-+			 * In order for FW to load correctly, the device needs
-+			 * DSP_RUN and DSP_ENABLE to be 0. This might not be the
-+			 * case for soft reboots. Ensure that DSP_RUN and
-+			 * DSP_ENABLE is 0 by bypassing the cache and write
-+			 * directly to HW when going OFF -> STANDBY.
-+			 */
-+			if (adau17x1_has_dsp(adau)) {
-+				regcache_cache_bypass(adau->regmap, true);
-+				regmap_write(adau->regmap, ADAU17X1_DSP_RUN, 0);
-+				regmap_write(adau->regmap,
-+					ADAU17X1_DSP_ENABLE, 0);
-+				regcache_cache_bypass(adau->regmap, false);
-+			}
-+		}
- 		break;
- 	case SND_SOC_BIAS_OFF:
- 		regmap_update_bits(adau->regmap, ADAU17X1_CLOCK_CONTROL,
--- 
-2.11.0
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index d5784a47fc13..d9203e2468fd 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -192,7 +192,7 @@ static int fdp=5Fnci=5Fsend=5Fpatch(struct nci=5Fdev *n=
+dev, u8 conn=5Fid, u8 type)
+ 	const struct firmware *fw;
+ 	struct sk=5Fbuff *skb;
+ 	unsigned long len;
+-	u8 max=5Fsize, payload=5Fsize;
++	s16 max=5Fsize, payload=5Fsize;
+ 	int rc =3D 0;
+=20
+ 	if ((type =3D=3D NCI=5FPATCH=5FTYPE=5FOTP && !info->otp=5Fpatch) ||
+--=20
+2.19.1
 
