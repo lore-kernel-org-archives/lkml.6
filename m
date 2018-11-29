@@ -2,162 +2,422 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E6AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A62CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D4D20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D4D20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 49AD22081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AD22081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeK2Sh2 (ORCPT
+        id S1726989AbeK2SlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:37:28 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:55688 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeK2Sh2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:37:28 -0500
-Received: by mail-it1-f198.google.com with SMTP id j3so1709716itf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 23:33:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fQMvDfQiwRtQ7uTrWTt1+SPSV5dr2RS2vLMekVVYf44=;
-        b=SufpPA3xofOClOCaftH/j5qrTjJVewQBL7aVS+XqMdmwXeQIjYl7upASdSZE4O/Hkd
-         uogRjj2719l0Mb3/Pqo+rJ+eL6NmzZbiuIqBFaAUNMiKTjiBDbPeH3OqmG5i6CB5xMP9
-         dUDEr7NGIVidzN3HPBPx0tv8gQfXSyy3qxT73f7oVKObIe2li86tUep3P7zzk4016gPN
-         pfaNDKglYbbmYNeQp5qERwvAYV/7oNsHonyEmj0rv7gxC3p360fB75efwJ3150SS2c8i
-         oZqczk60GE3/mzDanDfKxQ41IPFg0AneAPwDJbi2juk31Z2UVwm2o7crxKiUUZS3wdkP
-         F1XA==
-X-Gm-Message-State: AA+aEWYH/hYLP3muFf9sqUDLZQmGLxmjaYEPjiMHw7VCh54qPx3jJZGf
-        Moj+R/PXzr8JZ/doIQ868r+oJvnRSlHlJHGWcSMmqoK9mJRu
-X-Google-Smtp-Source: AFSGD/Vd9qquhrFvgkTnfCIhWMZmtZJ3YaExIgth0i+yu6Jgw/lo9gIAAZt2Qx2TQGMw5UVWwr0BkfTigvHKRF3lKRpV/Figyw8m
+        Thu, 29 Nov 2018 13:41:08 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42167 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726641AbeK2SlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:41:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 23:36:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,293,1539673200"; 
+   d="scan'208";a="95659300"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga006.jf.intel.com with ESMTP; 28 Nov 2018 23:36:38 -0800
+Subject: Re: [PATCH v2 1/3] mmc: sdhci: add support for using external DMA
+ devices
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        kishon@ti.com, nsekhar@ti.com
+References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
+ <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
+ <84836600-c705-9ac3-297e-bb67a611daca@intel.com>
+ <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <f78de042-69cf-5345-f16f-236d04d57051@intel.com>
+Date:   Thu, 29 Nov 2018 09:35:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9801:: with SMTP id a1mr276616iol.31.1543476782582;
- Wed, 28 Nov 2018 23:33:02 -0800 (PST)
-Date:   Wed, 28 Nov 2018 23:33:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005852b8057bc8b123@google.com>
-Subject: invalid opcode in close_fs_devices
-From:   syzbot <syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 29/11/18 8:22 AM, Chunyan Zhang wrote:
+> On Tue, 20 Nov 2018 at 21:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 12/11/18 9:26 AM, Chunyan Zhang wrote:
+>>> Some standard SD host controllers can support both external dma
+>>> controllers as well as ADMA/SDMA in which the SD host controller
+>>> acts as DMA master. TI's omap controller is the case as an example.
+>>>
+>>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+>>> the host controller but does not have any support for external DMA
+>>> controllers implemented using dmaengine, meaning that custom code is
+>>> needed for any systems that use an external DMA controller with SDHCI.
+>>
+>> I still think you probably need to reset the DMA if there are transfer
+>> errors - perhaps you could comment on that.  Also there are some comments below.
+> 
+> With regard to "transfer error", do you mean if
+> sdhci_external_dma_setup() failed?
 
-syzbot found the following crash on:
+No, I mean any error interrupt that can leave the DMA uncompleted.  For
+SDHCI, resetting the data circuit cleans that up, but presumably something
+is needed for external DMA?
 
-HEAD commit:    ef78e5ec9214 ia64: export node_distance function
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1514f733400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
-dashboard link: https://syzkaller.appspot.com/bug?extid=cabf977d00d3db1fdc37
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Thanks,
+> Chunyan
+> 
+> 
+>>
+>>>
+>>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>>> ---
+>>>  drivers/mmc/host/Kconfig |  13 ++++
+>>>  drivers/mmc/host/sdhci.c | 181 ++++++++++++++++++++++++++++++++++++++++++++++-
+>>>  drivers/mmc/host/sdhci.h |   8 +++
+>>>  3 files changed, 201 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>> index 1b58739..7bf3eff 100644
+>>> --- a/drivers/mmc/host/Kconfig
+>>> +++ b/drivers/mmc/host/Kconfig
+>>> @@ -977,3 +977,16 @@ config MMC_SDHCI_OMAP
+>>>         If you have a controller with this interface, say Y or M here.
+>>>
+>>>         If unsure, say N.
+>>> +
+>>> +config MMC_SDHCI_EXTERNAL_DMA
+>>> +        bool "Support external DMA in standard SD host controller"
+>>
+>> It would be simpler if the drivers that needed it just selected it e.g.
+>>
+>> config MMC_SDHCI_OMAP
+>>         tristate "TI SDHCI Controller Support"
+>>         depends on MMC_SDHCI_PLTFM && OF
+>>         select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
+>>
+>>> +     depends on MMC_SDHCI
+>>> +     depends on DMA_ENGINE
+>>> +     help
+>>> +       This is an option for using external DMA device via dmaengine
+>>> +       framework.
+>>> +
+>>> +       If you have a controller which support using external DMA device
+>>> +       for data transfer, can say Y.
+>>> +
+>>> +       If unsure, say N.
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 99bdae5..853cc98 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -14,6 +14,7 @@
+>>>   */
+>>>
+>>>  #include <linux/delay.h>
+>>> +#include <linux/dmaengine.h>
+>>>  #include <linux/ktime.h>
+>>>  #include <linux/highmem.h>
+>>>  #include <linux/io.h>
+>>> @@ -1309,6 +1310,158 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+>>>               del_timer(&host->timer);
+>>>  }
+>>>
+>>> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+>>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+>>> +{
+>>> +     int ret = 0;
+>>> +     struct mmc_host *mmc = host->mmc;
+>>> +
+>>> +     host->tx_chan = dma_request_chan(mmc->parent, "tx");
+>>> +     if (IS_ERR(host->tx_chan)) {
+>>> +             ret = PTR_ERR(host->tx_chan);
+>>> +             if (ret != -EPROBE_DEFER)
+>>> +                     pr_warn("Failed to request TX DMA channel.\n");
+>>> +             host->tx_chan = NULL;
+>>> +             return ret;
+>>> +     }
+>>> +
+>>> +     host->rx_chan = dma_request_chan(mmc->parent, "rx");
+>>> +     if (IS_ERR(host->rx_chan)) {
+>>> +             if (host->tx_chan) {
+>>> +                     dma_release_channel(host->tx_chan);
+>>> +                     host->tx_chan = NULL;
+>>> +             }
+>>> +
+>>> +             ret = PTR_ERR(host->rx_chan);
+>>> +             if (ret != -EPROBE_DEFER)
+>>> +                     pr_warn("Failed to request RX DMA channel.\n");
+>>> +             host->rx_chan = NULL;
+>>> +     }
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static inline struct dma_chan *
+>>> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
+>>> +{
+>>> +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+>>> +}
+>>> +
+>>> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+>>> +                                 struct mmc_command *cmd)
+>>> +{
+>>> +     int ret = 0, i;
+>>> +     struct dma_async_tx_descriptor *desc;
+>>> +     struct mmc_data *data = cmd->data;
+>>
+>> cmd->data might be NULL?  Have you tested this?
+>>
+>>> +     struct dma_chan *chan;
+>>> +     struct dma_slave_config cfg;
+>>> +     dma_cookie_t cookie;
+>>> +
+>>> +     if (!host->mapbase)
+>>> +             return -EINVAL;
+>>> +
+>>> +     cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+>>> +     cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+>>> +     cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>>> +     cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+>>> +     cfg.src_maxburst = data->blksz / 4;
+>>> +     cfg.dst_maxburst = data->blksz / 4;
+>>> +
+>>> +     /* Sanity check: all the SG entries must be aligned by block size. */
+>>> +     for (i = 0; i < data->sg_len; i++) {
+>>> +             if ((data->sg + i)->length % data->blksz)
+>>> +                     return -EINVAL;
+>>> +     }
+>>> +
+>>> +     chan = sdhci_external_dma_channel(host, data);
+>>> +
+>>> +     ret = dmaengine_slave_config(chan, &cfg);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+>>> +                                    mmc_get_dma_dir(data),
+>>> +                                    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+>>> +     if (!desc)
+>>> +             return -EINVAL;
+>>> +
+>>> +     desc->callback = NULL;
+>>> +     desc->callback_param = NULL;
+>>> +
+>>> +     cookie = dmaengine_submit(desc);
+>>> +     if (cookie < 0)
+>>> +             ret = cookie;
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +
+>>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+>>> +{
+>>> +     if (host->tx_chan) {
+>>> +             dma_release_channel(host->tx_chan);
+>>> +             host->tx_chan = NULL;
+>>> +     }
+>>> +
+>>> +     if (host->rx_chan) {
+>>> +             dma_release_channel(host->rx_chan);
+>>> +             host->rx_chan = NULL;
+>>> +     }
+>>> +
+>>> +     sdhci_switch_external_dma(host, false);
+>>> +}
+>>> +
+>>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+>>> +                                         struct mmc_command *cmd)
+>>> +{
+>>> +     if (sdhci_external_dma_setup(host, cmd)) {
+>>> +             sdhci_external_dma_release(host);
+>>> +             pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+>>> +                    mmc_hostname(host->mmc));
+>>> +     } else {
+>>> +             /* Prepare for using external dma */
+>>> +             host->flags |= SDHCI_REQ_USE_DMA;
+>>> +     }
+>>> +
+>>> +     sdhci_prepare_data(host, cmd);
+>>> +}
+>>> +
+>>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+>>> +                                         struct mmc_command *cmd)
+>>> +{
+>>> +     struct dma_chan *chan = sdhci_external_dma_channel(host, cmd->data);
+>>
+>> cmd->data might be NULL?  Have you tested this?
+>>
+>>> +
+>>> +     if (cmd->opcode != MMC_SET_BLOCK_COUNT) {
+>>
+>> I would have thought:
+>>
+>>         if (cmd->data)
+>>
+>>> +             sdhci_set_timeout(host, cmd);
+>>> +             dma_async_issue_pending(chan);
+>>> +     }
+>>> +}
+>>> +#else
+>>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+>>> +{
+>>> +     return 0;
+>>
+>> That should return an error, perhaps -EOPNOTSUPP.
+>>
+>>> +}
+>>> +
+>>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+>>> +{}
+>>> +
+>>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+>>> +                                         struct mmc_command *cmd)
+>>> +{
+>>> +     /* If SDHCI_EXTDMA not supported, PIO will be used */
+>>
+>> SDHCI_EXTDMA is now MMC_SDHCI_EXTERNAL_DMA
+>>
+>>> +     sdhci_prepare_data(host, cmd);
+>>> +}
+>>> +
+>>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+>>> +                                         struct mmc_command *cmd)
+>>> +{}
+>>> +#endif
+>>> +
+>>> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+>>> +{
+>>> +     host->use_external_dma = en;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+>>> +
+>>>  void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>  {
+>>>       int flags;
+>>> @@ -1355,7 +1508,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>               host->data_cmd = cmd;
+>>>       }
+>>>
+>>> -     sdhci_prepare_data(host, cmd);
+>>> +     if (host->use_external_dma)
+>>> +             sdhci_external_dma_prepare_data(host, cmd);
+>>> +     else
+>>> +             sdhci_prepare_data(host, cmd);
+>>>
+>>>       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+>>>
+>>> @@ -1397,6 +1553,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>>>               timeout += 10 * HZ;
+>>>       sdhci_mod_timer(host, cmd->mrq, timeout);
+>>>
+>>> +     if (host->use_external_dma)
+>>> +             sdhci_external_dma_pre_transfer(host, cmd);
+>>> +
+>>>       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+>>> @@ -4133,6 +4292,19 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>                       return ret;
+>>>       }
+>>>
+>>> +     if (host->use_external_dma) {
+>>> +             ret = sdhci_external_dma_init(host);
+>>> +             if (ret == -EPROBE_DEFER)
+>>> +                     goto unreg;
+>>> +
+>>> +             /*
+>>> +              * Fall back to use the DMA/PIO integrated in standard SDHCI
+>>> +              * instead of external DMA devices.
+>>> +              */
+>>> +             if (ret)
+>>> +                     sdhci_switch_external_dma(host, false);
+>>> +     }
+>>> +
+>>>       return 0;
+>>>
+>>>  unreg:
+>>> @@ -4161,6 +4333,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+>>>               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+>>>                                 host->adma_table_sz, host->align_buffer,
+>>>                                 host->align_addr);
+>>> +
+>>> +     if (host->use_external_dma)
+>>> +             sdhci_external_dma_release(host);
+>>> +
+>>>       host->adma_table = NULL;
+>>>       host->align_buffer = NULL;
+>>>  }
+>>> @@ -4295,6 +4471,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+>>>                                 host->adma_table_sz, host->align_buffer,
+>>>                                 host->align_addr);
+>>>
+>>> +     if (host->use_external_dma)
+>>> +             sdhci_external_dma_release(host);
+>>> +
+>>>       host->adma_table = NULL;
+>>>       host->align_buffer = NULL;
+>>>  }
+>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>> index b001cf4..8e50a97 100644
+>>> --- a/drivers/mmc/host/sdhci.h
+>>> +++ b/drivers/mmc/host/sdhci.h
+>>> @@ -475,6 +475,7 @@ struct sdhci_host {
+>>>
+>>>       int irq;                /* Device IRQ */
+>>>       void __iomem *ioaddr;   /* Mapped address */
+>>> +     phys_addr_t mapbase;    /* physical address base */
+>>>       char *bounce_buffer;    /* For packing SDMA reads/writes */
+>>>       dma_addr_t bounce_addr;
+>>>       unsigned int bounce_buffer_size;
+>>> @@ -524,6 +525,7 @@ struct sdhci_host {
+>>>       bool pending_reset;     /* Cmd/data reset is pending */
+>>>       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+>>>       bool v4_mode;           /* Host Version 4 Enable */
+>>> +     bool use_external_dma;
+>>>
+>>>       struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
+>>>       struct mmc_command *cmd;        /* Current command */
+>>> @@ -552,6 +554,11 @@ struct sdhci_host {
+>>>       struct timer_list timer;        /* Timer for timeouts */
+>>>       struct timer_list data_timer;   /* Timer for data timeouts */
+>>>
+>>> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+>>> +     struct dma_chan *rx_chan;
+>>> +     struct dma_chan *tx_chan;
+>>> +#endif
+>>> +
+>>>       u32 caps;               /* CAPABILITY_0 */
+>>>       u32 caps1;              /* CAPABILITY_1 */
+>>>       bool read_caps;         /* Capability flags have been read */
+>>> @@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
+>>>  void sdhci_end_tuning(struct sdhci_host *host);
+>>>  void sdhci_reset_tuning(struct sdhci_host *host);
+>>>  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
+>>> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+>>>
+>>>  #endif /* __SDHCI_HW_H */
+>>>
+>>
+> 
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com
-
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 6312 Comm: syz-executor4 Not tainted 4.20.0-rc4+ #132
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
-RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
-Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 85  
-bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 7b 85  
-8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
-RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
-RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
-RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
-RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
-R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
-R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
-FS:  00007fc6d31a2700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000400200 CR3: 00000001d3b95000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  close_fs_devices fs/btrfs/volumes.c:1095 [inline]
-  btrfs_close_devices+0xa1/0x210 fs/btrfs/volumes.c:1081
-  btrfs_mount_root+0x13d2/0x1d70 fs/btrfs/super.c:1619
-  mount_fs+0xae/0x31d fs/super.c:1261
-  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-  vfs_kern_mount+0x40/0x60 fs/namespace.c:951
-  btrfs_mount+0x4a3/0x2136 fs/btrfs/super.c:1670
-  mount_fs+0xae/0x31d fs/super.c:1261
-  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-  vfs_kern_mount fs/namespace.c:951 [inline]
-  do_new_mount fs/namespace.c:2469 [inline]
-  do_mount+0x581/0x31f0 fs/namespace.c:2801
-  ksys_mount+0x12d/0x140 fs/namespace.c:3017
-  __do_sys_mount fs/namespace.c:3031 [inline]
-  __se_sys_mount fs/namespace.c:3028 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459fda
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d 89 fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007fc6d31a1a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fc6d31a1b30 RCX: 0000000000459fda
-RDX: 00007fc6d31a1ad0 RSI: 0000000020000740 RDI: 00007fc6d31a1af0
-RBP: 0000000020000740 R08: 00007fc6d31a1b30 R09: 00007fc6d31a1ad0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000004
-R13: 0000000000000000 R14: 00000000004d8ef0 R15: 0000000000000003
-Modules linked in:
-kobject: 'loop1' (0000000014e46057): kobject_uevent_env
-kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop1' (0000000014e46057): kobject_uevent_env
-kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop1' (0000000014e46057): kobject_uevent_env
-kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop1' (0000000014e46057): kobject_uevent_env
-kobject: 'loop1' (0000000014e46057): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
----[ end trace 260d74aed8afc1e0 ]---
-RIP: 0010:btrfs_close_one_device fs/btrfs/volumes.c:1039 [inline]
-RIP: 0010:close_fs_devices.part.44+0x7be/0xa20 fs/btrfs/volumes.c:1063
-Code: 48 8d 7b 30 49 89 44 24 18 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 85  
-bd 01 00 00 48 83 6b 30 01 e9 7a fa ff ff e8 82 85 8c fe <0f> 0b e8 7b 85  
-8c fe 0f 0b e8 74 85 8c fe 0f 0b e9 6f fd ff ff e8
-RSP: 0018:ffff8881b7b771d8 EFLAGS: 00010212
-RAX: 0000000000040000 RBX: ffff8881cdebb300 RCX: ffffc9000dea2000
-RDX: 0000000000022db4 RSI: ffffffff82f3057e RDI: 0000000000000007
-RBP: ffff8881b7b77380 R08: ffff8881b50d0000 R09: 0000000000000006
-R10: 0000000000000000 R11: ffff8881b50d0000 R12: ffff8881bad2b200
-R13: dffffc0000000000 R14: fffffffffffffff4 R15: 0000000000000000
-FS:  00007fc6d31a2700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004dc418 CR3: 00000001d3b95000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
