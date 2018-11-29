@@ -2,88 +2,89 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D870C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C080DC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5880E21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5880E21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5524A206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DDCs3kLQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5524A206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeK2Swg (ORCPT
+        id S1727773AbeK2Swi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:52:36 -0500
-Received: from mga07.intel.com ([134.134.136.100]:12758 "EHLO mga07.intel.com"
+        Thu, 29 Nov 2018 13:52:38 -0500
+Received: from m12-18.163.com ([220.181.12.18]:53103 "EHLO m12-18.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726879AbeK2Swg (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:52:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 23:48:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,293,1539673200"; 
-   d="scan'208";a="278627321"
-Received: from skl.sh.intel.com ([10.239.161.125])
-  by orsmga005.jf.intel.com with ESMTP; 28 Nov 2018 23:48:07 -0800
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v4 2/4] perf annotate: Create a annotate2 flag in struct symbol
-Date:   Thu, 29 Nov 2018 23:39:36 +0800
-Message-Id: <1543505978-19808-3-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543505978-19808-1-git-send-email-yao.jin@linux.intel.com>
-References: <1543505978-19808-1-git-send-email-yao.jin@linux.intel.com>
+        id S1726639AbeK2Swh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:52:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=1qvYh
+        0HtzxaAtwDX9ZTAwiISs2FbFxsTz04hf0Xd5W0=; b=DDCs3kLQOYnomTGm+8UXs
+        VSdOVqmclA8ooA1wja6mj5gwa7MKl8y8kla/6GD6M73LKJ9r6iDPwP7WbcZeRQ2/
+        j50nHhOWCPDsX4C9zMPy1x/rOvzWKhBmcdTjFufMo1IapZw8yoTw9Uhi/LSjTxEQ
+        ZQn0oU268eknZx4nC6bifQ=
+Received: from bp (unknown [106.120.213.96])
+        by smtp14 (Coremail) with SMTP id EsCowAC31Imrmf9buZxJCQ--.19691S2;
+        Thu, 29 Nov 2018 15:47:56 +0800 (CST)
+Date:   Thu, 29 Nov 2018 15:47:56 +0800
+From:   PanBian <bianpan2016@163.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: do not free algorithm before using
+Message-ID: <20181129074756.GA73370@bp>
+Reply-To: PanBian <bianpan2016@163.com>
+References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
+ <20181129065711.7renu7xnxzp7sr2d@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129065711.7renu7xnxzp7sr2d@gondor.apana.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CM-TRANSID: EsCowAC31Imrmf9buZxJCQ--.19691S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr4fKr4UKw4fCF47Zw15twb_yoWfGrgEg3
+        yUGr4jkw1DGr97Cw18AFWUur1FgF93Jr15WF1Sg3Zayr98J3yDJanrKwn3W3WUXrZ5Kr9r
+        uFyrXFZxAr9FkjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5UWrtUUUUU==
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZwwOcletsK4i6QAAs4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We often use the symbol__annotate2() to annotate a specified symbol.
-While annotating may take some time, so in order to avoid annotating
-the same symbol repeatedly, the patch creates a new flag to indicate
-the symbol has been annotated.
+On Thu, Nov 29, 2018 at 02:57:11PM +0800, Herbert Xu wrote:
+> On Thu, Nov 22, 2018 at 06:00:16PM +0800, Pan Bian wrote:
+> > In multiple functions, the algorithm fields are read after its reference
+> > is dropped through crypto_mod_put. In this case, the algorithm memory
+> > may be freed, resulting in use-after-free bugs. This patch delays the
+> > put operation until the algorithm is never used.
+> > 
+> > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> 
+> Patch applied.  Thanks!
+> 
+> BTW, this problem exists in almost every other skcipher template,
+> e.g., in ctr.  Are you working on a fix for them too?
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/util/annotate.c | 1 +
- tools/perf/util/symbol.h   | 1 +
- 2 files changed, 2 insertions(+)
+Probably not. Could you please provide patches to fix them?
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 4b2b1b0..f69d8e1 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2798,6 +2798,7 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
- 	notes->nr_events = nr_pcnt;
- 
- 	annotation__update_column_widths(notes);
-+	sym->annotate2 = true;
- 
- 	return 0;
- 
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index d026d21..14d9d43 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -63,6 +63,7 @@ struct symbol {
- 	u8		ignore:1;
- 	u8		inlined:1;
- 	u8		arch_sym;
-+	bool		annotate2;
- 	char		name[0];
- };
- 
--- 
-2.7.4
+Thanks,
+Pan
+
+> 
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
