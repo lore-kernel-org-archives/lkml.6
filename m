@@ -2,103 +2,143 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10ABAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F16C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45A82081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45A82081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 15C3C2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:01:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jVcttVge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C3C2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeK2XG1 (ORCPT
+        id S1728072AbeK2XGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:06:27 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:7460 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726187AbeK2XG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:06:27 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id B640EC1CDF11E08AF480;
-        Thu, 29 Nov 2018 20:01:16 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wATC14fH046438;
-        Thu, 29 Nov 2018 20:01:04 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018112920013614-13734234 ;
-          Thu, 29 Nov 2018 20:01:36 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com, sstabellini@kernel.org
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH] pvcalls-front: Use GFP_ATOMIC under spin_lock
-Date:   Thu, 29 Nov 2018 20:01:01 +0800
-Message-Id: <20181129120101.19678-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Thu, 29 Nov 2018 18:06:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57744 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbeK2XGy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:06:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZjVlWPxBMqjaWdR9l7NGz+tA4yUfca+HteKZBh3WsGc=; b=jVcttVgeyzwQ9rSWwUPH+h8Xs
+        bYrt3/a2si/GOw/sT3i59eErBD79K3aA/MC4XZfrLw72xTmRGQ9GjERIFg0sXiUC9C8F+IDLKt+tY
+        fA5CoATFQVe84D8LPHoLy4ldNaRJQzre2CcIaIK0p3ydVkTloyCvB0mC3qrJbm873mwFSNq3NM+G2
+        xt/AUAXcsglnQvKpxH8e8WAepGiMWSGJfik/xhi3V1POOfyKfUJoHPP/agKGPT90nujAi0CVBWtel
+        cb1LJyhc6PKZI/4BYAksI9C6cWpbZwY8bwjfE0fBzKWr2vCqM1GCHeGH9/jd7kTf3UGacB2BAIx6l
+        wFbfZskBg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSL0r-0000ss-PQ; Thu, 29 Nov 2018 12:01:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B96BD2029FD58; Thu, 29 Nov 2018 13:01:43 +0100 (CET)
+Date:   Thu, 29 Nov 2018 13:01:43 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 22/27] locking/lockdep: Reuse list entries that are no
+ longer in use
+Message-ID: <20181129120143.GG2149@hirez.programming.kicks-ass.net>
+References: <20181128234325.110011-1-bvanassche@acm.org>
+ <20181128234325.110011-23-bvanassche@acm.org>
+ <20181129104902.GH2131@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-29 20:01:36,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-29 20:00:52
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wATC14fH046438
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129104902.GH2131@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that we call this with a spin lock held.
-The call tree is:
-pvcalls=5Ffront=5Faccept() holds bedata->socket=5Flock.
-    -> create=5Factive()
-        -> =5F=5Fget=5Ffree=5Fpages() uses GFP=5FKERNEL
+On Thu, Nov 29, 2018 at 11:49:02AM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 28, 2018 at 03:43:20PM -0800, Bart Van Assche wrote:
+> > Instead of abandoning elements of list_entries[] that are no longer in
+> > use, make alloc_list_entry() reuse array elements that have been freed.
+> 
+> > diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> > index 43327a1dd488..01e55fca7c2c 100644
+> > --- a/include/linux/lockdep.h
+> > +++ b/include/linux/lockdep.h
+> > @@ -183,6 +183,11 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
+> >  struct lock_list {
+> >  	/* Entry in locks_after or locks_before. */
+> >  	struct list_head		lock_order_entry;
+> > +	/*
+> > +	 * Entry in all_list_entries when in use and entry in
+> > +	 * free_list_entries when not in use.
+> > +	 */
+> > +	struct list_head		alloc_entry;
+> >  	struct lock_class		*class;
+> >  	struct lock_class		*links_to;
+> >  	struct stack_trace		trace;
+> 
+> > +static LIST_HEAD(all_list_entries);
+> > +static LIST_HEAD(free_list_entries);
+> >  
+> 
+> > @@ -862,7 +867,10 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+> >   */
+> >  static struct lock_list *alloc_list_entry(void)
+> >  {
+> > -	if (nr_list_entries >= MAX_LOCKDEP_ENTRIES) {
+> > +	struct lock_list *e = list_first_entry_or_null(&free_list_entries,
+> > +						       typeof(*e), alloc_entry);
+> > +
+> > +	if (!e) {
+> >  		if (!debug_locks_off_graph_unlock())
+> >  			return NULL;
+> >  
+> > @@ -870,7 +878,8 @@ static struct lock_list *alloc_list_entry(void)
+> >  		dump_stack();
+> >  		return NULL;
+> >  	}
+> > -	return list_entries + nr_list_entries++;
+> > +	list_move_tail(&e->alloc_entry, &all_list_entries);
+> > +	return e;
+> >  }
+> 
+> > @@ -4235,19 +4244,19 @@ static void zap_class(struct list_head *zapped_classes,
+> >  		      struct lock_class *class)
+> >  {
+> >  	struct lock_class *links_to;
+> > +	struct lock_list *entry, *tmp;
+> >  
+> >  	/*
+> >  	 * Remove all dependencies this lock is
+> >  	 * involved in:
+> >  	 */
+> > +	list_for_each_entry_safe(entry, tmp, &all_list_entries, alloc_entry) {
+> >  		if (entry->class != class && entry->links_to != class)
+> >  			continue;
+> >  		links_to = entry->links_to;
+> >  		WARN_ON_ONCE(entry->class == links_to);
+> >  		list_del_rcu(&entry->lock_order_entry);
+> > +		list_move(&entry->alloc_entry, &free_list_entries);
+> >  		entry->class = NULL;
+> >  		entry->links_to = NULL;
+> >  		check_free_class(zapped_classes, class);
+> 
+> Hurm.. I'm confused here.
+> 
+> The reason you cannot re-use lock_order_entry for the free list is
+> because list_del_rcu(), right? But if so, then what ensures the
+> list_entry is not re-used before it's grace-period?
 
-The create=5Factive() function is only called from pvcalls=5Ffront=5Faccept=
-()
-with a spin=5Flock held, The allocation is not allowed to sleep and
-GFP=5FKERNEL is not sufficient, it has to be ATOMIC.
+Also; if you have to grow lock_list by 16 bytes just to be able to free
+it, a bitmap allocator is much cheaper, space wise.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/xen/pvcalls-front.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 2f11ca72a281..f2bbc06a0f7f 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -344,11 +344,11 @@ static int create=5Factive(struct sock=5Fmapping *map=
-, int *evtchn)
- 	init=5Fwaitqueue=5Fhead(&map->active.inflight=5Fconn=5Freq);
-=20
- 	map->active.ring =3D (struct pvcalls=5Fdata=5Fintf *)
--		=5F=5Fget=5Ffree=5Fpage(GFP=5FKERNEL | =5F=5FGFP=5FZERO);
-+		=5F=5Fget=5Ffree=5Fpage(GFP=5FATOMIC | =5F=5FGFP=5FZERO);
- 	if (map->active.ring =3D=3D NULL)
- 		goto out=5Ferror;
- 	map->active.ring->ring=5Forder =3D PVCALLS=5FRING=5FORDER;
--	bytes =3D (void *)=5F=5Fget=5Ffree=5Fpages(GFP=5FKERNEL | =5F=5FGFP=5FZER=
-O,
-+	bytes =3D (void *)=5F=5Fget=5Ffree=5Fpages(GFP=5FATOMIC | =5F=5FGFP=5FZER=
-O,
- 					PVCALLS=5FRING=5FORDER);
- 	if (bytes =3D=3D NULL)
- 		goto out=5Ferror;
---=20
-2.19.1
-
+Some people seem to really care about the static image size, and
+lockdep's .data section does matter to them.
