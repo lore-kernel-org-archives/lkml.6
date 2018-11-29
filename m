@@ -2,193 +2,275 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4207AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D3DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF83520673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:38:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fc9HUKEo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF83520673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ACD82081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:38:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACD82081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeK2WnP (ORCPT
+        id S1728119AbeK2Wnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:43:15 -0500
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:10938
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727151AbeK2WnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:43:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VG019TPCNuFlL2+TlHopIMaDR12ifZuWmh5RHvz/uBo=;
- b=fc9HUKEoTEFtVYKFZ2zf6da6mo5jEtaq9pKZVP3PfEHtQdvwIuzvaPAbanbzTR2YjpSBwA/TCxN6F6OzReHUXEe05dJbfRQ9sRQCHMbBb1dLPTqMN+Em31aPxMsYCuotmZ63N2vd25wheL2mgeNmqXzOf7ZIMyDUFysGtu7Q+dM=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB1456.eurprd04.prod.outlook.com (10.163.166.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18; Thu, 29 Nov 2018 11:38:05 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::595a:9890:8397:5d51%4]) with mapi id 15.20.1382.017; Thu, 29 Nov 2018
- 11:38:05 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Topic: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Index: AQHUhjthS4yZSu2tFUKxjttSopGq5aVk3CAAgAG6GYA=
-Date:   Thu, 29 Nov 2018 11:38:05 +0000
-Message-ID: <VI1PR04MB572644A2AE3214356A62478799D20@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1543314174-28580-1-git-send-email-frieder.schrempf@kontron.de>
- <1543314174-28580-4-git-send-email-frieder.schrempf@kontron.de>
- <3981845c-327a-bb14-2908-47dd443971bf@kontron.de>
-In-Reply-To: <3981845c-327a-bb14-2908-47dd443971bf@kontron.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1456;6:grITMgshpkXZl3KAjO5EISbbVfRRO5YE+iuu+ai6dfHfNe27PZtJr+kUMehfsDiGMmtLwOU/Fc4nM1bXbwR+F1Vlr4CZdnC9WZenaymhW3R/KUdUAevlfIHPtY6o1mFyi5pbhEb3g4Gb2YInzsIVd1ASorLCWSgOLmMXLjQVEu1M8Hkn72OVgRDwlr35SRSXigTKt12GciuqGCXQKh8wJqBW6AlI6uBIFC0j6uOZnoHBGKanyGLh70Z+DcxmfkDMb0kBUwcb12BOXG7S8fL04yyDf0juSVf/jl3HkfG9CM6WlcJa4+PkQaJpJZNXj1CWfQcZMR1ybBLsaeydsl+Sd8H56R66FxolVBCUHD84P6GL2688zJ1u0LpBA/CvVunawf78jThBBRXVoBv5QkqnRma5XJDEFt/umPqLaqvApYPuw8d27KciJI1crUU6zXWUazByZsLUycRaw4VsWYJzVZkJdm6HBNRixF6nuS1Iy8w=;5:KFUP6crvKnEQsHgv7KVzhX9yWdNAV+gBuebD/aOSfn4x0NNZB8aaQMFcvjA/BTXXgkdw7crohLjy/BsjKBbqy7xrzMlVDGQFZ6WBxNaZEtfykOY5G7ODWzz8S/tTUePZNLgN8TfxjW8FsKpl46TMN0ewTaDS9sxFsyoPKCc/WYQ=;7:DluwGDS9pWo/HMrKzmyE82qk1zQGuBOAjUC9Ukh1y7WxrCox1kqsfLdF4GPZqePTGiiSrOaY5UDvgnBEby0TAoegCRLgMw9Rly0kixi+S834+NtfQjDeXXMGMf8A51IIVqoKZD8vuDiNjOPiX1rWFA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f8c6ea47-ef88-48dd-d00d-08d655ef20cb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1456;
-x-ms-traffictypediagnostic: VI1PR04MB1456:
-x-microsoft-antispam-prvs: <VI1PR04MB14569EE258105A40A5A1843899D20@VI1PR04MB1456.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231453)(999002)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1456;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1456;
-x-forefront-prvs: 0871917CDA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(346002)(396003)(376002)(199004)(189003)(13464003)(4326008)(71190400001)(71200400001)(99286004)(105586002)(2906002)(6636002)(33656002)(229853002)(74316002)(305945005)(106356001)(7736002)(97736004)(78486014)(11346002)(53936002)(9686003)(478600001)(476003)(55016002)(446003)(256004)(14444005)(110136005)(39060400002)(316002)(54906003)(6116002)(3846002)(6436002)(6246003)(186003)(2201001)(6506007)(68736007)(7696005)(53546011)(14454004)(7416002)(102836004)(66066001)(2501003)(55236004)(8936002)(8676002)(5660300001)(81156014)(81166006)(76176011)(25786009)(26005)(486006)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1456;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: d/jPAWYyTeGu9uub+8pqDGTW4YyQl2lMUVRjyI/N9Pohivk1BEVicrQyNZp6GFNgcBk9YMy6XDn3eq9E8NhjemotWI//yMQRDImG96rH0jhmJa9AiHvH99ezRCKxIF1VPJ+M/hHRfTkrp8R7h90gxn0H5LjcSVfgrhH/1+KmrTAM5rDpQQSb0ao7FHZk5etBaxneJ0N50IkjpI183mX6hv4ZEUHjQxxZk1SNMgNe9mWZ3r5BKzBom55NWhfiYCjoPd383LUidImzWspgbL7URUgRhALIJhdGdy6iDnmC8WJaqhH9YtMVt+d1fHg/INPZFFS07n7E/oVWNZYH6VnJLuCTuHyq7twlYgkx042iRQM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 29 Nov 2018 17:43:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726869AbeK2Wnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 17:43:47 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C75030001E8;
+        Thu, 29 Nov 2018 11:38:42 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ADAD462997;
+        Thu, 29 Nov 2018 11:38:41 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3D9801809546;
+        Thu, 29 Nov 2018 11:38:41 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 06:38:40 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Zheng Yan <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
+        linux-mm@kvack.org
+Message-ID: <1231450124.37408874.1543491520867.JavaMail.zimbra@redhat.com>
+In-Reply-To: <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
+References: <20181129075301.29087-1-nborisov@suse.com> <20181129075301.29087-2-nborisov@suse.com> <20181129081826.GO6923@dhcp22.suse.cz> <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
+Subject: Re: [PATCH 2/2] fs: Don't open-code lru_to_page
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8c6ea47-ef88-48dd-d00d-08d655ef20cb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 11:38:05.3345
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1456
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.136, 10.4.195.28]
+Thread-Topic: Don't open-code lru_to_page
+Thread-Index: f6plNFJ2u+TeYP0RguagIH0cNHPblQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 29 Nov 2018 11:38:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRnJpZWRlciwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTY2hy
-ZW1wZiBGcmllZGVyIFttYWlsdG86ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRlXQ0KPiBTZW50
-OiBXZWRuZXNkYXksIE5vdmVtYmVyIDI4LCAyMDE4IDE6NTggUE0NCj4gVG86IGxpbnV4LW10ZEBs
-aXN0cy5pbmZyYWRlYWQub3JnOyBib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5jb207IGxpbnV4LQ0K
-PiBzcGlAdmdlci5rZXJuZWwub3JnOyBNYXJlayBWYXN1dCA8bWFyZWsudmFzdXRAZ21haWwuY29t
-PjsgTWFyayBCcm93bg0KPiA8YnJvb25pZUBrZXJuZWwub3JnPjsgSGFuIFh1IDxoYW4ueHVAbnhw
-LmNvbT4NCj4gQ2M6IGR3bXcyQGluZnJhZGVhZC5vcmc7IGNvbXB1dGVyc2ZvcnBlYWNlQGdtYWls
-LmNvbTsgcmljaGFyZEBub2QuYXQ7DQo+IG1pcXVlbC5yYXluYWxAYm9vdGxpbi5jb207IERhdmlk
-IFdvbGZlIDxkYXZpZC53b2xmZUBueHAuY29tPjsgRmFiaW8NCj4gRXN0ZXZhbSA8ZmFiaW8uZXN0
-ZXZhbUBueHAuY29tPjsgUHJhYmhha2FyIEt1c2h3YWhhDQo+IDxwcmFiaGFrYXIua3VzaHdhaGFA
-bnhwLmNvbT47IFlvZ2VzaCBOYXJheWFuIEdhdXINCj4gPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAu
-Y29tPjsgc2hhd25ndW9Aa2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NiAzLzldIHNwaTogQWRkIGEgZHJpdmVyIGZvciB0
-aGUgRnJlZXNjYWxlL05YUCBRdWFkU1BJDQo+IGNvbnRyb2xsZXINCj4gDQo+IE9uIDI3LjExLjE4
-IDExOjI0LCBTY2hyZW1wZiBGcmllZGVyIHdyb3RlOg0KPiA+IFRoaXMgZHJpdmVyIGlzIGRlcml2
-ZWQgZnJvbSB0aGUgU1BJIE5PUiBkcml2ZXIgYXQNCj4gPiBtdGQvc3BpLW5vci9mc2wtcXVhZHNw
-aS5jLiBJdCB1c2VzIHRoZSBuZXcgU1BJIG1lbW9yeSBpbnRlcmZhY2Ugb2YgdGhlDQo+ID4gU1BJ
-IGZyYW1ld29yayB0byBpc3N1ZSBmbGFzaCBtZW1vcnkgb3BlcmF0aW9ucyB0byB1cCB0byBmb3Vy
-IGNvbm5lY3RlZA0KPiA+IGZsYXNoIGNoaXBzICgyIGJ1c2VzIHdpdGggMiBDUyBlYWNoKS4NCj4g
-Pg0KPiA+IFRoZSBjb250cm9sbGVyIGRvZXMgbm90IHN1cHBvcnQgZ2VuZXJpYyBTUEkgbWVzc2Fn
-ZXMuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFsc28gZGlzYWJsZXMgdGhlIGJ1aWxkIG9mIHRoZSAi
-b2xkIiBkcml2ZXIgYW5kIHJldXNlcyBpdHMNCj4gPiBLY29uZmlnIG9wdGlvbiBDT05GSUdfU1BJ
-X0ZTTF9RVUFEU1BJIHRvIHJlcGxhY2UgaXQuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBGcmll
-ZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGU+DQo+ID4gLS0tDQo+ID4g
-ICBkcml2ZXJzL210ZC9zcGktbm9yL0tjb25maWcgIHwgICA5IC0NCj4gPiAgIGRyaXZlcnMvbXRk
-L3NwaS1ub3IvTWFrZWZpbGUgfCAgIDEgLQ0KPiA+ICAgZHJpdmVycy9zcGkvS2NvbmZpZyAgICAg
-ICAgICB8ICAxMSArDQo+ID4gICBkcml2ZXJzL3NwaS9NYWtlZmlsZSAgICAgICAgIHwgICAxICsN
-Cj4gPiAgIGRyaXZlcnMvc3BpL3NwaS1mc2wtcXNwaS5jICAgfCA5NjcNCj4gKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgIDUgZmlsZXMgY2hhbmdlZCwgOTc5IGlu
-c2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbXRkL3NwaS1ub3IvS2NvbmZpZyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvS2NvbmZpZw0KPiA+
-IGluZGV4IDZjYzljOTIuLmQxY2EzMDcgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tdGQvc3Bp
-LW5vci9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9LY29uZmlnDQo+ID4g
-QEAgLTU5LDE1ICs1OSw2IEBAIGNvbmZpZyBTUElfQ0FERU5DRV9RVUFEU1BJDQo+ID4gICAJICBk
-ZXZpY2Ugd2l0aCBhIENhZGVuY2UgUVNQSSBjb250cm9sbGVyIGFuZCB3YW50IHRvIGFjY2VzcyB0
-aGUNCj4gPiAgIAkgIEZsYXNoIGFzIGFuIE1URCBkZXZpY2UuDQo+ID4NCj4gPiAtY29uZmlnIFNQ
-SV9GU0xfUVVBRFNQSQ0KPiA+IC0JdHJpc3RhdGUgIkZyZWVzY2FsZSBRdWFkIFNQSSBjb250cm9s
-bGVyIg0KPiA+IC0JZGVwZW5kcyBvbiBBUkNIX01YQyB8fCBTT0NfTFMxMDIxQSB8fCBBUkNIX0xB
-WUVSU0NBUEUgfHwNCj4gQ09NUElMRV9URVNUDQo+ID4gLQlkZXBlbmRzIG9uIEhBU19JT01FTQ0K
-PiA+IC0JaGVscA0KPiA+IC0JICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgdGhlIFF1YWQgU1BJ
-IGNvbnRyb2xsZXIgaW4gbWFzdGVyIG1vZGUuDQo+ID4gLQkgIFRoaXMgY29udHJvbGxlciBkb2Vz
-IG5vdCBzdXBwb3J0IGdlbmVyaWMgU1BJLiBJdCBvbmx5IHN1cHBvcnRzDQo+ID4gLQkgIFNQSSBO
-T1IuDQo+ID4gLQ0KPiA+ICAgY29uZmlnIFNQSV9ISVNJX1NGQw0KPiA+ICAgCXRyaXN0YXRlICJI
-aXNpbGljb24gU1BJLU5PUiBGbGFzaCBDb250cm9sbGVyKFNGQykiDQo+ID4gICAJZGVwZW5kcyBv
-biBBUkNIX0hJU0kgfHwgQ09NUElMRV9URVNUIGRpZmYgLS1naXQNCj4gPiBhL2RyaXZlcnMvbXRk
-L3NwaS1ub3IvTWFrZWZpbGUgYi9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxlIGluZGV4DQo+
-ID4gZjRjNjFkMi4uM2YxNjBjMmUzIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbXRkL3NwaS1u
-b3IvTWFrZWZpbGUNCj4gPiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxlDQo+ID4g
-QEAgLTMsNyArMyw2IEBAIG9iai0kKENPTkZJR19NVERfU1BJX05PUikJKz0gc3BpLW5vci5vDQo+
-ID4gICBvYmotJChDT05GSUdfU1BJX0FTUEVFRF9TTUMpCSs9IGFzcGVlZC1zbWMubw0KPiA+ICAg
-b2JqLSQoQ09ORklHX1NQSV9BVE1FTF9RVUFEU1BJKQkrPSBhdG1lbC1xdWFkc3BpLm8NCj4gPiAg
-IG9iai0kKENPTkZJR19TUElfQ0FERU5DRV9RVUFEU1BJKQkrPSBjYWRlbmNlLXF1YWRzcGkubw0K
-PiA+IC1vYmotJChDT05GSUdfU1BJX0ZTTF9RVUFEU1BJKQkrPSBmc2wtcXVhZHNwaS5vDQo+ID4g
-ICBvYmotJChDT05GSUdfU1BJX0hJU0lfU0ZDKQkrPSBoaXNpLXNmYy5vDQo+ID4gICBvYmotJChD
-T05GSUdfTVREX01UODF4eF9OT1IpICAgICs9IG10ay1xdWFkc3BpLm8NCj4gPiAgIG9iai0kKENP
-TkZJR19TUElfTlhQX1NQSUZJKQkrPSBueHAtc3BpZmkubw0KPiA+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL3NwaS9LY29uZmlnIGIvZHJpdmVycy9zcGkvS2NvbmZpZyBpbmRleA0KPiA+IDdkM2E1Yzku
-LjhjODQxODYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9zcGkvS2NvbmZpZw0KPiA+ICsrKyBi
-L2RyaXZlcnMvc3BpL0tjb25maWcNCj4gPiBAQCAtMjU5LDYgKzI1OSwxNyBAQCBjb25maWcgU1BJ
-X0ZTTF9MUFNQSQ0KPiA+ICAgCWhlbHANCj4gPiAgIAkgIFRoaXMgZW5hYmxlcyBGcmVlc2NhbGUg
-aS5NWCBMUFNQSSBjb250cm9sbGVycyBpbiBtYXN0ZXIgbW9kZS4NCj4gPg0KPiA+ICtjb25maWcg
-U1BJX0ZTTF9RVUFEU1BJDQo+ID4gKwl0cmlzdGF0ZSAiRnJlZXNjYWxlIFFTUEkgY29udHJvbGxl
-ciINCj4gPiArCWRlcGVuZHMgb24gQVJDSF9NWEMgfHwgU09DX0xTMTAyMUEgfHwgQVJDSF9MQVlF
-UlNDQVBFIHx8DQo+IENPTVBJTEVfVEVTVA0KPiA+ICsJZGVwZW5kcyBvbiBIQVNfSU9NRU0NCj4g
-PiArCWhlbHANCj4gPiArCSAgVGhpcyBlbmFibGVzIHN1cHBvcnQgZm9yIHRoZSBRdWFkIFNQSSBj
-b250cm9sbGVyIGluIG1hc3RlciBtb2RlLg0KPiA+ICsJICBVcCB0byBmb3VyIGZsYXNoIGNoaXBz
-IGNhbiBiZSBjb25uZWN0ZWQgb24gdHdvIGJ1c2VzIHdpdGggdHdvDQo+ID4gKwkgIGNoaXBzZWxl
-Y3RzIGVhY2guDQo+ID4gKwkgIFRoaXMgY29udHJvbGxlciBkb2VzIG5vdCBzdXBwb3J0IGdlbmVy
-aWMgU1BJIG1lc3NhZ2VzLiBJdCBvbmx5DQo+ID4gKwkgIHN1cHBvcnRzIHRoZSBoaWdoLWxldmVs
-IFNQSSBtZW1vcnkgaW50ZXJmYWNlLg0KPiA+ICsNClsuLi5dDQo+ID4gK3N0YXRpYyB2b2lkIGZz
-bF9xc3BpX3NlbGVjdF9tZW0oc3RydWN0IGZzbF9xc3BpICpxLCBzdHJ1Y3Qgc3BpX2RldmljZSAq
-c3BpKQ0KPiA+ICt7DQo+ID4gKwl1bnNpZ25lZCBsb25nIHJhdGUgPSBzcGktPm1heF9zcGVlZF9o
-ejsNCj4gPiArCWludCByZXQsIGk7DQo+ID4gKwl1MzIgbWFwX2FkZHI7DQo+IA0KPiBGb3Jnb3Qg
-dG8gZHJvcCBzb21lIHVudXNlZCB2YXJzIGhlcmUuIEkgd2lsbCByZW1vdmUgdGhlbSBpbiB0aGUg
-bmV4dA0KPiB2ZXJzaW9uLg0KPiANCg0KWWVzLCBiZWxvdyBhcmUgdGhlIGJ1aWxkIHdhcm5pbmdz
-IG1lc3NhZ2VzIGNvbWluZyBmb3IgdGhpcyB2ZXJzaW9uIG9mIHRoZSBwYXRjaC4NCg0KCWRyaXZl
-cnMvc3BpL3NwaS1mc2wtcXNwaS5jOiBJbiBmdW5jdGlvbiDigJhmc2xfcXNwaV9zZWxlY3RfbWVt
-4oCZOg0KCWRyaXZlcnMvc3BpL3NwaS1mc2wtcXNwaS5jOjUwMDo2OiB3YXJuaW5nOiB1bnVzZWQg
-dmFyaWFibGUg4oCYbWFwX2FkZHLigJkgWy1XdW51c2VkLXZhcmlhYmxlXQ0KCSAgdTMyIG1hcF9h
-ZGRyOw0KCSAgICAgIF4NCglkcml2ZXJzL3NwaS9zcGktZnNsLXFzcGkuYzo0OTk6MTE6IHdhcm5p
-bmc6IHVudXNlZCB2YXJpYWJsZSDigJhp4oCZIFstV3VudXNlZC12YXJpYWJsZV0NCgkgIGludCBy
-ZXQsIGk7DQoNCj4gPiArDQo+ID4gKwlpZiAocS0+c2VsZWN0ZWQgPT0gc3BpLT5jaGlwX3NlbGVj
-dCkNClsuLi5dDQoNClZlcmlmaWVkIHRoaXMgcGF0Y2ggc2VyaWVzIG9uIExheWVyU2NhcGUtMi54
-IGFyY2hpdGVjdHVyZSBib2FyZHMuDQpMUzEwODhhcmRiLCBpcyBoYXZpbmcgdHdvIGNvbm5lY3Rl
-ZCBmbGFzaCBzbGF2ZSBkZXZpY2VzIG9uIENTMCBhbmQgQ1MxLg0KDQpWZXJpZmllZCB3aXRoIHNp
-bXBsZSBSZWFkL1dyaXRlL0VyYXNlIG9wZXJhdGlvbnMgYWxvbmcgd2l0aCBKRkZTMiBtb3VudGlu
-ZyBhbmQgYm9vdGluZyBmcm9tIGZsYXNoIE1URCBwYXJ0aXRpb24gZm9yIGJvdGggc2xhdmUgZGV2
-aWNlcy4NCg0KVGhhbmtzLg0KDQotLQ0KUmVnYXJkcw0KWW9nZXNoIEdhdXINCg==
+
+> >> There are a bunch of filesystems which essentially open-code lru_to_page
+> >> helper. Change them to using the helper. No functional changes.
+> > 
+> > I would just squash the two into a single patch. It makes the first one
+> > more obvious. Or is there any reason to have them separate?
+> 
+> No reason, just didn't know how people would react so that's why I chose
+> to send as two separate.
+> 
+> If I squash them who would be the best person to take them ?
+
+For squashed version:
+Acked-by: Pankaj gupta <pagupta@redhat.com>
+
+> 
+> > 
+> >> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+> > 
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > 
+> >> ---
+> >>
+> >> Since this is a mostly mechanical change I've actually batched all of them
+> >> in
+> >> a single patch.
+> >>
+> >>  fs/afs/file.c        | 5 +++--
+> >>  fs/btrfs/extent_io.c | 2 +-
+> >>  fs/ceph/addr.c       | 5 ++---
+> >>  fs/cifs/file.c       | 3 ++-
+> >>  fs/ext4/readpage.c   | 2 +-
+> >>  fs/ocfs2/aops.c      | 3 ++-
+> >>  fs/orangefs/inode.c  | 2 +-
+> >>  mm/swap.c            | 2 +-
+> >>  8 files changed, 13 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> >> index d6bc3f5d784b..323ae9912203 100644
+> >> --- a/fs/afs/file.c
+> >> +++ b/fs/afs/file.c
+> >> @@ -17,6 +17,7 @@
+> >>  #include <linux/writeback.h>
+> >>  #include <linux/gfp.h>
+> >>  #include <linux/task_io_accounting_ops.h>
+> >> +#include <linux/mm.h>
+> >>  #include "internal.h"
+> >>  
+> >>  static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
+> >> @@ -441,7 +442,7 @@ static int afs_readpages_one(struct file *file, struct
+> >> address_space *mapping,
+> >>  	/* Count the number of contiguous pages at the front of the list.  Note
+> >>  	 * that the list goes prev-wards rather than next-wards.
+> >>  	 */
+> >> -	first = list_entry(pages->prev, struct page, lru);
+> >> +	first = lru_to_page(pages);
+> >>  	index = first->index + 1;
+> >>  	n = 1;
+> >>  	for (p = first->lru.prev; p != pages; p = p->prev) {
+> >> @@ -473,7 +474,7 @@ static int afs_readpages_one(struct file *file, struct
+> >> address_space *mapping,
+> >>  	 * page at the end of the file.
+> >>  	 */
+> >>  	do {
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  		list_del(&page->lru);
+> >>  		index = page->index;
+> >>  		if (add_to_page_cache_lru(page, mapping, index,
+> >> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> >> index 19f4b8fd654f..8332c5f4b1c3 100644
+> >> --- a/fs/btrfs/extent_io.c
+> >> +++ b/fs/btrfs/extent_io.c
+> >> @@ -4104,7 +4104,7 @@ int extent_readpages(struct address_space *mapping,
+> >> struct list_head *pages,
+> >>  	u64 prev_em_start = (u64)-1;
+> >>  
+> >>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  
+> >>  		prefetchw(&page->flags);
+> >>  		list_del(&page->lru);
+> >> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> >> index 8eade7a993c1..5d0c05e288cc 100644
+> >> --- a/fs/ceph/addr.c
+> >> +++ b/fs/ceph/addr.c
+> >> @@ -306,7 +306,7 @@ static int start_read(struct inode *inode, struct
+> >> ceph_rw_context *rw_ctx,
+> >>  	struct ceph_osd_client *osdc =
+> >>  		&ceph_inode_to_client(inode)->client->osdc;
+> >>  	struct ceph_inode_info *ci = ceph_inode(inode);
+> >> -	struct page *page = list_entry(page_list->prev, struct page, lru);
+> >> +	struct page *page = lru_to_page(page_list);
+> >>  	struct ceph_vino vino;
+> >>  	struct ceph_osd_request *req;
+> >>  	u64 off;
+> >> @@ -333,8 +333,7 @@ static int start_read(struct inode *inode, struct
+> >> ceph_rw_context *rw_ctx,
+> >>  			if (got)
+> >>  				ceph_put_cap_refs(ci, got);
+> >>  			while (!list_empty(page_list)) {
+> >> -				page = list_entry(page_list->prev,
+> >> -						  struct page, lru);
+> >> +				page = lru_to_page(page_list);
+> >>  				list_del(&page->lru);
+> >>  				put_page(page);
+> >>  			}
+> >> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> >> index 74c33d5fafc8..b16a4d887d17 100644
+> >> --- a/fs/cifs/file.c
+> >> +++ b/fs/cifs/file.c
+> >> @@ -33,6 +33,7 @@
+> >>  #include <linux/mount.h>
+> >>  #include <linux/slab.h>
+> >>  #include <linux/swap.h>
+> >> +#include <linux/mm.h>
+> >>  #include <asm/div64.h>
+> >>  #include "cifsfs.h"
+> >>  #include "cifspdu.h"
+> >> @@ -3975,7 +3976,7 @@ readpages_get_pages(struct address_space *mapping,
+> >> struct list_head *page_list,
+> >>  
+> >>  	INIT_LIST_HEAD(tmplist);
+> >>  
+> >> -	page = list_entry(page_list->prev, struct page, lru);
+> >> +	page = lru_to_page(page_list);
+> >>  
+> >>  	/*
+> >>  	 * Lock the page and put it in the cache. Since no one else
+> >> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> >> index f461d75ac049..6aa282ee455a 100644
+> >> --- a/fs/ext4/readpage.c
+> >> +++ b/fs/ext4/readpage.c
+> >> @@ -128,7 +128,7 @@ int ext4_mpage_readpages(struct address_space
+> >> *mapping,
+> >>  
+> >>  		prefetchw(&page->flags);
+> >>  		if (pages) {
+> >> -			page = list_entry(pages->prev, struct page, lru);
+> >> +			page = lru_to_page(pages);
+> >>  			list_del(&page->lru);
+> >>  			if (add_to_page_cache_lru(page, mapping, page->index,
+> >>  				  readahead_gfp_mask(mapping)))
+> >> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+> >> index eb1ce30412dc..832c1759a09a 100644
+> >> --- a/fs/ocfs2/aops.c
+> >> +++ b/fs/ocfs2/aops.c
+> >> @@ -30,6 +30,7 @@
+> >>  #include <linux/quotaops.h>
+> >>  #include <linux/blkdev.h>
+> >>  #include <linux/uio.h>
+> >> +#include <linux/mm.h>
+> >>  
+> >>  #include <cluster/masklog.h>
+> >>  
+> >> @@ -397,7 +398,7 @@ static int ocfs2_readpages(struct file *filp, struct
+> >> address_space *mapping,
+> >>  	 * Check whether a remote node truncated this file - we just
+> >>  	 * drop out in that case as it's not worth handling here.
+> >>  	 */
+> >> -	last = list_entry(pages->prev, struct page, lru);
+> >> +	last = lru_to_page(pages);
+> >>  	start = (loff_t)last->index << PAGE_SHIFT;
+> >>  	if (start >= i_size_read(inode))
+> >>  		goto out_unlock;
+> >> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> >> index fe53381b26b1..f038235c64bd 100644
+> >> --- a/fs/orangefs/inode.c
+> >> +++ b/fs/orangefs/inode.c
+> >> @@ -77,7 +77,7 @@ static int orangefs_readpages(struct file *file,
+> >>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+> >>  		struct page *page;
+> >>  
+> >> -		page = list_entry(pages->prev, struct page, lru);
+> >> +		page = lru_to_page(pages);
+> >>  		list_del(&page->lru);
+> >>  		if (!add_to_page_cache(page,
+> >>  				       mapping,
+> >> diff --git a/mm/swap.c b/mm/swap.c
+> >> index aa483719922e..20b9e9d99652 100644
+> >> --- a/mm/swap.c
+> >> +++ b/mm/swap.c
+> >> @@ -126,7 +126,7 @@ void put_pages_list(struct list_head *pages)
+> >>  	while (!list_empty(pages)) {
+> >>  		struct page *victim;
+> >>  
+> >> -		victim = list_entry(pages->prev, struct page, lru);
+> >> +		victim = lru_to_page(pages);
+> >>  		list_del(&victim->lru);
+> >>  		put_page(victim);
+> >>  	}
+> >> --
+> >> 2.17.1
+> > 
+> 
+> 
