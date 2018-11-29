@@ -7,102 +7,110 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8625C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FF7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7815520868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EC8820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4T/ualK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7815520868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE9XJU0W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC8820989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbeK2RBi (ORCPT
+        id S1728241AbeK2RBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:01:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34802 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbeK2RBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:01:37 -0500
+        id S1727416AbeK2RBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:01:40 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF76720868;
-        Thu, 29 Nov 2018 05:57:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B63CC20834;
+        Thu, 29 Nov 2018 05:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471046;
-        bh=SOF4wTq4vpCzf27Z6lbAbzPsnNjp5oET/y/ojMYqwXw=;
+        s=default; t=1543471049;
+        bh=NQLitjhfGeBr7ygQQxE8T5JB5dIrtzJKlPMN+IygH80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4T/ualKs88I8r/FIG0fMfazSmGwpxLZCfpCaK1tKWPEVE+CuVuOGeqF+yUopQeSG
-         b2gXcBUsBzAmIiK09HDuOU9BaHw2MsdgD97eaQXrMLslB8+/KA5l8ZVRbw2wvhZSN2
-         ofobDnWyFENzDxANjTwAGDZ8hpDmCtANkdK7bzP4=
+        b=jE9XJU0WvI7kURHQUXfEuW/pJqGVOgSr82Hh50VwqJPfOWJS25kSeMvBQ+4j3b50f
+         DC7mtZmnZGXCuCxUGBSzi01DPmJcSthKA3eq1HpMBEBMZxbdvrAvJdK5y+ow9t4827
+         5nnBHi0c5rqE6TbppHWkkE4VVZAJ4DOek7aDKyYo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Benson Leung <bleung@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 13/68] HID: input: Ignore battery reported by Symbol DS4308
-Date:   Thu, 29 Nov 2018 00:55:04 -0500
-Message-Id: <20181129055559.159228-13-sashal@kernel.org>
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 14/68] batman-adv: Use explicit tvlv padding for ELP packets
+Date:   Thu, 29 Nov 2018 00:55:05 -0500
+Message-Id: <20181129055559.159228-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benson Leung <bleung@chromium.org>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
+[ Upstream commit f4156f9656feac21f4de712fac94fae964c5d402 ]
 
-The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
-which does not have a battery, but reports one anyway that always has
-capacity 2.
+The announcement messages of batman-adv COMPAT_VERSION 15 have the
+possibility to announce additional information via a dynamic TVLV part.
+This part is optional for the ELP packets and currently not parsed by the
+Linux implementation. Still out-of-tree versions are using it to transport
+things like neighbor hashes to optimize the rebroadcast behavior.
 
-Let's apply the IGNORE quirk to prevent it from being treated like a
-power supply so that userspaces don't get confused that this
-accessory is almost out of power and warn the user that they need to charge
-their wired barcode scanner.
+Since the ELP broadcast packets are smaller than the minimal ethernet
+packet, it often has to be padded. This is often done (as specified in
+RFC894) with octets of zero and thus work perfectly fine with the TVLV
+part (making it a zero length and thus empty). But not all ethernet
+compatible hardware seems to follow this advice. To avoid ambiguous
+situations when parsing the TVLV header, just force the 4 bytes (TVLV
+length + padding) after the required ELP header to zero.
 
-Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
-
-Signed-off-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: d6f94d91f766 ("batman-adv: ELP - adding basic infrastructure")
+Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h   | 1 +
- drivers/hid/hid-input.c | 3 +++
- 2 files changed, 4 insertions(+)
+ net/batman-adv/bat_v_elp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 501c05cbec7e..a2d25055cd7f 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1038,6 +1038,7 @@
- #define USB_VENDOR_ID_SYMBOL		0x05e0
- #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
- #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
-+#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
+diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
+index 9f481cfdf77d..e8090f099eb8 100644
+--- a/net/batman-adv/bat_v_elp.c
++++ b/net/batman-adv/bat_v_elp.c
+@@ -352,19 +352,21 @@ static void batadv_v_elp_periodic_work(struct work_struct *work)
+  */
+ int batadv_v_elp_iface_enable(struct batadv_hard_iface *hard_iface)
+ {
++	static const size_t tvlv_padding = sizeof(__be32);
+ 	struct batadv_elp_packet *elp_packet;
+ 	unsigned char *elp_buff;
+ 	u32 random_seqno;
+ 	size_t size;
+ 	int res = -ENOMEM;
  
- #define USB_VENDOR_ID_SYNAPTICS		0x06cb
- #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index a481eaf39e88..a3916e58dbf5 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
- 		USB_DEVICE_ID_ELECOM_BM084),
- 	  HID_BATTERY_QUIRK_IGNORE },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
-+		USB_DEVICE_ID_SYMBOL_SCANNER_3),
-+	  HID_BATTERY_QUIRK_IGNORE },
- 	{}
- };
+-	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN;
++	size = ETH_HLEN + NET_IP_ALIGN + BATADV_ELP_HLEN + tvlv_padding;
+ 	hard_iface->bat_v.elp_skb = dev_alloc_skb(size);
+ 	if (!hard_iface->bat_v.elp_skb)
+ 		goto out;
  
+ 	skb_reserve(hard_iface->bat_v.elp_skb, ETH_HLEN + NET_IP_ALIGN);
+-	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb, BATADV_ELP_HLEN);
++	elp_buff = skb_put_zero(hard_iface->bat_v.elp_skb,
++				BATADV_ELP_HLEN + tvlv_padding);
+ 	elp_packet = (struct batadv_elp_packet *)elp_buff;
+ 
+ 	elp_packet->packet_type = BATADV_ELP;
 -- 
 2.17.1
 
