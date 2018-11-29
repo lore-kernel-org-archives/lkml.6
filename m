@@ -2,101 +2,203 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94471C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCC6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590A02081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7481A20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTKtR29E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590A02081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="HXMo/o7K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7481A20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbeK3ACp (ORCPT
+        id S1728290AbeK3ADX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:02:45 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43282 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeK3ACp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:02:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so1786247wrs.10;
-        Thu, 29 Nov 2018 04:57:27 -0800 (PST)
+        Thu, 29 Nov 2018 19:03:23 -0500
+Received: from mail-eopbgr780085.outbound.protection.outlook.com ([40.107.78.85]:57265
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727312AbeK3ADW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:03:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sqfAvVGQXK4jlNOQ/1Qd1yvPT6TmcecriJz+3bFH3S8=;
-        b=OTKtR29EzscppSjcoJ0KzgzWk1bIBfFDMEqDvnviIO3MQI7nCTAUnaJKcDHpzsycj1
-         BVxlvoVNdyWtoQDopEGp8XEJTX24Tt3FbilW85QHvhyHri7RlQq/6jVUgFmgWtzEOSlu
-         TNglUgQkFCAkZpx7qHU6m6j0fwJdtkRxMNlfwRlC8SouypSuV1wZPU+I5AZ49oB46F8H
-         rwTwiX72k/ZC/YOGWS1KNn6oLpazr2L2a9T2/9myeQOmJi/nLPzZNTpoX5RT2abw1ufb
-         hjqJEIOrb8bOzP0WEBLfPZ38auFij1Erw/S574XjL2waoucMHn8L1vOvUlNjR5/N7o4Z
-         xh0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sqfAvVGQXK4jlNOQ/1Qd1yvPT6TmcecriJz+3bFH3S8=;
-        b=mAYgasOoyNdoM+j5iSOexgSyMvGtHuwjVFTksYDOlu3+HywZjfLPnAErSJsK5M9faa
-         GEoy6W6XLDYVY/49n+2jow+5LuBDCe60bwNP0fpk9i3VojEXF9kaaLl5kCDSld7c75lL
-         xymtIXgIY2uD66Os+YBL1G86sn9of+3wSmKOMFtojmQj3OXhBdXuHmRCecZBkjODVVp4
-         R7HUq0IGDzeYpMYFP1ftfsIVZMPY/ps55JOID9jA4CEPc3zLnLxvjPvUiysL+IywpQfG
-         Vlv6U49SZLHjhEaZy5Ck3T4QP8SQB/3jDQqFwrlOL09dShsdkUzzCdZxeeUFud3nWRcO
-         7b9A==
-X-Gm-Message-State: AA+aEWYJdxnrqwUmPZBvE0L0yHu0LQY6a8SXvtlACT/vqPZaDPMvR174
-        ltVw7aZmhyz3TZD63Y1264A=
-X-Google-Smtp-Source: AFSGD/Wm0z9RMdb2jkjWQ/4+5D2SaqNK3uS8oC6zFSvYvPVuShS7Orkv3Yif2GLc1Jvd36OPMpjzIQ==
-X-Received: by 2002:adf:8001:: with SMTP id 1mr1273881wrk.23.1543496246963;
-        Thu, 29 Nov 2018 04:57:26 -0800 (PST)
-Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
-        by smtp.gmail.com with ESMTPSA id q12sm1816318wrx.31.2018.11.29.04.57.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 04:57:26 -0800 (PST)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH] ARM: dts: socfpga: remove incorrect 0x leading
-Date:   Thu, 29 Nov 2018 13:56:49 +0100
-Message-Id: <20181129125649.4060-1-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.19.1
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wy6NY5NcTNPUtnGWBhy1NfBesyNwhy2/zAySc7JK7cU=;
+ b=HXMo/o7KKyPCQLggFnJ1m7T5u5oXB2LEQ/dlcOFQi2smfvch754IH2Ju8/k69WzVykmt4/RYtnC8LAK7k/l/Gn38aAo2gjJ3PDRmfvXoYDMIOlVqWfJ7qT1o97GT7MxgjgP4Pr9C+jIacDBVntSfZq/lAN0qCGHtJc1f2/PqLMU=
+Received: from MWHPR02CA0011.namprd02.prod.outlook.com (2603:10b6:300:4b::21)
+ by SN4PR0201MB3518.namprd02.prod.outlook.com (2603:10b6:803:44::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.15; Thu, 29 Nov
+ 2018 12:58:01 +0000
+Received: from SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by MWHPR02CA0011.outlook.office365.com
+ (2603:10b6:300:4b::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1382.18 via Frontend
+ Transport; Thu, 29 Nov 2018 12:58:00 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ SN1NAM02FT052.mail.protection.outlook.com (10.152.72.146) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1382.18
+ via Frontend Transport; Thu, 29 Nov 2018 12:57:57 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:41752 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
+        id 1gSLtE-0002We-CO; Thu, 29 Nov 2018 04:57:56 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
+        id 1gSLt9-0005dK-92; Thu, 29 Nov 2018 04:57:51 -0800
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wATCvkus000595;
+        Thu, 29 Nov 2018 04:57:46 -0800
+Received: from [172.23.37.108] (helo=xhdnagasure40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
+        id 1gSLt4-0005cq-3L; Thu, 29 Nov 2018 04:57:46 -0800
+From:   Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+To:     <mmayer@broadcom.com>, <f.fainelli@gmail.com>,
+        <ladis@linux-mips.org>, <treding@nvidia.com>, <digetx@gmail.com>,
+        <d-gerlach@ti.com>
+CC:     <linus.walleij@linaro.org>, <michal.simek@xilinx.com>,
+        <linux-kernel@vger.kernel.org>,
+        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Subject: [LINUX PATCH v12 1/2] dt-bindings: memory: Add pl353 smc controller devicetree binding information
+Date:   Thu, 29 Nov 2018 18:27:37 +0530
+Message-ID: <1543496257-5396-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(2980300002)(438002)(199004)(189003)(4326008)(478600001)(48376002)(336012)(39060400002)(107886003)(6666004)(356004)(50466002)(26005)(186003)(36756003)(63266004)(77096007)(106466001)(217873002)(2201001)(2906002)(54906003)(106002)(9786002)(305945005)(81156014)(81166006)(316002)(16586007)(50226002)(110136005)(47776003)(8936002)(5660300001)(51416003)(7696005)(8676002)(126002)(486006)(36386004)(426003)(476003)(2616005)(107986001)(5001870100001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3518;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT052;1:Ur+Y1taS53E3INfs/Gj4RdiD5hZfMgWVBGfN6pPR5M8B7c/Pw+hoibqRH091awpKuybdcN3HK384j2wAHGIuIMXWOxOWZHPiXH/8bW8bk7VTxHwEYJmsG0B0mgqb7J8C
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 48082483-83e7-4fa9-111e-08d655fa4a9a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN4PR0201MB3518;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;3:QQL2vZ9fmp/x9pvntZNFIjuywql6DFZ5seWVg2ipdbTIsb1gjUdaaA0lpLaD65sLa1ZHNLUv6ReSlSG0V1Kf7E79MqlMxz45xVry2AhQcoWR4tYlVYjPjlFuv2t1WOa/RB1d8DnUESHqQnda4yfDMMA1+JI5h73o0N1AtsYLtWDVTNQpuOUJUie69iFLcZljOhRztRgTz2oDSVOKGjTJl+Lxod1jslbx77/W5aCtHqRYYv9U53Hq7Zd3fxtdh7pi1PE2nAnXT/QAEByBewOefuT6QYctWWbi2H7OWIZpdMYABe6utuRbHDtgKlHEbig/QwCOu9REpQdXW0W121qEyAjgkMkOLcGrNYBjMK5Mo/c=;25:X3M3Zq7E2pvVxYcQZAaOFpKvTu90wk8hfiSk80qhFBPgHaUlsrbXJsuQsQeG9eVFUk2nRGkXja66ey65Jc5OPZIO61OYKu/h8h6JBa7vG73mVj/rrNUXav/FZCdDUGrJhjNIEpf+0rQW9K1+BRXRDHSdDGon8TZXIFvH4zFlAO9AEcyRiBi39h1LZTipIO5qOWxa9yWgbupG/0tIf45ZH085R+K/jcIhQlbA+MX2RRdPSwe03a/4xsbzf0ljTZzHabCHK93f8Nj3xntw4rltxSY1dSL4DRd7UuGBUh17yAFFI0Iui7OYuRpYbPfxpdQ5IMtSQ7/mp3J/PEjhHthC6w==
+X-MS-TrafficTypeDiagnostic: SN4PR0201MB3518:
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;31:y0aAROJXmOoka+XWfpdVNGqUTm9Fh8KydqEFY9QR6EF59Oyj5r+53WoSI1Zjih3QWjhzi2HnvNER60i7kVMi+u2TqaJBwnKt+6RkeyobNKQHRMnufE1vwvX9HNxcmVYYCRnKokkuZUZ7w8b972eKmWbl97D9zwR8SybRx0McVfvsfkr+rdQi75Ik5Uqbely4EYQNJN6faxog29NcE8MsOmZ+zFX3DwWEGk83IFYfT+s=;20:spPD9Ftl/ZFIxf1zsXZB5Yy4o80KerLhIrv/43I0XelVi2NuagmNBtI8bWRymfztyAMDjXkGRwBXroXyIDsBrTjvefteBgCrZTc5lKZdaCQgfgD2eXGxHvws2BpHVkdFqE543CM6gwx/ET81XMuyfJvYhfpy8a5wABRrr+iZ9jxoGpx340Gok0WdrW16VPojufdogqyizR6xvXTWtYNBo0YsYQvc/t+QrYjuhuCCS3TiHbRL+Pg90IH6Ami3E/hMkqnLxVnYX0KZQhqqR6H0JUPInAQv985YbuI3xtdPuc3K3+2Gh63r1t+CjGErPM5kowjM8Lz0anUTx/L40hLVQ0AHu9k99NuJuLV7UGMux/Y8HQhu4/ceZdkAZQLs49O3Wz/Q3mBY4+zhZtiCBaO0lgbuBURgUURkQq+1CrPyXAjqaV6BU6QHXluTxIqISMUwBmy70ot+kjnMNXwQRr0fNv8G2gdDme2hWudU0oEOBKuXPyHRubxQYL7ehlZlB1LO
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <SN4PR0201MB351809D357D38E7648EEA1F6AFD20@SN4PR0201MB3518.namprd02.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231453)(999002)(944501410)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3518;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;4:xEu9/xG5Nh6Gujem/+qhhMX/0ACUujUGOp0cXGga9t7QfKvlEEKuTJ+S2Z1aa7aXPKx9BNQf9/42O3l5C1UnZHQeW1+h2CWsJ8wDJpOGCQwFLXVPqQne7DS09fx1YcdTIJyrg6PBdvFovA2uKeh2bmyqhYkbuUGD8KwHpf6tvgKCjFF4E1XdxPJ48/y+8DkOQNQq4mEfZ+HVH7JtE8SdNcTaQW/eIWcKA7xDxij7g0ejASXRlGjWQcYI8D+ktcIEGd0ccyzhx/uZ5m5UBrYoEw==
+X-Forefront-PRVS: 0871917CDA
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3518;23:04KYnTjgxB6vlns8bPM5ohvi4beRooiNcMo/Sps?=
+ =?us-ascii?Q?Y9yGDK7LkgEaYxpXMlvwqdzGt457Fpk0HQCuKdUMifcIv9HpqxnzsUXDk/sb?=
+ =?us-ascii?Q?1VDsvlSaIEMgnZ4odCBYCKi8VgpCNvTJ4jHNJxfgqVG7zfACvgfW7fUvlQYs?=
+ =?us-ascii?Q?8YpsZ2/KT8TOjhcAP1HEqVe3rFqOapTntOZSfvMOmrjQm4BW8Rir55wtgwDL?=
+ =?us-ascii?Q?QFZoXWf0TzPSQV26Jm7gB1hdAPNGW65+TvU+InoT82C2WG5/WZftjtxtTxf4?=
+ =?us-ascii?Q?Vl9EQN3PDdW7rJTlf/UB7kTZd33t9AKoftTHH/mdMTJMbW+OTNQPgPGhy04U?=
+ =?us-ascii?Q?7D1SDRHn3t+hD7N3JcPz4ikXxoegRiDWWoGOLAk6lIndYZDn+NUPnuNDH7O5?=
+ =?us-ascii?Q?20G/vZyKUl9Yus61kZesQq31+bRazLMCmYD6WqE2J5Sa5o2bTIaDvy40jDcO?=
+ =?us-ascii?Q?kYtN7EPgetiW+f1Rd8ldJNBLqcuzoQNS8L+dIcesXrE2SpKi4PdTlqy490er?=
+ =?us-ascii?Q?gFxw8lktka23W9a9j8yJNBxHVSWJfivHmORFdV48xLgx3cNZrWECn2D8ohjJ?=
+ =?us-ascii?Q?WPukEJutF7BNk5NPMbsKIJ+a/CtvS8iD7MNL/nncTUvQ18y5bjZ1+y9il6VP?=
+ =?us-ascii?Q?M4XoFIfdBr3tp85wMVUONhfbi00Ah4lqEFqTpWLoH3dgFadKPgwj1IWslaKV?=
+ =?us-ascii?Q?5ebp7pdpKAu6fcjgzviC9zFUb9xKl9E9rg9XlIoivmbOoqlt+AR5hy5VwHUj?=
+ =?us-ascii?Q?cMgCwM/IfGiL1vzoJA/xXsZxs4Q1ZsD8M6OkXVKvySxi3Sl0XjnS/77s/T5U?=
+ =?us-ascii?Q?LjkD/B4+KeNZRMBwCnQ15gM3zJYV2nXp7lfeO7DgodspHJ4QFInXo+nPkDhs?=
+ =?us-ascii?Q?OeJ+551slrg+gskOtOvs2eUK77+N+Dca8G/wPgnjsQF+o7MJaVxIO6Di8bb2?=
+ =?us-ascii?Q?Dbjkg5i8NgScsYpvv1EZ6sLniHKVKAGU10Um6fabglyCgkkGeycf+1iLR9qQ?=
+ =?us-ascii?Q?SGsf53VS5oBd5tE6iOc4t8tvndTH5I/+ZJFeD+XmlOZ5D6w42ubTBPN38A/V?=
+ =?us-ascii?Q?oFizQYrIqqGTCTV94ZD3pXw95GlW/kaL0t4t8+KTnfIQXxNI9tzTxkqW46Sv?=
+ =?us-ascii?Q?vz1wJwZ2P4YMFMF6y8vRkcrWQwurMJkwIwPRY646SGI7CwfiQp5Cl3g=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: Pc3nvBkfSJk6usoPYLWFyheBIt3UtHwkxWOJ2voNeKICFRxie05PgLs4ycxs/m2fA74oVMPcJTIzwtpCkCPI6DFTsXszl8CKWqSifPsHW9LBqsNQJAlkZsrID6uHDmjoYL6/KU++osKTQjJaVGSW3CRJNk9knEwkSvKX2yojPrUm52WSO87mgj1VYbRt+X65IQFhch4QH97LOVitMgOVJp9/E6esP2axaTIJrWkvZ5vgs6dnVqk56C5o0FxchcAvg1O+/sc9rR7LhtYjv5dCdypdaFwqll5m+Oufmz0zsY3qJGt5wo+b1SRRbWRDtgmqd5w1NVBcX3P8a7fm1c+kOnThcTETjaY1RJ10UbRoW80=
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;6:G0vARWh2HPudI3RK3cY2jLDtF6p/0YxTilQO0WZK6d11yXvzmhMEdKUxlXQbXa3EfsfVF+KJ8EUoXhw0REdSbEgu7yM+aLIdHj6Uwz+Lj2gpHlBoFakMR/QSn41jLH0+cgRizAdhAbACxEQNRI9BoOqrgmawKo3/Ow1hW+NpqLiGN6KBMH6YObCRneup91XxS3Tge1M2BUG+b0A/INVmws+pIJlLsD0tChelGCQsjuG7CCrHtP8mTR5B9QvthmYVCdjv3U/7cOvQ4m2rjPqGOOv5O2eaBVs7ITuAd6Z2u5CLaEopNli/Y3QoHp6owK5yWbANduqFqXrZfSQjRVE+3Zcs4d0yRtrSEmrt91C7fDvrFJnSLCuFM6/UEigGSCPRZFnVRr1Nt3wexPybXzni8Ou6+rx9JDKbge1/D1xDYMDCIVDfD1g6bjVZvtg5xSUUtwUO4f5h6nFVF476LMZQlA==;5:4BBjDLjaSYy545w0LxbW9DKlJ2VNvqKNkt4pidqEfBsps0sFFBDEc4RYiNWErTD9R+wtx5pz62xghG7+Z46/uMagKCP6R9/4tF8b66mjUQalVQgpqz2IS0RqHU08Q2B2NSfzLuVrRVZ7N+lEX/8Y0aMm0pW/8Ie4jozIFNat9gI=;7:C8II1E319tjsUDtEFiUHE66VQvlrBb15egX04VdAoQkrIxZIKIjlMPje8v8BD/1+HWVsu34XdsLTJmlgHpFkA203RlmYmbFwHLkpvlC1g6DumL7E9Jtw4nK1aRRvf5rm8eCxJsNxkWdTRTOre9xLTQ==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2018 12:57:57.1769
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48082483-83e7-4fa9-111e-08d655fa4a9a
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-unit-address does not have a leading "0x" (the number is assumed to be hexadecimal).
+Add pl353 static memory controller devicetree binding information.
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
+Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/boot/dts/socfpga.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/memory-controllers/pl353-smc.txt      | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
 
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index b38f8c240558..715009b8a0a8 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -728,7 +728,7 @@
- 			arm,prefetch-offset = <7>;
- 		};
- 
--		l3regs@0xff800000 {
-+		l3regs@ff800000 {
- 			compatible = "altr,l3regs", "syscon";
- 			reg = <0xff800000 0x1000>;
- 		};
+diff --git a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+new file mode 100644
+index 0000000..d56615f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+@@ -0,0 +1,47 @@
++Device tree bindings for ARM PL353 static memory controller
++
++PL353 static memory controller supports two kinds of memory
++interfaces.i.e NAND and SRAM/NOR interfaces.
++The actual devices are instantiated from the child nodes of pl353 smc node.
++
++Required properties:
++- compatible		: Should be "arm,pl353-smc-r2p1", "arm,primecell".
++- reg			: Controller registers map and length.
++- clock-names		: List of input clock names - "memclk", "apb_pclk"
++			  (See clock bindings for details).
++- clocks		: Clock phandles (see clock bindings for details).
++- address-cells		: Must be 2.
++- size-cells		: Must be 1.
++
++Child nodes:
++ For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash" drivers are
++supported as child nodes.
++
++for NAND partition information please refer the below file
++Documentation/devicetree/bindings/mtd/partition.txt
++
++Example:
++	smcc: memory-controller@e000e000
++			compatible = "arm,pl353-smc-r2p1", "arm,primecell";
++			clock-names = "memclk", "apb_pclk";
++			clocks = <&clkc 11>, <&clkc 44>;
++			reg = <0xe000e000 0x1000>;
++			#address-cells = <2>;
++			#size-cells = <1>;
++			ranges = <0x0 0x0 0xe1000000 0x1000000 //Nand CS Region
++				  0x1 0x0 0xe2000000 0x2000000 //SRAM/NOR CS Region
++				  0x2 0x0 0xe4000000 0x2000000>; //SRAM/NOR CS Region
++			nand_0: flash@e1000000 {
++				compatible = "arm,pl353-nand-r2p1"
++				reg = <0 0 0x1000000>;
++				(...)
++			};
++			nor0: flash@e2000000 {
++				compatible = "cfi-flash";
++				reg = <1 0 0x2000000>;
++			};
++			nor1: flash@e4000000 {
++				compatible = "cfi-flash";
++				reg = <2 0 0x2000000>;
++			};
++	};
 -- 
-2.19.1
+2.7.4
 
