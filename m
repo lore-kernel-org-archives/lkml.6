@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19490C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880EDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CC721019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4065721019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iq/LQfbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CC721019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zHRA3rLW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4065721019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbeK3BUa (ORCPT
+        id S1729446AbeK3BUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:20:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41432 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:20:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729379AbeK3BU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:20:29 -0500
+        id S1728334AbeK3BUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:20:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EADA221104;
-        Thu, 29 Nov 2018 14:14:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EC26208E7;
+        Thu, 29 Nov 2018 14:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500899;
-        bh=SuavPrg/c5YMZmK4yL/YNVzmx8brJayaetYepH3of6I=;
+        s=default; t=1543500901;
+        bh=ts+C+u7ATk2TTyIf7U8kKjljlByluk2wZ49REWA9uyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iq/LQfbxMEiBzXxyp662aZ3vp1Da3l+lJHyLM8tIUarc4293x4OF1AsA2vQ3gWG4G
-         leGmN+LojV1f0wxZ0ER4JDpzz0Tt1srt2o93UF4k6oVMtAVRvNxIHcE4bfqsx7dOrH
-         wIl4QgJl9Fmef2c6sDfr3ppoJh+oaBHFjYEPruEM=
+        b=zHRA3rLWVdlxyKR2KcGdnVTlHK+p7g1E7pcvHKxlQGDhjJORw1LEu2yY5xEAgIk3O
+         Im6elVD79LhXHtUy6m16Q8tPaA+IQbmhmcZKS1zddeQ+8H7nm9UVPE87AZHzGhy8OB
+         FAoxNDcMz31sfYAksy2bCHFJAtbTqv2JwJ74+2HI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
+        stable@vger.kernel.org,
+        "Pierre-Loup A. Griffais" <eduke32@plagman.net>,
+        Thomas Debesse <dev@illwieckz.net>,
+        aronschatz <aronschatz@aselabs.com>,
         Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 44/83] Input: xpad - prevent spurious input from wired Xbox 360 controllers
-Date:   Thu, 29 Nov 2018 15:12:02 +0100
-Message-Id: <20181129140140.237998470@linuxfoundation.org>
+Subject: [PATCH 3.18 45/83] Input: xpad - add more third-party controllers
+Date:   Thu, 29 Nov 2018 15:12:03 +0100
+Message-Id: <20181129140140.290345850@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -64,54 +67,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1ff5fa3c6732f08e01ae12f12286d4728c9e4d86 ]
+[ Upstream commit 6538c3b2d2d220a974e47928b165ea09b9cfa6b4 ]
 
-After initially connecting a wired Xbox 360 controller or sending it
-a command to change LEDs, a status/response packet is interpreted as
-controller input. This causes the state of buttons represented in
-byte 2 of the controller data packet to be incorrect until the next
-valid input packet. Wireless Xbox 360 controllers are not affected.
-
-Writing a new value to the LED device while holding the Start button
-and running jstest is sufficient to reproduce this bug. An event will
-come through with the Start button released.
-
-Xboxdrv also won't attempt to read controller input from a packet
-where byte 0 is non-zero. It also checks that byte 1 is 0x14, but
-that value differs between wired and wireless controllers and this
-code is shared by both. I think just checking byte 0 is enough to
-eliminate unwanted packets.
-
-The following are some examples of 3-byte status packets I saw:
-01 03 02
-02 03 00
-03 03 03
-08 03 00
-
-Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Pierre-Loup A. Griffais <eduke32@plagman.net>
+Signed-off-by: Thomas Debesse <dev@illwieckz.net>
+Signed-off-by: aronschatz <aronschatz@aselabs.com>
 Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/joystick/xpad.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index c8add0e425b5..43b09dbacee6 100644
+index 43b09dbacee6..2a0573eeadaa 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -459,6 +459,10 @@ static void xpad_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *d
- static void xpad360_process_packet(struct usb_xpad *xpad, struct input_dev *dev,
- 				   u16 cmd, unsigned char *data)
- {
-+	/* valid pad data */
-+	if (data[0] != 0x00)
-+		return;
-+
- 	/* digital pad */
- 	if (xpad->mapping & MAP_DPAD_TO_BUTTONS) {
- 		/* dpad as buttons (left, right, up, down) */
+@@ -173,9 +173,11 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x0006, "Edge wireless Controller", 0, XTYPE_XBOX },
+ 	{ 0x0e6f, 0x0105, "HSM3 Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0113, "Afterglow AX.1 Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
++	{ 0x0e6f, 0x0139, "Afterglow Prismatic Wired Controller", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0201, "Pelican PL-3601 'TSZ' Wired Xbox 360 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0213, "Afterglow Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x021f, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
++	{ 0x0e6f, 0x0146, "Rock Candy Wired Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e8f, 0x0201, "SmartJoy Frag Xpad/PS2 adaptor", 0, XTYPE_XBOX },
+@@ -183,6 +185,7 @@ static const struct xpad_device {
+ 	{ 0x0f0d, 0x000a, "Hori Co. DOA4 FightStick", 0, XTYPE_XBOX360 },
+ 	{ 0x0f0d, 0x000d, "Hori Fighting Stick EX2", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x0f0d, 0x0016, "Hori Real Arcade Pro.EX", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
++	{ 0x0f0d, 0x0067, "HORIPAD ONE", 0, XTYPE_XBOXONE },
+ 	{ 0x0f30, 0x0202, "Joytech Advanced Controller", 0, XTYPE_XBOX },
+ 	{ 0x0f30, 0x8888, "BigBen XBMiniPad Controller", 0, XTYPE_XBOX },
+ 	{ 0x102c, 0xff0c, "Joytech Wireless Advanced Controller", 0, XTYPE_XBOX },
+@@ -200,6 +203,7 @@ static const struct xpad_device {
+ 	{ 0x162e, 0xbeef, "Joytech Neo-Se Take2", 0, XTYPE_XBOX360 },
+ 	{ 0x1689, 0xfd00, "Razer Onza Tournament Edition", 0, XTYPE_XBOX360 },
+ 	{ 0x1689, 0xfd01, "Razer Onza Classic Edition", 0, XTYPE_XBOX360 },
++	{ 0x24c6, 0x542a, "Xbox ONE spectra", 0, XTYPE_XBOXONE },
+ 	{ 0x24c6, 0x5d04, "Razer Sabertooth", 0, XTYPE_XBOX360 },
+ 	{ 0x1bad, 0x0002, "Harmonix Rock Band Guitar", 0, XTYPE_XBOX360 },
+ 	{ 0x1bad, 0x0003, "Harmonix Rock Band Drumkit", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+@@ -213,6 +217,8 @@ static const struct xpad_device {
+ 	{ 0x24c6, 0x5000, "Razer Atrox Arcade Stick", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5300, "PowerA MINI PROEX Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5303, "Xbox Airflo wired controller", 0, XTYPE_XBOX360 },
++	{ 0x24c6, 0x541a, "PowerA Xbox One Mini Wired Controller", 0, XTYPE_XBOXONE },
++	{ 0x24c6, 0x543a, "PowerA Xbox One wired controller", 0, XTYPE_XBOXONE },
+ 	{ 0x24c6, 0x5500, "Hori XBOX 360 EX 2 with Turbo", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5501, "Hori Real Arcade Pro VX-SA", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5506, "Hori SOULCALIBUR V Stick", 0, XTYPE_XBOX360 },
+@@ -308,13 +314,16 @@ static struct usb_device_id xpad_table[] = {
+ 	{ USB_DEVICE(0x0738, 0x4540) },		/* Mad Catz Beat Pad */
+ 	XPAD_XBOXONE_VENDOR(0x0738),		/* Mad Catz FightStick TE 2 */
+ 	XPAD_XBOX360_VENDOR(0x0e6f),		/* 0x0e6f X-Box 360 controllers */
++	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
+ 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
+ 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
+ 	XPAD_XBOX360_VENDOR(0x146b),		/* BigBen Interactive Controllers */
+ 	XPAD_XBOX360_VENDOR(0x1bad),		/* Harminix Rock Band Guitar and Drums */
+ 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
++	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
+ 	XPAD_XBOX360_VENDOR(0x1689),		/* Razer Onza */
+ 	XPAD_XBOX360_VENDOR(0x24c6),		/* PowerA Controllers */
++	XPAD_XBOXONE_VENDOR(0x24c6),		/* PowerA Controllers */
+ 	XPAD_XBOX360_VENDOR(0x1532),		/* Razer Sabertooth */
+ 	XPAD_XBOXONE_VENDOR(0x1532),		/* Razer Wildcat */
+ 	XPAD_XBOX360_VENDOR(0x15e4),		/* Numark X-Box 360 controllers */
 -- 
 2.17.1
 
