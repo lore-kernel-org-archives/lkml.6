@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E76C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE71C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC152145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 071AC21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="svK7cntf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC152145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DB0VI9M0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071AC21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732674AbeK3BcA (ORCPT
+        id S1733312AbeK3BcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59820 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbeK3Bb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:59 -0500
+        id S1728574AbeK3BcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:32:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 721622133F;
-        Thu, 29 Nov 2018 14:26:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE18C213A2;
+        Thu, 29 Nov 2018 14:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501586;
-        bh=vhPuVxessv532O79CgtPwTEhrejhfqOXPSQzrqMjiNs=;
+        s=default; t=1543501589;
+        bh=WMwy+pIzC00bDTu2bnH06e3RQX1CWcWWmehmj3HTELM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=svK7cntfoeIDu2de4xumbQYocQrHpxy0Y1vWgJThXt8QF0MA8YntasL8mZhJTkEbi
-         GM7ukRP9XJ8+L9w99eqgR0vw6op3s0UgJDeaVhBbQb3E49ijQ6/5laFIr3Hia8GRmY
-         G9y9cA86WFnL/CwD9is+XD/eI6IHoHgcathftPC4=
+        b=DB0VI9M0Hms6K58XrOoJUg+r36yjpxWCsgoYUtjVEpIvocsbEMWb/D0bw9ImaYroK
+         iugkL9RNsUMvpEGM/Thx2q9Pw+THT/tlzqwo0CJzJrXXlF69L6AhFr5WhIuypkrOyR
+         Ez8KMG7dcmLMRqGkH5rAXC5FWEZ/gW1xOCKCjf8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kgdb-bugreport@lists.sourceforge.net,
+        stable@vger.kernel.org,
+        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 059/100] kdb: Use strscpy with destination buffer size
-Date:   Thu, 29 Nov 2018 15:12:29 +0100
-Message-Id: <20181129140104.178001855@linuxfoundation.org>
+Subject: [PATCH 4.14 060/100] powerpc/numa: Suppress "VPHN is not supported" messages
+Date:   Thu, 29 Nov 2018 15:12:30 +0100
+Message-Id: <20181129140104.244080148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -66,121 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c2b94c72d93d0929f48157eef128c4f9d2e603ce ]
+[ Upstream commit 437ccdc8ce629470babdda1a7086e2f477048cbd ]
 
-gcc 8.1.0 warns with:
+When VPHN function is not supported and during cpu hotplug event,
+kernel prints message 'VPHN function not supported. Disabling
+polling...'. Currently it prints on every hotplug event, it floods
+dmesg when a KVM guest tries to hotplug huge number of vcpus, let's
+just print once and suppress further kernel prints.
 
-kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
-kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-     strncpy(prefix_name, name, strlen(name)+1);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
-
-Use strscpy() with the destination buffer size, and use ellipses when
-displaying truncated symbols.
-
-v2: Use strscpy()
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Jonathan Toppins <jtoppins@redhat.com>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: kgdb-bugreport@lists.sourceforge.net
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
- kernel/debug/kdb/kdb_private.h |  2 +-
- kernel/debug/kdb/kdb_support.c | 10 +++++-----
- 3 files changed, 15 insertions(+), 12 deletions(-)
+ arch/powerpc/mm/numa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index ed5d34925ad0..6a4b41484afe 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 	int count;
- 	int i;
- 	int diag, dtab_count;
--	int key;
-+	int key, buf_size, ret;
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 9fead0796364..40fb9a8835fe 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -1261,7 +1261,7 @@ static long vphn_get_associativity(unsigned long cpu,
  
- 
- 	diag = kdbgetintenv("DTABCOUNT", &dtab_count);
-@@ -336,9 +336,8 @@ poll_again:
- 		else
- 			p_tmp = tmpbuffer;
- 		len = strlen(p_tmp);
--		count = kallsyms_symbol_complete(p_tmp,
--						 sizeof(tmpbuffer) -
--						 (p_tmp - tmpbuffer));
-+		buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
-+		count = kallsyms_symbol_complete(p_tmp, buf_size);
- 		if (tab == 2 && count > 0) {
- 			kdb_printf("\n%d symbols are found.", count);
- 			if (count > dtab_count) {
-@@ -350,9 +349,13 @@ poll_again:
- 			}
- 			kdb_printf("\n");
- 			for (i = 0; i < count; i++) {
--				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
-+				ret = kallsyms_symbol_next(p_tmp, i, buf_size);
-+				if (WARN_ON(!ret))
- 					break;
--				kdb_printf("%s ", p_tmp);
-+				if (ret != -E2BIG)
-+					kdb_printf("%s ", p_tmp);
-+				else
-+					kdb_printf("%s... ", p_tmp);
- 				*(p_tmp + len) = '\0';
- 			}
- 			if (i >= dtab_count)
-diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
-index fc224fbcf954..f2158e463a0f 100644
---- a/kernel/debug/kdb/kdb_private.h
-+++ b/kernel/debug/kdb/kdb_private.h
-@@ -83,7 +83,7 @@ typedef struct __ksymtab {
- 		unsigned long sym_start;
- 		unsigned long sym_end;
- 		} kdb_symtab_t;
--extern int kallsyms_symbol_next(char *prefix_name, int flag);
-+extern int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size);
- extern int kallsyms_symbol_complete(char *prefix_name, int max_len);
- 
- /* Exported Symbols for kernel loadable modules to use. */
-diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
-index 84422d2b95c0..014f6fbb3832 100644
---- a/kernel/debug/kdb/kdb_support.c
-+++ b/kernel/debug/kdb/kdb_support.c
-@@ -221,11 +221,13 @@ int kallsyms_symbol_complete(char *prefix_name, int max_len)
-  * Parameters:
-  *	prefix_name	prefix of a symbol name to lookup
-  *	flag	0 means search from the head, 1 means continue search.
-+ *	buf_size	maximum length that can be written to prefix_name
-+ *			buffer
-  * Returns:
-  *	1 if a symbol matches the given prefix.
-  *	0 if no string found
-  */
--int kallsyms_symbol_next(char *prefix_name, int flag)
-+int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size)
- {
- 	int prefix_len = strlen(prefix_name);
- 	static loff_t pos;
-@@ -235,10 +237,8 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
- 		pos = 0;
- 
- 	while ((name = kdb_walk_kallsyms(&pos))) {
--		if (strncmp(name, prefix_name, prefix_len) == 0) {
--			strncpy(prefix_name, name, strlen(name)+1);
--			return 1;
--		}
-+		if (!strncmp(name, prefix_name, prefix_len))
-+			return strscpy(prefix_name, name, buf_size);
- 	}
- 	return 0;
- }
+ 	switch (rc) {
+ 	case H_FUNCTION:
+-		printk(KERN_INFO
++		printk_once(KERN_INFO
+ 			"VPHN is not supported. Disabling polling...\n");
+ 		stop_topology_update();
+ 		break;
 -- 
 2.17.1
 
