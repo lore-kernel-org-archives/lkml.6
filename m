@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17573C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCDDC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE91721479
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4829021479
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqfUSyDf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE91721479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjU21V27"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4829021479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbeK3Bh6 (ORCPT
+        id S2389487AbeK3BiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41216 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:38:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389450AbeK3Bh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:58 -0500
+        id S2388832AbeK3BiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:38:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47645214C1;
-        Thu, 29 Nov 2018 14:32:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE77B2147C;
+        Thu, 29 Nov 2018 14:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501944;
-        bh=hsL57PSzPb0icCVt8Nhtl1CfIqJ3TuJphvjussWfR1c=;
+        s=default; t=1543501947;
+        bh=VfLuBBYOpeRh3jnBKMziyi/qr/rqs/bhhKIzfoc1t/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OqfUSyDfXijCfJ3opO2P5tFP6Jwz+xMjOVWCszZvQemuPJyHbmgdgGO5F/j2w83Di
-         88GhNIX0XA+ihhcWf0IXgz4ScOdu6chm8tEywtz/KQT1ILC3ScwtEpyizlqEXkwPJ6
-         m+uMp3Vclj8dF9UtG7NIArFM39n54dPablAObR/o=
+        b=MjU21V27jrdJI00jvnyJzPN0+O0QHKIhjr9A7RGKFz49AtWjGsCWYzxV0F+puI0Od
+         66OF4XMtzbAZ3EcPoGidmPNnSR57uLPVJ9lvpNNgqVpV6oqQ2xRAUKLFh8Haqp5BvN
+         EnBoTCneg+Cdi8HFLU0T6LfkAm2qAV096NfcMpzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samuel Bobrowicz <sam@elite-embedded.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Jacopo Mondi <jacopo@jmondi.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Adam Ford <aford173@gmail.com>
-Subject: [PATCH 4.19 106/110] media: ov5640: Fix timings setup code
-Date:   Thu, 29 Nov 2018 15:13:17 +0100
-Message-Id: <20181129135925.551220583@linuxfoundation.org>
+Subject: [PATCH 4.19 107/110] media: ov5640: fix exposure regression
+Date:   Thu, 29 Nov 2018 15:13:18 +0100
+Message-Id: <20181129135925.596288829@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -66,118 +66,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacopo Mondi <jacopo@jmondi.org>
+From: Hugues Fruchet <hugues.fruchet@st.com>
 
-commit bad1774ed41e98a43074e50e7d5ac9e1e848d99a upstream.
+commit dc29a1c187eedc1d498cb567c44bbbc832b009cb upstream.
 
-As of: commit 476dec012f4c ("media: ov5640: Add horizontal and vertical
-totals") the timings parameters gets programmed separately from the
-static register values array.
+Symptom was black image when capturing HD or 5Mp picture
+due to manual exposure set to 1 while it was intended to
+set autoexposure to "manual", fix this.
 
-When changing capture mode, the vertical and horizontal totals gets
-inspected by the set_mode_exposure_calc() functions, and only later
-programmed with the new values. This means exposure, light banding
-filter and shutter gain are calculated using the previous timings, and
-are thus not correct.
+Fixes: bf4a4b518c20 ("media: ov5640: Don't force the auto exposure state at start time").
 
-Fix this by programming timings right after the static register value
-table has been sent to the sensor in the ov5640_load_regs() function.
-
-Fixes: 476dec012f4c ("media: ov5640: Add horizontal and vertical totals")
-
-Tested-by: Steve Longerbeam <slongerbeam@gmail.com> # i.MX6q SabreSD, CSI-2
-Tested-by: Loic Poulain <loic.poulain@linaro.org> # Dragonboard-410c, CSI-2
-Signed-off-by: Samuel Bobrowicz <sam@elite-embedded.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo@jmondi.org>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/ov5640.c |   50 ++++++++++++++++++---------------------------
- 1 file changed, 21 insertions(+), 29 deletions(-)
+ drivers/media/i2c/ov5640.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 --- a/drivers/media/i2c/ov5640.c
 +++ b/drivers/media/i2c/ov5640.c
-@@ -910,6 +910,26 @@ static int ov5640_mod_reg(struct ov5640_
+@@ -960,6 +960,12 @@ static int ov5640_load_regs(struct ov564
+ 	return ov5640_set_timings(sensor, mode);
  }
  
- /* download ov5640 settings to sensor through i2c */
-+static int ov5640_set_timings(struct ov5640_dev *sensor,
-+			      const struct ov5640_mode_info *mode)
++static int ov5640_set_autoexposure(struct ov5640_dev *sensor, bool on)
 +{
-+	int ret;
-+
-+	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_DVPHO, mode->hact);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_DVPVO, mode->vact);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_HTS, mode->htot);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ov5640_write_reg16(sensor, OV5640_REG_TIMING_VTS, mode->vtot);
++	return ov5640_mod_reg(sensor, OV5640_REG_AEC_PK_MANUAL,
++			      BIT(0), on ? 0 : BIT(0));
 +}
 +
- static int ov5640_load_regs(struct ov5640_dev *sensor,
- 			    const struct ov5640_mode_info *mode)
+ /* read exposure, in number of line periods */
+ static int ov5640_get_exposure(struct ov5640_dev *sensor)
  {
-@@ -937,7 +957,7 @@ static int ov5640_load_regs(struct ov564
- 			usleep_range(1000 * delay_ms, 1000 * delay_ms + 100);
+@@ -1604,7 +1610,7 @@ static int ov5640_set_mode_exposure_calc
+  */
+ static int ov5640_set_mode_direct(struct ov5640_dev *sensor,
+ 				  const struct ov5640_mode_info *mode,
+-				  s32 exposure)
++				  bool auto_exp)
+ {
+ 	int ret;
+ 
+@@ -1621,7 +1627,8 @@ static int ov5640_set_mode_direct(struct
+ 	if (ret)
+ 		return ret;
+ 
+-	return __v4l2_ctrl_s_ctrl(sensor->ctrls.auto_exp, exposure);
++	return __v4l2_ctrl_s_ctrl(sensor->ctrls.auto_exp, auto_exp ?
++				  V4L2_EXPOSURE_AUTO : V4L2_EXPOSURE_MANUAL);
+ }
+ 
+ static int ov5640_set_mode(struct ov5640_dev *sensor)
+@@ -1629,7 +1636,7 @@ static int ov5640_set_mode(struct ov5640
+ 	const struct ov5640_mode_info *mode = sensor->current_mode;
+ 	const struct ov5640_mode_info *orig_mode = sensor->last_mode;
+ 	enum ov5640_downsize_mode dn_mode, orig_dn_mode;
+-	s32 exposure;
++	bool auto_exp =  sensor->ctrls.auto_exp->val == V4L2_EXPOSURE_AUTO;
+ 	int ret;
+ 
+ 	dn_mode = mode->dn_mode;
+@@ -1640,8 +1647,7 @@ static int ov5640_set_mode(struct ov5640
+ 	if (ret)
+ 		return ret;
+ 
+-	exposure = sensor->ctrls.auto_exp->val;
+-	ret = ov5640_set_exposure(sensor, V4L2_EXPOSURE_MANUAL);
++	ret = ov5640_set_autoexposure(sensor, false);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1657,7 +1663,7 @@ static int ov5640_set_mode(struct ov5640
+ 		 * change inside subsampling or scaling
+ 		 * download firmware directly
+ 		 */
+-		ret = ov5640_set_mode_direct(sensor, mode, exposure);
++		ret = ov5640_set_mode_direct(sensor, mode, auto_exp);
  	}
  
--	return ret;
-+	return ov5640_set_timings(sensor, mode);
- }
- 
- /* read exposure, in number of line periods */
-@@ -1400,30 +1420,6 @@ static int ov5640_set_virtual_channel(st
- 	return ov5640_write_reg(sensor, OV5640_REG_DEBUG_MODE, temp);
- }
- 
--static int ov5640_set_timings(struct ov5640_dev *sensor,
--			      const struct ov5640_mode_info *mode)
--{
--	int ret;
--
--	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_DVPHO, mode->hact);
--	if (ret < 0)
--		return ret;
--
--	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_DVPVO, mode->vact);
--	if (ret < 0)
--		return ret;
--
--	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_HTS, mode->htot);
--	if (ret < 0)
--		return ret;
--
--	ret = ov5640_write_reg16(sensor, OV5640_REG_TIMING_VTS, mode->vtot);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
--
- static const struct ov5640_mode_info *
- ov5640_find_mode(struct ov5640_dev *sensor, enum ov5640_frame_rate fr,
- 		 int width, int height, bool nearest)
-@@ -1667,10 +1663,6 @@ static int ov5640_set_mode(struct ov5640
  	if (ret < 0)
- 		return ret;
- 
--	ret = ov5640_set_timings(sensor, mode);
--	if (ret < 0)
--		return ret;
--
- 	ret = ov5640_set_binning(sensor, dn_mode != SCALING);
- 	if (ret < 0)
- 		return ret;
 
 
