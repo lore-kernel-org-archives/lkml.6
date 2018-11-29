@@ -2,49 +2,52 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A22C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B214CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85AD0208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 774D1205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsMIDENq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85AD0208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="imfapy89"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774D1205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbeK3BWs (ORCPT
+        id S1730346AbeK3BWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44602 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728439AbeK3BWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:47 -0500
+        id S1728439AbeK3BWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E9D8208E7;
-        Thu, 29 Nov 2018 14:17:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD586205C9;
+        Thu, 29 Nov 2018 14:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501036;
-        bh=b8ccLwZNQzjhK5eTSpUADchdhDFuofXAQc6HB+zjW+8=;
+        s=default; t=1543501039;
+        bh=Tto5c8BST2bAfk6RF/oa3DikEhSDj2p5RzutNfjsxyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JsMIDENqOMgOaf7lYqM7N28nG3jMGMiyrOVdFzb6/8v8ictiW8E21Ruce9l4+jTMw
-         XOYwvTlEBMbym/Nw/UItRhKgX4tRUH+8a1S6FGopT4+HIZ09tkEtiH63k4JTjeOTsk
-         aN0ixJhdEawixifmiCMTUwx9Ar/EwNlaqb8i3m7s=
+        b=imfapy892jxjBzhsaT03txKk7AS3Y9PIH4nlcFSR4iCEFL7X2y4FZxEZlX/lw8ROh
+         47roOABxx/UkDplxN/iKRo90a1/CCVM3P6RHDTzOkRat0q+L1L/k054SFNeZEf+U5W
+         G/PJtALqQeP91ck8D52RLExOSyb9/hq3NW5TtbwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.4 17/86] usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
-Date:   Thu, 29 Nov 2018 15:11:42 +0100
-Message-Id: <20181129140111.298202802@linuxfoundation.org>
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Scott Wood <oss@buserror.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 18/86] KVM: PPC: Move and undef TRACE_INCLUDE_PATH/FILE
+Date:   Thu, 29 Nov 2018 15:11:43 +0100
+Message-Id: <20181129140111.354704779@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -62,146 +65,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+[ Upstream commit 28c5bcf74fa07c25d5bd118d1271920f51ce2a98 ]
 
-commit 2f31a67f01a8beb22cae754c53522cb61a005750 upstream.
+TRACE_INCLUDE_PATH and TRACE_INCLUDE_FILE are used by
+<trace/define_trace.h>, so like that #include, they should
+be outside #ifdef protection.
 
-USB3 roothub might autosuspend before a plugged USB3 device is detected,
-causing USB3 device enumeration failure.
+They also need to be #undefed before defining, in case multiple trace
+headers are included by the same C file.  This became the case on
+book3e after commit cf4a6085151a ("powerpc/mm: Add missing tracepoint for
+tlbie"), leading to the following build error:
 
-USB3 devices don't show up as connected and enabled until USB3 link trainig
-completes. On a fast booting platform with a slow USB3 link training the
-link might reach the connected enabled state just as the bus is suspending.
+   CC      arch/powerpc/kvm/powerpc.o
+In file included from arch/powerpc/kvm/powerpc.c:51:0:
+arch/powerpc/kvm/trace.h:9:0: error: "TRACE_INCLUDE_PATH" redefined
+[-Werror]
+  #define TRACE_INCLUDE_PATH .
+  ^
+In file included from arch/powerpc/kvm/../mm/mmu_decl.h:25:0,
+                  from arch/powerpc/kvm/powerpc.c:48:
+./arch/powerpc/include/asm/trace.h:224:0: note: this is the location of
+the previous definition
+  #define TRACE_INCLUDE_PATH asm
+  ^
+cc1: all warnings being treated as errors
 
-If this device is discovered first time by the xhci_bus_suspend() routine
-it will be put to U3 suspended state like the other ports which failed to
-suspend earlier.
-
-The hub thread will notice the connect change and resume the bus,
-moving the port back to U0
-
-This U0 -> U3 -> U0 transition right after being connected seems to be
-too much for some devices, causing them to first go to SS.Inactive state,
-and finally end up stuck in a polling state with reset asserted
-
-Fix this by failing the bus suspend if a port has a connect change or is
-in a polling state in xhci_bus_suspend().
-
-Don't do any port changes until all ports are checked, buffer all port
-changes and only write them in the end if suspend can proceed
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-hub.c |   60 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 14 deletions(-)
+ arch/powerpc/kvm/trace.h       | 8 ++++++--
+ arch/powerpc/kvm/trace_booke.h | 9 +++++++--
+ arch/powerpc/kvm/trace_hv.h    | 9 +++++++--
+ arch/powerpc/kvm/trace_pr.h    | 9 +++++++--
+ 4 files changed, 27 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1298,13 +1298,16 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 	__le32 __iomem **port_array;
- 	struct xhci_bus_state *bus_state;
- 	unsigned long flags;
-+	u32 portsc_buf[USB_MAXCHILDREN];
-+	bool wake_enabled;
+diff --git a/arch/powerpc/kvm/trace.h b/arch/powerpc/kvm/trace.h
+index 2e0e67ef3544..e8cedf32345a 100644
+--- a/arch/powerpc/kvm/trace.h
++++ b/arch/powerpc/kvm/trace.h
+@@ -5,8 +5,6 @@
  
- 	max_ports = xhci_get_ports(hcd, &port_array);
- 	bus_state = &xhci->bus_state[hcd_index(hcd)];
-+	wake_enabled = hcd->self.root_hub->do_remote_wakeup;
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM kvm
+-#define TRACE_INCLUDE_PATH .
+-#define TRACE_INCLUDE_FILE trace
  
- 	spin_lock_irqsave(&xhci->lock, flags);
+ /*
+  * Tracepoint for guest mode entry.
+@@ -119,4 +117,10 @@ TRACE_EVENT(kvm_check_requests,
+ #endif /* _TRACE_KVM_H */
  
--	if (hcd->self.root_hub->do_remote_wakeup) {
-+	if (wake_enabled) {
- 		if (bus_state->resuming_ports ||	/* USB2 */
- 		    bus_state->port_remote_wakeup) {	/* USB3 */
- 			spin_unlock_irqrestore(&xhci->lock, flags);
-@@ -1312,26 +1315,36 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 			return -EBUSY;
- 		}
- 	}
--
--	port_index = max_ports;
-+	/*
-+	 * Prepare ports for suspend, but don't write anything before all ports
-+	 * are checked and we know bus suspend can proceed
-+	 */
- 	bus_state->bus_suspended = 0;
-+	port_index = max_ports;
- 	while (port_index--) {
--		/* suspend the port if the port is not suspended */
- 		u32 t1, t2;
--		int slot_id;
- 
- 		t1 = readl(port_array[port_index]);
- 		t2 = xhci_port_state_to_neutral(t1);
-+		portsc_buf[port_index] = 0;
- 
--		if ((t1 & PORT_PE) && !(t1 & PORT_PLS_MASK)) {
--			xhci_dbg(xhci, "port %d not suspended\n", port_index);
--			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
--					port_index + 1);
--			if (slot_id) {
-+		/* Bail out if a USB3 port has a new device in link training */
-+		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
-+			bus_state->bus_suspended = 0;
-+			spin_unlock_irqrestore(&xhci->lock, flags);
-+			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
-+			return -EBUSY;
-+		}
+ /* This part must be outside protection */
++#undef TRACE_INCLUDE_PATH
++#undef TRACE_INCLUDE_FILE
 +
-+		/* suspend ports in U0, or bail out for new connect changes */
-+		if ((t1 & PORT_PE) && (t1 & PORT_PLS_MASK) == XDEV_U0) {
-+			if ((t1 & PORT_CSC) && wake_enabled) {
-+				bus_state->bus_suspended = 0;
- 				spin_unlock_irqrestore(&xhci->lock, flags);
--				xhci_stop_device(xhci, slot_id, 1);
--				spin_lock_irqsave(&xhci->lock, flags);
-+				xhci_dbg(xhci, "Bus suspend bailout, port connect change\n");
-+				return -EBUSY;
- 			}
-+			xhci_dbg(xhci, "port %d not suspended\n", port_index);
- 			t2 &= ~PORT_PLS_MASK;
- 			t2 |= PORT_LINK_STROBE | XDEV_U3;
- 			set_bit(port_index, &bus_state->bus_suspended);
-@@ -1340,7 +1353,7 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 		 * including the USB 3.0 roothub, but only if CONFIG_PM
- 		 * is enabled, so also enable remote wake here.
- 		 */
--		if (hcd->self.root_hub->do_remote_wakeup) {
-+		if (wake_enabled) {
- 			if (t1 & PORT_CONNECT) {
- 				t2 |= PORT_WKOC_E | PORT_WKDISC_E;
- 				t2 &= ~PORT_WKCONN_E;
-@@ -1353,7 +1366,26 @@ int xhci_bus_suspend(struct usb_hcd *hcd
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE trace
++
+ #include <trace/define_trace.h>
+diff --git a/arch/powerpc/kvm/trace_booke.h b/arch/powerpc/kvm/trace_booke.h
+index 7ec534d1db9f..7eadbf449a1f 100644
+--- a/arch/powerpc/kvm/trace_booke.h
++++ b/arch/powerpc/kvm/trace_booke.h
+@@ -5,8 +5,6 @@
  
- 		t1 = xhci_port_state_to_neutral(t1);
- 		if (t1 != t2)
--			writel(t2, port_array[port_index]);
-+			portsc_buf[port_index] = t2;
-+	}
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM kvm_booke
+-#define TRACE_INCLUDE_PATH .
+-#define TRACE_INCLUDE_FILE trace_booke
+ 
+ #define kvm_trace_symbol_exit \
+ 	{0, "CRITICAL"}, \
+@@ -217,4 +215,11 @@ TRACE_EVENT(kvm_booke_queue_irqprio,
+ #endif
+ 
+ /* This part must be outside protection */
 +
-+	/* write port settings, stopping and suspending ports if needed */
-+	port_index = max_ports;
-+	while (port_index--) {
-+		if (!portsc_buf[port_index])
-+			continue;
-+		if (test_bit(port_index, &bus_state->bus_suspended)) {
-+			int slot_id;
++#undef TRACE_INCLUDE_PATH
++#undef TRACE_INCLUDE_FILE
 +
-+			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
-+							    port_index + 1);
-+			if (slot_id) {
-+				spin_unlock_irqrestore(&xhci->lock, flags);
-+				xhci_stop_device(xhci, slot_id, 1);
-+				spin_lock_irqsave(&xhci->lock, flags);
-+			}
-+		}
-+		writel(portsc_buf[port_index], port_array[port_index]);
- 	}
- 	hcd->state = HC_STATE_SUSPENDED;
- 	bus_state->next_statechange = jiffies + msecs_to_jiffies(10);
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE trace_booke
++
+ #include <trace/define_trace.h>
+diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
+index 33d9daff5783..d1bfe017d751 100644
+--- a/arch/powerpc/kvm/trace_hv.h
++++ b/arch/powerpc/kvm/trace_hv.h
+@@ -8,8 +8,6 @@
+ 
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM kvm_hv
+-#define TRACE_INCLUDE_PATH .
+-#define TRACE_INCLUDE_FILE trace_hv
+ 
+ #define kvm_trace_symbol_hcall \
+ 	{H_REMOVE,			"H_REMOVE"}, \
+@@ -474,4 +472,11 @@ TRACE_EVENT(kvmppc_run_vcpu_exit,
+ #endif /* _TRACE_KVM_HV_H */
+ 
+ /* This part must be outside protection */
++
++#undef TRACE_INCLUDE_PATH
++#undef TRACE_INCLUDE_FILE
++
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE trace_hv
++
+ #include <trace/define_trace.h>
+diff --git a/arch/powerpc/kvm/trace_pr.h b/arch/powerpc/kvm/trace_pr.h
+index 810507cb688a..1e40aa2aa5af 100644
+--- a/arch/powerpc/kvm/trace_pr.h
++++ b/arch/powerpc/kvm/trace_pr.h
+@@ -7,8 +7,6 @@
+ 
+ #undef TRACE_SYSTEM
+ #define TRACE_SYSTEM kvm_pr
+-#define TRACE_INCLUDE_PATH .
+-#define TRACE_INCLUDE_FILE trace_pr
+ 
+ TRACE_EVENT(kvm_book3s_reenter,
+ 	TP_PROTO(int r, struct kvm_vcpu *vcpu),
+@@ -271,4 +269,11 @@ TRACE_EVENT(kvm_unmap_hva,
+ #endif /* _TRACE_KVM_H */
+ 
+ /* This part must be outside protection */
++
++#undef TRACE_INCLUDE_PATH
++#undef TRACE_INCLUDE_FILE
++
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE trace_pr
++
+ #include <trace/define_trace.h>
+-- 
+2.17.1
+
 
 
