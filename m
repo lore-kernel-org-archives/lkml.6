@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D8FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A564C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACDCF2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4220D2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/rMp+nt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDCF2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYtmsA0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4220D2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbeK3BWB (ORCPT
+        id S1730063AbeK3BWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43562 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbeK3BWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:01 -0500
+        id S1728561AbeK3BWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7760D21104;
-        Thu, 29 Nov 2018 14:16:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEDBA2133F;
+        Thu, 29 Nov 2018 14:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500990;
-        bh=i0SaZa/jQKc7kNXfRbDyk3FMOraS5fUUikqhqDo5sCk=;
+        s=default; t=1543500993;
+        bh=6dCJOc7dQ7v4TebUD5HV780h1QbnRihcI4F4F6TMYEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V/rMp+nt98KFFB/ttoj7RHvL2ayfA6of2HSEpjxK5SzIsAxxGFd5CjL128Cur2Aum
-         rGgRkz7eD5owPYOOLWWDwHNLGJfDKxgMXqy9teqeR1lUIpJKGykO6yxv9QvUvevdI9
-         Oc3ukrA6QH7LkjMGnqUYzWFzB9c8Zu/V9bIeenfw=
+        b=dYtmsA0p1+E27dhb4jNjGqOMeyCU9BNKNr617BYOO78Ox7K7yuQFO/GzKQL8HpjZg
+         T9BsSQvJJhLH0capZ/IxfDC+A6UsUhDwNN64q0WKZhmeI9tmnSp7FASPwRP1V+G7GV
+         /tbceMlCIb4pIqj/LjpVWque5nCbOIputc4bchlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Rainer Weikusat <rweikusat@mobileactivedefense.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Petr Vorel <pvorel@suse.cz>
-Subject: [PATCH 3.18 82/83] af_unix: move unix_mknod() out of bindlock
-Date:   Thu, 29 Nov 2018 15:12:40 +0100
-Message-Id: <20181129140142.732788522@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
+        "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 3.18 83/83] drm/ast: Remove existing framebuffers before loading driver
+Date:   Thu, 29 Nov 2018 15:12:41 +0100
+Message-Id: <20181129140142.765731691@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -66,93 +64,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: WANG Cong <xiyou.wangcong@gmail.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-commit 0fb44559ffd67de8517098b81f675fa0210f13f0 upstream.
+commit 5478ad10e7850ce3d8b7056db05ddfa3c9ddad9a upstream.
 
-Dmitry reported a deadlock scenario:
+If vesafb attaches to the AST device, it configures the framebuffer memory
+for uncached access by default. When ast.ko later tries to attach itself to
+the device, it wants to use write-combining on the framebuffer memory, but
+vesefb's existing configuration for uncached access takes precedence. This
+results in reduced performance.
 
-unix_bind() path:
-u->bindlock ==> sb_writer
+Removing the framebuffer's configuration before loding the AST driver fixes
+the problem. Other DRM drivers already contain equivalent code.
 
-do_splice() path:
-sb_writer ==> pipe->mutex ==> u->bindlock
-
-In the unix_bind() code path, unix_mknod() does not have to
-be done with u->bindlock held, since it is a pure fs operation,
-so we can just move unix_mknod() out.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Rainer Weikusat <rweikusat@mobileactivedefense.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Petr Vorel <pvorel@suse.cz>
+Link: https://bugzilla.opensuse.org/show_bug.cgi?id=1112963
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: <stable@vger.kernel.org>
+Tested-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Tested-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/unix/af_unix.c |   27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/ast/ast_drv.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -980,6 +980,7 @@ static int unix_bind(struct socket *sock
- 	unsigned int hash;
- 	struct unix_address *addr;
- 	struct hlist_head *list;
-+	struct path path = { NULL, NULL };
+--- a/drivers/gpu/drm/ast/ast_drv.c
++++ b/drivers/gpu/drm/ast/ast_drv.c
+@@ -60,8 +60,29 @@ static const struct pci_device_id pciidl
  
- 	err = -EINVAL;
- 	if (sunaddr->sun_family != AF_UNIX)
-@@ -995,9 +996,20 @@ static int unix_bind(struct socket *sock
- 		goto out;
- 	addr_len = err;
+ MODULE_DEVICE_TABLE(pci, pciidlist);
  
-+	if (sun_path[0]) {
-+		umode_t mode = S_IFSOCK |
-+		       (SOCK_INODE(sock)->i_mode & ~current_umask());
-+		err = unix_mknod(sun_path, mode, &path);
-+		if (err) {
-+			if (err == -EEXIST)
-+				err = -EADDRINUSE;
-+			goto out;
-+		}
-+	}
++static void ast_kick_out_firmware_fb(struct pci_dev *pdev)
++{
++	struct apertures_struct *ap;
++	bool primary = false;
 +
- 	err = mutex_lock_interruptible(&u->readlock);
- 	if (err)
--		goto out;
-+		goto out_put;
- 
- 	err = -EINVAL;
- 	if (u->addr)
-@@ -1014,16 +1026,6 @@ static int unix_bind(struct socket *sock
- 	atomic_set(&addr->refcnt, 1);
- 
- 	if (sun_path[0]) {
--		struct path path;
--		umode_t mode = S_IFSOCK |
--		       (SOCK_INODE(sock)->i_mode & ~current_umask());
--		err = unix_mknod(sun_path, mode, &path);
--		if (err) {
--			if (err == -EEXIST)
--				err = -EADDRINUSE;
--			unix_release_addr(addr);
--			goto out_up;
--		}
- 		addr->hash = UNIX_HASH_SIZE;
- 		hash = d_backing_inode(path.dentry)->i_ino & (UNIX_HASH_SIZE-1);
- 		spin_lock(&unix_table_lock);
-@@ -1050,6 +1052,9 @@ out_unlock:
- 	spin_unlock(&unix_table_lock);
- out_up:
- 	mutex_unlock(&u->readlock);
-+out_put:
-+	if (err)
-+		path_put(&path);
- out:
- 	return err;
++	ap = alloc_apertures(1);
++	if (!ap)
++		return;
++
++	ap->ranges[0].base = pci_resource_start(pdev, 0);
++	ap->ranges[0].size = pci_resource_len(pdev, 0);
++
++#ifdef CONFIG_X86
++	primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
++#endif
++	remove_conflicting_framebuffers(ap, "astdrmfb", primary);
++	kfree(ap);
++}
++
+ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
++	ast_kick_out_firmware_fb(pdev);
++
+ 	return drm_get_pci_dev(pdev, ent, &driver);
  }
+ 
 
 
