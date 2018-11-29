@@ -2,126 +2,123 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2D9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871A4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8C520834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A4820863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Mwxtrp9X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8C520834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="UnW5kO+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A4820863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeK2VFO (ORCPT
+        id S1727767AbeK2VFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:05:14 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:3194 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeK2VFN (ORCPT
+        Thu, 29 Nov 2018 16:05:22 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35852 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727248AbeK2VFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:05:13 -0500
-X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
-   d="scan'208";a="20910078"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Nov 2018 03:00:25 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 29 Nov 2018 03:00:24 -0700
+        Thu, 29 Nov 2018 16:05:14 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so981251lfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 02:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rWS2/PzdJuwrCYHzkYx8A+7YVvro5eJuRJ0ay16oQiU=;
- b=Mwxtrp9X98+9/6CHkphMurMv//5yW9o22uROxySrmGXoClUB/uOZ49+TnSiQBhran1oFs4dtVYN8+AMK8odog6M1uV+JtLi7IIja9QhMmIg3moz/GFEx7gA6ulfxfP4e3AMkmm9Lj66kyN7aBtNZHOJM4HTx/9IQjhlDilE7s74=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0680.namprd11.prod.outlook.com (10.163.111.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Thu, 29 Nov 2018 10:00:22 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1361.019; Thu, 29 Nov 2018
- 10:00:22 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <brandon.streiff@ni.com>, <harini.katakam@xilinx.com>,
-        <Nicolas.Ferre@microchip.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <michal.simek@xilinx.com>, <harinikatakamlinux@gmail.com>
-Subject: Re: [RFC PATCH] net: macb: Apply RXUBR workaround only to versions
- with errata
-Thread-Topic: [RFC PATCH] net: macb: Apply RXUBR workaround only to versions
- with errata
-Thread-Index: AQHUgxNAbu3Co8uTGEqCd0JItPQ7vKVltyuAgADXUoA=
-Date:   Thu, 29 Nov 2018 10:00:22 +0000
-Message-ID: <88ca959b-6fed-8afb-e433-6a21e17ec067@microchip.com>
-References: <1542967157-8053-1-git-send-email-harini.katakam@xilinx.com>
- <5b550305-ff96-fdf6-883e-b6ae69ad3124@ni.com>
-In-Reply-To: <5b550305-ff96-fdf6-883e-b6ae69ad3124@ni.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0226.eurprd07.prod.outlook.com
- (2603:10a6:802:58::29) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0680;6:ewJn0dde8b54wdOI/D4bJ9AElPQtwI9UYmr5CNu/3KZlU2dwALhNH8AzVZi8bSVGowEfTihYvCEDhAao0CdpC3Y8RFfGcXMBxF0Vin/nQEkbod40iE4tFWxPZ8hfijbfsIJeE2ar/Mq+TTaNbYbrcxI3jU/lC67u5yvOzz+QQru1LslFJXrjvGdulsbJtmmNT5Z5IV/Xp7ajY47qFiy1PK9EJxnSgPvUbukN8ds68/raigZzEbShEl9yPet2r4f4yA1oY9wKPSuQ+AdiHzIz5QqqGWs8OKc1Tc3KPJ+Wuw3yEIx23Teq2CIL2173WS37Z41KIZuDgBhGydcyJs6uRcF75PhwnNXuNKos9ChVornbslRovgQNsUfrBIdDKYfsnIOuzJM6aKGRHjjuhjWjx5v1beMc4JkO1dUJ8gZMOoNeLVifKVCcjZlLRcitAW6clUIboES48GuSCDRmtQi4Cs82idmOnKU4894F/fAYZ9g=;5:gfdR/raHJZQWCmcKU2Ck01994KVl7YNLnf7eeBKnqvNjHaUXtEZPzXUg5iiQJt0MtQFWFg3WwGFXB62Az/udl111HpXhM6G/q7/Ge90/3ha1YLBjN6SIH2Ow1cl8j+J2UgcUuu3VRwulVuC9oV8uE6R/cPgLPWTuKZlKFGzeOHs=;7:WLAtWtIg2y6kHc3OOtUjEJuJyxYcBl4/vqiY0prcM+zjJx4Dzq+7NEfu4nnMjMx1ngx9w48yKqdnpffz0Qi4wSucXsoyCVJrcuuDcFOwWflOzhdUGwlwsVhdmc1kfus4oGbsqSG+fteeBlI92iX2Tw==
-x-ms-office365-filtering-correlation-id: 62bc00c8-f23d-4058-abdf-08d655e17a1a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0680;
-x-ms-traffictypediagnostic: BY2PR11MB0680:
-x-microsoft-antispam-prvs: <BY2PR11MB0680F14BE3EB03196C5DF58287D20@BY2PR11MB0680.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231453)(999002)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0680;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0680;
-x-forefront-prvs: 0871917CDA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(376002)(396003)(366004)(189003)(199004)(966005)(3846002)(186003)(6116002)(6306002)(8676002)(81156014)(81166006)(229853002)(6512007)(7736002)(25786009)(256004)(76176011)(6506007)(53546011)(386003)(31696002)(71200400001)(8936002)(2906002)(71190400001)(86362001)(575784001)(36756003)(97736004)(52116002)(53936002)(99286004)(105586002)(102836004)(106356001)(11346002)(31686004)(2616005)(6436002)(26005)(486006)(478600001)(72206003)(39060400002)(66066001)(305945005)(14454004)(4326008)(446003)(476003)(6246003)(5660300001)(316002)(6486002)(68736007)(110136005)(54906003)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0680;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: BECOmW7QIO3pHFBV0W0GnJgmIMlH+RRpcipUMmNDu7WriT3RLH60VPas5NVEcHBUm20M7oEnTm8ixTa5NNha9Y4CXTxBbCo0oA3ckzfCdwG2ic1UHEVi7g9D5QbjM1WCjyR2U3X72l1zOdf1WMksp7CTFJRfOcicuYvKCHkHktoJS4lxwkwG7NnXDBzjuSZuCQK1RUCGxc+wgCUwyzbTe8I6u7HBhARu9w1PZ5+RbRrvt3oaGKkIgz4BUlx9KCAOOkTNjNKuMgm2zSaJvJ4YpKgpriAW4DVOGYoirWfPHOT1Yq4CqOAfYcYJkR/0Z3Z1+kT9XpsnrHQJ9lIa0b9wTvfupyMIOP7ourUBk7zHHlk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D17F534876C74042ACEFFC664D5D1474@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HbxN6WX1QJU+9RRAsjsTRo1+u7xCCwC0lAnxCYOVPno=;
+        b=UnW5kO+1LGKEgIz1lM+bDmzs96y8jKCjCFcKxUzegsbJYj73Dt7NSQ+WOunl97TzqO
+         vJytSMHl0FdRHXxJZ6w7JaF3V7dsCifUMD/hp96ExHNWu1Q4UXHlJ3blhQn94UN+mexs
+         g7TmqXEmRr6xAhX01/I7cxbKghQl/YM/9WIjufbdnJHmG+pGddJfee63eLqVOEblYC1l
+         mbQaAT2CdfaqY5+opASBi30fBkqj2FJ+gUSFxuCAiO0FlCdZbYb63eUitIsi+L7VrTcr
+         Oz4mnWPNOgK5QLyUUgt7IWcz53MTqeWyfM3bv0ozkqLsHCrQv7LVZxiumsl+VeqBbxpp
+         TMGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=HbxN6WX1QJU+9RRAsjsTRo1+u7xCCwC0lAnxCYOVPno=;
+        b=S5smKAtCcvnmLqHFJihI6JqPrqX6z3N8DtoiVN4XJW1r6doheOvYGmcj+nqdzcaWAF
+         RtK/+QljQFLBgDksHWymOgeftcCiAxprsOPtqe5cTaRuSKHYDNvS1za+IIZKw8Nmwuaa
+         lYEPdRoAr9NIWQK44uZQy1DIpoLFNXE2upAATtDWl+GfoDx3sYCFwlejQysx0lrXhQBf
+         W57NpVo5KqBHpYAmgH0zqBjOhq0iAn0AAj371KeNz8nUKgAXnFPMnEgtlXFM7pUgHBl5
+         f+mponIKP5cIhuz4w94teixbcb9iR0rCial1PcdxaG/rHpTRaBQ/wVtPOyoZex4oKSrb
+         rk0A==
+X-Gm-Message-State: AA+aEWbv4LZZpw3hqVRM7054hf9cg1ar6n8TYFfevax3VIEEJWGbPMuq
+        p+uWIWG4JUb4Z1PaB6ZoGC7www==
+X-Google-Smtp-Source: AFSGD/U3P/o39bCBehNz1oB3zdqsFN+ypm2pTSQwR7LwmWcRAECXwP8h/RdOJoSKRmqaJvbtT6OGQw==
+X-Received: by 2002:a19:4849:: with SMTP id v70mr587258lfa.62.1543485624886;
+        Thu, 29 Nov 2018 02:00:24 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.83.97])
+        by smtp.gmail.com with ESMTPSA id u26-v6sm209609lji.22.2018.11.29.02.00.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 02:00:24 -0800 (PST)
+Subject: Re: [PATCH AUTOSEL 4.19 15/68] batman-adv: Expand merged fragment
+ buffer for full packet
+To:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        netdev@vger.kernel.org
+References: <20181129055559.159228-1-sashal@kernel.org>
+ <20181129055559.159228-15-sashal@kernel.org>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <cad9ec40-5125-9bef-0e9e-5c70783a5cb7@cogentembedded.com>
+Date:   Thu, 29 Nov 2018 13:00:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62bc00c8-f23d-4058-abdf-08d655e17a1a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 10:00:22.6436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0680
-X-OriginatorOrg: microchip.com
+In-Reply-To: <20181129055559.159228-15-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDI4LjExLjIwMTggMjM6MDksIEJyYW5kb24gU3RyZWlmZiB3cm90ZToNCj4gT24gMTEv
-MjMvMjAxOCAzOjU5IEFNLCBIYXJpbmkgS2F0YWthbSB3cm90ZToNCj4+ICsvKiBFcnJhdGEgbWFz
-ayBiaXRzICovDQo+PiArI2RlZmluZSBNQUNCX0VSUkFUQV9SWExPQ0tVUAkJCTB4MDAwMDAwMDEN
-Cj4+ICsNCj4+ICAvKiBMU08gc2V0dGluZ3MgKi8NCj4+ICAjZGVmaW5lIE1BQ0JfTFNPX1VGT19F
-TkFCTEUJCQkweDAxDQo+PiAgI2RlZmluZSBNQUNCX0xTT19UU09fRU5BQkxFCQkJMHgwMg0KPj4g
-QEAgLTEwODUsNiArMTA4OCw3IEBAIHN0cnVjdCBtYWNiX2NvbmZpZyB7DQo+PiAgCQkJICAgIHN0
-cnVjdCBjbGsgKipyeF9jbGspOw0KPj4gIAlpbnQJKCppbml0KShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KTsNCj4+ICAJaW50CWp1bWJvX21heF9sZW47DQo+PiArCXUzMgllcnJhdGE7DQo+
-PiAgfTsNCj4+ICANCj4+ICBzdHJ1Y3QgdHN1X2luY3Igew0KPj4gQEAgLTEyMTQsNiArMTIxOCw4
-IEBAIHN0cnVjdCBtYWNiIHsNCj4+ICANCj4+ICAJaW50CXJ4X2JkX3JkX3ByZWZldGNoOw0KPj4g
-IAlpbnQJdHhfYmRfcmRfcHJlZmV0Y2g7DQo+PiArDQo+PiArCXUzMiBlcnJhdGE7DQo+PiAgfTsN
-Cj4gDQo+IEhpIEhhcmluaSwNCj4gDQo+IENvdWxkIHRoaXMgYmUgbWFkZSBpbnRvIHNpbXBsZXIg
-YnkgaW5zdGVhZCBhZGRpbmcgYSBjYXBzIGJpdCwgbmFtZWQNCj4gKHBlcmhhcHMpIE1BQ0JfQ0FQ
-U19CVUdHWV9SWFVCUiBvciBNQUNCX0NBUFNfTkVFRFNfUlhVQlJfUkVTRVRTIG9yDQo+IHNvbWV0
-aGluZz8NCj4gDQo+IFRoYXQgd291bGQgc2F2ZSBuZWVkaW5nIHRvIGFkZCBhIG5ldyB1MzIgZmll
-bGQgaW50byB0aGUgbWFjYl9jb25maWcgYW5kDQo+IG1hY2Igc3RydWN0cyAoYm90aCBvZiB3aGlj
-aCBhbHJlYWR5IGhhdmUgdGhpcyBjYXBzIGZpZWxkKS4NCj4gDQoNCkkgYXZvaWQgZHVwbGljYXRp
-bmcgdGhlc2UgZmllbGRzIGZyb20gc3RydWN0IG1hY2JfY29uZmlnIHRvIHN0cnVjdCBtYWNiIEkN
-CndvdWxkIHN0YXJ0IHRvIG1vdmUgbWFjYl9jb25maWcgcGFydCBvZiBzdHJ1Y3QgbWFjYiBhcyBh
-IGNvbnN0ICogbWVtYmVyDQooc2VlIFsxXSkuDQoNCg0KWzFdDQpodHRwczovL2dpdGh1Yi5jb20v
-bGludXg0c2FtL2xpbnV4LWF0OTEvY29tbWl0LzhjNTg4MTM2MTg5MTQ4ZDc5YzQwNzhjNTVkYTIy
-NDJhMmJhMmI4ZDMjZGlmZi05MjFjODM5ZGJhNDM5ZmQ1MDJhMjRhZWQwODQ1ZGM5ZA0K
+Hello!
+
+On 11/29/2018 08:55 AM, Sasha Levin wrote:
+
+> From: Sven Eckelmann <sven@narfation.org>
+> 
+> [ Upstream commit d7d8bbb40a5b1f682ee6589e212934f4c6b8ad60 ]
+> 
+> The complete size ("total_size") of the fragmented packet is stored in the
+> fragment header and in the size of the fragment chain. When the fragments
+> are ready for merge, the skbuff's tail of the first fragment is expanded to
+> have enough room after the data pointer for at least total_size. This means
+> that it gets expanded by total_size - first_skb->len.
+> 
+> But this is ignoring the fact that after expanding the buffer, the fragment
+> header is pulled by from this buffer. Assuming that the tailroom of the
+
+   Pulled by what?
+
+> buffer was already 0, the buffer after the data pointer of the skbuff is
+> now only total_size - len(fragment_header) large. When the merge function
+> is then processing the remaining fragments, the code to copy the data over
+> to the merged skbuff will cause an skb_over_panic when it tries to actually
+> put enough data to fill the total_size bytes of the packet.
+> 
+> The size of the skb_pull must therefore also be taken into account when the
+> buffer's tailroom is expanded.
+> 
+> Fixes: 610bfc6bc99b ("batman-adv: Receive fragmented packets and merge")
+> Reported-by: Martin Weinelt <martin@darmstadt.freifunk.net>
+> Co-authored-by: Linus Lüssing <linus.luessing@c0d3.blue>
+> Signed-off-by: Sven Eckelmann <sven@narfation.org>
+> Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+[...]
+
+MBR, Sergei
