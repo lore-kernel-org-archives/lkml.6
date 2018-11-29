@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4436C64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B74C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B24FD20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:07:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24FD20673
+	by mail.kernel.org (Postfix) with ESMTP id 35DF921019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DF921019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeK3KOJ (ORCPT
+        id S1727485AbeK3KOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:14:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37084 "EHLO mx1.suse.de"
+        Fri, 30 Nov 2018 05:14:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37098 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeK3KOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:14:08 -0500
+        id S1726393AbeK3KOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:14:14 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 98349AC66;
-        Thu, 29 Nov 2018 23:06:58 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id BF0E6AD1A;
+        Thu, 29 Nov 2018 23:07:04 +0000 (UTC)
 From:   NeilBrown <neilb@suse.com>
 To:     Jeff Layton <jlayton@kernel.org>
 Date:   Fri, 30 Nov 2018 10:04:08 +1100
-Subject: [PATCH 11/12] fs/locks: merge posix_unblock_lock() and
- locks_delete_block()
+Subject: [PATCH 12/12] fs/locks: remove unnecessary white space.
 Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Message-ID: <154353264860.32133.5531424691087714715.stgit@noble>
+Message-ID: <154353264864.32133.8284811853792418912.stgit@noble>
 In-Reply-To: <154353251599.32133.1085882002675619240.stgit@noble>
 References: <154353251599.32133.1085882002675619240.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -47,167 +46,181 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-posix_unblock_lock() is not specific to posix locks, and behaves
-nearly identically to locks_delete_block() - the former returning a
-status while the later doesn't.
-
-So discard posix_unblock_lock() and use locks_delete_block() instead,
-after giving that function an appropriate return value.
+ - spaces before tabs,
+ - spaces at the end of lines,
+ - multiple blank lines,
+ - blank lines before EXPORT_SYMBOL,
+can all go.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: J. Bruce Fields <bfields@redhat.com>
 ---
- fs/cifs/file.c      |    2 +-
- fs/lockd/svclock.c  |    2 +-
- fs/locks.c          |   36 +++++++++++++-----------------------
- fs/nfsd/nfs4state.c |    6 +++---
- include/linux/fs.h  |    4 ++--
- 5 files changed, 20 insertions(+), 30 deletions(-)
+ fs/locks.c |   33 ++++++++++++---------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index d7ed895e05d1..94c3575e850c 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1106,7 +1106,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
- 		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_blocker);
- 		if (!rc)
- 			goto try_again;
--		posix_unblock_lock(flock);
-+		locks_delete_block(flock);
- 	}
- 	return rc;
- }
-diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-index 74330daeab71..ea719cdd6a36 100644
---- a/fs/lockd/svclock.c
-+++ b/fs/lockd/svclock.c
-@@ -276,7 +276,7 @@ static int nlmsvc_unlink_block(struct nlm_block *block)
- 	dprintk("lockd: unlinking block %p...\n", block);
- 
- 	/* Remove block from list */
--	status = posix_unblock_lock(&block->b_call->a_args.lock.fl);
-+	status = locks_delete_block(&block->b_call->a_args.lock.fl);
- 	nlmsvc_remove_block(block);
- 	return status;
- }
 diff --git a/fs/locks.c b/fs/locks.c
-index 7a55d6feb12a..75a03a9d666e 100644
+index 75a03a9d666e..b6b43970f461 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -748,8 +748,16 @@ static void __locks_wake_up_blocks(struct file_lock *blocker)
- 	}
- }
- 
--static void locks_delete_block(struct file_lock *waiter)
-+/**
-+ *	locks_delete_lock - stop waiting for a file lock
-+ *	@waiter: the lock which was waiting
+@@ -11,11 +11,11 @@
+  *
+  *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.
+  *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994
+- *  
 + *
-+ *	lockd/nfsd need to disconnect the lock while working on it.
-+ */
-+int locks_delete_block(struct file_lock *waiter)
- {
-+	int status = -ENOENT;
+  *  Converted file_lock_table to a linked list from an array, which eliminates
+  *  the limits on how many active file locks are open.
+  *  Chad Page (pageone@netcom.com), November 27, 1994
+- * 
++ *
+  *  Removed dependency on file descriptors. dup()'ed file descriptors now
+  *  get the same locks as the original file descriptors, and a close() on
+  *  any file descriptor removes ALL the locks on the file for the current
+@@ -41,7 +41,7 @@
+  *  with a file pointer (filp). As a result they can be shared by a parent
+  *  process and its children after a fork(). They are removed when the last
+  *  file descriptor referring to the file pointer is closed (unless explicitly
+- *  unlocked). 
++ *  unlocked).
+  *
+  *  FL_FLOCK locks never deadlock, an existing lock is always removed before
+  *  upgrading from shared to exclusive (or vice versa). When this happens
+@@ -50,7 +50,7 @@
+  *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995
+  *
+  *  Removed some race conditions in flock_lock_file(), marked other possible
+- *  races. Just grep for FIXME to see them. 
++ *  races. Just grep for FIXME to see them.
+  *  Dmitry Gorodchanin (pgmdsg@ibi.com), February 09, 1996.
+  *
+  *  Addressed Dmitry's concerns. Deadlock checking no longer recursive.
+@@ -399,7 +399,6 @@ void locks_init_lock(struct file_lock *fl)
+ 	memset(fl, 0, sizeof(struct file_lock));
+ 	locks_init_lock_heads(fl);
+ }
+-
+ EXPORT_SYMBOL(locks_init_lock);
+ 
+ /*
+@@ -439,7 +438,6 @@ void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
+ 			fl->fl_ops->fl_copy_lock(new, fl);
+ 	}
+ }
+-
+ EXPORT_SYMBOL(locks_copy_lock);
+ 
+ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+@@ -482,7 +480,7 @@ flock_make_lock(struct file *filp, unsigned int cmd, struct file_lock *fl)
+ 
+ 	if (type < 0)
+ 		return ERR_PTR(type);
+-	
 +
- 	/*
- 	 * If fl_blocker is NULL, it won't be set again as this thread
- 	 * "owns" the lock and is the only one that might try to claim
-@@ -765,10 +773,14 @@ static void locks_delete_block(struct file_lock *waiter)
- 	    list_empty(&waiter->fl_blocked_requests))
- 		return status;
- 	spin_lock(&blocked_lock_lock);
-+	if (waiter->fl_blocker)
-+		status = 0;
- 	__locks_wake_up_blocks(waiter);
- 	__locks_delete_block(waiter);
- 	spin_unlock(&blocked_lock_lock);
-+	return status;
- }
-+EXPORT_SYMBOL(locks_delete_block);
- 
- /* Insert waiter into blocker's block list.
-  * We use a circular list so that processes can be easily woken up in
-@@ -2675,28 +2687,6 @@ void locks_remove_file(struct file *filp)
- 	spin_unlock(&ctx->flc_lock);
+ 	if (fl == NULL) {
+ 		fl = locks_alloc_lock();
+ 		if (fl == NULL)
+@@ -497,7 +495,7 @@ flock_make_lock(struct file *filp, unsigned int cmd, struct file_lock *fl)
+ 	fl->fl_flags = FL_FLOCK;
+ 	fl->fl_type = type;
+ 	fl->fl_end = OFFSET_MAX;
+-	
++
+ 	return fl;
  }
  
--/**
-- *	posix_unblock_lock - stop waiting for a file lock
-- *	@waiter: the lock which was waiting
-- *
-- *	lockd needs to block waiting for locks.
-- */
--int
--posix_unblock_lock(struct file_lock *waiter)
--{
--	int status = -ENOENT;
+@@ -1169,8 +1167,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 			}
+ 			spin_unlock(&blocked_lock_lock);
+ 			goto out;
+-  		}
+-  	}
++		}
++	}
+ 
+ 	/* If we're just looking for a conflict, we're done. */
+ 	error = 0;
+@@ -1465,7 +1463,6 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
+ 
+ 	return error;
+ }
 -
--	spin_lock(&blocked_lock_lock);
--	if (waiter->fl_blocker) {
--		__locks_wake_up_blocks(waiter);
--		__locks_delete_block(waiter);
--		status = 0;
--	}
--	spin_unlock(&blocked_lock_lock);
--	return status;
--}
--EXPORT_SYMBOL(posix_unblock_lock);
+ EXPORT_SYMBOL(locks_mandatory_area);
+ #endif /* CONFIG_MANDATORY_FILE_LOCKING */
+ 
+@@ -1667,7 +1664,6 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+ 	locks_free_lock(new_fl);
+ 	return error;
+ }
 -
+ EXPORT_SYMBOL(__break_lease);
+ 
  /**
-  * vfs_cancel_lock - file byte range unblock lock
-  * @filp: The file to apply the unblock to
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index f093fbe47133..a334828723fa 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -238,7 +238,7 @@ find_blocked_lock(struct nfs4_lockowner *lo, struct knfsd_fh *fh,
- 	}
- 	spin_unlock(&nn->blocked_locks_lock);
- 	if (found)
--		posix_unblock_lock(&found->nbl_lock);
-+		locks_delete_block(&found->nbl_lock);
- 	return found;
+@@ -1698,7 +1694,6 @@ void lease_get_mtime(struct inode *inode, struct timespec64 *time)
+ 	if (has_lease)
+ 		*time = current_time(inode);
  }
+-
+ EXPORT_SYMBOL(lease_get_mtime);
  
-@@ -293,7 +293,7 @@ remove_blocked_locks(struct nfs4_lockowner *lo)
- 		nbl = list_first_entry(&reaplist, struct nfsd4_blocked_lock,
- 					nbl_lru);
- 		list_del_init(&nbl->nbl_lru);
--		posix_unblock_lock(&nbl->nbl_lock);
-+		locks_delete_block(&nbl->nbl_lock);
- 		free_blocked_lock(nbl);
- 	}
- }
-@@ -4863,7 +4863,7 @@ nfs4_laundromat(struct nfsd_net *nn)
- 		nbl = list_first_entry(&reaplist,
- 					struct nfsd4_blocked_lock, nbl_lru);
- 		list_del_init(&nbl->nbl_lru);
--		posix_unblock_lock(&nbl->nbl_lock);
-+		locks_delete_block(&nbl->nbl_lock);
- 		free_blocked_lock(nbl);
- 	}
- out:
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 16df3a7df378..26a8607b3c3c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1124,7 +1124,7 @@ extern void locks_remove_file(struct file *);
- extern void locks_release_private(struct file_lock *);
- extern void posix_test_lock(struct file *, struct file_lock *);
- extern int posix_lock_file(struct file *, struct file_lock *, struct file_lock *);
--extern int posix_unblock_lock(struct file_lock *);
-+extern int locks_delete_block(struct file_lock *);
- extern int vfs_test_lock(struct file *, struct file_lock *);
- extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, struct file_lock *);
- extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-@@ -1214,7 +1214,7 @@ static inline int posix_lock_file(struct file *filp, struct file_lock *fl,
- 	return -ENOLCK;
- }
+ /**
+@@ -1753,8 +1748,8 @@ int fcntl_getlease(struct file *filp)
  
--static inline int posix_unblock_lock(struct file_lock *waiter)
-+static inline int locks_delete_block(struct file_lock *waiter)
- {
- 	return -ENOENT;
+ /**
+  * check_conflicting_open - see if the given dentry points to a file that has
+- * 			    an existing open that would conflict with the
+- * 			    desired lease.
++ *			    an existing open that would conflict with the
++ *			    desired lease.
+  * @dentry:	dentry to check
+  * @arg:	type of lease that we're trying to acquire
+  * @flags:	current lock flags
+@@ -1978,7 +1973,7 @@ EXPORT_SYMBOL(generic_setlease);
+  * @arg:	type of lease to obtain
+  * @lease:	file_lock to use when adding a lease
+  * @priv:	private info for lm_setup when adding a lease (may be
+- * 		NULL if lm_setup doesn't require it)
++ *		NULL if lm_setup doesn't require it)
+  *
+  * Call this to establish a lease on the file. The "lease" argument is not
+  * used for F_UNLCK requests and may be NULL. For commands that set or alter
+@@ -2266,7 +2261,7 @@ int fcntl_getlk(struct file *filp, unsigned int cmd, struct flock *flock)
+ 	error = vfs_test_lock(filp, fl);
+ 	if (error)
+ 		goto out;
+- 
++
+ 	flock->l_type = fl->fl_type;
+ 	if (fl->fl_type != F_UNLCK) {
+ 		error = posix_lock_to_flock(flock, fl);
+@@ -2614,7 +2609,6 @@ void locks_remove_posix(struct file *filp, fl_owner_t owner)
+ 		lock.fl_ops->fl_release_private(&lock);
+ 	trace_locks_remove_posix(inode, &lock, error);
  }
+-
+ EXPORT_SYMBOL(locks_remove_posix);
+ 
+ /* The i_flctx must be valid when calling into here */
+@@ -2700,7 +2694,6 @@ int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
+ 		return filp->f_op->lock(filp, F_CANCELLK, fl);
+ 	return 0;
+ }
+-
+ EXPORT_SYMBOL_GPL(vfs_cancel_lock);
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -2900,7 +2893,6 @@ static int __init filelock_init(void)
+ 	filelock_cache = kmem_cache_create("file_lock_cache",
+ 			sizeof(struct file_lock), 0, SLAB_PANIC, NULL);
+ 
+-
+ 	for_each_possible_cpu(i) {
+ 		struct file_lock_list_struct *fll = per_cpu_ptr(&file_lock_list, i);
+ 
+@@ -2910,5 +2902,4 @@ static int __init filelock_init(void)
+ 
+ 	return 0;
+ }
+-
+ core_initcall(filelock_init);
 
 
