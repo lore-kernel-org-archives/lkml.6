@@ -2,164 +2,105 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AA4C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1213AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724822082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724822082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C23C621019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:02:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGPJ1hIL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23C621019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbeK3CHx convert rfc822-to-8bit (ORCPT
+        id S1730869AbeK3CID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:07:53 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:35004 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728787AbeK3CHw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:07:52 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gSNpS-0008Nl-Ao; Thu, 29 Nov 2018 16:02:10 +0100
-Date:   Thu, 29 Nov 2018 16:02:10 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH 07/29 v2] x86/fpu: don't export __kernel_fpu_{begin|end}()
-Message-ID: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
-References: <20181128222035.2996-1-bigeasy@linutronix.de>
- <20181128222035.2996-8-bigeasy@linutronix.de>
- <da61c2af8aab3348d6fb09889b5531bec7e2f842.camel@surriel.com>
+        Thu, 29 Nov 2018 21:08:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728787AbeK3CIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:08:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15D9C2082F;
+        Thu, 29 Nov 2018 15:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543503743;
+        bh=7Xx1EbM+HfVYfGRaJ/LZZwcUlPvH0W0etgnu7fLP2No=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LGPJ1hILkeVUFTi/azWAEsqMiD8AYdQiLSLOGAjjLKrLeOJVF8Ysk0rUnS0raJVBj
+         8sJEqOpjF3Na/HSdIXJ8q/7cG5R2t341gnSF6CBeNZjcs9UdubWQIDmDHsVsxytfY4
+         4k8qxakQNcf0ql6wRWX3N/s+HyB6/TvQ/mEdJI2E=
+Date:   Thu, 29 Nov 2018 16:02:21 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, sashal@kernel.org
+Subject: Re: [PATCH 4.9 39/92] efi/arm: Revert deferred unmap of early memmap
+ mapping
+Message-ID: <20181129150221.GB22451@kroah.com>
+References: <20181129140106.520639693@linuxfoundation.org>
+ <20181129140109.438834361@linuxfoundation.org>
+ <CAKv+Gu8cPOQaYY_KH3dq+2U517z7j67Od+Cxe+wB4gkEOqnQTA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <da61c2af8aab3348d6fb09889b5531bec7e2f842.camel@surriel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAKv+Gu8cPOQaYY_KH3dq+2U517z7j67Od+Cxe+wB4gkEOqnQTA@mail.gmail.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one user using __kernel_fpu_begin() and before invoking it, it
-invokes preempt_disable(). So it could invoke kernel_fpu_begin() right
-away. The 32bit version of arch_efi_call_virt_setup() and
-arch_efi_call_virt_teardown() does this already.
+On Thu, Nov 29, 2018 at 03:28:44PM +0100, Ard Biesheuvel wrote:
+> On Thu, 29 Nov 2018 at 15:21, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > 4.9-stable review patch.  If anyone has any objections, please let me know.
+> >
+> > ------------------
+> >
+> > [ Upstream commit 33412b8673135b18ea42beb7f5117ed0091798b6 ]
+> >
+> > Commit:
+> >
+> >   3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory map longer for BGRT")
+> >
+> > deferred the unmap of the early mapping of the UEFI memory map to
+> > accommodate the ACPI BGRT code, which looks up the memory type that
+> > backs the BGRT table to validate it against the requirements of the UEFI spec.
+> >
+> > Unfortunately, this causes problems on ARM, which does not permit
+> > early mappings to persist after paging_init() is called, resulting
+> > in a WARN() splat. Since we don't support the BGRT table on ARM anway,
+> > let's revert ARM to the old behaviour, which is to take down the
+> > early mapping at the end of efi_init().
+> >
+> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: linux-efi@vger.kernel.org
+> > Fixes: 3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory ...")
+> 
+> This commit is only in v4.19 as far as I know. Does it even apply?
 
-The comment above *kernel_fpu*() claims that before invoking
-__kernel_fpu_begin() preemption should be disabled and that KVM is a
-good example of doing it. Well, KVM doesn't do that since commit
+This commit is in the following releases:
+	4.9.129 4.14.72 4.18.10 4.19
 
-  f775b13eedee2 ("x86,kvm: move qemu/guest FPU switching out to vcpu_run")
+so it should apply :)
 
-so it is not an example anymore.
-With EFI gone as the last user of __kernel_fpu_{begin|end}(), it can be
-made static and not exported anymore.
+thanks,
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v1…v2: `carefull' -> `careful'
-
- arch/x86/include/asm/efi.h     |  6 ++----
- arch/x86/include/asm/fpu/api.h | 16 ++++++----------
- arch/x86/kernel/fpu/core.c     |  6 ++----
- 3 files changed, 10 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index eea40d52ca785..45864898f7e50 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -82,8 +82,7 @@ struct efi_scratch {
- #define arch_efi_call_virt_setup()					\
- ({									\
- 	efi_sync_low_kernel_mappings();					\
--	preempt_disable();						\
--	__kernel_fpu_begin();						\
-+	kernel_fpu_begin();						\
- 	firmware_restrict_branch_speculation_start();			\
- 									\
- 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
-@@ -99,8 +98,7 @@ struct efi_scratch {
- 		efi_switch_mm(efi_scratch.prev_mm);			\
- 									\
- 	firmware_restrict_branch_speculation_end();			\
--	__kernel_fpu_end();						\
--	preempt_enable();						\
-+	kernel_fpu_end();						\
- })
- 
- extern void __iomem *__init efi_ioremap(unsigned long addr, unsigned long size,
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index a9caac9d4a729..e368d8d94ca68 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -12,17 +12,13 @@
- #define _ASM_X86_FPU_API_H
- 
- /*
-- * Careful: __kernel_fpu_begin/end() must be called with preempt disabled
-- * and they don't touch the preempt state on their own.
-- * If you enable preemption after __kernel_fpu_begin(), preempt notifier
-- * should call the __kernel_fpu_end() to prevent the kernel/user FPU
-- * state from getting corrupted. KVM for example uses this model.
-- *
-- * All other cases use kernel_fpu_begin/end() which disable preemption
-- * during kernel FPU usage.
-+ * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
-+ * disables preemption so be careful if you intend to use it for long periods
-+ * of time.
-+ * If you intend to use the FPU in softirq you need to check first with
-+ * irq_fpu_usable() if it is possible.
-+ * Using the FPU in hardirq is not allowed.
-  */
--extern void __kernel_fpu_begin(void);
--extern void __kernel_fpu_end(void);
- extern void kernel_fpu_begin(void);
- extern void kernel_fpu_end(void);
- extern bool irq_fpu_usable(void);
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ea85b32421a0..2e5003fef51a9 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -93,7 +93,7 @@ bool irq_fpu_usable(void)
- }
- EXPORT_SYMBOL(irq_fpu_usable);
- 
--void __kernel_fpu_begin(void)
-+static void __kernel_fpu_begin(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
-@@ -111,9 +111,8 @@ void __kernel_fpu_begin(void)
- 		__cpu_invalidate_fpregs_state();
- 	}
- }
--EXPORT_SYMBOL(__kernel_fpu_begin);
- 
--void __kernel_fpu_end(void)
-+static void __kernel_fpu_end(void)
- {
- 	struct fpu *fpu = &current->thread.fpu;
- 
-@@ -122,7 +121,6 @@ void __kernel_fpu_end(void)
- 
- 	kernel_fpu_enable();
- }
--EXPORT_SYMBOL(__kernel_fpu_end);
- 
- void kernel_fpu_begin(void)
- {
--- 
-2.20.0.rc1
-
+greg k-h
