@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E8FC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6400C64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2402020673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8085E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jRCZPc8i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2402020673
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jxDGC1dJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8085E20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeK3KRj (ORCPT
+        id S1727506AbeK3KQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:17:39 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33013 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbeK3KQI (ORCPT
+        Fri, 30 Nov 2018 05:16:07 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44827 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbeK3KQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:16:08 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so1793780pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:59 -0800 (PST)
+        Fri, 30 Nov 2018 05:16:07 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k8so1777433pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ND6k4ouTg4IDxqilUc081KI8dVfG8RVX8Ga+YXLF9/I=;
-        b=jRCZPc8ifxc6K1k3WCdEZPPJyLPjXqT7G4TtWxiAtBc28KaQ+Kk39evPYWGLODQ58F
-         nz1RMUVwjpqN90qPdoVt0yX2jyF5xkTAhdHlyHEeHNVce23N6qIma5mqVlRk2R2jWy+P
-         qOPcguYBVhmOJ8TOT4GI3r06FeCbvhO1WHDV0=
+        bh=tZ1ANa+h2UBjtVpsGd+gI1f/ON/w0NtBaZ9yRTzwZr4=;
+        b=jxDGC1dJf9Mzs+DuEj0mkwfM8wN+qDieU0by68vQFHEwEbQtqcBH1x/IUOdeDGURvP
+         sJ/AMtbi4idvcWdaKHVccfeqnHUv/gV5LD3/+fBhkde3En/jEz5ZNMkEyRk1JsfbrARP
+         Q4R/SnALNU9Kxo4RbDjaLh0WAhm9azo8eHs6c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ND6k4ouTg4IDxqilUc081KI8dVfG8RVX8Ga+YXLF9/I=;
-        b=HB37vc0ltPe7WcudenFC58BvqCo0jEWK6C4T71VBR1ttDbBdSMylDivQQd9Cef8spq
-         VYRfFxSHXyxuogUSkwLtL7+/ji+7QcaZ1NECdBRhU0W4EF+5PRZfqhII9YzjG989hHsk
-         p0UPHVIc9CHHZr1AEzP7hgQFjXFJl5lVXkAKoHItfg8ZBsmJC/p3252ShqH3XdpZbsoa
-         d9TzHwJy3P4huMUjIHkT9rgvPj2/83xjxh9tYjUpDkUOxnKaoB02VlpD5+9atdvkQQzo
-         pWLffFCvrJ5UqElPYTueoasP8aOXuL6W8ze6/G4vueJQS7DfE1W39jRXm5kZ1X27Dvqu
-         Lfmg==
-X-Gm-Message-State: AA+aEWYzsj+zuoGHQUcT9qUOesspNLun5VDkNRt3qwps3pzkS47bL0hY
-        ozgdG5KZz8bQySkAtRJVDmGZSw==
-X-Google-Smtp-Source: AFSGD/WzShcPbcCng0JwiY/YMozJjjIi1voV3BEcv6HeLujZfpGJluROj/XxPLUOJH697EOckNIdow==
-X-Received: by 2002:a63:be4d:: with SMTP id g13mr2906773pgo.378.1543532939248;
-        Thu, 29 Nov 2018 15:08:59 -0800 (PST)
+        bh=tZ1ANa+h2UBjtVpsGd+gI1f/ON/w0NtBaZ9yRTzwZr4=;
+        b=JXUf5Cqcg9uf4Wu4KhyDk0yeGGRJzTQosZFjhMB6W4nWqj2w68W1OeFkhUCEc9l+qr
+         yXKt2MGirEncs/dNOrt32UKUi0me1Oo2Tdmq/hjs/Kh/ZuwEHckJaTQtZZYunqnGK9Me
+         K1szsLgvLVRmIzH9tqMcIkv6871tGulhL2YP/BgYdB6wjQt/GmoDvdnK5Pf6euP8rIWK
+         IQV1qVJbkUbPFLVBgmi6k8OnN38MTe6J2lGlBbNbZJ+HQdJ+wH4ZBinOkYEjyDT04Mck
+         C+GPR7qYi4s93cG1hxVcrcfxfn6NTnXf1tM9RWAcXeS4c/6mj2HsFzzlf1VP3+45ae8d
+         E+Pw==
+X-Gm-Message-State: AA+aEWZBT726D9V7fJp8uqMs4XD+zpcSBRVk+l0YXGDwOXRroSfH0u2Y
+        Eqjo+TTdggTN6Dj6jlWXwprICA==
+X-Google-Smtp-Source: AFSGD/UVHUPl3O8sGsu70An1ijtvRfzVL/EjSE7lBgCOqe/D2OMmpQDde7pCj1jSDPtXx3KvQWYt3w==
+X-Received: by 2002:a17:902:468:: with SMTP id 95mr3338372ple.3.1543532938326;
+        Thu, 29 Nov 2018 15:08:58 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id r66sm4513532pfk.157.2018.11.29.15.08.53
+        by smtp.gmail.com with ESMTPSA id y89sm4181377pfa.136.2018.11.29.15.08.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 29 Nov 2018 15:08:56 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -62,9 +62,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH -next v2 08/12] pstore: Improve and update some comments and status output
-Date:   Thu, 29 Nov 2018 15:08:37 -0800
-Message-Id: <20181129230841.29955-9-keescook@chromium.org>
+Subject: [PATCH -next v2 06/12] pstore/ram: Report backend assignments with finer granularity
+Date:   Thu, 29 Nov 2018 15:08:35 -0800
+Message-Id: <20181129230841.29955-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129230841.29955-1-keescook@chromium.org>
 References: <20181129230841.29955-1-keescook@chromium.org>
@@ -73,75 +73,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This improves and updates some comments:
- - dump handler comment out of sync from calling convention
- - fix kern-doc typo
-
-and improves status output:
- - reminder that only kernel crash dumps are compressed
- - do not be silent about ECC infrastructure failures
+In order to more easily perform automated regression testing, this
+adds pr_debug() calls to report each prz allocation which can then be
+verified against persistent storage. Specifically, seeing the dividing
+line between header, data, any ECC bytes. (And the general assignment
+output is updated to remove the bogus ECC blocksize which isn't actually
+recorded outside the prz instance.)
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/pstore/platform.c   | 7 +++----
- fs/pstore/ram_core.c   | 4 +++-
- include/linux/pstore.h | 2 +-
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ fs/pstore/ram.c      | 4 ++--
+ fs/pstore/ram_core.c | 6 ++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index a75756c48e10..32340e7dd6a5 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -304,7 +304,7 @@ static void allocate_buf_for_compression(void)
- 	big_oops_buf_sz = size;
- 	big_oops_buf = buf;
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 768759841491..10ac4d23c423 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -853,9 +853,9 @@ static int ramoops_probe(struct platform_device *pdev)
+ 	ramoops_pmsg_size = pdata->pmsg_size;
+ 	ramoops_ftrace_size = pdata->ftrace_size;
  
--	pr_info("Using compression: %s\n", zbackend->name);
-+	pr_info("Using crash dump compression: %s\n", zbackend->name);
- }
+-	pr_info("attached 0x%lx@0x%llx, ecc: %d/%d\n",
++	pr_info("using 0x%lx@0x%llx, ecc: %d\n",
+ 		cxt->size, (unsigned long long)cxt->phys_addr,
+-		cxt->ecc_info.ecc_size, cxt->ecc_info.block_size);
++		cxt->ecc_info.ecc_size);
  
- static void free_buf_for_compression(void)
-@@ -354,9 +354,8 @@ void pstore_record_init(struct pstore_record *record,
- }
+ 	return 0;
  
- /*
-- * callback from kmsg_dump. (s2,l2) has the most recently
-- * written bytes, older bytes are in (s1,l1). Save as much
-- * as we can from the end of the buffer.
-+ * callback from kmsg_dump. Save as much as we can (up to kmsg_bytes) from the
-+ * end of the buffer.
-  */
- static void pstore_dump(struct kmsg_dumper *dumper,
- 			enum kmsg_dump_reason reason)
 diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 3e9e3ba4fb07..e6375439c5ac 100644
+index f5d0173901aa..62830734deee 100644
 --- a/fs/pstore/ram_core.c
 +++ b/fs/pstore/ram_core.c
-@@ -503,8 +503,10 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 	bool zap = !!(prz->flags & PRZ_FLAG_ZAP_OLD);
+@@ -576,6 +576,12 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
+ 	if (ret)
+ 		goto err;
  
- 	ret = persistent_ram_init_ecc(prz, ecc_info);
--	if (ret)
-+	if (ret) {
-+		pr_warn("ECC failed %s\n", prz->label);
- 		return ret;
-+	}
- 
- 	sig ^= PERSISTENT_RAM_SIG;
- 
-diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-index 30fcec375a3a..81669aa80027 100644
---- a/include/linux/pstore.h
-+++ b/include/linux/pstore.h
-@@ -85,7 +85,7 @@ struct pstore_record {
- /**
-  * struct pstore_info - backend pstore driver structure
-  *
-- * @owner:	module which is repsonsible for this backend driver
-+ * @owner:	module which is responsible for this backend driver
-  * @name:	name of the backend driver
-  *
-  * @buf_lock:	spinlock to serialize access to @buf
++	pr_debug("attached %s 0x%zx@0x%llx: %zu header, %zu data, %zu ecc (%d/%d)\n",
++		prz->label, prz->size, (unsigned long long)prz->paddr,
++		sizeof(*prz->buffer), prz->buffer_size,
++		prz->size - sizeof(*prz->buffer) - prz->buffer_size,
++		prz->ecc_info.ecc_size, prz->ecc_info.block_size);
++
+ 	return prz;
+ err:
+ 	persistent_ram_free(prz);
 -- 
 2.17.1
 
