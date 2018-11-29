@@ -2,51 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9A3C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB9FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8AE520868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7687E21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1pEWT9K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8AE520868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2i0U3jsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7687E21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731928AbeK3B1r (ORCPT
+        id S1731938AbeK3B1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731909AbeK3B1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:47 -0500
+        id S1731259AbeK3B1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E6A220868;
-        Thu, 29 Nov 2018 14:22:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C6D9205C9;
+        Thu, 29 Nov 2018 14:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501335;
-        bh=HEDO6JXkVeN9F5qB6GSGLI3W0aAVtTBjKJmbI4AX8dM=;
+        s=default; t=1543501338;
+        bh=wAXQC21pq5EqZiFvXNhNAimsJeT0FZeB/IWULknZxjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1pEWT9KCrHZ4uNywdrSpl0gya0BqyaX4nchmd0zzWWOWbf4iS0Lq3c/i6h8CTE5F
-         UTcWYXFdyTjmEXX5EfawKhYFmhgs31CH4zR52zjW9G9ML43iIbSDHAF8A5bxrq34Cy
-         6n06PtOFRrSPJlw7xFNMjcj0XUuNVSCI5iPuiHnY=
+        b=2i0U3jsGllpJ6Ggi+UxCCzndjfluU1zARTS040OVvES3hHOKF7+ygGzOjebMZfUF5
+         NwLRTbVy3W7U3IYuKuyJqKWcTUCI0gdfctLYSz6rIylSL/Mq1gAIb0OAkiFOxZOC9x
+         viWmzLpSJ96GbKnFbVo1NaH3vvZicbwuvxidFqOc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Tobias <dan.g.tob@gmail.com>,
-        Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 48/92] Input: xpad - correctly sort vendor ids
-Date:   Thu, 29 Nov 2018 15:12:17 +0100
-Message-Id: <20181129140110.256195980@linuxfoundation.org>
+Subject: [PATCH 4.9 49/92] Input: xpad - move reporting xbox one home button to common function
+Date:   Thu, 29 Nov 2018 15:12:18 +0100
+Message-Id: <20181129140110.330453183@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,46 +63,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c02fc1d9e5d9f093296e43e13ec7f35f140784bd ]
+[ Upstream commit 4f88476c75429ba9ab71c428b4cd2f67575bc9c1 ]
 
-Signed-off-by: Daniel Tobias <dan.g.tob@gmail.com>
+xbox one was the only device that has a *_process_buttons routine.
+
 Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/input/joystick/xpad.c | 52 +++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index b9f48d4e155a..8b7fc47f7ffb 100644
+index 8b7fc47f7ffb..b06f4b0785f7 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -321,19 +321,19 @@ static struct usb_device_id xpad_table[] = {
- 	XPAD_XBOXONE_VENDOR(0x0738),		/* Mad Catz FightStick TE 2 */
- 	XPAD_XBOX360_VENDOR(0x0e6f),		/* 0x0e6f X-Box 360 controllers */
- 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
-+	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
-+	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
- 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
- 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x146b),		/* BigBen Interactive Controllers */
--	XPAD_XBOX360_VENDOR(0x1bad),		/* Harminix Rock Band Guitar and Drums */
--	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
--	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
--	XPAD_XBOX360_VENDOR(0x1689),		/* Razer Onza */
--	XPAD_XBOX360_VENDOR(0x24c6),		/* PowerA Controllers */
--	XPAD_XBOXONE_VENDOR(0x24c6),		/* PowerA Controllers */
- 	XPAD_XBOX360_VENDOR(0x1532),		/* Razer Sabertooth */
- 	XPAD_XBOXONE_VENDOR(0x1532),		/* Razer Wildcat */
- 	XPAD_XBOX360_VENDOR(0x15e4),		/* Numark X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x162e),		/* Joytech X-Box 360 controllers */
-+	XPAD_XBOX360_VENDOR(0x1689),		/* Razer Onza */
-+	XPAD_XBOX360_VENDOR(0x1bad),		/* Harminix Rock Band Guitar and Drums */
-+	XPAD_XBOX360_VENDOR(0x24c6),		/* PowerA Controllers */
-+	XPAD_XBOXONE_VENDOR(0x24c6),		/* PowerA Controllers */
- 	{ }
- };
+@@ -610,14 +610,28 @@ static void xpad360w_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned cha
+ }
  
+ /*
+- *	xpadone_process_buttons
++ *	xpadone_process_packet
+  *
+- *	Process a button update packet from an Xbox one controller.
++ *	Completes a request by converting the data into events for the
++ *	input subsystem. This version is for the Xbox One controller.
++ *
++ *	The report format was gleaned from
++ *	https://github.com/kylelemons/xbox/blob/master/xbox.go
+  */
+-static void xpadone_process_buttons(struct usb_xpad *xpad,
+-				struct input_dev *dev,
+-				unsigned char *data)
++static void xpadone_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *data)
+ {
++	struct input_dev *dev = xpad->dev;
++
++	/* the xbox button has its own special report */
++	if (data[0] == 0X07) {
++		input_report_key(dev, BTN_MODE, data[4] & 0x01);
++		input_sync(dev);
++		return;
++	}
++	/* check invalid packet */
++	else if (data[0] != 0X20)
++		return;
++
+ 	/* menu/view buttons */
+ 	input_report_key(dev, BTN_START,  data[4] & 0x04);
+ 	input_report_key(dev, BTN_SELECT, data[4] & 0x08);
+@@ -680,34 +694,6 @@ static void xpadone_process_buttons(struct usb_xpad *xpad,
+ 	input_sync(dev);
+ }
+ 
+-/*
+- *	xpadone_process_packet
+- *
+- *	Completes a request by converting the data into events for the
+- *	input subsystem. This version is for the Xbox One controller.
+- *
+- *	The report format was gleaned from
+- *	https://github.com/kylelemons/xbox/blob/master/xbox.go
+- */
+-
+-static void xpadone_process_packet(struct usb_xpad *xpad,
+-				u16 cmd, unsigned char *data)
+-{
+-	struct input_dev *dev = xpad->dev;
+-
+-	switch (data[0]) {
+-	case 0x20:
+-		xpadone_process_buttons(xpad, dev, data);
+-		break;
+-
+-	case 0x07:
+-		/* the xbox button has its own special report */
+-		input_report_key(dev, BTN_MODE, data[4] & 0x01);
+-		input_sync(dev);
+-		break;
+-	}
+-}
+-
+ static void xpad_irq_in(struct urb *urb)
+ {
+ 	struct usb_xpad *xpad = urb->context;
 -- 
 2.17.1
 
