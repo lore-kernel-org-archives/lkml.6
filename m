@@ -2,138 +2,102 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307DAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80746C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6DE2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:15:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6DE2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F2DA2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F2DA2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeK2WU1 (ORCPT
+        id S1727880AbeK2WVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:20:27 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46747 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbeK2WU1 (ORCPT
+        Thu, 29 Nov 2018 17:21:41 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40122 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeK2WVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:20:27 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gSKHu-0008Uq-7w; Thu, 29 Nov 2018 12:15:18 +0100
-Message-ID: <1543490117.2507.61.camel@pengutronix.de>
-Subject: Re: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Date:   Thu, 29 Nov 2018 12:15:17 +0100
-In-Reply-To: <VI1PR04MB5533595EE55A724C7E69F297EED10@VI1PR04MB5533.eurprd04.prod.outlook.com>
-References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
-         <20181117181225.10737-4-andrew.smirnov@gmail.com>
-         <ce2ac1a880ce2a7a39f0e42b5059676daa748e52.camel@nxp.com>
-         <CAHQ1cqH6LT4GsxUchrmVG1m3fqawgyUjxdHvh=SzxhBiQOd8eg@mail.gmail.com>
-         <1543313169.2507.39.camel@pengutronix.de>
-         <VI1PR04MB5533DE497786CD80D4FE0941EED00@VI1PR04MB5533.eurprd04.prod.outlook.com>
-         <CAHQ1cqEGABcH3EG9yGo7Ns2fPR1s_u1YPtFoKRjUh50=aa=J2Q@mail.gmail.com>
-         <VI1PR04MB5533595EE55A724C7E69F297EED10@VI1PR04MB5533.eurprd04.prod.outlook.com>
+        Thu, 29 Nov 2018 17:21:41 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k12so1469970qtf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 03:16:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YlcC0aGHswOfoNMeGr5j2xZjAIH275T4vL4O229VZj4=;
+        b=KsSQKCZ3IwbprbGUmUxEYn0x9Qgp/V1O6tFsePc77AqfLxBTAkWYC70LeHj8qGR9G2
+         BWVnwVlxWN4S807rsG7S2QG6wI6I+Tx7woDT6XeS5AsA5K+h9g6pzc/KSb4ubuMEJVcq
+         uuMPFADOyyX0rVunF4++Y3dXZf4wIUE/EeMNMeNu/mpqxFxkKJDWs/uP946MvIb0DRvF
+         650biIh6zIjuLbozF7MZeGR0QP4tdGEg2pxOphfZSX7xxVjKhV2WuCLN5uV8stQ7iVf3
+         19gDGvbN1mB3AiFizWOq4JYEFh/3lf+2Z2gyaMz8MIgEa8tgbkXtBJSFhHEYJniyeHpO
+         pp1g==
+X-Gm-Message-State: AA+aEWb3YHEKhic226p9IxofHiZlFacEdYJdVl7+YnokkTGtRd7NJtCw
+        lFkKqv/EiuImQGge3gttPBXRLNu+xDL5OKyp22c5bw==
+X-Google-Smtp-Source: AFSGD/Uzi/YIF0dBfG3jMaiSxCmXT0gRUV/TBQWQd9X1ws7DThaXwkxHkW4nldo85ak5RNiKlZU4DAUSY7UTL/XP6go=
+X-Received: by 2002:ac8:101a:: with SMTP id z26mr923663qti.184.1543490200087;
+ Thu, 29 Nov 2018 03:16:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20181121201622.20815-1-lyude@redhat.com> <20181128034720.GB21318@jelly>
+In-Reply-To: <20181128034720.GB21318@jelly>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 29 Nov 2018 12:16:29 +0100
+Message-ID: <CAO-hwJKLaM=RgfdR_c_MF_rCdJ=CPrbFRRST4KYb6czqsAORBA@mail.gmail.com>
+Subject: Re: [PATCH] Input: synaptics - Add PNP ID for ThinkPad P50 to SMBus
+To:     Peter Hutterer <peter.hutterer@who-t.net>
+Cc:     Lyude Paul <lyude@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        edvard.holst@gmail.com, arkadiusz.hiler@intel.com,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 28.11.2018, 10:55 +0000 schrieb Leonard Crestez:
-> On 11/27/18 11:15 PM, Andrey Smirnov wrote:
-> > On Tue, Nov 27, 2018 at 2:46 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> > > On 11/27/18 12:06 PM, Lucas Stach wrote:
-> > > > Am Montag, den 26.11.2018, 10:24 -0800 schrieb Andrey Smirnov:
-> > > > > On Tue, Nov 20, 2018 at 2:49 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> > > > > > On Sat, 2018-11-17 at 10:12 -0800, Andrey Smirnov wrote:
-> > > > > > > @@ -921,7 +1004,28 @@ static int imx6_pcie_probe(struct platform_device *pdev)
-> > > > > > > -     case IMX7D:
-> > > > > > > +     case IMX8MQ:
-> > > > > > > +             if (of_property_read_u32(node, "fsl,iomux-gpr1x",
-> > > > > > > +                                      &imx6_pcie->gpr1x)) {
-> > > > > > > +                     dev_err(dev, "Failed to get GPR1x address\n");
-> > > > > > > +                     return -EINVAL;
-> > > > > > > +             }
-> > > > > > 
-> > > > > > This is for distinguishing multiple controllers on the SOC but other
-> > > > > > registers and bits might differ. Isn't it preferable to have a property
-> > > > > > for controller id instead of adding many registers to DT?
-> > > > > 
-> > > > > I liked encoding necessary info in DT directly slightly better than
-> > > > > encoding abstract ID and then decoding it further in the driver code.
-> > > > > OTOH, I am not really attached to that path. Lucas, can you comment on
-> > > > > this please?
-> > > > Yes, after rereading the patch with this in mind I agree that having
-> > > > the GPR offset on DT directly is IMO the better approach than an
-> > > > abstract ID.
-> > > 
-> > > But it's not a single offset, for example the device_type (EP/RC) has
-> > > bits for the two controllers side-by-side in GPR12.
-> > > 
-> > 
-> > Playing devil's advocate for a bit:
-> > 
-> > More specifically, currently the following per-controller bits need to
-> > be configured:
-> > 
-> > - Location of the "device type" field within GPR12
-> > - GPR register to use to control PCIn_CLKREQ_B_OVERRIDE_EN and
-> > PCIn_CLKREQ_B_OVERRIDE_EN (GPR14 vs GPR16)
-> > - Now that Philip spoke against PCIE_CTRL_APPS_CLK_REQ being exposed
-> > via reset controller driver, we need to know which SRC register to use
-> > to control that bit (SRC_PCIEPHY_RCR vs. SRC_PCIE2_RCR)
-> 
-> I looked a bit through bindings and there some instances of syscon-$BLH 
-> properties which include detailed offsets or bitmasks for $BLAH relative 
-> to the target syscon node.
-> 
-> If you're going the route of adding properties points to IOMUXC/SRC bits 
-> it would sense to ensure that they're also usable on other SOCs, 
-> otherwise you're just making 8mq more complicated. But that's hard.
-> 
-> But I think it's easier to deal with such SOC-specific details behind a 
-> compat string. Maybe the DT list has some opinion on this?
+On Wed, Nov 28, 2018 at 4:47 AM Peter Hutterer <peter.hutterer@who-t.net> wrote:
+>
+> On Wed, Nov 21, 2018 at 03:16:20PM -0500, Lyude Paul wrote:
+> > Noticed the other day the trackpoint felt different on my P50, then
+> > realized it was because rmi4 wasn't loading for this machine
+> > automatically. Suspend/resume, hibernate, and everything else seem to
+> > work perfectly fine on here.
+> >
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+>
+> Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
 
-I agree with this. The number of bits and offsets is too large to keep
-it in DT properties, without running into backwards compat issues later
-on.
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-> I wonder if of_alias_get_id would be a reasonable way to distinguish 
-> between pcie0 and pcie1 instead of adding an ctrl-id property?
+Cheers,
+Benjamin
 
-No, the alias is a arbitrary number that can change from board to
-board. It can, but doesn't need to, correspond to any real hardware ID.
-If we need a hardware controller ID, then there is no way around adding
-a property to the PCIe controller node for this.
-
-Regards,
-Lucas
+>
+> Cheers,
+>    Peter
+>
+> > ---
+> >  drivers/input/mouse/synaptics.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+> > index 5e85f3cca867..c42813d50591 100644
+> > --- a/drivers/input/mouse/synaptics.c
+> > +++ b/drivers/input/mouse/synaptics.c
+> > @@ -170,6 +170,7 @@ static const char * const smbus_pnp_ids[] = {
+> >       "LEN0048", /* X1 Carbon 3 */
+> >       "LEN0046", /* X250 */
+> >       "LEN004a", /* W541 */
+> > +     "LEN005b", /* P50 */
+> >       "LEN0071", /* T480 */
+> >       "LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+> >       "LEN0073", /* X1 Carbon G5 (Elantech) */
+> > --
+> > 2.19.1
+> >
