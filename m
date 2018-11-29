@@ -2,121 +2,113 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676D8C64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80233C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 262012146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34BEB2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:22:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0wZ9qjZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262012146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YbLQYNNb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BEB2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbeK3K0c (ORCPT
+        id S1726652AbeK3K3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:26:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbeK3K0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:26:31 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E427121019;
-        Thu, 29 Nov 2018 23:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543533559;
-        bh=csSKUpgZONU0nmpFRcE2r6cm1Jjd5vLKitToD311j7g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=G0wZ9qjZuV0yYSK+4OQpDBmYs4axW2Y7HXSvy/l9/SA0P5E+8YJju6FMAOEQ5+KC7
-         zEidhTmNj1xvUPPOJQeCSIxilF62hZwVYPQeR0bI2mCrNdJ+TjuNKwscv2nToxLyiK
-         JOs16kBo3rDyz6r9FC3T+TkftNqpBb/wUo3n5kBM=
-Date:   Fri, 30 Nov 2018 08:19:13 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 0/2] =?ISO-2022-JP?B?RG9uGyRCIUcbKEJ0?= leave executable
- TLB entries to freed pages
-Message-Id: <20181130081913.916a27c8230b125da4bcf2f7@kernel.org>
-In-Reply-To: <4cddc2ba36ba3b6d528556207b8d4592209797ea.camel@intel.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
-        <20181129230616.f017059a093841dbaa4b82e6@kernel.org>
-        <4cddc2ba36ba3b6d528556207b8d4592209797ea.camel@intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 30 Nov 2018 05:29:17 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42464 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbeK3K3R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:29:17 -0500
+Received: by mail-yb1-f194.google.com with SMTP id o204-v6so1480333yba.9
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:22:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AnIlxkjtqtGHVmRvr73Sozy1WM9iPtA7IkS9ZaPRr5s=;
+        b=YbLQYNNbpyzyr/iA6zCYgVJvTwYSahanmlPS3wf2bZn1m9PmhRhbJIx1l9COC8xd3T
+         rVAKCWvzFXWkMsWyGrXGfCNl3gC8xU3NKbO4RRJTwJoGJ1Rn3fAcLp0T0jku9smLrI2D
+         RNQEwBImgTvsBrtfYvmrQXA5gRTp3Vt6niOOc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AnIlxkjtqtGHVmRvr73Sozy1WM9iPtA7IkS9ZaPRr5s=;
+        b=ev7iyAWxkqYaGbo9kkHgwVXNPpda0/jc6fAE/m6r9vrn1sU3kO+9gLvmdmBaGgZXQr
+         8LI7X/N3VwKFxAQbbBLRsrDM51SwcaDL6IHQbjO4rH/8nqqRm8TmoqsySUdcYMWgXKjY
+         WQLHP3rZhbTZkkcWQtHyr3AGdmIg9eK2N2dkMu5ZAGt7ewKuhGicEOV+o/9f8Obfb6ai
+         uvdiKOuHKwvJPNoZfAGJ7qnIFKs8qve4FLt0dAe44GrodhIdOB8/OKyn+nrahnhAKGqr
+         nah1kGGK004uosNQsRJCIz/YlRgO40bPKX9HlQy5dXBVk4PRYdpyrTdGaxc/n0H+d1k3
+         ryow==
+X-Gm-Message-State: AA+aEWZSpXuviEVQDRpGdcSXDN9Cw9liSUeA+d+HNJ5a8yUfG7R4YAvr
+        dK97Ue2ISBD93KLTqb/R22LXl9j4VdQ=
+X-Google-Smtp-Source: AFSGD/Vx1tC/Z0j1XIZjUkc2FsCmCpC2+Qh4TK/BsS86eZ4tBNoXugKOcYdiDzgwFUN3iJpvc/caGA==
+X-Received: by 2002:a25:d64d:: with SMTP id n74-v6mr3379651ybg.204.1543533725073;
+        Thu, 29 Nov 2018 15:22:05 -0800 (PST)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id g81-v6sm926890ywa.100.2018.11.29.15.22.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 15:22:02 -0800 (PST)
+Received: by mail-yb1-f174.google.com with SMTP id u103-v6so1489366ybi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:22:02 -0800 (PST)
+X-Received: by 2002:a25:3502:: with SMTP id c2-v6mr3465839yba.410.1543533722025;
+ Thu, 29 Nov 2018 15:22:02 -0800 (PST)
+MIME-Version: 1.0
+References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de> <1507383097088-1070743746-13-diffsplit-thomas@m3y3r.de>
+In-Reply-To: <1507383097088-1070743746-13-diffsplit-thomas@m3y3r.de>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 29 Nov 2018 15:21:50 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKpXpcQ4tM+m3Fwk+3CqH-pWF5xme2zgq=ojS=GMzqjQw@mail.gmail.com>
+Message-ID: <CAGXu5jKpXpcQ4tM+m3Fwk+3CqH-pWF5xme2zgq=ojS=GMzqjQw@mail.gmail.com>
+Subject: Re: [PATCH] pstore: Fix bool initialization/comparison
+To:     Thomas Meyer <thomas@m3y3r.de>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 18:49:26 +0000
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+On Sat, Oct 7, 2017 at 7:24 AM Thomas Meyer <thomas@m3y3r.de> wrote:
+> Bool initializations should use true and false. Bool tests don't need
+> comparisons.
+>
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
 
-> On Thu, 2018-11-29 at 23:06 +0900, Masami Hiramatsu wrote:
-> > On Tue, 27 Nov 2018 16:07:52 -0800
-> > Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> > 
-> > > Sometimes when memory is freed via the module subsystem, an executable
-> > > permissioned TLB entry can remain to a freed page. If the page is re-used to
-> > > back an address that will receive data from userspace, it can result in user
-> > > data being mapped as executable in the kernel. The root of this behavior is
-> > > vfree lazily flushing the TLB, but not lazily freeing the underlying pages. 
-> > 
-> > Good catch!
-> > 
-> > > 
-> > > There are sort of three categories of this which show up across modules,
-> > > bpf,
-> > > kprobes and ftrace:
-> > 
-> > For x86-64 kprobe, it sets the page NX and after that RW, and then release
-> > via module_memfree. So I'm not sure it really happens on kprobes. (Of course
-> > the default memory allocator is simpler so it may happen on other archs) But
-> > interesting fixes.
-> Yes, I think you are right, it should not leave an executable TLB entry in this
-> case. Ftrace actually does this on x86 as well.
-> 
-> Is there some other reason for calling set_memory_nx that should apply elsewhere
-> for module users? Or could it be removed in the case of this patch to centralize
-> the behavior?
+I totally missed this email (now over a year ago!)
 
-According to the commit c93f5cf571e7 ("kprobes/x86: Fix to set RWX bits correctly
-before releasing trampoline"), if we release readonly page by module_memfree(),
-it causes kernel crash. And at this moment, on x86-64 set the trampoline page
-readonly becuase it is an exacutable page. Setting NX bit is for security reason
-that should be set before making it writable.
-So I think if you centralize setting NX bit, it should be done before setting
-writable bit.
+However, since it's still correct and applies, I've taken it for -next
+now. :) Thanks!
 
-Thank you,
+-Kees
+
+> ---
+>
+> diff -u -p a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
+> --- a/fs/pstore/ftrace.c
+> +++ b/fs/pstore/ftrace.c
+> @@ -148,7 +148,7 @@ void pstore_unregister_ftrace(void)
+>         mutex_lock(&pstore_ftrace_lock);
+>         if (pstore_ftrace_enabled) {
+>                 unregister_ftrace_function(&pstore_ftrace_ops);
+> -               pstore_ftrace_enabled = 0;
+> +               pstore_ftrace_enabled = false;
+>         }
+>         mutex_unlock(&pstore_ftrace_lock);
+>
 
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Kees Cook
