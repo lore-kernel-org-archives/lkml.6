@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D85C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7143FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB43220868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3724E21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQPRd7Db"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB43220868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TObjm8fd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3724E21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731269AbeK3BZa (ORCPT
+        id S1731285AbeK3BZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48960 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbeK3BZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:29 -0500
+        id S1731270AbeK3BZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDE54205C9;
-        Thu, 29 Nov 2018 14:19:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 245A821104;
+        Thu, 29 Nov 2018 14:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501198;
-        bh=VRuJxr8T7FYK7s8jbrrbD1O8jC/otT6HvFJhYFdLaFM=;
+        s=default; t=1543501201;
+        bh=5RB+Ge78ujoLgfRhw2DPUxe/6ymReWdIoDcPEcLiNQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQPRd7Dbr2b+N81WhpI2W0KGrpRBD9VwZUtzZ9R/lSrxn4C9g+zNyj3lFsYOrZAEm
-         ke4pXM3wi6UV6InEPNc6YP1ubiu4Oz2ZEUIXqSh+xRVesh7oN1664j0KbwyB1tW6Np
-         yNxgy4CnuEMxsHlgwK18HLXv4ylod0QEZEMYiKUA=
+        b=TObjm8fdKmxPOrdUH0V/yBOj+7dzj6J+QqmfdGcvRAMBtLLk626gm6L5WohgD2ev7
+         vg2dX+/Bq1T4xGG3zHnX2eG2WkMb0bl4/u1VhvlrS9vfo+Tvs+DRcCFFag7/z+EzBg
+         HILBw2zuOp8Pu6f3Zmit9vaIpya8gdgRc4886UPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Solar Designer <solar@openwall.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Loic <hackurx@opensec.fr>
-Subject: [PATCH 4.4 84/86] namei: allow restricted O_CREAT of FIFOs and regular files
-Date:   Thu, 29 Nov 2018 15:12:49 +0100
-Message-Id: <20181129140116.434559220@linuxfoundation.org>
+        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.4 85/86] s390/mm: Check for valid vma before zapping in gmap_discard
+Date:   Thu, 29 Nov 2018 15:12:50 +0100
+Message-Id: <20181129140116.504805310@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -69,233 +63,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+From: Janosch Frank <frankja@linux.ibm.com>
 
-commit 30aba6656f61ed44cba445a3c0d38b296fa9e8f5 upstream.
+commit 1843abd03250115af6cec0892683e70cf2297c25 upstream.
 
-Disallows open of FIFOs or regular files not owned by the user in world
-writable sticky directories, unless the owner is the same as that of the
-directory or the file is opened without the O_CREAT flag.  The purpose
-is to make data spoofing attacks harder.  This protection can be turned
-on and off separately for FIFOs and regular files via sysctl, just like
-the symlinks/hardlinks protection.  This patch is based on Openwall's
-"HARDEN_FIFO" feature by Solar Designer.
+Userspace could have munmapped the area before doing unmapping from
+the gmap. This would leave us with a valid vmaddr, but an invalid vma
+from which we would try to zap memory.
 
-This is a brief list of old vulnerabilities that could have been prevented
-by this feature, some of them even allow for privilege escalation:
+Let's check before using the vma.
 
-CVE-2000-1134
-CVE-2007-3852
-CVE-2008-0525
-CVE-2009-0416
-CVE-2011-4834
-CVE-2015-1838
-CVE-2015-7442
-CVE-2016-7489
-
-This list is not meant to be complete.  It's difficult to track down all
-vulnerabilities of this kind because they were often reported without any
-mention of this particular attack vector.  In fact, before
-hardlinks/symlinks restrictions, fifos/regular files weren't the favorite
-vehicle to exploit them.
-
-[s.mesoraca16@gmail.com: fix bug reported by Dan Carpenter]
-  Link: https://lkml.kernel.org/r/20180426081456.GA7060@mwanda
-  Link: http://lkml.kernel.org/r/1524829819-11275-1-git-send-email-s.mesoraca16@gmail.com
-[keescook@chromium.org: drop pr_warn_ratelimited() in favor of audit changes in the future]
-[keescook@chromium.org: adjust commit subjet]
-Link: http://lkml.kernel.org/r/20180416175918.GA13494@beast
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Suggested-by: Solar Designer <solar@openwall.com>
-Suggested-by: Kees Cook <keescook@chromium.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Loic <hackurx@opensec.fr>
+Fixes: 1e133ab296f3 ("s390/mm: split arch/s390/mm/pgtable.c")
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Message-Id: <20180816082432.78828-1-frankja@linux.ibm.com>
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/sysctl/fs.txt |   36 +++++++++++++++++++++++++++++
- fs/namei.c                  |   53 +++++++++++++++++++++++++++++++++++++++++---
- include/linux/fs.h          |    2 +
- kernel/sysctl.c             |   18 ++++++++++++++
- 4 files changed, 106 insertions(+), 3 deletions(-)
+ arch/s390/mm/pgtable.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/Documentation/sysctl/fs.txt
-+++ b/Documentation/sysctl/fs.txt
-@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/
- - overflowgid
- - pipe-user-pages-hard
- - pipe-user-pages-soft
-+- protected_fifos
- - protected_hardlinks
-+- protected_regular
- - protected_symlinks
- - suid_dumpable
- - super-max
-@@ -182,6 +184,24 @@ applied.
- 
- ==============================================================
- 
-+protected_fifos:
-+
-+The intent of this protection is to avoid unintentional writes to
-+an attacker-controlled FIFO, where a program expected to create a regular
-+file.
-+
-+When set to "0", writing to FIFOs is unrestricted.
-+
-+When set to "1" don't allow O_CREAT open on FIFOs that we don't own
-+in world writable sticky directories, unless they are owned by the
-+owner of the directory.
-+
-+When set to "2" it also applies to group writable sticky directories.
-+
-+This protection is based on the restrictions in Openwall.
-+
-+==============================================================
-+
- protected_hardlinks:
- 
- A long-standing class of security issues is the hardlink-based
-@@ -202,6 +222,22 @@ This protection is based on the restrict
- 
- ==============================================================
- 
-+protected_regular:
-+
-+This protection is similar to protected_fifos, but it
-+avoids writes to an attacker-controlled regular file, where a program
-+expected to create one.
-+
-+When set to "0", writing to regular files is unrestricted.
-+
-+When set to "1" don't allow O_CREAT open on regular files that we
-+don't own in world writable sticky directories, unless they are
-+owned by the owner of the directory.
-+
-+When set to "2" it also applies to group writable sticky directories.
-+
-+==============================================================
-+
- protected_symlinks:
- 
- A long-standing class of security issues is the symlink-based
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -869,6 +869,8 @@ static inline void put_link(struct namei
- 
- int sysctl_protected_symlinks __read_mostly = 0;
- int sysctl_protected_hardlinks __read_mostly = 0;
-+int sysctl_protected_fifos __read_mostly;
-+int sysctl_protected_regular __read_mostly;
- 
- /**
-  * may_follow_link - Check symlink following for unsafe situations
-@@ -982,6 +984,45 @@ static int may_linkat(struct path *link)
- 	return -EPERM;
- }
- 
-+/**
-+ * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
-+ *			  should be allowed, or not, on files that already
-+ *			  exist.
-+ * @dir: the sticky parent directory
-+ * @inode: the inode of the file to open
-+ *
-+ * Block an O_CREAT open of a FIFO (or a regular file) when:
-+ *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
-+ *   - the file already exists
-+ *   - we are in a sticky directory
-+ *   - we don't own the file
-+ *   - the owner of the directory doesn't own the file
-+ *   - the directory is world writable
-+ * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
-+ * the directory doesn't have to be world writable: being group writable will
-+ * be enough.
-+ *
-+ * Returns 0 if the open is allowed, -ve on error.
-+ */
-+static int may_create_in_sticky(struct dentry * const dir,
-+				struct inode * const inode)
-+{
-+	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
-+	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
-+	    likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
-+	    uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
-+	    uid_eq(current_fsuid(), inode->i_uid))
-+		return 0;
-+
-+	if (likely(dir->d_inode->i_mode & 0002) ||
-+	    (dir->d_inode->i_mode & 0020 &&
-+	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
-+	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
-+		return -EACCES;
-+	}
-+	return 0;
-+}
-+
- static __always_inline
- const char *get_link(struct nameidata *nd)
- {
-@@ -3166,9 +3207,15 @@ finish_open:
- 		error = -ELOOP;
- 		goto out;
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -637,6 +637,8 @@ void gmap_discard(struct gmap *gmap, uns
+ 		vmaddr |= gaddr & ~PMD_MASK;
+ 		/* Find vma in the parent mm */
+ 		vma = find_vma(gmap->mm, vmaddr);
++		if (!vma)
++			continue;
+ 		size = min(to - gaddr, PMD_SIZE - (gaddr & ~PMD_MASK));
+ 		zap_page_range(vma, vmaddr, size, NULL);
  	}
--	error = -EISDIR;
--	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
--		goto out;
-+	if (open_flag & O_CREAT) {
-+		error = -EISDIR;
-+		if (d_is_dir(nd->path.dentry))
-+			goto out;
-+		error = may_create_in_sticky(dir,
-+					     d_backing_inode(nd->path.dentry));
-+		if (unlikely(error))
-+			goto out;
-+	}
- 	error = -ENOTDIR;
- 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
- 		goto out;
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -65,6 +65,8 @@ extern struct inodes_stat_t inodes_stat;
- extern int leases_enable, lease_break_time;
- extern int sysctl_protected_symlinks;
- extern int sysctl_protected_hardlinks;
-+extern int sysctl_protected_fifos;
-+extern int sysctl_protected_regular;
- 
- struct buffer_head;
- typedef int (get_block_t)(struct inode *inode, sector_t iblock,
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1716,6 +1716,24 @@ static struct ctl_table fs_table[] = {
- 		.extra2		= &one,
- 	},
- 	{
-+		.procname	= "protected_fifos",
-+		.data		= &sysctl_protected_fifos,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &two,
-+	},
-+	{
-+		.procname	= "protected_regular",
-+		.data		= &sysctl_protected_regular,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &two,
-+	},
-+	{
- 		.procname	= "suid_dumpable",
- 		.data		= &suid_dumpable,
- 		.maxlen		= sizeof(int),
 
 
