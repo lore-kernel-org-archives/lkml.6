@@ -2,77 +2,85 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F771C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B9FC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6734921019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:32:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6734921019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F141921019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:32:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbjP0KEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F141921019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeK3HjS (ORCPT
+        id S1726885AbeK3Hj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 02:39:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39596 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeK3HjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 02:39:17 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE13888D;
-        Thu, 29 Nov 2018 20:32:37 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 12:32:36 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Dave Rodgman <dave.rodgman@arm.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
-        "markus@oberhumer.com" <markus@oberhumer.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sonnyrao@google.com" <sonnyrao@google.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 7/7] lib/lzo: separate lzo-rle from lzo
-Message-Id: <20181129123236.8e31034663cd391bf9c24c3e@linux-foundation.org>
-In-Reply-To: <293c53a6-3313-359a-c5d0-2e2fa453494a@arm.com>
-References: <20181127161913.23863-1-dave.rodgman@arm.com>
-        <20181127161913.23863-8-dave.rodgman@arm.com>
-        <20181129044333.GH6379@jagdpanzerIV>
-        <293c53a6-3313-359a-c5d0-2e2fa453494a@arm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 30 Nov 2018 02:39:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbeK3Hj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 02:39:26 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45B8821104;
+        Thu, 29 Nov 2018 20:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543523566;
+        bh=OzK7H7ll0lE8CzSNcyKwfNVjw7Y6GajsQ4/3h2gBUr8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CbjP0KExrQpQvcCqwAdU7uzBrRk+KanrgcOu9k647cGRiN/1AYGuB0GwalzPFf6Vq
+         HeHJHbT9QZsbKw3bSlDVK8zYMrnD40wf6qVR9EYzLPoGv90L16NFPaOzBZHKd2u1PV
+         rBf4fRJCNv7NlOLUqvxMf3IfoJXzWhsNMsU/5h4Q=
+Subject: Re: [PATCH 4.14 000/100] 4.14.85-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah@kernel.org
+References: <20181129140058.768942700@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <be46da97-8fd1-49b5-941a-859c4062df23@kernel.org>
+Date:   Thu, 29 Nov 2018 13:32:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 10:21:53 +0000 Dave Rodgman <dave.rodgman@arm.com> wrote:
-
-> >> @@ -41,7 +41,7 @@ static DEFINE_IDR(zram_index_idr);
-> >>   static DEFINE_MUTEX(zram_index_mutex);
-> >>   
-> >>   static int zram_major;
-> >> -static const char *default_compressor = "lzo";
-> >> +static const char *default_compressor = "lzo-rle";
-> > 
-> > OK, so it's not just "separate lzo-rle", it's also "switch zram to
-> > a new compression algorithm by default". I'd say that usually I'd
-> > expect this to be separate patches.
+On 11/29/18 7:11 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.85 release.
+> There are 100 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Yes, fair point. akpm has picked this up now though, so probably a bit 
-> late to break it out into a separate patch?
+> Responses should be made by Sat Dec  1 14:00:29 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.85-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-That's fine.  akpm is flexible ;)  Whatever produces the best overall
-result in the permanent record, please.
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
 
