@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3744EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4BEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F13212146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B586921479
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmvFrIrC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F13212146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEG3P83X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B586921479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbeK3BhD (ORCPT
+        id S2389169AbeK3BhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732338AbeK3BhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:02 -0500
+        id S1732338AbeK3BhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 134E721479;
-        Thu, 29 Nov 2018 14:31:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 736592147C;
+        Thu, 29 Nov 2018 14:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501889;
-        bh=qPGw64zRS//kgIwfCjGfal0vlqY5CgWce8zAay7XQrQ=;
+        s=default; t=1543501891;
+        bh=yDiig809qWphk8EMufkH8u+dzt062kGKj26KVjj873U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmvFrIrCNtWQ52ceUQxeeVAQJY57fWh9ZfBz6x0wkdYY3X+6PCVMT9cintpiotNQD
-         Ro4ywwHFhPwBkBBz83ln00NfrTWA6IoLnCJC/65z/KNscp629BKyat8hD72gu8qoFK
-         XwjDNbf6UYeGR/+a9+5mbbQna1o4z25A7osqUdLQ=
+        b=tEG3P83XUifbTclRFXRChjI6IZT9owZO8zuLC7+FH1i7BdiqBASRsDvJLyNyYttcx
+         XUijb+1T0I5l5wHsyERoXHiHqS3IggQUjlBW9ORNc7D7oTzgUoR0XCVmYA9g0NftXJ
+         dhuPIM/Cp3AEnJJu+mw5ev4Ski4D+uVCjFXS+7LE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 082/110] ARM: make lookup_processor_type() non-__init
-Date:   Thu, 29 Nov 2018 15:12:53 +0100
-Message-Id: <20181129135924.570029302@linuxfoundation.org>
+Subject: [PATCH 4.19 083/110] ARM: clean up per-processor check_bugs method call
+Date:   Thu, 29 Nov 2018 15:12:54 +0100
+Message-Id: <20181129135924.605836476@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,42 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc ]
+[ Upstream commit 945aceb1db8885d3a35790cf2e810f681db52756 ]
 
-Move lookup_processor_type() out of the __init section so it is callable
-from (eg) the secondary startup code during hotplug.
+Call the per-processor type check_bugs() method in the same way as we
+do other per-processor functions - move the "processor." detail into
+proc-fns.h.
 
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/head-common.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/include/asm/proc-fns.h | 1 +
+ arch/arm/kernel/bugs.c          | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 6e0375e7db05..997b02302c31 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -145,6 +145,9 @@ __mmap_switched_data:
+diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
+index e25f4392e1b2..30c499146320 100644
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@ -99,6 +99,7 @@ extern void cpu_do_suspend(void *);
+ extern void cpu_do_resume(void *);
+ #else
+ #define cpu_proc_init			processor._proc_init
++#define cpu_check_bugs			processor.check_bugs
+ #define cpu_proc_fin			processor._proc_fin
+ #define cpu_reset			processor.reset
+ #define cpu_do_idle			processor._do_idle
+diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
+index 7be511310191..d41d3598e5e5 100644
+--- a/arch/arm/kernel/bugs.c
++++ b/arch/arm/kernel/bugs.c
+@@ -6,8 +6,8 @@
+ void check_other_bugs(void)
+ {
+ #ifdef MULTI_CPU
+-	if (processor.check_bugs)
+-		processor.check_bugs();
++	if (cpu_check_bugs)
++		cpu_check_bugs();
  #endif
- 	.size	__mmap_switched_data, . - __mmap_switched_data
+ }
  
-+	__FINIT
-+	.text
-+
- /*
-  * This provides a C-API version of __lookup_processor_type
-  */
-@@ -156,9 +159,6 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
- 
--	__FINIT
--	.text
--
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
 -- 
 2.17.1
 
