@@ -6,114 +6,93 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE0CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B19C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 603B320863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:26:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 603B320863
+	by mail.kernel.org (Postfix) with ESMTP id A982220863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A982220863
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbeK3Dci (ORCPT
+        id S1729104AbeK3DdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:32:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:38562 "EHLO foss.arm.com"
+        Thu, 29 Nov 2018 22:33:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:38622 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729121AbeK3Dci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:32:38 -0500
+        id S1728562AbeK3DdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:33:22 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 845EAA78;
-        Thu, 29 Nov 2018 08:26:43 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 215C1A78;
+        Thu, 29 Nov 2018 08:27:27 -0800 (PST)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7A953F59C;
-        Thu, 29 Nov 2018 08:26:41 -0800 (PST)
-Date:   Thu, 29 Nov 2018 16:26:39 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 305293F59C;
+        Thu, 29 Nov 2018 08:27:25 -0800 (PST)
+Date:   Thu, 29 Nov 2018 16:27:22 +0000
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     Julien Thierry <julien.thierry@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, daniel.thompson@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
-        james.morse@arm.com, joel@joelfernandes.org
-Subject: Re: [PATCH v6 01/24] arm64: Remove unused daif related
- functions/macros
-Message-ID: <20181129162638.gth6epspauks3a4i@lakrids.cambridge.arm.com>
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        joel@joelfernandes.org
+Subject: Re: [PATCH v6 02/24] arm64: cpufeature: Set SYSREG_GIC_CPUIF as a
+ boot system feature
+Message-ID: <20181129162722.s2ee2mdteli7jdir@lakrids.cambridge.arm.com>
 References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-2-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-3-git-send-email-julien.thierry@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542023835-21446-2-git-send-email-julien.thierry@arm.com>
+In-Reply-To: <1542023835-21446-3-git-send-email-julien.thierry@arm.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:56:52AM +0000, Julien Thierry wrote:
-> There are some helpers to modify PSR.[DAIF] bits that are not referenced
-> anywhere. The less these bits are available outside of local_irq_*
-> functions the better.
+On Mon, Nov 12, 2018 at 11:56:53AM +0000, Julien Thierry wrote:
+> It is not supported to have some CPUs using GICv3 sysreg CPU interface
+> while some others do not.
 > 
-> Get rid of those unused helpers.
+> Once ICC_SRE_EL1.SRE is set on a CPU, the bit cannot be cleared. Since
+> matching this feature require setting ICC_SRE_EL1.SRE, it cannot be
+> turned off if found on a CPU.
+> 
+> Set the feature as STRICT_BOOT, if boot CPU has it, all other CPUs are
+> required to have it.
 > 
 > Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
-> Cc: James Morse <james.morse@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+
+Makes sense.
 
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 
 Mark.
 
 > ---
->  arch/arm64/include/asm/assembler.h | 10 +---------
->  arch/arm64/include/asm/daifflags.h | 10 ----------
->  2 files changed, 1 insertion(+), 19 deletions(-)
+>  arch/arm64/kernel/cpufeature.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-> index 6142402..6e76c8e 100644
-> --- a/arch/arm64/include/asm/assembler.h
-> +++ b/arch/arm64/include/asm/assembler.h
-> @@ -60,16 +60,8 @@
->  	.endm
->  
->  /*
-> - * Enable and disable interrupts.
-> + * Save/restore interrupts.
->   */
-> -	.macro	disable_irq
-> -	msr	daifset, #2
-> -	.endm
-> -
-> -	.macro	enable_irq
-> -	msr	daifclr, #2
-> -	.endm
-> -
->  	.macro	save_and_disable_irq, flags
->  	mrs	\flags, daif
->  	msr	daifset, #2
-> diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
-> index 8d91f22..546bc39 100644
-> --- a/arch/arm64/include/asm/daifflags.h
-> +++ b/arch/arm64/include/asm/daifflags.h
-> @@ -43,16 +43,6 @@ static inline unsigned long local_daif_save(void)
->  	return flags;
->  }
->  
-> -static inline void local_daif_unmask(void)
-> -{
-> -	trace_hardirqs_on();
-> -	asm volatile(
-> -		"msr	daifclr, #0xf		// local_daif_unmask"
-> -		:
-> -		:
-> -		: "memory");
-> -}
-> -
->  static inline void local_daif_restore(unsigned long flags)
->  {
->  	if (!arch_irqs_disabled_flags(flags))
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index af50064..03a9d96 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1149,7 +1149,7 @@ static void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
+>  	{
+>  		.desc = "GIC system register CPU interface",
+>  		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
+>  		.matches = has_useable_gicv3_cpuif,
+>  		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>  		.field_pos = ID_AA64PFR0_GIC_SHIFT,
 > -- 
 > 1.9.1
 > 
