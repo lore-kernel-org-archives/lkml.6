@@ -6,129 +6,183 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8320CC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56852C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4398F21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4398F21479
+	by mail.kernel.org (Postfix) with ESMTP id 186C621473
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 186C621473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbeK3JtB (ORCPT
+        id S1726950AbeK3JtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:49:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37548 "EHLO mx1.redhat.com"
+        Fri, 30 Nov 2018 04:49:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57330 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeK3JtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:49:00 -0500
+        id S1726393AbeK3JtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:49:02 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94F7242BA0;
-        Thu, 29 Nov 2018 22:41:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ED74B307D84C;
+        Thu, 29 Nov 2018 22:41:57 +0000 (UTC)
 Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9C98604D0;
-        Thu, 29 Nov 2018 22:41:55 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B5D8E60123;
+        Thu, 29 Nov 2018 22:41:56 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Will Deacon <will.deacon@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH 1/2] locking/lockdep: Annotate #else/#endif's that are far from #if
-Date:   Thu, 29 Nov 2018 17:41:36 -0500
-Message-Id: <1543531297-18349-2-git-send-email-longman@redhat.com>
+Subject: [PATCH 2/2] locking/lockdep: Track number of zapped classes & report abuse
+Date:   Thu, 29 Nov 2018 17:41:37 -0500
+Message-Id: <1543531297-18349-3-git-send-email-longman@redhat.com>
 In-Reply-To: <1543531297-18349-1-git-send-email-longman@redhat.com>
 References: <1543531297-18349-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 22:41:56 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 29 Nov 2018 22:41:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some #else and #endif preprocessor directives that are hard
-to see where the corresponding #if*'s are when they are more than a
-page away. To make the code easier to read, those #else and #endif's
-are now properly annotated.
+When a kernel module is unloaded, all the lock classes associated with
+that kernel module will be zapped. Unfortunately the corresponding
+lockdep entries in stack_trace[], list_entries[], lock_classes[],
+lock_chains[] and chain_hlocks[] are not reusable without greatly
+complicating the existing code.
+
+As a result, an application that does repeated kernel module load and
+unload operations may exhaust all the entries in one of the lockdep
+arrays leading to a bug message. Lockdep cannot currently support this
+particular use case and we need to let users aware of that.
+
+The number of zapped lock classes will now be tracked. If one of the
+lockdep arrays is out of entries and the number of zapped classes is
+a significant portion (1/4) of the total, a warning message will be
+printed to notify users that we cannot supported repeated kernel module
+load and unload operations.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/lockdep.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ kernel/locking/lockdep.c           | 26 ++++++++++++++++++++++++++
+ kernel/locking/lockdep_internals.h |  1 +
+ kernel/locking/lockdep_proc.c      |  2 ++
+ 3 files changed, 29 insertions(+)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 1efada2..9e0d36b 100644
+index 9e0d36b..7136da4 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -267,11 +267,11 @@ static void lock_release_holdtime(struct held_lock *hlock)
- 	else
- 		lock_time_inc(&stats->write_holdtime, holdtime);
+@@ -138,6 +138,7 @@ static inline int debug_locks_off_graph_unlock(void)
+  * get freed - this significantly simplifies the debugging code.
+  */
+ unsigned long nr_lock_classes;
++unsigned long nr_zapped_classes;
+ struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
+ 
+ static inline struct lock_class *hlock_class(struct held_lock *hlock)
+@@ -372,6 +373,25 @@ static int verbose(struct lock_class *class)
  }
--#else
-+#else /* CONFIG_LOCK_STAT */
- static inline void lock_release_holdtime(struct held_lock *hlock)
- {
- }
--#endif
-+#endif /* CONFIG_LOCK_STAT */
  
  /*
-  * We keep a global list of all lock classes. The list only grows,
-@@ -1699,7 +1699,7 @@ static void inc_chains(void)
++ * Check the number of zapped classes and print a warning if it is
++ * more than 1/4 of the total.
++ */
++static void check_zapped_classes(void)
++{
++	if (nr_zapped_classes < nr_lock_classes/4)
++		return;
++	pr_warn("========================================================\n");
++	pr_warn("WARNING: %ld out of %ld locks have been destroyed\n",
++		nr_zapped_classes, nr_lock_classes);
++	pr_warn("through kernel module unload operations.\n");
++	pr_warn("The corresponding lockdep entries are not reusable.\n");
++	pr_warn("The system might have run out of lockdep entries because\n");
++	pr_warn("of repeated kernel module load and unload operations.\n");
++	pr_warn("Lockdep cannot support this particular use case.\n");
++	pr_warn("--------------------------------------------------------\n");
++}
++
++/*
+  * Stack-trace: tightly packed array of stack backtrace
+  * addresses. Protected by the graph_lock.
+  */
+@@ -417,6 +437,7 @@ static int save_trace(struct stack_trace *trace)
+ 			return 0;
+ 
+ 		print_lockdep_off("BUG: MAX_STACK_TRACE_ENTRIES too low!");
++		check_zapped_classes();
+ 		dump_stack();
+ 
+ 		return 0;
+@@ -781,6 +802,7 @@ static bool assign_lock_key(struct lockdep_map *lock)
+ 		}
+ 
+ 		print_lockdep_off("BUG: MAX_LOCKDEP_KEYS too low!");
++		check_zapped_classes();
+ 		dump_stack();
+ 		return NULL;
  	}
+@@ -847,6 +869,7 @@ static struct lock_list *alloc_list_entry(void)
+ 			return NULL;
+ 
+ 		print_lockdep_off("BUG: MAX_LOCKDEP_ENTRIES too low!");
++		check_zapped_classes();
+ 		dump_stack();
+ 		return NULL;
+ 	}
+@@ -2183,6 +2206,7 @@ static inline int add_chain_cache(struct task_struct *curr,
+ 			return 0;
+ 
+ 		print_lockdep_off("BUG: MAX_LOCKDEP_CHAINS too low!");
++		check_zapped_classes();
+ 		dump_stack();
+ 		return 0;
+ 	}
+@@ -2217,6 +2241,7 @@ static inline int add_chain_cache(struct task_struct *curr,
+ 			return 0;
+ 
+ 		print_lockdep_off("BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!");
++		check_zapped_classes();
+ 		dump_stack();
+ 		return 0;
+ 	}
+@@ -4146,6 +4171,7 @@ static void zap_class(struct lock_class *class)
+ 
+ 	RCU_INIT_POINTER(class->key, NULL);
+ 	RCU_INIT_POINTER(class->name, NULL);
++	nr_zapped_classes++;
  }
  
--#else
-+#else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
+ static inline int within(const void *addr, void *start, unsigned long size)
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index 88c847a..e719d3d 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -95,6 +95,7 @@ extern void get_usage_chars(struct lock_class *class,
+ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
  
- static inline int
- check_prev_add_irq(struct task_struct *curr, struct held_lock *prev,
-@@ -1713,7 +1713,7 @@ static inline void inc_chains(void)
- 	nr_process_chains++;
- }
+ extern unsigned long nr_lock_classes;
++extern unsigned long nr_zapped_classes;
+ extern unsigned long nr_list_entries;
+ extern unsigned long nr_lock_chains;
+ extern int nr_chain_hlocks;
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 3d31f9b..04823e6 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -314,6 +314,8 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, " irq-read-unsafe locks:         %11lu\n",
+ 			nr_irq_read_unsafe);
  
--#endif
-+#endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
- 
- static void
- print_deadlock_scenario(struct held_lock *nxt,
-@@ -2115,7 +2115,7 @@ static void print_collision(struct task_struct *curr,
- 	pr_warn("\nstack backtrace:\n");
- 	dump_stack();
- }
--#endif
-+#endif /* CONFIG_DEBUG_LOCKDEP */
- 
- /*
-  * Checks whether the chain and the current held locks are consistent
-@@ -2357,14 +2357,14 @@ static int validate_chain(struct task_struct *curr, struct lockdep_map *lock,
- 
- 	return 1;
- }
--#else
-+#else /* CONFIG_PROVE_LOCKING */
- static inline int validate_chain(struct task_struct *curr,
- 	       	struct lockdep_map *lock, struct held_lock *hlock,
- 		int chain_head, u64 chain_key)
- {
- 	return 1;
- }
--#endif
-+#endif /* CONFIG_PROVE_LOCKING */
- 
- /*
-  * We are building curr_chain_key incrementally, so double-check
-@@ -4100,7 +4100,7 @@ void lock_acquired(struct lockdep_map *lock, unsigned long ip)
- 	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(lock_acquired);
--#endif
-+#endif /* CONFIG_LOCK_STAT */
- 
- /*
-  * Used by the testsuite, sanitize the validator state
++	seq_printf(m, " zapped locks:                  %11lu\n",
++			nr_zapped_classes);
+ 	seq_printf(m, " uncategorized locks:           %11lu\n",
+ 			nr_uncategorized);
+ 	seq_printf(m, " unused locks:                  %11lu\n",
 -- 
 1.8.3.1
 
