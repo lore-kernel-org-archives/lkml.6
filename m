@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B227C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CA4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CFF205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB5C205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWVhY22s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CFF205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbiQZFTO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB5C205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731682AbeK3B1B (ORCPT
+        id S1731697AbeK3B1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51548 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730358AbeK3B1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:00 -0500
+        id S1730358AbeK3B1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA1C3205C9;
-        Thu, 29 Nov 2018 14:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A0D820868;
+        Thu, 29 Nov 2018 14:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501289;
-        bh=pJU5us8Xwsv2eGRVe/jUJOTUAT1Gr52oq4UPu65u1Yo=;
+        s=default; t=1543501291;
+        bh=eBoHjWFOHLdkyJA9Ao2Lu/zr71RHMq1X891DCmIGDR4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IWVhY22swToNOhN5aklBZVbrsVsBcjKJWGE3HUU3pYURYZdlb/Mcy8qyScDqBbxQ2
-         GoC8nFWPn8ZhTZrHL5Hr4/U+rfEU+Vu2qCnOcfCNwOT/LU2YkngcTrleLSL4AdUNQm
-         bxc8dkAxvY/GstUMKTag8+SP25iVctv5VAd9dtBo=
+        b=VbiQZFTOQY3DvYw12VNaVjV6Q9UuYPYzWVVuE9rp7Xov/5mbJp70iu9CZ8nKOj3OC
+         hgQDkBhHkW/rOdh2SfHbuYlJT8KxGivE6oSJKtxXHx1iL7y7AMJpGlEJWy++n1ZBTR
+         DUy+OtLRHvSSsQuJXeyasBTSGSmFJA36QekWXVCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Xulin Sun <xulin.sun@windriver.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 30/92] cpufreq: imx6q: add return value check for voltage scale
-Date:   Thu, 29 Nov 2018 15:11:59 +0100
-Message-Id: <20181129140108.832826759@linuxfoundation.org>
+Subject: [PATCH 4.9 31/92] rtc: pcf2127: fix a kmemleak caused in pcf2127_i2c_gather_write
+Date:   Thu, 29 Nov 2018 15:12:00 +0100
+Message-Id: <20181129140108.955413577@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,37 +63,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6ef28a04d1ccf718eee069b72132ce4aa1e52ab9 ]
+[ Upstream commit 9bde0afb7a906f1dabdba37162551565740b862d ]
 
-Add return value check for voltage scale when ARM clock
-rate change fail.
+pcf2127_i2c_gather_write() allocates memory as local variable
+for i2c_master_send(), after finishing the master transfer,
+the allocated memory should be freed. The kmemleak is reported:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+unreferenced object 0xffff80231e7dba80 (size 64):
+  comm "hwclock", pid 27762, jiffies 4296880075 (age 356.944s)
+  hex dump (first 32 bytes):
+    03 00 12 03 19 02 11 13 00 80 98 18 00 00 ff ff ................
+    00 50 00 00 00 00 00 00 02 00 00 00 00 00 00 00 .P..............
+  backtrace:
+    [<ffff000008221398>] create_object+0xf8/0x278
+    [<ffff000008a96264>] kmemleak_alloc+0x74/0xa0
+    [<ffff00000821070c>] __kmalloc+0x1ac/0x348
+    [<ffff0000087ed1dc>] pcf2127_i2c_gather_write+0x54/0xf8
+    [<ffff0000085fd9d4>] _regmap_raw_write+0x464/0x850
+    [<ffff0000085fe3f4>] regmap_bulk_write+0x1a4/0x348
+    [<ffff0000087ed32c>] pcf2127_rtc_set_time+0xac/0xe8
+    [<ffff0000087eaad8>] rtc_set_time+0x80/0x138
+    [<ffff0000087ebfb0>] rtc_dev_ioctl+0x398/0x610
+    [<ffff00000823f2c0>] do_vfs_ioctl+0xb0/0x848
+    [<ffff00000823fae4>] SyS_ioctl+0x8c/0xa8
+    [<ffff000008083ac0>] el0_svc_naked+0x34/0x38
+    [<ffffffffffffffff>] 0xffffffffffffffff
+
+Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/imx6q-cpufreq.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-pcf2127.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index ef1fa8145419..fa86946d12aa 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -130,8 +130,13 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 	/* Ensure the arm clock divider is what we expect */
- 	ret = clk_set_rate(arm_clk, new_freq * 1000);
- 	if (ret) {
-+		int ret1;
+diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
+index 2bfdf638b673..8a3667e761dd 100644
+--- a/drivers/rtc/rtc-pcf2127.c
++++ b/drivers/rtc/rtc-pcf2127.c
+@@ -237,6 +237,9 @@ static int pcf2127_i2c_gather_write(void *context,
+ 	memcpy(buf + 1, val, val_size);
+ 
+ 	ret = i2c_master_send(client, buf, val_size + 1);
 +
- 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
--		regulator_set_voltage_tol(arm_reg, volt_old, 0);
-+		ret1 = regulator_set_voltage_tol(arm_reg, volt_old, 0);
-+		if (ret1)
-+			dev_warn(cpu_dev,
-+				 "failed to restore vddarm voltage: %d\n", ret1);
- 		return ret;
- 	}
++	kfree(buf);
++
+ 	if (ret != val_size + 1)
+ 		return ret < 0 ? ret : -EIO;
  
 -- 
 2.17.1
