@@ -2,112 +2,122 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F46C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295AAC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD7820834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26EC20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:49:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uv5EWYxg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD7820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vN0j/r2R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26EC20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbeK3CyE (ORCPT
+        id S1728896AbeK3CzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:54:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34994 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbeK3CyE (ORCPT
+        Thu, 29 Nov 2018 21:55:11 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:35898 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbeK3CzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:54:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WJfKPk62iR8HjrIDfrOhj1agMZ8cEXyVLMFpR5knzCA=; b=uv5EWYxgH6Ho1XiYHKl5HZfoH
-        IpbUhztiIPNSIUVuWRlFHiIGQ/WCFunkW+RVxG/O3LspwIPzpSlMzAnj9IOC0sUZe2oveDfDeG6K9
-        8lRGsVUjl4OXcToTRpx7evs4OrcNOie9kgjN+4VTrvvSKEs6L7uAlTYtvP4FlJYr3FMqCGyHxLuUI
-        NgIn5zW2c2YotLeZZvjT7kRxITx3q1nooqegTWPSPDCj4GiuY+204B7vw+uzxjVgk++Hqm3x6t7el
-        44ZWlDut51iqOZ2UXRecwirUtOX4if0ovlxI9tUOEzb4EroIZ4f7/aUVY3EQqhHQxbSLkZ44LYFYB
-        89/2Z68lA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSOXy-0004jv-56; Thu, 29 Nov 2018 15:48:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A4E572029FD58; Thu, 29 Nov 2018 16:48:08 +0100 (CET)
-Date:   Thu, 29 Nov 2018 16:48:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 08/28] sched/smt: Make sched_smt_present track topology
-Message-ID: <20181129154808.GT2131@hirez.programming.kicks-ass.net>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185004.246110444@linutronix.de>
- <20181129144256.GI32259@char.us.oracle.com>
- <20181129145013.GA32648@char.us.oracle.com>
+        Thu, 29 Nov 2018 21:55:11 -0500
+Received: by mail-yb1-f193.google.com with SMTP id g192-v6so925094ybf.3;
+        Thu, 29 Nov 2018 07:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kz3dlz6bQKYwlGklFZS+mfDThvjV457sQrSsgWVJFng=;
+        b=vN0j/r2RslOzzzUxYdvwqlYZlvRszVNX/btGSlpATxyvpI2/Y1pAMV2uPkrqvMXoRX
+         nHvwy8NXinkgfGCnhQ/YrbWcp6fTQgua/fKOSIOV4Zbfc2ZXokJLb9KVvud3NSHxIQBa
+         G0mIw1neHBa0XvVR5ROuv38YIPOMuumXHjVlZOTntH6BsRCtGBY+sm/YNwgMpBlKxKvi
+         1ywaWVeJdQjR4soDpb/sifDolAYXlLTKJY6E5ENC+gBsrDp+TMuTAviQiuqO1xd8cYnR
+         kvOq7NIdbQwSudVxpf42O1AHmetw5cm07OE9afOESCLEzlpskjuXg+EyVIo+HoGxleZ+
+         43Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kz3dlz6bQKYwlGklFZS+mfDThvjV457sQrSsgWVJFng=;
+        b=K2szJ+VQS+vcK4ObnrTDRc0ZJoPmBhTvWVU+DYWeLf6qAQgDW2YhPwRWD64tfP/Dkx
+         6tv5Ic1jsz/wtMVSaNVyt/CBte9OtOyUT1SLOZ2XgWp4uJUQqh0RhRjj6hQatxZQcJOI
+         UPwV0DMeHvt/EfWzh9eCF5YZcxwBS5O57MZfBYdf5pSHnUDeubHcS4AwA6DlvTtslxOE
+         thsd7TFGP+U+BIG8aNOK9NGO+uwGJMgr69KNVj7148m/XCRcGWDAEt+o03WYwFYAGALs
+         nqFIW+ua9VaXWM54gY693hPwms3wUEiTDPv3WGf1VpCZjskJPa7e/Bvt0eJjKsoKmY/L
+         V1Ug==
+X-Gm-Message-State: AA+aEWYzBfZFk70hue0OPnlD0i2jNao1ZrW+cTOTfqldYfeWf+hUsO11
+        H7NASmgpCSEjBEtUBb/M0mqB8X/M
+X-Google-Smtp-Source: AFSGD/XVmjVwxITljB/ilynmA7TD9g/XGCTLxyATc38pRqeySvJC1b1W82D587Os6lomaqv9PzTuZw==
+X-Received: by 2002:a5b:eca:: with SMTP id a10-v6mr1734183ybs.242.1543506562214;
+        Thu, 29 Nov 2018 07:49:22 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:c5f4])
+        by smtp.gmail.com with ESMTPSA id p203-v6sm789514ywb.34.2018.11.29.07.49.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 07:49:21 -0800 (PST)
+Date:   Thu, 29 Nov 2018 07:49:17 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/13] blkcg: introduce common blkg association logic
+Message-ID: <20181129154917.GD2509588@devbig004.ftw2.facebook.com>
+References: <20181126211946.77067-1-dennis@kernel.org>
+ <20181126211946.77067-5-dennis@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129145013.GA32648@char.us.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126211946.77067-5-dennis@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 09:50:13AM -0500, Konrad Rzeszutek Wilk wrote:
-> On Thu, Nov 29, 2018 at 09:42:56AM -0500, Konrad Rzeszutek Wilk wrote:
-> > On Sun, Nov 25, 2018 at 07:33:36PM +0100, Thomas Gleixner wrote:
-> > > Currently the 'sched_smt_present' static key is enabled when at CPU bringup
-> > > SMT topology is observed, but it is never disabled. However there is demand
-> > > to also disable the key when the topology changes such that there is no SMT
-> > > present anymore.
-> > > 
-> > > Implement this by making the key count the number of cores that have SMT
-> > > enabled.
-> > > 
-> > > In particular, the SMT topology bits are set before interrrupts are enabled
-> > > and similarly, are cleared after interrupts are disabled for the last time
-> > > and the CPU dies.
-> > 
-> > I see that the number you used is '2', but I thought that there are some
-> > CPUs out there (Knights Landing?) that could have four threads?
-
-This code is generic, Sparc, Power and I think MIPS all have parts with
-SMT8.
-
-> > Would it be better to have a generic function that would provide the
-> > amount of threads the platform does expose - and use that instead
-> > of a constant value? 
+On Mon, Nov 26, 2018 at 04:19:37PM -0500, Dennis Zhou wrote:
+> There are 3 ways blkg association can happen: association with the
+> current css, with the page css (swap), or from the wbc css (writeback).
 > 
-> Nevermind - this would work even with 4 threads as we would hit the
-> number '2' before '4' and the key would be turned on/off properly.
+> This patch handles how association is done for the first case where we
+> are associating bsaed on the current css. If there is already a blkg
+> associated, the css will be reused and association will be redone as the
+> request_queue may have changed.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
-Indeed so, 2 is the point where we either have more than 1 sibling, or
-will go back to 1.
+Acked-by: Tejun Heo <tj@kernel.org>
+
+A minor nit below.
+
+> +/**
+> + * bio_associate_blkg - associate a bio with a blkg from q
+> + * @bio: target bio
+> + *
+> + * Associate @bio with the blkg found from the bio's css and request_queue.
+> + * If one is not found, bio_lookup_blkg() creates the blkg.  If a blkg is
+> + * already associated, the css is reused and association redone as the
+> + * request_queue may have changed.
+> + */
+> +void bio_associate_blkg(struct bio *bio)
+> +{
+> +	struct request_queue *q;
+> +	struct blkcg *blkcg;
+> +	struct blkcg_gq *blkg;
+> +
+> +	if (!bio_has_queue(bio))
+> +		return;
+
+So, this isn't actually necessary cuz we don't stack with
+request_queues but it might be more consistent to call disassociate
+before returning above so that even if sth like that happens the
+function always guarantees that the blkg and bio agree.
+
+Thanks.
+
+-- 
+tejun
