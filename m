@@ -2,48 +2,52 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB83C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C441C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 947B42146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D8C32145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1wSxhGNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 947B42146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9F8Yss1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D8C32145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389629AbeK3Bi3 (ORCPT
+        id S2389642AbeK3Bib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42066 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:38:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732483AbeK3Bi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:38:27 -0500
+        id S1732483AbeK3Bia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:38:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 313B5213A2;
-        Thu, 29 Nov 2018 14:32:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A58962146D;
+        Thu, 29 Nov 2018 14:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501974;
-        bh=5GTV/uNPYmmzougMSUCYronxFxCFZbx7OGYHxGKfpa4=;
+        s=default; t=1543501977;
+        bh=rV27G2XKB6sXoBsSLoZ+v5siD30qlU7214kLN5CHHbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1wSxhGNFNgRm8Hqq12/94xw2bwLHa2IFLRIgfY7oTprB+oYVsoPxh0P3ZR267d92n
-         19qS+aPz2j11sUUvjWNGuILlFeqlMAndI+onQT/h6kxwmte/+7W4Epj+3Iz95pIdUk
-         HPawS7zBVGv5DLRAi6fAL2sLSmfcfMYBLgtYGzfc=
+        b=N9F8Yss1fibbIOA3JPscbVxDGAGygO5351L3dIySRE2XBoD+hlWXmmR+6pvHMUZiM
+         SXo9MboTt3BoFrbEl4jymUL+5z4HUxk0wL/jpStZsJgooBtXvDTP0E4fqWDaraCEg8
+         L8G0I1S3w/h285WcnWcVNdRLq+z5xrUSenEjkYnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 4.19 099/110] dax: Avoid losing wakeup in dax_lock_mapping_entry
-Date:   Thu, 29 Nov 2018 15:13:10 +0100
-Message-Id: <20181129135925.248125334@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 090/110] drm/amdgpu: fix bug with IH ring setup
+Date:   Thu, 29 Nov 2018 15:13:01 +0100
+Message-Id: <20181129135924.890209320@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -61,45 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Wilcox <willy@infradead.org>
+[ Upstream commit c837243ff4017f493c7d6f4ab57278d812a86859 ]
 
-commit 25bbe21bf427a81b8e3ccd480ea0e1d940256156 upstream.
+The bug limits the IH ring wptr address to 40bit. When the system memory
+is bigger than 1TB, the bus address is more than 40bit, this causes the
+interrupt cannot be handled and cleared correctly.
 
-After calling get_unlocked_entry(), you have to call
-put_unlocked_entry() to avoid subsequent waiters losing wakeups.
-
-Fixes: c2a7d2a11552 ("filesystem-dax: Introduce dax_lock_mapping_entry()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Philip Yang <Philip.Yang@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dax.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/vega10_ih.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -217,6 +217,9 @@ static inline void *unlock_slot(struct a
- 	return (void *)entry;
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/vega10_ih.c b/drivers/gpu/drm/amd/amdgpu/vega10_ih.c
+index 5ae5ed2e62d6..21bc12e02311 100644
+--- a/drivers/gpu/drm/amd/amdgpu/vega10_ih.c
++++ b/drivers/gpu/drm/amd/amdgpu/vega10_ih.c
+@@ -129,7 +129,7 @@ static int vega10_ih_irq_init(struct amdgpu_device *adev)
+ 	else
+ 		wptr_off = adev->wb.gpu_addr + (adev->irq.ih.wptr_offs * 4);
+ 	WREG32_SOC15(OSSSYS, 0, mmIH_RB_WPTR_ADDR_LO, lower_32_bits(wptr_off));
+-	WREG32_SOC15(OSSSYS, 0, mmIH_RB_WPTR_ADDR_HI, upper_32_bits(wptr_off) & 0xFF);
++	WREG32_SOC15(OSSSYS, 0, mmIH_RB_WPTR_ADDR_HI, upper_32_bits(wptr_off) & 0xFFFF);
  
-+static void put_unlocked_mapping_entry(struct address_space *mapping,
-+				       pgoff_t index, void *entry);
-+
- /*
-  * Lookup entry in radix tree, wait for it to become unlocked if it is
-  * exceptional entry and return it. The caller must call
-@@ -256,8 +259,10 @@ static void *__get_unlocked_mapping_entr
- 		revalidate = wait_fn();
- 		finish_wait(wq, &ewait.wait);
- 		xa_lock_irq(&mapping->i_pages);
--		if (revalidate)
-+		if (revalidate) {
-+			put_unlocked_mapping_entry(mapping, index, entry);
- 			return ERR_PTR(-EAGAIN);
-+		}
- 	}
- }
- 
+ 	/* set rptr, wptr to 0 */
+ 	WREG32_SOC15(OSSSYS, 0, mmIH_RB_RPTR, 0);
+-- 
+2.17.1
+
 
 
