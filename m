@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3981C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604CDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC43213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 142152146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNPf+yhe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC43213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcL4YHYe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142152146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389314AbeK3Bhc (ORCPT
+        id S2389329AbeK3Bhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40532 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbeK3Bhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:31 -0500
+        id S1732374AbeK3Bhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E201C213A2;
-        Thu, 29 Nov 2018 14:31:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 646EB2145D;
+        Thu, 29 Nov 2018 14:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501918;
-        bh=MgJXLZZppXzaDlA7x9sjWVcTWfmkWT9S3Wu3Nu73DrE=;
+        s=default; t=1543501920;
+        bh=2iIF1BYLCp8Fh9E9YwBd5Vfny2ApSprcdx/NrOneWu0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jNPf+yhe7dcrUmZ+CGqXBPaplte7M0eJRlRTLGSp8+FVeh8iglR/SC4aQizx0TQNU
-         vDgrt+bQ8ic66V5ydHndTSjUoB+oZ7Jk59dCYDBL/thlwdVohP6qWUsUT2+SINFeKI
-         hCYcKmehsynktBXAMskTlGqiPmT0W8CFoaZlGpSI=
+        b=qcL4YHYetOEh9xSOzXPCbGVjliV3vTPSf8c3lnWYOdhQei5Gep0qIMgs0VD1KL9Ys
+         gziUmJpwi4LDbApeSWfp9Z5EZEvFr8dtcxiVPiDNQ4XONEiDKmBWZTQgGk0I/2RxKW
+         cB+IO6RAQhpZ8YzGundrkCE7NpHMhUqGmMC5sYEM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH 4.19 061/110] ACPICA: AML interpreter: add region addresses in global list during initialization
-Date:   Thu, 29 Nov 2018 15:12:32 +0100
-Message-Id: <20181129135923.722829835@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mitko Haralanov <mitko.haralanov@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 062/110] IB/hfi1: Eliminate races in the SDMA send error path
+Date:   Thu, 29 Nov 2018 15:12:33 +0100
+Message-Id: <20181129135923.760004612@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -64,46 +66,267 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
+commit a0e0cb82804a6a21d9067022c2dfdf80d11da429 upstream.
 
-The table load process omitted adding the operation region address
-range to the global list. This omission is problematic because the OS
-queries the global list to check for address range conflicts before
-deciding which drivers to load. This commit may result in warning
-messages that look like the following:
+pq_update() can only be called in two places: from the completion
+function when the complete (npkts) sequence of packets has been
+submitted and processed, or from setup function if a subset of the
+packets were submitted (i.e. the error path).
 
-[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
-[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+Currently both paths can call pq_update() if an error occurrs.  This
+race will cause the n_req value to go negative, hanging file_close(),
+or cause a crash by freeing the txlist more than once.
 
-However, these messages do not signify regressions. It is a result of
-properly adding address ranges within the global address list.
+Several variables are used to determine SDMA send state.  Most of
+these are unnecessary, and have code inspectible races between the
+setup function and the completion function, in both the send path and
+the error path.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
-Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Jean Delvare <jdelvare@suse.de>
+The request 'status' value can be set by the setup or by the
+completion function.  This is code inspectibly racy.  Since the status
+is not needed in the completion code or by the caller it has been
+removed.
+
+The request 'done' value races between usage by the setup and the
+completion function.  The completion function does not need this.
+When the number of processed packets matches npkts, it is done.
+
+The 'has_error' value races between usage of the setup and the
+completion function.  This can cause incorrect error handling and leave
+the n_req in an incorrect value (i.e. negative).
+
+Simplify the code by removing all of the unneeded state checks and
+variables.
+
+Clean up iovs node when it is freed.
+
+Eliminate race conditions in the error path:
+
+If all packets are submitted, the completion handler will set the
+completion status correctly (ok or aborted).
+
+If all packets are not submitted, the caller must wait until the
+submitted packets have completed, and then set the completion status.
+
+These two change eliminate the race condition in the error path.
+
+Reviewed-by: Mitko Haralanov <mitko.haralanov@intel.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/dsopcode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/infiniband/hw/hfi1/user_sdma.c |   85 ++++++++++++++-------------------
+ drivers/infiniband/hw/hfi1/user_sdma.h |    3 -
+ 2 files changed, 38 insertions(+), 50 deletions(-)
 
---- a/drivers/acpi/acpica/dsopcode.c
-+++ b/drivers/acpi/acpica/dsopcode.c
-@@ -417,6 +417,10 @@ acpi_ds_eval_region_operands(struct acpi
- 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
- 			  obj_desc->region.length));
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -328,7 +328,6 @@ int hfi1_user_sdma_process_request(struc
+ 	u8 opcode, sc, vl;
+ 	u16 pkey;
+ 	u32 slid;
+-	int req_queued = 0;
+ 	u16 dlid;
+ 	u32 selector;
  
-+	status = acpi_ut_add_address_range(obj_desc->region.space_id,
-+					   obj_desc->region.address,
-+					   obj_desc->region.length, node);
+@@ -392,7 +391,6 @@ int hfi1_user_sdma_process_request(struc
+ 	req->data_len  = 0;
+ 	req->pq = pq;
+ 	req->cq = cq;
+-	req->status = -1;
+ 	req->ahg_idx = -1;
+ 	req->iov_idx = 0;
+ 	req->sent = 0;
+@@ -400,12 +398,14 @@ int hfi1_user_sdma_process_request(struc
+ 	req->seqcomp = 0;
+ 	req->seqsubmitted = 0;
+ 	req->tids = NULL;
+-	req->done = 0;
+ 	req->has_error = 0;
+ 	INIT_LIST_HEAD(&req->txps);
+ 
+ 	memcpy(&req->info, &info, sizeof(info));
+ 
++	/* The request is initialized, count it */
++	atomic_inc(&pq->n_reqs);
 +
- 	/* Now the address and length are valid for this opregion */
+ 	if (req_opcode(info.ctrl) == EXPECTED) {
+ 		/* expected must have a TID info and at least one data vector */
+ 		if (req->data_iovs < 2) {
+@@ -500,7 +500,6 @@ int hfi1_user_sdma_process_request(struc
+ 		ret = pin_vector_pages(req, &req->iovs[i]);
+ 		if (ret) {
+ 			req->data_iovs = i;
+-			req->status = ret;
+ 			goto free_req;
+ 		}
+ 		req->data_len += req->iovs[i].iov.iov_len;
+@@ -561,14 +560,10 @@ int hfi1_user_sdma_process_request(struc
+ 		req->ahg_idx = sdma_ahg_alloc(req->sde);
  
- 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
+ 	set_comp_state(pq, cq, info.comp_idx, QUEUED, 0);
+-	atomic_inc(&pq->n_reqs);
+-	req_queued = 1;
+ 	/* Send the first N packets in the request to buy us some time */
+ 	ret = user_sdma_send_pkts(req, pcount);
+-	if (unlikely(ret < 0 && ret != -EBUSY)) {
+-		req->status = ret;
++	if (unlikely(ret < 0 && ret != -EBUSY))
+ 		goto free_req;
+-	}
+ 
+ 	/*
+ 	 * It is possible that the SDMA engine would have processed all the
+@@ -588,14 +583,8 @@ int hfi1_user_sdma_process_request(struc
+ 	while (req->seqsubmitted != req->info.npkts) {
+ 		ret = user_sdma_send_pkts(req, pcount);
+ 		if (ret < 0) {
+-			if (ret != -EBUSY) {
+-				req->status = ret;
+-				WRITE_ONCE(req->has_error, 1);
+-				if (READ_ONCE(req->seqcomp) ==
+-				    req->seqsubmitted - 1)
+-					goto free_req;
+-				return ret;
+-			}
++			if (ret != -EBUSY)
++				goto free_req;
+ 			wait_event_interruptible_timeout(
+ 				pq->busy.wait_dma,
+ 				(pq->state == SDMA_PKT_Q_ACTIVE),
+@@ -606,10 +595,19 @@ int hfi1_user_sdma_process_request(struc
+ 	*count += idx;
+ 	return 0;
+ free_req:
+-	user_sdma_free_request(req, true);
+-	if (req_queued)
++	/*
++	 * If the submitted seqsubmitted == npkts, the completion routine
++	 * controls the final state.  If sequbmitted < npkts, wait for any
++	 * outstanding packets to finish before cleaning up.
++	 */
++	if (req->seqsubmitted < req->info.npkts) {
++		if (req->seqsubmitted)
++			wait_event(pq->busy.wait_dma,
++				   (req->seqcomp == req->seqsubmitted - 1));
++		user_sdma_free_request(req, true);
+ 		pq_update(pq);
+-	set_comp_state(pq, cq, info.comp_idx, ERROR, req->status);
++		set_comp_state(pq, cq, info.comp_idx, ERROR, ret);
++	}
+ 	return ret;
+ }
+ 
+@@ -917,7 +915,6 @@ dosend:
+ 	ret = sdma_send_txlist(req->sde, &pq->busy, &req->txps, &count);
+ 	req->seqsubmitted += count;
+ 	if (req->seqsubmitted == req->info.npkts) {
+-		WRITE_ONCE(req->done, 1);
+ 		/*
+ 		 * The txreq has already been submitted to the HW queue
+ 		 * so we can free the AHG entry now. Corruption will not
+@@ -1365,11 +1362,15 @@ static int set_txreq_header_ahg(struct u
+ 	return idx;
+ }
+ 
+-/*
+- * SDMA tx request completion callback. Called when the SDMA progress
+- * state machine gets notification that the SDMA descriptors for this
+- * tx request have been processed by the DMA engine. Called in
+- * interrupt context.
++/**
++ * user_sdma_txreq_cb() - SDMA tx request completion callback.
++ * @txreq: valid sdma tx request
++ * @status: success/failure of request
++ *
++ * Called when the SDMA progress state machine gets notification that
++ * the SDMA descriptors for this tx request have been processed by the
++ * DMA engine. Called in interrupt context.
++ * Only do work on completed sequences.
+  */
+ static void user_sdma_txreq_cb(struct sdma_txreq *txreq, int status)
+ {
+@@ -1378,7 +1379,7 @@ static void user_sdma_txreq_cb(struct sd
+ 	struct user_sdma_request *req;
+ 	struct hfi1_user_sdma_pkt_q *pq;
+ 	struct hfi1_user_sdma_comp_q *cq;
+-	u16 idx;
++	enum hfi1_sdma_comp_state state = COMPLETE;
+ 
+ 	if (!tx->req)
+ 		return;
+@@ -1391,31 +1392,19 @@ static void user_sdma_txreq_cb(struct sd
+ 		SDMA_DBG(req, "SDMA completion with error %d",
+ 			 status);
+ 		WRITE_ONCE(req->has_error, 1);
++		state = ERROR;
+ 	}
+ 
+ 	req->seqcomp = tx->seqnum;
+ 	kmem_cache_free(pq->txreq_cache, tx);
+-	tx = NULL;
+ 
+-	idx = req->info.comp_idx;
+-	if (req->status == -1 && status == SDMA_TXREQ_S_OK) {
+-		if (req->seqcomp == req->info.npkts - 1) {
+-			req->status = 0;
+-			user_sdma_free_request(req, false);
+-			pq_update(pq);
+-			set_comp_state(pq, cq, idx, COMPLETE, 0);
+-		}
+-	} else {
+-		if (status != SDMA_TXREQ_S_OK)
+-			req->status = status;
+-		if (req->seqcomp == (READ_ONCE(req->seqsubmitted) - 1) &&
+-		    (READ_ONCE(req->done) ||
+-		     READ_ONCE(req->has_error))) {
+-			user_sdma_free_request(req, false);
+-			pq_update(pq);
+-			set_comp_state(pq, cq, idx, ERROR, req->status);
+-		}
+-	}
++	/* sequence isn't complete?  We are done */
++	if (req->seqcomp != req->info.npkts - 1)
++		return;
++
++	user_sdma_free_request(req, false);
++	set_comp_state(pq, cq, req->info.comp_idx, state, status);
++	pq_update(pq);
+ }
+ 
+ static inline void pq_update(struct hfi1_user_sdma_pkt_q *pq)
+@@ -1448,6 +1437,8 @@ static void user_sdma_free_request(struc
+ 		if (!node)
+ 			continue;
+ 
++		req->iovs[i].node = NULL;
++
+ 		if (unpin)
+ 			hfi1_mmu_rb_remove(req->pq->handler,
+ 					   &node->rb);
+--- a/drivers/infiniband/hw/hfi1/user_sdma.h
++++ b/drivers/infiniband/hw/hfi1/user_sdma.h
+@@ -205,8 +205,6 @@ struct user_sdma_request {
+ 	/* Writeable fields shared with interrupt */
+ 	u64 seqcomp ____cacheline_aligned_in_smp;
+ 	u64 seqsubmitted;
+-	/* status of the last txreq completed */
+-	int status;
+ 
+ 	/* Send side fields */
+ 	struct list_head txps ____cacheline_aligned_in_smp;
+@@ -228,7 +226,6 @@ struct user_sdma_request {
+ 	u16 tididx;
+ 	/* progress index moving along the iovs array */
+ 	u8 iov_idx;
+-	u8 done;
+ 	u8 has_error;
+ 
+ 	struct user_sdma_iovec iovs[MAX_VECTORS_PER_REQ];
 
 
