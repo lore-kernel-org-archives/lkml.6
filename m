@@ -2,78 +2,84 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F24EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1382C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F85A20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujgDzGAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F85A20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B7742081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7742081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbeK2LvF (ORCPT
+        id S1726825AbeK2LxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:51:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52128 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 06:53:11 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:49780 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeK2LvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:51:04 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 646962081C;
-        Thu, 29 Nov 2018 00:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543452454;
-        bh=lAgU7MYjvOByAzOhN+W2fwbbF8Ar0s4uVP3R243QB/c=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ujgDzGAdPaQsC/ZuPUhWB79O7IpnxRWbCWZQIHFMjL9gliwah0SNpx4293p6g8Fuz
-         Ubr/KzGL7A95aoRgCX1/HcwEOLIMLedBw4h61P1BBzuQGjH6QNRftXPpMW9XUnzlpL
-         ssZceq6y9/Z5uRWW6d+wfesvtb2OgzU2yQmnbi2M=
-Content-Type: text/plain; charset="utf-8"
+        id S1726492AbeK2LxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:53:10 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gSAWR-00073x-My; Wed, 28 Nov 2018 17:49:40 -0700
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181112150215.508-1-namit@vmware.com>
+ <20181112150215.508-2-namit@vmware.com> <20181113113000.GB4788@gmail.com>
+ <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
+ <48577A3F-0F76-4CCA-A959-965344D7259F@vmware.com>
+ <7ff5de62-d1df-9a67-1c86-497ce00a4de4@deltatee.com>
+ <7072A2D8-30F8-45CB-AB0C-B1BE4A30259A@vmware.com>
+ <db8293cf-9abc-e899-8f43-6e42039006d9@deltatee.com>
+ <521458D7-A27C-4112-81ED-1974EFE96A76@vmware.com>
+ <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
+ <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <336cf7d8-6495-b112-8d3a-c146222fda78@deltatee.com>
+Date:   Wed, 28 Nov 2018 17:49:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
-Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
-Message-ID: <154345245385.88331.8344308999294645427@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 12/17] dt-bindings: clock: Add Allwinner suniv F1C100s CCU
-Date:   Wed, 28 Nov 2018 16:47:33 -0800
+In-Reply-To: <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, x86@kernel.org, hpa@zytor.com, bp@alien8.de, tglx@linutronix.de, michal.lkml@markovi.net, yamada.masahiro@socionext.com, mingo@redhat.com, mingo@kernel.org, namit@vmware.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mesih Kilinc (2018-11-28 14:33:22)
-> Add compatiple string for Allwinner suniv F1C100s CCU.
-> Add clock and reset definitions.
-> =
 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On 2018-11-28 5:38 p.m., Nadav Amit wrote:
+> So what’s your take? Would you think this patch is still needed? Should it
+> only be enabled automatically for distcc and not for distcc-pump?
+
+Not sure. The patch will probably slow things down a lot (seeing
+assembly is always done locally and there are twice as many compile
+steps) and will create some confusion once it's possible to disable it
+for the new versions. Maybe hold off and see if anyone else complains?
+
+I don't really know how you'd detect whether pump is in use or not and
+I'm uncertain as to whether any of the auto detection can actually be
+made to be reliable.
+
+Logan
+
 
