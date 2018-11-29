@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1CFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981AAC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F85D21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613EB2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVE3MC2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F85D21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkU9zasc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613EB2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733019AbeK3BbD (ORCPT
+        id S1733031AbeK3BbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:31:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58402 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:31:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733006AbeK3BbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:02 -0500
+        id S1733006AbeK3BbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 185C221104;
-        Thu, 29 Nov 2018 14:25:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 831A02133F;
+        Thu, 29 Nov 2018 14:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501530;
-        bh=KDVFzHBcv3E185h7ZQ1spo93gxbixLbGZJLpieRtn/o=;
+        s=default; t=1543501533;
+        bh=pQi3YUEzJ+IJ5PO+y55p9MRRkp2f1nOi6ptzTDDmtMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qVE3MC2hikbr/wClxxxvqgwxOXXtGyrapWC7jjuXf9YG1FtuJzCettRPq/IsMXSRY
-         kKVsiOggFAf9uGR1CBfFmocUkWJAQenEW15sn4yGhTyt83217PY56lN6ypg5hSvFU0
-         9yAmTHWUJ+ntaOira1U7b9ENYbB9P2tJRW/lRjAg=
+        b=tkU9zascRPVpb+bMZebb9QA0L6SD3WNYuHba6DFs9jNlRdlGehWu3HlmL8OETg4L2
+         iz1SoHKV2S3q7FYvpU+m1QyI98GyvXG5tbBNJL8LRBYO04sORaeOdZdb0GKYk8leYC
+         f1Z5j8GPrhWqfANH5o6gpQqOJMo68H3b5XASgwtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
-        "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.14 035/100] drm/ast: Remove existing framebuffers before loading driver
-Date:   Thu, 29 Nov 2018 15:12:05 +0100
-Message-Id: <20181129140101.884849953@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 036/100] can: dev: can_get_echo_skb(): factor out non sending code to __can_get_echo_skb()
+Date:   Thu, 29 Nov 2018 15:12:06 +0100
+Message-Id: <20181129140101.951595895@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,63 +61,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 5478ad10e7850ce3d8b7056db05ddfa3c9ddad9a upstream.
+commit a4310fa2f24687888ce80fdb0e88583561a23700 upstream.
 
-If vesafb attaches to the AST device, it configures the framebuffer memory
-for uncached access by default. When ast.ko later tries to attach itself to
-the device, it wants to use write-combining on the framebuffer memory, but
-vesefb's existing configuration for uncached access takes precedence. This
-results in reduced performance.
+This patch factors out all non sending parts of can_get_echo_skb() into
+a seperate function __can_get_echo_skb(), so that it can be re-used in
+an upcoming patch.
 
-Removing the framebuffer's configuration before loding the AST driver fixes
-the problem. Other DRM drivers already contain equivalent code.
-
-Link: https://bugzilla.opensuse.org/show_bug.cgi?id=1112963
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: <stable@vger.kernel.org>
-Tested-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Tested-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_drv.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/can/dev.c   |   36 +++++++++++++++++++++++++-----------
+ include/linux/can/dev.h |    1 +
+ 2 files changed, 26 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -60,8 +60,29 @@ static const struct pci_device_id pciidl
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -476,14 +476,7 @@ void can_put_echo_skb(struct sk_buff *sk
+ }
+ EXPORT_SYMBOL_GPL(can_put_echo_skb);
  
- MODULE_DEVICE_TABLE(pci, pciidlist);
+-/*
+- * Get the skb from the stack and loop it back locally
+- *
+- * The function is typically called when the TX done interrupt
+- * is handled in the device driver. The driver must protect
+- * access to priv->echo_skb, if necessary.
+- */
+-unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
++struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
  
-+static void ast_kick_out_firmware_fb(struct pci_dev *pdev)
-+{
-+	struct apertures_struct *ap;
-+	bool primary = false;
-+
-+	ap = alloc_apertures(1);
-+	if (!ap)
-+		return;
-+
-+	ap->ranges[0].base = pci_resource_start(pdev, 0);
-+	ap->ranges[0].size = pci_resource_len(pdev, 0);
-+
-+#ifdef CONFIG_X86
-+	primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
-+#endif
-+	drm_fb_helper_remove_conflicting_framebuffers(ap, "astdrmfb", primary);
-+	kfree(ap);
+@@ -494,13 +487,34 @@ unsigned int can_get_echo_skb(struct net
+ 		struct can_frame *cf = (struct can_frame *)skb->data;
+ 		u8 dlc = cf->can_dlc;
+ 
+-		netif_rx(priv->echo_skb[idx]);
++		*len_ptr = dlc;
+ 		priv->echo_skb[idx] = NULL;
+ 
+-		return dlc;
++		return skb;
+ 	}
+ 
+-	return 0;
++	return NULL;
 +}
 +
- static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
-+	ast_kick_out_firmware_fb(pdev);
++/*
++ * Get the skb from the stack and loop it back locally
++ *
++ * The function is typically called when the TX done interrupt
++ * is handled in the device driver. The driver must protect
++ * access to priv->echo_skb, if necessary.
++ */
++unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
++{
++	struct sk_buff *skb;
++	u8 len;
 +
- 	return drm_get_pci_dev(pdev, ent, &driver);
++	skb = __can_get_echo_skb(dev, idx, &len);
++	if (!skb)
++		return 0;
++
++	netif_rx(skb);
++
++	return len;
  }
+ EXPORT_SYMBOL_GPL(can_get_echo_skb);
+ 
+--- a/include/linux/can/dev.h
++++ b/include/linux/can/dev.h
+@@ -163,6 +163,7 @@ void can_change_state(struct net_device
+ 
+ void can_put_echo_skb(struct sk_buff *skb, struct net_device *dev,
+ 		      unsigned int idx);
++struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr);
+ unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx);
+ void can_free_echo_skb(struct net_device *dev, unsigned int idx);
  
 
 
