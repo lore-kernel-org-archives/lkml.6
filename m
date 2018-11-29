@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC791C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7109BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39B1213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CDFD2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vmKjyVR3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39B1213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vhat5kcA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDFD2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388174AbeK3BeR (ORCPT
+        id S2388185AbeK3BeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:34:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35406 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:34:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387654AbeK3BeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:16 -0500
+        id S1733183AbeK3BeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:34:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8519213A2;
-        Thu, 29 Nov 2018 14:28:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 196F9213A2;
+        Thu, 29 Nov 2018 14:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501724;
-        bh=H6k9sLLc3qDd+kYZX2aHJutKIp9F69TY6toeZKKm3so=;
+        s=default; t=1543501726;
+        bh=YU+j7jjfNEXgGjkbH0butR9A+EaJOnAPv/jgXm3yERk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vmKjyVR33sp+pSGyRWs/1RpimRwI4im7Mn45t+CDA+0hG/xOS3+z8Mhdg4V6SOeND
-         47b+y/rtWHv0KSS4Ffu2dZx2UABShDDIBv49FhUbECK9M93H5jAVs8IUrJjvJSt10G
-         udl9+sk2HrGJC23l/Gm0Cfcp1z/rkTNfa/TUKDyE=
+        b=Vhat5kcAknceam94PoScX7jmpQeYfBPZVAYpj9n39Z/GwmnIWc3AWfdAcpCrgDhv8
+         fRHAi8W9qFsrCnVz4JsZ2mQTAI7g7EE20nUS9waLS8C7g00iURjbwGHH6JNmTM8rW3
+         A4cfFVty5HEJPXpCsxqPpXVsZX+v0fjNdoZhGzYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1cb36954e127c98dd037@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 015/110] ALSA: oss: Use kvzalloc() for local buffer allocations
-Date:   Thu, 29 Nov 2018 15:11:46 +0100
-Message-Id: <20181129135921.859461211@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 016/110] MAINTAINERS: Add Sasha as a stable branch maintainer
+Date:   Thu, 29 Nov 2018 15:11:47 +0100
+Message-Id: <20181129135921.898563255@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,73 +61,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 65766ee0bf7fe8b3be80e2e1c3ef54ad59b29476 upstream.
+commit cb5d21946d2a2f4687c482ab4604af1d29dac35a upstream.
 
-PCM OSS layer may allocate a few temporary buffers, one for the core
-read/write and another for the conversions via plugins.  Currently
-both are allocated via vmalloc().  But as the allocation size is
-equivalent with the PCM period size, the required size might be quite
-small, depending on the application.
+Sasha has somehow been convinced into helping me with the stable kernel
+maintenance.  Codify this slip in good judgement before he realizes what
+he really signed up for :)
 
-This patch replaces these vmalloc() calls with kvzalloc() for covering
-small period sizes better.  Also, we use "z"-alloc variant here for
-addressing the possible uninitialized access reported by syzkaller.
-
-Reported-by: syzbot+1cb36954e127c98dd037@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c    |    6 +++---
- sound/core/oss/pcm_plugin.c |    6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1062,8 +1062,8 @@ static int snd_pcm_oss_change_params_loc
- 	runtime->oss.channels = params_channels(params);
- 	runtime->oss.rate = params_rate(params);
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13769,6 +13769,7 @@ F:	drivers/i2c/busses/i2c-stm32*
  
--	vfree(runtime->oss.buffer);
--	runtime->oss.buffer = vmalloc(runtime->oss.period_bytes);
-+	kvfree(runtime->oss.buffer);
-+	runtime->oss.buffer = kvzalloc(runtime->oss.period_bytes, GFP_KERNEL);
- 	if (!runtime->oss.buffer) {
- 		err = -ENOMEM;
- 		goto failure;
-@@ -2328,7 +2328,7 @@ static void snd_pcm_oss_release_substrea
- {
- 	struct snd_pcm_runtime *runtime;
- 	runtime = substream->runtime;
--	vfree(runtime->oss.buffer);
-+	kvfree(runtime->oss.buffer);
- 	runtime->oss.buffer = NULL;
- #ifdef CONFIG_SND_PCM_OSS_PLUGINS
- 	snd_pcm_oss_plugin_clear(substream);
---- a/sound/core/oss/pcm_plugin.c
-+++ b/sound/core/oss/pcm_plugin.c
-@@ -66,8 +66,8 @@ static int snd_pcm_plugin_alloc(struct s
- 		return -ENXIO;
- 	size /= 8;
- 	if (plugin->buf_frames < frames) {
--		vfree(plugin->buf);
--		plugin->buf = vmalloc(size);
-+		kvfree(plugin->buf);
-+		plugin->buf = kvzalloc(size, GFP_KERNEL);
- 		plugin->buf_frames = frames;
- 	}
- 	if (!plugin->buf) {
-@@ -191,7 +191,7 @@ int snd_pcm_plugin_free(struct snd_pcm_p
- 	if (plugin->private_free)
- 		plugin->private_free(plugin);
- 	kfree(plugin->buf_channels);
--	vfree(plugin->buf);
-+	kvfree(plugin->buf);
- 	kfree(plugin);
- 	return 0;
- }
+ STABLE BRANCH
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
++M:	Sasha Levin <sashal@kernel.org>
+ L:	stable@vger.kernel.org
+ S:	Supported
+ F:	Documentation/process/stable-kernel-rules.rst
 
 
