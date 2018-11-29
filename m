@@ -2,160 +2,87 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77D3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470F9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88ECC20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88ECC20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 06CD120989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:37:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CD120989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbeK3Djp (ORCPT
+        id S1729405AbeK3Dmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:39:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:16357 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728136AbeK3Djo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:39:44 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB4109F75D;
-        Thu, 29 Nov 2018 16:33:47 +0000 (UTC)
-Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 94E2368377;
-        Thu, 29 Nov 2018 16:33:44 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 10:33:42 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129163342.tp5wlfcyiazwwyoh@treble>
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
- <20181126171036.chcbmb35ygpxziub@treble>
- <20181126175624.bruqfbkngbucpvxr@treble>
- <20181126200801.GW2113@hirez.programming.kicks-ass.net>
- <20181126212628.4apztfazichxnt7r@treble>
- <20181127084330.GX2113@hirez.programming.kicks-ass.net>
- <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
- <20181129094210.GC2131@hirez.programming.kicks-ass.net>
- <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
- <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+        Thu, 29 Nov 2018 22:42:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38822 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728136AbeK3Dmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:42:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A47F1A78;
+        Thu, 29 Nov 2018 08:36:58 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 734CD3F59C;
+        Thu, 29 Nov 2018 08:36:58 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id D6B831AE0FD4; Thu, 29 Nov 2018 16:37:16 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 16:37:16 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Julien Thierry <Julien.Thierry@arm.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: io: specify asm operand width for __iormb()
+Message-ID: <20181129163716.GA21475@arm.com>
+References: <20181129041912.5918-1-nick.desaulniers@gmail.com>
+ <fe3cba43-935b-448c-46e9-90ea75593e5b@arm.com>
+ <20181129104902.GA2377@arm.com>
+ <20181129161039.GA17063@flashbox>
+ <20181129161337.GA21349@arm.com>
+ <20181129161738.GA9805@flashbox>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 29 Nov 2018 16:33:48 +0000 (UTC)
+In-Reply-To: <20181129161738.GA9805@flashbox>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:38:53PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 29, 2018 at 05:37:39AM -0800, Andy Lutomirski wrote:
+On Thu, Nov 29, 2018 at 09:17:38AM -0700, Nathan Chancellor wrote:
+> On Thu, Nov 29, 2018 at 04:13:37PM +0000, Will Deacon wrote:
+> > On Thu, Nov 29, 2018 at 09:10:39AM -0700, Nathan Chancellor wrote:
+> > > This doesn't appear to work, I get this error:
+> > > 
+> > > In file included from arch/arm64/kernel/asm-offsets.c:24:
+> > > In file included from ./include/linux/dma-mapping.h:11:
+> > > In file included from ./include/linux/scatterlist.h:9:
+> > > In file included from ./arch/arm64/include/asm/io.h:209:
+> > > ./include/asm-generic/io.h:695:9: error: expected expression
+> > >         return readb(addr);
+> > >                ^
+> > > ./arch/arm64/include/asm/io.h:147:50: note: expanded from macro 'readb'
+> > > #define readb(c)                ({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
+> > >                                                                ^
+> > > ./arch/arm64/include/asm/io.h:120:28: note: expanded from macro '__iormb'
+> > >                      : "=r" (tmp) : "r" (unsigned long)(v) : "memory"); \
+> > >                                          ^
 > > 
+> > Can you try throwing another set of brackets around it, please?
 > > 
-> > > On Nov 29, 2018, at 1:42 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > 
-> > > On Wed, Nov 28, 2018 at 10:05:54PM -0800, Andy Lutomirski wrote:
-> > > 
-> > >>>> +static void static_call_bp_handler(struct pt_regs *regs, void *_data)
-> > >>>> +{
-> > >>>> +    struct static_call_bp_data *data = _data;
-> > >>>> +
-> > >>>> +    /*
-> > >>>> +     * For inline static calls, push the return address on the stack so the
-> > >>>> +     * "called" function will return to the location immediately after the
-> > >>>> +     * call site.
-> > >>>> +     *
-> > >>>> +     * NOTE: This code will need to be revisited when kernel CET gets
-> > >>>> +     *       implemented.
-> > >>>> +     */
-> > >>>> +    if (data->ret) {
-> > >>>> +        regs->sp -= sizeof(long);
-> > >>>> +        *(unsigned long *)regs->sp = data->ret;
-> > >>>> +    }
-> > >> 
-> > >> You can’t do this.  Depending on the alignment of the old RSP, which
-> > >> is not guaranteed, this overwrites regs->cs.  IRET goes boom.
-> > > 
-> > > I don't get it; can you spell that out?
-> > > 
-> > > The way I understand it is that we're at a location where a "E8 - Near
-> > > CALL" instruction should be, and thus RSP should be the regular kernel
-> > > stack, and the above simply does "PUSH ret", which is what that CALL
-> > > would've done too.
-> > > 
+> > 	((unsigned long)(v))
 > > 
-> > int3 isn’t IST anymore, so the int3 instruction conditionally
-> > subtracts 8 from RSP and then pushes SS, etc. So my email was
-> > obviously wrong wrt “cs”, but you’re still potentially overwriting the
-> > int3 IRET frame.
-> 
-> ARGH!..
-> 
-> can't we 'fix' that again? The alternative is moving that IRET-frame and
-> fixing everything up, which is going to be fragile, ugly and such
-> things more.
-> 
-> Commit d8ba61ba58c8 ("x86/entry/64: Don't use IST entry for #BP stack")
-> doesn't list any strong reasons for why it should NOT be an IST.
+> Thanks, that fixes the warning as well.
 
-This seems to work...
+Great, I'll push this out tomorrow with your reported-by on it.
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index ce25d84023c0..184523447d35 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -876,7 +876,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
-  * @paranoid == 2 is special: the stub will never switch stacks.  This is for
-  * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
-  */
--.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
-+.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 create_gap=0
- ENTRY(\sym)
- 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
- 
-@@ -891,6 +891,12 @@ ENTRY(\sym)
- 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
- 	.endif
- 
-+	.if \create_gap == 1
-+	.rept 6
-+	pushq 5*8(%rsp)
-+	.endr
-+	.endif
-+
- 	.if \paranoid == 1
- 	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
- 	jnz	.Lfrom_usermode_switch_stack_\@
-@@ -1126,7 +1132,7 @@ apicinterrupt3 HYPERV_STIMER0_VECTOR \
- #endif /* CONFIG_HYPERV */
- 
- idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
--idtentry int3			do_int3			has_error_code=0
-+idtentry int3			do_int3			has_error_code=0	create_gap=1
- idtentry stack_segment		do_stack_segment	has_error_code=1
- 
- #ifdef CONFIG_XEN_PV
+Will
