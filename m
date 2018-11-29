@@ -7,44 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFABC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A6CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9AF2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B98D2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1maU05m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9AF2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0jtn5BO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B98D2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbeK3Bd4 (ORCPT
+        id S2388065AbeK3Bd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34808 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733011AbeK3Bdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:55 -0500
+        id S1733011AbeK3Bd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CC9B2146F;
-        Thu, 29 Nov 2018 14:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682A82145D;
+        Thu, 29 Nov 2018 14:28:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501702;
-        bh=nu3g1+EI96gg0CYT+j1+IPNrrvwBbXDXivnPgFNjJlk=;
+        s=default; t=1543501704;
+        bh=j7nSJHJntsFJDwKrAyPfJRBAzc92v3smGQ8PB5xgd7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u1maU05m2biHN4vxmSSSJ2/+Qhy1qU9qzcSRBQ0wxdRnzfDlFAIS71gZ3ln2SzTvT
-         yjL1vorbxAySDH2PWkOdY+fJG0itM9Hb2NJiqDE2I7yVwAELXJ+hB2ZapuZ23cMgJ7
-         9E1JK2YuscuQudUpJKynMwt1zEqbhguz84YHdVUI=
+        b=S0jtn5BOSbw+khNYj6w64vHh+nnoYtmpExssGhdl15Oos+IlRp8HXawdl8n+hTAOB
+         CkBhFj4hHH1+7URFCLScRXO8ndpr5gTueLAXTiZIJ5Rh49beCFj7/VgPR0SJyRoP2D
+         B5f2CslcN7JtRougl0mxit1sraUhY1dvmxRCoTgU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 091/100] usb: xhci: fix uninitialized completion when USB3 port got wrong status
-Date:   Thu, 29 Nov 2018 15:13:01 +0100
-Message-Id: <20181129140106.658352954@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Solar Designer <solar@openwall.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Loic <hackurx@opensec.fr>
+Subject: [PATCH 4.14 092/100] namei: allow restricted O_CREAT of FIFOs and regular files
+Date:   Thu, 29 Nov 2018 15:13:02 +0100
+Message-Id: <20181129140106.718416650@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,52 +69,233 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 
-commit 958c0bd86075d4ef1c936998deefe1947e539240 upstream.
+commit 30aba6656f61ed44cba445a3c0d38b296fa9e8f5 upstream.
 
-Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
-Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
-after clear port reset it works fine.
+Disallows open of FIFOs or regular files not owned by the user in world
+writable sticky directories, unless the owner is the same as that of the
+directory or the file is opened without the O_CREAT flag.  The purpose
+is to make data spoofing attacks harder.  This protection can be turned
+on and off separately for FIFOs and regular files via sysctl, just like
+the symlinks/hardlinks protection.  This patch is based on Openwall's
+"HARDEN_FIFO" feature by Solar Designer.
 
-Since this device is registered on USB3 roothub at boot,
-when port status reports not superspeed, xhci_get_port_status will call
-an uninitialized completion in bus_state[0].
-Kernel will hang because of NULL pointer.
+This is a brief list of old vulnerabilities that could have been prevented
+by this feature, some of them even allow for privilege escalation:
 
-Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
+CVE-2000-1134
+CVE-2007-3852
+CVE-2008-0525
+CVE-2009-0416
+CVE-2011-4834
+CVE-2015-1838
+CVE-2015-7442
+CVE-2016-7489
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+This list is not meant to be complete.  It's difficult to track down all
+vulnerabilities of this kind because they were often reported without any
+mention of this particular attack vector.  In fact, before
+hardlinks/symlinks restrictions, fifos/regular files weren't the favorite
+vehicle to exploit them.
+
+[s.mesoraca16@gmail.com: fix bug reported by Dan Carpenter]
+  Link: https://lkml.kernel.org/r/20180426081456.GA7060@mwanda
+  Link: http://lkml.kernel.org/r/1524829819-11275-1-git-send-email-s.mesoraca16@gmail.com
+[keescook@chromium.org: drop pr_warn_ratelimited() in favor of audit changes in the future]
+[keescook@chromium.org: adjust commit subjet]
+Link: http://lkml.kernel.org/r/20180416175918.GA13494@beast
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Solar Designer <solar@openwall.com>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Loic <hackurx@opensec.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c  |    2 +-
- drivers/usb/host/xhci-ring.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ Documentation/sysctl/fs.txt |   36 +++++++++++++++++++++++++++++
+ fs/namei.c                  |   53 +++++++++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h          |    2 +
+ kernel/sysctl.c             |   18 ++++++++++++++
+ 4 files changed, 106 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -895,7 +895,7 @@ static u32 xhci_get_port_status(struct u
- 			status |= USB_PORT_STAT_SUSPEND;
- 	}
- 	if ((raw_port_status & PORT_PLS_MASK) == XDEV_RESUME &&
--		!DEV_SUPERSPEED_ANY(raw_port_status)) {
-+		!DEV_SUPERSPEED_ANY(raw_port_status) && hcd->speed < HCD_USB3) {
- 		if ((raw_port_status & PORT_RESET) ||
- 				!(raw_port_status & PORT_PE))
- 			return 0xffffffff;
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1746,7 +1746,7 @@ static void handle_port_status(struct xh
- 	 * RExit to a disconnect state).  If so, let the the driver know it's
- 	 * out of the RExit state.
- 	 */
--	if (!DEV_SUPERSPEED_ANY(portsc) &&
-+	if (!DEV_SUPERSPEED_ANY(portsc) && hcd->speed < HCD_USB3 &&
- 			test_and_clear_bit(faked_port_index,
- 				&bus_state->rexit_ports)) {
- 		complete(&bus_state->rexit_done[faked_port_index]);
+--- a/Documentation/sysctl/fs.txt
++++ b/Documentation/sysctl/fs.txt
+@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/
+ - overflowgid
+ - pipe-user-pages-hard
+ - pipe-user-pages-soft
++- protected_fifos
+ - protected_hardlinks
++- protected_regular
+ - protected_symlinks
+ - suid_dumpable
+ - super-max
+@@ -182,6 +184,24 @@ applied.
+ 
+ ==============================================================
+ 
++protected_fifos:
++
++The intent of this protection is to avoid unintentional writes to
++an attacker-controlled FIFO, where a program expected to create a regular
++file.
++
++When set to "0", writing to FIFOs is unrestricted.
++
++When set to "1" don't allow O_CREAT open on FIFOs that we don't own
++in world writable sticky directories, unless they are owned by the
++owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++This protection is based on the restrictions in Openwall.
++
++==============================================================
++
+ protected_hardlinks:
+ 
+ A long-standing class of security issues is the hardlink-based
+@@ -202,6 +222,22 @@ This protection is based on the restrict
+ 
+ ==============================================================
+ 
++protected_regular:
++
++This protection is similar to protected_fifos, but it
++avoids writes to an attacker-controlled regular file, where a program
++expected to create one.
++
++When set to "0", writing to regular files is unrestricted.
++
++When set to "1" don't allow O_CREAT open on regular files that we
++don't own in world writable sticky directories, unless they are
++owned by the owner of the directory.
++
++When set to "2" it also applies to group writable sticky directories.
++
++==============================================================
++
+ protected_symlinks:
+ 
+ A long-standing class of security issues is the symlink-based
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -904,6 +904,8 @@ static inline void put_link(struct namei
+ 
+ int sysctl_protected_symlinks __read_mostly = 0;
+ int sysctl_protected_hardlinks __read_mostly = 0;
++int sysctl_protected_fifos __read_mostly;
++int sysctl_protected_regular __read_mostly;
+ 
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+@@ -1017,6 +1019,45 @@ static int may_linkat(struct path *link)
+ 	return -EPERM;
+ }
+ 
++/**
++ * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
++ *			  should be allowed, or not, on files that already
++ *			  exist.
++ * @dir: the sticky parent directory
++ * @inode: the inode of the file to open
++ *
++ * Block an O_CREAT open of a FIFO (or a regular file) when:
++ *   - sysctl_protected_fifos (or sysctl_protected_regular) is enabled
++ *   - the file already exists
++ *   - we are in a sticky directory
++ *   - we don't own the file
++ *   - the owner of the directory doesn't own the file
++ *   - the directory is world writable
++ * If the sysctl_protected_fifos (or sysctl_protected_regular) is set to 2
++ * the directory doesn't have to be world writable: being group writable will
++ * be enough.
++ *
++ * Returns 0 if the open is allowed, -ve on error.
++ */
++static int may_create_in_sticky(struct dentry * const dir,
++				struct inode * const inode)
++{
++	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
++	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
++	    likely(!(dir->d_inode->i_mode & S_ISVTX)) ||
++	    uid_eq(inode->i_uid, dir->d_inode->i_uid) ||
++	    uid_eq(current_fsuid(), inode->i_uid))
++		return 0;
++
++	if (likely(dir->d_inode->i_mode & 0002) ||
++	    (dir->d_inode->i_mode & 0020 &&
++	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
++	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
++		return -EACCES;
++	}
++	return 0;
++}
++
+ static __always_inline
+ const char *get_link(struct nameidata *nd)
+ {
+@@ -3355,9 +3396,15 @@ finish_open:
+ 	if (error)
+ 		return error;
+ 	audit_inode(nd->name, nd->path.dentry, 0);
+-	error = -EISDIR;
+-	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
+-		goto out;
++	if (open_flag & O_CREAT) {
++		error = -EISDIR;
++		if (d_is_dir(nd->path.dentry))
++			goto out;
++		error = may_create_in_sticky(dir,
++					     d_backing_inode(nd->path.dentry));
++		if (unlikely(error))
++			goto out;
++	}
+ 	error = -ENOTDIR;
+ 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
+ 		goto out;
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -72,6 +72,8 @@ extern struct inodes_stat_t inodes_stat;
+ extern int leases_enable, lease_break_time;
+ extern int sysctl_protected_symlinks;
+ extern int sysctl_protected_hardlinks;
++extern int sysctl_protected_fifos;
++extern int sysctl_protected_regular;
+ 
+ typedef __kernel_rwf_t rwf_t;
+ 
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1794,6 +1794,24 @@ static struct ctl_table fs_table[] = {
+ 		.extra2		= &one,
+ 	},
+ 	{
++		.procname	= "protected_fifos",
++		.data		= &sysctl_protected_fifos,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
++		.procname	= "protected_regular",
++		.data		= &sysctl_protected_regular,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &two,
++	},
++	{
+ 		.procname	= "suid_dumpable",
+ 		.data		= &suid_dumpable,
+ 		.maxlen		= sizeof(int),
 
 
