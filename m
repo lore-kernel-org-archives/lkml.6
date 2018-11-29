@@ -2,108 +2,136 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF0AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97258C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6606B2147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:09:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="D+auLjln";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h4t5752D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6606B2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 47F8B20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F8B20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeK2TN5 (ORCPT
+        id S1728071AbeK2TOj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:13:57 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:51673 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727017AbeK2TN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:13:57 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 89E8C21C24;
-        Thu, 29 Nov 2018 03:09:25 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 29 Nov 2018 03:09:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=s8D3KGdqHXecFnX8it035mVxsJi
-        xwUXlYYaL2rTeZpw=; b=D+auLjlnt/60hHebumzyX1bPax7V6Y3zBYkpDyjRTRY
-        JZP0JpIR4kQAl0ccya1WP+bgGKPKPPV/8COn1uCCmkn7hOgmXhxfEgiDJAi9N5pp
-        yWNRIvkbnOZXwbDQc8wsU21DBnKqF05jeCZyhPJsNeqUrpFtfH1LoWHUIYjsZ2IQ
-        ffeO7qUpieqWPHIZ5m9muuhkH5pULUu0Kjk+pS21jO4omaFAaIrQ8PWc65lH4Xvk
-        OkjyyoHgafSabf0I9D8NaG/ZNMHK924NM426LmHUeEJbfLVOAQr7Pphu+bJsoZJs
-        PhbYsB6OyIGwpm8OTlFSV7dthAjCjc3PpwdACYsD7Qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=s8D3KG
-        dqHXecFnX8it035mVxsJixwUXlYYaL2rTeZpw=; b=h4t5752DULVxuP6RmCILZ8
-        e5DIxOhzCAo4oIXYNzo0d9j53fbVqGI0DNYGM++2mI6qhYn65CI4VCT8nwVGpcvz
-        cI1bcZYoXfUgrMOcjpf0uCYbXoeApkxU/fkUbs7Ib+ZQFnF15d77VxOjQniRMCRZ
-        aPgPp3Q9sJf0FtGkSBgvNS9ebeCYKeV8JcTbTWqDXc4Eg7MpieB6HERQ1D9O9eFL
-        W78cJvs4ytwxWZxWjYKDsC+oT1sffXQWWQLzkcPGw+2mPReANyNIKORrjkN/zm+z
-        AlmloD6gUVsSbnG7fTvYdcSRWzmPnb5CJIFZiPi9vGiKXSKOA95Gra7BtANByyzg
-        ==
-X-ME-Sender: <xms:tJ7_W1U2AaFX2OR2Pia79cLfrxPuCAXgximISiunK9uKikZP_LgpGQ>
-X-ME-Proxy: <xmx:tJ7_W2btrDonF6B_1hADNipujXU7OkC-MWPBxyS3GF6XVzQOaq6I8A>
-    <xmx:tJ7_WwUW1ruyd_AI26VD_b6wg-HtDF2aLGmSgwD1U82895fs_6AKWQ>
-    <xmx:tZ7_W2Awe6bu7mM2avtB8-TTxr6YnfsccT3ZLYVTNebk4k4vcFpx3g>
-    <xmx:tZ7_W_wQII0qcQz_Vg8soCB68M3U2RGLCDDZj00GuJSpr-suhhNYrw>
-    <xmx:tZ7_W8aXmDCxHMpjE3OpYiXMF7llQxv0V9Hv6Uc3-7TIRf-StxzXOA>
-    <xmx:tZ7_WyRomZhW035oUNH5Y_GyWSZMWOc1umKRMka30_mhEUQWvLL0dA>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 75642E4122;
-        Thu, 29 Nov 2018 03:09:24 -0500 (EST)
-Date:   Thu, 29 Nov 2018 09:09:23 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Cc:     stable@vger.kernel.org, dedekind1@gmail.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
-Message-ID: <20181129080923.GE13859@kroah.com>
-References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+        Thu, 29 Nov 2018 14:14:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:41410 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726789AbeK2TOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:14:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4359DY261Bz9vGlg;
+        Thu, 29 Nov 2018 09:10:05 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 00KF6-RPm1J6; Thu, 29 Nov 2018 09:10:05 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4359DY1d8Mz9vGlV;
+        Thu, 29 Nov 2018 09:10:05 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 166538B890;
+        Thu, 29 Nov 2018 09:10:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id zaqgjfPvBWmw; Thu, 29 Nov 2018 09:10:06 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DBD738B762;
+        Thu, 29 Nov 2018 09:10:05 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B7FD269B13; Thu, 29 Nov 2018 08:10:05 +0000 (UTC)
+Message-Id: <92106c1e558d4ecbdea315669cb4a4407f5dce5e.1543478199.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
+References: <cover.1543478199.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v8 01/20] powerpc/book3s32: Remove CONFIG_BOOKE dependent code
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 29 Nov 2018 08:10:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:38:42AM +0100, Martin Kepplinger wrote:
-> From: Richard Weinberger <richard@nod.at>
-> 
-> [ Upstream commit 34653fd8c46e771585fce5975e4243f8fd401914 ]
-> 
-> This commit got merged along with commit 781932375ffc
-> ("ubi: fastmap: Correctly handle interrupted erasures in EBA") upstream but
-> only the latter has been applied to stable v4.14.54 as commit a23cf10d9abb.
-> This resulted in a performance regression. Startup on i.MX platforms is
-> delayed for up to a few seconds depending on the platform.
-> This fixes ubi fastmap to be of the same performance as it has been before
-> said fastmap changes.
-> 
-> Fixes: a23cf10d9abb ("ubi: fastmap: Correctly handle interrupted erasures in EBA")
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> ---
-> 
-> Richard, although this fixes a major slowdown regression in -stable, do you
-> consider this "stable" too?
-> 
-> This applies and is tested only for the 4.14 stable tree. It seems to be
-> equally relevant for 4.9 and 4.4 though.
+BOOK3S/32 cannot be BOOKE, so remove useless code
 
-Now queued up for 4.14.y, thanks.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/32/pgalloc.h | 18 ------------------
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 14 --------------
+ 2 files changed, 32 deletions(-)
 
-greg k-h
+diff --git a/arch/powerpc/include/asm/book3s/32/pgalloc.h b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+index 82e44b1a00ae..eb8882c6dbb0 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@ -50,8 +50,6 @@ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+ #define __pmd_free_tlb(tlb,x,a)		do { } while (0)
+ /* #define pgd_populate(mm, pmd, pte)      BUG() */
+ 
+-#ifndef CONFIG_BOOKE
+-
+ static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
+ 				       pte_t *pte)
+ {
+@@ -65,22 +63,6 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
+ }
+ 
+ #define pmd_pgtable(pmd) pmd_page(pmd)
+-#else
+-
+-static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
+-				       pte_t *pte)
+-{
+-	*pmdp = __pmd((unsigned long)pte | _PMD_PRESENT);
+-}
+-
+-static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
+-				pgtable_t pte_page)
+-{
+-	*pmdp = __pmd((unsigned long)lowmem_page_address(pte_page) | _PMD_PRESENT);
+-}
+-
+-#define pmd_pgtable(pmd) pmd_page(pmd)
+-#endif
+ 
+ extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long addr);
+ extern pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long addr);
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index c21d33704633..32c33eccc0e2 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -328,24 +328,10 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+ #define __HAVE_ARCH_PTE_SAME
+ #define pte_same(A,B)	(((pte_val(A) ^ pte_val(B)) & ~_PAGE_HASHPTE) == 0)
+ 
+-/*
+- * Note that on Book E processors, the pmd contains the kernel virtual
+- * (lowmem) address of the pte page.  The physical address is less useful
+- * because everything runs with translation enabled (even the TLB miss
+- * handler).  On everything else the pmd contains the physical address
+- * of the pte page.  -- paulus
+- */
+-#ifndef CONFIG_BOOKE
+ #define pmd_page_vaddr(pmd)	\
+ 	((unsigned long) __va(pmd_val(pmd) & PAGE_MASK))
+ #define pmd_page(pmd)		\
+ 	pfn_to_page(pmd_val(pmd) >> PAGE_SHIFT)
+-#else
+-#define pmd_page_vaddr(pmd)	\
+-	((unsigned long) (pmd_val(pmd) & PAGE_MASK))
+-#define pmd_page(pmd)		\
+-	pfn_to_page((__pa(pmd_val(pmd)) >> PAGE_SHIFT))
+-#endif
+ 
+ /* to find an entry in a kernel page-table-directory */
+ #define pgd_offset_k(address) pgd_offset(&init_mm, address)
+-- 
+2.13.3
+
