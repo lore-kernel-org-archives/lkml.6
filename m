@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0903C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3A1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B4F20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2546C2086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l76Ka96H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B4F20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0C2c1KVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2546C2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbeK2RJF (ORCPT
+        id S1730258AbeK2RJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:09:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48630 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727695AbeK2RJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:09:05 -0500
+        id S1727695AbeK2RJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:09:08 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5357C2086B;
-        Thu, 29 Nov 2018 06:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D55220834;
+        Thu, 29 Nov 2018 06:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471493;
-        bh=tv1cZEfTm29FKBG6pEDyrTtAveE6TT/Zzk3e2keWJ2M=;
+        s=default; t=1543471496;
+        bh=Z3F6jK5IWJM2A/P5f4mthgtC5Ul5iXP9lQiXC68+QaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l76Ka96HjWwk5gYY2pV/Tjxv9hvCWvkEBZWbp74TaaAPnyV3KEvY+TA//R0oMQuFh
-         EUguh1Eng3AobZNGfcTJS0irbr3g7Ng7aS/vxChFZ+Ri367Dk6KltuTYVI8LkZ5uar
-         Jlr4TG8SNpXSooFoqZsBzOQg530Qk2ZxgzqVG0vQ=
+        b=0C2c1KVgtKL6vqHXbtialKqjFeMK+rH6VR19y4TfJhBZIedX//NUrVVchQykNsxI0
+         TqymU3mf1cSsNJFpE9ykUwPXZ4dQTeoaC471rjolCoRlU6d7qilzBCKIxQRP8mxDMw
+         6KDWtyj+0YC0w6flJXuEHuvloZY001hvVR+Fvku8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.4 02/13] iommu/ipmmu-vmsa: Fix crash on early domain free
-Date:   Thu, 29 Nov 2018 01:04:33 -0500
-Message-Id: <20181129060444.160434-2-sashal@kernel.org>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 03/13] can: rcar_can: Fix erroneous registration
+Date:   Thu, 29 Nov 2018 01:04:34 -0500
+Message-Id: <20181129060444.160434-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060444.160434-1-sashal@kernel.org>
 References: <20181129060444.160434-1-sashal@kernel.org>
@@ -54,55 +55,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-[ Upstream commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd ]
+[ Upstream commit 68c8d209cd4337da4fa04c672f0b62bb735969bc ]
 
-If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
-called, leading to a crash, as the domain was only partially
-initialized:
+Assigning 2 to "renesas,can-clock-select" tricks the driver into
+registering the CAN interface, even though we don't want that.
+This patch improves one of the checks to prevent that from happening.
 
-    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
-    sata_rcar ee300000.sata: Unable to initialize IPMMU context
-    iommu: Failed to add device ee300000.sata to group 0: -22
-    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
-    ...
-    Call trace:
-     ipmmu_domain_free+0x1c/0xa0
-     iommu_group_release+0x48/0x68
-     kobject_put+0x74/0xe8
-     kobject_del.part.0+0x3c/0x50
-     kobject_put+0x60/0xe8
-     iommu_group_get_for_dev+0xa8/0x1f0
-     ipmmu_add_device+0x1c/0x40
-     of_iommu_configure+0x118/0x190
-
-Fix this by checking if the domain's context already exists, before
-trying to destroy it.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/ipmmu-vmsa.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/can/rcar_can.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 624e7ff76166..9101be1a6b59 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -372,6 +372,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
+index bc46be39549d..9d93492ddfcc 100644
+--- a/drivers/net/can/rcar_can.c
++++ b/drivers/net/can/rcar_can.c
+@@ -24,6 +24,9 @@
  
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
-+	if (!domain->mmu)
-+		return;
+ #define RCAR_CAN_DRV_NAME	"rcar_can"
+ 
++#define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
++				 BIT(CLKR_CLKEXT))
 +
- 	/*
- 	 * Disable the context. Flush the TLB as required when modifying the
- 	 * context registers.
+ /* Mailbox configuration:
+  * mailbox 60 - 63 - Rx FIFO mailboxes
+  * mailbox 56 - 59 - Tx FIFO mailboxes
+@@ -789,7 +792,7 @@ static int rcar_can_probe(struct platform_device *pdev)
+ 		goto fail_clk;
+ 	}
+ 
+-	if (clock_select >= ARRAY_SIZE(clock_names)) {
++	if (!(BIT(clock_select) & RCAR_SUPPORTED_CLOCKS)) {
+ 		err = -EINVAL;
+ 		dev_err(&pdev->dev, "invalid CAN clock selected\n");
+ 		goto fail_clk;
 -- 
 2.17.1
 
