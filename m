@@ -2,50 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB43C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378F1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B2F2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3D96205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXsgHgUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B2F2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOfq9gNO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D96205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731145AbeK3BZH (ORCPT
+        id S1731161AbeK3BZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48326 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbeK3BZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:05 -0500
+        id S1731125AbeK3BZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25A732133F;
-        Thu, 29 Nov 2018 14:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C98D205C9;
+        Thu, 29 Nov 2018 14:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501174;
-        bh=cFK92fDSTWCxY5JxGS4QOi81JsCeJTfEnJmremiUu4c=;
+        s=default; t=1543501176;
+        bh=2xhxOuqljGZhGbfB62xVA1yWEw/ufRkYiNz1XjsSoXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXsgHgUdMHZc83EnZSKCuj1a3qWl68qSlyXZqdtAv9YLQRsI9G+DyN+eyhJiZ0a2p
-         hT5KXa20ZCkx6OM59g1RaMOGjVNY9FPBYrDf/F0ov/1uU3eHKRtGkg+e6ysKTtWU8b
-         /5Dkfr/7IrlcD87mn6j1fUjtGSeJoWcU2JxgvI1c=
+        b=kOfq9gNOVYgU3W51rDyfMUV+t1QYYpXbEWy0A0a82i+q80Jtt8RpCVo1v7I9ZGVO1
+         VPQC31JM+Iqq++Z4mjKzm93LFMtju01pOKYVTBRVKaNH7hBWMIxjgOsbMI4EBkhvvS
+         3MY2obUn6TAkxv+Mzkh5bzXX1FyDp5dGZoaFkzWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 37/86] Input: xpad - correct xbox one pad device name
-Date:   Thu, 29 Nov 2018 15:12:02 +0100
-Message-Id: <20181129140113.194768756@linuxfoundation.org>
+Subject: [PATCH 4.4 38/86] Input: xpad - remove unused function
+Date:   Thu, 29 Nov 2018 15:12:03 +0100
+Message-Id: <20181129140113.311747833@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,34 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 95162dc8493ed92e5f7dcc8874e58c2ba3836b43 ]
+[ Upstream commit a6ed4a18ba6a6f5a01e024b9d221d6439bf6ca4c ]
 
-Apparently the Covert Forces ID is not Covert Forces pad exclusive, but
-rather denotes a new firmware version that can be found on all new
-controllers and can be also updated on old hardware using Windows 10.
+There are two definitions of xpad_identify_controller(), one is used
+when CONFIG_JOYSTICK_XPAD_LEDS is set, but the other one is empty
+and never used, and we get a gcc warning about it:
 
-see: https://github.com/paroj/xpad/issues/19
+drivers/input/joystick/xpad.c:1210:13: warning: 'xpad_identify_controller' defined but not used [-Wunused-function]
 
-Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
+This removes the second definition.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: cae705baa40b ("Input: xpad - re-send LED command on present event")
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index c3a38804cdc0..2f481ce2c8b0 100644
+index 2f481ce2c8b0..cd1de2851f1d 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -128,7 +128,7 @@ static const struct xpad_device {
- 	{ 0x045e, 0x0289, "Microsoft X-Box pad v2 (US)", 0, XTYPE_XBOX },
- 	{ 0x045e, 0x028e, "Microsoft X-Box 360 pad", 0, XTYPE_XBOX360 },
- 	{ 0x045e, 0x02d1, "Microsoft X-Box One pad", 0, XTYPE_XBOXONE },
--	{ 0x045e, 0x02dd, "Microsoft X-Box One pad (Covert Forces)", 0, XTYPE_XBOXONE },
-+	{ 0x045e, 0x02dd, "Microsoft X-Box One pad (Firmware 2015)", 0, XTYPE_XBOXONE },
- 	{ 0x045e, 0x0291, "Xbox 360 Wireless Receiver (XBOX)", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x045e, 0x0719, "Xbox 360 Wireless Receiver", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
+@@ -1209,7 +1209,6 @@ static void xpad_led_disconnect(struct usb_xpad *xpad)
+ #else
+ static int xpad_led_probe(struct usb_xpad *xpad) { return 0; }
+ static void xpad_led_disconnect(struct usb_xpad *xpad) { }
+-static void xpad_identify_controller(struct usb_xpad *xpad) { }
+ #endif
+ 
+ static int xpad_start_input(struct usb_xpad *xpad)
 -- 
 2.17.1
 
