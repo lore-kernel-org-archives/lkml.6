@@ -2,319 +2,178 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AC9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9FCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C363420673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E22720673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:08:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="D3v74xax"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C363420673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C9N9WHD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E22720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbeK3KPj (ORCPT
+        id S1727211AbeK3KQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:15:39 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41428 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeK3KPj (ORCPT
+        Fri, 30 Nov 2018 05:16:01 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44820 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeK3KQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:15:39 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so1773919pfi.8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:30 -0800 (PST)
+        Fri, 30 Nov 2018 05:16:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k8so1777323pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=37xWa5ppls1wBcn3ORaj0+L5Gz0YBCVILQxhZKoSFQo=;
-        b=D3v74xaxjmaV2Q98XgwWS6ruPskB9hIrccOgMFOTAjEibQfg+jc9tl5FU2JjYTWUYu
-         J+Ia1tj/xvBNEOfW0QsvXOiAFNyhB4OCNfGlfXaWJkqPdzTyZezlcuUrdJkxvKGj3WHL
-         X9P00gUKkyZEvFoKMv9NIPqvCejjna1rCQU5RaKChOXC8mSJU23t+wWULKZifGiKjXgA
-         6fCP0Sm2ZSTHUQ2Dt55hOlHXeGPzg6DHMcRF/Pow8UIqo+X9X1FB7zaxSWn7dLssrsUW
-         X30eSrIlAOVGoz5xZ4RlXySs520wCRDbazZ8rIpdUknVmUCfLP1myMnleh4LCdZrq7DZ
-         UcWQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=diyfuOqdqP35URsXUdFafl/76ZP7Os651qTHk8Grkrg=;
+        b=C9N9WHD+TdUB+zyJzkSp4v1TAJWGuSiaa44LFMs8TCSCMVNn40xY0ka/Or+chjPhzQ
+         oWrZ8nw3YPd7JbXCzgJbf9Rl4+oMpeehlnQ7kEu7YKRCLhAFu5YTMifVtvwYiPdmLpWL
+         InrarV3YVY6sTfIqnxpZjNSYt7WJfm1q7Y3tU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=37xWa5ppls1wBcn3ORaj0+L5Gz0YBCVILQxhZKoSFQo=;
-        b=GFlkUGsR8KVs4uma6CueZPZEXSKgunjq6jYQZJjy0dEONLJFQrh2bezDiXFpMuMX/A
-         dx76UiDFTTjxtnQfbgT4tmiWk9E/gfCZSBAQ0lVGXRBUQQTaf5vJ2RppQC21RtvlmhOF
-         ilwbLl2o0ATePXHxJRjvP2WTSlFqLnqDEhXmC9M3zU5czaaTC+OWT1ybibFOtP24OLrA
-         OxF9Adweq0qQ++M4RCG6CIOgm3B0qi4ja5gi7S+Wuzqh6FG67XqeDaY1eVJZOF6fNnDW
-         3rKvfCGqKCNgm3HRSto12WuGqhMtRsF78QBViENPez6ROotguA1O02RPNv7tJuQLPhlg
-         GxAw==
-X-Gm-Message-State: AA+aEWZoaH2jrIvXu81y6Ugpqy8Ek7sbi9bqUDbP1+oPQqVlREPt4S9W
-        K3yKNhEAEWFf0LDjDTyKNvFVkQ==
-X-Google-Smtp-Source: AFSGD/VaI+Krx6+6ZdUsuoRT4zyKf4Q1f42hP3RYrIPSy8iVIJCdQMYVcSNKwYSoJjqXW9xC6QfxdQ==
-X-Received: by 2002:a62:190e:: with SMTP id 14mr3253200pfz.70.1543532909714;
-        Thu, 29 Nov 2018 15:08:29 -0800 (PST)
-Received: from cisco ([128.107.241.161])
-        by smtp.gmail.com with ESMTPSA id v190sm4625799pfv.26.2018.11.29.15.08.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=diyfuOqdqP35URsXUdFafl/76ZP7Os651qTHk8Grkrg=;
+        b=dmPAlgaqRLQ51IcYogxPVHMw5kxnPEol8Tq01yhJTW8OxoNEny1Jtjvhx8w3ZBuEe8
+         nvMJh7S7tnbCQbhu5ZEAn2Y1WYX886ZRREV/w3qfGUVaA/xlzrCq8klQD5hfIOvQvIg4
+         TdY5mEzz56eq7zVslQK5FHNg7H+YxF14W1RMSDUoZOmxjpj5WxnLn6hXnqP18Ggyj5Ul
+         OQLPRlQDA/Kjw0ktQPAP0RaZTKuwxnsfYpS6L9fNVhEhIJCu3K6aXeCVxU2xjcsSNR9x
+         Cv7O4+SZuDw0Dj2acdLqINMCEmgptAWOP1/1I7VbyqniC0sHzcCvOpiLFpEz1EOdLPoo
+         rwtw==
+X-Gm-Message-State: AA+aEWaqfEin/ikarDdpfH31SQM3VJ3qA8bwUjQFOv2m97FUnjQUk4Va
+        lKj6xkpWOsBhArAAhCQpwdFZnoND+mV25A==
+X-Google-Smtp-Source: AFSGD/UwHQnpUgMQS6c9bgQnDnUh+R3wIaInj75tZ2rt4I3KgLk91eV4giDJxGSVGnBoteaNYPVENA==
+X-Received: by 2002:a17:902:bcc7:: with SMTP id o7mr3428847pls.281.1543532932803;
+        Thu, 29 Nov 2018 15:08:52 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm4360134pfn.177.2018.11.29.15.08.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 15:08:28 -0800 (PST)
-Date:   Thu, 29 Nov 2018 16:08:26 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181129230826.GB4676@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029224031.29809-2-tycho@tycho.ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 29 Nov 2018 15:08:51 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Peng Wang <wangpeng15@xiaomi.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH -next v2 04/12] pstore: Avoid duplicate call of persistent_ram_zap()
+Date:   Thu, 29 Nov 2018 15:08:33 -0800
+Message-Id: <20181129230841.29955-5-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129230841.29955-1-keescook@chromium.org>
+References: <20181129230841.29955-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 04:40:30PM -0600, Tycho Andersen wrote:
-> +	resp.id = req.id;
-> +	resp.error = -512; /* -ERESTARTSYS */
-> +	resp.val = 0;
-> +
-> +	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), 0);
+From: Peng Wang <wangpeng15@xiaomi.com>
 
-So, it turns out this *doesn't* work, and the reason this test was
-passing is because of poor hygiene on my part.
+When initialing a prz, if invalid data is found (no PERSISTENT_RAM_SIG),
+the function call path looks like this:
 
-Per the documentation in include/linux/errno.h,
+ramoops_init_prz ->
+    persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
+    persistent_ram_zap
 
-/*
- * These should never be seen by user programs.  To return one of ERESTART*
- * codes, signal_pending() MUST be set.  Note that ptrace can observe these
- * at syscall exit tracing, but they will never be left for the debugged user
- * process to see.
- */
-#define ERESTARTSYS     512
+As we can see, persistent_ram_zap() is called twice.
+We can avoid this by adding an option to persistent_ram_new(), and
+only call persistent_ram_zap() when it is needed.
 
-So basically, if you respond with -ERESTARTSYS with no signal pending, you'll
-leak it to userspace. It turns out this is already possible with
-SECCOMP_RET_TRAP (and probably ptrace alone, although I didn't try it out),
-see the program below.
+Signed-off-by: Peng Wang <wangpeng15@xiaomi.com>
+[kees: minor tweak to exit path and commit log]
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/pstore/ram.c            |  4 +---
+ fs/pstore/ram_core.c       | 15 +++++++++------
+ include/linux/pstore_ram.h |  1 +
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
-The question is: do we care? If so, it seems like we may need to handle the
--ERESTARTSYS-style cases even when there is no signal pending. If we don't,
-there's precedent for us to just do the same thing as what happens for
-SECCOMP_RET_TRACE, but we should probably at least fix the docs.
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index e02a9039b5ea..768759841491 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -640,7 +640,7 @@ static int ramoops_init_prz(const char *name,
+ 
+ 	label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
+ 	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+-				  cxt->memtype, 0, label);
++				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+ 	if (IS_ERR(*prz)) {
+ 		int err = PTR_ERR(*prz);
+ 
+@@ -649,8 +649,6 @@ static int ramoops_init_prz(const char *name,
+ 		return err;
+ 	}
+ 
+-	persistent_ram_zap(*prz);
+-
+ 	*paddr += sz;
+ 
+ 	return 0;
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index 12e21f789194..23ca6f2c98a0 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -489,6 +489,7 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 				    struct persistent_ram_ecc_info *ecc_info)
+ {
+ 	int ret;
++	bool zap = !!(prz->flags & PRZ_FLAG_ZAP_OLD);
+ 
+ 	ret = persistent_ram_init_ecc(prz, ecc_info);
+ 	if (ret)
+@@ -498,23 +499,25 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 
+ 	if (prz->buffer->sig == sig) {
+ 		if (buffer_size(prz) > prz->buffer_size ||
+-		    buffer_start(prz) > buffer_size(prz))
++		    buffer_start(prz) > buffer_size(prz)) {
+ 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
+ 				buffer_size(prz), buffer_start(prz));
+-		else {
++			zap = true;
++		} else {
+ 			pr_debug("found existing buffer, size %zu, start %zu\n",
+ 				 buffer_size(prz), buffer_start(prz));
+ 			persistent_ram_save_old(prz);
+-			return 0;
+ 		}
+ 	} else {
+ 		pr_debug("no valid data in buffer (sig = 0x%08x)\n",
+ 			 prz->buffer->sig);
++		prz->buffer->sig = sig;
++		zap = true;
+ 	}
+ 
+-	/* Rewind missing or invalid memory area. */
+-	prz->buffer->sig = sig;
+-	persistent_ram_zap(prz);
++	/* Reset missing, invalid, or single-use memory area. */
++	if (zap)
++		persistent_ram_zap(prz);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+index 602d64725222..6e94980357d2 100644
+--- a/include/linux/pstore_ram.h
++++ b/include/linux/pstore_ram.h
+@@ -30,6 +30,7 @@
+  * PRZ_FLAG_NO_LOCK is used. For all other cases, locking is required.
+  */
+ #define PRZ_FLAG_NO_LOCK	BIT(0)
++#define PRZ_FLAG_ZAP_OLD	BIT(1)
+ 
+ struct persistent_ram_buffer;
+ struct rs_control;
+-- 
+2.17.1
 
-Tycho
-
-
-#include <stdio.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <signal.h>
-#include <string.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <sys/ptrace.h>
-#include <sys/ioctl.h>
-#include <inttypes.h>
-#include <linux/filter.h>
-#include <linux/seccomp.h>
-#include <linux/ptrace.h>
-#include <linux/elf.h>
-#include <pthread.h>
-
-
-static int filter_syscall(int syscall_nr)
-{
-	struct sock_filter filter[] = {
-		BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(struct seccomp_data, nr)),
-		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, syscall_nr, 0, 1),
-		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_TRACE),
-		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-	};
-
-	struct sock_fprog bpf_prog = {
-		.len = (unsigned short)(sizeof(filter)/sizeof(filter[0])),
-		.filter = filter,
-	};
-
-	int ret;
-
-	ret = syscall(__NR_seccomp, SECCOMP_SET_MODE_FILTER, 0, &bpf_prog);
-	if (ret < 0) {
-		perror("prctl failed");
-		return -1;
-	}
-
-	return ret;
-}
-
-typedef struct {
-        uint64_t        r15;
-        uint64_t        r14;
-        uint64_t        r13;
-        uint64_t        r12;
-        uint64_t        bp;
-        uint64_t        bx;
-        uint64_t        r11;
-        uint64_t        r10;
-        uint64_t        r9;
-        uint64_t        r8;
-        uint64_t        ax;
-        uint64_t        cx;
-        uint64_t        dx;
-        uint64_t        si;
-        uint64_t        di;
-        uint64_t        orig_ax;
-        uint64_t        ip;
-        uint64_t        cs;
-        uint64_t        flags;
-        uint64_t        sp;
-        uint64_t        ss;
-        uint64_t        fs_base;
-        uint64_t        gs_base;
-        uint64_t        ds;
-        uint64_t        es;
-        uint64_t        fs;
-        uint64_t        gs;
-} user_regs_struct64;
-
-int main(int argc, char **argv)
-{
-	pid_t pid;
-	user_regs_struct64 regs;
-	struct iovec iov = {.iov_base = &regs, .iov_len = sizeof(regs)};
-	int status;
-
-	pid = fork();
-
-	if (pid == 0) {
-		if (signal(SIGUSR1, signal_handler) == SIG_ERR) {
-			perror("signal");
-			exit(1);
-		}
-
-		if (filter_syscall(__NR_getpid) < 0)
-			exit(1);
-
-		/* i'm lazy, so sue me :) */
-		sleep(1);
-
-		errno = 0;
-		pid = syscall(__NR_getpid);
-
-		/*
-		 * we get:
-		 *   getpid(): -1, errno: 512
-		 * probably should get
-		 *   getpid(): <pid> errno: 0
-		 */
-		printf("getpid(): %d, errno: %d\n", pid, errno);
-		exit(errno);
-	}
-
-	if (ptrace(PTRACE_ATTACH, pid, NULL, 0) < 0) {
-		perror("ptrace attach");
-		goto out;
-	}
-
-	if (waitpid(pid, NULL, 0) != pid) {
-		perror("waitpid");
-		goto out;
-	}
-
-	if (ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESECCOMP) < 0) {
-		perror("ptrace setoptions");
-		goto out;
-	}
-
-	if (ptrace(PTRACE_CONT, pid, NULL, 0) != 0) {
-		perror("ptrace cont");
-		goto out;
-	}
-
-	if (waitpid(pid, &status, 0) != pid) {
-		perror("wait for trace");
-		goto out;
-	}
-
-	if (status >> 8 != (SIGTRAP | (PTRACE_EVENT_SECCOMP<<8))) {
-		printf("got bad trap event?\n");
-		goto out;
-	}
-
-	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov) < 0) {
-		perror("getregset");
-		goto out;
-	}
-
-	/*
-	 * Tell the syscall to restart. Per include/linux/errno.h this should
-	 * only be set when signal_pending() is set. But we just won't send
-	 * any signals to the process, and we'll see this in userspace.
-	 */
-	regs.ax = -512; /* -ERESTARTSYS */
-
-	/*
-	 * This makes the this_syscall < 0 check in __seccomp_filter()
-	 * trigger, so we skip the syscall and return whatever is in ax
-	 */
-	regs.orig_ax = -512; /* -ERESTARTSYS */
-
-	if (ptrace(PTRACE_SETREGSET, pid, NT_PRSTATUS, &iov) < 0) {
-		perror("setregset");
-		goto out;
-	}
-
-	if (ptrace(PTRACE_CONT, pid, NULL, 0) < 0) {
-		perror("cont after setregset");
-		goto out;
-	}
-
-	while (1) {
-		if (waitpid(pid, &status, 0) != pid) {
-			perror("wait for death");
-			goto out;
-		}
-
-		if (!WIFSTOPPED(status)) {
-			break;
-		}
-
-		if (ptrace(PTRACE_CONT, pid, NULL, 0) < 0) {
-			perror("cont after setregset");
-			goto out;
-		}
-
-	}
-
-	if (WIFSIGNALED(status)) {
-		printf("didn't exit: %d\n", WTERMSIG(status));
-		return 1;
-	}
-
-	if (WEXITSTATUS(status)) {
-		printf("exited: %d\n", WEXITSTATUS(status));
-		return 1;
-	}
-
-	return 0;
-out:
-	kill(pid, SIGKILL);
-	return 1;
-}
