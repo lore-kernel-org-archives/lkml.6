@@ -2,126 +2,149 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EBAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D660FC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692682081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:10:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SECyZyg3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692682081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FF722081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF722081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbeK2VP1 (ORCPT
+        id S1727608AbeK2VRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:15:27 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36997 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbeK2VP0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:15:26 -0500
-Received: by mail-yb1-f195.google.com with SMTP id d18-v6so516658yba.4;
-        Thu, 29 Nov 2018 02:10:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9gr+ATf/O2khom4hddu5odHSvUoa8/KuFvkBwshtPzY=;
-        b=SECyZyg3C5C0AyqcokL+DIM4VrR90v9T5jvzKmQRVho6K/ozO1JdsFQ60zOhhcA2kI
-         VBYpqaotI4lXuD05Wy60txvo5XZXdIS6k03MePe6Gci0nOxgVrJtxXtjdge1UtPi8/VN
-         AAjz8tP5YfdxrsL+FUIhJgjnMQnwNsXWm5qWzwaW1kIQ8YkBgXYtJC3bgeNTYv+zrtjO
-         DuX5tTtN/+wIkmjyWfz/CykN3G7D47mHgHG/BLaUG/Wi+yqv3yBGtsk2+lOpRzvYhBwM
-         SXRrRVj7/ZKe8YfYCvfyC4pChwGN3cx/hAPZm/AkkjFZujVUhaiZD8FW9egy/RkCouji
-         P0pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9gr+ATf/O2khom4hddu5odHSvUoa8/KuFvkBwshtPzY=;
-        b=toe7zpBRo1HkkT5SXHey0Kz0pfE3BjaKMtnDYqNGPu20gwxX+nnhRIKrRV+8Ja6wor
-         TJUQ+Pq6Gt5Nm7PpHS9JS1wpSlQGKWTO1lf+LDo4qSWnjJf+LD4/ugrhswlYuSq9dBeS
-         xoOCWqHwpKPZ3a11vHojZSA7LrHR37ueElECb+V11uwtTapYtZ6KHOG71/Gk9ygvSx3e
-         ySJHoa81IR8Oqnr5SNIssplUxgAreg0euPNP8VuuxA7hKtfMULppLA27qHVWPP3Io65R
-         L2nhdW7P0g/+s7Hdr4KekkJ0GavXIANiIwDTjCwau2G/OmehEsfpeKF0zL9c7pi/zKgj
-         6zaw==
-X-Gm-Message-State: AA+aEWYRPHx1yoxZMTCB/wTfLd+k0yiEuq/UoFyxVVp933AmEk17J2eK
-        ZDueCLFZ6loujG3MHvTAh7JytfVW4OHYLIQUbX4=
-X-Google-Smtp-Source: AFSGD/WQPP5P3lxJjjCtgW3X04e5FiM1lBWR4mnXfb7/yFSfV3J7u+I42XO+fHHD58qW5DcvRBUEndJSeVgZ5Mttcvs=
-X-Received: by 2002:a5b:d06:: with SMTP id y6-v6mr623868ybp.147.1543486236407;
- Thu, 29 Nov 2018 02:10:36 -0800 (PST)
+        Thu, 29 Nov 2018 16:17:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49832 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726740AbeK2VRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 16:17:05 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D43E23078A32;
+        Thu, 29 Nov 2018 10:12:14 +0000 (UTC)
+Received: from [10.36.118.89] (unknown [10.36.118.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3134B7C806;
+        Thu, 29 Nov 2018 10:12:08 +0000 (UTC)
+Subject: Re: [PATCH 2/2] fs: Don't open-code lru_to_page
+To:     Michal Hocko <mhocko@kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-ext4@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
+        linux-mm@kvack.org
+References: <20181129075301.29087-1-nborisov@suse.com>
+ <20181129075301.29087-2-nborisov@suse.com>
+ <20181129081826.GO6923@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <38bdc5f7-63b5-7276-921f-258ee876c45b@redhat.com>
+Date:   Thu, 29 Nov 2018 11:12:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <1538332682-12018-1-git-send-email-andy.gross@linaro.org>
- <1538332682-12018-5-git-send-email-andy.gross@linaro.org> <CAK8P3a3SVftnc83sxe1NCsLbu23Buc+SHOpn9JUQJCZ=MXDuJw@mail.gmail.com>
-In-Reply-To: <CAK8P3a3SVftnc83sxe1NCsLbu23Buc+SHOpn9JUQJCZ=MXDuJw@mail.gmail.com>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Thu, 29 Nov 2018 11:10:25 +0100
-Message-ID: <CAJiuCcf0S97GoPt_p1R8F=35BJPw=mv=BExkLyt2CDcqs7_vLA@mail.gmail.com>
-Subject: Re: [GIT PULL] Qualcomm Device Tree updates for 4.20
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     andy.gross@linaro.org, arm@kernel.org, khilman@baylibre.com,
-        olof@lixom.net, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dianders@chromium.org,
-        bjorn.andersson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181129081826.GO6923@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 29 Nov 2018 10:12:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Arnd,
+On 29.11.18 09:18, Michal Hocko wrote:
+> On Thu 29-11-18 09:52:57, Nikolay Borisov wrote:
+>> There are a bunch of filesystems which essentially open-code lru_to_page
+>> helper. Change them to using the helper. No functional changes.
+> 
+> I would just squash the two into a single patch. It makes the first one
+> more obvious. Or is there any reason to have them separate?
+> 
+>> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-On Tue, 2 Oct 2018 at 11:38, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Sun, Sep 30, 2018 at 8:38 PM Andy Gross <andy.gross@linaro.org> wrote:
-> >
-> > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-> >
-> >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> >
-> > are available in the git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-dts-for-4.20
-> >
-> > for you to fetch changes up to ca02f96b95ca1a50344e7e2a7bb43fbb825aa3a2:
-> >
-> >   ARM: dts: qcom: Update coresight bindings for hardware ports (2018-09-30 13:14:05 -0500)
-> >
-> > ----------------------------------------------------------------
-> > Qualcomm Device Tree Changes for v4.20
-> >
-> > * Fix IRQ constants usage on MSM8974
-> > * Add led, gpio-button, sdcc, and pcie nodes for IPQ8064
-> > * Move/cleanup common nodes for IPQ8064
-> > * Add i2c sensor nodes for MSM8974 Hammerhead
-> > * Fixes for SAW, kpss, opp, pci range, and space/tab on IPQ4019
-> > * Update coresight bindings
->
-> Some of the ipq4019 changes look like important fixes, should
-> they be applied for linux-4.19 and possibly backported to stable?
+mm_inline.h is 99.9% about lru and there is barely anything about lru in
+mm.h. However this simple macro seems to differ from the other inlined
+functions.
 
-Just want to point that it has not been backported to 4.19 is it expected ?
+So to the squashed patch
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+
+-- 
 
 Thanks,
-Clement
 
-> If so, please submit them again for the fixes branch.
->
-> I also get this one warning (both with and without your patches):
->
-> arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning
-> (graph_endpoint): /soc/mdp@5100000/ports/port@3/endpoint: graph
-> connection to node '/soc/hdmi-tx@4a00000/ports/port@0/endpoint' is not
-> bidirectional
->
-> Can you have a look and see if it can be fixed in a follow-up?
->
-> I pulled this version into next/dt for now, thanks!
->
->       Arnd
+David / dhildenb
