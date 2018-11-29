@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00696C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA97205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E59432133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhvNmaVH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA97205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5XY0H2S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59432133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbeK3B0e (ORCPT
+        id S1731540AbeK3B0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50628 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728678AbeK3B0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:33 -0500
+        id S1728678AbeK3B0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0838E20868;
-        Thu, 29 Nov 2018 14:21:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 768CF205C9;
+        Thu, 29 Nov 2018 14:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501262;
-        bh=8jZ5seR/KtPhWBkvEKJiShN8Bjtn5S/h3O1f/MELzEQ=;
+        s=default; t=1543501264;
+        bh=6EDwcV46ipJJ8g6A9BMpEP8xolB5EmFhPyAAVsQKDIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NhvNmaVHoU4ccFc4LFP/COG4ZErOz7UhABX1aXmiz8p35OMq75aDy+G1Hfcr4HUoy
-         frW1iNsxY281aubwR3ahSReEvPRNRR9f5Vbyfo5G4Z+TeePMsYLy042uCffijO4ySp
-         Cq37q3gYwltE8c+O9cUf7t+QqIFQFUCgfChOFIsM=
+        b=U5XY0H2Scpq/8wLpgHzAAxZ81340YIdlfqBC3qcSDPlrU/+k2nXBlerydoBxBhQHQ
+         8lP29FiwO97Lg+JlwekTKJ0POzNinm5LhwUOBvgkxFMFBwI4W2uoofdGgqVs5XyVQI
+         97/qPZywmSNUWdDr2nEWqVuJoJRmbIH8T0kuP0NA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
-        "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.9 19/92] drm/ast: Remove existing framebuffers before loading driver
-Date:   Thu, 29 Nov 2018 15:11:48 +0100
-Message-Id: <20181129140107.929434946@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.9 02/92] usb: dwc3: core: Clean up ULPI device
+Date:   Thu, 29 Nov 2018 15:11:31 +0100
+Message-Id: <20181129140106.689987193@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,63 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Zimmermann <tzimmermann@suse.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 5478ad10e7850ce3d8b7056db05ddfa3c9ddad9a upstream.
+commit 08fd9a82fda86529bb2f2af3c2f7cb657b4d3066 upstream.
 
-If vesafb attaches to the AST device, it configures the framebuffer memory
-for uncached access by default. When ast.ko later tries to attach itself to
-the device, it wants to use write-combining on the framebuffer memory, but
-vesefb's existing configuration for uncached access takes precedence. This
-results in reduced performance.
+If dwc3_core_init_mode() fails with deferred probe,
+next probe fails on sysfs with
 
-Removing the framebuffer's configuration before loding the AST driver fixes
-the problem. Other DRM drivers already contain equivalent code.
+sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:11.0/dwc3.0.auto/dwc3.0.auto.ulpi'
 
-Link: https://bugzilla.opensuse.org/show_bug.cgi?id=1112963
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+To avoid this failure, clean up ULPI device.
+
 Cc: <stable@vger.kernel.org>
-Tested-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Tested-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_drv.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/usb/dwc3/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -60,8 +60,29 @@ static const struct pci_device_id pciidl
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1145,6 +1145,7 @@ static int dwc3_probe(struct platform_de
  
- MODULE_DEVICE_TABLE(pci, pciidlist);
+ err5:
+ 	dwc3_event_buffers_cleanup(dwc);
++	dwc3_ulpi_exit(dwc);
  
-+static void ast_kick_out_firmware_fb(struct pci_dev *pdev)
-+{
-+	struct apertures_struct *ap;
-+	bool primary = false;
-+
-+	ap = alloc_apertures(1);
-+	if (!ap)
-+		return;
-+
-+	ap->ranges[0].base = pci_resource_start(pdev, 0);
-+	ap->ranges[0].size = pci_resource_len(pdev, 0);
-+
-+#ifdef CONFIG_X86
-+	primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
-+#endif
-+	drm_fb_helper_remove_conflicting_framebuffers(ap, "astdrmfb", primary);
-+	kfree(ap);
-+}
-+
- static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
-+	ast_kick_out_firmware_fb(pdev);
-+
- 	return drm_get_pci_dev(pdev, ent, &driver);
- }
- 
+ err4:
+ 	dwc3_free_scratch_buffers(dwc);
 
 
