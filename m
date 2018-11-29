@@ -2,120 +2,138 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641DEC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2317720989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9901320989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HiuXfD0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2317720989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oTqTKDli"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9901320989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbeK3KeS (ORCPT
+        id S1726980AbeK3Kfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:34:18 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:42751 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeK3KeR (ORCPT
+        Fri, 30 Nov 2018 05:35:40 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:50484 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3Kfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:34:17 -0500
-Received: by mail-yb1-f193.google.com with SMTP id o204-v6so1484628yba.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:27:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zl5fPoC1NuO+flCl7vF84WF/Jg9hKcYZQ8HZLC6wvPA=;
-        b=HiuXfD0Q5KHE/jwMpvTffEyVtbFoHdqJAT6vlyIP66YJczO+M3EuOPZqg8jzHjt4wH
-         oObUIudcrRjP/ogYM+XANu8mRcD4gXkXLM9sYI8rKR5xTWaRLDtm4rAYfGuAtwcoecwc
-         RV7PlZPay0axjDCdGSLUfBHmCYrMO5Nlf1NMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zl5fPoC1NuO+flCl7vF84WF/Jg9hKcYZQ8HZLC6wvPA=;
-        b=SDuQdyUAccAK3zfdVL+R9QpgCWzJWR+eHGjWqMIl+Zheq50XjSCpDkop63s3VuU3NJ
-         GuGB9vIIi87QnNRMHE3EiG71se9TU/hiWN6Xa+Xi/bEBSGGr2hOPg8Wd4gDr1i0DkP9d
-         kHLPCB8sKXgrNA0pSMeklIDxJ0mZ9uWEKI/DVnUxH/SFDrtyrGDzRg19c7t4yFV8Lz5v
-         s1OsM/bqWlAGgSqjhHI7mHiJG+50Ms92oYV2QFreAIVZCO9yUXaSD5Otj9aDNM8v2vmh
-         hIn32i1uPOf9jJ3iGB6NatyyuY5etCspJHJTpJ5Wt7nA0eJsA0fsEIar51PZWYQTa766
-         HCgw==
-X-Gm-Message-State: AA+aEWb3u0V/ZN6Jldqls5Dujg22/dyz5YmtkM/+AZpiHKaq0+Inauar
-        RtM2pOdu14yb33qmqqVVN3H2kDINwK4=
-X-Google-Smtp-Source: AFSGD/X1noP5KpslbVOejb+1GstaRFUx3kGK1Be25Wykj5/gK/YAaB8NXIarOOYv7Iw0Aju5QUMtbQ==
-X-Received: by 2002:a5b:587:: with SMTP id l7-v6mr3373638ybp.76.1543534024820;
-        Thu, 29 Nov 2018 15:27:04 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id w2sm2603854ywl.10.2018.11.29.15.27.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 15:27:04 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id z2-v6so1495390ybj.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:27:03 -0800 (PST)
-X-Received: by 2002:a25:3502:: with SMTP id c2-v6mr3480754yba.410.1543534023393;
- Thu, 29 Nov 2018 15:27:03 -0800 (PST)
-MIME-Version: 1.0
-References: <1504729681-3504-1-git-send-email-deller@gmx.de> <1504729681-3504-10-git-send-email-deller@gmx.de>
-In-Reply-To: <1504729681-3504-10-git-send-email-deller@gmx.de>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 29 Nov 2018 15:26:51 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jL3qs=YrXWesOueaZYZ8k1qjJ=1HYb9Rmfry8tzvaGY8w@mail.gmail.com>
-Message-ID: <CAGXu5jL3qs=YrXWesOueaZYZ8k1qjJ=1HYb9Rmfry8tzvaGY8w@mail.gmail.com>
-Subject: Re: [PATCH 09/14] fs/pstore: Use %pS printk format for direct addresses
-To:     Helge Deller <deller@gmx.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Nov 2018 05:35:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1543534107; x=1575070107;
+  h=from:to:cc:subject:date:message-id;
+  bh=L7Qnx+G1U15UoezilU3DKAcIr1VLVm+CQnW9+MoRsKs=;
+  b=oTqTKDli1HZWr14a4gdRslqdsLY6gE2Ccnt1xO+D/28GAfOsRmca6iyt
+   iW489Auj48ALeMXXiRvtQFKPpGHgPG8Gs0jXj/7j40LrbV+oIpfhHtxJi
+   ilBPav86jOr3c8FjNNb0mCEzzhnegSt9DE96nDZmbA8HMrWvcoZqqeaHA
+   CLtx1lIvFlTcNEp7h0MAu+DQ5tJubWSSaubo9LyEX9tA1kN+/F6Ir1pud
+   PT/+8/4VDTqWaQVi67gcY9VzVdtssFExDUwsEtL3VCZegkzfdIUvktv7P
+   ceIl9P2uomkoqPwDCGTDWMYXFTWO1z97yMXR9BybLjrWaS4Szo+F2pzHm
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,296,1539619200"; 
+   d="scan'208";a="96644301"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2018 07:28:26 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 29 Nov 2018 15:11:23 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 29 Nov 2018 15:28:26 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        devicetree@vger.kernel.org,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)), linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RFT PATCH v1 0/4] Unify CPU topology across ARM64 & RISC-V
+Date:   Thu, 29 Nov 2018 15:28:16 -0800
+Message-Id: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 6, 2017 at 1:28 PM Helge Deller <deller@gmx.de> wrote:
->
-> Use the %pS instead of the %pF printk format specifier for printing symbols
-> from direct addresses. This is needed for the ia64, ppc64 and parisc64
-> architectures.
->
-> Signed-off-by: Helge Deller <deller@gmx.de>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Tony Luck <tony.luck@intel.com>
+The cpu-map DT entry in ARM64 can describe the CPU topology in
+much better way compared to other existing approaches. RISC-V can
+easily adopt this binding to represent it's own CPU topology.
+Thus, both cpu-map DT binding and topology parsing code can be
+moved to a common location so that RISC-V or any other
+architecture can leverage that.
 
-I missed this email from some time ago. I've now applied it, thanks!
+The relevant discussion regarding unifying cpu topology can be
+found in [1].
 
--Kees
+arch_topology seems to be a perfect place to move the common
+code. I have not introduced any functional changes in the moved
+code. The only downside in this approach is that the capacity
+code will be executed for RISC-V as well. But, it will exit
+immediately after not able to find the appropriate DT node. If
+the overhead is considered too much, we can always compile out
+capacity related functions under a different config for the
+architectures that do not support them.
 
-> ---
->  fs/pstore/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index fefd226..59f65d7 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -116,7 +116,7 @@ static int pstore_ftrace_seq_show(struct seq_file *s, void *v)
->
->         rec = (struct pstore_ftrace_record *)(ps->record->buf + data->off);
->
-> -       seq_printf(s, "CPU:%d ts:%llu %08lx  %08lx  %pf <- %pF\n",
-> +       seq_printf(s, "CPU:%d ts:%llu %08lx  %08lx  %ps <- %pS\n",
->                    pstore_ftrace_decode_cpu(rec),
->                    pstore_ftrace_read_timestamp(rec),
->                    rec->ip, rec->parent_ip, (void *)rec->ip,
-> --
-> 2.1.0
->
+The patches have been tested for RISC-V and compile tested for
+ARM64 & x86.
 
+The socket change[2] is also now part of this series.
 
--- 
-Kees Cook
+[1] https://lkml.org/lkml/2018/11/6/19
+[2] https://lkml.org/lkml/2018/11/7/918
+
+QEMU changes for RISC-V topology are available at
+
+https://github.com/atishp04/riscv-qemu/tree/cpu_topo
+
+Apologies for the previous patch series with incorrect title and
+was sent only to kernel mailing list due to a bug in my config.
+Please ignore that.
+
+Atish Patra (3):
+dt-binding: cpu-topology: Move cpu-map to a common binding.
+cpu-topology: Move cpu topology code to common code.
+RISC-V: Parse cpu topology during boot.
+
+Sudeep Holla (1):
+Documentation: DT: arm: add support for sockets defining package
+boundaries
+
+.../{arm/topology.txt => cpu/cpu-topology.txt}     | 133 +++++++--
+arch/arm64/include/asm/topology.h                  |  22 --
+arch/arm64/kernel/topology.c                       | 303 +--------------------
+arch/riscv/Kconfig                                 |   1 +
+arch/riscv/kernel/smpboot.c                        |   3 +
+drivers/base/arch_topology.c                       | 294 ++++++++++++++++++++
+include/linux/arch_topology.h                      |  26 ++
+include/linux/topology.h                           |   1 +
+8 files changed, 435 insertions(+), 348 deletions(-)
+rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (66%)
+
+--
+2.7.4
+
