@@ -2,122 +2,166 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A71C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ED5C46466
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F3C213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C768B21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:47:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N4aj4C/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F3C213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UPPBOHan"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C768B21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbeK3E5A (ORCPT
+        id S1731171AbeK3EyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:57:00 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40865 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730457AbeK3E47 (ORCPT
+        Thu, 29 Nov 2018 23:54:05 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41866 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731138AbeK3EyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:56:59 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so2100309lfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:50:48 -0800 (PST)
+        Thu, 29 Nov 2018 23:54:04 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so2097897lfj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9eAD1FlhoNaI8od/JETaoVJBfVG8KUjUrJgH6gdEefs=;
-        b=N4aj4C/+0fPBJ5+LMGSIrXc/on9r39woqdLZ0ZHErSm6GOzaBWC7k56Hz1kBRkGjUC
-         hJdQGo5ScWD9H5YcOxCoBNZn7nCnNkXSBD1TVsD234RSJ+t1/luwgKQjQOwZAnZhv64f
-         hrAfwWquiW9HLutDRyhd9NLkYkVDyXYkNvn2U=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=8XcXgSMicdNFExYNvXv93BQqc4PUMWszq8Q+N0PwQJQ=;
+        b=UPPBOHaniBcnAzLge02a1Ved7MDAgwg3PT63fbQBxmWP6r7IUNmB9wBF+cpdUregbU
+         YNpOhRm0kjRcXF6xnbJ01Ca2Erys97CKhH7FfDfbIj5YdHlt1zhk9sD+G18xFUEPnTeG
+         o/6qnFNHOkaoXtqDBngZxRNXPyWTOoR/EGa+Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9eAD1FlhoNaI8od/JETaoVJBfVG8KUjUrJgH6gdEefs=;
-        b=ZfltxzupMuKa2CiE1HCFcL2X3VGzKMBSRZxQ+Ox9PexbbJjs0jAzr92Hi5AoL62x8d
-         txMU8z7DWbHccsX/uDTstCd1f6XzbKTbVRgu0BPyKvBl7oqiCagyLvh3pCy14IvDVZTu
-         TcxOnZvdyYt7qg9vSEogyXiT2Tv+j3aP39DJ+JrAaa5mjusbjp5wFMw/zePtw5djriP3
-         wLPj0H/DfJbIv7xkC6ZQApiwCSLaefPneDeckiuQ8dCfAXcFF0ChmpH9rQeNl4q25wTT
-         hQN1bkIw0S9vBcFz3LHwl0SkrWqHTXFGtBrcJBTExhJI0uK4OZS8xpQ8oGDc6WqZqxhN
-         NrJA==
-X-Gm-Message-State: AA+aEWaEEqc50S8IHvKHjXLIGScyweTOSSjcbjoGMrNoMnV5EIHb0NGX
-        m8l6q3wbC2i2HlsF9l6hkFjOXNHCso4=
-X-Google-Smtp-Source: AFSGD/Xi+lKX0njO2yFmmEYk9TG7+NgR2y3tcV/E1n6mQeuLHngEn3t8vT4HyYRxueNc8ab4DUektw==
-X-Received: by 2002:a19:5d42:: with SMTP id p2mr1755143lfj.83.1543513846829;
-        Thu, 29 Nov 2018 09:50:46 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id p19-v6sm394400ljb.47.2018.11.29.09.50.44
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=8XcXgSMicdNFExYNvXv93BQqc4PUMWszq8Q+N0PwQJQ=;
+        b=tNbJ+9un/JDcFWkSZbOgj7OvDShq9bYNVKg8xLXh3MhjKLUMI48IKPpJb3AYUpym5q
+         pejBTqxdAyo2F2q8uxjrTroimoiJNCKwDtcNTvWPljz8DVEDPeFpcCHqdFKSOjZw/JEe
+         EjKuQsJUufNneCZzOsgmJvrbpkco1mQEmabUIjv7C56VI/KuvPHcXEDnik0Ni8XoMuIb
+         GXh629iQooJ1AF33sEMt59ext43RVohD5bQzW0EF6ANc9aA2eNd7fxgOL19zqJukh3Ae
+         PhHlddDsD/+FQxnuHMNnA6sxTRbZShv6kAHwfusiyzIo8QJrapdRRDm4lYNxFU2Ea7I5
+         grHQ==
+X-Gm-Message-State: AA+aEWYjX4HVVgSmAN44JeMpI+4OL5TDkNEl9e04HtXa0s8U58NZrBwU
+        YvL1bHVyTYMy5Ucb3OijJjnrzA==
+X-Google-Smtp-Source: AFSGD/Vv4orDwR+nTAJgZv7KcoNBHuFUfJ1RXoB3WL0hhWGM6CeGAm1v2qYblWtvCG+N9/GJet3jBw==
+X-Received: by 2002:a19:2d16:: with SMTP id k22mr1586183lfj.12.1543513671100;
+        Thu, 29 Nov 2018 09:47:51 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:50:45 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id z80-v6so2529122ljb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:50:44 -0800 (PST)
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr1921520ljk.80.1543513843985;
- Thu, 29 Nov 2018 09:50:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
- <20181126171036.chcbmb35ygpxziub@treble> <20181126175624.bruqfbkngbucpvxr@treble>
- <20181126200801.GW2113@hirez.programming.kicks-ass.net> <20181126212628.4apztfazichxnt7r@treble>
- <20181127084330.GX2113@hirez.programming.kicks-ass.net> <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
- <20181129094210.GC2131@hirez.programming.kicks-ass.net> <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
- <20181129143853.GO2131@hirez.programming.kicks-ass.net> <20181129163342.tp5wlfcyiazwwyoh@treble>
- <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
- <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net> <20181129121307.12393c57@gandalf.local.home>
- <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com> <20181129124404.2fe55dd0@gandalf.local.home>
-In-Reply-To: <20181129124404.2fe55dd0@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 29 Nov 2018 09:50:28 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
-Message-ID: <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Nov 2018 09:47:50 -0800 (PST)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v10 24/27] drivers: firmware: psci: Support CPU hotplug for the hierarchical model
+Date:   Thu, 29 Nov 2018 18:46:57 +0100
+Message-Id: <20181129174700.16585-25-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129174700.16585-1-ulf.hansson@linaro.org>
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 9:44 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> Well, the current method (as Jiri mentioned) did get the OK from at
-> least Intel (and that was with a lot of arm twisting to do so).
+When the hierarchical CPU topology is used and when a CPU has been put
+offline (hotplug), that same CPU prevents its PM domain and thus also
+potential master PM domains, from being powered off. This is because genpd
+observes the CPU's struct device to remain being active from a runtime PM
+point of view.
 
-Guys, when the comparison is to:
+To deal with this, let's decrease the runtime PM usage count by calling
+pm_runtime_put_sync_suspend() of the CPU's struct device when putting it
+offline. Consequentially, we must then increase the runtime PM usage for
+the CPU, while putting it online again.
 
- - create a huge honking security hole by screwing up the stack frame
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-or
+Changes in v10:
+	- Make it work when the hierarchical CPU topology is used, which may be
+	  used both for OSI and PC mode.
+	- Rework the code to prevent "BUG: sleeping function called from
+	  invalid context".
+---
+ drivers/firmware/psci/psci.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
- - corrupt random registers because we "know" they aren't in use
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index b03bccce0a5d..f62c4963eb62 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/acpi.h>
+ #include <linux/arm-smccc.h>
++#include <linux/cpu.h>
+ #include <linux/cpuidle.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+@@ -199,9 +200,20 @@ static int psci_cpu_suspend(u32 state, unsigned long entry_point)
+ 
+ static int psci_cpu_off(u32 state)
+ {
++	struct device *dev;
+ 	int err;
+ 	u32 fn;
+ 
++	/*
++	 * When the hierarchical CPU topology is used, decrease the runtime PM
++	 * usage count for the current CPU, as to allow other parts in the
++	 * topology to enter low power states.
++	 */
++	if (psci_dt_topology) {
++		dev = get_cpu_device(smp_processor_id());
++		pm_runtime_put_sync_suspend(dev);
++	}
++
+ 	fn = psci_function_id[PSCI_FN_CPU_OFF];
+ 	err = invoke_psci_fn(fn, state, 0, 0);
+ 	return psci_to_linux_errno(err);
+@@ -209,6 +221,7 @@ static int psci_cpu_off(u32 state)
+ 
+ static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
+ {
++	struct device *dev;
+ 	int err;
+ 	u32 fn;
+ 
+@@ -216,6 +229,13 @@ static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
+ 	err = invoke_psci_fn(fn, cpuid, entry_point, 0);
+ 	/* Clear the domain state to start fresh. */
+ 	psci_set_domain_state(0);
++
++	/* Increase runtime PM usage count if the hierarchical CPU toplogy. */
++	if (!err && psci_dt_topology) {
++		dev = get_cpu_device(cpuid);
++		pm_runtime_get_sync(dev);
++	}
++
+ 	return psci_to_linux_errno(err);
+ }
+ 
+-- 
+2.17.1
 
-then it really sounds pretty safe to just say "ok, just make it
-aligned and update the instruction with an atomic cmpxchg or
-something".
-
-Of course, another option is to just say "we don't do the inline case,
-then", and only ever do a call to a stub that does a "jmp"
-instruction.
-
-Problem solved, at the cost of some I$. Emulating a "jmp" is trivial,
-in ways emulating a "call" is not.
-
-              Linus
