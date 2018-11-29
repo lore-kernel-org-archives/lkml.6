@@ -2,232 +2,211 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79C1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4BDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7AE20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="KMyk7Cfs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7AE20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D3BA213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3BA213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbeK3DY5 (ORCPT
+        id S1729107AbeK3DZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:24:57 -0500
-Received: from vern.gendns.com ([98.142.107.122]:52536 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728136AbeK3DY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:24:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=52ybRUybQRHGNfoVsCBV1aI2xJ6q7oVESBG5aiohejo=; b=KMyk7CfsbhHFhZ7Ah0PZuSWVP5
-        kv+iayp1Qvu0rQvTr9U/zm0e+kmo9JLewPqBH2TaumfmI+PZSmvznTyiW6BgYft97w7bpKkHVbJ1h
-        9YC8xF4WmHJcyE6veUktAtOWi/AFcSwyp1n6Sk5FsxKaHkvxtC6fhP7Kbd51ZdF6UbWaW6b1fXmXF
-        OizJ776mTW5gpgziSpPH7eCzrZWW/qhDG6oEVvsN5uxm0ivmCDDmxzt1TzTUdrsEfzMlMKDyMhoX6
-        a9zeDdZHZ7rYQnQvpKjbZ9CZVEFPMLfKLpR2BDUixVCjjFFj2P807S5XkTqI4Wy3yiz8wB/tz3UG4
-        7nZDGH2g==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:44180 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gSP0t-0002Xc-DF; Thu, 29 Nov 2018 11:18:03 -0500
-Subject: Re: [PATCH 01/17] dt-bindings: remoteproc: Add TI PRUSS bindings
-To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
-Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
-        ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
-        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
-        m-karicheri2@ti.com, woods.technical@gmail.com,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-2-git-send-email-rogerq@ti.com>
- <a4fe952b-9065-d91b-4c07-984ec3f5b276@lechnology.com>
- <5BFD5F83.3070807@ti.com>
- <ee02b7d3-e7fd-2f4a-4213-d556d364194b@lechnology.com>
- <5BFFA811.3080907@ti.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <e9c26880-66df-120f-842c-f86ae8745f46@lechnology.com>
-Date:   Thu, 29 Nov 2018 10:18:58 -0600
+        Thu, 29 Nov 2018 22:25:49 -0500
+Received: from upbd19pa08.eemsg.mail.mil ([214.24.27.83]:21937 "EHLO
+        upbd19pa08.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbeK3DZs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:25:48 -0500
+X-Greylist: delayed 327 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Nov 2018 22:25:45 EST
+X-EEMSG-check-008: 183411373|UPBD19PA08_EEMSG_MP8.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by upbd19pa08.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 29 Nov 2018 16:19:49 +0000
+X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
+   d="scan'208";a="21145288"
+IronPort-PHdr: =?us-ascii?q?9a23=3Aq2VAaxFdtDD1lrUwLTBgT51GYnF86YWxBRYc79?=
+ =?us-ascii?q?8ds5kLTJ76pMS5bnLW6fgltlLVR4KTs6sC17KG9fi4EUU7or+5+EgYd5JNUx?=
+ =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
+ =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCa+bL9oMBm6sRjau9ULj4dlNqs/0A?=
+ =?us-ascii?q?bCrGFSe+RRy2NoJFaTkAj568yt4pNt8Dletuw4+cJYXqr0Y6o3TbpDDDQ7KG?=
+ =?us-ascii?q?81/9HktQPCTQSU+HQRVHgdnwdSDAjE6BH6WYrxsjf/u+Fg1iSWIdH6QLYpUj?=
+ =?us-ascii?q?m58axlVAHnhzsGNz4h8WHYlMpwjL5AoBm8oxBz2pPYbJ2JOPZ7eK7Sc8kaRW?=
+ =?us-ascii?q?5cVchPUSJPDJ63Y48WA+YfIepUqo/wrEYMoxSjHwmhHP7hxD9WiH/43qM03e?=
+ =?us-ascii?q?ouHg7E0wM8ENwDq2jUodbvOasOTey4wqvFwDPeZP1Wwzf9743Ifwg8r/GQQ7?=
+ =?us-ascii?q?1wacrRxlcpFwjYk1uQrJbqPzeR1usTs2mQ8u1tVfmyhG48sAxxvjiuydssio?=
+ =?us-ascii?q?nOnI4VzEvE+j9jzIY6It24Vld2bNi5G5VTryGXL5Z6T8wtTm1yuCs216cKtY?=
+ =?us-ascii?q?C0cSQU0pgr2hjSYOGdfYeS+BLsTuORLC99hHJiZb2wmQ6/8VOlyu3gTsm010?=
+ =?us-ascii?q?tKrjZdntnMqH8N0xvT59CbSvRn5Eeh2CuP1xvJ5uFYIUE7iarbK5k7zr42ip?=
+ =?us-ascii?q?UTqljMEjXzmEX3iK+abkQk+u625OT7erjqu5CROoBuhgz+L6gigNKzDOsmPg?=
+ =?us-ascii?q?QUQmSX4eG826fi/U39TrVKlPo2kqzBvZDBOMsbvbW0AxNV04k/6xa/CC2q0N?=
+ =?us-ascii?q?IDnXYdNl5FdxWHj5bxN1HUPP/4Feu/g0irkDpzwvDGP77hApHKLnjYi7rhZr?=
+ =?us-ascii?q?d85FBGyAUt0N9f5ohYCrEcIPjrQE/+qMTYDgMlMwyz2+vnFtp91oQeWG2VBq?=
+ =?us-ascii?q?+UK7nSvkGV6eIvOeaMeJUZtyr6K/gg//Tul2M2mUcBfam12psacHe4HvFhI0?=
+ =?us-ascii?q?WCZ3rjmMsOHnkRswokUuPllV2CXiRPZ3qoQ6084TQ7Apq8DYjfXoCtnKCB3C?=
+ =?us-ascii?q?CjE5JNaGBGC06DEXP1eIWfQPoMZiOSLdFlkjMZTriuVZQh2QuptA/gxLptNv?=
+ =?us-ascii?q?DU9TEAtZL/yNh14PXelQoo+jxwD8Wc0mGMT2dvk2wSQT85wbp/oUt8yliey6?=
+ =?us-ascii?q?R3n/tYFdlL7fNTTgg6LYLcz/B9C93qQgLOZMqJSFK9T9W+Gz4xU9Yxz8YLY0?=
+ =?us-ascii?q?Z6HNWilA7M0zC2DL8SkryBHIY0/b7E33jtO8Z9zG7L1K0gj1kgX8tOOnSqhq?=
+ =?us-ascii?q?1h+AjJAY7GjUGZmr20daQTwiHN7n2PzWmQs0FCVg5/T6HFUWoYZkvMotTz/l?=
+ =?us-ascii?q?nCQKO2CbQ7LgtBztaPKq9Lat3vkFVHS+7vOMnYY2KwnGewAxiIxqiXYYr0dG?=
+ =?us-ascii?q?USwj/dBFIHkw8N53aGMxYxBiO7r2LZFjxuGkrlY1nw/ulmtHO7Ukg0whmOb0?=
+ =?us-ascii?q?1g0bq15xEUieWSS/MIw70LpjkhpCtwHFumwdLWBMSPpxB7cKVff9w9+lFH2n?=
+ =?us-ascii?q?zdtwBnOZygNa9ijEYEcwtrp0Puywl3CoJYnMgxsnwqyAtyKaSF0FJObD6Yw5?=
+ =?us-ascii?q?/wNaPNKmXo/xCgdbTW2lfA39aS4KsP7+44q1r7tgGzCkUi62ln08VS03aE+5?=
+ =?us-ascii?q?rLAhAdUZbqUkY37BV6va/VbTQ954zOyX1gK7W7sjjH24FhOOxw7xeje9BEeJ?=
+ =?us-ascii?q?iWGRX/H8xSU82vK+gtgHCyfB8eMexTsq4paZCIbfyDjZW3Mf5gkTTutmFO5I?=
+ =?us-ascii?q?RwwwrY7CZnYvLZ1JYChfeD102IUCmq3wTpidz+hY0RPWJaJWG40yWxQdcLPq?=
+ =?us-ascii?q?A=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DNAAAREQBc/wHyM5BkGwEBAQEDAQEBBwMBAQGBZYFbK?=
+ =?us-ascii?q?YE1MyeDeZQgTAEBAQEBAQaBCAgliR6QIDgBhEACgzIiOBIBAwEBAQEBAQIBb?=
+ =?us-ascii?q?CiCNiQBgmIBBSMPAQVBEAsYAgImAgJXBg0GAgEBgl4/gXUNpjaBL4orgQuLC?=
+ =?us-ascii?q?xd4gQeBOAyCX4Q7HxEWgwSCVwKJFoIDhQVQjzUJkSwGGIFaiDSHDporIYFVK?=
+ =?us-ascii?q?wgCGAghD4MnkHkhAzCBBQEBim0PF4InAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 29 Nov 2018 16:19:47 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wATGJlIk020702;
+        Thu, 29 Nov 2018 11:19:47 -0500
+Subject: Re: overlayfs access checks on underlying layers
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com>
+ <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+Message-ID: <d82ba663-0154-337e-9cd5-360794df8c82@tycho.nsa.gov>
+Date:   Thu, 29 Nov 2018 11:22:13 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <5BFFA811.3080907@ti.com>
+In-Reply-To: <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 2:49 AM, Roger Quadros wrote:
-> David,
-> 
-> On 28/11/18 17:42, David Lechner wrote:
->> On 11/27/18 9:15 AM, Roger Quadros wrote:
+On 11/29/18 11:16 AM, Stephen Smalley wrote:
+> On 11/29/18 6:04 AM, Miklos Szeredi wrote:
+>> On Wed, Nov 28, 2018 at 10:43 PM Stephen Smalley <sds@tycho.nsa.gov> 
+>> wrote:
 >>>
->>> On 26/11/18 23:14, David Lechner wrote:
->>>> On 11/22/18 5:38 AM, Roger Quadros wrote:
->>>>> From: Suman Anna <s-anna@ti.com>
->>>>>
->>>>> This patch adds the bindings for the Programmable Real-Time Unit
->>>>> and Industrial Communication Subsystem (PRU-ICSS) present on various
->>>>> TI SoCs. The IP is present on multiple TI SoC architecture families
->>>>> including the OMAP architecture SoCs such as AM33xx, AM437x and
->>>>> AM57xx; and on a Keystone 2 architecture based 66AK2G SoC. It is
->>>>> also present on the Davinci based OMAPL138 SoCs and K3 architecture
->>>>> based AM65x SoCs as well (not covered for now). Details have been
->>>>> added to include bindings for various core sub-modules like the PRU
->>>>> Cores, the PRUSS Interrupt Controller, and other sub-modules used
->>>>> for Industrial Communication purposes, covering the MDIO, MII_RT
->>>>> and the IEP sub-modules. The binding mostly uses standard DT
->>>>> properties.
->>>>>
->>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>>>> ---
->>>>>     .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 +++++++++++++++++++++
->>>>>     1 file changed, 360 insertions(+)
->>>>>     create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>>> new file mode 100644
->>>>> index 0000000..24fedad
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>>>
->>>> ...
->>>>
->>>>> +
->>>>> +PRU-ICSS SoC Bus Parent Node
->>>>> +=============================
->>>>> +This node represents the integration of the PRU-ICSS IP into a SoC, and is
->>>>> +required for all SoCs. The PRU-ICSS parent nodes need to be defined as child
->>>>> +nodes of this node.
->>>>> +
->>>>> +Required Properties:
->>>>> +--------------------
->>>>> +- compatible     : should be one of,
->>>>> +                       "ti,am3356-pruss-soc-bus" for AM335x family of SoCs
->>>>> +                       "ti,am4376-pruss-soc-bus" for AM437x family of SoCs
->>>>> +                       "ti,am5728-pruss-soc-bus" for AM57xx family of SoCs
->>>>> +                       "ti,k2g-pruss-soc-bus" for 66AK2G family of SoCs
->>>>> +- reg            : address and size of the PRUSS CFG sub-module registers
->>>>> +                   dictating the interconnect configuration
->>>>
->>>> I haven't looked into Tony's suggestion of using ti-sysc yet, so this may be a
->>>> moot point, but how will this work with AM18xx that does not have a PRUSS CFG
->>>> register? It seems to me that reg here should be the address and size of the
->>>> entire PRUSS IP block and the CFG register should be a syscon node or something
->>>> like that.
->>>
->>> The reg property description is incorrect in the patch. It should have been
->>>
->>> reg        : address of SYSCFG register.
->>>
->>> The SYSCFG register is used to enable and reset the module.
->>>
->>> But based on Tony's suggestion this wrapper driver will change to ti,sysc for
->>> OMAP like SoCs.
->>>
->>> For AM18xx it could be a simple wrapper driver that just populates the children?
+>>> On 11/28/18 3:24 PM, Miklos Szeredi wrote:
+>>>> On Wed, Nov 28, 2018 at 8:32 PM Stephen Smalley <sds@tycho.nsa.gov> 
+>>>> wrote:
 >>
->> I suppose that could work. I will look into it (perhaps after seeing what you
->> come up with in v2).
+>> [...]
 >>
+>>>>> Does the breaking commit (007ea44892e6) fix a real bug affecting 
+>>>>> users?
+>>>>>     If not, I'd recommend just reverting it.
+>>>>
+>>>> That is certainly an option, but...  this is all about context=
+>>>> mounts, right?  Which allows mounter to override MAC checks under the
+>>>> new mount?  On any mount, not just overlay, right?  So why is overlay
+>>>> special?
 >>>
->>>>
->>>>> +- #address-cells : should be 1
->>>>> +- #size-cells    : should be 1
->>>>> +- ranges         : standard ranges definition
->>>>> +
->>>>
->>>> ...
->>>>
->>>>> +
->>>>> +PRUSS INTC Child Node
->>>>> +======================
->>>>> +Each PRUSS has a single interrupt controller instance that is common to both
->>>>> +the PRU cores. Each interrupt controller can detect 64 input events which are
->>>>> +then mapped to 10 possible output interrupts through two levels of mapping. The
->>>>> +input events can be triggered by either the PRUs and/or various other PRUSS
->>>>> +internal and external peripherals. The first 2 output interrupts are fed
->>>>> +exclusively to the internal PRU cores, with the remaining 8 connected to
->>>>> +external interrupt controllers including the MPU.
->>>>
->>>> FYI, on AM18xx, there is a PRUSSEVTSEL bit in CFGCHIP3[3] (already a syscon node
->>>> in the device tree) that allows selecting one of two groups of 32 input events
->>>> out of this group of 64. This is perhaps getting out of the scope of this patch
->>>> series, but I just want to make sure we end up with something that can be easily
->>>> extended for this case. For example, I was thinking that this binding could be
->>>> modified so that #interrupt-cells could be 1 or 2. If it is 2, then the first
->>>> cell specifies the PRUSSEVTSEL value and the second value is the event number.
->>>>
+>>> With other filesystems, the files are only accessible under the context
+>>> specified by the mounter (and you can't mount it twice with differing
+>>> context mount options). With overlay, the file is simultaneously
+>>> accessible under both the context specified by the mounter via the
+>>> overlay and under its lower/upper context via the lower/upper dir.
 >>>
->>> this is da850.dtsi correct?
+>>> Generally we only use context mounts on other filesystems when they have
+>>> no label information at all (no security.selinux xattrs) or when they
+>>> are completely untrusted to provide that information; the context
+>>> specified by the mounter is the only basis for access control.  With
+>>> overlay, we are frequently dealing with labeled lower and upper
+>>> directories in a filesystem we trust.
+>>>
+>>> It seems like overlay has a goal of preventing the mounter from
+>>> escalating its access through an overlay mount.
 >>
->> Yes.
+>> Overlayfs main purpose is to bypass limited access to a read-only
+>> filesystem by copying up on a write access.  So bypassing access is
+>> built into the system, but it's done in a way that in the end it
+>> doesn't permit mounter to do more than it could otherwise do.  Or at
+>> least that's the intent, as you say.
 >>
->>>
->>> As PRUSSEVTSEL is not SYSEVENT specific but applies to all the SYSEVENTs at a time.
->>> I don't think interrupt-cells is the right place to specify this.
->>>
->>> Can it be set in DT in the board file? But this can't change once booted so maybe restrictive.
->>
->> I guess the way I see this is that it is like specifying the bank and index for
->> a GPIO. If you only specify the system event number, then it is not clear which
->> event you mean - it could be one of two events. You have to also specify the
->> PRUSSEVTSEL value (one could call this the bank or group, I suppose) to fully
->> describe the system event.
+>> To generalize that, we could say:  trigger a copy-up if access to
+>> lower layer object is denied.  That would extend the scope of the
+>> trigger from write access on file/dir to read/write on special files
+>> and execute on regular files, all of which could theoretically be
+>> denied on the lower object, yet allowed on the upper object without
+>> violating the above rule.
 > 
-> But this PRUSSEVTSEL is not present on most SoCs. I think it is only on the AM18xx and OMAP-L13x SoCs.
-> 
-> How about modelling this as a linear map of 64 events and decode this internally in INTC driver.
-> i.e. 0 to 31 set PRUSSEVTSEL to 0 and 32 to 63 set PRUSSEVTSEL to 1.
-> 
-> If any interrupt map provides sysevents from both groups simultaneously then we complain and error out.
-> 
-> This should keep the dt-binding and resource table format identical across all SoCs.
+> Possibly I misunderstood you, but I don't think we want to copy-up on 
+> permission denial, as that would still allow the mounter to read/write 
+> special files or execute regular files to which it would normally be 
+> denied access, because the copy would inherit the context specified by 
+> the mounter in the context mount case.  It still represents an 
+> escalation of privilege for the mounter.  In contrast, the copy-up on 
+> write behavior does not allow the mounter to do anything it could not do 
+> already (i.e. read from the lower, write to the upper).
 
-
-This sounds reasonable to me.
-
+Also, copy-up in those cases might allow for device files that would 
+normally be unusable due to nodev on the lower filesystem mount to 
+become usable in the upper?  And likewise for executable files in a 
+noexec lower mount?  Is that already an issue for nosuid?
 
 > 
 >>
+>>>> I'd just like to see proper justification for why we should be doing
+>>>> those checks on underlying layer that simply don't belong there, IMO.
+>>>>    I'm sure you know better than I that it's not just about real bugs
+>>>> affecting users, it's about having a clear, well defined model to base
+>>>> the design on.   And by reverting the breaking commit, I don't see us
+>>>> getting closer to that.
 >>>
->>> If runtime change is required it can only be done before a PRU boots.
->>>
->>> How about providing this info in the resource table and/or application DT node?
+>>> It seems like the NFS folks raised a number of concerns with the overlay
+>>> approach beyond just these two checks,
 >>
->> This seems like this would make it easy to end up with a broken interrupts
->> if you accidentally try to use interrupts from both groups. Instead this
->> could be implemented in the irqchip driver such that the first interrupt
->> (system event) requested gets to select the group. If any interrupts from
->> the other group are requested later, they can just return an error. Any
->> interrupts in the same group as the first can be requested successfully.
+>> The concerns that NFS folks had was that overlayfs does not enforce
+>> permission checks (with creds of task) on underlying objects,
+>> resulting in possibly elevated access compared to directly accessing
+>> the NFS mount.    But I think there's no way to reconcile server
+>> permission checks with overlayfs, so we are left with the current
+>> model of only verifying the permission on the server against the
+>> mounter's creds.
 > 
-> cheers,
-> -roger
+> Typically this will only work if the NFS files are 
+> world-readable/searchable, right, since usually the mounter will be root 
+> and the server will enable root squash on the export?  Is that 
+> sufficient for most use cases?
+> 
+>>
+>>> and Android has their
+>>> override_creds=off use case.  Maybe the overlay model needs a more
+>>> significant rethinking than just these two cases.
+>>
+>> Yes, it would be good if that override_creds=off use case was
+>> discussed.  AFAICS it trades less privilege in the mounter for more
+>> privilege in the task accessing the overlay.  If, or how, that is a
+>> good model for anything other than Android is not clear to me.
+>>
+>> Thanks,
+>> Miklos
+>>
 > 
 
