@@ -6,178 +6,265 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C96BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE39C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B3520989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B3520989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DF98820834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF98820834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeK2TPF (ORCPT
+        id S1728360AbeK2TPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56748 "EHLO mx1.redhat.com"
+        Thu, 29 Nov 2018 14:15:08 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10486 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbeK2TPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:04 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D8B7130C11FB;
-        Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 27F7E60CCF;
-        Thu, 29 Nov 2018 08:10:20 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, x86@kernel.org,
-        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
-        bhe@redhat.com
-Subject: [PATCH 1/2 v8] resource: add the new I/O resource descriptor 'IORES_DESC_RESERVED'
-Date:   Thu, 29 Nov 2018 16:09:55 +0800
-Message-Id: <20181129080956.20776-2-lijiang@redhat.com>
-In-Reply-To: <20181129080956.20776-1-lijiang@redhat.com>
-References: <20181129080956.20776-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 29 Nov 2018 08:10:33 +0000 (UTC)
+        id S1727166AbeK2TPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:15:07 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4359F61Bjvz9vGpM;
+        Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 50tsGye4nyn5; Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F607ljz9vGnW;
+        Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D3C168B894;
+        Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id s1wB61iLj9rw; Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 78F468B891;
+        Thu, 29 Nov 2018 09:10:34 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 29AA469AEA; Thu, 29 Nov 2018 08:10:34 +0000 (UTC)
+Message-Id: <6c6e7ebff6eeba651f4bab69ff552888fdcf7cbf.1543478200.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
+References: <cover.1543478199.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v8 15/20] powerpc/8xx: Use hardware assistance in TLB handlers
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 29 Nov 2018 08:10:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When doing kexec_file_load, the first kernel needs to pass the e820
-reserved ranges to the second kernel. But kernel can not exactly
-match the e820 reserved ranges when walking through the iomem resources
-with the descriptor 'IORES_DESC_NONE', because several e820 types(
-e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
-_TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
-may pass these four types to the kdump kernel, that is not desired result.
+Today, on the 8xx the TLB handlers do SW tablewalk by doing all
+the calculation in ASM, in order to match with the Linux page
+table structure.
 
-So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
-for the iomem resources search interfaces. It is helpful to exactly
-match the reserved resource ranges when walking through iomem resources.
+The 8xx offers hardware assistance which allows significant size
+reduction of the TLB handlers, hence also reduces the time spent
+in the handlers.
 
-In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
-these code originally related to the descriptor 'IORES_DESC_NONE' need to
-be updated. Otherwise, it will be easily confused and also cause some
-errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
-descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
-changed.
+However, using this HW assistance implies some constraints on the
+page table structure:
+- Regardless of the main page size used (4k or 16k), the
+level 1 table (PGD) contains 1024 entries and each PGD entry covers
+a 4Mbytes area which is managed by a level 2 table (PTE) containing
+also 1024 entries each describing a 4k page.
+- 16k pages require 4 identifical entries in the L2 table
+- 512k pages PTE have to be spread every 128 bytes in the L2 table
+- 8M pages PTE are at the address pointed by the L1 entry and each
+8M page require 2 identical entries in the PGD.
 
-Suggested-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+This patch modifies the TLB handlers to use HW assistance for 4K PAGES.
+
+Before that patch, the mean time spent in TLB miss handlers is:
+- ITLB miss: 80 ticks
+- DTLB miss: 62 ticks
+After that patch, the mean time spent in TLB miss handlers is:
+- ITLB miss: 72 ticks
+- DTLB miss: 54 ticks
+So the improvement is 10% for ITLB and 13% for DTLB misses
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/ia64/kernel/efi.c |  4 ++++
- arch/x86/kernel/e820.c |  2 +-
- arch/x86/mm/ioremap.c  | 13 ++++++++++++-
- include/linux/ioport.h |  1 +
- kernel/resource.c      |  6 +++---
- 5 files changed, 21 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/head_8xx.S | 58 +++++++++++++++++-------------------------
+ arch/powerpc/mm/8xx_mmu.c      |  4 +--
+ 2 files changed, 26 insertions(+), 36 deletions(-)
 
-diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
-index 8f106638913c..1841e9b4db30 100644
---- a/arch/ia64/kernel/efi.c
-+++ b/arch/ia64/kernel/efi.c
-@@ -1231,6 +1231,10 @@ efi_initialize_iomem_resources(struct resource *code_resource,
- 				break;
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 01f58b1d9ae7..85fb4b8bf6c7 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -292,7 +292,7 @@ SystemCall:
+ 	. = 0x1100
+ /*
+  * For the MPC8xx, this is a software tablewalk to load the instruction
+- * TLB.  The task switch loads the M_TW register with the pointer to the first
++ * TLB.  The task switch loads the M_TWB register with the pointer to the first
+  * level table.
+  * If we discover there is no second level table (value is zero) or if there
+  * is an invalid pte, we load that into the TLB, which causes another fault
+@@ -323,6 +323,7 @@ InstructionTLBMiss:
+ 	 */
+ 	mfspr	r10, SPRN_SRR0	/* Get effective address of fault */
+ 	INVALIDATE_ADJACENT_PAGES_CPU15(r11, r10)
++	mtspr	SPRN_MD_EPN, r10
+ 	/* Only modules will cause ITLB Misses as we always
+ 	 * pin the first 8MB of kernel memory */
+ #ifdef ITLB_MISS_KERNEL
+@@ -339,7 +340,7 @@ InstructionTLBMiss:
+ #endif
+ #endif
+ #endif
+-	mfspr	r11, SPRN_M_TW	/* Get level 1 table */
++	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
+ #ifdef ITLB_MISS_KERNEL
+ #if defined(SIMPLE_KERNEL_ADDRESS) && defined(CONFIG_PIN_TLB_TEXT)
+ 	beq+	3f
+@@ -349,16 +350,14 @@ InstructionTLBMiss:
+ #ifndef CONFIG_PIN_TLB_TEXT
+ 	blt	cr7, ITLBMissLinear
+ #endif
+-	lis	r11, (swapper_pg_dir-PAGE_OFFSET)@ha
++	rlwinm	r11, r11, 0, 20, 31
++	oris	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@ha
+ 3:
+ #endif
+-	/* Insert level 1 index */
+-	rlwimi	r11, r10, 32 - ((PAGE_SHIFT - 2) << 1), (PAGE_SHIFT - 2) << 1, 29
+ 	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r11)	/* Get the level 1 entry */
  
- 			case EFI_RESERVED_TYPE:
-+				name = "reserved";
-+				desc = IORES_DESC_RESERVED;
-+				break;
+-	/* Extract level 2 index */
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+-	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
++	mtspr	SPRN_MD_TWC, r11
++	mfspr	r10, SPRN_MD_TWC
+ 	lwz	r10, 0(r10)	/* Get the pte */
+ #ifdef ITLB_MISS_KERNEL
+ 	mtcr	r12
+@@ -417,7 +416,7 @@ DataStoreTLBMiss:
+ 	mfspr	r10, SPRN_MD_EPN
+ 	rlwinm	r11, r10, 16, 0xfff8
+ 	cmpli	cr0, r11, PAGE_OFFSET@h
+-	mfspr	r11, SPRN_M_TW	/* Get level 1 table */
++	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
+ 	blt+	3f
+ 	rlwinm	r11, r10, 16, 0xfff8
+ #ifndef CONFIG_PIN_TLB_IMMR
+@@ -430,20 +429,16 @@ DataStoreTLBMiss:
+ 	patch_site	0b, patch__dtlbmiss_immr_jmp
+ #endif
+ 	blt	cr7, DTLBMissLinear
+-	lis	r11, (swapper_pg_dir-PAGE_OFFSET)@ha
++	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
++	rlwinm	r11, r11, 0, 20, 31
++	oris	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@ha
+ 3:
+-
+-	/* Insert level 1 index */
+-	rlwimi	r11, r10, 32 - ((PAGE_SHIFT - 2) << 1), (PAGE_SHIFT - 2) << 1, 29
+ 	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r11)	/* Get the level 1 entry */
+ 
+-	/* We have a pte table, so load fetch the pte from the table.
+-	 */
+-	/* Extract level 2 index */
+-	rlwinm	r10, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+-	rlwimi	r10, r11, 0, 0, 32 - PAGE_SHIFT - 1	/* Add level 2 base */
++	mtspr	SPRN_MD_TWC, r11
++	mfspr	r10, SPRN_MD_TWC
+ 	lwz	r10, 0(r10)	/* Get the pte */
+-4:
 +
- 			case EFI_RUNTIME_SERVICES_CODE:
- 			case EFI_RUNTIME_SERVICES_DATA:
- 			case EFI_ACPI_RECLAIM_MEMORY:
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 50895c2f937d..57fafdafb860 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -1048,10 +1048,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
- 	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
- 	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
- 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
-+	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
- 	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
- 	case E820_TYPE_RAM:		/* Fall-through: */
- 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
--	case E820_TYPE_RESERVED:	/* Fall-through: */
- 	default:			return IORES_DESC_NONE;
- 	}
- }
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 5378d10f1d31..fea2ef99415d 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -83,7 +83,18 @@ static bool __ioremap_check_ram(struct resource *res)
+ 	mtcr	r12
  
- static int __ioremap_check_desc_other(struct resource *res)
- {
--	return (res->desc != IORES_DESC_NONE);
-+	/*
-+	 * But now, the 'E820_TYPE_RESERVED' type is converted to the new
-+	 * descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE',
-+	 * it has been changed. And the value of 'mem_flags.desc_other'
-+	 * is equal to 'true' if we don't strengthen the condition in this
-+	 * function, that is wrong. Because originally it is equal to
-+	 * 'false' for the same reserved type.
-+	 *
-+	 * So, that would be nice to keep it the same as before.
-+	 */
-+	return ((res->desc != IORES_DESC_NONE) &&
-+		(res->desc != IORES_DESC_RESERVED));
- }
+ 	/* Insert the Guarded flag into the TWC from the Linux PTE.
+@@ -668,9 +663,10 @@ FixupDAR:/* Entry point for dcbx workaround. */
+ 	mtspr	SPRN_SPRG_SCRATCH2, r10
+ 	/* fetch instruction from memory. */
+ 	mfspr	r10, SPRN_SRR0
++	mtspr	SPRN_MD_EPN, r10
+ 	rlwinm	r11, r10, 16, 0xfff8
+ 	cmpli	cr0, r11, PAGE_OFFSET@h
+-	mfspr	r11, SPRN_M_TW	/* Get level 1 table */
++	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
+ 	blt+	3f
+ 	rlwinm	r11, r10, 16, 0xfff8
  
- static int __ioremap_res_check(struct resource *res, void *arg)
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index da0ebaec25f0..6ed59de48bd5 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -133,6 +133,7 @@ enum {
- 	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
- 	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
- 	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
-+	IORES_DESC_RESERVED			= 8,
- };
+@@ -680,17 +676,17 @@ FixupDAR:/* Entry point for dcbx workaround. */
+ 	/* create physical page address from effective address */
+ 	tophys(r11, r10)
+ 	blt-	cr7, 201f
+-	lis	r11, (swapper_pg_dir-PAGE_OFFSET)@ha
+-	/* Insert level 1 index */
+-3:	rlwimi	r11, r10, 32 - ((PAGE_SHIFT - 2) << 1), (PAGE_SHIFT - 2) << 1, 29
++	mfspr	r11, SPRN_M_TWB	/* Get level 1 table */
++	rlwinm	r11, r11, 0, 20, 31
++	oris	r11, r11, (swapper_pg_dir - PAGE_OFFSET)@ha
++3:
+ 	lwz	r11, (swapper_pg_dir-PAGE_OFFSET)@l(r11)	/* Get the level 1 entry */
++	mtspr	SPRN_MD_TWC, r11
+ 	mtcr	r11
++	mfspr	r11, SPRN_MD_TWC
++	lwz	r11, 0(r11)	/* Get the pte */
+ 	bt	28,200f		/* bit 28 = Large page (8M) */
+ 	bt	29,202f		/* bit 29 = Large page (8M or 512K) */
+-	rlwinm	r11, r11,0,0,19	/* Extract page descriptor page address */
+-	/* Insert level 2 index */
+-	rlwimi	r11, r10, 32 - (PAGE_SHIFT - 2), 32 - PAGE_SHIFT, 29
+-	lwz	r11, 0(r11)	/* Get the pte */
+ 	/* concat physical page address(r11) and page offset(r10) */
+ 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT, 31
+ 201:	lwz	r11,0(r11)
+@@ -712,18 +708,12 @@ FixupDAR:/* Entry point for dcbx workaround. */
+ 141:	mfspr	r10,SPRN_SPRG_SCRATCH2
+ 	b	DARFixed	/* Nope, go back to normal TLB processing */
  
- /* helpers to define resources */
-diff --git a/kernel/resource.c b/kernel/resource.c
-index b0fbf685c77a..f34a632c4169 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -994,7 +994,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
- 	res->start = start;
- 	res->end = end;
- 	res->flags = type | IORESOURCE_BUSY;
--	res->desc = IORES_DESC_NONE;
-+	res->desc = IORES_DESC_RESERVED;
+-	/* concat physical page address(r11) and page offset(r10) */
+ 200:
+-	rlwinm	r11, r10, 0, ~HUGEPD_SHIFT_MASK
+-	lwz	r11, 0(r11)	/* Get the pte */
+ 	/* concat physical page address(r11) and page offset(r10) */
+ 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT_8M, 31
+ 	b	201b
  
- 	while (1) {
+ 202:
+-	rlwinm	r11, r11, 0, 0, 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1) - 1
+-	rlwimi	r11, r10, 32 - (PAGE_SHIFT_512K - 2), 32 + PAGE_SHIFT_512K - (PAGE_SHIFT << 1), 29
+-	lwz	r11, 0(r11)	/* Get the pte */
+ 	/* concat physical page address(r11) and page offset(r10) */
+ 	rlwimi	r11, r10, 0, 32 - PAGE_SHIFT_512K, 31
+ 	b	201b
+@@ -839,7 +829,7 @@ start_here:
  
-@@ -1029,7 +1029,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
- 				next_res->start = conflict->end + 1;
- 				next_res->end = end;
- 				next_res->flags = type | IORESOURCE_BUSY;
--				next_res->desc = IORES_DESC_NONE;
-+				next_res->desc = IORES_DESC_RESERVED;
- 			}
- 		} else {
- 			res->start = conflict->end + 1;
-@@ -1477,7 +1477,7 @@ static int __init reserve_setup(char *str)
- 			res->start = io_start;
- 			res->end = io_start + io_num - 1;
- 			res->flags |= IORESOURCE_BUSY;
--			res->desc = IORES_DESC_NONE;
-+			res->desc = IORES_DESC_RESERVED;
- 			res->child = NULL;
- 			if (request_resource(parent, res) == 0)
- 				reserved = x+1;
+ 	lis	r6, swapper_pg_dir@ha
+ 	tophys(r6,r6)
+-	mtspr	SPRN_M_TW, r6
++	mtspr	SPRN_M_TWB, r6
+ 
+ 	bl	early_init	/* We have to do this with MMU on */
+ 
+diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
+index 01b7f5107c3a..e2b6687ebb50 100644
+--- a/arch/powerpc/mm/8xx_mmu.c
++++ b/arch/powerpc/mm/8xx_mmu.c
+@@ -175,12 +175,12 @@ void set_context(unsigned long id, pgd_t *pgd)
+ 	*(ptr + 1) = pgd;
+ #endif
+ 
+-	/* Register M_TW will contain base address of level 1 table minus the
++	/* Register M_TWB will contain base address of level 1 table minus the
+ 	 * lower part of the kernel PGDIR base address, so that all accesses to
+ 	 * level 1 table are done relative to lower part of kernel PGDIR base
+ 	 * address.
+ 	 */
+-	mtspr(SPRN_M_TW, __pa(pgd) - offset);
++	mtspr(SPRN_M_TWB, __pa(pgd) - offset);
+ 
+ 	/* Update context */
+ 	mtspr(SPRN_M_CASID, id - 1);
 -- 
-2.17.1
+2.13.3
 
