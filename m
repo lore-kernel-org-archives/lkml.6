@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF264C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41D1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D15213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DEA52146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Anep66RZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D15213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLNsaFIf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DEA52146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387888AbeK3Bda (ORCPT
+        id S2387901AbeK3Bdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34118 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbeK3Bd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:28 -0500
+        id S1731863AbeK3Bdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEEEA2133F;
-        Thu, 29 Nov 2018 14:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FF6D2146D;
+        Thu, 29 Nov 2018 14:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501676;
-        bh=9hS67AwPFo1hlyBFM7o2Vzf1fLz7+BzL7kOvJfITrOY=;
+        s=default; t=1543501678;
+        bh=BJcQErXZZLDzHfm4wnLouZmDwXKZCdwSffF5pWjt174=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Anep66RZHZhlVw8vMOM578wpRvVtK/ZJU6ZGqIBsgX3NsZN3xCIaDIfBNKYrnIe1+
-         o8PBi1EA07HMjioS2e7PThtBSWFVjlnfBrBA/lS4Q/nSwQM17nUsSUAjZgt9vByFhM
-         KTJbLnXPjCjKuoxrtmRmiHsmoSMU/9HT3JCjRlZs=
+        b=qLNsaFIfKpwN86Cr1+vnrBctw8pgUvgcj8kUtHZhWXHN1WfP+bk4+63W6Z4yV+PXr
+         0ek5X71Vl9aaTrxEG85NxBBmcZfuWPWVU9Wdufo6HbZJnzC8FahHeqDDRUjQ/IXvR1
+         mw2dayoXRoLF2BKTUaV2YZBCK5m1zAM8UM5SPRbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>
-Subject: [PATCH 4.14 096/100] net: ieee802154: 6lowpan: fix frag reassembly
-Date:   Thu, 29 Nov 2018 15:13:06 +0100
-Message-Id: <20181129140107.059805029@linuxfoundation.org>
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        Aditya Kali <adityakali@google.com>
+Subject: [PATCH 4.14 097/100] ima: always measure and audit files in policy
+Date:   Thu, 29 Nov 2018 15:13:07 +0100
+Message-Id: <20181129140107.150207555@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,71 +63,188 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-commit f18fa5de5ba7f1d6650951502bb96a6e4715a948 upstream.
+commit f3cc6b25dcc5616f0d5c720009b2ac66f97df2ff upstream.
 
-This patch initialize stack variables which are used in
-frag_lowpan_compare_key to zero. In my case there are padding bytes in the
-structures ieee802154_addr as well in frag_lowpan_compare_key. Otherwise
-the key variable contains random bytes. The result is that a compare of
-two keys by memcmp works incorrect.
+All files matching a "measure" rule must be included in the IMA
+measurement list, even when the file hash cannot be calculated.
+Similarly, all files matching an "audit" rule must be audited, even when
+the file hash can not be calculated.
 
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Reported-by: Stefan Schmidt <stefan@osg.samsung.com>
-Signed-off-by: Stefan Schmidt <stefan@osg.samsung.com>
+The file data hash field contained in the IMA measurement list template
+data will contain 0's instead of the actual file hash digest.
+
+Note:
+In general, adding, deleting or in anyway changing which files are
+included in the IMA measurement list is not a good idea, as it might
+result in not being able to unseal trusted keys sealed to a specific
+TPM PCR value.  This patch not only adds file measurements that were
+not previously measured, but specifies that the file hash value for
+these files will be 0's.
+
+As the IMA measurement list ordering is not consistent from one boot
+to the next, it is unlikely that anyone is sealing keys based on the
+IMA measurement list.  Remote attestation servers should be able to
+process these new measurement records, but might complain about
+these unknown records.
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Reviewed-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+Cc: Aditya Kali <adityakali@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ieee802154/6lowpan/6lowpan_i.h  |    4 ++--
- net/ieee802154/6lowpan/reassembly.c |   14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ security/integrity/ima/ima_api.c    |   69 ++++++++++++++++++++++--------------
+ security/integrity/ima/ima_crypto.c |   10 +++++
+ security/integrity/ima/ima_main.c   |    9 ++--
+ 3 files changed, 57 insertions(+), 31 deletions(-)
 
---- a/net/ieee802154/6lowpan/6lowpan_i.h
-+++ b/net/ieee802154/6lowpan/6lowpan_i.h
-@@ -20,8 +20,8 @@ typedef unsigned __bitwise lowpan_rx_res
- struct frag_lowpan_compare_key {
- 	u16 tag;
- 	u16 d_size;
--	const struct ieee802154_addr src;
--	const struct ieee802154_addr dst;
-+	struct ieee802154_addr src;
-+	struct ieee802154_addr dst;
- };
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -199,42 +199,59 @@ int ima_collect_measurement(struct integ
+ 	struct inode *inode = file_inode(file);
+ 	const char *filename = file->f_path.dentry->d_name.name;
+ 	int result = 0;
++	int length;
++	void *tmpbuf;
++	u64 i_version;
+ 	struct {
+ 		struct ima_digest_data hdr;
+ 		char digest[IMA_MAX_DIGEST_SIZE];
+ 	} hash;
  
- /* Equivalent of ipv4 struct ipq
---- a/net/ieee802154/6lowpan/reassembly.c
-+++ b/net/ieee802154/6lowpan/reassembly.c
-@@ -75,14 +75,14 @@ fq_find(struct net *net, const struct lo
- {
- 	struct netns_ieee802154_lowpan *ieee802154_lowpan =
- 		net_ieee802154_lowpan(net);
--	struct frag_lowpan_compare_key key = {
--		.tag = cb->d_tag,
--		.d_size = cb->d_size,
--		.src = *src,
--		.dst = *dst,
--	};
-+	struct frag_lowpan_compare_key key = {};
- 	struct inet_frag_queue *q;
+-	if (!(iint->flags & IMA_COLLECTED)) {
+-		u64 i_version = file_inode(file)->i_version;
++	if (iint->flags & IMA_COLLECTED)
++		goto out;
  
-+	key.tag = cb->d_tag;
-+	key.d_size = cb->d_size;
-+	key.src = *src;
-+	key.dst = *dst;
+-		if (file->f_flags & O_DIRECT) {
+-			audit_cause = "failed(directio)";
+-			result = -EACCES;
+-			goto out;
+-		}
+-
+-		hash.hdr.algo = algo;
+-
+-		result = (!buf) ?  ima_calc_file_hash(file, &hash.hdr) :
+-			ima_calc_buffer_hash(buf, size, &hash.hdr);
+-		if (!result) {
+-			int length = sizeof(hash.hdr) + hash.hdr.length;
+-			void *tmpbuf = krealloc(iint->ima_hash, length,
+-						GFP_NOFS);
+-			if (tmpbuf) {
+-				iint->ima_hash = tmpbuf;
+-				memcpy(iint->ima_hash, &hash, length);
+-				iint->version = i_version;
+-				iint->flags |= IMA_COLLECTED;
+-			} else
+-				result = -ENOMEM;
+-		}
++	/*
++	 * Dectecting file change is based on i_version. On filesystems
++	 * which do not support i_version, support is limited to an initial
++	 * measurement/appraisal/audit.
++	 */
++	i_version = file_inode(file)->i_version;
++	hash.hdr.algo = algo;
 +
- 	q = inet_frag_find(&ieee802154_lowpan->frags, &key);
- 	if (!q)
- 		return NULL;
-@@ -372,7 +372,7 @@ int lowpan_frag_rcv(struct sk_buff *skb,
- 	struct lowpan_frag_queue *fq;
- 	struct net *net = dev_net(skb->dev);
- 	struct lowpan_802154_cb *cb = lowpan_802154_cb(skb);
--	struct ieee802154_hdr hdr;
-+	struct ieee802154_hdr hdr = {};
- 	int err;
++	/* Initialize hash digest to 0's in case of failure */
++	memset(&hash.digest, 0, sizeof(hash.digest));
++
++	if (buf)
++		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
++	else
++		result = ima_calc_file_hash(file, &hash.hdr);
++
++	if (result && result != -EBADF && result != -EINVAL)
++		goto out;
++
++	length = sizeof(hash.hdr) + hash.hdr.length;
++	tmpbuf = krealloc(iint->ima_hash, length, GFP_NOFS);
++	if (!tmpbuf) {
++		result = -ENOMEM;
++		goto out;
+ 	}
++
++	iint->ima_hash = tmpbuf;
++	memcpy(iint->ima_hash, &hash, length);
++	iint->version = i_version;
++
++	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
++	if (!result)
++		iint->flags |= IMA_COLLECTED;
+ out:
+-	if (result)
++	if (result) {
++		if (file->f_flags & O_DIRECT)
++			audit_cause = "failed(directio)";
++
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+ 				    filename, "collect_data", audit_cause,
+ 				    result, 0);
++	}
+ 	return result;
+ }
  
- 	if (ieee802154_hdr_peek_addrs(skb, &hdr) < 0)
+@@ -278,7 +295,7 @@ void ima_store_measurement(struct integr
+ 	}
+ 
+ 	result = ima_store_template(entry, violation, inode, filename, pcr);
+-	if (!result || result == -EEXIST) {
++	if ((!result || result == -EEXIST) && !(file->f_flags & O_DIRECT)) {
+ 		iint->flags |= IMA_MEASURED;
+ 		iint->measured_pcrs |= (0x1 << pcr);
+ 	}
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -443,6 +443,16 @@ int ima_calc_file_hash(struct file *file
+ 	loff_t i_size;
+ 	int rc;
+ 
++	/*
++	 * For consistency, fail file's opened with the O_DIRECT flag on
++	 * filesystems mounted with/without DAX option.
++	 */
++	if (file->f_flags & O_DIRECT) {
++		hash->length = hash_digest_size[ima_hash_algo];
++		hash->algo = ima_hash_algo;
++		return -EINVAL;
++	}
++
+ 	i_size = i_size_read(file_inode(file));
+ 
+ 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -242,11 +242,8 @@ static int process_measurement(struct fi
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+ 	rc = ima_collect_measurement(iint, file, buf, size, hash_algo);
+-	if (rc != 0) {
+-		if (file->f_flags & O_DIRECT)
+-			rc = (iint->flags & IMA_PERMIT_DIRECTIO) ? 0 : -EACCES;
++	if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+ 		goto out_digsig;
+-	}
+ 
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
+@@ -254,12 +251,14 @@ static int process_measurement(struct fi
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, pcr);
+-	if (action & IMA_APPRAISE_SUBMASK)
++	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK))
+ 		rc = ima_appraise_measurement(func, iint, file, pathname,
+ 					      xattr_value, xattr_len, opened);
+ 	if (action & IMA_AUDIT)
+ 		ima_audit_measurement(iint, pathname);
+ 
++	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
++		rc = 0;
+ out_digsig:
+ 	if ((mask & MAY_WRITE) && (iint->flags & IMA_DIGSIG) &&
+ 	     !(iint->flags & IMA_NEW_FILE))
 
 
