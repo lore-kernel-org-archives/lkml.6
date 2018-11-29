@@ -2,191 +2,401 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C196C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D472C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E430320868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BFA52086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:07:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zaH7D6hn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E430320868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ucijsis2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFA52086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbeK2RLU (ORCPT
+        id S1729800AbeK2RMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:11:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbeK2RLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:11:19 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EBB02147C
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471626;
-        bh=qBhGs5+dFtZOHYuy7lvRQp2lSvzZtBEGEVmFofzHeM4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zaH7D6hnTAOrc8Sd/oTcCQmO5Qz/b/jHSzggAayLR6ZTe9sKDpOaOGHfublg3SF0c
-         Ij5eswjLjEsaXW/LXFWRsCmVAbDaOY/w5bhJucQbsmK+W9qHnReON9tJ7FyFx3rqG3
-         3rPfnpTqcZqdHV+465ZB8T/pINw1a3jgZs1HRqe0=
-Received: by mail-wm1-f50.google.com with SMTP id y185so5559151wmd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 22:07:06 -0800 (PST)
-X-Gm-Message-State: AA+aEWa45SOsig2xdzPA7cUKutVg584dIIRm4tB099PZ2L0GS23peY88
-        mUvsCP4TJUu4skw0+/gYNwna8ZzJMsg91LpBFRTwYQ==
-X-Google-Smtp-Source: AFSGD/UJdiibkvAYpg8Prd4o3kXBPx23gY7icmbOBspR0Sc1aCwmYb4byA7oNUMJbZquOmmCJ2Yh/46WhEej/LOd4BY=
-X-Received: by 2002:a1c:aacf:: with SMTP id t198-v6mr436643wme.108.1543471624564;
- Wed, 28 Nov 2018 22:07:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20181018005420.82993-1-namit@vmware.com> <20181128160849.epmoto4o5jaxxxol@treble>
- <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com> <20181129003837.6lgxsnhoyipkebmz@treble>
- <CALCETrUfC37TxuYLgqbN3_pZ1RzfpV03byKMpSt87o+JHtk6FQ@mail.gmail.com>
- <0E75C656-18BF-4967-98A3-35E0BD83D603@vmware.com> <4CD1975E-3B15-4B9C-B2A9-2E5F72E1D95F@amacapital.net>
-In-Reply-To: <4CD1975E-3B15-4B9C-B2A9-2E5F72E1D95F@amacapital.net>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 28 Nov 2018 22:06:52 -0800
-X-Gmail-Original-Message-ID: <CALCETrWN5QenBqNpLZ3EWEF2XFje3HGubzck4AEFePCspM6mGQ@mail.gmail.com>
-Message-ID: <CALCETrWN5QenBqNpLZ3EWEF2XFje3HGubzck4AEFePCspM6mGQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 29 Nov 2018 12:12:07 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42625 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729493AbeK2RMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:12:06 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 64so483979pfr.9
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 22:07:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=HD8DFIpNCGhIwZVOyzdP+cSeTABmfi21GvFpnMD1Wuk=;
+        b=Ucijsis2bA4z9B438v1jLgDFvKMk/ELbF0UgJffL+m9ahzQujlx2p5wZl3GvoIpG7u
+         83Pp23fuPGkWgOLi5fBtV30UgqiYYxsi2iR1U4xR+qlp3A+VMd4nULhRwR/vOF10u/A3
+         eEj9n58Z1TnWJ0ryPAjMaV5552TteSkCT9RhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=HD8DFIpNCGhIwZVOyzdP+cSeTABmfi21GvFpnMD1Wuk=;
+        b=AK+w1WwCyFJmLUk8EZcvyXnCUTHXSgWoxtCbsoN7AdS9gA/+Nf1847l1FXboHNfAnX
+         droiFEluZJPyH7/GtxRoZtGzmN0kTZ6tyfx+eONlgsihBFgxflNWaHyQWWoQpl56vc6m
+         spiWvTA0HiwANd/ebEEL7Nn2WB6/zV5W0oTY9Wrt2cTovlOWdxiQbp0HDX75uO/wYHat
+         2dZeGNXhMUVW8frP0DQgutXWeSuw+01yoMPIKQvGB5YFdJkT14nNq/4nPtiq1L2RoWmz
+         BiNHe5NLKKNFe/lLODZmElMOJc/hWYifSsuT/THci4/cDY0zmLc7VML2xKHwBSN/LVE4
+         tbCA==
+X-Gm-Message-State: AA+aEWZN/k/VipjuLxM7to7uvLmeH03XINouKk8ZrBnV0Dm1UcYIsVoC
+        MlVjgo/QO8t4E/kRx1RuuLcU9Q==
+X-Google-Smtp-Source: AFSGD/Uk5EuGQrUVRgqpj31YB17MDWnZ3uAqywuOBMr3mibT0zlu4UaVY8KofhNUURiDCOW//pBYaA==
+X-Received: by 2002:a62:5c41:: with SMTP id q62mr188869pfb.171.1543471673421;
+        Wed, 28 Nov 2018 22:07:53 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id i193sm1069369pgc.22.2018.11.28.22.07.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 28 Nov 2018 22:07:52 -0800 (PST)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 1/3] mmc: sdhci: add support for using external DMA devices
+Date:   Thu, 29 Nov 2018 14:07:44 +0800
+Message-Id: <1543471664-22856-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
+References: <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 7:24 PM Andy Lutomirski <luto@amacapital.net> wrote=
-:
->
->
-> On Nov 28, 2018, at 6:06 PM, Nadav Amit <namit@vmware.com> wrote:
->
-> >> On Nov 28, 2018, at 5:40 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> >>
-> >>> On Wed, Nov 28, 2018 at 4:38 PM Josh Poimboeuf <jpoimboe@redhat.com> =
-wrote:
-> >>> On Wed, Nov 28, 2018 at 07:34:52PM +0000, Nadav Amit wrote:
-> >>>>> On Nov 28, 2018, at 8:08 AM, Josh Poimboeuf <jpoimboe@redhat.com> w=
-rote:
-> >>>>>
-> >>>>>> On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
-> >>>>>> This RFC introduces indirect call promotion in runtime, which for =
-the
-> >>>>>> matter of simplification (and branding) will be called here "relpo=
-lines"
-> >>>>>> (relative call + trampoline). Relpolines are mainly intended as a =
-way
-> >>>>>> of reducing retpoline overheads due to Spectre v2.
-> >>>>>>
-> >>>>>> Unlike indirect call promotion through profile guided optimization=
-, the
-> >>>>>> proposed approach does not require a profiling stage, works well w=
-ith
-> >>>>>> modules whose address is unknown and can adapt to changing workloa=
-ds.
-> >>>>>>
-> >>>>>> The main idea is simple: for every indirect call, we inject a piec=
-e of
-> >>>>>> code with fast- and slow-path calls. The fast path is used if the =
-target
-> >>>>>> matches the expected (hot) target. The slow-path uses a retpoline.
-> >>>>>> During training, the slow-path is set to call a function that save=
-s the
-> >>>>>> call source and target in a hash-table and keep count for call
-> >>>>>> frequency. The most common target is then patched into the hot pat=
-h.
-> >>>>>>
-> >>>>>> The patching is done on-the-fly by patching the conditional branch
-> >>>>>> (opcode and offset) that is used to compare the target to the hot
-> >>>>>> target. This allows to direct all cores to the fast-path, while pa=
-tching
-> >>>>>> the slow-path and vice-versa. Patching follows 2 more rules: (1) O=
-nly
-> >>>>>> patch a single byte when the code might be executed by any core. (=
-2)
-> >>>>>> When patching more than one byte, ensure that all cores do not run=
- the
-> >>>>>> to-be-patched-code by preventing this code from being preempted, a=
-nd
-> >>>>>> using synchronize_sched() after patching the branch that jumps ove=
-r this
-> >>>>>> code.
-> >>>>>>
-> >>>>>> Changing all the indirect calls to use relpolines is done using as=
-sembly
-> >>>>>> macro magic. There are alternative solutions, but this one is
-> >>>>>> relatively simple and transparent. There is also logic to retrain =
-the
-> >>>>>> software predictor, but the policy it uses may need to be refined.
-> >>>>>>
-> >>>>>> Eventually the results are not bad (2 VCPU VM, throughput reported=
-):
-> >>>>>>
-> >>>>>>          base            relpoline
-> >>>>>>          ----            ---------
-> >>>>>> nginx      22898           25178 (+10%)
-> >>>>>> redis-ycsb 24523           25486 (+4%)
-> >>>>>> dbench     2144            2103 (+2%)
-> >>>>>>
-> >>>>>> When retpolines are disabled, and if retraining is off, performanc=
-e
-> >>>>>> benefits are up to 2% (nginx), but are much less impressive.
-> >>>>>
-> >>>>> Hi Nadav,
-> >>>>>
-> >>>>> Peter pointed me to these patches during a discussion about retpoli=
-ne
-> >>>>> profiling.  Personally, I think this is brilliant.  This could help
-> >>>>> networking and filesystem intensive workloads a lot.
-> >>>>
-> >>>> Thanks! I was a bit held-back by the relatively limited number of re=
-sponses.
-> >>>
-> >>> It is a rather, erm, ambitious idea, maybe they were speechless :-)
-> >>>
-> >>>> I finished another version two weeks ago, and every day I think: "sh=
-ould it
-> >>>> be RFCv2 or v1=E2=80=9D, ending up not sending it=E2=80=A6
-> >>>>
-> >>>> There is one issue that I realized while working on the new version:=
- I=E2=80=99m not
-> >>>> sure it is well-defined what an outline retpoline is allowed to do. =
-The
-> >>>> indirect branch promotion code can change rflags, which might cause
-> >>>> correction issues. In practice, using gcc, it is not a problem.
-> >>>
-> >>> Callees can clobber flags, so it seems fine to me.
-> >>
-> >> Just to check I understand your approach right: you made a macro
-> >> called "call", and you're therefore causing all instances of "call" to
-> >> become magic?  This is... terrifying.  It's even plausibly worse than
-> >> "#define if" :)  The scariest bit is that it will impact inline asm as
-> >> well.  Maybe a gcc plugin would be less alarming?
-> >
-> > It is likely to look less alarming. When I looked at the inline retpoli=
-ne
-> > implementation of gcc, it didn=E2=80=99t look much better than what I d=
-id - it
-> > basically just emits assembly instructions.
->
-> To be clear, that wasn=E2=80=99t a NAK.  It was merely a =E2=80=9Cthis is=
- alarming.=E2=80=9D
+Some standard SD host controllers can support both external dma
+controllers as well as ADMA/SDMA in which the SD host controller
+acts as DMA master. TI's omap controller is the case as an example.
 
-Although... how do you avoid matching on things that really don't want
-this treatment?  paravirt ops come to mind.
+Currently the generic SDHCI code supports ADMA/SDMA integrated in
+the host controller but does not have any support for external DMA
+controllers implemented using dmaengine, meaning that custom code is
+needed for any systems that use an external DMA controller with SDHCI.
+
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+---
+ drivers/mmc/host/Kconfig |  14 ++++
+ drivers/mmc/host/sdhci.c | 185 ++++++++++++++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.h |   8 ++
+ 3 files changed, 206 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 1b58739..4183f43 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -969,6 +969,7 @@ config MMC_SDHCI_XENON
+ config MMC_SDHCI_OMAP
+ 	tristate "TI SDHCI Controller Support"
+ 	depends on MMC_SDHCI_PLTFM && OF
++	select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+ 	  support present in TI's DRA7 SOCs. The controller supports
+@@ -977,3 +978,16 @@ config MMC_SDHCI_OMAP
+ 	  If you have a controller with this interface, say Y or M here.
+ 
+ 	  If unsure, say N.
++
++config MMC_SDHCI_EXTERNAL_DMA
++        bool "Support external DMA in standard SD host controller"
++	depends on MMC_SDHCI
++	depends on DMA_ENGINE
++	help
++	  This is an option for using external DMA device via dmaengine
++	  framework.
++
++	  If you have a controller which support using external DMA device
++	  for data transfer, can say Y.
++
++	  If unsure, say N.
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 99bdae5..ad7cc80 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <linux/delay.h>
++#include <linux/dmaengine.h>
+ #include <linux/ktime.h>
+ #include <linux/highmem.h>
+ #include <linux/io.h>
+@@ -1309,6 +1310,162 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+ 		del_timer(&host->timer);
+ }
+ 
++#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
++static int sdhci_external_dma_init(struct sdhci_host *host)
++{
++	int ret = 0;
++	struct mmc_host *mmc = host->mmc;
++
++	host->tx_chan = dma_request_chan(mmc->parent, "tx");
++	if (IS_ERR(host->tx_chan)) {
++		ret = PTR_ERR(host->tx_chan);
++		if (ret != -EPROBE_DEFER)
++			pr_warn("Failed to request TX DMA channel.\n");
++		host->tx_chan = NULL;
++		return ret;
++	}
++
++	host->rx_chan = dma_request_chan(mmc->parent, "rx");
++	if (IS_ERR(host->rx_chan)) {
++		if (host->tx_chan) {
++			dma_release_channel(host->tx_chan);
++			host->tx_chan = NULL;
++		}
++
++		ret = PTR_ERR(host->rx_chan);
++		if (ret != -EPROBE_DEFER)
++			pr_warn("Failed to request RX DMA channel.\n");
++		host->rx_chan = NULL;
++	}
++
++	return ret;
++}
++
++static inline struct dma_chan *
++sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
++{
++	return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
++}
++
++static int sdhci_external_dma_setup(struct sdhci_host *host,
++				    struct mmc_command *cmd)
++{
++	int ret, i;
++	struct dma_async_tx_descriptor *desc;
++	struct mmc_data *data = cmd->data;
++	struct dma_chan *chan;
++	struct dma_slave_config cfg;
++	dma_cookie_t cookie;
++
++	if (!host->mapbase)
++		return -EINVAL;
++
++	if (!data)
++		return 0;
++
++	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
++	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
++	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++	cfg.src_maxburst = data->blksz / 4;
++	cfg.dst_maxburst = data->blksz / 4;
++
++	/* Sanity check: all the SG entries must be aligned by block size. */
++	for (i = 0; i < data->sg_len; i++) {
++		if ((data->sg + i)->length % data->blksz)
++			return -EINVAL;
++	}
++
++	chan = sdhci_external_dma_channel(host, data);
++
++	ret = dmaengine_slave_config(chan, &cfg);
++	if (ret)
++		return ret;
++
++	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
++				       mmc_get_dma_dir(data),
++				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
++	if (!desc)
++		return -EINVAL;
++
++	desc->callback = NULL;
++	desc->callback_param = NULL;
++
++	cookie = dmaengine_submit(desc);
++	if (cookie < 0)
++		ret = cookie;
++
++	return ret;
++}
++
++static void sdhci_external_dma_release(struct sdhci_host *host)
++{
++	if (host->tx_chan) {
++		dma_release_channel(host->tx_chan);
++		host->tx_chan = NULL;
++	}
++
++	if (host->rx_chan) {
++		dma_release_channel(host->rx_chan);
++		host->rx_chan = NULL;
++	}
++
++	sdhci_switch_external_dma(host, false);
++}
++
++static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
++					    struct mmc_command *cmd)
++{
++	if (sdhci_external_dma_setup(host, cmd)) {
++		sdhci_external_dma_release(host);
++		pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
++		       mmc_hostname(host->mmc));
++	} else {
++		/* Prepare for using external dma */
++		host->flags |= SDHCI_REQ_USE_DMA;
++	}
++
++	sdhci_prepare_data(host, cmd);
++}
++
++static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
++					    struct mmc_command *cmd)
++{
++	struct dma_chan *chan;
++
++	if (cmd->opcode != MMC_SET_BLOCK_COUNT && cmd->data) {
++		sdhci_set_timeout(host, cmd);
++		chan = sdhci_external_dma_channel(host, cmd->data);
++		dma_async_issue_pending(chan);
++	}
++}
++#else
++static int sdhci_external_dma_init(struct sdhci_host *host)
++{
++	return -EOPNOTSUPP;
++}
++
++static void sdhci_external_dma_release(struct sdhci_host *host)
++{}
++
++static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
++					    struct mmc_command *cmd)
++{
++	/* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used */
++	sdhci_prepare_data(host, cmd);
++}
++
++static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
++					    struct mmc_command *cmd)
++{}
++#endif
++
++void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
++{
++	host->use_external_dma = en;
++}
++EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
++
+ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+ {
+ 	int flags;
+@@ -1355,7 +1512,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+ 		host->data_cmd = cmd;
+ 	}
+ 
+-	sdhci_prepare_data(host, cmd);
++	if (host->use_external_dma)
++		sdhci_external_dma_prepare_data(host, cmd);
++	else
++		sdhci_prepare_data(host, cmd);
+ 
+ 	sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+ 
+@@ -1397,6 +1557,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+ 		timeout += 10 * HZ;
+ 	sdhci_mod_timer(host, cmd->mrq, timeout);
+ 
++	if (host->use_external_dma)
++		sdhci_external_dma_pre_transfer(host, cmd);
++
+ 	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+ }
+ EXPORT_SYMBOL_GPL(sdhci_send_command);
+@@ -4133,6 +4296,19 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 			return ret;
+ 	}
+ 
++	if (host->use_external_dma) {
++		ret = sdhci_external_dma_init(host);
++		if (ret == -EPROBE_DEFER)
++			goto unreg;
++
++		/*
++		 * Fall back to use the DMA/PIO integrated in standard SDHCI
++		 * instead of external DMA devices.
++		 */
++		if (ret)
++			sdhci_switch_external_dma(host, false);
++	}
++
+ 	return 0;
+ 
+ unreg:
+@@ -4161,6 +4337,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+ 		dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+ 				  host->adma_table_sz, host->align_buffer,
+ 				  host->align_addr);
++
++	if (host->use_external_dma)
++		sdhci_external_dma_release(host);
++
+ 	host->adma_table = NULL;
+ 	host->align_buffer = NULL;
+ }
+@@ -4295,6 +4475,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+ 				  host->adma_table_sz, host->align_buffer,
+ 				  host->align_addr);
+ 
++	if (host->use_external_dma)
++		sdhci_external_dma_release(host);
++
+ 	host->adma_table = NULL;
+ 	host->align_buffer = NULL;
+ }
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index b001cf4..8e50a97 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -475,6 +475,7 @@ struct sdhci_host {
+ 
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
++	phys_addr_t mapbase;	/* physical address base */
+ 	char *bounce_buffer;	/* For packing SDMA reads/writes */
+ 	dma_addr_t bounce_addr;
+ 	unsigned int bounce_buffer_size;
+@@ -524,6 +525,7 @@ struct sdhci_host {
+ 	bool pending_reset;	/* Cmd/data reset is pending */
+ 	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
+ 	bool v4_mode;		/* Host Version 4 Enable */
++	bool use_external_dma;
+ 
+ 	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
+ 	struct mmc_command *cmd;	/* Current command */
+@@ -552,6 +554,11 @@ struct sdhci_host {
+ 	struct timer_list timer;	/* Timer for timeouts */
+ 	struct timer_list data_timer;	/* Timer for data timeouts */
+ 
++#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
++	struct dma_chan	*rx_chan;
++	struct dma_chan	*tx_chan;
++#endif
++
+ 	u32 caps;		/* CAPABILITY_0 */
+ 	u32 caps1;		/* CAPABILITY_1 */
+ 	bool read_caps;		/* Capability flags have been read */
+@@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
+ void sdhci_end_tuning(struct sdhci_host *host);
+ void sdhci_reset_tuning(struct sdhci_host *host);
+ void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
++void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+ 
+ #endif /* __SDHCI_HW_H */
+-- 
+2.7.4
+
