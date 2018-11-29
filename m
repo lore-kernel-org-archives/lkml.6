@@ -2,88 +2,99 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA8DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737CBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB4F20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ADAC20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:15:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="glzXTgP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB4F20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YvYLGFVl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ADAC20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeK2LOE (ORCPT
+        id S1727041AbeK2LTG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:14:04 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34634 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeK2LOD (ORCPT
+        Thu, 29 Nov 2018 06:19:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34328 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeK2LTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:14:03 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 17so69151pgg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=gxN6meZD+vL3jWc6RWDosS51Mvp7RAbZP0pEZDltb18=;
-        b=glzXTgP9RVW3Q+fHtdm4Gmchbs/kUTHp3HHm7/q7fNJM7MJw94zUIOFCwk9FA3tRny
-         chBx+lNb0h7BxU+LZ/DKE7ez0xAnhlde1Dx5/6T8v1AOPLzwvjSNUNkwLSRE8qSJjlU8
-         akEmy8LOqPypxZPcwDl+bLU2Dg6nCPxq9Lui6jQnFExExeD+WFwVX9mErKMM5nz52W9v
-         CFwVw6NHF7UiZg3UcwWuwuniWv3U/MsdPmNSMS25RRqlQ6bQ7D9paXy+/CmolrHzwG2B
-         VOcINC0l6/AAURqYbRwFKxDKS+4LkxJKR4cWivZLgVDdkuVxr7BfIaLqBPBcze+2rjBR
-         u/VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=gxN6meZD+vL3jWc6RWDosS51Mvp7RAbZP0pEZDltb18=;
-        b=AFSTvWDdTLwchpWyIVR24QJvURjZ/z1cECItMYTzmg7jbF912paSDzOlZ13G7kNxE5
-         DZFLDzSlP7Izgbpsrr7q7suZ1WBM+u6ZfLij6JQwUJEH/hIJy2tBCN+Rfn+mNM+9UBEh
-         cQzadR+5A3l1rWxEbhH65nSjnJOidQMcbFc9YV9IKC6bw+DnpMdolhKqXzm5dGDn2VcN
-         VF/Pu8IvbqsIx1F5KxbB+4j2zkfjVSuUOqYA56O4BX9Z5W7eX3HsS2ItNj6hdX+vOmeR
-         kOdNO1arf85jiiu34WnjAmnV3RrYS1J9xANfU6TCIuG9ISPeCVAY1MXwmEDv2kl+7dgn
-         iZzw==
-X-Gm-Message-State: AA+aEWbq6ePD6+eTFB/+1GPS+FLLszHZKDcyg6jS79tfzFiETyWdd000
-        TczEVvos9mIuF+7EzO/GkZiWMQ==
-X-Google-Smtp-Source: AFSGD/Whyayeeu/cJw7s5a8vSD3MBLZHxnydxg+Vzl6G9MqhcZqtSi3UUfjshdkPGA9YD1SoBOmMvA==
-X-Received: by 2002:a63:b54f:: with SMTP id u15mr34801840pgo.420.1543450238990;
-        Wed, 28 Nov 2018 16:10:38 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id y29sm87131pga.59.2018.11.28.16.10.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 16:10:38 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     He Yangxuan <yangxuan8282@gmail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, carlo@caione.org,
-        narmstrong@baylibre.com, He Yangxuan <yangxuan8282@gmail.com>
-Subject: Re: [PATCH v5 0/3] arm64: dts: meson-gxl: add support for phicomm n1
-In-Reply-To: <20181110033904.4207-1-yangxuan8282@gmail.com>
-References: <20181110033904.4207-1-yangxuan8282@gmail.com>
-Date:   Wed, 28 Nov 2018 16:10:37 -0800
-Message-ID: <7hsgzkd9qa.fsf@baylibre.com>
+        Thu, 29 Nov 2018 06:19:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/tLFbISmxWBmC3TgjCp1z4n+RwvtnNEvvGnjho+0Ky8=; b=YvYLGFVllIpSh8tptrBpv+n4d
+        aFFJ8e+s5IUrnfgzM01lEgLgq+O8vtDmwxPjMbsP6eDtd1E7VeKZt9H3POmVMTd9Z2qxJ7TXKQaMT
+        9phUls7UPhKCn2bBxtCRs2PBnzW+AZtlvzVRkxmRS5sCNAo4D6+Z6HN5M87DLZX/sJiSDSVCzfvZT
+        38WoWEDXXbgT+NSDJjQB6VHR+UUArOwaaV3bcHOD/2IoYUr4JdO6JzyZO/5CUgWOhIEwK9gDH/CuD
+        dC6rC6p7UdcwCL2tqVeZqoL4W2/Dg5aORi083a8Ih721QO2dkcGviVSu1oqyBDMBVlX5fu9DZJN2C
+        Uy+JJbO0A==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gS9zS-0004If-KS; Thu, 29 Nov 2018 00:15:34 +0000
+Date:   Wed, 28 Nov 2018 16:15:33 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: dell-laptop: Mark expected switch
+ fall-throughs
+Message-ID: <20181129001533.GA2468@fedora.eng.vmware.com>
+References: <20180705203807.GA10327@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705203807.GA10327@embeddedor.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-He Yangxuan <yangxuan8282@gmail.com> writes:
+On Thu, Jul 05, 2018 at 03:38:07PM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> This patch adds support for the Phicomm N1. This device based on P230 reference design.
-> The phy is RTL8211F, need to disable Energy Efficient Ethernet (EEE) to make it stable.
-> And this box doesn't have cvbs, so disable related section in device tree.
+I've applied this patch, but not the acer or sony fall through patches
+due to the pending questions there. Happy to revisit those as needed,
+but closing these out of the patch queue.
 
-Thanks for the series.
+> ---
+>  drivers/platform/x86/dell-laptop.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+> index f1fa861..1938f11 100644
+> --- a/drivers/platform/x86/dell-laptop.c
+> +++ b/drivers/platform/x86/dell-laptop.c
+> @@ -1565,8 +1565,10 @@ static ssize_t kbd_led_timeout_store(struct device *dev,
+>  		switch (unit) {
+>  		case KBD_TIMEOUT_DAYS:
+>  			value *= 24;
+> +			/* fall through */
+>  		case KBD_TIMEOUT_HOURS:
+>  			value *= 60;
+> +			/* fall through */
+>  		case KBD_TIMEOUT_MINUTES:
+>  			value *= 60;
+>  			unit = KBD_TIMEOUT_SECONDS;
+> -- 
+> 2.7.4
+> 
+> 
 
-Queued for v4.21 (branch: v4.21/dt64)
-
-Kevin
+-- 
+Darren Hart
+VMware Open Source Technology Center
