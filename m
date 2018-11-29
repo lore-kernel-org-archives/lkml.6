@@ -2,141 +2,94 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE52FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CD9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12C32145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12C32145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C5DB20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5DB20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeK3Dii (ORCPT
+        id S1729416AbeK3Dik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:38:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38732 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729064AbeK3Dih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:38:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB900A78;
-        Thu, 29 Nov 2018 08:32:41 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB79E3F59C;
-        Thu, 29 Nov 2018 08:32:39 -0800 (PST)
-Date:   Thu, 29 Nov 2018 16:32:37 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, daniel.thompson@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
-        james.morse@arm.com, joel@joelfernandes.org,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v6 04/24] arm/arm64: gic-v3: Add PMR and RPR accessors
-Message-ID: <20181129163237.dyppwn5ipkehv527@lakrids.cambridge.arm.com>
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-5-git-send-email-julien.thierry@arm.com>
+        Thu, 29 Nov 2018 22:38:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729064AbeK3Dij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:38:39 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 450D820863;
+        Thu, 29 Nov 2018 16:32:42 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 11:32:40 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        Tom Zanussi <zanussi@kernel.org>, linux-kernel@vger.kernel.org,
+        Daniel =?UTF-8?B?RMOt?= =?UTF-8?B?YXo=?= 
+        <daniel.diaz@linaro.org>
+Subject: Re: [PATCH] sefltests/ftrace: Use /bin/echo for output with options
+Message-ID: <20181129113240.163cbfa9@gandalf.local.home>
+In-Reply-To: <154350406317.4422.7595059658374071660.stgit@devbox>
+References: <20181129235407.9788e718a4ae7830f9e5d225@kernel.org>
+        <154350406317.4422.7595059658374071660.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542023835-21446-5-git-send-email-julien.thierry@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:56:55AM +0000, Julien Thierry wrote:
-> Add helper functions to access system registers related to interrupt
-> priorities: PMR and RPR.
+On Fri, 30 Nov 2018 00:07:43 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Use /bin/echo for console output with options like non
+> newline (-n) and/or backslash escape (-e).
 > 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-
-The AArch32 ICC_RPR encoding looks right per ARM DDI 0487D.a table G7-3,
-and the rest looks sane to me.
-
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
+> Tom Zanussi reported that when he tested ftracetest, it
+> shows "-e" and "-n" options on the console, since a system
+> which uses dash as the alias of /bin/sh, uses dash built-in
+> echo command which doesn't accept "-e".
+> 
+> To avoid this issue, use /bin/echo instead of echo for
+> the output with options.
+> 
+> Fixes: 8f381ac4d321 ("selftests/ftrace: Add color to the PASS / FAIL results")
+> Link: http://lkml.kernel.org/r/cover.1542221862.git.tom.zanussi@linux.intel.com
+> Reported-by: Tom Zanussi <zanussi@kernel.org>
+> Suggested-by: Tom Zanussi <zanussi@kernel.org>
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > ---
->  arch/arm/include/asm/arch_gicv3.h   | 16 ++++++++++++++++
->  arch/arm64/include/asm/arch_gicv3.h | 15 +++++++++++++++
->  2 files changed, 31 insertions(+)
+>  tools/testing/selftests/ftrace/ftracetest |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
-> index 0bd5307..bef0b5d 100644
-> --- a/arch/arm/include/asm/arch_gicv3.h
-> +++ b/arch/arm/include/asm/arch_gicv3.h
-> @@ -34,6 +34,7 @@
->  #define ICC_SRE				__ACCESS_CP15(c12, 0, c12, 5)
->  #define ICC_IGRPEN1			__ACCESS_CP15(c12, 0, c12, 7)
->  #define ICC_BPR1			__ACCESS_CP15(c12, 0, c12, 3)
-> +#define ICC_RPR				__ACCESS_CP15(c12, 0, c11, 3)
->  
->  #define __ICC_AP0Rx(x)			__ACCESS_CP15(c12, 0, c8, 4 | x)
->  #define ICC_AP0R0			__ICC_AP0Rx(0)
-> @@ -245,6 +246,21 @@ static inline void gic_write_bpr1(u32 val)
->  	write_sysreg(val, ICC_BPR1);
+> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> index 75244db70331..ba670b452bdb 100755
+> --- a/tools/testing/selftests/ftrace/ftracetest
+> +++ b/tools/testing/selftests/ftrace/ftracetest
+> @@ -173,8 +173,8 @@ strip_esc() {
 >  }
 >  
-> +static inline u32 gic_read_pmr(void)
-> +{
-> +	return read_sysreg(ICC_PMR);
-> +}
-> +
-> +static inline void gic_write_pmr(u32 val)
-> +{
-> +	write_sysreg(val, ICC_PMR);
-> +}
-> +
-> +static inline u32 gic_read_rpr(void)
-> +{
-> +	return read_sysreg(ICC_RPR);
-> +}
-> +
->  /*
->   * Even in 32bit systems that use LPAE, there is no guarantee that the I/O
->   * interface provides true 64bit atomic accesses, so using strd/ldrd doesn't
-> diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-> index e278f94..37193e2 100644
-> --- a/arch/arm64/include/asm/arch_gicv3.h
-> +++ b/arch/arm64/include/asm/arch_gicv3.h
-> @@ -114,6 +114,21 @@ static inline void gic_write_bpr1(u32 val)
->  	write_sysreg_s(val, SYS_ICC_BPR1_EL1);
+>  prlog() { # messages
+> -  echo -e "$@"
+> -  [ "$LOG_FILE" ] && echo -e "$@" | strip_esc >> $LOG_FILE
+> +  /bin/echo -e "$@"
+> +  [ "$LOG_FILE" ] && /bin/echo -e "$@" | strip_esc >> $LOG_FILE
 >  }
->  
-> +static inline u32 gic_read_pmr(void)
-> +{
-> +	return read_sysreg_s(SYS_ICC_PMR_EL1);
-> +}
-> +
-> +static inline void gic_write_pmr(u32 val)
-> +{
-> +	write_sysreg_s(val, SYS_ICC_PMR_EL1);
-> +}
-> +
-> +static inline u32 gic_read_rpr(void)
-> +{
-> +	return read_sysreg_s(SYS_ICC_RPR_EL1);
-> +}
-> +
->  #define gic_read_typer(c)		readq_relaxed(c)
->  #define gic_write_irouter(v, c)		writeq_relaxed(v, c)
->  #define gic_read_lpir(c)		readq_relaxed(c)
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>  catlog() { #file
+>    cat $1
+
+I'm fine with this change but I wonder if we should have a $ECHO that
+is defined to something that can be overwritten if need be.
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
