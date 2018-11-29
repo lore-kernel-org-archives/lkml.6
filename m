@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C474AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F202C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE17213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4730E2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUGxhDgh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE17213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xqMFk1a8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4730E2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbeK3BcR (ORCPT
+        id S2387482AbeK3BcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:32:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60318 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:32:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732836AbeK3BcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:32:16 -0500
+        id S1732836AbeK3BcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:32:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6503121479;
-        Thu, 29 Nov 2018 14:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE8FE2145D;
+        Thu, 29 Nov 2018 14:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501603;
-        bh=mHajNC2THgajAWVPjDtPA3TLv9ZtMzwWzF7jl5yjKUg=;
+        s=default; t=1543501606;
+        bh=ZST52MH9OuKRPyPvhpQl1YL3zFssz/EG2st8E5ufpOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hUGxhDghFW+Z9ZLzy3rSEn38X1xIIdKnbiT6IWzydZ6nDLBJrTsp4tb5MU6XjtMW3
-         Qei4KECKhJoc+CMWn0rc+aU30ySWuxboloa67uvHtVWPgr9vbDrDlQJDV8LLT965Uu
-         g+7S4oNX+/DmI9t6eo9Hu88nwTN/B3cR4/W0s+BM=
+        b=xqMFk1a89jqihV61JWX4/lQ2GtOWKlXE9ft1Qu5aQTCPKizKy9owC0erUnt152hHm
+         zsg2VHk+3tgt256L7brMQf8HM4rb01VQWO6a6wgqQjBHR+c9hJ6KHldoF0I3RnuxKy
+         HQi1sgWrioC3YvatVCnUtNSIy0K5xgh/Yn6YbGxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Cuissard <cuissard@marvell.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Xulin Sun <xulin.sun@windriver.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 066/100] NFC: nfcmrvl_uart: fix OF child-node lookup
-Date:   Thu, 29 Nov 2018 15:12:36 +0100
-Message-Id: <20181129140104.623516816@linuxfoundation.org>
+Subject: [PATCH 4.14 049/100] rtc: pcf2127: fix a kmemleak caused in pcf2127_i2c_gather_write
+Date:   Thu, 29 Nov 2018 15:12:19 +0100
+Message-Id: <20181129140103.410471153@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,46 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5bf59773aaf36dd62117dc83d50e1bbf9ef432da ]
+[ Upstream commit 9bde0afb7a906f1dabdba37162551565740b862d ]
 
-Use the new of_get_compatible_child() helper to lookup the nfc child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+pcf2127_i2c_gather_write() allocates memory as local variable
+for i2c_master_send(), after finishing the master transfer,
+the allocated memory should be freed. The kmemleak is reported:
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the parent node).
+unreferenced object 0xffff80231e7dba80 (size 64):
+  comm "hwclock", pid 27762, jiffies 4296880075 (age 356.944s)
+  hex dump (first 32 bytes):
+    03 00 12 03 19 02 11 13 00 80 98 18 00 00 ff ff ................
+    00 50 00 00 00 00 00 00 02 00 00 00 00 00 00 00 .P..............
+  backtrace:
+    [<ffff000008221398>] create_object+0xf8/0x278
+    [<ffff000008a96264>] kmemleak_alloc+0x74/0xa0
+    [<ffff00000821070c>] __kmalloc+0x1ac/0x348
+    [<ffff0000087ed1dc>] pcf2127_i2c_gather_write+0x54/0xf8
+    [<ffff0000085fd9d4>] _regmap_raw_write+0x464/0x850
+    [<ffff0000085fe3f4>] regmap_bulk_write+0x1a4/0x348
+    [<ffff0000087ed32c>] pcf2127_rtc_set_time+0xac/0xe8
+    [<ffff0000087eaad8>] rtc_set_time+0x80/0x138
+    [<ffff0000087ebfb0>] rtc_dev_ioctl+0x398/0x610
+    [<ffff00000823f2c0>] do_vfs_ioctl+0xb0/0x848
+    [<ffff00000823fae4>] SyS_ioctl+0x8c/0xa8
+    [<ffff000008083ac0>] el0_svc_naked+0x34/0x38
+    [<ffffffffffffffff>] 0xffffffffffffffff
 
-Fixes: e097dc624f78 ("NFC: nfcmrvl: add UART driver")
-Fixes: d8e018c0b321 ("NFC: nfcmrvl: update device tree bindings for Marvell NFC")
-Cc: stable <stable@vger.kernel.org>     # 4.2
-Cc: Vincent Cuissard <cuissard@marvell.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/nfcmrvl/uart.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/rtc/rtc-pcf2127.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/nfc/nfcmrvl/uart.c b/drivers/nfc/nfcmrvl/uart.c
-index 91162f8e0366..9a22056e8d9e 100644
---- a/drivers/nfc/nfcmrvl/uart.c
-+++ b/drivers/nfc/nfcmrvl/uart.c
-@@ -73,10 +73,9 @@ static int nfcmrvl_uart_parse_dt(struct device_node *node,
- 	struct device_node *matched_node;
- 	int ret;
+diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
+index f33447c5db85..9f1b14bf91ae 100644
+--- a/drivers/rtc/rtc-pcf2127.c
++++ b/drivers/rtc/rtc-pcf2127.c
+@@ -248,6 +248,9 @@ static int pcf2127_i2c_gather_write(void *context,
+ 	memcpy(buf + 1, val, val_size);
  
--	matched_node = of_find_compatible_node(node, NULL, "marvell,nfc-uart");
-+	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
- 	if (!matched_node) {
--		matched_node = of_find_compatible_node(node, NULL,
--						       "mrvl,nfc-uart");
-+		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
- 		if (!matched_node)
- 			return -ENODEV;
- 	}
+ 	ret = i2c_master_send(client, buf, val_size + 1);
++
++	kfree(buf);
++
+ 	if (ret != val_size + 1)
+ 		return ret < 0 ? ret : -EIO;
+ 
 -- 
 2.17.1
 
