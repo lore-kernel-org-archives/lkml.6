@@ -2,117 +2,130 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F64C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355F7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF37208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF726208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:10:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="r/Lxo4j/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF37208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gvDqCdVZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF726208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeK3BOn (ORCPT
+        id S1728758AbeK3BPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:14:43 -0500
-Received: from mail-eopbgr60085.outbound.protection.outlook.com ([40.107.6.85]:18784
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726989AbeK3BOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:14:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dA8aLWEcfva0+I+TNVNnflrQQuqQJhCZ1RHVHc/k76c=;
- b=r/Lxo4j/B5SO2BRyAB3xdFz7Mup6QksV1f7kMpMbz5qe4dixad6/2QgBjqJF4I8jFaCm0tRzrMLhSoIzzpaBOXqnQHdfxXxXcY6Vof27MuxfAd0qg037ByCFFkJSY7mFL3EchOTND80LQxAZoCyYRnXIHtV0d8pswCDI2/PxUKg=
-Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com (10.172.255.18) by
- VI1PR0402MB3725.eurprd04.prod.outlook.com (52.134.15.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Thu, 29 Nov 2018 14:09:11 +0000
-Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com
- ([fe80::d9a8:33a8:4241:be86]) by VI1PR0402MB2800.eurprd04.prod.outlook.com
- ([fe80::d9a8:33a8:4241:be86%9]) with mapi id 15.20.1361.019; Thu, 29 Nov 2018
- 14:09:11 +0000
-From:   Ioana Ciornei <ioana.ciornei@nxp.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH RESEND] bus: fsl-mc: explicitly define the fsl_mc_command
- endianness
-Thread-Topic: [PATCH RESEND] bus: fsl-mc: explicitly define the fsl_mc_command
- endianness
-Thread-Index: AQHUfNxw+U2RkUGjsUCH4hKpL41br6VkCUGAgALWQzA=
-Date:   Thu, 29 Nov 2018 14:09:11 +0000
-Message-ID: <VI1PR0402MB2800860831524A38C52620F5E0D20@VI1PR0402MB2800.eurprd04.prod.outlook.com>
-References: <1542283916-13101-1-git-send-email-ioana.ciornei@nxp.com>
- <20181127184621.GA18012@kroah.com>
-In-Reply-To: <20181127184621.GA18012@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ioana.ciornei@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3725;6:nIiomSAO6OdQ3/30TXz+cFZYvcSRO2gk+fSV4lStt7Qz+zhJ2neOne1gxoIWg+cjeHSFM6GpWbg4VAEgK6hYyOCTDZF5+ndu9q+jMBSFqdrEaBceTpQptXGdq5bP+I4+K4R9dIN2Ai1V1QbIU/pGO4Uj4tXvssz24M3OYDihFxBeVxAwwP+cKDj0lInhbyE/iBjfJQokzzY5SD8Eylj4X2oUFxXRDK4gDbpUWTz7y4jymiZsyRXoB7wjQfXcJtoZsactaGsruyoy6fSG89m+U70o+OXlOYIrSF8LRcAe5epdm2N/X2IJnjzDUjNOIl2jn0TrWD7G5hxH1RCzFqb/NOAgY5P0jDKkTLFrwVo3byl5nO0n9gLY6LEhilGcWivGUVxWhVpxQXKumMsBvx6LtO4BLdVf51vqjq/tc3fNitNrQ5PKCv8Wth8TtkPAxp6cOK5wJtdVBYb+dJryW9NmNA==;5:XxdX1n/7KadQRKDkwqmbxjAgw3+ODcXABPE3uByqNhA7w63BZv4GA8AsJqTUc8fTV3NpRcLRoKp5ihI8UGuC/mu53+x13o9TNpbznvxc0MgxcXVKVC92YZ39uvOzpIX4GrxV8I2176KK9lXDvjcayMUMrZb9BEZb5OCUIXRR9Zg=;7:STAwM1bBv4U7Pce1g0y9LX1cal0ZpgvfDupLkBdUhgseqejMtY84t7XhEcBrxQVI6uMlNfihjZ7As3HShIeAbmwqxuizM9KAE8xWkvEE66iXm6KBe7ZITR3UkT7G38tEFcBdtzuft1FEU6ngVqz78Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 431ceb86-1a5d-47e1-75de-08d656043ca0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3725;
-x-ms-traffictypediagnostic: VI1PR0402MB3725:
-x-microsoft-antispam-prvs: <VI1PR0402MB372512A7DCD9A403F317EFD7E0D20@VI1PR0402MB3725.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231453)(999002)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3725;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3725;
-x-forefront-prvs: 0871917CDA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(396003)(346002)(39860400002)(189003)(199004)(6436002)(81156014)(11346002)(6916009)(97736004)(5640700003)(55016002)(2501003)(4326008)(305945005)(53936002)(1730700003)(8676002)(256004)(25786009)(99286004)(2906002)(2351001)(7736002)(81166006)(74316002)(33656002)(14454004)(229853002)(6246003)(71190400001)(6506007)(102836004)(476003)(478600001)(446003)(106356001)(5660300001)(8936002)(3846002)(26005)(68736007)(186003)(66066001)(54906003)(105586002)(44832011)(86362001)(76176011)(6116002)(9686003)(71200400001)(7696005)(486006)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3725;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Jdl2/0oUSZ+cbJG0kquv7kUTzvEdWOsZnRn8FTVLTqSphYBHtZT4d7PJrbMnToBRvYH8oyFIX3PEswr5z04TNqqOedCPvRLLj5KoXyRlOV2jpL650SgO1Gu+S3+WyQtbVePZBWSFrwJsV7eZ37p+3k5haIGy63uivMu8hi6hd7/V+Ftu+zcNhqsp11a/IQ0Oub9pMLkhcZ7PY2CP7F5JQ4HJLGnVW39vzE3omq+HpCwcRy4T+Y/xMaUSPiC0cK2rtlG0zaLI4W6AU0ypp+YJaoEkMmjvhOHxCzVSekV3iDz4pbzpOIj10UT3xolbth+mgweF+gkNHUlZpYymWo0GUmo629rhksCsaKlhRLOxt/c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 29 Nov 2018 20:15:40 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51200 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbeK3BPj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:15:39 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATE8aVA055346;
+        Thu, 29 Nov 2018 14:09:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=y1bXiMDNjwfx2ZwyTDpQVJTp++PW02bcS0AwrLLC0Dk=;
+ b=gvDqCdVZ1rkYgZNr+gBlabFpr8Ciz7xOlErdnSnPxWPFKQi9yKb+FrbMqeAUitSYX1zj
+ KOK7dFlKsuQqO2VpXnzI5AZJRcvsbdDm5GrAjB1mSKcxUaG0duJtZg/nVAoh8XoZZbY4
+ 22TWb1oOVYWf0zxbB5d3HK/0ezIfichSGQICbq6oIDFN59yNVpaBeuBg/03zY+H/iYjH
+ At3iRUlnYVRz9/w3HwkQD5iWdhDnZ3AzzwVvyqUqdkZI0cpaFReUYy53JmqYf/4F6fzI
+ 7w+0+laDPbT3DWj10c4s0kDBU0+81eZPeDOMp878i0a6+LP6jh3zt/TK7quNtb5gq1hw 8A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2nxx2ugdnd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 14:09:59 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wATE9w4S023399
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 14:09:58 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wATE9vRa026167;
+        Thu, 29 Nov 2018 14:09:57 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 06:09:57 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] sysctl: clean up nr_pdflush_threads leftover
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181128152407.19062-1-aquini@redhat.com>
+Date:   Thu, 29 Nov 2018 07:09:56 -0700
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        davem@davemloft.net, virgile@acceis.fr, linux-mm@kvack.org
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 431ceb86-1a5d-47e1-75de-08d656043ca0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 14:09:11.5573
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3725
+Message-Id: <867FB7CF-C7CC-454F-8845-5026FC3D5BEA@oracle.com>
+References: <20181128152407.19062-1-aquini@redhat.com>
+To:     Rafael Aquini <aquini@redhat.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Both the header and the command parameters of the fsl_mc_command are
-> > 64-bit little-endian words. Use the appropriate type to explicitly
-> > specify their endianness.
-> >
-> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> > Reviewed-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> > ---
-> >  include/linux/fsl/mc.h | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
+
+
+> On Nov 28, 2018, at 8:24 AM, Rafael Aquini <aquini@redhat.com> wrote:
 >=20
-> What tree is this made against?  I can't seem to apply it to any of mine =
-:(
+> nr_pdflush_threads has been long deprecated and
+> removed, but a remnant of its glorious past is
+> still around in CTL_VM names enum. This patch
+> is a minor clean-up to that case.
+>=20
+> Signed-off-by: Rafael Aquini <aquini@redhat.com>
+> ---
+> include/uapi/linux/sysctl.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
+> index d71013fffaf6..dad5a8f93343 100644
+> --- a/include/uapi/linux/sysctl.h
+> +++ b/include/uapi/linux/sysctl.h
+> @@ -174,7 +174,7 @@ enum
+> 	VM_DIRTY_RATIO=3D12,	/* dirty_ratio */
+> 	VM_DIRTY_WB_CS=3D13,	/* dirty_writeback_centisecs */
+> 	VM_DIRTY_EXPIRE_CS=3D14,	/* dirty_expire_centisecs */
+> -	VM_NR_PDFLUSH_THREADS=3D15, /* nr_pdflush_threads */
+> +	VM_UNUSED15=3D15,		/* was: int nr_pdflush_threads =
+*/
+> 	VM_OVERCOMMIT_RATIO=3D16, /* percent of RAM to allow overcommit =
+in */
+> 	VM_PAGEBUF=3D17,		/* struct: Control pagebuf =
+parameters */
+> 	VM_HUGETLB_PAGES=3D18,	/* int: Number of available Huge Pages =
+*/
+> --=20
+> 2.17.2
 >=20
 
-This was generated against a clean 4.20-rc1 but I just checked and I could =
-apply it on both staging-next and driver-core-next.
-Am I missing something?
+Please reword the comment to add a colon after the word "int" to match =
+earlier
+comments in the enum:
 
-Ioana
++	VM_UNUSED15=3D15,		/* was: int: nr_pdflush_threads =
+*/
 
-> Any hints?
->=20
-> thanks,
->=20
-> greg k-h
+Also, as long as you're changing this file, please fix the typo earlier =
+in the
+same enum:
+
+-	VM_UNUSED2=3D2,		/* was; int: Linear or sqrt() swapout =
+for hogs */
++	VM_UNUSED2=3D2,		/* was: int: Linear or sqrt() swapout =
+for hogs */
+
+
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>=
