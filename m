@@ -2,380 +2,66 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C16EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C6C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4AFF20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:49:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNnRWK9n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4AFF20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A5D820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5D820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729875AbeK3DzM (ORCPT
+        id S1729895AbeK3DzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:55:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39563 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729515AbeK3DzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:55:12 -0500
-Received: by mail-pl1-f193.google.com with SMTP id 101so1309439pld.6;
-        Thu, 29 Nov 2018 08:49:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y70wAiO77Kv3KEmdaSMu6wTGibl98NKOJuv7kLTa57Y=;
-        b=hNnRWK9nmn4SJQTcYZCJd60/uDppyh5yKjTCi7CSzeJ25wP+NwQLN9lb3RLFJMZmxu
-         1NAUOq580vq+Ib/ZorXzBb0vRqW3z+ip4KxBvmOYptrPVM5tQhksxxkX+Xx3cHpCLG6J
-         kKvmww4Z1m8OlOD9BkkyBZQglSZhEguJN3lulZrcSktN7i4dDaWL4t87YDcw6h1bcBlE
-         Jrwz1IIHuZEkO026xCykCR5yaJNs5BZUdZ7CjjMJnzpvQaNY+WwA1d+8pFETFd4UhObL
-         lFRq3ekti/3jPD6whyHFs5xJY/SEKSZ4CuJHK8cWypdmSJTMe6Y6ZcoI79z+jt7+27Me
-         pVaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y70wAiO77Kv3KEmdaSMu6wTGibl98NKOJuv7kLTa57Y=;
-        b=CuRkrmVSk5GqLMZBiOZcYYCpW7wqBg8+vOwEG3gh/mmKkUTIlLQ0Vd4xZE+7J9BLDD
-         C1utCuGSnlM8eQyJ4MWa6qSR4L6/m5w3c8vJRabOfI/ZXWpLvdxC2i0KF3MopzYACxc7
-         82qAKnym0hx+Wr+sAFe7ILd1IsTWb0iokqDxaT6spqenpvrzLLe3UJQhMmVwZwowW5bV
-         DG+/RfSnDdpqgwQ3UQknepfczbVLxvLznYUyeGB0bpS7L0pA8ATQuQnXD6+/MYOqOfG/
-         KdLcIj9S9SxLg6HYr4zBHZkivBa69j6qM1yitLuZI0Qyiwz+IJsuAYzvSWBcE2NRDCUY
-         M/lQ==
-X-Gm-Message-State: AA+aEWYxNMb/x+B6iHf/RzkuOCiDFi+hKbgrCRK78vgyHkr1nMMBTJ2e
-        8dcnnlbeY16x+khYjSRLfH8=
-X-Google-Smtp-Source: AFSGD/WfkSYVVAjZ5jjX0rNK+V/lBBxmJdelbVvAw93hoSuVaQ/rkBHjZ1IMVayodQJ5r1CudCbAYQ==
-X-Received: by 2002:a17:902:6b0c:: with SMTP id o12mr2186614plk.291.1543510152230;
-        Thu, 29 Nov 2018 08:49:12 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id r83sm4429566pfc.115.2018.11.29.08.49.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 08:49:11 -0800 (PST)
-Date:   Thu, 29 Nov 2018 08:49:09 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "LW@KARO-electronics.de" <LW@KARO-electronics.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V4 2/4] thermal: imx_sc: add i.MX system controller
- thermal support
-Message-ID: <20181129164908.GB2688@localhost.localdomain>
-References: <1543458696-4741-1-git-send-email-Anson.Huang@nxp.com>
- <1543458696-4741-3-git-send-email-Anson.Huang@nxp.com>
+        Thu, 29 Nov 2018 22:55:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729515AbeK3DzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:55:13 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0609B20989;
+        Thu, 29 Nov 2018 16:49:12 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 11:49:11 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     shuah@kernel.org
+Cc:     Tom Zanussi <zanussi@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>
+Subject: Re: [PATCH] sefltests/ftrace: Use /bin/echo for output with options
+Message-ID: <20181129114911.7dcc8905@gandalf.local.home>
+In-Reply-To: <1543509793.2018.2.camel@kernel.org>
+References: <20181129235407.9788e718a4ae7830f9e5d225@kernel.org>
+        <154350406317.4422.7595059658374071660.stgit@devbox>
+        <1543509793.2018.2.camel@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543458696-4741-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 02:37:32AM +0000, Anson Huang wrote:
-> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
-> inside, the system controller is in charge of controlling power,
-> clock and thermal sensors etc..
-> 
-> This patch adds i.MX system controller thermal driver support,
-> Linux kernel has to communicate with system controller via MU
-> (message unit) IPC to get each thermal sensor's temperature,
-> it supports multiple sensors which are passed from device tree,
-> please see the binding doc for details.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> ChangeLog:
-> V3->V4:
->   *merge request/response message structure into one struction;
->   *change the compatible string to start with "fsl" instead of "nxp" to align with other nodes in dtb.
-> ---
->  drivers/thermal/Kconfig          |  11 +++
->  drivers/thermal/Makefile         |   1 +
->  drivers/thermal/imx_sc_thermal.c | 205 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 217 insertions(+)
->  create mode 100644 drivers/thermal/imx_sc_thermal.c
-> 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 0e69edc..84e850c 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -222,6 +222,17 @@ config IMX_THERMAL
->  	  cpufreq is used as the cooling device to throttle CPUs when the
->  	  passive trip is crossed.
->  
-> +config IMX_SC_THERMAL
-> +	tristate "Temperature sensor driver for NXP i.MX SoCs with System Controller"
-> +	depends on ARCH_MXC || COMPILE_TEST
-> +	depends on OF
-> +	help
-> +	  Support for Temperature Monitor (TEMPMON) found on NXP i.MX SoCs with
-> +	  system controller inside, Linux kernel has to communicate with system
-> +	  controller via MU (message unit) IPC to get temperature from thermal
-> +	  sensor. It supports one critical trip point and one
-> +	  passive trip point for each thermal sensor.
-> +
->  config MAX77620_THERMAL
->  	tristate "Temperature sensor driver for Maxim MAX77620 PMIC"
->  	depends on MFD_MAX77620
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 610344e..1b13f6a 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -41,6 +41,7 @@ obj-$(CONFIG_DB8500_THERMAL)	+= db8500_thermal.o
->  obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
->  obj-$(CONFIG_TANGO_THERMAL)	+= tango_thermal.o
->  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
-> +obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
->  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
->  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
->  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-> diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
-> new file mode 100644
-> index 0000000..ce8e2de
-> --- /dev/null
-> +++ b/drivers/thermal/imx_sc_thermal.c
-> @@ -0,0 +1,205 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2018 NXP.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/firmware/imx/sci.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/thermal.h>
-> +
-> +#include "thermal_core.h"
-> +
-> +#define IMX_SC_MISC_FUNC_GET_TEMP	13
-> +#define IMX_SC_C_TEMP			0
-> +
-> +static struct imx_sc_ipc *thermal_ipc_handle;
-> +
-> +struct imx_sc_sensor {
-> +	struct thermal_zone_device *tzd;
-> +	u32 resource_id;
-> +};
-> +
-> +struct imx_sc_thermal_data {
-> +	struct imx_sc_sensor *sensor;
-> +};
-> +
-> +struct req_get_temp {
-> +	u16 resource_id;
-> +	u8 type;
-> +} __packed;
-> +
-> +struct resp_get_temp {
-> +	u16 celsius;
-> +	u8 tenths;
-> +} __packed;
-> +
-> +struct imx_sc_msg_misc_get_temp {
-> +	struct imx_sc_rpc_msg hdr;
-> +	union {
-> +		struct req_get_temp req;
-> +		struct resp_get_temp resp;
-> +	} data;
-> +} __packed;
-> +
-> +static int imx_sc_thermal_get_temp(void *data, int *temp)
-> +{
-> +	struct imx_sc_msg_misc_get_temp msg;
-> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> +	struct imx_sc_sensor *sensor = data;
-> +	int ret;
-> +
-> +	msg.data.req.resource_id = sensor->resource_id;
-> +	msg.data.req.type = IMX_SC_C_TEMP;
-> +
-> +	hdr->ver = IMX_SC_RPC_VERSION;
-> +	hdr->svc = IMX_SC_RPC_SVC_MISC;
-> +	hdr->func = IMX_SC_MISC_FUNC_GET_TEMP;
-> +	hdr->size = 2;
-> +
-> +	ret = imx_scu_call_rpc(thermal_ipc_handle, &msg, true);
-> +	if (ret) {
-> +		pr_err("read temp sensor %d failed, ret %d\n",
-> +			sensor->resource_id, ret);
-> +		return ret;
-> +	}
-> +
-> +	*temp = msg.data.resp.celsius * 1000 + msg.data.resp.tenths * 100;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct thermal_zone_of_device_ops imx_sc_thermal_ops = {
-> +	.get_temp = imx_sc_thermal_get_temp,
-> +};
-> +
-> +static int imx_sc_thermal_register_sensor(struct platform_device *pdev,
-> +					  struct imx_sc_sensor *sensor)
-> +{
-> +	struct thermal_zone_device *tzd;
-> +
-> +	tzd = devm_thermal_zone_of_sensor_register(&pdev->dev,
-> +						   sensor->resource_id,
-> +						   sensor,
-> +						   &imx_sc_thermal_ops);
-> +	if (IS_ERR(tzd)) {
-> +		dev_err(&pdev->dev, "failed to register sensor: %d\n",
-> +			sensor->resource_id);
-> +		return PTR_ERR(tzd);
-> +	}
-> +
-> +	sensor->tzd = tzd;
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_sc_thermal_get_sensor_id(struct device_node *sensor_np, u32 *id)
-> +{
-> +	struct of_phandle_args sensor_specs;
-> +	int ret;
-> +
-> +	ret = of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-> +			"#thermal-sensor-cells",
-> +			0, &sensor_specs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sensor_specs.args_count >= 1) {
-> +		*id = sensor_specs.args[0];
-> +		WARN(sensor_specs.args_count > 1,
-> +				"%pOFn: too many cells in sensor specifier %d\n",
-> +				sensor_specs.np, sensor_specs.args_count);
-> +	} else {
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_sc_thermal_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct device_node *sensor_np = NULL;
-> +	struct imx_sc_thermal_data *data;
-> +	struct imx_sc_sensor *sensors;
-> +	u32 sensor_num;
-> +	int ret, i;
-> +
-> +	ret = imx_scu_get_handle(&thermal_ipc_handle);
-> +	if (ret) {
-> +		if (ret == -EPROBE_DEFER)
-> +			return ret;
-> +
-> +		dev_err(&pdev->dev, "failed to get ipc handle: %d!\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u32(np, "tsens-num", &sensor_num);
-> +	if (ret || !sensor_num) {
-> +		dev_err(&pdev->dev, "failed to get valid temp sensor number!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	sensors = devm_kzalloc(&pdev->dev, sizeof(*data->sensor) * sensor_num,
-> +			       GFP_KERNEL);
-> +	if (!sensors)
-> +		return -ENOMEM;
-> +
-> +	data->sensor = sensors;
-> +
-> +	np = of_find_node_by_name(NULL, "thermal-zones");
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	for (i = 0; i < sensor_num; i++) {
-> +		struct imx_sc_sensor *sensor = &data->sensor[i];
-> +
-> +		sensor_np = of_get_next_child(np, sensor_np);
-> +		ret = imx_sc_thermal_get_sensor_id(sensor_np, &sensor->resource_id);
+On Thu, 29 Nov 2018 10:43:13 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-Interesting.. another driver willing to have a get sensor id from DT.
-Can you please describe why you need this? Why not simply registering
-all sensors?
-
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev,
-> +				"failed to get valid sensor resource id: %d\n",
-> +				ret);
-> +			break;
-> +		}
-> +
-> +		ret = imx_sc_thermal_register_sensor(pdev, sensor);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to register thermal sensor: %d\n",
-> +				ret);
-> +			break;
-> +		}
-> +	}
-> +
-> +	of_node_put(np);
-> +	of_node_put(sensor_np);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id imx_sc_thermal_table[] = {
-> +	{ .compatible = "fsl,imx8qxp-sc-thermal", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_sc_thermal_table);
-> +
-> +static struct platform_driver imx_sc_thermal_driver = {
-> +		.probe = imx_sc_thermal_probe,
-> +		.driver = {
-> +			.name = "imx-sc-thermal",
-> +			.of_match_table = imx_sc_thermal_table,
-> +		},
-> +};
-> +module_platform_driver(imx_sc_thermal_driver);
-> +
-> +MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-> +MODULE_DESCRIPTION("Thermal driver for NXP i.MX SoCs with system controller");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.7.4
+> I tried this on the three systems mentioned before, and it worked fine
+> on all of them.
 > 
+> Tested-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+
+
+Shuah,
+
+Can you take this in your tree. I already acked it.
+
+Thanks!
+
+-- Steve
