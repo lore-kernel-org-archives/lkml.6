@@ -2,114 +2,133 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B600AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8475CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713B1206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4730F2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fTyOOpLP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713B1206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T7lgG7Jd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4730F2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbeK2L16 (ORCPT
+        id S1727196AbeK2L22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:27:58 -0500
-Received: from ozlabs.org ([203.11.71.1]:54569 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbeK2L16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:27:58 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 434yvK0DV2z9s7T;
-        Thu, 29 Nov 2018 11:24:28 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543451069;
-        bh=z0Gtrj2jyjg3h08XhNq6jioMtnzcJmm/SPfXSfICeA8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fTyOOpLPKSERjGrxS+YQqgG3Cvl/5Qh0UmHbAUkJzxC2ljpef/jdBOjWqt+ppWnAW
-         LrUyL+j9X7drVQufNhFgnPqbcxb0f7C2qhGU81lphlgmwbqnzblZCit4Rb9tFZs5vJ
-         AqTtzcNfxIOov02XnYU2em7IapfC1tALPovsYdZQpD2icl75E2jEgQejjeSV0tFTr1
-         TaeVh0Usoxqi4/pC5WJZy7tm7XrXIErU0ccCdVGggInjY8mGhHt5ug8SX0ZrGp4FQA
-         xg2yn/q6US+c0InKr9Rz7S5nK8LiZOx1l3vbDk01AS4j3+5RDpnshJfWq5pEhzMyUJ
-         VeCrXitCMRGRw==
-Date:   Thu, 29 Nov 2018 11:24:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-        Kees Cook <keescook@google.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: linux-next: build warning after merge of the net-next tree
-Message-ID: <20181129112428.45287471@canb.auug.org.au>
+        Thu, 29 Nov 2018 06:28:28 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38566 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbeK2L21 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:28:27 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so74695pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:25:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Y9+nEew+tVf7mKqcMn+dQrg9unnJoCXxGSHcyz/WRKM=;
+        b=T7lgG7JdNuazZcC3IQMTKYUQUIVtYYAEyJwY1lnYdVp8SxR8rIBsMRr/JpWOQh1ga5
+         0PMqiHEDvLbNNpmOQGqpHlfKVeccgrDfhscCEf1U3jXaPtSCnWesHycwo7WBCfKstXbp
+         n6/54RTopgPOgK/NnA94kICootwLnfammWznE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y9+nEew+tVf7mKqcMn+dQrg9unnJoCXxGSHcyz/WRKM=;
+        b=hkQBdipk+k+d3HA4RxDe90F83o8TcfnycsO+anQmoX80vHcwvCR2y8VnncLPTsuvoY
+         g4RN2x+cF3wEkxq4YoVXB+Z678u6h04hal1xU4M+ETYnwbypy7Icxf3RUDL8rBxViAZO
+         Kx03TSSOTg2Hz18SMy/9vtKD46NyiQddgZYtXRaVmFY0O1TN7a5YpnAjNYCEZMj/XVve
+         PXNIaX1Gy6bmxHPLQCzX2iLctGb89Njmmp/iJMIb8t8UmQ5/sGB/YbnMZLOYGtwhGSST
+         IFbTA4Jr9YnLZ5l4GS0o8mSzgtgGf2P5cKht7hBGzG1VifYNQLbTUgnI0FdPhC02NB30
+         UX3A==
+X-Gm-Message-State: AA+aEWaWLXDHm4udCJeMlRN7iUDilFjACN/TZGFcvvCIiLqrl9uafwS0
+        cmk62dNPTCgU4ypal5lMm4L/bQ==
+X-Google-Smtp-Source: AFSGD/Xgth3h6gs10pROeQKN2feu9pZAD5O1myTcgBALjvEj1z0vug5ffkiIG/gsoKo7VcczmRJf/Q==
+X-Received: by 2002:a62:5884:: with SMTP id m126mr20361260pfb.177.1543451100884;
+        Wed, 28 Nov 2018 16:25:00 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t4-v6sm148382pfh.21.2018.11.28.16.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 16:24:59 -0800 (PST)
+Date:   Wed, 28 Nov 2018 16:24:57 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>, evgreen@chromium.org,
+        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
+        rplsssn@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, thierry.reding@gmail.com
+Subject: Re: [RFC v3 2/3] dt-bindings: sdm845-pinctrl: add wakeup interrupt
+ parent for GPIO
+Message-ID: <20181129002457.GJ24969@minitux>
+References: <20181121000648.29262-1-ilina@codeaurora.org>
+ <20181121000648.29262-3-ilina@codeaurora.org>
+ <154283618199.88331.10217252750356423959@swboyd.mtv.corp.google.com>
+ <20181126161455.GA28236@codeaurora.org>
+ <154330994255.88331.11409511159882116164@swboyd.mtv.corp.google.com>
+ <20181127182123.GC28236@codeaurora.org>
+ <154335513853.88331.9713562640538396853@swboyd.mtv.corp.google.com>
+ <20181128173959.GC18262@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/98MDSry6jDRHt9Ep1W=uTQv"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128173959.GC18262@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/98MDSry6jDRHt9Ep1W=uTQv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed 28 Nov 09:39 PST 2018, Lina Iyer wrote:
 
-Hi all,
+> On Tue, Nov 27 2018 at 14:45 -0700, Stephen Boyd wrote:
+> > Quoting Lina Iyer (2018-11-27 10:21:23)
+> > > On Tue, Nov 27 2018 at 02:12 -0700, Stephen Boyd wrote:
+> > > >
+> > > >Two reasons. First, simplicity. The TLMM driver just needs to pass the
+> > > >gpio number up to the PDC gpio domain and then that domain can figure
+> > > >out what hwirq it maps to within the PDC hw irq space. I don't see any
+> > > >reason why we have to know the hwirq of PDC within the TLMM driver
+> > > >besides "let's not be different".
+> > > >
+> > > >And second, it makes it easier for us to implement the MPM case in the
+> > > >TLMM driver by letting the TLMM code just ask "should I mask the irq
+> > > >here or not?" by passing that with a wrapper struct around the fwspec
+> > > >and a dedicated domain in the PDC/MPM driver. Keeping less things in the
+> > > >TLMM driver and not driving the decision from DT but from tables in the
+> > > >PDC driver also keeps things simple and reduces DT parsing code/time.
+> > > >
+> > > Couldn't this be simply achieved by matching the compatible flags for
+> > > PDC/MPM bindings for the wakeup-parent in the TLMM driver?
+> > > 
+> > 
+> > It could be, but then we would be making TLMM highly aware of the wakeup
+> > parent
+> It is is not aware of anything about the wakeup parent, just the
+> compatible that indicates whether it needs to be mask locally or not.
+> 
 
-After merging the net-next tree, today's linux-next build
-(x86_64_allmodconfig) produced this warning:
+But the information related to how the PDC is wired to GPIO pins is a
+property related to the PDC not of the TLMM, so it does make sense to
+represent this information there.
 
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c: In function 'run_xdp':
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:324:3: warning: this state=
-ment may fall through [-Wimplicit-fallthrough=3D]
-   bpf_warn_invalid_xdp_action(xdp_act);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:325:2: note: here
-  case XDP_ABORTED:
-  ^~~~
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:326:3: warning: this state=
-ment may fall through [-Wimplicit-fallthrough=3D]
-   trace_xdp_exception(priv->net_dev, xdp_prog, xdp_act);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:327:2: note: here
-  case XDP_DROP:
-  ^~~~
+And iiuc it also makes sense to not encode it in DT because it's
+physical wiring, not configuration.
 
-Introduced by commit
+> > and have to do compatible string matching in two places, instead
+> > of making TLMM more abstractly aware that it needs to keep things masked
+> > while irq parent deals with the interrupts.
+> > 
+> Your approach seems too complex just to circumvent a simple match node.
+> I think we are stretching too much to support something that is not a
+> priority.
+> 
 
-  7e273a8ebdd3 ("dpaa2-eth: Add basic XDP support")
+What "something" are you referring to here?
 
-This due to my use of -Wimplicit-fallthrough.  This is new code.  The
-warning can be suppressed by adding a comment like /* fall through */
-at the appropriate places to indicate that the fallthrough is intended.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/98MDSry6jDRHt9Ep1W=uTQv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv/MbwACgkQAVBC80lX
-0Gxf2Qf/YWrIZvqMmkjx8UMwGPfDXUI/bw5l7GEJy03urzZJWem+77ggWgl70r0E
-AL6O4xHPzcv/TAEz+zqb3mae18N/k9uZudqIBQggxi/oPmQTZSQj7mIw0y3mEhRZ
-pOG0v1r3d4P5S7rvi6WTrwNnbzKYWFxIUFyIRCMNyrSB7Sk7DnjCjGwtyXctG2V8
-ZqsJKh6EaCpKVUEfCbxry8VOLN/JRjAOydkGWwAifvNsFcTqG8N+uinoZSd2mn/C
-N+lPshmqYmUJvCETKcABdLEcBY6IVQdoCRYgXO894VGxdlROBWPYGcVsnKteauRG
-3BuPWJbwz9C+IzUobaDc5S9LPA5BpQ==
-=+fzU
------END PGP SIGNATURE-----
-
---Sig_/98MDSry6jDRHt9Ep1W=uTQv--
+Regards,
+Bjorn
