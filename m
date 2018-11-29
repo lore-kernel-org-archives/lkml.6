@@ -2,166 +2,107 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD16C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E7C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1053920868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:53:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1053920868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F2E2213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:53:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yu5HrG6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F2E2213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbeK3C7G (ORCPT
+        id S1729372AbeK3C7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:59:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52894 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728363AbeK3C7G (ORCPT
+        Thu, 29 Nov 2018 21:59:25 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37340 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728363AbeK3C7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:59:06 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATFdoXf060506
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 10:53:17 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p2g4x8xby-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 10:50:06 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
-        Thu, 29 Nov 2018 15:49:07 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 29 Nov 2018 15:49:04 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATFn4dc15925274
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 15:49:04 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE2067805E;
-        Thu, 29 Nov 2018 15:49:03 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD4CE78066;
-        Thu, 29 Nov 2018 15:49:02 +0000 (GMT)
-Received: from [153.66.254.194] (unknown [9.85.139.109])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Nov 2018 15:49:02 +0000 (GMT)
-Subject: Re: [PATCH] scsi: libsas: Add missing license and update to SPDX
- license identifier
-From:   James Bottomley <jejb@linux.vnet.ibm.com>
-To:     John Garry <john.garry@huawei.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     martin.petersen@oracle.com, linuxarm@huawei.com,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Date:   Thu, 29 Nov 2018 07:49:01 -0800
-In-Reply-To: <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
-References: <1543328132-243266-1-git-send-email-john.garry@huawei.com>
-         <20181127144333.GA11004@kroah.com>
-         <8ae3a984-b4d4-f2eb-4aaa-b460441fa403@huawei.com>
-         <07b65f80-9b73-472f-1fb8-7c0133f1d1ab@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112915-0016-0000-0000-0000095CE2DA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010143; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01124513; UDB=6.00583849; IPR=6.00904640;
- MB=3.00024384; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-29 15:49:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112915-0017-0000-0000-0000413B7536
-Message-Id: <1543506541.2881.16.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811290131
+        Thu, 29 Nov 2018 21:59:25 -0500
+Received: by mail-yb1-f194.google.com with SMTP id d18-v6so928804yba.4;
+        Thu, 29 Nov 2018 07:53:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GyIEYhvdRvJJ7cA9IrZUO0BaASlbo8wDkHEXFN/2IZI=;
+        b=Yu5HrG6Via1jLCrMSeRY46VC9W1qnplO9X99/sbLV3hOCZQHRmll7T15VMunYtUkmd
+         r6ZBbA4Nvae2WL/X+6NoIU+UwUbAL+afGzCzqtKFyRzXFR/6Hk9j8A0CD35J9O5RZ7wF
+         DzUThCR0vYWT2qQY9X49fcICosw41pKdoL0gEW+bW8IuRzTmxy35L8iW/kw2Pkj+P4/M
+         TKjCfttb52tlX7LsRtNxd1a3Hx3PNE+bWu2IZzp7O2Oo8gSDE+xAxwkC2Z5O5nng4JCg
+         41+MKpxjW2URix2FDjrqSLT494f6d0DlZTPdWA9DoEBo0UH0Eyb5dePDI+JDdY6Rzddw
+         cHcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GyIEYhvdRvJJ7cA9IrZUO0BaASlbo8wDkHEXFN/2IZI=;
+        b=uSnDnlxqR38YOKW3Bgc2/O1uvGtsirjU3ae9lZS9iVBpp6hDRCW1v6m8NeacsE3RsX
+         kDoCbct73U5iObrk8tVZbpTo1wqOtVGCGJq8J+GpiMocuW75mW1vUXL2fLsprX04cI5Q
+         LJaNgYHv2oG4/4PgoO/LB1JBQUPXHgIj4I2+PlvTOiY04vsv7x0c+jg3eOR5V4q4k7o1
+         jXTYEeOHKJZCcxcBqm9tT2ae/xPdoeATI8o7AIR8Q+IUQLGv7Xm1vLxNvEM18LQdiJt8
+         NDRbNZElF0N1e3nvRtYhVpFI1yi/8+X4PDcRdvAjI+iT9xt2PyWQ1rSBkePTiPnHHXyr
+         AMQA==
+X-Gm-Message-State: AA+aEWYMwiu+ccOwKVUmrCDlK2EdHMKZFtEm34eE0W1zfDhaLRLsSR2U
+        BG/LXEotjrpSfyYRExLO/l5EvbjQ
+X-Google-Smtp-Source: AFSGD/W5OZO180NFEAW70YxFgvelwyDJ8YiPZ5rYQYMnGK7d2aFI7htk0m/TVzb/op0Qzt5ZXGMF3g==
+X-Received: by 2002:a25:5c88:: with SMTP id q130-v6mr1845610ybb.236.1543506816071;
+        Thu, 29 Nov 2018 07:53:36 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:c5f4])
+        by smtp.gmail.com with ESMTPSA id z37sm803549ywj.3.2018.11.29.07.53.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 07:53:35 -0800 (PST)
+Date:   Thu, 29 Nov 2018 07:53:33 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/13] blkcg: associate blkg when associating a device
+Message-ID: <20181129155333.GE2509588@devbig004.ftw2.facebook.com>
+References: <20181126211946.77067-1-dennis@kernel.org>
+ <20181126211946.77067-6-dennis@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126211946.77067-6-dennis@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-29 at 11:52 +0000, John Garry wrote:
-[...]
-> Hi Greg,
-> 
-> I also note that currently we have an inconsistency in license of 
-> sas_init.c:
-> 
-> /*
->   * Serial Attached SCSI (SAS) Transport Layer initialization
->   *
->   * Copyright (C) 2005 Adaptec, Inc.  All rights reserved.
->   * Copyright (C) 2005 Luben Tuikov <luben_tuikov@adaptec.com>
->   *
->   * This file is licensed under GPLv2.
->   *
->   * This program is free software; you can redistribute it and/or
->   * modify it under the terms of the GNU General Public License as
->   * published by the Free Software Foundation; either version 2 of
-> the
->   * License, or (at your option) any later version.
->   *
->   * This program is distributed in the hope that it will be useful,
-> but
->   * WITHOUT ANY WARRANTY; without even the implied warranty of
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
->   * General Public License for more details.
->   *
->   * You should have received a copy of the GNU General Public License
->   * along with this program; if not, write to the Free Software
->   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-
-> 1307
->   * USA
->   *
->   */
-> 
-> ...
-> 
-> MODULE_AUTHOR("Luben Tuikov <luben_tuikov@adaptec.com>");
-> MODULE_DESCRIPTION("SAS Transport Layer");
-> MODULE_LICENSE("GPL v2");
-> 
-> So the license specifies v2+ but module license states v2.
-> 
-> I could not find a docment for guidance on this. I also note that
-> making sas_task.c v2 would mean mixing v2 and v2+ into the module.
+On Mon, Nov 26, 2018 at 04:19:38PM -0500, Dennis Zhou wrote:
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 62715a5a4f32..8bc9d9b29fd3 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -486,6 +486,12 @@ extern unsigned int bvec_nr_vecs(unsigned short idx);
+>  extern const char *bio_devname(struct bio *bio, char *buffer);
+>  
+>  #define bio_set_dev(bio, bdev) 			\
+> +do {						\
+> +	bio_set_dev_only(bio, bdev);		\
+> +	bio_associate_blkg(bio);		\
+> +} while (0)
+> +
+> +#define bio_set_dev_only(bio, bdev)		\
+>  do {						\
+>  	if ((bio)->bi_disk != (bdev)->bd_disk)	\
+>  		bio_clear_flag(bio, BIO_THROTTLED);\
 
-The point here is to get help.  There are three pieces of evidence in
-the file one for v2+ and two for v2.  So you can look in the git tree
-to when it was actually contributed:
+Generally looks okay to me but I'm not sure about bio_set_dev_only().
+Maybe sth more explicit like bio_set_dev_without_blkg()?  Also, can
+you please add comments explaining which should be used when?
 
-commit 2908d778ab3e244900c310974e1fc1c69066e450
-Author: James Bottomley <James.Bottomley@SteelEye.com>
-Date:   Tue Aug 29 09:22:51 2006 -0500
+Thanks.
 
-    [SCSI] aic94xx: new driver
- 
-and if you ask the original contributor he can tell you the original
-intent was v2 only.  If you want to modify all the files in libsas and
-aic9xxx to have that SPDX tag.
-
-> At this point I'm reluctant to touch this in case I mess up, but
-> there  is still the missing license in sas_task.c .
-
-Again, the tree will tell you.  In this case it's
-
-commit 366ca51f30de1cbb5b356c70b7bb22051c558e41
-Author: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date:   Fri Jan 18 10:47:01 2008 -0600
-
-    [SCSI] libsas: abstract STP task status into a function
-
-So that file is a direct extraction from an existing v2 only file in
-aic9xxx, so it's licence is also v2 only.
-
-James
-
+-- 
+tejun
