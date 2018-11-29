@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392ABC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3B120863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A872145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IggHAJei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3B120863
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yl67IxDW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A872145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbeK3ETB (ORCPT
+        id S1730609AbeK3ETF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:19:01 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35048 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728554AbeK3ETB (ORCPT
+        Thu, 29 Nov 2018 23:19:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36529 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730555AbeK3ETE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:19:01 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so2696142wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:12:55 -0800 (PST)
+        Thu, 29 Nov 2018 23:19:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u3so2674561wrs.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:12:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9iTHNAMi/B7M59UNr1H/N7bE0xz4z3gfTlAxn3XU6zk=;
-        b=IggHAJei/HY1eekMT9MKvSsKn2ZhjsFwMEfCojcv0lIodqCRBUHbdO8IqfqEPCge5c
-         XqAVKSQE6Jc7+/UASrkQRlFwrIyPAziUKerwEFvHVV/ff5prnWM9DOFcWDDch0Xu7hlb
-         PvTEJ6tDpRrmrFGOtTXlBs3p87E9yD9WX8CGw=
+        bh=kZ9qAKUFhDNWQgwFHfyYbRlwlOBWhnuPIzx1kDDdeg4=;
+        b=Yl67IxDWCaxwjil2nX89/whyxy5/ukSWgHYZpMBQQIot+PIfkOxMwhGseVxhd3BBtB
+         D9M2MIOs9cboB2w/sSofoQkiNk8ae1wJgldy7FL+mMsL8bpX/tsOnPr3k20axn4Y65Wf
+         5rJz8R7H0vFt9oIPhrZlTL6EWZd4wY30CdsLA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9iTHNAMi/B7M59UNr1H/N7bE0xz4z3gfTlAxn3XU6zk=;
-        b=IFPPzr+WoiYPpuel8giaExXcONCLYWWAi48CdhVsbNmj+n5pHCvK4+cNSQVnTt31Cp
-         Ycv2MBpdLe0zArQeSMhCwfRbOSG1lAbxCAeEaLR7pFn55LyxLBgmoKLo+9EG0a4D+CxC
-         Xp1VQNNF44gHSDTBmquwv/86ze6/H7jESvakZTB9UgJ6MJXjedqx2ZxgY0GBQQeQzlo6
-         nITG5QlFSarNcIlEgl+MRv3eVD/Qo9u92cQn1y4kHEWnwbR4rtzObbOEkZLpWeF5yS37
-         B55Kd3ty2QoUxWcmbkTfFgn706Kx5K8E/ESJIDZOQq5HZd64RzZHIq+eegpB3BeJ57m9
-         EWUQ==
-X-Gm-Message-State: AA+aEWYa4mbP2GVZod5P5r4YNBo9w3txoM/vNfKIxg3jOSnWUaSQLjyr
-        Jaf5/YWqzrOer5fCDvKvBp2jSg==
-X-Google-Smtp-Source: AFSGD/UtLDkMHc5HoaZecxiqbpX5WWCFPebCteGp3tJbQc8pykCjasUtQfc+3ZX4DGY1KSKu21e1Mw==
-X-Received: by 2002:adf:9ec8:: with SMTP id b8mr2256654wrf.164.1543511574762;
-        Thu, 29 Nov 2018 09:12:54 -0800 (PST)
+        bh=kZ9qAKUFhDNWQgwFHfyYbRlwlOBWhnuPIzx1kDDdeg4=;
+        b=fb2z00OxfoW/OUSsV6biCZAxOa8B1rD9n3Fb77pTWydJO9VTT3PzafZRsvLsp5v+Ha
+         UHFqJpU0y8Hr9iLhOxfErrecZciJNnJCY3C6d4HX6MU0+n/O6BkMV3It+DK7iJTd9OXT
+         byGUsEKALYgy+uAMIa+SRFOOJaOcLXtX9Prdky5rkAzr2fxzjqyNx3v2hNB+MkzCbjHt
+         pe4JMF+5EWkmq6cap442CMdO9q7V2q8jl3RJnDZQVv4MiNxA/m4E9guGJF2eCAbHQn4h
+         x68GW/z0x9VG4TPtk6+paPDwGeefXCVD6exPuo1ypaRH5+Kw6ayW4uASzS5tqllplzO2
+         a+jA==
+X-Gm-Message-State: AA+aEWYwOQLyox87D/4npZw6pVMi7pxZIp7+oCuT5yJ7V2WPzogjwRMJ
+        a/ou4fuNiKl7hN7TCQAP3jMMtw==
+X-Google-Smtp-Source: AFSGD/UtnT0sj58bIGg9qkNnTEosV50ZPLk33LKcL2ORLzhMLpsD1cqFWNp5CiDb9TBrtUTCqaXa8A==
+X-Received: by 2002:adf:b102:: with SMTP id l2mr2059081wra.296.1543511577963;
+        Thu, 29 Nov 2018 09:12:57 -0800 (PST)
 Received: from harold.home ([2a01:cb1d:112:6f00:f070:d240:312e:9f99])
-        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.12.53
+        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.12.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:12:53 -0800 (PST)
+        Thu, 29 Nov 2018 09:12:57 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -76,9 +76,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Sedat Dilek <sedat.dilek@gmail.com>,
         YiFei Zhu <zhuyifei1999@gmail.com>
-Subject: [PATCH 04/11] x86/mm/pageattr: Introduce helper function to unmap EFI boot services
-Date:   Thu, 29 Nov 2018 18:12:23 +0100
-Message-Id: <20181129171230.18699-5-ard.biesheuvel@linaro.org>
+Subject: [PATCH 06/11] x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+Date:   Thu, 29 Nov 2018 18:12:25 +0100
+Message-Id: <20181129171230.18699-7-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
 References: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
@@ -91,28 +91,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 
-Ideally, after kernel assumes control of the platform, firmware
-shouldn't access EFI boot services code/data regions. But, it's noticed
-that this is not so true in many x86 platforms. Hence, during boot,
-kernel reserves EFI boot services code/data regions [1] and maps [2]
-them to efi_pgd so that call to set_virtual_address_map() doesn't fail.
-After returning from set_virtual_address_map(), kernel frees the
-reserved regions [3] but they still remain mapped. Hence, introduce
-kernel_unmap_pages_in_pgd() which will later be used to unmap EFI boot
-services code/data regions.
-
-While at it modify kernel_map_pages_in_pgd() by
-1. Adding __init modifier because it's always used *only* during boot.
-2. Add a warning if it's used after SMP is initialized because it uses
-   __flush_tlb_all() which flushes mappings only on current CPU.
-
-Unmapping EFI boot services code/data regions will result in clearing
-PAGE_PRESENT bit and it shouldn't bother L1TF cases because it's already
-handled by protnone_mask() at arch/x86/include/asm/pgtable-invert.h.
-
-[1] efi_reserve_boot_services()
-[2] efi_map_region() -> __map_region() -> kernel_map_pages_in_pgd()
-[3] efi_free_boot_services()
+efi_<reserve/free>_boot_services() are x86 specific quirks and as such
+should be in asm/efi.h, so move them from linux/efi.h. Also, call
+efi_free_boot_services() from __efi_enter_virtual_mode() as it is x86
+specific call and ideally shouldn't be part of init/main.c
 
 Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -121,97 +103,82 @@ Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Bhupesh Sharma <bhsharma@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/include/asm/pgtable_types.h |  8 ++++--
- arch/x86/mm/pageattr.c               | 40 ++++++++++++++++++++++++++--
- 2 files changed, 44 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/efi.h  | 2 ++
+ arch/x86/platform/efi/efi.c | 2 ++
+ include/linux/efi.h         | 3 ---
+ init/main.c                 | 4 ----
+ 4 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 106b7d0e2dae..d6ff0bbdb394 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -564,8 +564,12 @@ extern pte_t *lookup_address_in_pgd(pgd_t *pgd, unsigned long address,
- 				    unsigned int *level);
- extern pmd_t *lookup_pmd_address(unsigned long address);
- extern phys_addr_t slow_virt_to_phys(void *__address);
--extern int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
--				   unsigned numpages, unsigned long page_flags);
-+extern int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn,
-+					  unsigned long address,
-+					  unsigned numpages,
-+					  unsigned long page_flags);
-+extern int __init kernel_unmap_pages_in_pgd(pgd_t *pgd, unsigned long address,
-+					    unsigned long numpages);
- #endif	/* !__ASSEMBLY__ */
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index eea40d52ca78..d1e64ac80b9c 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -141,6 +141,8 @@ extern int __init efi_reuse_config(u64 tables, int nr_tables);
+ extern void efi_delete_dummy_variable(void);
+ extern void efi_switch_mm(struct mm_struct *mm);
+ extern void efi_recover_from_page_fault(unsigned long phys_addr);
++extern void efi_free_boot_services(void);
++extern void efi_reserve_boot_services(void);
  
- #endif /* _ASM_X86_PGTABLE_DEFS_H */
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index db7a10082238..bac35001d896 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2338,8 +2338,8 @@ bool kernel_page_present(struct page *page)
+ struct efi_setup_data {
+ 	u64 fw_vendor;
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 7ae939e353cd..e1cb01a22fa8 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -993,6 +993,8 @@ static void __init __efi_enter_virtual_mode(void)
+ 		panic("EFI call to SetVirtualAddressMap() failed!");
+ 	}
  
- #endif /* CONFIG_DEBUG_PAGEALLOC */
- 
--int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
--			    unsigned numpages, unsigned long page_flags)
-+int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
-+				   unsigned numpages, unsigned long page_flags)
- {
- 	int retval = -EINVAL;
- 
-@@ -2353,6 +2353,8 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 		.flags = 0,
- 	};
- 
-+	WARN_ONCE(num_online_cpus() > 1, "Don't call after initializing SMP");
++	efi_free_boot_services();
 +
- 	if (!(__supported_pte_mask & _PAGE_NX))
- 		goto out;
+ 	/*
+ 	 * Now that EFI is in virtual mode, update the function
+ 	 * pointers in the runtime service table to the new virtual addresses.
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 100ce4a4aff6..2b3b33c83b05 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1000,13 +1000,11 @@ extern void efi_memmap_walk (efi_freemem_callback_t callback, void *arg);
+ extern void efi_gettimeofday (struct timespec64 *ts);
+ extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
+ #ifdef CONFIG_X86
+-extern void efi_free_boot_services(void);
+ extern efi_status_t efi_query_variable_store(u32 attributes,
+ 					     unsigned long size,
+ 					     bool nonblocking);
+ extern void efi_find_mirror(void);
+ #else
+-static inline void efi_free_boot_services(void) {}
  
-@@ -2374,6 +2376,40 @@ int kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
- 	return retval;
+ static inline efi_status_t efi_query_variable_store(u32 attributes,
+ 						    unsigned long size,
+@@ -1046,7 +1044,6 @@ extern void efi_mem_reserve(phys_addr_t addr, u64 size);
+ extern int efi_mem_reserve_persistent(phys_addr_t addr, u64 size);
+ extern void efi_initialize_iomem_resources(struct resource *code_resource,
+ 		struct resource *data_resource, struct resource *bss_resource);
+-extern void efi_reserve_boot_services(void);
+ extern int efi_get_fdt_params(struct efi_fdt_params *params);
+ extern struct kobject *efi_kobj;
+ 
+diff --git a/init/main.c b/init/main.c
+index ee147103ba1b..ccefcd8e855f 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -737,10 +737,6 @@ asmlinkage __visible void __init start_kernel(void)
+ 	arch_post_acpi_subsys_init();
+ 	sfi_init_late();
+ 
+-	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+-		efi_free_boot_services();
+-	}
+-
+ 	/* Do the rest non-__init'ed, we're now alive */
+ 	arch_call_rest_init();
  }
- 
-+/*
-+ * __flush_tlb_all() flushes mappings only on current CPU and hence this
-+ * function shouldn't be used in an SMP environment. Presently, it's used only
-+ * during boot (way before smp_init()) by EFI subsystem and hence is ok.
-+ */
-+int __init kernel_unmap_pages_in_pgd(pgd_t *pgd, unsigned long address,
-+				     unsigned long numpages)
-+{
-+	int retval;
-+
-+	/*
-+	 * The typical sequence for unmapping is to find a pte through
-+	 * lookup_address_in_pgd() (ideally, it should never return NULL because
-+	 * the address is already mapped) and change it's protections. As pfn is
-+	 * the *target* of a mapping, it's not useful while unmapping.
-+	 */
-+	struct cpa_data cpa = {
-+		.vaddr		= &address,
-+		.pfn		= 0,
-+		.pgd		= pgd,
-+		.numpages	= numpages,
-+		.mask_set	= __pgprot(0),
-+		.mask_clr	= __pgprot(_PAGE_PRESENT | _PAGE_RW),
-+		.flags		= 0,
-+	};
-+
-+	WARN_ONCE(num_online_cpus() > 1, "Don't call after initializing SMP");
-+
-+	retval = __change_page_attr_set_clr(&cpa, 0);
-+	__flush_tlb_all();
-+
-+	return retval;
-+}
-+
- /*
-  * The testcases use internal knowledge of the implementation that shouldn't
-  * be exposed to the rest of the kernel. Include these directly here.
 -- 
 2.19.1
 
