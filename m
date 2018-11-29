@@ -2,109 +2,85 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B243C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48707C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4C8D213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:12:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C8D213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 1ED9821104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:13:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED9821104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeK3GSm (ORCPT
+        id S1726622AbeK3GTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:18:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbeK3GSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:18:39 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        Fri, 30 Nov 2018 01:19:41 -0500
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:55365 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbeK3GTl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 01:19:41 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5415521104;
-        Thu, 29 Nov 2018 19:12:11 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 14:12:09 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
-        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
-        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
-        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129141209.41c49869@gandalf.local.home>
-In-Reply-To: <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
-References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
-        <20181129094210.GC2131@hirez.programming.kicks-ass.net>
-        <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
-        <20181129143853.GO2131@hirez.programming.kicks-ass.net>
-        <20181129163342.tp5wlfcyiazwwyoh@treble>
-        <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com>
-        <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
-        <20181129121307.12393c57@gandalf.local.home>
-        <CAHk-=wik5AfDs7qqjGHQ5vRBYkV8K6tFmPna3PdbwdzVwPGTsg@mail.gmail.com>
-        <20181129124404.2fe55dd0@gandalf.local.home>
-        <CAHk-=wgnZobye-KNaBVO-SdqX-5Xkz+i=aJ_kOFZ4RpZFT0HqQ@mail.gmail.com>
-        <20181129125857.75c55b96@gandalf.local.home>
-        <CAHk-=wigLUgxDM6Dq2aS7efduffratP976Ggmpv4Ev4EOrJxyA@mail.gmail.com>
-        <20181129134725.6d86ade6@gandalf.local.home>
-        <CAHk-=wgbnQs4fpuHqT1jLkDnKcvTGS5EN8m=qy7oUE5n_fhOig@mail.gmail.com>
-        <CAHk-=wjN=sow0F-UtA6DtHHT_CNUV7wYVe3cQ4E8GPp4LN32+Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 036C5300002BE;
+        Thu, 29 Nov 2018 20:13:13 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id CA771105765; Thu, 29 Nov 2018 20:13:12 +0100 (CET)
+Date:   Thu, 29 Nov 2018 20:13:12 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Alex_Gagniuc@Dellteam.com
+Cc:     helgaas@kernel.org, mr.nuke.me@gmail.com, Austin.Bolen@dell.com,
+        keith.busch@intel.com, Shyam.Iyer@dell.com,
+        mika.westerberg@linux.intel.com, okaya@codeaurora.org,
+        rafael.j.wysocki@intel.com, poza@codeaurora.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
+ notification
+Message-ID: <20181129191312.6ksdzjv6qojacv4j@wunner.de>
+References: <20181129000829.14751-1-mr.nuke.me@gmail.com>
+ <20181129173553.GD178809@google.com>
+ <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 11:08:26 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, Nov 29, 2018 at 06:57:37PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> On 11/29/2018 11:36 AM, Bjorn Helgaas wrote:
+> > On Wed, Nov 28, 2018 at 06:08:24PM -0600, Alexandru Gagniuc wrote:
+> >> A warning is generated when a PCIe device is probed with a degraded
+> >> link, but there was no similar mechanism to warn when the link becomes
+> >> degraded after probing. The Link Bandwidth Notification provides this
+> >> mechanism.
+> >>
+> >> Use the link bandwidth notification interrupt to detect bandwidth
+> >> changes, and rescan the bandwidth, looking for the weakest point. This
+> >> is the same logic used in probe().
+> > 
+> > I like the concept of this.  What I don't like is the fact that it's
+> > tied to pciehp, since I don't think the concept of Link Bandwidth
+> > Notification is related to hotplug.  So I think we'll only notice this
+> > for ports that support hotplug.  Maybe it's worth doing it this way
+> > anyway, even if it could be generalized in the future?
+> 
+> That makes sense. At first, I thought that BW notification was tied to 
+> hotplug, but our PCIe spec writer disagreed with that assertion. I'm 
+> just not sure where to handle the interrupt otherwise.
 
-> On Thu, Nov 29, 2018 at 10:58 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > In contrast, if the call was wrapped in an inline asm, we'd *know* the
-> > compiler couldn't turn a "call wrapper(%rip)" into anything else.  
-> 
-> Actually, I think I have a better model - if the caller is done with inline asm.
-> 
-> What you can do then is basically add a single-byte prefix to the
-> "call" instruction that does nothing (say, cs override), and then
-> replace *that* with a 'int3' instruction.
-> 
-> Boom. Done.
-> 
-> Now, the "int3" handler can just update the instruction in-place, but
-> leave the "int3" in place, and then return to the next instruction
-> byte (which is just the normal branch instruction without the prefix
-> byte).
-> 
-> The cross-CPU case continues to work, because the 'int3' remains in
-> place until after the IPI.
-> 
-> But that would require that we'd mark those call instruction with
-> 
+I guess the interrupt is shared with hotplug and PME?  In that case write
+a separate pcie_port_service_driver and request the interrupt with
+IRQF_SHARED.  Define a new service type in drivers/pci/pcie/portdrv.h.
+Amend get_port_device_capability() to check for PCI_EXP_LNKCAP_LBNC.
 
-In my original proof of concept, I tried to to implement the callers
-with asm, but then the way to handle parameters became a nightmare.
+Thanks,
 
-The goal of this (for me) was to replace the tracepoint indirect calls
-with static calls, and tracepoints can have any number of parameters to
-pass. I ended up needing the compiler to help me with the passing of
-parameters.
-
--- Steve
+Lukas
