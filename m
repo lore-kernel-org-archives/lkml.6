@@ -2,123 +2,120 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E36FC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6D0C07E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CED1213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73EB82082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="KM4fXjyR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CED1213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9SdpF++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EB82082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbeK3GEE (ORCPT
+        id S1726648AbeK3GEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:04:04 -0500
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:20488 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725871AbeK3GEE (ORCPT
+        Fri, 30 Nov 2018 01:04:13 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40745 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeK3GEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:04:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1543517861; x=1575053861;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=FTFnN1BsmJTwfNfmFVxT6UakrtjsP3Ns+sJmB2+rBSw=;
-  b=KM4fXjyRGQflFh3bZpoetNIZr0RvcVOHuLvBnhsiGF1NeOYOzGerTlZs
-   ohNWH9t+4dtEgn22kg0jXsXZxSxoajphO0oG/YknZ0IDnnWUrXgOMDZ9y
-   7CrnYBqSwKwxS8QCIA8yF06tv3wbIy49QVsb4+2jwijmIzK5Ctf7kJRQ4
-   8=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EGAADJNQBchyeV50NkGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUQYBAQELAYNrMYRRhASDMl+LKYINgX2VR4F6CwEBhGyDNSI0CQ0?=
- =?us-ascii?q?BAwEBAgEBAgEBAhABAQEKCwkIKS+CNiKCZgEBAQMSKD0CEAIBCBgeEFcCBAE?=
- =?us-ascii?q?aGoJ/ggKbcz0CgRCJWAEBAYIdii+MFoIWg3UugSaDW4VbAokngXKVCgkFjUS?=
- =?us-ascii?q?DYSCBfY8fiHiPLwIEAgQFAhSBRoIOcIM9gjSOJkABjViBHwEB?=
-X-IPAS-Result: =?us-ascii?q?A2EGAADJNQBchyeV50NkGwEBAQEDAQEBBwMBAQGBUQYBA?=
- =?us-ascii?q?QELAYNrMYRRhASDMl+LKYINgX2VR4F6CwEBhGyDNSI0CQ0BAwEBAgEBAgEBA?=
- =?us-ascii?q?hABAQEKCwkIKS+CNiKCZgEBAQMSKD0CEAIBCBgeEFcCBAEaGoJ/ggKbcz0Cg?=
- =?us-ascii?q?RCJWAEBAYIdii+MFoIWg3UugSaDW4VbAokngXKVCgkFjUSDYSCBfY8fiHiPL?=
- =?us-ascii?q?wIEAgQFAhSBRoIOcIM9gjSOJkABjViBHwEB?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Nov 2018 12:57:40 -0600
-Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATIlgt1155006;
-        Thu, 29 Nov 2018 13:57:40 -0500
-Received: from esa3.dell-outbound2.iphmx.com (esa3.dell-outbound2.iphmx.com [68.232.154.63])
-        by mx0a-00154901.pphosted.com with ESMTP id 2p2gf5j6f6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 13:57:40 -0500
-Cc:     <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
-        <Shyam.Iyer@dell.com>, <lukas@wunner.de>,
-        <mika.westerberg@linux.intel.com>, <okaya@codeaurora.org>,
-        <rafael.j.wysocki@intel.com>, <poza@codeaurora.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Received: from ausxipps306.us.dell.com ([143.166.148.156])
-  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 30 Nov 2018 00:57:27 +0600
-X-LoopCount0: from 10.166.134.89
-X-IronPort-AV: E=Sophos;i="5.56,295,1539666000"; 
-   d="scan'208";a="244747003"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
-Subject: Re: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
- notification
-Thread-Topic: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
- notification
-Thread-Index: AQHUh3extvl0RTSvTEW+XZDJcp0hUQ==
-Date:   Thu, 29 Nov 2018 18:57:37 +0000
-Message-ID: <1828edee07fa483d9600aeb5b9b69456@ausx13mps321.AMER.DELL.COM>
-References: <20181129000829.14751-1-mr.nuke.me@gmail.com>
- <20181129173553.GD178809@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.178.128.193]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 30 Nov 2018 01:04:13 -0500
+Received: by mail-io1-f65.google.com with SMTP id n9so2455374ioh.7;
+        Thu, 29 Nov 2018 10:57:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lyy5yvTAUOmlEPj+xK+uWoEqiMsQzkVUDFwnxbzT9ZM=;
+        b=R9SdpF++3J5wNrSgIIiOZH57y04E765lRhzJu/kQqrptWQC3+2C/YrjQ1ypCdoPswF
+         tlnji4OlO5GOZ45I1+STjJxPErj+9EuvYC2IELaUiWir0z2vjKLPvor1wopKMk0tcnEx
+         DcWVheElQWGPXrUAc22u2TNtg+GjrjSLcDqK6DEYb36EeEdyqLs8upIDMWaaAXZ4ItdU
+         eISX637c0y5HKmNHjq6TODkxZwSkHNWsNqcFYB9IkOmnrDGqjcV686NZ2FlA3h1V7FCO
+         EFDXdH7fAk5vQRvQKrXCU17VHHZ0Sim/kQAYTILnhEdLrhmHMZ/TIo/gvDkKvNen8HLB
+         k6Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lyy5yvTAUOmlEPj+xK+uWoEqiMsQzkVUDFwnxbzT9ZM=;
+        b=hjIPG39UybShMAEZQK/xdHcgt/Cf3zQPFcCXSq+nfM4prYiB8DkYHodB7cawBLZvg/
+         9KkEJxtJfOsQLHPj+VVeoEMdnMK9hoZnxiVbY3PJDTu9BUriL5Q/LjjZ1TdY58r2TSXd
+         hlaWSGBSjYvCEh3dnYkiLrDCmz0THro1KEfDxb51VPQD1vybhi7oPI/V/AyV9vLKnk9L
+         7FL1w/Eap7Z0qAdIESFOZQdCpAfv3FiMVNjL0N2rH7DcJS8eCG4jejMwHW/rLbSNykko
+         Nk4JEEdIyBX2IshXe3Yeuv3amFUy+MqbGGjL1QqdbcrjBW0k5Fac9rTzuikYZhowtybL
+         RjVw==
+X-Gm-Message-State: AA+aEWYQ40/wJbstcAOl9lZs+rHTTTkOFSaoDMYee5gd2Ji2HM9bwvnn
+        qAC/AmLbEtJU7Yc2nhezMNyt88s/INrYlZ1kKOM=
+X-Google-Smtp-Source: AFSGD/VO+WGIdJk3fbf4iGppxQcXo9TOW2mnIfHXi0kfcs0slEpxE/m5gvYoouK8+jwWGBOWAghZKdPyoWE/r4xergE=
+X-Received: by 2002:a6b:fc05:: with SMTP id r5mr2207832ioh.129.1543517869444;
+ Thu, 29 Nov 2018 10:57:49 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=741 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811290155
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de> <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
+ <20181129155758.GC26537@lst.de> <20181129162807.GL21184@phenom.ffwll.local>
+ <20181129165715.GA27786@lst.de> <CAKMK7uECLeTbEjG6=unWZSKakpiYkmBVbCEKKY2xv=vVjF-pBQ@mail.gmail.com>
+ <CAAFQd5A-Bh711VaNWhRJqcrofkBVCMFcNgqfztoyWJcUdhSu0Q@mail.gmail.com>
+In-Reply-To: <CAAFQd5A-Bh711VaNWhRJqcrofkBVCMFcNgqfztoyWJcUdhSu0Q@mail.gmail.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 29 Nov 2018 13:57:38 -0500
+Message-ID: <CAF6AEGsT9RO2RmgBTa0HQRjRUiRKy9N3vQxvD7RVWp4HpnWn+w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, hch@lst.de,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 11:36 AM, Bjorn Helgaas wrote:=0A=
-> On Wed, Nov 28, 2018 at 06:08:24PM -0600, Alexandru Gagniuc wrote:=0A=
->> A warning is generated when a PCIe device is probed with a degraded=0A=
->> link, but there was no similar mechanism to warn when the link becomes=
-=0A=
->> degraded after probing. The Link Bandwidth Notification provides this=0A=
->> mechanism.=0A=
->>=0A=
->> Use the link bandwidth notification interrupt to detect bandwidth=0A=
->> changes, and rescan the bandwidth, looking for the weakest point. This=
-=0A=
->> is the same logic used in probe().=0A=
-> =0A=
-> I like the concept of this.  What I don't like is the fact that it's=0A=
-> tied to pciehp, since I don't think the concept of Link Bandwidth=0A=
-> Notification is related to hotplug.  So I think we'll only notice this=0A=
-> for ports that support hotplug.  Maybe it's worth doing it this way=0A=
-> anyway, even if it could be generalized in the future?=0A=
-=0A=
-That makes sense. At first, I thought that BW notification was tied to =0A=
-hotplug, but our PCIe spec writer disagreed with that assertion. I'm =0A=
-just not sure where to handle the interrupt otherwise.=0A=
-=0A=
-Alex=0A=
-=0A=
+On Thu, Nov 29, 2018 at 12:24 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> [CC Marek]
+>
+> On Thu, Nov 29, 2018 at 9:09 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Thu, Nov 29, 2018 at 5:57 PM Christoph Hellwig <hch@lst.de> wrote:
+> > >
+> > > Note that one thing I'd like to avoid is exposing these funtions directly
+> > > to drivers, as that will get us into all kinds of abuses.
+> >
+> > What kind of abuse do you expect? It could very well be that gpu folks
+> > call that "standard use case" ... At least on x86 with the i915 driver
+> > we pretty much rely on architectural guarantees for how cache flushes
+> > work very much. Down to userspace doing the cache flushing for
+> > mappings the kernel has set up.
+>
+> i915 is a very specific case of a fully contained,
+> architecture-specific hardware subsystem, where you can just hardcode
+> all integration details inside the driver, because nobody else would
+> care.
+>
+> In ARM world, you can have the same IP blocks licensed by multiple SoC
+> vendors with different integration details and that often includes the
+> option of coherency.
+
+fwiw, I believe all the GPU IP blocks that are used across multiple
+SoCs have their own GPU MMU (potentially in addition to an iommu?).
+So the dma-api is a much better fit for them..  drm/msm is a lot
+closer to drm/i915 scenario, so I don't so much care if the solution
+to our unique problem isn't something that would work for other
+drivers ;-)
+
+BR,
+-R
