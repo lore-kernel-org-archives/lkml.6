@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE11C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E95C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA712213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFE002133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHvDQDMC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA712213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejawPvOB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE002133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733070AbeK3BbM (ORCPT
+        id S1733084AbeK3BbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:31:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58634 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:31:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731628AbeK3BbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:12 -0500
+        id S1731628AbeK3BbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7ED421104;
-        Thu, 29 Nov 2018 14:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A6062133F;
+        Thu, 29 Nov 2018 14:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501540;
-        bh=pRM/0Qn0UML5kXuWYt3DWX+48xl/YSp8j0fjZmcziRY=;
+        s=default; t=1543501542;
+        bh=Fl8QC35nLKL01udSNtNrrlaSAYp2kj0ueKcq2izToEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NHvDQDMCwR5DWpQhi0v7HwO1cSrDDCqwDCYPOEIxY3qT0MT+EzOuwTdA4v5Km90eB
-         PeXgFQlqguVuT1TFwJZ9LndU6OKXws3cz4NWlqtlccVJPGQwLot8QA+T7cdD5kl/rT
-         EyK1ibMM3NebO0pYRbi8Yx7ksMT+iKOshzOz3R5o=
+        b=ejawPvOBxoOaZNNkLEY9iiFDLn3X+f+SatyMomBl903WzdoI/zRXzKw1LRKIjRZOP
+         dEVp1lM1E0sqyn+NDWA8XHVPFP4i1NsWxMYQfjJ3PKkswBf4wcB5N2L1UPZMzG5K6Z
+         hE7vNhqPgPldRQrzrAXwQFIl0ulQH71VFvKQyCLs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1cb36954e127c98dd037@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 012/100] ALSA: oss: Use kvzalloc() for local buffer allocations
-Date:   Thu, 29 Nov 2018 15:11:42 +0100
-Message-Id: <20181129140059.986581736@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 039/100] can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb
+Date:   Thu, 29 Nov 2018 15:12:09 +0100
+Message-Id: <20181129140102.139885270@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -63,73 +61,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 65766ee0bf7fe8b3be80e2e1c3ef54ad59b29476 upstream.
+commit 7da11ba5c5066dadc2e96835a6233d56d7b7764a upstream.
 
-PCM OSS layer may allocate a few temporary buffers, one for the core
-read/write and another for the conversions via plugins.  Currently
-both are allocated via vmalloc().  But as the allocation size is
-equivalent with the PCM period size, the required size might be quite
-small, depending on the application.
+Prior to echoing a successfully transmitted CAN frame (by calling
+can_get_echo_skb()), CAN drivers have to put the CAN frame (by calling
+can_put_echo_skb() in the transmit function). These put and get function
+take an index as parameter, which is used to identify the CAN frame.
 
-This patch replaces these vmalloc() calls with kvzalloc() for covering
-small period sizes better.  Also, we use "z"-alloc variant here for
-addressing the possible uninitialized access reported by syzkaller.
+A driver calling can_get_echo_skb() with a index not pointing to a skb
+is a BUG, so add an appropriate error message.
 
-Reported-by: syzbot+1cb36954e127c98dd037@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/oss/pcm_oss.c    |    6 +++---
- sound/core/oss/pcm_plugin.c |    6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/can/dev.c |   27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1062,8 +1062,8 @@ static int snd_pcm_oss_change_params_loc
- 	runtime->oss.channels = params_channels(params);
- 	runtime->oss.rate = params_rate(params);
- 
--	vfree(runtime->oss.buffer);
--	runtime->oss.buffer = vmalloc(runtime->oss.period_bytes);
-+	kvfree(runtime->oss.buffer);
-+	runtime->oss.buffer = kvzalloc(runtime->oss.period_bytes, GFP_KERNEL);
- 	if (!runtime->oss.buffer) {
- 		err = -ENOMEM;
- 		goto failure;
-@@ -2328,7 +2328,7 @@ static void snd_pcm_oss_release_substrea
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -479,6 +479,8 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
  {
- 	struct snd_pcm_runtime *runtime;
- 	runtime = substream->runtime;
--	vfree(runtime->oss.buffer);
-+	kvfree(runtime->oss.buffer);
- 	runtime->oss.buffer = NULL;
- #ifdef CONFIG_SND_PCM_OSS_PLUGINS
- 	snd_pcm_oss_plugin_clear(substream);
---- a/sound/core/oss/pcm_plugin.c
-+++ b/sound/core/oss/pcm_plugin.c
-@@ -66,8 +66,8 @@ static int snd_pcm_plugin_alloc(struct s
- 		return -ENXIO;
- 	size /= 8;
- 	if (plugin->buf_frames < frames) {
--		vfree(plugin->buf);
--		plugin->buf = vmalloc(size);
-+		kvfree(plugin->buf);
-+		plugin->buf = kvzalloc(size, GFP_KERNEL);
- 		plugin->buf_frames = frames;
+ 	struct can_priv *priv = netdev_priv(dev);
++	struct sk_buff *skb = priv->echo_skb[idx];
++	struct canfd_frame *cf;
+ 
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -486,21 +488,20 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
  	}
- 	if (!plugin->buf) {
-@@ -191,7 +191,7 @@ int snd_pcm_plugin_free(struct snd_pcm_p
- 	if (plugin->private_free)
- 		plugin->private_free(plugin);
- 	kfree(plugin->buf_channels);
--	vfree(plugin->buf);
-+	kvfree(plugin->buf);
- 	kfree(plugin);
- 	return 0;
+ 
+-	if (priv->echo_skb[idx]) {
+-		/* Using "struct canfd_frame::len" for the frame
+-		 * length is supported on both CAN and CANFD frames.
+-		 */
+-		struct sk_buff *skb = priv->echo_skb[idx];
+-		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
+-		u8 len = cf->len;
+-
+-		*len_ptr = len;
+-		priv->echo_skb[idx] = NULL;
+-
+-		return skb;
++	if (!skb) {
++		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
++			   __func__, idx);
++		return NULL;
+ 	}
+ 
+-	return NULL;
++	/* Using "struct canfd_frame::len" for the frame
++	 * length is supported on both CAN and CANFD frames.
++	 */
++	cf = (struct canfd_frame *)skb->data;
++	*len_ptr = cf->len;
++	priv->echo_skb[idx] = NULL;
++
++	return skb;
  }
+ 
+ /*
 
 
