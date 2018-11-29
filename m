@@ -2,244 +2,128 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12076C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F64C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA93620673
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="01nhtLSO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA93620673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 1CCE920673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCE920673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387943AbeK3Bdj (ORCPT
+        id S1733140AbeK3Brr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:39 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44806 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387917AbeK3Bdi (ORCPT
+        Thu, 29 Nov 2018 20:47:47 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:55903 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729142AbeK3Brq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:38 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z13so1565398lfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:28:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v4vz3sbNBH1XzX3GydMDty1pB9dgsxmbyenTp4UEM2g=;
-        b=01nhtLSOQ7vb/NXRZVxVKtSkqCHTXr9/A4oQQPr9J9b6WQHNmBDdmdUK0gcHChQAYw
-         pWV43ZPZeUtkTT7voJGB19uuIhcc9XipCB4oLE3oNO0QY5T8UxIJxwBYrAIYxGlsFgUC
-         MMWu+DnfkCQrBpqkMqwNKhQplbJf7N6Txeyz8QGhrZVXHFPICp1gS+Gh2DFLejviIz9f
-         ccifjgqEgiQeHO8GtjNtzWkeE4KT0ZcQe0GaItOSLXMr2sLni36MUYoPzVc+PXwSxnPx
-         oWSoG3Zwfj+jFFoocGlziL4zoY13JCWZjLhlGRphuj0VVDDr6Wy9aonK2JPLvN/7CMIw
-         dVIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v4vz3sbNBH1XzX3GydMDty1pB9dgsxmbyenTp4UEM2g=;
-        b=gR7EfK6M0/hZEvK38qeyeCzQYxiF04/UWUDLhC+In8JVSHVIp2zll7fYC3qZOqcU+Q
-         GancECGl+swKhU1EJ6oGm45h8erh2xwE7rM2RqLvF4vRhZ3XQDDSyResB6dAhrDz7liE
-         Pux2NGcyaRGdj2+NTO35c2QMIq1IdPt41BpVDE1Sr4y5bHwQhiNpbXSIeHPVu9c8a19O
-         mntd5TUxhuKEmAZi902nFXrLBbID980koL2x87Pgk6Q40bkqwgHZV6uayKYpu5s8aJpv
-         QGYzAHbEkIDe8cbIhELJH6LAoPAjnLKpVn7IreiFjRNP4rtFlvoObXWUr0b1Q+dkBRqk
-         /ijw==
-X-Gm-Message-State: AA+aEWYriKsW+zroqlTORUdnuuLGii3A2Lf8j8CqmPme6jDqmOhkGgYl
-        wnEjLdFzFJP2jcE48bHKseDikQ==
-X-Google-Smtp-Source: AFSGD/Ub3RUnFyfDx0S48fa+hcgyMzCJcXLKW7ISdSubwlWj/q0PqXbJQjqnB/lHOdEhwYfKtr+ezQ==
-X-Received: by 2002:a19:7d42:: with SMTP id y63mr1145504lfc.47.1543501684696;
-        Thu, 29 Nov 2018 06:28:04 -0800 (PST)
-Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id c19sm326970lfg.86.2018.11.29.06.28.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 06:28:03 -0800 (PST)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keith.busch@intel.com, linux-nvme@lists.infradead.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH] lightnvm: simplify geometry enumeration
-Date:   Thu, 29 Nov 2018 15:27:38 +0100
-Message-Id: <20181129142738.9567-1-mb@lightnvm.io>
-X-Mailer: git-send-email 2.17.1
+        Thu, 29 Nov 2018 20:47:46 -0500
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 0D9B0200002;
+        Thu, 29 Nov 2018 14:42:07 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 15:42:06 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, fabio.estevam@nxp.com
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Regression: v4.20-rc4: "SMSC LAN8710/LAN8720: Master/Slave
+ resolution failed"
+Message-ID: <20181129144206.GK9807@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0qVF/w3MHQqLSynd"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the geometry of an OCSSD is enumerated using a two step
-approach:
 
-First, nvm_register is called, the OCSSD identify command is issued,
-and second the geometry sos and csecs values are read either from the
-OCSSD identify if it is a 1.2 drive, or from the NVMe namespace data
-structure if it is a 2.0 device.
+--0qVF/w3MHQqLSynd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-This patch recombines it into a single step, such that nvm_register can
-use the csecs and sos fields independent of which version is used. This
-enables one to dynamically size the lightnvm subsystem dma pool.
+Hello,
+   netdev people,
+   i.MX6 people,
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/core.c      | 12 +++++-------
- drivers/nvme/host/core.c     | 18 +++++++++---------
- drivers/nvme/host/lightnvm.c | 18 ++++++------------
- drivers/nvme/host/nvme.h     |  2 --
- 4 files changed, 20 insertions(+), 30 deletions(-)
+   I'm running an i.MX6Q system, and since v4.20-rc1 the ethernet PHY
+fails to properly startup, preventing me from mounting my NFS rootfs
+(the interfaces gets configured after some minutes, but it's too late
+for NFS).
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 73ab3cf26868..a1d52e934ce4 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -1145,25 +1145,23 @@ int nvm_register(struct nvm_dev *dev)
- 	if (!dev->q || !dev->ops)
- 		return -EINVAL;
- 
-+	ret = nvm_init(dev);
-+	if (ret)
-+		return ret;
-+
- 	dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
- 	if (!dev->dma_pool) {
- 		pr_err("nvm: could not create dma pool\n");
-+		nvm_free(dev);
- 		return -ENOMEM;
- 	}
- 
--	ret = nvm_init(dev);
--	if (ret)
--		goto err_init;
--
- 	/* register device with a supported media manager */
- 	down_write(&nvm_lock);
- 	list_add(&dev->devices, &nvm_devices);
- 	up_write(&nvm_lock);
- 
- 	return 0;
--err_init:
--	dev->ops->destroy_dma_pool(dev->dma_pool);
--	return ret;
- }
- EXPORT_SYMBOL(nvm_register);
- 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 65c42448e904..387833b37e38 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1516,8 +1516,6 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
- 	if (ns->noiob)
- 		nvme_set_chunk_size(ns);
- 	nvme_update_disk_info(disk, ns, id);
--	if (ns->ndev)
--		nvme_nvm_update_nvm_info(ns);
- #ifdef CONFIG_NVME_MULTIPATH
- 	if (ns->head->disk)
- 		nvme_update_disk_info(ns->head->disk, ns, id);
-@@ -3086,13 +3084,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	nvme_setup_streams_ns(ctrl, ns);
- 	nvme_set_disk_name(disk_name, ns, ctrl, &flags);
- 
--	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
--		if (nvme_nvm_register(ns, disk_name, node)) {
--			dev_warn(ctrl->device, "LightNVM init failure\n");
--			goto out_unlink_ns;
--		}
--	}
--
- 	disk = alloc_disk_node(0, node);
- 	if (!disk)
- 		goto out_unlink_ns;
-@@ -3106,6 +3097,13 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 
- 	__nvme_revalidate_disk(disk, id);
- 
-+	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
-+		if (nvme_nvm_register(ns, disk_name, node)) {
-+			dev_warn(ctrl->device, "LightNVM init failure\n");
-+			goto out_put_disk;
-+		}
-+	}
-+
- 	down_write(&ctrl->namespaces_rwsem);
- 	list_add_tail(&ns->list, &ctrl->namespaces);
- 	up_write(&ctrl->namespaces_rwsem);
-@@ -3119,6 +3117,8 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	kfree(id);
- 
- 	return;
-+ out_put_disk:
-+	put_disk(ns->disk);
-  out_unlink_ns:
- 	mutex_lock(&ctrl->subsys->lock);
- 	list_del_rcu(&ns->siblings);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index d64805dc8efb..51d957ccf328 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -973,22 +973,11 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
- 	}
- }
- 
--void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
--{
--	struct nvm_dev *ndev = ns->ndev;
--	struct nvm_geo *geo = &ndev->geo;
--
--	if (geo->version == NVM_OCSSD_SPEC_12)
--		return;
--
--	geo->csecs = 1 << ns->lba_shift;
--	geo->sos = ns->ms;
--}
--
- int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
- {
- 	struct request_queue *q = ns->queue;
- 	struct nvm_dev *dev;
-+	struct nvm_geo *geo;
- 
- 	_nvme_nvm_check_size();
- 
-@@ -996,6 +985,11 @@ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
- 	if (!dev)
- 		return -ENOMEM;
- 
-+	/* Note that csecs and sos will be overridden if it is a 1.2 drive. */
-+	geo = &dev->geo;
-+	geo->csecs = 1 << ns->lba_shift;
-+	geo->sos = ns->ms;
-+
- 	dev->q = q;
- 	memcpy(dev->name, disk_name, DISK_NAME_LEN);
- 	dev->ops = &nvme_nvm_dev_ops;
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 9fefba039d1e..4f5399c8808b 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -541,13 +541,11 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
- #endif /* CONFIG_NVME_MULTIPATH */
- 
- #ifdef CONFIG_NVM
--void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
- int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
- void nvme_nvm_unregister(struct nvme_ns *ns);
- extern const struct attribute_group nvme_nvm_attr_group;
- int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
- #else
--static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
- static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
- 				    int node)
- {
--- 
-2.17.1
+The complete boot log:
 
+[    3.000186] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: attached PHY driver [SMSC LAN8710/LAN8720] (mii_bus:phy_addr=2188000.ethernet-1:00, irq=POLL)
+[    3.015616] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+[    4.090582] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: Master/Slave resolution failed, maybe conflicting manual settings?
+[   13.038779] Waiting up to 110 more seconds for network.
+[   23.058776] Waiting up to 100 more seconds for network.
+[   33.078782] Waiting up to 90 more seconds for network.
+[   43.098780] Waiting up to 80 more seconds for network.
+[   53.118780] Waiting up to 70 more seconds for network.
+[   63.138733] Waiting up to 60 more seconds for network.
+[   73.158781] Waiting up to 50 more seconds for network.
+[   83.178779] Waiting up to 40 more seconds for network.
+[   93.198778] Waiting up to 30 more seconds for network.
+[  103.218780] Waiting up to 20 more seconds for network.
+[  113.238779] Waiting up to 10 more seconds for network.
+[  123.048862] IP-Config: Guessing netmask 255.255.255.0
+[  123.053967] IP-Config: Complete:
+[  123.057247]      device=eth0, hwaddr=9c:53:cd:02:fb:34, ipaddr=192.168.1.100, mask=255.255.255.0, gw=255.255.255.255
+[  123.067927]      host=192.168.1.100, domain=, nis-domain=(none)
+[  123.074027]      bootserver=255.255.255.255, rootserver=192.168.1.64, rootpath=
+[  123.082826] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[  123.096250] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[  123.103753] ALSA device list:
+[  123.106824]   No soundcards found.
+[  123.111007] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[  123.119879] cfg80211: failed to load regulatory.db
+
+The board I'm using went in in v4.20-rc1:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=37c045d25e90038682b845de0a1db43c8301694d
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=09ad741b7ecee8f7fa80bfa21eb0716394aff418
+
+But with the above patches applied on v4.19 (on which I initially wrote them)
+it still works with no issues.
+
+Not a network expert and I might have missed some adjustments required
+to have the PHY work properly on v4.20 (I see the issue on both v4.20-rc1
+and v4.20-rc4 as well).
+
+Before diving into a painful bisect, I'm here reporting the issue.
+
+Thanks
+   j
+
+
+--0qVF/w3MHQqLSynd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb//q+AAoJEHI0Bo8WoVY8HRkP/RCh+2GE8PizHB0ztDirLfTY
+sS3pm6USbtTzYFF49sdXM17Ufgycn5DxuXr6SD2nv5utUUrKmECRVc6nSO/UFeGn
+/B7pDJh/WJM0Db8NhUIPxoATmc7elUR/OeCOfgB0cUPIxB5cj8evGxUaNY1Xco3R
+COBrWaAObtjUQLZWUErUKh2/komCUcm5UYwTWMRLycGQjzlORwS7KHezQBWTIKy7
+6ctjW76PL0B1eO7kipNiM1qlLs8wh0HAYWIqTY4XyT/VV/FBtss94Wql4TXGZKYP
+IQ+osFmvbslI+3NN6zLWagz/MQw06w09kO0M+G5c4Hs+Ht7qorLdSBR9sjVHTtUS
+15lMdNQddHLfIbeS8Vl0g6YFlcOCFa8ng0/17I50/SxdEwdLz0x50QtX8gpmKR1G
+qAwwKm0UuJ1KqtASX7p+2vV2Vv5EcRM2clQaz7Z2STqfSE2gB/FC7AzZX7mjZdnY
+bl2fxcn/k59B/g1JBJDg9Ydk8sPMpppeRLB3xDWqDYA4v1fGmnume9bX/XgQ6x+H
+x2Qb1mHMuZzW/GYb1ntQbo2EogB61bUxMnwx2NlAx59FB4uj48td6PRG5LdPz4pq
+LtsGqqhtZJINezuUwXCscax97LhD7nWhFOenADA/CmgqsWEqbaw1Vmyxt/1g0cfv
+z7flDRDqYp7sw13NJ490
+=4hsW
+-----END PGP SIGNATURE-----
+
+--0qVF/w3MHQqLSynd--
