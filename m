@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8DFC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B53CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85493213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522A22146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhnBcyNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85493213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="udHnXzWF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522A22146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732704AbeK3BaH (ORCPT
+        id S1732715AbeK3BaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:30:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56970 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:30:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732673AbeK3BaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:30:06 -0500
+        id S1731500AbeK3BaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:30:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74099205C9;
-        Thu, 29 Nov 2018 14:24:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE9AB21104;
+        Thu, 29 Nov 2018 14:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501474;
-        bh=GfPguvMM3Zl6U31oLZ5lCRKW5fDktYLDicEXV03ATOc=;
+        s=default; t=1543501477;
+        bh=n9DJN1Oty99bkT1IuSc7bNCie40ugdXeimF7j/GmC84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MhnBcyNQ9BiTs0b+cAzC9Zz1Pp7A7Nx6B2I42FHtnMKNXnueToUm/2mI4+9ri3t+p
-         tFfw4VswjvXbuwiQhnjrUfxKJzwlZPZGsY9hd7Ge/cQhDH3TAnQcB5Bjp0yPj4iDPq
-         hWqIkpiVtXzFhWTZXMQhq161m38FY0xgvtWE2el0=
+        b=udHnXzWF0wm3n9nj4oTgwkS7HR493FssMrioy7EZXJQMp9DL+X3O07bpXlZGOX47q
+         FHRVdT2GIAXpwgPtbK50LCSgyOXTUROPzjvdOysS8+ng5yP7x8N+LwrDqo2tt8XnoG
+         M9l3qLQNelY0BAdxTBsdcu5zun7BlAOG6i/oQy2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.14 005/100] ARM: trusted_foundations: do not use naked function
-Date:   Thu, 29 Nov 2018 15:11:35 +0100
-Message-Id: <20181129140059.340598377@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.14 006/100] usb: core: Fix hub port connection events lost
+Date:   Thu, 29 Nov 2018 15:11:36 +0100
+Message-Id: <20181129140059.440780027@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,70 +62,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-(commit 4ea7bdc6b5b33427bbd3f41c333e21c1825462a3 upstream)
+commit 22454b79e6de05fa61a2a72d00d2eed798abbb75 upstream.
 
-As documented in GCC naked functions should only use basic ASM
-syntax. The extended ASM or mixture of basic ASM and "C" code is
-not guaranteed. Currently this works because it was hard coded
-to follow and check GCC behavior for arguments and register
-placement.
+This will clear the USB_PORT_FEAT_C_CONNECTION bit in case of a hub port reset
+only if a device is was attached to the hub port before resetting the hub port.
 
-Furthermore with clang using parameters in Extended asm in a
-naked function is not supported:
-  arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
-          references not allowed in naked functions
-                : "r" (type), "r" (arg1), "r" (arg2)
-                       ^
+Using a Lenovo T480s attached to the ultra dock it was not possible to detect
+some usb-c devices at the dock usb-c ports because the hub_port_reset code
+will clear the USB_PORT_FEAT_C_CONNECTION bit after the actual hub port reset.
+Using this device combo the USB_PORT_FEAT_C_CONNECTION bit was set between the
+actual hub port reset and the clear of the USB_PORT_FEAT_C_CONNECTION bit.
+This ends up with clearing the USB_PORT_FEAT_C_CONNECTION bit after the
+new device was attached such that it was not detected.
 
-Use a regular function to be more portable. This aligns also with
-the other SMC call implementations e.g. in qcom_scm-32.c and
-bcm_kona_smc.c.
+This patch will not clear the USB_PORT_FEAT_C_CONNECTION bit if there is
+currently no device attached to the port before the hub port reset.
+This will avoid clearing the connection bit for new attached devices.
 
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stephen Warren <swarren@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/firmware/trusted_foundations.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -31,21 +31,25 @@
- 
- static unsigned long cpu_boot_addr;
- 
--static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
-+static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
- {
-+	register u32 r0 asm("r0") = type;
-+	register u32 r1 asm("r1") = arg1;
-+	register u32 r2 asm("r2") = arg2;
+---
+ drivers/usb/core/hub.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub
+ 					USB_PORT_FEAT_C_BH_PORT_RESET);
+ 			usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_PORT_LINK_STATE);
+-			usb_clear_port_feature(hub->hdev, port1,
 +
- 	asm volatile(
- 		".arch_extension	sec\n\t"
--		"stmfd	sp!, {r4 - r11, lr}\n\t"
-+		"stmfd	sp!, {r4 - r11}\n\t"
- 		__asmeq("%0", "r0")
- 		__asmeq("%1", "r1")
- 		__asmeq("%2", "r2")
- 		"mov	r3, #0\n\t"
- 		"mov	r4, #0\n\t"
- 		"smc	#0\n\t"
--		"ldmfd	sp!, {r4 - r11, pc}"
-+		"ldmfd	sp!, {r4 - r11}\n\t"
- 		:
--		: "r" (type), "r" (arg1), "r" (arg2)
--		: "memory");
-+		: "r" (r0), "r" (r1), "r" (r2)
-+		: "memory", "r3", "r12", "lr");
- }
++			if (udev)
++				usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_CONNECTION);
  
- static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 			/*
 
 
