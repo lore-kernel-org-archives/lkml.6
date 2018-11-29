@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257C3C520D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0F3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C0821104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55C1721104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6wx/B1l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C0821104
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AlPyEsAy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C1721104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbeK3EyM (ORCPT
+        id S1730962AbeK3Exn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:54:12 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:32970 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731191AbeK3EyK (ORCPT
+        Thu, 29 Nov 2018 23:53:43 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45474 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730942AbeK3Exm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:54:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i26so2124040lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:58 -0800 (PST)
+        Thu, 29 Nov 2018 23:53:42 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so2508493ljd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:47:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=edUuds9oK7rq3a7y1o1twsgnSy+L5oYmA4xb9WHJ9+k=;
-        b=A6wx/B1lx1+bygG6vNTP5U1cnmX9jGEyu1b3aHBxjvlAIzHP/jh/FWsauGN28VCUzQ
-         ljorwL5unf+YDLuCY0t6Ivi4w5Lj71gYb0YXCgZ4jRGr+Jt6dYLG2khG3OERWdIZ5xkY
-         Ac65FBUbc5jI8f4Eyk6HdNONOTEhIVUNeWVhQ=
+        bh=jX+qyQO49fWmt2xQpGUjw4NJQ/8bkzUinDH9qdTMnUA=;
+        b=AlPyEsAyB5TTJCSeRQDcqsvnIKB/rMfm0oTmlQA7hqOgZ6aMDexyWveeYmPE2QdbmV
+         BmJIUeVUEo68Z1RYBp5Q7w/uSp5wPfc9ZHJqQtiE1cMsCCV0zIMnnI1fU3CrzA3sf76y
+         BhqVyyrcH5tH2VK3YAUp3EhPfLgCuB7n6fgBg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=edUuds9oK7rq3a7y1o1twsgnSy+L5oYmA4xb9WHJ9+k=;
-        b=QuENIF6lvewFh/XAx8E+J0sFi1UmglcFW7r2AMO+2gyhg11s8Nk6ROXwJPNniy/Uvv
-         Mqs0GdJaPAi/Z0azEIxfbID2wyVsaGgJBmecZX5W6rtELCJCMp6V/iLZMci+9UDGHwTJ
-         H8ny3h2Zp0BC+bxA/4YsLxsBjG7JbZxTLVQOoX+zfGDG8teqVAFvys1pztE4M5cl6geZ
-         ApISjJUYMipokKIfS2BpJpXpiV5OA0PYi9XYH11KNCZQwKg7i4uOpQ4ItCRYVFdL3kFb
-         bZlS9ODb5f33BBy0iyiGB/YYfNau8/omo40ffJTHRFi0y4voYOQRHGf+kEnuj+2umUD9
-         +sbg==
-X-Gm-Message-State: AA+aEWZ9hjtDSGDfyObrCT2aaYepjX4N+U5AFfgIt+EVCkWre19/NZja
-        aOu3biCxL8II5/fygwqhhYuwEA==
-X-Google-Smtp-Source: AFSGD/XVzFGUZimGhzy88XMVy4uhorvpa7/8oAxi7Md22GA4kR2vIjSPoAiN4QAPlVeK/uqUb9G+/Q==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr1558629lfb.118.1543513677002;
-        Thu, 29 Nov 2018 09:47:57 -0800 (PST)
+        bh=jX+qyQO49fWmt2xQpGUjw4NJQ/8bkzUinDH9qdTMnUA=;
+        b=HRZVkWDvu35c4VPj7lfbDnA5WtaEd/bzvu/11J3ZlfS4jeLEe6irTFawl/VmJSIq8/
+         2BCc4j/IZVC5KHyauzBN8mal7zkD5lo9lHmV/TyjOgrgBl00NhFjOWgtGAAkI1dWbcW6
+         WjPCD5CHWuoTCwhSCDoeLV+htO9D0TH94A/MsZqWq38Nv1N5Lc9N0SzrJKuJbAvTLwQi
+         ZR7yGSB4j4j56u7f3S8ehCnLyQbju8OgWbgF7q8NNaIBohudPi+QI6X4hxbbPbrphu+D
+         7bwm2Ar4qvPik7aYtvma8nbSGwTVOzzYrJiQPVa9Sy8+qGoBkVJuEI1cmML2jVJpijvf
+         Isgg==
+X-Gm-Message-State: AA+aEWbWKEuCQpcsQZ84cZOu1PamlfGM3SERcoxsUzuW2lOcB+MlYpvO
+        qzrN5+ZefjMD0rZZhusA+duqbQ==
+X-Google-Smtp-Source: AFSGD/WMXNnYmUDhhw+Xfxe6yvJ/i67+Rv4G+K+ZK1l5/jdsO6I8LilxuZCD2yTIfDMQsHofrPEMgw==
+X-Received: by 2002:a2e:5b93:: with SMTP id m19-v6mr1512841lje.115.1543513651192;
+        Thu, 29 Nov 2018 09:47:31 -0800 (PST)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.55
+        by smtp.gmail.com with ESMTPSA id j76-v6sm393983ljb.12.2018.11.29.09.47.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:47:56 -0800 (PST)
+        Thu, 29 Nov 2018 09:47:30 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -72,10 +72,11 @@ Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 27/27] arm64: dts: hikey: Convert to the hierarchical CPU topology layout
-Date:   Thu, 29 Nov 2018 18:47:00 +0100
-Message-Id: <20181129174700.16585-28-ulf.hansson@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lina Iyer <lina.iyer@linaro.org>
+Subject: [PATCH v10 13/27] drivers: firmware: psci: Support hierarchical CPU idle states
+Date:   Thu, 29 Nov 2018 18:46:46 +0100
+Message-Id: <20181129174700.16585-14-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129174700.16585-1-ulf.hansson@linaro.org>
 References: <20181129174700.16585-1-ulf.hansson@linaro.org>
@@ -84,197 +85,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enable the OS to manage last-man standing activities for a CPU, while an
-idle state for a group of CPUs is selected, let's convert the Hikey
-platform into using the hierarchical CPU topology layout.
+From: Lina Iyer <lina.iyer@linaro.org>
 
+Currently CPU's idle states are represented in a flattened model, via the
+"cpu-idle-states" binding from within the CPU's device nodes.
+
+Support the hierarchical layout, simply by converting to calling the new OF
+helper, of_get_cpu_state_node().
+
+Cc: Lina Iyer <ilina@codeaurora.org>
+Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v10:
-	- New patch.
+	- None.
 
 ---
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 87 ++++++++++++++++++++---
- 1 file changed, 76 insertions(+), 11 deletions(-)
+ drivers/firmware/psci/psci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index 97d5bf2c6ec5..fa5b385cfbc4 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -20,6 +20,64 @@
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
-+
-+		CPU_PD0: cpu-pd0 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD0>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD1: cpu-pd1 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD0>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD2: cpu-pd2 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD0>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD3: cpu-pd3 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD0>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD4: cpu-pd4 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD1>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD5: cpu-pd5 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD1>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD6: cpu-pd6 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD1>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CPU_PD7: cpu-pd7 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD1>;
-+			domain-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		CLUSTER_PD0: cluster-pd0 {
-+			#power-domain-cells = <0>;
-+			domain-idle-states = <&CLUSTER_SLEEP>;
-+		};
-+
-+		CLUSTER_PD1: cluster-pd1 {
-+			#power-domain-cells = <0>;
-+			domain-idle-states = <&CLUSTER_SLEEP>;
-+		};
- 	};
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index cbfc936d251c..631e20720a22 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -300,7 +300,7 @@ static int psci_dt_cpu_init_idle(struct cpuidle_driver *drv,
+ 		return -ENOMEM;
  
- 	cpus {
-@@ -70,9 +128,8 @@
- 			};
+ 	for (i = 0; i < num_state_nodes; i++) {
+-		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
++		state_node = of_get_cpu_state_node(cpu_node, i);
+ 		if (!state_node)
+ 			break;
  
- 			CLUSTER_SLEEP: cluster-sleep {
--				compatible = "arm,idle-state";
--				local-timer-stop;
--				arm,psci-suspend-param = <0x1010000>;
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x1000000>;
- 				entry-latency-us = <1000>;
- 				exit-latency-us = <700>;
- 				min-residency-us = <2700>;
-@@ -88,9 +145,10 @@
- 			next-level-cache = <&CLUSTER0_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD0>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -101,9 +159,10 @@
- 			next-level-cache = <&CLUSTER0_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD1>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -114,9 +173,10 @@
- 			next-level-cache = <&CLUSTER0_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD2>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -127,9 +187,10 @@
- 			next-level-cache = <&CLUSTER0_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD3>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu4: cpu@100 {
-@@ -140,9 +201,10 @@
- 			next-level-cache = <&CLUSTER1_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD4>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -153,9 +215,10 @@
- 			next-level-cache = <&CLUSTER1_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD5>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -166,9 +229,10 @@
- 			next-level-cache = <&CLUSTER1_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD6>;
-+			power-domain-names = "psci";
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -179,9 +243,10 @@
- 			next-level-cache = <&CLUSTER1_L2>;
- 			clocks = <&stub_clock 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP>;
- 			#cooling-cells = <2>; /* min followed by max */
- 			dynamic-power-coefficient = <311>;
-+			power-domains = <&CPU_PD7>;
-+			power-domain-names = "psci";
- 		};
- 
- 		CLUSTER0_L2: l2-cache0 {
 -- 
 2.17.1
 
