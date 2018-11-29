@@ -2,113 +2,338 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4B6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582DEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C483206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:15:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C483206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F529206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F529206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbeK2XUM (ORCPT
+        id S1728027AbeK2XV4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:20:12 -0500
-Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:12280 "EHLO
-        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726683AbeK2XUM (ORCPT
+        Thu, 29 Nov 2018 18:21:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44062 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726683AbeK2XV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:20:12 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail01.adl6.internode.on.net with ESMTP; 29 Nov 2018 22:45:00 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gSLDf-000656-1S; Thu, 29 Nov 2018 23:14:59 +1100
-Date:   Thu, 29 Nov 2018 23:14:59 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout
- beyond EOF
-Message-ID: <20181129121458.GK19305@dastard>
-References: <20181129060110.159878-1-sashal@kernel.org>
- <20181129060110.159878-25-sashal@kernel.org>
+        Thu, 29 Nov 2018 18:21:56 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATC5Ga1180846
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 07:16:44 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p2ev438u0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 07:16:44 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Thu, 29 Nov 2018 12:16:42 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 29 Nov 2018 12:16:40 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATCGdKX1769846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 12:16:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3483BA405E;
+        Thu, 29 Nov 2018 12:16:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04045A4055;
+        Thu, 29 Nov 2018 12:16:39 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Nov 2018 12:16:38 +0000 (GMT)
+Date:   Thu, 29 Nov 2018 13:16:38 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for 4.20 #3
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+X-TM-AS-GCONF: 00
+x-cbid: 18112912-4275-0000-0000-000002E88918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112912-4276-0000-0000-000037F5CD54
+Message-Id: <20181129131638.4034318f@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129060110.159878-25-sashal@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811290105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:00:59AM -0500, Sasha Levin wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> [ Upstream commit b450672fb66b4a991a5b55ee24209ac7ae7690ce ]
-> 
-> If we are doing sub-block dio that extends EOF, we need to zero
-> the unused tail of the block to initialise the data in it it. If we
-> do not zero the tail of the block, then an immediate mmap read of
-> the EOF block will expose stale data beyond EOF to userspace. Found
-> with fsx running sub-block DIO sizes vs MAPREAD/MAPWRITE operations.
-> 
-> Fix this by detecting if the end of the DIO write is beyond EOF
-> and zeroing the tail if necessary.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/iomap.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 8f7673a69273..407efdae3978 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -940,7 +940,14 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		dio->submit.cookie = submit_bio(bio);
->  	} while (nr_pages);
->  
-> -	if (need_zeroout) {
-> +	/*
-> +	 * We need to zeroout the tail of a sub-block write if the extent type
-> +	 * requires zeroing or the write extends beyond EOF. If we don't zero
-> +	 * the block tail in the latter case, we can expose stale data via mmap
-> +	 * reads of the EOF block.
-> +	 */
-> +	if (need_zeroout ||
-> +	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
->  		/* zero out from the end of the write to the end of the block */
->  		pad = pos & (fs_block_size - 1);
->  		if (pad)
+Hi Linus,
 
-How do you propose to validate that this doesn't introduce new data
-corruptions in isolation? I've spent the last 4 weeks of my life and
-about 15 billion fsx ops chasing an validating the bug corruption
-fixes we've pushed recently into the 4.19 and 4.20 codebase.
+please pull s390 fixes for 4.20-rc5
 
-Cherry picking only one of the 50-odd patches we've committed into
-late 4.19 and 4.20 kernels to fix the problems we've found really
-seems like asking for trouble. If you're going to back port random
-data corruption fixes, then you need to spend a *lot* of time
-validating that it doesn't make things worse than they already
-are...
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
-Cheers,
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-4.20-3
+
+for you to fetch changes up to 814cedbc0b78d75e335c96da9b9391142eab5600:
+
+  s390/mm: correct pgtable_bytes on page table downgrade (2018-11-27 14:07:12 +0100)
+
+----------------------------------------------------------------
+s390 updates for 4.20-rc5
+
+ - Add two missing kfree calls on error paths in the vfio-ccw code
+
+ - Make sure that all data structures of a mediated vfio-ccw device are
+   initialized before registering it
+
+ - Fix a sparse warning in vfio-ccw
+
+ - A followup patch for the pgtable_bytes accounting, the page table
+   downgrade for compat processes missed a mm_dec_nr_pmds()
+
+ - Reject sampling requests in the PMU init function of the CPU
+   measurement counter facility
+
+ - With the vfio AP driver an AP queue needs to be reset on every device
+   probe as the alternative driver could have modified the device state
+
+----------------------------------------------------------------
+Eric Farman (2):
+      s390/cio: Fix cleanup of pfn_array alloc failure
+      s390/cio: Fix cleanup when unsupported IDA format is used
+
+Harald Freudenberger (1):
+      s390/zcrypt: reinit ap queue state machine during device probe
+
+Martin Schwidefsky (2):
+      Merge tag 'vfio-ccw-20181113' of git://git.kernel.org/.../kvms390/vfio-ccw into fixes
+      s390/mm: correct pgtable_bytes on page table downgrade
+
+Pierre Morel (1):
+      vfio: ccw: Register mediated device once all structures are initialized
+
+Sebastian Ott (1):
+      s390/cio: make vfio_ccw_io_region static
+
+Thomas Richter (1):
+      s390/cpum_cf: Reject request for sampling in event initialization
+
+ arch/s390/kernel/perf_cpum_cf.c    |  2 ++
+ arch/s390/mm/pgalloc.c             |  1 +
+ drivers/s390/cio/vfio_ccw_cp.c     |  6 ++++--
+ drivers/s390/cio/vfio_ccw_drv.c    | 10 +++++-----
+ drivers/s390/crypto/ap_bus.c       |  8 ++++----
+ drivers/s390/crypto/ap_bus.h       |  1 +
+ drivers/s390/crypto/ap_queue.c     | 15 +++++++++++++++
+ drivers/s390/crypto/zcrypt_cex2a.c |  1 -
+ drivers/s390/crypto/zcrypt_cex2c.c |  1 -
+ drivers/s390/crypto/zcrypt_cex4.c  |  1 -
+ 10 files changed, 32 insertions(+), 14 deletions(-)
+
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 74091fd..d5523ad 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -346,6 +346,8 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		break;
+ 
+ 	case PERF_TYPE_HARDWARE:
++		if (is_sampling_event(event))	/* No sampling support */
++			return -ENOENT;
+ 		ev = attr->config;
+ 		/* Count user space (problem-state) only */
+ 		if (!attr->exclude_user && attr->exclude_kernel) {
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 814f265..6791562 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -131,6 +131,7 @@ void crst_table_downgrade(struct mm_struct *mm)
+ 	}
+ 
+ 	pgd = mm->pgd;
++	mm_dec_nr_pmds(mm);
+ 	mm->pgd = (pgd_t *) (pgd_val(*pgd) & _REGION_ENTRY_ORIGIN);
+ 	mm->context.asce_limit = _REGION3_SIZE;
+ 	mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index fd77e46..70a006ba 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -387,8 +387,10 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+ 		 * orb specified one of the unsupported formats, we defer
+ 		 * checking for IDAWs in unsupported formats to here.
+ 		 */
+-		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
++		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw)) {
++			kfree(p);
+ 			return -EOPNOTSUPP;
++		}
+ 
+ 		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+ 			break;
+@@ -528,7 +530,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
+ 
+ 	ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev, ccw->cda, ccw->count);
+ 	if (ret < 0)
+-		goto out_init;
++		goto out_unpin;
+ 
+ 	/* Translate this direct ccw to a idal ccw. */
+ 	idaws = kcalloc(ret, sizeof(*idaws), GFP_DMA | GFP_KERNEL);
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index f47d16b..a10cec0 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -22,7 +22,7 @@
+ #include "vfio_ccw_private.h"
+ 
+ struct workqueue_struct *vfio_ccw_work_q;
+-struct kmem_cache *vfio_ccw_io_region;
++static struct kmem_cache *vfio_ccw_io_region;
+ 
+ /*
+  * Helpers
+@@ -134,14 +134,14 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
+ 	if (ret)
+ 		goto out_free;
+ 
+-	ret = vfio_ccw_mdev_reg(sch);
+-	if (ret)
+-		goto out_disable;
+-
+ 	INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
+ 	atomic_set(&private->avail, 1);
+ 	private->state = VFIO_CCW_STATE_STANDBY;
+ 
++	ret = vfio_ccw_mdev_reg(sch);
++	if (ret)
++		goto out_disable;
++
+ 	return 0;
+ 
+ out_disable:
+diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+index 048665e..9f5a201 100644
+--- a/drivers/s390/crypto/ap_bus.c
++++ b/drivers/s390/crypto/ap_bus.c
+@@ -775,6 +775,8 @@ static int ap_device_probe(struct device *dev)
+ 		drvres = ap_drv->flags & AP_DRIVER_FLAG_DEFAULT;
+ 		if (!!devres != !!drvres)
+ 			return -ENODEV;
++		/* (re-)init queue's state machine */
++		ap_queue_reinit_state(to_ap_queue(dev));
+ 	}
+ 
+ 	/* Add queue/card to list of active queues/cards */
+@@ -807,6 +809,8 @@ static int ap_device_remove(struct device *dev)
+ 	struct ap_device *ap_dev = to_ap_dev(dev);
+ 	struct ap_driver *ap_drv = ap_dev->drv;
+ 
++	if (is_queue_dev(dev))
++		ap_queue_remove(to_ap_queue(dev));
+ 	if (ap_drv->remove)
+ 		ap_drv->remove(ap_dev);
+ 
+@@ -1444,10 +1448,6 @@ static void ap_scan_bus(struct work_struct *unused)
+ 			aq->ap_dev.device.parent = &ac->ap_dev.device;
+ 			dev_set_name(&aq->ap_dev.device,
+ 				     "%02x.%04x", id, dom);
+-			/* Start with a device reset */
+-			spin_lock_bh(&aq->lock);
+-			ap_wait(ap_sm_event(aq, AP_EVENT_POLL));
+-			spin_unlock_bh(&aq->lock);
+ 			/* Register device */
+ 			rc = device_register(&aq->ap_dev.device);
+ 			if (rc) {
+diff --git a/drivers/s390/crypto/ap_bus.h b/drivers/s390/crypto/ap_bus.h
+index 3eed1b3..bfc66e4 100644
+--- a/drivers/s390/crypto/ap_bus.h
++++ b/drivers/s390/crypto/ap_bus.h
+@@ -254,6 +254,7 @@ struct ap_queue *ap_queue_create(ap_qid_t qid, int device_type);
+ void ap_queue_remove(struct ap_queue *aq);
+ void ap_queue_suspend(struct ap_device *ap_dev);
+ void ap_queue_resume(struct ap_device *ap_dev);
++void ap_queue_reinit_state(struct ap_queue *aq);
+ 
+ struct ap_card *ap_card_create(int id, int queue_depth, int raw_device_type,
+ 			       int comp_device_type, unsigned int functions);
+diff --git a/drivers/s390/crypto/ap_queue.c b/drivers/s390/crypto/ap_queue.c
+index 66f7334..0aa4b3c 100644
+--- a/drivers/s390/crypto/ap_queue.c
++++ b/drivers/s390/crypto/ap_queue.c
+@@ -718,5 +718,20 @@ void ap_queue_remove(struct ap_queue *aq)
+ {
+ 	ap_flush_queue(aq);
+ 	del_timer_sync(&aq->timeout);
++
++	/* reset with zero, also clears irq registration */
++	spin_lock_bh(&aq->lock);
++	ap_zapq(aq->qid);
++	aq->state = AP_STATE_BORKED;
++	spin_unlock_bh(&aq->lock);
+ }
+ EXPORT_SYMBOL(ap_queue_remove);
++
++void ap_queue_reinit_state(struct ap_queue *aq)
++{
++	spin_lock_bh(&aq->lock);
++	aq->state = AP_STATE_RESET_START;
++	ap_wait(ap_sm_event(aq, AP_EVENT_POLL));
++	spin_unlock_bh(&aq->lock);
++}
++EXPORT_SYMBOL(ap_queue_reinit_state);
+diff --git a/drivers/s390/crypto/zcrypt_cex2a.c b/drivers/s390/crypto/zcrypt_cex2a.c
+index 146f54f..c50f3e8 100644
+--- a/drivers/s390/crypto/zcrypt_cex2a.c
++++ b/drivers/s390/crypto/zcrypt_cex2a.c
+@@ -196,7 +196,6 @@ static void zcrypt_cex2a_queue_remove(struct ap_device *ap_dev)
+ 	struct ap_queue *aq = to_ap_queue(&ap_dev->device);
+ 	struct zcrypt_queue *zq = aq->private;
+ 
+-	ap_queue_remove(aq);
+ 	if (zq)
+ 		zcrypt_queue_unregister(zq);
+ }
+diff --git a/drivers/s390/crypto/zcrypt_cex2c.c b/drivers/s390/crypto/zcrypt_cex2c.c
+index 546f676..35c7c66 100644
+--- a/drivers/s390/crypto/zcrypt_cex2c.c
++++ b/drivers/s390/crypto/zcrypt_cex2c.c
+@@ -251,7 +251,6 @@ static void zcrypt_cex2c_queue_remove(struct ap_device *ap_dev)
+ 	struct ap_queue *aq = to_ap_queue(&ap_dev->device);
+ 	struct zcrypt_queue *zq = aq->private;
+ 
+-	ap_queue_remove(aq);
+ 	if (zq)
+ 		zcrypt_queue_unregister(zq);
+ }
+diff --git a/drivers/s390/crypto/zcrypt_cex4.c b/drivers/s390/crypto/zcrypt_cex4.c
+index f9d4c6c..582ffa7 100644
+--- a/drivers/s390/crypto/zcrypt_cex4.c
++++ b/drivers/s390/crypto/zcrypt_cex4.c
+@@ -275,7 +275,6 @@ static void zcrypt_cex4_queue_remove(struct ap_device *ap_dev)
+ 	struct ap_queue *aq = to_ap_queue(&ap_dev->device);
+ 	struct zcrypt_queue *zq = aq->private;
+ 
+-	ap_queue_remove(aq);
+ 	if (zq)
+ 		zcrypt_queue_unregister(zq);
+ }
+
