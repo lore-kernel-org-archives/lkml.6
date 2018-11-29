@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93B5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BFAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B67921104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BF6921104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w3k1NvNs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B67921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vdtdX5Ur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF6921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731389AbeK3B0G (ORCPT
+        id S1731404AbeK3B0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49714 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731378AbeK3B0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:03 -0500
+        id S1729473AbeK3B0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FFCF20868;
-        Thu, 29 Nov 2018 14:20:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31DD320868;
+        Thu, 29 Nov 2018 14:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501232;
-        bh=kc74CKBbj0W3GslJ/r76qP1IZXndZ4vXvhaK0hp1A14=;
+        s=default; t=1543501237;
+        bh=h6UtwvHEXtm4exRacG3c64BfRAJuf6i4q2fmrGWv6kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w3k1NvNsNREiQAukeTtP3d0Bz2yU3grIv5EpZ7iAaqCu33cGWur0vWUvvq2a8+Fr3
-         5Z3zRc91hram+Jq2Ye9W0E6prfn6o5hUPmnE12tGIUEEhjA3Zk9sfgyJ02Ije64aN1
-         TBdKuSErEfd1XfXjFBppcUWFZdjENmt9R1HBY2uc=
+        b=vdtdX5UrW8KElU4Ujnbwhw+YjdD4+JgvVg/H5IKsq0WBsYq+BNp6Hp0T4d3wA6teN
+         fkA8Kwhi5iZDz1BrxrTi3FzNEy2nzqHyxSWLwVQIW5KmYx7bMoCIHdsDRtD7tYxy4/
+         UjXt07m4xNiWyGjqXPSntnt4FyNGrfOf+GDAx1RE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        stable@vger.kernel.org,
+        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.4 81/86] usb: xhci: fix uninitialized completion when USB3 port got wrong status
-Date:   Thu, 29 Nov 2018 15:12:46 +0100
-Message-Id: <20181129140116.249572061@linuxfoundation.org>
+Subject: [PATCH 4.9 01/92] usb: core: Fix hub port connection events lost
+Date:   Thu, 29 Nov 2018 15:11:30 +0100
+Message-Id: <20181129140106.626770928@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
-References: <20181129140109.832117862@linuxfoundation.org>
+In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
+References: <20181129140106.520639693@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -58,56 +58,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit 958c0bd86075d4ef1c936998deefe1947e539240 upstream.
+commit 22454b79e6de05fa61a2a72d00d2eed798abbb75 upstream.
 
-Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
-Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
-after clear port reset it works fine.
+This will clear the USB_PORT_FEAT_C_CONNECTION bit in case of a hub port reset
+only if a device is was attached to the hub port before resetting the hub port.
 
-Since this device is registered on USB3 roothub at boot,
-when port status reports not superspeed, xhci_get_port_status will call
-an uninitialized completion in bus_state[0].
-Kernel will hang because of NULL pointer.
+Using a Lenovo T480s attached to the ultra dock it was not possible to detect
+some usb-c devices at the dock usb-c ports because the hub_port_reset code
+will clear the USB_PORT_FEAT_C_CONNECTION bit after the actual hub port reset.
+Using this device combo the USB_PORT_FEAT_C_CONNECTION bit was set between the
+actual hub port reset and the clear of the USB_PORT_FEAT_C_CONNECTION bit.
+This ends up with clearing the USB_PORT_FEAT_C_CONNECTION bit after the
+new device was attached such that it was not detected.
 
-Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
+This patch will not clear the USB_PORT_FEAT_C_CONNECTION bit if there is
+currently no device attached to the port before the hub port reset.
+This will avoid clearing the connection bit for new attached devices.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c  |    2 +-
- drivers/usb/host/xhci-ring.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/core/hub.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -744,7 +744,7 @@ static u32 xhci_get_port_status(struct u
- 			status |= USB_PORT_STAT_SUSPEND;
- 	}
- 	if ((raw_port_status & PORT_PLS_MASK) == XDEV_RESUME &&
--		!DEV_SUPERSPEED_ANY(raw_port_status)) {
-+		!DEV_SUPERSPEED_ANY(raw_port_status) && hcd->speed < HCD_USB3) {
- 		if ((raw_port_status & PORT_RESET) ||
- 				!(raw_port_status & PORT_PE))
- 			return 0xffffffff;
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1673,7 +1673,7 @@ static void handle_port_status(struct xh
- 	 * RExit to a disconnect state).  If so, let the the driver know it's
- 	 * out of the RExit state.
- 	 */
--	if (!DEV_SUPERSPEED_ANY(temp) &&
-+	if (!DEV_SUPERSPEED_ANY(temp) && hcd->speed < HCD_USB3 &&
- 			test_and_clear_bit(faked_port_index,
- 				&bus_state->rexit_ports)) {
- 		complete(&bus_state->rexit_done[faked_port_index]);
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2809,7 +2809,9 @@ static int hub_port_reset(struct usb_hub
+ 					USB_PORT_FEAT_C_BH_PORT_RESET);
+ 			usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_PORT_LINK_STATE);
+-			usb_clear_port_feature(hub->hdev, port1,
++
++			if (udev)
++				usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_CONNECTION);
+ 
+ 			/*
 
 
