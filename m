@@ -7,89 +7,100 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10498C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954DBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7F22081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57B0B2086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:05:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDXm+UmJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7F22081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="alikDhxx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B0B2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730431AbeK2RJq (ORCPT
+        id S1730433AbeK2RJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:09:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49912 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:09:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727695AbeK2RJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:09:45 -0500
+        id S1727695AbeK2RJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:09:53 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2A972081C;
-        Thu, 29 Nov 2018 06:05:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB8942081C;
+        Thu, 29 Nov 2018 06:05:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471534;
-        bh=wVSLT5r77O9EiZYHhIn7x5GFEiAdUxKd0ICmrXtBMP4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YDXm+UmJBv6HATWgQHY42qmqFCRLoXQB2qoaTPAbm9Tp/Eu3d4dqwaWPFMi+xHro4
-         07U8Usldc3kk2lzXqh6xzcueOumluVMKEu2iMMH4t8wXidl8qdjH9mEQYcBRt7pi2b
-         6mwjilKoIXA+NMr7FS0ZaGe6zgdA0KonW1Rk3pfY=
+        s=default; t=1543471541;
+        bh=N0leoRsMpSXosgk0i2v21MocpEQpxtsgGT7fKpcEOnc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=alikDhxxPFty4aBgAhWnehKnpxBU0nVnNBttIVpWx5HmS6oo6bol4HYeOeSJyodZY
+         xgJYl+CSa+ykXYFoiXqegYLd25iDdfysP25aBR2oPfONs6kwqZlNzU/jQ6iqFbjirZ
+         aeX0Fjk0XJ+NMc3oo1QRDOj+DMbqf9W0b7cRSsbU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 13/13] net: amd: add missing of_node_put()
-Date:   Thu, 29 Nov 2018 01:04:44 -0500
-Message-Id: <20181129060444.160434-13-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 3.18 1/6] iommu/ipmmu-vmsa: Fix crash on early domain free
+Date:   Thu, 29 Nov 2018 01:05:30 -0500
+Message-Id: <20181129060535.160592-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181129060444.160434-1-sashal@kernel.org>
-References: <20181129060444.160434-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit c44c749d3b6fdfca39002e7e48e03fe9f9fe37a3 ]
+[ Upstream commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd ]
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-This place doesn't do that, so fix it.
+If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
+called, leading to a crash, as the domain was only partially
+initialized:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
+    sata_rcar ee300000.sata: Unable to initialize IPMMU context
+    iommu: Failed to add device ee300000.sata to group 0: -22
+    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+    ...
+    Call trace:
+     ipmmu_domain_free+0x1c/0xa0
+     iommu_group_release+0x48/0x68
+     kobject_put+0x74/0xe8
+     kobject_del.part.0+0x3c/0x50
+     kobject_put+0x60/0xe8
+     iommu_group_get_for_dev+0xa8/0x1f0
+     ipmmu_add_device+0x1c/0x40
+     of_iommu_configure+0x118/0x190
+
+Fix this by checking if the domain's context already exists, before
+trying to destroy it.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amd/sunlance.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/ipmmu-vmsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
-index 7847638bdd22..8914170fccff 100644
---- a/drivers/net/ethernet/amd/sunlance.c
-+++ b/drivers/net/ethernet/amd/sunlance.c
-@@ -1419,7 +1419,7 @@ static int sparc_lance_probe_one(struct platform_device *op,
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 7dab5cbcc775..47e8db51288b 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -383,6 +383,9 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
  
- 			prop = of_get_property(nd, "tpe-link-test?", NULL);
- 			if (!prop)
--				goto no_link_test;
-+				goto node_put;
- 
- 			if (strcmp(prop, "true")) {
- 				printk(KERN_NOTICE "SunLance: warning: overriding option "
-@@ -1428,6 +1428,8 @@ static int sparc_lance_probe_one(struct platform_device *op,
- 				       "to ecd@skynet.be\n");
- 				auxio_set_lte(AUXIO_LTE_ON);
- 			}
-+node_put:
-+			of_node_put(nd);
- no_link_test:
- 			lp->auto_select = 1;
- 			lp->tpe = 0;
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+ {
++	if (!domain->mmu)
++		return;
++
+ 	/*
+ 	 * Disable the context. Flush the TLB as required when modifying the
+ 	 * context registers.
 -- 
 2.17.1
 
