@@ -2,100 +2,114 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4413FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B600AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FF4206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713B1206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c6t8XLn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FF4206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fTyOOpLP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713B1206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeK2L0L (ORCPT
+        id S1727171AbeK2L16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:26:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36102 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeK2L0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:26:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xW6+48CGgoujIYgsM9RK1y8+faj4I5h076V2EfrqqMw=; b=c6t8XLn6uIXfG0txX7iLk2O0/
-        uu4lhw+vgfelpqudmhghp/MV/eCbwX8IuMe4Deuij9QECb0EEf2qTu6BWhoMkeOt8jdUUYa6/FqJb
-        0id2LLHrNN4zqZHgHk/sKiFewIdzo+7qK4zmAr49fiaORIcYCrC+Z0Ff4stGtKUqkhtk1PzMM0AlN
-        eRExU9g5k0gkKAK3w6J0Dbjfx6FT+uzPg0+eVn4DbFhDUz7tH5zq+uP9Ek0j1QPtF4Pv1lDLeTArV
-        y8KxutlbyimkmXjoZaFRCV/+usZ5RWKilbjbpNZN7/fVLam1/uDKj1Dbl++BktUq2jb7nMrzfLIuz
-        +7L0pNBqA==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSA6N-0006QU-Mw; Thu, 29 Nov 2018 00:22:43 +0000
-Date:   Wed, 28 Nov 2018 16:22:42 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH 1/2] platform/x86: wmi: prefix sysfs files in
- /sys/bus/wmi with the ACPI device
-Message-ID: <20181129002242.GB2468@fedora.eng.vmware.com>
-References: <1512786861-1014-1-git-send-email-mario.limonciello@dell.com>
- <1512786861-1014-2-git-send-email-mario.limonciello@dell.com>
- <DDE9D9EA-D55D-41CC-94ED-EB2A590B7BCF@amacapital.net>
- <1512790860266.96149@Dell.com>
- <CALCETrWm9jY-jo9EN7KW+E4Gc1nDPrQAJ_g+07L-UgZpe5XgMA@mail.gmail.com>
+        Thu, 29 Nov 2018 06:27:58 -0500
+Received: from ozlabs.org ([203.11.71.1]:54569 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbeK2L16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:27:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 434yvK0DV2z9s7T;
+        Thu, 29 Nov 2018 11:24:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543451069;
+        bh=z0Gtrj2jyjg3h08XhNq6jioMtnzcJmm/SPfXSfICeA8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=fTyOOpLPKSERjGrxS+YQqgG3Cvl/5Qh0UmHbAUkJzxC2ljpef/jdBOjWqt+ppWnAW
+         LrUyL+j9X7drVQufNhFgnPqbcxb0f7C2qhGU81lphlgmwbqnzblZCit4Rb9tFZs5vJ
+         AqTtzcNfxIOov02XnYU2em7IapfC1tALPovsYdZQpD2icl75E2jEgQejjeSV0tFTr1
+         TaeVh0Usoxqi4/pC5WJZy7tm7XrXIErU0ccCdVGggInjY8mGhHt5ug8SX0ZrGp4FQA
+         xg2yn/q6US+c0InKr9Rz7S5nK8LiZOx1l3vbDk01AS4j3+5RDpnshJfWq5pEhzMyUJ
+         VeCrXitCMRGRw==
+Date:   Thu, 29 Nov 2018 11:24:28 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Kees Cook <keescook@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: linux-next: build warning after merge of the net-next tree
+Message-ID: <20181129112428.45287471@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWm9jY-jo9EN7KW+E4Gc1nDPrQAJ_g+07L-UgZpe5XgMA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/98MDSry6jDRHt9Ep1W=uTQv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 09, 2017 at 01:32:29PM -0800, Andy Lutomirski wrote:
-> On Fri, Dec 8, 2017 at 7:41 PM,  <Mario.Limonciello@dell.com> wrote:
-> >>> On Dec 8, 2017, at 6:34 PM, Mario Limonciello <mario.limonciello@dell.com> wrote:
-> >>>
-> >>> It's possible for the same GUID to show up on as system twice.
-> >>> This means using solely the GUID for identify the file will not
-> >>> be sufficient.
-> >>
-> >>Isn't the file already in a per-bus directory?
-> >
-> > Yep, but the symlink created in /sys/bus/wmi/devices isn't.
-> > That's where the kernel complains about duplicate sysfs
-> > attributes.
-> >
-> > It's not exactly a pretty path I submitted, but it does avoid
-> > those collisions.
-> >
-> > Example (with this in place from /sys/bus/wmi/devices):
-> > lrwxrwxrwx 1 root root 0 Dec  8 21:39 PNP0C14:04-70FE8229-D03B-4214-A1C6-1F884B1A892A -> ../../../devices/platform/PNP0C14:04/wmi_bus/wmi_bus-PNP0C14:04/PNP0C14:04-70FE8229-D03B-4214-A1C6-1F884B1A892A
-> 
-> Right, I saw that in the cover letter right after sending this.
-> 
-> Greg, is there a cleaner way to deal with this?  There are two
-> instances of the same bus type, each of which would like to have a
-> device called "70FE8229-D03B-4214-A1C6-1F884B1A892A".  Can we somehow
-> rename the symlinks without renaming the device, or are we just
-> supposed to prefix the device name like Mario is doing here?
-> 
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Mario, if this is still a concern (I presume it is) would you please
-resend the patch Cc gregkh directly?
+Hi all,
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+After merging the net-next tree, today's linux-next build
+(x86_64_allmodconfig) produced this warning:
+
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c: In function 'run_xdp':
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:324:3: warning: this state=
+ment may fall through [-Wimplicit-fallthrough=3D]
+   bpf_warn_invalid_xdp_action(xdp_act);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:325:2: note: here
+  case XDP_ABORTED:
+  ^~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:326:3: warning: this state=
+ment may fall through [-Wimplicit-fallthrough=3D]
+   trace_xdp_exception(priv->net_dev, xdp_prog, xdp_act);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c:327:2: note: here
+  case XDP_DROP:
+  ^~~~
+
+Introduced by commit
+
+  7e273a8ebdd3 ("dpaa2-eth: Add basic XDP support")
+
+This due to my use of -Wimplicit-fallthrough.  This is new code.  The
+warning can be suppressed by adding a comment like /* fall through */
+at the appropriate places to indicate that the fallthrough is intended.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv/MbwACgkQAVBC80lX
+0Gxf2Qf/YWrIZvqMmkjx8UMwGPfDXUI/bw5l7GEJy03urzZJWem+77ggWgl70r0E
+AL6O4xHPzcv/TAEz+zqb3mae18N/k9uZudqIBQggxi/oPmQTZSQj7mIw0y3mEhRZ
+pOG0v1r3d4P5S7rvi6WTrwNnbzKYWFxIUFyIRCMNyrSB7Sk7DnjCjGwtyXctG2V8
+ZqsJKh6EaCpKVUEfCbxry8VOLN/JRjAOydkGWwAifvNsFcTqG8N+uinoZSd2mn/C
+N+lPshmqYmUJvCETKcABdLEcBY6IVQdoCRYgXO894VGxdlROBWPYGcVsnKteauRG
+3BuPWJbwz9C+IzUobaDc5S9LPA5BpQ==
+=+fzU
+-----END PGP SIGNATURE-----
+
+--Sig_/98MDSry6jDRHt9Ep1W=uTQv--
