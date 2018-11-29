@@ -2,73 +2,74 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9899C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198ADC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782852081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C904A205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:49:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYIj8+7Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782852081C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyLzktSN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C904A205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbeK2Wyk (ORCPT
+        id S1728144AbeK2Wyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:54:40 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38161 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbeK2Wyk (ORCPT
+        Thu, 29 Nov 2018 17:54:46 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34099 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbeK2Wyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:54:40 -0500
-Received: by mail-ed1-f65.google.com with SMTP id h50so1646753ede.5;
-        Thu, 29 Nov 2018 03:49:32 -0800 (PST)
+        Thu, 29 Nov 2018 17:54:45 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b3so1653047ede.1;
+        Thu, 29 Nov 2018 03:49:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=7QG3q5EP4u5dXwowS7iOfs+6itK9jIAsHtwxK6bIloY=;
-        b=BYIj8+7YgyXTGgMydGEeRO101jshk+lKJcvMQdD8c2eN0bI4NsG7UJTW4GzQuuEtmf
-         8fNRa95ubzIupUNizP75+DkiXF9kD739f9BmXJ5zTM7z+dhd+M5shTawru2djNm+Sbfw
-         HKG5xTTdRC9DcYrmMM55KJQ0Xhsplc5REX3ScVEyaaY+fzk1iBXLi1ag4nSVE3LwgCH9
-         vgp1ilPMBXVuyFhoQe7IVJ/6IWzVzvi7tN4YRVvDpkhUZ0BPBU8L5zlLGr7bLbvyu0qh
-         H1SveuvnTl0Nu1JlqPXwGrY+ffLrOxOSgjv5dvi8N0LWfBAQ6dhWrhkVVHle8s4vTUW+
-         ou6w==
+        bh=8E7+KuuWOf50uiPK0IRzs/veIIu4t/exl7VOJl/CmeQ=;
+        b=iyLzktSNgbkVLQyOBlkVf4VxwpOEvT0JDhRSIzo36xZ0x5f5RaJTVVw1yB7VCOyD/A
+         eij38ENBLXHr4i8VSBpJ43WLEg6wHhTeqacOXahCG4TnuHkR/69290D9x3DFWVCU9JF9
+         I4VEZTD/8mkN+0lc1AWEitOMYcxdFp4/+QFNIy8LfZndb01Q7CzlMxtYsLyzXtdR54Ko
+         QP23dOUmG7QHOITwCN2cwNyb0+dSwR5vPefUMYu0kt4CowO9TiCfNd8f3BJVJx9S0yaP
+         O/yTjixBjhRCkPTPpdJMk9WecT4o5kCKtQh/jPudzZkETBnIgcIwk/Vm9Py/sLrPXAP5
+         1F5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=7QG3q5EP4u5dXwowS7iOfs+6itK9jIAsHtwxK6bIloY=;
-        b=B2KP5IAPc7suTyEeK14ytAqmyupma/Uxr7AcptN9dCDenGDbZu15EcP7Gk5RWatBGV
-         qMLDiYrYdcIH72RT7EI/QxMoAwn7ZZb3aa1Qj50xkCqoYTVeK6RV8C9ypECtxQ/9s+Tf
-         PtgxxQ2hjNEmwAquvTJ2y/rITeRgI1mXEZyiy3i9nljPxDiQsNmjQ9No5LRmGNJSwXuw
-         BnJUhuPZ66AqHlNQ50KRiyGgXpGRlMhkwMiM+5X8bB65JyGryn2gdat8JYA7GZk0AIeT
-         ZIuAXcuPQJmA/jluToNyasEGnB24x762fBvtQb/0IdnctHXXQopkmwEK4kSmCkJ4hIW8
-         11qQ==
-X-Gm-Message-State: AA+aEWZmmrTHtBfS73YYzwye3vjA5DYbckvj4pGgxpnZsP4+99wauJfM
-        bPsk8rpQHB6PTeumB2wynaU=
-X-Google-Smtp-Source: AFSGD/UDxHiypdI/eNpkDAkakWiOvkuL/UVJG6U4kLntoNqrO/1NZeqdHY9qGpb+Wy7Mx/EJk5Muow==
-X-Received: by 2002:a17:906:a35a:: with SMTP id bz26-v6mr1352728ejb.98.1543492172139;
-        Thu, 29 Nov 2018 03:49:32 -0800 (PST)
+        bh=8E7+KuuWOf50uiPK0IRzs/veIIu4t/exl7VOJl/CmeQ=;
+        b=WSVhRuSzoqMMcoXicKp6L+jlnmylmE2MtSzlz6Y1yZnfIlUin+WmbFOyPL2E9ezTeB
+         SPscfCJ4DylvEKXT6B7iNpwGwPwXET8ln81o6ANnlCoCF/A8XL7N78fm9ACShqT3x0Hd
+         TRQUatpNrg8j/jttT3rnPtJfIW2X+WbWdBoypHlxi1sGMcvVbxr5f601C003sGYrsGbk
+         rQj+8XosRAhMhKs1TVnhluFT0AjBsyRSGi8qBHfENhu7QdKQ99pHUSQmYWT1/bnaoGlG
+         A5gSk1AfWZDIWWNw4apGH3At6qehN4L/2JOMXW5JVam71pePB3foaMoc0fgr8bnLsrli
+         Df/Q==
+X-Gm-Message-State: AA+aEWbqM5r+ZwWD8nYpwenZO6Up+Fd+lEKEXjWn0J0w96a+dBYD8nHi
+        mj64N0Cf5FKesA2TCyUKu3A=
+X-Google-Smtp-Source: AFSGD/Wh0E1+IM5691YF9xgFoQ+AsY1J+Kfwd9z45IvusxI90IfBjP23fepwKikKT2Qvyo+csvqNVA==
+X-Received: by 2002:a50:86b7:: with SMTP id r52mr1347720eda.227.1543492178685;
+        Thu, 29 Nov 2018 03:49:38 -0800 (PST)
 Received: from ziggy.stardust ([37.223.145.41])
-        by smtp.gmail.com with ESMTPSA id z39sm541892edb.81.2018.11.29.03.49.30
+        by smtp.gmail.com with ESMTPSA id r18-v6sm311922ejz.22.2018.11.29.03.49.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 03:49:31 -0800 (PST)
-Subject: Re: [PATCH v3 2/4] arm64: dts: mediatek: mt6797: Add pinctrl support
+        Thu, 29 Nov 2018 03:49:37 -0800 (PST)
+Subject: Re: [PATCH v3 3/4] arm64: dts: mediatek: x20: Add pinmux support for
+ UART1
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         sean.wang@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org
 References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
- <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -114,12 +115,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <c19668d1-469d-957d-691d-a9d0422a9531@gmail.com>
-Date:   Thu, 29 Nov 2018 12:49:29 +0100
+Message-ID: <12508cbf-0718-a09f-4061-24a485fd5dc0@gmail.com>
+Date:   Thu, 29 Nov 2018 12:49:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -131,48 +132,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 07/11/2018 18:48, Manivannan Sadhasivam wrote:
-> Add pinctrl support for Mediatek MT6797 SoC.
+> Add pinmux support for UART1 on MediatekX20 Development board based
+> on Mediatek MT6797 SoC.
 > 
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts | 2 ++
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi        | 7 +++++++
+>  2 files changed, 9 insertions(+)
 > 
+
 
 pushed to v4.20-next/dts64
 
 Thanks!
 
+
+> diff --git a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> index 742938a1a548..13939d55b85b 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> @@ -30,4 +30,6 @@
+>  
+>  &uart1 {
+>  	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart1_pins_a>;
+>  };
 > diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> index 4beaa71107d7..231230d32d09 100644
+> index 231230d32d09..a64bb84bdec3 100644
 > --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
 > +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> @@ -14,6 +14,7 @@
->  #include <dt-bindings/clock/mt6797-clk.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/pinctrl/mt6797-pinfunc.h>
->  
->  / {
->  	compatible = "mediatek,mt6797";
-> @@ -129,6 +130,19 @@
->  		#clock-cells = <1>;
+> @@ -141,6 +141,13 @@
+>  			    "iocfgr", "iocfgt";
+>  		gpio-controller;
+>  		#gpio-cells = <2>;
+> +
+> +		uart1_pins_a: uart1 {
+> +			pins1 {
+> +				pinmux = <MT6797_GPIO232__FUNC_URXD1>,
+> +					 <MT6797_GPIO233__FUNC_UTXD1>;
+> +			};
+> +		};
 >  	};
 >  
-> +	pio: pinctrl@10005000 {
-> +		compatible = "mediatek,mt6797-pinctrl";
-> +		reg = <0 0x10005000 0 0x1000>,
-> +		      <0 0x10002000 0 0x400>,
-> +		      <0 0x10002400 0 0x400>,
-> +		      <0 0x10002800 0 0x400>,
-> +		      <0 0x10002C00 0 0x400>;
-> +		reg-names = "gpio", "iocfgl", "iocfgb",
-> +			    "iocfgr", "iocfgt";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
 >  	scpsys: scpsys@10006000 {
->  		compatible = "mediatek,mt6797-scpsys";
->  		#power-domain-cells = <1>;
 > 
