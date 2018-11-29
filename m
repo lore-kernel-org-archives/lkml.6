@@ -2,153 +2,210 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833DCC4161D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0C4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE822146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:35:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eosdVTlw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE822146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A709420868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:36:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A709420868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730637AbeK3EmF (ORCPT
+        id S1730656AbeK3EmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:42:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729320AbeK3EmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:42:04 -0500
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 29 Nov 2018 23:42:08 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:56054 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729320AbeK3EmH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:42:07 -0500
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 715762145D;
-        Thu, 29 Nov 2018 17:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543512955;
-        bh=45zONuEEIypRmhWIQjwcM10CFq021tG7aO2mMTvw5jg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eosdVTlw8gNwbr7Llcv7GeuA69npxTMQ5PbHCkMUvDcFoyaD189v5XVQumT/zdC8z
-         VW59ZUrgnb8Lngyl3UC0uQqV8y4qscsA0PCGvHfnpyGi4TlSIplw1sziL2WL0eL2pI
-         C5LLgRq+BEEpCF7PdLnr7Vjne72vbr98KDv01Kxs=
-Date:   Thu, 29 Nov 2018 11:35:53 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
-        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Report degraded links via link bandwidth
- notification
-Message-ID: <20181129173553.GD178809@google.com>
-References: <20181129000829.14751-1-mr.nuke.me@gmail.com>
+        by skedge04.snt-world.com (Postfix) with ESMTPS id BF0B667A87F;
+        Thu, 29 Nov 2018 18:35:46 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 29 Nov
+ 2018 18:35:46 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Thu, 29 Nov 2018 18:35:46 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Han Xu <han.xu@nxp.com>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Prabhakar Kushwaha" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH v6 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHUhjte86vILtO4B0icsbZQtceaAqVky10AgAHHZICAAARRAIAATYCAgAASHoA=
+Date:   Thu, 29 Nov 2018 17:35:46 +0000
+Message-ID: <1389ab35-b015-cb5d-1ae9-c8309074a5f9@kontron.de>
+References: <1543314174-28580-1-git-send-email-frieder.schrempf@kontron.de>
+ <1543314174-28580-4-git-send-email-frieder.schrempf@kontron.de>
+ <3981845c-327a-bb14-2908-47dd443971bf@kontron.de>
+ <VI1PR04MB572644A2AE3214356A62478799D20@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <f4c584e5-8930-bec3-0c4e-2216a89606b0@kontron.de>
+ <AM6PR04MB496732760F72A0B5B5F4A5A997D20@AM6PR04MB4967.eurprd04.prod.outlook.com>
+In-Reply-To: <AM6PR04MB496732760F72A0B5B5F4A5A997D20@AM6PR04MB4967.eurprd04.prod.outlook.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.42]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6C61E46C0BFAF94D99DB9A842E849C9B@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129000829.14751-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: BF0B667A87F.A303F
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, david.wolfe@nxp.com,
+        dwmw2@infradead.org, fabio.estevam@nxp.com, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
+        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 06:08:24PM -0600, Alexandru Gagniuc wrote:
-> A warning is generated when a PCIe device is probed with a degraded
-> link, but there was no similar mechanism to warn when the link becomes
-> degraded after probing. The Link Bandwidth Notification provides this
-> mechanism.
-> 
-> Use the link bandwidth notification interrupt to detect bandwidth
-> changes, and rescan the bandwidth, looking for the weakest point. This
-> is the same logic used in probe().
-
-I like the concept of this.  What I don't like is the fact that it's
-tied to pciehp, since I don't think the concept of Link Bandwidth
-Notification is related to hotplug.  So I think we'll only notice this
-for ports that support hotplug.  Maybe it's worth doing it this way
-anyway, even if it could be generalized in the future?
-
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/pci/hotplug/pciehp_hpc.c | 35 +++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index 7dd443aea5a5..834672000b59 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -515,7 +515,8 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->  	struct controller *ctrl = (struct controller *)dev_id;
->  	struct pci_dev *pdev = ctrl_dev(ctrl);
->  	struct device *parent = pdev->dev.parent;
-> -	u16 status, events;
-> +	struct pci_dev *endpoint;
-> +	u16 status, events, link_status;
->  
->  	/*
->  	 * Interrupts only occur in D3hot or shallower and only if enabled
-> @@ -525,6 +526,17 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->  	    (!(ctrl->slot_ctrl & PCI_EXP_SLTCTL_HPIE) && !pciehp_poll_mode))
->  		return IRQ_NONE;
->  
-> +	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &link_status);
-> +
-> +	if (link_status & PCI_EXP_LNKSTA_LBMS) {
-> +		if (pdev->subordinate && pdev->subordinate->self)
-> +			endpoint = pdev->subordinate->self;
-> +		else
-> +			endpoint = pdev;
-> +		__pcie_print_link_status(endpoint, false);
-> +		pcie_capability_write_word(pdev, PCI_EXP_LNKSTA, link_status);
-> +	}
-> +
->  	/*
->  	 * Keep the port accessible by holding a runtime PM ref on its parent.
->  	 * Defer resume of the parent to the IRQ thread if it's suspended.
-> @@ -677,6 +689,24 @@ static int pciehp_poll(void *data)
->  	return 0;
->  }
->  
-> +static bool pcie_link_bandwidth_notification_supported(struct controller *ctrl)
-> +{
-> +	int ret;
-> +	u32 cap;
-> +
-> +	ret = pcie_capability_read_dword(ctrl_dev(ctrl), PCI_EXP_LNKCAP, &cap);
-> +	return (ret == PCIBIOS_SUCCESSFUL) && (cap & PCI_EXP_LNKCAP_LBNC);
-> +}
-> +
-> +static void pcie_enable_link_bandwidth_notification(struct controller *ctrl)
-> +{
-> +	u16 lnk_ctl;
-> +
-> +	pcie_capability_read_word(ctrl_dev(ctrl), PCI_EXP_LNKCTL, &lnk_ctl);
-> +	lnk_ctl |= PCI_EXP_LNKCTL_LBMIE;
-> +	pcie_capability_write_word(ctrl_dev(ctrl), PCI_EXP_LNKCTL, lnk_ctl);
-> +}
-> +
->  static void pcie_enable_notification(struct controller *ctrl)
->  {
->  	u16 cmd, mask;
-> @@ -713,6 +743,9 @@ static void pcie_enable_notification(struct controller *ctrl)
->  	pcie_write_cmd_nowait(ctrl, cmd, mask);
->  	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
->  		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
-> +
-> +	if (pcie_link_bandwidth_notification_supported(ctrl))
-> +		pcie_enable_link_bandwidth_notification(ctrl);
->  }
->  
->  static void pcie_disable_notification(struct controller *ctrl)
-> -- 
-> 2.17.1
-> 
+SGkgSGFuLA0KDQpPbiAyOS4xMS4xOCAxNzozMCwgSGFuIFh1IHdyb3RlOg0KPiANCj4gDQo+PiAt
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4gRnJvbTogU2NocmVtcGYgRnJpZWRlciA8ZnJp
+ZWRlci5zY2hyZW1wZkBrb250cm9uLmRlPg0KPj4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDI5
+LCAyMDE4IDU6NTQgQU0NCj4+IFRvOiBZb2dlc2ggTmFyYXlhbiBHYXVyIDx5b2dlc2huYXJheWFu
+LmdhdXJAbnhwLmNvbT47IGxpbnV4LQ0KPj4gbXRkQGxpc3RzLmluZnJhZGVhZC5vcmc7IGJvcmlz
+LmJyZXppbGxvbkBib290bGluLmNvbTsgbGludXgtDQo+PiBzcGlAdmdlci5rZXJuZWwub3JnOyBN
+YXJlayBWYXN1dCA8bWFyZWsudmFzdXRAZ21haWwuY29tPjsgTWFyayBCcm93bg0KPj4gPGJyb29u
+aWVAa2VybmVsLm9yZz47IEhhbiBYdSA8aGFuLnh1QG54cC5jb20+DQo+PiBDYzogZHdtdzJAaW5m
+cmFkZWFkLm9yZzsgY29tcHV0ZXJzZm9ycGVhY2VAZ21haWwuY29tOw0KPj4gcmljaGFyZEBub2Qu
+YXQ7IG1pcXVlbC5yYXluYWxAYm9vdGxpbi5jb207IERhdmlkIFdvbGZlDQo+PiA8ZGF2aWQud29s
+ZmVAbnhwLmNvbT47IEZhYmlvIEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47DQo+PiBQ
+cmFiaGFrYXIgS3VzaHdhaGEgPHByYWJoYWthci5rdXNod2FoYUBueHAuY29tPjsNCj4+IHNoYXdu
+Z3VvQGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggdjYgMy85XSBzcGk6IEFkZCBhIGRyaXZlciBmb3IgdGhlIEZyZWVzY2FsZS9O
+WFAgUXVhZFNQSQ0KPj4gY29udHJvbGxlcg0KPj4NCj4+IEhpIFlvZ2VzaCwNCj4+DQo+PiBPbiAy
+OS4xMS4xOCAxMjozOCwgWW9nZXNoIE5hcmF5YW4gR2F1ciB3cm90ZToNCj4+PiBIaSBGcmllZGVy
+LA0KPj4+DQo+Pj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+Pj4+IEZyb206IFNjaHJl
+bXBmIEZyaWVkZXIgW21haWx0bzpmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24uZGVdDQo+Pj4+IFNl
+bnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIgMjgsIDIwMTggMTo1OCBQTQ0KPj4+PiBUbzogbGludXgt
+bXRkQGxpc3RzLmluZnJhZGVhZC5vcmc7IGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbTsNCj4+
+Pj4gbGludXgtIHNwaUB2Z2VyLmtlcm5lbC5vcmc7IE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dEBn
+bWFpbC5jb20+Ow0KPj4gTWFyaw0KPj4+PiBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPjsgSGFu
+IFh1IDxoYW4ueHVAbnhwLmNvbT4NCj4+Pj4gQ2M6IGR3bXcyQGluZnJhZGVhZC5vcmc7IGNvbXB1
+dGVyc2ZvcnBlYWNlQGdtYWlsLmNvbTsNCj4+IHJpY2hhcmRAbm9kLmF0Ow0KPj4+PiBtaXF1ZWwu
+cmF5bmFsQGJvb3RsaW4uY29tOyBEYXZpZCBXb2xmZSA8ZGF2aWQud29sZmVAbnhwLmNvbT47IEZh
+YmlvDQo+Pj4+IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFByYWJoYWthciBLdXNo
+d2FoYQ0KPj4+PiA8cHJhYmhha2FyLmt1c2h3YWhhQG54cC5jb20+OyBZb2dlc2ggTmFyYXlhbiBH
+YXVyDQo+Pj4+IDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT47IHNoYXduZ3VvQGtlcm5lbC5v
+cmc7IGxpbnV4LQ0KPj4+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+Pj4+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0ggdjYgMy85XSBzcGk6IEFkZCBhIGRyaXZlciBmb3IgdGhlIEZyZWVzY2FsZS9OWFAN
+Cj4+Pj4gUXVhZFNQSSBjb250cm9sbGVyDQo+Pj4+DQo+Pj4+IE9uIDI3LjExLjE4IDExOjI0LCBT
+Y2hyZW1wZiBGcmllZGVyIHdyb3RlOg0KPj4+Pj4gVGhpcyBkcml2ZXIgaXMgZGVyaXZlZCBmcm9t
+IHRoZSBTUEkgTk9SIGRyaXZlciBhdA0KPj4+Pj4gbXRkL3NwaS1ub3IvZnNsLXF1YWRzcGkuYy4g
+SXQgdXNlcyB0aGUgbmV3IFNQSSBtZW1vcnkgaW50ZXJmYWNlIG9mDQo+Pj4+PiB0aGUgU1BJIGZy
+YW1ld29yayB0byBpc3N1ZSBmbGFzaCBtZW1vcnkgb3BlcmF0aW9ucyB0byB1cCB0byBmb3VyDQo+
+Pj4+PiBjb25uZWN0ZWQgZmxhc2ggY2hpcHMgKDIgYnVzZXMgd2l0aCAyIENTIGVhY2gpLg0KPj4+
+Pj4NCj4+Pj4+IFRoZSBjb250cm9sbGVyIGRvZXMgbm90IHN1cHBvcnQgZ2VuZXJpYyBTUEkgbWVz
+c2FnZXMuDQo+Pj4+Pg0KPj4+Pj4gVGhpcyBwYXRjaCBhbHNvIGRpc2FibGVzIHRoZSBidWlsZCBv
+ZiB0aGUgIm9sZCIgZHJpdmVyIGFuZCByZXVzZXMNCj4+Pj4+IGl0cyBLY29uZmlnIG9wdGlvbiBD
+T05GSUdfU1BJX0ZTTF9RVUFEU1BJIHRvIHJlcGxhY2UgaXQuDQo+Pj4+Pg0KPj4+Pj4gU2lnbmVk
+LW9mZi1ieTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRlPg0K
+Pj4+Pj4gLS0tDQo+Pj4+PiAgICAgZHJpdmVycy9tdGQvc3BpLW5vci9LY29uZmlnICB8ICAgOSAt
+DQo+Pj4+PiAgICAgZHJpdmVycy9tdGQvc3BpLW5vci9NYWtlZmlsZSB8ICAgMSAtDQo+Pj4+PiAg
+ICAgZHJpdmVycy9zcGkvS2NvbmZpZyAgICAgICAgICB8ICAxMSArDQo+Pj4+PiAgICAgZHJpdmVy
+cy9zcGkvTWFrZWZpbGUgICAgICAgICB8ICAgMSArDQo+Pj4+PiAgICAgZHJpdmVycy9zcGkvc3Bp
+LWZzbC1xc3BpLmMgICB8IDk2Nw0KPj4+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKw0KPj4+Pj4gICAgIDUgZmlsZXMgY2hhbmdlZCwgOTc5IGluc2VydGlvbnMoKyksIDEw
+IGRlbGV0aW9ucygtKQ0KPj4+Pj4NCj4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9zcGkt
+bm9yL0tjb25maWcNCj4+Pj4+IGIvZHJpdmVycy9tdGQvc3BpLW5vci9LY29uZmlnIGluZGV4IDZj
+YzljOTIuLmQxY2EzMDcgMTAwNjQ0DQo+Pj4+PiAtLS0gYS9kcml2ZXJzL210ZC9zcGktbm9yL0tj
+b25maWcNCj4+Pj4+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvS2NvbmZpZw0KPj4+Pj4gQEAg
+LTU5LDE1ICs1OSw2IEBAIGNvbmZpZyBTUElfQ0FERU5DRV9RVUFEU1BJDQo+Pj4+PiAgICAgCSAg
+ZGV2aWNlIHdpdGggYSBDYWRlbmNlIFFTUEkgY29udHJvbGxlciBhbmQgd2FudCB0byBhY2Nlc3Mg
+dGhlDQo+Pj4+PiAgICAgCSAgRmxhc2ggYXMgYW4gTVREIGRldmljZS4NCj4+Pj4+DQo+Pj4+PiAt
+Y29uZmlnIFNQSV9GU0xfUVVBRFNQSQ0KPj4+Pj4gLQl0cmlzdGF0ZSAiRnJlZXNjYWxlIFF1YWQg
+U1BJIGNvbnRyb2xsZXIiDQo+Pj4+PiAtCWRlcGVuZHMgb24gQVJDSF9NWEMgfHwgU09DX0xTMTAy
+MUEgfHwgQVJDSF9MQVlFUlNDQVBFIHx8DQo+Pj4+IENPTVBJTEVfVEVTVA0KPj4+Pj4gLQlkZXBl
+bmRzIG9uIEhBU19JT01FTQ0KPj4+Pj4gLQloZWxwDQo+Pj4+PiAtCSAgVGhpcyBlbmFibGVzIHN1
+cHBvcnQgZm9yIHRoZSBRdWFkIFNQSSBjb250cm9sbGVyIGluIG1hc3RlciBtb2RlLg0KPj4+Pj4g
+LQkgIFRoaXMgY29udHJvbGxlciBkb2VzIG5vdCBzdXBwb3J0IGdlbmVyaWMgU1BJLiBJdCBvbmx5
+IHN1cHBvcnRzDQo+Pj4+PiAtCSAgU1BJIE5PUi4NCj4+Pj4+IC0NCj4+Pj4+ICAgICBjb25maWcg
+U1BJX0hJU0lfU0ZDDQo+Pj4+PiAgICAgCXRyaXN0YXRlICJIaXNpbGljb24gU1BJLU5PUiBGbGFz
+aCBDb250cm9sbGVyKFNGQykiDQo+Pj4+PiAgICAgCWRlcGVuZHMgb24gQVJDSF9ISVNJIHx8IENP
+TVBJTEVfVEVTVCBkaWZmIC0tZ2l0DQo+Pj4+PiBhL2RyaXZlcnMvbXRkL3NwaS1ub3IvTWFrZWZp
+bGUgYi9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxlIGluZGV4DQo+Pj4+PiBmNGM2MWQyLi4z
+ZjE2MGMyZTMgMTAwNjQ0DQo+Pj4+PiAtLS0gYS9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxl
+DQo+Pj4+PiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL01ha2VmaWxlDQo+Pj4+PiBAQCAtMyw3
+ICszLDYgQEAgb2JqLSQoQ09ORklHX01URF9TUElfTk9SKQkrPSBzcGktbm9yLm8NCj4+Pj4+ICAg
+ICBvYmotJChDT05GSUdfU1BJX0FTUEVFRF9TTUMpCSs9IGFzcGVlZC1zbWMubw0KPj4+Pj4gICAg
+IG9iai0kKENPTkZJR19TUElfQVRNRUxfUVVBRFNQSSkJKz0gYXRtZWwtcXVhZHNwaS5vDQo+Pj4+
+PiAgICAgb2JqLSQoQ09ORklHX1NQSV9DQURFTkNFX1FVQURTUEkpCSs9IGNhZGVuY2UtcXVhZHNw
+aS5vDQo+Pj4+PiAtb2JqLSQoQ09ORklHX1NQSV9GU0xfUVVBRFNQSSkJKz0gZnNsLXF1YWRzcGku
+bw0KPj4+Pj4gICAgIG9iai0kKENPTkZJR19TUElfSElTSV9TRkMpCSs9IGhpc2ktc2ZjLm8NCj4+
+Pj4+ICAgICBvYmotJChDT05GSUdfTVREX01UODF4eF9OT1IpICAgICs9IG10ay1xdWFkc3BpLm8N
+Cj4+Pj4+ICAgICBvYmotJChDT05GSUdfU1BJX05YUF9TUElGSSkJKz0gbnhwLXNwaWZpLm8NCj4+
+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3NwaS9LY29uZmlnIGIvZHJpdmVycy9zcGkvS2NvbmZp
+ZyBpbmRleA0KPj4+Pj4gN2QzYTVjOS4uOGM4NDE4NiAxMDA2NDQNCj4+Pj4+IC0tLSBhL2RyaXZl
+cnMvc3BpL0tjb25maWcNCj4+Pj4+ICsrKyBiL2RyaXZlcnMvc3BpL0tjb25maWcNCj4+Pj4+IEBA
+IC0yNTksNiArMjU5LDE3IEBAIGNvbmZpZyBTUElfRlNMX0xQU1BJDQo+Pj4+PiAgICAgCWhlbHAN
+Cj4+Pj4+ICAgICAJICBUaGlzIGVuYWJsZXMgRnJlZXNjYWxlIGkuTVggTFBTUEkgY29udHJvbGxl
+cnMgaW4gbWFzdGVyIG1vZGUuDQo+Pj4+Pg0KPj4+Pj4gK2NvbmZpZyBTUElfRlNMX1FVQURTUEkN
+Cj4+Pj4+ICsJdHJpc3RhdGUgIkZyZWVzY2FsZSBRU1BJIGNvbnRyb2xsZXIiDQo+Pj4+PiArCWRl
+cGVuZHMgb24gQVJDSF9NWEMgfHwgU09DX0xTMTAyMUEgfHwgQVJDSF9MQVlFUlNDQVBFIHx8DQo+
+Pj4+IENPTVBJTEVfVEVTVA0KPj4+Pj4gKwlkZXBlbmRzIG9uIEhBU19JT01FTQ0KPj4+Pj4gKwlo
+ZWxwDQo+Pj4+PiArCSAgVGhpcyBlbmFibGVzIHN1cHBvcnQgZm9yIHRoZSBRdWFkIFNQSSBjb250
+cm9sbGVyIGluIG1hc3RlciBtb2RlLg0KPj4+Pj4gKwkgIFVwIHRvIGZvdXIgZmxhc2ggY2hpcHMg
+Y2FuIGJlIGNvbm5lY3RlZCBvbiB0d28gYnVzZXMgd2l0aCB0d28NCj4+Pj4+ICsJICBjaGlwc2Vs
+ZWN0cyBlYWNoLg0KPj4+Pj4gKwkgIFRoaXMgY29udHJvbGxlciBkb2VzIG5vdCBzdXBwb3J0IGdl
+bmVyaWMgU1BJIG1lc3NhZ2VzLiBJdCBvbmx5DQo+Pj4+PiArCSAgc3VwcG9ydHMgdGhlIGhpZ2gt
+bGV2ZWwgU1BJIG1lbW9yeSBpbnRlcmZhY2UuDQo+Pj4+PiArDQo+Pj4gWy4uLl0NCj4+Pj4+ICtz
+dGF0aWMgdm9pZCBmc2xfcXNwaV9zZWxlY3RfbWVtKHN0cnVjdCBmc2xfcXNwaSAqcSwgc3RydWN0
+DQo+Pj4+PiArc3BpX2RldmljZSAqc3BpKSB7DQo+Pj4+PiArCXVuc2lnbmVkIGxvbmcgcmF0ZSA9
+IHNwaS0+bWF4X3NwZWVkX2h6Ow0KPj4+Pj4gKwlpbnQgcmV0LCBpOw0KPj4+Pj4gKwl1MzIgbWFw
+X2FkZHI7DQo+Pj4+DQo+Pj4+IEZvcmdvdCB0byBkcm9wIHNvbWUgdW51c2VkIHZhcnMgaGVyZS4g
+SSB3aWxsIHJlbW92ZSB0aGVtIGluIHRoZSBuZXh0DQo+Pj4+IHZlcnNpb24uDQo+Pj4+DQo+Pj4N
+Cj4+PiBZZXMsIGJlbG93IGFyZSB0aGUgYnVpbGQgd2FybmluZ3MgbWVzc2FnZXMgY29taW5nIGZv
+ciB0aGlzIHZlcnNpb24gb2YgdGhlDQo+PiBwYXRjaC4NCj4+Pg0KPj4+IAlkcml2ZXJzL3NwaS9z
+cGktZnNsLXFzcGkuYzogSW4gZnVuY3Rpb24g4oCYZnNsX3FzcGlfc2VsZWN0X21lbeKAmToNCj4+
+PiAJZHJpdmVycy9zcGkvc3BpLWZzbC1xc3BpLmM6NTAwOjY6IHdhcm5pbmc6IHVudXNlZCB2YXJp
+YWJsZSDigJhtYXBfYWRkcuKAmQ0KPj4gWy1XdW51c2VkLXZhcmlhYmxlXQ0KPj4+IAkgIHUzMiBt
+YXBfYWRkcjsNCj4+PiAJICAgICAgXg0KPj4+IAlkcml2ZXJzL3NwaS9zcGktZnNsLXFzcGkuYzo0
+OTk6MTE6IHdhcm5pbmc6IHVudXNlZCB2YXJpYWJsZSDigJhp4oCZIFstDQo+PiBXdW51c2VkLXZh
+cmlhYmxlXQ0KPj4+IAkgIGludCByZXQsIGk7DQo+Pj4NCj4+Pj4+ICsNCj4+Pj4+ICsJaWYgKHEt
+PnNlbGVjdGVkID09IHNwaS0+Y2hpcF9zZWxlY3QpDQo+Pj4gWy4uLl0NCj4+Pg0KPj4+IFZlcmlm
+aWVkIHRoaXMgcGF0Y2ggc2VyaWVzIG9uIExheWVyU2NhcGUtMi54IGFyY2hpdGVjdHVyZSBib2Fy
+ZHMuDQo+Pj4gTFMxMDg4YXJkYiwgaXMgaGF2aW5nIHR3byBjb25uZWN0ZWQgZmxhc2ggc2xhdmUg
+ZGV2aWNlcyBvbiBDUzAgYW5kIENTMS4NCj4+Pg0KPj4+IFZlcmlmaWVkIHdpdGggc2ltcGxlIFJl
+YWQvV3JpdGUvRXJhc2Ugb3BlcmF0aW9ucyBhbG9uZyB3aXRoIEpGRlMyDQo+PiBtb3VudGluZyBh
+bmQgYm9vdGluZyBmcm9tIGZsYXNoIE1URCBwYXJ0aXRpb24gZm9yIGJvdGggc2xhdmUgZGV2aWNl
+cy4NCj4+DQo+PiBUaGFuayB5b3UgZm9yIHRlc3RpbmchIERvZXMgdGhpcyBtZWFuIEkgY2FuIGFk
+ZCB5b3VyIFRlc3RlZC1ieSB0YWc/DQo+PiBJZiB5b3UgaGF2ZSBkb25lIGEgcmV2aWV3IG9mIGFu
+eSBvZiB0aGUgcGF0Y2hlcyBpbiB0aGlzIHNldCwgcGxlYXNlIGFsc28gYWRkIGENCj4+IFJldmll
+d2VkLWJ5IHRhZy4NCj4gDQo+IEhpIFNjaHJlbXBmLCBJIGFtIHJldmlld2luZyBhbmQgdGVzdGlu
+ZyBvbiBzb21lIGkuTVggcGxhdGZvcm1zLCBwbGVhc2UgaG9sZCBvbiBmb3IgYSB3aGlsZSBmb3Ig
+dGhlIHJlc3VsdC4NCg0KT2theSwgdGhhbmtzISBJJ20gbG9va2luZyBmb3J3YXJkIHRvIHNlZSB0
+aGUgcmVzdWx0cy4NCg0KUmVnYXJkcywNCkZyaWVkZXI=
