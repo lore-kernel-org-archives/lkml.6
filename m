@@ -2,133 +2,91 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A972AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD830C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7E320868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:54:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="SqurfwQt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7E320868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 8002420868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8002420868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbeK3EAp (ORCPT
+        id S1729965AbeK3EA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:00:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46716 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729753AbeK3EAo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:00:44 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t13so1304427ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:54:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:date:message-id:subject
-         :references:in-reply-to:to:cc;
-        bh=sjEVMn0liqvoIHfq2mD9stZv6GAR5Xx9RFy0h3lk7r8=;
-        b=SqurfwQtjebAQti1RfLbOLm32r4VnLtr22/JoWBKa1g0tbaT5T5XTZpEQ5bU55rmHo
-         E0NijTuUVlb/Ze0RALN2rbzbgbKjlhSMv7JbZOF+MO12XZ+J8QS6s0G0TRmFvEBCYqDw
-         MkWid0XKSW9d/YScIcs/aYFtwnowglwDDfcNjCuMSn2UkL9+HnXwXqysrzXl59tA2HNA
-         Q5zf6MTxipEHW0pnKXS8ZxxQopg7XmAfIclYehHMm+B+0oQSpDW4K/64Cq+UMcXKbTUC
-         oh7JfoFMeT9ZHcCYhaUzrMkezUwMScErsnyYSWFQ42Omg0SsSfpzU+/oc7OFI7HSn39c
-         p13g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version:date
-         :message-id:subject:references:in-reply-to:to:cc;
-        bh=sjEVMn0liqvoIHfq2mD9stZv6GAR5Xx9RFy0h3lk7r8=;
-        b=GvH7hS7s8WeAGDttdAjb0GXD25SzLC7Hz5X923zPl8Mgf1kBoPK7G52rMUXi8O6TuR
-         J5Z033WytSWWY/ErnV31eHNOSNJv6NqpYUbAJdn0MKtRlzMxIIj81eO8Arp13jI56WZd
-         fe2iIJi5n2/XafShmmfmfsESAJgTg6QSBgFfi4/ABVKORyg8amzxdEZdELHNPADbXchp
-         obLFmLzUzrjzsygcB+Mu3C6kYUlUhPQ/ylyDd27zVIt7yZ8nNX/3bZX3rq14IACs2BxF
-         YbYxED+x3FlGRm6heCqw4MCDnuaXoFWeV3M9e5oF58jR0DSCnJwkRFkb6edChG8GQ+E8
-         FkkA==
-X-Gm-Message-State: AA+aEWYBqv9Xq12yBCC6rgzvMqTu6Fd1s8YA9Dl1Uko2N9C2rqtw6mQ6
-        Pmm9xgaYGkxnilnegZy73GbL+Q==
-X-Google-Smtp-Source: AFSGD/XHMnIGNh/VA49bxmBquQy8gzEThVHAfOtoDp2hbXeYSq4OR58Nkj/whq5RaO79BJSrFr7OGA==
-X-Received: by 2002:a17:902:8a95:: with SMTP id p21mr2227355plo.183.1543510483898;
-        Thu, 29 Nov 2018 08:54:43 -0800 (PST)
-Received: from ?IPv6:2600:1010:b054:ff26:3849:a65d:14d0:f668? ([2600:1010:b054:ff26:3849:a65d:14d0:f668])
-        by smtp.gmail.com with ESMTPSA id e23sm3547346pfh.68.2018.11.29.08.54.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 08:54:42 -0800 (PST)
+        Thu, 29 Nov 2018 23:00:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35052 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729753AbeK3EA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:00:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3BE0CACBD;
+        Thu, 29 Nov 2018 16:54:54 +0000 (UTC)
+Subject: Re: [PATCH] pvcalls-front: fixes incorrect error handling
+To:     Pan Bian <bianpan2016@163.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <1542852432-30019-1-git-send-email-bianpan2016@163.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
+ CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
+ zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
+ kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
+ czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
+ d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
+ 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
+ B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
+ cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
+ w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
+ pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
+ 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
+ KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
+ Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
+ AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
+ UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
+ wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
+ CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
+ HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
+ V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
+ RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
+ W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
+ pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
+ jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
+ hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
+Message-ID: <d57f36f0-3e90-855e-0e89-281e8facbc89@suse.com>
+Date:   Thu, 29 Nov 2018 17:54:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <1542852432-30019-1-git-send-email-bianpan2016@163.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Date:   Thu, 29 Nov 2018 08:54:18 -0800
-Message-Id: <36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
-In-Reply-To: <87in0g5aqo.fsf@oldenburg.str.redhat.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Christian Brauner <christian@brauner.io>, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
-        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
-        cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-X-Mailer: iPhone Mail (16B92)
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22/11/2018 03:07, Pan Bian wrote:
+> kfree() is incorrectly used to release the pages allocated by
+> __get_free_page() and __get_free_pages(). Use the matching deallocators
+> i.e., free_page() and free_pages(), respectively.
+> 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+
+Pushed to xen/tip.git for-linus-4.20a
 
 
-> On Nov 29, 2018, at 4:28 AM, Florian Weimer <fweimer@redhat.com> wrote:
->=20
-> Disclaimer: I'm looking at this patch because Christian requested it.
-> I'm not a kernel developer.
->=20
-> * Christian Brauner:
->=20
->> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/sysc=
-alls/syscall_32.tbl
->> index 3cf7b533b3d1..3f27ffd8ae87 100644
->> --- a/arch/x86/entry/syscalls/syscall_32.tbl
->> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
->> @@ -398,3 +398,4 @@
->> 384    i386    arch_prctl        sys_arch_prctl            __ia32_compat_=
-sys_arch_prctl
->> 385    i386    io_pgetevents        sys_io_pgetevents        __ia32_compa=
-t_sys_io_pgetevents
->> 386    i386    rseq            sys_rseq            __ia32_sys_rseq
->> +387    i386    procfd_signal        sys_procfd_signal        __ia32_comp=
-at_sys_procfd_signal
->> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/sysc=
-alls/syscall_64.tbl
->> index f0b1709a5ffb..8a30cde82450 100644
->> --- a/arch/x86/entry/syscalls/syscall_64.tbl
->> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
->> @@ -343,6 +343,7 @@
->> 332    common    statx            __x64_sys_statx
->> 333    common    io_pgetevents        __x64_sys_io_pgetevents
->> 334    common    rseq            __x64_sys_rseq
->> +335    64    procfd_signal        __x64_sys_procfd_signal
->>=20
->> #
->> # x32-specific system call numbers start at 512 to avoid cache impact
->> @@ -386,3 +387,4 @@
->> 545    x32    execveat        __x32_compat_sys_execveat/ptregs
->> 546    x32    preadv2            __x32_compat_sys_preadv64v2
->> 547    x32    pwritev2        __x32_compat_sys_pwritev64v2
->> +548    x32    procfd_signal        __x32_compat_sys_procfd_signal
->=20
-> Is there a reason why these numbers have to be different?
->=20
-> (See the recent discussion with Andy Lutomirski.)
-
-Hah, I missed this part of the patch.  Let=E2=80=99s not add new x32 syscall=
- numbers.
-
-Also, can we perhaps rework this a bit to get rid of the compat entry point?=
-  The easier way would be to check in_compat_syscall(). The nicer way IMO wo=
-uld be to use the 64-bit structure for 32-bit as well.
+Juergen
