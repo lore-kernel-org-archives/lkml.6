@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE93BC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE18C43610
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A8B520834
+	by mail.kernel.org (Postfix) with ESMTP id A817C2145D
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8B520834
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A817C2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeK2TVb (ORCPT
+        id S1727879AbeK2TVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:21:31 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:46983 "EHLO
+        Thu, 29 Nov 2018 14:21:32 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:27144 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726841AbeK2TVa (ORCPT
+        with ESMTP id S1727490AbeK2TVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:21:30 -0500
+        Thu, 29 Nov 2018 14:21:31 -0500
 X-IronPort-AV: E=Sophos;i="5.56,293,1539619200"; 
-   d="scan'208";a="48821856"
+   d="scan'208";a="48821857"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 29 Nov 2018 16:16:55 +0800
+  by heian.cn.fujitsu.com with ESMTP; 29 Nov 2018 16:16:57 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id E2F064B734A5;
-        Thu, 29 Nov 2018 16:16:54 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id CA0A84B6ED56;
+        Thu, 29 Nov 2018 16:16:56 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:17:00 +0800
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:17:02 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v12 2/5] x86/boot: Add efi_get_rsdp_addr() to find RSDP from EFI table
-Date:   Thu, 29 Nov 2018 16:16:28 +0800
-Message-ID: <20181129081631.11139-3-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v12 3/5] x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
+Date:   Thu, 29 Nov 2018 16:16:29 +0800
+Message-ID: <20181129081631.11139-4-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
 References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: E2F064B734A5.A6AB9
+X-yoursite-MailScanner-ID: CA0A84B6ED56.A8FAE
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,100 +62,107 @@ information in SRAT table is necessary. So RSDP and SRAT table
 should be parsed.
 
 When booting form KEXEC/EFI/BIOS, the methods to compute RSDP pointer
-are different. When booting from EFI, EFI table points to RSDP.
-So parse the EFI table and find the RSDP pointer.
+are different. When booting from BIOS, there is no variable who can
+point to RSDP directly, so scan memory for the RSDP and verify RSDP
+by signature and checksum.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpitb.c | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/x86/boot/compressed/acpitb.c | 85 +++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
 diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-index 614c45655cff..c43546648638 100644
+index c43546648638..82d27c4b8978 100644
 --- a/arch/x86/boot/compressed/acpitb.c
 +++ b/arch/x86/boot/compressed/acpitb.c
-@@ -31,3 +31,82 @@ static acpi_physical_address get_acpi_rsdp(void)
- 	return 0;
+@@ -110,3 +110,88 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+ 	return rsdp_addr;
  #endif
  }
 +
-+/* Search EFI table for RSDP. */
-+static acpi_physical_address efi_get_rsdp_addr(void)
++static u8 compute_checksum(u8 *buffer, u32 length)
 +{
-+#ifdef CONFIG_EFI
-+	acpi_physical_address rsdp_addr = 0;
-+	efi_system_table_t *systab;
-+	struct efi_info *e;
-+	bool efi_64;
-+	char *sig;
-+	int size;
-+	int i;
++	u8 *end = buffer + length;
++	u8 sum = 0;
 +
-+	e = &boot_params->efi_info;
-+	sig = (char *)&e->efi_loader_signature;
++	while (buffer < end)
++		sum += *(buffer++);
 +
-+	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
-+		efi_64 = true;
-+	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
-+		efi_64 = false;
-+	else {
-+		debug_putstr("Wrong EFI loader signature.\n");
-+		return 0;
++	return sum;
++}
++
++/* Search a block of memory for the RSDP signature. */
++static u8 *scan_mem_for_rsdp(u8 *start, u32 length)
++{
++	struct acpi_table_rsdp *rsdp;
++	u8 *address;
++	u8 *end;
++
++	end = start + length;
++
++	/* Search from given start address for the requested length */
++	for (address = start; address < end; address += ACPI_RSDP_SCAN_STEP) {
++		/*
++		 * Both RSDP signature and checksum must be correct.
++		 * Note: Sometimes there exists more than one RSDP in memory;
++		 * the valid RSDP has a valid checksum, all others have an
++		 * invalid checksum.
++		 */
++		rsdp = (struct acpi_table_rsdp *)address;
++
++		/* BAD Signature */
++		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
++			continue;
++
++		/* Check the standard checksum */
++		if (compute_checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
++			continue;
++
++		/* Check extended checksum if table version >= 2 */
++		if ((rsdp->revision >= 2) &&
++		    (compute_checksum((u8 *) rsdp, ACPI_RSDP_XCHECKSUM_LENGTH)))
++			continue;
++
++		/* Signature and checksum valid, we have found a real RSDP */
++		return address;
 +	}
++	return NULL;
++}
 +
-+	/* Get systab from boot params. Based on efi_init(). */
-+#ifdef CONFIG_X86_64
-+	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
-+#else
-+	if (e->efi_systab_hi || e->efi_memmap_hi) {
-+		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-+		return 0;
-+	}
-+	systab = (efi_system_table_t *)e->efi_systab;
-+#endif
++/* Used to search RSDP physical address, based on acpi_find_root_pointer(). */
++static acpi_physical_address bios_get_rsdp_addr(void)
++{
++	u8 *table_ptr;
++	u32 address;
++	u8 *rsdp;
 +
-+	if (!systab)
-+		return 0;
++	/* Get the location of the Extended BIOS Data Area (EBDA) */
++	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
++	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
++	address <<= 4;
++	table_ptr = (u8 *)(long)address;
 +
 +	/*
-+	 * Get EFI tables from systab. Based on efi_config_init() and
-+	 * efi_config_parse_tables().
++	 * Search EBDA paragraphs (EBDA is required to be a minimum of
++	 * 1K length)
 +	 */
-+	size = efi_64 ? sizeof(efi_config_table_64_t) :
-+			sizeof(efi_config_table_32_t);
-+
-+	for (i = 0; i < systab->nr_tables; i++) {
-+		void *config_tables;
-+		unsigned long table;
-+		efi_guid_t guid;
-+
-+		config_tables = (void *)(systab->tables + size * i);
-+		if (efi_64) {
-+			efi_config_table_64_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_64_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+
-+			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
-+				debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-+				return 0;
-+			}
-+		} else {
-+			efi_config_table_32_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_32_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
++	if (address > 0x400) {
++		rsdp = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
++		if (rsdp) {
++			address += (u32)ACPI_PTR_DIFF(rsdp, table_ptr);
++			return (acpi_physical_address)address;
 +		}
-+
-+		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
-+			rsdp_addr = (acpi_physical_address)table;
-+		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
-+			return (acpi_physical_address)table;
 +	}
-+	return rsdp_addr;
-+#endif
++
++	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
++	rsdp = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
++
++	/* Search upper memory: 16-byte boundaries in E0000h-FFFFFh */
++	if (rsdp) {
++		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
++				ACPI_PTR_DIFF(rsdp, table_ptr));
++		return (acpi_physical_address)address;
++	}
 +}
 -- 
 2.19.1
