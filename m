@@ -2,52 +2,52 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F861C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22E2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5032145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D8DC208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPevAkLF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5032145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uL7ytdf7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8DC208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbeK3BZS (ORCPT
+        id S1731221AbeK3BZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48636 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbeK3BZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:17 -0500
+        id S1729806AbeK3BZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1015D21019;
-        Thu, 29 Nov 2018 14:19:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F03D21104;
+        Thu, 29 Nov 2018 14:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501186;
-        bh=QZtSs2H7DMbORaqFAyw9bWEbwVeU9mYsDI3w/j7dB+Q=;
+        s=default; t=1543501188;
+        bh=grb06WQifOamFrts22Mt+PXi86axAfRWluDnmcs3hDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WPevAkLF4Oygn3+V9qcx7AAbzgsWCovaEX2pFDwd3rrHnvNBlzDERGQR19tT3KseG
-         qqDM4za8s6qgem6btqbE1PuSW9L2vT2snmOXKmqgczWQyUAHZoD5RbBOSHMJRarnTg
-         5iBRqd7Os4jqOS2OERii/oZ1imhS04Y9+ZxjFFSQ=
+        b=uL7ytdf7Vq+S/h7xlGl7HWlzDFHB3a62jjJTaaT2HRMt7NllmU+eYB5gPVmFUdMLO
+         STIWy/BlXe8mu1Ci1y/bswT97smSqaafbAKw5aQZYor+BOJ/W8S+vqCPFvluUlXQb2
+         FwU3NhoWYhKKZhY1MXh0GVsojU3rqAtHLgJELPRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Pierre-Loup A. Griffais" <eduke32@plagman.net>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
         Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 42/86] Input: xpad - xbox one elite controller support
-Date:   Thu, 29 Nov 2018 15:12:07 +0100
-Message-Id: <20181129140113.758069253@linuxfoundation.org>
+Subject: [PATCH 4.4 33/86] Input: xpad - handle "present" and "gone" correctly
+Date:   Thu, 29 Nov 2018 15:11:58 +0100
+Message-Id: <20181129140112.841771750@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -65,44 +65,267 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6f49a398b266d4895bd7e041db77a2b2ee1482a6 ]
+[ Upstream commit 09c8b00ae3e16c8d0fd4beb2ca064502a76c0f17 ]
 
-added the according id and incresed XPAD_PKT_LEN to 64 as the elite
-controller sends at least 33 byte messages [1].
-Verified to be working by [2].
+Handle the "a new device is present" message properly by dynamically
+creating the input device at this point in time. This means we now do not
+"preallocate" all 4 devices when a single wireless base station is seen.
+This requires a workqueue as we are in interrupt context when we learn
+about this.
 
-[1]: https://franticrain.github.io/sniffs/XboxOneSniff.html
-[2]: https://github.com/paroj/xpad/issues/23
+Also properly disconnect any devices that we are told are removed.
 
-Signed-off-by: Pierre-Loup A. Griffais <eduke32@plagman.net>
+Signed-off-by: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 107 ++++++++++++++++++++++------------
+ 1 file changed, 69 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index c8897fc3202c..dcf9053a801e 100644
+index 2f16d07db8ef..88de7b17bf7d 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -87,7 +87,7 @@
- #define DRIVER_AUTHOR "Marko Friedemann <mfr@bmx-chemnitz.de>"
- #define DRIVER_DESC "X-Box pad driver"
+@@ -76,6 +76,8 @@
+  */
  
--#define XPAD_PKT_LEN 32
-+#define XPAD_PKT_LEN 64
+ #include <linux/kernel.h>
++#include <linux/input.h>
++#include <linux/rcupdate.h>
+ #include <linux/slab.h>
+ #include <linux/stat.h>
+ #include <linux/module.h>
+@@ -334,10 +336,12 @@ struct xpad_output_packet {
  
- /* xbox d-pads should map to buttons, as is required for DDR pads
-    but we map them to axes when possible to simplify things */
-@@ -129,6 +129,7 @@ static const struct xpad_device {
- 	{ 0x045e, 0x028e, "Microsoft X-Box 360 pad", 0, XTYPE_XBOX360 },
- 	{ 0x045e, 0x02d1, "Microsoft X-Box One pad", 0, XTYPE_XBOXONE },
- 	{ 0x045e, 0x02dd, "Microsoft X-Box One pad (Firmware 2015)", 0, XTYPE_XBOXONE },
-+	{ 0x045e, 0x02e3, "Microsoft X-Box One Elite pad", 0, XTYPE_XBOXONE },
- 	{ 0x045e, 0x0291, "Xbox 360 Wireless Receiver (XBOX)", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x045e, 0x0719, "Xbox 360 Wireless Receiver", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
+ struct usb_xpad {
+ 	struct input_dev *dev;		/* input device interface */
++	struct input_dev __rcu *x360w_dev;
+ 	struct usb_device *udev;	/* usb device */
+ 	struct usb_interface *intf;	/* usb interface */
+ 
+-	int pad_present;
++	bool pad_present;
++	bool input_created;
+ 
+ 	struct urb *irq_in;		/* urb for interrupt in report */
+ 	unsigned char *idata;		/* input data */
+@@ -362,8 +366,12 @@ struct usb_xpad {
+ 	int xtype;			/* type of xbox device */
+ 	int pad_nr;			/* the order x360 pads were attached */
+ 	const char *name;		/* name of the device */
++	struct work_struct work;	/* init/remove device from callback */
+ };
+ 
++static int xpad_init_input(struct usb_xpad *xpad);
++static void xpad_deinit_input(struct usb_xpad *xpad);
++
+ /*
+  *	xpad_process_packet
+  *
+@@ -443,11 +451,9 @@ static void xpad_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *d
+  *		http://www.free60.org/wiki/Gamepad
+  */
+ 
+-static void xpad360_process_packet(struct usb_xpad *xpad,
++static void xpad360_process_packet(struct usb_xpad *xpad, struct input_dev *dev,
+ 				   u16 cmd, unsigned char *data)
+ {
+-	struct input_dev *dev = xpad->dev;
+-
+ 	/* digital pad */
+ 	if (xpad->mapping & MAP_DPAD_TO_BUTTONS) {
+ 		/* dpad as buttons (left, right, up, down) */
+@@ -514,7 +520,30 @@ static void xpad360_process_packet(struct usb_xpad *xpad,
+ 	input_sync(dev);
+ }
+ 
+-static void xpad_identify_controller(struct usb_xpad *xpad);
++static void xpad_presence_work(struct work_struct *work)
++{
++	struct usb_xpad *xpad = container_of(work, struct usb_xpad, work);
++	int error;
++
++	if (xpad->pad_present) {
++		error = xpad_init_input(xpad);
++		if (error) {
++			/* complain only, not much else we can do here */
++			dev_err(&xpad->dev->dev,
++				"unable to init device: %d\n", error);
++		} else {
++			rcu_assign_pointer(xpad->x360w_dev, xpad->dev);
++		}
++	} else {
++		RCU_INIT_POINTER(xpad->x360w_dev, NULL);
++		synchronize_rcu();
++		/*
++		 * Now that we are sure xpad360w_process_packet is not
++		 * using input device we can get rid of it.
++		 */
++		xpad_deinit_input(xpad);
++	}
++}
+ 
+ /*
+  * xpad360w_process_packet
+@@ -532,24 +561,28 @@ static void xpad_identify_controller(struct usb_xpad *xpad);
+  */
+ static void xpad360w_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned char *data)
+ {
++	struct input_dev *dev;
++	bool present;
++
+ 	/* Presence change */
+ 	if (data[0] & 0x08) {
+-		if (data[1] & 0x80) {
+-			xpad->pad_present = 1;
+-			/*
+-			 * Light up the segment corresponding to
+-			 * controller number.
+-			 */
+-			xpad_identify_controller(xpad);
+-		} else
+-			xpad->pad_present = 0;
++		present = (data[1] & 0x80) != 0;
++
++		if (xpad->pad_present != present) {
++			xpad->pad_present = present;
++			schedule_work(&xpad->work);
++		}
+ 	}
+ 
+ 	/* Valid pad data */
+ 	if (data[1] != 0x1)
+ 		return;
+ 
+-	xpad360_process_packet(xpad, cmd, &data[4]);
++	rcu_read_lock();
++	dev = rcu_dereference(xpad->x360w_dev);
++	if (dev)
++		xpad360_process_packet(xpad, dev, cmd, &data[4]);
++	rcu_read_unlock();
+ }
+ 
+ /*
+@@ -678,7 +711,7 @@ static void xpad_irq_in(struct urb *urb)
+ 
+ 	switch (xpad->xtype) {
+ 	case XTYPE_XBOX360:
+-		xpad360_process_packet(xpad, 0, xpad->idata);
++		xpad360_process_packet(xpad, xpad->dev, 0, xpad->idata);
+ 		break;
+ 	case XTYPE_XBOX360W:
+ 		xpad360w_process_packet(xpad, 0, xpad->idata);
+@@ -1132,14 +1165,7 @@ static int xpad_led_probe(struct usb_xpad *xpad)
+ 	if (error)
+ 		goto err_free_id;
+ 
+-	if (xpad->xtype == XTYPE_XBOX360) {
+-		/*
+-		 * Light up the segment corresponding to controller
+-		 * number on wired devices. On wireless we'll do that
+-		 * when they respond to "presence" packet.
+-		 */
+-		xpad_identify_controller(xpad);
+-	}
++	xpad_identify_controller(xpad);
+ 
+ 	return 0;
+ 
+@@ -1223,8 +1249,11 @@ static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
+ 
+ static void xpad_deinit_input(struct usb_xpad *xpad)
+ {
+-	xpad_led_disconnect(xpad);
+-	input_unregister_device(xpad->dev);
++	if (xpad->input_created) {
++		xpad->input_created = false;
++		xpad_led_disconnect(xpad);
++		input_unregister_device(xpad->dev);
++	}
+ }
+ 
+ static int xpad_init_input(struct usb_xpad *xpad)
+@@ -1313,6 +1342,7 @@ static int xpad_init_input(struct usb_xpad *xpad)
+ 	if (error)
+ 		goto err_disconnect_led;
+ 
++	xpad->input_created = true;
+ 	return 0;
+ 
+ err_disconnect_led:
+@@ -1366,6 +1396,7 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 	xpad->mapping = xpad_device[i].mapping;
+ 	xpad->xtype = xpad_device[i].xtype;
+ 	xpad->name = xpad_device[i].name;
++	INIT_WORK(&xpad->work, xpad_presence_work);
+ 
+ 	if (xpad->xtype == XTYPE_UNKNOWN) {
+ 		if (intf->cur_altsetting->desc.bInterfaceClass == USB_CLASS_VENDOR_SPEC) {
+@@ -1415,10 +1446,6 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 
+ 	usb_set_intfdata(intf, xpad);
+ 
+-	error = xpad_init_input(xpad);
+-	if (error)
+-		goto err_deinit_output;
+-
+ 	if (xpad->xtype == XTYPE_XBOX360W) {
+ 		/*
+ 		 * Submit the int URB immediately rather than waiting for open
+@@ -1430,7 +1457,7 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 		xpad->irq_in->dev = xpad->udev;
+ 		error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
+ 		if (error)
+-			goto err_deinit_input;
++			goto err_deinit_output;
+ 
+ 		/*
+ 		 * Send presence packet.
+@@ -1442,13 +1469,15 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 		error = xpad_inquiry_pad_presence(xpad);
+ 		if (error)
+ 			goto err_kill_in_urb;
++	} else {
++		error = xpad_init_input(xpad);
++		if (error)
++			goto err_deinit_output;
+ 	}
+ 	return 0;
+ 
+ err_kill_in_urb:
+ 	usb_kill_urb(xpad->irq_in);
+-err_deinit_input:
+-	xpad_deinit_input(xpad);
+ err_deinit_output:
+ 	xpad_deinit_output(xpad);
+ err_free_in_urb:
+@@ -1465,17 +1494,19 @@ static void xpad_disconnect(struct usb_interface *intf)
+ {
+ 	struct usb_xpad *xpad = usb_get_intfdata (intf);
+ 
+-	xpad_deinit_input(xpad);
+-	xpad_deinit_output(xpad);
+-
+-	if (xpad->xtype == XTYPE_XBOX360W) {
++	if (xpad->xtype == XTYPE_XBOX360W)
+ 		usb_kill_urb(xpad->irq_in);
+-	}
++
++	cancel_work_sync(&xpad->work);
++
++	xpad_deinit_input(xpad);
+ 
+ 	usb_free_urb(xpad->irq_in);
+ 	usb_free_coherent(xpad->udev, XPAD_PKT_LEN,
+ 			xpad->idata, xpad->idata_dma);
+ 
++	xpad_deinit_output(xpad);
++
+ 	kfree(xpad);
+ 
+ 	usb_set_intfdata(intf, NULL);
 -- 
 2.17.1
 
