@@ -1,164 +1,191 @@
 Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C11C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBCEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C9820832
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7851020832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:40:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/IgGJBA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C9820832
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxdXc0lg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7851020832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeK2MkN (ORCPT
+        id S1727206AbeK2MoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:40:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40646 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbeK2MkM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:40:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i12so165736pfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:36:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fw993pv5o1TlUVp2ke13U9oKHcqsHYVOQzMpwFye9BM=;
-        b=K/IgGJBABepsNsNoUIqm/SldhyiI8uHiZ7HK8WhIqebUikHwqP8FZ5U6E3w8aN3eOv
-         ZGHGeNk0kIWHfcG0pVWLTgdqDqxPFGEf9sQ4DQGcmSYgv/gRkOYG3NT4/C8/f7YGU14O
-         D9L7zQx5+P6y3C+E2DvkgEUJgXcRsm6hXpR3RK4pDHLwsAZhSlSvuTPfF+OenApiNnqt
-         bY40aF3yzMAtSgs2JaO8r13dJFsKZ2YqWxV/BZm9T7QiPHAWHq2dG8pGKdRUTK38T3rn
-         eUaclBgn9pabqGxUoM6ZkFyIDQlY22KWaOQzFie/nDUZ2v2Zw9ohZNRXbGpfrNKk/17D
-         aGBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fw993pv5o1TlUVp2ke13U9oKHcqsHYVOQzMpwFye9BM=;
-        b=PrSV9gXnWNOtCXiW0vglAHbLxx4VjQL/rNPKS1WqOUwCf/8rhe33kImTQZ1QX59rbe
-         OrwvUzLRmB3cSM/lZDQ42cvulBs7KGw+N6a38vDJWh1UIO3i1exgIMKFKKoNPpNQkOOK
-         8EdGlSfJ19XyZmLZxNq09Fm26mcSY336qJRSnARp4pW8jWaNMA2hkTcqrRxD2Ysv+tJJ
-         sk2SzPdnCLn0B0b2wzgzPxJI4cUGHdqu/Xk+UN8/fRotb7jr8DGcXCvQfqIRRILDP4j2
-         Wd253FSZgKARRjEDZ7v+ccrzTvgFj9lX1NxSjn3GeVE4JSx8R4ywm30jxu796st6FrA/
-         1dcw==
-X-Gm-Message-State: AA+aEWaCP92DjQ5OaO4PXpCynRJ+eoic3/C+P+O1CCuQAYcs6UqtwGG+
-        lhYuEPHsDYrK8jJg5oImAURkJOnvDGE=
-X-Google-Smtp-Source: AFSGD/W8O0II5qUScXEFFhCIh6fz+NloszJCu6xv9Zarv40L8ClowEufoCiT48XDylTr1eMKsG5dEQ==
-X-Received: by 2002:a63:4745:: with SMTP id w5mr35899618pgk.377.1543455395831;
-        Wed, 28 Nov 2018 17:36:35 -0800 (PST)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id o8sm320751pfa.42.2018.11.28.17.36.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 17:36:34 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:36:30 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: Re: [PATCH v3 5/7] zram: support idle/huge page writeback
-Message-ID: <20181129013630.GA77327@google.com>
-References: <20181127055429.251614-1-minchan@kernel.org>
- <20181127055429.251614-6-minchan@kernel.org>
- <20181128153559.f6645b98a7033b6f6f6b0fbc@linux-foundation.org>
+        Thu, 29 Nov 2018 07:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726872AbeK2MoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 07:44:08 -0500
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1962A20832
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 01:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543455630;
+        bh=WFx/PkQAwcK4uTa0v16fHa7h5dbIQGv9lyyvSqwN9Os=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DxdXc0lgmwnQYdhDzaY6sGq+2xdaRf2tsW9aaGMtb1WomgwAFWf5DzBfVMQMoVrFm
+         0er/8GDsBsVnbZVVf91mDMFgF80z2JyZQ06sf3uPNHfuB4dSQ277B18uradZT0xt5Y
+         60iYbCPLs8bm7DC9VpS5+tj5OSyBAsI324aFMmao=
+Received: by mail-wm1-f41.google.com with SMTP id z18so568473wmc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:40:30 -0800 (PST)
+X-Gm-Message-State: AA+aEWZocBp93PO7kciwvrMSSHzmskdQu25m/02OVRGUzGwobnftl0tT
+        Knv1HPJb6Zx9jkgbQis9UN4PU6YPZiaowCBkTx0NMA==
+X-Google-Smtp-Source: AFSGD/XK9cvU0ZXHgQhz/TUtUcxa7puTu3fmT1y4gF9lWE+Z6cONBpe7NHgxwqQz9mNUXrWwlgJ5D6jFj2OqTOoi9xY=
+X-Received: by 2002:a7b:ce11:: with SMTP id m17mr5119089wmc.74.1543455628557;
+ Wed, 28 Nov 2018 17:40:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128153559.f6645b98a7033b6f6f6b0fbc@linux-foundation.org>
-User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
+References: <20181018005420.82993-1-namit@vmware.com> <20181128160849.epmoto4o5jaxxxol@treble>
+ <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com> <20181129003837.6lgxsnhoyipkebmz@treble>
+In-Reply-To: <20181129003837.6lgxsnhoyipkebmz@treble>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 28 Nov 2018 17:40:16 -0800
+X-Gmail-Original-Message-ID: <CALCETrUfC37TxuYLgqbN3_pZ1RzfpV03byKMpSt87o+JHtk6FQ@mail.gmail.com>
+Message-ID: <CALCETrUfC37TxuYLgqbN3_pZ1RzfpV03byKMpSt87o+JHtk6FQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Wed, Nov 28, 2018 at 4:38 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Wed, Nov 28, 2018 at 07:34:52PM +0000, Nadav Amit wrote:
+> > > On Nov 28, 2018, at 8:08 AM, Josh Poimboeuf <jpoimboe@redhat.com> wro=
+te:
+> > >
+> > > On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
+> > >> This RFC introduces indirect call promotion in runtime, which for th=
+e
+> > >> matter of simplification (and branding) will be called here "relpoli=
+nes"
+> > >> (relative call + trampoline). Relpolines are mainly intended as a wa=
+y
+> > >> of reducing retpoline overheads due to Spectre v2.
+> > >>
+> > >> Unlike indirect call promotion through profile guided optimization, =
+the
+> > >> proposed approach does not require a profiling stage, works well wit=
+h
+> > >> modules whose address is unknown and can adapt to changing workloads=
+.
+> > >>
+> > >> The main idea is simple: for every indirect call, we inject a piece =
+of
+> > >> code with fast- and slow-path calls. The fast path is used if the ta=
+rget
+> > >> matches the expected (hot) target. The slow-path uses a retpoline.
+> > >> During training, the slow-path is set to call a function that saves =
+the
+> > >> call source and target in a hash-table and keep count for call
+> > >> frequency. The most common target is then patched into the hot path.
+> > >>
+> > >> The patching is done on-the-fly by patching the conditional branch
+> > >> (opcode and offset) that is used to compare the target to the hot
+> > >> target. This allows to direct all cores to the fast-path, while patc=
+hing
+> > >> the slow-path and vice-versa. Patching follows 2 more rules: (1) Onl=
+y
+> > >> patch a single byte when the code might be executed by any core. (2)
+> > >> When patching more than one byte, ensure that all cores do not run t=
+he
+> > >> to-be-patched-code by preventing this code from being preempted, and
+> > >> using synchronize_sched() after patching the branch that jumps over =
+this
+> > >> code.
+> > >>
+> > >> Changing all the indirect calls to use relpolines is done using asse=
+mbly
+> > >> macro magic. There are alternative solutions, but this one is
+> > >> relatively simple and transparent. There is also logic to retrain th=
+e
+> > >> software predictor, but the policy it uses may need to be refined.
+> > >>
+> > >> Eventually the results are not bad (2 VCPU VM, throughput reported):
+> > >>
+> > >>            base            relpoline
+> > >>            ----            ---------
+> > >> nginx      22898           25178 (+10%)
+> > >> redis-ycsb 24523           25486 (+4%)
+> > >> dbench     2144            2103 (+2%)
+> > >>
+> > >> When retpolines are disabled, and if retraining is off, performance
+> > >> benefits are up to 2% (nginx), but are much less impressive.
+> > >
+> > > Hi Nadav,
+> > >
+> > > Peter pointed me to these patches during a discussion about retpoline
+> > > profiling.  Personally, I think this is brilliant.  This could help
+> > > networking and filesystem intensive workloads a lot.
+> >
+> > Thanks! I was a bit held-back by the relatively limited number of respo=
+nses.
+>
+> It is a rather, erm, ambitious idea, maybe they were speechless :-)
+>
+> > I finished another version two weeks ago, and every day I think: "shoul=
+d it
+> > be RFCv2 or v1=E2=80=9D, ending up not sending it=E2=80=A6
+> >
+> > There is one issue that I realized while working on the new version: I=
+=E2=80=99m not
+> > sure it is well-defined what an outline retpoline is allowed to do. The
+> > indirect branch promotion code can change rflags, which might cause
+> > correction issues. In practice, using gcc, it is not a problem.
+>
+> Callees can clobber flags, so it seems fine to me.
 
-On Wed, Nov 28, 2018 at 03:35:59PM -0800, Andrew Morton wrote:
-> On Tue, 27 Nov 2018 14:54:27 +0900 Minchan Kim <minchan@kernel.org> wrote:
-> 
-> > This patch supports new feature "zram idle/huge page writeback".
-> > On zram-swap usecase, zram has usually many idle/huge swap pages.
-> > It's pointless to keep in memory(ie, zram).
-> > 
-> > To solve the problem, this feature introduces idle/huge page
-> > writeback to backing device so the goal is to save more memory
-> > space on embedded system.
-> > 
-> > Normal sequence to use idle/huge page writeback feature is as follows,
-> > 
-> > while (1) {
-> >         # mark allocated zram slot to idle
-> >         echo all > /sys/block/zram0/idle
-> >         # leave system working for several hours
-> >         # Unless there is no access for some blocks on zram,
-> > 	# they are still IDLE marked pages.
-> > 
-> >         echo "idle" > /sys/block/zram0/writeback
-> > 	or/and
-> > 	echo "huge" > /sys/block/zram0/writeback
-> >         # write the IDLE or/and huge marked slot into backing device
-> > 	# and free the memory.
-> > }
-> > 
-> > By per discussion:
-> > https://lore.kernel.org/lkml/20181122065926.GG3441@jagdpanzerIV/T/#u,
-> > 
-> > This patch removes direct incommpressibe page writeback feature
-> > (d2afd25114f4, zram: write incompressible pages to backing device)
-> > so we could regard it as regression because incompressible pages
-> > doesn't go to backing storage automatically. Instead, usre should
-> > do it via "echo huge" > /sys/block/zram/writeback" manually.
-> 
-> I'm not in any position to determine the regression risk here.
-> 
-> Why is that feature being removed, anyway?
+Just to check I understand your approach right: you made a macro
+called "call", and you're therefore causing all instances of "call" to
+become magic?  This is... terrifying.  It's even plausibly worse than
+"#define if" :)  The scariest bit is that it will impact inline asm as
+well.  Maybe a gcc plugin would be less alarming?
 
-Below concerns from Sergey:
-https://lore.kernel.org/lkml/20181122065926.GG3441@jagdpanzerIV/T/#u
+> >
+> > 1. An indirect branch inside the BP handler might be the one we patch
+>
+> I _think_ nested INT3s should be doable, because they don't use IST.
+> Maybe Andy can clarify.
 
-== &< ==
-"IDLE writeback" is superior to "incompressible writeback".
+int3 should survive recursion these days.  Although I admit I'm
+currently wondering what happens if one thread puts a kprobe on an
+address that another thread tries to text_poke.
 
-"incompressible writeback" is completely unpredictable and
-uncontrollable; it depens on data patterns and compression algorithms.
-While "IDLE writeback" is predictable.
+Also, this relpoline magic is likely to start patching text at runtime
+on a semi-regular basis.  This type of patching is *slow*.  Is it a
+problem?
 
-I even suspect, that, *ideally*, we can remove "incompressible
-writeback". "IDLE pages" is a super set which also includes
-"incompressible" pages. So, technically, we still can do
-"incompressible writeback" from "IDLE writeback" path; but a much
-more reasonable one, based on a page idling period.
+> > 2. An indirect branch inside an interrupt or NMI handler might be the
+> >    one we patch
+>
+> But INT3s just use the existing stack, and NMIs support nesting, so I'm
+> thinking that should also be doable.  Andy?
+>
 
-I understand that you want to keep "direct incompressible writeback"
-around. ZRAM is especially popular on devices which do suffer from
-flash wearout, so I can see "incompressible writeback" path becoming
-a dead code, long term.
-== &< ==
-
-My concern is if we enable CONFIG_ZRAM_WRITEBACK in this implementation,
-both hugepage/idlepage writeck will turn on. However someuser want
-to enable only idlepage writeback so we need to introduce turn on/off
-knob for hugepage or new CONFIG_ZRAM_IDLEPAGE_WRITEBACK for those usecase.
-I don't want to make it complicated *if possible*.
-
-Long term, I imagine we need to make VM aware of new swap hierarchy
-a little bit different with as-is.
-For example, first high priority swap can return -EIO or -ENOCOMP,
-swap try to fallback to next lower priority swap device. With that,
-hugepage writeback will work tranparently.
-	
-> 
-> > If we hear some regression, we could restore the function.
-> 
-> Why not do that now?
-> 
-
-We want to remove it at this moment. 
+In principle, as long as the code isn't NOKPROBE_SYMBOL-ified, we
+should be fine, right?  I'd be a little nervous if we get an int3 in
+the C code that handles the early part of an NMI from user mode.  It's
+*probably* okay, but one of the alarming issues is that the int3
+return path will implicitly unmask NMI, which isn't fantastic.  Maybe
+we finally need to dust off my old "return using RET" code to get rid
+of that problem.
