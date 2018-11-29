@@ -2,80 +2,88 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B497EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA8DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1EA20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1EA20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CB4F20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:10:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="glzXTgP9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB4F20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeK2LNp (ORCPT
+        id S1727127AbeK2LOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:13:45 -0500
-Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:46478 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726328AbeK2LNp (ORCPT
+        Thu, 29 Nov 2018 06:14:04 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34634 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeK2LOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:13:45 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 72C89180A8141;
-        Thu, 29 Nov 2018 00:10:19 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: plane06_1f7db9e3ba51d
-X-Filterd-Recvd-Size: 2104
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 29 Nov 2018 00:10:16 +0000 (UTC)
-Message-ID: <cb0e83e2f99aa066d40b3bb1c560486f0f278445.camel@perches.com>
-Subject: Re: [PATCH v4 01/21] nvmem: Mark nvmem_type_str array with
- __maybe_unused
-From:   Joe Perches <joe@perches.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date:   Wed, 28 Nov 2018 16:10:15 -0800
-In-Reply-To: <20181128190537.14074-2-andriy.shevchenko@linux.intel.com>
-References: <20181128190537.14074-1-andriy.shevchenko@linux.intel.com>
-         <20181128190537.14074-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Nov 2018 06:14:03 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 17so69151pgg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:10:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=gxN6meZD+vL3jWc6RWDosS51Mvp7RAbZP0pEZDltb18=;
+        b=glzXTgP9RVW3Q+fHtdm4Gmchbs/kUTHp3HHm7/q7fNJM7MJw94zUIOFCwk9FA3tRny
+         chBx+lNb0h7BxU+LZ/DKE7ez0xAnhlde1Dx5/6T8v1AOPLzwvjSNUNkwLSRE8qSJjlU8
+         akEmy8LOqPypxZPcwDl+bLU2Dg6nCPxq9Lui6jQnFExExeD+WFwVX9mErKMM5nz52W9v
+         CFwVw6NHF7UiZg3UcwWuwuniWv3U/MsdPmNSMS25RRqlQ6bQ7D9paXy+/CmolrHzwG2B
+         VOcINC0l6/AAURqYbRwFKxDKS+4LkxJKR4cWivZLgVDdkuVxr7BfIaLqBPBcze+2rjBR
+         u/VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=gxN6meZD+vL3jWc6RWDosS51Mvp7RAbZP0pEZDltb18=;
+        b=AFSTvWDdTLwchpWyIVR24QJvURjZ/z1cECItMYTzmg7jbF912paSDzOlZ13G7kNxE5
+         DZFLDzSlP7Izgbpsrr7q7suZ1WBM+u6ZfLij6JQwUJEH/hIJy2tBCN+Rfn+mNM+9UBEh
+         cQzadR+5A3l1rWxEbhH65nSjnJOidQMcbFc9YV9IKC6bw+DnpMdolhKqXzm5dGDn2VcN
+         VF/Pu8IvbqsIx1F5KxbB+4j2zkfjVSuUOqYA56O4BX9Z5W7eX3HsS2ItNj6hdX+vOmeR
+         kOdNO1arf85jiiu34WnjAmnV3RrYS1J9xANfU6TCIuG9ISPeCVAY1MXwmEDv2kl+7dgn
+         iZzw==
+X-Gm-Message-State: AA+aEWbq6ePD6+eTFB/+1GPS+FLLszHZKDcyg6jS79tfzFiETyWdd000
+        TczEVvos9mIuF+7EzO/GkZiWMQ==
+X-Google-Smtp-Source: AFSGD/Whyayeeu/cJw7s5a8vSD3MBLZHxnydxg+Vzl6G9MqhcZqtSi3UUfjshdkPGA9YD1SoBOmMvA==
+X-Received: by 2002:a63:b54f:: with SMTP id u15mr34801840pgo.420.1543450238990;
+        Wed, 28 Nov 2018 16:10:38 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id y29sm87131pga.59.2018.11.28.16.10.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 16:10:38 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     He Yangxuan <yangxuan8282@gmail.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, carlo@caione.org,
+        narmstrong@baylibre.com, He Yangxuan <yangxuan8282@gmail.com>
+Subject: Re: [PATCH v5 0/3] arm64: dts: meson-gxl: add support for phicomm n1
+In-Reply-To: <20181110033904.4207-1-yangxuan8282@gmail.com>
+References: <20181110033904.4207-1-yangxuan8282@gmail.com>
+Date:   Wed, 28 Nov 2018 16:10:37 -0800
+Message-ID: <7hsgzkd9qa.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-28 at 21:05 +0200, Andy Shevchenko wrote:
-> Since we put static variable to a header file it's copied to each module
-> that includes the header. But not all of them are actually using it.
-> 
-> Mark nvmem_type_str array with __maybe_unused to make a compiler happy:
-> 
-> In file included from include/linux/rtc.h:18,
->                  from drivers/rtc/rtc-proc.c:15:
-> include/linux/nvmem-provider.h:29:27: warning: ‘nvmem_type_str’ defined but not used [-Wunused-const-variable=]
->  static const char * const nvmem_type_str[] = {
+He Yangxuan <yangxuan8282@gmail.com> writes:
 
-It would be better to move this definition into
-the one file that seems to use it.
+> This patch adds support for the Phicomm N1. This device based on P230 reference design.
+> The phy is RTL8211F, need to disable Energy Efficient Ethernet (EEE) to make it stable.
+> And this box doesn't have cvbs, so disable related section in device tree.
 
-$ git grep -w nvmem_type_str
-drivers/nvmem/core.c:   return sprintf(buf, "%s\n", nvmem_type_str[nvmem->type])
-include/linux/nvmem-provider.h:static const char * const nvmem_type_str[] = {
+Thanks for the series.
 
+Queued for v4.21 (branch: v4.21/dt64)
 
+Kevin
