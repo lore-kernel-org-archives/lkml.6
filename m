@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CA5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77745C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29AAA213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329EE2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGenz9C9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29AAA213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="grnliOzi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329EE2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388149AbeK3BeN (ORCPT
+        id S2388161AbeK3BeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35272 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:34:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388123AbeK3BeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:12 -0500
+        id S2388123AbeK3BeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:34:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0F692146F;
-        Thu, 29 Nov 2018 14:28:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48A882145D;
+        Thu, 29 Nov 2018 14:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501719;
-        bh=FYvtuFVyVnk7Uh/7SShkqevQgr7Wtj94MHZy9cS2guo=;
+        s=default; t=1543501721;
+        bh=OrNYUHpdQj6lcfKIT3GQCHk42xkIspMjInbHV8UIRvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGenz9C902Nf0cPOMR8k//LpBCKjb75O9e0OPPPXEalswvjOkb46fCyn/jn/sqC3T
-         0qVwuGXLFiAIQbDDZ1uAznTyeE7mGMuMqocWOOrRaWpRZhSMrgdRJ2e+xXSbGhOXqr
-         4PdG7mAMAST/SEdy0ppmeVqWOKZ5aLJay3YNe5I8=
+        b=grnliOzirqDu0O1k93WgRtS95CiQdgbmcje2SE+3Tq/DkiaG0k67vLXMsv7nf4X4J
+         exlEBtTYzMA8oeQaL4E0YD1DYH05pJvkk5umoZCr1eMByOEvPuGAGrbwPFsTmfk5UB
+         c6DrJfka5upMtyKombT/ICPGFzk7/uydKd1c8cxc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
+        stable@vger.kernel.org,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 013/110] xhci: Add quirk to workaround the errata seen on Cavium Thunder-X2 Soc
-Date:   Thu, 29 Nov 2018 15:11:44 +0100
-Message-Id: <20181129135921.778945636@linuxfoundation.org>
+Subject: [PATCH 4.19 014/110] usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
+Date:   Thu, 29 Nov 2018 15:11:45 +0100
+Message-Id: <20181129135921.817957465@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,110 +62,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cherian, George <George.Cherian@cavium.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 11644a7659529730eaf2f166efaabe7c3dc7af8c upstream.
+commit 2f31a67f01a8beb22cae754c53522cb61a005750 upstream.
 
-Implement workaround for ThunderX2 Errata-129 (documented in
-CN99XX Known Issues" available at Cavium support site).
-As per ThunderX2errata-129, USB 2 device may come up as USB 1
-if a connection to a USB 1 device is followed by another connection to
-a USB 2 device, the link will come up as USB 1 for the USB 2 device.
+USB3 roothub might autosuspend before a plugged USB3 device is detected,
+causing USB3 device enumeration failure.
 
-Resolution: Reset the PHY after the USB 1 device is disconnected.
-The PHY reset sequence is done using private registers in XHCI register
-space. After the PHY is reset we check for the PLL lock status and retry
-the operation if it fails. From our tests, retrying 4 times is sufficient.
+USB3 devices don't show up as connected and enabled until USB3 link trainig
+completes. On a fast booting platform with a slow USB3 link training the
+link might reach the connected enabled state just as the bus is suspending.
 
-Add a new quirk flag XHCI_RESET_PLL_ON_DISCONNECT to invoke the workaround
-in handle_xhci_port_status().
+If this device is discovered first time by the xhci_bus_suspend() routine
+it will be put to U3 suspended state like the other ports which failed to
+suspend earlier.
+
+The hub thread will notice the connect change and resume the bus,
+moving the port back to U0
+
+This U0 -> U3 -> U0 transition right after being connected seems to be
+too much for some devices, causing them to first go to SS.Inactive state,
+and finally end up stuck in a polling state with reset asserted
+
+Fix this by failing the bus suspend if a port has a connect change or is
+in a polling state in xhci_bus_suspend().
+
+Don't do any port changes until all ports are checked, buffer all port
+changes and only write them in the end if suspend can proceed
 
 Cc: stable@vger.kernel.org
-Signed-off-by: George Cherian <george.cherian@cavium.com>
 Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-pci.c  |    5 +++++
- drivers/usb/host/xhci-ring.c |   35 ++++++++++++++++++++++++++++++++++-
- drivers/usb/host/xhci.h      |    1 +
- 3 files changed, 40 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci-hub.c |   60 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 46 insertions(+), 14 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -231,6 +231,11 @@ static void xhci_pci_quirks(struct devic
- 	if (pdev->vendor == PCI_VENDOR_ID_TI && pdev->device == 0x8241)
- 		xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_7;
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1474,15 +1474,18 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 	unsigned long flags;
+ 	struct xhci_hub *rhub;
+ 	struct xhci_port **ports;
++	u32 portsc_buf[USB_MAXCHILDREN];
++	bool wake_enabled;
  
-+	if ((pdev->vendor == PCI_VENDOR_ID_BROADCOM ||
-+	     pdev->vendor == PCI_VENDOR_ID_CAVIUM) &&
-+	     pdev->device == 0x9026)
-+		xhci->quirks |= XHCI_RESET_PLL_ON_DISCONNECT;
-+
- 	if (xhci->quirks & XHCI_RESET_ON_RESUME)
- 		xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
- 				"QUIRK: Resetting on resume");
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1517,6 +1517,35 @@ static void handle_device_notification(s
- 		usb_wakeup_notification(udev->parent, udev->portnum);
- }
+ 	rhub = xhci_get_rhub(hcd);
+ 	ports = rhub->ports;
+ 	max_ports = rhub->num_ports;
+ 	bus_state = &xhci->bus_state[hcd_index(hcd)];
++	wake_enabled = hcd->self.root_hub->do_remote_wakeup;
  
-+/*
-+ * Quirk hanlder for errata seen on Cavium ThunderX2 processor XHCI
-+ * Controller.
-+ * As per ThunderX2errata-129 USB 2 device may come up as USB 1
-+ * If a connection to a USB 1 device is followed by another connection
-+ * to a USB 2 device.
-+ *
-+ * Reset the PHY after the USB device is disconnected if device speed
-+ * is less than HCD_USB3.
-+ * Retry the reset sequence max of 4 times checking the PLL lock status.
-+ *
-+ */
-+static void xhci_cavium_reset_phy_quirk(struct xhci_hcd *xhci)
-+{
-+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
-+	u32 pll_lock_check;
-+	u32 retry_count = 4;
-+
-+	do {
-+		/* Assert PHY reset */
-+		writel(0x6F, hcd->regs + 0x1048);
-+		udelay(10);
-+		/* De-assert the PHY reset */
-+		writel(0x7F, hcd->regs + 0x1048);
-+		udelay(200);
-+		pll_lock_check = readl(hcd->regs + 0x1070);
-+	} while (!(pll_lock_check & 0x1) && --retry_count);
-+}
-+
- static void handle_port_status(struct xhci_hcd *xhci,
- 		union xhci_trb *event)
- {
-@@ -1650,8 +1679,12 @@ static void handle_port_status(struct xh
- 		goto cleanup;
+ 	spin_lock_irqsave(&xhci->lock, flags);
+ 
+-	if (hcd->self.root_hub->do_remote_wakeup) {
++	if (wake_enabled) {
+ 		if (bus_state->resuming_ports ||	/* USB2 */
+ 		    bus_state->port_remote_wakeup) {	/* USB3 */
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+@@ -1490,26 +1493,36 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 			return -EBUSY;
+ 		}
  	}
+-
+-	port_index = max_ports;
++	/*
++	 * Prepare ports for suspend, but don't write anything before all ports
++	 * are checked and we know bus suspend can proceed
++	 */
+ 	bus_state->bus_suspended = 0;
++	port_index = max_ports;
+ 	while (port_index--) {
+-		/* suspend the port if the port is not suspended */
+ 		u32 t1, t2;
+-		int slot_id;
  
--	if (hcd->speed < HCD_USB3)
-+	if (hcd->speed < HCD_USB3) {
- 		xhci_test_and_clear_bit(xhci, port, PORT_PLC);
-+		if ((xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT) &&
-+		    (portsc & PORT_CSC) && !(portsc & PORT_CONNECT))
-+			xhci_cavium_reset_phy_quirk(xhci);
+ 		t1 = readl(ports[port_index]->addr);
+ 		t2 = xhci_port_state_to_neutral(t1);
++		portsc_buf[port_index] = 0;
+ 
+-		if ((t1 & PORT_PE) && !(t1 & PORT_PLS_MASK)) {
+-			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+-			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+-					port_index + 1);
+-			if (slot_id) {
++		/* Bail out if a USB3 port has a new device in link training */
++		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++			bus_state->bus_suspended = 0;
++			spin_unlock_irqrestore(&xhci->lock, flags);
++			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
++			return -EBUSY;
++		}
++
++		/* suspend ports in U0, or bail out for new connect changes */
++		if ((t1 & PORT_PE) && (t1 & PORT_PLS_MASK) == XDEV_U0) {
++			if ((t1 & PORT_CSC) && wake_enabled) {
++				bus_state->bus_suspended = 0;
+ 				spin_unlock_irqrestore(&xhci->lock, flags);
+-				xhci_stop_device(xhci, slot_id, 1);
+-				spin_lock_irqsave(&xhci->lock, flags);
++				xhci_dbg(xhci, "Bus suspend bailout, port connect change\n");
++				return -EBUSY;
+ 			}
++			xhci_dbg(xhci, "port %d not suspended\n", port_index);
+ 			t2 &= ~PORT_PLS_MASK;
+ 			t2 |= PORT_LINK_STROBE | XDEV_U3;
+ 			set_bit(port_index, &bus_state->bus_suspended);
+@@ -1518,7 +1531,7 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 		 * including the USB 3.0 roothub, but only if CONFIG_PM
+ 		 * is enabled, so also enable remote wake here.
+ 		 */
+-		if (hcd->self.root_hub->do_remote_wakeup) {
++		if (wake_enabled) {
+ 			if (t1 & PORT_CONNECT) {
+ 				t2 |= PORT_WKOC_E | PORT_WKDISC_E;
+ 				t2 &= ~PORT_WKCONN_E;
+@@ -1538,7 +1551,26 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 
+ 		t1 = xhci_port_state_to_neutral(t1);
+ 		if (t1 != t2)
+-			writel(t2, ports[port_index]->addr);
++			portsc_buf[port_index] = t2;
 +	}
- 
- cleanup:
- 	/* Update event ring dequeue pointer before dropping the lock */
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1846,6 +1846,7 @@ struct xhci_hcd {
- #define XHCI_SUSPEND_DELAY	BIT_ULL(30)
- #define XHCI_INTEL_USB_ROLE_SW	BIT_ULL(31)
- #define XHCI_ZERO_64B_REGS	BIT_ULL(32)
-+#define XHCI_RESET_PLL_ON_DISCONNECT	BIT_ULL(34)
- 
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
++
++	/* write port settings, stopping and suspending ports if needed */
++	port_index = max_ports;
++	while (port_index--) {
++		if (!portsc_buf[port_index])
++			continue;
++		if (test_bit(port_index, &bus_state->bus_suspended)) {
++			int slot_id;
++
++			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
++							    port_index + 1);
++			if (slot_id) {
++				spin_unlock_irqrestore(&xhci->lock, flags);
++				xhci_stop_device(xhci, slot_id, 1);
++				spin_lock_irqsave(&xhci->lock, flags);
++			}
++		}
++		writel(portsc_buf[port_index], ports[port_index]->addr);
+ 	}
+ 	hcd->state = HC_STATE_SUSPENDED;
+ 	bus_state->next_statechange = jiffies + msecs_to_jiffies(10);
 
 
