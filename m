@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18F8C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE93BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD57E20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD57E20834
+	by mail.kernel.org (Postfix) with ESMTP id 7A8B520834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:17:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8B520834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbeK2TV3 (ORCPT
+        id S1727773AbeK2TVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:21:29 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:27144 "EHLO
+        Thu, 29 Nov 2018 14:21:31 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:46983 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726733AbeK2TV3 (ORCPT
+        with ESMTP id S1726841AbeK2TVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:21:29 -0500
+        Thu, 29 Nov 2018 14:21:30 -0500
 X-IronPort-AV: E=Sophos;i="5.56,293,1539619200"; 
-   d="scan'208";a="48821854"
+   d="scan'208";a="48821856"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 29 Nov 2018 16:16:55 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id C6E944B734A2;
-        Thu, 29 Nov 2018 16:16:52 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id E2F064B734A5;
+        Thu, 29 Nov 2018 16:16:54 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:16:58 +0800
+ (TLS) id 14.3.408.0; Thu, 29 Nov 2018 16:17:00 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
-Date:   Thu, 29 Nov 2018 16:16:27 +0800
-Message-ID: <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v12 2/5] x86/boot: Add efi_get_rsdp_addr() to find RSDP from EFI table
+Date:   Thu, 29 Nov 2018 16:16:28 +0800
+Message-ID: <20181129081631.11139-3-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
 References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: C6E944B734A2.A8872
+X-yoursite-MailScanner-ID: E2F064B734A5.A6AB9
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,117 +58,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 To fix the conflict between KASLR and memory-hotremove, memory
-information in SRAT table is necessary.
+information in SRAT table is necessary. So RSDP and SRAT table
+should be parsed.
 
-ACPI SRAT (System/Static Resource Affinity Table) can show the details
-about memory ranges, including ranges of memory provided by hot-added
-memory devices. SRAT table must be introduced by RSDP pointer (Root
-System Description Pointer). So RSDP should be found firstly.
-
-When booting form KEXEC/EFI/BIOS, the methods to find RSDP pointer
-are different. When booting from KEXEC, 'acpi_rsdp' may have been
-added to cmdline, so parse the cmdline and find the RSDP pointer.
+When booting form KEXEC/EFI/BIOS, the methods to compute RSDP pointer
+are different. When booting from EFI, EFI table points to RSDP.
+So parse the EFI table and find the RSDP pointer.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpitb.c | 33 +++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/misc.c   |  5 +++++
- arch/x86/boot/compressed/misc.h   |  4 ++++
- lib/kstrtox.c                     |  5 +++++
- 4 files changed, 47 insertions(+)
- create mode 100644 arch/x86/boot/compressed/acpitb.c
+ arch/x86/boot/compressed/acpitb.c | 79 +++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
 diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-new file mode 100644
-index 000000000000..614c45655cff
---- /dev/null
+index 614c45655cff..c43546648638 100644
+--- a/arch/x86/boot/compressed/acpitb.c
 +++ b/arch/x86/boot/compressed/acpitb.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define BOOT_CTYPE_H
-+#include "misc.h"
-+#include "error.h"
+@@ -31,3 +31,82 @@ static acpi_physical_address get_acpi_rsdp(void)
+ 	return 0;
+ #endif
+ }
 +
-+#include <linux/efi.h>
-+#include <asm/efi.h>
-+#include <linux/numa.h>
-+#include <linux/acpi.h>
++/* Search EFI table for RSDP. */
++static acpi_physical_address efi_get_rsdp_addr(void)
++{
++#ifdef CONFIG_EFI
++	acpi_physical_address rsdp_addr = 0;
++	efi_system_table_t *systab;
++	struct efi_info *e;
++	bool efi_64;
++	char *sig;
++	int size;
++	int i;
 +
-+#define STATIC
-+#include <linux/decompress/mm.h>
++	e = &boot_params->efi_info;
++	sig = (char *)&e->efi_loader_signature;
 +
-+/* Store the immovable memory regions. */
-+struct mem_vector immovable_mem[MAX_NUMNODES*2];
++	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
++		efi_64 = true;
++	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
++		efi_64 = false;
++	else {
++		debug_putstr("Wrong EFI loader signature.\n");
++		return 0;
++	}
++
++	/* Get systab from boot params. Based on efi_init(). */
++#ifdef CONFIG_X86_64
++	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
++#else
++	if (e->efi_systab_hi || e->efi_memmap_hi) {
++		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
++		return 0;
++	}
++	systab = (efi_system_table_t *)e->efi_systab;
 +#endif
 +
-+static acpi_physical_address get_acpi_rsdp(void)
-+{
-+#ifdef CONFIG_KEXEC
-+	unsigned long long res;
-+	int len = 0;
-+	char *val;
++	if (!systab)
++		return 0;
 +
-+	val = malloc(19);
-+	len = cmdline_find_option("acpi_rsdp", val, 19);
-+	if (len > 0) {
-+		val[len] = 0;
-+		return (acpi_physical_address)kstrtoull(val, 16, &res);
++	/*
++	 * Get EFI tables from systab. Based on efi_config_init() and
++	 * efi_config_parse_tables().
++	 */
++	size = efi_64 ? sizeof(efi_config_table_64_t) :
++			sizeof(efi_config_table_32_t);
++
++	for (i = 0; i < systab->nr_tables; i++) {
++		void *config_tables;
++		unsigned long table;
++		efi_guid_t guid;
++
++		config_tables = (void *)(systab->tables + size * i);
++		if (efi_64) {
++			efi_config_table_64_t *tmp_table;
++
++			tmp_table = (efi_config_table_64_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
++
++			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
++				debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
++				return 0;
++			}
++		} else {
++			efi_config_table_32_t *tmp_table;
++
++			tmp_table = (efi_config_table_32_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
++		}
++
++		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
++			rsdp_addr = (acpi_physical_address)table;
++		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
++			return (acpi_physical_address)table;
 +	}
-+	return 0;
++	return rsdp_addr;
 +#endif
 +}
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index 8dd1d5ccae58..e51713fe3add 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -12,6 +12,7 @@
-  * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
-  */
- 
-+#define BOOT_CTYPE_H
- #include "misc.h"
- #include "error.h"
- #include "pgtable.h"
-@@ -426,3 +427,7 @@ void fortify_panic(const char *name)
- {
- 	error("detected buffer overflow");
- }
-+
-+#ifdef BOOT_STRING
-+#include "../../../../lib/kstrtox.c"
-+#endif
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index a1d5918765f3..809c31effa4b 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -116,3 +116,7 @@ static inline void console_init(void)
- void set_sev_encryption_mask(void);
- 
- #endif
-+
-+/* acpitb.c */
-+#define BOOT_STRING
-+extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
-diff --git a/lib/kstrtox.c b/lib/kstrtox.c
-index 1006bf70bf74..a0ac1b2257b8 100644
---- a/lib/kstrtox.c
-+++ b/lib/kstrtox.c
-@@ -126,6 +126,9 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
- }
- EXPORT_SYMBOL(kstrtoull);
- 
-+/* Make compressed period code be able to use kstrtoull(). */
-+#ifndef BOOT_STRING
-+
- /**
-  * kstrtoll - convert a string to a long long
-  * @s: The start of the string. The string must be null-terminated, and may also
-@@ -408,3 +411,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
- kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
- kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
- kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
-+
-+#endif /* BOOT_STRING */
 -- 
 2.19.1
 
