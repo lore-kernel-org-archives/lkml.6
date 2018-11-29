@@ -2,292 +2,200 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD460C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BAC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66ED12146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52C020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Zy6VtwLw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66ED12146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0ZhGS47d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52C020673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388457AbeK3BsT (ORCPT
+        id S2388482AbeK3BsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:48:19 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42358 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387755AbeK3BsP (ORCPT
+        Thu, 29 Nov 2018 20:48:21 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:57438 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387401AbeK3BsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:48:15 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so2156795wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DnCS1rs6b2H/3VHK6H3MQrXNsxUPLpLFhvXASv311qQ=;
-        b=Zy6VtwLwktLr7OQ8uxJnrF3xgCsyPI69Fyv9iWR7S93YCaeurjl4+5Bbs+YcOtP0w0
-         Cg7TopLOW61w7tUJt5t/KyQUxVwEfmpD0qU/FmYFOmO+7TlXKCFCsmQ7lRpy4YEZnNhq
-         hqGambPnZcvIkHcjewhYO7zamfCWbAEFkJIvg9t7RGiRy29a1vLIUjMwEd4am2tjKdFu
-         t3kBpjISl/oX0EG2bFqKW+vJAVZptEo1W3PtfPnHdGkD3fgzV4NAQck75vOYTmc0bgDt
-         0Qz/iNSaa5LDmNQZbWWAIjTZ8HKxW3Wy+5mTqgtXSvFqYUR+FBGRn4StMdOJ1M7UIKE0
-         w6eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=DnCS1rs6b2H/3VHK6H3MQrXNsxUPLpLFhvXASv311qQ=;
-        b=hio6sTU7Zlf5UOnfB+dGUpxxvpKRRmKI5MBPbic1xwIUA7EnnUAW3uQ3c4XXWgFzb8
-         FAa6fNnNEFprqaxlPvWP9zojJ34iqp/hMzwlrtlxCN9xTibntm4kxDEkfWoWpbDXV4PB
-         Nqnlc2UIdDBRucEo/SKZrLb+5ZAK7eHhaxu5uKuxdMjFCVgAKbkK0rB3oTnpyZra+yAf
-         bXn4qnEST6EffQNmV2+fhbkuNKlXGpbRT0zD39y3ECofAB5yr6Q6T5FzXXgvlYhurdK+
-         aQZBjheIb4NXYp589MUYuyKXSM6ZeX3+X7Hn7FuwvGliqJvQlff2rCw4BfQRcrVQ+Kn7
-         fHWg==
-X-Gm-Message-State: AA+aEWZiRojvU8Mylcijyw2NskP/dKM7ivVLkccEGUC0Qg2XrjCqEKrC
-        bi4P8dO4qMTuaNhGRf13zb6/RQ==
-X-Google-Smtp-Source: AFSGD/VkAY8CFCRs+FFJN1VDQoYes/wgq4rCsg1k/fegk1tjSgrIaumUvBSVgJ4AF3g8vqrCmHJO/g==
-X-Received: by 2002:adf:8464:: with SMTP id 91mr1759409wrf.251.1543502558171;
-        Thu, 29 Nov 2018 06:42:38 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id t131sm875406wmt.1.2018.11.29.06.42.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 29 Nov 2018 06:42:37 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net, ebiggers@kernel.org,
-        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v5 04/11] crypto: crypto_user_stat: split user space crypto stat structures
-Date:   Thu, 29 Nov 2018 14:42:19 +0000
-Message-Id: <1543502546-23870-5-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
-References: <1543502546-23870-1-git-send-email-clabbe@baylibre.com>
+        Thu, 29 Nov 2018 20:48:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATEYE6a077723;
+        Thu, 29 Nov 2018 14:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=6C5BQDHCe8J1kMwqFRz4RD4rFxM9vqC2cOlO1D5qSIE=;
+ b=0ZhGS47dIqjxhIpmcuYsHdF6AnCXxSP1Vruu0lMReltPg3iPOuHRxyPKxSZ2Ba1jJgx7
+ d6DM+whgE/iIK44BeJxiiIod5ArgGnPPIZykp9lzF0UULUwPPh4yo7r7Nu39L3qWVTnT
+ bsaKN+H4M5usG3IJRwqlaJ94peCHwoPOqvYL4mlOhPr3XeclKctUXE3KikdAhL7TpV78
+ /tBSFgoRmf/K7y/1NXZx1sbQh5/L43Tu0VtwD9CWTqvZEGzpVl3UNfABFGjCdtb9pgJN
+ qGtt/MjeflYz6rQJp1oet7pkiqp5+IIcTHJirPZ5djEp4dnTIkuiwxyeFFhm8KYWC41B WA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2nxx2ugkbf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 14:41:09 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wATEf8SC018889
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 14:41:08 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wATEf8Ad030698;
+        Thu, 29 Nov 2018 14:41:08 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 06:41:08 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 20F186A00FB; Thu, 29 Nov 2018 09:41:04 -0500 (EST)
+Date:   Thu, 29 Nov 2018 09:41:04 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 07/28] x86/speculation: Reorganize speculation control
+ MSRs update
+Message-ID: <20181129144104.GH32259@char.us.oracle.com>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185004.151077005@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181125185004.151077005@linutronix.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=819
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is cleaner to have each stat in their own structures.
+On Sun, Nov 25, 2018 at 07:33:35PM +0100, Thomas Gleixner wrote:
+> The logic to detect whether there's a change in the previous and next
+> task's flag relevant to update speculation control MSRs are spread out
+> across multiple functions.
+> 
+> Consolidate all checks needed for updating speculation control MSRs into
+> the new __speculation_ctrl_update() helper function.
+> 
+> This makes it easy to pick the right speculation control MSR and the bits
+> in the MSR that needs updating based on TIF flags changes.
+> 
+> Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- crypto/crypto_user_stat.c       |  20 +++----
- include/uapi/linux/cryptouser.h | 100 ++++++++++++++++++++------------
- 2 files changed, 72 insertions(+), 48 deletions(-)
 
-diff --git a/crypto/crypto_user_stat.c b/crypto/crypto_user_stat.c
-index 352569f378a0..3c14be2f7a1b 100644
---- a/crypto/crypto_user_stat.c
-+++ b/crypto/crypto_user_stat.c
-@@ -33,7 +33,7 @@ struct crypto_dump_info {
- 
- static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat raead;
-+	struct crypto_stat_aead raead;
- 	u64 v64;
- 
- 	memset(&raead, 0, sizeof(raead));
-@@ -56,7 +56,7 @@ static int crypto_report_aead(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rcipher;
-+	struct crypto_stat_cipher rcipher;
- 	u64 v64;
- 
- 	memset(&rcipher, 0, sizeof(rcipher));
-@@ -79,7 +79,7 @@ static int crypto_report_cipher(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rcomp;
-+	struct crypto_stat_compress rcomp;
- 	u64 v64;
- 
- 	memset(&rcomp, 0, sizeof(rcomp));
-@@ -101,7 +101,7 @@ static int crypto_report_comp(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat racomp;
-+	struct crypto_stat_compress racomp;
- 	u64 v64;
- 
- 	memset(&racomp, 0, sizeof(racomp));
-@@ -123,7 +123,7 @@ static int crypto_report_acomp(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rakcipher;
-+	struct crypto_stat_akcipher rakcipher;
- 	u64 v64;
- 
- 	memset(&rakcipher, 0, sizeof(rakcipher));
-@@ -150,7 +150,7 @@ static int crypto_report_akcipher(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rkpp;
-+	struct crypto_stat_kpp rkpp;
- 	u64 v;
- 
- 	memset(&rkpp, 0, sizeof(rkpp));
-@@ -171,7 +171,7 @@ static int crypto_report_kpp(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rhash;
-+	struct crypto_stat_hash rhash;
- 	u64 v64;
- 
- 	memset(&rhash, 0, sizeof(rhash));
-@@ -190,7 +190,7 @@ static int crypto_report_ahash(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rhash;
-+	struct crypto_stat_hash rhash;
- 	u64 v64;
- 
- 	memset(&rhash, 0, sizeof(rhash));
-@@ -209,7 +209,7 @@ static int crypto_report_shash(struct sk_buff *skb, struct crypto_alg *alg)
- 
- static int crypto_report_rng(struct sk_buff *skb, struct crypto_alg *alg)
- {
--	struct crypto_stat rrng;
-+	struct crypto_stat_rng rrng;
- 	u64 v64;
- 
- 	memset(&rrng, 0, sizeof(rrng));
-@@ -248,7 +248,7 @@ static int crypto_reportstat_one(struct crypto_alg *alg,
- 	if (nla_put_u32(skb, CRYPTOCFGA_PRIORITY_VAL, alg->cra_priority))
- 		goto nla_put_failure;
- 	if (alg->cra_flags & CRYPTO_ALG_LARVAL) {
--		struct crypto_stat rl;
-+		struct crypto_stat_larval rl;
- 
- 		memset(&rl, 0, sizeof(rl));
- 		strscpy(rl.type, "larval", sizeof(rl.type));
-diff --git a/include/uapi/linux/cryptouser.h b/include/uapi/linux/cryptouser.h
-index 9f8187077ce4..3a70f025e27d 100644
---- a/include/uapi/linux/cryptouser.h
-+++ b/include/uapi/linux/cryptouser.h
-@@ -76,45 +76,69 @@ struct crypto_user_alg {
- 	__u32 cru_flags;
- };
- 
--struct crypto_stat {
--	char type[CRYPTO_MAX_NAME];
--	union {
--		__u64 stat_encrypt_cnt;
--		__u64 stat_compress_cnt;
--		__u64 stat_generate_cnt;
--		__u64 stat_hash_cnt;
--		__u64 stat_setsecret_cnt;
--	};
--	union {
--		__u64 stat_encrypt_tlen;
--		__u64 stat_compress_tlen;
--		__u64 stat_generate_tlen;
--		__u64 stat_hash_tlen;
--	};
--	union {
--		__u64 stat_akcipher_err_cnt;
--		__u64 stat_cipher_err_cnt;
--		__u64 stat_compress_err_cnt;
--		__u64 stat_aead_err_cnt;
--		__u64 stat_hash_err_cnt;
--		__u64 stat_rng_err_cnt;
--		__u64 stat_kpp_err_cnt;
--	};
--	union {
--		__u64 stat_decrypt_cnt;
--		__u64 stat_decompress_cnt;
--		__u64 stat_seed_cnt;
--		__u64 stat_generate_public_key_cnt;
--	};
--	union {
--		__u64 stat_decrypt_tlen;
--		__u64 stat_decompress_tlen;
--	};
--	union {
--		__u64 stat_verify_cnt;
--		__u64 stat_compute_shared_secret_cnt;
--	};
-+struct crypto_stat_aead {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_encrypt_cnt;
-+	__u64 stat_encrypt_tlen;
-+	__u64 stat_decrypt_cnt;
-+	__u64 stat_decrypt_tlen;
-+	__u64 stat_aead_err_cnt;
-+};
-+
-+struct crypto_stat_akcipher {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_encrypt_cnt;
-+	__u64 stat_encrypt_tlen;
-+	__u64 stat_decrypt_cnt;
-+	__u64 stat_decrypt_tlen;
-+	__u64 stat_verify_cnt;
- 	__u64 stat_sign_cnt;
-+	__u64 stat_akcipher_err_cnt;
-+};
-+
-+struct crypto_stat_cipher {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_encrypt_cnt;
-+	__u64 stat_encrypt_tlen;
-+	__u64 stat_decrypt_cnt;
-+	__u64 stat_decrypt_tlen;
-+	__u64 stat_cipher_err_cnt;
-+};
-+
-+struct crypto_stat_compress {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_compress_cnt;
-+	__u64 stat_compress_tlen;
-+	__u64 stat_decompress_cnt;
-+	__u64 stat_decompress_tlen;
-+	__u64 stat_compress_err_cnt;
-+};
-+
-+struct crypto_stat_hash {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_hash_cnt;
-+	__u64 stat_hash_tlen;
-+	__u64 stat_hash_err_cnt;
-+};
-+
-+struct crypto_stat_kpp {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_setsecret_cnt;
-+	__u64 stat_generate_public_key_cnt;
-+	__u64 stat_compute_shared_secret_cnt;
-+	__u64 stat_kpp_err_cnt;
-+};
-+
-+struct crypto_stat_rng {
-+	char type[CRYPTO_MAX_NAME];
-+	__u64 stat_generate_cnt;
-+	__u64 stat_generate_tlen;
-+	__u64 stat_seed_cnt;
-+	__u64 stat_rng_err_cnt;
-+};
-+
-+struct crypto_stat_larval {
-+	char type[CRYPTO_MAX_NAME];
- };
- 
- struct crypto_report_larval {
--- 
-2.18.1
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
+.. and I also have two tiny comments below - feel free to
+incorporate or not them in.
+> 
+> ---
+>  arch/x86/kernel/process.c |   42 ++++++++++++++++++++++++++++++++----------
+>  1 file changed, 32 insertions(+), 10 deletions(-)
+> 
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -397,25 +397,48 @@ static __always_inline void amd_set_ssb_
+>  
+>  static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+>  {
+> -	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+> +	u64 msr = x86_spec_ctrl_base;
+> +
+> +	/*
+> +	 * If X86_FEATURE_SSBD is not set, the SSBD bit is not to be
+> +	 * touched.
+> +	 */
+
+I had a bit of hard time parsing that. Could it perhaps be changed to:
+
+"If X86_FEATURE_SSBD is off (not set), we MUST leave the SSBD bit alone"
+> +	if (static_cpu_has(X86_FEATURE_SSBD))
+> +		msr |= ssbd_tif_to_spec_ctrl(tifn);
+>  
+>  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+>  }
+>  
+> -static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+> +/*
+> + * Update the MSRs managing speculation control, during context switch.
+> + *
+> + * tifp: Previous task's thread flags
+> + * tifn: Next task's thread flags
+> + */
+> +static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+> +						      unsigned long tifn)
+>  {
+> -	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+> -		amd_set_ssb_virt_state(tifn);
+> -	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+> -		amd_set_core_ssb_state(tifn);
+> -	else
+> +	bool updmsr = false;
+> +
+> +	/* If TIF_SSBD is different, select the proper mitigation method */
+> +	if ((tifp ^ tifn) & _TIF_SSBD) {
+> +		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+> +			amd_set_ssb_virt_state(tifn);
+> +		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+> +			amd_set_core_ssb_state(tifn);
+> +		else if (static_cpu_has(X86_FEATURE_SSBD))
+> +			updmsr  = true;
+                              ^
+Nothing really big, but you have an extra space here.
+> +	}
+> +
+> +	if (updmsr)
+>  		spec_ctrl_update_msr(tifn);
+>  }
+>  
+>  void speculation_ctrl_update(unsigned long tif)
+>  {
+> +	/* Forced update. Make sure all relevant TIF flags are different */
+>  	preempt_disable();
+> -	__speculation_ctrl_update(tif);
+> +	__speculation_ctrl_update(~tif, tif);
+>  	preempt_enable();
+>  }
+>  
+> @@ -451,8 +474,7 @@ void __switch_to_xtra(struct task_struct
+>  	if ((tifp ^ tifn) & _TIF_NOCPUID)
+>  		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+>  
+> -	if ((tifp ^ tifn) & _TIF_SSBD)
+> -		__speculation_ctrl_update(tifn);
+> +	__speculation_ctrl_update(tifp, tifn);
+>  }
+>  
+>  /*
+> 
+> 
