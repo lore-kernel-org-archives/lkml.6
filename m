@@ -3,184 +3,181 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C14C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C96BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050E6208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050E6208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 20B3520989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B3520989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeK2TPD (ORCPT
+        id S1728346AbeK2TPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:03 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:34593 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 14:15:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56748 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbeK2TPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:03 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4359F165gbz9vGpG;
-        Thu, 29 Nov 2018 09:10:29 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id bewVi_vR9Fxp; Thu, 29 Nov 2018 09:10:29 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4359F15cXdz9vGnW;
-        Thu, 29 Nov 2018 09:10:29 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9E1BF8B890;
-        Thu, 29 Nov 2018 09:10:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 0JhyDmMu8E2V; Thu, 29 Nov 2018 09:10:30 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6710C8B762;
-        Thu, 29 Nov 2018 09:10:30 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 1B90069AEA; Thu, 29 Nov 2018 08:10:30 +0000 (UTC)
-Message-Id: <842c27a242fba2994a9c1cca37ff1c215bbfb583.1543478200.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
-References: <cover.1543478199.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v8 13/20] powerpc/8xx: Move SW perf counters in first 32kb of
- memory
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 08:10:30 +0000 (UTC)
+        id S1727166AbeK2TPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:15:04 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8B7130C11FB;
+        Thu, 29 Nov 2018 08:10:32 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 27F7E60CCF;
+        Thu, 29 Nov 2018 08:10:20 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, x86@kernel.org,
+        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
+        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
+        bhe@redhat.com
+Subject: [PATCH 1/2 v8] resource: add the new I/O resource descriptor 'IORES_DESC_RESERVED'
+Date:   Thu, 29 Nov 2018 16:09:55 +0800
+Message-Id: <20181129080956.20776-2-lijiang@redhat.com>
+In-Reply-To: <20181129080956.20776-1-lijiang@redhat.com>
+References: <20181129080956.20776-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 29 Nov 2018 08:10:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to simplify time critical exceptions handling 8xx
-specific SW perf counters, this patch moves the counters into
-the beginning of memory. This is possible because .text is readable
-and the counters are never modified outside of the handlers.
+When doing kexec_file_load, the first kernel needs to pass the e820
+reserved ranges to the second kernel. But kernel can not exactly
+match the e820 reserved ranges when walking through the iomem resources
+with the descriptor 'IORES_DESC_NONE', because several e820 types(
+e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
+_TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
+may pass these four types to the kdump kernel, that is not desired result.
 
-By doing this, we avoid having to set a second register with
-the upper part of the address of the counters.
+So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
+for the iomem resources search interfaces. It is helpful to exactly
+match the reserved resource ranges when walking through iomem resources.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
+these code originally related to the descriptor 'IORES_DESC_NONE' need to
+be updated. Otherwise, it will be easily confused and also cause some
+errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
+descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
+changed.
+
+Suggested-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 ---
- arch/powerpc/kernel/head_8xx.S | 58 ++++++++++++++++++++----------------------
- 1 file changed, 28 insertions(+), 30 deletions(-)
+ arch/ia64/kernel/efi.c |  4 ++++
+ arch/x86/kernel/e820.c |  2 +-
+ arch/x86/mm/ioremap.c  | 13 ++++++++++++-
+ include/linux/ioport.h |  1 +
+ kernel/resource.c      |  6 +++---
+ 5 files changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 3b67b9533c82..c203defe49a4 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -106,6 +106,23 @@ turn_on_mmu:
- 	mtspr	SPRN_SRR0,r0
- 	rfi				/* enables MMU */
+diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
+index 8f106638913c..1841e9b4db30 100644
+--- a/arch/ia64/kernel/efi.c
++++ b/arch/ia64/kernel/efi.c
+@@ -1231,6 +1231,10 @@ efi_initialize_iomem_resources(struct resource *code_resource,
+ 				break;
  
+ 			case EFI_RESERVED_TYPE:
++				name = "reserved";
++				desc = IORES_DESC_RESERVED;
++				break;
 +
-+#ifdef CONFIG_PERF_EVENTS
-+	.align	4
-+
-+	.globl	itlb_miss_counter
-+itlb_miss_counter:
-+	.space	4
-+
-+	.globl	dtlb_miss_counter
-+dtlb_miss_counter:
-+	.space	4
-+
-+	.globl	instruction_counter
-+instruction_counter:
-+	.space	4
-+#endif
-+
- /*
-  * Exception entry code.  This code runs with address translation
-  * turned off, i.e. using physical addresses.
-@@ -384,17 +401,16 @@ InstructionTLBMiss:
+ 			case EFI_RUNTIME_SERVICES_CODE:
+ 			case EFI_RUNTIME_SERVICES_DATA:
+ 			case EFI_ACPI_RECLAIM_MEMORY:
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 50895c2f937d..57fafdafb860 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1048,10 +1048,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+ 	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
+ 	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
+ 	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
++	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+ 	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+ 	case E820_TYPE_RAM:		/* Fall-through: */
+ 	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+-	case E820_TYPE_RESERVED:	/* Fall-through: */
+ 	default:			return IORES_DESC_NONE;
+ 	}
+ }
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 5378d10f1d31..fea2ef99415d 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -83,7 +83,18 @@ static bool __ioremap_check_ram(struct resource *res)
  
- #ifdef CONFIG_PERF_EVENTS
- 	patch_site	0f, patch__itlbmiss_perf
--0:	lis	r10, (itlb_miss_counter - PAGE_OFFSET)@ha
--	lwz	r11, (itlb_miss_counter - PAGE_OFFSET)@l(r10)
--	addi	r11, r11, 1
--	stw	r11, (itlb_miss_counter - PAGE_OFFSET)@l(r10)
--#endif
-+0:	lwz	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
-+	addi	r10, r10, 1
-+	stw	r10, (itlb_miss_counter - PAGE_OFFSET)@l(0)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
- #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- #endif
- 	rfi
-+#endif
+ static int __ioremap_check_desc_other(struct resource *res)
+ {
+-	return (res->desc != IORES_DESC_NONE);
++	/*
++	 * But now, the 'E820_TYPE_RESERVED' type is converted to the new
++	 * descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE',
++	 * it has been changed. And the value of 'mem_flags.desc_other'
++	 * is equal to 'true' if we don't strengthen the condition in this
++	 * function, that is wrong. Because originally it is equal to
++	 * 'false' for the same reserved type.
++	 *
++	 * So, that would be nice to keep it the same as before.
++	 */
++	return ((res->desc != IORES_DESC_NONE) &&
++		(res->desc != IORES_DESC_RESERVED));
+ }
  
- #ifdef CONFIG_HUGETLB_PAGE
- 10:	/* 8M pages */
-@@ -509,15 +525,14 @@ DataStoreTLBMiss:
+ static int __ioremap_res_check(struct resource *res, void *arg)
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index da0ebaec25f0..6ed59de48bd5 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -133,6 +133,7 @@ enum {
+ 	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+ 	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+ 	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
++	IORES_DESC_RESERVED			= 8,
+ };
  
- #ifdef CONFIG_PERF_EVENTS
- 	patch_site	0f, patch__dtlbmiss_perf
--0:	lis	r10, (dtlb_miss_counter - PAGE_OFFSET)@ha
--	lwz	r11, (dtlb_miss_counter - PAGE_OFFSET)@l(r10)
--	addi	r11, r11, 1
--	stw	r11, (dtlb_miss_counter - PAGE_OFFSET)@l(r10)
--#endif
-+0:	lwz	r10, (dtlb_miss_counter - PAGE_OFFSET)@l(0)
-+	addi	r10, r10, 1
-+	stw	r10, (dtlb_miss_counter - PAGE_OFFSET)@l(0)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
- 	mfspr	r12, SPRN_SPRG_SCRATCH2
- 	rfi
-+#endif
+ /* helpers to define resources */
+diff --git a/kernel/resource.c b/kernel/resource.c
+index b0fbf685c77a..f34a632c4169 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -994,7 +994,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+ 	res->start = start;
+ 	res->end = end;
+ 	res->flags = type | IORESOURCE_BUSY;
+-	res->desc = IORES_DESC_NONE;
++	res->desc = IORES_DESC_RESERVED;
  
- #ifdef CONFIG_HUGETLB_PAGE
- 10:	/* 8M pages */
-@@ -625,16 +640,13 @@ DataBreakpoint:
- 	. = 0x1d00
- InstructionBreakpoint:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
--	mtspr	SPRN_SPRG_SCRATCH1, r11
--	lis	r10, (instruction_counter - PAGE_OFFSET)@ha
--	lwz	r11, (instruction_counter - PAGE_OFFSET)@l(r10)
--	addi	r11, r11, -1
--	stw	r11, (instruction_counter - PAGE_OFFSET)@l(r10)
-+	lwz	r10, (instruction_counter - PAGE_OFFSET)@l(0)
-+	addi	r10, r10, -1
-+	stw	r10, (instruction_counter - PAGE_OFFSET)@l(0)
- 	lis	r10, 0xffff
- 	ori	r10, r10, 0x01
- 	mtspr	SPRN_COUNTA, r10
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
--	mfspr	r11, SPRN_SPRG_SCRATCH1
- 	rfi
- #else
- 	EXCEPTION(0x1d00, Trap_1d, unknown_exception, EXC_XFER_EE)
-@@ -1065,17 +1077,3 @@ swapper_pg_dir:
-  */
- abatron_pteptrs:
- 	.space	8
--
--#ifdef CONFIG_PERF_EVENTS
--	.globl	itlb_miss_counter
--itlb_miss_counter:
--	.space	4
--
--	.globl	dtlb_miss_counter
--dtlb_miss_counter:
--	.space	4
--
--	.globl	instruction_counter
--instruction_counter:
--	.space	4
--#endif
+ 	while (1) {
+ 
+@@ -1029,7 +1029,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+ 				next_res->start = conflict->end + 1;
+ 				next_res->end = end;
+ 				next_res->flags = type | IORESOURCE_BUSY;
+-				next_res->desc = IORES_DESC_NONE;
++				next_res->desc = IORES_DESC_RESERVED;
+ 			}
+ 		} else {
+ 			res->start = conflict->end + 1;
+@@ -1477,7 +1477,7 @@ static int __init reserve_setup(char *str)
+ 			res->start = io_start;
+ 			res->end = io_start + io_num - 1;
+ 			res->flags |= IORESOURCE_BUSY;
+-			res->desc = IORES_DESC_NONE;
++			res->desc = IORES_DESC_RESERVED;
+ 			res->child = NULL;
+ 			if (request_resource(parent, res) == 0)
+ 				reserved = x+1;
 -- 
-2.13.3
+2.17.1
 
