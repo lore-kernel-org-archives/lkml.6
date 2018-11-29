@@ -2,97 +2,158 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_QP_LONG_LINE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D842BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98172C07E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53D32146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:59:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53D32146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C1EE2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:59:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="v3iYlZfG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1EE2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbeK3EFb (ORCPT
+        id S1730145AbeK3EFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:05:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44052 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeK3EFb (ORCPT
+        Thu, 29 Nov 2018 23:05:36 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33061 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeK3EFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:05:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id k8so1316794pls.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:59:29 -0800 (PST)
+        Thu, 29 Nov 2018 23:05:35 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so1206290pgu.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:59:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=lLiTtMu7ykg5/Be89p4ADj2aA76GZ2847GIo+ryVALU=;
+        b=v3iYlZfG6H4StPQtKZsMJQ9refOVTxWOAcN3NiXpxEKbLsrSBXVADrWE9OPnJ54y9j
+         ziQBJOhebvbK4D5GR1+XePpNZt1v8gtD3eNZGIrQm+t7BbFGqVIlwj3ftI3bboy9kipC
+         PD35/FfFNLzWgkq6t8eUdj1RUsyhiiLyiqzgWtQ6wZMR2vKB3hPDRMfQvGKEpVV/w9Fh
+         8KMY9rqaM3BrQmqvxkLAUuXMnUTJ4byuO/VO5oappgVOvwfic3Bv+gjyBGp37TksuA7Q
+         dqmJkd4K/phy2reJLubBBWetRmtRVWhStRPGRzwcCrfrYTHaJN5mRFmiqti2AYKkhwxQ
+         gW+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ntjuzxDQaoj1fqs341rXyp+TCylgYbBYTRllogcm+6s=;
-        b=EP1TsAx+Mfi4tpVPHItOU+e/6AO90cXPOYEF5mxQKHiDXDE2/agTtQ/M1/MzQQvjbh
-         n2vdQtw7d3GI8LhvytlMfr3G7vf7ZUH0L1ndTSZLeooDdybSu+HJlXVeUZQ9ovfWXjqb
-         7rh87opTw6nd9Zdf/aONTLrrDgvjx7f+g0sN59NKP/em5mKhfux3OkaJmh6jYaI+a9p7
-         TAaiTSSWne6DwFqHJkhuN0ILgmhmXeWDTXKzkRiHwatE7V5hPNWO0EzgJXfHkx5IzKXl
-         I7Imzh+F2/Q0DuvDTo4+hXIBUNHrH9wsAUP/xINb+6CYuxQC0nu+BXGezcmZW44zWj4L
-         9b4g==
-X-Gm-Message-State: AA+aEWYYfdWEatuZ+v0mEJxR5Iz6tM5U5SLkldySk4xYWmu/uxIyfLRH
-        VZYsZ6BFLEJQa94woMaaKlI=
-X-Google-Smtp-Source: AFSGD/UzcZaqxlXaS1SojyT3+L9XWhRUW2/iUn52UaSqBXIGXCD3p3AW14MmgfEe9aKXTzmUmm2hKA==
-X-Received: by 2002:a17:902:f20d:: with SMTP id gn13mr2118760plb.11.1543510769173;
-        Thu, 29 Nov 2018 08:59:29 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id t90sm9439247pfj.23.2018.11.29.08.59.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 08:59:28 -0800 (PST)
-Message-ID: <1543510767.185366.145.camel@acm.org>
-Subject: Re: [PATCH 25/27] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=lLiTtMu7ykg5/Be89p4ADj2aA76GZ2847GIo+ryVALU=;
+        b=s3LSVLY4qQ0uEdcpI5H7kvlR4esE7ACnvu4WnoqmNjjswx6VyFi4v53ryVeo1p/L0U
+         BpHJSF0uDof3qtc2AQSofuluTtCgJPRtYlEPKtGC0qVjj2aQuCEfzYKDw+EAyzFHw2gZ
+         AAkgz1IA2fivVLZq+3tlHEJr2/BH4jYRpB3h6nrH+48rO5twPAKNePgNh3mimLxvug4L
+         eFJnHTBPMXOcuz/LxbHPzK3MR9qNri3dM9dvxaKyanpp68O3/MUfA3lVJMnpnXa1ZKQl
+         rjtEaCMZ0bDF5sBf/p+lmcmuiiVAtZrObZjNC5Ki2SamzUULyEY5v1oZCgFQaSb4zyQi
+         ALzg==
+X-Gm-Message-State: AA+aEWbiAyXjOcB6v6mFBf/Se6Qdw49P4Pza+EkV4NRPWxvuHnbGqE1Q
+        qzrNvwmcXuw50zWT1iEuSWL1bQ==
+X-Google-Smtp-Source: AFSGD/W8IC4zUZgptvEgK4kzZ5nLxmlMphPU0VK12+3/dew5qka4jt2EM8Wu0r55fjyWUAmekf0OWg==
+X-Received: by 2002:a65:4142:: with SMTP id x2mr1828623pgp.356.1543510773565;
+        Thu, 29 Nov 2018 08:59:33 -0800 (PST)
+Received: from ?IPv6:2600:1010:b054:ff26:3849:a65d:14d0:f668? ([2600:1010:b054:ff26:3849:a65d:14d0:f668])
+        by smtp.gmail.com with ESMTPSA id g5sm7860561pgu.57.2018.11.29.08.59.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 08:59:32 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call implementation for x86-64
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <20181129164914.GA9027@hirez.programming.kicks-ass.net>
+Date:   Thu, 29 Nov 2018 08:59:31 -0800
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
+References: <20181126171036.chcbmb35ygpxziub@treble> <20181126175624.bruqfbkngbucpvxr@treble> <20181126200801.GW2113@hirez.programming.kicks-ass.net> <20181126212628.4apztfazichxnt7r@treble> <20181127084330.GX2113@hirez.programming.kicks-ass.net> <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com> <20181129094210.GC2131@hirez.programming.kicks-ass.net> <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net> <20181129143853.GO2131@hirez.programming.kicks-ass.net> <20181129163342.tp5wlfcyiazwwyoh@treble> <20181129164914.GA9027@hirez.programming.kicks-ass.net>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 29 Nov 2018 08:59:27 -0800
-In-Reply-To: <20181129120418.GI2131@hirez.programming.kicks-ass.net>
-References: <20181128234325.110011-1-bvanassche@acm.org>
-         <20181128234325.110011-26-bvanassche@acm.org>
-         <20181129120418.GI2131@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-29 at 13:04 +-0100, Peter Zijlstra wrote:
-+AD4 On Wed, Nov 28, 2018 at 03:43:23PM -0800, Bart Van Assche wrote:
-+AD4 +AD4 A shortcoming of the current lockdep implementation is that it requires
-+AD4 +AD4 lock keys to be allocated statically. That forces certain lock objects
-+AD4 +AD4 to share lock keys. Since lock dependency analysis groups lock objects
-+AD4 +AD4 per key sharing lock keys can cause false positive lockdep reports.
-+AD4 +AD4 Make it possible to avoid such false positive reports by allowing lock
-+AD4 +AD4 keys to be allocated dynamically. Require that dynamically allocated
-+AD4 +AD4 lock keys are registered before use by calling lockdep+AF8-register+AF8-key().
-+AD4 +AD4 Complain about attempts to register the same lock key pointer twice
-+AD4 +AD4 without calling lockdep+AF8-unregister+AF8-key() between successive
-+AD4 +AD4 registration calls.
-+AD4 +AD4  struct lock+AF8-class+AF8-key +AHs
-+AD4 +AD4 +-	struct hlist+AF8-node		hash+AF8-entry+ADs
-+AD4 +AD4  	struct lockdep+AF8-subclass+AF8-key	subkeys+AFs-MAX+AF8-LOCKDEP+AF8-SUBCLASSES+AF0AOw
-+AD4 +AD4  +AH0AOw
-+AD4 
-+AD4 That hash+AF8-entry is purely for that double-register warning, right? I
-+AD4 wonder if we can do that differently+ADs by always doing
-+AD4 register+AF8-lock+AF8-class(), and checking that state.
 
-Hi Peter,
 
-The hash+AF8-entry serves two purposes. One purpose is to verify whether the
-lockdep+AF8-register+AF8-key() and  lockdep+AF8-unregister+AF8-key() functions are used
-correctly. A second purpose is to avoid that lockdep+AF8-init+AF8-map() complains
-when encountering a dynamically allocated key. I'm not sure how always
-doing register+AF8-lock+AF8-class() would help?
+> On Nov 29, 2018, at 8:49 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+> On Thu, Nov 29, 2018 at 10:33:42AM -0600, Josh Poimboeuf wrote:
+>>> can't we 'fix' that again? The alternative is moving that IRET-frame and=
 
-Thanks,
+>>> fixing everything up, which is going to be fragile, ugly and such
+>>> things more.
+>=20
+>> This seems to work...
+>=20
+> That's almost too easy... nice!
 
-Bart.
+It is indeed too easy: you=E2=80=99re putting pt_regs in the wrong place for=
+ int3 from user mode, which is probably a root hole if you arrange for a ptr=
+aced process to do int3 and try to write to whatever register aliases CS.
+
+If you make it conditional on CPL, do it for 32-bit as well, add comments, a=
+nd convince yourself that there isn=E2=80=99t a better solution (like pointi=
+ng IP at a stub that retpolines to the target by reading the function pointe=
+r, a la the unoptimizable version), then okay, I guess, with only a small am=
+ount of grumbling.
+
+>=20
+>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>> index ce25d84023c0..184523447d35 100644
+>> --- a/arch/x86/entry/entry_64.S
+>> +++ b/arch/x86/entry/entry_64.S
+>> @@ -876,7 +876,7 @@ apicinterrupt IRQ_WORK_VECTOR            irq_work_int=
+errupt        smp_irq_work_interrupt
+>>  * @paranoid =3D=3D 2 is special: the stub will never switch stacks.  Thi=
+s is for
+>>  * #DF: if the thread stack is somehow unusable, we'll still get a useful=
+ OOPS.
+>>  */
+>> -.macro idtentry sym do_sym has_error_code:req paranoid=3D0 shift_ist=3D-=
+1
+>> +.macro idtentry sym do_sym has_error_code:req paranoid=3D0 shift_ist=3D-=
+1 create_gap=3D0
+>> ENTRY(\sym)
+>>    UNWIND_HINT_IRET_REGS offset=3D\has_error_code*8
+>>=20
+>> @@ -891,6 +891,12 @@ ENTRY(\sym)
+>>    pushq    $-1                /* ORIG_RAX: no syscall to restart */
+>>    .endif
+>>=20
+>> +    .if \create_gap =3D=3D 1
+>> +    .rept 6
+>> +    pushq 5*8(%rsp)
+>> +    .endr
+>> +    .endif
+>> +
+>>    .if \paranoid =3D=3D 1
+>>    testb    $3, CS-ORIG_RAX(%rsp)        /* If coming from userspace, swi=
+tch stacks */
+>>    jnz    .Lfrom_usermode_switch_stack_\@
+>> @@ -1126,7 +1132,7 @@ apicinterrupt3 HYPERV_STIMER0_VECTOR \
+>> #endif /* CONFIG_HYPERV */
+>>=20
+>> idtentry debug            do_debug        has_error_code=3D0    paranoid=3D=
+1 shift_ist=3DDEBUG_STACK
+>> -idtentry int3            do_int3            has_error_code=3D0
+>> +idtentry int3            do_int3            has_error_code=3D0    create=
+_gap=3D1
+>> idtentry stack_segment        do_stack_segment    has_error_code=3D1
+>>=20
+>> #ifdef CONFIG_XEN_PV
