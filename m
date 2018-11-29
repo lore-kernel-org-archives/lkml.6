@@ -2,85 +2,233 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D81C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5FA206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5FA206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 31DAE206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 03:32:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AFeLx8ES";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DiMntwCU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DAE206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeK2OfM (ORCPT
+        id S1727608AbeK2Ogj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 09:35:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727120AbeK2OfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 09:35:12 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 29 Nov 2018 09:36:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47554 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727098AbeK2Ogj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 09:36:39 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 51BFB60BFA; Thu, 29 Nov 2018 03:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543462365;
+        bh=mumIbfyEaZKWgOWHsQgc704vctLvrQ+mELOL6TQF0uo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AFeLx8ESLODpit6LIakLKRlOh3XXNKSxzO3+X1ok31HQvZpxhDdUiHF7jTE7SFrDY
+         Zh6cli9GTeGxoP/y9kNRYgqA6+hO+dkJW+Az0RO+ZdtI5zkGClwchbQZbOpGytlIdY
+         fboyWVekRK9xqTv+JoSnunC8OYCT/a1J0Y3LO2Gg=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AACD307DAC1;
-        Thu, 29 Nov 2018 03:31:19 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 48CA94531;
-        Thu, 29 Nov 2018 03:30:51 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 11:30:47 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Mike Snitzer <snitzer@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 00/20] block: support multi-page bvec
-Message-ID: <20181129033046.GE23390@ming.t460p>
-References: <20181126021720.19471-1-ming.lei@redhat.com>
- <7096bc4e-0617-29d0-a90d-ae7caf09a16d@kernel.dk>
- <20181129012959.GC23249@ming.t460p>
- <1983a2f5-07be-4102-fedc-54e2ad2e16dc@kernel.dk>
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0B42460B0D;
+        Thu, 29 Nov 2018 03:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543462364;
+        bh=mumIbfyEaZKWgOWHsQgc704vctLvrQ+mELOL6TQF0uo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DiMntwCUWgTGgrNsNKDOP4EjtnzoI+dJK9+nrBzEcnBQ7AL065XOur3uV2dBHTOIX
+         +ndGe+Rh6Fp6Lp+KWcZE2sbl3SllXy7hZan0T/SnN843fphMPA/1uP8NH4+c2PPmpi
+         ZegMO/2lpLN8+O14j/D1mMfgHGchE89ykzCG8Pz0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B42460B0D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Thu, 29 Nov 2018 09:02:39 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+Message-ID: <20181129033239.GE9838@codeaurora.org>
+References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
+ <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
+ <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1983a2f5-07be-4102-fedc-54e2ad2e16dc@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 29 Nov 2018 03:31:19 +0000 (UTC)
+In-Reply-To: <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 07:20:51PM -0700, Jens Axboe wrote:
-> On 11/28/18 6:30 PM, Ming Lei wrote:
-> >> I'm going back and forth on those one a bit. Any concerns with
-> >> pushing this to 4.22?
+
+On Tue, Nov 27, 2018 at 09:42:39AM +0800, Chao Yu wrote:
+> On 2018/11/27 8:30, Jaegeuk Kim wrote:
+> > On 11/26, Sahitya Tummala wrote:
+> >> When there is a failure in f2fs_fill_super() after/during
+> >> the recovery of fsync'd nodes, it frees the current sbi and
+> >> retries again. This time the mount is successful, but the files
+> >> that got recovered before retry, still holds the extent tree,
+> >> whose extent nodes list is corrupted since sbi and sbi->extent_list
+> >> is freed up. The list_del corruption issue is observed when the
+> >> file system is getting unmounted and when those recoverd files extent
+> >> node is being freed up in the below context.
+> >>
+> >> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+> >> <...>
+> >> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+> >> task: fffffff1f46f2280 task.stack: ffffff8008068000
+> >> lr : __list_del_entry_valid+0x94/0xb4
+> >> pc : __list_del_entry_valid+0x94/0xb4
+> >> <...>
+> >> Call trace:
+> >> __list_del_entry_valid+0x94/0xb4
+> >> __release_extent_node+0xb0/0x114
+> >> __free_extent_tree+0x58/0x7c
+> >> f2fs_shrink_extent_tree+0xdc/0x3b0
+> >> f2fs_leave_shrinker+0x28/0x7c
+> >> f2fs_put_super+0xfc/0x1e0
+> >> generic_shutdown_super+0x70/0xf4
+> >> kill_block_super+0x2c/0x5c
+> >> kill_f2fs_super+0x44/0x50
+> >> deactivate_locked_super+0x60/0x8c
+> >> deactivate_super+0x68/0x74
+> >> cleanup_mnt+0x40/0x78
+> >> __cleanup_mnt+0x1c/0x28
+> >> task_work_run+0x48/0xd0
+> >> do_notify_resume+0x678/0xe98
+> >> work_pending+0x8/0x14
+> >>
+> >> Fix this by cleaning up inodes, extent tree and nodes of those
+> >> recovered files before freeing up sbi and before next retry.
+> >>
+> >> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> >> ---
+> >> v2:
+> >> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
+> >>
+> >>  fs/f2fs/f2fs.h     |  1 +
+> >>  fs/f2fs/shrinker.c |  2 +-
+> >>  fs/f2fs/super.c    | 13 ++++++++++++-
+> >>  3 files changed, 14 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index 1e03197..aaee63b 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+> >>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+> >>  						struct rb_root_cached *root);
+> >>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
+> >> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
+> >>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+> >>  void f2fs_drop_extent_tree(struct inode *inode);
+> >>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
+> >> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+> >> index 9e13db9..7e3c13b 100644
+> >> --- a/fs/f2fs/shrinker.c
+> >> +++ b/fs/f2fs/shrinker.c
+> >> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+> >>  	return count > 0 ? count : 0;
+> >>  }
+> >>  
+> >> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+> >> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+> >>  {
+> >>  	return atomic_read(&sbi->total_zombie_tree) +
+> >>  				atomic_read(&sbi->total_ext_node);
+> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >> index af58b2c..769e7b1 100644
+> >> --- a/fs/f2fs/super.c
+> >> +++ b/fs/f2fs/super.c
+> >> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+> >>  	sbi->readdir_ra = 1;
+> >>  }
+> >>  
+> >> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
+> >> +{
+> >> +	struct super_block *sb = sbi->sb;
+> >> +
+> >> +	sync_filesystem(sb);
 > > 
-> > My only one concern is about the warning of
-> > "blk_cloned_rq_check_limits: over max segments limit" on dm multipath,
-> > and seems Ewan and Mike is waiting for this fix.
+> > This writes another checkpoint, which would not be what this retrial intended.
 > 
-> Not familiar with this issue, can you post a link to it? I'd be fine
-> working around anything until 4.22, it's not going to be a new issue.
+> Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
+> as below:
+> 
+> int f2fs_sync_fs(struct super_block *sb, int sync)
+> {
+> ...
+> 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+> 		return -EAGAIN;
+> ...
+> }
+> 
+> And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
+> IIUC.
+> 
 
-https://marc.info/?t=153303425700002&r=1&w=2
+Thanks Chao for the clarification.
 
-thanks,
-Ming
+Hi Jaegeuk,
+
+Do you still have any further concerns or comments on this patch?
+
+Thanks,
+Sahitya.
+
+> Thanks,
+> 
+> > How about adding a condition in f2fs_may_extent_tree() when adding extents?
+> > Likewise, if (shrinker is not registered) return false;
+> > 
+> > 
+> >> +	shrink_dcache_sb(sb);
+> >> +	evict_inodes(sb);
+> >> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
+> >> +}
+> >> +
+> >>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>  {
+> >>  	struct f2fs_sb_info *sbi;
+> >> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+> >>  	 */
+> >>  	truncate_inode_pages_final(META_MAPPING(sbi));
+> >> +	/* cleanup recovery and quota inodes */
+> >> +	f2fs_cleanup_inodes(sbi);
+> >>  	f2fs_unregister_sysfs(sbi);
+> >>  free_root_inode:
+> >>  	dput(sb->s_root);
+> >> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >>  	/* give only one another chance */
+> >>  	if (retry) {
+> >>  		retry = false;
+> >> -		shrink_dcache_sb(sb);
+> >>  		goto try_onemore;
+> >>  	}
+> >>  	return err;
+> >> -- 
+> >> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> >> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > 
+> > .
+> > 
+> 
+
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
