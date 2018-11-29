@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF56C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7EEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA27921479
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13AB22147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zt3N3zAL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA27921479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yr++Yz/w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AB22147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388437AbeK3Be6 (ORCPT
+        id S2388449AbeK3BfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:34:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:35:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731958AbeK3Be6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:58 -0500
+        id S1731958AbeK3BfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:35:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9894621479;
-        Thu, 29 Nov 2018 14:29:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED9CA2147D;
+        Thu, 29 Nov 2018 14:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501765;
-        bh=M6c5hRMz7pL/OawZwQjAyT9GpwHVXbEh5W0HVn7f1Zc=;
+        s=default; t=1543501767;
+        bh=9s+0HeLDh/G5RAjwKOcWj9nHkPT/541yKmF1nPhw6yk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zt3N3zALQe2YoGmKlNYSPq1mwohsSKsNEQ7EKtcG44YIPJSjOVl9MYHIUGLFWArAG
-         tHRY7ZBoQWQZkHuwAV+Zi6YrQXBfF+FvK4HEGi8iDQwn72dXdpaT4+2SKgzaf1V0h4
-         5b9rjU3MjyxX3sgwkZdgMgYdbGVAtKTramu99kmQ=
+        b=Yr++Yz/wQCgGLSzAB4GLYqK+VOs3kwBcF4XZLzdL0CKehU8fdljyoiYrKD5lJHoiC
+         x6vzYRNlwN2oyvune7BttyCqJTfUk237DEyQTS91/P3gXoH4+ZdKmq9QExrK1bIm8q
+         TXqMkU3rDOtF2PdMdo7SbGFyWznjw8YCHPgzg+9k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+13cb3b01d0784e4ffc3f@syzkaller.appspotmail.com,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 032/110] Input: synaptics - avoid using uninitialized variable when probing
-Date:   Thu, 29 Nov 2018 15:12:03 +0100
-Message-Id: <20181129135922.565401586@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tigran Aivazian <aivazian.tigran@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 033/110] bfs: add sanity check at bfs_fill_super()
+Date:   Thu, 29 Nov 2018 15:12:04 +0100
+Message-Id: <20181129135922.602882966@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -65,37 +67,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit f39f8688888ae74fa8deae2d01289b69b4727394 upstream.
+commit 9f2df09a33aa2c76ce6385d382693f98d7f2f07e upstream.
 
-synaptics_detect() does not check whether sending commands to the
-device succeeds and instead relies on getting unique data from the
-device. Let's make sure we seed entire buffer with zeroes to make sure
-we will not use garbage on stack that just happen to be 0x47.
+syzbot is reporting too large memory allocation at bfs_fill_super() [1].
+Since file system image is corrupted such that bfs_sb->s_start == 0,
+bfs_fill_super() is trying to allocate 8MB of continuous memory. Fix
+this by adding a sanity check on bfs_sb->s_start, __GFP_NOWARN and
+printf().
 
-Reported-by: syzbot+13cb3b01d0784e4ffc3f@syzkaller.appspotmail.com
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[1] https://syzkaller.appspot.com/bug?id=16a87c236b951351374a84c8a32f40edbc034e96
+
+Link: http://lkml.kernel.org/r/1525862104-3407-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Tigran Aivazian <aivazian.tigran@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/bfs/inode.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -99,9 +99,7 @@ static int synaptics_mode_cmd(struct psm
- int synaptics_detect(struct psmouse *psmouse, bool set_properties)
- {
- 	struct ps2dev *ps2dev = &psmouse->ps2dev;
--	u8 param[4];
--
--	param[0] = 0;
-+	u8 param[4] = { 0 };
+--- a/fs/bfs/inode.c
++++ b/fs/bfs/inode.c
+@@ -350,7 +350,8 @@ static int bfs_fill_super(struct super_b
  
- 	ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
- 	ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
+ 	s->s_magic = BFS_MAGIC;
+ 
+-	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end)) {
++	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end) ||
++	    le32_to_cpu(bfs_sb->s_start) < BFS_BSIZE) {
+ 		printf("Superblock is corrupted\n");
+ 		goto out1;
+ 	}
+@@ -359,9 +360,11 @@ static int bfs_fill_super(struct super_b
+ 					sizeof(struct bfs_inode)
+ 					+ BFS_ROOT_INO - 1;
+ 	imap_len = (info->si_lasti / 8) + 1;
+-	info->si_imap = kzalloc(imap_len, GFP_KERNEL);
+-	if (!info->si_imap)
++	info->si_imap = kzalloc(imap_len, GFP_KERNEL | __GFP_NOWARN);
++	if (!info->si_imap) {
++		printf("Cannot allocate %u bytes\n", imap_len);
+ 		goto out1;
++	}
+ 	for (i = 0; i < BFS_ROOT_INO; i++)
+ 		set_bit(i, info->si_imap);
+ 
 
 
