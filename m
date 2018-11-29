@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C77CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D91C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BBD208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487C721019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUEqYk3u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BBD208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yuhN/XTK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487C721019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbeK3BYQ (ORCPT
+        id S1730864AbeK3BYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:24:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46900 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:24:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728756AbeK3BYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:24:15 -0500
+        id S1728756AbeK3BYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:24:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C28A6205C9;
-        Thu, 29 Nov 2018 14:18:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44087205C9;
+        Thu, 29 Nov 2018 14:18:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501124;
-        bh=1HQt5R1s+DElKxH0S2Q70owjBYvMLLlI+7qGOJWDNng=;
+        s=default; t=1543501126;
+        bh=1PMTPRkqBNYRXEwgBHxh9qAFdl06KCW3JwTEK5OTyx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SUEqYk3uD7mk4LWmlhjOKtBx1p6ma7b6sHARDrvhAqwOl8MqSsvEWAbaRCTijL0/c
-         MyGeJMQl5JwYbWiIC3E6SdHinZh6JUh8biqxISNTVXv+C05JJjKnY9iTbOVigYN4+m
-         xm5nj8Pra+S5cQru1pvF8yKSIrnpU+8IwBCHbXuc=
+        b=yuhN/XTK7u+qv5udTQ/Jjjh7A1ku7MeQwR+L4qTATm4EKJ/m3M0vEUKmItCjcof1N
+         3HXh3290XhpkjEsMkPHVxbUbpVo661gnCPbrFTFQrI4WScrEltLv8wktgo4Oifrq68
+         P6zdkqd7wdOiPwbXrCoVTRvFD2XC6GI69fwPgSV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 35/86] Input: xpad - workaround dead irq_out after suspend/ resume
-Date:   Thu, 29 Nov 2018 15:12:00 +0100
-Message-Id: <20181129140113.014264758@linuxfoundation.org>
+Subject: [PATCH 4.4 53/86] Input: xpad - support some quirky Xbox One pads
+Date:   Thu, 29 Nov 2018 15:12:18 +0100
+Message-Id: <20181129140114.584651599@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,329 +63,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4220f7db1e424f2a086ad41217b5770cc9f003a9 ]
+[ Upstream commit 81093c9848a781b85163d06de92ef8f84528cf6a ]
 
-The irq_out urb is dead after suspend/ resume on my x360 wr pad. (also
-reproduced by Zachary Lund [0]) Work around this by implementing
-suspend, resume, and reset_resume callbacks and properly shutting down
-URBs on suspend and restarting them on resume.
+There are several quirky Xbox One pads that depend on initialization
+packets that the Microsoft pads don't require. To deal with these,
+I've added a mechanism for issuing device-specific initialization
+packets using a VID/PID-based quirks list.
 
-[0]: https://github.com/paroj/xpad/issues/6
+For the initial set of init quirks, I have added quirk handling from
+Valve's Steam Link xpad driver[0] and the 360Controller project[1] for
+macOS to enable some new pads to work properly.
 
-Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
+This should enable full functionality on the following quirky pads:
+0x0e6f:0x0165 - Titanfall 2 gamepad (previously fully non-functional)
+0x0f0d:0x0067 - Hori Horipad (analog sticks previously non-functional)
+0x24c6:0x541a - PowerA Xbox One pad (previously fully non-functional)
+0x24c6:0x542a - PowerA Xbox One pad (previously fully non-functional)
+0x24c6:0x543a - PowerA Xbox One pad (previously fully non-functional)
+
+[0]: https://github.com/ValveSoftware/steamlink-sdk/blob/master/kernel/drivers/input/joystick/xpad.c
+[1]: https://github.com/360Controller/360Controller
+
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 175 ++++++++++++++++++++++++++--------
- 1 file changed, 137 insertions(+), 38 deletions(-)
+ drivers/input/joystick/xpad.c | 114 ++++++++++++++++++++++++++++++----
+ 1 file changed, 101 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index bfe94216621f..0caced4a68cc 100644
+index 153b1ee13e03..df83fdc6c0e7 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -82,6 +82,7 @@
- #include <linux/stat.h>
- #include <linux/module.h>
- #include <linux/usb/input.h>
-+#include <linux/usb/quirks.h>
+@@ -339,6 +339,64 @@ static struct usb_device_id xpad_table[] = {
  
- #define DRIVER_AUTHOR "Marko Friedemann <mfr@bmx-chemnitz.de>"
- #define DRIVER_DESC "X-Box pad driver"
-@@ -348,9 +349,10 @@ struct usb_xpad {
- 	dma_addr_t idata_dma;
+ MODULE_DEVICE_TABLE(usb, xpad_table);
  
- 	struct urb *irq_out;		/* urb for interrupt out report */
-+	struct usb_anchor irq_out_anchor;
- 	bool irq_out_active;		/* we must not use an active URB */
--	unsigned char *odata;		/* output data */
- 	u8 odata_serial;		/* serial number for xbox one protocol */
-+	unsigned char *odata;		/* output data */
- 	dma_addr_t odata_dma;
- 	spinlock_t odata_lock;
- 
-@@ -767,11 +769,13 @@ static int xpad_try_sending_next_out_packet(struct usb_xpad *xpad)
- 	int error;
- 
- 	if (!xpad->irq_out_active && xpad_prepare_next_out_packet(xpad)) {
-+		usb_anchor_urb(xpad->irq_out, &xpad->irq_out_anchor);
- 		error = usb_submit_urb(xpad->irq_out, GFP_ATOMIC);
- 		if (error) {
- 			dev_err(&xpad->intf->dev,
- 				"%s - usb_submit_urb failed with result %d\n",
- 				__func__, error);
-+			usb_unanchor_urb(xpad->irq_out);
- 			return -EIO;
- 		}
- 
-@@ -813,11 +817,13 @@ static void xpad_irq_out(struct urb *urb)
- 	}
- 
- 	if (xpad->irq_out_active) {
-+		usb_anchor_urb(urb, &xpad->irq_out_anchor);
- 		error = usb_submit_urb(urb, GFP_ATOMIC);
- 		if (error) {
- 			dev_err(dev,
- 				"%s - usb_submit_urb failed with result %d\n",
- 				__func__, error);
-+			usb_unanchor_urb(urb);
- 			xpad->irq_out_active = false;
- 		}
- 	}
-@@ -834,6 +840,8 @@ static int xpad_init_output(struct usb_interface *intf, struct usb_xpad *xpad)
- 	if (xpad->xtype == XTYPE_UNKNOWN)
- 		return 0;
- 
-+	init_usb_anchor(&xpad->irq_out_anchor);
++struct xboxone_init_packet {
++	u16 idVendor;
++	u16 idProduct;
++	const u8 *data;
++	u8 len;
++};
 +
- 	xpad->odata = usb_alloc_coherent(xpad->udev, XPAD_PKT_LEN,
- 					 GFP_KERNEL, &xpad->odata_dma);
- 	if (!xpad->odata) {
-@@ -868,8 +876,14 @@ static int xpad_init_output(struct usb_interface *intf, struct usb_xpad *xpad)
- 
- static void xpad_stop_output(struct usb_xpad *xpad)
- {
--	if (xpad->xtype != XTYPE_UNKNOWN)
--		usb_kill_urb(xpad->irq_out);
-+	if (xpad->xtype != XTYPE_UNKNOWN) {
-+		if (!usb_wait_anchor_empty_timeout(&xpad->irq_out_anchor,
-+						   5000)) {
-+			dev_warn(&xpad->intf->dev,
-+				 "timed out waiting for output URB to complete, killing\n");
-+			usb_kill_anchored_urbs(&xpad->irq_out_anchor);
-+		}
++#define XBOXONE_INIT_PKT(_vid, _pid, _data)		\
++	{						\
++		.idVendor	= (_vid),		\
++		.idProduct	= (_pid),		\
++		.data		= (_data),		\
++		.len		= ARRAY_SIZE(_data),	\
 +	}
++
++
++/*
++ * This packet is required for all Xbox One pads with 2015
++ * or later firmware installed (or present from the factory).
++ */
++static const u8 xboxone_fw2015_init[] = {
++	0x05, 0x20, 0x00, 0x01, 0x00
++};
++
++/*
++ * This packet is required for the Titanfall 2 Xbox One pads
++ * (0x0e6f:0x0165) to finish initialization and for Hori pads
++ * (0x0f0d:0x0067) to make the analog sticks work.
++ */
++static const u8 xboxone_hori_init[] = {
++	0x01, 0x20, 0x00, 0x09, 0x00, 0x04, 0x20, 0x3a,
++	0x00, 0x00, 0x00, 0x80, 0x00
++};
++
++/*
++ * A rumble packet is required for some PowerA pads to start
++ * sending input reports. One of those pads is (0x24c6:0x543a).
++ */
++static const u8 xboxone_zerorumble_init[] = {
++	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00
++};
++
++/*
++ * This specifies the selection of init packets that a gamepad
++ * will be sent on init *and* the order in which they will be
++ * sent. The correct sequence number will be added when the
++ * packet is going to be sent.
++ */
++static const struct xboxone_init_packet xboxone_init_packets[] = {
++	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
++	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
++	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_zerorumble_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_zerorumble_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_zerorumble_init),
++};
++
+ struct xpad_output_packet {
+ 	u8 data[XPAD_PKT_LEN];
+ 	u8 len;
+@@ -375,6 +433,7 @@ struct usb_xpad {
+ 
+ 	struct xpad_output_packet out_packets[XPAD_NUM_OUT_PACKETS];
+ 	int last_out_packet;
++	int init_seq;
+ 
+ #if defined(CONFIG_JOYSTICK_XPAD_LEDS)
+ 	struct xpad_led *led;
+@@ -749,12 +808,48 @@ exit:
+ 			__func__, retval);
  }
  
- static void xpad_deinit_output(struct usb_xpad *xpad)
-@@ -1198,32 +1212,73 @@ static void xpad_led_disconnect(struct usb_xpad *xpad) { }
- static void xpad_identify_controller(struct usb_xpad *xpad) { }
- #endif
- 
--static int xpad_open(struct input_dev *dev)
-+static int xpad_start_input(struct usb_xpad *xpad)
- {
--	struct usb_xpad *xpad = input_get_drvdata(dev);
--
--	/* URB was submitted in probe */
--	if (xpad->xtype == XTYPE_XBOX360W)
--		return 0;
-+	int error;
- 
--	xpad->irq_in->dev = xpad->udev;
- 	if (usb_submit_urb(xpad->irq_in, GFP_KERNEL))
- 		return -EIO;
- 
--	if (xpad->xtype == XTYPE_XBOXONE)
--		return xpad_start_xbox_one(xpad);
-+	if (xpad->xtype == XTYPE_XBOXONE) {
-+		error = xpad_start_xbox_one(xpad);
-+		if (error) {
-+			usb_kill_urb(xpad->irq_in);
-+			return error;
-+		}
++/* Callers must hold xpad->odata_lock spinlock */
++static bool xpad_prepare_next_init_packet(struct usb_xpad *xpad)
++{
++	const struct xboxone_init_packet *init_packet;
++
++	if (xpad->xtype != XTYPE_XBOXONE)
++		return false;
++
++	/* Perform initialization sequence for Xbox One pads that require it */
++	while (xpad->init_seq < ARRAY_SIZE(xboxone_init_packets)) {
++		init_packet = &xboxone_init_packets[xpad->init_seq++];
++
++		if (init_packet->idVendor != 0 &&
++		    init_packet->idVendor != xpad->dev->id.vendor)
++			continue;
++
++		if (init_packet->idProduct != 0 &&
++		    init_packet->idProduct != xpad->dev->id.product)
++			continue;
++
++		/* This packet applies to our device, so prepare to send it */
++		memcpy(xpad->odata, init_packet->data, init_packet->len);
++		xpad->irq_out->transfer_buffer_length = init_packet->len;
++
++		/* Update packet with current sequence number */
++		xpad->odata[2] = xpad->odata_serial++;
++		return true;
 +	}
- 
- 	return 0;
- }
- 
--static void xpad_close(struct input_dev *dev)
-+static void xpad_stop_input(struct usb_xpad *xpad)
- {
--	struct usb_xpad *xpad = input_get_drvdata(dev);
-+	usb_kill_urb(xpad->irq_in);
++
++	return false;
 +}
 +
-+static int xpad360w_start_input(struct usb_xpad *xpad)
-+{
-+	int error;
-+
-+	error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
-+	if (error)
-+		return -EIO;
+ /* Callers must hold xpad->odata_lock spinlock */
+ static bool xpad_prepare_next_out_packet(struct usb_xpad *xpad)
+ {
+ 	struct xpad_output_packet *pkt, *packet = NULL;
+ 	int i;
  
--	if (xpad->xtype != XTYPE_XBOX360W)
++	/* We may have init packets to send before we can send user commands */
++	if (xpad_prepare_next_init_packet(xpad))
++		return true;
++
+ 	for (i = 0; i < XPAD_NUM_OUT_PACKETS; i++) {
+ 		if (++xpad->last_out_packet >= XPAD_NUM_OUT_PACKETS)
+ 			xpad->last_out_packet = 0;
+@@ -940,24 +1035,17 @@ static int xpad_inquiry_pad_presence(struct usb_xpad *xpad)
+ 
+ static int xpad_start_xbox_one(struct usb_xpad *xpad)
+ {
+-	struct xpad_output_packet *packet =
+-			&xpad->out_packets[XPAD_OUT_CMD_IDX];
+ 	unsigned long flags;
+ 	int retval;
+ 
+ 	spin_lock_irqsave(&xpad->odata_lock, flags);
+ 
+-	/* Xbox one controller needs to be initialized. */
+-	packet->data[0] = 0x05;
+-	packet->data[1] = 0x20;
+-	packet->data[2] = xpad->odata_serial++; /* packet serial */
+-	packet->data[3] = 0x01; /* rumble bit enable?  */
+-	packet->data[4] = 0x00;
+-	packet->len = 5;
+-	packet->pending = true;
+-
+-	/* Reset the sequence so we send out start packet first */
+-	xpad->last_out_packet = -1;
 +	/*
-+	 * Send presence packet.
-+	 * This will force the controller to resend connection packets.
-+	 * This is useful in the case we activate the module after the
-+	 * adapter has been plugged in, as it won't automatically
-+	 * send us info about the controllers.
++	 * Begin the init sequence by attempting to send a packet.
++	 * We will cycle through the init packet sequence before
++	 * sending any packets from the output ring.
 +	 */
-+	error = xpad_inquiry_pad_presence(xpad);
-+	if (error) {
- 		usb_kill_urb(xpad->irq_in);
-+		return error;
-+	}
++	xpad->init_seq = 0;
+ 	retval = xpad_try_sending_next_out_packet(xpad);
  
--	xpad_stop_output(xpad);
-+	return 0;
-+}
-+
-+static void xpad360w_stop_input(struct usb_xpad *xpad)
-+{
-+	usb_kill_urb(xpad->irq_in);
-+
-+	/* Make sure we are done with presence work if it was scheduled */
-+	flush_work(&xpad->work);
-+}
-+
-+static int xpad_open(struct input_dev *dev)
-+{
-+	struct usb_xpad *xpad = input_get_drvdata(dev);
-+
-+	return xpad_start_input(xpad);
-+}
-+
-+static void xpad_close(struct input_dev *dev)
-+{
-+	struct usb_xpad *xpad = input_get_drvdata(dev);
-+
-+	xpad_stop_input(xpad);
- }
- 
- static void xpad_set_up_abs(struct input_dev *input_dev, signed short abs)
-@@ -1284,8 +1339,10 @@ static int xpad_init_input(struct usb_xpad *xpad)
- 
- 	input_set_drvdata(input_dev, xpad);
- 
--	input_dev->open = xpad_open;
--	input_dev->close = xpad_close;
-+	if (xpad->xtype != XTYPE_XBOX360W) {
-+		input_dev->open = xpad_open;
-+		input_dev->close = xpad_close;
-+	}
- 
- 	__set_bit(EV_KEY, input_dev->evbit);
- 
-@@ -1459,21 +1516,17 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
- 		 * exactly the message that a controller has arrived that
- 		 * we're waiting for.
- 		 */
--		xpad->irq_in->dev = xpad->udev;
--		error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
-+		error = xpad360w_start_input(xpad);
- 		if (error)
- 			goto err_deinit_output;
--
- 		/*
--		 * Send presence packet.
--		 * This will force the controller to resend connection packets.
--		 * This is useful in the case we activate the module after the
--		 * adapter has been plugged in, as it won't automatically
--		 * send us info about the controllers.
-+		 * Wireless controllers require RESET_RESUME to work properly
-+		 * after suspend. Ideally this quirk should be in usb core
-+		 * quirk list, but we have too many vendors producing these
-+		 * controllers and we'd need to maintain 2 identical lists
-+		 * here in this driver and in usb core.
- 		 */
--		error = xpad_inquiry_pad_presence(xpad);
--		if (error)
--			goto err_kill_in_urb;
-+		udev->quirks |= USB_QUIRK_RESET_RESUME;
- 	} else {
- 		error = xpad_init_input(xpad);
- 		if (error)
-@@ -1481,8 +1534,6 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
- 	}
- 	return 0;
- 
--err_kill_in_urb:
--	usb_kill_urb(xpad->irq_in);
- err_deinit_output:
- 	xpad_deinit_output(xpad);
- err_free_in_urb:
-@@ -1492,35 +1543,83 @@ err_free_idata:
- err_free_mem:
- 	kfree(xpad);
- 	return error;
--
- }
- 
- static void xpad_disconnect(struct usb_interface *intf)
- {
--	struct usb_xpad *xpad = usb_get_intfdata (intf);
-+	struct usb_xpad *xpad = usb_get_intfdata(intf);
- 
- 	if (xpad->xtype == XTYPE_XBOX360W)
--		usb_kill_urb(xpad->irq_in);
--
--	cancel_work_sync(&xpad->work);
-+		xpad360w_stop_input(xpad);
- 
- 	xpad_deinit_input(xpad);
- 
-+	/*
-+	 * Now that both input device and LED device are gone we can
-+	 * stop output URB.
-+	 */
-+	xpad_stop_output(xpad);
-+
-+	xpad_deinit_output(xpad);
-+
- 	usb_free_urb(xpad->irq_in);
- 	usb_free_coherent(xpad->udev, XPAD_PKT_LEN,
- 			xpad->idata, xpad->idata_dma);
- 
--	xpad_deinit_output(xpad);
--
- 	kfree(xpad);
- 
- 	usb_set_intfdata(intf, NULL);
- }
- 
-+static int xpad_suspend(struct usb_interface *intf, pm_message_t message)
-+{
-+	struct usb_xpad *xpad = usb_get_intfdata(intf);
-+	struct input_dev *input = xpad->dev;
-+
-+	if (xpad->xtype == XTYPE_XBOX360W) {
-+		/*
-+		 * Wireless controllers always listen to input so
-+		 * they are notified when controller shows up
-+		 * or goes away.
-+		 */
-+		xpad360w_stop_input(xpad);
-+	} else {
-+		mutex_lock(&input->mutex);
-+		if (input->users)
-+			xpad_stop_input(xpad);
-+		mutex_unlock(&input->mutex);
-+	}
-+
-+	xpad_stop_output(xpad);
-+
-+	return 0;
-+}
-+
-+static int xpad_resume(struct usb_interface *intf)
-+{
-+	struct usb_xpad *xpad = usb_get_intfdata(intf);
-+	struct input_dev *input = xpad->dev;
-+	int retval = 0;
-+
-+	if (xpad->xtype == XTYPE_XBOX360W) {
-+		retval = xpad360w_start_input(xpad);
-+	} else {
-+		mutex_lock(&input->mutex);
-+		if (input->users)
-+			retval = xpad_start_input(xpad);
-+		mutex_unlock(&input->mutex);
-+	}
-+
-+	return retval;
-+}
-+
- static struct usb_driver xpad_driver = {
- 	.name		= "xpad",
- 	.probe		= xpad_probe,
- 	.disconnect	= xpad_disconnect,
-+	.suspend	= xpad_suspend,
-+	.resume		= xpad_resume,
-+	.reset_resume	= xpad_resume,
- 	.id_table	= xpad_table,
- };
- 
+ 	spin_unlock_irqrestore(&xpad->odata_lock, flags);
 -- 
 2.17.1
 
