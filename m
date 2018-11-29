@@ -2,49 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5333FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDADC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191E42146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015622145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:31:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulhnxfNW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191E42146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUjMXkdE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015622145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389180AbeK3BhI (ORCPT
+        id S2389192AbeK3BhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39888 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729111AbeK3BhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:07 -0500
+        id S1729111AbeK3BhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEE2F2146F;
-        Thu, 29 Nov 2018 14:31:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6734C2146D;
+        Thu, 29 Nov 2018 14:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501894;
-        bh=LTJ1bPmMKgp4/M61otub0fZSVN32Tcqz7VlGILEOC1w=;
+        s=default; t=1543501896;
+        bh=NVnJZ5WNLU74c5dGqcWGc08hNrlqwJQBN6rVEkwgXY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ulhnxfNWpYbEyL+MF9S0CxgXvxyiivK/ICAEOFETK5xAuZDde7A+8vY3MsVOicO0G
-         wMwS25GFdqQ9G8n7C8cXjbMoDeiMGhj/namLB/qhrYE3Y8zLv270ErKZEo0sEQo3hN
-         EqghXpIgzUfDww0R+gLV3ZxexxHYb/Px4ztLmmNg=
+        b=BUjMXkdEuHnNxvxjdd7guEEmi1TAfiMK8eskZZsYSEPoUJNI+inGOpR1PFs+bqKQK
+         Tw8wwFPFx+LiZjsGpHroJOcn+OielhAyAnR846bqECcZhNrCW9qEJCH5vRVDgBJRfl
+         UE2V/maGp1er/1j/i1jUSqkZ+tw1ZQyRrHalfUF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 057/110] can: raw: check for CAN FD capable netdev in raw_sendmsg()
-Date:   Thu, 29 Nov 2018 15:12:28 +0100
-Message-Id: <20181129135923.570105843@linuxfoundation.org>
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 084/110] ARM: add PROC_VTABLE and PROC_TABLE macros
+Date:   Thu, 29 Nov 2018 15:12:55 +0100
+Message-Id: <20181129135924.643942557@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -62,54 +63,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+[ Upstream commit e209950fdd065d2cc46e6338e47e52841b830cba ]
 
-commit a43608fa77213ad5ac5f75994254b9f65d57cfa0 upstream.
+Allow the way we access members of the processor vtable to be changed
+at compile time.  We will need to move to per-CPU vtables to fix the
+Spectre variant 2 issues on big.Little systems.
 
-When the socket is CAN FD enabled it can handle CAN FD frame
-transmissions.  Add an additional check in raw_sendmsg() as a CAN2.0 CAN
-driver (non CAN FD) should never see a CAN FD frame. Due to the commonly
-used can_dropped_invalid_skb() function the CAN 2.0 driver would drop
-that CAN FD frame anyway - but with this patch the user gets a proper
--EINVAL return code.
+However, we have a couple of calls that do not need the vtable
+treatment, and indeed cause a kernel warning due to the (later) use
+of smp_processor_id(), so also introduce the PROC_TABLE macro for
+these which always use CPU 0's function pointers.
 
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/can/raw.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm/include/asm/proc-fns.h | 39 ++++++++++++++++++++++-----------
+ arch/arm/kernel/setup.c         |  4 +---
+ 2 files changed, 27 insertions(+), 16 deletions(-)
 
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -745,18 +745,19 @@ static int raw_sendmsg(struct socket *so
- 	} else
- 		ifindex = ro->ifindex;
+diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
+index 30c499146320..c259cc49c641 100644
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@ -23,7 +23,7 @@ struct mm_struct;
+ /*
+  * Don't change this structure - ASM code relies on it.
+  */
+-extern struct processor {
++struct processor {
+ 	/* MISC
+ 	 * get data abort address/flags
+ 	 */
+@@ -79,9 +79,13 @@ extern struct processor {
+ 	unsigned int suspend_size;
+ 	void (*do_suspend)(void *);
+ 	void (*do_resume)(void *);
+-} processor;
++};
  
--	if (ro->fd_frames) {
-+	dev = dev_get_by_index(sock_net(sk), ifindex);
-+	if (!dev)
-+		return -ENXIO;
+ #ifndef MULTI_CPU
++static inline void init_proc_vtable(const struct processor *p)
++{
++}
 +
-+	err = -EINVAL;
-+	if (ro->fd_frames && dev->mtu == CANFD_MTU) {
- 		if (unlikely(size != CANFD_MTU && size != CAN_MTU))
--			return -EINVAL;
-+			goto put_dev;
- 	} else {
- 		if (unlikely(size != CAN_MTU))
--			return -EINVAL;
-+			goto put_dev;
- 	}
+ extern void cpu_proc_init(void);
+ extern void cpu_proc_fin(void);
+ extern int cpu_do_idle(void);
+@@ -98,18 +102,27 @@ extern void cpu_reset(unsigned long addr, bool hvc) __attribute__((noreturn));
+ extern void cpu_do_suspend(void *);
+ extern void cpu_do_resume(void *);
+ #else
+-#define cpu_proc_init			processor._proc_init
+-#define cpu_check_bugs			processor.check_bugs
+-#define cpu_proc_fin			processor._proc_fin
+-#define cpu_reset			processor.reset
+-#define cpu_do_idle			processor._do_idle
+-#define cpu_dcache_clean_area		processor.dcache_clean_area
+-#define cpu_set_pte_ext			processor.set_pte_ext
+-#define cpu_do_switch_mm		processor.switch_mm
  
--	dev = dev_get_by_index(sock_net(sk), ifindex);
--	if (!dev)
--		return -ENXIO;
--
- 	skb = sock_alloc_send_skb(sk, size + sizeof(struct can_skb_priv),
- 				  msg->msg_flags & MSG_DONTWAIT, &err);
- 	if (!skb)
+-/* These three are private to arch/arm/kernel/suspend.c */
+-#define cpu_do_suspend			processor.do_suspend
+-#define cpu_do_resume			processor.do_resume
++extern struct processor processor;
++#define PROC_VTABLE(f)			processor.f
++#define PROC_TABLE(f)			processor.f
++static inline void init_proc_vtable(const struct processor *p)
++{
++	processor = *p;
++}
++
++#define cpu_proc_init			PROC_VTABLE(_proc_init)
++#define cpu_check_bugs			PROC_VTABLE(check_bugs)
++#define cpu_proc_fin			PROC_VTABLE(_proc_fin)
++#define cpu_reset			PROC_VTABLE(reset)
++#define cpu_do_idle			PROC_VTABLE(_do_idle)
++#define cpu_dcache_clean_area		PROC_TABLE(dcache_clean_area)
++#define cpu_set_pte_ext			PROC_TABLE(set_pte_ext)
++#define cpu_do_switch_mm		PROC_VTABLE(switch_mm)
++
++/* These two are private to arch/arm/kernel/suspend.c */
++#define cpu_do_suspend			PROC_VTABLE(do_suspend)
++#define cpu_do_resume			PROC_VTABLE(do_resume)
+ #endif
+ 
+ extern void cpu_resume(void);
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 4c249cb261f3..6b9d191da868 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -686,9 +686,7 @@ static void __init setup_processor(void)
+ 	cpu_name = list->cpu_name;
+ 	__cpu_architecture = __get_cpu_architecture();
+ 
+-#ifdef MULTI_CPU
+-	processor = *list->proc;
+-#endif
++	init_proc_vtable(list->proc);
+ #ifdef MULTI_TLB
+ 	cpu_tlb = *list->tlb;
+ #endif
+-- 
+2.17.1
+
 
 
