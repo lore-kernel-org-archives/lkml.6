@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E156C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19D4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B0020868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BFFE2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMTx2uu5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B0020868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsX4Er4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFFE2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731866AbeK3B1g (ORCPT
+        id S1731876AbeK3B1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52658 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731856AbeK3B1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:35 -0500
+        id S1731856AbeK3B1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3370F20868;
-        Thu, 29 Nov 2018 14:22:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A5AB2133F;
+        Thu, 29 Nov 2018 14:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501323;
-        bh=qwWV6ZPGdDMjv81NDia436blk8bcnvcklrpTSGDTyc0=;
+        s=default; t=1543501326;
+        bh=8TrjrXV3EHBgEONvm6iiY0EuP2jOvlNE2HmLLCQxYac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMTx2uu5qALc5DhPUk/uIV4HEyEmdTMeKiRY4GwcL/SIAG5725dYCFnJnTkkQ4H0T
-         yM7ePnM58xfRzdysWDdBspudLxtfwINJNR8jF4EYRRIAOopsLwIz9cFgNLFpzMAlfN
-         UpAP6PuGGhjKRWzFATxL7KDyq4cdgvVpq8vZacO4=
+        b=nsX4Er4F6zj93N04EXiTa/8oo8xGUFey8lkvTE5KS79ZCV2i1XI6VWmMWDYPlfb2/
+         oJ5CYhUA0MIqEVGb5otkJXIlM8UCqEcgBboZZOnj987/tYQKll4TP23gl6sCR7D6ys
+         mLAOcSxpRbH/1pB+9F3ESACxHrqb+B/HqqjSRcxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 43/92] net: bcmgenet: fix OF child-node lookup
-Date:   Thu, 29 Nov 2018 15:12:12 +0100
-Message-Id: <20181129140109.690827353@linuxfoundation.org>
+Subject: [PATCH 4.9 44/92] arm64: remove no-op -p linker flag
+Date:   Thu, 29 Nov 2018 15:12:13 +0100
+Message-Id: <20181129140109.786474544@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,41 +65,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d397dbe606120a1ea1b11b0020c3f7a3852da5ac ]
+(commit 1a381d4a0a9a0f999a13faaba22bf6b3fc80dcb9 upstream)
 
-Use the new of_get_compatible_child() helper to lookup the mdio child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+Linking the ARM64 defconfig kernel with LLVM lld fails with the error:
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
+  ld.lld: error: unknown argument: -p
+  Makefile:1015: recipe for target 'vmlinux' failed
 
-Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: David S. Miller <davem@davemloft.net>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Without this flag, the ARM64 defconfig kernel successfully links with
+lld and boots on Dragonboard 410c.
+
+After digging through binutils source and changelogs, it turns out that
+-p is only relevant to ancient binutils installations targeting 32-bit
+ARM.  binutils accepts -p for AArch64 too, but it's always been
+undocumented and silently ignored.  A comment in
+ld/emultempl/aarch64elf.em explains that it's "Only here for backwards
+compatibility".
+
+Since this flag is a no-op on ARM64, we can safely drop it.
+
+Acked-by: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmmii.c | 2 +-
+ arch/arm64/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 3b9e1a5dce82..9bd90a7c4d40 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -483,7 +483,7 @@ static int bcmgenet_mii_of_init(struct bcmgenet_priv *priv)
- 	if (!compat)
- 		return -ENOMEM;
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 92110c2c6c59..ee94597773fa 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -10,7 +10,7 @@
+ #
+ # Copyright (C) 1995-2001 by Russell King
  
--	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
-+	priv->mdio_dn = of_get_compatible_child(dn, compat);
- 	kfree(compat);
- 	if (!priv->mdio_dn) {
- 		dev_err(kdev, "unable to find MDIO bus node\n");
+-LDFLAGS_vmlinux	:=-p --no-undefined -X
++LDFLAGS_vmlinux	:=--no-undefined -X
+ CPPFLAGS_vmlinux.lds = -DTEXT_OFFSET=$(TEXT_OFFSET)
+ GZFLAGS		:=-9
+ 
 -- 
 2.17.1
 
