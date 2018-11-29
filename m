@@ -2,56 +2,61 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03314C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018EAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC5E2205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA4A213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:18:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZoBF6dK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5E2205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wQ1RF4Ec"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA4A213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbeK3BXo (ORCPT
+        id S1730698AbeK3BXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:23:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46022 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:23:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729304AbeK3BXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:23:43 -0500
+        id S1729304AbeK3BXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:23:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78D91205C9;
-        Thu, 29 Nov 2018 14:18:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA07021019;
+        Thu, 29 Nov 2018 14:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501091;
-        bh=ruZ8e5fkN9bD6QomGI8gNKuAlwAc39WqkK3Q9wPzxm8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CZoBF6dKGYdVWL4u0bNzNy9gxrMnmCTWnm86xGkXxLfTG4cFCEII0ZUEubafN8rFt
-         VosNJmgyUZOmwLlMe6FdwecyNQQab4Kmw4T+BmjJX+rpqtXEPIC0n/YqA/5OskkIFf
-         jbusMuP3DH+bgW8FkWDReAxPSkmJPn25oAV/EWN0=
+        s=default; t=1543501094;
+        bh=D6tAP3B+eiiiOGqPUQbqRDmWBP/aOEWkdVaO7/LLiiQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wQ1RF4Ec2rYREW1RHrFztfy03an6jeTYGE+4Ncb0KeoqnhOfvQ8SXbjWly8gBtHZF
+         5xM0/RkYutX4EtpiBhIjgHM57YXYQruPmkcp6j8rUNkpR5wjqMmnynqMp+wOsOwZAV
+         rEb1BGJb0FchB9H9uDjFvWLtO6SBoNQyas48gCsw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 09/86] llc: do not use sk_eat_skb()
-Date:   Thu, 29 Nov 2018 15:11:34 +0100
-Message-Id: <20181129140110.695049897@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/86] 4.4.166-stable review
+Date:   Thu, 29 Nov 2018 15:11:25 +0100
+Message-Id: <20181129140109.832117862@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
-References: <20181129140109.832117862@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.166-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.166-rc1
+X-KernelTest-Deadline: 2018-12-01T14:01+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,168 +64,350 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.4.166 release.
+There are 86 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Dec  1 14:00:43 UTC 2018.
+Anything received after that time might be too late.
 
-From: Eric Dumazet <edumazet@google.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.166-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-commit 604d415e2bd642b7e02c80e719e0396b9d4a77a6 upstream.
+thanks,
 
-syzkaller triggered a use-after-free [1], caused by a combination of
-skb_get() in llc_conn_state_process() and usage of sk_eat_skb()
+greg k-h
 
-sk_eat_skb() is assuming the skb about to be freed is only used by
-the current thread. TCP/DCCP stacks enforce this because current
-thread holds the socket lock.
+-------------
+Pseudo-Shortlog of commits:
 
-llc_conn_state_process() wants to make sure skb does not disappear,
-and holds a reference on the skb it manipulates. But as soon as this
-skb is added to socket receive queue, another thread can consume it.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.166-rc1
 
-This means that llc must use regular skb_unlink() and kfree_skb()
-so that both producer and consumer can safely work on the same skb.
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/ast: Remove existing framebuffers before loading driver
 
-[1]
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:43 [inline]
-BUG: KASAN: use-after-free in skb_unref include/linux/skbuff.h:967 [inline]
-BUG: KASAN: use-after-free in kfree_skb+0xb7/0x580 net/core/skbuff.c:655
-Read of size 4 at addr ffff8801d1f6fba4 by task ksoftirqd/1/18
+Janosch Frank <frankja@linux.ibm.com>
+    s390/mm: Check for valid vma before zapping in gmap_discard
 
-CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.19.0-rc8+ #295
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
- print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
- atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
- refcount_read include/linux/refcount.h:43 [inline]
- skb_unref include/linux/skbuff.h:967 [inline]
- kfree_skb+0xb7/0x580 net/core/skbuff.c:655
- llc_sap_state_process+0x9b/0x550 net/llc/llc_sap.c:224
- llc_sap_rcv+0x156/0x1f0 net/llc/llc_sap.c:297
- llc_sap_handler+0x65e/0xf80 net/llc/llc_sap.c:438
- llc_rcv+0x79e/0xe20 net/llc/llc_input.c:208
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
- process_backlog+0x218/0x6f0 net/core/dev.c:5829
- napi_poll net/core/dev.c:6249 [inline]
- net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
- __do_softirq+0x30c/0xb03 kernel/softirq.c:292
- run_ksoftirqd+0x94/0x100 kernel/softirq.c:653
- smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
- kthread+0x35a/0x420 kernel/kthread.c:246
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+Salvatore Mesoraca <s.mesoraca16@gmail.com>
+    namei: allow restricted O_CREAT of FIFOs and regular files
 
-Allocated by task 18:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc_node+0x144/0x730 mm/slab.c:3644
- __alloc_skb+0x119/0x770 net/core/skbuff.c:193
- alloc_skb include/linux/skbuff.h:995 [inline]
- llc_alloc_frame+0xbc/0x370 net/llc/llc_sap.c:54
- llc_station_ac_send_xid_r net/llc/llc_station.c:52 [inline]
- llc_station_rcv+0x1dc/0x1420 net/llc/llc_station.c:111
- llc_rcv+0xc32/0xe20 net/llc/llc_input.c:220
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
- process_backlog+0x218/0x6f0 net/core/dev.c:5829
- napi_poll net/core/dev.c:6249 [inline]
- net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
- __do_softirq+0x30c/0xb03 kernel/softirq.c:292
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    sched/core: Allow __sched_setscheduler() in interrupts when PI is not used
 
-Freed by task 16383:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x83/0x290 mm/slab.c:3756
- kfree_skbmem+0x154/0x230 net/core/skbuff.c:582
- __kfree_skb+0x1d/0x20 net/core/skbuff.c:642
- sk_eat_skb include/net/sock.h:2366 [inline]
- llc_ui_recvmsg+0xec2/0x1610 net/llc/af_llc.c:882
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg+0xd0/0x110 net/socket.c:801
- ___sys_recvmsg+0x2b6/0x680 net/socket.c:2278
- __sys_recvmmsg+0x303/0xb90 net/socket.c:2390
- do_sys_recvmmsg+0x181/0x1a0 net/socket.c:2466
- __do_sys_recvmmsg net/socket.c:2484 [inline]
- __se_sys_recvmmsg net/socket.c:2480 [inline]
- __x64_sys_recvmmsg+0xbe/0x150 net/socket.c:2480
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Qu Wenruo <wqu@suse.com>
+    btrfs: Ensure btrfs_trim_fs can trim the whole filesystem
 
-The buggy address belongs to the object at ffff8801d1f6fac0
- which belongs to the cache skbuff_head_cache of size 232
-The buggy address is located 228 bytes inside of
- 232-byte region [ffff8801d1f6fac0, ffff8801d1f6fba8)
-The buggy address belongs to the page:
-page:ffffea000747dbc0 count:1 mapcount:0 mapping:ffff8801d9be7680 index:0xffff8801d1f6fe80
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0007346e88 ffffea000705b108 ffff8801d9be7680
-raw: ffff8801d1f6fe80 ffff8801d1f6f0c0 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
+Aaron Ma <aaron.ma@canonical.com>
+    usb: xhci: fix uninitialized completion when USB3 port got wrong status
 
-Memory state around the buggy address:
- ffff8801d1f6fa80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
- ffff8801d1f6fb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8801d1f6fb80: fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc
-                               ^
- ffff8801d1f6fc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8801d1f6fc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
+Greg Kroah-Hartman <greg@kroah.com>
+    tty: wipe buffer if not echoing data
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Linus Torvalds <torvalds@linux-foundation.org>
+    tty: wipe buffer.
 
----
- net/llc/af_llc.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: fix regulatory domain update when the firmware starts
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -726,7 +726,6 @@ static int llc_ui_recvmsg(struct socket
- 	struct sk_buff *skb = NULL;
- 	struct sock *sk = sock->sk;
- 	struct llc_sock *llc = llc_sk(sk);
--	unsigned long cpu_flags;
- 	size_t copied = 0;
- 	u32 peek_seq = 0;
- 	u32 *seq, skb_len;
-@@ -851,9 +850,8 @@ static int llc_ui_recvmsg(struct socket
- 			goto copy_uaddr;
- 
- 		if (!(flags & MSG_PEEK)) {
--			spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
--			sk_eat_skb(sk, skb);
--			spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
-+			skb_unlink(skb, &sk->sk_receive_queue);
-+			kfree_skb(skb);
- 			*seq = 0;
- 		}
- 
-@@ -874,9 +872,8 @@ copy_uaddr:
- 		llc_cmsg_rcv(msg, skb);
- 
- 	if (!(flags & MSG_PEEK)) {
--		spin_lock_irqsave(&sk->sk_receive_queue.lock, cpu_flags);
--		sk_eat_skb(sk, skb);
--		spin_unlock_irqrestore(&sk->sk_receive_queue.lock, cpu_flags);
-+		skb_unlink(skb, &sk->sk_receive_queue);
-+		kfree_skb(skb);
- 		*seq = 0;
- 	}
- 
+Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+    scsi: qla2xxx: do not queue commands when unloading
+
+Subhash Jadavani <subhashj@codeaurora.org>
+    scsi: ufshcd: release resources if probe fails
+
+Subhash Jadavani <subhashj@codeaurora.org>
+    scsi: ufs: fix race between clock gating and devfreq scaling work
+
+Venkat Gopalakrishnan <venkatg@codeaurora.org>
+    scsi: ufshcd: Fix race between clk scaling and ungate work
+
+Yaniv Gardi <ygardi@codeaurora.org>
+    scsi: ufs: fix bugs related to null pointer access and array size
+
+Liping Zhang <zlpnobody@gmail.com>
+    netfilter: nf_tables: fix oops when inserting an element into a verdict map
+
+Karthik D A <karthida@marvell.com>
+    mwifiex: fix p2p device doesn't find in scan problem
+
+Amitkumar Karwar <akarwar@marvell.com>
+    mwifiex: Fix NULL pointer dereference in skb_dequeue()
+
+Johannes Thumshirn <jthumshirn@suse.de>
+    cw1200: Don't leak memory if krealloc failes
+
+Ramses Ramírez <ramzeto@gmail.com>
+    Input: xpad - add support for Xbox1 PDP Camo series gamepad
+
+Enno Boland <gottox@voidlinux.eu>
+    Input: xpad - fix GPD Win 2 controller name
+
+Ethan Lee <flibitijibibo@gmail.com>
+    Input: xpad - add GPD Win 2 Controller USB IDs
+
+Marcus Folkesson <marcus.folkesson@gmail.com>
+    Input: xpad - avoid using __set_bit() for capabilities
+
+Leo Sperling <leosperling97@gmail.com>
+    Input: xpad - fix some coding style issues
+
+Francis Therien <frtherien@gmail.com>
+    Input: xpad - add PDP device id 0x02a4
+
+Mark Furneaux <mark@furneaux.ca>
+    Input: xpad - add support for PDP Xbox One controllers
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - validate USB endpoint type during probe
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - fix PowerA init quirk for some gamepad models
+
+Arvind Yadav <arvind.yadav.cs@gmail.com>
+    Input: xpad - constify usb_device_id
+
+Benjamin Valentin <benpicco@googlemail.com>
+    Input: xpad - sync supported devices with XBCD
+
+Benjamin Valentin <benpicco@googlemail.com>
+    Input: xpad - sync supported devices with 360Controller
+
+Benjamin Valentin <benpicco@googlemail.com>
+    Input: xpad - add USB IDs for Mad Catz Brawlstick and Razer Sabertooth
+
+Benjamin Valentin <benpicco@googlemail.com>
+    Input: xpad - sync supported devices with xboxdrv
+
+Benjamin Valentin <benpicco@googlemail.com>
+    Input: xpad - sort supported devices by USB ID
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - support some quirky Xbox One pads
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - restore LED state after device resume
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - fix stuck mode button on Xbox One S pad
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - don't depend on endpoint order
+
+Pavel Rojtberg <rojtberg@gmail.com>
+    Input: xpad - simplify error condition in init_output
+
+Daniel Tobias <dan.g.tob@gmail.com>
+    Input: xpad - move reporting xbox one home button to common function
+
+Daniel Tobias <dan.g.tob@gmail.com>
+    Input: xpad - correctly sort vendor id's
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - fix Xbox One rumble stopping after 2.5 secs
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - add product ID for Xbox One S pad
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - power off wireless 360 controllers on suspend
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - fix rumble on Xbox One controllers with 2015 firmware
+
+Pavel Rojtberg <rojtberg@gmail.com>
+    Input: xpad - xbox one elite controller support
+
+Pavel Rojtberg <rojtberg@gmail.com>
+    Input: xpad - add more third-party controllers
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - prevent spurious input from wired Xbox 360 controllers
+
+Silvan Jegen <s.jegen@gmail.com>
+    Input: xpad - add Mad Catz FightStick TE 2 VID/PID
+
+Arnd Bergmann <arnd@arndb.de>
+    Input: xpad - remove unused function
+
+Pavel Rojtberg <rojtberg@gmail.com>
+    Input: xpad - correct xbox one pad device name
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: xpad - use LED API when identifying wireless controllers
+
+Pavel Rojtberg <rojtberg@gmail.com>
+    Input: xpad - workaround dead irq_out after suspend/ resume
+
+Pierre-Loup A. Griffais <githubpublic@plagman.net>
+    Input: xpad - update Xbox One Force Feedback Support
+
+Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+    Input: xpad - handle "present" and "gone" correctly
+
+Clement Calmels <clement.calmels@free.fr>
+    Input: xpad - remove spurious events of wireless xpad 360 controller
+
+Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+    ath10k: fix kernel panic due to race in accessing arvif list
+
+Greg Hackmann <ghackmann@android.com>
+    arm64: remove no-op -p linker flag
+
+Andy Lutomirski <luto@kernel.org>
+    x86/entry/64: Remove %ebx handling from error_entry/exit
+
+Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+    x86/entry: spell EBX register correctly in documentation
+
+Johan Hovold <johan@kernel.org>
+    net: bcmgenet: fix OF child-node lookup
+
+Johan Hovold <johan@kernel.org>
+    NFC: nfcmrvl_uart: fix OF child-node lookup
+
+Johan Hovold <johan@kernel.org>
+    of: add helper to lookup compatible child node
+
+Yufen Yu <yuyufen@huawei.com>
+    tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
+
+Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+    powerpc/numa: Suppress "VPHN is not supported" messages
+
+Prarit Bhargava <prarit@redhat.com>
+    kdb: Use strscpy with destination buffer size
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    SUNRPC: Fix a bogus get/put in generic_key_to_expire()
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ARM: make lookup_processor_type() non-__init
+
+Anson Huang <anson.huang@nxp.com>
+    cpufreq: imx6q: add return value check for voltage scale
+
+Scott Wood <oss@buserror.net>
+    KVM: PPC: Move and undef TRACE_INCLUDE_PATH/FILE
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
+
+Erik Schmauss <erik.schmauss@intel.com>
+    ACPICA: AML interpreter: add region addresses in global list during initialization
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): Don't crash the kernel if can_priv::echo_skb is accessed out of bounds
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: __can_get_echo_skb(): replace struct can_frame by canfd_frame to access frame length
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: can_get_echo_skb(): factor out non sending code to __can_get_echo_skb()
+
+Y.C. Chen <yc_chen@aspeedtech.com>
+    drm/ast: fixed cursor may disappear sometimes
+
+Y.C. Chen <yc_chen@aspeedtech.com>
+    drm/ast: change resolution may cause screen blurred
+
+Eric Dumazet <edumazet@google.com>
+    llc: do not use sk_eat_skb()
+
+Andrew Price <anprice@redhat.com>
+    gfs2: Don't leave s_fs_info pointing to freed memory in init_sbd
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: clear the transport of some out_chunk_list chunks in sctp_assoc_rm_peer
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    bfs: add sanity check at bfs_fill_super()
+
+Dominique Martinet <dominique.martinet@cea.fr>
+    v9fs_dir_readdir: fix double-free on p9stat_read error
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: support sta_statistics() even on older firmware
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    MAINTAINERS: Add Sasha as a stable branch maintainer
+
+Aaron Ma <aaron.ma@canonical.com>
+    usb: xhci: fix timeout for transition from RExit to U0
+
+Dennis Wassenberg <dennis.wassenberg@secunet.com>
+    usb: core: Fix hub port connection events lost
+
+
+-------------
+
+Diffstat:
+
+ Documentation/sysctl/fs.txt                  |  36 ++
+ MAINTAINERS                                  |   1 +
+ Makefile                                     |   4 +-
+ arch/arm/kernel/head-common.S                |   6 +-
+ arch/arm64/Makefile                          |   2 +-
+ arch/powerpc/kvm/trace.h                     |   8 +-
+ arch/powerpc/kvm/trace_booke.h               |   9 +-
+ arch/powerpc/kvm/trace_hv.h                  |   9 +-
+ arch/powerpc/kvm/trace_pr.h                  |   9 +-
+ arch/powerpc/mm/numa.c                       |   2 +-
+ arch/s390/mm/pgtable.c                       |   2 +
+ arch/x86/entry/entry_64.S                    |  20 +-
+ drivers/acpi/acpica/dsopcode.c               |   4 +
+ drivers/cpufreq/imx6q-cpufreq.c              |   7 +-
+ drivers/gpu/drm/ast/ast_drv.c                |  21 +
+ drivers/gpu/drm/ast/ast_mode.c               |   3 +-
+ drivers/input/joystick/xpad.c                | 810 +++++++++++++++++++++------
+ drivers/net/can/dev.c                        |  48 +-
+ drivers/net/ethernet/broadcom/genet/bcmmii.c |   2 +-
+ drivers/net/wireless/ath/ath10k/mac.c        |   6 +
+ drivers/net/wireless/cw1200/wsm.c            |  16 +-
+ drivers/net/wireless/iwlwifi/mvm/mac80211.c  |  12 +-
+ drivers/net/wireless/iwlwifi/mvm/nvm.c       |   5 +-
+ drivers/net/wireless/mwifiex/cfg80211.c      |  10 +-
+ drivers/net/wireless/mwifiex/wmm.c           |  12 +-
+ drivers/nfc/nfcmrvl/uart.c                   |   5 +-
+ drivers/of/base.c                            |  25 +
+ drivers/scsi/qla2xxx/qla_os.c                |   5 +
+ drivers/scsi/ufs/ufs.h                       |   3 +-
+ drivers/scsi/ufs/ufshcd-pci.c                |   2 +
+ drivers/scsi/ufs/ufshcd-pltfrm.c             |   5 +-
+ drivers/scsi/ufs/ufshcd.c                    |  75 ++-
+ drivers/tty/n_tty.c                          |  19 +-
+ drivers/tty/tty_buffer.c                     |   2 +
+ drivers/usb/core/hub.c                       |   4 +-
+ drivers/usb/host/xhci-hub.c                  |  66 ++-
+ drivers/usb/host/xhci-ring.c                 |   2 +-
+ drivers/usb/host/xhci.h                      |   2 +-
+ fs/9p/vfs_dir.c                              |  11 -
+ fs/bfs/inode.c                               |   9 +-
+ fs/btrfs/extent-tree.c                       |  10 +-
+ fs/btrfs/ioctl.c                             |  11 +-
+ fs/gfs2/ops_fstype.c                         |   2 +-
+ fs/namei.c                                   |  53 +-
+ include/linux/can/dev.h                      |   1 +
+ include/linux/fs.h                           |   2 +
+ include/linux/of.h                           |   8 +
+ kernel/debug/kdb/kdb_io.c                    |  15 +-
+ kernel/debug/kdb/kdb_private.h               |   2 +-
+ kernel/debug/kdb/kdb_support.c               |  10 +-
+ kernel/sched/core.c                          |   4 +-
+ kernel/sysctl.c                              |  18 +
+ mm/shmem.c                                   |   4 +-
+ net/llc/af_llc.c                             |  11 +-
+ net/netfilter/nf_tables_api.c                |   1 +
+ net/sctp/associola.c                         |  10 +-
+ net/sunrpc/auth_generic.c                    |   8 +-
+ 57 files changed, 1126 insertions(+), 343 deletions(-)
 
 
