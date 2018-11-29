@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC0DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF30C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 737AE205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D7F421104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYzt0Yg8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737AE205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeVJv8Ej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7F421104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732671AbeK3BaC (ORCPT
+        id S1732690AbeK3BaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56842 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:30:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731509AbeK3BaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:30:01 -0500
+        id S1732673AbeK3BaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:30:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F41D205C9;
-        Thu, 29 Nov 2018 14:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1649421104;
+        Thu, 29 Nov 2018 14:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501470;
-        bh=BOSO/LAnamxiN6boCORNJjhFnQ2Ifsic/WhGceDaCqE=;
+        s=default; t=1543501472;
+        bh=QdKTGZ9sQ88S2TgQMmqHOIdRRsti9zYTkDyryLQCWtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KYzt0Yg8b9YPvYlBLRrBzf9D+Vw9YmABqMkaER0ZmOBmw+CNMTdZI0XjHBP95DKYe
-         mYbmxbpEwBtBXBOiYrvGKVe6TxGwwRAmvXhPQMnqePmGZvlYogcMVceNdLn8YGpfc8
-         tjuHfEFBL3DyUeMG/CB6Wz0/nDm3Z9pqZQLG6rL0=
+        b=JeVJv8EjQprd886VnSndQOVgcx0uKTATEI7lXE8P01TtV1YMbAOmbuq7SF+pJS8Qf
+         +MQDsAVhWuqPkUw6k+rJUDNc8q9Q6MYxUOMaS2/T3P3KTmA3MoZ4+GE+k1f9yfWo2L
+         0Oc4WRAK9mNW4Q3MGjzT5qbferzqHC5khbb7qBVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
+        Stefan Agner <stefan@agner.ch>,
+        Nicolas Pitre <nico@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Olof Johansson <olof@lixom.net>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.14 003/100] ARM: 8767/1: add support for building ARM kernel with clang
-Date:   Thu, 29 Nov 2018 15:11:33 +0100
-Message-Id: <20181129140059.153160367@linuxfoundation.org>
+Subject: [PATCH 4.14 004/100] bus: arm-cci: remove unnecessary unreachable()
+Date:   Thu, 29 Nov 2018 15:11:34 +0100
+Message-Id: <20181129140059.232917305@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,32 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Agner <stefan@agner.ch>
 
-(commit c1c386681bd73c4fc28eb5cc91cf8b7be9b409ba upstream)
+(commit 10d8713429d345867fc8998d6193b233c0cab28c upstream)
 
-Use cc-options call for compiler options which are not available
-in clang. With this patch an ARMv7 multi platform kernel can be
-successfully build using clang (tested with version 5.0.1).
+Mixing asm and C code is not recommended in a naked function by
+gcc and leads to an error when using clang:
+  drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
+  function is not supported
+        unreachable();
+        ^
 
-Based-on-patches-by: Behan Webster <behanw@converseincode.com>
+While the function is marked __naked it actually properly return
+in asm. There is no need for the unreachable() call.
 
+GCC 7.2 generates identical object files before and after, other
+than (for obvious reasons) the line numbers generated by
+WANT_WARN_ON_SLOWPATH for all the WARN()s appearing later in the
+file.
+
+Suggested-by: Russell King <linux@arm.linux.org.uk>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/compressed/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bus/arm-cci.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -113,7 +113,7 @@ CFLAGS_fdt_ro.o := $(nossp_flags)
- CFLAGS_fdt_rw.o := $(nossp_flags)
- CFLAGS_fdt_wip.o := $(nossp_flags)
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -2103,8 +2103,6 @@ asmlinkage void __naked cci_enable_port_
+ 	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
+ 	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
+ 	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
+-
+-	unreachable();
+ }
  
--ccflags-y := -fpic -mno-single-pic-base -fno-builtin -I$(obj)
-+ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin -I$(obj)
- asflags-y := -DZIMAGE
- 
- # Supply kernel BSS size to the decompressor via a linker symbol.
+ /**
 
 
