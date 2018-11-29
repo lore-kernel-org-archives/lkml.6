@@ -7,45 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8293BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4183C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D5621019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D5D021019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1clyfOg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D5621019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mf9aZuDM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5D021019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbeK3BZ0 (ORCPT
+        id S1728833AbeK3BZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48830 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbeK3BZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:25 -0500
+        id S1729806AbeK3BZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3551D208E7;
-        Thu, 29 Nov 2018 14:19:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 878BE208E7;
+        Thu, 29 Nov 2018 14:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501193;
-        bh=VZRWVEgLHfY4MaREpi+s/vj5lVnUek8myFpCjngm9tU=;
+        s=default; t=1543501196;
+        bh=+aKTUiYgH8GZbtreLbRSNo8J0IWnU7yRjfj3thwWrx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1clyfOg+A/uvcIlnTyRn//o5joa8vJWUjtNo4THiQby0l3LxizLFV+JN9pI3OFjAG
-         URmdYT8FrM77Fu7BQM8BWRtVq2Vy08mu4db5o+ntmdBT1VR7xECcHt3rRwNWzCy2s5
-         DXbKy5gKD0L85SAzvCNX+OsMp6V5pPyY2Ujz2ptI=
+        b=mf9aZuDM9GFmOr0vgm/G95cjW+WPwEpRs2eJeZsRKzRglDinnaoIYeePIBp8vR4ES
+         X82nsDamuYm1s60O8uzeJDrN93N28bJ6skx+4kRdwyhCoEHapWDtbot3Ddfo2XOx6h
+         744J5DZZAlfQS25SwsawcNxh7i+4L1uZelU1Osp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 82/86] btrfs: Ensure btrfs_trim_fs can trim the whole filesystem
-Date:   Thu, 29 Nov 2018 15:12:47 +0100
-Message-Id: <20181129140116.297281513@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@osdl.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 83/86] sched/core: Allow __sched_setscheduler() in interrupts when PI is not used
+Date:   Thu, 29 Nov 2018 15:12:48 +0100
+Message-Id: <20181129140116.377213541@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,96 +68,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 6ba9fc8e628becf0e3ec94083450d089b0dec5f5 upstream.
+commit 896bbb2522587e3b8eb2a0d204d43ccc1042a00d upstream.
 
-[BUG]
-fstrim on some btrfs only trims the unallocated space, not trimming any
-space in existing block groups.
+When priority inheritance was added back in 2.6.18 to sched_setscheduler(), it
+added a path to taking an rt-mutex wait_lock, which is not IRQ safe. As PI
+is not a common occurrence, lockdep will likely never trigger if
+sched_setscheduler was called from interrupt context. A BUG_ON() was added
+to trigger if __sched_setscheduler() was ever called from interrupt context
+because there was a possibility to take the wait_lock.
 
-[CAUSE]
-Before fstrim_range passed to btrfs_trim_fs(), it gets truncated to
-range [0, super->total_bytes).  So later btrfs_trim_fs() will only be
-able to trim block groups in range [0, super->total_bytes).
+Today the wait_lock is irq safe, but the path to taking it in
+sched_setscheduler() is the same as the path to taking it from normal
+context. The wait_lock is taken with raw_spin_lock_irq() and released with
+raw_spin_unlock_irq() which will indiscriminately enable interrupts,
+which would be bad in interrupt context.
 
-While for btrfs, any bytenr aligned to sectorsize is valid, since btrfs
-uses its logical address space, there is nothing limiting the location
-where we put block groups.
+The problem is that normalize_rt_tasks, which is called by triggering the
+sysrq nice-all-RT-tasks was changed to call __sched_setscheduler(), and this
+is done from interrupt context!
 
-For filesystem with frequent balance, it's quite easy to relocate all
-block groups and bytenr of block groups will start beyond
-super->total_bytes.
+Now __sched_setscheduler() takes a "pi" parameter that is used to know if
+the priority inheritance should be called or not. As the BUG_ON() only cares
+about calling the PI code, it should only bug if called from interrupt
+context with the "pi" parameter set to true.
 
-In that case, btrfs will not trim existing block groups.
-
-[FIX]
-Just remove the truncation in btrfs_ioctl_fitrim(), so btrfs_trim_fs()
-can get the unmodified range, which is normally set to [0, U64_MAX].
-
-Reported-by: Chris Murphy <lists@colorremedies.com>
-Fixes: f4c697e6406d ("btrfs: return EINVAL if start > total_bytes in fitrim ioctl")
-CC: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@osdl.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: dbc7f069b93a ("sched: Use replace normalize_task() with __sched_setscheduler()")
+Link: http://lkml.kernel.org/r/20170308124654.10e598f2@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/btrfs/extent-tree.c |   10 +---------
- fs/btrfs/ioctl.c       |   11 +++++++----
- 2 files changed, 8 insertions(+), 13 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -10708,17 +10708,9 @@ int btrfs_trim_fs(struct btrfs_root *roo
- 	u64 start;
- 	u64 end;
- 	u64 trimmed = 0;
--	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
- 	int ret = 0;
+---
+ kernel/sched/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3822,8 +3822,8 @@ static int __sched_setscheduler(struct t
+ 	struct rq *rq;
+ 	int reset_on_fork;
  
--	/*
--	 * try to trim all FS space, our block group may start from non-zero.
--	 */
--	if (range->len == total_bytes)
--		cache = btrfs_lookup_first_block_group(fs_info, range->start);
--	else
--		cache = btrfs_lookup_block_group(fs_info, range->start);
--
-+	cache = btrfs_lookup_first_block_group(fs_info, range->start);
- 	while (cache) {
- 		if (cache->key.objectid >= (range->start + range->len)) {
- 			btrfs_put_block_group(cache);
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -378,7 +378,6 @@ static noinline int btrfs_ioctl_fitrim(s
- 	struct fstrim_range range;
- 	u64 minlen = ULLONG_MAX;
- 	u64 num_devices = 0;
--	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
- 	int ret;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -402,11 +401,15 @@ static noinline int btrfs_ioctl_fitrim(s
- 		return -EOPNOTSUPP;
- 	if (copy_from_user(&range, arg, sizeof(range)))
- 		return -EFAULT;
--	if (range.start > total_bytes ||
--	    range.len < fs_info->sb->s_blocksize)
-+
-+	/*
-+	 * NOTE: Don't truncate the range using super->total_bytes.  Bytenr of
-+	 * block group is in the logical address space, which can be any
-+	 * sectorsize aligned bytenr in  the range [0, U64_MAX].
-+	 */
-+	if (range.len < fs_info->sb->s_blocksize)
- 		return -EINVAL;
- 
--	range.len = min(range.len, total_bytes - range.start);
- 	range.minlen = max(range.minlen, minlen);
- 	ret = btrfs_trim_fs(fs_info->tree_root, &range);
- 	if (ret < 0)
+-	/* may grab non-irq protected spin_locks */
+-	BUG_ON(in_interrupt());
++	/* The pi code expects interrupts enabled */
++	BUG_ON(pi && in_interrupt());
+ recheck:
+ 	/* double check policy once rq lock held */
+ 	if (policy < 0) {
 
 
