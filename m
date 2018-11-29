@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7143FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D861C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3724E21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BFE208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TObjm8fd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3724E21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHoWcZny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BFE208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbeK3BZd (ORCPT
+        id S1731287AbeK3BZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:25:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49088 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:25:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731270AbeK3BZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:25:32 -0500
+        id S1729581AbeK3BZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:25:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 245A821104;
-        Thu, 29 Nov 2018 14:20:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20630205C9;
+        Thu, 29 Nov 2018 14:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501201;
-        bh=5RB+Ge78ujoLgfRhw2DPUxe/6ymReWdIoDcPEcLiNQE=;
+        s=default; t=1543501211;
+        bh=26CZvhp+/rDYpfjhDmsOft+/LfZue39dMMfnoX+OH/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TObjm8fdKmxPOrdUH0V/yBOj+7dzj6J+QqmfdGcvRAMBtLLk626gm6L5WohgD2ev7
-         vg2dX+/Bq1T4xGG3zHnX2eG2WkMb0bl4/u1VhvlrS9vfo+Tvs+DRcCFFag7/z+EzBg
-         HILBw2zuOp8Pu6f3Zmit9vaIpya8gdgRc4886UPU=
+        b=uHoWcZnykEMOIFTikExja3kSUPjk4Bsx3O8/BGCFnQ4r+U6JiN+301yRx+3PgZNcu
+         CJbPA1fFVEhol0fJkSWv+sead26y2z7Xl3GPPoU/+WKAmXME/BmOm6qAP5Pi+8St+N
+         MpBHDncjvzq0mS85iJ7y/Xoahq7c49zx8W8uOil8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.4 85/86] s390/mm: Check for valid vma before zapping in gmap_discard
-Date:   Thu, 29 Nov 2018 15:12:50 +0100
-Message-Id: <20181129140116.504805310@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
+        "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.4 86/86] drm/ast: Remove existing framebuffers before loading driver
+Date:   Thu, 29 Nov 2018 15:12:51 +0100
+Message-Id: <20181129140116.579543061@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,38 +64,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-commit 1843abd03250115af6cec0892683e70cf2297c25 upstream.
+commit 5478ad10e7850ce3d8b7056db05ddfa3c9ddad9a upstream.
 
-Userspace could have munmapped the area before doing unmapping from
-the gmap. This would leave us with a valid vmaddr, but an invalid vma
-from which we would try to zap memory.
+If vesafb attaches to the AST device, it configures the framebuffer memory
+for uncached access by default. When ast.ko later tries to attach itself to
+the device, it wants to use write-combining on the framebuffer memory, but
+vesefb's existing configuration for uncached access takes precedence. This
+results in reduced performance.
 
-Let's check before using the vma.
+Removing the framebuffer's configuration before loding the AST driver fixes
+the problem. Other DRM drivers already contain equivalent code.
 
-Fixes: 1e133ab296f3 ("s390/mm: split arch/s390/mm/pgtable.c")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Message-Id: <20180816082432.78828-1-frankja@linux.ibm.com>
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Link: https://bugzilla.opensuse.org/show_bug.cgi?id=1112963
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: <stable@vger.kernel.org>
+Tested-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Tested-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/mm/pgtable.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/ast/ast_drv.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/arch/s390/mm/pgtable.c
-+++ b/arch/s390/mm/pgtable.c
-@@ -637,6 +637,8 @@ void gmap_discard(struct gmap *gmap, uns
- 		vmaddr |= gaddr & ~PMD_MASK;
- 		/* Find vma in the parent mm */
- 		vma = find_vma(gmap->mm, vmaddr);
-+		if (!vma)
-+			continue;
- 		size = min(to - gaddr, PMD_SIZE - (gaddr & ~PMD_MASK));
- 		zap_page_range(vma, vmaddr, size, NULL);
- 	}
+--- a/drivers/gpu/drm/ast/ast_drv.c
++++ b/drivers/gpu/drm/ast/ast_drv.c
+@@ -60,8 +60,29 @@ static const struct pci_device_id pciidl
+ 
+ MODULE_DEVICE_TABLE(pci, pciidlist);
+ 
++static void ast_kick_out_firmware_fb(struct pci_dev *pdev)
++{
++	struct apertures_struct *ap;
++	bool primary = false;
++
++	ap = alloc_apertures(1);
++	if (!ap)
++		return;
++
++	ap->ranges[0].base = pci_resource_start(pdev, 0);
++	ap->ranges[0].size = pci_resource_len(pdev, 0);
++
++#ifdef CONFIG_X86
++	primary = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
++#endif
++	remove_conflicting_framebuffers(ap, "astdrmfb", primary);
++	kfree(ap);
++}
++
+ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
++	ast_kick_out_firmware_fb(pdev);
++
+ 	return drm_get_pci_dev(pdev, ent, &driver);
+ }
+ 
 
 
