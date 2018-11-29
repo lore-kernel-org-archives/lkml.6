@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE39EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B157C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21822145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21822145D
+	by mail.kernel.org (Postfix) with ESMTP id 1AEAB20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AEAB20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbeK3HJb (ORCPT
+        id S1726793AbeK3HKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 02:09:31 -0500
-Received: from muru.com ([72.249.23.125]:55596 "EHLO muru.com"
+        Fri, 30 Nov 2018 02:10:04 -0500
+Received: from muru.com ([72.249.23.125]:55610 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeK3HJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 02:09:31 -0500
+        id S1726204AbeK3HKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 02:10:04 -0500
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 3700780EA;
-        Thu, 29 Nov 2018 20:02:58 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 12:02:53 -0800
+        by muru.com (Postfix) with ESMTPS id 02F4F8171;
+        Thu, 29 Nov 2018 20:03:30 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 12:03:25 -0800
 From:   Tony Lindgren <tony@atomide.com>
 To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     paul@pwsan.com, aaro.koskinen@iki.fi, linux@armlinux.org.uk,
+Cc:     khilman@kernel.org, aaro.koskinen@iki.fi, linux@armlinux.org.uk,
         linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: OMAP1: clock: Change to use DEFINE_SHOW_ATTRIBUTE
- macro
-Message-ID: <20181129200253.GB53235@atomide.com>
-References: <20181106143355.8340-1-tiny.windzz@gmail.com>
+Subject: Re: [PATCH] ARM: OMAP: PM: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Message-ID: <20181129200325.GC53235@atomide.com>
+References: <20181106143516.8394-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106143355.8340-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181106143516.8394-1-tiny.windzz@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Yangtao Li <tiny.windzz@gmail.com> [181106 06:34]:
+* Yangtao Li <tiny.windzz@gmail.com> [181106 06:35]:
 > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
 Applying into omap-for-v4.21/omap1 thanks.
