@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2E7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEC3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B9C205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23F8C2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:25:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2rkKx1AQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B9C205C9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVn+NBlx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F8C2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbeK3BbZ (ORCPT
+        id S1733143AbeK3Bb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58922 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:31:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731628AbeK3BbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:31:24 -0500
+        id S1729984AbeK3Bb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:31:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7B9821104;
-        Thu, 29 Nov 2018 14:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EBE72133F;
+        Thu, 29 Nov 2018 14:25:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501552;
-        bh=2NHCgXn3uuob5Nk4LxAMBG+IPBVMfagxotmbEHwy6zs=;
+        s=default; t=1543501555;
+        bh=kdKFFAjemawBwslrT/U9QXasAIsMlPGjSZkHk7KJGBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2rkKx1AQfnkaWYCK7gcATCFZwCcwZKFWsEdpyVJw87m9TP1e2mKUv/yeOa74EKpHB
-         sQryaG1gM2OWEXl1QBBRERKQkkSpzeyxRxelkIPp+mT2mTemoBeiYbdhunFGh5+c+7
-         XEVrupjsmORJf47niszHVGQFL/SpV58o6jCEZgpc=
+        b=YVn+NBlxNu/e68w45voQGmOchDtSU2l2c1eDKGFyxuuG1imy17rghg1Cy+RZR7O9e
+         k4T5YcZTs2L1PgzmBrEb/yWLGEb8tvlJCSflyClwIbl9dQT2XqF6+ozeXo6NcIl/6O
+         fQ6RvPd1jyIqH783CYYDASRfmk3EBjiRkdwuWOPk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Duckeck <m.duckeck@kunbus.de>,
-        Akshay Bhat <akshay.bhat@timesys.com>,
-        Casey Fitzpatrick <casey.fitzpatrick@timesys.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 043/100] can: hi311x: Use level-triggered interrupt
-Date:   Thu, 29 Nov 2018 15:12:13 +0100
-Message-Id: <20181129140102.572986349@linuxfoundation.org>
+        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH 4.14 044/100] ACPICA: AML interpreter: add region addresses in global list during initialization
+Date:   Thu, 29 Nov 2018 15:12:14 +0100
+Message-Id: <20181129140102.870510957@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -65,59 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-commit f164d0204b1156a7e0d8d1622c1a8d25752befec upstream.
+commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
 
-If the hi3110 shares the SPI bus with another traffic-intensive device
-and packets are received in high volume (by a separate machine sending
-with "cangen -g 0 -i -x"), reception stops after a few minutes and the
-counter in /proc/interrupts stops incrementing.  Bus state is "active".
-Bringing the interface down and back up reconvenes the reception.  The
-issue is not observed when the hi3110 is the sole device on the SPI bus.
+The table load process omitted adding the operation region address
+range to the global list. This omission is problematic because the OS
+queries the global list to check for address range conflicts before
+deciding which drivers to load. This commit may result in warning
+messages that look like the following:
 
-Using a level-triggered interrupt makes the issue go away and lets the
-hi3110 successfully receive 2 GByte over the course of 5 days while a
-ks8851 Ethernet chip on the same SPI bus handles 6 GByte of traffic.
+[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
+[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
 
-Unfortunately the hi3110 datasheet is mum on the trigger type.  The pin
-description on page 3 only specifies the polarity (active high):
-http://www.holtic.com/documents/371-hi-3110_v-rev-kpdf.do
+However, these messages do not signify regressions. It is a result of
+properly adding address ranges within the global address list.
 
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Akshay Bhat <akshay.bhat@timesys.com>
-Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
+Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Jean Delvare <jdelvare@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/net/can/holt_hi311x.txt |    2 +-
- drivers/net/can/spi/hi311x.c                              |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/acpi/acpica/dsopcode.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/Documentation/devicetree/bindings/net/can/holt_hi311x.txt
-+++ b/Documentation/devicetree/bindings/net/can/holt_hi311x.txt
-@@ -18,7 +18,7 @@ Example:
- 		reg = <1>;
- 		clocks = <&clk32m>;
- 		interrupt-parent = <&gpio4>;
--		interrupts = <13 IRQ_TYPE_EDGE_RISING>;
-+		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
- 		vdd-supply = <&reg5v0>;
- 		xceiver-supply = <&reg5v0>;
- 	};
---- a/drivers/net/can/spi/hi311x.c
-+++ b/drivers/net/can/spi/hi311x.c
-@@ -760,7 +760,7 @@ static int hi3110_open(struct net_device
- {
- 	struct hi3110_priv *priv = netdev_priv(net);
- 	struct spi_device *spi = priv->spi;
--	unsigned long flags = IRQF_ONESHOT | IRQF_TRIGGER_RISING;
-+	unsigned long flags = IRQF_ONESHOT | IRQF_TRIGGER_HIGH;
- 	int ret;
+--- a/drivers/acpi/acpica/dsopcode.c
++++ b/drivers/acpi/acpica/dsopcode.c
+@@ -451,6 +451,10 @@ acpi_ds_eval_region_operands(struct acpi
+ 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
+ 			  obj_desc->region.length));
  
- 	ret = open_candev(net);
++	status = acpi_ut_add_address_range(obj_desc->region.space_id,
++					   obj_desc->region.address,
++					   obj_desc->region.length, node);
++
+ 	/* Now the address and length are valid for this opregion */
+ 
+ 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
 
 
