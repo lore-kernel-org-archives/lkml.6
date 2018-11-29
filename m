@@ -2,153 +2,160 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCF7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A2BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012EB2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80B22081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:31:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JMfhBkl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012EB2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QXFBB5FO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80B22081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeK2Vfl (ORCPT
+        id S1728037AbeK2Vf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:35:41 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57464 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeK2Vfl (ORCPT
+        Thu, 29 Nov 2018 16:35:58 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35082 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbeK2Vf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:35:41 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wATATwfD073931;
-        Thu, 29 Nov 2018 04:29:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543487398;
-        bh=B0NFVY1BHE0+JdvAEnEoCl0k08F+72BWvDC4S9IW9k0=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=JMfhBkl9wnWxxCJ7d51KNyKT8vgdHiXuCtVt53KAj5fsiwNm1FNP63MNKoSpV1TGz
-         1cv0PzG46vwyTjN9R/CXPJvWqM9UjoId3Z5oIAHQJBgd5v3OrVGe+XKjcTs2sJadZk
-         kSFK2mzATALNcY7FC96ostsZGsUmikkRj7ay/2Gw=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wATATwp1011661
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 04:29:58 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
- Nov 2018 04:29:56 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 29 Nov 2018 04:29:56 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wATATqjf007259;
-        Thu, 29 Nov 2018 04:29:53 -0600
-Subject: Re: [PATCH 01/16] remoteproc: Extend rproc_da_to_va() API with a
- flags parameter
-To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>, <s-anna@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-2-git-send-email-rogerq@ti.com>
- <d93c4c96-e0b9-59cd-6098-92684bc2360b@lechnology.com>
-CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <nsekhar@ti.com>, <t-kristo@ti.com>,
-        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
-        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BFFBFA0.9000104@ti.com>
-Date:   Thu, 29 Nov 2018 12:29:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 29 Nov 2018 16:35:58 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c126so1665847wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 02:31:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qZzxft3Mxby9sQcd2bZckbBCj4ottuk3Pb1sYryFYm4=;
+        b=QXFBB5FOdfYGcNnZ68hykP/HCOgtymovxzNmy6ycu5Ed8Ih628XfpD+BvXrBzTkvSU
+         +a98EoBOHGgxV37npeAv4V3qXwNs/ZwAxMdqPYM61dyPrJmNXw8l0k4jUrKFW89HYgSO
+         XeysATP26FXqcYQ8QV27eg0IoGnddXK98eBCs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qZzxft3Mxby9sQcd2bZckbBCj4ottuk3Pb1sYryFYm4=;
+        b=mUWg91HF1GZOwxnx4tziExis3Siy7Ibr3Zlh4DoyBk/ecmXFL+lDe4wnk0W+NjnZdM
+         bFkQWJxrAn8avLS50YLwYQW9zTci90FkyOskdLACFLFgDLyydGunR6DS9q+C7exp12FZ
+         F1lbBVg8c+p8qlnLrZh+a5QZH1C4XpTdNacNJCadH3SFJBzpHDOlN2RPXi2EgqCUMUEv
+         Fc5B7sgHuvhhzhi1XpftWahDR9a6Xp5ocsvhH7MuFjILfepEBDKLUuX0RNOCw/BX4S6B
+         6wohg/NLym09Z3v0KxCAyNsOnTBzqgPWMAkIGJ7YHpUoJMSnn104UvNwIeQ0HbIvR46R
+         ByZw==
+X-Gm-Message-State: AA+aEWaVKO0q37lwVfHxEPGO9YA7BYPJfgsbJXIZDBWGas3ubiJvhW3F
+        xv/BLpLh5mKpTniSpw46qtb26A==
+X-Google-Smtp-Source: AFSGD/VLLH8nj3wXMlj+NqRr6XtPwd/k6u9/412xIsYwe1Zs7nhzAOCJvpKm3bxV5ROuXoFNnBH6gQ==
+X-Received: by 2002:a1c:a183:: with SMTP id k125mr1138425wme.25.1543487463750;
+        Thu, 29 Nov 2018 02:31:03 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id o81sm2354107wmd.10.2018.11.29.02.31.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 02:31:02 -0800 (PST)
+Subject: Re: [PATCH v3] media: venus: add support for key frame
+To:     Tomasz Figa <tfiga@chromium.org>, mgottam@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        vgarodia@codeaurora.org
+References: <1541163476-23249-1-git-send-email-mgottam@codeaurora.org>
+ <CAAFQd5D=hNdkEovonE6GOaYvq9dBbQwSZ=95V9a80e-sLp7cYg@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <4767b56f-420b-dc0c-0ae9-44dbf6dcd0b1@linaro.org>
+Date:   Thu, 29 Nov 2018 12:31:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <d93c4c96-e0b9-59cd-6098-92684bc2360b@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAAFQd5D=hNdkEovonE6GOaYvq9dBbQwSZ=95V9a80e-sLp7cYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn, Suman,
+Hi Tomasz,
 
-On 26/11/18 23:29, David Lechner wrote:
-> On 11/26/18 1:52 AM, Roger Quadros wrote:
->> From: Suman Anna <s-anna@ti.com>
->>
->> The rproc_da_to_va() API is currently used to perform any device
->> to kernel address translations to meet the different needs of the
->> remoteproc core/platform drivers (eg: loading). The function also
->> invokes the da_to_va ops, if present, to allow the remoteproc
->> platform drivers to provide address translation. However, not all
->> platform implementations have linear address spaces, and may need
->> an additional parameter to be able to perform proper translations.
->>
->> The rproc_da_to_va() API and the rproc .da_to_va ops have therefore
->> been expanded to take in an additional flags field enabling some
->> remoteproc implementations (like the TI PRUSS remoteproc driver)
->> to use these flags. Also, define some semantics for this flags
->> argument as this can vary from one implementation to another. A
->> new flags type is encoded into the upper 16 bits along side the
->> actual value in the lower 16-bits for the flags argument, to
->> allow different individual implementations to have better
->> flexibility in interpreting the flags as per their needs.
+On 11/3/18 5:01 AM, Tomasz Figa wrote:
+> Hi Malathi,
 > 
-> This seems like an overly complex solution for a rather simple
-> problem. Instead of passing all sorts of flags, could we just add
-> a parameter named "page" to da_to_va() that indicates the memory
-> page of the address in the remote processor?
+> On Fri, Nov 2, 2018 at 9:58 PM Malathi Gottam <mgottam@codeaurora.org> wrote:
+>>
+>> When client requests for a keyframe, set the property
+>> to hardware to generate the sync frame.
+>>
+>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/venc_ctrls.c | 20 +++++++++++++++++++-
+>>  1 file changed, 19 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
+>> index 45910172..59fe7fc 100644
+>> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
+>> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
+>> @@ -79,8 +79,10 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>>  {
+>>         struct venus_inst *inst = ctrl_to_inst(ctrl);
+>>         struct venc_controls *ctr = &inst->controls.enc;
+>> +       struct hfi_enable en = { .enable = 1 };
+>>         u32 bframes;
+>>         int ret;
+>> +       u32 ptype;
+>>
+>>         switch (ctrl->id) {
+>>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
+>> @@ -173,6 +175,19 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>>
+>>                 ctr->num_b_frames = bframes;
+>>                 break;
+>> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
+>> +               mutex_lock(&inst->lock);
+>> +               if (inst->streamon_out && inst->streamon_cap) {
 > 
-> Or perhaps there is some other use for all of these flags that I
-> am not aware of?
+> We had a discussion on this in v2. I don't remember seeing any conclusion.
+> 
+> Obviously the hardware should generate a keyframe naturally when the
+> CAPTURE streaming starts, which is where the encoding starts, but the
+> state of the OUTPUT queue should not affect this.
+> 
+> The application is free to stop and start streaming on the OUTPUT
+> queue as it goes and it shouldn't imply any side effects in the
+> encoded bitstream (e.g. a keyframe inserted). So:
+> - a sequence of STREAMOFF(OUTPUT),
+> S_CTRL(V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME), STREAMON(OUTPUT) should
+> explicitly generate a keyframe,
 
-I'm not a big fan of this patch either.
+I agree with you, but presently we don't follow strictly the stateful
+encoder spec. In this spirit I think proposed patch is applicable to the
+current state of the encoder driver, and your comment should be
+addressed in the follow-up patches where we have to re-factor a bit
+start/stop_streaming according to the encoder documentation.
 
-rproc_da_to_va() is used at the following places
+But until then we have to get that patch.
 
-2 qcom_q6v5_mss.c         qcom_q6v5_dump_segment           974 void *ptr = rproc_da_to_va(rproc, segment->da, segment->size,
-3 remoteproc_core.c       rproc_da_to_va                   197 void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
-4 remoteproc_core.c       rproc_handle_trace               582 ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, RPROC_FLAGS_NONE);
-5 remoteproc_core.c       rproc_coredump                  1592 ptr = rproc_da_to_va(rproc, segment->da, segment->size,
-6 remoteproc_elf_loader.c rproc_elf_load_segments          185 ptr = rproc_da_to_va(rproc, da, memsz,
-7 remoteproc_elf_loader.c rproc_elf_find_loaded_rsc_table  337 return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size,
-
-At rproc_elf_load_segments() we need to pass enough information so that
-the rproc driver can load the segment into proper area (IRAM vs DRAM).
-So providing page should suffice.
-
-I want to understand more about rproc_elf_find_loaded_rsc_table() myself.
-rproc_elf_find_loaded_rsc_table() is called only in rproc_start() in remoteproc_core.c
-with the comment
-
-        /*
-         * The starting device has been given the rproc->cached_table as the
-         * resource table. The address of the vring along with the other
-         * allocated resources (carveouts etc) is stored in cached_table.
-         * In order to pass this information to the remote device we must copy
-         * this information to device memory. We also update the table_ptr so
-         * that any subsequent changes will be applied to the loaded version.
-         */
-        loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-
-Why isn't cached_table sufficient?
-Why do we need to call rproc_find_loaded_rsc_table()?
-
-why do we need to load the resource table into remote processor memory at all.
-As discussed earlier, some PRU systems have very little memory (512 bytes?)
-and we want to avoid unnecessary loading.
-
-cheers,
--roger
+> - a sequence of STREAMOFF(OUTPUT), STREAMON(OUTPUT) should _not_
+> explicitly generate a keyframe (the hardware may generate one, if the
+> periodic keyframe counter is active or a scene detection algorithm
+> decides so).
+> 
+> Please refer to the specification (v2 is the latest for the time being
+> -> https://lore.kernel.org/patchwork/patch/1002476/) for further
+> details and feel free to leave any comment for it.
+> 
+> Best regards,
+> Tomasz
+> 
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+regards,
+Stan
