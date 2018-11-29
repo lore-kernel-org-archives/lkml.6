@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBF3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2626CC04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFDD21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE33021104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:00:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXNK5H5g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFDD21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkTA1MbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE33021104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbeK2REb (ORCPT
+        id S1729152AbeK2REe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39260 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:04:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeK2REa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:04:30 -0500
+        id S1727570AbeK2REe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:04:34 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCB72208E7;
-        Thu, 29 Nov 2018 06:00:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D93521019;
+        Thu, 29 Nov 2018 06:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471219;
-        bh=0Z09t9aazc65LnsxHX6m7kGgqsXPzSYdzhQNmNjkAbg=;
+        s=default; t=1543471222;
+        bh=jShrKi/vfZk7+GEJ3ieV2aPWemz8lwSxKzFX/4eulcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXNK5H5g/s5u4ja0hyXgHscRdN9lin5tUfOoAbO4UtUVsLHlor8WRKVAVghSxBdsx
-         hCMQFoTSxMkS9lKZr7YJVBUR0vkWBL98Gq2qwEYplNky/9Einmd+UxJcX4KV67s42/
-         RxysJMqVLlGx7hzp/cXIKM472gwISBSKtcs8W4po=
+        b=nkTA1MbKhcVILII5ylCIox1KS2AFF9WYsEQMZhSm6xPLKmYXuZ12IpFiWscHybO/K
+         4tQNmss4b1wfwrPEfj4CiVgzIjLFKqLKoQUdHJEXTroUzXMqCs78vRExKswNZBzeJ5
+         ZRnOqqHZyWDUENtZMBdpln4ypDZf7rZv7gVY0jUk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 56/68] iommu/vt-d: Use memunmap to free memremap
-Date:   Thu, 29 Nov 2018 00:55:47 -0500
-Message-Id: <20181129055559.159228-56-sashal@kernel.org>
+Cc:     Olga Kornievskaia <kolga@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 57/68] NFSv4.2 copy do not allocate memory under the lock
+Date:   Thu, 29 Nov 2018 00:55:48 -0500
+Message-Id: <20181129055559.159228-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -53,34 +53,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Olga Kornievskaia <kolga@netapp.com>
 
-[ Upstream commit 829383e183728dec7ed9150b949cd6de64127809 ]
+[ Upstream commit 99f2c55591fb5c1b536263970d98c2ebc2089906 ]
 
-memunmap() should be used to free the return of memremap(), not
-iounmap().
+Bruce pointed out that we shouldn't allocate memory while holding
+a lock in the nfs4_callback_offload() and handle_async_copy()
+that deal with a racing CB_OFFLOAD and reply to COPY case.
 
-Fixes: dfddb969edf0 ('iommu/vt-d: Switch from ioremap_cache to memremap')
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/callback_proc.c | 22 +++++++++++-----------
+ fs/nfs/nfs42proc.c     | 19 ++++++++++---------
+ 2 files changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index bedc801b06a0..a76c47f20587 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3100,7 +3100,7 @@ static int copy_context_table(struct intel_iommu *iommu,
- 			}
+diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
+index fa515d5ea5ba..48b2e9063b0a 100644
+--- a/fs/nfs/callback_proc.c
++++ b/fs/nfs/callback_proc.c
+@@ -686,20 +686,24 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ {
+ 	struct cb_offloadargs *args = data;
+ 	struct nfs_server *server;
+-	struct nfs4_copy_state *copy;
++	struct nfs4_copy_state *copy, *tmp_copy;
+ 	bool found = false;
  
- 			if (old_ce)
--				iounmap(old_ce);
-+				memunmap(old_ce);
++	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
++	if (!copy)
++		return htonl(NFS4ERR_SERVERFAULT);
++
+ 	spin_lock(&cps->clp->cl_lock);
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &cps->clp->cl_superblocks,
+ 				client_link) {
+-		list_for_each_entry(copy, &server->ss_copies, copies) {
++		list_for_each_entry(tmp_copy, &server->ss_copies, copies) {
+ 			if (memcmp(args->coa_stateid.other,
+-					copy->stateid.other,
++					tmp_copy->stateid.other,
+ 					sizeof(args->coa_stateid.other)))
+ 				continue;
+-			nfs4_copy_cb_args(copy, args);
+-			complete(&copy->completion);
++			nfs4_copy_cb_args(tmp_copy, args);
++			complete(&tmp_copy->completion);
+ 			found = true;
+ 			goto out;
+ 		}
+@@ -707,15 +711,11 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ out:
+ 	rcu_read_unlock();
+ 	if (!found) {
+-		copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
+-		if (!copy) {
+-			spin_unlock(&cps->clp->cl_lock);
+-			return htonl(NFS4ERR_SERVERFAULT);
+-		}
+ 		memcpy(&copy->stateid, &args->coa_stateid, NFS4_STATEID_SIZE);
+ 		nfs4_copy_cb_args(copy, args);
+ 		list_add_tail(&copy->copies, &cps->clp->pending_cb_stateids);
+-	}
++	} else
++		kfree(copy);
+ 	spin_unlock(&cps->clp->cl_lock);
  
- 			ret = 0;
- 			if (devfn < 0x80)
+ 	return 0;
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index ac5b784a1de0..fed06fd9998d 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -137,31 +137,32 @@ static int handle_async_copy(struct nfs42_copy_res *res,
+ 			     struct file *dst,
+ 			     nfs4_stateid *src_stateid)
+ {
+-	struct nfs4_copy_state *copy;
++	struct nfs4_copy_state *copy, *tmp_copy;
+ 	int status = NFS4_OK;
+ 	bool found_pending = false;
+ 	struct nfs_open_context *ctx = nfs_file_open_context(dst);
+ 
++	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
++	if (!copy)
++		return -ENOMEM;
++
+ 	spin_lock(&server->nfs_client->cl_lock);
+-	list_for_each_entry(copy, &server->nfs_client->pending_cb_stateids,
++	list_for_each_entry(tmp_copy, &server->nfs_client->pending_cb_stateids,
+ 				copies) {
+-		if (memcmp(&res->write_res.stateid, &copy->stateid,
++		if (memcmp(&res->write_res.stateid, &tmp_copy->stateid,
+ 				NFS4_STATEID_SIZE))
+ 			continue;
+ 		found_pending = true;
+-		list_del(&copy->copies);
++		list_del(&tmp_copy->copies);
+ 		break;
+ 	}
+ 	if (found_pending) {
+ 		spin_unlock(&server->nfs_client->cl_lock);
++		kfree(copy);
++		copy = tmp_copy;
+ 		goto out;
+ 	}
+ 
+-	copy = kzalloc(sizeof(struct nfs4_copy_state), GFP_NOFS);
+-	if (!copy) {
+-		spin_unlock(&server->nfs_client->cl_lock);
+-		return -ENOMEM;
+-	}
+ 	memcpy(&copy->stateid, &res->write_res.stateid, NFS4_STATEID_SIZE);
+ 	init_completion(&copy->completion);
+ 	copy->parent_state = ctx->state;
 -- 
 2.17.1
 
