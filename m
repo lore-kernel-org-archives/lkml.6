@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17E9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F6EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964E320868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F49520834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f39LXwYt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964E320868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqJtRPxX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F49520834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729986AbeK2RII (ORCPT
+        id S1730001AbeK2RIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:08:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbeK2RIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:08:07 -0500
+        id S1728038AbeK2RIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:08:10 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C75112086B;
-        Thu, 29 Nov 2018 06:03:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8966720834;
+        Thu, 29 Nov 2018 06:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471435;
-        bh=QNw5dJKq/1wapPHa6KqbeSH0zpryqjEVMrjRMBTpFuY=;
+        s=default; t=1543471438;
+        bh=q5MAXwSgVRbDONfxx34OaX4GywgY4499J3axyfCl+Kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f39LXwYt2QMFaSN6bxbX63GBRNxHvDluMAzzOngDmEYh5vlO8PMPAxDvWX/xd836J
-         YZWYzbweGFdkY+f02WecAKEznlVOoccJunXjdgK16FF6Je+t2nWBLMh10yCMriBCAu
-         qxbsF+QueiacXbgk0w3WM/U3LkKZ3tV/WsMF0lMQ=
+        b=qqJtRPxXlSkY3vag7c3N5ofUS2J9cWo4IM+tagVR++jtJVoY8uVsbFm0qDAt5wVFP
+         AmBKI4wi3KlxM9nm3vrIISmUzyqVrXrtQrtejW2R/r/Vl87Yet/uu3Cv4ixMSn9aTu
+         bI0d7NWF5r8KSlNUXu5OqgeV9sa4HsKIi/4KfqnU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 05/18] can: rcar_can: Fix erroneous registration
-Date:   Thu, 29 Nov 2018 01:03:17 -0500
-Message-Id: <20181129060331.160224-5-sashal@kernel.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 06/18] HID: input: Ignore battery reported by Symbol DS4308
+Date:   Thu, 29 Nov 2018 01:03:18 -0500
+Message-Id: <20181129060331.160224-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129060331.160224-1-sashal@kernel.org>
 References: <20181129060331.160224-1-sashal@kernel.org>
@@ -55,47 +53,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Benson Leung <bleung@chromium.org>
 
-[ Upstream commit 68c8d209cd4337da4fa04c672f0b62bb735969bc ]
+[ Upstream commit 0fd791841a6d67af1155a9c3de54dea51220721e ]
 
-Assigning 2 to "renesas,can-clock-select" tricks the driver into
-registering the CAN interface, even though we don't want that.
-This patch improves one of the checks to prevent that from happening.
+The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
+which does not have a battery, but reports one anyway that always has
+capacity 2.
 
-Fixes: 862e2b6af9413b43 ("can: rcar_can: support all input clocks")
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Let's apply the IGNORE quirk to prevent it from being treated like a
+power supply so that userspaces don't get confused that this
+accessory is almost out of power and warn the user that they need to charge
+their wired barcode scanner.
+
+Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
+
+Signed-off-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/rcar/rcar_can.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/hid/hid-ids.h   | 1 +
+ drivers/hid/hid-input.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index 788459f6bf5c..9b2c3bd00f8b 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -24,6 +24,9 @@
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 8913f357e78f..6f4c84d824e6 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -965,6 +965,7 @@
+ #define USB_VENDOR_ID_SYMBOL		0x05e0
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_1	0x0800
+ #define USB_DEVICE_ID_SYMBOL_SCANNER_2	0x1300
++#define USB_DEVICE_ID_SYMBOL_SCANNER_3	0x1200
  
- #define RCAR_CAN_DRV_NAME	"rcar_can"
+ #define USB_VENDOR_ID_SYNAPTICS		0x06cb
+ #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 5ff6dd8147b6..fc7ada26457e 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -324,6 +324,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
+ 		USB_DEVICE_ID_ELECOM_BM084),
+ 	  HID_BATTERY_QUIRK_IGNORE },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
++		USB_DEVICE_ID_SYMBOL_SCANNER_3),
++	  HID_BATTERY_QUIRK_IGNORE },
+ 	{}
+ };
  
-+#define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
-+				 BIT(CLKR_CLKEXT))
-+
- /* Mailbox configuration:
-  * mailbox 60 - 63 - Rx FIFO mailboxes
-  * mailbox 56 - 59 - Tx FIFO mailboxes
-@@ -789,7 +792,7 @@ static int rcar_can_probe(struct platform_device *pdev)
- 		goto fail_clk;
- 	}
- 
--	if (clock_select >= ARRAY_SIZE(clock_names)) {
-+	if (!(BIT(clock_select) & RCAR_SUPPORTED_CLOCKS)) {
- 		err = -EINVAL;
- 		dev_err(&pdev->dev, "invalid CAN clock selected\n");
- 		goto fail_clk;
 -- 
 2.17.1
 
