@@ -2,117 +2,116 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A312C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB5CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20EFA20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EFA20663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 06FE421104
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:51:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="XeQwGCNN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FE421104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbeK3GzH (ORCPT
+        id S1726471AbeK3G63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:55:07 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37262 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeK3GzH (ORCPT
+        Fri, 30 Nov 2018 01:58:29 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37258 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbeK3G62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:55:07 -0500
-Received: by mail-qt1-f194.google.com with SMTP id z16so3399052qtq.4;
-        Thu, 29 Nov 2018 11:48:33 -0800 (PST)
+        Fri, 30 Nov 2018 01:58:28 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so3473531wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 11:51:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=wDu0sHLI0lN+zV4akauy0m6DXCtD5MNm9PFRZcmF0sA=;
+        b=XeQwGCNNZT4NZ7LiZEvAKBuOv+xADjtenxd1etfgqd5/d4qAL4D0Uh2aQf+kOszJN5
+         R/5xDiCFbsovnxBcWrudz1Tx0rskWwXZBYaqF4uuQ+0U568I9XRhCcPeZFv4B1OY/e9a
+         5sNYlSq72UQtYSimGRaRMLBgoLEalg6i+zRpxSarDzIzeJNruhQxA7S+7hB/hXAl+8xl
+         GVj0ju2Z97BeL2AEl1qmCW3wrOPUYba2wrd2sO60uixZ2Jy3voaELNRcmo+Oy6twC5tb
+         Hnk/TDDDvkH9Jkv4qUVLz7lTFEwzfETFfkElclPuTPtCpCKeYsDZTgwV+yEFw7nj74R6
+         kwoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BR56+qJQYht+c/UF3lXH9JqG/9VgcGgo2mEFNDQ2gN4=;
-        b=TVocFVkUGDUdkLL8Nz6/vqgKYr1mTVG1ee0CunqJpVqRMOYYyldCCDqcG6hebrBTz/
-         oogZPFQgAcptRLn3rKm3ZMGHTwADhudWF0rpNLBDyQUUUM6824opeAvSogm939ytJGCE
-         /opRtlW0Ss4aa/Ylp9udgIilNmfSlOOe4MIWJvgBmXwK9ZvXVpj/vX5R99M9ZLCPnmGH
-         JgHMlIZG2+QhH+rSZj6O79oL034KA9wDRkVdqIRXdsGXUsBfU7Zuan+vqD3XEaQPtxpK
-         SbM3AmkAj2p+FGeKBHRmea6My/DzdUMs6oOLImk66Bxmbml+4Bf5eXmJlm8peJYCWbd9
-         zsZg==
-X-Gm-Message-State: AA+aEWbVC+3fs+kUGTaIUEbj+z5L9h6Bc9Ib8bqHUdI1ThY3Zuc+DLgz
-        9evsdWlM+26JtWWYus57ivI=
-X-Google-Smtp-Source: AFSGD/UkHNU984FKR0oBXA0OxFcpZuleLdTqrLk/NkRxekKYQae8r1R/Xtwi2CJDbbGtzk+jrUnzew==
-X-Received: by 2002:aed:202e:: with SMTP id 43mr2831430qta.27.1543520913295;
-        Thu, 29 Nov 2018 11:48:33 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::7:3dcb])
-        by smtp.gmail.com with ESMTPSA id m49sm1714135qtb.40.2018.11.29.11.48.31
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=wDu0sHLI0lN+zV4akauy0m6DXCtD5MNm9PFRZcmF0sA=;
+        b=K0z47FzbC0Ont2/IMtVTY3+I3jJIIlBdxrc/31XVA5liMIlWltGBDo3O0TlJBIWREq
+         Zu7VN48KukfCzYNcuvGk5y0TpPlDlDOCwkqitnWaGB8zGfydCBG0/63LfOEm/LoXNB8D
+         Szlvd+x69ZSEiKhMvqEYmesvOz7pSQOZ20DQ8xv6n0X2QnDdlliCHnSWijkF83YYOMct
+         vGML8cKNLWVYjv8Fh7RH0Grx4X7doOm9Jz4owTIrd1+73e90jvMyJzu1NXxMk3ZOJeuZ
+         rE70D0nShL70BY5MW7E9TyIctyazS71YdP4bB89CCve5W4lTMVCszFfNPEG7vv5N51Iu
+         Hjmw==
+X-Gm-Message-State: AA+aEWbCJ1OAphwzMUDjtlNvM4s6y+BqbueyZEgUr2foU4ekod03LKRn
+        LdcIg71beCk6L8uUP6uDbC28Lg==
+X-Google-Smtp-Source: AFSGD/Xw6LQ84GR7RqQmC+i1gMfho9DzoL3k0YLpvsdS1gpT8d/yiDWzqMg5BRzQA3PxTod+Jgs/bQ==
+X-Received: by 2002:a1c:eed2:: with SMTP id j79mr2864743wmi.98.1543521114419;
+        Thu, 29 Nov 2018 11:51:54 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id b18sm3390691wrw.83.2018.11.29.11.51.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 11:48:32 -0800 (PST)
-Date:   Thu, 29 Nov 2018 14:48:29 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/13] blkcg: introduce common blkg association logic
-Message-ID: <20181129194829.GA95415@dennisz-mbp.dhcp.thefacebook.com>
-References: <20181126211946.77067-1-dennis@kernel.org>
- <20181126211946.77067-5-dennis@kernel.org>
- <20181129154917.GD2509588@devbig004.ftw2.facebook.com>
+        Thu, 29 Nov 2018 11:51:53 -0800 (PST)
+Message-ID: <5c004359.1c69fb81.a2679.3c47@mx.google.com>
+Date:   Thu, 29 Nov 2018 11:51:53 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129154917.GD2509588@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-3.18.y
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v3.18.127-84-gd2846da19bca
+In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
+References: <20181129140138.002176596@linuxfoundation.org>
+Subject: Re: [PATCH 3.18 00/83] 3.18.128-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 07:49:17AM -0800, Tejun Heo wrote:
-> On Mon, Nov 26, 2018 at 04:19:37PM -0500, Dennis Zhou wrote:
-> > There are 3 ways blkg association can happen: association with the
-> > current css, with the page css (swap), or from the wbc css (writeback).
-> > 
-> > This patch handles how association is done for the first case where we
-> > are associating bsaed on the current css. If there is already a blkg
-> > associated, the css will be reused and association will be redone as the
-> > request_queue may have changed.
-> > 
-> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
-> 
-> Acked-by: Tejun Heo <tj@kernel.org>
-> 
-> A minor nit below.
-> 
-> > +/**
-> > + * bio_associate_blkg - associate a bio with a blkg from q
-> > + * @bio: target bio
-> > + *
-> > + * Associate @bio with the blkg found from the bio's css and request_queue.
-> > + * If one is not found, bio_lookup_blkg() creates the blkg.  If a blkg is
-> > + * already associated, the css is reused and association redone as the
-> > + * request_queue may have changed.
-> > + */
-> > +void bio_associate_blkg(struct bio *bio)
-> > +{
-> > +	struct request_queue *q;
-> > +	struct blkcg *blkcg;
-> > +	struct blkcg_gq *blkg;
-> > +
-> > +	if (!bio_has_queue(bio))
-> > +		return;
-> 
-> So, this isn't actually necessary cuz we don't stack with
-> request_queues but it might be more consistent to call disassociate
-> before returning above so that even if sth like that happens the
-> function always guarantees that the blkg and bio agree.
+stable-rc/linux-3.18.y boot: 64 boots: 5 failed, 59 passed (v3.18.127-84-gd=
+2846da19bca)
 
-Ah. That makes sense. I've changed bio_has_queue() to be
-bio_blkg_association_check(). This calls disassociate and should handle
-the case a bio transfers from a request_queue device to a bio driven
-device. It changes the future patches slightly as we have to remember
-the css before doing the check in case we want to reassociate with the
-same css.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-3.18.y/kernel/v3.18.127-84-gd2846da19bca/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
+y/kernel/v3.18.127-84-gd2846da19bca/
 
-Thanks,
-Dennis
+Tree: stable-rc
+Branch: linux-3.18.y
+Git Describe: v3.18.127-84-gd2846da19bca
+Git Commit: d2846da19bca0785a50c366d388d0da53c1b4042
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 26 unique boards, 12 SoC families, 14 builds out of 185
+
+Boot Failures Detected:
+
+arm:
+
+    exynos_defconfig
+        exynos4412-odroidx2: 1 failed lab
+
+x86:
+
+    x86_64_defconfig
+        qemu: 3 failed labs
+        x86-atom330: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
