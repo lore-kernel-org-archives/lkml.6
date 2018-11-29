@@ -2,148 +2,124 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C003EC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D41C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867FB20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:29:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3odRjOW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867FB20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 852EF20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 852EF20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbeK3Jgj (ORCPT
+        id S1726935AbeK3JhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:36:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56648 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 04:37:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbeK3Jgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:36:37 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726374AbeK3JhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:37:24 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F2B520863;
-        Thu, 29 Nov 2018 22:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543530575;
-        bh=2QaAe4Zs9DSQ7ZMWdrOuXKDmoS5z0evRYwMmfRjPW1M=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=t3odRjOWD8sO0m0lOm1DQM49DgOWK+6jn9pN5eN2zy3abLO+0TB7Tbhxy7d51jzml
-         pz6q1m8inNGb3MEPgVmCUlKW+Gzo0DcdRyXZeLHBxbvtUQdjgSbMsGP1IxslMm/krk
-         XY4QTginYdUvDUrDJwWlpmVEjHyTaWHbu4fnw52I=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A821811DC;
+        Thu, 29 Nov 2018 22:30:21 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EC9219743;
+        Thu, 29 Nov 2018 22:30:19 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 16:30:17 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129223017.h4fzfo3tkwchnp3t@treble>
+References: <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+ <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <20181129164914.GA9027@hirez.programming.kicks-ass.net>
+ <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
+ <20181129171050.iio53bw67fbiwzud@treble>
+ <20181129220148.GD11632@hirez.programming.kicks-ass.net>
+ <20181129221446.qb7znvt7zprlbz77@treble>
+ <20181129222209.GG11632@hirez.programming.kicks-ass.net>
+ <CALCETrW+bU5Bc3ShLfoNN10Wmgt_aSxyOM4BTdSm1WuaOf91qA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Janek Kotas <jank@cadence.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAE55F09-516A-4737-8F74-07BBA3AF5737@global.cadence.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <D3711617-229C-4FA5-9E73-A7A3C025893B@global.cadence.com>
- <154223394933.88331.14659021245427374668@swboyd.mtv.corp.google.com>
- <CAE55F09-516A-4737-8F74-07BBA3AF5737@global.cadence.com>
-Message-ID: <154353057449.88331.10017415440005548379@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: Add Fixed MMIO clock driver
-Date:   Thu, 29 Nov 2018 14:29:34 -0800
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrW+bU5Bc3ShLfoNN10Wmgt_aSxyOM4BTdSm1WuaOf91qA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 29 Nov 2018 22:30:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Janek Kotas (2018-11-15 00:27:15)
-> Thanks for the reply.
-> Jan
-> =
+On Thu, Nov 29, 2018 at 02:25:33PM -0800, Andy Lutomirski wrote:
+> On Thu, Nov 29, 2018 at 2:22 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Nov 29, 2018 at 04:14:46PM -0600, Josh Poimboeuf wrote:
+> > > On Thu, Nov 29, 2018 at 11:01:48PM +0100, Peter Zijlstra wrote:
+> > > > On Thu, Nov 29, 2018 at 11:10:50AM -0600, Josh Poimboeuf wrote:
+> > > > > On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
+> > > >
+> > > > > > (like pointing IP at a stub that retpolines to the target by reading
+> > > > > > the function pointer, a la the unoptimizable version), then okay, I
+> > > > > > guess, with only a small amount of grumbling.
+> > > > >
+> > > > > I tried that in v2, but Peter pointed out it's racy:
+> > > > >
+> > > > >   https://lkml.kernel.org/r/20181126160217.GR2113@hirez.programming.kicks-ass.net
+> > > >
+> > > > Ah, but that is because it is a global shared trampoline.
+> > > >
+> > > > Each static_call has it's own trampoline; which currently reads
+> > > > something like:
+> > > >
+> > > >     RETPOLINE_SAFE
+> > > >     JMP *key
+> > > >
+> > > > which you then 'defuse' by writing an UD2 on. _However_, if you write
+> > > > that trampoline like:
+> > > >
+> > > > 1:  RETPOLINE_SAFE
+> > > >     JMP *key
+> > > > 2:  CALL_NOSPEC *key
+> > > >     RET
+> > > >
+> > > > and have the text_poke_bp() handler jump to 2 (a location you'll never
+> > > > reach when you enter at 1), it will in fact work I think. The trampoline
+> > > > is never modified and not shared between different static_call's.
+> > >
+> > > But after returning from the function to the trampoline, how does it
+> > > return from the trampoline to the call site?  At that point there is no
+> > > return address on the stack.
+> >
+> > Oh, right, so that RET don't work. ARGH. Time to go sleep I suppose.
+> 
+> I assume I'm missing something, but can't it just be JMP_NOSPEC *key?
+> The code would call the trampoline just like any other function and,
+> if the alignment is bad, we can skip patching it.  And, if we want the
+> performance back, maybe some day we can find a clean way to patch
+> those misaligned callers, too.
 
-> > On 14 Nov 2018, at 23:19, Stephen Boyd <sboyd@kernel.org> wrote:
-> > =
+Yeah, this is currently the leading contender, though I believe it will
+use a direct jump like the current out-of-line implementation.
 
-> > Quoting Janek Kotas (2018-11-14 07:24:39)
-> >> This patch adds a driver for Fixed MMIO clock.
-> >> The driver reads a clock frequency value from a single 32-bit memory
-> >> mapped register and registers it as a fixed rate clock.
-> >> =
-
-> >> It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
-> >> =
-
-> >> Signed-off-by: Jan Kotas <jank@cadence.com>
-> > =
-
-> > Sounds like a fine idea. Except I can see how it will be abused if there
-> > are a handful of these fixed rate "clks" somewhere in memory that all
-> > get populated. =
-
-> > =
-
-> > Do you really have a fixed rate clk in hardware that exposes a single
-> > register, or do you have a set of them that some firmware is populating
-> > into an I/O memory space that we can read the fixed rates from? If it's
-> > the latter, I wonder why we can't just have the firmware populate the
-> > fixed rate clks into DT itself?
-> =
-
-> The first case.
-> We have a single register in a fixed location which contains =
-
-> the frequency of the main system clock.
-> This allows us to use the same image in emulation, FPGA
-> and simulation without any changes.
-> We usually don=E2=80=99t use a full bootloader, just a simple wrapper,
-> which initializes the necessary stuff and jumps to the kernel.
-
-So the hardware team has decided to throw a frequency register in there?
-Alright! Does that fixed rate clk generate its fixed rate from some
-other clk? I'm curious if this fixed rate clk has a parent source.
-
-It would also be good to make sure that any clks registered from this
-driver can't be populated from regions of memory like DDR. Can you
-confirm? I think it will fail, but it would be worth checking
-
-> =
-
-> > =
-
-> >> diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio=
-.c
-> >> new file mode 100644
-> >> index 0000000000..bbcadab345
-> >> --- /dev/null
-> >> +++ b/drivers/clk/clk-fixed-mmio.c
-> =
-
-> > =
-
-> >> +}
-> >> +
-> >> +CLK_OF_DECLARE(fixed_mmio_clk, "fixed-mmio-clock", of_fixed_mmio_clk_=
-setup);
-> > =
-
-> > Any reason why this can't be a platform driver? It would make this much
-> > less DT specific and usable on other firmwares/platforms if we used a
-> > platform driver here.
-> > =
-
-> =
-
-> I looked at the fixed rate clock as a reference, but I can change it to =
-
-> a platform driver, if that=E2=80=99s preferred.
-> =
-
-
-Yes I'd prefer a platform driver unless there's some reason it can't be
-done. We may need to have both in case this needs to be populated very
-early, but if that isn't the case then just a platform driver for now.
-
+-- 
+Josh
