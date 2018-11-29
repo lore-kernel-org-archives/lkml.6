@@ -3,211 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A98C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B85B0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFC720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:10:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEFC720834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8910320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8910320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeK2TPT (ORCPT
+        id S1728473AbeK2TPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:15:19 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:17408 "EHLO pegase1.c-s.fr"
+        Thu, 29 Nov 2018 14:15:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57006 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbeK2TPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:15:17 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4359FJ2Dv2z9vGlD;
-        Thu, 29 Nov 2018 09:10:44 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id DSNC29oWImcv; Thu, 29 Nov 2018 09:10:44 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4359FJ1mCSz9vGFV;
-        Thu, 29 Nov 2018 09:10:44 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 058B78B890;
-        Thu, 29 Nov 2018 09:10:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 4LAp4MSpgQI2; Thu, 29 Nov 2018 09:10:44 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BE4AC8B762;
-        Thu, 29 Nov 2018 09:10:44 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 5859869AEA; Thu, 29 Nov 2018 08:10:44 +0000 (UTC)
-Message-Id: <c128e9f950c94e652eecb08a9d4cf810157d9b86.1543478200.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1543478199.git.christophe.leroy@c-s.fr>
-References: <cover.1543478199.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v8 20/20] powerpc/8xx: regroup TLB handler routines
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 29 Nov 2018 08:10:44 +0000 (UTC)
+        id S1726587AbeK2TPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:15:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51B9231256A7;
+        Thu, 29 Nov 2018 08:11:00 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE3161084;
+        Thu, 29 Nov 2018 08:10:33 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, x86@kernel.org,
+        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
+        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
+        bhe@redhat.com
+Subject: [PATCH 2/2 v8] x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
+Date:   Thu, 29 Nov 2018 16:09:56 +0800
+Message-Id: <20181129080956.20776-3-lijiang@redhat.com>
+In-Reply-To: <20181129080956.20776-1-lijiang@redhat.com>
+References: <20181129080956.20776-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 29 Nov 2018 08:11:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As this is running with MMU off, the CPU only does speculative
-fetch for code in the same page.
+At present, when use the kexec_file_load syscall to load the kernel image
+and initramfs(for example: kexec -s -p xxx), kernel does not pass the e820
+reserved ranges to the second kernel, which might cause two problems:
 
-Following the significant size reduction of TLB handler routines,
-the side handlers can be brought back close to the main part,
-ie in the same page.
+The first one is the MMCONFIG issue. The basic problem is that this device
+is in PCI segment 1 and the kernel PCI probing can not find it without all
+the e820 I/O reservations being present in the e820 table. And the kdump
+kernel does not have those reservations because the kexec command does not
+pass the I/O reservation via the "memmap=xxx" command line option. (This
+problem does not show up for other vendors, as SGI is apparently the
+actually fails for everyone, but devices in segment 0 are then found by
+some legacy lookup method.) The workaround for this is to pass the I/O
+reserved regions to the kdump kernel.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+MMCONFIG(aka ECAM) space is described in the ACPI MCFG table. If you don't
+have ECAM: (a) PCI devices won't work at all on non-x86 systems that use
+only ECAM for config access, (b) you won't be albe to access devices on
+non-0 segments, (c) you won't be able to access extended config space(
+address 0x100-0xffff), which means none of the Extended Capabilities will
+be available(AER, ACS, ATS, etc). [Bjorn's comment]
+
+The second issue is that the SME kdump kernel doesn't work without the
+e820 reserved ranges. When SME is active in kdump kernel, actually, those
+reserved regions are still decrypted, but because those reserved ranges are
+not present at all in kdump kernel e820 table, those reserved regions are
+considered as encrypted, it goes wrong.
+
+The e820 reserved range is useful in kdump kernel, so it is necessary to
+pass the e820 reserved ranges to kdump kernel.
+
+Suggested-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 ---
- arch/powerpc/kernel/head_8xx.S | 112 ++++++++++++++++++++---------------------
- 1 file changed, 54 insertions(+), 58 deletions(-)
+ arch/x86/kernel/crash.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 0a4f8a9c85ff..b171b7c0a0e7 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -399,6 +399,23 @@ InstructionTLBMiss:
- 	rfi
- #endif
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index f631a3f15587..5354a84f1684 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -380,6 +380,12 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
+ 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
+ 			memmap_entry_callback);
  
-+#ifndef CONFIG_PIN_TLB_TEXT
-+ITLBMissLinear:
-+	mtcr	r11
-+	/* Set 8M byte page and mark it valid */
-+	li	r11, MI_PS8MEG | MI_SVALID
-+	mtspr	SPRN_MI_TWC, r11
-+	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
-+	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
-+			  _PAGE_PRESENT
-+	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
++	/* Add e820 reserved ranges */
++	cmd.type = E820_TYPE_RESERVED;
++	flags = IORESOURCE_MEM;
++	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
++			   memmap_entry_callback);
 +
-+0:	mfspr	r10, SPRN_SPRG_SCRATCH0
-+	mfspr	r11, SPRN_SPRG_SCRATCH1
-+	rfi
-+	patch_site	0b, patch__itlbmiss_exit_2
-+#endif
-+
- 	. = 0x1200
- DataStoreTLBMiss:
- 	mtspr	SPRN_SPRG_SCRATCH0, r10
-@@ -484,6 +501,43 @@ DataStoreTLBMiss:
- 	rfi
- #endif
- 
-+DTLBMissIMMR:
-+	mtcr	r11
-+	/* Set 512k byte guarded page and mark it valid */
-+	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID
-+	mtspr	SPRN_MD_TWC, r10
-+	mfspr	r10, SPRN_IMMR			/* Get current IMMR */
-+	rlwinm	r10, r10, 0, 0xfff80000		/* Get 512 kbytes boundary */
-+	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
-+			  _PAGE_PRESENT | _PAGE_NO_CACHE
-+	mtspr	SPRN_MD_RPN, r10	/* Update TLB entry */
-+
-+	li	r11, RPN_PATTERN
-+	mtspr	SPRN_DAR, r11	/* Tag DAR */
-+
-+0:	mfspr	r10, SPRN_SPRG_SCRATCH0
-+	mfspr	r11, SPRN_SPRG_SCRATCH1
-+	rfi
-+	patch_site	0b, patch__dtlbmiss_exit_2
-+
-+DTLBMissLinear:
-+	mtcr	r11
-+	/* Set 8M byte page and mark it valid */
-+	li	r11, MD_PS8MEG | MD_SVALID
-+	mtspr	SPRN_MD_TWC, r11
-+	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
-+	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
-+			  _PAGE_PRESENT
-+	mtspr	SPRN_MD_RPN, r10	/* Update TLB entry */
-+
-+	li	r11, RPN_PATTERN
-+	mtspr	SPRN_DAR, r11	/* Tag DAR */
-+
-+0:	mfspr	r10, SPRN_SPRG_SCRATCH0
-+	mfspr	r11, SPRN_SPRG_SCRATCH1
-+	rfi
-+	patch_site	0b, patch__dtlbmiss_exit_3
-+
- /* This is an instruction TLB error on the MPC8xx.  This could be due
-  * to many reasons, such as executing guarded memory or illegal instruction
-  * addresses.  There is nothing to do but handle a big time error fault.
-@@ -583,64 +637,6 @@ InstructionBreakpoint:
- 
- 	. = 0x2000
- 
--/*
-- * Bottom part of DataStoreTLBMiss handlers for IMMR area and linear RAM.
-- * not enough space in the DataStoreTLBMiss area.
-- */
--DTLBMissIMMR:
--	mtcr	r11
--	/* Set 512k byte guarded page and mark it valid */
--	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID
--	mtspr	SPRN_MD_TWC, r10
--	mfspr	r10, SPRN_IMMR			/* Get current IMMR */
--	rlwinm	r10, r10, 0, 0xfff80000		/* Get 512 kbytes boundary */
--	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
--			  _PAGE_PRESENT | _PAGE_NO_CACHE
--	mtspr	SPRN_MD_RPN, r10	/* Update TLB entry */
--
--	li	r11, RPN_PATTERN
--	mtspr	SPRN_DAR, r11	/* Tag DAR */
--
--0:	mfspr	r10, SPRN_SPRG_SCRATCH0
--	mfspr	r11, SPRN_SPRG_SCRATCH1
--	rfi
--	patch_site	0b, patch__dtlbmiss_exit_2
--
--DTLBMissLinear:
--	mtcr	r11
--	/* Set 8M byte page and mark it valid */
--	li	r11, MD_PS8MEG | MD_SVALID
--	mtspr	SPRN_MD_TWC, r11
--	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
--	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
--			  _PAGE_PRESENT
--	mtspr	SPRN_MD_RPN, r10	/* Update TLB entry */
--
--	li	r11, RPN_PATTERN
--	mtspr	SPRN_DAR, r11	/* Tag DAR */
--
--0:	mfspr	r10, SPRN_SPRG_SCRATCH0
--	mfspr	r11, SPRN_SPRG_SCRATCH1
--	rfi
--	patch_site	0b, patch__dtlbmiss_exit_3
--
--#ifndef CONFIG_PIN_TLB_TEXT
--ITLBMissLinear:
--	mtcr	r11
--	/* Set 8M byte page and mark it valid */
--	li	r11, MI_PS8MEG | MI_SVALID
--	mtspr	SPRN_MI_TWC, r11
--	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
--	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
--			  _PAGE_PRESENT
--	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
--
--0:	mfspr	r10, SPRN_SPRG_SCRATCH0
--	mfspr	r11, SPRN_SPRG_SCRATCH1
--	rfi
--	patch_site	0b, patch__itlbmiss_exit_2
--#endif
--
- /* This is the procedure to calculate the data EA for buggy dcbx,dcbi instructions
-  * by decoding the registers used by the dcbx instruction and adding them.
-  * DAR is set to the calculated address.
+ 	/* Add crashk_low_res region */
+ 	if (crashk_low_res.end) {
+ 		ei.addr = crashk_low_res.start;
 -- 
-2.13.3
+2.17.1
 
