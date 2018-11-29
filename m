@@ -2,110 +2,136 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A06DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700A0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381FC2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381FC2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2989B2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:17:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gkC5JIvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2989B2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbeK3JVy (ORCPT
+        id S1726463AbeK3JYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:21:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58596 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726963AbeK3JVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:21:49 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 20817DC8F4;
-        Thu, 29 Nov 2018 22:14:51 +0000 (UTC)
-Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 312CC1712C;
-        Thu, 29 Nov 2018 22:14:48 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 16:14:46 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181129221446.qb7znvt7zprlbz77@treble>
-References: <20181127084330.GX2113@hirez.programming.kicks-ass.net>
- <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
- <20181129094210.GC2131@hirez.programming.kicks-ass.net>
- <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
- <20181129143853.GO2131@hirez.programming.kicks-ass.net>
- <20181129163342.tp5wlfcyiazwwyoh@treble>
- <20181129164914.GA9027@hirez.programming.kicks-ass.net>
- <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
- <20181129171050.iio53bw67fbiwzud@treble>
- <20181129220148.GD11632@hirez.programming.kicks-ass.net>
+        Fri, 30 Nov 2018 04:24:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55986 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbeK3JYW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:24:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+mMrZVtKA2Oq8POkxjY1MuymzApncZl3S9cuM6cdNVc=; b=gkC5JIvd68FIhdCRvXy+SKuc9
+        HMxdQpSlwHvV1WWKdKJuhr3AHRUvuFWdrVrAmLlJGTMpnmP8ddg+GkjiG3jkuKIHk4aFZcogV2K7Z
+        HhpAQhkqQI3qwJKkN/4F0nRi+Xt+cd3ZCeeVUl4QtArcah7z5EgWGpO74WjeClrsd2tj4kdbZjHZ3
+        J7Bkw12JL47Rbnznbo8c7xofUUE/9y7K2C9wh+awsrO1tzklMlOlqhnwngcJYV44tCgS9S7FALJvM
+        EFqivWjE69UQPjSsuwEyeNBey7ij+kw3Bzw5TCrS5Fl1httbjtQgn6EVg/PE4ukam7gkCfFDMArrz
+        WRYm7Ea1Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSUcX-0004eT-6d; Thu, 29 Nov 2018 22:17:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8EC952029FD58; Thu, 29 Nov 2018 23:17:14 +0100 (CET)
+Date:   Thu, 29 Nov 2018 23:17:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        longman@redhat.com, andrea.parri@amarulasolutions.com
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181129221714.GF11632@hirez.programming.kicks-ass.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+ <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+ <20181129213017.v3eljor54lfpoug2@linux-r8p5>
+ <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129220148.GD11632@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 29 Nov 2018 22:14:51 +0000 (UTC)
+In-Reply-To: <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 11:01:48PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 29, 2018 at 11:10:50AM -0600, Josh Poimboeuf wrote:
-> > On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
+On Thu, Nov 29, 2018 at 01:34:21PM -0800, Davidlohr Bueso wrote:
+> I messed up something such that waiman was not in the thread. Ccing.
 > 
-> > > (like pointing IP at a stub that retpolines to the target by reading
-> > > the function pointer, a la the unoptimizable version), then okay, I
-> > > guess, with only a small amount of grumbling.
+> > On Thu, 29 Nov 2018, Waiman Long wrote:
 > > 
-> > I tried that in v2, but Peter pointed out it's racy:
+> > > That can be costly for x86 which will now have 2 locked instructions.
 > > 
-> >   https://lkml.kernel.org/r/20181126160217.GR2113@hirez.programming.kicks-ass.net
-> 
-> Ah, but that is because it is a global shared trampoline.
-> 
-> Each static_call has it's own trampoline; which currently reads
-> something like:
-> 
-> 	RETPOLINE_SAFE
-> 	JMP *key
-> 
-> which you then 'defuse' by writing an UD2 on. _However_, if you write
-> that trampoline like:
-> 
-> 1:	RETPOLINE_SAFE
-> 	JMP *key
-> 2:	CALL_NOSPEC *key
-> 	RET
-> 
-> and have the text_poke_bp() handler jump to 2 (a location you'll never
-> reach when you enter at 1), it will in fact work I think. The trampoline
-> is never modified and not shared between different static_call's.
+> > Yeah, and when used as an actual queue we should really start to notice.
+> > Some users just have a single task in the wake_q because avoiding the cost
+> > of wake_up_process() with locks held is significant.
+> > 
+> > How about instead of adding the barrier before the cmpxchg, we do it
+> > in the failed branch, right before we return. This is the uncommon
+> > path.
+> > 
+> > Thanks,
+> > Davidlohr
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 091e089063be..0d844a18a9dc 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -408,8 +408,14 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+> > 	 * This cmpxchg() executes a full barrier, which pairs with the full
+> > 	 * barrier executed by the wakeup in wake_up_q().
+> > 	 */
+> > -	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
+> > +	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL)) {
+> > +		/*
+> > +		 * Ensure, that when the cmpxchg() fails, the corresponding
+> > +		 * wake_up_q() will observe our prior state.
+> > +		 */
+> > +		smp_mb__after_atomic();
+> > 		return;
+> > +	}
 
-But after returning from the function to the trampoline, how does it
-return from the trampoline to the call site?  At that point there is no
-return address on the stack.
+So wake_up_q() does:
 
--- 
-Josh
+  wake_up_q():
+	node->next = NULL;
+	/* implied smp_mb */
+	wake_up_process();
+
+So per the cross your variables 'rule', this side then should do:
+
+  wake_q_add():
+	/* wake_cond = true */
+	smp_mb()
+	cmpxchg_relaxed(&node->next, ...);
+
+So that the ordering pivots around node->next.
+
+Either we see NULL and win the cmpxchg (in which case we'll do the
+wakeup later) or, when we fail the cmpxchg, we must observe what came
+before the failure.
+
+If it wasn't so damn late, I'd try and write a litmus test for this,
+because now I'm starting to get confused -- also probably because it's
+late.
+
+In any case, I think you patch is 'wrong' because it puts the barrier on
+the wrong side of the cmpxchg() (after, as opposed to before).
