@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F5BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF56C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A562147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA27921479
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HV874xA3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A562147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zt3N3zAL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA27921479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388428AbeK3Be4 (ORCPT
+        id S2388437AbeK3Be6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:34:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36432 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:34:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387401AbeK3Bez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:55 -0500
+        id S1731958AbeK3Be6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:34:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B0702147D;
-        Thu, 29 Nov 2018 14:29:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9894621479;
+        Thu, 29 Nov 2018 14:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501762;
-        bh=bU6Vy8ucRqXrdSCg84k56V7d9j2G7NihYWmrdUQ0tI8=;
+        s=default; t=1543501765;
+        bh=M6c5hRMz7pL/OawZwQjAyT9GpwHVXbEh5W0HVn7f1Zc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HV874xA3WgDXEO64ObxM6znlnzJXdf9uDmf0KxhEWQm802lfMe5i2WyYBAVduSzgw
-         Ytjz9AemyBE3KBiYIFjEHUFHZQyfwUk6OlkmLZl8Ri5419A6sqrzXHAoGg9I68J8SP
-         40UAMHr3eeb2FGDTGEuqpbMC6RqiU+2HP2jk7KYQ=
+        b=zt3N3zALQe2YoGmKlNYSPq1mwohsSKsNEQ7EKtcG44YIPJSjOVl9MYHIUGLFWArAG
+         tHRY7ZBoQWQZkHuwAV+Zi6YrQXBfF+FvK4HEGi8iDQwn72dXdpaT4+2SKgzaf1V0h4
+         5b9rjU3MjyxX3sgwkZdgMgYdbGVAtKTramu99kmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.19 031/110] selinux: Add __GFP_NOWARN to allocation at str_read()
-Date:   Thu, 29 Nov 2018 15:12:02 +0100
-Message-Id: <20181129135922.528897978@linuxfoundation.org>
+        syzbot+13cb3b01d0784e4ffc3f@syzkaller.appspotmail.com,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 032/110] Input: synaptics - avoid using uninitialized variable when probing
+Date:   Thu, 29 Nov 2018 15:12:03 +0100
+Message-Id: <20181129135922.565401586@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -64,35 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 4458bba09788e70e8fb39ad003f087cd9dfbd6ac upstream.
+commit f39f8688888ae74fa8deae2d01289b69b4727394 upstream.
 
-syzbot is hitting warning at str_read() [1] because len parameter can
-become larger than KMALLOC_MAX_SIZE. We don't need to emit warning for
-this case.
+synaptics_detect() does not check whether sending commands to the
+device succeeds and instead relies on getting unique data from the
+device. Let's make sure we seed entire buffer with zeroes to make sure
+we will not use garbage on stack that just happen to be 0x47.
 
-[1] https://syzkaller.appspot.com/bug?id=7f2f5aad79ea8663c296a2eedb81978401a908f0
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Reported-by: syzbot+13cb3b01d0784e4ffc3f@syzkaller.appspotmail.com
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/policydb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/synaptics.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1101,7 +1101,7 @@ static int str_read(char **strp, gfp_t f
- 	if ((len == 0) || (len == (u32)-1))
- 		return -EINVAL;
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -99,9 +99,7 @@ static int synaptics_mode_cmd(struct psm
+ int synaptics_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	struct ps2dev *ps2dev = &psmouse->ps2dev;
+-	u8 param[4];
+-
+-	param[0] = 0;
++	u8 param[4] = { 0 };
  
--	str = kmalloc(len + 1, flags);
-+	str = kmalloc(len + 1, flags | __GFP_NOWARN);
- 	if (!str)
- 		return -ENOMEM;
- 
+ 	ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
+ 	ps2_command(ps2dev, param, PSMOUSE_CMD_SETRES);
 
 
