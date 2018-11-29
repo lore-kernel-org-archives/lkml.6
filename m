@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87435C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58198C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0342145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102242145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZUV/pk0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0342145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/2RXDDi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102242145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732387AbeK3B3L (ORCPT
+        id S1732398AbeK3B3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:29:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55362 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731250AbeK3B3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:29:10 -0500
+        id S1731250AbeK3B3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D972133F;
-        Thu, 29 Nov 2018 14:23:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6576205C9;
+        Thu, 29 Nov 2018 14:23:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501418;
-        bh=zQ7AMAuxh/PWq7aVzXyU5Yom7WmRcK7Pd8xVztYqDJY=;
+        s=default; t=1543501421;
+        bh=vgNjUOhjL5ZJ9pTV9PWuDsAe44lkfx3uW1GVjTuAPgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZUV/pk0OrFvmAq/AwNzyZAAVuXxhPYgnWd3cNviOo9e6APqa/WBCU6eSOYGeasWS
-         jAKM3lOmk3xADJUfpmemifVscZcaJTJXJ8TV71D3W1VTpxOvOA+LV0bvq/KKM1e+dA
-         Bpoa83d8bNoxsZMJLrKKIpcCum4Vgfww8LHtLKtU=
+        b=l/2RXDDiHc43CbR6bD9W48/wtaXxFvc2zqDtOaoIzquDspKpEi019/eChfpIjNOx9
+         /OG5QVrpYtlBpBAilYgAH/TGlFE96kUkfvijZ9XoG/zOD2p68EanK8l8MPktF9E+7l
+         xA4LyR41GZPb3XCuzRBWcJOyNCaIAVQT8R2Yh1Gs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.9 82/92] usb: xhci: fix uninitialized completion when USB3 port got wrong status
-Date:   Thu, 29 Nov 2018 15:12:51 +0100
-Message-Id: <20181129140113.224407857@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@osdl.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 83/92] sched/core: Allow __sched_setscheduler() in interrupts when PI is not used
+Date:   Thu, 29 Nov 2018 15:12:52 +0100
+Message-Id: <20181129140113.332024968@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -62,52 +68,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 958c0bd86075d4ef1c936998deefe1947e539240 upstream.
+commit 896bbb2522587e3b8eb2a0d204d43ccc1042a00d upstream.
 
-Realtek USB3.0 Card Reader [0bda:0328] reports wrong port status on
-Cannon lake PCH USB3.1 xHCI [8086:a36d] after resume from S3,
-after clear port reset it works fine.
+When priority inheritance was added back in 2.6.18 to sched_setscheduler(), it
+added a path to taking an rt-mutex wait_lock, which is not IRQ safe. As PI
+is not a common occurrence, lockdep will likely never trigger if
+sched_setscheduler was called from interrupt context. A BUG_ON() was added
+to trigger if __sched_setscheduler() was ever called from interrupt context
+because there was a possibility to take the wait_lock.
 
-Since this device is registered on USB3 roothub at boot,
-when port status reports not superspeed, xhci_get_port_status will call
-an uninitialized completion in bus_state[0].
-Kernel will hang because of NULL pointer.
+Today the wait_lock is irq safe, but the path to taking it in
+sched_setscheduler() is the same as the path to taking it from normal
+context. The wait_lock is taken with raw_spin_lock_irq() and released with
+raw_spin_unlock_irq() which will indiscriminately enable interrupts,
+which would be bad in interrupt context.
 
-Restrict the USB2 resume status check in USB2 roothub to fix hang issue.
+The problem is that normalize_rt_tasks, which is called by triggering the
+sysrq nice-all-RT-tasks was changed to call __sched_setscheduler(), and this
+is done from interrupt context!
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Now __sched_setscheduler() takes a "pi" parameter that is used to know if
+the priority inheritance should be called or not. As the BUG_ON() only cares
+about calling the PI code, it should only bug if called from interrupt
+context with the "pi" parameter set to true.
+
+Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@osdl.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: dbc7f069b93a ("sched: Use replace normalize_task() with __sched_setscheduler()")
+Link: http://lkml.kernel.org/r/20170308124654.10e598f2@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/usb/host/xhci-hub.c  |    2 +-
- drivers/usb/host/xhci-ring.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -768,7 +768,7 @@ static u32 xhci_get_port_status(struct u
- 			status |= USB_PORT_STAT_SUSPEND;
- 	}
- 	if ((raw_port_status & PORT_PLS_MASK) == XDEV_RESUME &&
--		!DEV_SUPERSPEED_ANY(raw_port_status)) {
-+		!DEV_SUPERSPEED_ANY(raw_port_status) && hcd->speed < HCD_USB3) {
- 		if ((raw_port_status & PORT_RESET) ||
- 				!(raw_port_status & PORT_PE))
- 			return 0xffffffff;
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1676,7 +1676,7 @@ static void handle_port_status(struct xh
- 	 * RExit to a disconnect state).  If so, let the the driver know it's
- 	 * out of the RExit state.
- 	 */
--	if (!DEV_SUPERSPEED_ANY(temp) &&
-+	if (!DEV_SUPERSPEED_ANY(temp) && hcd->speed < HCD_USB3 &&
- 			test_and_clear_bit(faked_port_index,
- 				&bus_state->rexit_ports)) {
- 		complete(&bus_state->rexit_done[faked_port_index]);
+---
+ kernel/sched/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4087,8 +4087,8 @@ static int __sched_setscheduler(struct t
+ 	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+ 	struct rq *rq;
+ 
+-	/* may grab non-irq protected spin_locks */
+-	BUG_ON(in_interrupt());
++	/* The pi code expects interrupts enabled */
++	BUG_ON(pi && in_interrupt());
+ recheck:
+ 	/* double check policy once rq lock held */
+ 	if (policy < 0) {
 
 
