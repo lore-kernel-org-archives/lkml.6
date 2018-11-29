@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FE1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30FBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B82E21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 642B820868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:56:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSEzrejK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B82E21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAAZ2RwF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642B820868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeK2RAU (ORCPT
+        id S1728002AbeK2RAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:00:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33562 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:00:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbeK2RAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:00:19 -0500
+        id S1727024AbeK2RAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:00:23 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC5A20868;
-        Thu, 29 Nov 2018 05:56:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B7E320834;
+        Thu, 29 Nov 2018 05:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543470969;
-        bh=riDi5J8j60ZhryPhQ1qjn2BcDAwa2/J2ZbiDkMIm3Ww=;
+        s=default; t=1543470972;
+        bh=6ZMOD5n/0BKyvvjVMuNAiIi/WNZW3pO3unoznoXdITY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSEzrejKje4MRP2lQLALKyTWSKVblYxDnF0awrbQVWY3Rt4AVO7W4AzAxTHtMhquV
-         p/2DxfGM4btxZfrxwr+/QAqA/nXh/qeCW1oNUT1QThyEKo80ON22ElLuiWFfR09sUl
-         IpKW47j85t2T1k47LwPR9MGiseLLL9YMOX9yPmdI=
+        b=QAAZ2RwFyiTcc8YhUNMB3JXn3v6MmqO0yiOMKykglknT8jZIo11CyHB7+0yJa9w9z
+         XU0N/GThIoSiEBFtDyElzX8izMpF28kSVmOq2B48Dk1FV8rxT0szMfZsIMlUe/IkZT
+         vRWW6lv/shIpJRDnK87q+POut3+EYLCfzIWr9exA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 02/68] media: cec: check for non-OK/NACK conditions while claiming a LA
-Date:   Thu, 29 Nov 2018 00:54:53 -0500
-Message-Id: <20181129055559.159228-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 03/68] media: omap3isp: Unregister media device as first
+Date:   Thu, 29 Nov 2018 00:54:54 -0500
+Message-Id: <20181129055559.159228-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -54,95 +53,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit 55623b4169056d7bb493d1c6f715991f8db67302 ]
+[ Upstream commit 30efae3d789cd0714ef795545a46749236e29558 ]
 
-During the configuration phase of a CEC adapter it is trying to claim a
-free logical address by polling.
+While there are issues related to object lifetime management, unregister the
+media device first when the driver is being unbound. This is slightly
+safer.
 
-However, the code doesn't check if there were errors other than OK or NACK,
-those are just treated as if the poll was NACKed.
-
-Instead check for such errors and retry the poll. And if the problem persists
-then don't claim this LA since there is something weird going on.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/cec-adap.c | 47 ++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+ drivers/media/platform/omap3isp/isp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
-index dd8bad74a1f0..a537e518384b 100644
---- a/drivers/media/cec/cec-adap.c
-+++ b/drivers/media/cec/cec-adap.c
-@@ -1167,6 +1167,8 @@ static int cec_config_log_addr(struct cec_adapter *adap,
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index 842e2235047d..432bc7fbedc9 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -1587,6 +1587,8 @@ static void isp_pm_complete(struct device *dev)
+ 
+ static void isp_unregister_entities(struct isp_device *isp)
  {
- 	struct cec_log_addrs *las = &adap->log_addrs;
- 	struct cec_msg msg = { };
-+	const unsigned int max_retries = 2;
-+	unsigned int i;
- 	int err;
- 
- 	if (cec_has_log_addr(adap, log_addr))
-@@ -1175,19 +1177,44 @@ static int cec_config_log_addr(struct cec_adapter *adap,
- 	/* Send poll message */
- 	msg.len = 1;
- 	msg.msg[0] = (log_addr << 4) | log_addr;
--	err = cec_transmit_msg_fh(adap, &msg, NULL, true);
- 
--	/*
--	 * While trying to poll the physical address was reset
--	 * and the adapter was unconfigured, so bail out.
--	 */
--	if (!adap->is_configuring)
--		return -EINTR;
-+	for (i = 0; i < max_retries; i++) {
-+		err = cec_transmit_msg_fh(adap, &msg, NULL, true);
- 
--	if (err)
--		return err;
-+		/*
-+		 * While trying to poll the physical address was reset
-+		 * and the adapter was unconfigured, so bail out.
-+		 */
-+		if (!adap->is_configuring)
-+			return -EINTR;
++	media_device_unregister(&isp->media_dev);
 +
-+		if (err)
-+			return err;
+ 	omap3isp_csi2_unregister_entities(&isp->isp_csi2a);
+ 	omap3isp_ccp2_unregister_entities(&isp->isp_ccp2);
+ 	omap3isp_ccdc_unregister_entities(&isp->isp_ccdc);
+@@ -1597,7 +1599,6 @@ static void isp_unregister_entities(struct isp_device *isp)
+ 	omap3isp_stat_unregister_entities(&isp->isp_hist);
  
--	if (msg.tx_status & CEC_TX_STATUS_OK)
-+		/*
-+		 * The message was aborted due to a disconnect or
-+		 * unconfigure, just bail out.
-+		 */
-+		if (msg.tx_status & CEC_TX_STATUS_ABORTED)
-+			return -EINTR;
-+		if (msg.tx_status & CEC_TX_STATUS_OK)
-+			return 0;
-+		if (msg.tx_status & CEC_TX_STATUS_NACK)
-+			break;
-+		/*
-+		 * Retry up to max_retries times if the message was neither
-+		 * OKed or NACKed. This can happen due to e.g. a Lost
-+		 * Arbitration condition.
-+		 */
-+	}
-+
-+	/*
-+	 * If we are unable to get an OK or a NACK after max_retries attempts
-+	 * (and note that each attempt already consists of four polls), then
-+	 * then we assume that something is really weird and that it is not a
-+	 * good idea to try and claim this logical address.
-+	 */
-+	if (i == max_retries)
- 		return 0;
+ 	v4l2_device_unregister(&isp->v4l2_dev);
+-	media_device_unregister(&isp->media_dev);
+ 	media_device_cleanup(&isp->media_dev);
+ }
  
- 	/*
 -- 
 2.17.1
 
