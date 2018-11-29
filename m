@@ -2,81 +2,124 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ADAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F6EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925132146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbh8Kd7Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925132146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3EC7E2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 21:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC7E2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeK3JBK (ORCPT
+        id S1726685AbeK3JCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41534 "EHLO mail.kernel.org"
+        Fri, 30 Nov 2018 04:02:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:24937 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726264AbeK3JBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:01:09 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726381AbeK3JCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:02:15 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C03921019;
-        Thu, 29 Nov 2018 21:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543528457;
-        bh=ortKk2O4EC0nv9Q1OTcxa6pdyUU2m3A/5L6ZdMrKcmE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=sbh8Kd7Z8JAEne7GFMX38UO9jOMbfBnMj6eHMktH+l0T4KHGBoRi/+8DPLKSCuu/V
-         y4PkIULOwvIcXq8SaltD4azy1vOXdxqBxBuzXYNpteKU1PUT2YhoGYlr6kWJapqnlM
-         EzaRg0+S3AnfXRuOWYuhcddcdl9P3dmy88LhX684=
-Subject: Re: [PATCH] selftests/ftrace: Fix invalid SPDX identifiers
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, shuah@kernel.org
-References: <alpine.DEB.2.21.1811121108000.14703@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1811292220010.1657@nanos.tec.linutronix.de>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b69b7168-330f-28b5-ec28-8ce91f63dd09@kernel.org>
-Date:   Thu, 29 Nov 2018 14:54:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811292220010.1657@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A5EC4E928;
+        Thu, 29 Nov 2018 21:55:23 +0000 (UTC)
+Received: from dustball.brq.redhat.com (unknown [10.43.17.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BD1E601B9;
+        Thu, 29 Nov 2018 21:55:17 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     linux-mm@kvack.org, lersek@redhat.com, alex.williamson@redhat.com,
+        aarcange@redhat.com, rientjes@google.com, kirill@shutemov.name,
+        mgorman@techsingularity.net, mhocko@suse.com, jstancek@redhat.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: page_mapped: don't assume compound page is huge or THP
+Date:   Thu, 29 Nov 2018 22:53:48 +0100
+Message-Id: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 29 Nov 2018 21:55:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 2:20 PM, Thomas Gleixner wrote:
-> On Mon, 12 Nov 2018, Thomas Gleixner wrote:
-> 
-> Polite reminder....
+LTP proc01 testcase has been observed to rarely trigger crashes
+on arm64:
+    page_mapped+0x78/0xb4
+    stable_page_flags+0x27c/0x338
+    kpageflags_read+0xfc/0x164
+    proc_reg_read+0x7c/0xb8
+    __vfs_read+0x58/0x178
+    vfs_read+0x90/0x14c
+    SyS_read+0x60/0xc0
 
-Thanks for the reminder.
+Issue is that page_mapped() assumes that if compound page is not
+huge, then it must be THP. But if this is 'normal' compound page
+(COMPOUND_PAGE_DTOR), then following loop can keep running until
+it tries to read from memory that isn't mapped and triggers a panic:
+        for (i = 0; i < hpage_nr_pages(page); i++) {
+                if (atomic_read(&page[i]._mapcount) >= 0)
+                        return true;
+	}
 
-> 
->> While GPL2.0 looks about right, the correct and valid identifiers for GPL v2
->> only code are 'GPL-2.0' or 'GPL-2.0-only'.
->>
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->>
+I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
+with a custom kernel module [1] which:
+- allocates compound page (PAGEC) of order 1
+- allocates 2 normal pages (COPY), which are initialized to 0xff
+  (to satisfy _mapcount >= 0)
+- 2 PAGEC page structs are copied to address of first COPY page
+- second page of COPY is marked as not present
+- call to page_mapped(COPY) now triggers fault on access to 2nd COPY
+  page at offset 0x30 (_mapcount)
 
-Hi Masami,
+[1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
 
-I am pulling this in for 4.21-rc1.
+This patch modifies page_mapped() to check for 'normal'
+compound pages (COMPOUND_PAGE_DTOR).
 
-thanks,
--- Shuah
+Debugged-by: Laszlo Ersek <lersek@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ include/linux/mm.h | 9 +++++++++
+ mm/util.c          | 2 ++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5411de93a363..18b0bb953f92 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -700,6 +700,15 @@ static inline compound_page_dtor *get_compound_page_dtor(struct page *page)
+ 	return compound_page_dtors[page[1].compound_dtor];
+ }
+ 
++static inline int PageNormalCompound(struct page *page)
++{
++	if (!PageCompound(page))
++		return 0;
++
++	page = compound_head(page);
++	return page[1].compound_dtor == COMPOUND_PAGE_DTOR;
++}
++
+ static inline unsigned int compound_order(struct page *page)
+ {
+ 	if (!PageHead(page))
+diff --git a/mm/util.c b/mm/util.c
+index 8bf08b5b5760..06c1640cb7b3 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -478,6 +478,8 @@ bool page_mapped(struct page *page)
+ 		return true;
+ 	if (PageHuge(page))
+ 		return false;
++	if (PageNormalCompound(page))
++		return false;
+ 	for (i = 0; i < hpage_nr_pages(page); i++) {
+ 		if (atomic_read(&page[i]._mapcount) >= 0)
+ 			return true;
+-- 
+1.8.3.1
 
