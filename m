@@ -3,60 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304A3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32422C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018342146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:03:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018342146D
+	by mail.kernel.org (Postfix) with ESMTP id EB32B20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:05:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB32B20863
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730534AbeK3EJ4 (ORCPT
+        id S1730266AbeK3ELj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:09:56 -0500
-Received: from verein.lst.de ([213.95.11.211]:44754 "EHLO newverein.lst.de"
+        Thu, 29 Nov 2018 23:11:39 -0500
+Received: from verein.lst.de ([213.95.11.211]:44772 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729986AbeK3EJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:09:55 -0500
+        id S1729157AbeK3ELj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:11:39 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 8AA2768B02; Thu, 29 Nov 2018 18:03:51 +0100 (CET)
-Date:   Thu, 29 Nov 2018 18:03:51 +0100
+        id 46C7E68B02; Thu, 29 Nov 2018 18:05:35 +0100 (CET)
+Date:   Thu, 29 Nov 2018 18:05:35 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20181129170351.GC27951@lst.de>
-References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de> <87zhttfonk.fsf@concordia.ellerman.id.au> <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>,
+        lkp@01.org
+Subject: Re: [LKP] [block] 9d037ad707: BUG:unable_to_handle_kernel
+Message-ID: <20181129170535.GA28147@lst.de>
+References: <20181129092031.GF21676@shao2-debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+In-Reply-To: <20181129092031.GF21676@shao2-debian>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:05:23PM +0100, Christian Zigotzky wrote:
-> I compiled a test kernel from the following Git today.
->
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.4
->
-> Command: git clone git://git.infradead.org/users/hch/misc.git -b 
-> powerpc-dma.4 a
->
-> Unfortunately I get some DMA error messages and the PASEMI ethernet doesn't 
-> work anymore.
+On Thu, Nov 29, 2018 at 05:20:31PM +0800, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 9d037ad707ed6069fbea4e38e6ee37e027b13f1d ("block: remove req->timeout_list")
+> https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git mq-perf
 
-What kind of machine is this (and your other one)?  Can you send me
-(or point me to) the .config files?
+This looks very odd.  How could we introduce a new BUG with the removal
+of an unused structure member?
