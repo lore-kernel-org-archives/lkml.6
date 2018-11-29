@@ -2,211 +2,323 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4BDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85832C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3BA213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:19:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3BA213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
+	by mail.kernel.org (Postfix) with ESMTP id 2A25C20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:20:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KbdSnpnE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A25C20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbeK3DZt (ORCPT
+        id S1729152AbeK3DZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:25:49 -0500
-Received: from upbd19pa08.eemsg.mail.mil ([214.24.27.83]:21937 "EHLO
-        upbd19pa08.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbeK3DZs (ORCPT
+        Thu, 29 Nov 2018 22:25:58 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:32854 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbeK3DZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:25:48 -0500
-X-Greylist: delayed 327 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Nov 2018 22:25:45 EST
-X-EEMSG-check-008: 183411373|UPBD19PA08_EEMSG_MP8.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by upbd19pa08.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 29 Nov 2018 16:19:49 +0000
-X-IronPort-AV: E=Sophos;i="5.56,295,1539648000"; 
-   d="scan'208";a="21145288"
-IronPort-PHdr: =?us-ascii?q?9a23=3Aq2VAaxFdtDD1lrUwLTBgT51GYnF86YWxBRYc79?=
- =?us-ascii?q?8ds5kLTJ76pMS5bnLW6fgltlLVR4KTs6sC17KG9fi4EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCa+bL9oMBm6sRjau9ULj4dlNqs/0A?=
- =?us-ascii?q?bCrGFSe+RRy2NoJFaTkAj568yt4pNt8Dletuw4+cJYXqr0Y6o3TbpDDDQ7KG?=
- =?us-ascii?q?81/9HktQPCTQSU+HQRVHgdnwdSDAjE6BH6WYrxsjf/u+Fg1iSWIdH6QLYpUj?=
- =?us-ascii?q?m58axlVAHnhzsGNz4h8WHYlMpwjL5AoBm8oxBz2pPYbJ2JOPZ7eK7Sc8kaRW?=
- =?us-ascii?q?5cVchPUSJPDJ63Y48WA+YfIepUqo/wrEYMoxSjHwmhHP7hxD9WiH/43qM03e?=
- =?us-ascii?q?ouHg7E0wM8ENwDq2jUodbvOasOTey4wqvFwDPeZP1Wwzf9743Ifwg8r/GQQ7?=
- =?us-ascii?q?1wacrRxlcpFwjYk1uQrJbqPzeR1usTs2mQ8u1tVfmyhG48sAxxvjiuydssio?=
- =?us-ascii?q?nOnI4VzEvE+j9jzIY6It24Vld2bNi5G5VTryGXL5Z6T8wtTm1yuCs216cKtY?=
- =?us-ascii?q?C0cSQU0pgr2hjSYOGdfYeS+BLsTuORLC99hHJiZb2wmQ6/8VOlyu3gTsm010?=
- =?us-ascii?q?tKrjZdntnMqH8N0xvT59CbSvRn5Eeh2CuP1xvJ5uFYIUE7iarbK5k7zr42ip?=
- =?us-ascii?q?UTqljMEjXzmEX3iK+abkQk+u625OT7erjqu5CROoBuhgz+L6gigNKzDOsmPg?=
- =?us-ascii?q?QUQmSX4eG826fi/U39TrVKlPo2kqzBvZDBOMsbvbW0AxNV04k/6xa/CC2q0N?=
- =?us-ascii?q?IDnXYdNl5FdxWHj5bxN1HUPP/4Feu/g0irkDpzwvDGP77hApHKLnjYi7rhZr?=
- =?us-ascii?q?d85FBGyAUt0N9f5ohYCrEcIPjrQE/+qMTYDgMlMwyz2+vnFtp91oQeWG2VBq?=
- =?us-ascii?q?+UK7nSvkGV6eIvOeaMeJUZtyr6K/gg//Tul2M2mUcBfam12psacHe4HvFhI0?=
- =?us-ascii?q?WCZ3rjmMsOHnkRswokUuPllV2CXiRPZ3qoQ6084TQ7Apq8DYjfXoCtnKCB3C?=
- =?us-ascii?q?CjE5JNaGBGC06DEXP1eIWfQPoMZiOSLdFlkjMZTriuVZQh2QuptA/gxLptNv?=
- =?us-ascii?q?DU9TEAtZL/yNh14PXelQoo+jxwD8Wc0mGMT2dvk2wSQT85wbp/oUt8yliey6?=
- =?us-ascii?q?R3n/tYFdlL7fNTTgg6LYLcz/B9C93qQgLOZMqJSFK9T9W+Gz4xU9Yxz8YLY0?=
- =?us-ascii?q?Z6HNWilA7M0zC2DL8SkryBHIY0/b7E33jtO8Z9zG7L1K0gj1kgX8tOOnSqhq?=
- =?us-ascii?q?1h+AjJAY7GjUGZmr20daQTwiHN7n2PzWmQs0FCVg5/T6HFUWoYZkvMotTz/l?=
- =?us-ascii?q?nCQKO2CbQ7LgtBztaPKq9Lat3vkFVHS+7vOMnYY2KwnGewAxiIxqiXYYr0dG?=
- =?us-ascii?q?USwj/dBFIHkw8N53aGMxYxBiO7r2LZFjxuGkrlY1nw/ulmtHO7Ukg0whmOb0?=
- =?us-ascii?q?1g0bq15xEUieWSS/MIw70LpjkhpCtwHFumwdLWBMSPpxB7cKVff9w9+lFH2n?=
- =?us-ascii?q?zdtwBnOZygNa9ijEYEcwtrp0Puywl3CoJYnMgxsnwqyAtyKaSF0FJObD6Yw5?=
- =?us-ascii?q?/wNaPNKmXo/xCgdbTW2lfA39aS4KsP7+44q1r7tgGzCkUi62ln08VS03aE+5?=
- =?us-ascii?q?rLAhAdUZbqUkY37BV6va/VbTQ954zOyX1gK7W7sjjH24FhOOxw7xeje9BEeJ?=
- =?us-ascii?q?iWGRX/H8xSU82vK+gtgHCyfB8eMexTsq4paZCIbfyDjZW3Mf5gkTTutmFO5I?=
- =?us-ascii?q?RwwwrY7CZnYvLZ1JYChfeD102IUCmq3wTpidz+hY0RPWJaJWG40yWxQdcLPq?=
- =?us-ascii?q?A=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DNAAAREQBc/wHyM5BkGwEBAQEDAQEBBwMBAQGBZYFbK?=
- =?us-ascii?q?YE1MyeDeZQgTAEBAQEBAQaBCAgliR6QIDgBhEACgzIiOBIBAwEBAQEBAQIBb?=
- =?us-ascii?q?CiCNiQBgmIBBSMPAQVBEAsYAgImAgJXBg0GAgEBgl4/gXUNpjaBL4orgQuLC?=
- =?us-ascii?q?xd4gQeBOAyCX4Q7HxEWgwSCVwKJFoIDhQVQjzUJkSwGGIFaiDSHDporIYFVK?=
- =?us-ascii?q?wgCGAghD4MnkHkhAzCBBQEBim0PF4InAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 29 Nov 2018 16:19:47 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wATGJlIk020702;
-        Thu, 29 Nov 2018 11:19:47 -0500
-Subject: Re: overlayfs access checks on underlying layers
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
- <20181127210542.GA2599@redhat.com>
- <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
- <20181128170302.GA12405@redhat.com>
- <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
- <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
-Message-ID: <d82ba663-0154-337e-9cd5-360794df8c82@tycho.nsa.gov>
-Date:   Thu, 29 Nov 2018 11:22:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 29 Nov 2018 22:25:58 -0500
+Received: by mail-it1-f195.google.com with SMTP id m8so7802248itk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8tNdDKfnX+NF9A6VQrISB+YaCjA1m3+eKAOu/O8h0g4=;
+        b=KbdSnpnEGwPAn6/lnwDGBpADlZvoH2vbcM8p2PARdR0ryPQw92HiT5ztL+jt7j6nq/
+         bszPl5BuVtu3WY9ezxUBajrxj2u3LT2pV5fJXHetePunL/oNN/Wq1rc8IVWf4c5XFBBs
+         HWj1JQukfszt/CrZkp9D9+HhMM3A1Gx+HvNDc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8tNdDKfnX+NF9A6VQrISB+YaCjA1m3+eKAOu/O8h0g4=;
+        b=MdY73uyRMU3jbMqbRoV3RN0uOo6jgQcA6Zl9cJ3D0ob2iqOIzTl4D6MJyHFbf5FQPN
+         7r3003L8o/qzLXpwHVmwFHGvQcFtf0MNhSo25kBS5H4E0tQOdJWx0jchnXVwuZ5M2l5r
+         Z1jAivJHIZh17V5wc1B6QLAl9/V34JPzYahfnDv9sPych114ns3IlV5LHQjZtn1Ae/sq
+         xHKb4WDHeMikgKCUdaYxG1muHRnRcKA/VYEe5jtf4jCUeozCHGEFu8yo6oRakywhPZFM
+         cia9OKi0fP3n+Y41srhSHUgZ+y3rvkL5Fvep6v/WaCcODRCX0MUo6Cr83sPJPzaVrLgV
+         iZ/g==
+X-Gm-Message-State: AA+aEWaKBObfjcy30dFLh3Vk74fOZE1OUdwtN83Mmc6o4ZGhJ7wAxxIy
+        gl/uXk8s6AN8d+mKYmbXmKiu9CafQ8DM7UV9yZx4kw==
+X-Google-Smtp-Source: AFSGD/XIyn/Up8+odtLv6TZaLVXxuv3eBffzZqWBJ47JHsps4Fdu2hin1ADqt9EtQUMijkDjLfR46KPRhvdBY5Ly7vA=
+X-Received: by 2002:a24:a20e:: with SMTP id j14mr2128698itf.14.1543508403247;
+ Thu, 29 Nov 2018 08:20:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net> <20181128115336.GB23094@e110439-lin>
+ <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
+ <20181128144039.GC23094@e110439-lin> <CAKfTPtAR7otTTwKYbg5OWbgrUYNKBNsUnOcMS9CfQtbYspvO5A@mail.gmail.com>
+ <20181128152133.GD23094@e110439-lin> <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
+ <20181128163545.GE23094@e110439-lin> <CAKfTPtAd8V=Qst82HPb1HW7ZdvrHGgaVhZ=rAdzbHNednp+ztg@mail.gmail.com>
+ <20181129150020.GF23094@e110439-lin>
+In-Reply-To: <20181129150020.GF23094@e110439-lin>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 29 Nov 2018 17:19:51 +0100
+Message-ID: <CAKfTPtB_uVBx85vWVOhqUYyKGFipa4HGECsC-YZMvaz8wK6oCA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 11:16 AM, Stephen Smalley wrote:
-> On 11/29/18 6:04 AM, Miklos Szeredi wrote:
->> On Wed, Nov 28, 2018 at 10:43 PM Stephen Smalley <sds@tycho.nsa.gov> 
->> wrote:
->>>
->>> On 11/28/18 3:24 PM, Miklos Szeredi wrote:
->>>> On Wed, Nov 28, 2018 at 8:32 PM Stephen Smalley <sds@tycho.nsa.gov> 
->>>> wrote:
->>
->> [...]
->>
->>>>> Does the breaking commit (007ea44892e6) fix a real bug affecting 
->>>>> users?
->>>>>     If not, I'd recommend just reverting it.
->>>>
->>>> That is certainly an option, but...  this is all about context=
->>>> mounts, right?  Which allows mounter to override MAC checks under the
->>>> new mount?  On any mount, not just overlay, right?  So why is overlay
->>>> special?
->>>
->>> With other filesystems, the files are only accessible under the context
->>> specified by the mounter (and you can't mount it twice with differing
->>> context mount options). With overlay, the file is simultaneously
->>> accessible under both the context specified by the mounter via the
->>> overlay and under its lower/upper context via the lower/upper dir.
->>>
->>> Generally we only use context mounts on other filesystems when they have
->>> no label information at all (no security.selinux xattrs) or when they
->>> are completely untrusted to provide that information; the context
->>> specified by the mounter is the only basis for access control.  With
->>> overlay, we are frequently dealing with labeled lower and upper
->>> directories in a filesystem we trust.
->>>
->>> It seems like overlay has a goal of preventing the mounter from
->>> escalating its access through an overlay mount.
->>
->> Overlayfs main purpose is to bypass limited access to a read-only
->> filesystem by copying up on a write access.  So bypassing access is
->> built into the system, but it's done in a way that in the end it
->> doesn't permit mounter to do more than it could otherwise do.  Or at
->> least that's the intent, as you say.
->>
->> To generalize that, we could say:  trigger a copy-up if access to
->> lower layer object is denied.  That would extend the scope of the
->> trigger from write access on file/dir to read/write on special files
->> and execute on regular files, all of which could theoretically be
->> denied on the lower object, yet allowed on the upper object without
->> violating the above rule.
-> 
-> Possibly I misunderstood you, but I don't think we want to copy-up on 
-> permission denial, as that would still allow the mounter to read/write 
-> special files or execute regular files to which it would normally be 
-> denied access, because the copy would inherit the context specified by 
-> the mounter in the context mount case.  It still represents an 
-> escalation of privilege for the mounter.  In contrast, the copy-up on 
-> write behavior does not allow the mounter to do anything it could not do 
-> already (i.e. read from the lower, write to the upper).
+On Thu, 29 Nov 2018 at 16:00, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+>
+> On 29-Nov 11:43, Vincent Guittot wrote:
+> > On Wed, 28 Nov 2018 at 17:35, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > > On 28-Nov 16:42, Vincent Guittot wrote:
+> > > > On Wed, 28 Nov 2018 at 16:21, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > > > > On 28-Nov 15:55, Vincent Guittot wrote:
+> > > > > > On Wed, 28 Nov 2018 at 15:40, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > > > > > > On 28-Nov 14:33, Vincent Guittot wrote:
+> > > > > > > > On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > > > > > > > > On 28-Nov 11:02, Peter Zijlstra wrote:
+> > > > > > > > > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
+> > > > > > > > > >
+> > > > > > > > > > > Is there anything else that I should do for these patches ?
+> > > > > > > > > >
+> > > > > > > > > > IIRC, Morten mention they break util_est; Patrick was going to explain.
+> > > > > > > > >
+> > > > > > > > > I guess the problem is that, once we cross the current capacity,
+> > > > > > > > > strictly speaking util_avg does not represent anymore a utilization.
+> > > > > > > > >
+> > > > > > > > > With the new signal this could happen and we end up storing estimated
+> > > > > > > > > utilization samples which will overestimate the task requirements.
+> > > > > > > > >
+> > > > > > > > > We will have a spike in estimated utilization at next wakeup, since we
+> > > > > > > > > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
+> > > > > > > > > case we collect multiple samples above the current capacity.
+> > > > > > > >
+> > > > > > > > TBH I don't see how it's different from current implementation with a
+> > > > > > > > task that was scheduled on big core and now wakes up on little core.
+> > > > > > > > The util_est is overestimated as well.
+> > > > > > >
+> > > > > > > While running below the capacity of a CPU, either big or LITTLE, we
+> > > > > > > can still measure the actual used bandwidth as long as we have idle
+> > > > > > > time. If the task is then moved into a lower capacity core, I think
+> > > > > > > it's still safe to assume that, likely, it would need more capacity.
+> > > > > > >
+> > > > > > > Why do you say it's the same ?
+> > > > > >
+> > > > > > In the example of a task that runs 39ms in period of 80ms that we used
+> > > > > > during previous version,
+> > > > > > the utilization on the big core will reach 709 so will util_est too
+> > > > > > When the task migrates on little core (512), util_est is higher than
+> > > > > > current cpu capacity
+> > > > >
+> > > > > Right, and what's the problem ?
+> > > >
+> > > > you worry about an util_est being higher than capacity which is the case there
+> > >
+> > > I worry about util_est being higher then the capacity the task WAS
+> > > running... not the capacity the task IS running... if that value does
+> > > not correspond to what the task really need... (more on that at the
+> > > end).
+> > >
+> > > > > 1) We know that PELT is calibrated to 32ms period task and in your
+> > > > >    example, since the runtime is higher then the half-life, it's
+> > > > >    correct to estimate a utilization higher then 50%.
+> > > > >
+> > > > >    PELT utilization is defined _based on the half-life_: thus
+> > > > >    your task having a 50% duty cycle does not mean we are not correct
+> > > > >    if report a utilization != 50%.
+> > > > >    It would be as broken as reporting 10% utilization for a task
+> > > > >    running 100ms every 1s.
+> > > > >
+> > > > > 2) If it was a 70% task on a previous activation, once it's moved into
+> > > > >    a lower capacity CPU it's still correct to assume that it's likely
+> > > > >    going to require the same bandwidth and thus will be
+> > > > >    under-provisioned.
+> > > > >
+> > > > > I still don't see where we are wrong in this case :/
+> > > > >
+> > > > > To me it looks different then the problem I described.
+> > > > >
+> > > > > > > With your new signal instead, once we cross the current capacity,
+> > > > > > > utilization is just not anymore utilization. Thus, IMHO it make sense
+> > > > > > > avoid to accumulate a sample for what we call "estimated utilization".
+> > > >
+> > > > This is not true. With the example above, the util_est will be exactly the same
+> > > >  on big and little cores with the new signal
+> > >
+> > > ... AFAIU only if we have idle time...
+> > >
+> > > > > > > I would also say that, with the current implementation which caps
+> > > > > > > utilization to the current capacity, we get better estimation in
+> > > > > > > general. At least we can say with absolute precision:
+> > > > > > >
+> > > > > > >    "the task needs _at least_ that amount of capacity".
+> > > > > > >
+> > > > > > > Potentially we can also flag the task as being under-provisioned, in
+> > > > > > > case there was not idle time, and _let a policy_ decide what to do
+> > > > > > > with it and the granted information we have.
+> > > > > > >
+> > > > > > > While, with your new signal, once we are over the current capacity,
+> > > > > > > the "utilization" is just a sort of "random" number at best useful to
+> > > > > > > drive some conclusions about how long the task has been delayed.
+> > > >
+> > > > see my comment above
+> > > >
+> > > > > > >
+> > > > > > > IOW, I fear that we are embedding a policy within a signal which is
+> > > > > > > currently representing something very well defined: how much cpu
+> > > > > > > bandwidth a task used. While, latency/under-provisioning policies
+> > > > > > > perhaps should be better placed somewhere else.
+> > > > > > >
+> > > > > > > Perhaps I've missed it in some of the previous discussions:
+> > > > > > > have we have considered/discussed this signal-vs-policy aspect ?
+> > > > >
+> > > > > What's your opinion on the above instead ?
+> > > >
+> > > > It's not a policy but it gives better knowledge about the amount a work done
+> > > > I have put below discussion on the  subject on previous version
+> > >
+> > > Thanks, I think I've skimmed through it, but it's sill useful...
+> > >
+> > > > > > With contribution scaling the PELT utilization of a task is a _minimum_
+> > > > > > utilization. Regardless of where the task is currently/was running (and
+> > > > > > provided that it doesn't change behaviour) its PELT utilization will
+> > > > > > approximate its _minimum_ utilization on an idle 1024 capacity CPU.
+> > > > >
+> > > > > The main drawback is that the _minimum_ utilization depends on the CPU
+> > > > > capacity on which the task runs. The two 25% tasks on a 256 capacity
+> > > > > CPU will have an utilization of 128 as an example
+> > > > >
+> > > > > >
+> > > > > > With time scaling the PELT utilization doesn't really have a meaning on
+> > > > > > its own. It has to be compared to the capacity of the CPU where it
+> > > > > > is/was running to know what the its current PELT utilization means. When
+> > > > >
+> > > > > I would have said the opposite. The utilization of the task will
+> > > > > always reflect the same amount of work that has been already done
+> > > > > whatever the CPU capacity.
+> > > > > In fact, the new scaling mechanism uses the real amount of work that
+> > > > > has been already done to compute the utilization signal which is not
+> > > > > the case currently. This gives more information about the real amount
+> > > > > of worked that has been computed in the over utilization case.
+> > > > >
+> > > > > > the utilization over-shoots the capacity its value is no longer
+> > > > > > represents utilization, it just means that it has a higher compute
+> > > > > > demand than is offered on its current CPU and a high value means that it
+> > > > > > has been suffering longer. It can't be used to predict the actual
+> > > > > > utilization on an idle 1024 capacity any better than contribution scaled
+> > > > > > PELT utilization.
+> > > > >
+> > > > > I think that it provides earlier detection of over utilization and
+> > > > > more accurate signal for a longer time duration which can help the
+> > > > > load balance
+> > > > > Coming back to 50% task example . I will use a 50ms running time
+> > > > > during a 100ms period for the example below to make it easier
+> > > > >
+> > > > > Starting from 0, the evolution of the utilization is:
+> > > > >
+> > > > > With contribution scaling:
+> > > > >          time  0ms  50ms  100ms  150ms  200ms
+> > > > > capacity
+> > > > > 1024           0    666
+> > > > > 512            0    333   453
+> > > > > When the CPU start to be over utilized (@100ms), the utilization is
+> > > > > already too low (453 instead of 666) and scheduler doesn't detect yet
+> > > > > that we are over utilized
+> > > > > 256            0    169   226    246    252
+> > > > > That's even worse with this lower capacity
+> > > > >
+>
+>
+>
+>
+> > > > > With time scaling,
+> > > > >          time  0ms  50ms  100ms  150ms  200ms
+> > > > > capacity
+> > > > > 1024           0    666
+> > > > > 512            0    428   677
+> > > > > 256            0    234   468    564    677
+>
+> [...]
+>
+> > > I like the idea that we ramp up faster and always get to the same
+> > > value. I like also the idea that we always reach the same value on
+> > > both LITTLE and big.
+> > >
+> > > As long as there is idle time this is working fine, in these cases we
+> > > should probably also collect util_est samples.
+> > >
+> > > But what happens when we don't have idle time ?
+> >
+> > As shown above, the utilization stays correct for a longer time frame
+> > even after the over utilization point and provides better over
+> > utilization detection
+> >
+> > >
+> > > Let say we have 2 15% tasks, co-scheduled on a cpu with <300 capacity.
+> > >
+> > > Are not these two tasks being reported as 50% tasks (after a while) ?
+> >
+> > Yes they will but similarly to above they will stay correct for longer
+> > time even when they become higher than current cpu capacity
+>
+> Seems we agree that, when there is no idle time:
+> - the two 15% tasks will be overestimated
+> - their utilization will reach 50% after a while
+>
+> If I'm not wrong, we will have:
+> - 30% CPU util in  ~16ms @1024 capacity
+>                    ~64ms  @256 capacity
+>
+> Thus, the tasks will be certainly over-estimated after ~64ms.
+> Is that correct ?
 
-Also, copy-up in those cases might allow for device files that would 
-normally be unusable due to nodev on the lower filesystem mount to 
-become usable in the upper?  And likewise for executable files in a 
-noexec lower mount?  Is that already an issue for nosuid?
+From a pure util_avg pov it's correct
+But i'd like to weight that a bit with the example below
 
-> 
->>
->>>> I'd just like to see proper justification for why we should be doing
->>>> those checks on underlying layer that simply don't belong there, IMO.
->>>>    I'm sure you know better than I that it's not just about real bugs
->>>> affecting users, it's about having a clear, well defined model to base
->>>> the design on.   And by reverting the breaking commit, I don't see us
->>>> getting closer to that.
->>>
->>> It seems like the NFS folks raised a number of concerns with the overlay
->>> approach beyond just these two checks,
->>
->> The concerns that NFS folks had was that overlayfs does not enforce
->> permission checks (with creds of task) on underlying objects,
->> resulting in possibly elevated access compared to directly accessing
->> the NFS mount.    But I think there's no way to reconcile server
->> permission checks with overlayfs, so we are left with the current
->> model of only verifying the permission on the server against the
->> mounter's creds.
-> 
-> Typically this will only work if the NFS files are 
-> world-readable/searchable, right, since usually the mounter will be root 
-> and the server will enable root squash on the export?  Is that 
-> sufficient for most use cases?
-> 
->>
->>> and Android has their
->>> override_creds=off use case.  Maybe the overlay model needs a more
->>> significant rethinking than just these two cases.
->>
->> Yes, it would be good if that override_creds=off use case was
->> discussed.  AFAICS it trades less privilege in the mounter for more
->> privilege in the task accessing the overlay.  If, or how, that is a
->> good model for anything other than Android is not clear to me.
->>
->> Thanks,
->> Miklos
->>
-> 
+>
+> > > If that's the case, these are samples we should not store...
+>
+> Now, we can argue that 64ms is a pretty long time and thus it's quite
+> unlucky we will have no idle for such a long time.
+>
+> Still, I'm wondering if we should keep collecting those samples or
+> better find a way to detect that and skip the sampling.
 
+The problem is that you can have util_avg above capacity even with idle time
+In the 1st example of this thread, the 39ms/80ms task will reach 709
+which is the value saved by util_est on a big core
+But on core with half capacity, there is still idle time so 709 is a
+correct value although above 512
+
+In fact, max will be always above the linear ratio because it's based
+on geometric series
+
+And this is true even with 15.6ms/32ms (same ratio as above) task
+although the impact is smaller (max value, which should be saved by
+util est, becomes  587 in this case).
+
+
+
+
+
+
+>
+> --
+> #include <best/regards.h>
+>
+> Patrick Bellasi
