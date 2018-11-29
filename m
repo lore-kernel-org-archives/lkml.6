@@ -2,132 +2,116 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E143CC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADE1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D308213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5712220868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="XKEWduc8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D308213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DJSfdFoT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5712220868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbeK3EjR (ORCPT
+        id S1730391AbeK3ElZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:39:17 -0500
-Received: from mail-eopbgr130059.outbound.protection.outlook.com ([40.107.13.59]:9444
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728255AbeK3EjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:39:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rVZ7Y8yJkUlpltZuYH3x9qCjhaVBt4+eKvcsewkQjPo=;
- b=XKEWduc8c1jBsG55UZTiC06snWb1gJd6Tsu0IYioXo2hE0atJ5d0ajMf9RzrH3PJ7iA+M7T8Sk9R7hky6yTWRFEVGshxMh2De2gxTjes+xcSxvo2J+3zuVmFduLw+V4NwknBizPX5w1EYg/V/+hhBdMun9ary9QDmbRKrzbOIv8=
-Received: from AM6PR08MB3030.eurprd08.prod.outlook.com (52.135.163.139) by
- AM6PR08MB3957.eurprd08.prod.outlook.com (20.179.0.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Thu, 29 Nov 2018 17:33:03 +0000
-Received: from AM6PR08MB3030.eurprd08.prod.outlook.com
- ([fe80::a15d:a644:5b69:2989]) by AM6PR08MB3030.eurprd08.prod.outlook.com
- ([fe80::a15d:a644:5b69:2989%5]) with mapi id 15.20.1361.019; Thu, 29 Nov 2018
- 17:33:03 +0000
-From:   Brian Starkey <Brian.Starkey@arm.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     "Clark, Rob" <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <Robin.Murphy@arm.com>, nd <nd@arm.com>
-Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-Thread-Topic: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
-Thread-Index: AQHUiAmUr495p1h6JkW7FAgmR6hIrQ==
-Date:   Thu, 29 Nov 2018 17:33:03 +0000
-Message-ID: <20181129173301.rye77slpy27regi5@DESKTOP-E1NTVVP.localdomain>
-References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
- <20181129141429.GA22638@lst.de>
- <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
- <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
- <20181129155758.GC26537@lst.de> <20181129162807.GL21184@phenom.ffwll.local>
- <20181129165715.GA27786@lst.de>
-In-Reply-To: <20181129165715.GA27786@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: NeoMutt/20180716-849-147d51
-x-originating-ip: [217.140.106.50]
-x-clientproxiedby: CWLP265CA0329.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:57::29) To AM6PR08MB3030.eurprd08.prod.outlook.com
- (2603:10a6:209:45::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Brian.Starkey@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR08MB3957;6:7UTGNlAnK/ELSSAMuI8etGP33+z+zw4nA5PuV+iBpxyAN3hGP+7K455rMAOOK/4BhGKpUvpISHivi2wg5AUB0Bz7146fJWNxR2unHvEJUbOGDZ26eH9hWm1zNyL0QkGzolxdhy8M5ddu4ROgrh8XxUEdVVWhjbYsgzdQJODMvqmlt5Mb+23wt8IA+6BNZ5J51mEBHKEH9ey7OPCIqr57mZnG4NSXoa3IqRUDt77eMzgMtnukCM/Lycf58AZt3jr/YYHUWsH2/XMSNZCDZzOl+IM1lG+Hew1Ngc6TnC2rgWBgw08KGDj90KxXgAokDl6MmhakupPzyM0DqFRnOGxrg8ytWHXT5vSRX07YnkcqeiB3+P0YJ265J1SiEUVO1wKoIimTS6PHPykgGswbqqMhLJbxEhk9AwseAVGydJGe3N1w2N3STPDcKtwucvYPEpCoLiRtgBC/M4BlGgsNQqPilQ==;5:EgMTpyGoT13UXdjtCfCg/ABRpiNGc1zAx2MzRrrctA3HChEFOgJc48Fyx04Jo8+jPExM4TJcRPE+ppp1wckVNSRTVWvoIa3yPqnc7rxdP18dAkbKa1epgdvZQGvq8zs3+NrD+FVgKFX+gPXHGXnXP5Gvt9okNZ13AcRCDlKF3U0=;7:zc3HjSQa0YBOMw/kdwyl/QKFmE+8o4Xuehh0HzJ4zqNWhINxwLwGkiSseR4dFqv1lvkKcVGuLbpl87lPN0dpFsQogLm9UCTk/xCWjwkYrwkzf8XoPb2T+ahsqZWElC9bmY+vtHHK6IAsuxndcuFW/A==
-x-ms-office365-filtering-correlation-id: d344f98d-7efe-4023-bbab-08d65620b700
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3957;
-x-ms-traffictypediagnostic: AM6PR08MB3957:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM6PR08MB3957C90478ED962E3B38D5AAF0D20@AM6PR08MB3957.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231453)(999002)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR08MB3957;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3957;
-x-forefront-prvs: 0871917CDA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(366004)(396003)(199004)(189003)(316002)(81156014)(14454004)(71190400001)(71200400001)(66066001)(86362001)(68736007)(44832011)(39060400002)(105586002)(52116002)(6246003)(8676002)(106356001)(476003)(486006)(478600001)(256004)(14444005)(72206003)(6116002)(446003)(11346002)(3846002)(81166006)(1076002)(2906002)(99286004)(4326008)(8936002)(93886005)(6506007)(33896004)(5660300001)(25786009)(97736004)(7416002)(7736002)(26005)(6486002)(386003)(6436002)(102836004)(229853002)(76176011)(6916009)(53936002)(305945005)(186003)(9686003)(58126008)(54906003)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3957;H:AM6PR08MB3030.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wsC688zR/OJRJwxfBmoy2WlYAsATJpfC8lrPYBtXSLRPvggbavjLsK4QVxg4TM82rFnLJwvIoPyTyhvDGhVidNwDy780asljsdnCz/F7BwwexaKtrh3MoGuHB+7Fwa8bETfQVtaVeDq4Xeml9FSAbRgmMLQ7JfugeKTKnXez4gR+gR+qI7CqUIPCaxMQHpLMF3AGgWv04wwvL2/zfXsyEjLxnAl/mtUsGasLLk/hHmn382m9haTSwAKjbGoZr2u81AaMo6ixbotjVx2dtq+LVi4KAf8ugdeFur/e4hoGdC02+hTzGnrpJi/KIf4vSsCeXxcrY09+WfrYlIqp8gnCQx1jL+WjOds7McCBf3FS3Wg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <79138F810FDA1348BB17CA4285F5C59C@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 29 Nov 2018 23:41:25 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46852 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729304AbeK3ElZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:41:25 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f23so2047103lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:35:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WxTotULv5EqGMkW2xeKCdTtPj3sONi0p+WZ1ZNgSDTs=;
+        b=DJSfdFoTUZqDJ51bHvWUKqyQRvhblc/lbU6czVs/zIALcktFBMxDjS44XfWQ2k9utJ
+         qWWYTR96+QaUFDfpnjY2A56mjCmjToJhVNQwFJhVheiEf5iOjoeFPobFiGmCEqzda/W9
+         xkgjmvOZLykug/D3CXG2uYtXaErPHQNsLOosw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WxTotULv5EqGMkW2xeKCdTtPj3sONi0p+WZ1ZNgSDTs=;
+        b=ZLwyitclCScA/Xk1V0xgWYZkk4B1//neSAUUnnWgVXGm0OZeCj9MH0p7lE8xbHwNE2
+         zdOccp2EAJtXtkrwbUVvb0dtLzKS5rnxxGEw/W7xw8lwJc6zZ4xWfBYJt05qykCZ7iou
+         FFpOMSNXsHhw2mSuzlqy8dyKN2V9cN+K/kI72az22t02ljuRI8TKt9zTWAFv7dNg7saa
+         8KBw7S4wm2S003n5SckjtH8mja5VNdab+yG3BuFOHnPuzlouf4ffgvqjnR+md3WROeu6
+         h3g6pl1mObZSrTmd9ECJRN0dPTNPv+K0HKGethWlFIuQJdjFBym0RFf7o6qovqSxCuPX
+         dJtg==
+X-Gm-Message-State: AA+aEWaO11xaaB5IjnSoYNNDtLB1KRllLt1jhcvTmVtc1fvw2BbLzUWg
+        pOj4WOQdQ2+x7I3NLYWsAgVadYew/dw=
+X-Google-Smtp-Source: AFSGD/Uip/yADr/g6kzjlN/oC7KmSpaQPa6NNYazUQvtQPTRgpIEyDVHMmpuoIpjDqwoWq6VZ8WXFg==
+X-Received: by 2002:a19:5349:: with SMTP id h70mr1620074lfb.50.1543512915344;
+        Thu, 29 Nov 2018 09:35:15 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id m77sm410107lfg.3.2018.11.29.09.35.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 09:35:15 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id z13so2059840lfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:35:14 -0800 (PST)
+X-Received: by 2002:a19:c014:: with SMTP id q20mr1532106lff.16.1543512605768;
+ Thu, 29 Nov 2018 09:30:05 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d344f98d-7efe-4023-bbab-08d65620b700
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 17:33:03.1526
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3957
+References: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
+ <20181126171036.chcbmb35ygpxziub@treble> <20181126175624.bruqfbkngbucpvxr@treble>
+ <20181126200801.GW2113@hirez.programming.kicks-ass.net> <20181126212628.4apztfazichxnt7r@treble>
+ <20181127084330.GX2113@hirez.programming.kicks-ass.net> <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+ <20181129094210.GC2131@hirez.programming.kicks-ass.net> <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net> <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <CAHk-=wg5wUXJX5mF+22WXWM_vPESb+p6-z-ZrG7rC1k2O7u=NQ@mail.gmail.com> <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+In-Reply-To: <0A629D30-ADCF-4159-9443-E5727146F65F@amacapital.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 29 Nov 2018 09:29:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgoeXuodaDkKNneiQmU3mxkt2C1MeyPF5_0NX1VSQV=XQ@mail.gmail.com>
+Message-ID: <CAHk-=wgoeXuodaDkKNneiQmU3mxkt2C1MeyPF5_0NX1VSQV=XQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, mhiramat@kernel.org,
+        jbaron@akamai.com, Jiri Kosina <jkosina@suse.cz>,
+        David.Laight@aculab.com, bp@alien8.de, julia@ni.com,
+        jeyu@kernel.org, Peter Anvin <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Thu, Nov 29, 2018 at 9:02 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> > - just restart the instruction (with the suggested "ptregs->rip --")
+> >
+> > - to avoid any "oh, we're not making progress" issues, just fix the
+> > instruction yourself to be the right call, by looking it up in the
+> > "what needs to be fixed" tables.
+>
+> I thought that too.  I think it deadlocks. CPU A does text_poke_bp().  CPU B is waiting for a spinlock with IRQs off.  CPU C holds the spinlock and hits the int3.  The int3 never goes away because CPU A is waiting for CPU B to handle the sync_core IPI.
+>
+> Or do you think we can avoid the IPI while the int3 is there?
 
-On Thu, Nov 29, 2018 at 05:57:15PM +0100, Christoph Hellwig wrote:
->=20
-> As for the buffer sharing: at least for the DMA API side I want to
-> move the current buffer sharing users away from dma_alloc_coherent
-> (and coherent dma_alloc_attrs users) and the remapping done in there
-> required for non-coherent architectures.  Instead I'd like to allocate
-> plain old pages, and then just dma map them for each device separately,
-> with DMA_ATTR_SKIP_CPU_SYNC passed for all but the first user to map
-> or last user to unmap.  On the iommu side it could probably work
-> similar.
->=20
-> I have done some preliminary work on this, and want to get it into this
-> merge window, but there is a few other bits I need to sort out first.
->=20
+I'm handwaving and thinking that CPU C that hits the int3 can just fix
+up the instruction directly in its own caches, and return.
 
-This sounds very useful for ion, to avoid CPU cache maintenance as
-long as the buffer stays in device-land.
+Yes, it does what he "text_poke" *will* do (so now the instruction
+gets rewritten _twice_), but who cares? It's idempotent.
 
-One question though: How would you determine "the last user to unmap"
-to know when to do the final "make visible to CPU" step?
+And no, I don't have code, just "maybe some handwaving like this"
 
-Thanks,
--Brian
+               Linus
