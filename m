@@ -2,299 +2,228 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5175C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC67C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 611B3205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 611B3205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id DA8D4205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:50:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sdtKqew5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8D4205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeK2Tyx (ORCPT
+        id S1727010AbeK2TzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:54:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37022 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726565AbeK2Tyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:54:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8F8A0AE65;
-        Thu, 29 Nov 2018 08:50:11 +0000 (UTC)
-From:   Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH 2/2] fs: Don't open-code lru_to_page
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-ext4@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, devel@lists.orangefs.org,
-        linux-mm@kvack.org
-References: <20181129075301.29087-1-nborisov@suse.com>
- <20181129075301.29087-2-nborisov@suse.com>
- <20181129081826.GO6923@dhcp22.suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0921bc8f-b899-4925-51f2-a9f45d4c906a@suse.com>
-Date:   Thu, 29 Nov 2018 10:50:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 29 Nov 2018 14:55:01 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42118 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbeK2TzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:55:00 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAT8nQYm046530;
+        Thu, 29 Nov 2018 02:49:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543481366;
+        bh=Sps4nRosFULkrwOSC3/fsaDFC6X3yeM/fC6B7GW2bjY=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=sdtKqew5+mKqkJLYaRxtYd7GfgUsyjLHoBzDlIRYnDlpfOChW7VdoKQ8y3erNRtkX
+         2aJsEkdQf1as2NPYGdYPGt55Yx4slFWyMydNkS2gSn1bIzFCLdxBNFBD5ryWAgVpoo
+         TQm+mHcHbPkXagOd+l2k2KPgMU9r8rKUFInVJqeE=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAT8nQv1080071
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 02:49:26 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
+ Nov 2018 02:49:25 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 29 Nov 2018 02:49:25 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAT8nLKl018999;
+        Thu, 29 Nov 2018 02:49:22 -0600
+Subject: Re: [PATCH 01/17] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     David Lechner <david@lechnology.com>, <tony@atomide.com>
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+ <1542886753-17625-2-git-send-email-rogerq@ti.com>
+ <a4fe952b-9065-d91b-4c07-984ec3f5b276@lechnology.com>
+ <5BFD5F83.3070807@ti.com>
+ <ee02b7d3-e7fd-2f4a-4213-d556d364194b@lechnology.com>
+CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>,
+        <ssantosh@kernel.org>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFFA811.3080907@ti.com>
+Date:   Thu, 29 Nov 2018 10:49:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20181129081826.GO6923@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee02b7d3-e7fd-2f4a-4213-d556d364194b@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+David,
 
-
-On 29.11.18 г. 10:18 ч., Michal Hocko wrote:
-> On Thu 29-11-18 09:52:57, Nikolay Borisov wrote:
->> There are a bunch of filesystems which essentially open-code lru_to_page
->> helper. Change them to using the helper. No functional changes.
-> 
-> I would just squash the two into a single patch. It makes the first one
-> more obvious. Or is there any reason to have them separate?
-
-No reason, just didn't know how people would react so that's why I chose
-to send as two separate.
-
-If I squash them who would be the best person to take them ?
-
-> 
->> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
->> ---
+On 28/11/18 17:42, David Lechner wrote:
+> On 11/27/18 9:15 AM, Roger Quadros wrote:
 >>
->> Since this is a mostly mechanical change I've actually batched all of them in 
->> a single patch. 
+>> On 26/11/18 23:14, David Lechner wrote:
+>>> On 11/22/18 5:38 AM, Roger Quadros wrote:
+>>>> From: Suman Anna <s-anna@ti.com>
+>>>>
+>>>> This patch adds the bindings for the Programmable Real-Time Unit
+>>>> and Industrial Communication Subsystem (PRU-ICSS) present on various
+>>>> TI SoCs. The IP is present on multiple TI SoC architecture families
+>>>> including the OMAP architecture SoCs such as AM33xx, AM437x and
+>>>> AM57xx; and on a Keystone 2 architecture based 66AK2G SoC. It is
+>>>> also present on the Davinci based OMAPL138 SoCs and K3 architecture
+>>>> based AM65x SoCs as well (not covered for now). Details have been
+>>>> added to include bindings for various core sub-modules like the PRU
+>>>> Cores, the PRUSS Interrupt Controller, and other sub-modules used
+>>>> for Industrial Communication purposes, covering the MDIO, MII_RT
+>>>> and the IEP sub-modules. The binding mostly uses standard DT
+>>>> properties.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>> ---
+>>>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 +++++++++++++++++++++
+>>>>    1 file changed, 360 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> new file mode 100644
+>>>> index 0000000..24fedad
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>
+>>> ...
+>>>
+>>>> +
+>>>> +PRU-ICSS SoC Bus Parent Node
+>>>> +=============================
+>>>> +This node represents the integration of the PRU-ICSS IP into a SoC, and is
+>>>> +required for all SoCs. The PRU-ICSS parent nodes need to be defined as child
+>>>> +nodes of this node.
+>>>> +
+>>>> +Required Properties:
+>>>> +--------------------
+>>>> +- compatible     : should be one of,
+>>>> +                       "ti,am3356-pruss-soc-bus" for AM335x family of SoCs
+>>>> +                       "ti,am4376-pruss-soc-bus" for AM437x family of SoCs
+>>>> +                       "ti,am5728-pruss-soc-bus" for AM57xx family of SoCs
+>>>> +                       "ti,k2g-pruss-soc-bus" for 66AK2G family of SoCs
+>>>> +- reg            : address and size of the PRUSS CFG sub-module registers
+>>>> +                   dictating the interconnect configuration
+>>>
+>>> I haven't looked into Tony's suggestion of using ti-sysc yet, so this may be a
+>>> moot point, but how will this work with AM18xx that does not have a PRUSS CFG
+>>> register? It seems to me that reg here should be the address and size of the
+>>> entire PRUSS IP block and the CFG register should be a syscon node or something
+>>> like that.
 >>
->>  fs/afs/file.c        | 5 +++--
->>  fs/btrfs/extent_io.c | 2 +-
->>  fs/ceph/addr.c       | 5 ++---
->>  fs/cifs/file.c       | 3 ++-
->>  fs/ext4/readpage.c   | 2 +-
->>  fs/ocfs2/aops.c      | 3 ++-
->>  fs/orangefs/inode.c  | 2 +-
->>  mm/swap.c            | 2 +-
->>  8 files changed, 13 insertions(+), 11 deletions(-)
+>> The reg property description is incorrect in the patch. It should have been
 >>
->> diff --git a/fs/afs/file.c b/fs/afs/file.c
->> index d6bc3f5d784b..323ae9912203 100644
->> --- a/fs/afs/file.c
->> +++ b/fs/afs/file.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/writeback.h>
->>  #include <linux/gfp.h>
->>  #include <linux/task_io_accounting_ops.h>
->> +#include <linux/mm.h>
->>  #include "internal.h"
->>  
->>  static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
->> @@ -441,7 +442,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
->>  	/* Count the number of contiguous pages at the front of the list.  Note
->>  	 * that the list goes prev-wards rather than next-wards.
->>  	 */
->> -	first = list_entry(pages->prev, struct page, lru);
->> +	first = lru_to_page(pages);
->>  	index = first->index + 1;
->>  	n = 1;
->>  	for (p = first->lru.prev; p != pages; p = p->prev) {
->> @@ -473,7 +474,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
->>  	 * page at the end of the file.
->>  	 */
->>  	do {
->> -		page = list_entry(pages->prev, struct page, lru);
->> +		page = lru_to_page(pages);
->>  		list_del(&page->lru);
->>  		index = page->index;
->>  		if (add_to_page_cache_lru(page, mapping, index,
->> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
->> index 19f4b8fd654f..8332c5f4b1c3 100644
->> --- a/fs/btrfs/extent_io.c
->> +++ b/fs/btrfs/extent_io.c
->> @@ -4104,7 +4104,7 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
->>  	u64 prev_em_start = (u64)-1;
->>  
->>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
->> -		page = list_entry(pages->prev, struct page, lru);
->> +		page = lru_to_page(pages);
->>  
->>  		prefetchw(&page->flags);
->>  		list_del(&page->lru);
->> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
->> index 8eade7a993c1..5d0c05e288cc 100644
->> --- a/fs/ceph/addr.c
->> +++ b/fs/ceph/addr.c
->> @@ -306,7 +306,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->>  	struct ceph_osd_client *osdc =
->>  		&ceph_inode_to_client(inode)->client->osdc;
->>  	struct ceph_inode_info *ci = ceph_inode(inode);
->> -	struct page *page = list_entry(page_list->prev, struct page, lru);
->> +	struct page *page = lru_to_page(page_list);
->>  	struct ceph_vino vino;
->>  	struct ceph_osd_request *req;
->>  	u64 off;
->> @@ -333,8 +333,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->>  			if (got)
->>  				ceph_put_cap_refs(ci, got);
->>  			while (!list_empty(page_list)) {
->> -				page = list_entry(page_list->prev,
->> -						  struct page, lru);
->> +				page = lru_to_page(page_list);
->>  				list_del(&page->lru);
->>  				put_page(page);
->>  			}
->> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
->> index 74c33d5fafc8..b16a4d887d17 100644
->> --- a/fs/cifs/file.c
->> +++ b/fs/cifs/file.c
->> @@ -33,6 +33,7 @@
->>  #include <linux/mount.h>
->>  #include <linux/slab.h>
->>  #include <linux/swap.h>
->> +#include <linux/mm.h>
->>  #include <asm/div64.h>
->>  #include "cifsfs.h"
->>  #include "cifspdu.h"
->> @@ -3975,7 +3976,7 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
->>  
->>  	INIT_LIST_HEAD(tmplist);
->>  
->> -	page = list_entry(page_list->prev, struct page, lru);
->> +	page = lru_to_page(page_list);
->>  
->>  	/*
->>  	 * Lock the page and put it in the cache. Since no one else
->> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
->> index f461d75ac049..6aa282ee455a 100644
->> --- a/fs/ext4/readpage.c
->> +++ b/fs/ext4/readpage.c
->> @@ -128,7 +128,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
->>  
->>  		prefetchw(&page->flags);
->>  		if (pages) {
->> -			page = list_entry(pages->prev, struct page, lru);
->> +			page = lru_to_page(pages);
->>  			list_del(&page->lru);
->>  			if (add_to_page_cache_lru(page, mapping, page->index,
->>  				  readahead_gfp_mask(mapping)))
->> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
->> index eb1ce30412dc..832c1759a09a 100644
->> --- a/fs/ocfs2/aops.c
->> +++ b/fs/ocfs2/aops.c
->> @@ -30,6 +30,7 @@
->>  #include <linux/quotaops.h>
->>  #include <linux/blkdev.h>
->>  #include <linux/uio.h>
->> +#include <linux/mm.h>
->>  
->>  #include <cluster/masklog.h>
->>  
->> @@ -397,7 +398,7 @@ static int ocfs2_readpages(struct file *filp, struct address_space *mapping,
->>  	 * Check whether a remote node truncated this file - we just
->>  	 * drop out in that case as it's not worth handling here.
->>  	 */
->> -	last = list_entry(pages->prev, struct page, lru);
->> +	last = lru_to_page(pages);
->>  	start = (loff_t)last->index << PAGE_SHIFT;
->>  	if (start >= i_size_read(inode))
->>  		goto out_unlock;
->> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
->> index fe53381b26b1..f038235c64bd 100644
->> --- a/fs/orangefs/inode.c
->> +++ b/fs/orangefs/inode.c
->> @@ -77,7 +77,7 @@ static int orangefs_readpages(struct file *file,
->>  	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
->>  		struct page *page;
->>  
->> -		page = list_entry(pages->prev, struct page, lru);
->> +		page = lru_to_page(pages);
->>  		list_del(&page->lru);
->>  		if (!add_to_page_cache(page,
->>  				       mapping,
->> diff --git a/mm/swap.c b/mm/swap.c
->> index aa483719922e..20b9e9d99652 100644
->> --- a/mm/swap.c
->> +++ b/mm/swap.c
->> @@ -126,7 +126,7 @@ void put_pages_list(struct list_head *pages)
->>  	while (!list_empty(pages)) {
->>  		struct page *victim;
->>  
->> -		victim = list_entry(pages->prev, struct page, lru);
->> +		victim = lru_to_page(pages);
->>  		list_del(&victim->lru);
->>  		put_page(victim);
->>  	}
->> -- 
->> 2.17.1
+>> reg        : address of SYSCFG register.
+>>
+>> The SYSCFG register is used to enable and reset the module.
+>>
+>> But based on Tony's suggestion this wrapper driver will change to ti,sysc for
+>> OMAP like SoCs.
+>>
+>> For AM18xx it could be a simple wrapper driver that just populates the children?
 > 
+> I suppose that could work. I will look into it (perhaps after seeing what you
+> come up with in v2).
+> 
+>>
+>>>
+>>>> +- #address-cells : should be 1
+>>>> +- #size-cells    : should be 1
+>>>> +- ranges         : standard ranges definition
+>>>> +
+>>>
+>>> ...
+>>>
+>>>> +
+>>>> +PRUSS INTC Child Node
+>>>> +======================
+>>>> +Each PRUSS has a single interrupt controller instance that is common to both
+>>>> +the PRU cores. Each interrupt controller can detect 64 input events which are
+>>>> +then mapped to 10 possible output interrupts through two levels of mapping. The
+>>>> +input events can be triggered by either the PRUs and/or various other PRUSS
+>>>> +internal and external peripherals. The first 2 output interrupts are fed
+>>>> +exclusively to the internal PRU cores, with the remaining 8 connected to
+>>>> +external interrupt controllers including the MPU.
+>>>
+>>> FYI, on AM18xx, there is a PRUSSEVTSEL bit in CFGCHIP3[3] (already a syscon node
+>>> in the device tree) that allows selecting one of two groups of 32 input events
+>>> out of this group of 64. This is perhaps getting out of the scope of this patch
+>>> series, but I just want to make sure we end up with something that can be easily
+>>> extended for this case. For example, I was thinking that this binding could be
+>>> modified so that #interrupt-cells could be 1 or 2. If it is 2, then the first
+>>> cell specifies the PRUSSEVTSEL value and the second value is the event number.
+>>>
+>>
+>> this is da850.dtsi correct?
+> 
+> Yes.
+> 
+>>
+>> As PRUSSEVTSEL is not SYSEVENT specific but applies to all the SYSEVENTs at a time.
+>> I don't think interrupt-cells is the right place to specify this.
+>>
+>> Can it be set in DT in the board file? But this can't change once booted so maybe restrictive.
+> 
+> I guess the way I see this is that it is like specifying the bank and index for
+> a GPIO. If you only specify the system event number, then it is not clear which
+> event you mean - it could be one of two events. You have to also specify the
+> PRUSSEVTSEL value (one could call this the bank or group, I suppose) to fully
+> describe the system event.
+
+But this PRUSSEVTSEL is not present on most SoCs. I think it is only on the AM18xx and OMAP-L13x SoCs.
+
+How about modelling this as a linear map of 64 events and decode this internally in INTC driver.
+i.e. 0 to 31 set PRUSSEVTSEL to 0 and 32 to 63 set PRUSSEVTSEL to 1.
+
+If any interrupt map provides sysevents from both groups simultaneously then we complain and error out.
+
+This should keep the dt-binding and resource table format identical across all SoCs.
+
+> 
+>>
+>> If runtime change is required it can only be done before a PRU boots.
+>>
+>> How about providing this info in the resource table and/or application DT node?
+> 
+> This seems like this would make it easy to end up with a broken interrupts
+> if you accidentally try to use interrupts from both groups. Instead this
+> could be implemented in the irqchip driver such that the first interrupt
+> (system event) requested gets to select the group. If any interrupts from
+> the other group are requested later, they can just return an error. Any
+> interrupts in the same group as the first can be requested successfully.
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
