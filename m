@@ -2,90 +2,108 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679A2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52C9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B1F5213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:10:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sT0ZtBAx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B1F5213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 772B120863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:10:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772B120863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbeK3EQp (ORCPT
+        id S1730335AbeK3ERB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:16:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59460 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 23:17:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44066 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbeK3EQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:16:45 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726736AbeK3ERB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:17:01 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4352C20863;
-        Thu, 29 Nov 2018 17:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543511440;
-        bh=AHkNUQHUxUlNVBHIjsQ/dWtd4bTT7XdZHSbRLdBX9Xo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sT0ZtBAxLO8EJKfWp8roacbyh7DWsUjdjsiNMt8Ve7H1lcBoLVriDBagAFcgz94id
-         x2o6vrpZ+kpLum5IueNRz3U6kc6HHqNp5cwr5tqkaRUrcoVnxvB9mNc1sCU807l+OC
-         XxQEesVp0P6EAqOVhANcIfESJl7ySeTvJHuYo7Do=
-Date:   Thu, 29 Nov 2018 18:10:38 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, willy@infradead.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 4.19 033/110] bfs: add sanity check at bfs_fill_super()
-Message-ID: <20181129171038.GA4651@kroah.com>
-References: <20181129135921.231283053@linuxfoundation.org>
- <20181129135922.602882966@linuxfoundation.org>
- <CAK+_RLmVyVzL3G6++xOxfyEqEHL=bfZZx_Yj-TFNf5a7_oUoXw@mail.gmail.com>
- <20181129160722.GA31919@kroah.com>
- <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 37CCBC05000A;
+        Thu, 29 Nov 2018 17:10:57 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 27314620C8;
+        Thu, 29 Nov 2018 17:10:52 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 11:10:50 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129171050.iio53bw67fbiwzud@treble>
+References: <20181126200801.GW2113@hirez.programming.kicks-ass.net>
+ <20181126212628.4apztfazichxnt7r@treble>
+ <20181127084330.GX2113@hirez.programming.kicks-ass.net>
+ <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+ <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+ <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+ <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <20181129164914.GA9027@hirez.programming.kicks-ass.net>
+ <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK+_RLnbpu+nYsr8sVpHBVUcATDbqQoeH=+tu=tK1EKTHk6L9A@mail.gmail.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 29 Nov 2018 17:10:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 04:55:20PM +0000, Tigran Aivazian wrote:
-> On Thu, 29 Nov 2018 at 16:07, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Nov 29, 2018 at 03:23:00PM +0000, Tigran Aivazian wrote:
-> > > Yes, of course I object to it.
-> > I can not apply a patch to the stable trees that are not in Linus's tree
-> > first.  So there's nothing I can do here with this.
+On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
 > 
-> Ok, we can wait until my patch propagates into Linus' tree, but I
-> would have thought it would be a waste of your time to apply a patch
-> which is waiting to be inevitably superseded by a different one.
+> 
+> > On Nov 29, 2018, at 8:49 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > 
+> > On Thu, Nov 29, 2018 at 10:33:42AM -0600, Josh Poimboeuf wrote:
+> >>> can't we 'fix' that again? The alternative is moving that IRET-frame and
+> >>> fixing everything up, which is going to be fragile, ugly and such
+> >>> things more.
+> > 
+> >> This seems to work...
+> > 
+> > That's almost too easy... nice!
+> 
+> It is indeed too easy: you’re putting pt_regs in the wrong place for
+> int3 from user mode, which is probably a root hole if you arrange for
+> a ptraced process to do int3 and try to write to whatever register
+> aliases CS.
+> 
+> If you make it conditional on CPL, do it for 32-bit as well, add
+> comments convince yourself that there isn’t a better solution
 
-Your patch has to apply on top of the existing one, so there's not an
-issue here.
+I could do that - but why subject 32-bit to it?  I was going to make it
+conditional on CONFIG_HAVE_STATIC_CALL_INLINE which is 64-bit only.
 
-And might as well fix it now, as I can never count on a "future" patch
-getting merged.
+> (like pointing IP at a stub that retpolines to the target by reading
+> the function pointer, a la the unoptimizable version), then okay, I
+> guess, with only a small amount of grumbling.
 
-> I can
-> see there are 238 PRs at Linus' tree on github and I am very glad that
-> I looked into one of them --- it contained a long comment explaining
-> that I should NOT do what I was just about to do, i.e. make a PR
-> against Linus' tree! :)
+I tried that in v2, but Peter pointed out it's racy:
 
-We do not do kernel development on github :)
+  https://lkml.kernel.org/r/20181126160217.GR2113@hirez.programming.kicks-ass.net
 
-thanks,
-
-greg k-h
+-- 
+Josh
