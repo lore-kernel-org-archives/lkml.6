@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCD3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21043C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69168208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C81208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9xCsX4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69168208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OllmcYSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C81208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732087AbeK3B2S (ORCPT
+        id S1731396AbeK3B2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:28:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53780 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:28:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbeK3B2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:28:17 -0500
+        id S1731095AbeK3B2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:28:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18520205C9;
-        Thu, 29 Nov 2018 14:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72DF9205C9;
+        Thu, 29 Nov 2018 14:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501365;
-        bh=DvncEL8XKxLlxqf1uOO69i1UCJhOlByYK2SppQDJW8c=;
+        s=default; t=1543501368;
+        bh=aoAFvs9ynJb8wrJeTkUnAXkKFRLYvWGGbheiTJIgozg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k9xCsX4PEpsqzVyM4YkgLSWEkSgaLvIZOZhZeRZ0QykaXySWNLNAx6b+++LTbVF9c
-         G2kCCFJWRsubInBNEJk+DW847YpAPV7AEn/IvltwVjXnjtzlsT6acSlmoxwwHzW8KL
-         9h88ahv9Qhin2JZySZzLClTiZILNP2WqULqkDPMU=
+        b=OllmcYSqIOBfGtUgNtc+TUhU1H+jyciNgiCZ9ugqV0REm84vWTbbZkn0B9ktJIBU2
+         3xjOVcRq/ZpSbO2M9D4xrZP1tLJY9AvnO6h+IdquxloxxztCw+Z9wYlemgOkvD13EL
+         SgdmLgK79OZ7ZoHNCUZIeAJTayt/y9m8xBRIUSP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuval Shaia <yuval.shaia@oracle.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Alex Estrin <alex.estrin@intel.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org,
+        Mitko Haralanov <mitko.haralanov@intel.com>,
         Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        stable@kernel.org
-Subject: [PATCH 4.9 25/92] IB/core: Fix for core panic
-Date:   Thu, 29 Nov 2018 15:11:54 +0100
-Message-Id: <20181129140108.408252939@linuxfoundation.org>
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 26/92] IB/hfi1: Eliminate races in the SDMA send error path
+Date:   Thu, 29 Nov 2018 15:11:55 +0100
+Message-Id: <20181129140108.503467848@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -67,109 +66,290 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Estrin <alex.estrin@intel.com>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit e6f9bc34d3779cb7b6a337afed5de8be3f0fab77 upstream.
+commit a0e0cb82804a6a21d9067022c2dfdf80d11da429 upstream.
 
-Build with the latest patches resulted in panic:
-11384.486289] BUG: unable to handle kernel NULL pointer dereference at
-         (null)
-[11384.486293] IP:           (null)
-[11384.486295] PGD 0
-[11384.486295] P4D 0
-[11384.486296]
-[11384.486299] Oops: 0010 [#1] SMP
-......... snip ......
-[11384.486401] CPU: 0 PID: 968 Comm: kworker/0:1H Tainted: G        W  O
-    4.13.0-a-stream-20170825 #1
-[11384.486402] Hardware name: Intel Corporation S2600WT2R/S2600WT2R,
-BIOS SE5C610.86B.01.01.0014.121820151719 12/18/2015
-[11384.486418] Workqueue: ib-comp-wq ib_cq_poll_work [ib_core]
-[11384.486419] task: ffff880850579680 task.stack: ffffc90007fec000
-[11384.486420] RIP: 0010:          (null)
-[11384.486420] RSP: 0018:ffffc90007fef970 EFLAGS: 00010206
-[11384.486421] RAX: ffff88084cfe8000 RBX: ffff88084dce4000 RCX:
-ffffc90007fef978
-[11384.486422] RDX: 0000000000000000 RSI: 0000000000000001 RDI:
-ffff88084cfe8000
-[11384.486422] RBP: ffffc90007fefab0 R08: 0000000000000000 R09:
-ffff88084dce4080
-[11384.486423] R10: ffffffffa02d7f60 R11: 0000000000000000 R12:
-ffff88105af65a00
-[11384.486423] R13: ffff88084dce4000 R14: 000000000000c000 R15:
-000000000000c000
-[11384.486424] FS:  0000000000000000(0000) GS:ffff88085f400000(0000)
-knlGS:0000000000000000
-[11384.486425] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[11384.486425] CR2: 0000000000000000 CR3: 0000000001c09000 CR4:
-00000000001406f0
-[11384.486426] Call Trace:
-[11384.486431]  ? is_valid_mcast_lid.isra.21+0xfb/0x110 [ib_core]
-[11384.486436]  ib_attach_mcast+0x6f/0xa0 [ib_core]
-[11384.486441]  ipoib_mcast_attach+0x81/0x190 [ib_ipoib]
-[11384.486443]  ipoib_mcast_join_complete+0x354/0xb40 [ib_ipoib]
-[11384.486448]  mcast_work_handler+0x330/0x6c0 [ib_core]
-[11384.486452]  join_handler+0x101/0x220 [ib_core]
-[11384.486455]  ib_sa_mcmember_rec_callback+0x54/0x80 [ib_core]
-[11384.486459]  recv_handler+0x3a/0x60 [ib_core]
-[11384.486462]  ib_mad_recv_done+0x423/0x9b0 [ib_core]
-[11384.486466]  __ib_process_cq+0x5d/0xb0 [ib_core]
-[11384.486469]  ib_cq_poll_work+0x20/0x60 [ib_core]
-[11384.486472]  process_one_work+0x149/0x360
-[11384.486474]  worker_thread+0x4d/0x3c0
-[11384.486487]  kthread+0x109/0x140
-[11384.486488]  ? rescuer_thread+0x380/0x380
-[11384.486489]  ? kthread_park+0x60/0x60
-[11384.486490]  ? kthread_park+0x60/0x60
-[11384.486493]  ret_from_fork+0x25/0x30
-[11384.486493] Code:  Bad RIP value.
-[11384.486493] Code:  Bad RIP value.
-[11384.486496] RIP:           (null) RSP: ffffc90007fef970
-[11384.486497] CR2: 0000000000000000
-[11384.486531] ---[ end trace b1acec6fb4ff6e75 ]---
-[11384.532133] Kernel panic - not syncing: Fatal exception
-[11384.536541] Kernel Offset: disabled
-[11384.969491] ---[ end Kernel panic - not syncing: Fatal exception
-[11384.976875] sched: Unexpected reschedule of offline CPU#1!
-[11384.983646] ------------[ cut here ]------------
+pq_update() can only be called in two places: from the completion
+function when the complete (npkts) sequence of packets has been
+submitted and processed, or from setup function if a subset of the
+packets were submitted (i.e. the error path).
 
-Rdma device driver may not have implemented (*get_link_layer)()
-so it can not be called directly. Should use appropriate helper function.
+Currently both paths can call pq_update() if an error occurrs.  This
+race will cause the n_req value to go negative, hanging file_close(),
+or cause a crash by freeing the txlist more than once.
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Fixes: 523633359224 ("IB/core: Fix the validations of a multicast LID in attach or detach operations")
-Cc: stable@kernel.org # 4.13
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Several variables are used to determine SDMA send state.  Most of
+these are unnecessary, and have code inspectible races between the
+setup function and the completion function, in both the send path and
+the error path.
+
+The request 'status' value can be set by the setup or by the
+completion function.  This is code inspectibly racy.  Since the status
+is not needed in the completion code or by the caller it has been
+removed.
+
+The request 'done' value races between usage by the setup and the
+completion function.  The completion function does not need this.
+When the number of processed packets matches npkts, it is done.
+
+The 'has_error' value races between usage of the setup and the
+completion function.  This can cause incorrect error handling and leave
+the n_req in an incorrect value (i.e. negative).
+
+Simplify the code by removing all of the unneeded state checks and
+variables.
+
+Clean up iovs node when it is freed.
+
+Eliminate race conditions in the error path:
+
+If all packets are submitted, the completion handler will set the
+completion status correctly (ok or aborted).
+
+If all packets are not submitted, the caller must wait until the
+submitted packets have completed, and then set the completion status.
+
+These two change eliminate the race condition in the error path.
+
+Reviewed-by: Mitko Haralanov <mitko.haralanov@intel.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
 Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/verbs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hfi1/user_sdma.c |  104 +++++++++++++--------------------
+ 1 file changed, 44 insertions(+), 60 deletions(-)
 
---- a/drivers/infiniband/core/verbs.c
-+++ b/drivers/infiniband/core/verbs.c
-@@ -1522,7 +1522,7 @@ static bool is_valid_mcast_lid(struct ib
+--- a/drivers/infiniband/hw/hfi1/user_sdma.c
++++ b/drivers/infiniband/hw/hfi1/user_sdma.c
+@@ -148,11 +148,8 @@ MODULE_PARM_DESC(sdma_comp_size, "Size o
+ #define TXREQ_FLAGS_REQ_LAST_PKT BIT(0)
+ 
+ /* SDMA request flag bits */
+-#define SDMA_REQ_FOR_THREAD 1
+-#define SDMA_REQ_SEND_DONE  2
+-#define SDMA_REQ_HAVE_AHG   3
+-#define SDMA_REQ_HAS_ERROR  4
+-#define SDMA_REQ_DONE_ERROR 5
++#define SDMA_REQ_HAVE_AHG   1
++#define SDMA_REQ_HAS_ERROR  2
+ 
+ #define SDMA_PKT_Q_INACTIVE BIT(0)
+ #define SDMA_PKT_Q_ACTIVE   BIT(1)
+@@ -252,8 +249,6 @@ struct user_sdma_request {
+ 	u64 seqsubmitted;
+ 	struct list_head txps;
+ 	unsigned long flags;
+-	/* status of the last txreq completed */
+-	int status;
+ };
+ 
+ /*
+@@ -546,7 +541,6 @@ int hfi1_user_sdma_process_request(struc
+ 	struct sdma_req_info info;
+ 	struct user_sdma_request *req;
+ 	u8 opcode, sc, vl;
+-	int req_queued = 0;
+ 	u16 dlid;
+ 	u32 selector;
+ 
+@@ -611,11 +605,13 @@ int hfi1_user_sdma_process_request(struc
+ 	req->data_iovs = req_iovcnt(info.ctrl) - 1; /* subtract header vector */
+ 	req->pq = pq;
+ 	req->cq = cq;
+-	req->status = -1;
+ 	INIT_LIST_HEAD(&req->txps);
+ 
+ 	memcpy(&req->info, &info, sizeof(info));
+ 
++	/* The request is initialized, count it */
++	atomic_inc(&pq->n_reqs);
++
+ 	if (req_opcode(info.ctrl) == EXPECTED) {
+ 		/* expected must have a TID info and at least one data vector */
+ 		if (req->data_iovs < 2) {
+@@ -704,7 +700,7 @@ int hfi1_user_sdma_process_request(struc
+ 		memcpy(&req->iovs[i].iov, iovec + idx++, sizeof(struct iovec));
+ 		ret = pin_vector_pages(req, &req->iovs[i]);
+ 		if (ret) {
+-			req->status = ret;
++			req->data_iovs = i;
+ 			goto free_req;
+ 		}
+ 		req->data_len += req->iovs[i].iov.iov_len;
+@@ -772,14 +768,10 @@ int hfi1_user_sdma_process_request(struc
+ 	}
+ 
+ 	set_comp_state(pq, cq, info.comp_idx, QUEUED, 0);
+-	atomic_inc(&pq->n_reqs);
+-	req_queued = 1;
+ 	/* Send the first N packets in the request to buy us some time */
+ 	ret = user_sdma_send_pkts(req, pcount);
+-	if (unlikely(ret < 0 && ret != -EBUSY)) {
+-		req->status = ret;
++	if (unlikely(ret < 0 && ret != -EBUSY))
+ 		goto free_req;
+-	}
+ 
+ 	/*
+ 	 * It is possible that the SDMA engine would have processed all the
+@@ -796,17 +788,11 @@ int hfi1_user_sdma_process_request(struc
+ 	 * request have been submitted to the SDMA engine. However, it
+ 	 * will not wait for send completions.
  	 */
- 	if (!ib_query_qp(qp, &attr, IB_QP_STATE | IB_QP_PORT, &init_attr)) {
- 		if (attr.qp_state >= IB_QPS_INIT) {
--			if (qp->device->get_link_layer(qp->device, attr.port_num) !=
-+			if (rdma_port_get_link_layer(qp->device, attr.port_num) !=
- 			    IB_LINK_LAYER_INFINIBAND)
- 				return true;
- 			goto lid_check;
-@@ -1531,7 +1531,7 @@ static bool is_valid_mcast_lid(struct ib
+-	while (!test_bit(SDMA_REQ_SEND_DONE, &req->flags)) {
++	while (req->seqsubmitted != req->info.npkts) {
+ 		ret = user_sdma_send_pkts(req, pcount);
+ 		if (ret < 0) {
+-			if (ret != -EBUSY) {
+-				req->status = ret;
+-				set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
+-				if (ACCESS_ONCE(req->seqcomp) ==
+-				    req->seqsubmitted - 1)
+-					goto free_req;
+-				return ret;
+-			}
++			if (ret != -EBUSY)
++				goto free_req;
+ 			wait_event_interruptible_timeout(
+ 				pq->busy.wait_dma,
+ 				(pq->state == SDMA_PKT_Q_ACTIVE),
+@@ -817,10 +803,19 @@ int hfi1_user_sdma_process_request(struc
+ 	*count += idx;
+ 	return 0;
+ free_req:
+-	user_sdma_free_request(req, true);
+-	if (req_queued)
++	/*
++	 * If the submitted seqsubmitted == npkts, the completion routine
++	 * controls the final state.  If sequbmitted < npkts, wait for any
++	 * outstanding packets to finish before cleaning up.
++	 */
++	if (req->seqsubmitted < req->info.npkts) {
++		if (req->seqsubmitted)
++			wait_event(pq->busy.wait_dma,
++				   (req->seqcomp == req->seqsubmitted - 1));
++		user_sdma_free_request(req, true);
+ 		pq_update(pq);
+-	set_comp_state(pq, cq, info.comp_idx, ERROR, req->status);
++		set_comp_state(pq, cq, info.comp_idx, ERROR, ret);
++	}
+ 	return ret;
+ }
  
- 	/* Can't get a quick answer, iterate over all ports */
- 	for (port = 0; port < qp->device->phys_port_cnt; port++)
--		if (qp->device->get_link_layer(qp->device, port) !=
-+		if (rdma_port_get_link_layer(qp->device, port) !=
- 		    IB_LINK_LAYER_INFINIBAND)
- 			num_eth_ports++;
+@@ -903,10 +898,8 @@ static int user_sdma_send_pkts(struct us
+ 	pq = req->pq;
  
+ 	/* If tx completion has reported an error, we are done. */
+-	if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags)) {
+-		set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
++	if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags))
+ 		return -EFAULT;
+-	}
+ 
+ 	/*
+ 	 * Check if we might have sent the entire request already
+@@ -929,10 +922,8 @@ static int user_sdma_send_pkts(struct us
+ 		 * with errors. If so, we are not going to process any
+ 		 * more packets from this request.
+ 		 */
+-		if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags)) {
+-			set_bit(SDMA_REQ_DONE_ERROR, &req->flags);
++		if (test_bit(SDMA_REQ_HAS_ERROR, &req->flags))
+ 			return -EFAULT;
+-		}
+ 
+ 		tx = kmem_cache_alloc(pq->txreq_cache, GFP_KERNEL);
+ 		if (!tx)
+@@ -1090,7 +1081,6 @@ dosend:
+ 	ret = sdma_send_txlist(req->sde, &pq->busy, &req->txps, &count);
+ 	req->seqsubmitted += count;
+ 	if (req->seqsubmitted == req->info.npkts) {
+-		set_bit(SDMA_REQ_SEND_DONE, &req->flags);
+ 		/*
+ 		 * The txreq has already been submitted to the HW queue
+ 		 * so we can free the AHG entry now. Corruption will not
+@@ -1489,11 +1479,15 @@ static int set_txreq_header_ahg(struct u
+ 	return diff;
+ }
+ 
+-/*
+- * SDMA tx request completion callback. Called when the SDMA progress
+- * state machine gets notification that the SDMA descriptors for this
+- * tx request have been processed by the DMA engine. Called in
+- * interrupt context.
++/**
++ * user_sdma_txreq_cb() - SDMA tx request completion callback.
++ * @txreq: valid sdma tx request
++ * @status: success/failure of request
++ *
++ * Called when the SDMA progress state machine gets notification that
++ * the SDMA descriptors for this tx request have been processed by the
++ * DMA engine. Called in interrupt context.
++ * Only do work on completed sequences.
+  */
+ static void user_sdma_txreq_cb(struct sdma_txreq *txreq, int status)
+ {
+@@ -1502,7 +1496,7 @@ static void user_sdma_txreq_cb(struct sd
+ 	struct user_sdma_request *req;
+ 	struct hfi1_user_sdma_pkt_q *pq;
+ 	struct hfi1_user_sdma_comp_q *cq;
+-	u16 idx;
++	enum hfi1_sdma_comp_state state = COMPLETE;
+ 
+ 	if (!tx->req)
+ 		return;
+@@ -1515,31 +1509,19 @@ static void user_sdma_txreq_cb(struct sd
+ 		SDMA_DBG(req, "SDMA completion with error %d",
+ 			 status);
+ 		set_bit(SDMA_REQ_HAS_ERROR, &req->flags);
++		state = ERROR;
+ 	}
+ 
+ 	req->seqcomp = tx->seqnum;
+ 	kmem_cache_free(pq->txreq_cache, tx);
+-	tx = NULL;
+ 
+-	idx = req->info.comp_idx;
+-	if (req->status == -1 && status == SDMA_TXREQ_S_OK) {
+-		if (req->seqcomp == req->info.npkts - 1) {
+-			req->status = 0;
+-			user_sdma_free_request(req, false);
+-			pq_update(pq);
+-			set_comp_state(pq, cq, idx, COMPLETE, 0);
+-		}
+-	} else {
+-		if (status != SDMA_TXREQ_S_OK)
+-			req->status = status;
+-		if (req->seqcomp == (ACCESS_ONCE(req->seqsubmitted) - 1) &&
+-		    (test_bit(SDMA_REQ_SEND_DONE, &req->flags) ||
+-		     test_bit(SDMA_REQ_DONE_ERROR, &req->flags))) {
+-			user_sdma_free_request(req, false);
+-			pq_update(pq);
+-			set_comp_state(pq, cq, idx, ERROR, req->status);
+-		}
+-	}
++	/* sequence isn't complete?  We are done */
++	if (req->seqcomp != req->info.npkts - 1)
++		return;
++
++	user_sdma_free_request(req, false);
++	set_comp_state(pq, cq, req->info.comp_idx, state, status);
++	pq_update(pq);
+ }
+ 
+ static inline void pq_update(struct hfi1_user_sdma_pkt_q *pq)
+@@ -1572,6 +1554,8 @@ static void user_sdma_free_request(struc
+ 			if (!node)
+ 				continue;
+ 
++			req->iovs[i].node = NULL;
++
+ 			if (unpin)
+ 				hfi1_mmu_rb_remove(req->pq->handler,
+ 						   &node->rb);
 
 
