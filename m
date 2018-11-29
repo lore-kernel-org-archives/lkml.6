@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCA4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A280C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2635F213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC3E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:45:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ejnt8E0w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2635F213A2
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IBYLD9zM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC3E20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387959AbeK3BuP (ORCPT
+        id S2387907AbeK3Buq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:50:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36586 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732558AbeK3BuO (ORCPT
+        Thu, 29 Nov 2018 20:50:46 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59060 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728759AbeK3Buq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:50:14 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATEhxOC050421;
-        Thu, 29 Nov 2018 14:44:06 GMT
+        Thu, 29 Nov 2018 20:50:46 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATEi5mR047297;
+        Thu, 29 Nov 2018 14:44:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2018-07-02;
- bh=pQRTRhE4leFWVUUi359adxmWDFpZDGGOx4uesRG53YM=;
- b=Ejnt8E0wNqtXpVFlL+rpAU3sjXT+/sy1IIgAqF4HT4uy9XcWc5EG7Js93v7So+/FqBka
- Npk6sGNJvmRpTeE5uvJpxl16MtyfJ3Rlg0O3j2Fz3Pvt6qHBEDwroE8xyFC4SorGnTym
- jWMgNGiCRT8QmjNzBQFIrvv3V0P3XoDp1/GeyBNEd/NdWS2v3Hp931hpDvZVxCTE7O9R
- 9W9c1Oj+6Aqht4IObumHG0/P030GZR8NR5c5wrNltQv35AuCTSZOw7MS5tEj3B0gMjG1
- 50UwA7u2HSa04wVaoZYAu2c4bc0rg//LlHzOGqwD8mM0r+b0d+LAZVzh0MA6sRfTG//7 kg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2nxxkqrhva-1
+ bh=F92bRlEb61Q3pwcRtc6+V2AqdzNg8d7Uy6KvtZg0aT4=;
+ b=IBYLD9zMit8lt6sLhwR2dcnfP4RC+9MvrhPu/Ijsd0ebbzfBCfosYCurJSgypxXTogTz
+ TJ6HMke6uKtUrTJFvWcPIJB8i8BaO38FfMQnxQk10ttT3YfbARGfS1fClilDGRpfkRIb
+ kuSac3g2d7BCmVBAjpTbhn/h4GvjmMrJu2TDI03QjCUgqS+UnTNaz7coQLhGd65YuVar
+ h3WGeDpCUMkbUS1corbpGM2pb3SJ2Z9xL3mJKHPLX8iEPMWyqEn8FhO35mQgekR7we6o
+ JRl4He404VUKImcxTcfjAXSKxasHB5XJdu5UU8U4Abdp1fwrTJpYWAc9L71QANU066on xg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nxy9rghtf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Nov 2018 14:44:06 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wATEi5pX012169
+        Thu, 29 Nov 2018 14:44:36 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wATEia8t017338
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Nov 2018 14:44:05 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wATEi4bB032629;
-        Thu, 29 Nov 2018 14:44:04 GMT
+        Thu, 29 Nov 2018 14:44:36 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wATEiZbL009560;
+        Thu, 29 Nov 2018 14:44:35 GMT
 Received: from char.us.oracle.com (/10.152.32.25)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Nov 2018 06:44:04 -0800
+        with ESMTP ; Thu, 29 Nov 2018 06:44:34 -0800
 Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 715FE6A00FB; Thu, 29 Nov 2018 09:44:00 -0500 (EST)
-Date:   Thu, 29 Nov 2018 09:44:00 -0500
+        id E9AA26A00FB; Thu, 29 Nov 2018 09:44:30 -0500 (EST)
+Date:   Thu, 29 Nov 2018 09:44:30 -0500
 From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
@@ -77,14 +77,14 @@ Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 09/28] x86/Kconfig: Select SCHED_SMT if SMP enabled
-Message-ID: <20181129144400.GJ32259@char.us.oracle.com>
+Subject: Re: [patch V2 10/28] sched/smt: Expose sched_smt_present static key
+Message-ID: <20181129144430.GK32259@char.us.oracle.com>
 References: <20181125183328.318175777@linutronix.de>
- <20181125185004.337452245@linutronix.de>
+ <20181125185004.430168326@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181125185004.337452245@linutronix.de>
+In-Reply-To: <20181125185004.430168326@linutronix.de>
 User-Agent: Mutt/1.8.3 (2017-05-23)
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -96,43 +96,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 07:33:37PM +0100, Thomas Gleixner wrote:
-> CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
-> have it configurable. The runtime overhead in the core scheduler code is
-> minimal because the actual SMT scheduling parts are conditional on a static
-> key.
+On Sun, Nov 25, 2018 at 07:33:38PM +0100, Thomas Gleixner wrote:
+> Make the scheduler's 'sched_smt_present' static key globaly available, so
+> it can be used in the x86 speculation control code.
 > 
-> This allows to expose the scheduler's SMT state static key to the
-> speculation control code. Alternatively the scheduler's static key could be
-> made always available when CONFIG_SMP is enabled, but that's just adding an
-> unused static key to every other architecture for nothing.
+> Provide a query function and a stub for the CONFIG_SMP=n case.
 > 
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-
+> ---
+> 
+> v1 -> v2: Move SMT stuff to separate header. Unbreaks ia64 build
 > 
 > ---
->  arch/x86/Kconfig |    8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
+>  include/linux/sched/smt.h |   18 ++++++++++++++++++
+>  kernel/sched/sched.h      |    4 +---
+>  2 files changed, 19 insertions(+), 3 deletions(-)
 > 
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1001,13 +1001,7 @@ config NR_CPUS
->  	  to the kernel image.
+> --- /dev/null
+> +++ b/include/linux/sched/smt.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_SCHED_SMT_H
+> +#define _LINUX_SCHED_SMT_H
+> +
+> +#include <linux/static_key.h>
+> +
+> +#ifdef CONFIG_SCHED_SMT
+> +extern struct static_key_false sched_smt_present;
+> +
+> +static __always_inline bool sched_smt_active(void)
+> +{
+> +	return static_branch_likely(&sched_smt_present);
+> +}
+> +#else
+> +static inline bool sched_smt_active(void) { return false; }
+> +#endif
+> +
+> +#endif
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -23,6 +23,7 @@
+>  #include <linux/sched/prio.h>
+>  #include <linux/sched/rt.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/sched/smt.h>
+>  #include <linux/sched/stat.h>
+>  #include <linux/sched/sysctl.h>
+>  #include <linux/sched/task.h>
+> @@ -936,9 +937,6 @@ static inline int cpu_of(struct rq *rq)
 >  
->  config SCHED_SMT
-> -	bool "SMT (Hyperthreading) scheduler support"
-> -	depends on SMP
-> -	---help---
-> -	  SMT scheduler support improves the CPU scheduler's decision making
-> -	  when dealing with Intel Pentium 4 chips with HyperThreading at a
-> -	  cost of slightly increased overhead in some places. If unsure say
-> -	  N here.
-> +	def_bool y if SMP
 >  
->  config SCHED_MC
->  	def_bool y
+>  #ifdef CONFIG_SCHED_SMT
+> -
+> -extern struct static_key_false sched_smt_present;
+> -
+>  extern void __update_idle_core(struct rq *rq);
+>  
+>  static inline void update_idle_core(struct rq *rq)
 > 
 > 
