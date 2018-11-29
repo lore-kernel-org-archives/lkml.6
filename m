@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB7BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 941EB206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:53:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941EB206B6
+	by mail.kernel.org (Postfix) with ESMTP id 0A2DA20832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2DA20832
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeK2M5Y (ORCPT
+        id S1727387AbeK2M6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:57:24 -0500
-Received: from shelob.surriel.com ([96.67.55.147]:49638 "EHLO
+        Thu, 29 Nov 2018 07:58:16 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:49648 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeK2M5Y (ORCPT
+        with ESMTP id S1726893AbeK2M6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:57:24 -0500
+        Thu, 29 Nov 2018 07:58:16 -0500
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1gSBWS-0008Ta-SJ; Wed, 28 Nov 2018 20:53:44 -0500
-Message-ID: <271c63187be418b0f9f0ec3b3e4892d95be79cb8.camel@surriel.com>
-Subject: Re: [PATCH 04/29] x86/pkeys: Make init_pkru_value static
+        id 1gSBXI-0008U1-EQ; Wed, 28 Nov 2018 20:54:36 -0500
+Message-ID: <acc97851fe8f8d46a684e7b6255eded48cce29b7.camel@surriel.com>
+Subject: Re: [PATCH 05/29] x86/fpu: add might_fault() to user_insn()
 From:   Rik van Riel <riel@surriel.com>
 To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         linux-kernel@vger.kernel.org
@@ -38,12 +38,12 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Wed, 28 Nov 2018 20:53:44 -0500
-In-Reply-To: <20181128222035.2996-5-bigeasy@linutronix.de>
+Date:   Wed, 28 Nov 2018 20:54:36 -0500
+In-Reply-To: <20181128222035.2996-6-bigeasy@linutronix.de>
 References: <20181128222035.2996-1-bigeasy@linutronix.de>
-         <20181128222035.2996-5-bigeasy@linutronix.de>
+         <20181128222035.2996-6-bigeasy@linutronix.de>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-5tJLx9hlcVNhNIdfD93A"
+        protocol="application/pgp-signature"; boundary="=-5lsNr2pVguhcsEL3ExOw"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,15 +52,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-5tJLx9hlcVNhNIdfD93A
+--=-5lsNr2pVguhcsEL3ExOw
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2018-11-28 at 23:20 +0100, Sebastian Andrzej Siewior wrote:
-> The variable init_pkru_value isn't used outside of this file.
-> Make init_pkru_value static.
+> Every user of user_insn() passes an user memory pointer to this
+> macro.
 >=20
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Add might_fault() to user_insn() so we can spot users which are using
+> this macro in sections where page faulting is not allowed.
+
+Nice catch.
+
 > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
 Reviewed-by: Rik van Riel <riel@surriel.com>
@@ -68,22 +72,22 @@ Reviewed-by: Rik van Riel <riel@surriel.com>
 --=20
 All Rights Reversed.
 
---=-5tJLx9hlcVNhNIdfD93A
+--=-5lsNr2pVguhcsEL3ExOw
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlv/RqgACgkQznnekoTE
-3oMS3wf+Nn5ZVlzITlO/BSrs0tlU0vCdO91KhvmBw+JmhnQ2g9retoec0eV9VCJb
-gSA9kS47OljB9dUUoKdT6AnGxn3aFf/TzFnOEPpsdO87JFgrfGYnWVudA6//09GS
-09Uk+3M3blqoV9DV7CRt91EdT1Qln5Y35i70sEvJ/g0r4fzIKczGnHKKmulyqrwu
-Gc2yBqt3Nxz95mLAOe4ohT9TLb8ims1ZDlE2Q7exlzGSvZZJRZAAA5mlamPLxChv
-RNK+5UTl5hucXDe/ThhTHPP0OJ5Fzk0Az4FMeAuTnlt2fUs6IIWs9IQH0zAXDsqI
-SaFtM3Jesvs6JVMrfLE1TxSYLkVA8w==
-=RgUS
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlv/RtwACgkQznnekoTE
+3oNEGAgAvdamUHqGVBDgH/3XH31RSfjNytZjvtvag4usnH4ry7YksXywIzSAINNO
+0bXIeYVH5Cwn/HNUK78V6KjWcg2ZGrrcw7fTH1/zljyibW2h7ssw0/bpjRewbrch
+RZmoEDOObObzy6yxsPxLvxFZtPjEPTB7HZnRAa5lnJAhJreBbXtHT0QP/aS1T1CU
+rIzfYIYA69+VK+Z4LcH8nTpD3idMRG3eIAPFOf8ANuOiVOTBORiwYRGCPnuEkV2B
+cuH2+ow0SkY2wWPD1R2ONQv+hcFw/Yn3vChBlkhCexmIcdE+Kp2X5sZn8s0sgVsR
+cAv01HSseUfDA4dJx6qg2vs6yzuqAA==
+=C54D
 -----END PGP SIGNATURE-----
 
---=-5tJLx9hlcVNhNIdfD93A--
+--=-5lsNr2pVguhcsEL3ExOw--
 
