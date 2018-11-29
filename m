@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C700C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9A4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF4902145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0C5C213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:40:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFKejJKz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4902145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bwpn9+Gr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C5C213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbeK3Bes (ORCPT
+        id S2388243AbeK3Be3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:34:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:34:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388359AbeK3Ber (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:47 -0500
+        id S1731986AbeK3Be2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:34:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1B722147D;
-        Thu, 29 Nov 2018 14:29:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABF15213A2;
+        Thu, 29 Nov 2018 14:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501755;
-        bh=cF/oUZ+Jv84CMP+AcHiaA2HWHZozeefzKuHRP3+lC8k=;
+        s=default; t=1543501736;
+        bh=148Ocxf2G37iWIY4WCvt/2J980GP5faPL6L1wY2sDBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFKejJKz8zc062i7KDXkqXedCXoW+okTmvVdltu/kUT9pI8ab9QD1q3vxAxcI2fWJ
-         Ih9AT/3VsWC8+d2vFAaclM/B74ewZFqL1Yo2bJvg6m1nffBNpVshi/QB5R1cCJYj+F
-         pxuNxtTMSLSMtgx0YutA7KsnSQRru0Sod6FDAaT8=
+        b=Bwpn9+GrzfMcbqky3SsMjpKa16I+1QrJAlhcjci0rOCqzJiR3959Y/aDen8HGfVdA
+         rUtkyBiJMCkAcycMkJuTQiQT0jSlxBC11OYqzKFVm1i5qfnEBycuraLQJ6DX2pn/nr
+         OZy/loAkxoFD9rtqNR0fDpPGcRaeZLEuIB1fNXPg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.19 028/110] opp: ti-opp-supply: Correct the supply in _get_optimal_vdd_voltage call
-Date:   Thu, 29 Nov 2018 15:11:59 +0100
-Message-Id: <20181129135922.399592981@linuxfoundation.org>
+        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.19 005/110] usb: dwc3: gadget: Properly check last unaligned/zero chain TRB
+Date:   Thu, 29 Nov 2018 15:11:36 +0100
+Message-Id: <20181129135921.457321726@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -63,34 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keerthy <j-keerthy@ti.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-commit 622fecbccfe86a8052dea6b512d3821dcce29994 upstream.
+commit ba3a51ac32ebcf8d0a54b37f1af268ad8a31c52f upstream.
 
-_get_optimal_vdd_voltage call provides new_supply_vbb->u_volt
-as the reference voltage while it should be really new_supply_vdd->u_volt.
+Current check for the last extra TRB for zero and unaligned transfers
+does not account for isoc OUT. The last TRB of the Buffer Descriptor for
+isoc OUT transfers will be retired with HWO=0. As a result, we won't
+return early. The req->remaining will be updated to include the BUFSIZ
+count of the extra TRB, and the actual number of transferred bytes
+calculation will be wrong.
 
-Cc: 4.16+ <stable@vger.kernel.org> # v4.16+
-Fixes: 9a835fa6e47 ("PM / OPP: Add ti-opp-supply driver")
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Dave Gerlach <d-gerlach@ti.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+To fix this, check whether it's a short or zero packet and the last TRB
+chain bit to return early.
+
+Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/opp/ti-opp-supply.c |    2 +-
+ drivers/usb/dwc3/gadget.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/opp/ti-opp-supply.c
-+++ b/drivers/opp/ti-opp-supply.c
-@@ -288,7 +288,7 @@ static int ti_opp_supply_set_opp(struct
- 	int ret;
- 
- 	vdd_uv = _get_optimal_vdd_voltage(dev, &opp_data,
--					  new_supply_vbb->u_volt);
-+					  new_supply_vdd->u_volt);
- 
- 	if (new_supply_vdd->u_volt_min < vdd_uv)
- 		new_supply_vdd->u_volt_min = vdd_uv;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2250,7 +2250,7 @@ static int dwc3_gadget_ep_reclaim_comple
+ 	 * with one TRB pending in the ring. We need to manually clear HWO bit
+ 	 * from that TRB.
+ 	 */
+-	if ((req->zero || req->unaligned) && (trb->ctrl & DWC3_TRB_CTRL_HWO)) {
++	if ((req->zero || req->unaligned) && !(trb->ctrl & DWC3_TRB_CTRL_CHN)) {
+ 		trb->ctrl &= ~DWC3_TRB_CTRL_HWO;
+ 		return 1;
+ 	}
 
 
