@@ -2,238 +2,141 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54345C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEA5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E3E20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E3E20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EAE721019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:52:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3MDpd47"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAE721019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeK3A5M (ORCPT
+        id S1728423AbeK3A54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:57:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55766 "EHLO mx1.redhat.com"
+        Thu, 29 Nov 2018 19:57:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbeK3A5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:57:12 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726736AbeK3A5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:57:55 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 10F7C3002887;
-        Thu, 29 Nov 2018 13:51:47 +0000 (UTC)
-Received: from shodan.usersys.redhat.com (unknown [10.43.17.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 99CF25C7A0;
-        Thu, 29 Nov 2018 13:51:46 +0000 (UTC)
-Received: by shodan.usersys.redhat.com (Postfix, from userid 1000)
-        id E74F52C136D; Thu, 29 Nov 2018 14:51:45 +0100 (CET)
-From:   Artem Savkov <asavkov@redhat.com>
-To:     x86@kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH] x86/tools/relocs: fix big section header tables
-Date:   Thu, 29 Nov 2018 14:51:33 +0100
-Message-Id: <20181129135133.31369-1-asavkov@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 29 Nov 2018 13:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91F9220863;
+        Thu, 29 Nov 2018 13:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543499549;
+        bh=Py88rtfBV1eLZDFMCpvDn36g5W2AB9LMi+kdBo3gBlM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=h3MDpd47so+FQfB/7c+X71PXnw9wluPsMqUhuIEa5VK3Cu/bjJbtWF7pBrBdbUUJG
+         KL37F2pQmTThLjLqsOq+TNG/xDv+f36K3jC0dgQOshvZoyZxddOd81bVf8lWqP6eVX
+         qz6cDlFgYhUXf+n4CrWWaTDZt3S0mRYy/9RjOJ5w=
+Date:   Thu, 29 Nov 2018 22:52:25 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange
+ additions
+Message-Id: <20181129225225.00ab1709c79f63c8e08b49c7@kernel.org>
+In-Reply-To: <1543267288.2529.25.camel@kernel.org>
+References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+        <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
+        <1543267288.2529.25.camel@kernel.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case when the number of entries in the section header table is larger
-then or equal to SHN_LORESERVE the size of the table is held in the sh_size
-member of the initial entry in section header table instead of e_shnum.
-Same with the string table index which is located in sh_link instead of
-e_shstrndx.
+On Mon, 26 Nov 2018 15:21:28 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-This case is easily reproducible with KCFLAGS="-ffunction-sections",
-bzImage build fails with "String table index out of bounds" error.
+> Hi Masami,
+> 
+> On Mon, 2018-11-26 at 23:09 +0900, Masami Hiramatsu wrote:
+> > Hi Tom,
+> > 
+> > On Wed, 14 Nov 2018 14:17:57 -0600
+> > Tom Zanussi <zanussi@kernel.org> wrote:
+> > 
+> > > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > 
+> > > Hi,
+> > > 
+> > > This is v7 of the hist trigger snapshot and onchange additions
+> > > patchset.  It does a bit of refactoring to address the suggestions
+> > > made by Masami in v6.
+> > 
+> > Thank you for fixing it. 
+> > 
+> > > 
+> > > It also adds an additional patch to update the trigger/inter-event
+> > > testcases with SPDX license blurbs.
+> > > 
+> > > BTW, I noticed that with the recent kselftest changes, I now get
+> > > mangled output when running the selftests, though I can still see
+> > > well
+> > > enough that the tests passed as expected.  This happens with any of
+> > > the ftrace selftests and not just the trigger selftests.  In my
+> > > case,
+> > > this is using the stock Terminal in Ubuntu 17.10, in case that
+> > > helps.
+> > 
+> > Hmm, it should be fixed by
+> > 8096fbcf55c0 ("selftests/ftrace: Use colored output when available")
+> > 
+> > Could you check your kernel has this commit?
+> > 
+> 
+> Yes, it does have this commit.
+> 
+> > BTW, what terminal and environment (especially echo command)
+> > did you run your tests on? (It seems echo command didn't accept -e
+> > option)
+> > 
+> 
+> For that system, I'm using Gnome terminal 3.24.2 and GNU bash, version
+> 4.4.12(1)-release (x86_64-pc-linux-gnu) (Ubuntu 17.10).
+> 
+> If I change 'echo' to '/bin/echo' in e.g. prlog() it works fine, so it
+> must be the inbuilt bash echo that's not doing the right thing.  I
+> thought it might be the xpg_echo option, but 'shopt -s xpg_echo'
+> doesn't have any effect.
+> 
+> I also tried on a Fedora 28 system (GNOME terminal 3.28.2, GNU bash,
+> version 4.4.23(1)-release (x86_64-redhat-linux-gnu), and it worked
+> fine.
+> 
+> Also, tried a Ubuntu 18.04.1 system (GNOME Terminal 3.28.1, GNU bash,
+> version 4.4.19(1)-release (x86_64-pc-linux-gnu) and in that case the
+> colors worked fine, but still got the '-e -n' and newlines in the
+> output:
+> 
+> -e -n [28] (instance)  event trigger - test histogram modifiers
+> -e 	[PASS]
+> -e -n [29] (instance)  event trigger - test histogram trigger
+> -e 	[PASS]
+> 
+> Again, substituting '/bin/echo' in prlog() fixed things in this case
+> too.   I guess the builtin bash 'echo' can't be relied on..
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
----
- arch/x86/tools/relocs.c | 58 +++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 17 deletions(-)
+OK, then we should use /bin/echo for avoiding this issue.
 
-diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index b629f6992d9f..5275ea0a0d13 100644
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -11,7 +11,9 @@
- #define Elf_Shdr		ElfW(Shdr)
- #define Elf_Sym			ElfW(Sym)
- 
--static Elf_Ehdr ehdr;
-+static Elf_Ehdr	ehdr;
-+static unsigned long	shnum;
-+static unsigned int	shstrndx;
- 
- struct relocs {
- 	uint32_t	*offset;
-@@ -241,9 +243,9 @@ static const char *sec_name(unsigned shndx)
- {
- 	const char *sec_strtab;
- 	const char *name;
--	sec_strtab = secs[ehdr.e_shstrndx].strtab;
-+	sec_strtab = secs[shstrndx].strtab;
- 	name = "<noname>";
--	if (shndx < ehdr.e_shnum) {
-+	if (shndx < shnum) {
- 		name = sec_strtab + secs[shndx].shdr.sh_name;
- 	}
- 	else if (shndx == SHN_ABS) {
-@@ -271,7 +273,7 @@ static const char *sym_name(const char *sym_strtab, Elf_Sym *sym)
- static Elf_Sym *sym_lookup(const char *symname)
- {
- 	int i;
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		long nsyms;
- 		char *strtab;
-@@ -366,6 +368,9 @@ static void read_ehdr(FILE *fp)
- 	ehdr.e_shnum     = elf_half_to_cpu(ehdr.e_shnum);
- 	ehdr.e_shstrndx  = elf_half_to_cpu(ehdr.e_shstrndx);
- 
-+	shnum = ehdr.e_shnum;
-+	shstrndx = ehdr.e_shstrndx;
-+
- 	if ((ehdr.e_type != ET_EXEC) && (ehdr.e_type != ET_DYN)) {
- 		die("Unsupported ELF header type\n");
- 	}
-@@ -384,7 +389,26 @@ static void read_ehdr(FILE *fp)
- 	if (ehdr.e_shentsize != sizeof(Elf_Shdr)) {
- 		die("Bad section header entry\n");
- 	}
--	if (ehdr.e_shstrndx >= ehdr.e_shnum) {
-+
-+	if (shnum == SHN_UNDEF || shstrndx == SHN_XINDEX) {
-+		Elf_Shdr shdr;
-+
-+		if (fseek(fp, ehdr.e_shoff, SEEK_SET) < 0)
-+			die("Seek to %d failed: %s\n",
-+				ehdr.e_shoff, strerror(errno));
-+
-+		if (fread(&shdr, sizeof(shdr), 1, fp) != 1)
-+			die("Cannot read initial ELF section header: %s\n",
-+			    strerror(errno));
-+
-+		if (shnum == SHN_UNDEF)
-+			shnum = elf_xword_to_cpu(shdr.sh_size);
-+
-+		if (shstrndx == SHN_XINDEX)
-+			shstrndx = elf_word_to_cpu(shdr.sh_link);
-+	}
-+
-+	if (shstrndx >= shnum) {
- 		die("String table index out of bounds\n");
- 	}
- }
-@@ -394,20 +418,20 @@ static void read_shdrs(FILE *fp)
- 	int i;
- 	Elf_Shdr shdr;
- 
--	secs = calloc(ehdr.e_shnum, sizeof(struct section));
-+	secs = calloc(shnum, sizeof(struct section));
- 	if (!secs) {
- 		die("Unable to allocate %d section headers\n",
--		    ehdr.e_shnum);
-+		    shnum);
- 	}
- 	if (fseek(fp, ehdr.e_shoff, SEEK_SET) < 0) {
- 		die("Seek to %d failed: %s\n",
- 			ehdr.e_shoff, strerror(errno));
- 	}
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		if (fread(&shdr, sizeof(shdr), 1, fp) != 1)
- 			die("Cannot read ELF section headers %d/%d: %s\n",
--			    i, ehdr.e_shnum, strerror(errno));
-+			    i, shnum, strerror(errno));
- 		sec->shdr.sh_name      = elf_word_to_cpu(shdr.sh_name);
- 		sec->shdr.sh_type      = elf_word_to_cpu(shdr.sh_type);
- 		sec->shdr.sh_flags     = elf_xword_to_cpu(shdr.sh_flags);
-@@ -418,7 +442,7 @@ static void read_shdrs(FILE *fp)
- 		sec->shdr.sh_info      = elf_word_to_cpu(shdr.sh_info);
- 		sec->shdr.sh_addralign = elf_xword_to_cpu(shdr.sh_addralign);
- 		sec->shdr.sh_entsize   = elf_xword_to_cpu(shdr.sh_entsize);
--		if (sec->shdr.sh_link < ehdr.e_shnum)
-+		if (sec->shdr.sh_link < shnum)
- 			sec->link = &secs[sec->shdr.sh_link];
- 	}
- 
-@@ -427,7 +451,7 @@ static void read_shdrs(FILE *fp)
- static void read_strtabs(FILE *fp)
- {
- 	int i;
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		if (sec->shdr.sh_type != SHT_STRTAB) {
- 			continue;
-@@ -452,7 +476,7 @@ static void read_strtabs(FILE *fp)
- static void read_symtabs(FILE *fp)
- {
- 	int i,j;
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		if (sec->shdr.sh_type != SHT_SYMTAB) {
- 			continue;
-@@ -485,7 +509,7 @@ static void read_symtabs(FILE *fp)
- static void read_relocs(FILE *fp)
- {
- 	int i,j;
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		if (sec->shdr.sh_type != SHT_REL_TYPE) {
- 			continue;
-@@ -528,7 +552,7 @@ static void print_absolute_symbols(void)
- 
- 	printf("Absolute symbols\n");
- 	printf(" Num:    Value Size  Type       Bind        Visibility  Name\n");
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		char *sym_strtab;
- 		int j;
-@@ -566,7 +590,7 @@ static void print_absolute_relocs(void)
- 	else
- 		format = "%08"PRIx32" %08"PRIx32" %10s %08"PRIx32"  %s\n";
- 
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		struct section *sec = &secs[i];
- 		struct section *sec_applies, *sec_symtab;
- 		char *sym_strtab;
-@@ -650,7 +674,7 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
- {
- 	int i;
- 	/* Walk through the relocations */
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		char *sym_strtab;
- 		Elf_Sym *sh_symtab;
- 		struct section *sec_applies, *sec_symtab;
-@@ -706,7 +730,7 @@ static Elf_Addr per_cpu_load_addr;
- static void percpu_init(void)
- {
- 	int i;
--	for (i = 0; i < ehdr.e_shnum; i++) {
-+	for (i = 0; i < shnum; i++) {
- 		ElfW(Sym) *sym;
- 		if (strcmp(sec_name(i), ".data..percpu"))
- 			continue;
+Thank you!
+
+
+
 -- 
-2.19.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
