@@ -2,73 +2,99 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D29C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32C7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDBB20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:39:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yFyJ3xqB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDBB20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 8588C20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8588C20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbeK3Dpm (ORCPT
+        id S1729571AbeK3DqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:45:42 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:54623 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeK3Dpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:45:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=pN8vz9NEBWTepb0s1vN1u+LUaOJEyOy8+uBDHRs3Lqs=;
-        b=yFyJ3xqB3DD8Jwcq2ugjxQlzHV+Q9ktu65Ludf55ZTm4nmxDz+rNXwV0YMKN59I7LPm6WAL6PLrdFxf03XGV4Yr1cl04TgJ6yOqwtqRL8pSwQYCwI3IWAce+nPmrEPNvTZyzXkXmVBC8Xebs12tJnB2m2m7BKrajXdPLUOE9Ybo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gSPLk-0000sR-Nd; Thu, 29 Nov 2018 17:39:36 +0100
-Date:   Thu, 29 Nov 2018 17:39:36 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     f.fainelli@gmail.com, davem@davemloft.net, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, fabio.estevam@nxp.com,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Regression: v4.20-rc4: "SMSC LAN8710/LAN8720: Master/Slave
- resolution failed"
-Message-ID: <20181129163936.GE1501@lunn.ch>
-References: <20181129144206.GK9807@w540>
+        Thu, 29 Nov 2018 22:46:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38922 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729290AbeK3DqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:46:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CD0DA78;
+        Thu, 29 Nov 2018 08:40:18 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BDA63F59C;
+        Thu, 29 Nov 2018 08:40:16 -0800 (PST)
+Date:   Thu, 29 Nov 2018 16:40:13 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v6 06/24] arm64: ptrace: Provide definitions for PMR
+ values
+Message-ID: <20181129164013.qmmwhbygjkh5lwx5@lakrids.cambridge.arm.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-7-git-send-email-julien.thierry@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129144206.GK9807@w540>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1542023835-21446-7-git-send-email-julien.thierry@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:42:06PM +0100, jacopo mondi wrote:
-> Hello,
->    netdev people,
->    i.MX6 people,
-> 
->    I'm running an i.MX6Q system, and since v4.20-rc1 the ethernet PHY
-> fails to properly startup, preventing me from mounting my NFS rootfs
-> (the interfaces gets configured after some minutes, but it's too late
-> for NFS).
-> 
-> The complete boot log:
-> 
-> [    3.000186] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: attached PHY driver [SMSC LAN8710/LAN8720] (mii_bus:phy_addr=2188000.ethernet-1:00, irq=POLL)
-> [    3.015616] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
-> [    4.090582] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: Master/Slave resolution failed, maybe conflicting manual settings?
+On Mon, Nov 12, 2018 at 11:56:57AM +0000, Julien Thierry wrote:
+> Introduce fixed values for PMR that are going to be used to mask and
+> unmask interrupts by priority. These values are chosent in such a way
 
-Thanks for reporting this.
+Nit: s/chosent/chosen/
 
-I made some changes in link mode handling. Let me check the code i modified.
+> that a single bit (GIC_PMR_UNMASKED_BIT) encodes the information whether
+> interrupts are masked or not.
 
-  Andrew
+There's no GIC_PMR_UNMASKED_BIT in this patch. Should that be
+GIC_PRIO_STATUS_BIT?
+
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm64/include/asm/ptrace.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+> index fce22c4..ce6998c 100644
+> --- a/arch/arm64/include/asm/ptrace.h
+> +++ b/arch/arm64/include/asm/ptrace.h
+> @@ -25,6 +25,12 @@
+>  #define CurrentEL_EL1		(1 << 2)
+>  #define CurrentEL_EL2		(2 << 2)
+>  
+> +/* PMR values used to mask/unmask interrupts */
+> +#define GIC_PRIO_IRQON		0xf0
+> +#define GIC_PRIO_STATUS_SHIFT	6
+> +#define GIC_PRIO_STATUS_BIT	(1 << GIC_PRIO_STATUS_SHIFT)
+> +#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON ^ GIC_PRIO_STATUS_BIT)
+
+Could you elaborate on the GIC priority logic a bit?
+
+Are lower numbers higher priority?
+
+Are there restrictions on valid PMR values?
+
+IIUC GIC_PRIO_IRQOFF is 0xb0 (aka 0b10110000), which seems a little
+surprising. I'd have expected that we'd use the most signficant bit.
+
+
+Thanks,
+Mark.
