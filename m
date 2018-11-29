@@ -2,142 +2,429 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F666C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABCDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14E5220863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14E5220863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D2E420863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:23:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oET2Ch7P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2E420863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeK2R1a (ORCPT
+        id S1727867AbeK2R1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:27:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41882 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727416AbeK2R1a (ORCPT
+        Thu, 29 Nov 2018 12:27:47 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43724 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeK2R1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:27:30 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAT6Jt2j070635
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 01:23:14 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p27mrep2j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 01:23:13 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Thu, 29 Nov 2018 06:23:13 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 29 Nov 2018 06:23:11 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAT6NAX813566060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 06:23:10 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 793DDAC05F;
-        Thu, 29 Nov 2018 06:23:10 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04D31AC065;
-        Thu, 29 Nov 2018 06:23:07 +0000 (GMT)
-Received: from [9.85.85.107] (unknown [9.85.85.107])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Nov 2018 06:23:07 +0000 (GMT)
-Subject: Re: [PATCH V2 4/5] mm/hugetlb: Add prot_modify_start/commit sequence
- for hugetlb update
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20181128143438.29458-1-aneesh.kumar@linux.ibm.com>
- <20181128143438.29458-5-aneesh.kumar@linux.ibm.com>
- <20181128141051.ff38f23023f652759b06f828@linux-foundation.org>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Thu, 29 Nov 2018 11:53:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 29 Nov 2018 12:27:46 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 83-v6so652082ljf.10;
+        Wed, 28 Nov 2018 22:23:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rs54zgE9SpByj5wztzQb1btYsTLumAwkFU77ybXO9qk=;
+        b=oET2Ch7P8To+2y0NGjVr9LRR1aP70SRBr38UmUiLBvC402J5FSoutihvsMmJ4yHNVS
+         5HTqDWWFbIh1q3fUFOaEVqKZ49yxcOknvA9f+EbifEUmLEzu3X2lkNPPjvJwAVEGnO2R
+         +hk0+PZ/zJQ0MhYU5gI11IeyYOHTGQxStUbvYo2wcy+towLSH2EPa2Zy8PvnIigZ6FvD
+         QT4Zi8DpQFt8nU04W24Ek+4/QQspN098Kyy/GvZuOC3VllkqSwqHs/BOuy5EMSrt3UBJ
+         fB5YP9/BHG86nXWyCqMeqA889cxzJU0DhCVi/jQRtjqJmx1hOTI1p9GEFjF6h7woQZuu
+         fszA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rs54zgE9SpByj5wztzQb1btYsTLumAwkFU77ybXO9qk=;
+        b=Sn1XH9UcbkuluXdbcY+6fLEpDrwAAIgCBMYcMhO8UNwfWIf57hWRTvV5ZAqFk16u+v
+         A82BimrtpnOa81MS1nH6qYneaFaQ8SUIq/LDmYWIIKZ5IWRiZ11HyNt9dATwLhRx5fU/
+         jrqJYYPtFFw7zgbhPxIB5EQG/wCQ5Mc6RIfOPNn4rq8Xq9OZwq0+LMyNc7+zJfbn905y
+         ME8eUMCH+ESTR4Pemf2OT+TkA1bihPqyR4QEzKbkh+i8Fz+nXKRtFOiicCdEApi/YX4G
+         r8u39AFdxhu0qHM71nMDEEKhYFICY0Dp7DykmvuKa8UBhk4ffnL/egJyHGEPhzoyOH46
+         AWTA==
+X-Gm-Message-State: AA+aEWa04ocWeCjy6FHXuN2v1WP3/EOjW6L1AANnsTTXpTWh0Of0jxVG
+        7fRMSzN82dk6hEGgyH4+STikUif9JvXWOmUx5R4=
+X-Google-Smtp-Source: AFSGD/WiP40Jzp1tZJ1Mh/2y8yD+ro4YhO0qww3dfLBNUkqG52Ve0dYQpUmzUqbSjAX+PZEimGiO3ccENjejIpUyCBY=
+X-Received: by 2002:a2e:5356:: with SMTP id t22-v6mr184285ljd.26.1543472608768;
+ Wed, 28 Nov 2018 22:23:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181128141051.ff38f23023f652759b06f828@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112906-0060-0000-0000-000002DB389C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010141; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01124324; UDB=6.00583735; IPR=6.00904451;
- MB=3.00024378; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-29 06:23:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112906-0061-0000-0000-0000475BB2C7
-Message-Id: <d7ee1b8c-2f45-f430-b413-9d511e7d78c4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811290054
+References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
+ <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org> <84836600-c705-9ac3-297e-bb67a611daca@intel.com>
+In-Reply-To: <84836600-c705-9ac3-297e-bb67a611daca@intel.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Thu, 29 Nov 2018 14:22:52 +0800
+Message-ID: <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] mmc: sdhci: add support for using external DMA devices
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        kishon@ti.com, nsekhar@ti.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/18 3:40 AM, Andrew Morton wrote:
-> On Wed, 28 Nov 2018 20:04:37 +0530 "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com> wrote:
-> 
->> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> 
-> Some explanation of the motivation would be useful.
+On Tue, 20 Nov 2018 at 21:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 12/11/18 9:26 AM, Chunyan Zhang wrote:
+> > Some standard SD host controllers can support both external dma
+> > controllers as well as ADMA/SDMA in which the SD host controller
+> > acts as DMA master. TI's omap controller is the case as an example.
+> >
+> > Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> > the host controller but does not have any support for external DMA
+> > controllers implemented using dmaengine, meaning that custom code is
+> > needed for any systems that use an external DMA controller with SDHCI.
+>
+> I still think you probably need to reset the DMA if there are transfer
+> errors - perhaps you could comment on that.  Also there are some comments below.
 
-I will update the commit message.
+With regard to "transfer error", do you mean if
+sdhci_external_dma_setup() failed?
+
+Thanks,
+Chunyan
 
 
-> 
->>   include/linux/hugetlb.h | 18 ++++++++++++++++++
->>   mm/hugetlb.c            |  8 +++++---
->>   2 files changed, 23 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->> index 087fd5f48c91..e2a3b0c854eb 100644
->> --- a/include/linux/hugetlb.h
->> +++ b/include/linux/hugetlb.h
->> @@ -543,6 +543,24 @@ static inline void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr
->>   	set_huge_pte_at(mm, addr, ptep, pte);
->>   }
->>   #endif
->> +
->> +#ifndef huge_ptep_modify_prot_start
->> +static inline pte_t huge_ptep_modify_prot_start(struct vm_area_struct *vma,
->> +						unsigned long addr, pte_t *ptep)
->> +{
->> +	return huge_ptep_get_and_clear(vma->vm_mm, addr, ptep);
->> +}
->> +#endif
-> 
-> #define huge_ptep_modify_prot_start huge_ptep_modify_prot_start
-> 
->> +#ifndef huge_ptep_modify_prot_commit
->> +static inline void huge_ptep_modify_prot_commit(struct vm_area_struct *vma,
->> +						unsigned long addr, pte_t *ptep,
->> +						pte_t old_pte, pte_t pte)
->> +{
->> +	set_huge_pte_at(vma->vm_mm, addr, ptep, pte);
->> +}
->> +#endif
-> 
-> #define huge_ptep_modify_prot_commit huge_ptep_modify_prot_commit
-> 
-> 
-
-Will update.
-
--aneesh
-
+>
+> >
+> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> > ---
+> >  drivers/mmc/host/Kconfig |  13 ++++
+> >  drivers/mmc/host/sdhci.c | 181 ++++++++++++++++++++++++++++++++++++++++++++++-
+> >  drivers/mmc/host/sdhci.h |   8 +++
+> >  3 files changed, 201 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> > index 1b58739..7bf3eff 100644
+> > --- a/drivers/mmc/host/Kconfig
+> > +++ b/drivers/mmc/host/Kconfig
+> > @@ -977,3 +977,16 @@ config MMC_SDHCI_OMAP
+> >         If you have a controller with this interface, say Y or M here.
+> >
+> >         If unsure, say N.
+> > +
+> > +config MMC_SDHCI_EXTERNAL_DMA
+> > +        bool "Support external DMA in standard SD host controller"
+>
+> It would be simpler if the drivers that needed it just selected it e.g.
+>
+> config MMC_SDHCI_OMAP
+>         tristate "TI SDHCI Controller Support"
+>         depends on MMC_SDHCI_PLTFM && OF
+>         select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
+>
+> > +     depends on MMC_SDHCI
+> > +     depends on DMA_ENGINE
+> > +     help
+> > +       This is an option for using external DMA device via dmaengine
+> > +       framework.
+> > +
+> > +       If you have a controller which support using external DMA device
+> > +       for data transfer, can say Y.
+> > +
+> > +       If unsure, say N.
+> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> > index 99bdae5..853cc98 100644
+> > --- a/drivers/mmc/host/sdhci.c
+> > +++ b/drivers/mmc/host/sdhci.c
+> > @@ -14,6 +14,7 @@
+> >   */
+> >
+> >  #include <linux/delay.h>
+> > +#include <linux/dmaengine.h>
+> >  #include <linux/ktime.h>
+> >  #include <linux/highmem.h>
+> >  #include <linux/io.h>
+> > @@ -1309,6 +1310,158 @@ static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+> >               del_timer(&host->timer);
+> >  }
+> >
+> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> > +static int sdhci_external_dma_init(struct sdhci_host *host)
+> > +{
+> > +     int ret = 0;
+> > +     struct mmc_host *mmc = host->mmc;
+> > +
+> > +     host->tx_chan = dma_request_chan(mmc->parent, "tx");
+> > +     if (IS_ERR(host->tx_chan)) {
+> > +             ret = PTR_ERR(host->tx_chan);
+> > +             if (ret != -EPROBE_DEFER)
+> > +                     pr_warn("Failed to request TX DMA channel.\n");
+> > +             host->tx_chan = NULL;
+> > +             return ret;
+> > +     }
+> > +
+> > +     host->rx_chan = dma_request_chan(mmc->parent, "rx");
+> > +     if (IS_ERR(host->rx_chan)) {
+> > +             if (host->tx_chan) {
+> > +                     dma_release_channel(host->tx_chan);
+> > +                     host->tx_chan = NULL;
+> > +             }
+> > +
+> > +             ret = PTR_ERR(host->rx_chan);
+> > +             if (ret != -EPROBE_DEFER)
+> > +                     pr_warn("Failed to request RX DMA channel.\n");
+> > +             host->rx_chan = NULL;
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static inline struct dma_chan *
+> > +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
+> > +{
+> > +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+> > +}
+> > +
+> > +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> > +                                 struct mmc_command *cmd)
+> > +{
+> > +     int ret = 0, i;
+> > +     struct dma_async_tx_descriptor *desc;
+> > +     struct mmc_data *data = cmd->data;
+>
+> cmd->data might be NULL?  Have you tested this?
+>
+> > +     struct dma_chan *chan;
+> > +     struct dma_slave_config cfg;
+> > +     dma_cookie_t cookie;
+> > +
+> > +     if (!host->mapbase)
+> > +             return -EINVAL;
+> > +
+> > +     cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+> > +     cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+> > +     cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> > +     cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> > +     cfg.src_maxburst = data->blksz / 4;
+> > +     cfg.dst_maxburst = data->blksz / 4;
+> > +
+> > +     /* Sanity check: all the SG entries must be aligned by block size. */
+> > +     for (i = 0; i < data->sg_len; i++) {
+> > +             if ((data->sg + i)->length % data->blksz)
+> > +                     return -EINVAL;
+> > +     }
+> > +
+> > +     chan = sdhci_external_dma_channel(host, data);
+> > +
+> > +     ret = dmaengine_slave_config(chan, &cfg);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+> > +                                    mmc_get_dma_dir(data),
+> > +                                    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+> > +     if (!desc)
+> > +             return -EINVAL;
+> > +
+> > +     desc->callback = NULL;
+> > +     desc->callback_param = NULL;
+> > +
+> > +     cookie = dmaengine_submit(desc);
+> > +     if (cookie < 0)
+> > +             ret = cookie;
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static void sdhci_external_dma_release(struct sdhci_host *host)
+> > +{
+> > +     if (host->tx_chan) {
+> > +             dma_release_channel(host->tx_chan);
+> > +             host->tx_chan = NULL;
+> > +     }
+> > +
+> > +     if (host->rx_chan) {
+> > +             dma_release_channel(host->rx_chan);
+> > +             host->rx_chan = NULL;
+> > +     }
+> > +
+> > +     sdhci_switch_external_dma(host, false);
+> > +}
+> > +
+> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> > +                                         struct mmc_command *cmd)
+> > +{
+> > +     if (sdhci_external_dma_setup(host, cmd)) {
+> > +             sdhci_external_dma_release(host);
+> > +             pr_err("%s: Failed to setup external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+> > +                    mmc_hostname(host->mmc));
+> > +     } else {
+> > +             /* Prepare for using external dma */
+> > +             host->flags |= SDHCI_REQ_USE_DMA;
+> > +     }
+> > +
+> > +     sdhci_prepare_data(host, cmd);
+> > +}
+> > +
+> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> > +                                         struct mmc_command *cmd)
+> > +{
+> > +     struct dma_chan *chan = sdhci_external_dma_channel(host, cmd->data);
+>
+> cmd->data might be NULL?  Have you tested this?
+>
+> > +
+> > +     if (cmd->opcode != MMC_SET_BLOCK_COUNT) {
+>
+> I would have thought:
+>
+>         if (cmd->data)
+>
+> > +             sdhci_set_timeout(host, cmd);
+> > +             dma_async_issue_pending(chan);
+> > +     }
+> > +}
+> > +#else
+> > +static int sdhci_external_dma_init(struct sdhci_host *host)
+> > +{
+> > +     return 0;
+>
+> That should return an error, perhaps -EOPNOTSUPP.
+>
+> > +}
+> > +
+> > +static void sdhci_external_dma_release(struct sdhci_host *host)
+> > +{}
+> > +
+> > +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> > +                                         struct mmc_command *cmd)
+> > +{
+> > +     /* If SDHCI_EXTDMA not supported, PIO will be used */
+>
+> SDHCI_EXTDMA is now MMC_SDHCI_EXTERNAL_DMA
+>
+> > +     sdhci_prepare_data(host, cmd);
+> > +}
+> > +
+> > +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> > +                                         struct mmc_command *cmd)
+> > +{}
+> > +#endif
+> > +
+> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+> > +{
+> > +     host->use_external_dma = en;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+> > +
+> >  void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> >  {
+> >       int flags;
+> > @@ -1355,7 +1508,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> >               host->data_cmd = cmd;
+> >       }
+> >
+> > -     sdhci_prepare_data(host, cmd);
+> > +     if (host->use_external_dma)
+> > +             sdhci_external_dma_prepare_data(host, cmd);
+> > +     else
+> > +             sdhci_prepare_data(host, cmd);
+> >
+> >       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+> >
+> > @@ -1397,6 +1553,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> >               timeout += 10 * HZ;
+> >       sdhci_mod_timer(host, cmd->mrq, timeout);
+> >
+> > +     if (host->use_external_dma)
+> > +             sdhci_external_dma_pre_transfer(host, cmd);
+> > +
+> >       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+> >  }
+> >  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> > @@ -4133,6 +4292,19 @@ int sdhci_setup_host(struct sdhci_host *host)
+> >                       return ret;
+> >       }
+> >
+> > +     if (host->use_external_dma) {
+> > +             ret = sdhci_external_dma_init(host);
+> > +             if (ret == -EPROBE_DEFER)
+> > +                     goto unreg;
+> > +
+> > +             /*
+> > +              * Fall back to use the DMA/PIO integrated in standard SDHCI
+> > +              * instead of external DMA devices.
+> > +              */
+> > +             if (ret)
+> > +                     sdhci_switch_external_dma(host, false);
+> > +     }
+> > +
+> >       return 0;
+> >
+> >  unreg:
+> > @@ -4161,6 +4333,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+> >               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+> >                                 host->adma_table_sz, host->align_buffer,
+> >                                 host->align_addr);
+> > +
+> > +     if (host->use_external_dma)
+> > +             sdhci_external_dma_release(host);
+> > +
+> >       host->adma_table = NULL;
+> >       host->align_buffer = NULL;
+> >  }
+> > @@ -4295,6 +4471,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+> >                                 host->adma_table_sz, host->align_buffer,
+> >                                 host->align_addr);
+> >
+> > +     if (host->use_external_dma)
+> > +             sdhci_external_dma_release(host);
+> > +
+> >       host->adma_table = NULL;
+> >       host->align_buffer = NULL;
+> >  }
+> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> > index b001cf4..8e50a97 100644
+> > --- a/drivers/mmc/host/sdhci.h
+> > +++ b/drivers/mmc/host/sdhci.h
+> > @@ -475,6 +475,7 @@ struct sdhci_host {
+> >
+> >       int irq;                /* Device IRQ */
+> >       void __iomem *ioaddr;   /* Mapped address */
+> > +     phys_addr_t mapbase;    /* physical address base */
+> >       char *bounce_buffer;    /* For packing SDMA reads/writes */
+> >       dma_addr_t bounce_addr;
+> >       unsigned int bounce_buffer_size;
+> > @@ -524,6 +525,7 @@ struct sdhci_host {
+> >       bool pending_reset;     /* Cmd/data reset is pending */
+> >       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+> >       bool v4_mode;           /* Host Version 4 Enable */
+> > +     bool use_external_dma;
+> >
+> >       struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
+> >       struct mmc_command *cmd;        /* Current command */
+> > @@ -552,6 +554,11 @@ struct sdhci_host {
+> >       struct timer_list timer;        /* Timer for timeouts */
+> >       struct timer_list data_timer;   /* Timer for data timeouts */
+> >
+> > +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> > +     struct dma_chan *rx_chan;
+> > +     struct dma_chan *tx_chan;
+> > +#endif
+> > +
+> >       u32 caps;               /* CAPABILITY_0 */
+> >       u32 caps1;              /* CAPABILITY_1 */
+> >       bool read_caps;         /* Capability flags have been read */
+> > @@ -785,5 +792,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
+> >  void sdhci_end_tuning(struct sdhci_host *host);
+> >  void sdhci_reset_tuning(struct sdhci_host *host);
+> >  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
+> > +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+> >
+> >  #endif /* __SDHCI_HW_H */
+> >
+>
