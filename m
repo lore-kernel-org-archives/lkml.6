@@ -2,118 +2,147 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B170C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46994C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C03205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C03205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 00D4320868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqT6jSje"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D4320868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbeK3B2G (ORCPT
+        id S1732030AbeK3B2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:28:06 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38716 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731330AbeK3B2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:28:06 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p17so2101969qtl.5;
-        Thu, 29 Nov 2018 06:22:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dp1c5m9Go758zqpd0U6yL4XdcMp/QelpMOB8347WFtA=;
-        b=NpR1CWaOtsQLMg/NQb1y0fdwBPLpzVdQp5Yn0gUgDoUYvViKXmB/ERRSMyfmm1dLsw
-         QtEFAWBZ6VDSzd9THtNmAJSuUvaPaOatI5qu0T6prIBBGBi5Nh/wO4FXkw1VT6ZU4FD7
-         T5OKBGMaN11U/lGtO8Cb154bdwSzrLYr50r3035bCzDLAdnl1bU/u7hZfh6tcSQBbQhV
-         rZIuEegk2ilA0IgO5dSjW7Qi9q6ILrpf+NCTcaZ5r9M8j9sQegvyN/O/fekevb8c3FQR
-         VPvA2OMX0H5sjQG9INqaoMmK+h5BSox/Mbs5gNeagdqrheQLtXVGl8DstthsfpfwgxBn
-         5FQA==
-X-Gm-Message-State: AA+aEWauWSRpCmYTkdVjasxCD87SM08efqDs8ocUi2cwzfviwvuOecy8
-        Nq60iVKucboXydhJidiCH9buyEw/wFzvE6AVCQE=
-X-Google-Smtp-Source: AFSGD/XJaHcKePzx11S3n8QhdfLtER9xpVM+eDuxlxPNHoa0dhNrsDTwh051V+acJkGm5sjqJhai1WbJTiA0FwaPsLA=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr1517085qtr.319.1543501354279;
- Thu, 29 Nov 2018 06:22:34 -0800 (PST)
+        Thu, 29 Nov 2018 20:28:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731330AbeK3B2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:28:07 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 829F121104;
+        Thu, 29 Nov 2018 14:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543501356;
+        bh=3c8+QBvBmguTlj6t+PXwM7EAonkqCE1WSs+F0cOrteI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NqT6jSjezDu8rgv8MnrU8FM5i2+PleyedxfaP3/z8hh8FvpHHxo+WF2IpqcSbVHBA
+         03AMFDqv+1AF1NB5wkFei1zqbi/Rg55MiMoVRcEbTJRSkyN2QRxJcgwrvEnVGwb+jy
+         EwNpV4x68HZv7xfbsiQrtJ7J9kBVNVNP+1xYF8Qw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Benjamin Valentin <benpicco@googlemail.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 55/92] Input: xpad - sort supported devices by USB ID
+Date:   Thu, 29 Nov 2018 15:12:24 +0100
+Message-Id: <20181129140110.858506359@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
+References: <20181129140106.520639693@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org> <1543481016-18500-7-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1543481016-18500-7-git-send-email-firoz.khan@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 29 Nov 2018 15:22:16 +0100
-Message-ID: <CAK8P3a0rTwm_pCtQXyn_fyJttihKJ6Gpq97mw-r5ySUNBksCig@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] mips: generate uapi header and system call table files
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 9:45 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> diff --git a/arch/mips/include/uapi/asm/Kbuild b/arch/mips/include/uapi/asm/Kbuild
-> index 7a4becd..ed4bd03 100644
-> --- a/arch/mips/include/uapi/asm/Kbuild
-> +++ b/arch/mips/include/uapi/asm/Kbuild
-> @@ -1,5 +1,11 @@
->  # UAPI Header export list
->  include include/uapi/asm-generic/Kbuild.asm
->
-> +generated-y += unistd_n32.h
-> +generated-y += unistd_n64.h
-> +generated-y += unistd_o32.h
-> +generated-y += unistd_nr_n32.h
-> +generated-y += unistd_nr_n64.h
-> +generated-y += unistd_nr_o32.h
->  generic-y += bpf_perf_event.h
->  generic-y += ipcbuf.h
+------------------
 
-I'd argue that the unistd_nr_*.h headers should not be in the uapi directory
-but instead be included only from the in-kernel header.
+[ Upstream commit 873cb582738fde338ecaeaca594560cde2ba42c3 ]
+
+Some entries in the table of supported devices are out of order.
+To not create a mess when adding new ones using a script, sort them first.
+
+Signed-off-by: Benjamin Valentin <benpicco@googlemail.com>
+Reviewed-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/input/joystick/xpad.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index df83fdc6c0e7..f600f6662063 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -126,19 +126,19 @@ static const struct xpad_device {
+ 	u8 mapping;
+ 	u8 xtype;
+ } xpad_device[] = {
++	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
++	{ 0x044f, 0xb326, "Thrustmaster Gamepad GP XID", 0, XTYPE_XBOX360 },
+ 	{ 0x045e, 0x0202, "Microsoft X-Box pad v1 (US)", 0, XTYPE_XBOX },
+ 	{ 0x045e, 0x0285, "Microsoft X-Box pad (Japan)", 0, XTYPE_XBOX },
+ 	{ 0x045e, 0x0287, "Microsoft Xbox Controller S", 0, XTYPE_XBOX },
+ 	{ 0x045e, 0x0289, "Microsoft X-Box pad v2 (US)", 0, XTYPE_XBOX },
+ 	{ 0x045e, 0x028e, "Microsoft X-Box 360 pad", 0, XTYPE_XBOX360 },
++	{ 0x045e, 0x0291, "Xbox 360 Wireless Receiver (XBOX)", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
+ 	{ 0x045e, 0x02d1, "Microsoft X-Box One pad", 0, XTYPE_XBOXONE },
+ 	{ 0x045e, 0x02dd, "Microsoft X-Box One pad (Firmware 2015)", 0, XTYPE_XBOXONE },
+ 	{ 0x045e, 0x02e3, "Microsoft X-Box One Elite pad", 0, XTYPE_XBOXONE },
+ 	{ 0x045e, 0x02ea, "Microsoft X-Box One S pad", 0, XTYPE_XBOXONE },
+-	{ 0x045e, 0x0291, "Xbox 360 Wireless Receiver (XBOX)", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
+ 	{ 0x045e, 0x0719, "Xbox 360 Wireless Receiver", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
+-	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
+-	{ 0x044f, 0xb326, "Thrustmaster Gamepad GP XID", 0, XTYPE_XBOX360 },
+ 	{ 0x046d, 0xc21d, "Logitech Gamepad F310", 0, XTYPE_XBOX360 },
+ 	{ 0x046d, 0xc21e, "Logitech Gamepad F510", 0, XTYPE_XBOX360 },
+ 	{ 0x046d, 0xc21f, "Logitech Gamepad F710", 0, XTYPE_XBOX360 },
+@@ -180,10 +180,10 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x0105, "HSM3 Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0113, "Afterglow AX.1 Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0139, "Afterglow Prismatic Wired Controller", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x0146, "Rock Candy Wired Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0201, "Pelican PL-3601 'TSZ' Wired Xbox 360 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0213, "Afterglow Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x021f, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+-	{ 0x0e6f, 0x0146, "Rock Candy Wired Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e8f, 0x0201, "SmartJoy Frag Xpad/PS2 adaptor", 0, XTYPE_XBOX },
+@@ -209,8 +209,6 @@ static const struct xpad_device {
+ 	{ 0x162e, 0xbeef, "Joytech Neo-Se Take2", 0, XTYPE_XBOX360 },
+ 	{ 0x1689, 0xfd00, "Razer Onza Tournament Edition", 0, XTYPE_XBOX360 },
+ 	{ 0x1689, 0xfd01, "Razer Onza Classic Edition", 0, XTYPE_XBOX360 },
+-	{ 0x24c6, 0x542a, "Xbox ONE spectra", 0, XTYPE_XBOXONE },
+-	{ 0x24c6, 0x5d04, "Razer Sabertooth", 0, XTYPE_XBOX360 },
+ 	{ 0x1bad, 0x0002, "Harmonix Rock Band Guitar", 0, XTYPE_XBOX360 },
+ 	{ 0x1bad, 0x0003, "Harmonix Rock Band Drumkit", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x1bad, 0xf016, "Mad Catz Xbox 360 Controller", 0, XTYPE_XBOX360 },
+@@ -224,12 +222,14 @@ static const struct xpad_device {
+ 	{ 0x24c6, 0x5300, "PowerA MINI PROEX Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5303, "Xbox Airflo wired controller", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x541a, "PowerA Xbox One Mini Wired Controller", 0, XTYPE_XBOXONE },
++	{ 0x24c6, 0x542a, "Xbox ONE spectra", 0, XTYPE_XBOXONE },
+ 	{ 0x24c6, 0x543a, "PowerA Xbox One wired controller", 0, XTYPE_XBOXONE },
+ 	{ 0x24c6, 0x5500, "Hori XBOX 360 EX 2 with Turbo", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5501, "Hori Real Arcade Pro VX-SA", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5506, "Hori SOULCALIBUR V Stick", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5b02, "Thrustmaster, Inc. GPX Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x24c6, 0x5b03, "Thrustmaster Ferrari 458 Racing Wheel", 0, XTYPE_XBOX360 },
++	{ 0x24c6, 0x5d04, "Razer Sabertooth", 0, XTYPE_XBOX360 },
+ 	{ 0xffff, 0xffff, "Chinese-made Xbox Controller", 0, XTYPE_XBOX },
+ 	{ 0x0000, 0x0000, "Generic X-Box pad", 0, XTYPE_UNKNOWN }
+ };
+-- 
+2.17.1
 
 
-> diff --git a/arch/mips/kernel/scall64-n64.S b/arch/mips/kernel/scall64-n64.S
-> new file mode 100644
-> index 0000000..402a085
-> --- /dev/null
-> +++ b/arch/mips/kernel/scall64-n64.S
-> @@ -0,0 +1,117 @@
-> +/*
-> + * This file is subject to the terms and conditions of the GNU General Public
-> + * License.  See the file "COPYING" in the main directory of this archive
-> + * for more details.
-> + *
-> + * Copyright (C) 1995, 96, 97, 98, 99, 2000, 01, 02 by Ralf Baechle
-> + * Copyright (C) 1999, 2000 Silicon Graphics, Inc.
-> + * Copyright (C) 2001 MIPS Technologies, Inc.
-> + */
-> +#include <linux/errno.h>
-> +#include <asm/asm.h>
-> +#include <asm/asmmacro.h>
-> +#include <asm/irqflags.h>
 
-It looks like you change and rename this file at the same time.
-Generally speaking, I would not do that in one patch. Either
-leave the slightly inconsistent name unchanged, or rename
-it in a separate patch.
-
-         Arnd
