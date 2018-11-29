@@ -2,155 +2,173 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6526DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2919DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D35B20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0FFA20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dp6tBqUa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D35B20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="t5SmATrT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FFA20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbeK3Dvg (ORCPT
+        id S1729834AbeK3DwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:51:36 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52945 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729398AbeK3Dvf (ORCPT
+        Thu, 29 Nov 2018 22:52:02 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35568 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729654AbeK3DwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:51:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r11-v6so2968819wmb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:45:36 -0800 (PST)
+        Thu, 29 Nov 2018 22:52:01 -0500
+Received: by mail-it1-f193.google.com with SMTP id p197so4665535itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 08:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EtM4PIazhY07dM0/SaEEWQPxpJFOk9DHFjeuMp17cAY=;
-        b=dp6tBqUavwos7KZ6mfDXbkfB1XygBEgZvGmxP56Gt7XJvFVMSHA+Hbmc218c34qykK
-         mnKFwjX/LAeiZ8J7StjT1l/MyQY9VfNWCZGBnu8zGb8/1vxZe0vWyibf5kYKvQ3s8Tb3
-         oUf9Snoo6m2eXkvB3ttsuCl72Gh5NJemwmlpHwWSL7PT+Oo7XLRwYJd6+W4dn+ERcgn8
-         LCjmmDwmH55yKn9YQp0uQqs43FJJ9JA47QKSpvSGPYBImCVyOyAGS1/bZJh7DtYDdXu5
-         UMBpD7k8n+y7QVVX1qyERYjExlapvkTAYdT+LawMVBdRxpeN6kCuQDbCLOgnYzD/lIzG
-         sX+A==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Q/GbKuFaptQvUEl4Wd84DaujVYfeqvfBlIlbov2Mlak=;
+        b=t5SmATrTqyxoYaOPsWS1isXu69wHi5PApSbmSdcsjVmAIaMTmWEr6sHeeu+QcnvmnM
+         y8AKxeTUhRM157i1hdhz/3qxRIYwBJEHvR3wzmdZ8QKmJkB2J6ayMIVSp6VN4zXcKvL5
+         4nuhxSYvPf92WEuLFnIwtcyOmgdpWOiUUdbD0aBB+siPThe1kGatDIFD5yRiEKMybeLp
+         414LzhDar0l7qSdPOBcBSDL5408aXFERDCAj+jfb7dTdfdHzDu+syi5wL+c47WIe2b0g
+         vPCFTRQWRVAZUUCABSyDZGS6ooTaU+2O9TIGWkppwjV3vViWBb79ED0O4NVJ/DXMdSCc
+         zTUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EtM4PIazhY07dM0/SaEEWQPxpJFOk9DHFjeuMp17cAY=;
-        b=PGel9DvH8MNIklpibNBK16+HQ4KNdl5hQediJcUtFyjjhvYgUxLTy4TmUDYgWIMpWg
-         ygVUr8NXRjHlW293HfRXVUrdhojX0DPNG65COox3laE4+E8rpe9vSfptTDeGWcdLIW2c
-         Y92JYj7w7fwjxBtIZKOsa8/M8fY9W3jV4dHe3PEO2OKxvg0YPsP9HCyzwCw76ZxaGB+l
-         oZJ/19cxJneFsdr2yO7Ckn4lpI8V8WNZ+rx1/Bi+FEt08qAQbJMhx/ZdPtuUqmuRKUVb
-         HzyOJtPHNvF7Qo2WUrkdEx2mjaxXSRutUGTH/AWLwhhCTPWpsJvmAmvsQfrAFhGTlhRT
-         Z5UA==
-X-Gm-Message-State: AA+aEWYo64RukWKGFlKD6ZfLd6RP+YHeKcUCm2HEjhLZ84OrVgfi+N/U
-        Ym3c1SrT6wEDPVgZ3/bneyA0Wg==
-X-Google-Smtp-Source: AFSGD/WJaOfuutDvzzbZ0va/pIvGxVLGX5l0HSRmlnvR/hCkFtrHbXkYMSJpeus8Ic5I9RR/omDFMw==
-X-Received: by 2002:a7b:c44d:: with SMTP id l13mr2463397wmi.144.1543509935558;
-        Thu, 29 Nov 2018 08:45:35 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id d4sm2721909wrp.89.2018.11.29.08.45.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 08:45:34 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: meson: add clock controller clock inputs
-Date:   Thu, 29 Nov 2018 17:45:24 +0100
-Message-Id: <20181129164524.18670-4-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181129164524.18670-1-jbrunet@baylibre.com>
-References: <20181129164524.18670-1-jbrunet@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Q/GbKuFaptQvUEl4Wd84DaujVYfeqvfBlIlbov2Mlak=;
+        b=Lg0bmTYmnCQOc01hzlugGr6SYhkpydztm3B00XZ4sRagJapB9sWUouwP3huOCLqZKc
+         wrn6AijWnMeBcRxYCk+wPJQmTy97A06uh4XtiQ/nbghfysATHwLq0kPuhKTG1Wh0o9H4
+         TSIu+EByMmNtf1ufTAu1KrQDlgPjPTLb0KCLkyrKuiqG6qS6zPw23XGnuliCU18atPfJ
+         OFZ+UG3slo6uZae1pYfC1U1JBnG9Ddz9ICZKYLGaTqdlJsugUXQbUM290Y/mLF0KqMo0
+         CVsThVKmDnUZ2tgb8zOPqQBuHh97KiR/ExJPcopbTg+6+t8yiNQoXNAUGS/GRo9DRC7G
+         3aPA==
+X-Gm-Message-State: AA+aEWa62dHad6tmrzeptTPQFnh9eKGJl9ZmqmmP15OL923bzdGRCVPv
+        GFm8D+5L9BYv525Zm28j7b3BWBCATSt2NYzjX2pG4Q==
+X-Google-Smtp-Source: AFSGD/WRnDKDcgGOsgeEZErKEgs5yDvhgf9+ysbM80udT5JKDQ+ATrra5z8TWOE9+7Jh/+SzWH8Fec6sqqt0ef0ujP4=
+X-Received: by 2002:a02:3d42:: with SMTP id n63mr2027489jan.136.1543509962311;
+ Thu, 29 Nov 2018 08:46:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181113140133.17385-1-brgl@bgdev.pl> <20181113140133.17385-11-brgl@bgdev.pl>
+In-Reply-To: <20181113140133.17385-11-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 29 Nov 2018 17:45:51 +0100
+Message-ID: <CAMRc=MdLSVw11hzzqPLfSyz38uA46+LvobGk3vSNcTvtqnD5XQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/25] net: ethernet: provide nvmem_get_mac_address()
+To:     "David S . Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the clock inputs of the clock controllers
+wt., 13 lis 2018 o 15:02 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
+):
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> We already have of_get_nvmem_mac_address() but some non-DT systems want
+> to read the MAC address from NVMEM too. Implement a generalized routine
+> that takes struct device as argument.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  include/linux/etherdevice.h |  1 +
+>  net/ethernet/eth.c          | 38 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+>
+> diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
+> index 572e11bb8696..2c0af7b00715 100644
+> --- a/include/linux/etherdevice.h
+> +++ b/include/linux/etherdevice.h
+> @@ -32,6 +32,7 @@
+>  struct device;
+>  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
+>  unsigned char *arch_get_platform_mac_address(void);
+> +int nvmem_get_mac_address(struct device *dev, void *addrbuf);
+>  u32 eth_get_headlen(void *data, unsigned int max_len);
+>  __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
+>  extern const struct header_ops eth_header_ops;
+> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+> index fd8faa0dfa61..df38593d1bb4 100644
+> --- a/net/ethernet/eth.c
+> +++ b/net/ethernet/eth.c
+> @@ -47,6 +47,7 @@
+>  #include <linux/inet.h>
+>  #include <linux/ip.h>
+>  #include <linux/netdevice.h>
+> +#include <linux/nvmem-consumer.h>
+>  #include <linux/etherdevice.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/errno.h>
+> @@ -548,3 +549,40 @@ int eth_platform_get_mac_address(struct device *dev,=
+ u8 *mac_addr)
+>         return 0;
+>  }
+>  EXPORT_SYMBOL(eth_platform_get_mac_address);
+> +
+> +/**
+> + * Obtain the MAC address from an nvmem cell named 'mac-address' associa=
+ted
+> + * with given device.
+> + *
+> + * @dev:       Device with which the mac-address cell is associated.
+> + * @addrbuf:   Buffer to which the MAC address will be copied on success=
+.
+> + *
+> + * Returns 0 on success or a negative error number on failure.
+> + */
+> +int nvmem_get_mac_address(struct device *dev, void *addrbuf)
+> +{
+> +       struct nvmem_cell *cell;
+> +       const void *mac;
+> +       size_t len;
+> +
+> +       cell =3D nvmem_cell_get(dev, "mac-address");
+> +       if (IS_ERR(cell))
+> +               return PTR_ERR(cell);
+> +
+> +       mac =3D nvmem_cell_read(cell, &len);
+> +       nvmem_cell_put(cell);
+> +
+> +       if (IS_ERR(mac))
+> +               return PTR_ERR(mac);
+> +
+> +       if (len !=3D ETH_ALEN || !is_valid_ether_addr(mac)) {
+> +               kfree(mac);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ether_addr_copy(addrbuf, mac);
+> +       kfree(mac);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(nvmem_get_mac_address);
+> --
+> 2.19.1
+>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 3 +++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 3 +++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 3 +++
- 3 files changed, 9 insertions(+)
+If there are no objections - can patches 10-13 go into the networking
+tree already so that they spend some time in next before the merge
+window?
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 5f512c91471e..f2e9fbfff4ea 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1089,6 +1089,7 @@
- 				clkc: clock-controller {
- 					compatible = "amlogic,axg-clkc";
- 					#clock-cells = <1>;
-+					clocks = <&xtal>;
- 				};
- 			};
- 		};
-@@ -1334,6 +1335,8 @@
- 					compatible = "amlogic,meson-axg-aoclkc";
- 					#clock-cells = <1>;
- 					#reset-cells = <1>;
-+					clocks = <&xtal>, <&clkc CLKID_CLK81>;
-+					clock-names = "xtal", "mpeg-clk";
- 				};
- 			};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 6796d250985a..3322da6da962 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -299,6 +299,8 @@
- 
- &clkc_AO {
- 	compatible = "amlogic,meson-gxbb-aoclkc", "amlogic,meson-gx-aoclkc";
-+	clocks = <&xtal>, <&clkc CLKID_CLK81>;
-+	clock-names = "xtal", "mpeg-clk";
- };
- 
- &efuse {
-@@ -334,6 +336,7 @@
- 	clkc: clock-controller {
- 		compatible = "amlogic,gxbb-clkc";
- 		#clock-cells = <1>;
-+		clocks = <&xtal>;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index ed278097825b..223f34959844 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -260,6 +260,8 @@
- 
- &clkc_AO {
- 	compatible = "amlogic,meson-gxl-aoclkc", "amlogic,meson-gx-aoclkc";
-+	clocks = <&xtal>, <&clkc CLKID_CLK81>;
-+	clock-names = "xtal", "mpeg-clk";
- };
- 
- &gpio_intc {
-@@ -284,6 +286,7 @@
- 	clkc: clock-controller {
- 		compatible = "amlogic,gxl-clkc";
- 		#clock-cells = <1>;
-+		clocks = <&xtal>;
- 	};
- };
- 
--- 
-2.19.1
-
+Best regards,
+Bartosz Golaszewski
