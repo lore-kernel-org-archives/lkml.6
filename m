@@ -2,49 +2,51 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D64BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AF0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65EAB2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A59320868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvwaDIKc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65EAB2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAuS0WVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A59320868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732447AbeK3B3X (ORCPT
+        id S1732461AbeK3B3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:29:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55732 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:29:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731245AbeK3B3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:29:22 -0500
+        id S1731245AbeK3B3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:29:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46382208E7;
-        Thu, 29 Nov 2018 14:23:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3E252145D;
+        Thu, 29 Nov 2018 14:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501430;
-        bh=7+VOdMb4Wi3D55hoe0q8vdIcLUhhzsw37YXOMU4naqU=;
+        s=default; t=1543501433;
+        bh=+rsiHtKRjFf2rDm4ZY8fS/RV4Y8Dlmf1ZLGRh9HwXA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvwaDIKcW4QWBDyZWsU9HJuwpztG1hic8XLQ2Kq/xLMt+GmibpCE4GkPPaDVXXK6l
-         AZS10I1t4J0g4a+5a3yjocPEaxcclyHHQHKLFNudLpbQFA7LTL+bevODgJyTEscgpr
-         Rx4j+7b9xMPAhIWRVjo91ioJ14cYM295Z1WkXnR0=
+        b=dAuS0WVDBPhk21dd7pcnZlMq0p4p5stlozszer/bE+boMp1KWpm/dVzbbRpnuetlm
+         wKCgIoBRKfNyuHM6ms/1b8Wvwg7n1iXe76eQmF5UcYD3dO79XvTiJO9Rfm3/EjhwhM
+         KXWXASA0PQ3B1WwPWSZ0F1pyhPDNLCowKf5ov6wE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>
-Subject: [PATCH 4.9 87/92] net: ieee802154: 6lowpan: fix frag reassembly
-Date:   Thu, 29 Nov 2018 15:12:56 +0100
-Message-Id: <20181129140113.794779367@linuxfoundation.org>
+        stable@vger.kernel.org, Kyle Beauchamp <kyleabeauchamp@gmail.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 61/92] Input: xpad - fix PowerA init quirk for some gamepad models
+Date:   Thu, 29 Nov 2018 15:12:30 +0100
+Message-Id: <20181129140111.269483325@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -62,71 +64,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+[ Upstream commit f5308d1b83eba20e69df5e0926ba7257c8dd9074 ]
 
-commit f18fa5de5ba7f1d6650951502bb96a6e4715a948 upstream.
+The PowerA gamepad initialization quirk worked with the PowerA
+wired gamepad I had around (0x24c6:0x543a), but a user reported [0]
+that it didn't work for him, even though our gamepads shared the
+same vendor and product IDs.
 
-This patch initialize stack variables which are used in
-frag_lowpan_compare_key to zero. In my case there are padding bytes in the
-structures ieee802154_addr as well in frag_lowpan_compare_key. Otherwise
-the key variable contains random bytes. The result is that a compare of
-two keys by memcmp works incorrect.
+When I initially implemented the PowerA quirk, I wanted to avoid
+actually triggering the rumble action during init. My tests showed
+that my gamepad would work correctly even if it received a rumble
+of 0 intensity, so that's what I went with.
 
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Reported-by: Stefan Schmidt <stefan@osg.samsung.com>
-Signed-off-by: Stefan Schmidt <stefan@osg.samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Unfortunately, this apparently isn't true for all models (perhaps
+a firmware difference?). This non-working gamepad seems to require
+the real magic rumble packet that the Microsoft driver sends, which
+actually vibrates the gamepad. To counteract this effect, I still
+send the old zero-rumble PowerA quirk packet which cancels the
+rumble effect before the motors can spin up enough to vibrate.
 
+[0]: https://github.com/paroj/xpad/issues/48#issuecomment-313904867
+
+Reported-by: Kyle Beauchamp <kyleabeauchamp@gmail.com>
+Tested-by: Kyle Beauchamp <kyleabeauchamp@gmail.com>
+Fixes: 81093c9848a7 ("Input: xpad - support some quirky Xbox One pads")
+Cc: stable@vger.kernel.org # v4.12
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ieee802154/6lowpan/6lowpan_i.h  |    4 ++--
- net/ieee802154/6lowpan/reassembly.c |   14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/input/joystick/xpad.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
---- a/net/ieee802154/6lowpan/6lowpan_i.h
-+++ b/net/ieee802154/6lowpan/6lowpan_i.h
-@@ -19,8 +19,8 @@ typedef unsigned __bitwise__ lowpan_rx_r
- struct frag_lowpan_compare_key {
- 	u16 tag;
- 	u16 d_size;
--	const struct ieee802154_addr src;
--	const struct ieee802154_addr dst;
-+	struct ieee802154_addr src;
-+	struct ieee802154_addr dst;
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index 2578a7677040..f8e34ef643c7 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -476,10 +476,21 @@ static const u8 xboxone_hori_init[] = {
  };
  
- /* Equivalent of ipv4 struct ipq
---- a/net/ieee802154/6lowpan/reassembly.c
-+++ b/net/ieee802154/6lowpan/reassembly.c
-@@ -74,14 +74,14 @@ fq_find(struct net *net, const struct lo
- {
- 	struct netns_ieee802154_lowpan *ieee802154_lowpan =
- 		net_ieee802154_lowpan(net);
--	struct frag_lowpan_compare_key key = {
--		.tag = cb->d_tag,
--		.d_size = cb->d_size,
--		.src = *src,
--		.dst = *dst,
--	};
-+	struct frag_lowpan_compare_key key = {};
- 	struct inet_frag_queue *q;
- 
-+	key.tag = cb->d_tag;
-+	key.d_size = cb->d_size;
-+	key.src = *src;
-+	key.dst = *dst;
+ /*
+- * A rumble packet is required for some PowerA pads to start
++ * A specific rumble packet is required for some PowerA pads to start
+  * sending input reports. One of those pads is (0x24c6:0x543a).
+  */
+-static const u8 xboxone_zerorumble_init[] = {
++static const u8 xboxone_rumblebegin_init[] = {
++	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
++	0x1D, 0x1D, 0xFF, 0x00, 0x00
++};
 +
- 	q = inet_frag_find(&ieee802154_lowpan->frags, &key);
- 	if (!q)
- 		return NULL;
-@@ -371,7 +371,7 @@ int lowpan_frag_rcv(struct sk_buff *skb,
- 	struct lowpan_frag_queue *fq;
- 	struct net *net = dev_net(skb->dev);
- 	struct lowpan_802154_cb *cb = lowpan_802154_cb(skb);
--	struct ieee802154_hdr hdr;
-+	struct ieee802154_hdr hdr = {};
- 	int err;
++/*
++ * A rumble packet with zero FF intensity will immediately
++ * terminate the rumbling required to init PowerA pads.
++ * This should happen fast enough that the motors don't
++ * spin up to enough speed to actually vibrate the gamepad.
++ */
++static const u8 xboxone_rumbleend_init[] = {
+ 	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
+ 	0x00, 0x00, 0x00, 0x00, 0x00
+ };
+@@ -494,9 +505,12 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
+-	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_zerorumble_init),
+-	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_zerorumble_init),
+-	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_zerorumble_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumbleend_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumbleend_init),
++	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumbleend_init),
+ };
  
- 	if (ieee802154_hdr_peek_addrs(skb, &hdr) < 0)
+ struct xpad_output_packet {
+-- 
+2.17.1
+
 
 
