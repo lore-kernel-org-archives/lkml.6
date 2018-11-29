@@ -2,84 +2,95 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1382C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC67C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7742081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7742081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EE2920832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 00:49:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CoAwwA8B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE2920832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeK2LxL (ORCPT
+        id S1726994AbeK2LxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:53:11 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:49780 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeK2LxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:53:10 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gSAWR-00073x-My; Wed, 28 Nov 2018 17:49:40 -0700
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181112150215.508-1-namit@vmware.com>
- <20181112150215.508-2-namit@vmware.com> <20181113113000.GB4788@gmail.com>
- <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
- <48577A3F-0F76-4CCA-A959-965344D7259F@vmware.com>
- <7ff5de62-d1df-9a67-1c86-497ce00a4de4@deltatee.com>
- <7072A2D8-30F8-45CB-AB0C-B1BE4A30259A@vmware.com>
- <db8293cf-9abc-e899-8f43-6e42039006d9@deltatee.com>
- <521458D7-A27C-4112-81ED-1974EFE96A76@vmware.com>
- <be24a6eb-ebf0-8d9f-0051-681f0da66109@deltatee.com>
- <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <336cf7d8-6495-b112-8d3a-c146222fda78@deltatee.com>
-Date:   Wed, 28 Nov 2018 17:49:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 29 Nov 2018 06:53:19 -0500
+Received: from mail-pl1-f177.google.com ([209.85.214.177]:41058 "EHLO
+        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbeK2LxT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:53:19 -0500
+Received: by mail-pl1-f177.google.com with SMTP id u6so100802plm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 16:49:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=VDsk+R9UcyB7GaXXGjWWR4aS3VEHJ/14IPA2HoPmq/o=;
+        b=CoAwwA8BlLpd8qJFKiiPBniZ1v2L/b1IRqeIOw+Jw7VMmqfJY77k3Ki7XUHgNXHNXj
+         H2apkDSrNo1XIjCvC190xGimjz9lnLC0xBSgVXdrKOf71C5PsbuPdZZVoRP8ffUnfIzU
+         0SKBk8lc+8uUx0Y0vAFDkgYMqnX4S5x6PysSIdw02yxOxcKO8D+rlaWcW0D0q2j2S+jK
+         onRZH2DeUHK7KD01Q6/050g0kG3tQi8GC6aJ2bQVQmKGI52kV94FoemLqS79ck2LdTeI
+         M7kGpzFaNFRGqtm3PEjNL0GnXktd5RKCuVqsLAHVrvjpUEyjSDRQaqPO2hAZnXhzM/wU
+         iZ8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=VDsk+R9UcyB7GaXXGjWWR4aS3VEHJ/14IPA2HoPmq/o=;
+        b=HgutP9VH4Rn3tIEUBjO1h8dvWMLGeUcMecu6NTIM5rFh8gKdzKpyScBJFtil9R4d1n
+         OHGCa8otyGZRwM8r0a2glRiCKhJGuI2yYebfBD7NPGpALTfbnkxWKHtlFoonF6vO+Jo9
+         X84uKRehm9g50bLvTELGnfTmMFrtvY1Tu2N2XhYtA/DnrLThPiOhtrDQRYr2tnvtGFTL
+         cGImjXoBy0UYbZqmK0fsmSuxSsmYXucHTmQsmWR3wJZZioccUJC28A2C4mRkYsO8aqrU
+         lACeLzV50ctWYyC5PkrfM5dFYWFM5N9HW/Z+LtsDMDshudE77/lm5oFR1xCNqFU8iIKx
+         5OmA==
+X-Gm-Message-State: AA+aEWZor1w+/T0sVHjRBqrepbdF4gmWNujAFgHMZVs1tx07cjf1nOH5
+        yGMJ1LrhIIu6Sxm0Uw4AL55o6A==
+X-Google-Smtp-Source: AFSGD/XxigFP96pEQkmXQ5N5cs9Jq7Gb59zlfI1OWeHq3ocDTPKR9SuKkHe0x/4EiTA67e1cmnPotA==
+X-Received: by 2002:a17:902:bd0a:: with SMTP id p10mr37981199pls.322.1543452588253;
+        Wed, 28 Nov 2018 16:49:48 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id x19sm220529pfk.14.2018.11.28.16.49.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Nov 2018 16:49:47 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, carlo@caione.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/2] ARM: dts: meson: add the timer interrupts and clocks
+In-Reply-To: <20181116204235.3925-1-martin.blumenstingl@googlemail.com>
+References: <20181116204235.3925-1-martin.blumenstingl@googlemail.com>
+Date:   Wed, 28 Nov 2018 16:49:46 -0800
+Message-ID: <7hzhtsbtcl.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <5682CCB4-B7D3-4DDC-81BB-2D4DCE968A3D@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, x86@kernel.org, hpa@zytor.com, bp@alien8.de, tglx@linutronix.de, michal.lkml@markovi.net, yamada.masahiro@socionext.com, mingo@redhat.com, mingo@kernel.org, namit@vmware.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
+> This is a follow-up of my series "meson6_timer: dt-bindings updates"
+> from [0].
+> We were missing the interrupts for timer B, C and D. This is harmless
+> so far because the meson6_timer driver only implements timer A. Timer
+> E doesn't have any interrupt.
+>
+> Additionally the timer IP block has two clock inputs. This also adds
+> them.
+>
+> NOTE: the alias "timer_abcde" was chosen because there's a second
+> timer instance (F..I which are similar to A..D and J which is
+> similar to E).
 
-On 2018-11-28 5:38 p.m., Nadav Amit wrote:
-> So what’s your take? Would you think this patch is still needed? Should it
-> only be enabled automatically for distcc and not for distcc-pump?
+Queued for v4.21 (branch: v4.21/dt)
 
-Not sure. The patch will probably slow things down a lot (seeing
-assembly is always done locally and there are twice as many compile
-steps) and will create some confusion once it's possible to disable it
-for the new versions. Maybe hold off and see if anyone else complains?
-
-I don't really know how you'd detect whether pump is in use or not and
-I'm uncertain as to whether any of the auto detection can actually be
-made to be reliable.
-
-Logan
-
-
+Kevin
