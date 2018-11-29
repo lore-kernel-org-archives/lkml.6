@@ -2,50 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B83AC04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE428C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F94208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766422133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:23:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wvlp8g6i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33F94208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSqlVTDX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766422133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbeK3B2f (ORCPT
+        id S1732199AbeK3B2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:28:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:28:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbeK3B2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:28:34 -0500
+        id S1731095AbeK3B2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:28:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAC7E208E7;
-        Thu, 29 Nov 2018 14:23:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F1C7205C9;
+        Thu, 29 Nov 2018 14:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501383;
-        bh=8SoY2CJ0xowfB+Uxmzxn3QCjHLQJ4BJ+ZKVIg4XQ0XQ=;
+        s=default; t=1543501385;
+        bh=WD/B3l1P+NnMQpjLEI8ZdH9AoojLyqJixAmjalgERIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wvlp8g6isXTTWL5HkIu9PByP5Ux5qWWckdBepumB8HDlKlwZzp3rfnpGVGquE1T5R
-         3NOMJyK+ILTm8+dYGHr6zMJduG6B9QNzyYaOaJkosM/iLEkes4C/bvhm4kaYrdFEA4
-         fJmR3oqrqhN3ZwsjvmAj+JvyZi3EGdsKRB82h5pI=
+        b=DSqlVTDXeP7Sbx1xKxds8az3+x8El0oBcB8xQi5bzRv2ghtPYn0Pr5aCrqhkD1udQ
+         MHJP6AKzavO3rWVCbFNgf8cdxu0ncvLM9bbSBEQ28QgkgqkzpRaQ9UC1JP5NqfPGWT
+         OC79p4I9gHrgUNdR/MEi51xfqY6CW1dFxP0/GWPQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Enno Boland <gottox@voidlinux.eu>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ramses=20Ram=C3=ADrez?= <ramzeto@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 68/92] Input: xpad - fix GPD Win 2 controller name
-Date:   Thu, 29 Nov 2018 15:12:37 +0100
-Message-Id: <20181129140111.838242627@linuxfoundation.org>
+Subject: [PATCH 4.9 69/92] Input: xpad - add support for Xbox1 PDP Camo series gamepad
+Date:   Thu, 29 Nov 2018 15:12:38 +0100
+Message-Id: <20181129140111.939366946@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,42 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit dd6bee81c942c0ea01030da9356026afb88f9d18 ]
+[ Upstream commit 9735082a7cbae572c2eabdc45acecc8c9fa0759b ]
 
-This fixes using the controller with SDL2.
+The "Xbox One PDP Wired Controller - Camo series" has a different
+product-id than the regular PDP controller and the PDP stealth series,
+but it uses the same initialization sequence. This patch adds the
+product-id of the camo series to the structures that handle the other
+PDP Xbox One controllers.
 
-SDL2 has a naive algorithm to apply the correct settings to a controller.
-For X-Box compatible controllers it expects that the controller name
-contains a variation of a 'XBOX'-string.
-
-This patch changes the identifier to contain "X-Box" as substring.  Tested
-with Steam and C-Dogs-SDL which both detect the controller properly after
-adding this patch.
-
-Fixes: c1ba08390a8b ("Input: xpad - add GPD Win 2 Controller USB IDs")
+Signed-off-by: Ramses Ramírez <ramzeto@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Enno Boland <gottox@voidlinux.eu>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 66cc37b41113..69b44aebaf01 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -128,7 +128,7 @@ static const struct xpad_device {
- 	u8 mapping;
- 	u8 xtype;
- } xpad_device[] = {
--	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
-+	{ 0x0079, 0x18d4, "GPD Win 2 X-Box Controller", 0, XTYPE_XBOX360 },
- 	{ 0x044f, 0x0f00, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f03, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
--- 
-2.17.1
-
+@@ -234,6 +234,7 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x02a6, "PDP Wired Controller for Xbox One - Camo Series", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+@@ -533,6 +534,8 @@ static const struct xboxone_init_packet
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
 
 
