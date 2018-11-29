@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C4C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF16C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643D920868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99CD2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zQWnk6RV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643D920868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rw9KwYZY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99CD2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbeK3B0l (ORCPT
+        id S1731594AbeK3B0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50904 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730509AbeK3B0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:40 -0500
+        id S1730453AbeK3B0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48B6D213A2;
-        Thu, 29 Nov 2018 14:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC6EE205C9;
+        Thu, 29 Nov 2018 14:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501269;
-        bh=/FDYHQJXejVMd2UXeJwYfmAzrScdofrP2tUl+Xe8EPo=;
+        s=default; t=1543501272;
+        bh=iKuvD7zmvPLXYXxQxuv164In8l5Iuk/bePECyuJOR1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zQWnk6RVLmPdONCInAQvZPlPVd2rgyWAcWbZ8S84j+9dI1NM3zLhEAmfYZ5GPpChM
-         bDVjwuR/fH22/UQ4QJqCOcvjKzyry53z04rkUoFBVoggCPr7/bcKZTgGDn+MEVXGpY
-         WrPc54RIiUjhRGD7Ej4dHWh/nATMT1txpYnJPh7c=
+        b=rw9KwYZYF+cUUtQwfEdphGrt7wqsGzhS/d+l41pkUk7BbqEpPAvaPPGyXzKUvNBPw
+         FislHV4yPtZR+D42cFGp5hQy7zojE62zMrWdCN0SgRwZD3o6XQt5PmzE7RTiIwFMI3
+         EUmuoSgECgeEC6UT03RR/AYREK+p84D7p5tPmUpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 04/92] MAINTAINERS: Add Sasha as a stable branch maintainer
-Date:   Thu, 29 Nov 2018 15:11:33 +0100
-Message-Id: <20181129140106.835123109@linuxfoundation.org>
+        stable@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 05/92] gpio: dont free unallocated ida on gpiochip_add_data_with_key() error path
+Date:   Thu, 29 Nov 2018 15:11:34 +0100
+Message-Id: <20181129140106.922908269@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -61,31 +62,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
 
-commit cb5d21946d2a2f4687c482ab4604af1d29dac35a upstream.
+commit a05a14049999598a3bb6fab12db6b768a0215522 upstream.
 
-Sasha has somehow been convinced into helping me with the stable kernel
-maintenance.  Codify this slip in good judgement before he realizes what
-he really signed up for :)
+The change corrects the error path in gpiochip_add_data_with_key()
+by avoiding to call ida_simple_remove(), if ida_simple_get() returns
+an error.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Sasha Levin <sashal@kernel.org>
+Note that ida_simple_remove()/ida_free() throws a BUG(), if id argument
+is negative, it allows to easily check the correctness of the fix by
+fuzzing the return value from ida_simple_get().
+
+Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
+Cc: stable@vger.kernel.org # v4.6+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- MAINTAINERS |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11469,6 +11469,7 @@ F:	arch/alpha/kernel/srm_env.c
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1153,7 +1153,7 @@ int gpiochip_add_data(struct gpio_chip *
+ 	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
+ 	if (!gdev->descs) {
+ 		status = -ENOMEM;
+-		goto err_free_gdev;
++		goto err_free_ida;
+ 	}
  
- STABLE BRANCH
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+M:	Sasha Levin <sashal@kernel.org>
- L:	stable@vger.kernel.org
- S:	Supported
- F:	Documentation/stable_kernel_rules.txt
+ 	if (chip->ngpio == 0) {
+@@ -1285,8 +1285,9 @@ err_free_label:
+ 	kfree(gdev->label);
+ err_free_descs:
+ 	kfree(gdev->descs);
+-err_free_gdev:
++err_free_ida:
+ 	ida_simple_remove(&gpio_ida, gdev->id);
++err_free_gdev:
+ 	/* failures here can mean systems won't boot... */
+ 	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
+ 	       gdev->base, gdev->base + gdev->ngpio - 1,
 
 
