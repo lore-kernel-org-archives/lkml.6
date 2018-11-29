@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1008AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9456FC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99CE213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BEC02133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNlxMuIO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99CE213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjaXRgdS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BEC02133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbeK3B1P (ORCPT
+        id S1731761AbeK3B1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51942 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730358AbeK3B1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:13 -0500
+        id S1729984AbeK3B1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9C3D205C9;
-        Thu, 29 Nov 2018 14:21:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25C642133F;
+        Thu, 29 Nov 2018 14:21:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501302;
-        bh=8fD6ZZ+CnWCLXiDXINcZYnqyH+YYIoQ3hchFDHGBxWA=;
+        s=default; t=1543501304;
+        bh=tVllfzewr4TZp8ckDysYrscPpJW53rwfDhyPFFKsQ+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HNlxMuIOXfWkVogoZsJNuQTGHVyV1jVAZv2IQD5iNZEFQ0xbWUo7hRo35E04m0vjZ
-         9VKSTIzaKwxsAEqhgQeOVtbN8ITJmsV3OSLrNYkaW3/6RHXt3v+BMZICu8EvuGIgBg
-         dKZnScMnKM8NFX0Vaa5ZlWk8Zfrd959U6WghC0+g=
+        b=OjaXRgdSB2zqrJRaen7wDlRuOJDTG3kWRcIK5CZCQM2e/GsJRPzOCBMkXYZ+TPjp0
+         OkX2Tmp+BeRy//R7ZYousUWRrDRJdh0+PvFFwlzfckwc9zWrQcZo2AaeMxS0HbCiJC
+         7lWMWOKK8bJsSPR4CbvOS/BIfsbQ9n20KXqVqJcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 35/92] ARM: make lookup_processor_type() non-__init
-Date:   Thu, 29 Nov 2018 15:12:04 +0100
-Message-Id: <20181129140109.191283058@linuxfoundation.org>
+Subject: [PATCH 4.9 36/92] SUNRPC: Fix a bogus get/put in generic_key_to_expire()
+Date:   Thu, 29 Nov 2018 15:12:05 +0100
+Message-Id: <20181129140109.248276506@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,42 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc ]
+[ Upstream commit e3d5e573a54dabdc0f9f3cb039d799323372b251 ]
 
-Move lookup_processor_type() out of the __init section so it is callable
-from (eg) the secondary startup code during hotplug.
-
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/head-common.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/sunrpc/auth_generic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 8733012d231f..7e662bdd5cb3 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -122,6 +122,9 @@ __mmap_switched_data:
- 	.long	init_thread_union + THREAD_START_SP @ sp
- 	.size	__mmap_switched_data, . - __mmap_switched_data
- 
-+	__FINIT
-+	.text
-+
- /*
-  * This provides a C-API version of __lookup_processor_type
-  */
-@@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
- 
--	__FINIT
--	.text
+diff --git a/net/sunrpc/auth_generic.c b/net/sunrpc/auth_generic.c
+index f1df9837f1ac..1ac08dcbf85d 100644
+--- a/net/sunrpc/auth_generic.c
++++ b/net/sunrpc/auth_generic.c
+@@ -281,13 +281,7 @@ static bool generic_key_to_expire(struct rpc_cred *cred)
+ {
+ 	struct auth_cred *acred = &container_of(cred, struct generic_cred,
+ 						gc_base)->acred;
+-	bool ret;
 -
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
+-	get_rpccred(cred);
+-	ret = test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
+-	put_rpccred(cred);
+-
+-	return ret;
++	return test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
+ }
+ 
+ static const struct rpc_credops generic_credops = {
 -- 
 2.17.1
 
