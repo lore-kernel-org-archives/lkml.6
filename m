@@ -2,95 +2,170 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D33C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD6DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8921A21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8921A21019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ED160214C1
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:33:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QymXH3lE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mul79NHO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED160214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbeK3Cip (ORCPT
+        id S1728867AbeK3CjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:38:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728272AbeK3Cip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:38:45 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 29 Nov 2018 21:39:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49220 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbeK3CjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:39:14 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B0C1C606DC; Thu, 29 Nov 2018 15:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543505608;
+        bh=vI3CRDq9fQFG3zn1ZuN+7eSrOpHD3gIy79+DkJYMbhQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=QymXH3lEtBEhKzYPUyakiqaAaRpo+VuFMmcccTAIphmrey74K0fx/VdXjb53CXd6V
+         MOcPQJldr8DhpuIuPhmaQ2Jql0LV0OGSVUThwoRziI12scij8K5PCVlz4t5Bxm7nlm
+         REi3+eBEYrKb0GS0Kh3Ge99fSFYY47yxDOyBxPY8=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E0F33098491;
-        Thu, 29 Nov 2018 15:33:01 +0000 (UTC)
-Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E3C8183F6;
-        Thu, 29 Nov 2018 15:32:59 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 09:32:58 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Artem Savkov <asavkov@redhat.com>
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/tools/relocs: fix big section header tables
-Message-ID: <20181129153258.cutmesclgfadc5gu@treble>
-References: <20181129135133.31369-1-asavkov@redhat.com>
- <20181129142312.kz2l5gm33yeaglnn@treble>
- <20181129152200.GA1776@shodan.usersys.redhat.com>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72AAE60392;
+        Thu, 29 Nov 2018 15:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543505608;
+        bh=vI3CRDq9fQFG3zn1ZuN+7eSrOpHD3gIy79+DkJYMbhQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=mul79NHOSdt270pUr7bgoF3wBFsoB0rLpuRFZ7rMHSdXuuISHsfJZMcirvhYvVWuw
+         L/Ok7d+pgGud26ijq4iCdfea8FI4vxxjEjf6CFA0gRHDN/fod9BF7S9T6j9UgVuVwh
+         /uHAwc3MEmgYe2isMgSO2GdEgZ+n8MhoM9mX81KE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72AAE60392
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181129152200.GA1776@shodan.usersys.redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 29 Nov 2018 15:33:01 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] brcmfmac: Fix out of bounds memory access during fw load
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181124225707.12262-1-lyude@redhat.com>
+References: <20181124225707.12262-1-lyude@redhat.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     brcm80211-dev-list@cypress.com,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Dan Haab <dhaab@luxul.com>,
+        Jia-Shyr Chuang <saint.chuang@cypress.com>,
+        Ian Molton <ian@mnementh.co.uk>, stable@vger.kernel.org,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181129153328.B0C1C606DC@smtp.codeaurora.org>
+Date:   Thu, 29 Nov 2018 15:33:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 04:22:00PM +0100, Artem Savkov wrote:
-> On Thu, Nov 29, 2018 at 08:23:12AM -0600, Josh Poimboeuf wrote:
-> > On Thu, Nov 29, 2018 at 02:51:33PM +0100, Artem Savkov wrote:
-> > > In case when the number of entries in the section header table is larger
-> > > then or equal to SHN_LORESERVE the size of the table is held in the sh_size
-> > > member of the initial entry in section header table instead of e_shnum.
-> > > Same with the string table index which is located in sh_link instead of
-> > > e_shstrndx.
-> > > 
-> > > This case is easily reproducible with KCFLAGS="-ffunction-sections",
-> > > bzImage build fails with "String table index out of bounds" error.
-> > > 
-> > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> > > ---
-> > >  arch/x86/tools/relocs.c | 58 +++++++++++++++++++++++++++++------------
-> > >  1 file changed, 41 insertions(+), 17 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-> > > index b629f6992d9f..5275ea0a0d13 100644
-> > > --- a/arch/x86/tools/relocs.c
-> > > +++ b/arch/x86/tools/relocs.c
-> > > @@ -11,7 +11,9 @@
-> > >  #define Elf_Shdr		ElfW(Shdr)
-> > >  #define Elf_Sym			ElfW(Sym)
-> > >  
-> > > -static Elf_Ehdr ehdr;
-> > > +static Elf_Ehdr	ehdr;
-> > 
-> > I think there's a tab missing here, it doesn't line up with the other
-> > variables.
+Lyude Paul <lyude@redhat.com> wrote:
+
+> I ended up tracking down some rather nasty issues with f2fs (and other
+> filesystem modules) constantly crashing on my kernel down to a
+> combination of out of bounds memory accesses, one of which was coming
+> from brcmfmac during module load:
 > 
-> This seems to be a vim bug. It aligns perfectly in
-> cat/less/lore.kernel.org which all seem to use tabstop=8 by default, but
-> it does not align in vim, but it does align with tabstop=7 in vim.
+> [   30.891382] brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac4356-sdio for chip BCM4356/2
+> [   30.894437] ==================================================================
+> [   30.901581] BUG: KASAN: global-out-of-bounds in brcmf_fw_alloc_request+0x42c/0x480 [brcmfmac]
+> [   30.909935] Read of size 1 at addr ffff2000024865df by task kworker/6:2/387
+> [   30.916805]
+> [   30.918261] CPU: 6 PID: 387 Comm: kworker/6:2 Tainted: G           O      4.20.0-rc3Lyude-Test+ #19
+> [   30.927251] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
+> [   30.935964] Workqueue: events brcmf_driver_register [brcmfmac]
+> [   30.941641] Call trace:
+> [   30.944058]  dump_backtrace+0x0/0x3e8
+> [   30.947676]  show_stack+0x14/0x20
+> [   30.950968]  dump_stack+0x130/0x1c4
+> [   30.954406]  print_address_description+0x60/0x25c
+> [   30.959066]  kasan_report+0x1b4/0x368
+> [   30.962683]  __asan_report_load1_noabort+0x18/0x20
+> [   30.967547]  brcmf_fw_alloc_request+0x42c/0x480 [brcmfmac]
+> [   30.967639]  brcmf_sdio_probe+0x163c/0x2050 [brcmfmac]
+> [   30.978035]  brcmf_ops_sdio_probe+0x598/0xa08 [brcmfmac]
+> [   30.983254]  sdio_bus_probe+0x190/0x398
+> [   30.983270]  really_probe+0x2a0/0xa70
+> [   30.983296]  driver_probe_device+0x1b4/0x2d8
+> [   30.994901]  __driver_attach+0x200/0x280
+> [   30.994914]  bus_for_each_dev+0x10c/0x1a8
+> [   30.994925]  driver_attach+0x38/0x50
+> [   30.994935]  bus_add_driver+0x330/0x608
+> [   30.994953]  driver_register+0x140/0x388
+> [   31.013965]  sdio_register_driver+0x74/0xa0
+> [   31.014076]  brcmf_sdio_register+0x14/0x60 [brcmfmac]
+> [   31.023177]  brcmf_driver_register+0xc/0x18 [brcmfmac]
+> [   31.023209]  process_one_work+0x654/0x1080
+> [   31.032266]  worker_thread+0x4f0/0x1308
+> [   31.032286]  kthread+0x2a8/0x320
+> [   31.039254]  ret_from_fork+0x10/0x1c
+> [   31.039269]
+> [   31.044226] The buggy address belongs to the variable:
+> [   31.044351]  brcmf_firmware_path+0x11f/0xfffffffffffd3b40 [brcmfmac]
+> [   31.055601]
+> [   31.057031] Memory state around the buggy address:
+> [   31.061800]  ffff200002486480: 04 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+> [   31.068983]  ffff200002486500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> [   31.068993] >ffff200002486580: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
+> [   31.068999]                                                     ^
+> [   31.069017]  ffff200002486600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> [   31.096521]  ffff200002486680: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+> [   31.096528] ==================================================================
+> [   31.096533] Disabling lock debugging due to kernel taint
+> 
+> It appears that when trying to determine the length of the string in the
+> alternate firmware path, we make the mistake of not handling the case
+> where the firmware path is empty correctly. Since strlen(mp_path) can
+> return 0, we'll end up accessing mp_path[-1] when the firmware_path
+> isn't provided through the module arguments.
+> 
+> So, fix this by just setting the end char to '\0' by default, and only
+> changing it if we have a non-zero length. Additionally, use strnlen()
+> with BRCMF_FW_ALTPATH_LEN instead of strlen() just to be extra safe.
+> 
+> Fixes: 2baa3aaee27f ("brcmfmac: introduce brcmf_fw_alloc_request() function")
+> Cc: Hante Meuleman <hante.meuleman@broadcom.com>
+> Cc: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+> Cc: Franky Lin <franky.lin@broadcom.com>
+> Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: Arend Van Spriel <arend.vanspriel@broadcom.com>
+> Cc: Himanshu Jha <himanshujha199640@gmail.com>
+> Cc: Dan Haab <dhaab@luxul.com>
+> Cc: Jia-Shyr Chuang <saint.chuang@cypress.com>
+> Cc: Ian Molton <ian@mnementh.co.uk>
+> Cc: <stable@vger.kernel.org> # v4.17+
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-Are you looking at the patch?  Or the file itself?
+Patch applied to wireless-drivers-next.git, thanks.
 
-"less arch/x86/tools/relocs.c" shows the same issue.
+b72c51a58e6d brcmfmac: Fix out of bounds memory access during fw load
 
 -- 
-Josh
+https://patchwork.kernel.org/patch/10696609/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
