@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEFFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095E1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B988A2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C52E22133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBdYHYGg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988A2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJWGzMRC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52E22133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731618AbeK3B0t (ORCPT
+        id S1731631AbeK3B0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730438AbeK3B0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:48 -0500
+        id S1730438AbeK3B0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C275205C9;
-        Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014C2205C9;
+        Thu, 29 Nov 2018 14:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501277;
-        bh=Klk324mbtu9HWfkF5siH5oc0E6sEe8WH2zpyAyBKrwM=;
+        s=default; t=1543501279;
+        bh=i2c453BkqByqdKsslx0kSw6HFyN/JBlP6jTZYHE6X4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HBdYHYGgOXgE1VY6Kd1+0tjXhE5rWr2RJoVxVW7MA+gPbxWKRIuI2Ffg7/hB6bVix
-         ZZ259nPXQX6iKHSRzBSHBUbfDIzZodBIQpJcJspU8jBkxMd34ystivNQ6w4FYGNvxP
-         L/zS0HgbMBYbPQkiAXMjhQj/9XcHFzoMwfoiJnAk=
+        b=mJWGzMRCXsLFDk1BPzItEN/dvRSf+up0Luscd+q8EBQY0PlJKS2CKiSrky6fOKbAM
+         87LU+RWQfLPVAor73RUt4W94U02tCdZvyqIzSwSj+C20CV5WRpazGVYndfIO0a7gFg
+         88jCeNoDidbmVMbDqI7sJxgQ2mE7apnWx6g80SNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.9 07/92] iwlwifi: mvm: fix regulatory domain update when the firmware starts
-Date:   Thu, 29 Nov 2018 15:11:36 +0100
-Message-Id: <20181129140107.092372163@linuxfoundation.org>
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 08/92] brcmfmac: fix reporting support for 160 MHz channels
+Date:   Thu, 29 Nov 2018 15:11:37 +0100
+Message-Id: <20181129140107.166272173@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -63,77 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-commit 82715ac71e6b94a2c2136e31f3a8e6748e33aa8c upstream.
+commit d1fe6ad6f6bd61c84788d3a7b11e459a439c6169 upstream.
 
-When the firmware starts, it doesn't have any regulatory
-information, hence it uses the world wide limitations. The
-driver can feed the firmware with previous knowledge that
-was kept in the driver, but the firmware may still not
-update its internal tables.
+Driver can report IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160MHZ so it's
+important to provide valid & complete info about supported bands for
+each channel. By default no support for 160 MHz should be assumed unless
+firmware reports it for a given channel later.
 
-This happens when we start a BSS interface, and then the
-firmware can change the regulatory tables based on our
-location and it'll use more lenient, location specific
-rules. Then, if the firmware is shut down (when the
-interface is brought down), and then an AP interface is
-created, the firmware will forget the country specific
-rules.
+This fixes info passed to the userspace. Without that change userspace
+could try to use invalid channel and fail to start an interface.
 
-The host will think that we are in a certain country that
-may allow channels and will try to teach the firmware about
-our location, but the firmware may still not allow to drop
-the world wide limitations and apply country specific rules
-because it was just re-started.
-
-In this case, the firmware will reply with MCC_RESP_ILLEGAL
-to the MCC_UPDATE_CMD. In that case, iwlwifi needs to let
-the upper layers (cfg80211 / hostapd) know that the channel
-list they know about has been updated.
-
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201105
-
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 Cc: stable@vger.kernel.org
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    8 ++++++--
- drivers/net/wireless/intel/iwlwifi/mvm/nvm.c      |    5 ++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -327,8 +327,12 @@ struct ieee80211_regdomain *iwl_mvm_get_
- 		goto out;
- 	}
- 
--	if (changed)
--		*changed = (resp->status == MCC_RESP_NEW_CHAN_PROFILE);
-+	if (changed) {
-+		u32 status = le32_to_cpu(resp->status);
-+
-+		*changed = (status == MCC_RESP_NEW_CHAN_PROFILE ||
-+			    status == MCC_RESP_ILLEGAL);
-+	}
- 
- 	regd = iwl_parse_nvm_mcc_info(mvm->trans->dev, mvm->cfg,
- 				      __le32_to_cpu(resp->n_channels),
---- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-@@ -739,9 +739,8 @@ iwl_mvm_update_mcc(struct iwl_mvm *mvm,
- 	}
- 
- 	IWL_DEBUG_LAR(mvm,
--		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') change: %d n_chans: %d\n",
--		      status, mcc, mcc >> 8, mcc & 0xff,
--		      !!(status == MCC_RESP_NEW_CHAN_PROFILE), n_channels);
-+		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') n_chans: %d\n",
-+		      status, mcc, mcc >> 8, mcc & 0xff, n_channels);
- 
- exit:
- 	iwl_free_resp(&cmd);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -5990,7 +5990,8 @@ static int brcmf_construct_chaninfo(stru
+ 			 * for subsequent chanspecs.
+ 			 */
+ 			channel->flags = IEEE80211_CHAN_NO_HT40 |
+-					 IEEE80211_CHAN_NO_80MHZ;
++					 IEEE80211_CHAN_NO_80MHZ |
++					 IEEE80211_CHAN_NO_160MHZ;
+ 			ch.bw = BRCMU_CHAN_BW_20;
+ 			cfg->d11inf.encchspec(&ch);
+ 			chaninfo = ch.chspec;
 
 
