@@ -2,93 +2,132 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355B5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3E3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED4EA20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:47:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qq/gkA1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED4EA20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B7606208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 07:48:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7606208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeK2Svv (ORCPT
+        id S1727608AbeK2Swd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 13:51:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54602 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 13:52:33 -0500
+Received: from mga07.intel.com ([134.134.136.100]:12758 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbeK2Svu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 13:51:50 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7CBB206B6;
-        Thu, 29 Nov 2018 07:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543477643;
-        bh=Lsz4mTvdoqcwWqo4Lubt8iBi5mVJoSD6B53HO8icfdg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qq/gkA1FjuGpWGN2D3heloLYUwF4IW+eOUJDbHlyRYWLpYQYEkMRE7JdmiVJTj77M
-         dTh3awjFt2mcpA1qXlOdj4RcpSkZmrF2cT3K7/L8TOZM5M4r+/U/beorpInzu7LfTu
-         BoyCnVynqTtgvnEqNITMEeIEjSFB5VnV9+h06yJQ=
-Date:   Thu, 29 Nov 2018 08:47:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, jolsa@redhat.com,
-        namhyung@kernel.org, adrian.hunter@intel.com, ast@kernel.org,
-        hpa@zytor.com, suzuki.poulosi@arm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/6] perf: Introduce ioctl to communicate driver
- configuration to kernel
-Message-ID: <20181129074721.GC12347@kroah.com>
-References: <1543442478-31465-1-git-send-email-mathieu.poirier@linaro.org>
- <1543442478-31465-2-git-send-email-mathieu.poirier@linaro.org>
+        id S1727524AbeK2Swd (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 13:52:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 23:48:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,293,1539673200"; 
+   d="scan'208";a="278627307"
+Received: from skl.sh.intel.com ([10.239.161.125])
+  by orsmga005.jf.intel.com with ESMTP; 28 Nov 2018 23:48:03 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v4 0/4] perf report/annotate: Support average IPC and IPC coverage for function
+Date:   Thu, 29 Nov 2018 23:39:34 +0800
+Message-Id: <1543505978-19808-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543442478-31465-2-git-send-email-mathieu.poirier@linaro.org>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:01:13PM -0700, Mathieu Poirier wrote:
-> Adding a new IOCTL command to communicate PMU specific configuration to
-> PMU kernel drivers.  This can be anything a PMU might need for
-> configuration that doesn't fit in the perf_event_attr structure, such
-> as the CoreSight sink to use for a session.
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  include/uapi/linux/perf_event.h       | 1 +
->  tools/include/uapi/linux/perf_event.h | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> index 9de8780ac8d9..bb558caeb33b 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -462,6 +462,7 @@ struct perf_event_query_bpf {
->  #define PERF_EVENT_IOC_PAUSE_OUTPUT		_IOW('$', 9, __u32)
->  #define PERF_EVENT_IOC_QUERY_BPF		_IOWR('$', 10, struct perf_event_query_bpf *)
->  #define PERF_EVENT_IOC_MODIFY_ATTRIBUTES	_IOW('$', 11, struct perf_event_attr *)
-> +#define PERF_EVENT_IOC_SET_DRV_CONFIG		_IOW('$', 12, char *)
+Add supporting of displaying the average IPC and IPC coverage
+percentage per function.
 
+For example,
 
-A generic "char *" that the kernel is then going to parse?  Can you make
-any more flexible of a new syscall to the kernel that allows anyone to
-do anything with this?  :)
+$ perf record -b ...
+$ perf report -s symbol or
+  perf report -s symbol --stdio
 
-Please make this a lot more specific, this is way to generic, sorry.
+Overhead  Symbol                           IPC   [IPC Coverage]
+  39.60%  [.] __random                     2.30  [ 54.8%]
+  18.02%  [.] main                         0.43  [ 54.3%]
+  14.21%  [.] compute_flag                 2.29  [100.0%]
+  14.16%  [.] rand                         0.36  [100.0%]
+   7.06%  [.] __random_r                   2.57  [ 70.5%]
+   6.85%  [.] rand@plt                     0.00  [  0.0%]
+  ...
 
-greg k-h
+$ perf annotate --stdio2
+
+Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
+
+                        Disassembly of section .text:
+
+                        000000000003aac0 <random@@GLIBC_2.2.5>:
+  8.32  3.28              sub    $0x18,%rsp
+        3.28              mov    $0x1,%esi
+        3.28              xor    %eax,%eax
+        3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
+ 11.57  3.28     1      ↓ je     20
+                          lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+                        ↓ jne    29
+                        ↓ jmp    43
+ 11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
+ ...
+
+v4:
+---
+    Add a new patch "perf report: Documentation average IPC and IPC coverage"
+    to explain the new columns "IPC" and "IPC Coverage".
+
+    Other patches are not changed.
+
+v3:
+---
+    Remove the sortkey "ipc" from command-line. The columns "IPC"
+    and "[IPC Coverage]" are automatically enabled when "symbol"
+    is specified.
+
+    Patch "perf report: Display average IPC and IPC coverage per symbol"
+    is impacted.
+
+v2:
+---
+  1. Merge in Jiri's patch to support stdio mode
+
+  2. Add a new patch "perf annotate: Create a annotate2 flag
+     in struct symbol" which records if the symbol has been
+     annotated yet.
+
+  3. Minor update such as adding { } for multiline code in 'if'
+     condition.
+
+Jin Yao (4):
+  perf annotate: Compute average IPC and IPC coverage per symbol
+  perf annotate: Create a annotate2 flag in struct symbol
+  perf report: Display average IPC and IPC coverage per symbol
+  perf report: Documentation average IPC and IPC coverage
+
+ tools/perf/Documentation/perf-report.txt |  8 +++++
+ tools/perf/builtin-report.c              | 26 ++++++++++++--
+ tools/perf/util/annotate.c               | 42 ++++++++++++++++++++--
+ tools/perf/util/annotate.h               |  5 +++
+ tools/perf/util/hist.h                   |  1 +
+ tools/perf/util/sort.c                   | 61 ++++++++++++++++++++++++++++++++
+ tools/perf/util/sort.h                   |  2 ++
+ tools/perf/util/symbol.h                 |  1 +
+ 8 files changed, 140 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
+
