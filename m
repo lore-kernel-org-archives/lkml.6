@@ -2,95 +2,130 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73BC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0874DC64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B2A2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43F620863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:38:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU7gbtjH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B2A2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="FGqPIK9U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43F620863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbeK3Kot (ORCPT
+        id S1727158AbeK3KpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbeK3Kot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:44:49 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEBA120863;
-        Thu, 29 Nov 2018 23:37:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543534654;
-        bh=xAypaLrh/aJumtX2Ta2GrzMwv2NIrxoInFLOX84hZsA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=gU7gbtjHX+SSAcNGsJ35X0ABf61Sql5gkUW8TxBKKDAwDSgq9AwCBHLR83UcXF67Z
-         1faHn4I1uWBWaVZhmagRbXvI+Qa8qaLbT0YzGQvq0YRX9Th/8BztHt7BqCd0aZwEKs
-         iesPKYr3PKM8k7ELNM67GTxNRj8Gdz1trr7/WPdo=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 30 Nov 2018 05:45:14 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38532 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbeK3KpN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:45:13 -0500
+Received: by mail-ot1-f67.google.com with SMTP id e12so3497109otl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:37:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eQrn+Srwf0zuHQUeLfDQuJmZiLKRQB0d3wk46MwrBnM=;
+        b=FGqPIK9U655mw3w98R+fkmqgdVm92JZ3Cngf0mpMXhzOr5nFwhgG3ldP0z7Rzcu6KV
+         xtsJa/A0AsM5XjRg9S5hA9naAVqqx+d2wm12LJPRE3QoDNui4eYPZ0k+c1Jqm80wrgHH
+         yxQi8lH3o2v3e8/lgVHt83nNJavX9XVHRr+hqQMwRcz01SuRVwcMpf0vxRve8N8iiMS/
+         XFpsZ6WWJBuyEMaUeAu8hdSjjxh+bsNA+iI9H81vne8LYhT4OqMMk5FECZ6sR2Fg4GcV
+         3/hOg5vJBRnRIU1FtBV04bT2BpEQWh+cdfCasSv0icmDHxJiihXqvG1R97UOo/k3tVhO
+         fJXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eQrn+Srwf0zuHQUeLfDQuJmZiLKRQB0d3wk46MwrBnM=;
+        b=sir8/yhOqtToUW6xEwrISFqCUqObIOLlmf0SNdQZ+6zB4ivQApAwviylbtW/vIhNop
+         jtITXlihnLlTtcygWDaSJd103POvMit/6jWXArcEoY3Oq/530wMus0uywh45DgUmj6F/
+         MZDGLTRnO21A3pBwYHtoldBmNkAZBnIeAfPMF3NWTdwmZJ6EXQbQgG0Gq+IGPHyFKImv
+         rNRfQGx4vKf3AYLmoo5bmlA0gbPwTXbOo0zCkHSCkAe0YagivGFmnOny7Uk9MAqF0iWb
+         YAkdNZGyo/a34uOqu+bPgFmiwndTEOM3w0gD59ENpWIU8aekeLwJ/6K2prcGs0R+RCUF
+         mZOg==
+X-Gm-Message-State: AA+aEWbzj5fNTTmlrf/rcdWWsFSJ6aSOxRVwKy+RWAQ835aeVXLvDIuQ
+        d0L2f4Qw7XErTrVT8bcDgbVMw3VmV/cT1I6JWJ0=
+X-Google-Smtp-Source: AFSGD/VZCGMLGl5XAzDB0sU26vZ7NWPkmJVYRT9VDcH0VRYOUcH7uy2vxfgzXJFjh2GgTJP8qxpGUB6Obnq+PyWTTv4=
+X-Received: by 2002:a9d:a48:: with SMTP id 66mr2238865otg.308.1543534679125;
+ Thu, 29 Nov 2018 15:37:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181129063952.623svjr7pti7apah@ThinkPad>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
- <154345243603.88331.17915868280143383591@swboyd.mtv.corp.google.com>
- <20181129063952.623svjr7pti7apah@ThinkPad>
-Message-ID: <154353465409.88331.8677593357765162802@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 13/17] clk: sunxi-ng: add support for suniv F1C100s SoC
-Date:   Thu, 29 Nov 2018 15:37:34 -0800
+References: <20181114230554.4968-1-martin.blumenstingl@googlemail.com>
+ <7hh8g0d8tg.fsf@baylibre.com> <CAFBinCBViZgRrZO16FsRKSGNriSw2_D9+_6ri99_zf++_SuuKg@mail.gmail.com>
+ <7hk1kv79at.fsf@baylibre.com>
+In-Reply-To: <7hk1kv79at.fsf@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 30 Nov 2018 00:37:48 +0100
+Message-ID: <CAFBinCB8r+5tGKxfsPMapayxmDuWOi=WihvvdxS=UxcnpeYqdQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: switch CONFIG_PWM_MESON to built-in
+To:     khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mesih Kilinc (2018-11-28 22:39:52)
-> On 18/11/28 04:47, Stephen Boyd wrote:
-> > Quoting Mesih Kilinc (2018-11-28 14:33:23)
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/s=
-unxi-ng/ccu-suniv-f1c100s.c
-> > > new file mode 100644
-> > > index 0000000..d4bc1b8
-> > > --- /dev/null
-> > > +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-> > > @@ -0,0 +1,541 @@
-> > > +/*
-> > > + * Copyright (c) 2016 Icenowy Zheng <icenowy@aosc.io>
-> > > + *
-> > > + * SPDX-License-Identifier: GPL-2.0
-> > =
+Hi Kevin,
 
-> > Please fix this location.
-> =
+On Fri, Nov 30, 2018 at 12:28 AM Kevin Hilman <khilman@baylibre.com> wrote:
+>
+> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+>
+> > Hi Kevin,
+> >
+> > On Thu, Nov 29, 2018 at 1:30 AM Kevin Hilman <khilman@baylibre.com> wrote:
+> >>
+> >> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+> >>
+> >> > Some Meson8b boards (Odroid-C1, EC-100) use a PWM regulator which is the
+> >> > voltage supply of the CPU cores (this regulator is typically called
+> >> > "VCCK").
+> >> > Now that we are preparing support for CPU frequency scaling on Meson8,
+> >> > Meson8b and Meson8m2 we should build the pwm-meson driver into the
+> >> > kernel so we can configure the CPU voltage early in the boot process.
+> >>
+> >> Can you explain a little more why the configuration of CPU voltage
+> >> cannot wait a bit so this could be properly probed?
+> >
+> > I was under the impression that cpufreq-dt would still initialize even
+> > if the regulator is not ready yet. however (after reading the code
+> > again) this is clearly NOT the case.
+>
+> Hmm, a quick look at cpufreq-dt suggests that it should -EPROBE_DEFER if
+> the regulator isn't ready yet.  Why doesn't that work?
+sorry for not being clear:
+I was under the impression that cpufreq-dt wouldn't handle -EPROBE_DEFER.
+I'm not sure why I assumed that. As you already said: deferred probing
+of the regulator works fine.
 
-> I am very sorry, I should have been more carefull. Should I resend whole
-> patchset or just resending this patch is enough? =
+> > there's still a benefit with this change: your Odroid-C1 in your
+> > KernelCI lab would also be able to change the CPU frequency (so in
+> > case something breaks we could spot it there).
+> > will you accept this patch after I updated the description to mention
+> > that it's for KernelCI test coverage?
+>
+> Possibly, but I'd still rather see the dependencies worked out correctly
+> so that this can be module, and cpufreq-dt would defer until it's ready.
+KernelCI shows multiple "pwm-regulator regulator-vcck: Failed to get
+PWM: -517" messages on Odroid-C1.
+however, what I failed to notice so far is that there's a
+"pwm-regulator: supplied by regulator-dummy" at the end of the boot
+process. does this mean that the Odroid-C1 in your KernelCI lab can
+load kernel modules? in that case this patch can be ignored.
 
-> =
+(I will still send a PWM regulator related patch: that "Failed to get
+PWM: -517" message is very noisy and we typically suppress that in
+other drivers)
 
 
-Just this one? Who do you intend to pick up these patches?
-
+Regards
+Martin
