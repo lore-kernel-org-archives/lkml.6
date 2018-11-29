@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263B3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F17CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E190321104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675B221019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="doFgQFwu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E190321104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATAyVnit"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675B221019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbeK3BWf (ORCPT
+        id S1730283AbeK3BWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730253AbeK3BWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:34 -0500
+        id S1728190AbeK3BWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2322821104;
-        Thu, 29 Nov 2018 14:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF5821019;
+        Thu, 29 Nov 2018 14:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501024;
-        bh=Mx5kqOPpTm+TLpoMJSsB0rttWjM9BbAOmNxv2WoE0lw=;
+        s=default; t=1543501026;
+        bh=0hkNSlWnj37Jg51FVQvGEr/kcc6irP/Kb2oYroaEzVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=doFgQFwudP4M+QxVChNLL7rIwx3lReEQ9GpGALo6Cu5RT1+5zeznYsoG0SzHF9bq6
-         j0w5zvfu324avqjFuVWZkZ/rNaLNH522aN6rjxiGLerAWa0NFEYVtHLlsZ4zqx6m+3
-         tAW2L6OzHA8nSpXtI79SphEEU34B5mX8IP+hFpAU=
+        b=ATAyVnitHuNux1eQmvboMCXokKnKEGq3x8i9BKGyi18gia3K+9Ve9Je0+ltlkNxR8
+         hvuNyJbSrX4xKKHftFPnAcqw47QuqEq8fXb8wXqVyfFtxJ+CKjrzk00dueB9/iL5lJ
+         io3sTatcadmmXYGASkMbp++DEHfP1DexKQ9Th0xU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 12/86] can: dev: can_get_echo_skb(): factor out non sending code to __can_get_echo_skb()
-Date:   Thu, 29 Nov 2018 15:11:37 +0100
-Message-Id: <20181129140110.910340922@linuxfoundation.org>
+Subject: [PATCH 4.4 13/86] can: dev: __can_get_echo_skb(): replace struct can_frame by canfd_frame to access frame length
+Date:   Thu, 29 Nov 2018 15:11:38 +0100
+Message-Id: <20181129140110.982887675@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,86 +63,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit a4310fa2f24687888ce80fdb0e88583561a23700 upstream.
+commit 200f5c49f7a2cd694436bfc6cb0662b794c96736 upstream.
 
-This patch factors out all non sending parts of can_get_echo_skb() into
-a seperate function __can_get_echo_skb(), so that it can be re-used in
-an upcoming patch.
+This patch replaces the use of "struct can_frame::can_dlc" by "struct
+canfd_frame::len" to access the frame's length. As it is ensured that
+both structures have a compatible memory layout for this member this is
+no functional change. Futher, this compatibility is documented in a
+comment.
 
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/dev.c   |   36 +++++++++++++++++++++++++-----------
- include/linux/can/dev.h |    1 +
- 2 files changed, 26 insertions(+), 11 deletions(-)
+ drivers/net/can/dev.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 --- a/drivers/net/can/dev.c
 +++ b/drivers/net/can/dev.c
-@@ -423,14 +423,7 @@ void can_put_echo_skb(struct sk_buff *sk
- }
- EXPORT_SYMBOL_GPL(can_put_echo_skb);
+@@ -430,11 +430,14 @@ struct sk_buff *__can_get_echo_skb(struc
+ 	BUG_ON(idx >= priv->echo_skb_max);
  
--/*
-- * Get the skb from the stack and loop it back locally
-- *
-- * The function is typically called when the TX done interrupt
-- * is handled in the device driver. The driver must protect
-- * access to priv->echo_skb, if necessary.
-- */
--unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
-+struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
- {
- 	struct can_priv *priv = netdev_priv(dev);
+ 	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
+ 		struct sk_buff *skb = priv->echo_skb[idx];
+-		struct can_frame *cf = (struct can_frame *)skb->data;
+-		u8 dlc = cf->can_dlc;
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
  
-@@ -441,13 +434,34 @@ unsigned int can_get_echo_skb(struct net
- 		struct can_frame *cf = (struct can_frame *)skb->data;
- 		u8 dlc = cf->can_dlc;
- 
--		netif_rx(priv->echo_skb[idx]);
-+		*len_ptr = dlc;
+-		*len_ptr = dlc;
++		*len_ptr = len;
  		priv->echo_skb[idx] = NULL;
  
--		return dlc;
-+		return skb;
- 	}
- 
--	return 0;
-+	return NULL;
-+}
-+
-+/*
-+ * Get the skb from the stack and loop it back locally
-+ *
-+ * The function is typically called when the TX done interrupt
-+ * is handled in the device driver. The driver must protect
-+ * access to priv->echo_skb, if necessary.
-+ */
-+unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
-+{
-+	struct sk_buff *skb;
-+	u8 len;
-+
-+	skb = __can_get_echo_skb(dev, idx, &len);
-+	if (!skb)
-+		return 0;
-+
-+	netif_rx(skb);
-+
-+	return len;
- }
- EXPORT_SYMBOL_GPL(can_get_echo_skb);
- 
---- a/include/linux/can/dev.h
-+++ b/include/linux/can/dev.h
-@@ -154,6 +154,7 @@ void can_change_state(struct net_device
- 
- void can_put_echo_skb(struct sk_buff *skb, struct net_device *dev,
- 		      unsigned int idx);
-+struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr);
- unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx);
- void can_free_echo_skb(struct net_device *dev, unsigned int idx);
- 
+ 		return skb;
 
 
