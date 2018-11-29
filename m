@@ -2,48 +2,53 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BC4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3367C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E10213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889042146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:32:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6/IvaQP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E10213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrGzWFnM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889042146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389353AbeK3Bhk (ORCPT
+        id S2389366AbeK3Bhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:37:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40712 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:37:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbeK3Bhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:37:39 -0500
+        id S1732374AbeK3Bhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:37:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31B7B213A2;
-        Thu, 29 Nov 2018 14:32:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 972492145D;
+        Thu, 29 Nov 2018 14:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501925;
-        bh=M7yzv5RI9jO+LycEyZopC1Q5nL/ZfXjp1RUswh2X/1w=;
+        s=default; t=1543501928;
+        bh=p0bLMrQY46gJ01XlexoG48x3Xr8j1J5nLT2tuA8ywa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6/IvaQPMcQ8mN24a0zEcOA4JfU2y42oIVU8bFmempcclv/IrPvaCf/SfQT52ZVl3
-         VGVRdc5dwPfusR6+k3MdKnSZGf4chDvimsTufxacUwACMCOEUxD1F6bBa1e3COxFc8
-         kg+om+3Ab0JY45QC7s39WdmDCwKYO5SFWja7YOis=
+        b=BrGzWFnMlCRJ1psGoziG3xWLk0QoTpp4EE7m9WMnKAZcadNHNe9N9/07dVQTsYMnu
+         CaXG1KzXhEXCXupM8cD+wO736J/Kl4zAxDTNh5xJBHQ9C5bznq4HR+kkr+4Nb92gd8
+         t2hzAK5vEEBGDUcqAWpEaBnWu4wdMXkhQGfzplpE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 054/110] can: rx-offload: rename can_rx_offload_irq_queue_err_skb() to can_rx_offload_queue_tail()
-Date:   Thu, 29 Nov 2018 15:12:25 +0100
-Message-Id: <20181129135923.449757661@linuxfoundation.org>
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Jonathan Toppins <jtoppins@redhat.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 091/110] kdb: Use strscpy with destination buffer size
+Date:   Thu, 29 Nov 2018 15:13:02 +0100
+Message-Id: <20181129135924.931269897@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -61,75 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+[ Upstream commit c2b94c72d93d0929f48157eef128c4f9d2e603ce ]
 
-commit 4530ec36bb1e0d24f41c33229694adacda3d5d89 upstream.
+gcc 8.1.0 warns with:
 
-This function has nothing todo with error.
+kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
+kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
+     strncpy(prefix_name, name, strlen(name)+1);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Use strscpy() with the destination buffer size, and use ellipses when
+displaying truncated symbols.
 
+v2: Use strscpy()
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Jonathan Toppins <jtoppins@redhat.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: kgdb-bugreport@lists.sourceforge.net
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/flexcan.c      |    4 ++--
- drivers/net/can/rx-offload.c   |    5 +++--
- include/linux/can/rx-offload.h |    3 ++-
- 3 files changed, 7 insertions(+), 5 deletions(-)
+ kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
+ kernel/debug/kdb/kdb_private.h |  2 +-
+ kernel/debug/kdb/kdb_support.c | 10 +++++-----
+ 3 files changed, 15 insertions(+), 12 deletions(-)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -612,7 +612,7 @@ static void flexcan_irq_bus_err(struct n
- 	if (tx_errors)
- 		dev->stats.tx_errors++;
+diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+index ed5d34925ad0..6a4b41484afe 100644
+--- a/kernel/debug/kdb/kdb_io.c
++++ b/kernel/debug/kdb/kdb_io.c
+@@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ 	int count;
+ 	int i;
+ 	int diag, dtab_count;
+-	int key;
++	int key, buf_size, ret;
  
--	can_rx_offload_irq_queue_err_skb(&priv->offload, skb);
-+	can_rx_offload_queue_tail(&priv->offload, skb);
- }
  
- static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
-@@ -652,7 +652,7 @@ static void flexcan_irq_state(struct net
- 	if (unlikely(new_state == CAN_STATE_BUS_OFF))
- 		can_bus_off(dev);
+ 	diag = kdbgetintenv("DTABCOUNT", &dtab_count);
+@@ -336,9 +336,8 @@ poll_again:
+ 		else
+ 			p_tmp = tmpbuffer;
+ 		len = strlen(p_tmp);
+-		count = kallsyms_symbol_complete(p_tmp,
+-						 sizeof(tmpbuffer) -
+-						 (p_tmp - tmpbuffer));
++		buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
++		count = kallsyms_symbol_complete(p_tmp, buf_size);
+ 		if (tab == 2 && count > 0) {
+ 			kdb_printf("\n%d symbols are found.", count);
+ 			if (count > dtab_count) {
+@@ -350,9 +349,13 @@ poll_again:
+ 			}
+ 			kdb_printf("\n");
+ 			for (i = 0; i < count; i++) {
+-				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
++				ret = kallsyms_symbol_next(p_tmp, i, buf_size);
++				if (WARN_ON(!ret))
+ 					break;
+-				kdb_printf("%s ", p_tmp);
++				if (ret != -E2BIG)
++					kdb_printf("%s ", p_tmp);
++				else
++					kdb_printf("%s... ", p_tmp);
+ 				*(p_tmp + len) = '\0';
+ 			}
+ 			if (i >= dtab_count)
+diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
+index 1e5a502ba4a7..2118d8258b7c 100644
+--- a/kernel/debug/kdb/kdb_private.h
++++ b/kernel/debug/kdb/kdb_private.h
+@@ -83,7 +83,7 @@ typedef struct __ksymtab {
+ 		unsigned long sym_start;
+ 		unsigned long sym_end;
+ 		} kdb_symtab_t;
+-extern int kallsyms_symbol_next(char *prefix_name, int flag);
++extern int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size);
+ extern int kallsyms_symbol_complete(char *prefix_name, int max_len);
  
--	can_rx_offload_irq_queue_err_skb(&priv->offload, skb);
-+	can_rx_offload_queue_tail(&priv->offload, skb);
- }
- 
- static inline struct flexcan_priv *rx_offload_to_priv(struct can_rx_offload *offload)
---- a/drivers/net/can/rx-offload.c
-+++ b/drivers/net/can/rx-offload.c
-@@ -255,7 +255,8 @@ unsigned int can_rx_offload_get_echo_skb
- }
- EXPORT_SYMBOL_GPL(can_rx_offload_get_echo_skb);
- 
--int can_rx_offload_irq_queue_err_skb(struct can_rx_offload *offload, struct sk_buff *skb)
-+int can_rx_offload_queue_tail(struct can_rx_offload *offload,
-+			      struct sk_buff *skb)
+ /* Exported Symbols for kernel loadable modules to use. */
+diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+index 987eb73284d2..b14b0925c184 100644
+--- a/kernel/debug/kdb/kdb_support.c
++++ b/kernel/debug/kdb/kdb_support.c
+@@ -221,11 +221,13 @@ int kallsyms_symbol_complete(char *prefix_name, int max_len)
+  * Parameters:
+  *	prefix_name	prefix of a symbol name to lookup
+  *	flag	0 means search from the head, 1 means continue search.
++ *	buf_size	maximum length that can be written to prefix_name
++ *			buffer
+  * Returns:
+  *	1 if a symbol matches the given prefix.
+  *	0 if no string found
+  */
+-int kallsyms_symbol_next(char *prefix_name, int flag)
++int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size)
  {
- 	if (skb_queue_len(&offload->skb_queue) >
- 	    offload->skb_queue_len_max)
-@@ -266,7 +267,7 @@ int can_rx_offload_irq_queue_err_skb(str
+ 	int prefix_len = strlen(prefix_name);
+ 	static loff_t pos;
+@@ -235,10 +237,8 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
+ 		pos = 0;
  
+ 	while ((name = kdb_walk_kallsyms(&pos))) {
+-		if (strncmp(name, prefix_name, prefix_len) == 0) {
+-			strncpy(prefix_name, name, strlen(name)+1);
+-			return 1;
+-		}
++		if (!strncmp(name, prefix_name, prefix_len))
++			return strscpy(prefix_name, name, buf_size);
+ 	}
  	return 0;
  }
--EXPORT_SYMBOL_GPL(can_rx_offload_irq_queue_err_skb);
-+EXPORT_SYMBOL_GPL(can_rx_offload_queue_tail);
- 
- static int can_rx_offload_init_queue(struct net_device *dev, struct can_rx_offload *offload, unsigned int weight)
- {
---- a/include/linux/can/rx-offload.h
-+++ b/include/linux/can/rx-offload.h
-@@ -45,7 +45,8 @@ int can_rx_offload_queue_sorted(struct c
- 				struct sk_buff *skb, u32 timestamp);
- unsigned int can_rx_offload_get_echo_skb(struct can_rx_offload *offload,
- 					 unsigned int idx, u32 timestamp);
--int can_rx_offload_irq_queue_err_skb(struct can_rx_offload *offload, struct sk_buff *skb);
-+int can_rx_offload_queue_tail(struct can_rx_offload *offload,
-+			      struct sk_buff *skb);
- void can_rx_offload_reset(struct can_rx_offload *offload);
- void can_rx_offload_del(struct can_rx_offload *offload);
- void can_rx_offload_enable(struct can_rx_offload *offload);
+-- 
+2.17.1
+
 
 
