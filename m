@@ -2,697 +2,79 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31DBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24215C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2874020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD9F52081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="phmh6g86"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2874020834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OV4opozB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9F52081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbeK3ADm (ORCPT
+        id S1728353AbeK3AED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:03:42 -0500
-Received: from mail-eopbgr790054.outbound.protection.outlook.com ([40.107.79.54]:48955
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726683AbeK3ADl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:03:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W+J7n7DOczB7ebp6Ee6rXu5oApRh+lmOJwhCN6ULrmo=;
- b=phmh6g863CVssFY/tnqCTwwWxjJRUWs/TAEyuq9RbW3sdN5WXDd//u3X1MqwhQhjqQRYKzS/S6tp0aoEip6KB/+PzB8MAPa4KX0eG2qEdojIkRIQTOA00JCVvzzShBKo5KMwLQ+raCE6f2drMxdq0ZNoAUE8HLbIsPf49LliDzE=
-Received: from SN4PR0201CA0028.namprd02.prod.outlook.com
- (2603:10b6:803:2e::14) by DM6PR02MB4329.namprd02.prod.outlook.com
- (2603:10b6:5:2a::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.20; Thu, 29 Nov
- 2018 12:58:20 +0000
-Received: from CY1NAM02FT035.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::205) by SN4PR0201CA0028.outlook.office365.com
- (2603:10b6:803:2e::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.14 via Frontend
- Transport; Thu, 29 Nov 2018 12:58:20 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT035.mail.protection.outlook.com (10.152.75.186) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1382.18
- via Frontend Transport; Thu, 29 Nov 2018 12:58:17 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gSLtY-000768-Hv; Thu, 29 Nov 2018 04:58:16 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gSLtT-0005g7-EY; Thu, 29 Nov 2018 04:58:11 -0800
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wATCw3P6000629;
-        Thu, 29 Nov 2018 04:58:03 -0800
-Received: from [172.23.37.108] (helo=xhdnagasure40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gSLtK-0005dh-Fz; Thu, 29 Nov 2018 04:58:02 -0800
-From:   Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-To:     <mmayer@broadcom.com>, <f.fainelli@gmail.com>,
-        <ladis@linux-mips.org>, <treding@nvidia.com>, <digetx@gmail.com>,
-        <d-gerlach@ti.com>
-CC:     <linus.walleij@linaro.org>, <michal.simek@xilinx.com>,
-        <linux-kernel@vger.kernel.org>,
-        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Subject: [LINUX PATCH v12 2/2] memory: pl353: Add driver for arm pl353 static memory controller
-Date:   Thu, 29 Nov 2018 18:27:58 +0530
-Message-ID: <1543496278-6524-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(2980300002)(438002)(189003)(199004)(110136005)(8936002)(2201001)(54906003)(36756003)(51416003)(50226002)(7696005)(305945005)(5660300001)(81166006)(81156014)(186003)(478600001)(36386004)(26005)(77096007)(8676002)(48376002)(50466002)(356004)(4744004)(16586007)(217873002)(106002)(47776003)(6666004)(106466001)(316002)(107886003)(4326008)(2906002)(9786002)(2616005)(476003)(126002)(575784001)(63266004)(39060400002)(336012)(14444005)(486006)(426003)(107986001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4329;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT035;1:umEjgT/XUSNnV0B16Jx8du4+QvL8o9gS8QHcVnz4Q4yUKTxxPgLjqWvFMz6/zwOMJBbMu+ry7e1oL5mSQl8+9a2uRCDlIjx5w+WiYzJb5M2aC8/+1CJ9G0mJwIemWOQe
+        Thu, 29 Nov 2018 19:04:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeK3AED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:04:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=viT4Erl/lf99MowhyCv9Arfq7SWceDt/JW8of8ieUoo=; b=OV4opozBqhoiA7Ly4z5pQuIEM
+        86rlHLMpEalVHMJVULBbjzCuWvGUkboyIaTvdA0jll1km2k2LqjXxxt0ETTyFvckjjzabAr0J4QEH
+        xhaBzOBT5vIEscbwANEIN2Hd9X2RFYsxo7CrSlJwCP31j4MlqTpdI38hgtQHjQ17i7daRZb616KvW
+        hR3Z/xDrnfNzrWJRj5w8kJiafRyWKq2O5NZj7qKkx6n787nZUoKAnzbCmkxlOFE08q2JNIbbtB6w2
+        e7C4bYy/aZzLnka/Jcpylu4B37vieiNZGnH0pNwhBZTZVPbieyveQNX/qyh9gN9mncdJLBWvp6Vw0
+        sucts0EdA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSLtu-0002Dm-1s; Thu, 29 Nov 2018 12:58:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 635E02029FD58; Thu, 29 Nov 2018 13:58:36 +0100 (CET)
+Date:   Thu, 29 Nov 2018 13:58:36 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v6 00/10] x86/alternative: text_poke() fixes
+Message-ID: <20181129125836.GM2131@hirez.programming.kicks-ass.net>
+References: <20181120203545.34928-1-namit@vmware.com>
+ <20181126103252.GN2113@hirez.programming.kicks-ass.net>
+ <60FD8780-DA8B-421F-A136-4CFB6271DD6D@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 65830cd0-3922-4a9b-6218-08d655fa569f
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM6PR02MB4329;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;3:nzEHqAq+Kzgz66Wq43dpdta3rhX6GVGAtnSLx/cUt259KtvPV+VzyLIKXJKN9vW+2fF7NedQRhCmHUmEefLY+zr20nBEATpGyCrqi4tQN0bF56dQv7kDleG6Z0jwBdmnACv13Bb57gXoqH6VP+gtDaL2quyvG2UT6gRukXxb04mYTAvNayWTGvXA9QlQhlnhCJ8262lznPiV2KXsA7wfgjNbFe4anpBojTxFUZUumLA0fsIgaTfn7t9TBSCnnb1vK2t66z8KYLL2B+OLBk36WXmx1a3AVsxdos98G2LVx7gihD1+Z1xZL8ktNP9I+/K0d2kgkJRB0jxedjmvK1cc4ypfczhagZa7Tpp7Yn8vYnE=;25:bXNNM5/eXmZ/cXtpcxNtYK6B1kjfKbUr3QXEKXOio+/U2C2a2FD8P+V6W4GU6ZFErv/NoGGBQY3W0VsUpAPLEW+/Asl8+uV2mriX8huNZhb29KuWdIdQozj6xRigdqo6sKnuUtjufcRzg8KEMPw+SuEtn+H08VY8CXrtU5wkpMvth4PYrwFueApA1n/COIWVW91gZL4dgSSMOGsfnT2jqeA7FD7K06o6OvG0MKSdz3adRA3SAME18G3LVu7iMPFNVIUkVTef0AEACoiGObsfS7hURZvgjcChbXw9oB6f+Xgio28qIt3HeRaR62NmW2QcEPK8v0bFiehqzOzAJmdy7w==
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4329:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;31:8KJqkFL846R8egfLohZjZXxNQCktco8//8YzCi03uKaIS5yGPG1aitZAxbbYDukBxLlqUfJMr8A1Y8j1yn4iVBuY/k68WbaL4+JRZAjiK3xVSRqFrhkpkwgRxCXMyanw+duqcGBgz9EKxk4pzF5AMST9spJN9yboxoHcW22QKeebK5NTLsBxbp5SIkBAm2urkkN/7UOYh37KMquC4RJ9iPrVuA/OEfE+NJcYks0Un2U=;20:ipqxDeyrE70J+iVGeHfMkpjx3CbcRdIsvJVdj+eU2oQkobQjF/H4anDzTHI2OK1+lwo0zWU+1W6OwU/bj9NxE3Pst5NVUKDEmmyv5UFXqlGiWSq6HuUIZoK5tcSI1RoRJd4iWTI50UE7vs+oeG1Hemz1FCTIpzuN11ZMAFVLBoQE0owU3d2asZZ0Cmhid+Z1M/Ym6EXRSRPP1FC66S/TdUugRMGiC6y9DGkTmBhcP7KGEM73j0en5quc/36ezp86ddrBJfCUrOblj0Fd1ePnVop1g8WdMnzQXxcy8eyqFeTSvpvW4RyiAd4R19+BzWGnr7zoUXA+KYi3xgyREUMGLNArb9J9lgBqw/Qx60yV/6cZf1NcAao6F/1UxDwAf27c+pB/kQc3XFpLGAJ3V08ZSGQYHM5gMiJdY0nKp3lVRt+CNV942SCsJ6Sna0gOlS2J9YkfbaTgn77xIsQwVHZGlBlCaWWf9qWo2NeQu4xodrJgrLdIdaJRIZ1QWIH/j1qN
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <DM6PR02MB43295980FF0ADFD5F59A5C55AFD20@DM6PR02MB4329.namprd02.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231453)(999002)(944501447)(52105112)(3002001)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM6PR02MB4329;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4329;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;4:1wTaW7kgj6nW1SXa38dpDY7WiQiEns/QWMKz0zOxbYksr+okteZ7Ngug9zhSLmcwGznIa9WS4T7KwAB4rqgEFl6A4l34SCSuuV+cG1z2rIMWMqmpLNp3faseP2h955eOLhMNAEtgGw+4S/ACDziH6qViaWrN9IN63C8EC4vleXxcsvG/P+HdJbCh8OX54cUMugqkhAVQ0Fx5KeE/d0a4WdjVtaDMWSG2vWJSTltEydyovEI0/q6ufyADumhAy+fm0CWuHmOD8dneuDGnCGREoA==
-X-Forefront-PRVS: 0871917CDA
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4329;23:3kTWCtoR35ZLhhfomekVgP9VLUAzPqVEOiIOldtiw?=
- =?us-ascii?Q?tHN+Zu8mgJfA0SfAuvaID7dePWnXmn1U2UMG8+XO0b13rJVUoQ+9b9JnUXpV?=
- =?us-ascii?Q?R2jRN4HzweSzpPf9MYGBUVgTBDfdOWROVea+nwpgUKmaB6Nb0rm//W/CzjUM?=
- =?us-ascii?Q?pPTTVtnadMG2fgOlTLPfSwHcNQ0URopB4ISkGfw14pgzZIU1ukS2Cmw2VsAk?=
- =?us-ascii?Q?7vKlaNdkXeKQmX9HG9wj46Nwn9d1Np24bMWgu004FutOoDFpfvkifrHzd94k?=
- =?us-ascii?Q?sTHmdXtccY9IpSEr6ps7I4vdf7FZgov7eGO+yxlR4JbWw5p5sNQZa4Tw4oaN?=
- =?us-ascii?Q?r2Nz+RgRc8lAvrOKTCzpGTatpX4vt4F42f/gwpD4hTUigDiZ2GAZlhdKS1vN?=
- =?us-ascii?Q?2NRfatFsouudCi8XeWwAzSsAmY9Nv2teMQiQ8Y+keYl8LCCt8tKGS58OM2iZ?=
- =?us-ascii?Q?t6cs2Kytp+eMgbrv1JMjEN8qax2qL7f+Xv0/F04+Sbtn0JVLaawuOgBdaS3G?=
- =?us-ascii?Q?nVqb9oIQsYMhPk3x5J2RpgNdKga3sWfbJufRXfFgjQL3r/nuwFPw1/WHtbDd?=
- =?us-ascii?Q?sYcqUMiiU+2q14LhBp+1FFwM+KfHKGaiFWZRFUYXhJnspL8wzfkMAeKx/naE?=
- =?us-ascii?Q?yiAPPWrUSkg7l2TUhcWRzt36lGwkdWxIWHWmlen3ogz1cxF38pzrw99ePcCd?=
- =?us-ascii?Q?uOT5W1gVoH+gAc6kHXAeV/GmvQBA6P7gVa29U4X3tJlc2yLaNFr6WcX3b9lN?=
- =?us-ascii?Q?AhnxfCyploOOFfTp85xJ95wv8eUSQX8BoSy2/R06d4R+9sjm+DhLpjjkSCN7?=
- =?us-ascii?Q?Rm2Ya5oZfTj9DhqTaRbRfNwjrxar2RBmxyltSf6e4RsKLazoVYx2qVnqBkIB?=
- =?us-ascii?Q?/CFCwuR7Abn19Kmgxhmh8SNcc6lMUNwrknvAT6UoBnz1oosD1epMdQaR56P9?=
- =?us-ascii?Q?osEQHsczX7Isg7zQWZwU9M1DJmnma6HumyMhQohPh5HKtYaRAikvJrrNIUnP?=
- =?us-ascii?Q?WaywWq1/5TBtT7N0hqThr30YWIwTtxNfVqKYol/8eRHN5/aeURHYSfcUdJxb?=
- =?us-ascii?Q?IsNU/6rLQqNppJ41Fle86M7D1+gjHLps1ilR7LaklWZwVV8NlPsEfvVZWKB+?=
- =?us-ascii?Q?5vn2/AVuuRJZ24/SJKQy0LTyMz2i5SpJuznqCCmueSrgdNZQdXfqqZhicfqM?=
- =?us-ascii?Q?SMDdINWZ8oD/WrcLXfO2SU1TAzFT7cN1HyN?=
-X-Microsoft-Antispam-Message-Info: e5Y8vG3blGaI7p6mMUzqSF3CcFHu5UyxgIvvadNhcZP8AsckWyp9DohyAe5dojvuS8lBr1vZLnHvLubVmUVIC6RaJkkoM97XTpsnk6XRZ4ZtcMKu/+aWUFMQYX8ymYDxkLA24hvOxu7Vu/ctS8hYveuZYBDCQmGTUql478K5XuDjDSekk0TJfyROlJOAAlVHoBvBbS2zs/hzcwVRRHNfX4HaBltcF4g9R7dhzAr5k7zcx81rRmSTCKnhF+c07NBgkxFF3c41yQtPfBZTlXS83RbBhBT5t/vvuHXRtlq+sZL96vqFNV23qoYLSYv2VqiWzyoYvg3kFf27+syEydut7/gB9LNy3vuOOtckT+q21ic=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4329;6:oDdJVmZXJEZfHUHz3li9LXwTdSnei4opzt6pdruzazRGxcPU52DD/kv23r9zbwm+akH3zOBU9RfBK9EK90rAuNazTj+AU1MU677L661+VmsO2haHlhjd/JPDahw67zKTJqUzjiY0zgSmjEtLRthYWcsTyeFnOSF8UxE2ykc03ccIQ3hvi/weFXf6v/OEMThri8e5nfFPjKfXWISj0Nv9ALsO5Mh8PzOoeXxU8ca4JUwX5Z6gNAGROImVd8PIEgm3kN3119lIokg0XmM3mf/aI4Eci0EaN0tdQv1NJdA6S9Q4NrXigp5UhQHQoX/yUIpxnj7/hkh8KRMMriHutH/TeW467/IkpWD844jbW8VVNf+KE3xshr6pvyOlBnwKShMzswE6lQbBpWIcXjTKHtWZUlkdo0z+bSVZ9ppfl2lD7ZODQvPOwMTvBEmIcOAw+ldqaQql2CvjQtTFgDtvskoytQ==;5:iAEVfUm2Fs3r/Zi7hiQROJDYGNaiO3TI4WAUcfseUELyCKbaVl9wqL8nFLlBU2eWRnnxWf6xSwI3DdkY+//vMUk8f6S4IRP/BM8u83N04INnH1/3tL9hg4upv+EM6EUqYdivVTcFJIQOt+zkRRNpEQb63kwcsByOIRd6IWlJl4o=;7:lfdL+AjcyLc7jE1w0U4bKNawEA/mzEmpKObFH9qDQn6sKOIbF+HhZMauECwhjc65NY08w0aSjInANDO90iWz9EUHzGCYF1RAEVVjFhinLEXf9kUGgcGLh7A+8ENc46f6zyyP4U44KPxOCAP7ZqdH5w==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2018 12:58:17.2349
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65830cd0-3922-4a9b-6218-08d655fa569f
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4329
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60FD8780-DA8B-421F-A136-4CFB6271DD6D@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver for arm pl353 static memory controller. This controller is used in
-Xilinx Zynq SoC for interfacing the NAND and NOR/SRAM memory devices.
+On Mon, Nov 26, 2018 at 05:46:09PM +0000, Nadav Amit wrote:
 
-Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/memory/Kconfig     |   9 +
- drivers/memory/Makefile    |   1 +
- drivers/memory/pl353-smc.c | 468 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pl353-smc.h  |  30 +++
- 4 files changed, 508 insertions(+)
- create mode 100644 drivers/memory/pl353-smc.c
- create mode 100644 include/linux/pl353-smc.h
+> One small request - on [02/10], since after your review the patch changed to
+> be the single line that you provided, I set you as a co-developer. IIUC this
+> requires your signed-off-by.
 
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 63389f0..2d91b00 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -145,6 +145,15 @@ config DA8XX_DDRCTL
- 	  Texas Instruments da8xx SoCs. It's used to tweak various memory
- 	  controller configuration options.
- 
-+config PL353_SMC
-+	tristate "ARM PL35X Static Memory Controller(SMC) driver"
-+	default y
-+	depends on ARM
-+	depends on ARM_AMBA
-+	help
-+	  This driver is for the ARM PL351/PL353 Static Memory
-+	  Controller(SMC) module.
-+
- source "drivers/memory/samsung/Kconfig"
- source "drivers/memory/tegra/Kconfig"
- 
-diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-index a01ab3e..90161de 100644
---- a/drivers/memory/Makefile
-+++ b/drivers/memory/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
- obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
- obj-$(CONFIG_MTK_SMI)		+= mtk-smi.o
- obj-$(CONFIG_DA8XX_DDRCTL)	+= da8xx-ddrctl.o
-+obj-$(CONFIG_PL353_SMC)		+= pl353-smc.o
- 
- obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
- obj-$(CONFIG_TEGRA_MC)		+= tegra/
-diff --git a/drivers/memory/pl353-smc.c b/drivers/memory/pl353-smc.c
-new file mode 100644
-index 0000000..6738a84
---- /dev/null
-+++ b/drivers/memory/pl353-smc.c
-@@ -0,0 +1,468 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ARM PL353 SMC driver
-+ *
-+ * Copyright (C) 2012 - 2018 Xilinx, Inc
-+ * Author: Punnaiah Choudary Kalluri <punnaiah@xilinx.com>
-+ * Author: Naga Sureshkumar Relli <nagasure@xilinx.com>
-+ *
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/pl353-smc.h>
-+#include <linux/amba/bus.h>
-+
-+/* Register definitions */
-+#define PL353_SMC_MEMC_STATUS_OFFS	0	/* Controller status reg, RO */
-+#define PL353_SMC_CFG_CLR_OFFS		0xC	/* Clear config reg, WO */
-+#define PL353_SMC_DIRECT_CMD_OFFS	0x10	/* Direct command reg, WO */
-+#define PL353_SMC_SET_CYCLES_OFFS	0x14	/* Set cycles register, WO */
-+#define PL353_SMC_SET_OPMODE_OFFS	0x18	/* Set opmode register, WO */
-+#define PL353_SMC_ECC_STATUS_OFFS	0x400	/* ECC status register */
-+#define PL353_SMC_ECC_MEMCFG_OFFS	0x404	/* ECC mem config reg */
-+#define PL353_SMC_ECC_MEMCMD1_OFFS	0x408	/* ECC mem cmd1 reg */
-+#define PL353_SMC_ECC_MEMCMD2_OFFS	0x40C	/* ECC mem cmd2 reg */
-+#define PL353_SMC_ECC_VALUE0_OFFS	0x418	/* ECC value 0 reg */
-+
-+/* Controller status register specific constants */
-+#define PL353_SMC_MEMC_STATUS_RAW_INT_1_SHIFT	6
-+
-+/* Clear configuration register specific constants */
-+#define PL353_SMC_CFG_CLR_INT_CLR_1	0x10
-+#define PL353_SMC_CFG_CLR_ECC_INT_DIS_1	0x40
-+#define PL353_SMC_CFG_CLR_INT_DIS_1	0x2
-+#define PL353_SMC_CFG_CLR_DEFAULT_MASK	(PL353_SMC_CFG_CLR_INT_CLR_1 | \
-+					 PL353_SMC_CFG_CLR_ECC_INT_DIS_1 | \
-+					 PL353_SMC_CFG_CLR_INT_DIS_1)
-+
-+/* Set cycles register specific constants */
-+#define PL353_SMC_SET_CYCLES_T0_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T0_SHIFT	0
-+#define PL353_SMC_SET_CYCLES_T1_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T1_SHIFT	4
-+#define PL353_SMC_SET_CYCLES_T2_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T2_SHIFT	8
-+#define PL353_SMC_SET_CYCLES_T3_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T3_SHIFT	11
-+#define PL353_SMC_SET_CYCLES_T4_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T4_SHIFT	14
-+#define PL353_SMC_SET_CYCLES_T5_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T5_SHIFT	17
-+#define PL353_SMC_SET_CYCLES_T6_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T6_SHIFT	20
-+
-+/* ECC status register specific constants */
-+#define PL353_SMC_ECC_STATUS_BUSY	BIT(6)
-+#define PL353_SMC_ECC_REG_SIZE_OFFS	4
-+
-+/* ECC memory config register specific constants */
-+#define PL353_SMC_ECC_MEMCFG_MODE_MASK	0xC
-+#define PL353_SMC_ECC_MEMCFG_MODE_SHIFT	2
-+#define PL353_SMC_ECC_MEMCFG_PGSIZE_MASK	0xC
-+
-+#define PL353_SMC_DC_UPT_NAND_REGS	((4 << 23) |	/* CS: NAND chip */ \
-+				 (2 << 21))	/* UpdateRegs operation */
-+
-+#define PL353_NAND_ECC_CMD1	((0x80)       |	/* Write command */ \
-+				 (0 << 8)     |	/* Read command */ \
-+				 (0x30 << 16) |	/* Read End command */ \
-+				 (1 << 24))	/* Read End command calid */
-+
-+#define PL353_NAND_ECC_CMD2	((0x85)	      |	/* Write col change cmd */ \
-+				 (5 << 8)     |	/* Read col change cmd */ \
-+				 (0xE0 << 16) |	/* Read col change end cmd */ \
-+				 (1 << 24)) /* Read col change end cmd valid */
-+#define PL353_NAND_ECC_BUSY_TIMEOUT	(1 * HZ)
-+/**
-+ * struct pl353_smc_data - Private smc driver structure
-+ * @memclk:		Pointer to the peripheral clock
-+ * @aclk:		Pointer to the APER clock
-+ */
-+struct pl353_smc_data {
-+	struct clk		*memclk;
-+	struct clk		*aclk;
-+};
-+
-+/* SMC virtual register base */
-+static void __iomem *pl353_smc_base;
-+
-+/**
-+ * pl353_smc_set_buswidth - Set memory buswidth
-+ * @bw:	Memory buswidth (8 | 16)
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_buswidth(unsigned int bw)
-+{
-+	if (bw != PL353_SMC_MEM_WIDTH_8  && bw != PL353_SMC_MEM_WIDTH_16)
-+		return -EINVAL;
-+
-+	writel(bw, pl353_smc_base + PL353_SMC_SET_OPMODE_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_buswidth);
-+
-+/**
-+ * pl353_smc_set_cycles - Set memory timing parameters
-+ * @timings: NAND controller timing parameters
-+ *
-+ * Sets NAND chip specific timing parameters.
-+ */
-+void pl353_smc_set_cycles(u32 timings[])
-+{
-+	/*
-+	 * Set write pulse timing. This one is easy to extract:
-+	 *
-+	 * NWE_PULSE = tWP
-+	 */
-+	timings[0] &= PL353_SMC_SET_CYCLES_T0_MASK;
-+	timings[1] = (timings[1] & PL353_SMC_SET_CYCLES_T1_MASK) <<
-+			PL353_SMC_SET_CYCLES_T1_SHIFT;
-+	timings[2] = (timings[2]  & PL353_SMC_SET_CYCLES_T2_MASK) <<
-+			PL353_SMC_SET_CYCLES_T2_SHIFT;
-+	timings[3] = (timings[3]  & PL353_SMC_SET_CYCLES_T3_MASK) <<
-+			PL353_SMC_SET_CYCLES_T3_SHIFT;
-+	timings[4] = (timings[4] & PL353_SMC_SET_CYCLES_T4_MASK) <<
-+			PL353_SMC_SET_CYCLES_T4_SHIFT;
-+	timings[5]  = (timings[5]  & PL353_SMC_SET_CYCLES_T5_MASK) <<
-+			PL353_SMC_SET_CYCLES_T5_SHIFT;
-+	timings[6]  = (timings[6]  & PL353_SMC_SET_CYCLES_T6_MASK) <<
-+			PL353_SMC_SET_CYCLES_T6_SHIFT;
-+	timings[0] |= timings[1] | timings[2] | timings[3] |
-+			timings[4] | timings[5] | timings[6];
-+
-+	writel(timings[0], pl353_smc_base + PL353_SMC_SET_CYCLES_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_cycles);
-+
-+/**
-+ * pl353_smc_ecc_is_busy - Read ecc busy flag
-+ * Return: the ecc_status bit from the ecc_status register. 1 = busy, 0 = idle
-+ */
-+bool pl353_smc_ecc_is_busy(void)
-+{
-+	return ((readl(pl353_smc_base + PL353_SMC_ECC_STATUS_OFFS) &
-+		  PL353_SMC_ECC_STATUS_BUSY) == PL353_SMC_ECC_STATUS_BUSY);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_ecc_is_busy);
-+
-+/**
-+ * pl353_smc_get_ecc_val - Read ecc_valueN registers
-+ * @ecc_reg:	Index of the ecc_value reg (0..3)
-+ * Return: the content of the requested ecc_value register.
-+ *
-+ * There are four valid ecc_value registers. The argument is truncated to stay
-+ * within this valid boundary.
-+ */
-+u32 pl353_smc_get_ecc_val(int ecc_reg)
-+{
-+	u32 addr, reg;
-+
-+	addr = PL353_SMC_ECC_VALUE0_OFFS +
-+		(ecc_reg * PL353_SMC_ECC_REG_SIZE_OFFS);
-+	reg = readl(pl353_smc_base + addr);
-+
-+	return reg;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_get_ecc_val);
-+
-+/**
-+ * pl353_smc_get_nand_int_status_raw - Get NAND interrupt status bit
-+ * Return: the raw_int_status1 bit from the memc_status register
-+ */
-+int pl353_smc_get_nand_int_status_raw(void)
-+{
-+	u32 reg;
-+
-+	reg = readl(pl353_smc_base + PL353_SMC_MEMC_STATUS_OFFS);
-+	reg >>= PL353_SMC_MEMC_STATUS_RAW_INT_1_SHIFT;
-+	reg &= 1;
-+
-+	return reg;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_get_nand_int_status_raw);
-+
-+/**
-+ * pl353_smc_clr_nand_int - Clear NAND interrupt
-+ */
-+void pl353_smc_clr_nand_int(void)
-+{
-+	writel(PL353_SMC_CFG_CLR_INT_CLR_1,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_clr_nand_int);
-+
-+/**
-+ * pl353_smc_set_ecc_mode - Set SMC ECC mode
-+ * @mode:	ECC mode (BYPASS, APB, MEM)
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_ecc_mode(enum pl353_smc_ecc_mode mode)
-+{
-+	u32 reg;
-+	int ret = 0;
-+
-+	switch (mode) {
-+	case PL353_SMC_ECCMODE_BYPASS:
-+	case PL353_SMC_ECCMODE_APB:
-+	case PL353_SMC_ECCMODE_MEM:
-+
-+		reg = readl(pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+		reg &= ~PL353_SMC_ECC_MEMCFG_MODE_MASK;
-+		reg |= mode << PL353_SMC_ECC_MEMCFG_MODE_SHIFT;
-+		writel(reg, pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_ecc_mode);
-+
-+/**
-+ * pl353_smc_set_ecc_pg_size - Set SMC ECC page size
-+ * @pg_sz:	ECC page size
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_ecc_pg_size(unsigned int pg_sz)
-+{
-+	u32 reg, sz;
-+
-+	switch (pg_sz) {
-+	case 0:
-+		sz = 0;
-+		break;
-+	case SZ_512:
-+		sz = 1;
-+		break;
-+	case SZ_1K:
-+		sz = 2;
-+		break;
-+	case SZ_2K:
-+		sz = 3;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	reg = readl(pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+	reg &= ~PL353_SMC_ECC_MEMCFG_PGSIZE_MASK;
-+	reg |= sz;
-+	writel(reg, pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_ecc_pg_size);
-+
-+static int __maybe_unused pl353_smc_suspend(struct device *dev)
-+{
-+	struct pl353_smc_data *pl353_smc = dev_get_drvdata(dev);
-+
-+	clk_disable(pl353_smc->memclk);
-+	clk_disable(pl353_smc->aclk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused pl353_smc_resume(struct device *dev)
-+{
-+	int ret;
-+	struct pl353_smc_data *pl353_smc = dev_get_drvdata(dev);
-+
-+	ret = clk_enable(pl353_smc->aclk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable axi domain clock.\n");
-+		return ret;
-+	}
-+
-+	ret = clk_enable(pl353_smc->memclk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable memory clock.\n");
-+		clk_disable(pl353_smc->aclk);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+static struct amba_driver pl353_smc_driver;
-+static SIMPLE_DEV_PM_OPS(pl353_smc_dev_pm_ops, pl353_smc_suspend,
-+			 pl353_smc_resume);
-+
-+/**
-+ * pl353_smc_init_nand_interface - Initialize the NAND interface
-+ * @adev:	Pointer to the amba_device struct
-+ * @nand_node:	Pointer to the pl353_nand device_node struct
-+ */
-+void pl353_smc_init_nand_interface(struct amba_device *adev,
-+					struct device_node *nand_node)
-+{
-+	unsigned long timeout;
-+
-+	pl353_smc_set_buswidth(PL353_SMC_MEM_WIDTH_8);
-+	writel(PL353_SMC_CFG_CLR_INT_CLR_1,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+
-+	timeout = jiffies + PL353_NAND_ECC_BUSY_TIMEOUT;
-+	/* Wait till the ECC operation is complete */
-+	do {
-+		if (pl353_smc_ecc_is_busy())
-+			cpu_relax();
-+		else
-+			break;
-+	} while (!time_after_eq(jiffies, timeout));
-+
-+	if (time_after_eq(jiffies, timeout))
-+		return;
-+
-+	writel(PL353_NAND_ECC_CMD1,
-+	       pl353_smc_base + PL353_SMC_ECC_MEMCMD1_OFFS);
-+	writel(PL353_NAND_ECC_CMD2,
-+	       pl353_smc_base + PL353_SMC_ECC_MEMCMD2_OFFS);
-+}
-+
-+static const struct of_device_id pl353_smc_supported_children[] = {
-+	{
-+		.compatible = "cfi-flash"
-+	},
-+	{
-+		.compatible = "arm,pl353-nand-r2p1",
-+		.data = pl353_smc_init_nand_interface
-+	},
-+	{}
-+};
-+
-+static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
-+{
-+	struct pl353_smc_data *pl353_smc;
-+	struct device_node *child;
-+	struct resource *res;
-+	int err;
-+	struct device_node *of_node = adev->dev.of_node;
-+	void (*init)(struct amba_device *adev,
-+		     struct device_node *nand_node);
-+	const struct of_device_id *match = NULL;
-+
-+	pl353_smc = devm_kzalloc(&adev->dev, sizeof(*pl353_smc), GFP_KERNEL);
-+	if (!pl353_smc)
-+		return -ENOMEM;
-+
-+	/* Get the NAND controller virtual address */
-+	res = &adev->res;
-+	pl353_smc_base = devm_ioremap_resource(&adev->dev, res);
-+	if (IS_ERR(pl353_smc_base))
-+		return PTR_ERR(pl353_smc_base);
-+
-+	pl353_smc->aclk = devm_clk_get(&adev->dev, "apb_pclk");
-+	if (IS_ERR(pl353_smc->aclk)) {
-+		dev_err(&adev->dev, "aclk clock not found.\n");
-+		return PTR_ERR(pl353_smc->aclk);
-+	}
-+
-+	pl353_smc->memclk = devm_clk_get(&adev->dev, "memclk");
-+	if (IS_ERR(pl353_smc->memclk)) {
-+		dev_err(&adev->dev, "memclk clock not found.\n");
-+		return PTR_ERR(pl353_smc->memclk);
-+	}
-+
-+	err = clk_prepare_enable(pl353_smc->aclk);
-+	if (err) {
-+		dev_err(&adev->dev, "Unable to enable AXI clock.\n");
-+		return err;
-+	}
-+
-+	err = clk_prepare_enable(pl353_smc->memclk);
-+	if (err) {
-+		dev_err(&adev->dev, "Unable to enable memory clock.\n");
-+		goto out_clk_dis_aper;
-+	}
-+
-+	amba_set_drvdata(adev, pl353_smc);
-+
-+	/* clear interrupts */
-+	writel(PL353_SMC_CFG_CLR_DEFAULT_MASK,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+
-+	/* Find compatible children. Only a single child is supported */
-+	for_each_available_child_of_node(of_node, child) {
-+		match = of_match_node(pl353_smc_supported_children, child);
-+		if (!match) {
-+			dev_warn(&adev->dev, "unsupported child node\n");
-+			continue;
-+		}
-+		break;
-+	}
-+	if (!match) {
-+		dev_err(&adev->dev, "no matching children\n");
-+		goto out_clk_disable;
-+	}
-+
-+	init = match->data;
-+	if (init)
-+		init(adev, child);
-+	of_platform_device_create(child, NULL, &adev->dev);
-+
-+	return 0;
-+
-+out_clk_disable:
-+	clk_disable_unprepare(pl353_smc->memclk);
-+out_clk_dis_aper:
-+	clk_disable_unprepare(pl353_smc->aclk);
-+
-+	return err;
-+}
-+
-+static int pl353_smc_remove(struct amba_device *adev)
-+{
-+	struct pl353_smc_data *pl353_smc = amba_get_drvdata(adev);
-+
-+	clk_disable_unprepare(pl353_smc->memclk);
-+	clk_disable_unprepare(pl353_smc->aclk);
-+
-+	return 0;
-+}
-+
-+/* Match table for device tree binding */
-+static const struct of_device_id pl353_smc_of_match[] = {
-+	{ .compatible = "arm,pl353-smc-r2p1" },
-+	{ },
-+};
-+
-+static const struct amba_id pl353_ids[] = {
-+	{
-+	.id = 0x00041353,
-+	.mask = 0x000fffff,
-+	},
-+	{ 0, 0 },
-+};
-+MODULE_DEVICE_TABLE(amba, pl353_ids);
-+
-+static struct amba_driver pl353_smc_driver = {
-+	.drv = {
-+		.owner = THIS_MODULE,
-+		.name = "pl353-smc",
-+		.pm = &pl353_smc_dev_pm_ops,
-+	},
-+	.id_table = pl353_ids,
-+	.probe		= pl353_smc_probe,
-+	.remove		= pl353_smc_remove,
-+};
-+
-+module_amba_driver(pl353_smc_driver);
-+
-+MODULE_AUTHOR("Xilinx, Inc.");
-+MODULE_DESCRIPTION("ARM PL353 SMC Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/pl353-smc.h b/include/linux/pl353-smc.h
-new file mode 100644
-index 0000000..0e0d3df
---- /dev/null
-+++ b/include/linux/pl353-smc.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * ARM PL353 SMC Driver Header
-+ *
-+ * Copyright (C) 2012 - 2018 Xilinx, Inc
-+ */
-+
-+#ifndef __LINUX_PL353_SMC_H
-+#define __LINUX_PL353_SMC_H
-+
-+enum pl353_smc_ecc_mode {
-+	PL353_SMC_ECCMODE_BYPASS = 0,
-+	PL353_SMC_ECCMODE_APB = 1,
-+	PL353_SMC_ECCMODE_MEM = 2
-+};
-+
-+enum pl353_smc_mem_width {
-+	PL353_SMC_MEM_WIDTH_8 = 0,
-+	PL353_SMC_MEM_WIDTH_16 = 1
-+};
-+
-+u32 pl353_smc_get_ecc_val(int ecc_reg);
-+bool pl353_smc_ecc_is_busy(void);
-+int pl353_smc_get_nand_int_status_raw(void);
-+void pl353_smc_clr_nand_int(void);
-+int pl353_smc_set_ecc_mode(enum pl353_smc_ecc_mode mode);
-+int pl353_smc_set_ecc_pg_size(unsigned int pg_sz);
-+int pl353_smc_set_buswidth(unsigned int bw);
-+void pl353_smc_set_cycles(u32 timings[]);
-+#endif
--- 
-2.7.4
-
+I really wouldn't know. Feel free to do as you with. It's just a few
+lines.
