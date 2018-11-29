@@ -2,99 +2,102 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1980CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1057C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D410821019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:10:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EkFVLZMa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D410821019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9122F208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9122F208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeK3BQJ (ORCPT
+        id S1728616AbeK3BQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:16:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34714 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeK3BQJ (ORCPT
+        Thu, 29 Nov 2018 20:16:30 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46543 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728233AbeK3BQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:16:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so2062155wrw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TIMzsWiuFXNQn+25PMCI//XNjDk8aXC2Z+rFkgxvJII=;
-        b=EkFVLZMaHBzN9S2e1A/U2ZbqKTG6FSXB2hIHii0QldQ289MrYyzCRysJr7nX2vxY9u
-         OGZCksnbudHfK4OdqQdXeSXfA3J6yB1ctvMPCfEMjnBkAIFMzq6ReqmQC8zvsWupH1yh
-         cPCfKQFrNf31O+Y+ZcZoLO3grR4Kvb0djErAY=
+        Thu, 29 Nov 2018 20:16:29 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so1081675qkf.13;
+        Thu, 29 Nov 2018 06:11:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TIMzsWiuFXNQn+25PMCI//XNjDk8aXC2Z+rFkgxvJII=;
-        b=uL8MYORE0WfcuukTEfiNyyOIvzCdMT57iRn1kisoXTxQV+eZSkqysgCrttrMfa46s6
-         MwcX4H9nEFgCoabwTxHGu+M8xn+6hOtGP5KGPcHCbTPWDeRi3RRZxHp/DUbtM/1L69yv
-         F+MVWRZGcJEmjHiMLHBsYH/DUnX+4WXuKognBi9TcNZMdOmS6Gd1s2SuFi1+ASJyI4qV
-         0F2kpNN6Ia73XRIr6iHs1zpkE5RTM21Jynk0KRO+dHUx8UGzk4jDfskx/5RvS/yl/E0c
-         1JA/jVLsTFXh7+uyUbD1bOYG6PLx8q+JFsQQcigvgbU50mNUOQsJOWDc/S/bMkAEk7hD
-         S9kQ==
-X-Gm-Message-State: AA+aEWaWAE9jJ7CCP90w/BcnBQC0hl1O5u/FhfuRGOWnfkn3QDwk/yUA
-        BvqE35Z4JJkrzzAwkGM7+Kdebg==
-X-Google-Smtp-Source: AFSGD/XA01RUSd+sBzsDJhS8CCWdn2+vMePBKxNOYT4hgJAdGX4V3IHSz2/K44Sk32UAcYfcgZagYw==
-X-Received: by 2002:adf:e911:: with SMTP id f17mr1663595wrm.126.1543500638593;
-        Thu, 29 Nov 2018 06:10:38 -0800 (PST)
-Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id e19sm4644695wrc.25.2018.11.29.06.10.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 06:10:37 -0800 (PST)
-Subject: Re: [RFC PATCH v3 3/4] irqchip: gic-v3: Add quirk for msm8996 secured
- registers
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     marc.zyngier@arm.com, sudeep.holla@arm.com, tglx@linutronix.de,
-        jason@lakedaemon.net, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        sboyd@kernel.org, srini@kernel.org, nicolas.dechesne@linaro.org,
-        ctatlor97@gmail.com, vkoul@kernel.org
-References: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
- <20181112103340.24702-4-srinivas.kandagatla@linaro.org>
- <20181128233327.GE24969@minitux>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <86b0d75b-c604-f2ad-e147-270942e05409@linaro.org>
-Date:   Thu, 29 Nov 2018 14:10:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wv38us1LrGaAtmbmo49i4wsBnN+kWL1/8/1UP+gxTYQ=;
+        b=iJrgSgrcd55iTLc7xH0DmrTsXtqW3C7pScAKuReir1VkgbWTBRzooA7EnYKwN81EZ8
+         7ZnOFb4D/llqF2+ZD+no2SsbeU7NKEKWmzAVTJepDEcMSll75SyAKhiESPxysyihacdj
+         koo7j+u+DbRRrjdjERo88krZ2IkCcRLTIm50rCY+1csrw7yv8iIjR4Tk7h9c3kR07ytr
+         IcEX71ChQ+iHeZevkHIgxEK2QgoU4h/d0F9/yX9Nm+vbO4nbcx7g+nB8umm+p0GF3gl6
+         lFf8HLONtTTVmUwVhkstuaZMA9yrOolMl3+z8KHR1dLjmPn0tg0dCnWxfKtBcwVAh8eF
+         pBBg==
+X-Gm-Message-State: AA+aEWbMypOanyRBKBtCSrImDOyej/kcXbHjlmsaVQLTK8ULeW+ocCDZ
+        xEpb3/I+n6Jn4CGxbYB/YpQEVaaIAc2TetzZKWk=
+X-Google-Smtp-Source: AFSGD/VRjXbNAIpsZr4dI3CXoXFX08aFmjLRqc+nKn9Ux1anF/pD33EoUiKp/HulBbq07qB9abOPjXVoHN09EbmMkg8=
+X-Received: by 2002:a37:bdc6:: with SMTP id n189mr1407839qkf.330.1543500659952;
+ Thu, 29 Nov 2018 06:10:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181128233327.GE24969@minitux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org> <1543481016-18500-2-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1543481016-18500-2-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 29 Nov 2018 15:10:42 +0100
+Message-ID: <CAK8P3a1Pq=Y83p-cN9bf+m-2ZAmJdEYRaAY9FfEkVHvfSwNWNg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] mips: add __NR_syscalls along with __NR_Linux_syscalls
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 29, 2018 at 9:44 AM Firoz Khan <firoz.khan@linaro.org> wrote:
 
+>  arch/mips/include/uapi/asm/unistd.h | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/mips/include/uapi/asm/unistd.h b/arch/mips/include/uapi/asm/unistd.h
+> index f25dd1d..6914be5 100644
+> --- a/arch/mips/include/uapi/asm/unistd.h
+> +++ b/arch/mips/include/uapi/asm/unistd.h
+> @@ -391,11 +391,14 @@
+>  #define __NR_rseq                      (__NR_Linux + 367)
+>  #define __NR_io_pgetevents             (__NR_Linux + 368)
+>
+> +#ifdef __KERNEL__
+> +#define __NR_syscalls                  368
+> +#endif
+>
+>  /*
+>   * Offset of the last Linux o32 flavoured syscall
+>   */
+> -#define __NR_Linux_syscalls            368
+> +#define __NR_Linux_syscalls            __NR_syscalls
 
-On 28/11/18 23:33, Bjorn Andersson wrote:
-> Given that the change request introducing this restriction looks quite
-> generic and that we've heard reports of other shipping platforms having
-> the same restriction, could we make this slightly more generic?
-> 
-> I.e. dropping the MSM8996 from the flag name and perhaps use a bool
-> property in devicetree to toggle the flag, instead of adding compatibles
-> as we figure out which Qualcomm platforms has this restriction.
-If I understand the dt compatible thing correctly. Am not expecting 
-other platforms to add new compatible string. If the gic-v3 of that SoC 
-is compatible with msm8996, they should be able to use the same 
-compatible string!
+This seems odd: you define __NR_Linux_syscalls outside of
+#ifdef __KERNEL__, but the definition only works
+with __NR_syscalls being defined first, which it isn't in
+user space.
 
---srini
+Since the macros are completely unused as well as unusable
+now, how about removing them together with the other
+ones removed in patch 2?
+
+      Arnd
