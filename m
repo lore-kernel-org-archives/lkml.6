@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D813EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA68C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5342147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EEB2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/ySmz+2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5342147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5SQ73SU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EEB2147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbeK3Bdu (ORCPT
+        id S2388041AbeK3Bdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:33:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34680 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:33:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731925AbeK3Bdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:33:50 -0500
+        id S1733011AbeK3Bdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60BD12146D;
-        Thu, 29 Nov 2018 14:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD129213A2;
+        Thu, 29 Nov 2018 14:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501697;
-        bh=pG6BnRcIqDOzpYjNRatk9I4SMvpquxEvPVItHqEZqio=;
+        s=default; t=1543501700;
+        bh=jXu99XRM2fys48vFQm8x+MG749JNQ5fEs0B9Y6XNrlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K/ySmz+20QBF1fulzYxzTy0M0rsk6ft6yGMFzq/0yTdQ+nE0LCTMrLhQzswhBdcpw
-         jV3nJOaP/K3dq8aS7pycNC8KhEMZtv+j9Tn5Fjnta/zq6NgvmX7/XliAOr+Xl3AksM
-         oqiyWR5JN+Nta+R5Nxvceja9ANrmY8c8AorqV2bY=
+        b=U5SQ73SU7H8Jf34uTCZ5vCsD4LelZKAjCqyjLTRQqRwRDmR0rp46P1wUYPtBbiFvJ
+         ROPflTkpAz6DW28pFJf6xHQwUSbFJLnkLBHuVSVg/DC+DGWkicTwseYCzf4bmq+5+u
+         LCO0JKpDDAPlS1LPO2fh/ILO/jF2ow1/bD3UfknE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Milan Broz <gmazyland@gmail.com>,
         Daniel Zatovic <daniel.zatovic@gmail.com>,
         Willy Tarreau <w@1wt.eu>
-Subject: [PATCH 4.14 089/100] tty: wipe buffer.
-Date:   Thu, 29 Nov 2018 15:12:59 +0100
-Message-Id: <20181129140106.504209905@linuxfoundation.org>
+Subject: [PATCH 4.14 090/100] tty: wipe buffer if not echoing data
+Date:   Thu, 29 Nov 2018 15:13:00 +0100
+Message-Id: <20181129140106.581594215@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,11 +64,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Greg Kroah-Hartman <greg@kroah.com>
 
-commit c9a8e5fce009e3c601a43c49ea9dbcb25d1ffac5 upstream.
+commit b97b3d9fb57860a60592859e332de7759fd54c2e upstream.
 
-After we are done with the tty buffer, zero it out.
+If we are not echoing the data to userspace or the console is in icanon
+mode, then perhaps it is a "secret" so we should wipe it once we are
+done with it.
+
+This mirrors the logic that the audit code has.
 
 Reported-by: aszlig <aszlig@nix.build>
 Tested-by: Milan Broz <gmazyland@gmail.com>
@@ -78,27 +82,65 @@ Cc: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_buffer.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/tty/n_tty.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/tty_buffer.c
-+++ b/drivers/tty/tty_buffer.c
-@@ -467,11 +467,15 @@ receive_buf(struct tty_port *port, struc
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -154,17 +154,28 @@ static inline unsigned char *echo_buf_ad
+ 	return &ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
+ }
+ 
++/* If we are not echoing the data, perhaps this is a secret so erase it */
++static void zero_buffer(struct tty_struct *tty, u8 *buffer, int size)
++{
++	bool icanon = !!L_ICANON(tty);
++	bool no_echo = !L_ECHO(tty);
++
++	if (icanon && no_echo)
++		memset(buffer, 0x00, size);
++}
++
+ static int tty_copy_to_user(struct tty_struct *tty, void __user *to,
+ 			    size_t tail, size_t n)
  {
- 	unsigned char *p = char_buf_ptr(head, head->read);
- 	char	      *f = NULL;
-+	int n;
+ 	struct n_tty_data *ldata = tty->disc_data;
+ 	size_t size = N_TTY_BUF_SIZE - tail;
+-	const void *from = read_buf_addr(ldata, tail);
++	void *from = read_buf_addr(ldata, tail);
+ 	int uncopied;
  
- 	if (~head->flags & TTYB_NORMAL)
- 		f = flag_buf_ptr(head, head->read);
+ 	if (n > size) {
+ 		tty_audit_add_data(tty, from, size);
+ 		uncopied = copy_to_user(to, from, size);
++		zero_buffer(tty, from, size - uncopied);
+ 		if (uncopied)
+ 			return uncopied;
+ 		to += size;
+@@ -173,7 +184,9 @@ static int tty_copy_to_user(struct tty_s
+ 	}
  
--	return port->client_ops->receive_buf(port, p, f, count);
-+	n = port->client_ops->receive_buf(port, p, f, count);
-+	if (n > 0)
-+		memset(p, 0, n);
-+	return n;
+ 	tty_audit_add_data(tty, from, n);
+-	return copy_to_user(to, from, n);
++	uncopied = copy_to_user(to, from, n);
++	zero_buffer(tty, from, n - uncopied);
++	return uncopied;
  }
  
  /**
+@@ -1962,11 +1975,12 @@ static int copy_from_read_buf(struct tty
+ 	n = min(head - ldata->read_tail, N_TTY_BUF_SIZE - tail);
+ 	n = min(*nr, n);
+ 	if (n) {
+-		const unsigned char *from = read_buf_addr(ldata, tail);
++		unsigned char *from = read_buf_addr(ldata, tail);
+ 		retval = copy_to_user(*b, from, n);
+ 		n -= retval;
+ 		is_eof = n == 1 && *from == EOF_CHAR(tty);
+ 		tty_audit_add_data(tty, from, n);
++		zero_buffer(tty, from, n);
+ 		smp_store_release(&ldata->read_tail, ldata->read_tail + n);
+ 		/* Turn single EOF into zero-length read */
+ 		if (L_EXTPROC(tty) && ldata->icanon && is_eof &&
 
 
