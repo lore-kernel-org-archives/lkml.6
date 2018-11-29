@@ -2,201 +2,120 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC22C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641DEC64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4AF32148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4AF32148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2317720989
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:27:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HiuXfD0Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2317720989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeK3KeM (ORCPT
+        id S1727134AbeK3KeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:34:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40576 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeK3KeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:34:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D2DA2AE20;
-        Thu, 29 Nov 2018 23:26:57 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>
-Date:   Fri, 30 Nov 2018 10:26:50 +1100
-Cc:     tgraf@suug.ch, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
-Subject: [PATCH v3] rhashtable: detect when object movement between tables might have invalidated a lookup
-In-Reply-To: <878t1tece0.fsf@notabene.neil.brown.name>
-References: <87muqbtev6.fsf@notabene.neil.brown.name> <20181116055551.zxfydbpoicslsfkg@gondor.apana.org.au> <878t1tece0.fsf@notabene.neil.brown.name>
-Message-ID: <87pnuno479.fsf@notabene.neil.brown.name>
+        Fri, 30 Nov 2018 05:34:18 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:42751 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeK3KeR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:34:17 -0500
+Received: by mail-yb1-f193.google.com with SMTP id o204-v6so1484628yba.9
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:27:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Zl5fPoC1NuO+flCl7vF84WF/Jg9hKcYZQ8HZLC6wvPA=;
+        b=HiuXfD0Q5KHE/jwMpvTffEyVtbFoHdqJAT6vlyIP66YJczO+M3EuOPZqg8jzHjt4wH
+         oObUIudcrRjP/ogYM+XANu8mRcD4gXkXLM9sYI8rKR5xTWaRLDtm4rAYfGuAtwcoecwc
+         RV7PlZPay0axjDCdGSLUfBHmCYrMO5Nlf1NMU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zl5fPoC1NuO+flCl7vF84WF/Jg9hKcYZQ8HZLC6wvPA=;
+        b=SDuQdyUAccAK3zfdVL+R9QpgCWzJWR+eHGjWqMIl+Zheq50XjSCpDkop63s3VuU3NJ
+         GuGB9vIIi87QnNRMHE3EiG71se9TU/hiWN6Xa+Xi/bEBSGGr2hOPg8Wd4gDr1i0DkP9d
+         kHLPCB8sKXgrNA0pSMeklIDxJ0mZ9uWEKI/DVnUxH/SFDrtyrGDzRg19c7t4yFV8Lz5v
+         s1OsM/bqWlAGgSqjhHI7mHiJG+50Ms92oYV2QFreAIVZCO9yUXaSD5Otj9aDNM8v2vmh
+         hIn32i1uPOf9jJ3iGB6NatyyuY5etCspJHJTpJ5Wt7nA0eJsA0fsEIar51PZWYQTa766
+         HCgw==
+X-Gm-Message-State: AA+aEWb3u0V/ZN6Jldqls5Dujg22/dyz5YmtkM/+AZpiHKaq0+Inauar
+        RtM2pOdu14yb33qmqqVVN3H2kDINwK4=
+X-Google-Smtp-Source: AFSGD/X1noP5KpslbVOejb+1GstaRFUx3kGK1Be25Wykj5/gK/YAaB8NXIarOOYv7Iw0Aju5QUMtbQ==
+X-Received: by 2002:a5b:587:: with SMTP id l7-v6mr3373638ybp.76.1543534024820;
+        Thu, 29 Nov 2018 15:27:04 -0800 (PST)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id w2sm2603854ywl.10.2018.11.29.15.27.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 15:27:04 -0800 (PST)
+Received: by mail-yb1-f181.google.com with SMTP id z2-v6so1495390ybj.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:27:03 -0800 (PST)
+X-Received: by 2002:a25:3502:: with SMTP id c2-v6mr3480754yba.410.1543534023393;
+ Thu, 29 Nov 2018 15:27:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <1504729681-3504-1-git-send-email-deller@gmx.de> <1504729681-3504-10-git-send-email-deller@gmx.de>
+In-Reply-To: <1504729681-3504-10-git-send-email-deller@gmx.de>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 29 Nov 2018 15:26:51 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jL3qs=YrXWesOueaZYZ8k1qjJ=1HYb9Rmfry8tzvaGY8w@mail.gmail.com>
+Message-ID: <CAGXu5jL3qs=YrXWesOueaZYZ8k1qjJ=1HYb9Rmfry8tzvaGY8w@mail.gmail.com>
+Subject: Re: [PATCH 09/14] fs/pstore: Use %pS printk format for direct addresses
+To:     Helge Deller <deller@gmx.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 6, 2017 at 1:28 PM Helge Deller <deller@gmx.de> wrote:
+>
+> Use the %pS instead of the %pF printk format specifier for printing symbols
+> from direct addresses. This is needed for the ia64, ppc64 and parisc64
+> architectures.
+>
+> Signed-off-by: Helge Deller <deller@gmx.de>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+
+I missed this email from some time ago. I've now applied it, thanks!
+
+-Kees
+
+> ---
+>  fs/pstore/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+> index fefd226..59f65d7 100644
+> --- a/fs/pstore/inode.c
+> +++ b/fs/pstore/inode.c
+> @@ -116,7 +116,7 @@ static int pstore_ftrace_seq_show(struct seq_file *s, void *v)
+>
+>         rec = (struct pstore_ftrace_record *)(ps->record->buf + data->off);
+>
+> -       seq_printf(s, "CPU:%d ts:%llu %08lx  %08lx  %pf <- %pF\n",
+> +       seq_printf(s, "CPU:%d ts:%llu %08lx  %08lx  %ps <- %pS\n",
+>                    pstore_ftrace_decode_cpu(rec),
+>                    pstore_ftrace_read_timestamp(rec),
+>                    rec->ip, rec->parent_ip, (void *)rec->ip,
+> --
+> 2.1.0
+>
 
 
-Some users of rhashtables might need to move an object from one table
-to another -  this appears to be the reason for the incomplete usage
-of NULLS markers.
-
-To support these, we store a unique NULLS_MARKER at the end of
-each chain, and when a search fails to find a match, we check
-if the NULLS marker found was the expected one.  If not, the search
-may not have examined all objects in the target bucket, so it is
-repeated.
-
-The unique NULLS_MARKER is derived from the address of the
-head of the chain.  As this cannot be derived at load-time the
-static rhnull in rht_bucket_nested() needs to be initialised
-at run time.
-
-Any caller of a lookup function must still be prepared for the
-possibility that the object returned is in a different table - it
-might have been there for some time.
-
-Note that this does NOT provide support for other uses of
-NULLS_MARKERs such as allocating with SLAB_TYPESAFE_BY_RCU or changing
-the key of an object and re-inserting it in the same table.
-These could only be done safely if new objects were inserted
-at the *start* of a hash chain, and that is not currently the case.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-This version has an added comment to explain the ">>1" in
-RHT_NULLS_MARKER().
-
-Thanks,
-NeilBrown
-
- include/linux/rhashtable.h | 34 ++++++++++++++++++++++++++--------
- lib/rhashtable.c           |  8 +++++---
- 2 files changed, 31 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index eb7111039247..ae507af54800 100644
-=2D-- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -75,8 +75,19 @@ struct bucket_table {
- 	struct rhash_head __rcu *buckets[] ____cacheline_aligned_in_smp;
- };
-=20
-+/*
-+ * NULLS_MARKER() expects a hash value with the low
-+ * bits mostly likely to be significant, and it discards
-+ * the msb.
-+ * We git it an address, in which the bottom 2 bits are
-+ * always 0, and the msb might be significant.
-+ * So we shift the address down one bit to align with
-+ * expectations and avoid losing a significant bit.
-+ */
-+#define	RHT_NULLS_MARKER(ptr)	\
-+	((void *)NULLS_MARKER(((unsigned long) (ptr)) >> 1))
- #define INIT_RHT_NULLS_HEAD(ptr)	\
-=2D	((ptr) =3D (typeof(ptr)) NULLS_MARKER(0))
-+	((ptr) =3D RHT_NULLS_MARKER(&(ptr)))
-=20
- static inline bool rht_is_a_nulls(const struct rhash_head *ptr)
- {
-@@ -471,6 +482,7 @@ static inline struct rhash_head *__rhashtable_lookup(
- 		.ht =3D ht,
- 		.key =3D key,
- 	};
-+	struct rhash_head __rcu * const *head;
- 	struct bucket_table *tbl;
- 	struct rhash_head *he;
- 	unsigned int hash;
-@@ -478,13 +490,19 @@ static inline struct rhash_head *__rhashtable_lookup(
- 	tbl =3D rht_dereference_rcu(ht->tbl, ht);
- restart:
- 	hash =3D rht_key_hashfn(ht, tbl, key, params);
-=2D	rht_for_each_rcu(he, tbl, hash) {
-=2D		if (params.obj_cmpfn ?
-=2D		    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-=2D		    rhashtable_compare(&arg, rht_obj(ht, he)))
-=2D			continue;
-=2D		return he;
-=2D	}
-+	head =3D rht_bucket(tbl, hash);
-+	do {
-+		rht_for_each_rcu_continue(he, *head, tbl, hash) {
-+			if (params.obj_cmpfn ?
-+			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-+			    rhashtable_compare(&arg, rht_obj(ht, he)))
-+				continue;
-+			return he;
-+		}
-+		/* An object might have been moved to a different hash chain,
-+		 * while we walk along it - better check and retry.
-+		 */
-+	} while (he !=3D RHT_NULLS_MARKER(head));
-=20
- 	/* Ensure we see any new tables. */
- 	smp_rmb();
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 30526afa8343..852ffa5160f1 100644
-=2D-- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -1179,8 +1179,7 @@ struct rhash_head __rcu **rht_bucket_nested(const str=
-uct bucket_table *tbl,
- 					    unsigned int hash)
- {
- 	const unsigned int shift =3D PAGE_SHIFT - ilog2(sizeof(void *));
-=2D	static struct rhash_head __rcu *rhnull =3D
-=2D		(struct rhash_head __rcu *)NULLS_MARKER(0);
-+	static struct rhash_head __rcu *rhnull;
- 	unsigned int index =3D hash & ((1 << tbl->nest) - 1);
- 	unsigned int size =3D tbl->size >> tbl->nest;
- 	unsigned int subhash =3D hash;
-@@ -1198,8 +1197,11 @@ struct rhash_head __rcu **rht_bucket_nested(const st=
-ruct bucket_table *tbl,
- 		subhash >>=3D shift;
- 	}
-=20
-=2D	if (!ntbl)
-+	if (!ntbl) {
-+		if (!rhnull)
-+			INIT_RHT_NULLS_HEAD(rhnull);
- 		return &rhnull;
-+	}
-=20
- 	return &ntbl[subhash].bucket;
-=20
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwAdboACgkQOeye3VZi
-gbn96A/+OHwojhtpC3hdcI9CiYvjGide9ehwVLtgaF95+B+wV1ALPGoJ7Z+Mr9E1
-NCXZEs8vmL2FXsQwArY6gCneoLXTAixLcOEPX7vMdZC/RbRZND+uNsJDn3Z96ncZ
-2ma7oLgjzVSu+KrFIqn7PW6z4ppM9QR3egLCuRCVwCyTGtzQ4hDDmZUTD7qeHaV/
-GK0PCkKoIJ5HB3SjXuT0st243cLtNnIBjGMyXNRVMcGH9Vgf3DejFMnnBcUqj8rh
-Cd7hZ9gsrccKug5tKL9kEfFfh0pZH0rh7nQBSGKsPGxxP6iE7A7248AwKD2WRT59
-/3GQkXIxM2Jrk3SqtBIpox3MqCqwJ2zVPO9MKhYjfW+nevofNAA7j8R+iqbSmUk1
-S2J7jZYnjOI4k7hB6gVH8TgM7H8jDcr96eU18b67sybfzCR57H8l9PO6MeW0FW6D
-oDuopi2TP0xyU+PFyhWqGgk4EmuYcqSPopcTlWUBzdhuTsHSjA7RF2gw88rfbTnC
-EWv7GwNK9NosF8ANZzerb5Uhq9+Angz7apOd1LSwQ4TN4M4nKXc53zOV876f3bR5
-DzZwxeDMcBSiE5UT9YMxOeRhjWcl5h0GRUmtnOuRi5X7b2D2lteGD0sK+vrBl5Xr
-uEPLHpxAp6E2tnOxuZrhSc1Wi3LMgIkvANS158Ct2q8dGbhaCPA=
-=DgXW
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Kees Cook
