@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5515C18E01
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF398C41536
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BABA2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8513A213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:13:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+euQ7cO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BABA2146D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2eS3OBs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8513A213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbeK3ETM (ORCPT
+        id S1730651AbeK3ETK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:19:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41339 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbeK3ETL (ORCPT
+        Thu, 29 Nov 2018 23:19:10 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39723 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730577AbeK3ETJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:19:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id x10so2665592wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:13:06 -0800 (PST)
+        Thu, 29 Nov 2018 23:19:09 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so2682424wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=B3Orb74WwT6irLdvQjoh7i+GpPzyw+FEcB0oGPiZXlw=;
-        b=O+euQ7cOPUSvTs0X63EO/sOSn7bDdrMGZJ5nE1modkea/IlEoTYp6VkHHZtZa/61aA
-         B+VBxGQZ6y/i+q9i6B3V5aJqNEin4OkrJAnfp7SShnyPgSmw4KBttr4E/6qg8f0uY/Kq
-         mPFOiayoNqoeagrCpxVdR1sjiUWaJgacNx0mA=
+        bh=Vz5y5QfDkngla5yyvKovxaI5hAxDbbXuYQKEXtGsLK0=;
+        b=A2eS3OBsFIVDm3SbMQ7DUpIRVJaS4Tf4DsriQrtmhjV/xWOrFJrAGLsgYBTc5/fFlA
+         OpVuFxOZ/rcVN87UaesapdcPSRxKvEXGo3RvgB8nKzD/b1pspyeh3U+iCODuXeRt3xk5
+         MZCuXvCIBlyLxDmtKe+GunAIP/SJBTBSiVHpg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=B3Orb74WwT6irLdvQjoh7i+GpPzyw+FEcB0oGPiZXlw=;
-        b=Aq25pkAYql6XfUaboU8DrDEv1dVlzBZ6Fo1inTYHiAJB7BkLNTz8kaaOheyTMtpEFR
-         uyZ8/KRS8mI7Dv56Tc0k1qCptdRiqS3xLN9Y4ho8fzGu1Z6lNoln0pQBCCACk0s3d2zU
-         pFZdpIqSJERcIC7bU8tttHUhqq0qQ975of9YNPKSSwLzr0efFVb63Etzm6eUJXMV5gs/
-         n5R8EZVUKbEU4g7b8OVt/Ba80AZ8cqE2cApcGHFDu+eYwZNSI2ITgL6BhZ4Y+LU6hTrK
-         6YRaqYBSrU/xjkH93fOBUAUXuKaelDj0HkIKLSslAL6yFhqoMhOcxRFGYP0OLZfBVrEC
-         KBWg==
-X-Gm-Message-State: AA+aEWbFElPFttcdDKYKvVnfBjsZbIZa+Kr98YutbygD5BmbdWP3ontO
-        MS4ygdA9Vkff+OwctXTM6lLKgg==
-X-Google-Smtp-Source: AFSGD/VXU3Gv8ZHfIWa1Y/lIBR/IIvc8fDnsn3MW5lTMJdLElHbXsGE2kJul1o7vEl37VNZ178NB1w==
-X-Received: by 2002:adf:8228:: with SMTP id 37mr2092166wrb.160.1543511585964;
-        Thu, 29 Nov 2018 09:13:05 -0800 (PST)
+        bh=Vz5y5QfDkngla5yyvKovxaI5hAxDbbXuYQKEXtGsLK0=;
+        b=NZ4L9Wsw1zzJ/S6hOftba8aBSrL9z8hTy1B5EkUxLwjpO6Dt0Ggq2YgknS8fMUaMG7
+         uK5XOH7fuI+oOKAJlUxzpBsIf6nXni5pKuMbTSOcZGgIXyQEGn1UjMrNL285b/GcESt2
+         Iqe/fdj2W8s0ydEHBbQaqSBQlsYjeA71OoxMwBKzJcU012ZJBaV6U4gzxqzV5UCzzs/e
+         Gr4/h5OLJhM4RDRgwNinicNrBHm408iLWfy4mJA9BniDE1t44WKtq4T80zpIq9meeCue
+         qbasTHSx/9NP22Myw4ukHVsx0iXigO3yOKJlAoXPKAtPGkPyUl+kYAY2+fuUM4lfGuAP
+         1TvA==
+X-Gm-Message-State: AA+aEWaULf2RzkrE2pyKvkDOJyd8XEqLhZUCyovv/Qi1RujmYrfDWTFm
+        mSlua7ooIjpizRo5o8hcs8OtRg==
+X-Google-Smtp-Source: AFSGD/XPSjHYNRHfSzMVvI8TnB0UjDzpOaOvtnSjewY8kr1XwC9JyKnC4C/aEITO5Gp32KPaM3KgTQ==
+X-Received: by 2002:a5d:6105:: with SMTP id v5mr2115260wrt.63.1543511582682;
+        Thu, 29 Nov 2018 09:13:02 -0800 (PST)
 Received: from harold.home ([2a01:cb1d:112:6f00:f070:d240:312e:9f99])
-        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.13.04
+        by smtp.gmail.com with ESMTPSA id y185sm1593882wmg.34.2018.11.29.09.13.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 09:13:05 -0800 (PST)
+        Thu, 29 Nov 2018 09:13:01 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -76,9 +76,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Sedat Dilek <sedat.dilek@gmail.com>,
         YiFei Zhu <zhuyifei1999@gmail.com>
-Subject: [PATCH 11/11] efi/x86: earlyprintk - Fix infinite loop on some screen widths
-Date:   Thu, 29 Nov 2018 18:12:30 +0100
-Message-Id: <20181129171230.18699-12-ard.biesheuvel@linaro.org>
+Subject: [PATCH 09/11] efi: permit multiple entries in persistent memreserve data structure
+Date:   Thu, 29 Nov 2018 18:12:28 +0100
+Message-Id: <20181129171230.18699-10-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
 References: <20181129171230.18699-1-ard.biesheuvel@linaro.org>
@@ -89,39 +89,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YiFei Zhu <zhuyifei1999@gmail.com>
+In preparation of updating efi_mem_reserve_persistent() to cause less
+fragmentation when dealing with many persistent reservations, update
+the struct definition and the code that handles it currently so it
+can describe an arbitrary number of reservations using a single linked
+list entry. The actual optimization will be implemented in a subsequent
+patch.
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
-
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
-
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/efi.c              | 39 +++++++++++++++++--------
+ drivers/firmware/efi/libstub/arm-stub.c |  2 +-
+ include/linux/efi.h                     | 13 +++++++--
+ 3 files changed, 38 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 7476b3b097e1..7138bc7a265c 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -183,7 +183,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 415849bab233..80b11521627a 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -602,21 +602,33 @@ int __init efi_apply_persistent_mem_reservations(void)
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
+ 		while (prsv) {
+ 			struct linux_efi_memreserve *rsv;
+-
+-			/* reserve the entry itself */
+-			memblock_reserve(prsv, sizeof(*rsv));
+-
+-			rsv = early_memremap(prsv, sizeof(*rsv));
+-			if (rsv == NULL) {
++			u8 *p;
++			int i;
++
++			/*
++			 * Just map a full page: that is what we will get
++			 * anyway, and it permits us to map the entire entry
++			 * before knowing its size.
++			 */
++			p = early_memremap(ALIGN_DOWN(prsv, PAGE_SIZE),
++					   PAGE_SIZE);
++			if (p == NULL) {
+ 				pr_err("Could not map UEFI memreserve entry!\n");
+ 				return -ENOMEM;
+ 			}
+ 
+-			if (rsv->size)
+-				memblock_reserve(rsv->base, rsv->size);
++			rsv = (void *)(p + prsv % PAGE_SIZE);
++
++			/* reserve the entry itself */
++			memblock_reserve(prsv, EFI_MEMRESERVE_SIZE(rsv->size));
++
++			for (i = 0; i < atomic_read(&rsv->count); i++) {
++				memblock_reserve(rsv->entry[i].base,
++						 rsv->entry[i].size);
++			}
+ 
+ 			prsv = rsv->next;
+-			early_memunmap(rsv, sizeof(*rsv));
++			early_memunmap(p, PAGE_SIZE);
  		}
+ 	}
+ 
+@@ -985,6 +997,7 @@ static int __init efi_memreserve_map_root(void)
+ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ {
+ 	struct linux_efi_memreserve *rsv;
++	int rsvsize = EFI_MEMRESERVE_SIZE(1);
+ 	int rc;
+ 
+ 	if (efi_memreserve_root == (void *)ULONG_MAX)
+@@ -996,12 +1009,14 @@ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ 			return rc;
+ 	}
+ 
+-	rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
++	rsv = kmalloc(rsvsize, GFP_ATOMIC);
+ 	if (!rsv)
+ 		return -ENOMEM;
+ 
+-	rsv->base = addr;
+-	rsv->size = size;
++	rsv->size = 1;
++	atomic_set(&rsv->count, 1);
++	rsv->entry[0].base = addr;
++	rsv->entry[0].size = size;
+ 
+ 	spin_lock(&efi_mem_reserve_persistent_lock);
+ 	rsv->next = efi_memreserve_root->next;
+diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
+index 3d36142cf812..9e20159ea5f5 100644
+--- a/drivers/firmware/efi/libstub/arm-stub.c
++++ b/drivers/firmware/efi/libstub/arm-stub.c
+@@ -86,8 +86,8 @@ void install_memreserve_table(efi_system_table_t *sys_table_arg)
+ 	}
+ 
+ 	rsv->next = 0;
+-	rsv->base = 0;
+ 	rsv->size = 0;
++	atomic_set(&rsv->count, 0);
+ 
+ 	status = efi_call_early(install_configuration_table,
+ 				&memreserve_table_guid,
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 2b3b33c83b05..4f27640fdcdc 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1712,9 +1712,16 @@ extern struct efi_runtime_work efi_rts_work;
+ extern struct workqueue_struct *efi_rts_wq;
+ 
+ struct linux_efi_memreserve {
+-	phys_addr_t	next;
+-	phys_addr_t	base;
+-	phys_addr_t	size;
++	int		size;			// allocated size of the array
++	atomic_t	count;			// number of entries used
++	phys_addr_t	next;			// pa of next struct instance
++	struct {
++		phys_addr_t	base;
++		phys_addr_t	size;
++	} entry[0];
+ };
+ 
++#define EFI_MEMRESERVE_SIZE(count) (sizeof(struct linux_efi_memreserve) + \
++	(count) * sizeof(((struct linux_efi_memreserve *)0)->entry[0]))
++
+ #endif /* _LINUX_EFI_H */
 -- 
 2.19.1
 
