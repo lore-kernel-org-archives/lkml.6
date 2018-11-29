@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600F7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0CBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2631F21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4152321019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 05:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCdORK6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2631F21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zwh4z+MF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4152321019
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbeK2RD0 (ORCPT
+        id S1728816AbeK2RDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 12:03:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 12:03:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727402AbeK2RDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 12:03:25 -0500
+        id S1727402AbeK2RDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 12:03:30 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8627321104;
-        Thu, 29 Nov 2018 05:59:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08D4D21104;
+        Thu, 29 Nov 2018 05:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543471154;
-        bh=e5Nv0J2oHwauCYmFw66YMHAf7Gfp+g+y45/Isxcld2Y=;
+        s=default; t=1543471160;
+        bh=MZx7sEqYq7f/8NRXbVinBynqyxycWcTUl18acKqFgJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CCdORK6UOIIdXfJ0NiD+GnUjouCkuIxO8q0Cj+HUVxLIRgJj8csOgpPnvhVFFtOdb
-         xbJSwW/4FmYlhU1xhxko+UfJu2Elqzkk+iGefSbgcMxqiLf3ahSxp9nUl4i01yZARm
-         +BH9049Ra7qPgQUWhfjSPzeqSWnXnzJnNui8ccb8=
+        b=zwh4z+MFwS+9+pbLv9eIUEg6Na0/zgMldE3WsvcPJ304gpmJyo4f+pz6r/aU+bAU5
+         7MhWwU/r832fCrFFLdJdE81jt0d4lyr5FwLqRpeIhlIGBX61l3FPDQgAFW/OIFIwLp
+         dYhpcoxc3OPJIL/4JYB8KSHaQ94cnvoS4cM0osTs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chanho Min <chanho.min@lge.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 39/68] exec: make de_thread() freezable
-Date:   Thu, 29 Nov 2018 00:55:30 -0500
-Message-Id: <20181129055559.159228-39-sashal@kernel.org>
+Cc:     Connor McAdams <conmanx360@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 40/68] ALSA: hda/ca0132 - Add new ZxR quirk
+Date:   Thu, 29 Nov 2018 00:55:31 -0500
+Message-Id: <20181129055559.159228-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
@@ -53,76 +52,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chanho Min <chanho.min@lge.com>
+From: Connor McAdams <conmanx360@gmail.com>
 
-[ Upstream commit c22397888f1eed98cd59f0a88f2a5f6925f80e15 ]
+[ Upstream commit cce997292a5264c5342c968bbd226d7c365f03d6 ]
 
-Suspend fails due to the exec family of functions blocking the freezer.
-The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for
-all sub-threads to die, and we have the deadlock if one of them is frozen.
-This also can occur with the schedule() waiting for the group thread leader
-to exit if it is frozen.
+This patch adds a new PCI subsys ID for the ZxR, as found and tested by
+other users. Without a way to know if any Z's use it as well, it keeps
+the quirk of QUIRK_SBZ and goes through the HDA subsys test function.
 
-In our machine, it causes freeze timeout as bellows.
-
-Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze, wq_busy=0):
-setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
- Call trace:
-[<ffffffc00008ed70>] __switch_to+0x88/0xa0
-[<ffffffc000d1c30c>] __schedule+0x1bc/0x720
-[<ffffffc000d1ca90>] schedule+0x40/0xa8
-[<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
-[<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
-[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-[<ffffffc00021c584>] load_script+0x20c/0x228
-[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-[<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
-[<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
-[<ffffffc00008de30>] el0_svc_naked+0x24/0x28
-
-To fix this, make de_thread() freezable. It looks safe and works fine.
-
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exec.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 1ebf6e5a521d..6da8745857cb 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -62,6 +62,7 @@
- #include <linux/oom.h>
- #include <linux/compat.h>
- #include <linux/vmalloc.h>
-+#include <linux/freezer.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -1083,7 +1084,7 @@ static int de_thread(struct task_struct *tsk)
- 	while (sig->notify_count) {
- 		__set_current_state(TASK_KILLABLE);
- 		spin_unlock_irq(lock);
--		schedule();
-+		freezable_schedule();
- 		if (unlikely(__fatal_signal_pending(tsk)))
- 			goto killed;
- 		spin_lock_irq(lock);
-@@ -1111,7 +1112,7 @@ static int de_thread(struct task_struct *tsk)
- 			__set_current_state(TASK_KILLABLE);
- 			write_unlock_irq(&tasklist_lock);
- 			cgroup_threadgroup_change_end(tsk);
--			schedule();
-+			freezable_schedule();
- 			if (unlikely(__fatal_signal_pending(tsk)))
- 				goto killed;
- 		}
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index dffd60cebc31..cc2bb0057810 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -1065,6 +1065,7 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
++	SND_PCI_QUIRK(0x1102, 0x0033, "Sound Blaster ZxR", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA026, "Gigabyte G1.Sniper Z97", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA036, "Gigabyte GA-Z170X-Gaming 7", QUIRK_R3DI),
 -- 
 2.17.1
 
