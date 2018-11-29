@@ -2,114 +2,159 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AACC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8096EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B9620868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:13:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B9620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5019020868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 15:19:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5019020868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbeK3CTC (ORCPT
+        id S1728627AbeK3CYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 21:19:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbeK3CTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 21:19:01 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A18D80D;
-        Thu, 29 Nov 2018 07:13:21 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03C573F59C;
-        Thu, 29 Nov 2018 07:13:18 -0800 (PST)
-Date:   Thu, 29 Nov 2018 15:13:16 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-Message-ID: <20181129151316.GG23094@e110439-lin>
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
- <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
- <20181128100241.GA2131@hirez.programming.kicks-ass.net>
- <20181128115336.GB23094@e110439-lin>
- <20181129125348.GL2131@hirez.programming.kicks-ass.net>
+        Thu, 29 Nov 2018 21:24:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44971 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728444AbeK3CYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 21:24:52 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 42F6F8EA20;
+        Thu, 29 Nov 2018 15:19:10 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9B58183F0;
+        Thu, 29 Nov 2018 15:19:08 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 09:19:06 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 0/5] x86: dynamic indirect call promotion
+Message-ID: <20181129151906.owxeef2e3cm4nn2y@treble>
+References: <20181018005420.82993-1-namit@vmware.com>
+ <20181128160849.epmoto4o5jaxxxol@treble>
+ <9EACED43-EC21-41FB-BFAC-4E98C3842FD9@vmware.com>
+ <20181129003837.6lgxsnhoyipkebmz@treble>
+ <CALCETrUfC37TxuYLgqbN3_pZ1RzfpV03byKMpSt87o+JHtk6FQ@mail.gmail.com>
+ <0E75C656-18BF-4967-98A3-35E0BD83D603@vmware.com>
+ <4CD1975E-3B15-4B9C-B2A9-2E5F72E1D95F@amacapital.net>
+ <CALCETrWN5QenBqNpLZ3EWEF2XFje3HGubzck4AEFePCspM6mGQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181129125348.GL2131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrWN5QenBqNpLZ3EWEF2XFje3HGubzck4AEFePCspM6mGQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 29 Nov 2018 15:19:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-Nov 13:53, Peter Zijlstra wrote:
-> On Wed, Nov 28, 2018 at 11:53:36AM +0000, Patrick Bellasi wrote:
+On Wed, Nov 28, 2018 at 10:06:52PM -0800, Andy Lutomirski wrote:
+> On Wed, Nov 28, 2018 at 7:24 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> >
+> > On Nov 28, 2018, at 6:06 PM, Nadav Amit <namit@vmware.com> wrote:
+> >
+> > >> On Nov 28, 2018, at 5:40 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > >>
+> > >>> On Wed, Nov 28, 2018 at 4:38 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > >>> On Wed, Nov 28, 2018 at 07:34:52PM +0000, Nadav Amit wrote:
+> > >>>>> On Nov 28, 2018, at 8:08 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > >>>>>
+> > >>>>>> On Wed, Oct 17, 2018 at 05:54:15PM -0700, Nadav Amit wrote:
+> > >>>>>> This RFC introduces indirect call promotion in runtime, which for the
+> > >>>>>> matter of simplification (and branding) will be called here "relpolines"
+> > >>>>>> (relative call + trampoline). Relpolines are mainly intended as a way
+> > >>>>>> of reducing retpoline overheads due to Spectre v2.
+> > >>>>>>
+> > >>>>>> Unlike indirect call promotion through profile guided optimization, the
+> > >>>>>> proposed approach does not require a profiling stage, works well with
+> > >>>>>> modules whose address is unknown and can adapt to changing workloads.
+> > >>>>>>
+> > >>>>>> The main idea is simple: for every indirect call, we inject a piece of
+> > >>>>>> code with fast- and slow-path calls. The fast path is used if the target
+> > >>>>>> matches the expected (hot) target. The slow-path uses a retpoline.
+> > >>>>>> During training, the slow-path is set to call a function that saves the
+> > >>>>>> call source and target in a hash-table and keep count for call
+> > >>>>>> frequency. The most common target is then patched into the hot path.
+> > >>>>>>
+> > >>>>>> The patching is done on-the-fly by patching the conditional branch
+> > >>>>>> (opcode and offset) that is used to compare the target to the hot
+> > >>>>>> target. This allows to direct all cores to the fast-path, while patching
+> > >>>>>> the slow-path and vice-versa. Patching follows 2 more rules: (1) Only
+> > >>>>>> patch a single byte when the code might be executed by any core. (2)
+> > >>>>>> When patching more than one byte, ensure that all cores do not run the
+> > >>>>>> to-be-patched-code by preventing this code from being preempted, and
+> > >>>>>> using synchronize_sched() after patching the branch that jumps over this
+> > >>>>>> code.
+> > >>>>>>
+> > >>>>>> Changing all the indirect calls to use relpolines is done using assembly
+> > >>>>>> macro magic. There are alternative solutions, but this one is
+> > >>>>>> relatively simple and transparent. There is also logic to retrain the
+> > >>>>>> software predictor, but the policy it uses may need to be refined.
+> > >>>>>>
+> > >>>>>> Eventually the results are not bad (2 VCPU VM, throughput reported):
+> > >>>>>>
+> > >>>>>>          base            relpoline
+> > >>>>>>          ----            ---------
+> > >>>>>> nginx      22898           25178 (+10%)
+> > >>>>>> redis-ycsb 24523           25486 (+4%)
+> > >>>>>> dbench     2144            2103 (+2%)
+> > >>>>>>
+> > >>>>>> When retpolines are disabled, and if retraining is off, performance
+> > >>>>>> benefits are up to 2% (nginx), but are much less impressive.
+> > >>>>>
+> > >>>>> Hi Nadav,
+> > >>>>>
+> > >>>>> Peter pointed me to these patches during a discussion about retpoline
+> > >>>>> profiling.  Personally, I think this is brilliant.  This could help
+> > >>>>> networking and filesystem intensive workloads a lot.
+> > >>>>
+> > >>>> Thanks! I was a bit held-back by the relatively limited number of responses.
+> > >>>
+> > >>> It is a rather, erm, ambitious idea, maybe they were speechless :-)
+> > >>>
+> > >>>> I finished another version two weeks ago, and every day I think: "should it
+> > >>>> be RFCv2 or v1”, ending up not sending it…
+> > >>>>
+> > >>>> There is one issue that I realized while working on the new version: I’m not
+> > >>>> sure it is well-defined what an outline retpoline is allowed to do. The
+> > >>>> indirect branch promotion code can change rflags, which might cause
+> > >>>> correction issues. In practice, using gcc, it is not a problem.
+> > >>>
+> > >>> Callees can clobber flags, so it seems fine to me.
+> > >>
+> > >> Just to check I understand your approach right: you made a macro
+> > >> called "call", and you're therefore causing all instances of "call" to
+> > >> become magic?  This is... terrifying.  It's even plausibly worse than
+> > >> "#define if" :)  The scariest bit is that it will impact inline asm as
+> > >> well.  Maybe a gcc plugin would be less alarming?
+> > >
+> > > It is likely to look less alarming. When I looked at the inline retpoline
+> > > implementation of gcc, it didn’t look much better than what I did - it
+> > > basically just emits assembly instructions.
+> >
+> > To be clear, that wasn’t a NAK.  It was merely a “this is alarming.”
 > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index ac855b2f4774..93e0cf5d8a76 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -3661,6 +3661,10 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
-> >  	if (!task_sleep)
-> >  		return;
-> > 
-> > +	/* Skip samples which do not represent an actual utilization */
-> > +	if (unlikely(task_util(p) > capacity_of(task_cpu(p))))
-> > +		return;
-> > +
-> >  	/*
-> >  	 * If the PELT values haven't changed since enqueue time,
-> >  	 * skip the util_est update.
-> 
-> Would you not want something like:
-> 
-> 	min(task_util(p), capacity_of(task_cpu(p)))
-> 
-> And is this the only place where we need this?
+> Although... how do you avoid matching on things that really don't want
+> this treatment?  paravirt ops come to mind.
 
-Mmm... even this could be an over-estimation:
-
-I've just posted an example in my last reply to Vincent, end of:
-
-   Message-ID: <20181129150020.GF23094@e110439-lin>
-   https://lore.kernel.org/lkml/20181129150020.GF23094@e110439-lin/
-
-> OTOH, if the task is always running, it will be always running
-> irrespective of where it runs.
-
-That's not what I'm concerned about. I'm concerned about small tasks
-which are running on limited capacity (e.g. due to thermal capping)
-without idle time. In this case, the new "utilization" signal could
-overestimate the real task needs.
-
-> Not storing these samples seems weird though; this is the exact
-> condition you want to record -- the task is very active, if we skip
-> these, we'll come back at a low frequency on the next wakeup.
-
-When there is not idle time, we don't know if the reported
-utilization, above the cpu capacity, is due to the task being bigger...
-or just the new utilization signal converging towards:
-
-    100% / RUNNABLE_TASKS_COUNT
+Paravirt ops don't use retpolines because they're patched into direct
+calls during boot.  So Nadav's patches won't touch them.
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Josh
