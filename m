@@ -2,132 +2,110 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E4DC64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A06DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89D6820863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mOatvf8S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D6820863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 381FC2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:14:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381FC2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeK3JVu (ORCPT
+        id S1727083AbeK3JVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:21:50 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40993 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbeK3JVt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 04:21:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58596 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726963AbeK3JVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Nov 2018 04:21:49 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u6so1720881plm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 14:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EO7ihF7n2bMGlK8SofFmGFu/hpPVR0zNtU43Ep46OZs=;
-        b=mOatvf8SehG/Q3q5N5A3GQ4zschqCVf25vsPplLqg+v8m0UG8V0hcMa0PY9cMdJo1g
-         lhnLDBc/ZAkqsxp2rk5b151vcbGuEsJy49cE7eOaeIvuhjocJXSdR66itwigwBUs3mDL
-         kbg5ghJkqHOc4vSJraRLxWOC/NjNSjEhvw3ug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EO7ihF7n2bMGlK8SofFmGFu/hpPVR0zNtU43Ep46OZs=;
-        b=GXSlYlXyKllRswrR3dzeMri0gLxD9ohGSJAp8nxPnkMB57ez1g/ov9oEDshr2HFucX
-         5czN1gNcgLUmlDbKBA0sy5WrZBfmJv/QyrJeI5zU51S+9x4sfSlGH4kytUxZD8UXolZz
-         fwk/Ze/O3GwvVwAoRCtq97Iv6jd2mOVhe/KR78QiRNUJ2u4tXoeEnaxG/oO9Is1rhbQ9
-         K4MUKYfMBiXO+jUc27+ptIwSqTdYADaL9qjSrjpmBpyJCbh73HuJacuTGBakubvtSF9P
-         BNC8ElkE5yIXLeJodqq+VJ9HJ7fCaE50XVB/V+Wm3wGT7i3IeN5k5ZHF5teznHneMXKj
-         A/Sg==
-X-Gm-Message-State: AA+aEWasVqk1kiOC82J3aRE0Qb2s/oFVkHIGGp6Au9/41GMiMo7zd2r0
-        kiRmPmghjRdlsos5H9NudxjjzA==
-X-Google-Smtp-Source: AFSGD/X1C/z6YMgz1tiuumY4GL/PM4pj90qJuODIFNW6yEXcqRbNf1wkQ0OtBo+DhvU818sDF9cwbA==
-X-Received: by 2002:a17:902:bd86:: with SMTP id q6mr3124699pls.16.1543529690279;
-        Thu, 29 Nov 2018 14:14:50 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id c67sm4697690pfg.170.2018.11.29.14.14.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 29 Nov 2018 14:14:49 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh@kernel.org>, Can Guo <cang@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>
-Subject: [PATCH v1 4/4] phy: qcom-qmp: Expose provided clocks to DT
-Date:   Thu, 29 Nov 2018 14:13:57 -0800
-Message-Id: <20181129221357.67417-5-evgreen@chromium.org>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181129221357.67417-1-evgreen@chromium.org>
-References: <20181129221357.67417-1-evgreen@chromium.org>
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20817DC8F4;
+        Thu, 29 Nov 2018 22:14:51 +0000 (UTC)
+Received: from treble (ovpn-123-4.rdu2.redhat.com [10.10.123.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 312CC1712C;
+        Thu, 29 Nov 2018 22:14:48 +0000 (UTC)
+Date:   Thu, 29 Nov 2018 16:14:46 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129221446.qb7znvt7zprlbz77@treble>
+References: <20181127084330.GX2113@hirez.programming.kicks-ass.net>
+ <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
+ <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+ <ECF632D9-581B-40B7-9F0A-6B5607A4D0E3@amacapital.net>
+ <20181129143853.GO2131@hirez.programming.kicks-ass.net>
+ <20181129163342.tp5wlfcyiazwwyoh@treble>
+ <20181129164914.GA9027@hirez.programming.kicks-ass.net>
+ <0FDA053D-7ADC-4F42-AEA5-99DA155FCED0@amacapital.net>
+ <20181129171050.iio53bw67fbiwzud@treble>
+ <20181129220148.GD11632@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181129220148.GD11632@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 29 Nov 2018 22:14:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register a simple clock provider for the PHY pipe clock sources so that
-device tree users can point at these clocks via phandles to the lane
-nodes.
+On Thu, Nov 29, 2018 at 11:01:48PM +0100, Peter Zijlstra wrote:
+> On Thu, Nov 29, 2018 at 11:10:50AM -0600, Josh Poimboeuf wrote:
+> > On Thu, Nov 29, 2018 at 08:59:31AM -0800, Andy Lutomirski wrote:
+> 
+> > > (like pointing IP at a stub that retpolines to the target by reading
+> > > the function pointer, a la the unoptimizable version), then okay, I
+> > > guess, with only a small amount of grumbling.
+> > 
+> > I tried that in v2, but Peter pointed out it's racy:
+> > 
+> >   https://lkml.kernel.org/r/20181126160217.GR2113@hirez.programming.kicks-ass.net
+> 
+> Ah, but that is because it is a global shared trampoline.
+> 
+> Each static_call has it's own trampoline; which currently reads
+> something like:
+> 
+> 	RETPOLINE_SAFE
+> 	JMP *key
+> 
+> which you then 'defuse' by writing an UD2 on. _However_, if you write
+> that trampoline like:
+> 
+> 1:	RETPOLINE_SAFE
+> 	JMP *key
+> 2:	CALL_NOSPEC *key
+> 	RET
+> 
+> and have the text_poke_bp() handler jump to 2 (a location you'll never
+> reach when you enter at 1), it will in fact work I think. The trampoline
+> is never modified and not shared between different static_call's.
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
+But after returning from the function to the trampoline, how does it
+return from the trampoline to the call site?  At that point there is no
+return address on the stack.
 
- drivers/phy/qualcomm/phy-qcom-qmp.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index 8204d55e2d650..b4006818e1b65 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -1542,6 +1542,11 @@ static int qcom_qmp_phy_clk_init(struct device *dev)
- 	return devm_clk_bulk_get(dev, num, qmp->clks);
- }
- 
-+static void phy_pipe_clk_release_provider(void *res)
-+{
-+	of_clk_del_provider(res);
-+}
-+
- /*
-  * Register a fixed rate pipe clock.
-  *
-@@ -1588,7 +1593,23 @@ static int phy_pipe_clk_register(struct qcom_qmp *qmp, struct device_node *np)
- 	fixed->fixed_rate = 125000000;
- 	fixed->hw.init = &init;
- 
--	return devm_clk_hw_register(qmp->dev, &fixed->hw);
-+	ret = devm_clk_hw_register(qmp->dev, &fixed->hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &fixed->hw);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Roll a devm action because the clock provider is the child node, but
-+	 * the child node is not actually a device.
-+	 */
-+	ret = devm_add_action(qmp->dev, phy_pipe_clk_release_provider, np);
-+	if (ret)
-+		phy_pipe_clk_release_provider(np);
-+
-+	return ret;
- }
- 
- static const struct phy_ops qcom_qmp_phy_gen_ops = {
 -- 
-2.18.1
-
+Josh
