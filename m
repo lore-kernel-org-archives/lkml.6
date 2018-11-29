@@ -2,87 +2,79 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1896CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6154EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE05D20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE05D20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AD5D20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JQaCmV4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD5D20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbeK3Dir (ORCPT
+        id S1729495AbeK3Di5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:38:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49971 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729216AbeK3Dii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 22:38:38 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51694356F6;
-        Thu, 29 Nov 2018 16:32:42 +0000 (UTC)
-Received: from jlaw-desktop.bos.csb (wlan-196-240.bos.redhat.com [10.16.196.240])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AF4E601B9;
-        Thu, 29 Nov 2018 16:32:40 +0000 (UTC)
-Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
- counter to prevent trace corruption
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-References: <20181122002801.501220343@goodmis.org>
- <20181128203931.ym2rkya7a6agzzy3@redhat.com>
- <20181128160021.09acd1af@gandalf.local.home>
- <20181128222936.74da7f54@vmware.local.home>
- <20181128232430.425f8b12@vmware.local.home>
- <044db9c0-a937-252f-b9e6-e4060bca3b0d@redhat.com>
- <20181129111708.766f35d6@gandalf.local.home>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Organization: Red Hat
-Message-ID: <11879829-4827-8eda-7cb8-ddcfdc404120@redhat.com>
-Date:   Thu, 29 Nov 2018 11:32:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 29 Nov 2018 22:38:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56640 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbeK3Di5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 22:38:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K6S8T1/ozDfgvj/IZZYEdp1msRrLxjSOc1DfsDdupEQ=; b=JQaCmV4qZuS4WCUvjaMI/tffl
+        PzHymh5/4olRWtMgWiiOyUBTAj5fSqQLz+P+tr+ghbE0MOyeHz8N6zllvpYKfK7FwQyxKghye5XBk
+        cv3IUUQDSFpgeZT6K5o6NpXLHPWvSTVgw7EtFZ9hL1ImElZAZJy9QCvNNuptLeUUqN0Ojrfjc1xed
+        M32g9SibhQ5ZMyx3Dnq8TCGxfwkaEBvE6cbnsVGp1eVWgHNuWs0LX+mFSE3/4HjemxctZ/7gM+0KC
+        ua34NyGNqIxi4JBSdY38/hs5cAJmPuxAkmZAVBp3So60tNEMkrPtGU22KqlMkq6EyVSa8jrj+zRTU
+        cRWX+5yEA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSPFL-0000z0-7S; Thu, 29 Nov 2018 16:32:59 +0000
+Date:   Thu, 29 Nov 2018 08:32:58 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org
+Subject: Re: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
+Message-ID: <20181129163258.GA26511@infradead.org>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
+ <20181116145937.27660-4-phil.edworthy@renesas.com>
+ <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
 MIME-Version: 1.0
-In-Reply-To: <20181129111708.766f35d6@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 16:32:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2018 11:17 AM, Steven Rostedt wrote:
-> On Thu, 29 Nov 2018 10:08:55 -0500
-> Joe Lawrence <joe.lawrence@redhat.com> wrote:
+On Thu, Nov 29, 2018 at 09:54:37PM +1000, Greg Ungerer wrote:
+> Hi Phil,
 > 
->> With the "take 2" patch, I only see smp_irq_work_interrupt() graph when
->> the graph_function is in progress..  for example:
+> On 17/11/18 12:59 am, Phil Edworthy wrote:
+> > clk_get_optional() returns NULL if not found instead of -ENOENT,
+> > otherwise the behaviour is the same as clk_get().
+> > 
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 > 
-> In other words it works :-)
+> Acked-by: Greg Ungerer <gerg@@linux-m68k.org>
 > 
-> Can I get a Tested-by from you?
-> 
+> Looks good. Do you want me to take this in the m68knommu git tree?
+> Or is the whole series going through some other tree?
 
-Yup, thanks for fixing!
-
-Tested-by: Joe Lawrence <joe.lawrence@redhat.com>
-
--- Joe
+Any chance we could just get coldfire moved over to the common clock
+framework?
