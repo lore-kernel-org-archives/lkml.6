@@ -2,108 +2,115 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B202DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3997CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2F120834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2F120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EA54B20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:00:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLsAmmd/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA54B20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeK2VCz (ORCPT
+        id S1727229AbeK2VFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:02:55 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38161 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeK2VCz (ORCPT
+        Thu, 29 Nov 2018 16:05:12 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41822 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbeK2VFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:02:55 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so1217237wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 01:58:07 -0800 (PST)
+        Thu, 29 Nov 2018 16:05:12 -0500
+Received: by mail-lf1-f67.google.com with SMTP id c16so962822lfj.8;
+        Thu, 29 Nov 2018 02:00:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qA1DNuw+7GiqVUBAahLlA+0uqyff0Brlhy+2UZlD/dI=;
+        b=SLsAmmd/zyPgskuVNZESLCfDNFRyNP7fwMGHhMdA8qe4qBfE1rvCxWmCPAhhHuzhf1
+         XyyUQN6lGLg2g+BdjeAj5AZvKREtbMYJlemqmz+McRMYlnHqm6ZBJ86yc5e15gDmIaY/
+         HZmhk9QqCPmp/w2056tXZZI5CztUA66cCRbLeFROjaKpJwDS9rP6b+EUVVItWnVKVua5
+         QKoqWEVhA0Km0k11fll9bTcrw5zGz5aJVCJfDYMRelp1M/NRHV9kKX+irEY730BbiEg8
+         lWzU3DOjsMA+8L9TLh3OTHfTsuJod9SjRJai6QZsz2IU4n+WQjf+yFLuFdaFtB2mdkMz
+         g4Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wVbQqGOEZGIqh5tnJCI0R/630vIv6JcoxcsOFv3IZng=;
-        b=Z+lo30BXVHApujXrkBhf/VdYV3JoMczCuXVSsm1fOEqiutzM9JRqn4LW917mKHN5PK
-         al+83L4RJ2BQno+G2AIU1quuhYIQGWyL2PSSE9hTfvZivSfmT/TgBdyL5fx/zBZijqGe
-         bJEoyAx9DVXucQNfdH4DGkwvPfk/6DX9nGwsYcxBQKKmUBBCUcp5jXC2alZ61r7h+loJ
-         oSRItmKU/WQEomg4NYNxvBa+nJ9SfZwiMX1ubZ4ocv4qU1gkFUnLWnlt1sarGFgs2ej1
-         YvZ+t30VGYSahsS+r3n5+GLAa309HqOTBSiLmLPk4sCAEslXsJZbYdB7uRQlp7l5fGdv
-         hlhg==
-X-Gm-Message-State: AA+aEWbYVdzBjQ8kj1tOtQIDDV2R4YvUQZe07dZm/1DjJP+PU/XdM7Zz
-        yBPLqmwD6Ju3xtwoSf0nXAG+rw==
-X-Google-Smtp-Source: AFSGD/UW/sY4Ma4EUXKAuQrmoh9/ZwxCf5J8M45gZBWKGWZ2Ein+aUJ/sHbd2BzKc5JWtCpkL+P/RQ==
-X-Received: by 2002:adf:9c8a:: with SMTP id d10mr752691wre.244.1543485486748;
-        Thu, 29 Nov 2018 01:58:06 -0800 (PST)
-Received: from localhost.localdomain ([151.15.226.84])
-        by smtp.gmail.com with ESMTPSA id o81sm2224951wmd.10.2018.11.29.01.58.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 01:58:05 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:58:03 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        viresh.kumar@linaro.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: Re: [PATCH V5 1/2] base/drivers/arch_topology: Replace mutex with
- READ_ONCE / WRITE_ONCE
-Message-ID: <20181129095803.GF4271@localhost.localdomain>
-References: <1543325060-1599-1-git-send-email-daniel.lezcano@linaro.org>
- <20181128114454.GC4271@localhost.localdomain>
- <17ecb59a-7647-ce56-0715-bfe8d520dd18@linaro.org>
- <20181129070437.GD4271@localhost.localdomain>
- <749fdda3-7af5-2899-5c91-c9a1c57025d3@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qA1DNuw+7GiqVUBAahLlA+0uqyff0Brlhy+2UZlD/dI=;
+        b=SMLwTrIphawQGZGWBMMv7BOa/IDsrKqoCkIslLtlWgRR+3FLby5gUA5zhKmfakIsRv
+         6aeBXAsrKkIMBMyxsSs9nI6kMzWS6XXQf2LPHezjriE0RULOZ/kDrxRU79zqa6XZzcfS
+         oLugbS1J7o9blDhICqUmEhMAUk45VuUOQ1fBJbLca4rtqVdUvIlgU8bXe92Wkxs9BASv
+         KEPMCfMW0XYzh2Ux1F29NOZABTnOWjQUbJQmYYh4Bc5no/Q/aWH6x6v4MuQKboQ02Gf3
+         hvgatveS8r9WxrM9Z8inSM6kcCeNgHydu7XzJyNx7H7ofOcigULP2+E7/9HvLb1AT7bF
+         4Xrg==
+X-Gm-Message-State: AA+aEWa9OskPqX7GvBJV6syYvqQlAXw6CFma6DhIlxuiiGCImtwNflky
+        U4tUspr5vEABTQgx6n5gbDv62ow03bQSBhWyW9A=
+X-Google-Smtp-Source: AFSGD/UiRVhqMm8zhmPaCDXqpaVX6gohIegDv+i1ouoH6K6CUIpbh3Ryt+GJ79XVsRKh27x84mNT86t44QO6E04lvyw=
+X-Received: by 2002:a19:d58e:: with SMTP id m136mr638831lfg.70.1543485623040;
+ Thu, 29 Nov 2018 02:00:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <749fdda3-7af5-2899-5c91-c9a1c57025d3@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542007566-9449-1-git-send-email-zhang.chunyan@linaro.org>
+ <1542007566-9449-2-git-send-email-zhang.chunyan@linaro.org>
+ <84836600-c705-9ac3-297e-bb67a611daca@intel.com> <CAAfSe-us5aKOv9F6KHwvJR_cMAF8KFo6W1Gs_B3zBiNOuD10Qg@mail.gmail.com>
+ <f78de042-69cf-5345-f16f-236d04d57051@intel.com>
+In-Reply-To: <f78de042-69cf-5345-f16f-236d04d57051@intel.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Thu, 29 Nov 2018 17:59:46 +0800
+Message-ID: <CAAfSe-sfe5A7b_8iBiUmvi_mo1zRZ_Oh0yu-uwXo8Hv+WBftWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] mmc: sdhci: add support for using external DMA devices
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        kishon@ti.com, nsekhar@ti.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/18 10:18, Daniel Lezcano wrote:
-> On 29/11/2018 08:04, Juri Lelli wrote:
-> 
-> [ ... ]
-> 
-> >> With or without this patch, it is the case:
-> >>
-> >>                 task1                      task2
-> >>                   |                          |
-> >>   read("/sys/.../cpu1/cpu_capacity)          |
-> >>                   |                  write("/sys/.../cpu1/cpu_capacity")
-> >>   read("/sys/.../cpu2/cpu_capacity)          |
-> >>
-> >>
-> >> There is no guarantee userspace can have a consistent view of the
-> >> capacity. As soon as it reads a capacity, it can be changed in its back.
-> > 
-> > True, but w/o the mutex task1 could read different cpu_capacity values
-> > for a cluster (it actually can also with current implementation, we
-> > should grab the mutex in the read path as well if we want to avoid
-> > this). 
-> 
-> Even if the mutex is on the read path, the userspace can see different
-> capacities because it will read the cpu_capacity per cpu directory.
-> 
-> The mutex will be take when reading cpu0/cpu_capacity, not for
-> cpu[0-9]/cpu_capacity. Between two reads, a write can happen because the
-> lock is released in between.
-> 
-> Do you agree with the patch ? Or do you want me to drop it ?
+Hi Adrian,
 
-I don't actually have cases at hand that are showing regression with it,
-I was just trying to understand if we might potentially hit problems in
-the future. So, I'm not against this patch. :-)
+On Thu, 29 Nov 2018 at 15:36, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 29/11/18 8:22 AM, Chunyan Zhang wrote:
+> > On Tue, 20 Nov 2018 at 21:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> >>
+> >> On 12/11/18 9:26 AM, Chunyan Zhang wrote:
+> >>> Some standard SD host controllers can support both external dma
+> >>> controllers as well as ADMA/SDMA in which the SD host controller
+> >>> acts as DMA master. TI's omap controller is the case as an example.
+> >>>
+> >>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> >>> the host controller but does not have any support for external DMA
+> >>> controllers implemented using dmaengine, meaning that custom code is
+> >>> needed for any systems that use an external DMA controller with SDHCI.
+> >>
+> >> I still think you probably need to reset the DMA if there are transfer
+> >> errors - perhaps you could comment on that.  Also there are some comments below.
+> >
+> > With regard to "transfer error", do you mean if
+> > sdhci_external_dma_setup() failed?
+>
+> No, I mean any error interrupt that can leave the DMA uncompleted.  For
+> SDHCI, resetting the data circuit cleans that up, but presumably something
+> is needed for external DMA?
+
+Yes, it should need a dmaengine_terminate_all().
+
+How about adding that at here (I will wrap it up of course):
+https://elixir.bootlin.com/linux/v4.19.5/source/drivers/mmc/host/sdhci.c#L2553
+
+Is there somewhere else I'm missing?
+
+Thanks,
+Chunyan
