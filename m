@@ -2,128 +2,111 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590EDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF30C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0685205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B96120863
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="OjdoUDN4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0685205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RoSdbJBT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B96120863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeK2UnO (ORCPT
+        id S1726989AbeK2UrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:43:14 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45393 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbeK2UnO (ORCPT
+        Thu, 29 Nov 2018 15:47:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45328 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeK2UrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:43:14 -0500
-Received: by mail-ed1-f68.google.com with SMTP id d39so1285626edb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 01:38:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9xllrEvB2eA3wMsFtSx3nY/XVVZZnFPzIpbG/h1Vw/c=;
-        b=OjdoUDN4bS8OD7eoHGIR9uxIQv8UIXE8FkfH0VeBfbkmj4SMEPoMIC3NVGqtlJWOvB
-         ec0f6JnsIXYpVOal53fg4UaeJrgL1fRfsvpHVF6vFwPJ2HSesCRqFEjJrszydWAlGOrZ
-         sRtw87fomFhpzMKtNxV7LV5AyTYXUUvdK9Fas=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=9xllrEvB2eA3wMsFtSx3nY/XVVZZnFPzIpbG/h1Vw/c=;
-        b=pfNERIp0kHED//HvRPlvmZel37geC/qGz6/FlpuZ5BHVSbJ7XzKxYql7QzqaqhVhYw
-         xwQCrCfJIVJDJqDcw120LskJiMVsiRqIbgM5P7FyaS8kunC6NCHL9ZiQPwbK6vIKiciW
-         Y9ayZEZrWXCOMtY6PE+rTTiZdYoKgojf2BNOIeu3EVSBxFbR46l8aKE8kMLwROaJqbXg
-         GZ6/5oK3tT6zlZxk9xwMH1Q5XNfLabDSOGynscUqRCEkoxv3fc+DqEM/34JTaYzJqK7U
-         M6wRYrZzimz/gNRJ/cJidzSRv7jiRwsD3riPg1qDSGm9gWmiD+CWx6UC8UeuAwcXXZlw
-         lyDg==
-X-Gm-Message-State: AA+aEWb0j85kCWYIFamZy4LB8IgIkc9pDBvribEYy5Vufv7IIf8Kg+LL
-        5xYxP+ugMkYzfOwm9avSrxakIQ==
-X-Google-Smtp-Source: AFSGD/VnyP6k6JkAuhCfgoOxcDpe5f63Vy2OJBPlPDi2c5VNoMp6uK5SA2O27O/OBjAC16ZpQwmTxQ==
-X-Received: by 2002:a17:906:6085:: with SMTP id t5-v6mr1003301ejj.47.1543484308506;
-        Thu, 29 Nov 2018 01:38:28 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id k26-v6sm256708ejv.59.2018.11.29.01.38.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 01:38:27 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:38:25 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        Dave Emett <david.emett@broadcom.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/v3d: Fix prime imports of buffers from other
- drivers.
-Message-ID: <20181129093825.GJ21184@phenom.ffwll.local>
-Mail-Followup-To: Eric Anholt <eric@anholt.net>,
-        dri-devel@lists.freedesktop.org,
-        Dave Emett <david.emett@broadcom.com>, linux-kernel@vger.kernel.org
-References: <20181128230927.10951-1-eric@anholt.net>
- <20181128230927.10951-3-eric@anholt.net>
+        Thu, 29 Nov 2018 15:47:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oM54E/pz6Qe+h9lX2NbLAODLiq3zUg+3MJImPEMuok4=; b=RoSdbJBTmvlACxTnC+BQk9ittb
+        cV5EkQL8s0NBfkHo67U2etz2zwNW2xMwXQ8Gu7EiKR/pdE+3/zsVEy1z3vdcmRi3GXNKior0J8UM8
+        Wp91mMloMPkiyIFldjJrLpzSiWXMf3yJRYFdfA6ijI2GZpIxhrBk96p5b5JfuRwJn5vbA0YIW9JCi
+        Eoq2NdPyV0WExsSOSCPeJJjU4c5n0IrpaMBBsrdVV0I9TkxKzz7U3xndljz24Wv9qs0dzqI+Vp3a3
+        1+9QQ75V2nFJ//bcXjwaHOxDPp8x+CF+ABmtcnHIeSvYpboKjBG5A0zzGbrB4GvZ9AXJNwIC8diwD
+        /TDDHXBA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSIpo-0003NN-SH; Thu, 29 Nov 2018 09:42:13 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6BA9F2029FD58; Thu, 29 Nov 2018 10:42:10 +0100 (CET)
+Date:   Thu, 29 Nov 2018 10:42:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181129094210.GC2131@hirez.programming.kicks-ass.net>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
+ <20181126160217.GR2113@hirez.programming.kicks-ass.net>
+ <20181126171036.chcbmb35ygpxziub@treble>
+ <20181126175624.bruqfbkngbucpvxr@treble>
+ <20181126200801.GW2113@hirez.programming.kicks-ass.net>
+ <20181126212628.4apztfazichxnt7r@treble>
+ <20181127084330.GX2113@hirez.programming.kicks-ass.net>
+ <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181128230927.10951-3-eric@anholt.net>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrXam8JBtXE3S97Vyb_=+pmjgr23SoZ-Dm5pmYtwZYA+7Q@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:09:27PM -0800, Eric Anholt wrote:
-> v3d_bo_get_pages() checks this to decide to map the imported buffer
-> instead of the backing shmem file.  The caller was about to set this
-> value anyway, and there's no error path in between.  Ideally we
-> wouldn't even allocate the shmem file for our imports, but that's a
-> more invasive fix.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-> Cc: Dave Emett <david.emett@broadcom.com>
+On Wed, Nov 28, 2018 at 10:05:54PM -0800, Andy Lutomirski wrote:
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> >> +static void static_call_bp_handler(struct pt_regs *regs, void *_data)
+> >> +{
+> >> +    struct static_call_bp_data *data = _data;
+> >> +
+> >> +    /*
+> >> +     * For inline static calls, push the return address on the stack so the
+> >> +     * "called" function will return to the location immediately after the
+> >> +     * call site.
+> >> +     *
+> >> +     * NOTE: This code will need to be revisited when kernel CET gets
+> >> +     *       implemented.
+> >> +     */
+> >> +    if (data->ret) {
+> >> +        regs->sp -= sizeof(long);
+> >> +        *(unsigned long *)regs->sp = data->ret;
+> >> +    }
+> 
+> You can’t do this.  Depending on the alignment of the old RSP, which
+> is not guaranteed, this overwrites regs->cs.  IRET goes boom.
 
-> ---
-> 
-> I've been sitting on this one because I don't like it and was hoping
-> the shmem library would pan out.  This is a useful patch for now,
-> though.
-> 
->  drivers/gpu/drm/v3d/v3d_bo.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-> index 54d96518a131..a08766d39eab 100644
-> --- a/drivers/gpu/drm/v3d/v3d_bo.c
-> +++ b/drivers/gpu/drm/v3d/v3d_bo.c
-> @@ -293,6 +293,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
->  	bo->resv = attach->dmabuf->resv;
->  
->  	bo->sgt = sgt;
-> +	obj->import_attach = attach;
->  	v3d_bo_get_pages(bo);
->  
->  	v3d_mmu_insert_ptes(bo);
-> -- 
-> 2.20.0.rc1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I don't get it; can you spell that out?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The way I understand it is that we're at a location where a "E8 - Near
+CALL" instruction should be, and thus RSP should be the regular kernel
+stack, and the above simply does "PUSH ret", which is what that CALL
+would've done too.
+
+
