@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE4CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E156C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFD52146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B0020868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:22:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ot3/ta49"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DFD52146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMTx2uu5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B0020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731853AbeK3B1d (ORCPT
+        id S1731866AbeK3B1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:27:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:27:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731142AbeK3B1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:27:32 -0500
+        id S1731856AbeK3B1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:27:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C995120868;
-        Thu, 29 Nov 2018 14:22:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3370F20868;
+        Thu, 29 Nov 2018 14:22:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501321;
-        bh=VdAoHXBmmxfqj1/4IXVoPlT/EW3c6Bh3wSuIxqYr99o=;
+        s=default; t=1543501323;
+        bh=qwWV6ZPGdDMjv81NDia436blk8bcnvcklrpTSGDTyc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ot3/ta499YQuj9NhFeK1OsyzEwsr2/6mTnXVtupggFFehwzY1RLzvqIaJeNvmFs+W
-         ikyS/TcibbpGBmLLFI+T7WSeqC0Y1yYBFCJ4ge1/ELw5rPSikJKMgVjMMS8jdLwx4c
-         06PYG/KHt89e/IbdensnDYL67HZdKS3Es3Z3eKAE=
+        b=HMTx2uu5qALc5DhPUk/uIV4HEyEmdTMeKiRY4GwcL/SIAG5725dYCFnJnTkkQ4H0T
+         yM7ePnM58xfRzdysWDdBspudLxtfwINJNR8jF4EYRRIAOopsLwIz9cFgNLFpzMAlfN
+         UpAP6PuGGhjKRWzFATxL7KDyq4cdgvVpq8vZacO4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Cuissard <cuissard@marvell.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 42/92] NFC: nfcmrvl_uart: fix OF child-node lookup
-Date:   Thu, 29 Nov 2018 15:12:11 +0100
-Message-Id: <20181129140109.631906297@linuxfoundation.org>
+Subject: [PATCH 4.9 43/92] net: bcmgenet: fix OF child-node lookup
+Date:   Thu, 29 Nov 2018 15:12:12 +0100
+Message-Id: <20181129140109.690827353@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -64,46 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5bf59773aaf36dd62117dc83d50e1bbf9ef432da ]
+[ Upstream commit d397dbe606120a1ea1b11b0020c3f7a3852da5ac ]
 
-Use the new of_get_compatible_child() helper to lookup the nfc child
+Use the new of_get_compatible_child() helper to lookup the mdio child
 node instead of using of_find_compatible_node(), which searches the
 entire tree from a given start node and thus can return an unrelated
 (i.e. non-child) node.
 
 This also addresses a potential use-after-free (e.g. after probe
 deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the parent node).
+argument (i.e. the node of the device being probed).
 
-Fixes: e097dc624f78 ("NFC: nfcmrvl: add UART driver")
-Fixes: d8e018c0b321 ("NFC: nfcmrvl: update device tree bindings for Marvell NFC")
-Cc: stable <stable@vger.kernel.org>     # 4.2
-Cc: Vincent Cuissard <cuissard@marvell.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
+Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
+Cc: stable <stable@vger.kernel.org>     # 3.15
+Cc: David S. Miller <davem@davemloft.net>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/nfcmrvl/uart.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/genet/bcmmii.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/nfcmrvl/uart.c b/drivers/nfc/nfcmrvl/uart.c
-index 6c0c301611c4..1b11ded79c4f 100644
---- a/drivers/nfc/nfcmrvl/uart.c
-+++ b/drivers/nfc/nfcmrvl/uart.c
-@@ -73,10 +73,9 @@ static int nfcmrvl_uart_parse_dt(struct device_node *node,
- 	struct device_node *matched_node;
- 	int ret;
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+index 3b9e1a5dce82..9bd90a7c4d40 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -483,7 +483,7 @@ static int bcmgenet_mii_of_init(struct bcmgenet_priv *priv)
+ 	if (!compat)
+ 		return -ENOMEM;
  
--	matched_node = of_find_compatible_node(node, NULL, "marvell,nfc-uart");
-+	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
- 	if (!matched_node) {
--		matched_node = of_find_compatible_node(node, NULL,
--						       "mrvl,nfc-uart");
-+		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
- 		if (!matched_node)
- 			return -ENODEV;
- 	}
+-	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
++	priv->mdio_dn = of_get_compatible_child(dn, compat);
+ 	kfree(compat);
+ 	if (!priv->mdio_dn) {
+ 		dev_err(kdev, "unable to find MDIO bus node\n");
 -- 
 2.17.1
 
