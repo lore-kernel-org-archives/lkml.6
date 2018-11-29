@@ -6,121 +6,134 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77A7C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C4DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A94DA2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94DA2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id CEA80208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:07:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA80208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbeK3BMr (ORCPT
+        id S1728984AbeK3BMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:12:47 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:53116 "EHLO gloria.sntech.de"
+        Thu, 29 Nov 2018 20:12:51 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:61849 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728857AbeK3BMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:12:46 -0500
-Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gSMyK-0003fP-3z; Thu, 29 Nov 2018 15:07:16 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     sre@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mdf@kernel.org
-Subject: Re: [PATCH v2] power: supply: bq24190_charger: add support for bq24196 variant
-Date:   Thu, 29 Nov 2018 15:07:15 +0100
-Message-ID: <2186433.S1hFpfxTzA@phil>
-In-Reply-To: <20181113124753.29948-1-heiko@sntech.de>
-References: <20181113124753.29948-1-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1728857AbeK3BMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:12:50 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 435K8l49hKz9vGF4;
+        Thu, 29 Nov 2018 15:07:19 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id SpS-bAsIITvC; Thu, 29 Nov 2018 15:07:19 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 435K8l3hsJz9vGDm;
+        Thu, 29 Nov 2018 15:07:19 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C4FCF8B8A1;
+        Thu, 29 Nov 2018 15:07:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id x35CBJUYNZUW; Thu, 29 Nov 2018 15:07:20 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 46FB88B899;
+        Thu, 29 Nov 2018 15:07:20 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id E86FA69AE8; Thu, 29 Nov 2018 14:07:19 +0000 (UTC)
+Message-Id: <7f705dc6b125f0f8147258a97fe6a61277702db4.1543499865.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1543499860.git.christophe.leroy@c-s.fr>
+References: <cover.1543499860.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v9 17/20] powerpc/8xx: Enable 512k hugepage support with HW
+ assistance
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 29 Nov 2018 14:07:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+For using 512k pages with hardware assistance, the PTEs have to be spread
+every 128 bytes in the L2 table.
 
-Am Dienstag, 13. November 2018, 13:47:53 CET schrieb Heiko Stuebner:
-> From: Heiko Stuebner <heiko.stuebner@bq.com>
-> 
-> The bq24196 is another variant of the bq24190 charger ic.
-> Its register set is identical to the bq24192 and it even reuses
-> the same part number (0x5).
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/hugetlb.h |  4 +++-
+ arch/powerpc/mm/hugetlbpage.c      | 10 +++++++++-
+ arch/powerpc/mm/tlb_nohash.c       |  3 +++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-any opinion on the underlying bq24192 and this bq24196 support?
-It's a month now for Brian's patches and 2 weeks for my small bq24196
-addition, so it would be cool to know if there needs to be done more
-to get it included.
-
-
-Thanks
-Heiko
-
-> ---
-> This should go on top of the bq24192 support patches from Brian Masney /
-> Jonathan Marek [0]
-> 
-> [0] https://patchwork.kernel.org/patch/10663409/
-> 
-> changes in v2:
-> - add missing compatible to dt-binding
-> 
->  Documentation/devicetree/bindings/power/supply/bq24190.txt | 1 +
->  drivers/power/supply/bq24190_charger.c                     | 4 +++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq24190.txt b/Documentation/devicetree/bindings/power/supply/bq24190.txt
-> index c8ac028bd3c7..ffe2be408bb6 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq24190.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/bq24190.txt
-> @@ -5,6 +5,7 @@ Required properties:
->      * "ti,bq24190"
->      * "ti,bq24192"
->      * "ti,bq24192i"
-> +    * "ti,bq24196"
->  - reg: integer, I2C address of the charger.
->  - interrupts[-extended]: configuration for charger INT pin.
->  
-> diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
-> index 4e64e6ac95c5..effa7c3c21e6 100644
-> --- a/drivers/power/supply/bq24190_charger.c
-> +++ b/drivers/power/supply/bq24190_charger.c
-> @@ -143,7 +143,7 @@
->  #define BQ24190_REG_VPRS_PN_MASK		(BIT(5) | BIT(4) | BIT(3))
->  #define BQ24190_REG_VPRS_PN_SHIFT		3
->  #define BQ24190_REG_VPRS_PN_24190			0x4
-> -#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193 */
-> +#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193, 24196 */
->  #define BQ24190_REG_VPRS_PN_24192I			0x3
->  #define BQ24190_REG_VPRS_TS_PROFILE_MASK	BIT(2)
->  #define BQ24190_REG_VPRS_TS_PROFILE_SHIFT	2
-> @@ -1973,6 +1973,7 @@ static const struct i2c_device_id bq24190_i2c_ids[] = {
->  	{ "bq24190" },
->  	{ "bq24192" },
->  	{ "bq24192i" },
-> +	{ "bq24196" },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
-> @@ -1982,6 +1983,7 @@ static const struct of_device_id bq24190_of_match[] = {
->  	{ .compatible = "ti,bq24190", },
->  	{ .compatible = "ti,bq24192", },
->  	{ .compatible = "ti,bq24192i", },
-> +	{ .compatible = "ti,bq24196", },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, bq24190_of_match);
-> 
-
-
-
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index dfb8bf236586..62a0ca02ca7d 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -74,7 +74,9 @@ static inline pte_t *hugepte_offset(hugepd_t hpd, unsigned long addr,
+ 	unsigned long idx = 0;
+ 
+ 	pte_t *dir = hugepd_page(hpd);
+-#ifndef CONFIG_PPC_FSL_BOOK3E
++#ifdef CONFIG_PPC_8xx
++	idx = (addr & ((1UL << pdshift) - 1)) >> PAGE_SHIFT;
++#elif !defined(CONFIG_PPC_FSL_BOOK3E)
+ 	idx = (addr & ((1UL << pdshift) - 1)) >> hugepd_shift(hpd);
+ #endif
+ 
+diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
+index bc97874d7c74..5b236621d302 100644
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -65,6 +65,9 @@ static int __hugepte_alloc(struct mm_struct *mm, hugepd_t *hpdp,
+ 	if (pshift >= pdshift) {
+ 		cachep = PGT_CACHE(PTE_T_ORDER);
+ 		num_hugepd = 1 << (pshift - pdshift);
++	} else if (IS_ENABLED(CONFIG_PPC_8xx)) {
++		cachep = PGT_CACHE(PTE_INDEX_SIZE);
++		num_hugepd = 1;
+ 	} else {
+ 		cachep = PGT_CACHE(pdshift - pshift);
+ 		num_hugepd = 1;
+@@ -331,6 +334,9 @@ static void free_hugepd_range(struct mmu_gather *tlb, hugepd_t *hpdp, int pdshif
+ 
+ 	if (shift >= pdshift)
+ 		hugepd_free(tlb, hugepte);
++	else if (IS_ENABLED(CONFIG_PPC_8xx))
++		pgtable_free_tlb(tlb, hugepte,
++				 get_hugepd_cache_index(PTE_INDEX_SIZE));
+ 	else
+ 		pgtable_free_tlb(tlb, hugepte,
+ 				 get_hugepd_cache_index(pdshift - shift));
+@@ -700,7 +706,9 @@ static int __init hugetlbpage_init(void)
+ 		 * if we have pdshift and shift value same, we don't
+ 		 * use pgt cache for hugepd.
+ 		 */
+-		if (pdshift > shift)
++		if (pdshift > shift && IS_ENABLED(CONFIG_PPC_8xx))
++			pgtable_cache_add(PTE_INDEX_SIZE);
++		else if (pdshift > shift)
+ 			pgtable_cache_add(pdshift - shift);
+ #if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_8xx)
+ 		else
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index 8ad7aab150b7..ae5d568e267f 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -97,6 +97,9 @@ struct mmu_psize_def mmu_psize_defs[MMU_PAGE_COUNT] = {
+ 		.shift	= 14,
+ 	},
+ #endif
++	[MMU_PAGE_512K] = {
++		.shift	= 19,
++	},
+ 	[MMU_PAGE_8M] = {
+ 		.shift	= 23,
+ 	},
+-- 
+2.13.3
 
