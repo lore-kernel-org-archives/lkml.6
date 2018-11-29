@@ -2,237 +2,149 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57533C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46533C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9EF21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9EF21019
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 06B7E20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O99qaLbD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B7E20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeK3IG1 (ORCPT
+        id S1726966AbeK3IGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:06:27 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33106 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeK3IG1 (ORCPT
+        Fri, 30 Nov 2018 03:06:30 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39742 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeK3IG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:06:27 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i20so3151271otl.0;
-        Thu, 29 Nov 2018 12:59:43 -0800 (PST)
+        Fri, 30 Nov 2018 03:06:29 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i6so2877696oia.6;
+        Thu, 29 Nov 2018 12:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YjLIHyl46Y1925E5LQa1fhTz2lS4zWuFowCBuzUz7sE=;
+        b=O99qaLbDZlnVwwWCtPZ+ztMPAiiDh1eTXCQw/0OGu7Hv17fVxAEZNxiuHUF5Rn0AAn
+         WJfmigNxAhARe6FThnlS+83B6HWC0SiOyxFgFNi3gPQT5HALDKmlPVaZh2S+050/+YGf
+         2IjEDI+P0hxjWFBpIL45+n/mEsByEMwchFXbhCX7yKWJegK/evL5JjRwMTfZ7gii6bcz
+         MD/lc5VCCa5P13x01+Mx80qD7jW6R8Qws2vXN0DwrEBukjBsuEnV7YRW3me33cwDDgWc
+         cWvZV/V1zXnJQrn9/VUyd8Qp6pGbZY9re2ZN0xihP18MEQw2Fzka+dagptWOGFuegOfQ
+         n3fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ecNpW9FlIciGr0ZOsxh0ds2o4ow6kp3tMqjNmA73Tx8=;
-        b=QG4gbN+xssrADVG+EmJcsYr6J2CES3Z5+lPJzLjdctj/BuHe6cxCljyfDOW6MuIJ/o
-         Sf1TZwRFREK5F0ztq3yJDChuqorWggRl/jdJIa7RizbYth0GloZx3MvX2LK+Gaisli61
-         ytTlnIA8Dj/lvvkjgjyhRRKfFb0aMG0nzdtYnT2LWsRdW0Q4JooO8NvTCD/tSzM69Gri
-         L31BgvgAOmfoEyQzVslkQQmZep35/oNd1DHuP70PAjWE5H56KBtkFis5diCCLtAfM2Oc
-         gjv2gLUCEYsoZ5iK8ILZ6P/AzkW8h7cFbFsUuDptkd+moDVmkpg8BodUGwamfa0bwIBl
-         FM8g==
-X-Gm-Message-State: AA+aEWYDFQuuJPQ8HY/hSqZzbY39f0WqeJJguTYhUMVB15V49G/wPEyC
-        gUUYuJAd5S6YLw3mGZWKhrkTPFRPAt0u6YfDzuw=
-X-Google-Smtp-Source: AFSGD/Vh4qwiAgQildcI7YIxZTJ6pIOCzXVz/p2mafnviiaX0K6dbaLL++RxEvI0SqP7zw3tCFTfuVGcUlgZbXZAiCg=
-X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr1776334otq.119.1543525183187;
- Thu, 29 Nov 2018 12:59:43 -0800 (PST)
+        bh=YjLIHyl46Y1925E5LQa1fhTz2lS4zWuFowCBuzUz7sE=;
+        b=KADF1qwV1XsaIODafru8PlgKsr8ZFRiomONfJ4ffYQDqKSxxVf4hmDhPTBY049u+3Q
+         zzUJRA3eFJMzSvkEfFg/lS+SWys1hUeFhDQxv8XoZ3DT7D50B+U97/xxm2vuu++vW+cQ
+         r/yTJu78ZhLhywq7I4av94de66v8muL52exBA7yFomXVA/MScths0lUOR4W4oCwXHlDj
+         xBHqM92vSjtIb/nu5gAFg2DZhLg0z7GuYwwWUyRlUIYLRiyq36LNiM4g1CbUneHoQA3c
+         n82g2Wz2TJca4PXQ19DyuC2QShnx6pHepE9qLPiRP7GxxtNaFtLkhSkdKsEhoHa5Wbf2
+         fcsQ==
+X-Gm-Message-State: AA+aEWZFJsAGD7zUv4zhhW1Va0zL+iT6oW9nm7uPMpJEe7swkEaNDjuE
+        0zc7TrXD4BIHMW8Otf7LeH0uHiiotOscU8MWT7f7d4T7
+X-Google-Smtp-Source: AFSGD/XrGvCniSMZsQ6nwTJzq9ls2wvhZoMejUUtnTF+y+jDz2YmYt+VaI14kpd2A6qaMRqd+IMNhLoa4kCIwjQXx1o=
+X-Received: by 2002:aca:db04:: with SMTP id s4mr1686748oig.248.1543525185885;
+ Thu, 29 Nov 2018 12:59:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20181129155153.35840-1-mika.westerberg@linux.intel.com> <20181129155153.35840-2-mika.westerberg@linux.intel.com>
-In-Reply-To: <20181129155153.35840-2-mika.westerberg@linux.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 29 Nov 2018 21:59:32 +0100
-Message-ID: <CAJZ5v0iCDWWSycJgs7srsYEputDxpoGQzf5ZO46BkWPNyHHghg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] PCI / ACPI: Identify untrusted PCI devices
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, ckellner@redhat.com,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181121150709.6030-1-TheSven73@googlemail.com>
+ <20181121150709.6030-7-TheSven73@googlemail.com> <20181126220804.GA23069@bogus>
+ <CAGngYiWBBe7P80ASQJnS8woe6SKLgNUmqKxOHMeyV1fGSCpY_w@mail.gmail.com> <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqK--6UE9N2je3mkoxf_0+i5fTYqYpmTF2bpzFf-KRjhaQ@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Thu, 29 Nov 2018 15:59:34 -0500
+Message-ID: <CAGngYiXFag-C9-0XvGxVVWs5AxL2qn0UhU2W1Ds9LE+BJYgvDQ@mail.gmail.com>
+Subject: Re: [PATCH anybus v4 6/7] dt-bindings: anybuss-host: document
+ devicetree binding
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
+        john.garry@huawei.com, geert+renesas@glider.be,
+        robin.murphy@arm.com, paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 4:52 PM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> A malicious PCI device may use DMA to attack the system. An external
-> Thunderbolt port is a convenient point to attach such a device. The OS
-> may use IOMMU to defend against DMA attacks.
->
-> Recent BIOSes with Thunderbolt ports mark these externally facing root
-> ports with this ACPI _DSD [1]:
->
->   Name (_DSD, Package () {
->       ToUUID ("efcc06cc-73ac-4bc3-bff0-76143807c389"),
->       Package () {
->           Package () {"ExternalFacingPort", 1},
->           Package () {"UID", 0 }
->       }
->   })
->
-> If we find such a root port, mark it and all its children as untrusted.
-> The rest of the OS may use this information to enable DMA protection
-> against malicious devices. For instance the device may be put behind an
-> IOMMU to keep it from accessing memory outside of what the driver has
-> allocated for it.
->
-> While at it, add a comment on top of prp_guids array explaining the
-> possible caveat resulting when these GUIDs are treated equivalent.
->
-> [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Rob,
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Eliminating the 'compatible' property for the anybus gives me an interesting
+devicetree problem.
 
-> ---
->  drivers/acpi/property.c | 11 +++++++++++
->  drivers/pci/pci-acpi.c  | 19 +++++++++++++++++++
->  drivers/pci/probe.c     | 15 +++++++++++++++
->  include/linux/pci.h     |  8 ++++++++
->  4 files changed, 53 insertions(+)
->
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index 8c7c4583b52d..77abe0ec4043 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -24,6 +24,14 @@ static int acpi_data_get_property_array(const struct acpi_device_data *data,
->                                         acpi_object_type type,
->                                         const union acpi_object **obj);
->
-> +/*
-> + * The GUIDs here are made equivalent to each other in order to avoid extra
-> + * complexity in the properties handling code, with the caveat that the
-> + * kernel will accept certain combinations of GUID and properties that are
-> + * not defined without a warning. For instance if any of the properties
-> + * from different GUID appear in a property list of another, it will be
-> + * accepted by the kernel. Firmware validation tools should catch these.
-> + */
->  static const guid_t prp_guids[] = {
->         /* ACPI _DSD device properties GUID: daffd814-6eba-4d8c-8a91-bc9bbf4aa301 */
->         GUID_INIT(0xdaffd814, 0x6eba, 0x4d8c,
-> @@ -31,6 +39,9 @@ static const guid_t prp_guids[] = {
->         /* Hotplug in D3 GUID: 6211e2c0-58a3-4af3-90e1-927a4e0c55a4 */
->         GUID_INIT(0x6211e2c0, 0x58a3, 0x4af3,
->                   0x90, 0xe1, 0x92, 0x7a, 0x4e, 0x0c, 0x55, 0xa4),
-> +       /* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
-> +       GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
-> +                 0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
->  };
->
->  static const guid_t ads_guid =
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index 921db6f80340..e1949f7efd9c 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -789,6 +789,24 @@ static void pci_acpi_optimize_delay(struct pci_dev *pdev,
->         ACPI_FREE(obj);
->  }
->
-> +static void pci_acpi_set_untrusted(struct pci_dev *dev)
-> +{
-> +       u8 val;
-> +
-> +       if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
-> +               return;
-> +       if (device_property_read_u8(&dev->dev, "ExternalFacingPort", &val))
-> +               return;
-> +
-> +       /*
-> +        * These root ports expose PCIe (including DMA) outside of the
-> +        * system so make sure we treat them and everything behind as
-> +        * untrusted.
-> +        */
-> +       if (val)
-> +               dev->untrusted = 1;
-> +}
-> +
->  static void pci_acpi_setup(struct device *dev)
->  {
->         struct pci_dev *pci_dev = to_pci_dev(dev);
-> @@ -798,6 +816,7 @@ static void pci_acpi_setup(struct device *dev)
->                 return;
->
->         pci_acpi_optimize_delay(pci_dev, adev->handle);
-> +       pci_acpi_set_untrusted(pci_dev);
->
->         pci_acpi_add_pm_notifier(adev, pci_dev);
->         if (!adev->wakeup.flags.valid)
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b1c05b5054a0..257b9f6f2ebb 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1378,6 +1378,19 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
->         }
->  }
->
-> +static void set_pcie_untrusted(struct pci_dev *dev)
-> +{
-> +       struct pci_dev *parent;
-> +
-> +       /*
-> +        * If the upstream bridge is untrusted we treat this device
-> +        * untrusted as well.
-> +        */
-> +       parent = pci_upstream_bridge(dev);
-> +       if (parent && parent->untrusted)
-> +               dev->untrusted = true;
-> +}
-> +
->  /**
->   * pci_ext_cfg_is_aliased - Is ext config space just an alias of std config?
->   * @dev: PCI device
-> @@ -1638,6 +1651,8 @@ int pci_setup_device(struct pci_dev *dev)
->         /* Need to have dev->cfg_size ready */
->         set_pcie_thunderbolt(dev);
->
-> +       set_pcie_untrusted(dev);
-> +
->         /* "Unknown power state" */
->         dev->current_state = PCI_UNKNOWN;
->
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 11c71c4ecf75..c786a2f27bee 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -396,6 +396,14 @@ struct pci_dev {
->         unsigned int    is_hotplug_bridge:1;
->         unsigned int    shpc_managed:1;         /* SHPC owned by shpchp */
->         unsigned int    is_thunderbolt:1;       /* Thunderbolt controller */
-> +       /*
-> +        * Devices marked being untrusted are the ones that can potentially
-> +        * execute DMA attacks and similar. They are typically connected
-> +        * through external ports such as Thunderbolt but not limited to
-> +        * that. When an IOMMU is enabled they should be getting full
-> +        * mappings to make sure they cannot access arbitrary memory.
-> +        */
-> +       unsigned int    untrusted:1;
->         unsigned int    __aer_firmware_first_valid:1;
->         unsigned int    __aer_firmware_first:1;
->         unsigned int    broken_intx_masking:1;  /* INTx masking can't be used */
-> --
-> 2.19.2
->
+The imx-weim code naively loops through all subnodes, applying timing settings
+to the CS in the first reg entry.
+In the example below, WEIM CS0 is programmed with the settings in
+fsl,weim-cs-timing, because the CS part of reg is 0:
+
+
+weim: weim@21b8000 {
+        compatible = "fsl,imx6q-weim";
+        reg = <0x021b8000 0x4000>;
+        clocks = <&clks 196>;
+        #address-cells = <2>;
+        #size-cells = <1>;
+        ranges = <0 0 0x08000000 0x08000000>;
+        fsl,weim-cs-gpr = <&gpr>;
+
+        nor@0,0 {
+                compatible = "cfi-flash";
+                reg = <0 0 0x02000000>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+                bank-width = <2>;
+                fsl,weim-cs-timing = <0x00620081 0x00000001 0x1c022000
+                                0x0000c000 0x1404a38e 0x00000000>;
+        };
+};
+
+The problem is that my 'anybus controller' hardware spans chip selects.
+It requires access to various memory areas. In the example below, CS1
+will not be programmed with timing settings:
+
+weim {
+        controller@0 {
+                compatible = "arcx,anybus-controller";
+                reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
+                fsl,weim-cs-timing = ...;
+        };
+};
+
+I've coped with this in the past by creating a 'dummy' subnode, without a
+compatible property. But it's ugly:
+
+weim {
+        controller@0 {
+                compatible = "arcx,anybus-controller";
+                reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
+                fsl,weim-cs-timing = ...;
+        };
+        dummy@1 { /* this works ! */
+                reg = <1 0 0>;
+                fsl,weim-cs-timing = ...;
+        };
+};
+
+Is there a better way? I've looked and looked, but can't find anything that's
+similar.
+
+Or should I extend the imx-weim driver to cope?
