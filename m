@@ -2,104 +2,105 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5ADC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C285C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1876E20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 225922081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:54:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iriT1DhT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1876E20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ss0CrV6P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225922081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeK2X6z (ORCPT
+        id S1728343AbeK2X7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:58:55 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:57404 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeK2X6y (ORCPT
+        Thu, 29 Nov 2018 18:59:17 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeK2X7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:58:54 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id EA17C24E0B36;
-        Thu, 29 Nov 2018 04:53:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543496018; bh=PuCfmfY4tvjiz/t7rBqpzaa3FzVztjAU/rfpwNVOpkc=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
-        b=iriT1DhTJMIZZOgwgXvGCqgpDnourjXY35/uSAPBRp4qXGsc/Oslz97b6npX/mY6e
-         XksWgNkZprlH2+tI9aELOhwpcKCANiNxzQjDOb8yIaCqJh/lHZIvbTNcOPc+XRe2rZ
-         qxzapRGuvAcHyVuMYOCKYXsFlS5rfevMfqiLzKueLzJVHE+2vnfugh4UMOnlhpoCEh
-         GGC5Q3UC5VujxXgFMJ/SF5JmBY4MVwSxc4cHilulrgwTGeOXtwO+NBF4/4aT1AkhNy
-         2W9FtLcO4qpbSxb2NmEMMUYAopeJXLkUMvu6x3zf5IYhKN7gky6d8n5L0oiAsiD7OL
-         frL0Sh03IQ3zw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CAF375A4D;
-        Thu, 29 Nov 2018 04:53:38 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 29 Nov 2018 04:53:38 -0800
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 29 Nov 2018 13:53:36 +0100
-Received: from [10.0.2.15] (10.107.19.26) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 29 Nov
- 2018 13:53:36 +0100
-Subject: Re: [PATCH] ARC: io.h: Implement reads{x}()/writes{x}()
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <bdcc49c9eab45bda6815b1419590943e603d8dc2.1543484040.git.joabreu@synopsys.com>
- <f634eb3e39284e48923552a0c21562c6@AcuMS.aculab.com>
-CC:     Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        "Vitor Soares" <vitor.soares@synopsys.com>
-From:   Jose Abreu <jose.abreu@synopsys.com>
-Message-ID: <2d58c25b-60d0-4616-d2d2-ea490a7261f5@synopsys.com>
-Date:   Thu, 29 Nov 2018 12:53:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Thu, 29 Nov 2018 18:59:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K+COZvF9HrSOwZVna3Gq9ATJ61O/vDbbqu5cBO305ws=; b=ss0CrV6P96e2MIvqREtHsT+61
+        x5htakmhuCMqrZC/C1kd90Q3xfrEIC6zUmL6EMZXEyo6W/ckiW/Tnea1EMSdVPAv2b7gY83nWD/Ji
+        DcNxkhVCVbyewOFzy1h5nSFx780nni8WZymzvwMr3hK2Ttx25xY0rD0rLsQutYUM6caLQjVi/LsJ/
+        bu/qKoyrRg8cRNGOFgYcLask3k4M/h6XsTxt09rclVche9IHmSSuJMAMeIgtoHxju8M27EX97ELFh
+        WhOoQ7Ak2as87Q6uI+ICM9fHrtI3xySX77mmfcLc/Y4RQVVBXQY03ULuHa9jTDROVO/6JiTw8Q9Sb
+        ztCRKGPTg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSLpG-0008AQ-25; Thu, 29 Nov 2018 12:53:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BFBE42029FD58; Thu, 29 Nov 2018 13:53:48 +0100 (CET)
+Date:   Thu, 29 Nov 2018 13:53:48 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20181129125348.GL2131@hirez.programming.kicks-ass.net>
+References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+ <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net>
+ <20181128115336.GB23094@e110439-lin>
 MIME-Version: 1.0
-In-Reply-To: <f634eb3e39284e48923552a0c21562c6@AcuMS.aculab.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.26]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128115336.GB23094@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-11-2018 12:47, David Laight wrote:
-> From: Jose Abreu
->> Sent: 29 November 2018 12:42
->>
->> Some ARC CPU's do not support unaligned loads/stores. Currently, generic
->> implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
->> This can lead to misfunction of some drivers as generic functions do a
->> plain dereference of a pointer that can be unaligned.
->>
->> Let's use {get/put}_unaligned() helper instead of plain dereference of
->> pointer in order to fix this.
-> Is it worth adding a check for the pointer being aligned?
+On Wed, Nov 28, 2018 at 11:53:36AM +0000, Patrick Bellasi wrote:
 
-We could but then we would need to know which CPU version is
-currently running because some ARC processors support unaligned
-accesses.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index ac855b2f4774..93e0cf5d8a76 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3661,6 +3661,10 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+>  	if (!task_sleep)
+>  		return;
+>  
+> +	/* Skip samples which do not represent an actual utilization */
+> +	if (unlikely(task_util(p) > capacity_of(task_cpu(p))))
+> +		return;
+> +
+>  	/*
+>  	 * If the PELT values haven't changed since enqueue time,
+>  	 * skip the util_est update.
 
-Thanks and Best Regards,
-Jose Miguel Abreu
+Would you not want something like:
 
->
-> 	David
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
->
+	min(task_util(p), capacity_of(task_cpu(p)))
+
+And is this the only place where we need this?
+
+OTOH, if the task is always running, it will be always running
+irrespective of where it runs.
+
+Not storing these samples seems weird though; this is the exact
+condition you want to record -- the task is very active, if we skip
+these, we'll come back at a low frequency on the next wakeup.
+
 
