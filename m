@@ -2,252 +2,186 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B40C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB01C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EABE92081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABE92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 978592081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 11:19:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fJt7DuHl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978592081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeK2WXt (ORCPT
+        id S1728151AbeK2WYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 17:23:49 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33004 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbeK2WXt (ORCPT
+        Thu, 29 Nov 2018 17:24:05 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34840 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbeK2WYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 17:23:49 -0500
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 5nJh1z0063XaVaC01nJhhW; Thu, 29 Nov 2018 12:18:46 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gSKLB-0002dc-75; Thu, 29 Nov 2018 12:18:41 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gSKLB-0003MT-4N; Thu, 29 Nov 2018 12:18:41 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dmaengine: sh: Remove R-Mobile APE6 support
-Date:   Thu, 29 Nov 2018 12:18:39 +0100
-Message-Id: <20181129111839.12879-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 29 Nov 2018 17:24:05 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATBDZ70071893;
+        Thu, 29 Nov 2018 11:18:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=x95QraatNv2DrpxT4h5GMhY0iwPXD1GBC8siRKGxmXE=;
+ b=fJt7DuHlXvFcKQcimnTav1w21PdqhOJeRcNTxbyhAeNTvDP8RPiFnFg94GQ1RN6oOrIl
+ 37Q8MNG9nkOswjgqrrJYnqR+QDCeCeUYcOJLl6yiYB7vrtlGGgILZbH1Hu27bfQLSsjs
+ HhVFApt2QG32G0WH6xoMHzhwqQLlUP6XEG2KOlO1zumNNeHAWNVeV5qWyaSnmlb+wf5a
+ XK3lDhMhHLBl1Ygxga49ROFN02PONOpOptZuBL4kse/CXZT8yuR/DHPRLKLxWXP2Vtcn
+ VUznhkum0ns6uRejD10AvRYCQoZnN3IgLu0UQZ5Ku/WvqYtfFHMR2Npq8pma3N4vJv1f Ag== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2nxy9rfjp6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 11:18:30 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wATBITF4015960
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 11:18:29 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wATBIORO001814;
+        Thu, 29 Nov 2018 11:18:24 GMT
+Received: from unbuntlaptop (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 03:18:23 -0800
+Date:   Thu, 29 Nov 2018 14:18:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Waiman Long <longman@redhat.com>
+Cc:     kbuild-all@01.org, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dennis Zhou <dennis@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v4 1/5] cgroup: subtree_control bypass mode for
+ bypassable controllers
+Message-ID: <20181129111811.GP3073@unbuntlaptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542736289-31338-2-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Renesas R-Mobile APE6 support is currently unused:
-  - DMA slaves were never enabled in r8a73a4.dtsi,
-  - The driver relies on legacy filter matching and describing all
-    slaves and MID/RIDs in a table, unlike modern DMA engine drivers for
-    similar hardware like rcar-dmac,
-  - The driver doesn't seem to work well.
+Hi Waiman,
 
-Remove the driver, it can be resurrected from git history when needed.
+Thank you for the patch! Perhaps something to improve:
 
-As this was the last user of SH_DMAE_BASE on Renesas ARM SoCs, the
-sh-dma-engine driver core is now used on SuperH only.
+url:    https://github.com/0day-ci/linux/commits/Waiman-Long/cgroup-Introducing-bypass-mode/20181123-030552
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
 
-Note that the DT bindings are still present, as r8a73a4.dtsi uses them.
+smatch warnings:
+kernel/cgroup/cgroup.c:4893 css_create() error: we previously assumed 'parent' could be null (see line 4864)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+# https://github.com/0day-ci/linux/commit/8b68fd4330e043645667a5d3306398f8f88f9ff2
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 8b68fd4330e043645667a5d3306398f8f88f9ff2
+vim +/parent +4893 kernel/cgroup/cgroup.c
+
+a31f2d3ff kernel/cgroup.c        Tejun Heo        2012-11-19  4840  
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4841  /**
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4842   * css_create - create a cgroup_subsys_state
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4843   * @cgrp: the cgroup new css will be associated with
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4844   * @ss: the subsys of new css
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4845   *
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4846   * Create a new css associated with @cgrp - @ss pair.  On success, the new
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4847   * css is online and installed in @cgrp.  This function doesn't create the
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4848   * interface files.  Returns 0 on success, -errno on failure.
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4849   */
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4850  static struct cgroup_subsys_state *css_create(struct cgroup *cgrp,
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4851  					      struct cgroup_subsys *ss)
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4852  {
+d51f39b05 kernel/cgroup.c        Tejun Heo        2014-05-16  4853  	struct cgroup *parent = cgroup_parent(cgrp);
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4854  	struct cgroup_subsys_state *parent_css = NULL;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4855  	struct cgroup_subsys_state *css;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4856  	int err;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4857  
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4858  	lockdep_assert_held(&cgroup_mutex);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4859  
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4860  	/*
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4861  	 * As cgroup may be in bypass mode, need to skip over ancestor
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4862  	 * cgroups with NULL CSS.
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4863  	 */
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20 @4864  	for (; parent && !parent_css; parent = cgroup_parent(parent))
+                                                                               ^^^^^^^^^^^^^^^^^^^^^
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4865  		parent_css = cgroup_css(parent, ss);
+
+When we exit this loop it means either parent is NULL or parent_css
+is non-NULL.
+
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4866  
+1fed1b2e3 kernel/cgroup.c        Tejun Heo        2014-05-16  4867  	css = ss->css_alloc(parent_css);
+e7e15b87f kernel/cgroup.c        Tejun Heo        2016-06-21  4868  	if (!css)
+e7e15b87f kernel/cgroup.c        Tejun Heo        2016-06-21  4869  		css = ERR_PTR(-ENOMEM);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4870  	if (IS_ERR(css))
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4871  		return css;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4872  
+8b68fd433 kernel/cgroup/cgroup.c Waiman Long      2018-11-20  4873  	init_and_link_css(css, ss, cgrp, parent_css);
+a2bed8209 kernel/cgroup.c        Tejun Heo        2014-05-04  4874  
+2aad2a86f kernel/cgroup.c        Tejun Heo        2014-09-24  4875  	err = percpu_ref_init(&css->refcnt, css_release, 0, GFP_KERNEL);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4876  	if (err)
+3eb59ec64 kernel/cgroup.c        Li Zefan         2014-03-18  4877  		goto err_free_css;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4878  
+cf780b7dc kernel/cgroup.c        Vladimir Davydov 2015-08-03  4879  	err = cgroup_idr_alloc(&ss->css_idr, NULL, 2, 0, GFP_KERNEL);
+15a4c835e kernel/cgroup.c        Tejun Heo        2014-05-04  4880  	if (err < 0)
+b00c52dae kernel/cgroup.c        Wenwei Tao       2016-05-13  4881  		goto err_free_css;
+15a4c835e kernel/cgroup.c        Tejun Heo        2014-05-04  4882  	css->id = err;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4883  
+15a4c835e kernel/cgroup.c        Tejun Heo        2014-05-04  4884  	/* @css is ready to be brought online now, make it visible */
+1fed1b2e3 kernel/cgroup.c        Tejun Heo        2014-05-16  4885  	list_add_tail_rcu(&css->sibling, &parent_css->children);
+15a4c835e kernel/cgroup.c        Tejun Heo        2014-05-04  4886  	cgroup_idr_replace(&ss->css_idr, css, css->id);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4887  
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4888  	err = online_css(css);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4889  	if (err)
+1fed1b2e3 kernel/cgroup.c        Tejun Heo        2014-05-16  4890  		goto err_list_del;
+944196278 kernel/cgroup.c        Tejun Heo        2014-03-19  4891  
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4892  	if (ss->broken_hierarchy && !ss->warned_broken_hierarchy &&
+d51f39b05 kernel/cgroup.c        Tejun Heo        2014-05-16 @4893  	    cgroup_parent(parent)) {
+                                                                                          ^^^^^^
+We dereference parent inside the function, but I don't know for sure
+if this is reachable when "parent" is NULL.
+
+ed3d261b5 kernel/cgroup.c        Joe Perches      2014-04-25  4894  		pr_warn("%s (%d) created nested cgroup for controller \"%s\" which has incomplete hierarchy support. Nested cgroups may change behavior in the future.\n",
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4895  			current->comm, current->pid, ss->name);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4896  		if (!strcmp(ss->name, "memory"))
+ed3d261b5 kernel/cgroup.c        Joe Perches      2014-04-25  4897  			pr_warn("\"memory\" requires setting use_hierarchy to 1 on the root\n");
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4898  		ss->warned_broken_hierarchy = true;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4899  	}
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4900  
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4901  	return css;
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4902  
+1fed1b2e3 kernel/cgroup.c        Tejun Heo        2014-05-16  4903  err_list_del:
+1fed1b2e3 kernel/cgroup.c        Tejun Heo        2014-05-16  4904  	list_del_rcu(&css->sibling);
+3eb59ec64 kernel/cgroup.c        Li Zefan         2014-03-18  4905  err_free_css:
+8f53470ba kernel/cgroup/cgroup.c Tejun Heo        2018-04-26  4906  	list_del_rcu(&css->rstat_css_node);
+8f36aaec9 kernel/cgroup/cgroup.c Tejun Heo        2018-03-14  4907  	INIT_RCU_WORK(&css->destroy_rwork, css_free_rwork_fn);
+8f36aaec9 kernel/cgroup/cgroup.c Tejun Heo        2018-03-14  4908  	queue_rcu_work(cgroup_destroy_wq, &css->destroy_rwork);
+6cd0f5bba kernel/cgroup.c        Tejun Heo        2016-03-03  4909  	return ERR_PTR(err);
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4910  }
+c81c925ad kernel/cgroup.c        Tejun Heo        2013-12-06  4911  
+
 ---
-v2:
-  - Add Reviewed-by,
-  - Drop RFC.
-
----
- drivers/dma/sh/Kconfig         | 11 +----
- drivers/dma/sh/Makefile        |  1 -
- drivers/dma/sh/shdma-r8a73a4.c | 74 ----------------------------------
- drivers/dma/sh/shdma.h         |  7 ----
- drivers/dma/sh/shdmac.c        |  7 ----
- 5 files changed, 1 insertion(+), 99 deletions(-)
- delete mode 100644 drivers/dma/sh/shdma-r8a73a4.c
-
-diff --git a/drivers/dma/sh/Kconfig b/drivers/dma/sh/Kconfig
-index 6e0685f1a83814f4..b728cfaf4d700f96 100644
---- a/drivers/dma/sh/Kconfig
-+++ b/drivers/dma/sh/Kconfig
-@@ -12,7 +12,7 @@ config RENESAS_DMA
- 
- config SH_DMAE_BASE
- 	bool "Renesas SuperH DMA Engine support"
--	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-+	depends on SUPERH || COMPILE_TEST
- 	depends on !SUPERH || SH_DMA
- 	depends on !SH_DMA_API
- 	default y
-@@ -30,15 +30,6 @@ config SH_DMAE
- 	help
- 	  Enable support for the Renesas SuperH DMA controllers.
- 
--if SH_DMAE
--
--config SH_DMAE_R8A73A4
--	def_bool y
--	depends on ARCH_R8A73A4
--	depends on OF
--
--endif
--
- config RCAR_DMAC
- 	tristate "Renesas R-Car Gen2 DMA Controller"
- 	depends on ARCH_RENESAS || COMPILE_TEST
-diff --git a/drivers/dma/sh/Makefile b/drivers/dma/sh/Makefile
-index 7d7c9491ade1216d..42110dd57a56fda8 100644
---- a/drivers/dma/sh/Makefile
-+++ b/drivers/dma/sh/Makefile
-@@ -10,7 +10,6 @@ obj-$(CONFIG_SH_DMAE_BASE) += shdma-base.o shdma-of.o
- #
- 
- shdma-y := shdmac.o
--shdma-$(CONFIG_SH_DMAE_R8A73A4) += shdma-r8a73a4.o
- shdma-objs := $(shdma-y)
- obj-$(CONFIG_SH_DMAE) += shdma.o
- 
-diff --git a/drivers/dma/sh/shdma-r8a73a4.c b/drivers/dma/sh/shdma-r8a73a4.c
-deleted file mode 100644
-index ddc9a35783534bdd..0000000000000000
---- a/drivers/dma/sh/shdma-r8a73a4.c
-+++ /dev/null
-@@ -1,74 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Renesas SuperH DMA Engine support for r8a73a4 (APE6) SoCs
-- *
-- * Copyright (C) 2013 Renesas Electronics, Inc.
-- */
--#include <linux/sh_dma.h>
--
--#include "shdma-arm.h"
--
--static const unsigned int dma_ts_shift[] = SH_DMAE_TS_SHIFT;
--
--static const struct sh_dmae_slave_config dma_slaves[] = {
--	{
--		.chcr		= CHCR_TX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xd1,		/* MMC0 Tx */
--	}, {
--		.chcr		= CHCR_RX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xd2,		/* MMC0 Rx */
--	}, {
--		.chcr		= CHCR_TX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xe1,		/* MMC1 Tx */
--	}, {
--		.chcr		= CHCR_RX(XMIT_SZ_32BIT),
--		.mid_rid	= 0xe2,		/* MMC1 Rx */
--	},
--};
--
--#define DMAE_CHANNEL(a, b)				\
--	{						\
--		.offset         = (a) - 0x20,		\
--		.dmars          = (a) - 0x20 + 0x40,	\
--		.chclr_bit	= (b),			\
--		.chclr_offset	= 0x80 - 0x20,		\
--	}
--
--static const struct sh_dmae_channel dma_channels[] = {
--	DMAE_CHANNEL(0x8000, 0),
--	DMAE_CHANNEL(0x8080, 1),
--	DMAE_CHANNEL(0x8100, 2),
--	DMAE_CHANNEL(0x8180, 3),
--	DMAE_CHANNEL(0x8200, 4),
--	DMAE_CHANNEL(0x8280, 5),
--	DMAE_CHANNEL(0x8300, 6),
--	DMAE_CHANNEL(0x8380, 7),
--	DMAE_CHANNEL(0x8400, 8),
--	DMAE_CHANNEL(0x8480, 9),
--	DMAE_CHANNEL(0x8500, 10),
--	DMAE_CHANNEL(0x8580, 11),
--	DMAE_CHANNEL(0x8600, 12),
--	DMAE_CHANNEL(0x8680, 13),
--	DMAE_CHANNEL(0x8700, 14),
--	DMAE_CHANNEL(0x8780, 15),
--	DMAE_CHANNEL(0x8800, 16),
--	DMAE_CHANNEL(0x8880, 17),
--	DMAE_CHANNEL(0x8900, 18),
--	DMAE_CHANNEL(0x8980, 19),
--};
--
--const struct sh_dmae_pdata r8a73a4_dma_pdata = {
--	.slave		= dma_slaves,
--	.slave_num	= ARRAY_SIZE(dma_slaves),
--	.channel	= dma_channels,
--	.channel_num	= ARRAY_SIZE(dma_channels),
--	.ts_low_shift	= TS_LOW_SHIFT,
--	.ts_low_mask	= TS_LOW_BIT << TS_LOW_SHIFT,
--	.ts_high_shift	= TS_HI_SHIFT,
--	.ts_high_mask	= TS_HI_BIT << TS_HI_SHIFT,
--	.ts_shift	= dma_ts_shift,
--	.ts_shift_num	= ARRAY_SIZE(dma_ts_shift),
--	.dmaor_init     = DMAOR_DME,
--	.chclr_present	= 1,
--	.chclr_bitwise	= 1,
--};
-diff --git a/drivers/dma/sh/shdma.h b/drivers/dma/sh/shdma.h
-index bfb69909bd192759..9c121a4b33ad829c 100644
---- a/drivers/dma/sh/shdma.h
-+++ b/drivers/dma/sh/shdma.h
-@@ -58,11 +58,4 @@ struct sh_dmae_desc {
- #define to_sh_dev(chan) container_of(chan->shdma_chan.dma_chan.device,\
- 				     struct sh_dmae_device, shdma_dev.dma_dev)
- 
--#ifdef CONFIG_SH_DMAE_R8A73A4
--extern const struct sh_dmae_pdata r8a73a4_dma_pdata;
--#define r8a73a4_shdma_devid (&r8a73a4_dma_pdata)
--#else
--#define r8a73a4_shdma_devid NULL
--#endif
--
- #endif	/* __DMA_SHDMA_H */
-diff --git a/drivers/dma/sh/shdmac.c b/drivers/dma/sh/shdmac.c
-index 2ab7971928e3d8b5..ce19ab7ed30c3a8f 100644
---- a/drivers/dma/sh/shdmac.c
-+++ b/drivers/dma/sh/shdmac.c
-@@ -662,12 +662,6 @@ static const struct shdma_ops sh_dmae_shdma_ops = {
- 	.get_residue = sh_dmae_get_residue,
- };
- 
--static const struct of_device_id sh_dmae_of_match[] = {
--	{.compatible = "renesas,shdma-r8a73a4", .data = r8a73a4_shdma_devid,},
--	{}
--};
--MODULE_DEVICE_TABLE(of, sh_dmae_of_match);
--
- static int sh_dmae_probe(struct platform_device *pdev)
- {
- 	const enum dma_slave_buswidth widths =
-@@ -912,7 +906,6 @@ static struct platform_driver sh_dmae_driver = {
- 	.driver		= {
- 		.pm	= &sh_dmae_pm,
- 		.name	= SH_DMAE_DRV_NAME,
--		.of_match_table = sh_dmae_of_match,
- 	},
- 	.remove		= sh_dmae_remove,
- };
--- 
-2.17.1
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
