@@ -2,52 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC51C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DBFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2311B21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8A82133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zIo8ZBlB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2311B21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2/cG9By"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8A82133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbeK3BUf (ORCPT
+        id S1729476AbeK3BUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:20:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41588 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:20:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbeK3BUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:20:34 -0500
+        id S1728241AbeK3BUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:20:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C806221019;
-        Thu, 29 Nov 2018 14:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CA02208E7;
+        Thu, 29 Nov 2018 14:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500904;
-        bh=EMTl3AsIwL5AhfBe4JrbccWRj64Am9WNDnju6YAkXeA=;
+        s=default; t=1543500906;
+        bh=pANIFGga0kCHaRtvpq5N57Wo2Cj7cGpPBjwmJ0cDeBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zIo8ZBlB83XEThU4+fCzPwyYZATlK94f2ePI77DPFPzmB2IRthpE/X8IvaS3/z0tk
-         iR4lotGh9+QxSHiWdoJDVYTPZRaqoSebL4vdDwfHr8Vj3VW/y6F1AM/fBcrFW/5av3
-         lsfNh0gKpLWS1qMWsWTw0wCRVmqqVyXQJ95+L138=
+        b=a2/cG9By1S99G+MCF2Oj+RMXXjkLnT3ZhMUko43ZDIATwogFcgBwpunE00/ujAPT5
+         ru+RsF7aQCse9Hsz2xPI71Z5pNHX7CLbZirY7+56uZEQJYDtsOfj+mxR8i+jUsENeF
+         ZDinHoq6w8Rg5YwCSOFLKyDIn+CYaMx5addbLTlY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Pierre-Loup A. Griffais" <eduke32@plagman.net>,
-        Pavel Rojtberg <rojtberg@gmail.com>,
+        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 46/83] Input: xpad - xbox one elite controller support
-Date:   Thu, 29 Nov 2018 15:12:04 +0100
-Message-Id: <20181129140140.330809687@linuxfoundation.org>
+Subject: [PATCH 3.18 47/83] Input: xpad - fix rumble on Xbox One controllers with 2015 firmware
+Date:   Thu, 29 Nov 2018 15:12:05 +0100
+Message-Id: <20181129140140.372787856@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -65,44 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6f49a398b266d4895bd7e041db77a2b2ee1482a6 ]
+[ Upstream commit 540c26087bfbad6ea72758b76b16ae6282a73fea ]
 
-added the according id and incresed XPAD_PKT_LEN to 64 as the elite
-controller sends at least 33 byte messages [1].
-Verified to be working by [2].
+Xbox One controllers that shipped with or were upgraded to the 2015
+firmware discard the current rumble packets we send. This patch changes
+the Xbox One rumble packet to a form that both the newer and older
+firmware will accept.
 
-[1]: https://franticrain.github.io/sniffs/XboxOneSniff.html
-[2]: https://github.com/paroj/xpad/issues/23
+It is based on changes made to support newer Xbox One controllers in
+the SteamOS brewmaster-4.1 kernel branch.
 
-Signed-off-by: Pierre-Loup A. Griffais <eduke32@plagman.net>
-Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 2a0573eeadaa..c8a20893d2d5 100644
+index c8a20893d2d5..6586d7ae0019 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -87,7 +87,7 @@
- #define DRIVER_AUTHOR "Marko Friedemann <mfr@bmx-chemnitz.de>"
- #define DRIVER_DESC "X-Box pad driver"
+@@ -1033,17 +1033,17 @@ static int xpad_play_effect(struct input_dev *dev, void *data, struct ff_effect
  
--#define XPAD_PKT_LEN 32
-+#define XPAD_PKT_LEN 64
- 
- /* xbox d-pads should map to buttons, as is required for DDR pads
-    but we map them to axes when possible to simplify things */
-@@ -129,6 +129,7 @@ static const struct xpad_device {
- 	{ 0x045e, 0x028e, "Microsoft X-Box 360 pad", 0, XTYPE_XBOX360 },
- 	{ 0x045e, 0x02d1, "Microsoft X-Box One pad", 0, XTYPE_XBOXONE },
- 	{ 0x045e, 0x02dd, "Microsoft X-Box One pad (Firmware 2015)", 0, XTYPE_XBOXONE },
-+	{ 0x045e, 0x02e3, "Microsoft X-Box One Elite pad", 0, XTYPE_XBOXONE },
- 	{ 0x045e, 0x0291, "Xbox 360 Wireless Receiver (XBOX)", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x045e, 0x0719, "Xbox 360 Wireless Receiver", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360W },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
+ 	case XTYPE_XBOXONE:
+ 		packet->data[0] = 0x09; /* activate rumble */
+-		packet->data[1] = 0x08;
++		packet->data[1] = 0x00;
+ 		packet->data[2] = xpad->odata_serial++;
+-		packet->data[3] = 0x08; /* continuous effect */
+-		packet->data[4] = 0x00; /* simple rumble mode */
+-		packet->data[5] = 0x03; /* L and R actuator only */
+-		packet->data[6] = 0x00; /* TODO: LT actuator */
+-		packet->data[7] = 0x00; /* TODO: RT actuator */
++		packet->data[3] = 0x09;
++		packet->data[4] = 0x00;
++		packet->data[5] = 0x0F;
++		packet->data[6] = 0x00;
++		packet->data[7] = 0x00;
+ 		packet->data[8] = strong / 512;	/* left actuator */
+ 		packet->data[9] = weak / 512;	/* right actuator */
+-		packet->data[10] = 0x80;	/* length of pulse */
+-		packet->data[11] = 0x00;	/* stop period of pulse */
++		packet->data[10] = 0xFF;
++		packet->data[11] = 0x00;
+ 		packet->data[12] = 0x00;
+ 		packet->len = 13;
+ 		packet->pending = true;
 -- 
 2.17.1
 
