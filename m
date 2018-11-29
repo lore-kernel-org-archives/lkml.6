@@ -2,148 +2,111 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E22C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90851C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14B32081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5439920832
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 02:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJJKkQJf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14B32081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="IBABWwgr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5439920832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeK2NUh (ORCPT
+        id S1727581AbeK2NYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 08:20:37 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38330 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeK2NUg (ORCPT
+        Thu, 29 Nov 2018 08:24:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38634 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbeK2NYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 08:20:36 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so218847pfi.5;
-        Wed, 28 Nov 2018 18:16:53 -0800 (PST)
+        Thu, 29 Nov 2018 08:24:40 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so223963pfi.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 18:20:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=IPR5nIyHZDdPLDZfkU2TiFWAFZrkV8aoha9yy8TDNg0=;
-        b=UJJKkQJfCb66cMGRj8enZVuby41zZmg55ovQgw9hENmQOjOFgxdMpnx5YsXVNCa2CF
-         2eGm8lrswYxRnW7Cv8mWNQcMRu/ZQHVxSWXcUIm2HAXFGCThyvi4FDlrIfEK0G86sxB/
-         J43YmTDhvS80om2exn2d3rmp3PvOGmiJHLdSE+3JNTRxrFLBDeO/++q48tV7Pde8nXEa
-         k0jLzSRvCsr5fbvfex7+1uSBHC2ZhcdzMWX9q/BaqOt06oEJbubpiH0VfwTfOQJfefxc
-         GYVPJzIGwmTXii0y3ljU7YQOrRTVtpaO+0pYVNaARZb+m3j5lnPbqeHg/hp/bth6jiRK
-         TlpA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+xBxlzLdOgUjA+rwVYpyLPHrP2t70NClUp58sJDLeSo=;
+        b=IBABWwgrXcCT1WKx0aOP+SDJ6LrB2QoZut4pYAmU/padXum7mRkmkk9g+P4aICKJur
+         G/XTylGZn5P4YCSbxCxXvtPR3OmasHswTZLGrKQq+ergy+kZhbZ0GiFvp/ttEQlz5QhD
+         ckizUNqSowcj4lopzGqubImKzDtvVwUsUWli0ebrDugOBpmLbbPNuAKXtJ1fSD6Uonym
+         84hc3x1+Y99BvUT8c+MCLkq/B9y0Ur5bYMQesTfwdJGjoYW0YHArWdp/xaKI7Emt8EGc
+         inq+wd28VJpj2dXRSh3ZRwCDnn8Pml88K/P0uB/nqWThGfKETVv0AoGbckDmjkar/Z6z
+         MWgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=IPR5nIyHZDdPLDZfkU2TiFWAFZrkV8aoha9yy8TDNg0=;
-        b=WdvHdMe5IC4JDX/A9lR1VXhElaC+teGdOyxFDgCHntRqhqh++agk4/l61PrrjiKUn7
-         jklt9d9gQYfyZ762wrZuYs965gVuOa/3/2ZSjs+oJyD/kg47XAdwqj/mN+Dr0Zy4Z0Ba
-         3lgnlZ+c7HzFaX68N2Q6d4yk/F5Ctont4GTCJdvyIKICQ0hAw4Sw3oFRX7HcTQQPIqp3
-         JveQoz2xwQZWPma6PlLUL4dXy28XPo/bWQPFq+cem7PvGirvmCnRiqziwgWB+XSDpJN9
-         t72O+J9qfG7uOinMs49Ru3hy9GYVnTCAPO+7pQvroh4vncTUVI9ZQohqZFk+OfnfpN5P
-         RUig==
-X-Gm-Message-State: AA+aEWYuZFkE05pcB2zGA+xajadO/lvGB+mb4ceWQOjWcokdNdQQ7MSm
-        o1lUR8L7uKCKJA4HajyA3AI=
-X-Google-Smtp-Source: AFSGD/WEWzxpSqRGljfrplGrh/MxClhr9wNvImOZPHkkpJ0cjHM4YtZTDvaMsCh1BN4SKIu8iVCUpg==
-X-Received: by 2002:a63:6506:: with SMTP id z6mr35160024pgb.334.1543457813424;
-        Wed, 28 Nov 2018 18:16:53 -0800 (PST)
-Received: from bytedancedeMacBook-Air.local ([61.120.150.66])
-        by smtp.gmail.com with ESMTPSA id m65sm359118pfg.180.2018.11.28.18.16.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 18:16:52 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:16:35 +0800
-From:   Xiaozhou Liu <lxz1983@gmail.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, yhs@fb.com,
-        jakub.kicinski@netronome.com, quentin.monnet@netronome.com
-Subject: Re: [PATCH] Compiler Attributes: move kernel-only attributes into
- __KERNEL__
-Message-ID: <20181129021635.rzmehzzfgt2jvpgi@bytedancedeMacBook-Air.local>
-References: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
- <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+xBxlzLdOgUjA+rwVYpyLPHrP2t70NClUp58sJDLeSo=;
+        b=JKWlUjDG+mCt8TnBLoZvM2/K8jm4zhVQ/uA6B1eop4BOoTMfG96+gbtOHiD+3paWPc
+         xLXo3hWDQ5NRnVIzoWjWlikV2b4OZkfstSLGZ1+VkyJCgdIu3+d3scMSZl68AMLgnLoD
+         cjQLNK0qLqfa68yj/tkHWfXuMf5ahnK9RxuV+sWagthQ/SXg9sCE7SWLVIks5Xiu5ArD
+         wn6O+XXHPjNEvvOIJcBq1mr76atjbuMODZCRbrYXBamVCIU0pVXaUqSUCR5YqB2wSaBL
+         P3pnApnRgQ0a+AO0odbpOAoEevraTn1iRHmThNoLDSLmzbQ4u5NLCjd51eKLDmD9ROU2
+         1OGw==
+X-Gm-Message-State: AA+aEWbAL66Yr0Lr9+5FPTBfgdEHyDK+0AG74x8pyKZtHS0eCLIGt/uM
+        F1tHNPLPd4q/tYfqccqqBRMRLg==
+X-Google-Smtp-Source: AFSGD/Xjmg+dfaPK5u6yWz2etb/IgmXW9IWv0GfBO/57N+6M+K3o2su7LsFsb2aC/3PCZgu8Zmu/Cw==
+X-Received: by 2002:a62:68c5:: with SMTP id d188mr2809905pfc.194.1543458056775;
+        Wed, 28 Nov 2018 18:20:56 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id x3sm330869pgt.45.2018.11.28.18.20.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 18:20:55 -0800 (PST)
+Subject: Re: [PATCH V12 00/20] block: support multi-page bvec
+To:     Ming Lei <ming.lei@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+ <7096bc4e-0617-29d0-a90d-ae7caf09a16d@kernel.dk>
+ <20181129012959.GC23249@ming.t460p>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1983a2f5-07be-4102-fedc-54e2ad2e16dc@kernel.dk>
+Date:   Wed, 28 Nov 2018 19:20:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181129012959.GC23249@ming.t460p>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miguel,
-
-On Wed, Nov 28, 2018 at 06:35:18PM +0100, Miguel Ojeda wrote:
-> Hi Xiaozhou,
+On 11/28/18 6:30 PM, Ming Lei wrote:
+>> I'm going back and forth on those one a bit. Any concerns with
+>> pushing this to 4.22?
 > 
-> On Wed, Nov 28, 2018 at 3:09 PM Xiaozhou Liu <liuxiaozhou@bytedance.com> wrote:
-> >
-> > Attributes such as `__gnu_inline' are meant to be used within the
-> > kernel. When userspace somehow includes <linux/compiler.h>
-> > (eg. tools/bpf), compilation errors would be shown:
-> >
-> >         "error: unknown type name ‘__gnu_inline’"
-> >
-> > So just move these things into __KERNEL__ and the behavior is kept
-> > as before.
+> My only one concern is about the warning of
+> "blk_cloned_rq_check_limits: over max segments limit" on dm multipath,
+> and seems Ewan and Mike is waiting for this fix.
 
-By `these' I mean inline and the like, to be clear.
+Not familiar with this issue, can you post a link to it? I'd be fine
+working around anything until 4.22, it's not going to be a new issue.
 
-> That is not exactly correct -- a3f8a30f3f00 moved some attributes to
-> another file, moving them into __KERNEL__ (in particular,__gnu_inline
-> is).
+-- 
+Jens Axboe
 
-Yes, that is what a3f8a30f3f00 did. Sorry.
-Turns out the commits in question are 815f0ddb346c and a3f8a30f3f00.
-
-> The problem is, instead, that __gnu_inline is not anymore defined
-> outside __KERNEL__, but something else that uses it is (the inline
-> macro definition, if I had to guess).
-
-Yes and no. Let's recall the whole story.
-
-Before 815f0ddb346c("include/linux/compiler*.h: make compiler-*.h mutually exclusive"),
-__gnu_inline and inline were both *in* __KERNEL__ as the were in
-<linux/compiler-gcc.h>, which was entirely put to __KERNEL__ in
-<linux/compiler_types.h>. Everything was fine.
-
-Then 815f0ddb346c moved inline and __gnu_inline *out* of __KERNEL__
-and put them in <linux/compiler_types.h> so userspace could see them
-both. Not sure if it's intended behavior, but everything looked fine.
-
-Then a3f8a30f3f00 moved __gnu_inline back into __KERNEL__ and left
-inline behind. Since inline depends on __gnu_inline, error showing
-"unknown type name ‘__gnu_inline’" pops up.
-
-> If your problem is fixed by putting __gnu_inline into __KERNEL__
-> again, it means we can simply move the inline definition inside
-> __KERNEL__ too. That way, we don't pollute userspace users with macro
-> definitions.
-
-It'd be good. That's exactly what my patch does.
-
-> Having said that, does someone know whether userspace should have
-> access to those attributes (or rather, other code that uses in turn
-> those attributes)?
-
-It'd be better to keep those attributes out of userspace, as is the
-case before 815f0ddb346c.
-
-BTW, the userspace code failed to compile in my case is under
-directory tools/bpf/.
-
-
-Thanks,
-Xiaozhou
