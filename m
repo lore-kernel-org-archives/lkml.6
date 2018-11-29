@@ -2,225 +2,132 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E9BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E143CC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FDE20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D308213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9R0U0Q2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FDE20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="XKEWduc8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D308213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbeK3Ei6 (ORCPT
+        id S1730491AbeK3EjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:38:58 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33243 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728255AbeK3Ei5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:38:57 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o89so1555933qko.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:32:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PUeBlSazp8q7PH7NS5jeXi8v+2rFYAsXlS74SjDLeWI=;
-        b=C9R0U0Q2IneniGIGY/LSCG1iMl7VpPDd+SAGjqz8CqhJMmgSXgd2lYgfnSFdB6p6V8
-         noeolGwhl19qefSLPh0LhbFYUqmWT9KqoWWr7f0ywgvLjtBtZfK50DvJqw9p+zfcpjyc
-         tcd2RWPTpAE9I/F1axwHLGOln2nUDWST/oQbv8qatlKFYRQqtchf2nU5KizmFnN5CHW0
-         u2I0HBmFyQOZE3qXe7uZYnb+guP5rEeqx60tCg992zTf8C+eSIylq+uFMo8KA4KFF5EK
-         qS4dduFHQuNI3rxzuQ5b28wzu6jfIzNTrTvTadsasE0cYo3VLxC1Cf3IK++M7uO++Gme
-         wdNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PUeBlSazp8q7PH7NS5jeXi8v+2rFYAsXlS74SjDLeWI=;
-        b=Mdvb2EM3rT3nV2XuSv/GkKy/jDJrLT5Y+Sb9GZmWHg8x8fmrjCNcE3BURfaXJ7SOVo
-         aFDCW+hMTtkTHVAyuKuniXEnsLzaWADeGLcBVm/pCbPZmmPPtvQCfcY3wh9kIBktO8oI
-         v3KedG8/JjwURsv7s5FYhqeGT8T4IGlu81JD5Y9osCsFHGri1CEwy3nPgP4BrQgGldSm
-         L2Glr/NhbQ9R7kB39nCE97wFm7RA+rq8PFpKpaLdC7TgameBEI4V9GjPXMOgDfK24/Zg
-         TuT5nuc60YsUYT5nyfiffqcEYy20vQxE9XVYa9EwmAFkqfa6URqgBYxYDlGwphkqjPuU
-         CcBw==
-X-Gm-Message-State: AA+aEWZAgEOBm+juuD2NanJ8CQEVA8UQ1U4E02I49hRGg0hEMMgcRbU6
-        z0rJnLRZLK/SmF9cyA2KZA==
-X-Google-Smtp-Source: AFSGD/Wel2wFQhhR5RcQ6gat25n6IUDPFGg62Ux4asNDLHtBiEMtdEnfUqeKzeZho6opn4y4nBImnw==
-X-Received: by 2002:a37:c891:: with SMTP id t17mr2110182qkl.31.1543512769409;
-        Thu, 29 Nov 2018 09:32:49 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q15sm1356721qkl.81.2018.11.29.09.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 09:32:49 -0800 (PST)
-Date:   Thu, 29 Nov 2018 12:32:46 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v12 0/5] x86/boot/KASLR: Parse ACPI table and limit KASLR
- to choosing immovable memory
-Message-ID: <20181129173245.etpt52om2b5qpdeq@gabell>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
+        Thu, 29 Nov 2018 23:39:17 -0500
+Received: from mail-eopbgr130059.outbound.protection.outlook.com ([40.107.13.59]:9444
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728255AbeK3EjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:39:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rVZ7Y8yJkUlpltZuYH3x9qCjhaVBt4+eKvcsewkQjPo=;
+ b=XKEWduc8c1jBsG55UZTiC06snWb1gJd6Tsu0IYioXo2hE0atJ5d0ajMf9RzrH3PJ7iA+M7T8Sk9R7hky6yTWRFEVGshxMh2De2gxTjes+xcSxvo2J+3zuVmFduLw+V4NwknBizPX5w1EYg/V/+hhBdMun9ary9QDmbRKrzbOIv8=
+Received: from AM6PR08MB3030.eurprd08.prod.outlook.com (52.135.163.139) by
+ AM6PR08MB3957.eurprd08.prod.outlook.com (20.179.0.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.15; Thu, 29 Nov 2018 17:33:03 +0000
+Received: from AM6PR08MB3030.eurprd08.prod.outlook.com
+ ([fe80::a15d:a644:5b69:2989]) by AM6PR08MB3030.eurprd08.prod.outlook.com
+ ([fe80::a15d:a644:5b69:2989%5]) with mapi id 15.20.1361.019; Thu, 29 Nov 2018
+ 17:33:03 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     "Clark, Rob" <robdclark@gmail.com>, Dave Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <Robin.Murphy@arm.com>, nd <nd@arm.com>
+Subject: Re: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+Thread-Topic: [PATCH v3 1/1] drm: msm: Replace dma_map_sg with dma_sync_sg*
+Thread-Index: AQHUiAmUr495p1h6JkW7FAgmR6hIrQ==
+Date:   Thu, 29 Nov 2018 17:33:03 +0000
+Message-ID: <20181129173301.rye77slpy27regi5@DESKTOP-E1NTVVP.localdomain>
+References: <20181129140315.28476-1-vivek.gautam@codeaurora.org>
+ <20181129141429.GA22638@lst.de>
+ <CAF6AEGvsFbXGkC+=4oq1xXnoC2EVX2J0k-GqShefcek1=uw4Lw@mail.gmail.com>
+ <CAKMK7uHOKtX2a12itSA0sDg=b77F+0vnLAdEvc_aNGRJTh85=Q@mail.gmail.com>
+ <20181129155758.GC26537@lst.de> <20181129162807.GL21184@phenom.ffwll.local>
+ <20181129165715.GA27786@lst.de>
+In-Reply-To: <20181129165715.GA27786@lst.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51
+x-originating-ip: [217.140.106.50]
+x-clientproxiedby: CWLP265CA0329.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:57::29) To AM6PR08MB3030.eurprd08.prod.outlook.com
+ (2603:10a6:209:45::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR08MB3957;6:7UTGNlAnK/ELSSAMuI8etGP33+z+zw4nA5PuV+iBpxyAN3hGP+7K455rMAOOK/4BhGKpUvpISHivi2wg5AUB0Bz7146fJWNxR2unHvEJUbOGDZ26eH9hWm1zNyL0QkGzolxdhy8M5ddu4ROgrh8XxUEdVVWhjbYsgzdQJODMvqmlt5Mb+23wt8IA+6BNZ5J51mEBHKEH9ey7OPCIqr57mZnG4NSXoa3IqRUDt77eMzgMtnukCM/Lycf58AZt3jr/YYHUWsH2/XMSNZCDZzOl+IM1lG+Hew1Ngc6TnC2rgWBgw08KGDj90KxXgAokDl6MmhakupPzyM0DqFRnOGxrg8ytWHXT5vSRX07YnkcqeiB3+P0YJ265J1SiEUVO1wKoIimTS6PHPykgGswbqqMhLJbxEhk9AwseAVGydJGe3N1w2N3STPDcKtwucvYPEpCoLiRtgBC/M4BlGgsNQqPilQ==;5:EgMTpyGoT13UXdjtCfCg/ABRpiNGc1zAx2MzRrrctA3HChEFOgJc48Fyx04Jo8+jPExM4TJcRPE+ppp1wckVNSRTVWvoIa3yPqnc7rxdP18dAkbKa1epgdvZQGvq8zs3+NrD+FVgKFX+gPXHGXnXP5Gvt9okNZ13AcRCDlKF3U0=;7:zc3HjSQa0YBOMw/kdwyl/QKFmE+8o4Xuehh0HzJ4zqNWhINxwLwGkiSseR4dFqv1lvkKcVGuLbpl87lPN0dpFsQogLm9UCTk/xCWjwkYrwkzf8XoPb2T+ahsqZWElC9bmY+vtHHK6IAsuxndcuFW/A==
+x-ms-office365-filtering-correlation-id: d344f98d-7efe-4023-bbab-08d65620b700
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3957;
+x-ms-traffictypediagnostic: AM6PR08MB3957:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM6PR08MB3957C90478ED962E3B38D5AAF0D20@AM6PR08MB3957.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231453)(999002)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR08MB3957;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3957;
+x-forefront-prvs: 0871917CDA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(366004)(396003)(199004)(189003)(316002)(81156014)(14454004)(71190400001)(71200400001)(66066001)(86362001)(68736007)(44832011)(39060400002)(105586002)(52116002)(6246003)(8676002)(106356001)(476003)(486006)(478600001)(256004)(14444005)(72206003)(6116002)(446003)(11346002)(3846002)(81166006)(1076002)(2906002)(99286004)(4326008)(8936002)(93886005)(6506007)(33896004)(5660300001)(25786009)(97736004)(7416002)(7736002)(26005)(6486002)(386003)(6436002)(102836004)(229853002)(76176011)(6916009)(53936002)(305945005)(186003)(9686003)(58126008)(54906003)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3957;H:AM6PR08MB3030.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wsC688zR/OJRJwxfBmoy2WlYAsATJpfC8lrPYBtXSLRPvggbavjLsK4QVxg4TM82rFnLJwvIoPyTyhvDGhVidNwDy780asljsdnCz/F7BwwexaKtrh3MoGuHB+7Fwa8bETfQVtaVeDq4Xeml9FSAbRgmMLQ7JfugeKTKnXez4gR+gR+qI7CqUIPCaxMQHpLMF3AGgWv04wwvL2/zfXsyEjLxnAl/mtUsGasLLk/hHmn382m9haTSwAKjbGoZr2u81AaMo6ixbotjVx2dtq+LVi4KAf8ugdeFur/e4hoGdC02+hTzGnrpJi/KIf4vSsCeXxcrY09+WfrYlIqp8gnCQx1jL+WjOds7McCBf3FS3Wg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <79138F810FDA1348BB17CA4285F5C59C@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d344f98d-7efe-4023-bbab-08d65620b700
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 17:33:03.1526
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3957
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+Hi Christoph,
 
-Thank you for your continued working.
+On Thu, Nov 29, 2018 at 05:57:15PM +0100, Christoph Hellwig wrote:
+>=20
+> As for the buffer sharing: at least for the DMA API side I want to
+> move the current buffer sharing users away from dma_alloc_coherent
+> (and coherent dma_alloc_attrs users) and the remapping done in there
+> required for non-coherent architectures.  Instead I'd like to allocate
+> plain old pages, and then just dma map them for each device separately,
+> with DMA_ATTR_SKIP_CPU_SYNC passed for all but the first user to map
+> or last user to unmap.  On the iommu side it could probably work
+> similar.
+>=20
+> I have done some preliminary work on this, and want to get it into this
+> merge window, but there is a few other bits I need to sort out first.
+>=20
 
-Could you please build your patches before sending?
-Your patches depend on the following kconfig,
-so please build them under the config combination.
+This sounds very useful for ion, to avoid CPU cache maintenance as
+long as the buffer stays in device-land.
 
-RANDOMIZE_BASE
-MEMORY_HOTREMOVE
-EARLY_PARSE_RSDP
-KEXEC
-EFI
+One question though: How would you determine "the last user to unmap"
+to know when to do the final "make visible to CPU" step?
 
 Thanks,
-Masa
-
-On Thu, Nov 29, 2018 at 04:16:26PM +0800, Chao Fan wrote:
-> ***Background:
-> People reported that KASLR may randomly choose some positions
-> which are located in movable memory regions. This will break memory
-> hotplug feature and make the movable memory chosen by KASLR can't be
-> removed.
-> 
-> ***Solutions:
-> Get the information of memory hot-remove, then KASLR will know the
-> right regions. Information about memory hot-remove is in ACPI
-> tables, which will be parsed after start_kernel(), so that KASLR
-> can't get the information.
-> 
-> Somebody suggest to add a kernel parameter to specify the
-> immovable memory so that limit KASLR in these regions. Then I make
-> a patchset. After several versions, Ingo gave a suggestion:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
-> Follow Ingo's suggestion, imitate the ACPI code to parse the ACPI
-> tables, so that the kaslr can get necessary memory information in
-> ACPI tables.
-> I think ACPI code is an independent part, so imitate the codes
-> and functions to 'compressed/' directory, so that kaslr won't
-> influence the initialization of ACPI.
-> 
-> PATCH 1/5 Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
-> PATCH 2/5 Add efi_get_rsdp_addr() to find RSDP from EFI table when
->           booting from EFI.
-> PATCH 3/5 Add bios_get_rsdp_addr() to search RSDP in memory when EFI
->           table not found.
-> PATCH 4/5 Compute SRAT table from RSDP and walk SRAT table to store
->           the immovable memory regions.
-> PATCH 5/5 Calculate the intersection between memory regions from e820/efi
->           memory table and immovable memory regions. Limit KASLR to
->           choosing these regions for randomization.
-> 
-> v1->v2:
->  -  Simplify some code.
-> Follow Baoquan He's suggestion:
->  - Reuse the head file of acpi code.
-> 
-> v2->v3:
->  - Test in more conditions, so remove the 'RFC' tag.
->  - Change some comments.
-> 
-> v3->v4:
-> Follow Thomas Gleixner's suggetsion:
->  - Put the whole efi related function into #define CONFIG_EFI and return
->    false in the other stub.
-> 
-> v4->v5:
-> Follow Dou Liyang's suggestion:
->  - Add more comments about some functions based on kernel code.
->  - Change some typo in comments.
->  - Clean useless variable.
->  - Add check for the boundary of array.
->  - Add check for 'movable_node' parameter
-> 
-> v5->v6:
-> Follow Baoquan He's suggestion:
->  - Change some log.
->  - Add the check for acpi_rsdp
->  - Change some code logical to make code clear
-> 
-> v6->v7:
-> Follow Rafael's suggestion:
->  - Add more comments and patch log.
-> Follow test robot's suggestion:
->  - Add "static" tag for function
-> 
-> v7-v8:
-> Follow Kees Cook's suggestion:
->  - Use mem_overlaps() to check memory region.
->  - Use #ifdef in the definition of function.
-> 
-> v8-v9:
-> Follow Boris' suggestion:
->  - Change code style.
->  - Splite PATCH 1/3 to more path.
->  - Introduce some new function
->  - Use existing function to rework some code
-> Follow Masayoshi's suggetion:
->  - Make code more readable
-> 
-> v9->v10:
-> Follow Baoquan's suggestion:
->  - Change some log
->  - Merge last two patch together.
-> 
-> v10->v11:
-> Follow Boris' suggestion:
->  - Link kstrtoull() instead of copying it.
->  - Drop the useless wrapped function.
-> 
-> v11->v12:
-> Follow Boris' suggestion:
->  - Change patch log and code comments.
->  - Add 'CONFIG_EARLY_PARSE_RSDP' to make code easy to read
->  - Put strtoull() to misc.c
-> Follow Masa's suggestion:
->  - Remove the detection for 'movable_node'
->  - Change the code logical about cmdline_find_option()
-> 
-> Any comments will be welcome.
-> 
-> 
-> Chao Fan (5):
->   x86/boot: Add get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
->   x86/boot: Add efi_get_rsdp_addr() to find RSDP from EFI table
->   x86/boot: Add bios_get_rsdp_addr() to search RSDP in memory
->   x86/boot: Parse SRAT table from RSDP and store immovable memory
->   x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
-> 
->  arch/x86/Kconfig                  |  10 +
->  arch/x86/boot/compressed/Makefile |   2 +
->  arch/x86/boot/compressed/acpitb.c | 322 ++++++++++++++++++++++++++++++
->  arch/x86/boot/compressed/kaslr.c  |  79 ++++++--
->  arch/x86/boot/compressed/misc.c   |   5 +
->  arch/x86/boot/compressed/misc.h   |  24 +++
->  lib/kstrtox.c                     |   5 +
->  7 files changed, 432 insertions(+), 15 deletions(-)
->  create mode 100644 arch/x86/boot/compressed/acpitb.c
-> 
-> -- 
-> 2.19.1
-> 
-> 
-> 
+-Brian
