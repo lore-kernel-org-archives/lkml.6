@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E099BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A1CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD31F2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD31F2081C
+	by mail.kernel.org (Postfix) with ESMTP id 52C022081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 06:51:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C022081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asix.com.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbeK2R4F (ORCPT
+        id S1727944AbeK2R4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 29 Nov 2018 12:56:05 -0500
-Received: from asix.com.tw ([210.243.224.51]:60155 "EHLO freebsd2.asix.com.tw"
+Received: from asix.com.tw ([210.243.224.51]:45086 "EHLO freebsd2.asix.com.tw"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727521AbeK2R4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727560AbeK2R4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Nov 2018 12:56:05 -0500
 Received: from JACKYCHOU ([10.1.2.56])
-        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPS id wAT6nLbZ021291
+        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPS id wAT6nLbY021291
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 29 Nov 2018 14:49:22 +0800 (CST)
+        Thu, 29 Nov 2018 14:49:21 +0800 (CST)
         (envelope-from jackychou@asix.com.tw)
 Authentication-Results: freebsd2.asix.com.tw; sender-id=permerror header.from=jackychou@asix.com.tw; spf=permerror smtp.mfrom=jackychou@asix.com.tw
 X-Authentication-Warning: freebsd2.asix.com.tw: Host [10.1.2.56] claimed to be JACKYCHOU
@@ -34,17 +34,17 @@ To:     <johan@kernel.org>
 Cc:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <louis@asix.com.tw>,
         <jackychou@asix.com.tw>
-References: <20181129064728.11830-1-jackychou@asix.com.tw> <20181129064728.11830-2-jackychou@asix.com.tw>
-In-Reply-To: <20181129064728.11830-2-jackychou@asix.com.tw>
-Subject: FW: [PATCH 2/2] USB: serial: mos7840: Add a product ID for the new product
-Date:   Thu, 29 Nov 2018 14:51:38 +0800
-Message-ID: <005901d487af$f9cd87d0$ed689770$@asix.com.tw>
+References: <20181129064728.11830-1-jackychou@asix.com.tw>
+In-Reply-To: <20181129064728.11830-1-jackychou@asix.com.tw>
+Subject: [PATCH 1/2] USB: serial: mos7840: Adjust port settings for read and write registers
+Date:   Thu, 29 Nov 2018 14:51:36 +0800
+Message-ID: <005801d487af$f9517a00$ebf46e00$@asix.com.tw>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQG8u6aoLP+6LyW/pvQFCmc7tbxgrQIwzUT/pYRiEXA=
+Thread-Index: AQG8u6aoLP+6LyW/pvQFCmc7tbxgraWV6CDA
 Content-Language: zh-tw
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,57 +54,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: JackyChou <jackychou@asix.com.tw>
 
-Add a new PID 0x7843 to the driver.
-Let the new products be able to set up 3 serial ports with the driver.
+In the read/write function, set port 2 independently in the 2-port case.
+
+When setting the offset of port registers, the offset between port 1 and
+other ports is different, so port 1 is set independently.
+Then in the rest of ports, the port 2 between 2-ports case and 4-ports case
+is different, so port 2 in 2-ports case is set independently.
 
 Signed-off-by: JackyChou <jackychou@asix.com.tw>
 ---
- drivers/usb/serial/mos7840.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/usb/serial/mos7840.c | 48 ++++++++++++------------------------
+ 1 file changed, 16 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-index 92ab68ef08ab..b6e7b55fcb7c 100644
+index 88828b4b8c44..92ab68ef08ab 100644
 --- a/drivers/usb/serial/mos7840.c
 +++ b/drivers/usb/serial/mos7840.c
-@@ -94,6 +94,7 @@
- /* The native mos7840/7820 component */
- #define USB_VENDOR_ID_MOSCHIP           0x9710
- #define MOSCHIP_DEVICE_ID_7840          0x7840
-+#define MOSCHIP_DEVICE_ID_7843          0x7843
- #define MOSCHIP_DEVICE_ID_7820          0x7820
- #define MOSCHIP_DEVICE_ID_7810          0x7810
- /* The native component can have its vendor/device id's overridden
-@@ -176,6 +177,7 @@ enum mos7840_flag {
- 
- static const struct usb_device_id id_table[] = {
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7840)},
-+	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7843)},
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7820)},
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7810)},
- 	{USB_DEVICE(USB_VENDOR_ID_BANDB, BANDB_DEVICE_ID_USO9ML2_2)},
-@@ -2033,7 +2035,8 @@ static int mos7840_probe(struct usb_serial *serial,
- 	int device_type;
- 
- 	if (product == MOSCHIP_DEVICE_ID_7810 ||
--		product == MOSCHIP_DEVICE_ID_7820) {
-+		product == MOSCHIP_DEVICE_ID_7820 ||
-+		product == MOSCHIP_DEVICE_ID_7843) {
- 		device_type = product;
- 		goto out;
- 	}
-@@ -2067,7 +2070,10 @@ static int mos7840_calc_num_ports(struct usb_serial
-*serial,
- 	int device_type = (unsigned long)usb_get_serial_data(serial);
- 	int num_ports;
- 
--	num_ports = (device_type >> 4) & 0x000F;
-+	if (device_type == MOSCHIP_DEVICE_ID_7843)
-+		num_ports = 3;
+@@ -298,15 +298,10 @@ static int mos7840_set_uart_reg(struct usb_serial_port
+*port, __u16 reg,
+ 	val = val & 0x00ff;
+ 	/* For the UART control registers, the application number need
+ 	   to be Or'ed */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 2 && port->port_number != 0)
++		val |= ((__u16)port->port_number + 2) << 8;
 +	else
-+		num_ports = (device_type >> 4) & 0x000F;
+ 		val |= ((__u16)port->port_number + 1) << 8;
+-	} else {
+-		if (port->port_number == 0) {
+-			val |= ((__u16)port->port_number + 1) << 8;
+-		} else {
+-			val |= ((__u16)port->port_number + 2) << 8;
+-		}
+-	}
+ 	dev_dbg(&port->dev, "%s application number is %x\n", __func__, val);
+ 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0), MCS_WRREQ,
+ 			       MCS_WR_RTYPE, val, reg, NULL, 0,
+@@ -332,15 +327,10 @@ static int mos7840_get_uart_reg(struct usb_serial_port
+*port, __u16 reg,
+ 		return -ENOMEM;
  
- 	/*
- 	 * num_ports is currently never zero as device_type is one of
+ 	/* Wval  is same as application number */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 2 && port->port_number != 0)
++		Wval = ((__u16)port->port_number + 2) << 8;
++	else
+ 		Wval = ((__u16)port->port_number + 1) << 8;
+-	} else {
+-		if (port->port_number == 0) {
+-			Wval = ((__u16)port->port_number + 1) << 8;
+-		} else {
+-			Wval = ((__u16)port->port_number + 2) << 8;
+-		}
+-	}
+ 	dev_dbg(&port->dev, "%s application number is %x\n", __func__,
+Wval);
+ 	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), MCS_RDREQ,
+ 			      MCS_RD_RTYPE, Wval, reg, buf,
+VENDOR_READ_LENGTH,
+@@ -2132,22 +2122,16 @@ static int mos7840_port_probe(struct usb_serial_port
+*port)
+ 		mos7840_port->SpRegOffset = 0x0;
+ 		mos7840_port->ControlRegOffset = 0x1;
+ 		mos7840_port->DcrRegOffset = 0x4;
+-	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
+4)) {
+-		mos7840_port->SpRegOffset = 0x8;
+-		mos7840_port->ControlRegOffset = 0x9;
+-		mos7840_port->DcrRegOffset = 0x16;
+-	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
+2)) {
+-		mos7840_port->SpRegOffset = 0xa;
+-		mos7840_port->ControlRegOffset = 0xb;
+-		mos7840_port->DcrRegOffset = 0x19;
+-	} else if ((mos7840_port->port_num == 3) && (serial->num_ports ==
+4)) {
+-		mos7840_port->SpRegOffset = 0xa;
+-		mos7840_port->ControlRegOffset = 0xb;
+-		mos7840_port->DcrRegOffset = 0x19;
+-	} else if ((mos7840_port->port_num == 4) && (serial->num_ports ==
+4)) {
+-		mos7840_port->SpRegOffset = 0xc;
+-		mos7840_port->ControlRegOffset = 0xd;
+-		mos7840_port->DcrRegOffset = 0x1c;
++	} else {
++		u8 port_offset;
++
++		if ((mos7840_port->port_num == 2) && (serial->num_ports ==
+2))
++			port_offset = 1;
++		else
++			port_offset = mos7840_port->port_num - 2;
++		mos7840_port->SpRegOffset = 0x8 + (2 * port_offset);
++		mos7840_port->ControlRegOffset = 0x9 + (2 * port_offset);
++		mos7840_port->DcrRegOffset = 0x16 + (3 * port_offset);
+ 	}
+ 	mos7840_dump_serial_port(port, mos7840_port);
+ 	mos7840_set_port_private(port, mos7840_port);
 -- 
 2.17.1
 
