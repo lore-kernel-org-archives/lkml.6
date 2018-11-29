@@ -2,106 +2,117 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94C9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A312C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555C521019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:47:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Yu7kKGqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 555C521019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 20EFA20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 19:48:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EFA20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbeK3GyJ (ORCPT
+        id S1726706AbeK3GzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 01:54:09 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38569 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeK3GyI (ORCPT
+        Fri, 30 Nov 2018 01:55:07 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37262 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeK3GzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 01:54:08 -0500
-Received: by mail-io1-f65.google.com with SMTP id l14so2587928ioj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 11:47:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TObri6b8riy4VhBHAFZkP4Ecjb5uepSkDJv8gstmZS4=;
-        b=Yu7kKGqdjPTq46vGx7yd1jlSLE2/yeSlnOJTUzp0wAV07t5THzJxQVdUwsWQHgzCd1
-         OCEkl+hRioT0tog9Dfm/TU9+rt9X7oylk7qTcZWpXvF67a0VazX/eBCvqZjYXMkwqxRv
-         aD4jYheto+A5B1w2xDyTHp3sHE12ZvlRbI4kc=
+        Fri, 30 Nov 2018 01:55:07 -0500
+Received: by mail-qt1-f194.google.com with SMTP id z16so3399052qtq.4;
+        Thu, 29 Nov 2018 11:48:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TObri6b8riy4VhBHAFZkP4Ecjb5uepSkDJv8gstmZS4=;
-        b=lvwqv9hFEOTmQ19wAldBC9y5xyK2jClyP7ojtR+rR54x6gLaZoa7hNTiGWiSu5dPDl
-         V1bq6klMqxErEb3ZYvIIK2FRTKtOdG8h49vJt8zUUdDDr0eVYBGoG4qEEJkOTapx2UzN
-         Lmdq2Yo8+yacQQifYXMQTaRXrk5pOJxTpjs0z8GeK0SgS7WAffaFdwuO2hFLqX98PQKe
-         siBLTgGWihlFPsHBdjyE7gzMw46Df4phaifTKwQ4/dMlap07vXDfBkuQNrPuhRqJ4Tk6
-         vYlWSk2agP+MyOi9llGcHq2gqNoci8LpM9LepUQy6+clM4k6aThcpC5CB+Q1NQTDsz4i
-         pNaQ==
-X-Gm-Message-State: AA+aEWb3PCApWjAhYLLxxaFPWl6+YGyfiw6vB3P6AJl1a1e1nmM8u+qv
-        B9J3vW1rQqzY6tAugewjk3jDr2NtlpzpoB6Q2qvu2g==
-X-Google-Smtp-Source: AFSGD/VY7+tkreu3BzL9Ldl1XHVuY20055VF026B6I1wnkcBkGa5S3YtXL6DObT5J7Wa0XKbD84ZdLXNM6OAccNdT/Q=
-X-Received: by 2002:a5d:9698:: with SMTP id m24mr2301116ion.246.1543520855197;
- Thu, 29 Nov 2018 11:47:35 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BR56+qJQYht+c/UF3lXH9JqG/9VgcGgo2mEFNDQ2gN4=;
+        b=TVocFVkUGDUdkLL8Nz6/vqgKYr1mTVG1ee0CunqJpVqRMOYYyldCCDqcG6hebrBTz/
+         oogZPFQgAcptRLn3rKm3ZMGHTwADhudWF0rpNLBDyQUUUM6824opeAvSogm939ytJGCE
+         /opRtlW0Ss4aa/Ylp9udgIilNmfSlOOe4MIWJvgBmXwK9ZvXVpj/vX5R99M9ZLCPnmGH
+         JgHMlIZG2+QhH+rSZj6O79oL034KA9wDRkVdqIRXdsGXUsBfU7Zuan+vqD3XEaQPtxpK
+         SbM3AmkAj2p+FGeKBHRmea6My/DzdUMs6oOLImk66Bxmbml+4Bf5eXmJlm8peJYCWbd9
+         zsZg==
+X-Gm-Message-State: AA+aEWbVC+3fs+kUGTaIUEbj+z5L9h6Bc9Ib8bqHUdI1ThY3Zuc+DLgz
+        9evsdWlM+26JtWWYus57ivI=
+X-Google-Smtp-Source: AFSGD/UkHNU984FKR0oBXA0OxFcpZuleLdTqrLk/NkRxekKYQae8r1R/Xtwi2CJDbbGtzk+jrUnzew==
+X-Received: by 2002:aed:202e:: with SMTP id 43mr2831430qta.27.1543520913295;
+        Thu, 29 Nov 2018 11:48:33 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::7:3dcb])
+        by smtp.gmail.com with ESMTPSA id m49sm1714135qtb.40.2018.11.29.11.48.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 11:48:32 -0800 (PST)
+Date:   Thu, 29 Nov 2018 14:48:29 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/13] blkcg: introduce common blkg association logic
+Message-ID: <20181129194829.GA95415@dennisz-mbp.dhcp.thefacebook.com>
+References: <20181126211946.77067-1-dennis@kernel.org>
+ <20181126211946.77067-5-dennis@kernel.org>
+ <20181129154917.GD2509588@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
- <20181127210542.GA2599@redhat.com> <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
- <20181128170302.GA12405@redhat.com> <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov> <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
-In-Reply-To: <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 29 Nov 2018 20:47:22 +0100
-Message-ID: <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
-Subject: Re: overlayfs access checks on underlying layers
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129154917.GD2509588@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+On Thu, Nov 29, 2018 at 07:49:17AM -0800, Tejun Heo wrote:
+> On Mon, Nov 26, 2018 at 04:19:37PM -0500, Dennis Zhou wrote:
+> > There are 3 ways blkg association can happen: association with the
+> > current css, with the page css (swap), or from the wbc css (writeback).
+> > 
+> > This patch handles how association is done for the first case where we
+> > are associating bsaed on the current css. If there is already a blkg
+> > associated, the css will be reused and association will be redone as the
+> > request_queue may have changed.
+> > 
+> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> 
+> Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> A minor nit below.
+> 
+> > +/**
+> > + * bio_associate_blkg - associate a bio with a blkg from q
+> > + * @bio: target bio
+> > + *
+> > + * Associate @bio with the blkg found from the bio's css and request_queue.
+> > + * If one is not found, bio_lookup_blkg() creates the blkg.  If a blkg is
+> > + * already associated, the css is reused and association redone as the
+> > + * request_queue may have changed.
+> > + */
+> > +void bio_associate_blkg(struct bio *bio)
+> > +{
+> > +	struct request_queue *q;
+> > +	struct blkcg *blkcg;
+> > +	struct blkcg_gq *blkg;
+> > +
+> > +	if (!bio_has_queue(bio))
+> > +		return;
+> 
+> So, this isn't actually necessary cuz we don't stack with
+> request_queues but it might be more consistent to call disassociate
+> before returning above so that even if sth like that happens the
+> function always guarantees that the blkg and bio agree.
 
-> Possibly I misunderstood you, but I don't think we want to copy-up on
-> permission denial, as that would still allow the mounter to read/write
-> special files or execute regular files to which it would normally be
-> denied access, because the copy would inherit the context specified by
-> the mounter in the context mount case.  It still represents an
-> escalation of privilege for the mounter.  In contrast, the copy-up on
-> write behavior does not allow the mounter to do anything it could not do
-> already (i.e. read from the lower, write to the upper).
-
-Let's get this straight:  when file is copied up, it inherits label
-from context=, not from label of lower file?
-
-Next question: permission to change metadata is tied to permission to
-open?  Is it possible that open is denied, but metadata can be
-changed?
-
-DAC model allows this: metadata change is tied to ownership, not mode
-bits.   And different capability flag.
-
-If the same is true for MAC, then the pre-v4.20-rc1 is already
-susceptible to the privilege escalation you describe, right?
+Ah. That makes sense. I've changed bio_has_queue() to be
+bio_blkg_association_check(). This calls disassociate and should handle
+the case a bio transfers from a request_queue device to a bio driven
+device. It changes the future patches slightly as we have to remember
+the css before doing the check in case we want to reassociate with the
+same css.
 
 Thanks,
-Miklos
+Dennis
