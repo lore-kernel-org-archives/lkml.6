@@ -2,84 +2,132 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6434AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9427C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2998D208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:25:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2998D208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 72A4E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 13:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A4E208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeK3AaU (ORCPT
+        id S1728371AbeK3AcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 19:30:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60474 "EHLO mx1.suse.de"
+        Thu, 29 Nov 2018 19:32:15 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45813 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727040AbeK3AaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 19:30:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 94112AE69;
-        Thu, 29 Nov 2018 13:24:56 +0000 (UTC)
-Date:   Thu, 29 Nov 2018 14:24:55 +0100 (CET)
-From:   Richard Biener <rguenther@suse.de>
-To:     Borislav Petkov <bp@alien8.de>
-cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, matz@suse.de, gcc@gcc.gnu.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-In-Reply-To: <20181129131611.GC3070@nazgul.tnic>
-Message-ID: <alpine.LSU.2.20.1811291423490.1827@zhemvz.fhfr.qr>
-References: <20181003213100.189959-1-namit@vmware.com> <20181007091805.GA30687@zn.tnic> <20181007132228.GJ29268@gate.crashing.org> <alpine.LSU.2.21.1810071534220.7867@wotan.suse.de> <20181008073128.GL29268@gate.crashing.org> <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org> <CAK7LNARmrdtyE7JRAdJH_zbfvD_cej+TGLh+5KfT20o538KUcA@mail.gmail.com> <20181129130718.GA3070@nazgul.tnic> <alpine.LSU.2.20.1811291408400.1827@zhemvz.fhfr.qr> <20181129131611.GC3070@nazgul.tnic>
-User-Agent: Alpine 2.20 (LSU 67 2015-01-07)
+        id S1726724AbeK3AcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 19:32:15 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A1E86A779E4F0;
+        Thu, 29 Nov 2018 21:26:49 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 29 Nov 2018 21:26:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Suchanek <msuchanek@suse.de>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        "Mauricio Faria de Oliveira" <mauricfo@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] powerpc/64s: Fix debugfs_simple_attr.cocci warnings
+Date:   Thu, 29 Nov 2018 13:35:18 +0000
+Message-ID: <1543498518-107601-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018, Borislav Petkov wrote:
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+for debugfs files.
 
-> On Thu, Nov 29, 2018 at 02:09:25PM +0100, Richard Biener wrote:
-> > I'd be not opposed to backporting the asm inline support.
-> 
-> Even better! :-)
-> 
-> > Of course we still have to be happy with it and install the patch ;)
-> > 
-> > Are you (kernel folks) happy with asm inline ()?
-> 
-> Yes, I think we are:
-> 
-> https://lkml.kernel.org/r/20181031125526.GA13219@hirez.programming.kicks-ass.net
+Semantic patch information:
+Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+imposes some significant overhead as compared to
+DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
 
-OK, Segher - can you ping the latest version of the patch please?
+Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
 
-Thanks,
-Richard.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/kernel/security.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
+index 9703dce..14bb806 100644
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -90,13 +90,14 @@ static int barrier_nospec_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_barrier_nospec,
+-			barrier_nospec_get, barrier_nospec_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(fops_barrier_nospec, barrier_nospec_get,
++			 barrier_nospec_set, "%llu\n");
+ 
+ static __init int barrier_nospec_debugfs_init(void)
+ {
+-	debugfs_create_file("barrier_nospec", 0600, powerpc_debugfs_root, NULL,
+-			    &fops_barrier_nospec);
++	debugfs_create_file_unsafe("barrier_nospec", 0600,
++				   powerpc_debugfs_root, NULL,
++				   &fops_barrier_nospec);
+ 	return 0;
+ }
+ device_initcall(barrier_nospec_debugfs_init);
+@@ -339,11 +340,13 @@ static int stf_barrier_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_stf_barrier, stf_barrier_get, stf_barrier_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(fops_stf_barrier, stf_barrier_get, stf_barrier_set,
++			 "%llu\n");
+ 
+ static __init int stf_barrier_debugfs_init(void)
+ {
+-	debugfs_create_file("stf_barrier", 0600, powerpc_debugfs_root, NULL, &fops_stf_barrier);
++	debugfs_create_file_unsafe("stf_barrier", 0600, powerpc_debugfs_root,
++				   NULL, &fops_stf_barrier);
+ 	return 0;
+ }
+ device_initcall(stf_barrier_debugfs_init);
+@@ -404,13 +407,14 @@ static int count_cache_flush_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(fops_count_cache_flush, count_cache_flush_get,
+-			count_cache_flush_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(fops_count_cache_flush, count_cache_flush_get,
++			 count_cache_flush_set, "%llu\n");
+ 
+ static __init int count_cache_flush_debugfs_init(void)
+ {
+-	debugfs_create_file("count_cache_flush", 0600, powerpc_debugfs_root,
+-			    NULL, &fops_count_cache_flush);
++	debugfs_create_file_unsafe("count_cache_flush", 0600,
++				   powerpc_debugfs_root, NULL,
++				   &fops_count_cache_flush);
+ 	return 0;
+ }
+ device_initcall(count_cache_flush_debugfs_init);
+
+
+
+
+
