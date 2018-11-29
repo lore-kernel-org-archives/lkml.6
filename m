@@ -2,51 +2,51 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5385C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5240C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72478208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB0D205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:19:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOVtW1Ds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72478208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTBocCHb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB0D205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730954AbeK3BYe (ORCPT
+        id S1730969AbeK3BYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:24:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47414 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:24:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729693AbeK3BYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:24:34 -0500
+        id S1729693AbeK3BYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:24:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F09E021104;
-        Thu, 29 Nov 2018 14:19:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E190205C9;
+        Thu, 29 Nov 2018 14:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501143;
-        bh=X23rH/FfYSj7Lt1N0wC1MwBqNT3nYm6JDJQCdefqkR0=;
+        s=default; t=1543501145;
+        bh=nS3WFZJYUQAw88EuwbnpSbuz53vvK3ka4xWbGIK3Fl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rOVtW1Ds6/+fEskmT2p75LKSrr0wuMRsmTQiJQJmGoctb37Nsu1JBvRoHhadBKwYH
-         1EvmdMPh+AGSzubMQQmZbuxkeegh/NGkMWwCFKaG41mApfNWhRww1ss3DowHEiekcY
-         w0bIg+KyLFvQUK9ZH5Pw6aUZScVLcT4I9w1AZWI4=
+        b=bTBocCHboxBUAsy8Dy0FEBvNC1ecaqp2Cojo05eSqPkG+jxpNKQU6CFLq33BrS4hY
+         OPZ8P3Ig4yQeWpCb1bJqRcn3qK9uHxCtU5CaddFURMjihYrG3Zd9J1Fz+hj6M3iKk2
+         GnBumdw3Q9jzwxH+0BuXNj8u9O+4zIlB391riNvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyle Beauchamp <kyleabeauchamp@gmail.com>,
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
         Cameron Gutman <aicommander@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 60/86] Input: xpad - fix PowerA init quirk for some gamepad models
-Date:   Thu, 29 Nov 2018 15:12:25 +0100
-Message-Id: <20181129140115.056953213@linuxfoundation.org>
+Subject: [PATCH 4.4 61/86] Input: xpad - validate USB endpoint type during probe
+Date:   Thu, 29 Nov 2018 15:12:26 +0100
+Message-Id: <20181129140115.135763514@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -64,82 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f5308d1b83eba20e69df5e0926ba7257c8dd9074 ]
+[ Upstream commit 122d6a347329818419b032c5a1776e6b3866d9b9 ]
 
-The PowerA gamepad initialization quirk worked with the PowerA
-wired gamepad I had around (0x24c6:0x543a), but a user reported [0]
-that it didn't work for him, even though our gamepads shared the
-same vendor and product IDs.
+We should only see devices with interrupt endpoints. Ignore any other
+endpoints that we find, so we don't send try to send them interrupt URBs
+and trigger a WARN down in the USB stack.
 
-When I initially implemented the PowerA quirk, I wanted to avoid
-actually triggering the rumble action during init. My tests showed
-that my gamepad would work correctly even if it received a rumble
-of 0 intensity, so that's what I went with.
-
-Unfortunately, this apparently isn't true for all models (perhaps
-a firmware difference?). This non-working gamepad seems to require
-the real magic rumble packet that the Microsoft driver sends, which
-actually vibrates the gamepad. To counteract this effect, I still
-send the old zero-rumble PowerA quirk packet which cancels the
-rumble effect before the motors can spin up enough to vibrate.
-
-[0]: https://github.com/paroj/xpad/issues/48#issuecomment-313904867
-
-Reported-by: Kyle Beauchamp <kyleabeauchamp@gmail.com>
-Tested-by: Kyle Beauchamp <kyleabeauchamp@gmail.com>
-Fixes: 81093c9848a7 ("Input: xpad - support some quirky Xbox One pads")
-Cc: stable@vger.kernel.org # v4.12
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Cc: <stable@vger.kernel.org> # c01b5e7464f0 Input: xpad - don't depend on endpoint order
 Signed-off-by: Cameron Gutman <aicommander@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/input/joystick/xpad.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 2578a7677040..f8e34ef643c7 100644
+index f8e34ef643c7..d86e59515b9c 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -476,10 +476,21 @@ static const u8 xboxone_hori_init[] = {
- };
+@@ -1764,10 +1764,12 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 		struct usb_endpoint_descriptor *ep =
+ 				&intf->cur_altsetting->endpoint[i].desc;
  
- /*
-- * A rumble packet is required for some PowerA pads to start
-+ * A specific rumble packet is required for some PowerA pads to start
-  * sending input reports. One of those pads is (0x24c6:0x543a).
-  */
--static const u8 xboxone_zerorumble_init[] = {
-+static const u8 xboxone_rumblebegin_init[] = {
-+	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
-+	0x1D, 0x1D, 0xFF, 0x00, 0x00
-+};
-+
-+/*
-+ * A rumble packet with zero FF intensity will immediately
-+ * terminate the rumbling required to init PowerA pads.
-+ * This should happen fast enough that the motors don't
-+ * spin up to enough speed to actually vibrate the gamepad.
-+ */
-+static const u8 xboxone_rumbleend_init[] = {
- 	0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 0x00, 0x00,
- 	0x00, 0x00, 0x00, 0x00, 0x00
- };
-@@ -494,9 +505,12 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
- 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
--	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_zerorumble_init),
--	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_zerorumble_init),
--	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_zerorumble_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumbleend_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumbleend_init),
-+	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumbleend_init),
- };
+-		if (usb_endpoint_dir_in(ep))
+-			ep_irq_in = ep;
+-		else
+-			ep_irq_out = ep;
++		if (usb_endpoint_xfer_int(ep)) {
++			if (usb_endpoint_dir_in(ep))
++				ep_irq_in = ep;
++			else
++				ep_irq_out = ep;
++		}
+ 	}
  
- struct xpad_output_packet {
+ 	if (!ep_irq_in || !ep_irq_out) {
 -- 
 2.17.1
 
