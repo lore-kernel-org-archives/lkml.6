@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAC3C43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFE3C04EBC
 	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83572145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1E862146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wo8gQuYG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83572145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOAldl19"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E862146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732762AbeK3BaU (ORCPT
+        id S1732775AbeK3BaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:30:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57280 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:30:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728616AbeK3BaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:30:19 -0500
+        id S1728616AbeK3BaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:30:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 930002145D;
-        Thu, 29 Nov 2018 14:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE813213A2;
+        Thu, 29 Nov 2018 14:24:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501487;
-        bh=15ZDFBeCbi4PNIHf+9wWO3hJKWfkyB7RXha/rb/wyis=;
+        s=default; t=1543501489;
+        bh=TT9/PqdAjI6g90JL8CWAZ3XSrboVPjISxIr7QQyfDks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wo8gQuYGS4R6gchep5OswLWAkO3RWvkMqMgPuPJ2BPedcaOJjx/UPp20jpKJLr7TH
-         vBeNPu/ljehSWSu2Su3MqzvFwpMYi/6+kS3z0qWTLgnLPeZ+kB3WD4natPEX7Z5m1X
-         ny5YrKUlEfKYJHtDm7A95N/vfK1oeQgyCGfpqpPQ=
+        b=EOAldl19dquzUmGUR3fr8xYk03aluv9WYExJ0NePfTcqnOc4RU6M52NVWY6SyypAk
+         eMVX3AM4ZATA2371zMIWB8Vj8yFvvONnJFdvzfzH7N+vZSJPOGvdcgMMZ5awPeE9Dp
+         RI48A9Lm4LaVIgitHxotxuem7jV4o1EpXsFssTaU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandeep Singh <sandeep.singh@amd.com>,
-        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 010/100] xhci: Add check for invalid byte size error when UAS devices are connected.
-Date:   Thu, 29 Nov 2018 15:11:40 +0100
-Message-Id: <20181129140059.851469378@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 019/100] brcmfmac: fix reporting support for 160 MHz channels
+Date:   Thu, 29 Nov 2018 15:11:49 +0100
+Message-Id: <20181129140100.480709812@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -63,41 +63,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandeep Singh <sandeep.singh@amd.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-commit d9193efba84fe4c4aa22a569fade5e6ca971f8af upstream.
+commit d1fe6ad6f6bd61c84788d3a7b11e459a439c6169 upstream.
 
-Observed "TRB completion code (27)" error which corresponds to Stopped -
-Length Invalid error(xhci spec section 4.17.4) while connecting USB to
-SATA bridge.
+Driver can report IEEE80211_VHT_CAP_SUPP_CHAN_WIDTH_160MHZ so it's
+important to provide valid & complete info about supported bands for
+each channel. By default no support for 160 MHz should be assumed unless
+firmware reports it for a given channel later.
 
-Looks like this case was not considered when the following patch[1] was
-committed. Hence adding this new check which can prevent
-the invalid byte size error.
+This fixes info passed to the userspace. Without that change userspace
+could try to use invalid channel and fail to start an interface.
 
-[1] ade2e3a xhci: handle transfer events without TRB pointer
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sandeep Singh <sandeep.singh@amd.com>
-cc: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
-cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Cc: stable@vger.kernel.org
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-ring.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -2335,6 +2335,7 @@ static int handle_tx_event(struct xhci_h
- 			goto cleanup;
- 		case COMP_RING_UNDERRUN:
- 		case COMP_RING_OVERRUN:
-+		case COMP_STOPPED_LENGTH_INVALID:
- 			goto cleanup;
- 		default:
- 			xhci_err(xhci, "ERROR Transfer event for unknown stream ring slot %u ep %u\n",
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6098,7 +6098,8 @@ static int brcmf_construct_chaninfo(stru
+ 			 * for subsequent chanspecs.
+ 			 */
+ 			channel->flags = IEEE80211_CHAN_NO_HT40 |
+-					 IEEE80211_CHAN_NO_80MHZ;
++					 IEEE80211_CHAN_NO_80MHZ |
++					 IEEE80211_CHAN_NO_160MHZ;
+ 			ch.bw = BRCMU_CHAN_BW_20;
+ 			cfg->d11inf.encchspec(&ch);
+ 			chaninfo = ch.chspec;
 
 
