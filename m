@@ -2,47 +2,48 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UPPERCASE_50_75,URIBL_BLACK,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78E6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD01C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB5C2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:20:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB5C2081B
+	by mail.kernel.org (Postfix) with ESMTP id EA83C2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 09:21:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA83C2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeK2UZD (ORCPT
+        id S1727325AbeK2UZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 15:25:03 -0500
-Received: from mga05.intel.com ([192.55.52.43]:28550 "EHLO mga05.intel.com"
+        Thu, 29 Nov 2018 15:25:40 -0500
+Received: from mga07.intel.com ([134.134.136.100]:22152 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbeK2UZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 15:25:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726565AbeK2UZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 15:25:40 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 01:20:19 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 01:20:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
-   d="xz'?yaml'?scan'208";a="113570991"
+   d="yaml'?scan'208";a="113447090"
 Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
-  by orsmga001.jf.intel.com with ESMTP; 29 Nov 2018 01:20:15 -0800
-Date:   Thu, 29 Nov 2018 17:20:31 +0800
+  by orsmga002.jf.intel.com with ESMTP; 29 Nov 2018 01:20:52 -0800
+Date:   Thu, 29 Nov 2018 17:21:08 +0800
 From:   kernel test robot <rong.a.chen@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@fb.com>, lkp@01.org
-Subject: [LKP] [block] 9d037ad707: BUG:unable_to_handle_kernel
-Message-ID: <20181129092031.GF21676@shao2-debian>
+To:     Josef Bacik <jbacik@fb.com>
+Cc:     David Sterba <dsterba@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: [LKP] [btrfs] 4fd93529bc:  fio.write_bw_MBps -6.9% regression
+Message-ID: <20181129092108.GG21676@shao2-debian>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="9UV9rz0O2dU/yYYn"
+Content-Type: multipart/mixed; boundary="M/SuVGWktc5uNpra"
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,91 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-FYI, we noticed the following commit (built with gcc-7):
+Greeting,
 
-commit: 9d037ad707ed6069fbea4e38e6ee37e027b13f1d ("block: remove req->timeout_list")
-https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git mq-perf
+FYI, we noticed a -6.9% regression of fio.write_bw_MBps due to commit:
 
-in testcase: fsmark
+
+commit: 4fd93529bcf2686433120ac18662513548d937d3 ("btrfs: introduce delayed_refs_rsv")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+
+in testcase: fio-basic
+on test machine: 72 threads Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz with 128G memory
 with following parameters:
 
-	iterations: 1x
-	nr_threads: 64t
-	disk: 1BRD_48G
+	disk: 1SSD
 	fs: btrfs
-	fs2: nfsv4
-	filesize: 4M
-	test_size: 40G
-	sync_method: fsyncBeforeClose
-	ucode: 0x42d
+	runtime: 300s
+	nr_task: 8
+	rw: randwrite
+	bs: 4k
+	ioengine: sync
+	test_size: 512g
+	ucode: 0x3d
 	cpufreq_governor: performance
 
-test-description: The fsmark is a file system benchmark to test synchronous write workloads, for example, mail servers workload.
-test-url: https://sourceforge.net/projects/fsmark/
-
-
-on test machine: 48 threads Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz with 64G memory
-
-caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-
-
-+---------------------------------------------------------------------+------------+------------+
-|                                                                     | 27d420bc47 | 9d037ad707 |
-+---------------------------------------------------------------------+------------+------------+
-| boot_successes                                                      | 5          | 24         |
-| boot_failures                                                       | 1          |            |
-| WARNING:suspicious_RCU_usage                                        | 1          |            |
-| include/linux/xarray.h:#suspicious_rcu_dereference_check()usage     | 1          |            |
-| include/linux/xarray.h:#suspicious_rcu_dereference_protected()usage | 1          |            |
-| BUG:kernel_hang_in_test_stage                                       | 1          |            |
-+---------------------------------------------------------------------+------------+------------+
+test-description: Fio is a tool that will spawn a number of threads or processes doing a particular type of I/O action as specified by the user.
+test-url: https://github.com/axboe/fio
 
 
 
-[   26.259902] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[   26.269247] PGD 0 P4D 0 
-[   26.272559] Oops: 0000 [#1] SMP PTI
-[   26.276947] CPU: 42 PID: 0 Comm: swapper/42 Not tainted 4.20.0-rc1-00174-g9d037ad7 #1
-[   26.286229] Hardware name: Intel Corporation S2600WP/S2600WP, BIOS SE5C600.86B.02.02.0002.122320131210 12/23/2013
-[   26.298280] RIP: 0010:t10_pi_complete+0x5c/0x1d0
-[   26.304001] Code: 00 00 0f b6 88 2a 01 00 00 88 5c 24 03 48 8b 5f 30 83 e9 09 48 d3 eb 45 31 ed f6 45 12 01 74 04 4c 8b 6d 78 44 0f b6 64 24 03 <45> 8b 4d 08 41 8b 7d 10 45 8b 55 14 45 8b 45 18 45 0f b6 dc 85 ff
-[   26.326185] RSP: 0018:ffff881012283e98 EFLAGS: 00010246
-[   26.332666] RAX: ffff8807eba48848 RBX: 0000000000000000 RCX: 00000000fffffff7
-[   26.341306] RDX: 0000000000000018 RSI: 0000000000000000 RDI: ffff8807ed1e0000
-[   26.349970] RBP: ffff880fedea5700 R08: ffff88101229ff40 R09: 0000000000000200
-[   26.358648] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-[   26.367338] R13: 0000000000000000 R14: ffff8807ed1e0000 R15: ffff8810039c3400
-[   26.376039] FS:  0000000000000000(0000) GS:ffff881012280000(0000) knlGS:0000000000000000
-[   26.385840] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   26.393015] CR2: 0000000000000008 CR3: 0000000feeb0a005 CR4: 00000000001606e0
-[   26.401744] Call Trace:
-[   26.405154]  <IRQ>
-[   26.408077]  sd_done+0x2b2/0x330 [sd_mod]
-[   26.413274]  scsi_finish_command+0xcb/0x120
-[   26.418638]  blk_done_softirq+0xa1/0xd0
-[   26.423605]  __do_softirq+0xe3/0x311
-[   26.428269]  irq_exit+0xf0/0x100
-[   26.432548]  call_function_single_interrupt+0xf/0x20
-[   26.438813]  </IRQ>
-[   26.441836] RIP: 0010:cpuidle_enter_state+0xb4/0x330
-[   26.448115] Code: 31 ff e8 8f 85 89 ff 45 84 f6 74 17 9c 58 0f 1f 44 00 00 f6 c4 02 0f 85 58 02 00 00 31 ff e8 d3 5a 8f ff fb 66 0f 1f 44 00 00 <85> ed 0f 88 35 02 00 00 4c 29 fb 48 ba cf f7 53 e3 a5 9b c4 20 48
-[   26.470614] RSP: 0018:ffffc900064f7ea0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff04
-[   26.479879] RAX: ffff8810122a2c40 RBX: 000000061d3621be RCX: 000000000000001f
-[   26.488663] RDX: 000000061d3621be RSI: 000000002f8590d5 RDI: 0000000000000000
-[   26.497444] RBP: 0000000000000001 R08: 0000000000000002 R09: 00000000000224c0
-[   26.506226] R10: ffffc900064f7e80 R11: 000000000000002a R12: ffffffff8274efb8
-[   26.515003] R13: ffffe8fffec81d00 R14: 0000000000000000 R15: 000000061d34cc3f
-[   26.523789]  do_idle+0x1f4/0x260
-[   26.528114]  cpu_startup_entry+0x19/0x20
-[   26.533236]  start_secondary+0x1ae/0x200
-[   26.538335]  secondary_startup_64+0xa4/0xb0
-[   26.543710] Modules linked in: sd_mod sg intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel aesni_intel mgag200 snd_pcm ipmi_si crypto_simd cryptd snd_timer ttm ipmi_devintf snd glue_helper drm_kms_helper soundcore isci pcspkr ipmi_msghandler syscopyarea libsas sysfillrect ahci sysimgblt fb_sys_fops libahci scsi_transport_sas drm libata wmi pcc_cpufreq ip_tables
-[   26.592415] CR2: 0000000000000008
-[   26.596941] ---[ end trace 47ea337d473f2b82 ]---
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
 
 To reproduce:
@@ -144,18 +95,519 @@ To reproduce:
         bin/lkp install job.yaml  # job file is attached in this email
         bin/lkp run     job.yaml
 
+=========================================================================================
+bs/compiler/cpufreq_governor/disk/fs/ioengine/kconfig/nr_task/rootfs/runtime/rw/tbox_group/test_size/testcase/ucode:
+  4k/gcc-7/performance/1SSD/btrfs/sync/x86_64-rhel-7.2/8/debian-x86_64-2018-04-03.cgz/300s/randwrite/lkp-hsw-ep2/512g/fio-basic/0x3d
+
+commit: 
+  c3b63109d1 ("btrfs: only track ref_heads in delayed_ref_updates")
+  4fd93529bc ("btrfs: introduce delayed_refs_rsv")
+
+c3b63109d175d206 4fd93529bcf2686433120ac186 
+---------------- -------------------------- 
+       fail:runs  %reproduction    fail:runs
+           |             |             |    
+          2:4          -50%            :4     dmesg.WARNING:at#for_ip_interrupt_entry/0x
+         %stddev     %change         %stddev
+             \          |                \  
+      0.19 ± 10%      +0.8        0.95 ±  3%  fio.latency_1000us%
+      1.76 ±  8%     +21.6       23.40 ±  5%  fio.latency_100us%
+      0.02 ±  3%      +0.1        0.09 ± 10%  fio.latency_10ms%
+      5.24 ±  8%      -1.6        3.66 ± 11%  fio.latency_10us%
+      0.01            +0.0        0.02 ± 11%  fio.latency_20ms%
+      1.55 ±  3%      -0.7        0.86 ± 27%  fio.latency_20us%
+     75.43           -52.2       23.19 ±  2%  fio.latency_250us%
+      0.49 ±  4%      +0.5        0.94 ±  9%  fio.latency_2ms%
+      0.02 ± 17%      +0.2        0.26 ± 11%  fio.latency_4ms%
+     14.71 ±  7%      -3.4       11.33 ±  5%  fio.latency_500us%
+      0.20 ±  9%     +32.1       32.33        fio.latency_50us%
+      0.21 ± 13%      +2.6        2.80 ±  4%  fio.latency_750us%
+    325.40            -1.8%     319.61        fio.time.elapsed_time
+    325.40            -1.8%     319.61        fio.time.elapsed_time.max
+  71398082            -6.6%   66663998        fio.time.file_system_outputs
+     24.71 ±  2%     -10.6%      22.10        fio.time.user_time
+   8326551            -4.2%    7980852        fio.time.voluntary_context_switches
+   8922305            -6.6%    8331632        fio.workload
+    116.17            -6.9%     108.10        fio.write_bw_MBps
+    274.00           +28.5%     352.00        fio.write_clat_90%_us
+    316.00           +59.8%     505.00        fio.write_clat_95%_us
+    467.00 ±  3%    +151.0%       1172 ±  4%  fio.write_clat_99%_us
+    267.51            +7.6%     287.72        fio.write_clat_mean_us
+     29740            -6.9%      27673        fio.write_iops
+   9896739 ± 11%     +34.2%   13283798 ±  6%  cpuidle.POLL.time
+   3005327 ± 12%     +36.3%    4097378 ±  4%  cpuidle.POLL.usage
+      9059 ± 21%     -20.1%       7235 ±  2%  softirqs.NET_RX
+   5980740 ±  4%     -17.0%    4961204 ±  6%  softirqs.RCU
+    198.25 ±  2%     +10.6%     219.25 ±  2%  turbostat.Avg_MHz
+     11.89 ± 10%     -30.7%       8.24 ± 24%  turbostat.Pkg%pc2
+      0.36 ±  2%      +0.4        0.77 ±  4%  mpstat.cpu.iowait%
+      4.26            +0.7        4.98 ±  2%  mpstat.cpu.sys%
+      0.13 ±  2%      -0.0        0.11 ±  9%  mpstat.cpu.usr%
+    573529 ± 10%     -39.8%     345193 ± 12%  numa-meminfo.node0.Dirty
+     21728 ±  7%     +49.3%      32433 ± 10%  numa-meminfo.node0.Writeback
+      8778 ± 15%     +77.0%      15540 ± 13%  numa-meminfo.node1.Writeback
+    143494 ± 10%     -40.1%      85936 ± 12%  numa-vmstat.node0.nr_dirty
+      5496 ±  5%     +53.1%       8414 ±  6%  numa-vmstat.node0.nr_writeback
+    149300 ±  9%     -36.6%      94629 ± 11%  numa-vmstat.node0.nr_zone_write_pending
+      2184 ± 21%     +71.9%       3754 ± 14%  numa-vmstat.node1.nr_writeback
+    218022           +10.2%     240277        vmstat.io.bo
+  26855227            -8.6%   24557716        vmstat.memory.cache
+    396691            +9.3%     433456        vmstat.system.cs
+    180728            -1.7%     177599        vmstat.system.in
+     54.15 ±  2%     +69.9%      91.99 ±  4%  iostat.sdb.avgqu-sz
+    202.81 ±  9%     -32.3%     137.37 ± 10%  iostat.sdb.avgrq-sz
+     27069            -4.0%      25994        iostat.sdb.w/s
+    217862           +10.3%     240272        iostat.sdb.wkB/s
+      1.37 ± 20%    +261.6%       4.96 ±  5%  iostat.sdb.wrqm/s
+   5028110 ±  6%     -25.2%    3762248 ±  5%  meminfo.Active
+   4751087 ±  6%     -26.7%    3483276 ±  6%  meminfo.Active(file)
+  25867858            -8.8%   23583792        meminfo.Cached
+    887304 ±  2%     -31.5%     607410        meminfo.Dirty
+     30842 ±  8%     +54.3%      47603 ±  4%  meminfo.Writeback
+ 5.038e+11 ±  5%     +14.4%  5.762e+11 ±  5%  perf-stat.branch-instructions
+ 1.312e+08            +6.5%  1.398e+08        perf-stat.context-switches
+ 4.936e+12 ±  3%      +9.3%  5.395e+12 ±  6%  perf-stat.cpu-cycles
+      0.55 ± 12%      -0.1        0.40 ±  8%  perf-stat.dTLB-load-miss-rate%
+ 3.947e+09 ± 12%     -16.4%  3.302e+09 ±  9%  perf-stat.dTLB-load-misses
+ 7.115e+11 ±  6%     +14.4%  8.141e+11 ±  5%  perf-stat.dTLB-loads
+ 2.637e+12 ±  6%     +14.1%  3.009e+12 ±  5%  perf-stat.instructions
+    903201            -2.9%     877236        perf-stat.minor-faults
+    903221            -2.9%     877223        perf-stat.page-faults
+    295526 ±  6%     +22.2%     361161 ±  5%  perf-stat.path-length
+    233.51 ± 28%    +263.3%     848.24 ± 26%  sched_debug.cfs_rq:/.exec_clock.min
+      7673 ± 14%     -21.6%       6016 ± 14%  sched_debug.cfs_rq:/.exec_clock.stddev
+    195.54 ± 10%     +14.8%     224.58 ±  5%  sched_debug.cfs_rq:/.load_avg.stddev
+      2.73 ± 28%     +52.7%       4.18 ± 27%  sched_debug.cfs_rq:/.removed.util_avg.avg
+     13.44 ± 14%     +70.9%      22.96 ± 34%  sched_debug.cfs_rq:/.removed.util_avg.stddev
+     41.17 ± 24%     +37.7%      56.70 ±  9%  sched_debug.cfs_rq:/.runnable_load_avg.avg
+    138.20 ± 12%     +16.3%     160.67 ±  3%  sched_debug.cfs_rq:/.runnable_load_avg.stddev
+     91.34 ± 10%     +15.2%     105.27 ± 10%  sched_debug.cpu.cpu_load[2].stddev
+     79.46 ± 10%     +18.8%      94.42 ± 11%  sched_debug.cpu.cpu_load[3].stddev
+    814.50           +11.6%     908.82 ±  7%  sched_debug.cpu.curr->pid.stddev
+     12393 ± 56%    +458.8%      69261 ± 13%  sched_debug.cpu.nr_switches.min
+    880934 ± 11%     -23.2%     676786 ± 14%  sched_debug.cpu.nr_switches.stddev
+     12090 ± 57%    +467.5%      68614 ± 13%  sched_debug.cpu.sched_count.min
+    881104 ± 11%     -23.1%     677137 ± 14%  sched_debug.cpu.sched_count.stddev
+      6021 ± 57%    +469.2%      34275 ± 13%  sched_debug.cpu.sched_goidle.min
+    440105 ± 11%     -23.2%     338119 ± 14%  sched_debug.cpu.sched_goidle.stddev
+      1512 ± 64%    +688.4%      11921 ± 42%  sched_debug.cpu.ttwu_count.min
+      3574 ± 24%     +46.1%       5220 ± 18%  sched_debug.cpu.ttwu_local.avg
+    138459 ± 47%     +70.4%     235958 ± 28%  sched_debug.cpu.ttwu_local.max
+     16146 ± 47%     +70.3%      27493 ± 28%  sched_debug.cpu.ttwu_local.stddev
+   1187638 ±  6%     -26.7%     870813 ±  6%  proc-vmstat.nr_active_file
+  18056001            +7.5%   19407987        proc-vmstat.nr_dirtied
+    222170 ±  2%     -31.7%     151680        proc-vmstat.nr_dirty
+   6469411            -8.8%    5898305        proc-vmstat.nr_file_pages
+  25594617            +2.3%   26176799        proc-vmstat.nr_free_pages
+     55526            +2.8%      57092        proc-vmstat.nr_inactive_anon
+   4989952            -5.1%    4734307        proc-vmstat.nr_inactive_file
+     59395            +2.7%      60992        proc-vmstat.nr_mapped
+     57213            +2.6%      58672        proc-vmstat.nr_shmem
+    480860            -2.6%     468192        proc-vmstat.nr_slab_unreclaimable
+      7572 ±  7%     +59.8%      12102 ±  4%  proc-vmstat.nr_writeback
+  18027209            +7.5%   19370852        proc-vmstat.nr_written
+   1187638 ±  6%     -26.7%     870813 ±  6%  proc-vmstat.nr_zone_active_file
+     55526            +2.8%      57092        proc-vmstat.nr_zone_inactive_anon
+   4989952            -5.1%    4734307        proc-vmstat.nr_zone_inactive_file
+    230210 ±  2%     -28.7%     164220        proc-vmstat.nr_zone_write_pending
+  13092479            -7.9%   12051991        proc-vmstat.numa_hit
+  13078305            -7.9%   12038637        proc-vmstat.numa_local
+   1203496 ±  7%     -50.0%     601160 ± 12%  proc-vmstat.pgactivate
+  16801820 ±  2%      +5.8%   17780491        proc-vmstat.pgalloc_normal
+    923922            -2.9%     897337        proc-vmstat.pgfault
+  72108783            +7.5%   77484272        proc-vmstat.pgpgout
+     29951 ±  9%     -36.6%      18992 ±  2%  slabinfo.Acpi-ParseExt.active_objs
+    784.50 ±  9%     -34.2%     516.25 ±  2%  slabinfo.Acpi-ParseExt.active_slabs
+     30612 ±  9%     -34.2%      20148 ±  2%  slabinfo.Acpi-ParseExt.num_objs
+    784.50 ±  9%     -34.2%     516.25 ±  2%  slabinfo.Acpi-ParseExt.num_slabs
+     47360 ±  5%     -41.6%      27645 ±  5%  slabinfo.avc_xperms_data.active_objs
+    372.75 ±  5%     -41.1%     219.50 ±  4%  slabinfo.avc_xperms_data.active_slabs
+     47782 ±  5%     -41.0%      28171 ±  5%  slabinfo.avc_xperms_data.num_objs
+    372.75 ±  5%     -41.1%     219.50 ±  4%  slabinfo.avc_xperms_data.num_slabs
+    625.00 ± 24%     +51.6%     947.25 ±  7%  slabinfo.biovec-128.active_objs
+    642.75 ± 22%     +47.8%     949.75 ±  7%  slabinfo.biovec-128.num_objs
+    753.75 ± 16%     +43.5%       1081 ±  5%  slabinfo.biovec-64.active_objs
+    753.75 ± 16%     +43.5%       1081 ±  5%  slabinfo.biovec-64.num_objs
+      2199 ± 24%    +126.4%       4977 ±  6%  slabinfo.biovec-max.active_objs
+    555.00 ± 24%    +125.6%       1252 ±  5%  slabinfo.biovec-max.active_slabs
+      2222 ± 24%    +125.4%       5010 ±  5%  slabinfo.biovec-max.num_objs
+    555.00 ± 24%    +125.6%       1252 ±  5%  slabinfo.biovec-max.num_slabs
+     33746 ±  8%     -37.0%      21253        slabinfo.btrfs_delayed_ref_head.active_objs
+    674.50 ±  8%     -34.8%     439.75 ±  2%  slabinfo.btrfs_delayed_ref_head.active_slabs
+     34430 ±  8%     -34.8%      22460 ±  2%  slabinfo.btrfs_delayed_ref_head.num_objs
+    674.50 ±  8%     -34.8%     439.75 ±  2%  slabinfo.btrfs_delayed_ref_head.num_slabs
+    725.75 ±  2%     -12.8%     632.50 ±  4%  slabinfo.btrfs_inode.active_objs
+    727.75 ±  2%     -13.0%     633.25 ±  4%  slabinfo.btrfs_inode.num_objs
+     19890 ±  2%     +64.6%      32735 ±  3%  slabinfo.btrfs_ordered_extent.active_objs
+    513.25           +64.7%     845.25 ±  3%  slabinfo.btrfs_ordered_extent.active_slabs
+     20038           +64.6%      32983 ±  3%  slabinfo.btrfs_ordered_extent.num_objs
+    513.25           +64.7%     845.25 ±  3%  slabinfo.btrfs_ordered_extent.num_slabs
+      8562           -37.4%       5357        slabinfo.kmalloc-192.active_objs
+      8576           -37.4%       5371        slabinfo.kmalloc-192.num_objs
+     79749 ±  3%     +22.0%      97286        slabinfo.kmalloc-64.active_objs
+      1253 ±  3%     +22.2%       1531        slabinfo.kmalloc-64.active_slabs
+     80232 ±  3%     +22.2%      98070        slabinfo.kmalloc-64.num_objs
+      1253 ±  3%     +22.2%       1531        slabinfo.kmalloc-64.num_slabs
+      9144 ± 14%     +22.4%      11193 ±  7%  slabinfo.mnt_cache.active_objs
+      9317 ± 13%     +22.6%      11425 ±  7%  slabinfo.mnt_cache.num_objs
+    905.50 ± 11%     +13.9%       1031 ±  4%  slabinfo.skbuff_fclone_cache.active_objs
+    905.50 ± 11%     +13.9%       1031 ±  4%  slabinfo.skbuff_fclone_cache.num_objs
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.calltrace.cycles-pp.wb_workfn.process_one_work.worker_thread.kthread.ret_from_fork
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.calltrace.cycles-pp.wb_writeback.wb_workfn.process_one_work.worker_thread.kthread
+      6.90 ± 26%      -4.2        2.71 ± 49%  perf-profile.calltrace.cycles-pp.do_writepages.__writeback_single_inode.writeback_sb_inodes.wb_writeback.wb_workfn
+      6.90 ± 26%      -4.2        2.71 ± 49%  perf-profile.calltrace.cycles-pp.writeback_sb_inodes.wb_writeback.wb_workfn.process_one_work.worker_thread
+      6.90 ± 26%      -4.2        2.71 ± 49%  perf-profile.calltrace.cycles-pp.__writeback_single_inode.writeback_sb_inodes.wb_writeback.wb_workfn.process_one_work
+      5.64 ± 25%      -2.9        2.78 ± 60%  perf-profile.calltrace.cycles-pp.extent_write_cache_pages.extent_writepages.do_writepages.__writeback_single_inode.writeback_sb_inodes
+      5.38 ± 25%      -2.7        2.66 ± 61%  perf-profile.calltrace.cycles-pp.__extent_writepage.extent_write_cache_pages.extent_writepages.do_writepages.__writeback_single_inode
+      4.49 ± 24%      -2.4        2.14 ± 66%  perf-profile.calltrace.cycles-pp.writepage_delalloc.__extent_writepage.extent_write_cache_pages.extent_writepages.do_writepages
+      4.76 ± 18%      -2.3        2.43 ± 57%  perf-profile.calltrace.cycles-pp.extent_writepages.do_writepages.__writeback_single_inode.writeback_sb_inodes.wb_writeback
+      4.04 ± 28%      -2.0        2.02 ± 67%  perf-profile.calltrace.cycles-pp.btrfs_run_delalloc_range.writepage_delalloc.__extent_writepage.extent_write_cache_pages.extent_writepages
+      4.04 ± 28%      -2.0        2.01 ± 67%  perf-profile.calltrace.cycles-pp.run_delalloc_nocow.btrfs_run_delalloc_range.writepage_delalloc.__extent_writepage.extent_write_cache_pages
+      1.67 ± 45%      -1.2        0.45 ±100%  perf-profile.calltrace.cycles-pp.submit_one_bio.submit_extent_page.write_one_eb.btree_write_cache_pages.do_writepages
+      1.67 ± 45%      -1.2        0.45 ±100%  perf-profile.calltrace.cycles-pp.btree_submit_bio_hook.submit_one_bio.submit_extent_page.write_one_eb.btree_write_cache_pages
+      1.66 ± 45%      -1.2        0.44 ±100%  perf-profile.calltrace.cycles-pp.btree_csum_one_bio.btree_submit_bio_hook.submit_one_bio.submit_extent_page.write_one_eb
+      1.65 ± 45%      -1.2        0.44 ±100%  perf-profile.calltrace.cycles-pp.csum_tree_block.btree_csum_one_bio.btree_submit_bio_hook.submit_one_bio.submit_extent_page
+      1.64 ± 45%      -1.2        0.44 ±100%  perf-profile.calltrace.cycles-pp.crc32c.csum_tree_block.btree_csum_one_bio.btree_submit_bio_hook.submit_one_bio
+      1.63 ± 45%      -1.2        0.44 ±100%  perf-profile.calltrace.cycles-pp.chksum_update.crc32c.csum_tree_block.btree_csum_one_bio.btree_submit_bio_hook
+      1.63 ± 45%      -1.2        0.44 ±100%  perf-profile.calltrace.cycles-pp.__crc32c_le.chksum_update.crc32c.csum_tree_block.btree_csum_one_bio
+      0.69 ± 16%      +0.4        1.07 ± 28%  perf-profile.calltrace.cycles-pp.push_leaf_right.split_leaf.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written
+      0.82 ± 17%      +0.4        1.22 ± 27%  perf-profile.calltrace.cycles-pp.split_leaf.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      0.72 ± 18%      +0.5        1.18 ± 25%  perf-profile.calltrace.cycles-pp.setup_items_for_insert.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io
+      0.79 ± 19%      +0.5        1.26 ± 21%  perf-profile.calltrace.cycles-pp.setup_items_for_insert.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      0.46 ± 59%      +0.6        1.02 ± 28%  perf-profile.calltrace.cycles-pp.btrfs_search_slot.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io
+      0.90 ± 26%      +0.6        1.47 ± 27%  perf-profile.calltrace.cycles-pp.save_stack_trace_tsk.__account_scheduler_latency.enqueue_entity.enqueue_task_fair.ttwu_do_activate
+      0.59 ± 60%      +0.6        1.19 ± 37%  perf-profile.calltrace.cycles-pp.enqueue_task_fair.ttwu_do_activate.try_to_wake_up.autoremove_wake_function.__wake_up_common
+      0.61 ± 60%      +0.6        1.23 ± 37%  perf-profile.calltrace.cycles-pp.ttwu_do_activate.try_to_wake_up.autoremove_wake_function.__wake_up_common.__wake_up_common_lock
+      0.95 ± 29%      +0.7        1.68 ± 36%  perf-profile.calltrace.cycles-pp.__wake_up_common.__wake_up_common_lock.unlock_up.btrfs_search_slot.btrfs_mark_extent_written
+      0.78 ± 59%      +0.8        1.59 ± 36%  perf-profile.calltrace.cycles-pp.try_to_wake_up.autoremove_wake_function.__wake_up_common.__wake_up_common_lock.unlock_up
+      0.81 ± 59%      +0.8        1.66 ± 36%  perf-profile.calltrace.cycles-pp.autoremove_wake_function.__wake_up_common.__wake_up_common_lock.unlock_up.btrfs_search_slot
+      1.33 ± 17%      +0.9        2.21 ± 26%  perf-profile.calltrace.cycles-pp.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper
+      2.00 ± 18%      +1.2        3.23 ± 27%  perf-profile.calltrace.cycles-pp.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper.process_one_work.worker_thread
+      2.00 ± 17%      +1.2        3.23 ± 27%  perf-profile.calltrace.cycles-pp.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper.process_one_work
+      2.94 ± 23%      +1.5        4.45 ± 16%  perf-profile.calltrace.cycles-pp.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper.process_one_work
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.children.cycles-pp.wb_workfn
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.children.cycles-pp.wb_writeback
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.children.cycles-pp.writeback_sb_inodes
+      7.88 ± 29%      -4.8        3.06 ± 54%  perf-profile.children.cycles-pp.__writeback_single_inode
+      7.91 ± 29%      -4.4        3.48 ± 59%  perf-profile.children.cycles-pp.do_writepages
+      5.74 ± 23%      -3.0        2.79 ± 60%  perf-profile.children.cycles-pp.extent_writepages
+      5.74 ± 23%      -3.0        2.79 ± 60%  perf-profile.children.cycles-pp.extent_write_cache_pages
+      5.47 ± 23%      -2.8        2.67 ± 61%  perf-profile.children.cycles-pp.__extent_writepage
+      4.56 ± 22%      -2.3        2.23 ± 61%  perf-profile.children.cycles-pp.writepage_delalloc
+      4.22 ± 22%      -2.1        2.10 ± 62%  perf-profile.children.cycles-pp.btrfs_run_delalloc_range
+      4.21 ± 22%      -2.1        2.10 ± 62%  perf-profile.children.cycles-pp.run_delalloc_nocow
+      2.47 ± 39%      -1.6        0.90 ± 64%  perf-profile.children.cycles-pp.submit_extent_page
+      2.17 ± 47%      -1.5        0.70 ± 69%  perf-profile.children.cycles-pp.btree_write_cache_pages
+      2.23 ± 40%      -1.5        0.78 ± 67%  perf-profile.children.cycles-pp.submit_one_bio
+      2.08 ± 47%      -1.4        0.66 ± 69%  perf-profile.children.cycles-pp.write_one_eb
+      2.44 ± 29%      -1.3        1.10 ± 18%  perf-profile.children.cycles-pp.crc32c
+      2.43 ± 29%      -1.3        1.10 ± 18%  perf-profile.children.cycles-pp.chksum_update
+      2.43 ± 29%      -1.3        1.10 ± 18%  perf-profile.children.cycles-pp.__crc32c_le
+      1.69 ± 46%      -1.2        0.54 ± 69%  perf-profile.children.cycles-pp.btree_submit_bio_hook
+      1.68 ± 46%      -1.1        0.54 ± 69%  perf-profile.children.cycles-pp.btree_csum_one_bio
+      1.67 ± 46%      -1.1        0.54 ± 69%  perf-profile.children.cycles-pp.csum_tree_block
+      1.14 ± 21%      -0.5        0.65 ± 30%  perf-profile.children.cycles-pp.queue_work_on
+      0.88 ± 25%      -0.5        0.42 ± 62%  perf-profile.children.cycles-pp.__extent_writepage_io
+      1.07 ± 17%      -0.4        0.62 ± 29%  perf-profile.children.cycles-pp.__queue_work
+      0.76 ± 21%      -0.4        0.35 ± 59%  perf-profile.children.cycles-pp.create_io_em
+      0.60 ± 27%      -0.4        0.23 ± 51%  perf-profile.children.cycles-pp.btrfs_lookup_csums_range
+      0.60 ± 27%      -0.4        0.23 ± 51%  perf-profile.children.cycles-pp.csum_exist_in_range
+      0.65 ± 25%      -0.3        0.31 ± 57%  perf-profile.children.cycles-pp.btrfs_drop_extent_cache
+      0.53 ± 23%      -0.3        0.23 ± 71%  perf-profile.children.cycles-pp.btrfs_submit_bio_hook
+      0.53 ± 23%      -0.3        0.23 ± 72%  perf-profile.children.cycles-pp.btrfs_wq_submit_bio
+      0.55 ± 27%      -0.3        0.28 ± 38%  perf-profile.children.cycles-pp.btrfs_inode_rsv_release
+      0.38 ± 31%      -0.2        0.13 ± 76%  perf-profile.children.cycles-pp.btrfs_cross_ref_exist
+      0.33 ± 26%      -0.2        0.12 ± 70%  perf-profile.children.cycles-pp.find_lock_delalloc_range
+      0.56 ± 26%      -0.2        0.36 ± 40%  perf-profile.children.cycles-pp.btrfs_remove_ordered_extent
+      0.26 ± 27%      -0.2        0.10 ± 69%  perf-profile.children.cycles-pp.find_delalloc_range
+      0.22 ± 34%      -0.1        0.08 ± 81%  perf-profile.children.cycles-pp.check_committed_ref
+      0.38 ± 13%      -0.1        0.25 ± 33%  perf-profile.children.cycles-pp.btrfs_map_bio
+      0.21 ± 34%      -0.1        0.09 ± 87%  perf-profile.children.cycles-pp.__btrfs_add_ordered_extent
+      0.21 ± 34%      -0.1        0.09 ± 87%  perf-profile.children.cycles-pp.btrfs_add_ordered_extent
+      0.22 ± 13%      -0.1        0.11 ± 48%  perf-profile.children.cycles-pp.btrfs_tree_read_unlock_blocking
+      0.22 ± 24%      -0.1        0.10 ± 25%  perf-profile.children.cycles-pp.btrfs_tree_read_lock_atomic
+      0.17 ± 28%      -0.1        0.05 ±100%  perf-profile.children.cycles-pp.end_bio_extent_buffer_writepage
+      0.17 ± 24%      -0.1        0.06 ± 65%  perf-profile.children.cycles-pp.extent_clear_unlock_delalloc
+      0.36 ± 15%      -0.1        0.25 ± 35%  perf-profile.children.cycles-pp.btrfs_submit_bio_done
+      0.17 ± 32%      -0.1        0.06 ± 65%  perf-profile.children.cycles-pp.find_get_pages_range_tag
+      0.17 ± 32%      -0.1        0.06 ± 67%  perf-profile.children.cycles-pp.pagevec_lookup_range_tag
+      0.13 ± 46%      -0.1        0.03 ±102%  perf-profile.children.cycles-pp.memzero_extent_buffer
+      0.12 ± 42%      -0.1        0.03 ±100%  perf-profile.children.cycles-pp.clear_page_dirty_for_io
+      0.13 ± 34%      -0.1        0.04 ±110%  perf-profile.children.cycles-pp.__test_set_page_writeback
+      0.16 ± 25%      -0.1        0.08 ± 58%  perf-profile.children.cycles-pp.xas_find_marked
+      0.10 ± 36%      -0.1        0.03 ±102%  perf-profile.children.cycles-pp.btrfs_merge_bio_hook
+      0.10 ± 34%      -0.1        0.03 ±102%  perf-profile.children.cycles-pp.btrfs_map_block
+      0.11 ± 24%      -0.1        0.05 ± 62%  perf-profile.children.cycles-pp.btrfs_get_chunk_map
+      0.11 ± 14%      -0.0        0.08 ± 23%  perf-profile.children.cycles-pp.leave_mm
+      0.11 ±  4%      +0.0        0.14 ±  8%  perf-profile.children.cycles-pp.rb_next
+      0.08 ±  6%      +0.0        0.10 ± 10%  perf-profile.children.cycles-pp.tick_nohz_idle_enter
+      0.23 ±  4%      +0.0        0.26 ±  5%  perf-profile.children.cycles-pp.dequeue_entity
+      0.07 ± 17%      +0.0        0.10 ±  4%  perf-profile.children.cycles-pp.rb_erase
+      0.16 ±  6%      +0.0        0.20 ± 10%  perf-profile.children.cycles-pp.nr_iowait_cpu
+      0.14 ± 11%      +0.0        0.18 ±  8%  perf-profile.children.cycles-pp.__module_text_address
+      0.00            +0.1        0.05 ±  8%  perf-profile.children.cycles-pp.btrfs_set_token_64
+      0.28 ±  2%      +0.1        0.34 ±  7%  perf-profile.children.cycles-pp.dequeue_task_fair
+      0.01 ±173%      +0.1        0.08 ± 27%  perf-profile.children.cycles-pp.write_extent_buffer
+      0.23 ± 13%      +0.1        0.30 ± 10%  perf-profile.children.cycles-pp.__kernel_text_address
+      0.12 ± 33%      +0.1        0.19 ± 21%  perf-profile.children.cycles-pp.btrfs_leaf_free_space
+      0.12 ±  5%      +0.1        0.20 ± 33%  perf-profile.children.cycles-pp.set_extent_buffer_dirty
+      0.05 ± 60%      +0.1        0.13 ±  8%  perf-profile.children.cycles-pp.btrfs_free_tree_block
+      0.25 ± 16%      +0.1        0.35 ± 22%  perf-profile.children.cycles-pp.btrfs_free_path
+      0.15 ± 12%      +0.1        0.24 ± 25%  perf-profile.children.cycles-pp.alloc_extent_buffer
+      0.20 ± 11%      +0.1        0.31 ± 21%  perf-profile.children.cycles-pp.memcpy_extent_buffer
+      0.28 ± 18%      +0.1        0.39 ± 15%  perf-profile.children.cycles-pp.btrfs_unlock_up_safe
+      0.10 ± 10%      +0.1        0.25 ± 10%  perf-profile.children.cycles-pp.btrfs_add_delayed_tree_ref
+      0.15 ± 28%      +0.2        0.31 ± 27%  perf-profile.children.cycles-pp.btrfs_add_delayed_data_ref
+      0.15 ± 30%      +0.2        0.31 ± 28%  perf-profile.children.cycles-pp.btrfs_inc_extent_ref
+      0.23 ± 19%      +0.2        0.41 ± 25%  perf-profile.children.cycles-pp.unpin_extent_cache
+      0.31 ± 14%      +0.2        0.50 ± 23%  perf-profile.children.cycles-pp.memmove
+      0.14 ± 15%      +0.2        0.33 ± 15%  perf-profile.children.cycles-pp.add_delayed_ref_head
+      0.94 ± 14%      +0.2        1.13 ±  4%  perf-profile.children.cycles-pp.schedule
+      0.26 ± 30%      +0.2        0.45 ± 21%  perf-profile.children.cycles-pp.__push_leaf_right
+      0.28 ±  7%      +0.2        0.49 ± 22%  perf-profile.children.cycles-pp.copy_page
+      0.27 ± 10%      +0.2        0.49 ± 23%  perf-profile.children.cycles-pp.copy_extent_buffer_full
+      0.38 ± 15%      +0.2        0.60 ± 17%  perf-profile.children.cycles-pp.btrfs_alloc_tree_block
+      0.54 ± 26%      +0.3        0.80 ± 19%  perf-profile.children.cycles-pp.btrfs_set_token_32
+      0.00            +0.5        0.53 ± 56%  perf-profile.children.cycles-pp.space_info_add_old_bytes
+      0.91 ± 15%      +0.6        1.50 ± 24%  perf-profile.children.cycles-pp.push_leaf_right
+      1.09 ± 17%      +0.6        1.74 ± 25%  perf-profile.children.cycles-pp.split_leaf
+      0.83 ± 10%      +0.6        1.48 ± 20%  perf-profile.children.cycles-pp.__btrfs_cow_block
+      0.84 ± 11%      +0.7        1.49 ± 19%  perf-profile.children.cycles-pp.btrfs_cow_block
+      1.44 ± 19%      +0.9        2.32 ± 26%  perf-profile.children.cycles-pp.btrfs_insert_empty_items
+      1.60 ± 20%      +0.9        2.51 ± 22%  perf-profile.children.cycles-pp.setup_items_for_insert
+      2.00 ± 18%      +1.2        3.23 ± 27%  perf-profile.children.cycles-pp.add_pending_csums
+      2.00 ± 17%      +1.2        3.23 ± 27%  perf-profile.children.cycles-pp.btrfs_csum_file_blocks
+      2.94 ± 23%      +1.5        4.45 ± 16%  perf-profile.children.cycles-pp.btrfs_duplicate_item
+      2.37 ± 27%      -1.3        1.08 ± 18%  perf-profile.self.cycles-pp.__crc32c_le
+      0.13 ± 46%      -0.1        0.03 ±102%  perf-profile.self.cycles-pp.memzero_extent_buffer
+      0.16 ± 25%      -0.1        0.08 ± 58%  perf-profile.self.cycles-pp.xas_find_marked
+      0.11 ±  3%      +0.0        0.13 ±  3%  perf-profile.self.cycles-pp.rb_next
+      0.06 ± 15%      +0.0        0.08 ± 10%  perf-profile.self.cycles-pp.dequeue_task_fair
+      0.07 ± 17%      +0.0        0.10 ±  4%  perf-profile.self.cycles-pp.rb_erase
+      0.06 ± 17%      +0.0        0.10 ± 30%  perf-profile.self.cycles-pp.block_group_cache_tree_search
+      0.16 ±  6%      +0.0        0.19 ± 11%  perf-profile.self.cycles-pp.nr_iowait_cpu
+      0.12 ±  6%      +0.0        0.16 ± 11%  perf-profile.self.cycles-pp.__switch_to
+      0.13 ± 14%      +0.0        0.17 ±  7%  perf-profile.self.cycles-pp.pick_next_task_fair
+      0.01 ±173%      +0.1        0.08 ± 27%  perf-profile.self.cycles-pp.write_extent_buffer
+      0.22 ± 25%      +0.1        0.32 ± 13%  perf-profile.self.cycles-pp.setup_items_for_insert
+      0.11 ± 13%      +0.2        0.27 ± 15%  perf-profile.self.cycles-pp.add_delayed_ref_head
+      0.31 ± 13%      +0.2        0.49 ± 23%  perf-profile.self.cycles-pp.memmove
+      0.27 ±  6%      +0.2        0.49 ± 22%  perf-profile.self.cycles-pp.copy_page
+      0.48 ± 24%      +0.3        0.74 ± 19%  perf-profile.self.cycles-pp.btrfs_set_token_32
+
+
+                                                                                
+                               fio.write_clat_95__us                            
+                                                                                
+  600 +-+-------------------------------------------------------------------+   
+      |                                     O O                             |   
+  550 +-+            O                  O                                   |   
+      |               O                                                     |   
+  500 +O+ O O   O       OOOO  O   O O  O  O  O O OOO                        |   
+      O  O O  OO   O            O  O O   O                                  |   
+  450 +-+        O  O        O O                                            |   
+      |                                                                     |   
+  400 +-+                                                                   |   
+      |                                                                     |   
+  350 +-+                                                                   |   
+      |    +          +.    .+ +     +.    .+++     +.    .++  .++++.++ +.++|   
+  300 +-+++ +.++++.+++  ++++  + +.+++  ++++    +.+++  ++++   ++        +    |   
+      |                                                                     |   
+  250 +-+-------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                               fio.write_clat_99__us                            
+                                                                                
+  1400 +-+------------------------------------------------------------------+   
+  1300 +-+                                  O O                             |   
+       |      O O  O  OO                O         O                         |   
+  1200 +-+   O          O  O      O  O          O  O                        |   
+  1100 OOO  O    O       O  O O  O O  OO   O O   O                          |   
+       |   O         O                    O                                 |   
+  1000 +-+        O          O  O                                           |   
+   900 +-+                                                                  |   
+   800 +-+                                                                  |   
+       |                                                                    |   
+   700 +-+                                                                  |   
+   600 +-+                                                                  |   
+       |                                                            .+      |   
+   500 +-+.       + .+  + .+   .++ +.  + .+   +.+ +   + +.  +++.++++  +++.++|   
+   400 +-+------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                fio.latency_50us_                               
+                                                                                
+  40 +-+--------------------------------------------------------------------+   
+     |                                                                      |   
+  35 +O+     OO   O  O O              OO  O O    O                          |   
+  30 O-+OOO    O   OO   OO O O   O O O   O     OO  O                        |   
+     |     O    O           O O            O  O                             |   
+  25 +-+                        O O                                         |   
+     |                                                                      |   
+  20 +-+                                                                    |   
+     |                                                                      |   
+  15 +-+                                                                    |   
+  10 +-+                                                                    |   
+     |                                                                      |   
+   5 +-+                                                                    |   
+     |                                                                      |   
+   0 +-+--------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                               fio.latency_100us_                               
+                                                                                
+  30 +-+--------------------------------------------------------------------+   
+     |                      O O                                             |   
+  25 +-+        O   O      O O  O O        O  OO                            |   
+     O     O                     O O O   OO O   OO                          |   
+     |O OOO   OO  OO O OOO            OO           O                        |   
+  20 +-+     O                                                              |   
+     |                                                                      |   
+  15 +-+                                                                    |   
+     |                                                                      |   
+  10 +-+                                                                    |   
+     |                                                                      |   
+     |                                                                      |   
+   5 +-+                                                                    |   
+     |+.++++.++++.++++.+++.++++.++++.+++.++++.++++.++++.+++.++++.++++.++++.+|   
+   0 +-+--------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                               fio.latency_250us_                               
+                                                                                
+  80 +-+--------------------------------------------------------------------+   
+     |+.+ ++.++ +.++ +.+++  +++.+++  +++.+ ++.++++  +++.+ +.+ ++.++++.++++.+|   
+  70 +-+                                                                    |   
+     |                                                                      |   
+     |                                                                      |   
+  60 +-+                                                                    |   
+     |                                                                      |   
+  50 +-+                                                                    |   
+     |                                                                      |   
+  40 +-+                                                                    |   
+     |                                                                      |   
+     |                                                                      |   
+  30 +-+  O  O     O        O O O O                                         |   
+     OO OO O  OOO O    OOO O O   O O OO  O     OOO O                        |   
+  20 +-+------------OO-----------------O--OOO-O-----------------------------+   
+                                                                                
+                                                                                                                                                                
+                                fio.latency_750us_                              
+                                                                                
+    4 +-+-------------------------------------------------------------------+   
+      |                                     O O                             |   
+  3.5 +-+                                                                   |   
+    3 +-+ O          O                  O                                   |   
+      |O              O OOOO  O      O O OO  O O O O                        |   
+  2.5 O-+O OO   OO                O O             O                         |   
+      |       OO   OO        O OO  O                                        |   
+    2 +-+                                                                   |   
+      |                                                                     |   
+  1.5 +-+                                                                   |   
+    1 +-+                                                                   |   
+      |                                                                     |   
+  0.5 +-+                                                                   |   
+      |+.++++.++ +.++++.++++.++++.++++.++++.++++.++++.++++.++++.++++.++++.++|   
+    0 +-+-------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                fio.latency_1000us_                             
+                                                                                
+  1.4 +-+-------------------------------------------------------------------+   
+      |                                     O O                             |   
+  1.2 +-+                                                                   |   
+      |              O                  O                                   |   
+    1 +O+ O O         O OO                O  O O  O                         |   
+      O       O O  O      OO  O   O O  O O       O O                        |   
+  0.8 +-+  O   O    O           O  O O                                      |   
+      |  O       O           O O                                            |   
+  0.6 +-+                                                                   |   
+      |                                                                     |   
+  0.4 +-+                                                                   |   
+      |                                                                     |   
+  0.2 +-++       +. +  .+ +    ++. +  .+ +    ++. +  .+ +   ++ .++++.++++.++|   
+      |+  +++.+++  + ++  + +.++   + ++  + +.++   + ++  + +.+  +             |   
+    0 +-+-------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                 fio.latency_4ms_                               
+                                                                                
+  0.35 +-+------------------------------------------------------------------+   
+       |                                                                    |   
+   0.3 +-+      O  O  O                                                     |   
+       |     OO        O         OOO O  O   O O O OO                        |   
+  0.25 +-O              O  OO O       OO                                    |   
+       OO   O    O       O                 O O                              |   
+   0.2 +-+                   O  O         O      O                          |   
+       |   O      O  O                                                      |   
+  0.15 +-+                                                                  |   
+       |                                                                    |   
+   0.1 +-+                                                                  |   
+       |                                                                    |   
+  0.05 +-+                                                                  |   
+       |++.++++.++++.+++++.++++.++++.++++.+++++.++++.++++.+++++.++++.++++.++|   
+     0 +-+------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                 fio.latency_10ms_                              
+                                                                                
+  0.14 +-+------------------------------------------------------------------+   
+       |                                                                    |   
+  0.12 +-+      O  O             O O                                        |   
+       |     O        O    OO O                   O                         |   
+   0.1 +-+             O                           O                        |   
+       O O  O O  O      O         O  OOOO  O O   O                          |   
+  0.08 +O+ O         O       O  O           O O O                           |   
+       |          O      O                O                                 |   
+  0.06 +-+                                                                  |   
+       |                                                                    |   
+  0.04 +-+                                                                  |   
+       |                                                          +         |   
+  0.02 +-+                    +.+            ++.            +++.++ +.++++.++|   
+       |++.++++.++++.+++++.+++   +++.++++.+++   ++++.++++.++                |   
+     0 +-+------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                  fio.latency_20ms_                             
+                                                                                
+   0.03 +-+------O----------------------------------------------------------+   
+  0.028 +-+                                                                 |   
+        |           O      O O O                                            |   
+  0.026 +-+   O                                                             |   
+  0.024 +-O              O                         O                        |   
+        |         O  O  O                                                   |   
+  0.022 O-+ O                     O O                                       |   
+   0.02 +-+    O       O                 O OO OO                            |   
+  0.018 +-+  O                O O       O       OO  O                       |   
+        |O                            O                                     |   
+  0.016 +-+        O      O        O O    O                                 |   
+  0.014 +-+                                                                 |   
+        |                                                                   |   
+  0.012 +-+                    +                                            |   
+   0.01 +-+-----------------------------------------------------------------+   
+                                                                                
+                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
 
 
 Thanks,
 Rong Chen
 
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.20.0-rc1-00174-g9d037ad7"
+Content-Disposition: attachment; filename="config-4.20.0-rc3-00082-g4fd93529"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 4.20.0-rc1 Kernel Configuration
+# Linux/x86_64 4.20.0-rc3 Kernel Configuration
 #
 
 #
@@ -1053,6 +1505,14 @@ CONFIG_BLK_PM=y
 #
 # IO Schedulers
 #
+CONFIG_IOSCHED_NOOP=y
+CONFIG_IOSCHED_DEADLINE=y
+CONFIG_IOSCHED_CFQ=y
+CONFIG_CFQ_GROUP_IOSCHED=y
+CONFIG_DEFAULT_DEADLINE=y
+# CONFIG_DEFAULT_CFQ is not set
+# CONFIG_DEFAULT_NOOP is not set
+CONFIG_DEFAULT_IOSCHED="deadline"
 CONFIG_MQ_IOSCHED_DEADLINE=y
 CONFIG_MQ_IOSCHED_KYBER=y
 # CONFIG_IOSCHED_BFQ is not set
@@ -2187,6 +2647,7 @@ CONFIG_RAID_ATTRS=m
 CONFIG_SCSI=y
 CONFIG_SCSI_DMA=y
 CONFIG_SCSI_NETLINK=y
+# CONFIG_SCSI_MQ_DEFAULT is not set
 CONFIG_SCSI_PROC_FS=y
 
 #
@@ -3377,6 +3838,7 @@ CONFIG_I2C_ISMT=m
 CONFIG_I2C_PIIX4=m
 CONFIG_I2C_NFORCE2=m
 CONFIG_I2C_NFORCE2_S4985=m
+# CONFIG_I2C_NVIDIA_GPU is not set
 # CONFIG_I2C_SIS5595 is not set
 # CONFIG_I2C_SIS630 is not set
 CONFIG_I2C_SIS96X=m
@@ -7030,7 +7492,7 @@ CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
 # CONFIG_UNWINDER_GUESS is not set
 
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -7038,61 +7500,61 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='fsmark'
-	export testcase='fsmark'
+	export suite='fio-basic'
+	export testcase='fio-basic'
 	export category='benchmark'
-	export iterations=1
-	export nr_threads=64
-	export need_memory='50G'
-	export job_origin='/lkp/lkp/.src-20181118-183111/allot/cyclic:default:linux-devel:devel-hourly/ivb44/fsmark-generic-1brd.yaml'
+	export runtime=300
+	export nr_task=8
+	export job_origin='/lkp/lkp/.src-20181116-091644/allot/cyclic:p1:linux-devel:devel-hourly/lkp-hsw-ep2/fio-basic-1ssd-nvme-write.yaml'
 	export queue='validate'
-	export testbox='ivb44'
-	export tbox_group='ivb44'
-	export submit_id='5bfe26220b9a931c6b31caf3'
-	export job_file='/lkp/jobs/scheduled/ivb44/fsmark-1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance-debian-x86_64-2018-04-03.cgz-9d037ad707ed6069fbea4e38e6ee37e027b13f1d-20181128-7275-1nbhj8d-19.yaml'
-	export id='a8ef567f6323291108edbde8eca55a233d15cb7a'
-	export model='Ivytown Ivy Bridge-EP'
+	export testbox='lkp-hsw-ep2'
+	export tbox_group='lkp-hsw-ep2'
+	export submit_id='5bfd75440b9a937031cf4af2'
+	export job_file='/lkp/jobs/scheduled/lkp-hsw-ep2/fio-basic-1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance-debian-x86_64-2018-04-03.cgz-4fd93529bcf2686433120ac18662513548d937d3-20181128-28721-19gapir-3.yaml'
+	export id='58c870e32bf905446259cc08c72f6b4f4aacd909'
+	export model='Brickland Haswell-EP'
 	export nr_node=2
-	export nr_cpu=48
-	export memory='64G'
-	export nr_hdd_partitions=1
-	export hdd_partitions='/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part1'
-	export swap_partitions='/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part2'
-	export rootfs_partition='/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part3'
-	export netconsole_port=6644
-	export ucode='0x42d'
-	export brand='Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz'
-	export need_kconfig='CONFIG_BLK_DEV_RAM=m
-CONFIG_BLK_DEV=y
+	export nr_cpu=72
+	export memory='128G'
+	export nr_ssd_partitions=1
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BA800G3_BTTV451305A2800JGN-part1'
+	export swap_partitions=
+	export rootfs_partition='LABEL=LKP-ROOTFS'
+	export ucode='0x3d'
+	export brand='Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz'
+	export need_kconfig='CONFIG_BLK_DEV_SD
+CONFIG_SCSI
 CONFIG_BLOCK=y
-CONFIG_NFSD
-CONFIG_BTRFS_FS
-CONFIG_NFS_V4'
-	export commit='9d037ad707ed6069fbea4e38e6ee37e027b13f1d'
+CONFIG_SATA_AHCI
+CONFIG_SATA_AHCI_PLATFORM
+CONFIG_ATA
+CONFIG_PCI=y
+CONFIG_BTRFS_FS'
+	export commit='4fd93529bcf2686433120ac18662513548d937d3'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2018-04-03.cgz'
-	export enqueue_time='2018-11-28 13:22:42 +0800'
-	export _id='5bfe26250b9a931c6b31cb05'
-	export _rt='/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d'
+	export enqueue_time='2018-11-28 00:48:04 +0800'
+	export _id='5bfd75440b9a937031cf4af3'
+	export _rt='/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3'
 	export user='lkp'
 	export head_commit='1a5904eb47a96840b8a8108af1fed78b7cc9e186'
 	export base_commit='9ff01193a20d391e8dbce4403dd5ef87c7eaaca6'
 	export branch='linux-devel/devel-hourly-2018112308'
-	export result_root='/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/19'
+	export result_root='/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/3'
 	export LKP_SERVER='inn'
-	export max_uptime=742.4
+	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2018-04-03.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/jobs/scheduled/ivb44/fsmark-1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance-debian-x86_64-2018-04-03.cgz-9d037ad707ed6069fbea4e38e6ee37e027b13f1d-20181128-7275-1nbhj8d-19.yaml
+job=/lkp/jobs/scheduled/lkp-hsw-ep2/fio-basic-1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance-debian-x86_64-2018-04-03.cgz-4fd93529bcf2686433120ac18662513548d937d3-20181128-28721-19gapir-3.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
 branch=linux-devel/devel-hourly-2018112308
-commit=9d037ad707ed6069fbea4e38e6ee37e027b13f1d
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/vmlinuz-4.20.0-rc1-00174-g9d037ad7
-max_uptime=742
-RESULT_ROOT=/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/19
+commit=4fd93529bcf2686433120ac18662513548d937d3
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/vmlinuz-4.20.0-rc3-00082-g4fd93529
+max_uptime=1500
+RESULT_ROOT=/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/3
 LKP_SERVER=inn
 debug
 apic=debug
@@ -7114,16 +7576,16 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs2_2018-06-12.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/fsmark-x86_64-_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fio_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
-	export repeat_to=20
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/vmlinuz-4.20.0-rc1-00174-g9d037ad7'
-	export dequeue_time='2018-11-28 15:19:59 +0800'
-	export job_initrd='/lkp/jobs/scheduled/ivb44/fsmark-1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance-debian-x86_64-2018-04-03.cgz-9d037ad707ed6069fbea4e38e6ee37e027b13f1d-20181128-7275-1nbhj8d-19.cgz'
+	export repeat_to=4
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/vmlinuz-4.20.0-rc3-00082-g4fd93529'
+	export dequeue_time='2018-11-28 01:01:13 +0800'
+	export job_initrd='/lkp/jobs/scheduled/lkp-hsw-ep2/fio-basic-1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance-debian-x86_64-2018-04-03.cgz-4fd93529bcf2686433120ac18662513548d937d3-20181128-28721-19gapir-3.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -7139,15 +7601,14 @@ run_job()
 
 	export_top_env
 
-	run_setup nr_brd=1 ramdisk_size=51539607552 $LKP_SRC/setup/disk
+	run_setup nr_ssd=1 $LKP_SRC/setup/disk
 
 	run_setup fs='btrfs' $LKP_SRC/setup/fs
 
-	run_setup fs='nfsv4' $LKP_SRC/setup/fs2
+	run_setup rw='randwrite' bs='4k' ioengine='sync' test_size='512g' $LKP_SRC/setup/fio-setup-basic
 
 	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
 
-	run_monitor delay=1 $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
 	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
 	run_monitor $LKP_SRC/monitors/wrapper iostat
@@ -7173,16 +7634,16 @@ run_job()
 	run_monitor $LKP_SRC/monitors/wrapper sched_debug
 	run_monitor $LKP_SRC/monitors/wrapper perf-stat
 	run_monitor $LKP_SRC/monitors/wrapper mpstat
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test filesize='4M' test_size='40G' sync_method='fsyncBeforeClose' $LKP_SRC/tests/wrapper fsmark
+	run_test $LKP_SRC/tests/wrapper fio
 }
 
 extract_stats()
 {
-	$LKP_SRC/stats/wrapper perf-profile
-	$LKP_SRC/stats/wrapper fsmark
+	$LKP_SRC/stats/wrapper fio
 	$LKP_SRC/stats/wrapper kmsg
 	$LKP_SRC/stats/wrapper boot-time
 	$LKP_SRC/stats/wrapper iostat
@@ -7204,8 +7665,9 @@ extract_stats()
 	$LKP_SRC/stats/wrapper sched_debug
 	$LKP_SRC/stats/wrapper perf-stat
 	$LKP_SRC/stats/wrapper mpstat
+	$LKP_SRC/stats/wrapper perf-profile
 
-	$LKP_SRC/stats/wrapper time fsmark.time
+	$LKP_SRC/stats/wrapper time fio.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -7215,457 +7677,47 @@ extract_stats()
 
 "$@"
 
---9UV9rz0O2dU/yYYn
-Content-Type: application/x-xz
-Content-Disposition: attachment; filename="dmesg.xz"
-Content-Transfer-Encoding: base64
-
-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
-
---9UV9rz0O2dU/yYYn
+--M/SuVGWktc5uNpra
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
 ---
 
-#! jobs/fsmark-generic-1brd.yaml
-suite: fsmark
-testcase: fsmark
+#! jobs/fio-basic-1ssd-nvme-write.yaml
+suite: fio-basic
+testcase: fio-basic
 category: benchmark
-perf-profile:
-  delay: 1
-iterations: 1x
-nr_threads: 64t
-disk: 1BRD_48G
-need_memory: 50G
+disk: 1SSD
 fs: btrfs
-fs2: nfsv4
-fsmark:
-  filesize: 4M
-  test_size: 40G
-  sync_method: fsyncBeforeClose
-job_origin: "/lkp/lkp/.src-20181118-183111/allot/cyclic:default:linux-devel:devel-hourly/ivb44/fsmark-generic-1brd.yaml"
+runtime: 300s
+nr_task: 8
+fio-setup-basic:
+  rw: randwrite
+  bs: 4k
+  ioengine: sync
+  test_size: 512g
+fio: 
+job_origin: "/lkp/lkp/.src-20181116-091644/allot/cyclic:p1:linux-devel:devel-hourly/lkp-hsw-ep2/fio-basic-1ssd-nvme-write.yaml"
 
 #! queue options
 queue: bisect
-testbox: ivb44
-tbox_group: ivb44
-submit_id: 5bfe24740b9a939e6c2a219c
-job_file: "/lkp/jobs/scheduled/ivb44/fsmark-1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance-debian-x86_64-2018-04-03.cgz-9d037ad707ed6069fbea4e38e6ee37e027b13f1d-20181128-40556-16ofjvt-0.yaml"
-id: 78db5785dd25a9488d0cca3051ed593c0fa4d900
+testbox: lkp-hsw-ep2
+tbox_group: lkp-hsw-ep2
+submit_id: 5bfd6c1b0b9a932b6ad3c902
+job_file: "/lkp/jobs/scheduled/lkp-hsw-ep2/fio-basic-1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance-debian-x86_64-2018-04-03.cgz-4fd93529bcf2686433120ac18662513548d937d3-20181128-11114-144df0-0.yaml"
+id: 15695968a1ce171cc1d911ef09e0e7ed9a464511
 
-#! hosts/ivb44
-model: Ivytown Ivy Bridge-EP
+#! hosts/lkp-hsw-ep2
+model: Brickland Haswell-EP
 nr_node: 2
-nr_cpu: 48
-memory: 64G
-nr_hdd_partitions: 1
-hdd_partitions: "/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part1"
-swap_partitions: "/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part2"
-rootfs_partition: "/dev/disk/by-id/ata-WDC_WD1003FBYZ-010FB0_WD-WCAW36795753-part3"
-netconsole_port: 6644
-ucode: '0x42d'
-brand: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+nr_cpu: 72
+memory: 128G
+nr_ssd_partitions: 1
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BA800G3_BTTV451305A2800JGN-part1"
+swap_partitions: 
+rootfs_partition: LABEL=LKP-ROOTFS
+ucode: '0x3d'
+brand: Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
 
 #! include/category/benchmark
 kmsg: 
@@ -7693,56 +7745,55 @@ turbostat:
 sched_debug: 
 perf-stat: 
 mpstat: 
+perf-profile: 
 
 #! include/category/ALL
 cpufreq_governor: performance
 
-#! include/disk/nr_brd
+#! include/disk/nr_ssd
 need_kconfig:
-- CONFIG_BLK_DEV_RAM=m
-- CONFIG_BLK_DEV=y
+- CONFIG_BLK_DEV_SD
+- CONFIG_SCSI
 - CONFIG_BLOCK=y
-- CONFIG_NFSD
+- CONFIG_SATA_AHCI
+- CONFIG_SATA_AHCI_PLATFORM
+- CONFIG_ATA
+- CONFIG_PCI=y
 - CONFIG_BTRFS_FS
-- CONFIG_NFS_V4
-
-#! include/fsmark
-
-#! include/queue/cyclic
-commit: 9d037ad707ed6069fbea4e38e6ee37e027b13f1d
 
 #! include/fs/OTHERS
 
-#! include/fs/nfsv4
+#! include/queue/cyclic
+commit: 4fd93529bcf2686433120ac18662513548d937d3
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2018-04-03.cgz
-enqueue_time: 2018-11-28 13:15:33.082915348 +08:00
-_id: 5bfe24740b9a939e6c2a219c
-_rt: "/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d"
+enqueue_time: 2018-11-28 00:08:59.860799038 +08:00
+_id: 5bfd6c1b0b9a932b6ad3c902
+_rt: "/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3"
 
 #! schedule options
 user: lkp
 head_commit: 1a5904eb47a96840b8a8108af1fed78b7cc9e186
 base_commit: 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6
 branch: linux-devel/devel-hourly-2018112308
-result_root: "/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/0"
+result_root: "/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/0"
 LKP_SERVER: inn
-max_uptime: 742.4
+max_uptime: 1500
 initrd: "/osimage/debian/debian-x86_64-2018-04-03.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/jobs/scheduled/ivb44/fsmark-1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance-debian-x86_64-2018-04-03.cgz-9d037ad707ed6069fbea4e38e6ee37e027b13f1d-20181128-40556-16ofjvt-0.yaml
+- job=/lkp/jobs/scheduled/lkp-hsw-ep2/fio-basic-1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance-debian-x86_64-2018-04-03.cgz-4fd93529bcf2686433120ac18662513548d937d3-20181128-11114-144df0-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
 - branch=linux-devel/devel-hourly-2018112308
-- commit=9d037ad707ed6069fbea4e38e6ee37e027b13f1d
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/vmlinuz-4.20.0-rc1-00174-g9d037ad7
-- max_uptime=742
-- RESULT_ROOT=/result/fsmark/1x-64t-1BRD_48G-btrfs-nfsv4-4M-40G-fsyncBeforeClose-ucode=0x42d-performance/ivb44/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/0
+- commit=4fd93529bcf2686433120ac18662513548d937d3
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/vmlinuz-4.20.0-rc3-00082-g4fd93529
+- max_uptime=1500
+- RESULT_ROOT=/result/fio-basic/1SSD-btrfs-300s-8-randwrite-4k-sync-512g-ucode=0x3d-performance/lkp-hsw-ep2/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -7764,8 +7815,8 @@ bootloader_append:
 - console=ttyS0,115200
 - vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/modules.cgz"
-bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs2_2018-06-12.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/fsmark-x86_64-_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fio_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2018-06-26.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-6f0d349d922b_2018-06-26.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
 
@@ -7776,12 +7827,53 @@ oom-killer:
 watchdog: 
 
 #! runtime status
+repeat_to: 2
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/9d037ad707ed6069fbea4e38e6ee37e027b13f1d/vmlinuz-4.20.0-rc1-00174-g9d037ad7"
-dequeue_time: 2018-11-28 13:19:42.598929694 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/4fd93529bcf2686433120ac18662513548d937d3/vmlinuz-4.20.0-rc3-00082-g4fd93529"
+dequeue_time: 2018-11-28 00:27:13.359249385 +08:00
 
-#! /lkp/lkp/.src-20181128-124931/include/site/inn
-job_state: booting
+#! /lkp/lkp/.src-20181128-001749/include/site/inn
+job_state: finished
+loadavg: 8.90 9.90 4.74 1/663 10043
+start_time: '1543336151'
+end_time: '1543336472'
+version: "/lkp/lkp/.src-20181128-001749"
 
---9UV9rz0O2dU/yYYn--
+--M/SuVGWktc5uNpra
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=reproduce
+
+dmsetup remove_all
+wipefs -a --force /dev/sdb1
+mkfs -t btrfs /dev/sdb1
+mkdir -p /fs/sdb1
+mount -t btrfs /dev/sdb1 /fs/sdb1
+
+for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
+do
+	online_file="$cpu_dir"/online
+	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
+
+	file="$cpu_dir"/cpufreq/scaling_governor
+	[ -f "$file" ] && echo "performance" > "$file"
+done
+
+echo '[global]
+bs=4k
+ioengine=sync
+iodepth=32
+size=68719476736
+direct=0
+runtime=300
+invalidate=1
+fallocate=posix
+group_reporting
+
+[task_0]
+rw=randwrite
+directory=/fs/sdb1
+numjobs=8' | fio --output-format=json -
+umount /fs/sdb1
+
+--M/SuVGWktc5uNpra--
