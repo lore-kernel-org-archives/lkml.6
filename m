@@ -2,178 +2,77 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00673C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4C9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3582082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:13:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3582082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 89684213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 18:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PPfCHTUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89684213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeK3FTS (ORCPT
+        id S1727594AbeK3FTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:19:18 -0500
-Received: from foss.arm.com ([217.140.101.70]:42580 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbeK3FTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:19:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96B2E80D;
-        Thu, 29 Nov 2018 10:13:03 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 814393F575;
-        Thu, 29 Nov 2018 10:13:01 -0800 (PST)
-Date:   Thu, 29 Nov 2018 18:12:59 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, daniel.thompson@linaro.org,
-        Jason Cooper <jason@lakedaemon.net>, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
-        james.morse@arm.com, joel@joelfernandes.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 05/24] irqchip/gic-v3: Switch to PMR masking before
- calling IRQ handler
-Message-ID: <20181129181258.jo6s4e7s3zwkp4sk@lakrids.cambridge.arm.com>
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-6-git-send-email-julien.thierry@arm.com>
+        Fri, 30 Nov 2018 00:19:40 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51928 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeK3FTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:19:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0HEU5J2Qf78Xp8NdP3inc4RVXCKDIY45GBCgQX2P4XE=; b=PPfCHTUOR2KlyKrsAEQcVhZPU
+        eQ1He9vqP1qhM7VrqZw12MB6bRBKUN00TDNImUuVvIqQNatvzCzi0sKhlmFxQTa0Rsd9MZG3/itU1
+        1h6OwcTgJZqReyJix5ox2n2Y1YdRvFdw8UGAqv/sAu1SIVtkXfSGGZSudRmwSDAQOH6jHI4nmKeKJ
+        CVQ/xNX1X9BN01igBNZUx6p4INCvYun1kjorREwcZJMaF9lbL160qh82p/KQcwOh+H+uQN5kwweZn
+        bTOxfCgRBm78yyrBjBVEJDi/GJr79hlasXoh8EUN4fuUIUKeS+Pp06u0X0Hl0U/bwGdccN8vZShdv
+        1jM/qGZlg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gSQoM-0004Nm-Vh; Thu, 29 Nov 2018 18:13:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 67EB12029FD58; Thu, 29 Nov 2018 19:13:12 +0100 (CET)
+Date:   Thu, 29 Nov 2018 19:13:12 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181129181312.GC11632@hirez.programming.kicks-ass.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+ <aa425caf-a080-3b67-22eb-15c5b5bbad85@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542023835-21446-6-git-send-email-julien.thierry@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <aa425caf-a080-3b67-22eb-15c5b5bbad85@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:56:56AM +0000, Julien Thierry wrote:
-> Mask the IRQ priority through PMR and re-enable IRQs at CPU level,
-> allowing only higher priority interrupts to be received during interrupt
-> handling.
-> 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm/include/asm/arch_gicv3.h   | 17 +++++++++++++++++
->  arch/arm64/include/asm/arch_gicv3.h | 17 +++++++++++++++++
->  drivers/irqchip/irq-gic-v3.c        | 10 ++++++++++
->  3 files changed, 44 insertions(+)
-> 
-> diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
-> index bef0b5d..f6f485f 100644
-> --- a/arch/arm/include/asm/arch_gicv3.h
-> +++ b/arch/arm/include/asm/arch_gicv3.h
-> @@ -363,5 +363,22 @@ static inline void gits_write_vpendbaser(u64 val, void * __iomem addr)
->  
->  #define gits_read_vpendbaser(c)		__gic_readq_nonatomic(c)
->  
-> +static inline bool gic_prio_masking_enabled(void)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline void gic_pmr_mask_irqs(void)
-> +{
-> +	/* Should not get called. */
-> +	WARN_ON_ONCE(true);
-> +}
-> +
-> +static inline void gic_arch_enable_irqs(void)
-> +{
-> +	/* Should not get called. */
-> +	WARN_ON_ONCE(true);
-> +}
-> +
->  #endif /* !__ASSEMBLY__ */
->  #endif /* !__ASM_ARCH_GICV3_H */
-> diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-> index 37193e2..3f8d5f4 100644
-> --- a/arch/arm64/include/asm/arch_gicv3.h
-> +++ b/arch/arm64/include/asm/arch_gicv3.h
-> @@ -155,5 +155,22 @@ static inline u32 gic_read_rpr(void)
->  #define gits_write_vpendbaser(v, c)	writeq_relaxed(v, c)
->  #define gits_read_vpendbaser(c)		readq_relaxed(c)
->  
-> +static inline bool gic_prio_masking_enabled(void)
-> +{
-> +	return system_supports_irq_prio_masking();
-> +}
-> +
-> +static inline void gic_pmr_mask_irqs(void)
-> +{
-> +	/* Should not get called yet. */
-> +	WARN_ON_ONCE(true);
-> +}
-> +
-> +static inline void gic_arch_enable_irqs(void)
-> +{
-> +	/* Should not get called yet. */
-> +	WARN_ON_ONCE(true);
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_ARCH_GICV3_H */
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 8f87f40..e5d8c14 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -353,6 +353,11 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
->  	if (likely(irqnr > 15 && irqnr < 1020) || irqnr >= 8192) {
->  		int err;
->  
-> +		if (gic_prio_masking_enabled()) {
-> +			gic_pmr_mask_irqs();
-> +			gic_arch_enable_irqs();
-> +		}
+On Thu, Nov 29, 2018 at 12:58:26PM -0500, Waiman Long wrote:
+> OK, you convinced me. However, that can still lead to anonymous wakeups
+> that can be problematic if it happens in certain places. Should we try
+> to reduce anonymous wakeup as much as possible?
 
-IIUC, if we have two pNMIs, this will allow one to preempt another, e.g.
-
-	< pNMI#1 asserted >
-
-	< CPU takes IRQ exception for pNMI #1>
-
-	irqnr = gic_read_iar(); // pNMI #1
-
-	< pNMI#2 asserted >
-
-	// masks IRQs at GIC, leaves other pNMIs unmasked
-	gic_pmr_mask_irqs()
-	gic_arch_enable_irqs();
-
-	...
-
-	< CPU takes IRQ exception for pNMI #2 >
-
-... or is that not a problem? Is the NMI code re-entrant?
-
-> +
->  		if (static_branch_likely(&supports_deactivate_key))
->  			gic_write_eoir(irqnr);
->  		else
-> @@ -371,6 +376,11 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
->  		return;
->  	}
->  	if (irqnr < 16) {
-> +		if (gic_prio_masking_enabled()) {
-> +			gic_pmr_mask_irqs();
-> +			gic_arch_enable_irqs();
-> +		}
-
-Can we pull this above the two cases, or is there a problem with doing
-this for spurious IRQs?
-
-Where is the corresponding unmask of the PMR, and disable of IRQs? It's
-difficult to follow the logic if that's in another patch.
-
-Thanks,
-Mark.
+No, we should at all times accept and expect spurious wakeups.
