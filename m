@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749F4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D8FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2A52133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDCF2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu+eXaMr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2A52133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/rMp+nt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDCF2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730032AbeK3BV7 (ORCPT
+        id S1730046AbeK3BWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:21:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43502 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbeK3BV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:21:58 -0500
+        id S1728865AbeK3BWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18B79208E7;
-        Thu, 29 Nov 2018 14:16:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7760D21104;
+        Thu, 29 Nov 2018 14:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500988;
-        bh=Cq6t3JH39L+YvapXndr8WEDyMxL0v+4VjfAtTd4B/Sk=;
+        s=default; t=1543500990;
+        bh=i0SaZa/jQKc7kNXfRbDyk3FMOraS5fUUikqhqDo5sCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eu+eXaMrN4682vLnYqzUmCQfAib09kKfkG/eq+FwslguKXnEC4jVy8tPzEkUwXz4d
-         qOhKaBGfGjDcXp3WG38QQbLofCFsn/zqQtZDnAR2ALu1+42Fm4Lx02xmyQSwOvgbD3
-         C9b3V/PEFcTXUDxEVR0tF5DeI4UJzihCRNJkpjcY=
+        b=V/rMp+nt98KFFB/ttoj7RHvL2ayfA6of2HSEpjxK5SzIsAxxGFd5CjL128Cur2Aum
+         rGgRkz7eD5owPYOOLWWDwHNLGJfDKxgMXqy9teqeR1lUIpJKGykO6yxv9QvUvevdI9
+         Oc3ukrA6QH7LkjMGnqUYzWFzB9c8Zu/V9bIeenfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, aszlig <aszlig@nix.build>,
-        Milan Broz <gmazyland@gmail.com>,
-        Daniel Zatovic <daniel.zatovic@gmail.com>,
-        Willy Tarreau <w@1wt.eu>
-Subject: [PATCH 3.18 81/83] tty: wipe buffer if not echoing data
-Date:   Thu, 29 Nov 2018 15:12:39 +0100
-Message-Id: <20181129140142.655336408@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Rainer Weikusat <rweikusat@mobileactivedefense.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Petr Vorel <pvorel@suse.cz>
+Subject: [PATCH 3.18 82/83] af_unix: move unix_mknod() out of bindlock
+Date:   Thu, 29 Nov 2018 15:12:40 +0100
+Message-Id: <20181129140142.732788522@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -64,68 +66,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <greg@kroah.com>
+From: WANG Cong <xiyou.wangcong@gmail.com>
 
-commit b97b3d9fb57860a60592859e332de7759fd54c2e upstream.
+commit 0fb44559ffd67de8517098b81f675fa0210f13f0 upstream.
 
-If we are not echoing the data to userspace or the console is in icanon
-mode, then perhaps it is a "secret" so we should wipe it once we are
-done with it.
+Dmitry reported a deadlock scenario:
 
-This mirrors the logic that the audit code has.
+unix_bind() path:
+u->bindlock ==> sb_writer
 
-Reported-by: aszlig <aszlig@nix.build>
-Tested-by: Milan Broz <gmazyland@gmail.com>
-Tested-by: Daniel Zatovic <daniel.zatovic@gmail.com>
-Tested-by: aszlig <aszlig@nix.build>
-Cc: Willy Tarreau <w@1wt.eu>
+do_splice() path:
+sb_writer ==> pipe->mutex ==> u->bindlock
+
+In the unix_bind() code path, unix_mknod() does not have to
+be done with u->bindlock held, since it is a pure fs operation,
+so we can just move unix_mknod() out.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Rainer Weikusat <rweikusat@mobileactivedefense.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Petr Vorel <pvorel@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_tty.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ net/unix/af_unix.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -188,15 +188,29 @@ static int receive_room(struct tty_struc
- 	return left;
- }
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -980,6 +980,7 @@ static int unix_bind(struct socket *sock
+ 	unsigned int hash;
+ 	struct unix_address *addr;
+ 	struct hlist_head *list;
++	struct path path = { NULL, NULL };
  
-+/* If we are not echoing the data, perhaps this is a secret so erase it */
-+static inline void zero_buffer(struct tty_struct *tty, u8 *buffer, int size)
-+{
-+	bool icanon = !!L_ICANON(tty);
-+	bool no_echo = !L_ECHO(tty);
+ 	err = -EINVAL;
+ 	if (sunaddr->sun_family != AF_UNIX)
+@@ -995,9 +996,20 @@ static int unix_bind(struct socket *sock
+ 		goto out;
+ 	addr_len = err;
+ 
++	if (sun_path[0]) {
++		umode_t mode = S_IFSOCK |
++		       (SOCK_INODE(sock)->i_mode & ~current_umask());
++		err = unix_mknod(sun_path, mode, &path);
++		if (err) {
++			if (err == -EEXIST)
++				err = -EADDRINUSE;
++			goto out;
++		}
++	}
 +
-+	if (icanon && no_echo)
-+		memset(buffer, 0x00, size);
-+}
-+
- static inline int tty_copy_to_user(struct tty_struct *tty,
- 					void __user *to,
--					const void *from,
-+					void *from,
- 					unsigned long n)
- {
- 	struct n_tty_data *ldata = tty->disc_data;
-+	int retval;
+ 	err = mutex_lock_interruptible(&u->readlock);
+ 	if (err)
+-		goto out;
++		goto out_put;
  
- 	tty_audit_add_data(tty, from, n, ldata->icanon);
--	return copy_to_user(to, from, n);
-+	retval = copy_to_user(to, from, n);
-+	if (!retval)
-+		zero_buffer(tty, from, n);
-+	return retval;
+ 	err = -EINVAL;
+ 	if (u->addr)
+@@ -1014,16 +1026,6 @@ static int unix_bind(struct socket *sock
+ 	atomic_set(&addr->refcnt, 1);
+ 
+ 	if (sun_path[0]) {
+-		struct path path;
+-		umode_t mode = S_IFSOCK |
+-		       (SOCK_INODE(sock)->i_mode & ~current_umask());
+-		err = unix_mknod(sun_path, mode, &path);
+-		if (err) {
+-			if (err == -EEXIST)
+-				err = -EADDRINUSE;
+-			unix_release_addr(addr);
+-			goto out_up;
+-		}
+ 		addr->hash = UNIX_HASH_SIZE;
+ 		hash = d_backing_inode(path.dentry)->i_ino & (UNIX_HASH_SIZE-1);
+ 		spin_lock(&unix_table_lock);
+@@ -1050,6 +1052,9 @@ out_unlock:
+ 	spin_unlock(&unix_table_lock);
+ out_up:
+ 	mutex_unlock(&u->readlock);
++out_put:
++	if (err)
++		path_put(&path);
+ out:
+ 	return err;
  }
- 
- /**
-@@ -2006,6 +2020,7 @@ static int copy_from_read_buf(struct tty
- 		is_eof = n == 1 && read_buf(ldata, tail) == EOF_CHAR(tty);
- 		tty_audit_add_data(tty, read_buf_addr(ldata, tail), n,
- 				ldata->icanon);
-+		zero_buffer(tty, read_buf_addr(ldata, tail), n);
- 		ldata->read_tail += n;
- 		/* Turn single EOF into zero-length read */
- 		if (L_EXTPROC(tty) && ldata->icanon && is_eof && !read_cnt(ldata))
 
 
