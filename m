@@ -2,49 +2,50 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2085DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D965C04EBA
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14242145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D65D72145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x2qy1z9Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14242145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mr9vucAl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65D72145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387585AbeK3Bck (ORCPT
+        id S2387598AbeK3Bcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60956 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731824AbeK3Bci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:32:38 -0500
+        id S1732959AbeK3Bck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:32:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 336B32133F;
-        Thu, 29 Nov 2018 14:27:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94B342145D;
+        Thu, 29 Nov 2018 14:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501625;
-        bh=SUYh6AICqaxru1Oy86ZESA6CAQPGv0/QCmdtfnGsgSk=;
+        s=default; t=1543501628;
+        bh=sBjj2y8mNv1OWS2SLnMhS43bPeIETakPDg6fgWlH8wY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x2qy1z9Q0rd5PAUHNEJIYG6mGDI1YK4h69RPP4RTFaSZS6K4cwSmfwIHuyltaevlc
-         kJzHNMRG6Jzepu089R/wl1IUgsFkFcHub+0qCCrB7MqY1PeGizLK3koQojnRvXgKAh
-         UcKvkeNiuWcxILGGuG/lfZ1yX1YXUlxbcaeuyBY0=
+        b=mr9vucAlqyqAS/WsogSMEwE953wXCbCbQmCrjTBCsDkM5WZBMx79ofMQxZQi8NbOA
+         CS+E8h/iFndoQQME1JXMpCc9iQH2shYuLrIQmQ8Oq2cPl8UnT+LoMtVKQXqjtfuC/u
+         S5KcN4O+2GZ3+oZzUXip0D5kWdeScXSSVGyh3H4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH 4.14 074/100] ubi: fastmap: Check each mapping only once
-Date:   Thu, 29 Nov 2018 15:12:44 +0100
-Message-Id: <20181129140105.188935124@linuxfoundation.org>
+        stable@vger.kernel.org, Francis Therien <frtherien@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 075/100] Input: xpad - add PDP device id 0x02a4
+Date:   Thu, 29 Nov 2018 15:12:45 +0100
+Message-Id: <20181129140105.256543105@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -62,177 +63,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+[ Upstream commit c6c848572f4da0e34ffe0a35364b4db871e13e42 ]
 
-commit 34653fd8c46e771585fce5975e4243f8fd401914 upstream.
+Adds support for a PDP Xbox One controller with device ID
+(0x06ef:0x02a4). The Product string for this device is "PDP Wired
+Controller for Xbox One - Stealth Series | Phantom Black".
 
-Maintain a bitmap to keep track of which LEB->PEB mapping
-was checked already.
-That way we have to read back VID headers only once.
-
-Fixes: a23cf10d9abb ("ubi: fastmap: Correctly handle interrupted erasures in EBA")
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-
+Signed-off-by: Francis Therien <frtherien@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/ubi/build.c   |    1 +
- drivers/mtd/ubi/eba.c     |    4 ++++
- drivers/mtd/ubi/fastmap.c |   20 ++++++++++++++++++++
- drivers/mtd/ubi/ubi.h     |   11 +++++++++++
- drivers/mtd/ubi/vmt.c     |    1 +
- drivers/mtd/ubi/vtbl.c    |   16 +++++++++++++++-
- 6 files changed, 52 insertions(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -526,6 +526,7 @@ void ubi_free_internal_volumes(struct ub
- 	for (i = ubi->vtbl_slots;
- 	     i < ubi->vtbl_slots + UBI_INT_VOL_COUNT; i++) {
- 		ubi_eba_replace_table(ubi->volumes[i], NULL);
-+		ubi_fastmap_destroy_checkmap(ubi->volumes[i]);
- 		kfree(ubi->volumes[i]);
- 	}
- }
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -517,6 +517,9 @@ static int check_mapping(struct ubi_devi
- 	if (!ubi->fast_attach)
- 		return 0;
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index 53f775c41cd1..d2a1857fdae5 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -231,6 +231,7 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x021f, "Rock Candy Gamepad for Xbox 360", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+@@ -480,7 +481,8 @@ static const u8 xboxone_hori_init[] = {
  
-+	if (!vol->checkmap || test_bit(lnum, vol->checkmap))
-+		return 0;
-+
- 	vidb = ubi_alloc_vid_buf(ubi, GFP_NOFS);
- 	if (!vidb)
- 		return -ENOMEM;
-@@ -551,6 +554,7 @@ static int check_mapping(struct ubi_devi
- 		goto out_free;
- 	}
+ /*
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init1[] = {
+ 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
+@@ -488,7 +490,8 @@ static const u8 xboxone_pdp_init1[] = {
  
-+	set_bit(lnum, vol->checkmap);
- 	err = 0;
- 
- out_free:
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -1101,6 +1101,26 @@ free_fm_sb:
- 	goto out;
- }
- 
-+int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count)
-+{
-+	struct ubi_device *ubi = vol->ubi;
-+
-+	if (!ubi->fast_attach)
-+		return 0;
-+
-+	vol->checkmap = kcalloc(BITS_TO_LONGS(leb_count), sizeof(unsigned long),
-+				GFP_KERNEL);
-+	if (!vol->checkmap)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol)
-+{
-+	kfree(vol->checkmap);
-+}
-+
- /**
-  * ubi_write_fastmap - writes a fastmap.
-  * @ubi: UBI device object
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -334,6 +334,9 @@ struct ubi_eba_leb_desc {
-  * @changing_leb: %1 if the atomic LEB change ioctl command is in progress
-  * @direct_writes: %1 if direct writes are enabled for this volume
-  *
-+ * @checkmap: bitmap to remember which PEB->LEB mappings got checked,
-+ *            protected by UBI LEB lock tree.
-+ *
-  * The @corrupted field indicates that the volume's contents is corrupted.
-  * Since UBI protects only static volumes, this field is not relevant to
-  * dynamic volumes - it is user's responsibility to assure their data
-@@ -377,6 +380,10 @@ struct ubi_volume {
- 	unsigned int updating:1;
- 	unsigned int changing_leb:1;
- 	unsigned int direct_writes:1;
-+
-+#ifdef CONFIG_MTD_UBI_FASTMAP
-+	unsigned long *checkmap;
-+#endif
- };
- 
- /**
-@@ -965,8 +972,12 @@ size_t ubi_calc_fm_size(struct ubi_devic
- int ubi_update_fastmap(struct ubi_device *ubi);
- int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
- 		     struct ubi_attach_info *scan_ai);
-+int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count);
-+void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol);
- #else
- static inline int ubi_update_fastmap(struct ubi_device *ubi) { return 0; }
-+int static inline ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count) { return 0; }
-+static inline void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol) {}
- #endif
- 
- /* block.c */
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -139,6 +139,7 @@ static void vol_release(struct device *d
- 	struct ubi_volume *vol = container_of(dev, struct ubi_volume, dev);
- 
- 	ubi_eba_replace_table(vol, NULL);
-+	ubi_fastmap_destroy_checkmap(vol);
- 	kfree(vol);
- }
- 
---- a/drivers/mtd/ubi/vtbl.c
-+++ b/drivers/mtd/ubi/vtbl.c
-@@ -534,7 +534,7 @@ static int init_volumes(struct ubi_devic
- 			const struct ubi_attach_info *ai,
- 			const struct ubi_vtbl_record *vtbl)
- {
--	int i, reserved_pebs = 0;
-+	int i, err, reserved_pebs = 0;
- 	struct ubi_ainf_volume *av;
- 	struct ubi_volume *vol;
- 
-@@ -620,6 +620,16 @@ static int init_volumes(struct ubi_devic
- 			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
- 		vol->used_bytes += av->last_data_size;
- 		vol->last_eb_bytes = av->last_data_size;
-+
-+		/*
-+		 * We use ubi->peb_count and not vol->reserved_pebs because
-+		 * we want to keep the code simple. Otherwise we'd have to
-+		 * resize/check the bitmap upon volume resize too.
-+		 * Allocating a few bytes more does not hurt.
-+		 */
-+		err = ubi_fastmap_init_checkmap(vol, ubi->peb_count);
-+		if (err)
-+			return err;
- 	}
- 
- 	/* And add the layout volume */
-@@ -645,6 +655,9 @@ static int init_volumes(struct ubi_devic
- 	reserved_pebs += vol->reserved_pebs;
- 	ubi->vol_count += 1;
- 	vol->ubi = ubi;
-+	err = ubi_fastmap_init_checkmap(vol, UBI_LAYOUT_VOLUME_EBS);
-+	if (err)
-+		return err;
- 
- 	if (reserved_pebs > ubi->avail_pebs) {
- 		ubi_err(ubi, "not enough PEBs, required %d, available %d",
-@@ -849,6 +862,7 @@ int ubi_read_volume_table(struct ubi_dev
- out_free:
- 	vfree(ubi->vtbl);
- 	for (i = 0; i < ubi->vtbl_slots + UBI_INT_VOL_COUNT; i++) {
-+		ubi_fastmap_destroy_checkmap(ubi->volumes[i]);
- 		kfree(ubi->volumes[i]);
- 		ubi->volumes[i] = NULL;
- 	}
+ /*
+  * This packet is required for some of the PDP pads to start
+- * sending input reports. One of those pads is (0x0e6f:0x02ab).
++ * sending input reports. These pads include: (0x0e6f:0x02ab),
++ * (0x0e6f:0x02a4).
+  */
+ static const u8 xboxone_pdp_init2[] = {
+ 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
+@@ -526,6 +529,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
+ 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
+-- 
+2.17.1
+
 
 
