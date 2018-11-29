@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE8CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B904C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6572A2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5E5208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcnD0Q8Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6572A2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDfouqDw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5E5208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbeK3BTu (ORCPT
+        id S1729142AbeK3BTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:19:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:19:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728198AbeK3BTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:19:49 -0500
+        id S1728198AbeK3BTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:19:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E141521019;
-        Thu, 29 Nov 2018 14:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50AE021104;
+        Thu, 29 Nov 2018 14:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543500859;
-        bh=PYEF3MqGwKIR17j7TLBVlL+On0iM+Xw9U8ZTRIDItaM=;
+        s=default; t=1543500861;
+        bh=5QbaYuFL519dR4JffJ7BbBG+USLI3xv21ovHnXIRwDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NcnD0Q8Q7ISTFiJk1lFx5gme4T06ce0A9SXKSken+qugOGT6sq/cwa7uLOJYmFHc4
-         8cT39OFSZ0ygTjSEAwFUnxUBgRRk5EWENnm5Re9TeXbF91NnTGKEmj5eAID954GCTz
-         iNp8qDHjAjlHOiHvE0Smi49TrQtMX1sAOk/7/3/Q=
+        b=mDfouqDwMd7pEbK8T7zLN4wRnVWdNDO2t+HwZjTYcZj9LpKgxTVWDDkrMholuDl5e
+         fbeN84IaqKaqpgoTckgFiuVGx52YJoT3Th0ppbAwfcrup90G2U9kV0WSofua9EC7KU
+         +kP8xVZ3mLYq8IYptOosAA0LNu0qGRLgA/p7DeK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Rojtberg <rojtberg@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 27/83] Input: xpad - use ida() for finding the pad_nr
-Date:   Thu, 29 Nov 2018 15:11:45 +0100
-Message-Id: <20181129140139.525654428@linuxfoundation.org>
+Subject: [PATCH 3.18 28/83] Input: xpad - remove needless bulk out URB used for LED setup
+Date:   Thu, 29 Nov 2018 15:11:46 +0100
+Message-Id: <20181129140139.566608123@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -63,127 +63,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e3b651745a03810efffd7ebf2a9b5be65fb70ec3 ]
+[ Upstream commit a306a65f46acb040d208523592a2d34f67d47a61 ]
 
-The pad_nr corresponds to the lit up LED on the controller. Therefore there
-should be no gaps when enumerating. Currently a LED is only re-assigned
-after a controller is re-connected 4 times.
+This code was probably wrong ever since and is redundant with
+xpad_send_led_command. Both try to send a similar command to the xbox360
+controller. However xpad_send_led_command correctly uses the pad_nr instead
+of bInterfaceNumber to select the led and re-uses the irq_out URB instead
+of creating a new one.
 
-This patch uses ida to track connected pads - this way we can re-assign
-freed up pad number immediately.
-
-Consider the following case:
-1. pad A is connected and gets pad_nr = 0
-2. pad B is connected and gets pad_nr = 1
-3. pad A is disconnected
-4. pad A is connected again
-
-using ida_simple_get() controller A now correctly gets pad_nr = 0 again.
+Note that this change only affects the two supported wireless controllers.
+Tested using the xbox360 wireless controller (PC).
 
 Signed-off-by: Pavel Rojtberg <rojtberg@gmail.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/joystick/xpad.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+ drivers/input/joystick/xpad.c | 79 +----------------------------------
+ 1 file changed, 1 insertion(+), 78 deletions(-)
 
 diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
-index 60ebd78a49a6..a395980bb816 100644
+index a395980bb816..afa232b415a5 100644
 --- a/drivers/input/joystick/xpad.c
 +++ b/drivers/input/joystick/xpad.c
-@@ -244,7 +244,6 @@ static const signed short xpad_btn_triggers[] = {
- 	-1
- };
+@@ -330,9 +330,6 @@ struct usb_xpad {
+ 	unsigned char *idata;		/* input data */
+ 	dma_addr_t idata_dma;
  
+-	struct urb *bulk_out;
+-	unsigned char *bdata;
 -
- static const signed short xpad360_btn[] = {  /* buttons for x360 controller */
- 	BTN_TL, BTN_TR,		/* Button LB/RB */
- 	BTN_MODE,		/* The big X button */
-@@ -347,7 +346,7 @@ struct usb_xpad {
+ 	struct urb *irq_out;		/* urb for interrupt out report */
+ 	unsigned char *odata;		/* output data */
+ 	dma_addr_t odata_dma;
+@@ -512,7 +509,6 @@ static void xpad360w_process_packet(struct usb_xpad *xpad, u16 cmd, unsigned cha
+ 	if (data[0] & 0x08) {
+ 		if (data[1] & 0x80) {
+ 			xpad->pad_present = 1;
+-			usb_submit_urb(xpad->bulk_out, GFP_ATOMIC);
+ 			/*
+ 			 * Light up the segment corresponding to
+ 			 * controller number.
+@@ -674,28 +670,6 @@ exit:
+ 			__func__, retval);
+ }
  
- 	int mapping;			/* map d-pad to buttons or to axes */
- 	int xtype;			/* type of xbox device */
--	unsigned long pad_nr;		/* the order x360 pads were attached */
-+	int pad_nr;			/* the order x360 pads were attached */
- };
- 
- /*
-@@ -883,6 +882,9 @@ static int xpad_init_ff(struct usb_xpad *xpad) { return 0; }
- 
- #if defined(CONFIG_JOYSTICK_XPAD_LEDS)
- #include <linux/leds.h>
-+#include <linux/idr.h>
-+
-+static DEFINE_IDA(xpad_pad_seq);
- 
- struct xpad_led {
- 	char name[16];
-@@ -964,7 +966,6 @@ static void xpad_led_set(struct led_classdev *led_cdev,
- 
- static int xpad_led_probe(struct usb_xpad *xpad)
- {
--	static atomic_t led_seq = ATOMIC_INIT(-1);
- 	struct xpad_led *led;
- 	struct led_classdev *led_cdev;
- 	int error;
-@@ -976,9 +977,13 @@ static int xpad_led_probe(struct usb_xpad *xpad)
- 	if (!led)
- 		return -ENOMEM;
- 
--	xpad->pad_nr = atomic_inc_return(&led_seq);
-+	xpad->pad_nr = ida_simple_get(&xpad_pad_seq, 0, 0, GFP_KERNEL);
-+	if (xpad->pad_nr < 0) {
-+		error = xpad->pad_nr;
-+		goto err_free_mem;
-+	}
- 
--	snprintf(led->name, sizeof(led->name), "xpad%lu", xpad->pad_nr);
-+	snprintf(led->name, sizeof(led->name), "xpad%d", xpad->pad_nr);
- 	led->xpad = xpad;
- 
- 	led_cdev = &led->led_cdev;
-@@ -986,16 +991,19 @@ static int xpad_led_probe(struct usb_xpad *xpad)
- 	led_cdev->brightness_set = xpad_led_set;
- 
- 	error = led_classdev_register(&xpad->udev->dev, led_cdev);
--	if (error) {
--		kfree(led);
--		xpad->led = NULL;
--		return error;
+-static void xpad_bulk_out(struct urb *urb)
+-{
+-	struct usb_xpad *xpad = urb->context;
+-	struct device *dev = &xpad->intf->dev;
+-
+-	switch (urb->status) {
+-	case 0:
+-		/* success */
+-		break;
+-	case -ECONNRESET:
+-	case -ENOENT:
+-	case -ESHUTDOWN:
+-		/* this urb is terminated, clean up */
+-		dev_dbg(dev, "%s - urb shutting down with status: %d\n",
+-			__func__, urb->status);
+-		break;
+-	default:
+-		dev_dbg(dev, "%s - nonzero urb status received: %d\n",
+-			__func__, urb->status);
 -	}
-+	if (error)
-+		goto err_free_id;
- 
- 	/* Light up the segment corresponding to controller number */
- 	xpad_identify_controller(xpad);
+-}
 -
- 	return 0;
-+
-+err_free_id:
-+	ida_simple_remove(&xpad_pad_seq, xpad->pad_nr);
-+err_free_mem:
-+	kfree(led);
-+	xpad->led = NULL;
-+	return error;
- }
- 
- static void xpad_led_disconnect(struct usb_xpad *xpad)
-@@ -1004,6 +1012,7 @@ static void xpad_led_disconnect(struct usb_xpad *xpad)
- 
- 	if (xpad_led) {
- 		led_classdev_unregister(&xpad_led->led_cdev);
-+		ida_simple_remove(&xpad_pad_seq, xpad->pad_nr);
- 		kfree(xpad_led);
- 	}
- }
-@@ -1013,7 +1022,6 @@ static void xpad_led_disconnect(struct usb_xpad *xpad) { }
- static void xpad_identify_controller(struct usb_xpad *xpad) { }
- #endif
- 
--
- static int xpad_open(struct input_dev *dev)
+ static void xpad_irq_out(struct urb *urb)
  {
- 	struct usb_xpad *xpad = input_get_drvdata(dev);
+ 	struct usb_xpad *xpad = urb->context;
+@@ -1234,52 +1208,6 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 	usb_set_intfdata(intf, xpad);
+ 
+ 	if (xpad->xtype == XTYPE_XBOX360W) {
+-		/*
+-		 * Setup the message to set the LEDs on the
+-		 * controller when it shows up
+-		 */
+-		xpad->bulk_out = usb_alloc_urb(0, GFP_KERNEL);
+-		if (!xpad->bulk_out) {
+-			error = -ENOMEM;
+-			goto fail7;
+-		}
+-
+-		xpad->bdata = kzalloc(XPAD_PKT_LEN, GFP_KERNEL);
+-		if (!xpad->bdata) {
+-			error = -ENOMEM;
+-			goto fail8;
+-		}
+-
+-		xpad->bdata[2] = 0x08;
+-		switch (intf->cur_altsetting->desc.bInterfaceNumber) {
+-		case 0:
+-			xpad->bdata[3] = 0x42;
+-			break;
+-		case 2:
+-			xpad->bdata[3] = 0x43;
+-			break;
+-		case 4:
+-			xpad->bdata[3] = 0x44;
+-			break;
+-		case 6:
+-			xpad->bdata[3] = 0x45;
+-		}
+-
+-		ep_irq_in = &intf->cur_altsetting->endpoint[1].desc;
+-		if (usb_endpoint_is_bulk_out(ep_irq_in)) {
+-			usb_fill_bulk_urb(xpad->bulk_out, udev,
+-					  usb_sndbulkpipe(udev,
+-							  ep_irq_in->bEndpointAddress),
+-					  xpad->bdata, XPAD_PKT_LEN,
+-					  xpad_bulk_out, xpad);
+-		} else {
+-			usb_fill_int_urb(xpad->bulk_out, udev,
+-					 usb_sndintpipe(udev,
+-							ep_irq_in->bEndpointAddress),
+-					 xpad->bdata, XPAD_PKT_LEN,
+-					 xpad_bulk_out, xpad, 0);
+-		}
+-
+ 		/*
+ 		 * Submit the int URB immediately rather than waiting for open
+ 		 * because we get status messages from the device whether
+@@ -1290,13 +1218,11 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 		xpad->irq_in->dev = xpad->udev;
+ 		error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
+ 		if (error)
+-			goto fail9;
++			goto fail7;
+ 	}
+ 
+ 	return 0;
+ 
+- fail9:	kfree(xpad->bdata);
+- fail8:	usb_free_urb(xpad->bulk_out);
+  fail7:	input_unregister_device(input_dev);
+ 	input_dev = NULL;
+  fail6:	xpad_led_disconnect(xpad);
+@@ -1320,8 +1246,6 @@ static void xpad_disconnect(struct usb_interface *intf)
+ 	xpad_deinit_output(xpad);
+ 
+ 	if (xpad->xtype == XTYPE_XBOX360W) {
+-		usb_kill_urb(xpad->bulk_out);
+-		usb_free_urb(xpad->bulk_out);
+ 		usb_kill_urb(xpad->irq_in);
+ 	}
+ 
+@@ -1329,7 +1253,6 @@ static void xpad_disconnect(struct usb_interface *intf)
+ 	usb_free_coherent(xpad->udev, XPAD_PKT_LEN,
+ 			xpad->idata, xpad->idata_dma);
+ 
+-	kfree(xpad->bdata);
+ 	kfree(xpad);
+ 
+ 	usb_set_intfdata(intf, NULL);
 -- 
 2.17.1
 
