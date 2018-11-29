@@ -2,220 +2,237 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1469DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57533C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C954E20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C954E20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C9EF21019
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 20:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9EF21019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbeK3IGS (ORCPT
+        id S1726935AbeK3IG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:06:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48534 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726192AbeK3IGS (ORCPT
+        Fri, 30 Nov 2018 03:06:27 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33106 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeK3IG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:06:18 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATKwphn112329
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:59:35 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p2pm3tq32-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:59:34 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 29 Nov 2018 20:59:32 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 29 Nov 2018 20:59:26 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATKxPsF8520020
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 20:59:25 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D557FA405B;
-        Thu, 29 Nov 2018 20:59:25 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA5B0A405F;
-        Thu, 29 Nov 2018 20:59:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.103.235])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Nov 2018 20:59:23 +0000 (GMT)
-Subject: Re: [PATCH v8 04/14] integrity: Introduce struct evm_xattr
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
+        Fri, 30 Nov 2018 03:06:27 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so3151271otl.0;
+        Thu, 29 Nov 2018 12:59:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ecNpW9FlIciGr0ZOsxh0ds2o4ow6kp3tMqjNmA73Tx8=;
+        b=QG4gbN+xssrADVG+EmJcsYr6J2CES3Z5+lPJzLjdctj/BuHe6cxCljyfDOW6MuIJ/o
+         Sf1TZwRFREK5F0ztq3yJDChuqorWggRl/jdJIa7RizbYth0GloZx3MvX2LK+Gaisli61
+         ytTlnIA8Dj/lvvkjgjyhRRKfFb0aMG0nzdtYnT2LWsRdW0Q4JooO8NvTCD/tSzM69Gri
+         L31BgvgAOmfoEyQzVslkQQmZep35/oNd1DHuP70PAjWE5H56KBtkFis5diCCLtAfM2Oc
+         gjv2gLUCEYsoZ5iK8ILZ6P/AzkW8h7cFbFsUuDptkd+moDVmkpg8BodUGwamfa0bwIBl
+         FM8g==
+X-Gm-Message-State: AA+aEWYDFQuuJPQ8HY/hSqZzbY39f0WqeJJguTYhUMVB15V49G/wPEyC
+        gUUYuJAd5S6YLw3mGZWKhrkTPFRPAt0u6YfDzuw=
+X-Google-Smtp-Source: AFSGD/Vh4qwiAgQildcI7YIxZTJ6pIOCzXVz/p2mafnviiaX0K6dbaLL++RxEvI0SqP7zw3tCFTfuVGcUlgZbXZAiCg=
+X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr1776334otq.119.1543525183187;
+ Thu, 29 Nov 2018 12:59:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20181129155153.35840-1-mika.westerberg@linux.intel.com> <20181129155153.35840-2-mika.westerberg@linux.intel.com>
+In-Reply-To: <20181129155153.35840-2-mika.westerberg@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 29 Nov 2018 21:59:32 +0100
+Message-ID: <CAJZ5v0iCDWWSycJgs7srsYEputDxpoGQzf5ZO46BkWPNyHHghg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] PCI / ACPI: Identify untrusted PCI devices
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date:   Thu, 29 Nov 2018 15:59:12 -0500
-In-Reply-To: <20181116200712.14154-5-bauerman@linux.ibm.com>
-References: <20181116200712.14154-1-bauerman@linux.ibm.com>
-         <20181116200712.14154-5-bauerman@linux.ibm.com>
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>, ckellner@redhat.com,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112920-0028-0000-0000-000003238C40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112920-0029-0000-0000-000023DF9E7F
-Message-Id: <1543525152.3902.411.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811290175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-16 at 18:07 -0200, Thiago Jung Bauermann wrote:
-> Even though struct evm_ima_xattr_data includes a fixed-size array to hold a
-> SHA1 digest, most of the code ignores the array and uses the struct to mean
-> "type indicator followed by data of unspecified size" and tracks the real
-> size of what the struct represents in a separate length variable.
-> 
-> The only exception to that is the EVM code, which correctly uses the
-> definition of struct evm_ima_xattr_data.
-> 
-> So make this explicit in the code by removing the length specification from
-> the array in struct evm_ima_xattr_data. Also, change the name of the
-> element from digest to data since in most places the array doesn't hold a
-> digest.
-> 
-> A separate struct evm_xattr is introduced, with the original definition of
-> evm_ima_xattr_data to be used in the places that actually expect that
-> definition.
+On Thu, Nov 29, 2018 at 4:52 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> A malicious PCI device may use DMA to attack the system. An external
+> Thunderbolt port is a convenient point to attach such a device. The OS
+> may use IOMMU to defend against DMA attacks.
+>
+> Recent BIOSes with Thunderbolt ports mark these externally facing root
+> ports with this ACPI _DSD [1]:
+>
+>   Name (_DSD, Package () {
+>       ToUUID ("efcc06cc-73ac-4bc3-bff0-76143807c389"),
+>       Package () {
+>           Package () {"ExternalFacingPort", 1},
+>           Package () {"UID", 0 }
+>       }
+>   })
+>
+> If we find such a root port, mark it and all its children as untrusted.
+> The rest of the OS may use this information to enable DMA protection
+> against malicious devices. For instance the device may be put behind an
+> IOMMU to keep it from accessing memory outside of what the driver has
+> allocated for it.
+>
+> While at it, add a comment on top of prp_guids array explaining the
+> possible caveat resulting when these GUIDs are treated equivalent.
+>
+> [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
+>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-, specifically the EVM HMAC code.
-
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-
-Other than commenting the evm_xattr usage is limited to HMAC before
-the structure definition, this looks good.
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 > ---
->  security/integrity/evm/evm_main.c     | 8 ++++----
->  security/integrity/ima/ima_appraise.c | 7 ++++---
->  security/integrity/integrity.h        | 5 +++++
->  3 files changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 7f3f54d89a6e..a1b42d10efc7 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -169,7 +169,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
->  	/* check value type */
->  	switch (xattr_data->type) {
->  	case EVM_XATTR_HMAC:
-> -		if (xattr_len != sizeof(struct evm_ima_xattr_data)) {
-> +		if (xattr_len != sizeof(struct evm_xattr)) {
->  			evm_status = INTEGRITY_FAIL;
->  			goto out;
->  		}
-> @@ -179,7 +179,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
->  				   xattr_value_len, &digest);
->  		if (rc)
->  			break;
-> -		rc = crypto_memneq(xattr_data->digest, digest.digest,
-> +		rc = crypto_memneq(xattr_data->data, digest.digest,
->  				   SHA1_DIGEST_SIZE);
->  		if (rc)
->  			rc = -EINVAL;
-> @@ -523,7 +523,7 @@ int evm_inode_init_security(struct inode *inode,
->  				 const struct xattr *lsm_xattr,
->  				 struct xattr *evm_xattr)
->  {
-> -	struct evm_ima_xattr_data *xattr_data;
-> +	struct evm_xattr *xattr_data;
->  	int rc;
->  
->  	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
-> @@ -533,7 +533,7 @@ int evm_inode_init_security(struct inode *inode,
->  	if (!xattr_data)
->  		return -ENOMEM;
->  
-> -	xattr_data->type = EVM_XATTR_HMAC;
-> +	xattr_data->data.type = EVM_XATTR_HMAC;
->  	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
->  	if (rc < 0)
->  		goto out;
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index deec1804a00a..8bcef90939f8 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -167,7 +167,8 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->  		return sig->hash_algo;
->  		break;
->  	case IMA_XATTR_DIGEST_NG:
-> -		ret = xattr_value->digest[0];
-> +		/* first byte contains algorithm id */
-> +		ret = xattr_value->data[0];
->  		if (ret < HASH_ALGO__LAST)
->  			return ret;
->  		break;
-> @@ -175,7 +176,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->  		/* this is for backward compatibility */
->  		if (xattr_len == 21) {
->  			unsigned int zero = 0;
-> -			if (!memcmp(&xattr_value->digest[16], &zero, 4))
-> +			if (!memcmp(&xattr_value->data[16], &zero, 4))
->  				return HASH_ALGO_MD5;
->  			else
->  				return HASH_ALGO_SHA1;
-> @@ -274,7 +275,7 @@ int ima_appraise_measurement(enum ima_hooks func,
->  			/* xattr length may be longer. md5 hash in previous
->  			   version occupied 20 bytes in xattr, instead of 16
->  			 */
-> -			rc = memcmp(&xattr_value->digest[hash_start],
-> +			rc = memcmp(&xattr_value->data[hash_start],
->  				    iint->ima_hash->digest,
->  				    iint->ima_hash->length);
->  		else
-> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-> index e60473b13a8d..20ac02bf1b84 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -79,6 +79,11 @@ enum evm_ima_xattr_type {
->  
->  struct evm_ima_xattr_data {
->  	u8 type;
-> +	u8 data[];
-> +} __packed;
+>  drivers/acpi/property.c | 11 +++++++++++
+>  drivers/pci/pci-acpi.c  | 19 +++++++++++++++++++
+>  drivers/pci/probe.c     | 15 +++++++++++++++
+>  include/linux/pci.h     |  8 ++++++++
+>  4 files changed, 53 insertions(+)
+>
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 8c7c4583b52d..77abe0ec4043 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -24,6 +24,14 @@ static int acpi_data_get_property_array(const struct acpi_device_data *data,
+>                                         acpi_object_type type,
+>                                         const union acpi_object **obj);
+>
+> +/*
+> + * The GUIDs here are made equivalent to each other in order to avoid extra
+> + * complexity in the properties handling code, with the caveat that the
+> + * kernel will accept certain combinations of GUID and properties that are
+> + * not defined without a warning. For instance if any of the properties
+> + * from different GUID appear in a property list of another, it will be
+> + * accepted by the kernel. Firmware validation tools should catch these.
+> + */
+>  static const guid_t prp_guids[] = {
+>         /* ACPI _DSD device properties GUID: daffd814-6eba-4d8c-8a91-bc9bbf4aa301 */
+>         GUID_INIT(0xdaffd814, 0x6eba, 0x4d8c,
+> @@ -31,6 +39,9 @@ static const guid_t prp_guids[] = {
+>         /* Hotplug in D3 GUID: 6211e2c0-58a3-4af3-90e1-927a4e0c55a4 */
+>         GUID_INIT(0x6211e2c0, 0x58a3, 0x4af3,
+>                   0x90, 0xe1, 0x92, 0x7a, 0x4e, 0x0c, 0x55, 0xa4),
+> +       /* External facing port GUID: efcc06cc-73ac-4bc3-bff0-76143807c389 */
+> +       GUID_INIT(0xefcc06cc, 0x73ac, 0x4bc3,
+> +                 0xbf, 0xf0, 0x76, 0x14, 0x38, 0x07, 0xc3, 0x89),
+>  };
+>
+>  static const guid_t ads_guid =
+> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> index 921db6f80340..e1949f7efd9c 100644
+> --- a/drivers/pci/pci-acpi.c
+> +++ b/drivers/pci/pci-acpi.c
+> @@ -789,6 +789,24 @@ static void pci_acpi_optimize_delay(struct pci_dev *pdev,
+>         ACPI_FREE(obj);
+>  }
+>
+> +static void pci_acpi_set_untrusted(struct pci_dev *dev)
+> +{
+> +       u8 val;
 > +
-
-Please add a comment here saying that evm_xattr is limited to HMAC.
-
-> +struct evm_xattr {
-> +	struct evm_ima_xattr_data data;
->  	u8 digest[SHA1_DIGEST_SIZE];
->  } __packed;
->  
-
+> +       if (pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
+> +               return;
+> +       if (device_property_read_u8(&dev->dev, "ExternalFacingPort", &val))
+> +               return;
+> +
+> +       /*
+> +        * These root ports expose PCIe (including DMA) outside of the
+> +        * system so make sure we treat them and everything behind as
+> +        * untrusted.
+> +        */
+> +       if (val)
+> +               dev->untrusted = 1;
+> +}
+> +
+>  static void pci_acpi_setup(struct device *dev)
+>  {
+>         struct pci_dev *pci_dev = to_pci_dev(dev);
+> @@ -798,6 +816,7 @@ static void pci_acpi_setup(struct device *dev)
+>                 return;
+>
+>         pci_acpi_optimize_delay(pci_dev, adev->handle);
+> +       pci_acpi_set_untrusted(pci_dev);
+>
+>         pci_acpi_add_pm_notifier(adev, pci_dev);
+>         if (!adev->wakeup.flags.valid)
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b1c05b5054a0..257b9f6f2ebb 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1378,6 +1378,19 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+>         }
+>  }
+>
+> +static void set_pcie_untrusted(struct pci_dev *dev)
+> +{
+> +       struct pci_dev *parent;
+> +
+> +       /*
+> +        * If the upstream bridge is untrusted we treat this device
+> +        * untrusted as well.
+> +        */
+> +       parent = pci_upstream_bridge(dev);
+> +       if (parent && parent->untrusted)
+> +               dev->untrusted = true;
+> +}
+> +
+>  /**
+>   * pci_ext_cfg_is_aliased - Is ext config space just an alias of std config?
+>   * @dev: PCI device
+> @@ -1638,6 +1651,8 @@ int pci_setup_device(struct pci_dev *dev)
+>         /* Need to have dev->cfg_size ready */
+>         set_pcie_thunderbolt(dev);
+>
+> +       set_pcie_untrusted(dev);
+> +
+>         /* "Unknown power state" */
+>         dev->current_state = PCI_UNKNOWN;
+>
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 11c71c4ecf75..c786a2f27bee 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -396,6 +396,14 @@ struct pci_dev {
+>         unsigned int    is_hotplug_bridge:1;
+>         unsigned int    shpc_managed:1;         /* SHPC owned by shpchp */
+>         unsigned int    is_thunderbolt:1;       /* Thunderbolt controller */
+> +       /*
+> +        * Devices marked being untrusted are the ones that can potentially
+> +        * execute DMA attacks and similar. They are typically connected
+> +        * through external ports such as Thunderbolt but not limited to
+> +        * that. When an IOMMU is enabled they should be getting full
+> +        * mappings to make sure they cannot access arbitrary memory.
+> +        */
+> +       unsigned int    untrusted:1;
+>         unsigned int    __aer_firmware_first_valid:1;
+>         unsigned int    __aer_firmware_first:1;
+>         unsigned int    broken_intx_masking:1;  /* INTx masking can't be used */
+> --
+> 2.19.2
+>
