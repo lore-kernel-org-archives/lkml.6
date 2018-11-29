@@ -2,350 +2,199 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF256C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA07C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B2B2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:55:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REsFysyW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B2B2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F2ABD2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2ABD2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbeK3FBh (ORCPT
+        id S1726374AbeK3FEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 00:01:37 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36770 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbeK3FBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 00:01:36 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t13so2976034qtn.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:55:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bIrb+1cPZtYc5UGklcZt5k9ONQODYb3CUv1UGFlIJPM=;
-        b=REsFysyWNIfEsY8fb4s6u5AMGSAPFHJcEaB3+oKvUkO6DsUusyBciUg1dJeUF7uCPb
-         5T3EuPtNFQKiuC32x8sdSTKiC8znvpk9QEXwJcd7iCzmrtC21yvfFk/Sk5g/YlD1NE7B
-         lkMZvh9gUCuPRkl8jolXnYw2jX/d5Bu1gwopNeQY+4gTQEbyAzCs+Jivrx0XMFV7mFVr
-         uls70fHZexZs/KpI7UKPfQCbq5PG7IByiYgX5/yyV1lr713Klck9tzWPOD0fIXAfUuEb
-         y/oghtJmb3GoqcFbTlcpgytF0EDMHaHQaiSHCBibW68B/uHGTlX5POW8cp2YdKK+UrnG
-         xH3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bIrb+1cPZtYc5UGklcZt5k9ONQODYb3CUv1UGFlIJPM=;
-        b=RcztLg7o8LJf9lCFr+zF3CNT7JXpZCi58u2iB8/rQ2o+9BE+vVAA7w/uM8SwQ0CZQ0
-         C8+IrhW6PHhMZX7Q8NlUmlapnfBMYz+HioxmvgeKEg99f7vlJCWO+lObGWhoAx0L0RL2
-         J0U2etHBQLQjsA84rvkKjjdzn0usoaX23XW1Gn1xs2UeDImTzAFnuZLZa+vpXeMtzBsD
-         AGMQYLTd1t6H7daK0xS9hr6eeikJCm8IwTi67DFEzE7QyfQ9l7cEPC3XG6ZDdi43H1Ms
-         GuGpsVx28ZPoe4HP0fnf/B/EW6H7a60UkVdjrguzVUBYpFKSVt4uajGyfvHQbX/T2dZM
-         r2bw==
-X-Gm-Message-State: AA+aEWY8OQBjfw/F0SGltPPpHekeVzD0sQ1MMVrgtXjFcMi4efvaPfs8
-        9Id+9TTOxDKhTC7ezX9OuQ==
-X-Google-Smtp-Source: AFSGD/VpyyffQDt7xhnga1BUDEt8kOCJXAaa2UwLXJWzgyXrVFbtz3DmQBpUTp87Y+KduNDD5F4JMQ==
-X-Received: by 2002:ac8:17f0:: with SMTP id r45mr2358936qtk.206.1543514124295;
-        Thu, 29 Nov 2018 09:55:24 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a3sm1519149qta.21.2018.11.29.09.55.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 09:55:23 -0800 (PST)
-Date:   Thu, 29 Nov 2018 12:55:21 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v12 4/5] x86/boot: Parse SRAT table from RSDP and store
- immovable memory
-Message-ID: <20181129175520.xcmj3bv4yhdr7kk3@gabell>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-5-fanc.fnst@cn.fujitsu.com>
+        Fri, 30 Nov 2018 00:04:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbeK3FEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 00:04:42 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5E075307DABA;
+        Thu, 29 Nov 2018 17:58:30 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BC7141001F50;
+        Thu, 29 Nov 2018 17:58:26 +0000 (UTC)
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+ <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+ <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <aa425caf-a080-3b67-22eb-15c5b5bbad85@redhat.com>
+Date:   Thu, 29 Nov 2018 12:58:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129081631.11139-5-fanc.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181129172700.GA11632@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 29 Nov 2018 17:58:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 04:16:30PM +0800, Chao Fan wrote:
-> To fix the conflict between KASLR and memory-hotremove, SRAT table
-> should be parsed by RSDP pointer, then find the immovable
-> memory regions and store them in an array called immovable_mem[].
-> The array called immovable_mem[] will extern to KASLR, then
-> KASLR will avoid to extract kernel to these regions.
-> 
-> Add 'CONFIG_EARLY_PARSE_RSDP' which depends on RANDOMIZE_BASE &&
-> MEMORY_HOTREMOVE, cause only when both KASLR and memory-hotremove
-> are enabled, RSDP needs to be parsed in compressed period.
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/Kconfig                  |  10 +++
->  arch/x86/boot/compressed/Makefile |   2 +
->  arch/x86/boot/compressed/acpitb.c | 125 ++++++++++++++++++++++++++++++
->  arch/x86/boot/compressed/kaslr.c  |   4 -
->  arch/x86/boot/compressed/misc.h   |  20 +++++
->  5 files changed, 157 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index a29d49ef4d56..bc775968557b 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2146,6 +2146,16 @@ config X86_NEED_RELOCS
->  	def_bool y
->  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
->  
-
-> +config CONFIG_EARLY_PARSE_RSDP
-
-config EARLY_PARSE_RSDP
-
-> +	bool "Parse RSDP pointer on compressed period for KASLR"
-> +	def_bool n
-
-Should be def_bool y?
-It is better to enable EARLY_PARSE_RSDP by default if 
-RANDOMIZE_BASE and MEMORY_HOTREMOVE are enabled.
-
-> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
-> +	help
-> +	  This option parses RSDP pointer in compressed period. Works
-> +	  for KASLR to get memory information by SRAT table and choose
-> +	  immovable memory to extract kernel.
-> +	  Say Y if you want to use both KASLR and memory-hotremove.
-> +
->  config PHYSICAL_ALIGN
->  	hex "Alignment value to which kernel should be aligned"
->  	default "0x200000"
-> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-> index 466f66c8a7f8..4cbfb58bf083 100644
-> --- a/arch/x86/boot/compressed/Makefile
-> +++ b/arch/x86/boot/compressed/Makefile
-> @@ -84,6 +84,8 @@ ifdef CONFIG_X86_64
->  	vmlinux-objs-y += $(obj)/pgtable_64.o
->  endif
->  
-> +vmlinux-objs-$(CONFIG_EARLY_PARSE_RSDP) += $(obj)/acpitb.o
-> +
->  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
->  
->  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
-> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-> index 82d27c4b8978..023b33d0cd3b 100644
-> --- a/arch/x86/boot/compressed/acpitb.c
-> +++ b/arch/x86/boot/compressed/acpitb.c
-> @@ -195,3 +195,128 @@ static acpi_physical_address bios_get_rsdp_addr(void)
->  		return (acpi_physical_address)address;
->  	}
->  }
-> +
-> +/* Used to determine RSDP table, based on acpi_os_get_root_pointer(). */
-> +static acpi_physical_address get_rsdp_addr(void)
-> +{
-> +	acpi_physical_address pa = 0;
-> +
-> +	pa = get_acpi_rsdp();
-> +
-> +	if (!pa)
-> +		pa = efi_get_rsdp_addr();
-> +
-> +	if (!pa)
-> +		pa = bios_get_rsdp_addr();
-> +
-> +	return pa;
-> +}
-> +
-> +/* Compute SRAT table from RSDP. */
-> +static struct acpi_table_header *get_acpi_srat_table(void)
-> +{
-> +	acpi_physical_address acpi_table;
-> +	acpi_physical_address root_table;
-> +	struct acpi_table_header *header;
-> +	struct acpi_table_rsdp *rsdp;
-> +	int num_entries;
-> +	char arg[10];
-> +	u8 *entry;
-> +	u32 size;
-> +	u32 len;
-> +
-> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
-> +	if (!rsdp)
-> +		return NULL;
-> +
-> +	/* Get RSDT or XSDT from RSDP. */
-
-> +	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
-> +	    !strncmp(arg, "rsdt", 4)) &&
-> +	    rsdp->xsdt_physical_address &&
-> +	    rsdp->revision > 1) {
-> +		root_table = rsdp->xsdt_physical_address;
-> +		size = ACPI_XSDT_ENTRY_SIZE;
-> +	} else {
-> +		root_table = rsdp->rsdt_physical_address;
-> +		size = ACPI_RSDT_ENTRY_SIZE;
-> +	}
-> +
-> +	/* Get ACPI root table from RSDT or XSDT.*/
-> +	header = (struct acpi_table_header *)root_table;
-> +	if (!header)
-> +		return NULL;
-> +
-> +	len = header->length;
-> +	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
-
-> +	if (num_entries > MAX_ACPI_SIG)
-> +		return NULL;
-
-I think this check isn't needed...
-
-> +
-> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
-> +
-> +	while (num_entries--) {
-> +		u64 address64;
-> +
-> +		if (size == ACPI_RSDT_ENTRY_SIZE)
-> +			acpi_table = ((acpi_physical_address)
-> +				      (*ACPI_CAST_PTR(u32, entry)));
-> +		else {
-> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
-> +			acpi_table = (acpi_physical_address) address64;
-> +		}
-> +
-> +		if (acpi_table) {
-> +			header = (struct acpi_table_header *)acpi_table;
-> +
-> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
-> +				return header;
-> +		}
-> +		entry += size;
-> +	}
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * According to ACPI table, filter the immovable memory regions
-> + * and store them in immovable_mem[].
-> + */
-> +void get_immovable_mem(void)
-> +{
-> +	struct acpi_table_header *table_header;
-> +	struct acpi_subtable_header *table;
-> +	struct acpi_srat_mem_affinity *ma;
-> +	unsigned long table_end;
-> +	char arg[10];
-> +	int i = 0;
-> +
-> +	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-> +	    !strncmp(arg, "off", 3))
-> +		return;
-> +
-> +	table_header = get_acpi_srat_table();
-> +	if (!table_header)
-> +		return;
-> +
-> +	table_end = (unsigned long)table_header + table_header->length;
-> +	table = (struct acpi_subtable_header *)
-> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
-> +
-> +	while (((unsigned long)table) +
-> +		       sizeof(struct acpi_subtable_header) < table_end) {
-> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
-> +			ma = (struct acpi_srat_mem_affinity *)table;
-> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
-> +				immovable_mem[i].start = ma->base_address;
-> +				immovable_mem[i].size = ma->length;
-> +				i++;
-> +			}
-> +
-> +			if (i >= MAX_NUMNODES*2) {
-> +				debug_putstr("Too many immovable memory regions, aborting.\n");
-> +				return;
-> +			}
-> +		}
-> +		table = (struct acpi_subtable_header *)
-> +			((unsigned long)table + table->length);
-> +	}
-> +	num_immovable_mem = i;
-> +}
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index 9ed9709d9947..b251572e77af 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
->  #define KASLR_COMPRESSED_BOOT
->  #include "../../lib/kaslr.c"
->  
-> -struct mem_vector {
-> -	unsigned long long start;
-> -	unsigned long long size;
-> -};
->  
->  /* Only supporting at most 4 unusable memmap regions with kaslr */
->  #define MAX_MEMMAP_REGIONS	4
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index 809c31effa4b..d94e2a419c13 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
->  			    unsigned long *output,
->  			    unsigned long output_size,
->  			    unsigned long *virt_addr);
-> +struct mem_vector {
-> +	unsigned long long start;
-> +	unsigned long long size;
-> +};
-> +
->  /* cpuflags.c */
->  bool has_cpuflag(int flag);
->  #else
-> @@ -118,5 +123,20 @@ void set_sev_encryption_mask(void);
->  #endif
->  
->  /* acpitb.c */
-> +#ifdef CONFIG_RANDOMIZE_BASE
-> +/* Store the amount of immovable memory regions */
-> +int num_immovable_mem;
-> +#endif
-> +
-> +#ifdef CONFIG_EARLY_PARSE_RSDP
-> +void get_immovable_mem(void);
-
-> +/* There are 72 kinds of ACPI_SIG in head file of ACPI. */
-> +#define MAX_ACPI_SIG	72
-
-The 72 isn't the specification of ACPI, right? So the number
-of SIG may increase and decrease in the future.
-This macro and the check I commented above isn't needed...
-
-Thanks,
-Masa
-
-> +#else
-> +static void get_immovable_mem(void)
-> +{
-> +}
-> +#endif
-> +
->  #define BOOT_STRING
->  extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
-> -- 
-> 2.19.1
-> 
-> 
-> 
+T24gMTEvMjkvMjAxOCAxMjoyNyBQTSwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6Cj4gT24gVGh1
+LCBOb3YgMjksIDIwMTggYXQgMTI6MDI6MTlQTSAtMDUwMCwgV2FpbWFuIExvbmcgd3JvdGU6
+Cj4+IE9uIDExLzI5LzIwMTggMTE6MDYgQU0sIFBldGVyIFppamxzdHJhIHdyb3RlOgo+Pj4g
+V2h5OyBhdCB0aGF0IHBvaW50IHdlIGtub3cgdGhlIHdha2V1cCB3aWxsIGhhcHBlbiBhZnRl
+ciwgd2hpY2ggaXMgYWxsIHdlCj4+PiByZXF1aXJlLgo+Pj4KPj4gVGhyZWFkIDHCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgVGhyZWFkIDLCoMKgwqDCoMKgIFRocmVhZCAzCj4+Cj4+IMKgwqDCoCByd3NlbV9k
+b3duX3JlYWRfZmFpbGVkKCkKPj4gwqByYXdfc3Bpbl9sb2NrX2lycSgmc2VtLT53YWl0X2xv
+Y2spOwo+PiDCoGxpc3RfYWRkX3RhaWwoJndhaXRlci5saXN0LCAmd2FpdF9saXN0KTsKPj4g
+wqByYXdfc3Bpbl91bmxvY2tfaXJxKCZzZW0tPndhaXRfbG9jayk7Cj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9fcndzZW1f
+bWFya193YWtlKCk7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgd2FrZV9xX2FkZCgpOwo+PiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHdha2VfdXBfcSgpOwo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdhaXRlci0+dGFzayA9Cj4+IE5V
+TEw7IC0tKwo+PiDCoHdoaWxlICh0cnVlKQo+PiB7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+
+PiDCoAo+PiBzZXRfY3VycmVudF9zdGF0ZShUQVNLX1VOSU5URVJSVVBUSUJMRSk7wqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAKPj4gfAo+PiDCoCBpZiAoIXdhaXRlci50YXNrKSAvLwo+PiBmYWxz
+ZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4+
+IMKgwqDCoMKgwqAKPj4gYnJlYWs7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+PiDC
+oAo+PiBzY2hlZHVsZSgpO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+PiB8Cj4+IMKgfcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPj4gPC0tLS0tKwo+PiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3YWtl
+X3VwX3EoJndha2VfcSk7Cj4gSSB0aGluayB0aGF0IHRoaW5nIGlzIGhvcnJpYmx5IHdoaXRl
+c3BhY2UgZGFtYW5hZ2VkLiBBdCBsZWFzdCwgaXQncyBub3QKPiBtYWtpbmcgc2Vuc2UgdG8g
+bWUuCgpJIGFtIHNvcnJ5LiBJdCB3YXMgbGluZS13cmFwcGVkIGJ5IG15IGVtYWlsIGNsaWVu
+dC4gVGhlIGNoYXJ0IHdhcwoKVGhyZWFkIDHCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBUaHJlYWQgMsKgwqDCoMKgwqAgVGhyZWFkIDMKwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkb3duX3dyaXRlKCk7CnJ3c2VtX2Rvd25fcmVh
+ZF9mYWlsZWQoKQrCoHJhd19zcGluX2xvY2tfaXJxKCZzZW0tPndhaXRfbG9jayk7CsKgbGlz
+dF9hZGRfdGFpbCgmd2FpdGVyLmxpc3QsICZ3YWl0X2xpc3QpOwrCoHJhd19zcGluX3VubG9j
+a19pcnEoJnNlbS0+d2FpdF9sb2NrKTsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBfX3J3c2VtX21hcmtfd2FrZSgpOwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgd2FrZV9xX2FkZCgpOwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgd2FrZV91cF9xKCk7CsKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3YWl0ZXItPnRhc2sgPSBOVUxMOy0rCsKgd2hp
+bGUgKHRydWUpIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfArCoCBzZXRfY3VycmVudF9zdGF0ZShUQVNLX1VOSU5URVJSVVBUSUJMRSk7wqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKwqAgaWYg
+KCF3YWl0ZXIudGFzaykgLy8gZmFsc2XCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKwqDCoMKg
+wqDCoCBicmVhazvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgfArCoCBzY2hlZHVsZSgpO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfArCoH3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwtKwrC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdha2VfdXBfcSgmd2FrZV9xKTsK
+Cj4+IE9LLCBJIGdvdCBjb25mdXNlZCBieSB0aGUgdGhyZWFkIHJhY2luZyBjaGFydCBzaG93
+biBpbiB0aGUgcGF0Y2guIEl0Cj4+IHdpbGwgYmUgY2xlYXJlciBpZiB0aGUgY2xlYXJpbmcg
+b2Ygd2FpdGVyLT50YXNrIGlzIG1vdmVkIGRvd24gYXMgc2hvd24uCj4+IE90aGVyd2lzZSwg
+bW92aW5nIHRoZSBjbGVhcmluZyBvZiB3YWl0ZXItPnRhc2sgYmVmb3JlIHdha2VfcV9hZGQo
+KSB3b24ndAo+PiBtYWtlIGEgZGlmZmVyZW5jZS4gU28gdGhlIHBhdGNoIGNhbiBiZSBhIHBv
+c3NpYmxlIGZpeC4KPj4KPj4gU3RpbGwgd2UgYXJlIHRhbGtpbmcgYWJvdXQgMyB0aHJlYWRz
+IHJhY2luZyB3aXRoIGVhY2ggb3RoZXIuIFRoZQo+PiBjbGVhcmluZyBvZiB3YWtlX3EubmV4
+dCBpbiB3YWtlX3VwX3EoKSBpcyBub3QgYXRvbWljIGFuZCBpdCBpcyBoYXJkIHRvCj4+IHBy
+ZWRpY3QgdGhlIHJhY2luZyByZXN1bHQgb2YgdGhlIGNvbmN1cnJlbnQgd2FrZV9xIG9wZXJh
+dGlvbnMgYmV0d2Vlbgo+PiB0aHJlYWRzIDIgYW5kIDMuIFRoZSBlc3NlbmNlIG9mIG15IHRl
+bnRhdGl2ZSBwYXRjaCBpcyB0byBwcmV2ZW50IHRoZQo+PiBjb25jdXJyZW50IHdha2VfcSBv
+cGVyYXRpb25zIGluIHRoZSBmaXJzdCBwbGFjZS4KPiB3YWtlX3VwX3EoKSBzaG91bGQsIHBl
+ciB0aGUgYmFycmllcnMgaW4gd2FrZV91cF9wcm9jZXNzLCBlbnN1cmUgdGhhdCBpZgo+IHdh
+a2VfYV9hZGQoKSBmYWlscywgdGhlcmUgd2lsbCBiZSBhIHdha2V1cCBvZiB0aGF0IHRhc2sg
+YWZ0ZXIgdGhhdAo+IHBvaW50Lgo+Cj4gU28gaWYgd2UgcHV0IHdha2VfdXBfcSgpIGF0IHRo
+ZSBsb2NhdGlvbiB3aGVyZSB3YWtlX3VwX3Byb2Nlc3MoKSBzaG91bGQKPiBiZSwgaXQgc2hv
+dWxkIGFsbCB3b3JrLgo+Cj4gVGhlIGJ1ZyBpbiBxdWVzdGlvbiBpcyB0aGF0IGl0IGNhbiBo
+YXBwZW4gYXQgYW55IHRpbWUgYWZ0ZXIKPiB3YWtlX3FfYWRkKCksIG5vdCBuZWNlc3Nhcmls
+eSBhdCB3YWtlX3VwX3EoKS4KCk9LLCB5b3UgY29udmluY2VkIG1lLiBIb3dldmVyLCB0aGF0
+IGNhbiBzdGlsbCBsZWFkIHRvIGFub255bW91cyB3YWtldXBzCnRoYXQgY2FuIGJlIHByb2Js
+ZW1hdGljIGlmIGl0IGhhcHBlbnMgaW4gY2VydGFpbiBwbGFjZXMuIFNob3VsZCB3ZSB0cnkK
+dG8gcmVkdWNlIGFub255bW91cyB3YWtldXAgYXMgbXVjaCBhcyBwb3NzaWJsZT8KCkNoZWVy
+cywKTG9uZ21hbgoK
