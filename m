@@ -2,53 +2,179 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C0DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDBFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100642145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100642145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 976952145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 17:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976952145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbeK3EIJ (ORCPT
+        id S1730322AbeK3EIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 23:08:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:44714 "EHLO newverein.lst.de"
+        Thu, 29 Nov 2018 23:08:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55242 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729818AbeK3EIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:08:09 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 6208268B02; Thu, 29 Nov 2018 18:02:06 +0100 (CET)
-Date:   Thu, 29 Nov 2018 18:02:06 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20181129170206.GA27951@lst.de>
-References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de> <87zhttfonk.fsf@concordia.ellerman.id.au>
+        id S1729818AbeK3EIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:08:23 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E95272D808;
+        Thu, 29 Nov 2018 17:02:20 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC51161530;
+        Thu, 29 Nov 2018 17:02:19 +0000 (UTC)
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        xieyongji@baidu.com, zhangyu31@baidu.com, liuqi16@baidu.com,
+        yuanlinsi01@baidu.com, nixun@baidu.com, lilin24@baidu.com,
+        Davidlohr Bueso <dave@stgolabs.net>
+References: <1543495830-2644-1-git-send-email-xieyongji@baidu.com>
+ <20181129131232.GN2131@hirez.programming.kicks-ass.net>
+ <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
+ <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
+Date:   Thu, 29 Nov 2018 12:02:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhttfonk.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181129160627.GU2131@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Nov 2018 17:02:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 10:05:19PM +1100, Michael Ellerman wrote:
-> Is the plan that you take these via the dma-mapping tree or that they go
-> via powerpc?
-
-In principle either way is fine with me.  If it goes through the powerpc
-tree we might run into a few minor conflicts with the dma-mapping tree
-depending on how some of the current discussions go.
+T24gMTEvMjkvMjAxOCAxMTowNiBBTSwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6Cj4gT24gVGh1
+LCBOb3YgMjksIDIwMTggYXQgMTA6MjE6NThBTSAtMDUwMCwgV2FpbWFuIExvbmcgd3JvdGU6
+Cj4KPj4+PiBkaWZmIC0tZ2l0IGEva2VybmVsL2xvY2tpbmcvcndzZW0teGFkZC5jIGIva2Vy
+bmVsL2xvY2tpbmcvcndzZW0teGFkZC5jCj4+Pj4gaW5kZXggMDliMTgwMC4uNTBkOWFmNiAx
+MDA2NDQKPj4+PiAtLS0gYS9rZXJuZWwvbG9ja2luZy9yd3NlbS14YWRkLmMKPj4+PiArKysg
+Yi9rZXJuZWwvbG9ja2luZy9yd3NlbS14YWRkLmMKPj4+PiBAQCAtMTk4LDE1ICsxOTgsMjIg
+QEAgc3RhdGljIHZvaWQgX19yd3NlbV9tYXJrX3dha2Uoc3RydWN0IHJ3X3NlbWFwaG9yZSAq
+c2VtLAo+Pj4+ICAJCXdva2VuKys7Cj4+Pj4gIAkJdHNrID0gd2FpdGVyLT50YXNrOwo+Pj4+
+ICAKPj4+PiAtCQl3YWtlX3FfYWRkKHdha2VfcSwgdHNrKTsKPj4+PiArCQlnZXRfdGFza19z
+dHJ1Y3QodHNrKTsKPj4+PiAgCQlsaXN0X2RlbCgmd2FpdGVyLT5saXN0KTsKPj4+PiAgCQkv
+Kgo+Pj4+IC0JCSAqIEVuc3VyZSB0aGF0IHRoZSBsYXN0IG9wZXJhdGlvbiBpcyBzZXR0aW5n
+IHRoZSByZWFkZXIKPj4+PiArCQkgKiBFbnN1cmUgY2FsbGluZyBnZXRfdGFza19zdHJ1Y3Qo
+KSBiZWZvcmUgc2V0dGluZyB0aGUgcmVhZGVyCj4+Pj4gIAkJICogd2FpdGVyIHRvIG5pbCBz
+dWNoIHRoYXQgcndzZW1fZG93bl9yZWFkX2ZhaWxlZCgpIGNhbm5vdAo+Pj4+ICAJCSAqIHJh
+Y2Ugd2l0aCBkb19leGl0KCkgYnkgYWx3YXlzIGhvbGRpbmcgYSByZWZlcmVuY2UgY291bnQK
+Pj4+PiAgCQkgKiB0byB0aGUgdGFzayB0byB3YWtldXAuCj4+Pj4gIAkJICovCj4+Pj4gIAkJ
+c21wX3N0b3JlX3JlbGVhc2UoJndhaXRlci0+dGFzaywgTlVMTCk7Cj4+Pj4gKwkJLyoKPj4+
+PiArCQkgKiBFbnN1cmUgaXNzdWluZyB0aGUgd2FrZXVwIChlaXRoZXIgYnkgdXMgb3Igc29t
+ZW9uZSBlbHNlKQo+Pj4+ICsJCSAqIGFmdGVyIHNldHRpbmcgdGhlIHJlYWRlciB3YWl0ZXIg
+dG8gbmlsLgo+Pj4+ICsJCSAqLwo+Pj4+ICsJCXdha2VfcV9hZGQod2FrZV9xLCB0c2spOwo+
+Pj4+ICsJCS8qIHdha2VfcV9hZGQoKSBhbHJlYWR5IHRha2UgdGhlIHRhc2sgcmVmICovCj4+
+Pj4gKwkJcHV0X3Rhc2tfc3RydWN0KHRzayk7Cj4+Pj4gIAl9Cj4+Pj4gIAo+Pj4+ICAJYWRq
+dXN0bWVudCA9IHdva2VuICogUldTRU1fQUNUSVZFX1JFQURfQklBUyAtIGFkanVzdG1lbnQ7
+Cj4+IEkgZG91YnQgcHV0dGluZyB3YWtlX3FfYWRkKCkgYWZ0ZXIgY2xlYXJpbmcgd2FpdGVy
+LT50YXNrIGNhbiByZWFsbHkgZml4Cj4gV2h5OyBhdCB0aGF0IHBvaW50IHdlIGtub3cgdGhl
+IHdha2V1cCB3aWxsIGhhcHBlbiBhZnRlciwgd2hpY2ggaXMgYWxsIHdlCj4gcmVxdWlyZS4K
+Pgo+CgpUaHJlYWQgMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUaHJlYWQgMsKgwqDCoMKgwqAgVGhyZWFkIDMK
+CsKgwqDCoCByd3NlbV9kb3duX3JlYWRfZmFpbGVkKCkKwqByYXdfc3Bpbl9sb2NrX2lycSgm
+c2VtLT53YWl0X2xvY2spOwrCoGxpc3RfYWRkX3RhaWwoJndhaXRlci5saXN0LCAmd2FpdF9s
+aXN0KTsKwqByYXdfc3Bpbl91bmxvY2tfaXJxKCZzZW0tPndhaXRfbG9jayk7CsKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9fcndz
+ZW1fbWFya193YWtlKCk7CsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgd2FrZV9xX2FkZCgpOwrCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHdha2VfdXBfcSgpOwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdhaXRlci0+dGFzayA9Ck5VTEw7IC0tKwrC
+oHdoaWxlICh0cnVlKQp7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfArCoApzZXRfY3VycmVudF9z
+dGF0ZShUQVNLX1VOSU5URVJSVVBUSUJMRSk7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKfArCoCBp
+ZiAoIXdhaXRlci50YXNrKSAvLwpmYWxzZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB8CsKgwqDCoMKgwqAKYnJlYWs7wqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgfArCoApzY2hlZHVsZSgpO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAp8
+CsKgfcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPC0tLS0tKwrCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3YWtl
+X3VwX3EoJndha2VfcSk7CgpPSywgSSBnb3QgY29uZnVzZWQgYnkgdGhlIHRocmVhZCByYWNp
+bmcgY2hhcnQgc2hvd24gaW4gdGhlIHBhdGNoLiBJdAp3aWxsIGJlIGNsZWFyZXIgaWYgdGhl
+IGNsZWFyaW5nIG9mIHdhaXRlci0+dGFzayBpcyBtb3ZlZCBkb3duIGFzIHNob3duLgpPdGhl
+cndpc2UsIG1vdmluZyB0aGUgY2xlYXJpbmcgb2Ygd2FpdGVyLT50YXNrIGJlZm9yZSB3YWtl
+X3FfYWRkKCkgd29uJ3QKbWFrZSBhIGRpZmZlcmVuY2UuIFNvIHRoZSBwYXRjaCBjYW4gYmUg
+YSBwb3NzaWJsZSBmaXguCgpTdGlsbCB3ZSBhcmUgdGFsa2luZyBhYm91dCAzIHRocmVhZHMg
+cmFjaW5nIHdpdGggZWFjaCBvdGhlci4gVGhlCmNsZWFyaW5nIG9mIHdha2VfcS5uZXh0IGlu
+IHdha2VfdXBfcSgpIGlzIG5vdCBhdG9taWMgYW5kIGl0IGlzIGhhcmQgdG8KcHJlZGljdCB0
+aGUgcmFjaW5nIHJlc3VsdCBvZiB0aGUgY29uY3VycmVudCB3YWtlX3Egb3BlcmF0aW9ucyBi
+ZXR3ZWVuCnRocmVhZHMgMiBhbmQgMy4gVGhlIGVzc2VuY2Ugb2YgbXkgdGVudGF0aXZlIHBh
+dGNoIGlzIHRvIHByZXZlbnQgdGhlCmNvbmN1cnJlbnQgd2FrZV9xIG9wZXJhdGlvbnMgaW4g
+dGhlIGZpcnN0IHBsYWNlLgoKQ2hlZXJzLApMb25nbWFuCgoKClRoZSBzZWNvbmQgd2FrZV9x
+X2FkZCgpIGFib3ZlIHdpbGwgZmFpbCB0byBhZGQgdGhlIHRhc2sgdG8gdGhlIHNlY29uZAp3
+YWtlX3EgYmVjYXVzZSBpdCBpcyBzdGlsbCBpbiB0aGUgZmlyc3Qgd2FrZV9xLiBTbyB0aGUg
+c2Vjb25kCndha2VfdXBfcSgpIHdpbGwgbm90IHdha2UgdXAgdGhlIHRhc2sgYmVjYXVzZSBp
+dCBpcyBub3QgaW4gaXRzIHdha2VfcS4KCkNoZWVycywKTG9uZ21hbgoKCg==
