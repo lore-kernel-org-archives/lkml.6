@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74498C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B61C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FADD2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4557521473
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6eTsylP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FADD2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gifOcTOM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4557521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387493AbeK3BcW (ORCPT
+        id S2387507AbeK3BcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:32:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60444 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:32:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731758AbeK3BcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:32:21 -0500
+        id S1731758AbeK3BcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:32:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CFC1213A2;
-        Thu, 29 Nov 2018 14:26:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5E75213A2;
+        Thu, 29 Nov 2018 14:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501608;
-        bh=/BvzpZENmPifSNh770tpLP6tzJBeZckolCQ6U6aV0hY=;
+        s=default; t=1543501611;
+        bh=EjyD5ItF790zzMwiw08SUObFOQxOi6FFODmYdi/mlPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6eTsylPIDUgKka9+q1nk83pEtqbM4uHhM3cHOkNxE6AxE1aqsSU82x5c9KZ1M+Pj
-         fR0ZukInyFKfP/tl8DDS556MDPPWvZcpj9hY3XOElJroWJhyw3RS4MikYDkz1xgo9x
-         wS3z50eVaaf++FPrnY8q7gX9t5P8LTin7pz8+THc=
+        b=gifOcTOMXu6a2JMZpaDC04McvFBjZ2G1BmRoV4iBvLT6MhS0PizT9uO9lT3udhV/c
+         mdZDBpa33F/i1XE2n096Se5annM2YJ0S9pw/XeEw3LAn/nrsLGrjqBC16r0NroxwkU
+         amUsKVEm2N8vDxj2YubgHssu5ILIjjVf/vw2XrsU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Junzhi Zhao <junzhi.zhao@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        CK Hu <ck.hu@mediatek.com>, David Airlie <airlied@linux.ie>,
         Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 067/100] net: bcmgenet: fix OF child-node lookup
-Date:   Thu, 29 Nov 2018 15:12:37 +0100
-Message-Id: <20181129140104.702561383@linuxfoundation.org>
+Subject: [PATCH 4.14 068/100] drm/mediatek: fix OF sibling-node lookup
+Date:   Thu, 29 Nov 2018 15:12:38 +0100
+Message-Id: <20181129140104.781890622@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
 References: <20181129140058.768942700@linuxfoundation.org>
@@ -64,41 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d397dbe606120a1ea1b11b0020c3f7a3852da5ac ]
+[ Upstream commit ceff2f4dcd44abf35864d9a99f85ac619e89a01d ]
 
-Use the new of_get_compatible_child() helper to lookup the mdio child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+Use the new of_get_compatible_child() helper to lookup the sibling
+instead of using of_find_compatible_node(), which searches the entire
+tree from a given start node and thus can return an unrelated (i.e.
+non-sibling) node.
 
 This also addresses a potential use-after-free (e.g. after probe
 deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
+argument (i.e. the parent device node).
 
-Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: David S. Miller <davem@davemloft.net>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+While at it, also fix the related cec-node reference leak.
+
+Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
+Cc: stable <stable@vger.kernel.org>     # 4.8
+Cc: Junzhi Zhao <junzhi.zhao@mediatek.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: CK Hu <ck.hu@mediatek.com>
+Cc: David Airlie <airlied@linux.ie>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmmii.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index abbd2894f870..c421e2753c8c 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -360,7 +360,7 @@ static struct device_node *bcmgenet_mii_of_find_mdio(struct bcmgenet_priv *priv)
- 	if (!compat)
- 		return NULL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 690c67507cbc..aba27ea9cea5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1446,8 +1446,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+ 	}
  
--	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
-+	priv->mdio_dn = of_get_compatible_child(dn, compat);
- 	kfree(compat);
- 	if (!priv->mdio_dn) {
- 		dev_err(kdev, "unable to find MDIO bus node\n");
+ 	/* The CEC module handles HDMI hotplug detection */
+-	cec_np = of_find_compatible_node(np->parent, NULL,
+-					 "mediatek,mt8173-cec");
++	cec_np = of_get_compatible_child(np->parent, "mediatek,mt8173-cec");
+ 	if (!cec_np) {
+ 		dev_err(dev, "Failed to find CEC node\n");
+ 		return -EINVAL;
+@@ -1457,8 +1456,10 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+ 	if (!cec_pdev) {
+ 		dev_err(hdmi->dev, "Waiting for CEC device %pOF\n",
+ 			cec_np);
++		of_node_put(cec_np);
+ 		return -EPROBE_DEFER;
+ 	}
++	of_node_put(cec_np);
+ 	hdmi->cec_dev = &cec_pdev->dev;
+ 
+ 	/*
 -- 
 2.17.1
 
