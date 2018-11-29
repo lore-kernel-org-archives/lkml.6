@@ -2,296 +2,140 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEFEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6F2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2302146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC98C20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 10:43:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ua1Pr3tS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2302146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="CF2/f0BT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC98C20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeK2VsU (ORCPT
+        id S1728005AbeK2Vsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 16:48:20 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:33392 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbeK2VsU (ORCPT
+        Thu, 29 Nov 2018 16:48:39 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:37720 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeK2Vsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:48:20 -0500
-Received: by mail-it1-f193.google.com with SMTP id m8so7091068itk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 02:43:23 -0800 (PST)
+        Thu, 29 Nov 2018 16:48:39 -0500
+X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
+   d="scan'208";a="23646942"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Nov 2018 03:43:43 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 29 Nov 2018 03:43:43 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W43hL2jxdV8AviS5wnWHYTM9XjIWPe0lzZEOvGfc1wE=;
-        b=Ua1Pr3tSIgzmkZSoujH70qmcJOcIvA3QzeNR0GqoXVl8FbIJyyiBdP1k5KQNpvNRBZ
-         wlYZklPBe/IlTHOXFXo8WQlGIapQUPBOalR8Eq+Gikh8Xf3oE5iAnuhLuofhTj+5ITF7
-         vbuHTpKlGt1lbIHV521bUlUmd/u3SnCS9udsE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W43hL2jxdV8AviS5wnWHYTM9XjIWPe0lzZEOvGfc1wE=;
-        b=dd/rHa72BdyHHOXlbx/zKex8sG7qkg25OuzF7FYDL8YGZEcqN0gaESgIr7jRZDyQRe
-         tSKp9RfSb346MwFEkdzGDUnT/MPFrZANTWUyY1DpTvvG7Zfc3+HABot+zQkxDQZ4RK9l
-         VJ5odHJXWNQBQkccPDltrcATZGjGIPsXNM9/z8TQGaj46nmkN2DOn7CRfeNNHjC/EUbH
-         g9sLnaLqJ724/Xt2FJziDCmkeT0Eo09kKjAL7EyaeXAxJMHtNu9MobRUVYFcTQ+EWxtR
-         bI3zVsmozgLFrWKRVud/6I18Ui1wD28dO3dSB7iOfwzC2k6MtZCT+SiC8Or6iR2ixUmo
-         lhFQ==
-X-Gm-Message-State: AA+aEWYd/FpmgwAmdfdZ52GB7M9aY2bPEdnN1CG/lfMLbIrLrZcBwAPz
-        TCs4cB3q1F102+JQBpjyPy7IaTwO+5hVdBwJ49WUIg==
-X-Google-Smtp-Source: AFSGD/UQ9RxgYaZGivOr3mJrEfoYd4l+d2efCy5VqAqLzyFeFWXRdDmSCBWwcNHkr94P5rMk6WeGcmJRqQTqL3933HU=
-X-Received: by 2002:a24:6f42:: with SMTP id x63mr979083itb.152.1543488203263;
- Thu, 29 Nov 2018 02:43:23 -0800 (PST)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VP4slUa6YwhpC1O47SZdnXRRsJy6Ko4ZY73t64cUNrw=;
+ b=CF2/f0BTqQVM67RV20v4Sn/1bs7Jx0Y14k3meD+323MZoyyjel4fgjcp6Lnz09StDLb5XySk546Nj/QHK1kZ35nlg+o7HvnSqdo2w+TF7cyYwezRwtDpupCxAiTP/mh83rzFDSKITpAXYiLF2eZPgXSJi8myRf2SaBsbEsCv6nE=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0824.namprd11.prod.outlook.com (10.163.112.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.18; Thu, 29 Nov 2018 10:43:41 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1361.019; Thu, 29 Nov 2018
+ 10:43:41 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <harinik@xilinx.com>
+CC:     <harini.katakam@xilinx.com>, <Nicolas.Ferre@microchip.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <michal.simek@xilinx.com>
+Subject: Re: [RFC PATCH] net: macb: Apply RXUBR workaround only to versions
+ with errata
+Thread-Topic: [RFC PATCH] net: macb: Apply RXUBR workaround only to versions
+ with errata
+Thread-Index: AQHUh804bu3Co8uTGEqCd0JItPQ7vKVmj6eAgAABfoA=
+Date:   Thu, 29 Nov 2018 10:43:41 +0000
+Message-ID: <fbd59625-b36b-76f3-6f88-78efe901f67a@microchip.com>
+References: <1542967157-8053-1-git-send-email-harini.katakam@xilinx.com>
+ <b838b826-9395-fbe9-1b4c-34be574b33cf@microchip.com>
+ <CAFcVECKw0utBH6-owf-0C1M07Tr2tH3Gu=X7cp04XuvXWHoJiA@mail.gmail.com>
+In-Reply-To: <CAFcVECKw0utBH6-owf-0C1M07Tr2tH3Gu=X7cp04XuvXWHoJiA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P189CA0021.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:802:2a::34) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0824;6:sxJvPtn9EiG2YS6DJAIgQAA8bnVboawuwRPOMiOXJ//pT8Yugq26VBlMduoE+X62KV6JduOtgaYkMp0i0r7KpkOBhs5VXnIVvbKDleEoSZz0UBfCsv5uhpXovYgUQT3nrclSpoBO/IJ9a9guxmcv6N/5ZqPv2+f4FC/VCuOkA0RiKVf/j6OIDohu28823fJYTSgj0gTyprzxnFcWTIc+XdDSB/6ZBsAoMyCgN3z66MHimguUPeE/x8OBRaIGdlo5sReIxApj7AcsCwlLz9sDhZ2gBbuZRQB1ONaeJkmoL9iGTBTmPeV2gxvYa2zSxNrmJBMdv9uNVJLD18NArNMi6HG2EG8vJ9TSR8/L1rqrCefrpG7H4oErnI5iXfdKGQjW9VzR6vFrpOCL4p3Dadyjdu3cMrelqm7RDDmZJL62fj/d36wOjdcqOSXlucH0CitTZFO+NV2wIgCUSnEX3cl0LjbOTaLIC6NTy4DtYHcqnUQ=;5:jRdHa2npysm1P6yUAcxRT2ZF9Rd7GTHZ/DHY/JNMVfeqLIAZUXjgx7/6sSFg+va6J0Ec+8vmTFKrgclLfBLAap38mR1MTv9kEVRGohJEgOHglmuihjKLVWotwNQ6EXuQ1jezN6m3b/MV3q9XocdmE+DnaJYH00Ut5dUWrUjE5v4=;7:1PFbpiq1XBA3uUqbXKWUsPzDjPOPl1OQ0AtVeYVrlJwGPB32+i6Bde/6Cwf84BK0XpKoSlJNPhhJfYvUnAJ1EQ1w3t8zCaomnzmxJkenybZQ9leSpRozPcN01ImyDWBBuG1nG7IZ5pS0XbzhUF2AsA==
+x-ms-office365-filtering-correlation-id: ed0859c4-e325-45e0-4866-08d655e78723
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0824;
+x-ms-traffictypediagnostic: BY2PR11MB0824:
+x-microsoft-antispam-prvs: <BY2PR11MB08241A7F1882EB9F3F069DB687D20@BY2PR11MB0824.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231453)(999002)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0824;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0824;
+x-forefront-prvs: 0871917CDA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(376002)(366004)(39860400002)(69234005)(189003)(199004)(486006)(14444005)(256004)(2616005)(305945005)(446003)(7736002)(476003)(11346002)(316002)(14454004)(86362001)(68736007)(31696002)(3846002)(6116002)(186003)(2906002)(72206003)(31686004)(99286004)(6486002)(6916009)(229853002)(97736004)(386003)(53546011)(6506007)(966005)(76176011)(26005)(102836004)(54906003)(25786009)(6246003)(53936002)(8676002)(36756003)(8936002)(106356001)(81156014)(81166006)(66066001)(6436002)(105586002)(71200400001)(52116002)(71190400001)(6306002)(6512007)(478600001)(5660300001)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0824;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /Rlx8yQqAxTc3jInTi4ad78fnDg2jvwX0NmsgNFYUFmhP66chq6sTYV5tzrMyPBf9LkCp4a8qkdijXe7C/XN0QOnUQSD3bIjh1pzHomSpTho72ZxzeXghPUqrBxYSmAkYdp313alOL2I6xvFzHXb4LBC+TkEo4sOl8mr+6OVuyM134NZGRV5zOns2CTN/K35k0ICe2tegtB1wb01Kdb+ilU2lUpTCrOwhNq4nl43iRl/L+jJRaw2Zn4xwkm5yszXLyTEwdLzCWtBOw+K+0mkPEo2CV9XaOnf8wZTOYq13zFQpKLoucrYXCkEENOMmpyTsxQiQO0gW3Y3GnixFhjMN37Q160FkbFvJ7MPA2g+M8Q=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DED11D583FE8CD42842754469157A7C1@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
- <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
- <20181128100241.GA2131@hirez.programming.kicks-ass.net> <20181128115336.GB23094@e110439-lin>
- <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
- <20181128144039.GC23094@e110439-lin> <CAKfTPtAR7otTTwKYbg5OWbgrUYNKBNsUnOcMS9CfQtbYspvO5A@mail.gmail.com>
- <20181128152133.GD23094@e110439-lin> <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
- <20181128163545.GE23094@e110439-lin>
-In-Reply-To: <20181128163545.GE23094@e110439-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 29 Nov 2018 11:43:11 +0100
-Message-ID: <CAKfTPtAd8V=Qst82HPb1HW7ZdvrHGgaVhZ=rAdzbHNednp+ztg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed0859c4-e325-45e0-4866-08d655e78723
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2018 10:43:41.5699
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0824
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 at 17:35, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
->
-> On 28-Nov 16:42, Vincent Guittot wrote:
-> > On Wed, 28 Nov 2018 at 16:21, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > >
-> > > On 28-Nov 15:55, Vincent Guittot wrote:
-> > > > On Wed, 28 Nov 2018 at 15:40, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > > > >
-> > > > > On 28-Nov 14:33, Vincent Guittot wrote:
-> > > > > > On Wed, 28 Nov 2018 at 12:53, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> > > > > > >
-> > > > > > > On 28-Nov 11:02, Peter Zijlstra wrote:
-> > > > > > > > On Wed, Nov 28, 2018 at 10:54:13AM +0100, Vincent Guittot wrote:
-> > > > > > > >
-> > > > > > > > > Is there anything else that I should do for these patches ?
-> > > > > > > >
-> > > > > > > > IIRC, Morten mention they break util_est; Patrick was going to explain.
-> > > > > > >
-> > > > > > > I guess the problem is that, once we cross the current capacity,
-> > > > > > > strictly speaking util_avg does not represent anymore a utilization.
-> > > > > > >
-> > > > > > > With the new signal this could happen and we end up storing estimated
-> > > > > > > utilization samples which will overestimate the task requirements.
-> > > > > > >
-> > > > > > > We will have a spike in estimated utilization at next wakeup, since we
-> > > > > > > use MAX(util_avg@dequeue_time, ewma). Potentially we also inflate the EWMA in
-> > > > > > > case we collect multiple samples above the current capacity.
-> > > > > >
-> > > > > > TBH I don't see how it's different from current implementation with a
-> > > > > > task that was scheduled on big core and now wakes up on little core.
-> > > > > > The util_est is overestimated as well.
-> > > > >
-> > > > > While running below the capacity of a CPU, either big or LITTLE, we
-> > > > > can still measure the actual used bandwidth as long as we have idle
-> > > > > time. If the task is then moved into a lower capacity core, I think
-> > > > > it's still safe to assume that, likely, it would need more capacity.
-> > > > >
-> > > > > Why do you say it's the same ?
-> > > >
-> > > > In the example of a task that runs 39ms in period of 80ms that we used
-> > > > during previous version,
-> > > > the utilization on the big core will reach 709 so will util_est too
-> > > > When the task migrates on little core (512), util_est is higher than
-> > > > current cpu capacity
-> > >
-> > > Right, and what's the problem ?
-> >
-> > you worry about an util_est being higher than capacity which is the case there
->
-> I worry about util_est being higher then the capacity the task WAS
-> running... not the capacity the task IS running... if that value does
-> not correspond to what the task really need... (more on that at the
-> end).
->
-> > > 1) We know that PELT is calibrated to 32ms period task and in your
-> > >    example, since the runtime is higher then the half-life, it's
-> > >    correct to estimate a utilization higher then 50%.
-> > >
-> > >    PELT utilization is defined _based on the half-life_: thus
-> > >    your task having a 50% duty cycle does not mean we are not correct
-> > >    if report a utilization != 50%.
-> > >    It would be as broken as reporting 10% utilization for a task
-> > >    running 100ms every 1s.
-> > >
-> > > 2) If it was a 70% task on a previous activation, once it's moved into
-> > >    a lower capacity CPU it's still correct to assume that it's likely
-> > >    going to require the same bandwidth and thus will be
-> > >    under-provisioned.
-> > >
-> > > I still don't see where we are wrong in this case :/
-> > >
-> > > To me it looks different then the problem I described.
-> > >
-> > > > > With your new signal instead, once we cross the current capacity,
-> > > > > utilization is just not anymore utilization. Thus, IMHO it make sense
-> > > > > avoid to accumulate a sample for what we call "estimated utilization".
-> >
-> > This is not true. With the example above, the util_est will be exactly the same
-> >  on big and little cores with the new signal
->
-> ... AFAIU only if we have idle time...
->
-> > > > > I would also say that, with the current implementation which caps
-> > > > > utilization to the current capacity, we get better estimation in
-> > > > > general. At least we can say with absolute precision:
-> > > > >
-> > > > >    "the task needs _at least_ that amount of capacity".
-> > > > >
-> > > > > Potentially we can also flag the task as being under-provisioned, in
-> > > > > case there was not idle time, and _let a policy_ decide what to do
-> > > > > with it and the granted information we have.
-> > > > >
-> > > > > While, with your new signal, once we are over the current capacity,
-> > > > > the "utilization" is just a sort of "random" number at best useful to
-> > > > > drive some conclusions about how long the task has been delayed.
-> >
-> > see my comment above
-> >
-> > > > >
-> > > > > IOW, I fear that we are embedding a policy within a signal which is
-> > > > > currently representing something very well defined: how much cpu
-> > > > > bandwidth a task used. While, latency/under-provisioning policies
-> > > > > perhaps should be better placed somewhere else.
-> > > > >
-> > > > > Perhaps I've missed it in some of the previous discussions:
-> > > > > have we have considered/discussed this signal-vs-policy aspect ?
-> > >
-> > > What's your opinion on the above instead ?
-> >
-> > It's not a policy but it gives better knowledge about the amount a work done
-> > I have put below discussion on the  subject on previous version
->
-> Thanks, I think I've skimmed through it, but it's sill useful...
->
-> > > > With contribution scaling the PELT utilization of a task is a _minimum_
-> > > > utilization. Regardless of where the task is currently/was running (and
-> > > > provided that it doesn't change behaviour) its PELT utilization will
-> > > > approximate its _minimum_ utilization on an idle 1024 capacity CPU.
-> > >
-> > > The main drawback is that the _minimum_ utilization depends on the CPU
-> > > capacity on which the task runs. The two 25% tasks on a 256 capacity
-> > > CPU will have an utilization of 128 as an example
-> > >
-> > > >
-> > > > With time scaling the PELT utilization doesn't really have a meaning on
-> > > > its own. It has to be compared to the capacity of the CPU where it
-> > > > is/was running to know what the its current PELT utilization means. When
-> > >
-> > > I would have said the opposite. The utilization of the task will
-> > > always reflect the same amount of work that has been already done
-> > > whatever the CPU capacity.
-> > > In fact, the new scaling mechanism uses the real amount of work that
-> > > has been already done to compute the utilization signal which is not
-> > > the case currently. This gives more information about the real amount
-> > > of worked that has been computed in the over utilization case.
-> > >
-> > > > the utilization over-shoots the capacity its value is no longer
-> > > > represents utilization, it just means that it has a higher compute
-> > > > demand than is offered on its current CPU and a high value means that it
-> > > > has been suffering longer. It can't be used to predict the actual
-> > > > utilization on an idle 1024 capacity any better than contribution scaled
-> > > > PELT utilization.
-> > >
-> > > I think that it provides earlier detection of over utilization and
-> > > more accurate signal for a longer time duration which can help the
-> > > load balance
-> > > Coming back to 50% task example . I will use a 50ms running time
-> > > during a 100ms period for the example below to make it easier
-> > >
-> > > Starting from 0, the evolution of the utilization is:
-> > >
-> > > With contribution scaling:
-> > >          time  0ms  50ms  100ms  150ms  200ms
-> > > capacity
-> > > 1024           0    666
-> > > 512            0    333   453
-> > > When the CPU start to be over utilized (@100ms), the utilization is
-> > > already too low (453 instead of 666) and scheduler doesn't detect yet
-> > > that we are over utilized
-> > > 256            0    169   226    246    252
-> > > That's even worse with this lower capacity
-> > >
-> > > With time scaling,
-> > >          time  0ms  50ms  100ms  150ms  200ms
-> > > capacity
-> > > 1024           0    666
-> > > 512            0    428   677
-> > > We know that the current capacity is not enough and the utilization
-> > > reflect the correct utilization level compare to 1024 capacity (the
-> > > 666 vs 677 difference comes from the 1024us window so the last window
-> > > is not full in the case of max capacity)
-> > > 256            0    234   468    564    677
-> > > At 100ms, we know that there is not enough capacity. (In fact we know
-> > > that at 56ms). And even at time 200ms, the amount of work is exactly
-> > > what would have been executed on a CPU 4x faster
-> > >
-> > > >
-> > > > This change might not be a showstopper, but it is something to be aware
-> > > > off and take into account wherever PELT utilization is used.
-> > >
-> > > The point above is clearly a big difference between the 2 approaches
-> > > of the no spare cycle case but I think it will help by giving more
-> > > information in the over utilization case
->
-> I like the idea that we ramp up faster and always get to the same
-> value. I like also the idea that we always reach the same value on
-> both LITTLE and big.
->
-> As long as there is idle time this is working fine, in these cases we
-> should probably also collect util_est samples.
->
-> But what happens when we don't have idle time ?
-
-As shown above, the utilization stays correct for a longer time frame
-even after the over utilization point and provides better over
-utilization detection
-
->
-> Let say we have 2 15% tasks, co-scheduled on a cpu with <300 capacity.
->
-> Are not these two tasks being reported as 50% tasks (after a while) ?
-
-Yes they will but similarly to above they will stay correct for longer
-time even when they become higher than current cpu capacity
-
-
->
-> If that's the case, these are samples we should not store...
->
-> --
-> #include <best/regards.h>
->
-> Patrick Bellasi
+DQoNCk9uIDI5LjExLjIwMTggMTI6MzgsIEhhcmluaSBLYXRha2FtIHdyb3RlOg0KPiBIaSBDbGF1
+ZGl1LA0KPiBPbiBUaHUsIE5vdiAyOSwgMjAxOCBhdCAzOjUxIFBNIDxDbGF1ZGl1LkJlem5lYUBt
+aWNyb2NoaXAuY29tPiB3cm90ZToNCj4+DQo+Pg0KPj4NCj4+IE9uIDIzLjExLjIwMTggMTE6NTks
+IEhhcmluaSBLYXRha2FtIHdyb3RlOg0KPiA8c25pcD4NCj4+PiAtICAgICAgICAgICAgIGlmIChz
+dGF0dXMgJiBNQUNCX0JJVChSWFVCUikpIHsNCj4+PiArICAgICAgICAgICAgIGlmICgoYnAtPmVy
+cmF0YSAmIE1BQ0JfRVJSQVRBX1JYTE9DS1VQKSAmJg0KPj4+ICsgICAgICAgICAgICAgICAgIChz
+dGF0dXMgJiBNQUNCX0JJVChSWFVCUikpKSB7DQo+Pg0KPj4gSnVzdCBhc2tpbmcsIGRpZCB5b3Ug
+bWFuYWdlIHRvIHRlc3QgdGhpcyBvbiBvdGhlciBwbGF0Zm9ybXMgdGhhdCBoYXZlbid0DQo+PiB0
+aGlzIGlzc3VlPw0KPj4gU0FNQTVEMiBkYXRhc2hlZXQgWzFdIHN0YXRlcyB0aGlzOg0KPj4gIldo
+ZW4gaW4gcGFja2V0IGJ1ZmZlciBmdWxsIHN0b3JlIGFuZCBmb3J3YXJkIG1vZGUsIG9ubHkgZ29v
+ZCByZWNlaXZlZA0KPj4gZnJhbWVzIGFyZSB3cml0dGVuIG91dCBvZiB0aGUgRE1BLCBzbyBubw0K
+Pj4gIGZyYWdtZW50cyB3aWxsIGV4aXN0IGluIHRoZSBBSEIgYnVmZmVycyBkdWUgdG8gTUFDIHJl
+Y2VpdmVyIGVycm9ycy4gVGhlcmUNCj4+IGlzIHN0aWxsIHRoZSBwb3NzaWJpbGl0eSBvZiBmcmFn
+bWVudHMgZHVlIHRvDQo+PiAgRE1BIGVycm9ycywgZm9yIGV4YW1wbGUgdXNlZCBiaXQgcmVhZCBv
+biB0aGUgc2Vjb25kIGJ1ZmZlciBvZiBhDQo+PiBtdWx0aWJ1ZmZlciBmcmFtZS4iDQo+Pg0KPj4g
+QnV0IGl0IGlzIHRydWUgdGhhdCBub3doZXJlIGlzIHByZXNlbnRlZCB0aGF0IHRoaXMgbXVzdCBi
+ZSBzcGVjaWFsIHRyZWF0ZWQuDQo+Pg0KPiANCj4gWWVzLCBJIHRlc3RlZCBpdCBvbiBaeW5xTVAg
+d2hpY2ggZG9lcyBOT1QgaGF2ZSB0aGlzIGVycmF0YSAtIGRpZCBwZXJmIGFuZA0KPiBwaW5nIGZs
+b29kIGFuZCBkaW50IHNlZSBhbnkgaXNzdWVzLg0KDQpHcmVhdCEgVGhhbmsgeW91LCBIYXJpbmkh
+DQoNCj4gSnVzdCBGWUksIHRoZSBlcnJhdGEgaW4gdGhlIElQIHZlcnNpb24gaW4gWnlucSBjYXVz
+ZXMgYW4gUlggbG9jayB1cCB1bmRlcg0KPiBoaWdoIHN0cmVzcyAod2hlbiB0aGVyZSBpcyBvYnZp
+b3VzbHkgbXVsdGlwbGUgUlhVQlIgaW50ZXJydXB0cykuIFRoZSBSWCByZXNldA0KPiBpcyBhIHBy
+ZS1lbXB0aXZlIHdvcmthcm91bmQgdG8gKm1vc3RseSogYXZvaWQgdGhlIGlzc3VlLg0KPiBQbGVh
+c2Ugc2VlIEFuc3dlciByZWNvcmQgNTIwMjggaW4NCj4gaHR0cHM6Ly93d3cueGlsaW54LmNvbS9z
+dXBwb3J0L2RvY3VtZW50YXRpb24vZXJyYXRhL2VuMjQ3LnBkZg0KPiANCj4+IE1vcmVvdmVyLCBp
+ZiB5b3UgZG8gdGhpcyBvbmx5IGZvciBNQUNCX0VSUkFUQV9SWExPQ0tVUCBhbmQgc3RpbGwgaGF2
+ZSBSWFVCUg0KPj4gaW50ZXJydXB0IGVuYWJsZWQgZXZlcnkgdGltZSBpdCB3b3VsZCBub3QgbWFr
+ZSBzZW5zZSB0byBzdGlsbCBlbmFibGUgaXQuDQo+PiBPciwgaWYgeW91IHdhbnQgaXQgZW5hYmxl
+ZCBldmVyeSB0aW1lLCB5b3Ugc2hvdWxkIGNsZWFyIGl0IG5vIG1hdHRlciB0aGUNCj4+IE1BQ0Jf
+RVJSQVRBX1JYTE9DS1VQIGlzIHNldCBvciBub3QsIHdpdGggc29tZXRoaW5nIGxpa2UgdGhpczoN
+Cj4+DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoYnAtPmNhcHMgJiBNQUNCX0NBUFNf
+SVNSX0NMRUFSX09OX1dSSVRFKQ0KPj4NCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgcXVldWVfd3JpdGVsKHF1ZXVlLCBJU1IsIE1BQ0JfQklUKFJYVUJSKSk7DQo+Pg0KPj4NCj4g
+VGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91dCAtIHllcyBpJ2xsIG1vdmUgdGhlIFdUQyBjb2Rl
+IG91dHNpZGUgdGhlIGNoZWNrLg0KPiANCj4gUmVnYXJkcywNCj4gSGFyaW5pDQo+IA0K
