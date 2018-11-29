@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F638C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE620C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2213121104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7708F208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:16:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdpbrKpw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2213121104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7ABMbZo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7708F208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbeK3BWQ (ORCPT
+        id S1730154AbeK3BWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729224AbeK3BWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:15 -0500
+        id S1728190AbeK3BWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0156C2133F;
-        Thu, 29 Nov 2018 14:16:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A18921019;
+        Thu, 29 Nov 2018 14:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501005;
-        bh=4PzYO707HyDkFFZM6/hTM1cAQcWRo50kF3DgHGJJzgk=;
+        s=default; t=1543501007;
+        bh=JeAtgXFutTxNt3/ZJwk06qrlNAYBFxJt9NcDrhRjBmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MdpbrKpwD4uWnHIAItEvAZ/l0ygbTU2QKbjPwcFbjyiZpVLpf8gjDceUm4YfwTHdj
-         CjWMCralklw8IKszZrZfiYNcVs4m5LoF1l+bjxoWnnRXp8QPsCsbiXb6DiVHPJd30J
-         tHVLy41zblaBOIXQ1zTBbeXcN1Maggmmhlj9XvGE=
+        b=T7ABMbZowHDU2gexqamz9M7Dgz+t2Bt9RMOTnZfwGaQjn53owzb5v7hmv2g8NOhsx
+         6I6htN5/Xd8TcHimf6wuk7lJ8Qg4S1HdYgcLjYbCsTjGXiK7fmxkye/zuIFCZandYk
+         hpDzFPKRpvvRpxTrKhIE/cdDcf/et74n9+cGLkvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yaniv Gardi <ygardi@codeaurora.org>,
+        stable@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
         Subhash Jadavani <subhashj@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 76/83] scsi: ufs: fix bugs related to null pointer access and array size
-Date:   Thu, 29 Nov 2018 15:12:34 +0100
-Message-Id: <20181129140142.335334269@linuxfoundation.org>
+Subject: [PATCH 3.18 77/83] scsi: ufshcd: Fix race between clk scaling and ungate work
+Date:   Thu, 29 Nov 2018 15:12:35 +0100
+Message-Id: <20181129140142.401400052@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140138.002176596@linuxfoundation.org>
 References: <20181129140138.002176596@linuxfoundation.org>
@@ -64,101 +65,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yaniv Gardi <ygardi@codeaurora.org>
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-commit e3ce73d69aff44421d7899b235fec5ac2c306ff4 upstream.
+commit f2a785ac23125fa0774327d39e837e45cf28fe92 upstream.
 
-In this change there are a few fixes of possible NULL pointer access and
-possible access to index that exceeds array boundaries.
+The ungate work turns on the clock before it exits hibern8, if the link
+was put in hibern8 during clock gating work.  There occurs a race
+condition when clock scaling work calls ufshcd_hold() to make sure low
+power states cannot be entered, but that returns by checking only
+whether the clocks are on.  This causes the clock scaling work to issue
+UIC commands when the link is in hibern8 causing failures. Make sure we
+exit hibern8 state before returning from ufshcd_hold().
 
-Signed-off-by: Yaniv Gardi <ygardi@codeaurora.org>
+Callstacks for race condition:
+
+ ufshcd_scale_gear
+ ufshcd_devfreq_scale
+ ufshcd_devfreq_target
+ update_devfreq
+ devfreq_monitor
+ process_one_work
+ worker_thread
+ kthread
+ ret_from_fork
+
+ ufshcd_uic_hibern8_exit
+ ufshcd_ungate_work
+ process_one_work
+ worker_thread
+ kthread
+ ret_from_fork
+
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufs.h    |    3 ++-
- drivers/scsi/ufs/ufshcd.c |   25 +++++++++++++++++++------
- 2 files changed, 21 insertions(+), 7 deletions(-)
+ drivers/scsi/ufs/ufshcd.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -45,6 +45,7 @@
- #define QUERY_DESC_MIN_SIZE       2
- #define QUERY_OSF_SIZE            (GENERAL_UPIU_REQUEST_SIZE - \
- 					(sizeof(struct utp_upiu_header)))
-+#define RESPONSE_UPIU_SENSE_DATA_LENGTH	18
- 
- #define UPIU_HEADER_DWORD(byte3, byte2, byte1, byte0)\
- 			cpu_to_be32((byte3 << 24) | (byte2 << 16) |\
-@@ -383,7 +384,7 @@ struct utp_cmd_rsp {
- 	__be32 residual_transfer_count;
- 	__be32 reserved[4];
- 	__be16 sense_data_len;
--	u8 sense_data[18];
-+	u8 sense_data[RESPONSE_UPIU_SENSE_DATA_LENGTH];
- };
- 
- /**
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -796,10 +796,14 @@ static inline void ufshcd_copy_sense_dat
- 	int len;
- 	if (lrbp->sense_buffer &&
- 	    ufshcd_get_rsp_upiu_data_seg_len(lrbp->ucd_rsp_ptr)) {
-+		int len_to_copy;
-+
- 		len = be16_to_cpu(lrbp->ucd_rsp_ptr->sr.sense_data_len);
-+		len_to_copy = min_t(int, RESPONSE_UPIU_SENSE_DATA_LENGTH, len);
-+
- 		memcpy(lrbp->sense_buffer,
- 			lrbp->ucd_rsp_ptr->sr.sense_data,
--			min_t(int, len, SCSI_SENSE_BUFFERSIZE));
-+			min_t(int, len_to_copy, SCSI_SENSE_BUFFERSIZE));
- 	}
- }
- 
-@@ -5161,7 +5165,10 @@ EXPORT_SYMBOL(ufshcd_system_suspend);
- 
- int ufshcd_system_resume(struct ufs_hba *hba)
- {
--	if (!hba || !hba->is_powered || pm_runtime_suspended(hba->dev))
-+	if (!hba)
-+		return -EINVAL;
-+
-+	if (!hba->is_powered || pm_runtime_suspended(hba->dev))
- 		/*
- 		 * Let the runtime resume take care of resuming
- 		 * if runtime suspended.
-@@ -5182,7 +5189,10 @@ EXPORT_SYMBOL(ufshcd_system_resume);
-  */
- int ufshcd_runtime_suspend(struct ufs_hba *hba)
- {
--	if (!hba || !hba->is_powered)
-+	if (!hba)
-+		return -EINVAL;
-+
-+	if (!hba->is_powered)
- 		return 0;
- 
- 	return ufshcd_suspend(hba, UFS_RUNTIME_PM);
-@@ -5212,10 +5222,13 @@ EXPORT_SYMBOL(ufshcd_runtime_suspend);
-  */
- int ufshcd_runtime_resume(struct ufs_hba *hba)
- {
--	if (!hba || !hba->is_powered)
-+	if (!hba)
-+		return -EINVAL;
-+
-+	if (!hba->is_powered)
- 		return 0;
--	else
--		return ufshcd_resume(hba, UFS_RUNTIME_PM);
-+
-+	return ufshcd_resume(hba, UFS_RUNTIME_PM);
- }
- EXPORT_SYMBOL(ufshcd_runtime_resume);
- 
+@@ -570,6 +570,21 @@ int ufshcd_hold(struct ufs_hba *hba, boo
+ start:
+ 	switch (hba->clk_gating.state) {
+ 	case CLKS_ON:
++		/*
++		 * Wait for the ungate work to complete if in progress.
++		 * Though the clocks may be in ON state, the link could
++		 * still be in hibner8 state if hibern8 is allowed
++		 * during clock gating.
++		 * Make sure we exit hibern8 state also in addition to
++		 * clocks being ON.
++		 */
++		if (ufshcd_can_hibern8_during_gating(hba) &&
++		    ufshcd_is_link_hibern8(hba)) {
++			spin_unlock_irqrestore(hba->host->host_lock, flags);
++			flush_work(&hba->clk_gating.ungate_work);
++			spin_lock_irqsave(hba->host->host_lock, flags);
++			goto start;
++		}
+ 		break;
+ 	case REQ_CLKS_OFF:
+ 		if (cancel_delayed_work(&hba->clk_gating.gate_work)) {
 
 
