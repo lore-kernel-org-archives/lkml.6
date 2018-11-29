@@ -2,110 +2,140 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCD0C64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C940EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE932146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:36:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d9clXkQR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE932146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FA792145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 22:40:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA792145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbeK3JnG (ORCPT
+        id S1726675AbeK3Jr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 04:43:06 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44461 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbeK3JnF (ORCPT
+        Fri, 30 Nov 2018 04:47:28 -0500
+Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:25529 "EHLO
+        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726393AbeK3Jr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 04:43:05 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f18so3334598otl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 14:36:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3JW6B3D98u4etHJO+8n/AZa4bWpPMV0p1A76//BfEnc=;
-        b=d9clXkQRKp7Vxx9axZUxcicoVAl6MEaYkfSMF/x1IKHHzbcNKeuXzRa8RZAM2T9yJV
-         +ls6MbY5CGWw668MPt8/WXvtagbWLQsQSI1ghdrjkOxl8Oua2R9qcly7u/ldiUDIzfB/
-         A/k7Jf8NreyWYYofMNmQv/KZhFM83Z0AIj0mc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3JW6B3D98u4etHJO+8n/AZa4bWpPMV0p1A76//BfEnc=;
-        b=d7FC05pwLTGyPnTdwyFk6tNYUsEFNcO5I74x89pPMs1kwrgIHxydc/M/nVBTdLpzPL
-         a/XHruCF3ta7hQhqvJrtGMqPPdXi2QtWYoWIrQfiqe4R6WX7xXHhuLCWNfwkx4pgJ2s6
-         A7hEiEc8q34YrJtTn0Zp6KzscDYbVGtXT7LPmIPn6PHV8hu46h8AhEArcf9231hqZhyS
-         5GDOjCyurHOC29pEts67jbza5Ybt3Z+tyIIS1O9prBDl5RhYuKkhWLVG/dJ9DzoRFjqo
-         aaQzL6gRskfBa7494LEtSRbb3KFJMd2PetezpVWrWBSdrl0aiyUzBKX+CVCFl6zomSWU
-         7q+g==
-X-Gm-Message-State: AA+aEWbWFiHaiKF5kpJmol1xi99KTOmAi9FmI9LbrN79wNjHtsufEyUo
-        3h3c7OVNqJ0NKtU7mjWYovslMw==
-X-Google-Smtp-Source: AFSGD/WO2I8ekTpFCi7HsNadZ8gApVd7jCph+HE9wWDZas8Y0VsclympBnWaKsTZDjVgBFCml3UwLQ==
-X-Received: by 2002:a9d:6287:: with SMTP id x7mr2177701otk.304.1543530961916;
-        Thu, 29 Nov 2018 14:36:01 -0800 (PST)
-Received: from localhost ([2600:1700:141:4960:d408:b2c2:72bf:467a])
-        by smtp.gmail.com with ESMTPSA id g138sm2698392oib.26.2018.11.29.14.36.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Nov 2018 14:36:01 -0800 (PST)
-Date:   Thu, 29 Nov 2018 16:36:00 -0600
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kbuild test robot <lkp@intel.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH] drm: msm: Check cmd_db_read_aux_data() for failure
-Message-ID: <20181129223600.GC32306@hector.attlocal.net>
-References: <20181129163826.178670-1-swboyd@chromium.org>
+        Fri, 30 Nov 2018 04:47:28 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl2.internode.on.net with ESMTP; 30 Nov 2018 09:10:21 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gSUyp-0006kN-Sp; Fri, 30 Nov 2018 09:40:19 +1100
+Date:   Fri, 30 Nov 2018 09:40:19 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.14 25/35] iomap: sub-block dio needs to zeroout
+ beyond EOF
+Message-ID: <20181129224019.GM19305@dastard>
+References: <20181129060110.159878-1-sashal@kernel.org>
+ <20181129060110.159878-25-sashal@kernel.org>
+ <20181129121458.GK19305@dastard>
+ <20181129124756.GA25945@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129163826.178670-1-swboyd@chromium.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20181129124756.GA25945@kroah.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 08:38:26AM -0800, Stephen Boyd wrote:
-> We need to check the call to cmd_db_read_aux_data() for the error case,
-> so that we don't continue and use potentially uninitialized values for
-> 'pri_count' and 'sec_count'. Otherwise, we get the following compiler
-> warnings:
+On Thu, Nov 29, 2018 at 01:47:56PM +0100, Greg KH wrote:
+> On Thu, Nov 29, 2018 at 11:14:59PM +1100, Dave Chinner wrote:
+> > 
+> > Cherry picking only one of the 50-odd patches we've committed into
+> > late 4.19 and 4.20 kernels to fix the problems we've found really
+> > seems like asking for trouble. If you're going to back port random
+> > data corruption fixes, then you need to spend a *lot* of time
+> > validating that it doesn't make things worse than they already
+> > are...
 > 
->    drivers/gpu/drm/msm/adreno/a6xx_gmu.c: In function 'a6xx_gmu_rpmh_arc_votes_init.isra.12':
->    drivers/gpu/drm/msm/adreno/a6xx_gmu.c:943:12: warning: 'pri_count' is used uninitialized in this function [-Wuninitialized]
->      pri_count >>= 1;
->                ^~~
->    drivers/gpu/drm/msm/adreno/a6xx_gmu.c:948:12: warning: 'sec_count' may be used uninitialized in this function
-> [-Wmaybe-uninitialized]
->      sec_count >>= 1;
->                ^~~
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Cc: Jordan Crouse <jcrouse@codeaurora.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Jordan Crouse <jcrouse@codeaurora.org>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Fixes: ed3cafa79ea7 ("soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Any reason why we can't take the 50-odd patches in their entirety?  It
+> sounds like 4.19 isn't fully fixed, but 4.20-rc1 is?  If so, what do you
+> recommend we do to make 4.19 working properly?
 
-Thanks for the patch.  Queueing this up.
+You coul dpull all the fixes, but then you have a QA problem.
+Basically, we have multiple badly broken syscalls (FICLONERANGE,
+FIDEDUPERANGE and copy_file_range), and even 4.20-rc4 isn't fully
+fixed.
 
+There were ~5 critical dedupe/clone data corruption fixes for XFS
+went into 4.19-rc8.
 
-Andy
+There were ~30 patches that went into 4.20-rc1 that fixed the
+FICLONERANGE/FIDEDUPERANGE ioctls. That completely reworks the
+entire VFS infrastructure for those calls, and touches several
+filesystems as well. It fixes problems with setuid files, swap
+files, modifying immutable files, failure to enforce rlimit and
+max file size constraints, behaviour that didn't match man page
+descriptions, etc.
+
+There were another ~10 patches that went into 4.20-rc4 that fixed
+yet more data corruption and API problems that we found when we
+enhanced fsx to use the above syscalls.
+
+And I have another ~10 patches that I'm working on right now to fix
+the copy_file_range() implementation - it has all the same problems
+I listed above for FICLONERANGE/FIDEDUPERANGE and some other unique
+ones. I'm currently writing error condition tests for fstests so
+that we at least have some coverage of the conditions
+copy_file_range() is supposed to catch and fail. This might all make
+a late 4.20-rcX, but it's looking more like 4.21 at this point.
+
+As to testing this stuff, I've spend several weeks now on this and
+so has Darrick. Between us we've done a huge amount of QA needed to
+verify that the problems are fixed and it is still ongoing. From
+#xfs a couple of days ago:
+
+[28/11/18 16:59] * djwong hits 6 billion fsxops...
+[28/11/18 17:07] <dchinner_> djwong: I've got about 3.75 billion ops running on a machine here....
+[28/11/18 17:20] <djwong> note that's 1 billion fsxops x 6 machines
+[28/11/18 17:21] <djwong> [xfsv4, xfsv5, xfsv5 w/ 1k blocks] * [directio fsx, buffered fsx]
+[28/11/18 17:21] <dchinner_> Oh, I've got 3.75B x 4 instances on one filesystem :P
+[28/11/18 17:22] <dchinner_> [direct io, buffered] x [small op lengths, large op lengths]
+
+And this morning:
+
+[30/11/18 08:53] <djwong> 7 billion fsxops...
+
+I stopped my tests at 5 billion ops yesterday (i.e. 20 billion ops
+aggregate) to focus on testing the copy_file_range() changes, but
+Darrick's tests are still ongoing and have passed 40 billion ops in
+aggregate over the past few days.
+
+The reason we are running these so long is that we've seen fsx data
+corruption failures after 12+ hours of runtime and hundreds of
+millions of ops. Hence the testing for backported fixes will need to
+replicate these test runs across multiple configurations for
+multiple days before we have any confidence that we've actually
+fixed the data corruptions and not introduced any new ones.
+
+If you pull only a small subset of the fixes, the fsx will still
+fail and we have no real way of actually verifying that there have
+been no regression introduced by the backport.  IOWs, there's a
+/massive/ amount of QA needed for ensuring that these backports work
+correctly.
+
+Right now the XFS developers don't have the time or resources
+available to validate stable backports are correct and regression
+fre because we are focussed on ensuring the upstream fixes we've
+already made (and are still writing) are solid and reliable.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
