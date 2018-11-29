@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC572C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEFFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D94320868
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B988A2133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw/OS5lu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D94320868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBdYHYGg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988A2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731604AbeK3B0q (ORCPT
+        id S1731618AbeK3B0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:26:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51044 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:26:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730438AbeK3B0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:26:45 -0500
+        id S1730438AbeK3B0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:26:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BC3A205C9;
-        Thu, 29 Nov 2018 14:21:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C275205C9;
+        Thu, 29 Nov 2018 14:21:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501274;
-        bh=wH37HmzVI8Kdu0aF0jqh5LiwlgeNzIG572BVtt9mXkM=;
+        s=default; t=1543501277;
+        bh=Klk324mbtu9HWfkF5siH5oc0E6sEe8WH2zpyAyBKrwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iw/OS5lucSvVdBpBPRGybNnCSuKo6Ge6L23t5GkYv7Ax+vGWBOVEysifehUXZKBK3
-         f9HacyKF3LaVvj2Jzmdqt26KknKXG0/svYo52P/c8qutl6KvCaSX07BA+7aqw75Sw5
-         OYmA1U2Q27J9bAGNXwSAndaugWPhsqBiM2lk6xOc=
+        b=HBdYHYGgOXgE1VY6Kd1+0tjXhE5rWr2RJoVxVW7MA+gPbxWKRIuI2Ffg7/hB6bVix
+         ZZ259nPXQX6iKHSRzBSHBUbfDIzZodBIQpJcJspU8jBkxMd34ystivNQ6w4FYGNvxP
+         L/zS0HgbMBYbPQkiAXMjhQj/9XcHFzoMwfoiJnAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.9 06/92] iwlwifi: mvm: support sta_statistics() even on older firmware
-Date:   Thu, 29 Nov 2018 15:11:35 +0100
-Message-Id: <20181129140107.015307102@linuxfoundation.org>
+Subject: [PATCH 4.9 07/92] iwlwifi: mvm: fix regulatory domain update when the firmware starts
+Date:   Thu, 29 Nov 2018 15:11:36 +0100
+Message-Id: <20181129140107.092372163@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140106.520639693@linuxfoundation.org>
 References: <20181129140106.520639693@linuxfoundation.org>
@@ -65,34 +65,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit ec484d03ef0df8d34086b95710e355a259cbe1f2 upstream.
+commit 82715ac71e6b94a2c2136e31f3a8e6748e33aa8c upstream.
 
-The oldest firmware supported by iwlmvm do support getting
-the average beacon RSSI. Enable the sta_statistics() call
-from mac80211 even on older firmware versions.
+When the firmware starts, it doesn't have any regulatory
+information, hence it uses the world wide limitations. The
+driver can feed the firmware with previous knowledge that
+was kept in the driver, but the firmware may still not
+update its internal tables.
 
-Fixes: 33cef9256342 ("iwlwifi: mvm: support beacon statistics for BSS client")
-Cc: stable@vger.kernel.org # 4.2+
+This happens when we start a BSS interface, and then the
+firmware can change the regulatory tables based on our
+location and it'll use more lenient, location specific
+rules. Then, if the firmware is shut down (when the
+interface is brought down), and then an AP interface is
+created, the firmware will forget the country specific
+rules.
+
+The host will think that we are in a certain country that
+may allow channels and will try to teach the firmware about
+our location, but the firmware may still not allow to drop
+the world wide limitations and apply country specific rules
+because it was just re-started.
+
+In this case, the firmware will reply with MCC_RESP_ILLEGAL
+to the MCC_UPDATE_CMD. In that case, iwlwifi needs to let
+the upper layers (cfg80211 / hostapd) know that the channel
+list they know about has been updated.
+
+This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201105
+
+Cc: stable@vger.kernel.org
 Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    8 ++++++--
+ drivers/net/wireless/intel/iwlwifi/mvm/nvm.c      |    5 ++---
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -3976,10 +3976,6 @@ static void iwl_mvm_mac_sta_statistics(s
- 		sinfo->filled |= BIT(NL80211_STA_INFO_SIGNAL_AVG);
+@@ -327,8 +327,12 @@ struct ieee80211_regdomain *iwl_mvm_get_
+ 		goto out;
  	}
  
--	if (!fw_has_capa(&mvm->fw->ucode_capa,
--			 IWL_UCODE_TLV_CAPA_RADIO_BEACON_STATS))
--		return;
--
- 	/* if beacon filtering isn't on mac80211 does it anyway */
- 	if (!(vif->driver_flags & IEEE80211_VIF_BEACON_FILTER))
- 		return;
+-	if (changed)
+-		*changed = (resp->status == MCC_RESP_NEW_CHAN_PROFILE);
++	if (changed) {
++		u32 status = le32_to_cpu(resp->status);
++
++		*changed = (status == MCC_RESP_NEW_CHAN_PROFILE ||
++			    status == MCC_RESP_ILLEGAL);
++	}
+ 
+ 	regd = iwl_parse_nvm_mcc_info(mvm->trans->dev, mvm->cfg,
+ 				      __le32_to_cpu(resp->n_channels),
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+@@ -739,9 +739,8 @@ iwl_mvm_update_mcc(struct iwl_mvm *mvm,
+ 	}
+ 
+ 	IWL_DEBUG_LAR(mvm,
+-		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') change: %d n_chans: %d\n",
+-		      status, mcc, mcc >> 8, mcc & 0xff,
+-		      !!(status == MCC_RESP_NEW_CHAN_PROFILE), n_channels);
++		      "MCC response status: 0x%x. new MCC: 0x%x ('%c%c') n_chans: %d\n",
++		      status, mcc, mcc >> 8, mcc & 0xff, n_channels);
+ 
+ exit:
+ 	iwl_free_resp(&cmd);
 
 
