@@ -2,172 +2,181 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC1AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5648C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2A1208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66E77208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:08:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="elq6sHTw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2A1208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O794UlsC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E77208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeK2TLe (ORCPT
+        id S1727760AbeK2TMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:11:34 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:37038 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbeK2TLc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:11:32 -0500
-Received: by mail-vs1-f67.google.com with SMTP id h18so608813vsj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 00:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0yEaeayPmO0YnoftslT2ejHvS42yrzrZiYJovhPn/xE=;
-        b=elq6sHTwgwZfaEvETwZQ/j2c3rOkVyxP3G7x4xy9M+EyLu6XLnzjbHP3J/9qhNyWVy
-         totM1ddPI28kikLfuqsKSY66gyZCV2wCR2tRfsMQ1nSDJZk3IJcBRVjyInBBAmU70pNz
-         qTlSboiFiBHAa1h1sFKpSdGYGnAzBd0LKbSEw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0yEaeayPmO0YnoftslT2ejHvS42yrzrZiYJovhPn/xE=;
-        b=KE169z4C/QIsabrJ+MugjHN1CcWk9XqClRtbb0W4uRhZ0Yb92caU1W8S2lIe9JuVGb
-         dMaDnvPc7Hyig3ZnQ5RS3mzgpA1AU5tikHNnLM7Tt0wiBeNZ9jZe3iEq+PwVvNzqNrXs
-         uoaPJsck9Ub6fLo2LpuK8DXL9/vnIwxhVy3hqr7wGLe5JlJEwV4lHU/EH1kTFyxes9pf
-         WZyye9mrr5IW8MVnGRtOe6s6KrjaynukYMNaQddYvzGxeFh65up0c0pg+GGRQ9ZDOKnl
-         KoTIRi6gcTqBnW9uN+MxahlIz6VAYmN00u7zWOCYWHMXqeLi/rHNFkvnmV0/KXX8Pwk2
-         IIag==
-X-Gm-Message-State: AA+aEWafWzL12wbMRVBbQmV9Ywbxum5gDElKhRJ+wMksIQ63P+510cC0
-        B25Yi18zJdAD6n5MZaMx7nV9BbJ24uIKjWsq816K0Q==
-X-Google-Smtp-Source: AFSGD/Wl/EXXYlWEBE1Ptqa8QC1fWdpxEOqAG+M9nAXqmaGsnVIPRapGgLKoe0VNkJbp2bqNAP1e4V707nv1NCf6n+M=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr208305vsc.35.1543478821119;
- Thu, 29 Nov 2018 00:07:01 -0800 (PST)
+        Thu, 29 Nov 2018 14:12:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726651AbeK2TMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:12:44 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F64520834;
+        Thu, 29 Nov 2018 08:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543478892;
+        bh=Y7dCXkwUHZlyun9Jj/P0d5xxj8WOlsQH4+QkSqvvrLM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O794UlsCLZL4nVP2xiTRgDcaYE8Y7TXSDpYCTN9YczCJgTu1h+WyEtVyq7qtubpR6
+         uJJEzqH0GeEU2YecJyiLUJQsPiC2P8W28ks4ylVtyW/vgB3vYttSs6x5Umk0JCLsyO
+         kxzX7HkcC7hTAi/Gi6kjzYhBigrsEEyaCUkORs0A=
+Date:   Thu, 29 Nov 2018 09:08:10 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        nicolas.ferre@microchip.com, rainyfeeling@outlook.com
+Subject: Re: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
+Message-ID: <20181129080810.GD13859@kroah.com>
+References: <20181126105050.592727680@linuxfoundation.org>
+ <20181126105054.941598787@linuxfoundation.org>
+ <CA+G9fYsyM9VS8QkaEizQT_LSvZyT+h6zdoWZbhVQtd1n60Bniw@mail.gmail.com>
+ <20181126160840.1c702e87@bbrezillon>
+ <20181126151418.GA19698@kroah.com>
+ <20181126154824.GA2403@localhost>
 MIME-Version: 1.0
-References: <9986634.fXZiTbRPzQ@aspire.rjw.lan>
-In-Reply-To: <9986634.fXZiTbRPzQ@aspire.rjw.lan>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 29 Nov 2018 09:06:25 +0100
-Message-ID: <CAPDyKFp_1nCF7nn0dXYbm_kJDo+0rp8O1nGPFH+NrS3wz8RW1Q@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: admin-guide: PM: Add cpuidle document
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        jacob.jun.pan@linux.intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        ggherdovich@suse.cz, Sudeep Holla <sudeep.holla@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126154824.GA2403@localhost>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 at 12:47, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Important information is missing from user/admin cpuidle documentation
-> available today, so add a new user/admin document for cpuidle containing
-> current and comprehensive information to admin-guide and drop the old
-> .txt documents it is replacing.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+On Mon, Nov 26, 2018 at 07:48:24AM -0800, Johan Hovold wrote:
+> On Mon, Nov 26, 2018 at 04:14:18PM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Nov 26, 2018 at 04:08:40PM +0100, Boris Brezillon wrote:
+> > > On Mon, 26 Nov 2018 19:46:15 +0530
+> > > Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > 
+> > > > Do you see build failure arm x15 beagleboard on 4.14 due to this patch ?
+> > > > 
+> > > > On Mon, 26 Nov 2018 at 16:31, Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> > > > >
+> > > > > ------------------
+> > > > >
+> > > > > From: Johan Hovold <johan@kernel.org>
+> > > > >
+> > > > > commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
+> > > > >
+> > > > > Use the new of_get_compatible_child() helper to lookup the nfc child
+> > > > > node instead of using of_find_compatible_node(), which searches the
+> > > > > entire tree from a given start node and thus can return an unrelated
+> > > > > (i.e. non-child) node.
+> > > > >
+> > > > > This also addresses a potential use-after-free (e.g. after probe
+> > > > > deferral) as the tree-wide helper drops a reference to its first
+> > > > > argument (i.e. the node of the device being probed).
+> > > > >
+> > > > > While at it, also fix a related nfc-node reference leak.
+> > > > >
+> > > > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> > > > > Cc: stable <stable@vger.kernel.org>     # 4.11
+> > > > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > > > Cc: Josh Wu <rainyfeeling@outlook.com>
+> > > > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > > > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > >
+> > > > > ---
+> > > > >  drivers/mtd/nand/atmel/nand-controller.c |   11 +++++++----
+> > > > >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > --- a/drivers/mtd/nand/atmel/nand-controller.c
+> > > > > +++ b/drivers/mtd/nand/atmel/nand-controller.c
+> > > > > @@ -2077,8 +2077,7 @@ atmel_hsmc_nand_controller_legacy_init(s
+> > > > >         int ret;
+> > > > >
+> > > > >         nand_np = dev->of_node;
+> > > > > -       nfc_np = of_find_compatible_node(dev->of_node, NULL,
+> > > > > -                                        "atmel,sama5d3-nfc");
+> > > > > +       nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+> > > > >         if (!nfc_np) {
+> > > > >                 dev_err(dev, "Could not find device node for sama5d3-nfc\n");
+> > > > >                 return -ENODEV;
+> > > > > @@ -2492,15 +2491,19 @@ static int atmel_nand_controller_probe(s
+> > > > >         }
+> > > > >
+> > > > >         if (caps->legacy_of_bindings) {
+> > > > > +               struct device_node *nfc_node;
+> > > > >                 u32 ale_offs = 21;
+> > > > >
+> > > > >                 /*
+> > > > >                  * If we are parsing legacy DT props and the DT contains a
+> > > > >                  * valid NFC node, forward the request to the sama5 logic.
+> > > > >                  */
+> > > > > -               if (of_find_compatible_node(pdev->dev.of_node, NULL,
+> > > > > -                                           "atmel,sama5d3-nfc"))
+> > > > > +               nfc_node = of_get_compatible_child(pdev->dev.of_node,
+> > > > > +                                                  "atmel,sama5d3-nfc");
+> > > > > +               if (nfc_node) {
+> > > > >                         caps = &atmel_sama5_nand_caps;
+> > > > > +                       of_node_put(nfc_node);
+> > > > > +               }
+> > > > >
+> > > > >                 /*
+> > > > >                  * Even if the compatible says we are dealing with an
+> > > > >
+> > > > >  
+> > > > 
+> > > > /drivers/mtd/nand/atmel/nand-controller.c: In function
+> > > > 'atmel_hsmc_nand_controller_legacy_init':
+> > > > /drivers/mtd/nand/atmel/nand-controller.c:2080:11: error: implicit
+> > > > declaration of function 'of_get_compatible_child'; did you mean
+> > > > 'of_get_next_available_child'? [-Werror=implicit-function-declaration]
+> > > >    nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+> > > 
+> > > Looks like of_get_compatible_child() has been introduced in 4.18, hence
+> > > this error.
+> > > 
+> > > Greg, can you drop this patch from 4.14.y?
+> > 
+> > Yes, my fault, I fixed a number of these in the past, missed this one :(
+> > 
+> > Now dropped.
+> 
+> The intention here was that the helper should be backported along with
+> the fixes. I mentioned this in the cover letter to the series
+> introducing the helper and the fixes. As they were submitted together I
+> could not use the usual
+> 
+> 	Cc: stable <stable@vger.kernel.org>	# 4.xx: 36156f9241cb
+> 
+> notation for this. I realise I should still have mentioned this in each
+> individual commit messages as well, sorry about that.
+> 
+> The dependency for all of these fixes is:
+> 
+> 	36156f9241cb ("of: add helper to lookup compatible child node")
+> 
+> and the original thread can be found here:
+> 
+> 	https://lkml.kernel.org/r/20180827082153.22537-1-johan@kernel.org
 
-Wow! Great work!
+Now fixed up and applied, thanks.
 
-[...]
-
-> +.. _idle-states-representation:
-> +
-> +Representation of Idle States
-> +=============================
-> +
-> +For the CPU idle time management purposes all of the physical idle states
-> +supported by the processor have to be represented as a one-dimensional array of
-> +|struct cpuidle_state| objects each allowing an individual (logical) CPU to ask
-> +the processor hardware to enter an idle state of certain properties.  If there
-> +is a hierarchy of units in the processor, one |struct cpuidle_state| object can
-> +cover a combination of idle states supported by the units at different levels of
-> +the hierarchy.  In that case, the `target residency and exit latency parameters
-> +of it <idle-loop_>`_, must reflect the properties of the idle state at the
-> +deepest level (i.e. the idle state of the unit containing all of the other
-> +units).
-> +
-> +For example, take a processor with two cores in a larger unit referred to as
-> +a "module" and suppose that asking the hardware to enter a specific idle state
-> +(say "X") at the "core" level by one core will trigger the module to try to
-> +enter a specific idle state of its own (say "MX") if the other core is in idle
-> +state "X" already.  In other words, asking for idle state "X" at the "core"
-> +level gives the hardware a license to go as deep as to idle state "MX" at the
-> +"module" level, but there is no guarantee that this is going to happen (the core
-> +asking for idle state "X" may just end up in that state by itself instead).
-
-This is a good description of a HW like x86 and ARM64 (using PSCI in
-platform coordinated mode).
-
-However, for "legacy" ARM products, having at least two cores in a
-module, this description does in many cases *not* match how the HW
-works. I wonder about other architectures.
-
-My point is, I think it would be fair to mention that the above
-description is specific to certain HWs. In other words, for HWs that
-leaves the entire state synchronization of the last man standing
-algorithm to be managed by a FW, the cpuidle framework plays well. But
-for others it has limitations.
-
-> +Then, the target residency of the |struct cpuidle_state| object representing
-> +idle state "X" must reflect the minimum time to spend in idle state "MX" of
-> +the module (including the time needed to enter it), because that is the minimum
-> +time the CPU needs to be idle to save any energy in case the hardware enters
-> +that state.  Analogously, the exit latency parameter of that object must cover
-> +the exit time of idle state "MX" of the module (and usually its entry time too),
-> +because that is the maximum delay between a wakeup signal and the time the CPU
-> +will start to execute the first new instruction (assuming that both cores in the
-> +module will always be ready to execute instructions as soon as the module
-> +becomes operational as a whole).
-
-For the HW working as you described, this is a nice clarification, thanks!
-
-[...]
-
-> +
-> +.. _cpu-pm-qos:
-> +
-> +Power Management Quality of Service for CPUs
-> +============================================
-> +
-> +The power management quality of service (PM QoS) framework in the Linux kernel
-> +allows kernel code and user space processes to set constraints on various
-> +energy-efficiency features of the kernel to prevent performance from dropping
-> +below a required level.  The PM QoS constraints can be set globally, in
-> +predefined categories referred to as PM QoS classes, or against individual
-> +devices.
-> +
-> +CPU idle time management can be affected by PM QoS in two ways, through the
-> +global constraint in the ``PM_QOS_CPU_DMA_LATENCY`` class and through the
-
-No objections to the description, it's really nice! However, the
-naming of this QOS class, is to me, rather confusing.
-
-I realize renaming the sysfs node is not an option, but maybe we
-should make a tree wide change to rename the class to something more
-descriptive. What do you think?
-
-[...]
-
-Kind regards
-Uffe
+greg k-h
