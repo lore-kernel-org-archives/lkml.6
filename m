@@ -1,116 +1,141 @@
 Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1BDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502B5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEFB220832
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:45:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khbhpzqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFB220832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0648220879
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0648220879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeK2Msp (ORCPT
+        id S1727197AbeK2Mvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:48:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46021 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbeK2Msp (ORCPT
+        Thu, 29 Nov 2018 07:51:47 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:35025 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbeK2Mvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:48:45 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a14so155666plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Nov 2018 17:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nXQUdjr8mIMk9bhk9tG9P0f+M4XEdIih2ulCHESQpac=;
-        b=khbhpzqvajd9ieD09Y15wYFJl/5FotZya/FVHwo3z6fH/trrTJtBKwjoly9DHjSXS3
-         7NpR9rXQYhFzHOXeDGzEbowsobPDGHOZRlnte1OtaWDkMDaZ/n7PW8iIm28SPpMB5+wT
-         c3xTttljxBiv+9UpO8/SY69RUvoPeVM5gt6gswzAsP1rLyL/Rf4jxwLPjaFNVZjYgybw
-         x/krHppOGCiBDnlOwj21iIBNN9zFixXrarWIrPPIrFGGbnh9BpuI988NvAQg0Y4m1UkT
-         7y5Jn184rlW5o2AIxdeJ/4NAwrAwGC09U3P1tyzU6V9AkmO9nZ7gRftWAp7RnUcqQ3eB
-         c7Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nXQUdjr8mIMk9bhk9tG9P0f+M4XEdIih2ulCHESQpac=;
-        b=Te/9NyHPowThr6SvOPZ3301I2/NqQeXR0aGeyy6JuIhMaYkTVh1PpTs4vZ5c3WBUHU
-         tqBYQHCW5swevycB4A1FzzqvAwS77G9vOf7Izw5DhVg0uVyY6BGjGlboP3AV0awDzGdK
-         eEip+d4sukbz98j7hQw3RqPREwXj/qyiDGMsnPNE8I6QsCYQKt7zVW9bRGfM3mjfKrAo
-         mbKPMnpaUWO2Rrr2NzFDkDrbc44/NWRBlI383DI15QMXxFowZ7l/JayfzUXAcEeJ+jZ9
-         y1tUBwGaZla2nTDvRx4fJwC+ye3uyDVgPBh/c/u/LJmHkJQ/rzvH4KtAk3drEYbyLeLZ
-         5+oQ==
-X-Gm-Message-State: AA+aEWbWfMVng4NieKj+O5byqD2gnAW+1ek4IwNq2mMUrGIYYqqDJDif
-        J31dhXQ7WdIyylNpiNwbJSg=
-X-Google-Smtp-Source: AFSGD/UJ9uX6D8xchdwRCbqiF9MO4/UIHlRjU5Jp3TVzGwhGeiFYaZrNenJvqkkelUmliB9IxNW7Gw==
-X-Received: by 2002:a17:902:4c08:: with SMTP id a8mr39764498ple.74.1543455907415;
-        Wed, 28 Nov 2018 17:45:07 -0800 (PST)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id m9sm231144pgd.32.2018.11.28.17.45.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Nov 2018 17:45:06 -0800 (PST)
-Date:   Thu, 29 Nov 2018 10:45:02 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v2 6/7] zram: add bd_stat statistics
-Message-ID: <20181129014502.GB77327@google.com>
-References: <20181126082813.81977-1-minchan@kernel.org>
- <20181126082813.81977-7-minchan@kernel.org>
- <20181126125833.e95a21088ae60ccc6fd55022@linux-foundation.org>
- <20181127020754.GB237537@google.com>
- <20181128153021.3f125ed82df68a29e25ce428@linux-foundation.org>
+        Thu, 29 Nov 2018 07:51:47 -0500
+Received: from [10.18.29.194] (10.18.29.194) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 29 Nov
+ 2018 09:48:20 +0800
+Subject: Re: [PATCH v7 0/4] clk: meson: add a sub EMMC clock controller
+ support
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <aa21f2d6-507d-a672-9e9b-0896df011307@amlogic.com>
+Date:   Thu, 29 Nov 2018 09:48:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128153021.3f125ed82df68a29e25ce428@linux-foundation.org>
-User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
+In-Reply-To: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.194]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:30:21PM -0800, Andrew Morton wrote:
-> On Tue, 27 Nov 2018 11:07:54 +0900 Minchan Kim <minchan@kernel.org> wrote:
-> 
-> > On Mon, Nov 26, 2018 at 12:58:33PM -0800, Andrew Morton wrote:
-> > > On Mon, 26 Nov 2018 17:28:12 +0900 Minchan Kim <minchan@kernel.org> wrote:
-> > > 
-> > > > +File /sys/block/zram<id>/bd_stat
-> > > > +
-> > > > +The stat file represents device's backing device statistics. It consists of
-> > > > +a single line of text and contains the following stats separated by whitespace:
-> > > > + bd_count	size of data written in backing device.
-> > > > +		Unit: pages
-> > > > + bd_reads	the number of reads from backing device
-> > > > +		Unit: pages
-> > > > + bd_writes	the number of writes to backing device
-> > > > +		Unit: pages
-> > > 
-> > > Using `pages' is a bad choice.  And I assume this means that
-> > > writeback_limit is in pages as well, which is worse.
-> > > 
-> > > Page sizes are not constant!  We want userspace which was developed on
-> > > 4k pagesize to work the same on 64k pagesize.
-> > > 
-> > > Arguably, we could require that well-written userspace remember to use
-> > > getpagesize().  However we have traditionally tried to avoid that by
-> > > performing the pagesize normalization within the kernel.
-> > 
-> > zram works based on page so I used that term but I agree it's rather
-> > vague. If there is no objection, I will use (Unit: 4K) instead of
-> > (Unit: pages).
-> 
-> Is that still true if PAGE_SIZE=64k?
+Hi Jerome,
 
-Oops, it will fix.
+I made some modifications as you suggested， could you please take a look?
+
+On 2018/11/15 20:18, Jianxin Pan wrote:
+> This driver will add a MMC clock controller driver support.
+> The original idea about adding a clock controller is during the
+> discussion in the NAND driver mainline effort[1].
+> 
+> This driver is tested in the S400 board (AXG platform) with NAND driver.
+> 
+> Changes since v6 [7]:
+>  - add one based support for sclk divier
+>  - alloc sclk in probe for multiple instance
+>  - fix coding styles
+> 
+> Changes since v5 [6]:
+>  - remove divider ops with .init and use sclk_div instead
+>  - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+>  - drop the useless type cast 
+> 
+> Changes since v4 [5]:
+>  - use struct parm in phase delay driver
+>  - remove 0 delay releted part in phase delay driver
+>  - don't rebuild the parent name once again
+>  - add divider ops with .init
+> 
+> Changes since v3 [4]:
+>  - separate clk-phase-delay driver
+>  - replace clk_get_rate() with clk_hw_get_rate()
+>  - collect Rob's R-Y
+>  - drop 'meson-' prefix from compatible string
+> 
+>  Changes since v2 [3]:
+>  - squash dt-binding clock-id patch
+>  - update license
+>  - fix alignment
+>  - construct a clk register helper() function
+> 
+> Changes since v1 [2]:
+>  - implement phase clock
+>  - update compatible name
+>  - adjust file name
+>  - divider probe() into small functions, and re-use them
+> 
+> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+> [2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+> [7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+> Yixun Lan (3):
+>   clk: meson: add emmc sub clock phase delay driver
+>   clk: meson: add DT documentation for emmc clock controller
+>   clk: meson: add sub MMC clock controller driver
+>   clk: meson: add one based divider support for sclk divider
+> 
+>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
+>  drivers/clk/meson/Kconfig                          |  10 +
+>  drivers/clk/meson/Makefile                         |   3 +-
+>  drivers/clk/meson/clk-phase-delay.c                |  64 +++++
+>  drivers/clk/meson/clkc-audio.h                     |   1 +
+>  drivers/clk/meson/clkc.h                           |  13 +
+>  drivers/clk/meson/mmc-clkc.c                       | 313 +++++++++++++++++++++
+>  drivers/clk/meson/sclk-div.c                       |  28 +-
+>  include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
+>  9 files changed, 477 insertions(+), 11 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+>  create mode 100644 drivers/clk/meson/mmc-clkc.c
+>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+> 
+
