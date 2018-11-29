@@ -2,92 +2,90 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85ED4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD40C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 227BE206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 227BE206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E599206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 01:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E599206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeK2M40 (ORCPT
+        id S1727531AbeK2M4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 07:56:26 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15611 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727022AbeK2M4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 07:56:25 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 87A158D1EBA91;
-        Thu, 29 Nov 2018 09:52:44 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 29 Nov 2018 09:52:35 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-CC:     YueHaibing <yuehaibing@huawei.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ocfs2: Use kmemdup rather than duplicating its implementation
-Date:   Thu, 29 Nov 2018 02:01:14 +0000
-Message-ID: <1543456874-137698-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        Thu, 29 Nov 2018 07:56:30 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:49612 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbeK2M43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 07:56:29 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gSBVa-0008Se-6C; Wed, 28 Nov 2018 20:52:50 -0500
+Message-ID: <272363031cecc6641ccaaf3fc7cc1dd9dc749b9f.camel@surriel.com>
+Subject: Re: [PATCH 02/29] x86/entry/32: Remove asm/math_emu.h include
+From:   Rik van Riel <riel@surriel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Wed, 28 Nov 2018 20:52:50 -0500
+In-Reply-To: <20181128222035.2996-3-bigeasy@linutronix.de>
+References: <20181128222035.2996-1-bigeasy@linutronix.de>
+         <20181128222035.2996-3-bigeasy@linutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ULI3fVaZ3PXAivI0K2zE"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/ocfs2/localalloc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--=-ULI3fVaZ3PXAivI0K2zE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index 308f05b..3572204 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -433,12 +433,11 @@ void ocfs2_shutdown_local_alloc(struct ocfs2_super *osb)
- 	bh = osb->local_alloc_bh;
- 	alloc = (struct ocfs2_dinode *) bh->b_data;
- 
--	alloc_copy = kmalloc(bh->b_size, GFP_NOFS);
-+	alloc_copy = kmemdup(alloc, bh->b_size, GFP_NOFS);
- 	if (!alloc_copy) {
- 		status = -ENOMEM;
- 		goto out_commit;
- 	}
--	memcpy(alloc_copy, alloc, bh->b_size);
- 
- 	status = ocfs2_journal_access_di(handle, INODE_CACHE(local_alloc_inode),
- 					 bh, OCFS2_JOURNAL_ACCESS_WRITE);
-@@ -1281,13 +1280,12 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 	 * local alloc shutdown won't try to double free main bitmap
- 	 * bits. Make a copy so the sync function knows which bits to
- 	 * free. */
--	alloc_copy = kmalloc(osb->local_alloc_bh->b_size, GFP_NOFS);
-+	alloc_copy = kmemdup(alloc, osb->local_alloc_bh->b_size, GFP_NOFS);
- 	if (!alloc_copy) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
- 		goto bail;
- 	}
--	memcpy(alloc_copy, alloc, osb->local_alloc_bh->b_size);
- 
- 	status = ocfs2_journal_access_di(handle,
- 					 INODE_CACHE(local_alloc_inode),
+On Wed, 2018-11-28 at 23:20 +0100, Sebastian Andrzej Siewior wrote:
+> The math_emu.h header files contains the definition of struct
+> math_emu_info. It is not used in this file.
+>=20
+> Remove asm/math_emu.h include.
+>=20
+> Reviewed-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
+--=20
+All Rights Reversed.
 
+--=-ULI3fVaZ3PXAivI0K2zE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlv/RnIACgkQznnekoTE
+3oOHlAgAsNEbn8+igOGYmllpdslwKqe7W2JVJ3nMOJpReTTtcuqjfo9GJ05ZhX/5
+MJ/Bj9zYneTvcyo8ZXALPbZBrQRcQmyDUq4Wk5Gb+Z/4M9f2wsCTMPsjuF/eaRTV
+OzBMtDp7SMrFGo1utWCEe5onYMAy/bFYNEf2IYhEPE2SqwoY0UgCC4OWmJG5SUec
+Ym9/xagMjdJOSzz9HInCrWQq3hcJBCBbh7Fqddzl2xXZBLoo8NaZbyZO28yLvSCA
+cClpp8wq22A12POOfpcby9G3atga8C2TM4nU7+dj6rqmCftsgwzyxo3FR3rG5fBJ
+/h11TRt/pmFVA8Ol0M3cxtDHrDRBrQ==
+=MIUF
+-----END PGP SIGNATURE-----
+
+--=-ULI3fVaZ3PXAivI0K2zE--
 
