@@ -2,184 +2,145 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42E0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34BEC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D9E2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D9E2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FD3B2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:27:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bmh/2kw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD3B2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387658AbeK3Bcw (ORCPT
+        id S2387674AbeK3Bcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 29 Nov 2018 20:32:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731824AbeK3Bcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Nov 2018 20:32:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43248 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731814AbeK3Bcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:32:51 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATEJH5O118028
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:27:18 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p2ga6vyey-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 09:27:18 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 29 Nov 2018 14:27:16 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 29 Nov 2018 14:27:13 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATERDve14024920
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 14:27:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF797B205F;
-        Thu, 29 Nov 2018 14:27:12 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4A5CB206A;
-        Thu, 29 Nov 2018 14:27:12 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.160.212])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Nov 2018 14:27:12 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id AE92B16C1B35; Thu, 29 Nov 2018 06:27:12 -0800 (PST)
-Date:   Thu, 29 Nov 2018 06:27:12 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <CD6925E8781EFD4D8E11882D20FC406D52A11F61@SHSMSX104.ccr.corp.intel.com>
- <20181129130647.GG4170@linux.ibm.com>
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8C3C2133F;
+        Thu, 29 Nov 2018 14:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543501640;
+        bh=30Fop4Vl9YN60K+GvNfYizdHh730tEDnnl4rHhALyG8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Bmh/2kw2NQk+ukE6Cau3/I1S43L7GOH0z/Q3RWGr+WMa56ic5fQ5fHKebuJJMDKCD
+         W3WtXKbT9sqpQlBfrPSNsDzynEBRyw1MvcnpDvFI50xjvajMln5PNxcPouiyniEQ/Q
+         aiiUDVtNPi75VNF+3LUBcnKcPFzegkQaxldx5p+c=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matt Chen <matt.chen@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 4.14 079/100] iwlwifi: fix wrong WGDS_WIFI_DATA_SIZE
+Date:   Thu, 29 Nov 2018 15:12:49 +0100
+Message-Id: <20181129140105.588559473@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181129140058.768942700@linuxfoundation.org>
+References: <20181129140058.768942700@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129130647.GG4170@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18112914-0068-0000-0000-00000369077F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010143; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01124485; UDB=6.00583832; IPR=6.00904613;
- MB=3.00024384; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-29 14:27:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112914-0069-0000-0000-000046970B95
-Message-Id: <20181129142712.GA16607@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811290121
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 05:06:47AM -0800, Paul E. McKenney wrote:
-> On Thu, Nov 29, 2018 at 08:49:35AM +0000, He, Bo wrote:
-> > Hi, 
-> >       we test on kernel 4.19.0 on android, after run more than 24 Hours monkey stress test, we see OOM on 1/10 2G memory board, the issue is not seen on the 4.14 kernel.
-> > we have done some debugs:
-> > 1. OOM is due to the filp consume too many memory: 300M vs 2G board.
-> > 2. with the 120s hung task detect, most of the tasks will block at __wait_rcu_gp: wait_for_completion(&rs_array[i].completion);
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Did you did see any RCU CPU stall warnings?  Or have those been disabled?
-If they have been disabled, could you please rerun with them enabled?
+------------------
 
-> > [47571.863839] Kernel panic - not syncing: hung_task: blocked tasks
-> > [47571.875446] CPU: 1 PID: 13626 Comm: FinalizerDaemon Tainted: G     U     O      4.19.0-quilt-2e5dc0ac-gf3f313245eb6 #1
-> > [47571.887603] Call Trace:
-> > [47571.890547]  dump_stack+0x70/0xa5
-> > [47571.894456]  panic+0xe3/0x241
-> > [47571.897977]  ? wait_for_completion_timeout+0x72/0x1b0
-> > [47571.903830]  __wait_rcu_gp+0x17b/0x180
-> > [47571.908226]  synchronize_rcu.part.76+0x38/0x50
-> > [47571.913393]  ? __call_rcu.constprop.79+0x3a0/0x3a0
-> > [47571.918948]  ? __bpf_trace_rcu_invoke_callback+0x10/0x10
-> > [47571.925094]  synchronize_rcu+0x43/0x50
-> > [47571.929487]  evdev_detach_client+0x59/0x60
-> > [47571.934264]  evdev_release+0x4e/0xd0
-> > [47571.938464]  __fput+0xfa/0x1f0
-> > [47571.942072]  ____fput+0xe/0x10
-> > [47571.945683]  task_work_run+0x90/0xc0
-> > [47571.949884]  exit_to_usermode_loop+0x9f/0xb0
-> > [47571.954855]  do_syscall_64+0xfa/0x110
-> > [47571.959151]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+From: Matt Chen <matt.chen@intel.com>
 
-This is indeed a task waiting on synchronize_rcu().
+commit 66e839030fd698586734e017fd55c4f2a89dba0b upstream.
 
-> > 3. after enable the rcu trace, we don't see rcu_quiescent_state_report trace in a long time, we see rcu_callback: rcu_preempt will never response with the rcu_invoke_callback.
-> > [47572.040668]      ps-12388   1d..1 47566097572us : rcu_grace_period: rcu_preempt 23716088 AccWaitCB
-> > [47572.040707]      ps-12388   1d... 47566097621us : rcu_callback: rcu_preempt rhp=00000000783a728b func=file_free_rcu 4354/82824
-> > [47572.040734]      ps-12388   1d..1 47566097622us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Startleaf
-> > [47572.040756]      ps-12388   1d..1 47566097623us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Prestarted
-> > [47572.040778]      ps-12388   1d..1 47566097623us : rcu_grace_period: rcu_preempt 23716088 AccWaitCB
-> > [47572.040802]      ps-12388   1d... 47566097674us : rcu_callback: rcu_preempt rhp=0000000042c76521 func=file_free_rcu 4354/82825
-> > [47572.040824]      ps-12388   1d..1 47566097676us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Startleaf
-> > [47572.040847]      ps-12388   1d..1 47566097676us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Prestarted
-> > [47572.040868]      ps-12388   1d..1 47566097676us : rcu_grace_period: rcu_preempt 23716088 AccWaitCB
-> > [47572.040895]      ps-12388   1d..1 47566097716us : rcu_callback: rcu_preempt rhp=000000005e40fde2 func=avc_node_free 4354/82826
-> > [47572.040919]      ps-12388   1d..1 47566097735us : rcu_callback: rcu_preempt rhp=00000000f80fe353 func=avc_node_free 4354/82827
-> > [47572.040943]      ps-12388   1d..1 47566097758us : rcu_callback: rcu_preempt rhp=000000007486f400 func=avc_node_free 4354/82828
-> > [47572.040967]      ps-12388   1d..1 47566097760us : rcu_callback: rcu_preempt rhp=00000000b87872a8 func=avc_node_free 4354/82829
-> > [47572.040990]      ps-12388   1d... 47566097789us : rcu_callback: rcu_preempt rhp=000000008c656343 func=file_free_rcu 4354/82830
-> > [47572.041013]      ps-12388   1d..1 47566097790us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Startleaf
-> > [47572.041036]      ps-12388   1d..1 47566097790us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Prestarted
-> > [47572.041057]      ps-12388   1d..1 47566097791us : rcu_grace_period: rcu_preempt 23716088 AccWaitCB
-> > [47572.041081]      ps-12388   1d... 47566097871us : rcu_callback: rcu_preempt rhp=000000007e6c898c func=file_free_rcu 4354/82831
-> > [47572.041103]      ps-12388   1d..1 47566097872us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Startleaf
-> > [47572.041126]      ps-12388   1d..1 47566097872us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Prestarted
-> > [47572.041147]      ps-12388   1d..1 47566097873us : rcu_grace_period: rcu_preempt 23716088 AccWaitCB
-> > [47572.041170]      ps-12388   1d... 47566097945us : rcu_callback: rcu_preempt rhp=0000000032f4f174 func=file_free_rcu 4354/82832
-> > [47572.041193]      ps-12388   1d..1 47566097946us : rcu_future_grace_period: rcu_preempt 23716088 23716092 0 0 3 Startleaf
+>From coreboot/BIOS:
+Name ("WGDS", Package() {
+ Revision,
+ Package() {
+     DomainType,                         // 0x7:WiFi ==> We miss this one.
+     WgdsWiFiSarDeltaGroup1PowerMax1,    // Group 1 FCC 2400 Max
+     WgdsWiFiSarDeltaGroup1PowerChainA1, // Group 1 FCC 2400 A Offset
+     WgdsWiFiSarDeltaGroup1PowerChainB1, // Group 1 FCC 2400 B Offset
+     WgdsWiFiSarDeltaGroup1PowerMax2,    // Group 1 FCC 5200 Max
+     WgdsWiFiSarDeltaGroup1PowerChainA2, // Group 1 FCC 5200 A Offset
+     WgdsWiFiSarDeltaGroup1PowerChainB2, // Group 1 FCC 5200 B Offset
+     WgdsWiFiSarDeltaGroup2PowerMax1,    // Group 2 EC Jap 2400 Max
+     WgdsWiFiSarDeltaGroup2PowerChainA1, // Group 2 EC Jap 2400 A Offset
+     WgdsWiFiSarDeltaGroup2PowerChainB1, // Group 2 EC Jap 2400 B Offset
+     WgdsWiFiSarDeltaGroup2PowerMax2,    // Group 2 EC Jap 5200 Max
+     WgdsWiFiSarDeltaGroup2PowerChainA2, // Group 2 EC Jap 5200 A Offset
+     WgdsWiFiSarDeltaGroup2PowerChainB2, // Group 2 EC Jap 5200 B Offset
+     WgdsWiFiSarDeltaGroup3PowerMax1,    // Group 3 ROW 2400 Max
+     WgdsWiFiSarDeltaGroup3PowerChainA1, // Group 3 ROW 2400 A Offset
+     WgdsWiFiSarDeltaGroup3PowerChainB1, // Group 3 ROW 2400 B Offset
+     WgdsWiFiSarDeltaGroup3PowerMax2,    // Group 3 ROW 5200 Max
+     WgdsWiFiSarDeltaGroup3PowerChainA2, // Group 3 ROW 5200 A Offset
+     WgdsWiFiSarDeltaGroup3PowerChainB2, // Group 3 ROW 5200 B Offset
+ }
+})
 
-Callbacks are being queued and future grace periods to handle them are being
-requested, but as you say, no progress on the current grace period.
+When read the ACPI data to find out the WGDS, the DATA_SIZE is never
+matched.
+>From the above format, it gives 19 numbers, but our driver is hardcode
+as 18.
+Fix it to pass then can parse the data into our wgds table.
+Then we will see:
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init Sending GEO_TX_POWER_LIMIT
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[0]
+Band[0]: chain A = 68 chain B = 69 max_tx_power = 54
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[0]
+Band[1]: chain A = 48 chain B = 49 max_tx_power = 70
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[1]
+Band[0]: chain A = 51 chain B = 67 max_tx_power = 50
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[1]
+Band[1]: chain A = 69 chain B = 70 max_tx_power = 68
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[2]
+Band[0]: chain A = 49 chain B = 50 max_tx_power = 48
+iwlwifi 0000:01:00.0: U iwl_mvm_sar_geo_init SAR geographic profile[2]
+Band[1]: chain A = 52 chain B = 53 max_tx_power = 51
 
-Is it possible to start the trace earlier?
+Cc: stable@vger.kernel.org # 4.12+
+Fixes: a6bff3cb19b7 ("iwlwifi: mvm: add GEO_TX_POWER_LIMIT cmd for geographic tx power table")
+Signed-off-by: Matt Chen <matt.chen@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> > Do you have any suggestions to debug the issue?
-> 
-> If you do not already have CONFIG_RCU_BOOST=y set, could you please
-> rebuild with that?
-> 
-> Could you also please send your .config file?
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So, to summarize:
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -590,7 +590,7 @@ static int iwl_mvm_config_ltr(struct iwl
+ #define ACPI_WRDS_WIFI_DATA_SIZE	(IWL_MVM_SAR_TABLE_SIZE + 2)
+ #define ACPI_EWRD_WIFI_DATA_SIZE	((IWL_MVM_SAR_PROFILE_NUM - 1) * \
+ 					 IWL_MVM_SAR_TABLE_SIZE + 3)
+-#define ACPI_WGDS_WIFI_DATA_SIZE	18
++#define ACPI_WGDS_WIFI_DATA_SIZE	19
+ #define ACPI_WGDS_NUM_BANDS		2
+ #define ACPI_WGDS_TABLE_SIZE		3
+ 
+@@ -964,7 +964,7 @@ static int iwl_mvm_sar_geo_init(struct i
+ 	IWL_DEBUG_RADIO(mvm, "Sending GEO_TX_POWER_LIMIT\n");
+ 
+ 	BUILD_BUG_ON(IWL_NUM_GEO_PROFILES * ACPI_WGDS_NUM_BANDS *
+-		     ACPI_WGDS_TABLE_SIZE !=  ACPI_WGDS_WIFI_DATA_SIZE);
++		     ACPI_WGDS_TABLE_SIZE + 1 !=  ACPI_WGDS_WIFI_DATA_SIZE);
+ 
+ 	for (i = 0; i < IWL_NUM_GEO_PROFILES; i++) {
+ 		struct iwl_per_chain_offset *chain =
 
-1.	If you don't have RCU CPU stall warnings enabled,
-	please enable them.  For example, please remove
-	rcupdate.rcu_cpu_stall_suppress from the kernel boot
-	parameters if it is there.
-
-	Getting an RCU CPU stall warning would be extremely
-	helpful.  It contains many useful diagnostics.
-
-2.	If possible, please start the trace before the last
-	grace period starts.
-
-3.	If CONFIG_RCU_BOOST=y is not set, please try setting it.
-
-4.	Please send me your .config file.
-
-						Thanx, Paul
 
