@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF53FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BC6C64EB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3302146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3302146D
+	by mail.kernel.org (Postfix) with ESMTP id 1DB1820673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB1820673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbeK3KNo (ORCPT
+        id S1727367AbeK3KNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:13:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36944 "EHLO mx1.suse.de"
+        Fri, 30 Nov 2018 05:13:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36980 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeK3KNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:13:43 -0500
+        id S1726393AbeK3KNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:13:50 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 53059AC66;
-        Thu, 29 Nov 2018 23:06:33 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D7A82AC66;
+        Thu, 29 Nov 2018 23:06:39 +0000 (UTC)
 From:   NeilBrown <neilb@suse.com>
 To:     Jeff Layton <jlayton@kernel.org>
 Date:   Fri, 30 Nov 2018 10:04:08 +1100
-Subject: [PATCH 07/12] fs/locks: allow a lock request to block other
- requests.
+Subject: [PATCH 08/12] fs/locks: always delete_block after waiting.
 Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Message-ID: <154353264847.32133.3141626293377932243.stgit@noble>
+Message-ID: <154353264851.32133.3996924672100884987.stgit@noble>
 In-Reply-To: <154353251599.32133.1085882002675619240.stgit@noble>
 References: <154353251599.32133.1085882002675619240.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -47,130 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, a lock can block pending requests, but all pending
-requests are equal.  If lots of pending requests are
-mutually exclusive, this means they will all be woken up
-and all but one will fail.  This can hurt performance.
+Now that requests can block other requests, we
+need to be careful to always clean up those blocked
+requests.
+Any time that we wait for a request, we might have
+other requests attached, and when we stop waiting,
+we must clean them up.
+If the lock was granted, the requests might have been
+moved to the new lock, though when merged with a
+pre-exiting lock, this might not happen.
+In all cases we don't want blocked locks to remain
+attached, so we remove them to be safe.
 
-So we will allow pending requests to block other requests.
-Only the first request will be woken, and it will wake the others.
-
-This patch doesn't implement this fully, but prepares the way.
-
-- It acknowledges that a request might be blocking other requests,
-  and when the request is converted to a lock, those blocked
-  requests are moved across.
-- When a request is requeued or discarded, all blocked requests are
-  woken.
-- When deadlock-detection looks for the lock which blocks a
-  given request, we follow the chain of ->fl_blocker all
-  the way to the top.
-
-Tested-by: kernel test robot <rong.a.chen@intel.com>
 Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: J. Bruce Fields <bfields@redhat.com>
+Tested-by: syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com
+Tested-by: kernel test robot <rong.a.chen@intel.com>
 ---
- fs/locks.c |   43 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
+ fs/locks.c |   40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 492d970c67d7..1260c265ba62 100644
+index 1260c265ba62..2814662ecfe6 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -402,6 +402,24 @@ void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
+@@ -710,6 +710,20 @@ static void __locks_wake_up_blocks(struct file_lock *blocker)
  
- EXPORT_SYMBOL(locks_copy_lock);
- 
-+static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
-+{
-+	struct file_lock *f;
-+
-+	/*
-+	 * As ctx->flc_lock is held, new requests cannot be added to
-+	 * ->fl_blocked_requests, so we don't need a lock to check if it
-+	 * is empty.
-+	 */
-+	if (list_empty(&fl->fl_blocked_requests))
-+		return;
-+	spin_lock(&blocked_lock_lock);
-+	list_splice_init(&fl->fl_blocked_requests, &new->fl_blocked_requests);
-+	list_for_each_entry(f, &fl->fl_blocked_requests, fl_blocked_member)
-+		f->fl_blocker = new;
-+	spin_unlock(&blocked_lock_lock);
-+}
-+
- static inline int flock_translate_cmd(int cmd) {
- 	if (cmd & LOCK_MAND)
- 		return cmd & (LOCK_MAND | LOCK_RW);
-@@ -693,6 +711,7 @@ static void __locks_wake_up_blocks(struct file_lock *blocker)
  static void locks_delete_block(struct file_lock *waiter)
  {
- 	spin_lock(&blocked_lock_lock);
-+	__locks_wake_up_blocks(waiter);
- 	__locks_delete_block(waiter);
- 	spin_unlock(&blocked_lock_lock);
- }
-@@ -716,6 +735,12 @@ static void __locks_insert_block(struct file_lock *blocker,
- 	list_add_tail(&waiter->fl_blocked_member, &blocker->fl_blocked_requests);
- 	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
- 		locks_insert_global_blocked(waiter);
-+
-+	/* The requests in waiter->fl_blocked are known to conflict with
-+	 * waiter, but might not conflict with blocker, or the requests
-+	 * and lock which block it.  So they all need to be woken.
++	/*
++	 * If fl_blocker is NULL, it won't be set again as this thread
++	 * "owns" the lock and is the only one that might try to claim
++	 * the lock.  So it is safe to test fl_blocker locklessly.
++	 * Also if fl_blocker is NULL, this waiter is not listed on
++	 * fl_blocked_requests for some lock, so no other request can
++	 * be added to the list of fl_blocked_requests for this
++	 * request.  So if fl_blocker is NULL, it is safe to
++	 * locklessly check if fl_blocked_requests is empty.  If both
++	 * of these checks succeed, there is no need to take the lock.
 +	 */
-+	__locks_wake_up_blocks(waiter);
- }
- 
- /* Must be called with flc_lock held. */
-@@ -888,8 +913,11 @@ static struct file_lock *what_owner_is_waiting_for(struct file_lock *block_fl)
- 	struct file_lock *fl;
- 
- 	hash_for_each_possible(blocked_hash, fl, fl_link, posix_owner_key(block_fl)) {
--		if (posix_same_owner(fl, block_fl))
--			return fl->fl_blocker;
-+		if (posix_same_owner(fl, block_fl)) {
-+			while (fl->fl_blocker)
-+				fl = fl->fl_blocker;
-+			return fl;
-+		}
- 	}
- 	return NULL;
- }
-@@ -982,6 +1010,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
- 	if (request->fl_flags & FL_ACCESS)
- 		goto out;
- 	locks_copy_lock(new_fl, request);
-+	locks_move_blocks(new_fl, request);
- 	locks_insert_lock_ctx(new_fl, &ctx->flc_flock);
- 	new_fl = NULL;
- 	error = 0;
-@@ -1175,6 +1204,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- 			goto out;
- 		}
- 		locks_copy_lock(new_fl, request);
-+		locks_move_blocks(new_fl, request);
- 		locks_insert_lock_ctx(new_fl, &fl->fl_list);
- 		fl = new_fl;
- 		new_fl = NULL;
-@@ -2586,13 +2616,14 @@ void locks_remove_file(struct file *filp)
- int
- posix_unblock_lock(struct file_lock *waiter)
- {
--	int status = 0;
-+	int status = -ENOENT;
- 
++	if (waiter->fl_blocker == NULL &&
++	    list_empty(&waiter->fl_blocked_requests))
++		return status;
  	spin_lock(&blocked_lock_lock);
--	if (waiter->fl_blocker)
-+	if (waiter->fl_blocker) {
-+		__locks_wake_up_blocks(waiter);
- 		__locks_delete_block(waiter);
--	else
--		status = -ENOENT;
-+		status = 0;
-+	}
- 	spin_unlock(&blocked_lock_lock);
- 	return status;
+ 	__locks_wake_up_blocks(waiter);
+ 	__locks_delete_block(waiter);
+@@ -1279,12 +1293,10 @@ static int posix_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+ 		if (error != FILE_LOCK_DEFERRED)
+ 			break;
+ 		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+-		if (!error)
+-			continue;
+-
+-		locks_delete_block(fl);
+-		break;
++		if (error)
++			break;
+ 	}
++	locks_delete_block(fl);
+ 	return error;
+ }
+ 
+@@ -1375,9 +1387,9 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
+ 				continue;
+ 		}
+ 
+-		locks_delete_block(&fl);
+ 		break;
+ 	}
++	locks_delete_block(&fl);
+ 
+ 	return error;
+ }
+@@ -1973,12 +1985,10 @@ static int flock_lock_inode_wait(struct inode *inode, struct file_lock *fl)
+ 		if (error != FILE_LOCK_DEFERRED)
+ 			break;
+ 		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+-		if (!error)
+-			continue;
+-
+-		locks_delete_block(fl);
+-		break;
++		if (error)
++			break;
+ 	}
++	locks_delete_block(fl);
+ 	return error;
+ }
+ 
+@@ -2252,12 +2262,10 @@ static int do_lock_file_wait(struct file *filp, unsigned int cmd,
+ 		if (error != FILE_LOCK_DEFERRED)
+ 			break;
+ 		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
+-		if (!error)
+-			continue;
+-
+-		locks_delete_block(fl);
+-		break;
++		if (error)
++			break;
+ 	}
++	locks_delete_block(fl);
+ 
+ 	return error;
  }
 
 
