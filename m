@@ -2,104 +2,108 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23E4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9647EC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12A32081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:19:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12A32081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 50C8B206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:21:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U6Cja+0X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C8B206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeK2XYg (ORCPT
+        id S1728151AbeK2X0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:24:36 -0500
-Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:52910 "EHLO
-        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726683AbeK2XYg (ORCPT
+        Thu, 29 Nov 2018 18:26:53 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:35112 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeK2X0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:24:36 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail01.adl6.internode.on.net with ESMTP; 29 Nov 2018 22:49:23 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gSLHu-00065Z-JD; Thu, 29 Nov 2018 23:19:22 +1100
-Date:   Thu, 29 Nov 2018 23:19:22 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 52/68] iomap: sub-block dio needs to zeroout
- beyond EOF
-Message-ID: <20181129121922.GL19305@dastard>
-References: <20181129055559.159228-1-sashal@kernel.org>
- <20181129055559.159228-52-sashal@kernel.org>
+        Thu, 29 Nov 2018 18:26:53 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wATCIxkM162052;
+        Thu, 29 Nov 2018 12:20:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=AFjw7fba25Nf7rHkCrrAVTagUz0zXPAeYPiGn97bCqU=;
+ b=U6Cja+0X/Z5vZaB/ktSssT9xgMwAAA+rYOBywkAFObE2VMeY3cuZnYfCEgwaWADx0Nkz
+ EdX9mulsDOe8agxv5s8J9AIOjYFddrWNQqeOx6JanyQ5lD8LNIFJLnncp5LC3Y9Hxr1K
+ 6mAG6t8MC+s/H0rVAY7mlAyOZaV1GhznIyLmn/Xth24JpuNqpdd+ZSXiwuZ6mfuzDn52
+ wIWkjo+V/9qeeTnKpIJRVlkPUJqMh+ch7f/k6LDfce035bxPiROL3elf0H3t1B4J/gpe
+ EKQLiP7puD5W/aILEhMmPGZRYfHZ7cDCXQhAp3dej2iHP/njr2tR6IQVjhsHwBUeT/nz Aw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2nxx2ufwb8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 12:20:55 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wATCKtm7013370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Nov 2018 12:20:55 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wATCKpuC002202;
+        Thu, 29 Nov 2018 12:20:51 GMT
+Received: from unbuntlaptop (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Nov 2018 04:20:51 -0800
+Date:   Thu, 29 Nov 2018 15:20:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hanjie Lin <hanjie.lin@amlogic.com>
+Cc:     kbuild@01.org, kbuild-all@01.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>
+Subject: Re: [PATCH v6 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
+ controller driver
+Message-ID: <20181129122032.GS3073@unbuntlaptop>
+References: <20181129090340.GO3073@unbuntlaptop>
+ <6da0ecdc-47e6-960e-c84e-2eb30632c317@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129055559.159228-52-sashal@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <6da0ecdc-47e6-960e-c84e-2eb30632c317@amlogic.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9091 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=740
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811290106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:55:43AM -0500, Sasha Levin wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> [ Upstream commit b450672fb66b4a991a5b55ee24209ac7ae7690ce ]
-> 
-> If we are doing sub-block dio that extends EOF, we need to zero
-> the unused tail of the block to initialise the data in it it. If we
-> do not zero the tail of the block, then an immediate mmap read of
-> the EOF block will expose stale data beyond EOF to userspace. Found
-> with fsx running sub-block DIO sizes vs MAPREAD/MAPWRITE operations.
-> 
-> Fix this by detecting if the end of the DIO write is beyond EOF
-> and zeroing the tail if necessary.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/iomap.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index fa46e3ed8f53..82e35265679d 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -1678,7 +1678,14 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		dio->submit.cookie = submit_bio(bio);
->  	} while (nr_pages);
->  
-> -	if (need_zeroout) {
-> +	/*
-> +	 * We need to zeroout the tail of a sub-block write if the extent type
-> +	 * requires zeroing or the write extends beyond EOF. If we don't zero
-> +	 * the block tail in the latter case, we can expose stale data via mmap
-> +	 * reads of the EOF block.
-> +	 */
-> +	if (need_zeroout ||
-> +	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
->  		/* zero out from the end of the write to the end of the block */
->  		pad = pos & (fs_block_size - 1);
->  		if (pad)
+On Thu, Nov 29, 2018 at 08:08:57PM +0800, Hanjie Lin wrote:
+> Yes, it's really a silly mistake. 
 
-Same again - what's the test plan for these cherry-picked data
-corruption fixes?
+No one gets annoyed about typos.  We're all human and we make mistakes.
 
-Cheers,
+(This was going to an uplifting email, but then I had to mention that
+what does make people annoyed is OS abstraction layers.  People try to
+use the same driver on both linux and windows.  Absolute madness!)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+regards,
+dan carpenter
+
