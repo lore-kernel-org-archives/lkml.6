@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F17CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54720C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675B221019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1E7208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATAyVnit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675B221019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Noc7x51F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1E7208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730283AbeK3BWh (ORCPT
+        id S1730300AbeK3BWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbeK3BWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:37 -0500
+        id S1729335AbeK3BWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DF5821019;
-        Thu, 29 Nov 2018 14:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC6BC208E7;
+        Thu, 29 Nov 2018 14:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501026;
-        bh=0hkNSlWnj37Jg51FVQvGEr/kcc6irP/Kb2oYroaEzVw=;
+        s=default; t=1543501029;
+        bh=KZGzmwVwYOHoxghKlDjuacAKGo1dlSItKDeHYy7AipA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ATAyVnitHuNux1eQmvboMCXokKnKEGq3x8i9BKGyi18gia3K+9Ve9Je0+ltlkNxR8
-         hvuNyJbSrX4xKKHftFPnAcqw47QuqEq8fXb8wXqVyfFtxJ+CKjrzk00dueB9/iL5lJ
-         io3sTatcadmmXYGASkMbp++DEHfP1DexKQ9Th0xU=
+        b=Noc7x51FAsEgVMN7T1esmysI+NTARasRA9wzb7oTlAdDoeZZIAk1t6HKGv1mzOxHj
+         93FBPJC371ufLBMSH1pANmiNOAmcmFJdD7nMvU6IzqIJAu+EcJhzpy9jWPtruoxxXJ
+         YBn0r3QFXVDkcJS6jOowU3hE5FKnZvMWW3ppWWxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 13/86] can: dev: __can_get_echo_skb(): replace struct can_frame by canfd_frame to access frame length
-Date:   Thu, 29 Nov 2018 15:11:38 +0100
-Message-Id: <20181129140110.982887675@linuxfoundation.org>
+Subject: [PATCH 4.4 14/86] can: dev: __can_get_echo_skb(): Dont crash the kernel if can_priv::echo_skb is accessed out of bounds
+Date:   Thu, 29 Nov 2018 15:11:39 +0100
+Message-Id: <20181129140111.054108665@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -63,41 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 200f5c49f7a2cd694436bfc6cb0662b794c96736 upstream.
+commit e7a6994d043a1e31d5b17706a22ce33d2a3e4cdc upstream.
 
-This patch replaces the use of "struct can_frame::can_dlc" by "struct
-canfd_frame::len" to access the frame's length. As it is ensured that
-both structures have a compatible memory layout for this member this is
-no functional change. Futher, this compatibility is documented in a
-comment.
+If the "struct can_priv::echo_skb" is accessed out of bounds would lead
+to a kernel crash. Better print a sensible warning message instead and
+try to recover.
 
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/dev.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/can/dev.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/drivers/net/can/dev.c
 +++ b/drivers/net/can/dev.c
-@@ -430,11 +430,14 @@ struct sk_buff *__can_get_echo_skb(struc
- 	BUG_ON(idx >= priv->echo_skb_max);
+@@ -427,7 +427,11 @@ struct sk_buff *__can_get_echo_skb(struc
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+ 
+-	BUG_ON(idx >= priv->echo_skb_max);
++	if (idx >= priv->echo_skb_max) {
++		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
++			   __func__, idx, priv->echo_skb_max);
++		return NULL;
++	}
  
  	if (priv->echo_skb[idx]) {
-+		/* Using "struct canfd_frame::len" for the frame
-+		 * length is supported on both CAN and CANFD frames.
-+		 */
- 		struct sk_buff *skb = priv->echo_skb[idx];
--		struct can_frame *cf = (struct can_frame *)skb->data;
--		u8 dlc = cf->can_dlc;
-+		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
-+		u8 len = cf->len;
- 
--		*len_ptr = dlc;
-+		*len_ptr = len;
- 		priv->echo_skb[idx] = NULL;
- 
- 		return skb;
+ 		/* Using "struct canfd_frame::len" for the frame
 
 
