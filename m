@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7613EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF85C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED802146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77CA32146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:29:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zAIN2cvM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED802146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpJut3MB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CA32146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388555AbeK3BfU (ORCPT
+        id S2388566AbeK3BfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:35:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37124 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:35:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732084AbeK3BfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:35:19 -0500
+        id S1732084AbeK3BfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:35:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 087A521479;
-        Thu, 29 Nov 2018 14:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 691F12145D;
+        Thu, 29 Nov 2018 14:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501786;
-        bh=KIxA3Sl8roLGedwVi883FYcBGEtHyGFlIVeFwaZfNhg=;
+        s=default; t=1543501788;
+        bh=+xsDmVJY5H6ac35tM9RyBh3F/+gyYkWLxPriUUKxTGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zAIN2cvMLvOqx++dGlsQoYfZvdb6zgD8pGCC/vSacYbXCqyNucJOB6VVVtMUfhpGd
-         fWuQACUlCd7rEI2C8RX3hJLLy9P5bRF3jTBbvBt7qgjBuIe+c12+HNxTyQUwsmaZ6o
-         jhIsQzKcjINuMnpAjWiu5ToXBlsdsg8Ysj/7l1uk=
+        b=ZpJut3MBLBy7TyET72N2w+JZk3nuTX6iDhNI8CtR0k9VUZVgOUVIdRVo73EFC6Cu4
+         4+0+uD7/StOE+SHyPFlFdaxqUfF2Hel6BQHP7OcQswrHeWrTjKESNxEa+9ne3yg244
+         KsBSAI2bkhUsWUtilhh3240qrvMVn5i9jEC9uv98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.19 040/110] drm/fb-helper: Blacklist writeback when adding connectors to fbdev
-Date:   Thu, 29 Nov 2018 15:12:11 +0100
-Message-Id: <20181129135922.880925714@linuxfoundation.org>
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 041/110] drm/amdgpu: Add missing firmware entry for HAINAN
+Date:   Thu, 29 Nov 2018 15:12:12 +0100
+Message-Id: <20181129135922.922590330@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
 References: <20181129135921.231283053@linuxfoundation.org>
@@ -65,50 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 8fd3b90300bec541806dac271de2fd44e2e4e2d2 upstream.
+commit 8d4d7c58994759bbd9f4fec32d88bf0e0b89302e upstream.
 
-Writeback connectors do not produce any on-screen output and require
-special care for use. Such connectors are hidden from enumeration in
-DRM resources by default, but they are still picked-up by fbdev.
-This makes rather little sense since fbdev is not really adapted for
-dealing with writeback.
+Due to lack of MODULE_FIRMWARE() with hainan_mc.bin, the driver
+doesn't work properly in initrd.  Let's add it.
 
-Moreover, this is also a source of issues when userspace disables the
-CRTC (and associated plane) without detaching the CRTC from the
-connector (which is hidden by default). In this case, the connector is
-still using the CRTC, leading to am "enabled/connectors mismatch" and
-eventually the failure of the associated atomic commit. This situation
-happens with VC4 testing under IGT GPU Tools.
-
-Filter out writeback connectors in the fbdev helper to solve this.
-
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Tested-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Fixes: 935774cd71fe ("drm: Add writeback connector type")
-Cc: <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181115163248.21168-1-paul.kocialkowski@bootlin.com
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1116239
+Fixes: 8eaf2b1faaf4 ("drm/amdgpu: switch firmware path for SI parts")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_fb_helper.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -200,6 +200,9 @@ int drm_fb_helper_single_add_all_connect
- 	mutex_lock(&fb_helper->lock);
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	drm_for_each_connector_iter(connector, &conn_iter) {
-+		if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
-+			continue;
-+
- 		ret = __drm_fb_helper_add_one_connector(fb_helper, connector);
- 		if (ret)
- 			goto fail;
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+@@ -45,6 +45,7 @@ MODULE_FIRMWARE("amdgpu/tahiti_mc.bin");
+ MODULE_FIRMWARE("amdgpu/pitcairn_mc.bin");
+ MODULE_FIRMWARE("amdgpu/verde_mc.bin");
+ MODULE_FIRMWARE("amdgpu/oland_mc.bin");
++MODULE_FIRMWARE("amdgpu/hainan_mc.bin");
+ MODULE_FIRMWARE("amdgpu/si58_mc.bin");
+ 
+ #define MC_SEQ_MISC0__MT__MASK   0xf0000000
 
 
