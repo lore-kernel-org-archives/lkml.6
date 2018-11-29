@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B82C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6378C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33EE21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F065213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:17:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="atnbKPOY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33EE21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/FZxs+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F065213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeK3BWb (ORCPT
+        id S1729355AbeK3BWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:22:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44224 "EHLO mail.kernel.org"
+        Thu, 29 Nov 2018 20:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbeK3BWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:22:30 -0500
+        id S1728190AbeK3BWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:22:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E577208E7;
-        Thu, 29 Nov 2018 14:16:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5040205C9;
+        Thu, 29 Nov 2018 14:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501019;
-        bh=A4TYvWLog5vCbEjHgLR8Bpsyzid5q3FnpB5KfwSadYs=;
+        s=default; t=1543501022;
+        bh=Cx2TXNwRSE9zdhm3f5cpSlnOQU8+k9gZ0R9tv54cb8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atnbKPOYPAkGnv/UL+svDeh8QEzcTJ3gkuXIOvXl4+Ro6DHxN4OvpSEnu0eDfQ7ns
-         DSsCx3JOmMkKoqKJEkK4X+pvMYVivYiAVq9Z069yJfdimE6oOnZmKwBVKUGYBVK01z
-         /H2v2bTSyYfSG1WYnkdWFxAjL8Sb/56x4WHdrV5Y=
+        b=P/FZxs+hASaIP5dAgbHQJqtvXFA2mukWpd8/7EnXcQ2Qp4IEPt5quTSOAoMYVhR6z
+         hyThA33Hp8OIrSBIbWPWX8MXaYCEunTVZLph7XWO263ug0DePynbE9DPI6msQftNzW
+         Z65yJviMSMhECm733a7YlVAXqoFdnj+lqLl0GJJM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Jean Delvare <jdelvare@suse.de>,
         Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.4 10/86] drm/ast: change resolution may cause screen blurred
-Date:   Thu, 29 Nov 2018 15:11:35 +0100
-Message-Id: <20181129140110.761654710@linuxfoundation.org>
+Subject: [PATCH 4.4 11/86] drm/ast: fixed cursor may disappear sometimes
+Date:   Thu, 29 Nov 2018 15:11:36 +0100
+Message-Id: <20181129140110.846404311@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181129140109.832117862@linuxfoundation.org>
 References: <20181129140109.832117862@linuxfoundation.org>
@@ -65,34 +64,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Y.C. Chen <yc_chen@aspeedtech.com>
 
-commit 1a37bd823891568f8721989aed0615835632d81a upstream.
-
-The value of pitches is not correct while calling mode_set.
-The issue we found so far on following system:
-- Debian8 with XFCE Desktop
-- Ubuntu with KDE Desktop
-- SUSE15 with KDE Desktop
+commit 7989b9ee8bafe5cc625381dd0c3c4586de27ca26 upstream.
 
 Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
 Cc: <stable@vger.kernel.org>
-Tested-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ast/ast_mode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/ast/ast_mode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/ast/ast_mode.c
 +++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -552,6 +552,7 @@ static int ast_crtc_do_set_base(struct d
- 	}
- 	ast_bo_unreserve(bo);
+@@ -1250,7 +1250,7 @@ static int ast_cursor_move(struct drm_cr
+ 	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xc7, ((y >> 8) & 0x07));
  
-+	ast_set_offset_reg(crtc);
- 	ast_set_start_address_crt1(crtc, (u32)gpu_addr);
+ 	/* dummy write to fire HWC */
+-	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xCB, 0xFF, 0x00);
++	ast_show_cursor(crtc);
  
  	return 0;
+ }
 
 
