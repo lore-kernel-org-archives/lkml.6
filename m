@@ -2,167 +2,161 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12712C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DFCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84CB2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:42:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="AKiWEwTt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84CB2133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id D16292081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 12:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16292081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeK2XsF (ORCPT
+        id S1728151AbeK2XuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:48:05 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:42766 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeK2XsF (ORCPT
+        Thu, 29 Nov 2018 18:50:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33172 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726958AbeK2XuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 18:48:05 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id A284210C11A2;
-        Thu, 29 Nov 2018 04:42:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543495366; bh=iTliEgV6ReEmVDtiPNhclUVkpQAMjfk6hcnZD/hbnWU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AKiWEwTtI6Nn8rjxidEhtQNwdGJkQvVpqP1i0RWAbTefXbelbvjv1Iwk88Oi2q3Pw
-         QkGmBZyhheFwCnuXY+IEOuDSzg51JBcMrLtC2Cy+cbB/3Q8B+rnXAKw8We3TPmhTW4
-         6xCF7+Es0lcNFyHqIMucCfpzH+mVBwMfA72mDnnzMC8Ddp3kSsspdL1aNUPlWDV0NI
-         6vNp31r7f3onvhAzlRIJA+vJqoHnA5gGXGmKQ8DHnK6ZSIruMLvOM1+qD6UFtSd5Ly
-         XiX32L7x/OXT2BXv/eRWcuWO88M756SAUvT6IVwfIESAlxixh2G4da3Uz8kGtvajs1
-         tkJ+1yWXbIEsw==
-Received: from joabreu-VirtualBox.internal.synopsys.com (joabreu-e7440.internal.synopsys.com [10.107.19.26])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 122925861;
-        Thu, 29 Nov 2018 04:42:44 -0800 (PST)
-From:   Jose Abreu <jose.abreu@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        Vitor Soares <vitor.soares@synopsys.com>
-Subject: [PATCH] ARC: io.h: Implement reads{x}()/writes{x}()
-Date:   Thu, 29 Nov 2018 12:42:22 +0000
-Message-Id: <bdcc49c9eab45bda6815b1419590943e603d8dc2.1543484040.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 29 Nov 2018 18:50:15 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wATCdr4E123981
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 07:44:59 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p2f2vkq9r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 07:44:59 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 29 Nov 2018 12:44:57 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 29 Nov 2018 12:44:53 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wATCipNd57278598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 29 Nov 2018 12:44:51 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF692A4040;
+        Thu, 29 Nov 2018 12:44:51 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3DC14A4051;
+        Thu, 29 Nov 2018 12:44:51 +0000 (GMT)
+Received: from [9.152.224.168] (unknown [9.152.224.168])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Nov 2018 12:44:51 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 3/3] vfio: ap: AP Queue Interrupt Control VFIO ioctl
+ calls
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1542906675-7949-1-git-send-email-pmorel@linux.ibm.com>
+ <1542906675-7949-4-git-send-email-pmorel@linux.ibm.com>
+ <20181129123726.62b04690.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 29 Nov 2018 13:44:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181129123726.62b04690.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112912-0020-0000-0000-000002EF8E4B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112912-0021-0000-0000-0000213EEE36
+Message-Id: <8a0946c9-5c43-2f06-1ed0-c9ea9aeaa5fb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-29_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811290109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some ARC CPU's do not support unaligned loads/stores. Currently, generic
-implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
-This can lead to misfunction of some drivers as generic functions do a
-plain dereference of a pointer that can be unaligned.
+On 29/11/2018 12:37, Cornelia Huck wrote:
+> On Thu, 22 Nov 2018 18:11:15 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> This is the implementation of the VFIO ioctl calls to handle
+>> the AQIC interception and use GISA to handle interrupts.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c | 110 +++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 109 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 272ef42..f6e942f 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -895,12 +895,121 @@ static int vfio_ap_mdev_get_device_info(unsigned long arg)
+>>   	return copy_to_user((void __user *)arg, &info, minsz);
+>>   }
+>>   
+>> +static unsigned long vfio_ap_get_nib(struct kvm *kvm, struct vfio_ap_aqic *parm)
+>> +{
+>> +	struct s390_io_adapter *adapter;
+>> +	struct s390_map_info *map;
+>> +	unsigned long nib;
+>> +	int found = 0;
+>> +
+>> +	/* find the adapter */
+>> +	if (parm->adapter_id > MAX_S390_IO_ADAPTERS)
+>> +		return 0;
+>> +
+>> +	adapter = kvm->arch.adapters[parm->adapter_id];
+>> +	if (!adapter)
+>> +		return 0;
+>> +
+>> +	down_write(&adapter->maps_lock);
+>> +	list_for_each_entry(map, &adapter->maps, list) {
+>> +		if (map->guest_addr == parm->nib) {
+>> +			found = 1;
+>> +			break;
+>> +		}
+>> +	}
+>> +	up_write(&adapter->maps_lock);
+> 
+> Regardless of which user space interface you ultimately use: I think
+> you should leave poking the adapter handling innards to the adapter
+> code and instead create and use an interface to look up the mapping
+> from the guest address.
 
-Let's use {get/put}_unaligned() helper instead of plain dereference of
-pointer in order to fix this.
+Right...
+Thanks
 
-We do not implement readsq()/writesq() as we assume that only HS is a
-64 Bit CPU and that it supports unaligned loads/stores.
+Pierre
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Tested-by: Vitor Soares <soares@synopsys.com>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: Vitor Soares <soares@synopsys.com>
----
- arch/arc/include/asm/io.h | 48 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+> 
+>> +
+>> +	if (!found)
+>> +		return 0;
+>> +
+>> +	nib = (unsigned long) page_address(map->page);
+>> +	nib += (map->guest_addr & 0x0fff);
+>> +
+>> +	return nib;
+>> +}
+> 
 
-diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
-index c22b181e8206..ca42c84af042 100644
---- a/arch/arc/include/asm/io.h
-+++ b/arch/arc/include/asm/io.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- #include <asm/page.h>
-+#include <asm/unaligned.h>
- 
- #ifdef CONFIG_ISA_ARCV2
- #include <asm/barrier.h>
-@@ -94,6 +95,27 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
- 	return w;
- }
- 
-+#define __raw_readsx(t,f) \
-+static inline void __raw_reads##f(const volatile void __iomem *addr, \
-+				  void *buffer, unsigned int count) \
-+{ \
-+	if (count) { \
-+		u##t *buf = buffer; \
-+\
-+		do { \
-+			u##t x = __raw_read##f(addr); \
-+			put_unaligned(x, buf++); \
-+		} while (--count); \
-+	} \
-+}
-+
-+#define __raw_readsb __raw_readsb
-+__raw_readsx(8, b);
-+#define __raw_readsw __raw_readsw
-+__raw_readsx(16, w);
-+#define __raw_readsl __raw_readsl
-+__raw_readsx(32, l);
-+
- #define __raw_writeb __raw_writeb
- static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
- {
-@@ -126,6 +148,26 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- 
- }
- 
-+#define __raw_writesx(t,f) \
-+static inline void __raw_writes##f(volatile void __iomem *addr, \
-+				   const void *buffer, unsigned int count) \
-+{ \
-+	if (count) { \
-+		const u##t *buf = buffer; \
-+\
-+		do { \
-+			__raw_write##f(get_unaligned(buf++), addr); \
-+		} while (--count); \
-+	} \
-+}
-+
-+#define __raw_writesb __raw_writesb
-+__raw_writesx(8, b);
-+#define __raw_writesw __raw_writesw
-+__raw_writesx(16, w);
-+#define __raw_writesl __raw_writesl
-+__raw_writesx(32, l);
-+
- /*
-  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
-  * Based on ARM model for the typical use case
-@@ -141,10 +183,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
- #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
- #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
-+#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
-+#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
-+#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
- #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
-+#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
-+#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
-+#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
- 
- /*
-  * Relaxed API for drivers which can handle barrier ordering themselves
+
 -- 
-2.7.4
-
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
