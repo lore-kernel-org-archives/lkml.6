@@ -2,147 +2,112 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90615C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90745C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51A03205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:51:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ott2O7JU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A03205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DF9D205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 08:53:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF9D205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbeK2T4f (ORCPT
+        id S1727114AbeK2T6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 14:56:35 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42322 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbeK2T4f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 14:56:35 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAT8p7iV046970;
-        Thu, 29 Nov 2018 02:51:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543481467;
-        bh=sBLXjLUdLISmYEYTrO0R5UkJZ4wVDS+GJ1QX8LYc0XM=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=Ott2O7JUCZYW/lovljzCBWdhe2ONinbGbb6N+yN2yaKCo6BRmytNlwVp7ne36FjVd
-         6SO8uvJvc1IpiSpQqikI2FHkKf4eNn9aGggD6NDll9Y5CrM3i/SnRj/oMc9Zp1ExwG
-         LGehsnfAsh89hXEQ+JIZ9qActLBU2N5staakn3Ls=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAT8p740112393
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Nov 2018 02:51:07 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 29
- Nov 2018 02:51:06 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 29 Nov 2018 02:51:06 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAT8p2Ln020902;
-        Thu, 29 Nov 2018 02:51:02 -0600
-Subject: Re: [PATCH 02/16] remoteproc: Add a rproc_set_firmware() API
-To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-3-git-send-email-rogerq@ti.com>
- <ee68d58b-24ff-f7b2-aa62-f1e73e078516@lechnology.com>
-CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BFFA875.6020002@ti.com>
-Date:   Thu, 29 Nov 2018 10:51:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 29 Nov 2018 14:58:11 -0500
+Received: from mga18.intel.com ([134.134.136.126]:50117 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726565AbeK2T6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 14:58:10 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2018 00:53:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,294,1539673200"; 
+   d="asc'?scan'208";a="93868075"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.8])
+  by orsmga007.jf.intel.com with ESMTP; 29 Nov 2018 00:53:29 -0800
+Date:   Thu, 29 Nov 2018 16:43:43 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/gvt: fix spelling mistake "Interupts" ->
+ "Interrupts"
+Message-ID: <20181129084343.GD12743@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20181125232524.14672-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <ee68d58b-24ff-f7b2-aa62-f1e73e078516@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DVXvgjZtTc9TWCEb"
+Content-Disposition: inline
+In-Reply-To: <20181125232524.14672-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/11/18 23:41, David Lechner wrote:
-> On 11/26/18 1:52 AM, Roger Quadros wrote:
->> From: Suman Anna <s-anna@ti.com>
->>
->> A new API, rproc_set_firmware() is added to allow the remoteproc platform
->> drivers and remoteproc client drivers to be able to configure a custom
->> firmware name that is different from the default name used during
->> remoteproc registration. This function is being introduced to provide
->> a kernel-level equivalent of the current sysfs interface to remoteproc
->> client drivers. This allows some remoteproc drivers to choose different
->> firmwares at runtime when the remote processor is not running based on
->> the functional feature it is providing using that remote processor.
->> The TI PRU Ethernet driver will be an example of such usage as it
->> requires to use different firmwares for different supported protocols.
->>
->> Also, update the firmware_store() function used by the sysfs interface
->> to reuse this function to avoid code duplication.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>   drivers/remoteproc/remoteproc_core.c  | 61 +++++++++++++++++++++++++++++++++++
->>   drivers/remoteproc/remoteproc_sysfs.c | 33 ++-----------------
->>   include/linux/remoteproc.h            |  1 +
->>   3 files changed, 64 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 39458a7..581e6e8 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -2151,6 +2151,67 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
-> 
-> ...
-> 
->> +int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
->> +{
->> +    struct device *dev = rproc->dev.parent;
->> +    int ret, len;
->> +    char *p;
->> +
->> +    if (!rproc || !fw_name)
->> +        return -EINVAL;
->> +
->> +    ret = mutex_lock_interruptible(&rproc->lock);
->> +    if (ret) {
->> +        dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
->> +        return -EINVAL;
->> +    }
->> +
->> +    if (rproc->state != RPROC_OFFLINE) {
->> +        dev_err(dev, "can't change firmware while running\n");
->> +        ret = -EBUSY;
->> +        goto out;
->> +    }
->> +
->> +    len = strcspn(fw_name, "\n");
->> +    if (!len) {
->> +        dev_err(dev, "can't provide a NULL firmware\n");
-> 
-> I realize this was just copied, but technically, this would be an
-> empty string rather than NULL.
-> 
-Noted. Thanks.
 
-cheers,
--roger
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+--DVXvgjZtTc9TWCEb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2018.11.25 23:25:24 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is a spelling mistake in an error message, fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/interrupt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/=
+gvt/interrupt.c
+> index 5daa23ae566b..6b9d1354ff29 100644
+> --- a/drivers/gpu/drm/i915/gvt/interrupt.c
+> +++ b/drivers/gpu/drm/i915/gvt/interrupt.c
+> @@ -126,7 +126,7 @@ static const char * const irq_name[INTEL_GVT_EVENT_MA=
+X] =3D {
+>  	[FDI_RX_INTERRUPTS_TRANSCODER_C] =3D "FDI RX Interrupts Combined C",
+>  	[AUDIO_CP_CHANGE_TRANSCODER_C] =3D "Audio CP Change Transcoder C",
+>  	[AUDIO_CP_REQUEST_TRANSCODER_C] =3D "Audio CP Request Transcoder C",
+> -	[ERR_AND_DBG] =3D "South Error and Debug Interupts Combined",
+> +	[ERR_AND_DBG] =3D "South Error and Debug Interrupts Combined",
+>  	[GMBUS] =3D "Gmbus",
+>  	[SDVO_B_HOTPLUG] =3D "SDVO B hotplug",
+>  	[CRT_HOTPLUG] =3D "CRT Hotplug",
+> --=20
+> 2.19.1
+>=20
+
+Applied this. Thanks!
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--DVXvgjZtTc9TWCEb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCW/+mvwAKCRCxBBozTXgY
+JzHFAJ0Zcxz4D8oFO1tsTgZvokHwPgnyjACfeKctWqVMlvRAzp9DtyegAGTRiPw=
+=tOOg
+-----END PGP SIGNATURE-----
+
+--DVXvgjZtTc9TWCEb--
