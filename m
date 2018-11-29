@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0451C64EB4
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282BEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B63B21019
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFC8820673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 23:10:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KLk757S+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B63B21019
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TaA+cQc1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC8820673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeK3KQG (ORCPT
+        id S1726812AbeK3KSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:16:06 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46437 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbeK3KQF (ORCPT
+        Fri, 30 Nov 2018 05:18:04 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44978 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeK3KQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:16:05 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so1596350pgp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:57 -0800 (PST)
+        Fri, 30 Nov 2018 05:16:03 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so1768348pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 15:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xB00KxuZQEu8aN2blw/Q7Mwo860ndkfrw/IytwM8ixA=;
-        b=KLk757S+QT2gg/0HtZ5p20n9LoB9fxOQO74mVfGpnvhkchl/ieEusz8uMx3wU7C7kB
-         aLDEWT1xAAYZhjx5LfI8p7y2JRIBeo1zV5Sh/1roe4+GunlukdXaMzcL08Ur/hU3Tf2o
-         +o3NqNu5gVo/oFZTGxnrclUguwussIQAJBlgM=
+        bh=TYHL1GknfPZnGhtn8O/gU4na0wLc5ctGe1uKnMNWOT4=;
+        b=TaA+cQc1/7+T5qacCyh0AAwLz3GPgtA9CMObEOi6jpamjleUWuvMh0LHBXUvpNCxL7
+         9CR/2PdZuW7JNJ+nOq4FABOvs/Mp+GxIy7dONyGTgxWxhu/ff51jHPYH1LvZG3L9Hso7
+         ti4Xj2pSArDeKcva/CRnBxS6xun/lvNPkW2RU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xB00KxuZQEu8aN2blw/Q7Mwo860ndkfrw/IytwM8ixA=;
-        b=lTBZ26Bt4s7IqSwApaN8Ymgf2854T6tpma2Hh/FdY9CrOh9Q4AM7AkmmcoMP98Ve/v
-         hWqD9EjZF6pXlO+sGpIniiCJwz4mmKvfeo0WEyrkM8GWrLXY1lx2Z57tYa9TkP1VosEk
-         Mv6wGNionha7rgU7Hnyu2M5nV5nAJGwMgh6ZNdQKuv4aZ4kl3nkMIUJGDamXytqIqC6F
-         S3J6kwansJM6pWdl0ss7K0K3wPDvNdvoG8pSasAQOvRbq1rpIHKwFwpkxyxNbj1VM+kH
-         7ltC6HjL+SGEFAZy/eN+sUgyUTNyylNDFljXHYX3tGSBbnyUYcdggL4kqg7SseQGIp6n
-         kCUQ==
-X-Gm-Message-State: AA+aEWb8P+3HxAY7YYWzURIpP3GTFJuaFqIdal4r0k8NUjBNzQkOUUQC
-        FrwalJUtZBwYF/JT2TjJ+kFoXg==
-X-Google-Smtp-Source: AFSGD/VL6gadzATXMEw0F99o2WQFjWZOc9UutvDrN+3YGMvscFFfGhS5mvm9fHebBgzEdWRjuWi2xQ==
-X-Received: by 2002:a62:26c7:: with SMTP id m190mr3369401pfm.79.1543532936769;
-        Thu, 29 Nov 2018 15:08:56 -0800 (PST)
+        bh=TYHL1GknfPZnGhtn8O/gU4na0wLc5ctGe1uKnMNWOT4=;
+        b=uhkYBI30ccPB/df1i2dmOwTk1MmCiptp1XqmygqVjPW4azpCacYC6Zs/wLdsbY4g+C
+         szrXkmcOFzYIdEYVITBFGvVbB0iYL9woByHbj+q7HZAw7/OgPZ9Cxij78P/avUL8UiTh
+         35vIJXaFDte+985p+7DDBgmQc0NFI63lEIB2S4sGdEQ+8ejh91E8DyO8br35otCNAQ8l
+         sHw8fR6kHqjN3CICifvJL1jDx39hHTBijasWuNsLwBrhnbrUBPFtQHAuX4WvZZJ9qPzK
+         NqspSjPkAFbJOtASSXoNmUZHAdXz5v6fNVfVtc4UNnLWzz8KUsMkVrbgx5849++KsCsG
+         Tu3w==
+X-Gm-Message-State: AA+aEWZGHJzKMOSBOo7pxIKw9FRHg7PH9l9OalaQdlAXVYxitXKI6CSX
+        aBLAlHo+q2cyliAIEea5s0U4+w==
+X-Google-Smtp-Source: AFSGD/VRITuuXmEPfTlLIi6EbXimBJNN7RTXaXlDfh0jfXgGMjAVegg3qRAP/so5VF11tn2YxDQo8w==
+X-Received: by 2002:a63:101d:: with SMTP id f29mr2927128pgl.38.1543532934634;
+        Thu, 29 Nov 2018 15:08:54 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c13sm4285561pfo.121.2018.11.29.15.08.53
+        by smtp.gmail.com with ESMTPSA id n68sm4737537pfb.62.2018.11.29.15.08.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 15:08:55 -0800 (PST)
+        Thu, 29 Nov 2018 15:08:51 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -62,9 +62,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Anton Vorontsov <anton@enomsg.org>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
-Subject: [PATCH -next v2 05/12] pstore/ram: Standardize module name in ramoops
-Date:   Thu, 29 Nov 2018 15:08:34 -0800
-Message-Id: <20181129230841.29955-6-keescook@chromium.org>
+Subject: [PATCH -next v2 01/12] pstore/ram: Correctly calculate usable PRZ bytes
+Date:   Thu, 29 Nov 2018 15:08:30 -0800
+Message-Id: <20181129230841.29955-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181129230841.29955-1-keescook@chromium.org>
 References: <20181129230841.29955-1-keescook@chromium.org>
@@ -73,39 +73,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With both ram.c and ram_core.c built into ramoops.ko, it doesn't make
-sense to have differing pr_fmt prefixes. This fixes ram_core.c to use
-the module name (as ram.c already does). Additionally improves region
-reservation error to include the region name.
+The actual number of bytes stored in a PRZ is smaller than the
+bytes requested by platform data, since there is a header on each
+PRZ. Additionally, if ECC is enabled, there are trailing bytes used
+as well. Normally this mismatch doesn't matter since PRZs are circular
+buffers and the leading "overflow" bytes are just thrown away. However, in
+the case of a compressed record, this rather badly corrupts the results.
 
+This corruption was visible with "ramoops.mem_size=204800 ramoops.ecc=1".
+Any stored crashes would not be uncompressable (producing a pstorefs
+"dmesg-*.enc.z" file), and triggering errors at boot:
+
+  [    2.790759] pstore: crypto_comp_decompress failed, ret = -22!
+
+Backporting this depends on commit 70ad35db3321 ("pstore: Convert console
+write to use ->write_buf")
+
+Reported-by: Joel Fernandes <joel@joelfernandes.org>
+Fixes: b0aad7a99c1d ("pstore: Add compression support to pstore")
 Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- fs/pstore/ram_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/pstore/ram.c        | 15 ++++++---------
+ include/linux/pstore.h |  5 ++++-
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 23ca6f2c98a0..f5d0173901aa 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -12,7 +12,7 @@
-  *
-  */
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index ffcff6516e89..e02a9039b5ea 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -816,17 +816,14 @@ static int ramoops_probe(struct platform_device *pdev)
  
--#define pr_fmt(fmt) "persistent_ram: " fmt
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -443,7 +443,8 @@ static void *persistent_ram_iomap(phys_addr_t start, size_t size,
- 	void *va;
- 
- 	if (!request_mem_region(start, size, label ?: "ramoops")) {
--		pr_err("request mem region (0x%llx@0x%llx) failed\n",
-+		pr_err("request mem region (%s 0x%llx@0x%llx) failed\n",
-+			label ?: "ramoops",
- 			(unsigned long long)size, (unsigned long long)start);
- 		return NULL;
+ 	cxt->pstore.data = cxt;
+ 	/*
+-	 * Console can handle any buffer size, so prefer LOG_LINE_MAX. If we
+-	 * have to handle dumps, we must have at least record_size buffer. And
+-	 * for ftrace, bufsize is irrelevant (if bufsize is 0, buf will be
+-	 * ZERO_SIZE_PTR).
++	 * Since bufsize is only used for dmesg crash dumps, it
++	 * must match the size of the dprz record (after PRZ header
++	 * and ECC bytes have been accounted for).
+ 	 */
+-	if (cxt->console_size)
+-		cxt->pstore.bufsize = 1024; /* LOG_LINE_MAX */
+-	cxt->pstore.bufsize = max(cxt->record_size, cxt->pstore.bufsize);
+-	cxt->pstore.buf = kmalloc(cxt->pstore.bufsize, GFP_KERNEL);
++	cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
++	cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
+ 	if (!cxt->pstore.buf) {
+-		pr_err("cannot allocate pstore buffer\n");
++		pr_err("cannot allocate pstore crash dump buffer\n");
+ 		err = -ENOMEM;
+ 		goto fail_clear;
  	}
+diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+index a15bc4d48752..30fcec375a3a 100644
+--- a/include/linux/pstore.h
++++ b/include/linux/pstore.h
+@@ -90,7 +90,10 @@ struct pstore_record {
+  *
+  * @buf_lock:	spinlock to serialize access to @buf
+  * @buf:	preallocated crash dump buffer
+- * @bufsize:	size of @buf available for crash dump writes
++ * @bufsize:	size of @buf available for crash dump bytes (must match
++ *		smallest number of bytes available for writing to a
++ *		backend entry, since compressed bytes don't take kindly
++ *		to being truncated)
+  *
+  * @read_mutex:	serializes @open, @read, @close, and @erase callbacks
+  * @flags:	bitfield of frontends the backend can accept writes for
 -- 
 2.17.1
 
