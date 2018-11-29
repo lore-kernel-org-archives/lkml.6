@@ -2,55 +2,73 @@ Return-Path: <SRS0=8q1S=OI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA49C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12076C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023E121104
-	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA93620673
+	for <linux-kernel@archiver.kernel.org>; Thu, 29 Nov 2018 14:41:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNgqvk2m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023E121104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="01nhtLSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA93620673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732889AbeK3Bql (ORCPT
+        id S2387943AbeK3Bdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 29 Nov 2018 20:46:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728823AbeK3BeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Nov 2018 20:34:02 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3983E2146F;
-        Thu, 29 Nov 2018 14:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543501709;
-        bh=4ROiFYHcZpWRSCusofb7JpxDElS9DDPnG4Uz5o9rVRc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iNgqvk2mEEeBUHpapM500B1NDLNJWvLrJHmaaivNm6cAZExqLpD0X4Xu6EP+XE6SF
-         ivRqxK7bzDwIkWjZMNyFmPLpnI5sygdlvGwod90UDLAMdv2vQm/yoaLZjHzM2Qlhhc
-         YQz/RXJdZljx4YysRdRSib7OvdVyGjfjMXyZn8A4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Pierre-Loup Griffais <pgriffais@valvesoftware.com>
-Subject: [PATCH 4.19 001/110] HID: steam: remove input device when a hid client is running.
-Date:   Thu, 29 Nov 2018 15:11:32 +0100
-Message-Id: <20181129135921.291078513@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181129135921.231283053@linuxfoundation.org>
-References: <20181129135921.231283053@linuxfoundation.org>
-User-Agent: quilt/0.65
+        Thu, 29 Nov 2018 20:33:39 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44806 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387917AbeK3Bdi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Nov 2018 20:33:38 -0500
+Received: by mail-lf1-f66.google.com with SMTP id z13so1565398lfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Nov 2018 06:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v4vz3sbNBH1XzX3GydMDty1pB9dgsxmbyenTp4UEM2g=;
+        b=01nhtLSOQ7vb/NXRZVxVKtSkqCHTXr9/A4oQQPr9J9b6WQHNmBDdmdUK0gcHChQAYw
+         pWV43ZPZeUtkTT7voJGB19uuIhcc9XipCB4oLE3oNO0QY5T8UxIJxwBYrAIYxGlsFgUC
+         MMWu+DnfkCQrBpqkMqwNKhQplbJf7N6Txeyz8QGhrZVXHFPICp1gS+Gh2DFLejviIz9f
+         ccifjgqEgiQeHO8GtjNtzWkeE4KT0ZcQe0GaItOSLXMr2sLni36MUYoPzVc+PXwSxnPx
+         oWSoG3Zwfj+jFFoocGlziL4zoY13JCWZjLhlGRphuj0VVDDr6Wy9aonK2JPLvN/7CMIw
+         dVIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v4vz3sbNBH1XzX3GydMDty1pB9dgsxmbyenTp4UEM2g=;
+        b=gR7EfK6M0/hZEvK38qeyeCzQYxiF04/UWUDLhC+In8JVSHVIp2zll7fYC3qZOqcU+Q
+         GancECGl+swKhU1EJ6oGm45h8erh2xwE7rM2RqLvF4vRhZ3XQDDSyResB6dAhrDz7liE
+         Pux2NGcyaRGdj2+NTO35c2QMIq1IdPt41BpVDE1Sr4y5bHwQhiNpbXSIeHPVu9c8a19O
+         mntd5TUxhuKEmAZi902nFXrLBbID980koL2x87Pgk6Q40bkqwgHZV6uayKYpu5s8aJpv
+         QGYzAHbEkIDe8cbIhELJH6LAoPAjnLKpVn7IreiFjRNP4rtFlvoObXWUr0b1Q+dkBRqk
+         /ijw==
+X-Gm-Message-State: AA+aEWYriKsW+zroqlTORUdnuuLGii3A2Lf8j8CqmPme6jDqmOhkGgYl
+        wnEjLdFzFJP2jcE48bHKseDikQ==
+X-Google-Smtp-Source: AFSGD/Ub3RUnFyfDx0S48fa+hcgyMzCJcXLKW7ISdSubwlWj/q0PqXbJQjqnB/lHOdEhwYfKtr+ezQ==
+X-Received: by 2002:a19:7d42:: with SMTP id y63mr1145504lfc.47.1543501684696;
+        Thu, 29 Nov 2018 06:28:04 -0800 (PST)
+Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id c19sm326970lfg.86.2018.11.29.06.28.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 06:28:03 -0800 (PST)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keith.busch@intel.com, linux-nvme@lists.infradead.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: simplify geometry enumeration
+Date:   Thu, 29 Nov 2018 15:27:38 +0100
+Message-Id: <20181129142738.9567-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -59,323 +77,169 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Currently the geometry of an OCSSD is enumerated using a two step
+approach:
 
-------------------
+First, nvm_register is called, the OCSSD identify command is issued,
+and second the geometry sos and csecs values are read either from the
+OCSSD identify if it is a 1.2 drive, or from the NVMe namespace data
+structure if it is a 2.0 device.
 
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+This patch recombines it into a single step, such that nvm_register can
+use the csecs and sos fields independent of which version is used. This
+enables one to dynamically size the lightnvm subsystem dma pool.
 
-commit 385a4886778f6d6e61eff1d4d295af332d7130e1 upstream.
-
-Previously, when a HID client such as the Steam Client was running, this
-driver disabled its input device to avoid doubling the input events.
-
-While it worked mostly fine, some games got confused by the idle gamepad,
-and switched to two player mode, or asked the user to choose which gamepad
-to use. Other games just crashed, probably a bug in Unity [1].
-
-With this commit, when a HID client starts, the input device is removed;
-when the HID client ends the input device is recreated.
-
-[1]: https://github.com/ValveSoftware/steam-for-linux/issues/5645
-
-Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Pierre-Loup Griffais <pgriffais@valvesoftware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/hid/hid-steam.c |  154 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 90 insertions(+), 64 deletions(-)
+ drivers/lightnvm/core.c      | 12 +++++-------
+ drivers/nvme/host/core.c     | 18 +++++++++---------
+ drivers/nvme/host/lightnvm.c | 18 ++++++------------
+ drivers/nvme/host/nvme.h     |  2 --
+ 4 files changed, 20 insertions(+), 30 deletions(-)
 
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -23,8 +23,9 @@
-  * In order to avoid breaking them this driver creates a layered hidraw device,
-  * so it can detect when the client is running and then:
-  *  - it will not send any command to the controller.
-- *  - this input device will be disabled, to avoid double input of the same
-+ *  - this input device will be removed, to avoid double input of the same
-  *    user action.
-+ * When the client is closed, this input device will be created again.
-  *
-  * For additional functions, such as changing the right-pad margin or switching
-  * the led, you can use the user-space tool at:
-@@ -113,7 +114,7 @@ struct steam_device {
- 	spinlock_t lock;
- 	struct hid_device *hdev, *client_hdev;
- 	struct mutex mutex;
--	bool client_opened, input_opened;
-+	bool client_opened;
- 	struct input_dev __rcu *input;
- 	unsigned long quirks;
- 	struct work_struct work_connect;
-@@ -279,18 +280,6 @@ static void steam_set_lizard_mode(struct
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 73ab3cf26868..a1d52e934ce4 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -1145,25 +1145,23 @@ int nvm_register(struct nvm_dev *dev)
+ 	if (!dev->q || !dev->ops)
+ 		return -EINVAL;
+ 
++	ret = nvm_init(dev);
++	if (ret)
++		return ret;
++
+ 	dev->dma_pool = dev->ops->create_dma_pool(dev, "ppalist");
+ 	if (!dev->dma_pool) {
+ 		pr_err("nvm: could not create dma pool\n");
++		nvm_free(dev);
+ 		return -ENOMEM;
+ 	}
+ 
+-	ret = nvm_init(dev);
+-	if (ret)
+-		goto err_init;
+-
+ 	/* register device with a supported media manager */
+ 	down_write(&nvm_lock);
+ 	list_add(&dev->devices, &nvm_devices);
+ 	up_write(&nvm_lock);
+ 
+ 	return 0;
+-err_init:
+-	dev->ops->destroy_dma_pool(dev->dma_pool);
+-	return ret;
+ }
+ EXPORT_SYMBOL(nvm_register);
+ 
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 65c42448e904..387833b37e38 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1516,8 +1516,6 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
+ 	if (ns->noiob)
+ 		nvme_set_chunk_size(ns);
+ 	nvme_update_disk_info(disk, ns, id);
+-	if (ns->ndev)
+-		nvme_nvm_update_nvm_info(ns);
+ #ifdef CONFIG_NVME_MULTIPATH
+ 	if (ns->head->disk)
+ 		nvme_update_disk_info(ns->head->disk, ns, id);
+@@ -3086,13 +3084,6 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	nvme_setup_streams_ns(ctrl, ns);
+ 	nvme_set_disk_name(disk_name, ns, ctrl, &flags);
+ 
+-	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
+-		if (nvme_nvm_register(ns, disk_name, node)) {
+-			dev_warn(ctrl->device, "LightNVM init failure\n");
+-			goto out_unlink_ns;
+-		}
+-	}
+-
+ 	disk = alloc_disk_node(0, node);
+ 	if (!disk)
+ 		goto out_unlink_ns;
+@@ -3106,6 +3097,13 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 
+ 	__nvme_revalidate_disk(disk, id);
+ 
++	if ((ctrl->quirks & NVME_QUIRK_LIGHTNVM) && id->vs[0] == 0x1) {
++		if (nvme_nvm_register(ns, disk_name, node)) {
++			dev_warn(ctrl->device, "LightNVM init failure\n");
++			goto out_put_disk;
++		}
++	}
++
+ 	down_write(&ctrl->namespaces_rwsem);
+ 	list_add_tail(&ns->list, &ctrl->namespaces);
+ 	up_write(&ctrl->namespaces_rwsem);
+@@ -3119,6 +3117,8 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	kfree(id);
+ 
+ 	return;
++ out_put_disk:
++	put_disk(ns->disk);
+  out_unlink_ns:
+ 	mutex_lock(&ctrl->subsys->lock);
+ 	list_del_rcu(&ns->siblings);
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index d64805dc8efb..51d957ccf328 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -973,22 +973,11 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
  	}
  }
  
--static void steam_update_lizard_mode(struct steam_device *steam)
+-void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
 -{
--	mutex_lock(&steam->mutex);
--	if (!steam->client_opened) {
--		if (steam->input_opened)
--			steam_set_lizard_mode(steam, false);
--		else
--			steam_set_lizard_mode(steam, lizard_mode);
--	}
--	mutex_unlock(&steam->mutex);
+-	struct nvm_dev *ndev = ns->ndev;
+-	struct nvm_geo *geo = &ndev->geo;
+-
+-	if (geo->version == NVM_OCSSD_SPEC_12)
+-		return;
+-
+-	geo->csecs = 1 << ns->lba_shift;
+-	geo->sos = ns->ms;
 -}
 -
- static int steam_input_open(struct input_dev *dev)
+ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
  {
- 	struct steam_device *steam = input_get_drvdata(dev);
-@@ -301,7 +290,6 @@ static int steam_input_open(struct input
- 		return ret;
+ 	struct request_queue *q = ns->queue;
+ 	struct nvm_dev *dev;
++	struct nvm_geo *geo;
  
- 	mutex_lock(&steam->mutex);
--	steam->input_opened = true;
- 	if (!steam->client_opened && lizard_mode)
- 		steam_set_lizard_mode(steam, false);
- 	mutex_unlock(&steam->mutex);
-@@ -313,7 +301,6 @@ static void steam_input_close(struct inp
- 	struct steam_device *steam = input_get_drvdata(dev);
+ 	_nvme_nvm_check_size();
  
- 	mutex_lock(&steam->mutex);
--	steam->input_opened = false;
- 	if (!steam->client_opened && lizard_mode)
- 		steam_set_lizard_mode(steam, true);
- 	mutex_unlock(&steam->mutex);
-@@ -400,7 +387,7 @@ static int steam_battery_register(struct
- 	return 0;
- }
- 
--static int steam_register(struct steam_device *steam)
-+static int steam_input_register(struct steam_device *steam)
- {
- 	struct hid_device *hdev = steam->hdev;
- 	struct input_dev *input;
-@@ -414,17 +401,6 @@ static int steam_register(struct steam_d
- 		return 0;
- 	}
- 
--	/*
--	 * Unlikely, but getting the serial could fail, and it is not so
--	 * important, so make up a serial number and go on.
--	 */
--	if (steam_get_serial(steam) < 0)
--		strlcpy(steam->serial_no, "XXXXXXXXXX",
--				sizeof(steam->serial_no));
--
--	hid_info(hdev, "Steam Controller '%s' connected",
--			steam->serial_no);
--
- 	input = input_allocate_device();
- 	if (!input)
+@@ -996,6 +985,11 @@ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+ 	if (!dev)
  		return -ENOMEM;
-@@ -492,11 +468,6 @@ static int steam_register(struct steam_d
- 		goto input_register_fail;
  
- 	rcu_assign_pointer(steam->input, input);
--
--	/* ignore battery errors, we can live without it */
--	if (steam->quirks & STEAM_QUIRK_WIRELESS)
--		steam_battery_register(steam);
--
- 	return 0;
++	/* Note that csecs and sos will be overridden if it is a 1.2 drive. */
++	geo = &dev->geo;
++	geo->csecs = 1 << ns->lba_shift;
++	geo->sos = ns->ms;
++
+ 	dev->q = q;
+ 	memcpy(dev->name, disk_name, DISK_NAME_LEN);
+ 	dev->ops = &nvme_nvm_dev_ops;
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 9fefba039d1e..4f5399c8808b 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -541,13 +541,11 @@ static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
+ #endif /* CONFIG_NVME_MULTIPATH */
  
- input_register_fail:
-@@ -504,27 +475,88 @@ input_register_fail:
- 	return ret;
- }
- 
--static void steam_unregister(struct steam_device *steam)
-+static void steam_input_unregister(struct steam_device *steam)
+ #ifdef CONFIG_NVM
+-void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+ int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+ void nvme_nvm_unregister(struct nvme_ns *ns);
+ extern const struct attribute_group nvme_nvm_attr_group;
+ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
+ #else
+-static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+ static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
+ 				    int node)
  {
- 	struct input_dev *input;
-+	rcu_read_lock();
-+	input = rcu_dereference(steam->input);
-+	rcu_read_unlock();
-+	if (!input)
-+		return;
-+	RCU_INIT_POINTER(steam->input, NULL);
-+	synchronize_rcu();
-+	input_unregister_device(input);
-+}
-+
-+static void steam_battery_unregister(struct steam_device *steam)
-+{
- 	struct power_supply *battery;
- 
- 	rcu_read_lock();
--	input = rcu_dereference(steam->input);
- 	battery = rcu_dereference(steam->battery);
- 	rcu_read_unlock();
- 
--	if (battery) {
--		RCU_INIT_POINTER(steam->battery, NULL);
--		synchronize_rcu();
--		power_supply_unregister(battery);
-+	if (!battery)
-+		return;
-+	RCU_INIT_POINTER(steam->battery, NULL);
-+	synchronize_rcu();
-+	power_supply_unregister(battery);
-+}
-+
-+static int steam_register(struct steam_device *steam)
-+{
-+	int ret;
-+
-+	/*
-+	 * This function can be called several times in a row with the
-+	 * wireless adaptor, without steam_unregister() between them, because
-+	 * another client send a get_connection_status command, for example.
-+	 * The battery and serial number are set just once per device.
-+	 */
-+	if (!steam->serial_no[0]) {
-+		/*
-+		 * Unlikely, but getting the serial could fail, and it is not so
-+		 * important, so make up a serial number and go on.
-+		 */
-+		if (steam_get_serial(steam) < 0)
-+			strlcpy(steam->serial_no, "XXXXXXXXXX",
-+					sizeof(steam->serial_no));
-+
-+		hid_info(steam->hdev, "Steam Controller '%s' connected",
-+				steam->serial_no);
-+
-+		/* ignore battery errors, we can live without it */
-+		if (steam->quirks & STEAM_QUIRK_WIRELESS)
-+			steam_battery_register(steam);
-+
-+		mutex_lock(&steam_devices_lock);
-+		list_add(&steam->list, &steam_devices);
-+		mutex_unlock(&steam_devices_lock);
- 	}
--	if (input) {
--		RCU_INIT_POINTER(steam->input, NULL);
--		synchronize_rcu();
-+
-+	mutex_lock(&steam->mutex);
-+	if (!steam->client_opened) {
-+		steam_set_lizard_mode(steam, lizard_mode);
-+		ret = steam_input_register(steam);
-+	} else {
-+		ret = 0;
-+	}
-+	mutex_unlock(&steam->mutex);
-+
-+	return ret;
-+}
-+
-+static void steam_unregister(struct steam_device *steam)
-+{
-+	steam_battery_unregister(steam);
-+	steam_input_unregister(steam);
-+	if (steam->serial_no[0]) {
- 		hid_info(steam->hdev, "Steam Controller '%s' disconnected",
- 				steam->serial_no);
--		input_unregister_device(input);
-+		mutex_lock(&steam_devices_lock);
-+		list_del(&steam->list);
-+		mutex_unlock(&steam_devices_lock);
-+		steam->serial_no[0] = 0;
- 	}
- }
- 
-@@ -600,6 +632,9 @@ static int steam_client_ll_open(struct h
- 	mutex_lock(&steam->mutex);
- 	steam->client_opened = true;
- 	mutex_unlock(&steam->mutex);
-+
-+	steam_input_unregister(steam);
-+
- 	return ret;
- }
- 
-@@ -609,13 +644,13 @@ static void steam_client_ll_close(struct
- 
- 	mutex_lock(&steam->mutex);
- 	steam->client_opened = false;
--	if (steam->input_opened)
--		steam_set_lizard_mode(steam, false);
--	else
--		steam_set_lizard_mode(steam, lizard_mode);
- 	mutex_unlock(&steam->mutex);
- 
- 	hid_hw_close(steam->hdev);
-+	if (steam->connected) {
-+		steam_set_lizard_mode(steam, lizard_mode);
-+		steam_input_register(steam);
-+	}
- }
- 
- static int steam_client_ll_raw_request(struct hid_device *hdev,
-@@ -744,11 +779,6 @@ static int steam_probe(struct hid_device
- 		}
- 	}
- 
--	mutex_lock(&steam_devices_lock);
--	steam_update_lizard_mode(steam);
--	list_add(&steam->list, &steam_devices);
--	mutex_unlock(&steam_devices_lock);
--
- 	return 0;
- 
- hid_hw_open_fail:
-@@ -774,10 +804,6 @@ static void steam_remove(struct hid_devi
- 		return;
- 	}
- 
--	mutex_lock(&steam_devices_lock);
--	list_del(&steam->list);
--	mutex_unlock(&steam_devices_lock);
--
- 	hid_destroy_device(steam->client_hdev);
- 	steam->client_opened = false;
- 	cancel_work_sync(&steam->work_connect);
-@@ -792,12 +818,14 @@ static void steam_remove(struct hid_devi
- static void steam_do_connect_event(struct steam_device *steam, bool connected)
- {
- 	unsigned long flags;
-+	bool changed;
- 
- 	spin_lock_irqsave(&steam->lock, flags);
-+	changed = steam->connected != connected;
- 	steam->connected = connected;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
--	if (schedule_work(&steam->work_connect) == 0)
-+	if (changed && schedule_work(&steam->work_connect) == 0)
- 		dbg_hid("%s: connected=%d event already queued\n",
- 				__func__, connected);
- }
-@@ -1019,13 +1047,8 @@ static int steam_raw_event(struct hid_de
- 			return 0;
- 		rcu_read_lock();
- 		input = rcu_dereference(steam->input);
--		if (likely(input)) {
-+		if (likely(input))
- 			steam_do_input_event(steam, input, data);
--		} else {
--			dbg_hid("%s: input data without connect event\n",
--					__func__);
--			steam_do_connect_event(steam, true);
--		}
- 		rcu_read_unlock();
- 		break;
- 	case STEAM_EV_CONNECT:
-@@ -1074,7 +1097,10 @@ static int steam_param_set_lizard_mode(c
- 
- 	mutex_lock(&steam_devices_lock);
- 	list_for_each_entry(steam, &steam_devices, list) {
--		steam_update_lizard_mode(steam);
-+		mutex_lock(&steam->mutex);
-+		if (!steam->client_opened)
-+			steam_set_lizard_mode(steam, lizard_mode);
-+		mutex_unlock(&steam->mutex);
- 	}
- 	mutex_unlock(&steam_devices_lock);
- 	return 0;
-
+-- 
+2.17.1
 
